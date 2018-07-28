@@ -32,46 +32,46 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// Interaction logic for BrushSimpleConditionalControl.xaml
-	/// </summary>
-	public partial class BrushSimpleConditionalControl : UserControl
-	{
-		public BrushSimpleConditionalControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for BrushSimpleConditionalControl.xaml
+  /// </summary>
+  public partial class BrushSimpleConditionalControl : UserControl
+  {
+    public BrushSimpleConditionalControl()
+    {
+      InitializeComponent();
+    }
 
-		public Altaxo.Graph.Gdi.BrushX SelectedBrush
-		{
-			get
-			{
-				if (_chkEnableBrush.IsChecked == true)
-				{
-					return _cbBrush.SelectedBrush;
-				}
-				else
-				{
-					var brush = _cbBrush.SelectedBrush;
-					brush.Color = NamedColors.Transparent;
-					return brush;
-				}
-			}
-			set
-			{
-				_cbBrush.SelectedBrush = value;
-				_chkEnableBrush.IsChecked = value.IsVisible;
-			}
-		}
+    public Altaxo.Graph.Gdi.BrushX SelectedBrush
+    {
+      get
+      {
+        if (_chkEnableBrush.IsChecked == true)
+        {
+          return _cbBrush.SelectedBrush;
+        }
+        else
+        {
+          var brush = _cbBrush.SelectedBrush;
+          brush.Color = NamedColors.Transparent;
+          return brush;
+        }
+      }
+      set
+      {
+        _cbBrush.SelectedBrush = value;
+        _chkEnableBrush.IsChecked = value.IsVisible;
+      }
+    }
 
-		private void EhEnableFill_Checked(object sender, RoutedEventArgs e)
-		{
-			var brush = _cbBrush.SelectedBrush.Clone();
-			if (!brush.IsVisible)
-			{
-				brush.Color = NamedColors.AliceBlue;
-				_cbBrush.SelectedBrush = brush;
-			}
-		}
-	}
+    private void EhEnableFill_Checked(object sender, RoutedEventArgs e)
+    {
+      var brush = _cbBrush.SelectedBrush.Clone();
+      if (!brush.IsVisible)
+      {
+        brush.Color = NamedColors.AliceBlue;
+        _cbBrush.SelectedBrush = brush;
+      }
+    }
+  }
 }

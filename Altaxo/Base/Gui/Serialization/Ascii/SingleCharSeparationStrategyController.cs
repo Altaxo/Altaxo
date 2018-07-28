@@ -30,39 +30,39 @@ using System.Text;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-	public interface ISingleCharSeparationStrategyView
-	{
-		char SeparatorChar { get; set; }
-	}
+  public interface ISingleCharSeparationStrategyView
+  {
+    char SeparatorChar { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(ISingleCharSeparationStrategyView))]
-	[UserControllerForObject(typeof(SingleCharSeparationStrategy))]
-	public class SingleCharSeparationStrategyController : MVCANControllerEditOriginalDocBase<SingleCharSeparationStrategy, ISingleCharSeparationStrategyView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [ExpectedTypeOfView(typeof(ISingleCharSeparationStrategyView))]
+  [UserControllerForObject(typeof(SingleCharSeparationStrategy))]
+  public class SingleCharSeparationStrategyController : MVCANControllerEditOriginalDocBase<SingleCharSeparationStrategy, ISingleCharSeparationStrategyView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
+      if (initData)
+      {
+      }
 
-			if (null != _view)
-			{
-				_view.SeparatorChar = _doc.SeparatorChar;
-			}
-		}
+      if (null != _view)
+      {
+        _view.SeparatorChar = _doc.SeparatorChar;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.SeparatorChar = _view.SeparatorChar;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.SeparatorChar = _view.SeparatorChar;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

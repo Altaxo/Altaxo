@@ -40,64 +40,64 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	/// <summary>
-	/// Interaction logic for RangeOfPhysicalValuesControl.xaml
-	/// </summary>
-	public partial class IncludeSingleTextValueControl : UserControl, IIncludeSingleTextValueView
-	{
-		public IncludeSingleTextValueControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for RangeOfPhysicalValuesControl.xaml
+  /// </summary>
+  public partial class IncludeSingleTextValueControl : UserControl, IIncludeSingleTextValueView
+  {
+    public IncludeSingleTextValueControl()
+    {
+      InitializeComponent();
+    }
 
-		public void Init_Column(string boxText, string toolTip, int status)
-		{
-			this._guiColumn.Text = boxText;
-			this._guiColumn.ToolTip = toolTip;
-			this._guiColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-		}
+    public void Init_Column(string boxText, string toolTip, int status)
+    {
+      this._guiColumn.Text = boxText;
+      this._guiColumn.ToolTip = toolTip;
+      this._guiColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+    }
 
-		public void Init_ColumnTransformation(string boxText, string toolTip)
-		{
-			if (null == boxText)
-			{
-				this._guiColumnTransformation.Visibility = Visibility.Collapsed;
-			}
-			else
-			{
-				this._guiColumnTransformation.Text = boxText;
-				this._guiColumnTransformation.ToolTip = toolTip;
-				this._guiColumnTransformation.Visibility = Visibility.Visible;
-			}
-		}
+    public void Init_ColumnTransformation(string boxText, string toolTip)
+    {
+      if (null == boxText)
+      {
+        this._guiColumnTransformation.Visibility = Visibility.Collapsed;
+      }
+      else
+      {
+        this._guiColumnTransformation.Text = boxText;
+        this._guiColumnTransformation.ToolTip = toolTip;
+        this._guiColumnTransformation.Visibility = Visibility.Visible;
+      }
+    }
 
-		public void Init_Index(int idx)
-		{
-			_guiDataLabel.Content = string.Format("Col#{0}:", idx);
-		}
+    public void Init_Index(int idx)
+    {
+      _guiDataLabel.Content = string.Format("Col#{0}:", idx);
+    }
 
-		public string Value
-		{
-			get { return _guiValue.Text; }
-			set
-			{
-				_guiValue.Text = value;
-			}
-		}
+    public string Value
+    {
+      get { return _guiValue.Text; }
+      set
+      {
+        _guiValue.Text = value;
+      }
+    }
 
-		public bool IgnoreCase
-		{
-			get
-			{
-				return _guiIgnoreCase.IsChecked == true;
-			}
-			set
-			{
-				_guiIgnoreCase.IsChecked = value;
-			}
-		}
+    public bool IgnoreCase
+    {
+      get
+      {
+        return _guiIgnoreCase.IsChecked == true;
+      }
+      set
+      {
+        _guiIgnoreCase.IsChecked = value;
+      }
+    }
 
-		public string ActionString { set => _guiActionLabel.Content = value; }
-		public string TextFieldToolTip { set => _guiValue.ToolTip = value; }
-	}
+    public string ActionString { set => _guiActionLabel.Content = value; }
+    public string TextFieldToolTip { set => _guiValue.ToolTip = value; }
+  }
 }

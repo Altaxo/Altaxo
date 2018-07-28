@@ -32,21 +32,21 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-	/// <summary>
-	/// Tests and test data for <see cref="Mixture_DEA_Nitrogen"/>.
-	/// </summary>
-	/// <remarks>
-	/// <para>Reference:</para>
+  /// <summary>
+  /// Tests and test data for <see cref="Mixture_DEA_Nitrogen"/>.
+  /// </summary>
+  /// <remarks>
+  /// <para>Reference:</para>
   /// <para>The test data was created automatically using calls into the TREND.DLL of the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-	/// </remarks>
+  /// </remarks>
   [TestFixture]
   public class Test_Mixture_DEA_Nitrogen : MixtureTestBase
-    {
+  {
 
     public Test_Mixture_DEA_Nitrogen()
-      {
-      _mixture = MixtureOfFluids.FromCASRegistryNumbersAndMoleFractions(new[]{("111-42-2", 0.5), ("7727-37-9", 0.5) });
+    {
+      _mixture = MixtureOfFluids.FromCASRegistryNumbersAndMoleFractions(new[] { ("111-42-2", 0.5), ("7727-37-9", 0.5) });
 
       // TestData for 1 Permille to 999 Permille Molefraction contains:
       // 0. Temperature (Kelvin)
@@ -55,7 +55,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 3. delta*AlphaR_delta
       // 4. Isochoric heat capacity (J/mol K)
       // 5. Phasetype (1: liquid, 2: gas)
-      _testData_001_999 = new (double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
+      _testData_001_999 = new(double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
       {
       ( 350, 0.343632948608537, 1000.00000000115, 1.12756740651278E-06, 21.0251152114435, 1 ),
       ( 400, 0.300678344798651, 1000.0000000001, 2.70972483497226E-06, 21.1359689882254, 1 ),
@@ -80,7 +80,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 3. delta*AlphaR_delta
       // 4. Isochoric heat capacity (J/mol K)
       // 5. Phasetype (1: liquid, 2: gas)
-      _testData_500_500 = new (double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
+      _testData_500_500 = new(double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
       {
       ( 500, 0.240553731861784, 999.999999974548, -4.0322294168267E-05, 142.311942268469, 2 ),
       ( 500, 2.40641075488901, 9999.99999997338, -0.000403269912484506, 142.31903073297, 2 ),
@@ -96,7 +96,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 3. delta*AlphaR_delta
       // 4. Isochoric heat capacity (J/mol K)
       // 5. Phasetype (1: liquid, 2: gas)
-      _testData_999_001 = new (double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
+      _testData_999_001 = new(double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
       {
       ( 500, 0.240626832410898, 999.999999983372, -0.000341228448131214, 263.127892302101, 2 ),
       ( 500, 2.41370948486115, 9999.99982485481, -0.00342304980993207, 263.255766076975, 2 ),

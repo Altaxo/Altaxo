@@ -28,274 +28,274 @@ using System.Collections.Immutable;
 
 namespace Altaxo.Scripting
 {
-	public interface IColumnScriptText : IScriptText, Main.IDocumentLeafNode
-	{
-		/// <summary>
-		/// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-		/// If the script object exists, the data change notifications will be switched of (for all tables).
-		/// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
-		/// </summary>
-		/// <param name="myColumn">The property column this script is working on.</param>
-		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
-		/// <returns>True if executed without exceptions, otherwise false.</returns>
-		/// <remarks>If exceptions were thrown during execution, the exception messages are stored
-		/// inside the column script and can be recalled by the Errors property.</remarks>
-		bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter);
-	}
+  public interface IColumnScriptText : IScriptText, Main.IDocumentLeafNode
+  {
+    /// <summary>
+    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// If the script object exists, the data change notifications will be switched of (for all tables).
+    /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
+    /// </summary>
+    /// <param name="myColumn">The property column this script is working on.</param>
+    /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
+    /// inside the column script and can be recalled by the Errors property.</remarks>
+    bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter);
+  }
 
-	/// <summary>
-	/// Holds the text, the module (=executable), and some properties of a property column script.
-	/// </summary>
+  /// <summary>
+  /// Holds the text, the module (=executable), and some properties of a property column script.
+  /// </summary>
 
-	public class PropertyColumnScript : AbstractScript, IColumnScriptText
-	{
-		#region Serialization
+  public class PropertyColumnScript : AbstractScript, IColumnScriptText
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.PropertyColumnScript", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.PropertyColumnScript), 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				AbstractScript s = (AbstractScript)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.PropertyColumnScript", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.PropertyColumnScript), 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        AbstractScript s = (AbstractScript)obj;
 
-				info.AddBaseValueEmbedded(s, typeof(AbstractScript));
-			}
+        info.AddBaseValueEmbedded(s, typeof(AbstractScript));
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				PropertyColumnScript s = null != o ? (PropertyColumnScript)o : new PropertyColumnScript();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        PropertyColumnScript s = null != o ? (PropertyColumnScript)o : new PropertyColumnScript();
 
-				// deserialize the base class
-				info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
+        // deserialize the base class
+        info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>
-		/// Creates an empty column script. Default Style is "Set Column".
-		/// </summary>
-		public PropertyColumnScript()
-		{
-		}
+    /// <summary>
+    /// Creates an empty column script. Default Style is "Set Column".
+    /// </summary>
+    public PropertyColumnScript()
+    {
+    }
 
-		/// <summary>
-		/// Creates a column script as a copy from another script.
-		/// </summary>
-		/// <param name="b">The script to copy from.</param>
-		public PropertyColumnScript(PropertyColumnScript b)
-			: this(b, false)
-		{
-		}
+    /// <summary>
+    /// Creates a column script as a copy from another script.
+    /// </summary>
+    /// <param name="b">The script to copy from.</param>
+    public PropertyColumnScript(PropertyColumnScript b)
+      : this(b, false)
+    {
+    }
 
-		/// <summary>
-		/// Creates a column script as a copy from another script.
-		/// </summary>
-		/// <param name="b">The script to copy from.</param>
-		/// <param name="forModification">If true, the new script text can be modified.</param>
-		public PropertyColumnScript(PropertyColumnScript b, bool forModification)
-			: base(b, forModification)
-		{
-		}
+    /// <summary>
+    /// Creates a column script as a copy from another script.
+    /// </summary>
+    /// <param name="b">The script to copy from.</param>
+    /// <param name="forModification">If true, the new script text can be modified.</param>
+    public PropertyColumnScript(PropertyColumnScript b, bool forModification)
+      : base(b, forModification)
+    {
+    }
 
-		/// <summary>
-		/// Gives the type of the script object (full name), which is created after successfull compilation.
-		/// </summary>
-		public override string ScriptObjectType
-		{
-			get { return "Altaxo.Calc.SetPropertyColumnValues"; }
-		}
+    /// <summary>
+    /// Gives the type of the script object (full name), which is created after successfull compilation.
+    /// </summary>
+    public override string ScriptObjectType
+    {
+      get { return "Altaxo.Calc.SetPropertyColumnValues"; }
+    }
 
-		/// <summary>
-		/// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
-		/// </summary>
-		public override string CodeHeader
-		{
-			get
-			{
-				return
-					"#region ScriptHeader\r\n" +
-					"using System;\r\n" +
-					"using System.Collections.Generic;\r\n" +
-					"using System.Linq;\r\n" +
-					"using Altaxo;\r\n" +
-					"using Altaxo.Calc.LinearAlgebra;\r\n" +
-					"using Altaxo.Data;\r\n" +
-					"\r\n" +
-					"namespace Altaxo.Calc\r\n" +
-					"{\r\n" +
-					"\tpublic class SetPropertyColumnValues : Altaxo.Calc.ColScriptExeBase\r\n" +
-					"\t{\r\n" +
-					"\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol, IProgressReporter reporter)\r\n" +
-					"\t\t{\r\n" +
-					"\t\t\tAltaxo.Data.DataColumnCollection pcol = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(mycol);\r\n" +
-					"\t\t\tAltaxo.Data.DataTable         mytable = Altaxo.Data.DataTable.GetParentDataTableOf(pcol);\r\n" +
-					"\t\t\tAltaxo.Data.DataColumnCollection  col = mytable==null? null : mytable.DataColumns;\r\n" +
-					"\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n";
-			}
-		}
+    /// <summary>
+    /// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
+    /// </summary>
+    public override string CodeHeader
+    {
+      get
+      {
+        return
+          "#region ScriptHeader\r\n" +
+          "using System;\r\n" +
+          "using System.Collections.Generic;\r\n" +
+          "using System.Linq;\r\n" +
+          "using Altaxo;\r\n" +
+          "using Altaxo.Calc.LinearAlgebra;\r\n" +
+          "using Altaxo.Data;\r\n" +
+          "\r\n" +
+          "namespace Altaxo.Calc\r\n" +
+          "{\r\n" +
+          "\tpublic class SetPropertyColumnValues : Altaxo.Calc.ColScriptExeBase\r\n" +
+          "\t{\r\n" +
+          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol, IProgressReporter reporter)\r\n" +
+          "\t\t{\r\n" +
+          "\t\t\tAltaxo.Data.DataColumnCollection pcol = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(mycol);\r\n" +
+          "\t\t\tAltaxo.Data.DataTable         mytable = Altaxo.Data.DataTable.GetParentDataTableOf(pcol);\r\n" +
+          "\t\t\tAltaxo.Data.DataColumnCollection  col = mytable==null? null : mytable.DataColumns;\r\n" +
+          "\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n";
+      }
+    }
 
-		public override string CodeStart
-		{
-			get
-			{
-				return
-					"#endregion\r\n" +
-					"\t\t\t// ----- add your script below this line -----\r\n";
-			}
-		}
+    public override string CodeStart
+    {
+      get
+      {
+        return
+          "#endregion\r\n" +
+          "\t\t\t// ----- add your script below this line -----\r\n";
+      }
+    }
 
-		public override string CodeUserDefault
-		{
-			get
-			{
-				return
-					"\t\t\t\r\n" +
-					"\t\t\tmycol.Data = pcol[\"B\"] - pcol[\"A\"];\r\n" +
-					"\t\t\t\r\n"
-					;
-			}
-		}
+    public override string CodeUserDefault
+    {
+      get
+      {
+        return
+          "\t\t\t\r\n" +
+          "\t\t\tmycol.Data = pcol[\"B\"] - pcol[\"A\"];\r\n" +
+          "\t\t\t\r\n"
+          ;
+      }
+    }
 
-		public override string CodeEnd
-		{
-			get
-			{
-				return
-					"\t\t\t// ----- add your script above this line -----\r\n" +
-					"#region ScriptFooter\r\n";
-			}
-		}
+    public override string CodeEnd
+    {
+      get
+      {
+        return
+          "\t\t\t// ----- add your script above this line -----\r\n" +
+          "#region ScriptFooter\r\n";
+      }
+    }
 
-		/// <summary>
-		/// Get the ending text of the script, dependent on the ScriptStyle.
-		/// </summary>
-		public override string CodeTail
-		{
-			get
-			{
-				return
+    /// <summary>
+    /// Get the ending text of the script, dependent on the ScriptStyle.
+    /// </summary>
+    public override string CodeTail
+    {
+      get
+      {
+        return
 
-					"\t\t} // Execute method\r\n" +
-					"\t} // class\r\n" +
-					"} //namespace\r\n" +
-					"#endregion\r\n";
-			}
-		}
+          "\t\t} // Execute method\r\n" +
+          "\t} // class\r\n" +
+          "} //namespace\r\n" +
+          "#endregion\r\n";
+      }
+    }
 
-		/// <summary>
-		/// Clones the script.
-		/// </summary>
-		/// <returns>The cloned object.</returns>
-		public override object Clone()
-		{
-			return new PropertyColumnScript(this, true);
-		}
+    /// <summary>
+    /// Clones the script.
+    /// </summary>
+    /// <returns>The cloned object.</returns>
+    public override object Clone()
+    {
+      return new PropertyColumnScript(this, true);
+    }
 
-		/// <summary>
-		/// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-		/// If the script object exists, the Execute function of this script object is called.
-		/// </summary>
-		/// <param name="myColumn">The data table this script is working on.</param>
-		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
-		/// <returns>True if executed without exceptions, otherwise false.</returns>
-		/// <remarks>If exceptions were thrown during execution, the exception messages are stored
-		/// inside the column script and can be recalled by the Errors property.</remarks>
-		public bool Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
-		{
-			if (null == _scriptObject)
-			{
-				_errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
-				return false;
-			}
+    /// <summary>
+    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// If the script object exists, the Execute function of this script object is called.
+    /// </summary>
+    /// <param name="myColumn">The data table this script is working on.</param>
+    /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
+    /// inside the column script and can be recalled by the Errors property.</remarks>
+    public bool Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
+    {
+      if (null == _scriptObject)
+      {
+        _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
+        return false;
+      }
 
-			try
-			{
-				((Altaxo.Calc.ColScriptExeBase)_scriptObject).Execute(myColumn, reporter);
-			}
-			catch (Exception ex)
-			{
-				_errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, ex.ToString()));
-				return false;
-			}
-			return true;
-		}
+      try
+      {
+        ((Altaxo.Calc.ColScriptExeBase)_scriptObject).Execute(myColumn, reporter);
+      }
+      catch (Exception ex)
+      {
+        _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, ex.ToString()));
+        return false;
+      }
+      return true;
+    }
 
-		/// <summary>
-		/// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-		/// If the script object exists, the data change notifications will be switched of (for all tables).
-		/// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
-		/// </summary>
-		/// <param name="myColumn">The property column this script is working on.</param>
-		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
-		/// <returns>True if executed without exceptions, otherwise false.</returns>
-		/// <remarks>If exceptions were thrown during execution, the exception messages are stored
-		/// inside the column script and can be recalled by the Errors property.</remarks>
-		public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
-		{
-			bool bSucceeded = true;
-			Altaxo.Data.DataTableCollection myDataSet = null;
+    /// <summary>
+    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// If the script object exists, the data change notifications will be switched of (for all tables).
+    /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
+    /// </summary>
+    /// <param name="myColumn">The property column this script is working on.</param>
+    /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
+    /// inside the column script and can be recalled by the Errors property.</remarks>
+    public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
+    {
+      bool bSucceeded = true;
+      Altaxo.Data.DataTableCollection myDataSet = null;
 
-			// first, test some preconditions
-			if (null == _scriptObject)
-			{
-				_errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
-				return false;
-			}
+      // first, test some preconditions
+      if (null == _scriptObject)
+      {
+        _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
+        return false;
+      }
 
-			Altaxo.Data.DataColumnCollection myColumnCollection = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);
+      Altaxo.Data.DataColumnCollection myColumnCollection = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);
 
-			Altaxo.Data.DataTable myTable = Altaxo.Data.DataTable.GetParentDataTableOf(myColumnCollection);
+      Altaxo.Data.DataTable myTable = Altaxo.Data.DataTable.GetParentDataTableOf(myColumnCollection);
 
-			myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
+      myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
 
-			IDisposable suspendToken = null;
+      IDisposable suspendToken = null;
 
-			if (null != myDataSet)
-				suspendToken = myDataSet.SuspendGetToken();
-			else if (null != myTable)
-				suspendToken = myTable.SuspendGetToken();
-			else if (null != myColumnCollection)
-				suspendToken = myColumnCollection.SuspendGetToken();
-			else if (null != myColumn)
-				suspendToken = myColumn.SuspendGetToken();
+      if (null != myDataSet)
+        suspendToken = myDataSet.SuspendGetToken();
+      else if (null != myTable)
+        suspendToken = myTable.SuspendGetToken();
+      else if (null != myColumnCollection)
+        suspendToken = myColumnCollection.SuspendGetToken();
+      else if (null != myColumn)
+        suspendToken = myColumn.SuspendGetToken();
 
-			try
-			{
-				((Altaxo.Calc.ColScriptExeBase)_scriptObject).Execute(myColumn, reporter);
-			}
-			catch (Exception ex)
-			{
-				bSucceeded = false;
-				_errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, ex.ToString()));
-			}
-			finally
-			{
-				if (null != suspendToken)
-					suspendToken.Dispose();
-			}
+      try
+      {
+        ((Altaxo.Calc.ColScriptExeBase)_scriptObject).Execute(myColumn, reporter);
+      }
+      catch (Exception ex)
+      {
+        bSucceeded = false;
+        _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, ex.ToString()));
+      }
+      finally
+      {
+        if (null != suspendToken)
+          suspendToken.Dispose();
+      }
 
-			return bSucceeded;
-		}
+      return bSucceeded;
+    }
 
-		/// <summary>
-		/// Executes the script in the background with showing the background dialog. If no instance of the script object exists, a error message will be stored and the return value is false.
-		/// If the script object exists, the data change notifications will be switched of (for all tables).
-		/// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
-		/// </summary>
-		/// <param name="myColumn">The property column this script is working on.</param>
-		/// <returns>True if executed without exceptions, otherwise false.</returns>
-		/// <remarks>If exceptions were thrown during execution, the exception messages are stored
-		/// inside the column script and can be recalled by the Errors property.</remarks>
-		public bool ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataColumn myColumn)
-		{
-			var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-			System.Threading.Thread t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myColumn, reporter));
-			t.Start();
-			return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
-		}
-	} // end of class PropertyColumnScript
+    /// <summary>
+    /// Executes the script in the background with showing the background dialog. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// If the script object exists, the data change notifications will be switched of (for all tables).
+    /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
+    /// </summary>
+    /// <param name="myColumn">The property column this script is working on.</param>
+    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
+    /// inside the column script and can be recalled by the Errors property.</remarks>
+    public bool ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataColumn myColumn)
+    {
+      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      System.Threading.Thread t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myColumn, reporter));
+      t.Start();
+      return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
+    }
+  } // end of class PropertyColumnScript
 }

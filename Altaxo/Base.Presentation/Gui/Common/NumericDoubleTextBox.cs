@@ -32,116 +32,116 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
-	public class NumericDoubleTextBox : TextBox
-	{
-		public event DependencyPropertyChangedEventHandler SelectedValueChanged;
+  public class NumericDoubleTextBox : TextBox
+  {
+    public event DependencyPropertyChangedEventHandler SelectedValueChanged;
 
-		private NumericDoubleConverter _converter;
+    private NumericDoubleConverter _converter;
 
-		/// <summary>
-		/// Static initialization.
-		/// </summary>
-		static NumericDoubleTextBox()
-		{
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(NumericDoubleTextBox), new FrameworkPropertyMetadata(typeof(NumericDoubleTextBox)));
-		}
+    /// <summary>
+    /// Static initialization.
+    /// </summary>
+    static NumericDoubleTextBox()
+    {
+      DefaultStyleKeyProperty.OverrideMetadata(typeof(NumericDoubleTextBox), new FrameworkPropertyMetadata(typeof(NumericDoubleTextBox)));
+    }
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public NumericDoubleTextBox()
-		{
-			var binding = new Binding();
-			binding.Source = this;
-			binding.Path = new PropertyPath("SelectedValue");
-			binding.Mode = BindingMode.TwoWay;
-			binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-			_converter = new NumericDoubleConverter();
-			binding.Converter = _converter;
-			binding.ValidationRules.Add(_converter);
-			this.SetBinding(TextBox.TextProperty, binding);
-		}
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public NumericDoubleTextBox()
+    {
+      var binding = new Binding();
+      binding.Source = this;
+      binding.Path = new PropertyPath("SelectedValue");
+      binding.Mode = BindingMode.TwoWay;
+      binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+      _converter = new NumericDoubleConverter();
+      binding.Converter = _converter;
+      binding.ValidationRules.Add(_converter);
+      this.SetBinding(TextBox.TextProperty, binding);
+    }
 
-		public bool AllowNaNValues { get { return _converter.AllowNaNValues; } set { _converter.AllowNaNValues = value; } }
+    public bool AllowNaNValues { get { return _converter.AllowNaNValues; } set { _converter.AllowNaNValues = value; } }
 
-		public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
+    public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
 
-		public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
+    public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
 
-		public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
+    public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
-		public double MinValue { get { return _converter.MinValue; } set { _converter.MinValue = value; } }
+    public double MinValue { get { return _converter.MinValue; } set { _converter.MinValue = value; } }
 
-		public double MaxValue { get { return _converter.MaxValue; } set { _converter.MaxValue = value; } }
+    public double MaxValue { get { return _converter.MaxValue; } set { _converter.MaxValue = value; } }
 
-		public bool IsMinValueInclusive { get { return _converter.IsMinValueInclusive; } set { _converter.IsMinValueInclusive = value; } }
+    public bool IsMinValueInclusive { get { return _converter.IsMinValueInclusive; } set { _converter.IsMinValueInclusive = value; } }
 
-		public bool IsMaxValueInclusive { get { return _converter.IsMaxValueInclusive; } set { _converter.IsMaxValueInclusive = value; } }
+    public bool IsMaxValueInclusive { get { return _converter.IsMaxValueInclusive; } set { _converter.IsMaxValueInclusive = value; } }
 
-		#region Change selection behaviour
+    #region Change selection behaviour
 
-		// The next three overrides change the selection behaviour of the text box as described in
-		// 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
-		// (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
+    // The next three overrides change the selection behaviour of the text box as described in
+    // 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
+    // (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
-		protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
-		{
-			SelectAll();
-			base.OnGotKeyboardFocus(e);
-		}
+    protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
+    {
+      SelectAll();
+      base.OnGotKeyboardFocus(e);
+    }
 
-		protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
-		{
-			SelectAll();
-			base.OnMouseDoubleClick(e);
-		}
+    protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
+    {
+      SelectAll();
+      base.OnMouseDoubleClick(e);
+    }
 
-		protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
-		{
-			if (!IsKeyboardFocusWithin)
-			{
-				e.Handled = true;
-				Focus();
-			}
-			else
-			{
-				base.OnPreviewMouseLeftButtonDown(e);
-			}
-		}
+    protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
+    {
+      if (!IsKeyboardFocusWithin)
+      {
+        e.Handled = true;
+        Focus();
+      }
+      else
+      {
+        base.OnPreviewMouseLeftButtonDown(e);
+      }
+    }
 
-		#endregion Change selection behaviour
+    #endregion Change selection behaviour
 
-		#region Dependency property
+    #region Dependency property
 
-		/// <summary>
-		/// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
-		/// </summary>
-		public double SelectedValue
-		{
-			get { return (double)GetValue(SelectedValueProperty); }
-			set { SetValue(SelectedValueProperty, value); }
-		}
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public double SelectedValue
+    {
+      get { return (double)GetValue(SelectedValueProperty); }
+      set { SetValue(SelectedValueProperty, value); }
+    }
 
-		public static readonly DependencyProperty SelectedValueProperty =
-				DependencyProperty.Register("SelectedValue", typeof(double), typeof(NumericDoubleTextBox),
-				new FrameworkPropertyMetadata(EhSelectedValueChanged));
+    public static readonly DependencyProperty SelectedValueProperty =
+        DependencyProperty.Register("SelectedValue", typeof(double), typeof(NumericDoubleTextBox),
+        new FrameworkPropertyMetadata(EhSelectedValueChanged));
 
-		private static void EhSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((NumericDoubleTextBox)obj).OnSelectedValueChanged(obj, args);
-		}
+    private static void EhSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((NumericDoubleTextBox)obj).OnSelectedValueChanged(obj, args);
+    }
 
-		/// <summary>
-		/// Triggers the <see cref="SelectedValueChanged"/> event.
-		/// </summary>
-		/// <param name="obj">Dependency object (here: the control).</param>
-		/// <param name="args">Property changed event arguments.</param>
-		protected void OnSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			if (null != SelectedValueChanged)
-				SelectedValueChanged(obj, args);
-		}
+    /// <summary>
+    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// </summary>
+    /// <param name="obj">Dependency object (here: the control).</param>
+    /// <param name="args">Property changed event arguments.</param>
+    protected void OnSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      if (null != SelectedValueChanged)
+        SelectedValueChanged(obj, args);
+    }
 
-		#endregion Dependency property
-	}
+    #endregion Dependency property
+  }
 }

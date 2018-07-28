@@ -29,262 +29,262 @@ using System.Text;
 
 namespace Altaxo.Main.Properties
 {
-	/// <summary>
-	/// A property bag that holds the properties of a project folder.
-	/// </summary>
-	public class ProjectFolderPropertyDocument
-		:
-		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
-		IProjectItem,
-		IPropertyBagOwner,
-		Main.INameOwner,
-		Main.ICopyFrom
-	{
-		private string _name;
-		private PropertyBag _propertyBag;
-		private DateTime _creationTimeUtc;
-		private DateTime _changeTimeUtc;
+  /// <summary>
+  /// A property bag that holds the properties of a project folder.
+  /// </summary>
+  public class ProjectFolderPropertyDocument
+    :
+    Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
+    IProjectItem,
+    IPropertyBagOwner,
+    Main.INameOwner,
+    Main.ICopyFrom
+  {
+    private string _name;
+    private PropertyBag _propertyBag;
+    private DateTime _creationTimeUtc;
+    private DateTime _changeTimeUtc;
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2014-01-22 Initial version
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectFolderPropertyDocument), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (ProjectFolderPropertyDocument)obj;
+    /// <summary>
+    /// 2014-01-22 Initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectFolderPropertyDocument), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ProjectFolderPropertyDocument)obj;
 
-				info.AddValue("Name", s._name);
-				info.AddValue("CreationTimeUtc", s._creationTimeUtc);
-				info.AddValue("ChangeTimeUtc", s._changeTimeUtc);
-				info.AddValue("Properties", s._propertyBag);
-			}
+        info.AddValue("Name", s._name);
+        info.AddValue("CreationTimeUtc", s._creationTimeUtc);
+        info.AddValue("ChangeTimeUtc", s._changeTimeUtc);
+        info.AddValue("Properties", s._propertyBag);
+      }
 
-			public void Deserialize(ProjectFolderPropertyDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				s._name = info.GetString("Name");
-				s._creationTimeUtc = info.GetDateTime("CreationTimeUtc");
-				s._changeTimeUtc = info.GetDateTime("ChangeTimeUtc");
-				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
-			}
+      public void Deserialize(ProjectFolderPropertyDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        s._name = info.GetString("Name");
+        s._creationTimeUtc = info.GetDateTime("CreationTimeUtc");
+        s._changeTimeUtc = info.GetDateTime("ChangeTimeUtc");
+        s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = null != o ? (ProjectFolderPropertyDocument)o : new ProjectFolderPropertyDocument(string.Empty);
-				Deserialize(s, info, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = null != o ? (ProjectFolderPropertyDocument)o : new ProjectFolderPropertyDocument(string.Empty);
+        Deserialize(s, info, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ProjectFolderPropertyDocument"/> class.
-		/// </summary>
-		/// <param name="folderName">Name of the folder.</param>
-		public ProjectFolderPropertyDocument(string folderName)
-		{
-			this.Name = folderName;
-			_creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
-			PropertyBag = new PropertyBag();
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectFolderPropertyDocument"/> class.
+    /// </summary>
+    /// <param name="folderName">Name of the folder.</param>
+    public ProjectFolderPropertyDocument(string folderName)
+    {
+      this.Name = folderName;
+      _creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
+      PropertyBag = new PropertyBag();
+    }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ProjectFolderPropertyDocument"/> class.
-		/// </summary>
-		/// <param name="from">Another instance to copy the name of the bag and the properties from.</param>
-		public ProjectFolderPropertyDocument(ProjectFolderPropertyDocument from)
-		{
-			_creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
-			CopyFrom(from);
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectFolderPropertyDocument"/> class.
+    /// </summary>
+    /// <param name="from">Another instance to copy the name of the bag and the properties from.</param>
+    public ProjectFolderPropertyDocument(ProjectFolderPropertyDocument from)
+    {
+      _creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
+      CopyFrom(from);
+    }
 
-		/// <summary>
-		/// Copies name and properties from another instance.
-		/// </summary>
-		/// <param name="obj">The object to copy from.</param>
-		/// <returns><c>True</c> if anything could be copyied.</returns>
-		public virtual bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
+    /// <summary>
+    /// Copies name and properties from another instance.
+    /// </summary>
+    /// <param name="obj">The object to copy from.</param>
+    /// <returns><c>True</c> if anything could be copyied.</returns>
+    public virtual bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
 
-			var from = (ProjectFolderPropertyDocument)obj;
-			if (null != from)
-			{
-				this._name = from._name;
-				this._changeTimeUtc = from._changeTimeUtc;
-				this._propertyBag = null;
-				if (null != from._propertyBag)
-				{
-					this._propertyBag = this.PropertyBagNotNull;
-					this._propertyBag.Clear();
-					this._propertyBag.CopyFrom(from._propertyBag);
-				}
-				return true;
-			}
-			return false;
-		}
+      var from = (ProjectFolderPropertyDocument)obj;
+      if (null != from)
+      {
+        this._name = from._name;
+        this._changeTimeUtc = from._changeTimeUtc;
+        this._propertyBag = null;
+        if (null != from._propertyBag)
+        {
+          this._propertyBag = this.PropertyBagNotNull;
+          this._propertyBag.Clear();
+          this._propertyBag.CopyFrom(from._propertyBag);
+        }
+        return true;
+      }
+      return false;
+    }
 
-		object ICloneable.Clone()
-		{
-			return new ProjectFolderPropertyDocument(this);
-		}
+    object ICloneable.Clone()
+    {
+      return new ProjectFolderPropertyDocument(this);
+    }
 
-		/// <summary>
-		/// Clones this instance.
-		/// </summary>
-		/// <returns>Clone of this instance.</returns>
-		public ProjectFolderPropertyDocument Clone()
-		{
-			return new ProjectFolderPropertyDocument(this);
-		}
+    /// <summary>
+    /// Clones this instance.
+    /// </summary>
+    /// <returns>Clone of this instance.</returns>
+    public ProjectFolderPropertyDocument Clone()
+    {
+      return new ProjectFolderPropertyDocument(this);
+    }
 
-		/// <summary>
-		/// Gets or sets the name of the property bag. This has to be a valid project folder name.
-		/// </summary>
-		/// <value>
-		/// The name.
-		/// </value>
-		public override string Name
-		{
-			get
-			{
-				return _name;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException("New name is null");
-				if (_name == value)
-					return; // nothing changed
+    /// <summary>
+    /// Gets or sets the name of the property bag. This has to be a valid project folder name.
+    /// </summary>
+    /// <value>
+    /// The name.
+    /// </value>
+    public override string Name
+    {
+      get
+      {
+        return _name;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException("New name is null");
+        if (_name == value)
+          return; // nothing changed
 
-				Main.ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(value);
+        Main.ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(value);
 
-				var canBeRenamed = true;
-				var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
-				if (null != parentAs)
-				{
-					canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
-				}
+        var canBeRenamed = true;
+        var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
+        if (null != parentAs)
+        {
+          canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
+        }
 
-				if (canBeRenamed)
-				{
-					var oldName = _name;
-					_name = value;
+        if (canBeRenamed)
+        {
+          var oldName = _name;
+          _name = value;
 
-					if (null != parentAs)
-						parentAs.EhChild_HasBeenRenamed(this, oldName);
+          if (null != parentAs)
+            parentAs.EhChild_HasBeenRenamed(this, oldName);
 
-					OnNameChanged(oldName);
-				}
-				else
-				{
-					throw new ApplicationException(string.Format("Renaming of table {0} into {1} not possible, because name exists already", _name, value));
-				}
-			}
-		}
+          OnNameChanged(oldName);
+        }
+        else
+        {
+          throw new ApplicationException(string.Format("Renaming of table {0} into {1} not possible, because name exists already", _name, value));
+        }
+      }
+    }
 
-		/// <summary>
-		/// Fires both a Changed and a TunnelingEvent when the name has changed.
-		/// The event arg of the Changed event is an instance of <see cref="T:Altaxo.Main.NamedObjectCollectionChangedEventArgs"/>.
-		/// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
-		/// </summary>
-		/// <param name="oldName">The name of the table before it has changed the name.</param>
-		protected virtual void OnNameChanged(string oldName)
-		{
-			EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
-			EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(this, oldName));
-		}
+    /// <summary>
+    /// Fires both a Changed and a TunnelingEvent when the name has changed.
+    /// The event arg of the Changed event is an instance of <see cref="T:Altaxo.Main.NamedObjectCollectionChangedEventArgs"/>.
+    /// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
+    /// </summary>
+    /// <param name="oldName">The name of the table before it has changed the name.</param>
+    protected virtual void OnNameChanged(string oldName)
+    {
+      EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
+      EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(this, oldName));
+    }
 
-		/// <summary>
-		/// Gets the creation time in UTC.
-		/// </summary>
-		/// <value>
-		/// The creation time in UTC.
-		/// </value>
-		public DateTime CreationTimeUtc
-		{
-			get
-			{
-				return _creationTimeUtc;
-			}
-		}
+    /// <summary>
+    /// Gets the creation time in UTC.
+    /// </summary>
+    /// <value>
+    /// The creation time in UTC.
+    /// </value>
+    public DateTime CreationTimeUtc
+    {
+      get
+      {
+        return _creationTimeUtc;
+      }
+    }
 
-		/// <summary>
-		/// Gets the change time in UTC.
-		/// </summary>
-		/// <value>
-		/// The change time in UTC.
-		/// </value>
-		public DateTime ChangeTimeUtc
-		{
-			get
-			{
-				return _creationTimeUtc;
-			}
-		}
+    /// <summary>
+    /// Gets the change time in UTC.
+    /// </summary>
+    /// <value>
+    /// The change time in UTC.
+    /// </value>
+    public DateTime ChangeTimeUtc
+    {
+      get
+      {
+        return _creationTimeUtc;
+      }
+    }
 
-		/// <summary>
-		/// Gets the property bag. If the property bag is empty or not created, it is allowed to return null.
-		/// </summary>
-		/// <value>
-		/// The property bag, or <c>null</c> if there is no property bag.
-		/// </value>
-		public PropertyBag PropertyBag
-		{
-			get
-			{
-				return _propertyBag;
-			}
-			protected set
-			{
-				ChildSetMember(ref _propertyBag, value);
-			}
-		}
+    /// <summary>
+    /// Gets the property bag. If the property bag is empty or not created, it is allowed to return null.
+    /// </summary>
+    /// <value>
+    /// The property bag, or <c>null</c> if there is no property bag.
+    /// </value>
+    public PropertyBag PropertyBag
+    {
+      get
+      {
+        return _propertyBag;
+      }
+      protected set
+      {
+        ChildSetMember(ref _propertyBag, value);
+      }
+    }
 
-		/// <summary>
-		/// Gets the property bag. If there is no property bag, a new bag is created and then returned.
-		/// </summary>
-		/// <value>
-		/// The property bag.
-		/// </value>
-		public PropertyBag PropertyBagNotNull
-		{
-			get
-			{
-				if (null == _propertyBag)
-					PropertyBag = new PropertyBag();
-				return _propertyBag;
-			}
-		}
+    /// <summary>
+    /// Gets the property bag. If there is no property bag, a new bag is created and then returned.
+    /// </summary>
+    /// <value>
+    /// The property bag.
+    /// </value>
+    public PropertyBag PropertyBagNotNull
+    {
+      get
+      {
+        if (null == _propertyBag)
+          PropertyBag = new PropertyBag();
+        return _propertyBag;
+      }
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			if (null != _propertyBag)
-				yield return new Main.DocumentNodeAndName(_propertyBag, () => _propertyBag = null, "PropertyBag");
-		}
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      if (null != _propertyBag)
+        yield return new Main.DocumentNodeAndName(_propertyBag, () => _propertyBag = null, "PropertyBag");
+    }
 
-		/// <summary>
-		/// Has to enumerate all references to other items in the project (<see cref="DocNodeProxy" />) which are used in this project item and in all childs of this project item. The references
-		/// has to be reported to the <paramref name="ProxyProcessing" /> function. This function is responsible for processing of the proxies, for instance to relocated the path.
-		/// </summary>
-		/// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy" /> instances.</param>
-		public void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing)
-		{
-			// currently there is nothing to do here
-		}
+    /// <summary>
+    /// Has to enumerate all references to other items in the project (<see cref="DocNodeProxy" />) which are used in this project item and in all childs of this project item. The references
+    /// has to be reported to the <paramref name="ProxyProcessing" /> function. This function is responsible for processing of the proxies, for instance to relocated the path.
+    /// </summary>
+    /// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy" /> instances.</param>
+    public void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing)
+    {
+      // currently there is nothing to do here
+    }
 
-		#region Suspend
+    #region Suspend
 
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			_accumulatedEventData = EventArgs.Empty;
-		}
+    protected override void AccumulateChangeData(object sender, EventArgs e)
+    {
+      _accumulatedEventData = EventArgs.Empty;
+    }
 
-		#endregion Suspend
-	}
+    #endregion Suspend
+  }
 }

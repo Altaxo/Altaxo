@@ -31,171 +31,171 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-	public class StyleListBase<T> : IStyleList<T> where T : Main.IImmutable
-	{
-		protected string _name;
-		protected IList<T> _list;
+  public class StyleListBase<T> : IStyleList<T> where T : Main.IImmutable
+  {
+    protected string _name;
+    protected IList<T> _list;
 
-		#region Serialization
+    #region Serialization
 
-		protected StyleListBase(string name, List<T> listToTakeDirectly, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			_name = name;
-			_list = listToTakeDirectly;
-		}
+    protected StyleListBase(string name, List<T> listToTakeDirectly, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      _name = name;
+      _list = listToTakeDirectly;
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public StyleListBase(string name, IEnumerable<T> symbols)
-		{
-			_name = name;
-			_list = new List<T>(symbols);
-			if (_list.Count == 0)
-				throw new ArgumentException("Provided enumeration is emtpy", nameof(symbols));
-		}
+    public StyleListBase(string name, IEnumerable<T> symbols)
+    {
+      _name = name;
+      _list = new List<T>(symbols);
+      if (_list.Count == 0)
+        throw new ArgumentException("Provided enumeration is emtpy", nameof(symbols));
+    }
 
-		public string Name { get { return _name; } }
+    public string Name { get { return _name; } }
 
-		public IStyleList<T> WithName(string name)
-		{
-			if (string.IsNullOrEmpty(name))
-				throw new ArgumentNullException(nameof(name) + " is null or empty");
+    public IStyleList<T> WithName(string name)
+    {
+      if (string.IsNullOrEmpty(name))
+        throw new ArgumentNullException(nameof(name) + " is null or empty");
 
-			if (_name == name)
-			{
-				return this;
-			}
-			else
-			{
-				var result = (StyleListBase<T>)this.MemberwiseClone();
-				result._name = name;
-				return result;
-			}
-		}
+      if (_name == name)
+      {
+        return this;
+      }
+      else
+      {
+        var result = (StyleListBase<T>)this.MemberwiseClone();
+        result._name = name;
+        return result;
+      }
+    }
 
-		public int Count
-		{
-			get
-			{
-				return _list.Count;
-			}
-		}
+    public int Count
+    {
+      get
+      {
+        return _list.Count;
+      }
+    }
 
-		public bool IsReadOnly
-		{
-			get
-			{
-				return true;
-			}
-		}
+    public bool IsReadOnly
+    {
+      get
+      {
+        return true;
+      }
+    }
 
-		public T this[int index]
-		{
-			get
-			{
-				return _list[index];
-			}
+    public T this[int index]
+    {
+      get
+      {
+        return _list[index];
+      }
 
-			set
-			{
-				throw new InvalidOperationException("List is a read-only list");
-			}
-		}
+      set
+      {
+        throw new InvalidOperationException("List is a read-only list");
+      }
+    }
 
-		public int IndexOf(T item)
-		{
-			return _list.IndexOf(item);
-		}
+    public int IndexOf(T item)
+    {
+      return _list.IndexOf(item);
+    }
 
-		public void Insert(int index, T item)
-		{
-			throw new InvalidOperationException("List is a read-only list");
-		}
+    public void Insert(int index, T item)
+    {
+      throw new InvalidOperationException("List is a read-only list");
+    }
 
-		public void RemoveAt(int index)
-		{
-			throw new InvalidOperationException("List is a read-only list");
-		}
+    public void RemoveAt(int index)
+    {
+      throw new InvalidOperationException("List is a read-only list");
+    }
 
-		public void Add(T item)
-		{
-			throw new InvalidOperationException("List is a read-only list");
-		}
+    public void Add(T item)
+    {
+      throw new InvalidOperationException("List is a read-only list");
+    }
 
-		public void Clear()
-		{
-			throw new InvalidOperationException("List is a read-only list");
-		}
+    public void Clear()
+    {
+      throw new InvalidOperationException("List is a read-only list");
+    }
 
-		public bool Contains(T item)
-		{
-			return _list.Contains(item);
-		}
+    public bool Contains(T item)
+    {
+      return _list.Contains(item);
+    }
 
-		public void CopyTo(T[] array, int arrayIndex)
-		{
-			_list.CopyTo(array, arrayIndex);
-		}
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+      _list.CopyTo(array, arrayIndex);
+    }
 
-		public bool Remove(T item)
-		{
-			throw new InvalidOperationException("List is a read-only list");
-		}
+    public bool Remove(T item)
+    {
+      throw new InvalidOperationException("List is a read-only list");
+    }
 
-		public IEnumerator<T> GetEnumerator()
-		{
-			return _list.GetEnumerator();
-		}
+    public IEnumerator<T> GetEnumerator()
+    {
+      return _list.GetEnumerator();
+    }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return _list.GetEnumerator();
-		}
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return _list.GetEnumerator();
+    }
 
-		#region Structural comparison
+    #region Structural comparison
 
-		public static bool AreListsStructuralEquivalent(IReadOnlyList<T> l1, IReadOnlyList<T> l2)
-		{
-			if (l1 == null || l2 == null)
-				return false;
+    public static bool AreListsStructuralEquivalent(IReadOnlyList<T> l1, IReadOnlyList<T> l2)
+    {
+      if (l1 == null || l2 == null)
+        return false;
 
-			if (l1.Count != l2.Count)
-				return false;
+      if (l1.Count != l2.Count)
+        return false;
 
-			for (int i = l1.Count - 1; i >= 0; --i)
-			{
-				if (!l1[i].Equals(l2[i]))
-					return false;
-			}
+      for (int i = l1.Count - 1; i >= 0; --i)
+      {
+        if (!l1[i].Equals(l2[i]))
+          return false;
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		public bool IsStructuralEquivalentTo(IEnumerable<T> l1)
-		{
-			if (l1 == null)
-				return false;
+    public bool IsStructuralEquivalentTo(IEnumerable<T> l1)
+    {
+      if (l1 == null)
+        return false;
 
-			var l2 = this;
+      var l2 = this;
 
-			int i = 0;
-			int len2 = l2.Count;
-			foreach (var item1 in l1)
-			{
-				if (i >= len2)
-					return false;
+      int i = 0;
+      int len2 = l2.Count;
+      foreach (var item1 in l1)
+      {
+        if (i >= len2)
+          return false;
 
-				if (!item1.Equals(l2[i]))
-					return false;
-				++i;
-			}
+        if (!item1.Equals(l2[i]))
+          return false;
+        ++i;
+      }
 
-			if (i != l2.Count)
-				return false;
+      if (i != l2.Count)
+        return false;
 
-			return true;
-		}
+      return true;
+    }
 
-		#endregion Structural comparison
-	}
+    #endregion Structural comparison
+  }
 }

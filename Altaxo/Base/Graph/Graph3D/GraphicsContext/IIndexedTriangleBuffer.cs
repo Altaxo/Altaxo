@@ -30,42 +30,42 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	/// <summary>
-	/// Interface to a buffer that stores indexed triangle data. This interface is the base interface of all indexed triangle buffers.
-	/// </summary>
-	public interface IIndexedTriangleBuffer
-	{
-		/// <summary>
-		/// Gets the number of triangles already stored in the buffer.
-		/// </summary>
-		/// <value>
-		/// The index offset, i.e. the number of triangles already stored in the buffer.
-		/// </value>
-		int VertexCount { get; }
+  /// <summary>
+  /// Interface to a buffer that stores indexed triangle data. This interface is the base interface of all indexed triangle buffers.
+  /// </summary>
+  public interface IIndexedTriangleBuffer
+  {
+    /// <summary>
+    /// Gets the number of triangles already stored in the buffer.
+    /// </summary>
+    /// <value>
+    /// The index offset, i.e. the number of triangles already stored in the buffer.
+    /// </value>
+    int VertexCount { get; }
 
-		/// <summary>
-		/// Gets the number of triangles (the number of indices is 3 times the number of triangles).
-		/// </summary>
-		/// <value>
-		/// Number of triangles (the number of indices is 3 times the number of triangles).
-		/// </value>
-		int TriangleCount { get; }
+    /// <summary>
+    /// Gets the number of triangles (the number of indices is 3 times the number of triangles).
+    /// </summary>
+    /// <value>
+    /// Number of triangles (the number of indices is 3 times the number of triangles).
+    /// </value>
+    int TriangleCount { get; }
 
-		/// <summary>
-		/// Adds the indices for one triangle.
-		/// </summary>
-		/// <param name="v1">The index of vertex 1.</param>
-		/// <param name="v2">The index of vertex 2.</param>
-		/// <param name="v3">The index of vertex 3.</param>
-		void AddTriangleIndices(int v1, int v2, int v3);
+    /// <summary>
+    /// Adds the indices for one triangle.
+    /// </summary>
+    /// <param name="v1">The index of vertex 1.</param>
+    /// <param name="v2">The index of vertex 2.</param>
+    /// <param name="v3">The index of vertex 3.</param>
+    void AddTriangleIndices(int v1, int v2, int v3);
 
-		/// <summary>
-		/// Adds the indices for one triangle.
-		/// </summary>
-		/// <param name="v1">The index of vertex 1.</param>
-		/// <param name="v2">The index of vertex 2.</param>
-		/// <param name="v3">The index of vertex 3.</param>
-		/// <param name="isLeftHandedCOS">True if this is a left handed coordinate system.</param>
-		void AddTriangleIndices(int v1, int v2, int v3, bool isLeftHandedCOS);
-	}
+    /// <summary>
+    /// Adds the indices for one triangle.
+    /// </summary>
+    /// <param name="v1">The index of vertex 1.</param>
+    /// <param name="v2">The index of vertex 2.</param>
+    /// <param name="v3">The index of vertex 3.</param>
+    /// <param name="isLeftHandedCOS">True if this is a left handed coordinate system.</param>
+    void AddTriangleIndices(int v1, int v2, int v3, bool isLeftHandedCOS);
+  }
 }

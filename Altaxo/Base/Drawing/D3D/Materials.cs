@@ -32,30 +32,30 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Drawing.D3D
 {
-	using Material;
+  using Material;
 
-	public class Materials
-	{
-		public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
+  public class Materials
+  {
+    public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
 
-		public static IMaterial GetNoMaterial()
-		{
-			return MaterialInvisible.Instance;
-		}
+    public static IMaterial GetNoMaterial()
+    {
+      return MaterialInvisible.Instance;
+    }
 
-		public static IMaterial GetSolidMaterial(NamedColor color)
-		{
-			return new MaterialWithUniformColor(color);
-		}
+    public static IMaterial GetSolidMaterial(NamedColor color)
+    {
+      return new MaterialWithUniformColor(color);
+    }
 
-		public static IMaterial GetMaterialWithNewColor(IMaterial material, NamedColor newColor)
-		{
-			return material.WithColor(newColor);
-		}
+    public static IMaterial GetMaterialWithNewColor(IMaterial material, NamedColor newColor)
+    {
+      return material.WithColor(newColor);
+    }
 
-		public static IMaterial GetSolidMaterialWithoutColorOrTexture()
-		{
-			return _materialWithoutColorOrTexture;
-		}
-	}
+    public static IMaterial GetSolidMaterialWithoutColorOrTexture()
+    {
+      return _materialWithoutColorOrTexture;
+    }
+  }
 }

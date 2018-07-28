@@ -27,208 +27,208 @@ using System;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
-	/// <summary>
-	/// Summary description for KohlrauschDecay.
-	/// </summary>
-	[FitFunctionClass]
-	public class KohlrauschDecay : IFitFunction
-	{
-		private int _numberOfRelaxations = 1;
-		private bool _logarithmizeResult;
+  /// <summary>
+  /// Summary description for KohlrauschDecay.
+  /// </summary>
+  [FitFunctionClass]
+  public class KohlrauschDecay : IFitFunction
+  {
+    private int _numberOfRelaxations = 1;
+    private bool _logarithmizeResult;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				KohlrauschDecay s = (KohlrauschDecay)obj;
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        KohlrauschDecay s = (KohlrauschDecay)obj;
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				KohlrauschDecay s = o != null ? (KohlrauschDecay)o : new KohlrauschDecay();
-				return s;
-			}
-		}
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        KohlrauschDecay s = o != null ? (KohlrauschDecay)o : new KohlrauschDecay();
+        return s;
+      }
+    }
 
-		/// <summary>
-		/// 2013-02-07 extended by NumberOfRelaxations and LogarithmizeResult
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 1)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				KohlrauschDecay s = (KohlrauschDecay)obj;
-				info.AddValue("NumberOfRelaxations", s._numberOfRelaxations);
-				info.AddValue("LogarithmizeResult", s._logarithmizeResult);
-			}
+    /// <summary>
+    /// 2013-02-07 extended by NumberOfRelaxations and LogarithmizeResult
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        KohlrauschDecay s = (KohlrauschDecay)obj;
+        info.AddValue("NumberOfRelaxations", s._numberOfRelaxations);
+        info.AddValue("LogarithmizeResult", s._logarithmizeResult);
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				KohlrauschDecay s = o != null ? (KohlrauschDecay)o : new KohlrauschDecay();
-				s.NumberOfRelaxations = info.GetInt32("NumberOfRelaxations");
-				s._logarithmizeResult = info.GetBoolean("LogarithmizeResult");
-				return s;
-			}
-		}
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        KohlrauschDecay s = o != null ? (KohlrauschDecay)o : new KohlrauschDecay();
+        s.NumberOfRelaxations = info.GetInt32("NumberOfRelaxations");
+        s._logarithmizeResult = info.GetBoolean("LogarithmizeResult");
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public KohlrauschDecay()
-		{
-		}
+    public KohlrauschDecay()
+    {
+    }
 
-		public int NumberOfRelaxations
-		{
-			get
-			{
-				return _numberOfRelaxations;
-			}
-			set
-			{
-				var oldValue = _numberOfRelaxations;
-				value = Math.Max(value, 0);
-				_numberOfRelaxations = value;
+    public int NumberOfRelaxations
+    {
+      get
+      {
+        return _numberOfRelaxations;
+      }
+      set
+      {
+        var oldValue = _numberOfRelaxations;
+        value = Math.Max(value, 0);
+        _numberOfRelaxations = value;
 
-				if (oldValue != value)
-				{
-					OnChanged();
-				}
-			}
-		}
+        if (oldValue != value)
+        {
+          OnChanged();
+        }
+      }
+    }
 
-		/// <summary>
-		/// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
-		/// </summary>
-		/// <value>
-		///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
-		/// </value>
-		public bool LogarithmizeResult
-		{
-			get
-			{
-				return _logarithmizeResult;
-			}
-			set
-			{
-				var oldValue = _logarithmizeResult;
-				_logarithmizeResult = value;
-				if (value != oldValue)
-					OnChanged();
-			}
-		}
+    /// <summary>
+    /// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
+    /// </value>
+    public bool LogarithmizeResult
+    {
+      get
+      {
+        return _logarithmizeResult;
+      }
+      set
+      {
+        var oldValue = _logarithmizeResult;
+        _logarithmizeResult = value;
+        if (value != oldValue)
+          OnChanged();
+      }
+    }
 
-		public override string ToString()
-		{
-			return "KohlrauschDecay";
-		}
+    public override string ToString()
+    {
+      return "KohlrauschDecay";
+    }
 
-		[FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 4)]
-		[System.ComponentModel.Description("FitFunctions.Relaxation.Kohlrausch.Decay")]
-		public static IFitFunction CreateDefault()
-		{
-			return new KohlrauschDecay();
-		}
+    [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 4)]
+    [System.ComponentModel.Description("FitFunctions.Relaxation.Kohlrausch.Decay")]
+    public static IFitFunction CreateDefault()
+    {
+      return new KohlrauschDecay();
+    }
 
-		#region IFitFunction Members
+    #region IFitFunction Members
 
-		public int NumberOfIndependentVariables
-		{
-			get
-			{
-				return 1;
-			}
-		}
+    public int NumberOfIndependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
 
-		public int NumberOfDependentVariables
-		{
-			get
-			{
-				return 1;
-			}
-		}
+    public int NumberOfDependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
 
-		public int NumberOfParameters
-		{
-			get
-			{
-				return 1 + 3 * _numberOfRelaxations;
-			}
-		}
+    public int NumberOfParameters
+    {
+      get
+      {
+        return 1 + 3 * _numberOfRelaxations;
+      }
+    }
 
-		public string IndependentVariableName(int i)
-		{
-			return "x";
-		}
+    public string IndependentVariableName(int i)
+    {
+      return "x";
+    }
 
-		public string DependentVariableName(int i)
-		{
-			return _logarithmizeResult ? "lg y" : "y";
-		}
+    public string DependentVariableName(int i)
+    {
+      return _logarithmizeResult ? "lg y" : "y";
+    }
 
-		private static readonly string[] _parameterNames = new string[] { "offset", "amplitude", "tau", "beta" };
+    private static readonly string[] _parameterNames = new string[] { "offset", "amplitude", "tau", "beta" };
 
-		public string ParameterName(int i)
-		{
-			var namearr = _parameterNames;
-			if (0 == i)
-				return namearr[0]; // eps_inf
+    public string ParameterName(int i)
+    {
+      var namearr = _parameterNames;
+      if (0 == i)
+        return namearr[0]; // eps_inf
 
-			--i;
-			var idx = i % 3;
-			var term = i / 3;
-			return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
-		}
+      --i;
+      var idx = i % 3;
+      var term = i / 3;
+      return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
+    }
 
-		public double DefaultParameterValue(int i)
-		{
-			if (0 == i)
-				return 0; // offset
-			--i;
-			var idx = i % 3;
-			var term = i / 3;
+    public double DefaultParameterValue(int i)
+    {
+      if (0 == i)
+        return 0; // offset
+      --i;
+      var idx = i % 3;
+      var term = i / 3;
 
-			if (term == 0)
-				return 1; // 1 for all parameters in relaxation term1
+      if (term == 0)
+        return 1; // 1 for all parameters in relaxation term1
 
-			if (idx == 1 || idx == 2)
-				return 1; // 1 for all taus and betas
+      if (idx == 1 || idx == 2)
+        return 1; // 1 for all taus and betas
 
-			return 0; // 0 for all amplitudes
-		}
+      return 0; // 0 for all amplitudes
+    }
 
-		public IVarianceScaling DefaultVarianceScaling(int i)
-		{
-			return null;
-		}
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
 
-		public void Evaluate(double[] X, double[] P, double[] Y)
-		{
-			double sum = P[0];
+    public void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      double sum = P[0];
 
-			for (int i = 0, j = 1; i < _numberOfRelaxations; ++i, j += 3)
-				sum += P[j] * Math.Exp(-Math.Pow(X[0] / P[j + 1], P[j + 2]));
+      for (int i = 0, j = 1; i < _numberOfRelaxations; ++i, j += 3)
+        sum += P[j] * Math.Exp(-Math.Pow(X[0] / P[j + 1], P[j + 2]));
 
-			Y[0] = _logarithmizeResult ? Math.Log10(sum) : sum;
-		}
+      Y[0] = _logarithmizeResult ? Math.Log10(sum) : sum;
+    }
 
-		/// <summary>
-		/// Called when anything in this fit function has changed.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
+    /// <summary>
+    /// Called when anything in this fit function has changed.
+    /// </summary>
+    protected virtual void OnChanged()
+    {
+      if (null != Changed)
+        Changed(this, EventArgs.Empty);
+    }
 
-		/// <summary>
-		/// Fired when the fit function changed.
-		/// </summary>
-		public event EventHandler Changed;
+    /// <summary>
+    /// Fired when the fit function changed.
+    /// </summary>
+    public event EventHandler Changed;
 
-		#endregion IFitFunction Members
-	}
+    #endregion IFitFunction Members
+  }
 }

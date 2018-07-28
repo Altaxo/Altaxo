@@ -30,25 +30,25 @@ using System.Text;
 
 namespace Altaxo.Geometry
 {
-	/// <summary>
-	/// Represents a open or closed polygon in 2D space.
-	/// </summary>
-	public interface IPolygonD2D
-	{
-		/// <summary>
-		/// Gets the points that form the closed polygon.
-		/// </summary>
-		/// <value>
-		/// The points.
-		/// </value>
-		IList<PointD2D> Points { get; }
+  /// <summary>
+  /// Represents a open or closed polygon in 2D space.
+  /// </summary>
+  public interface IPolygonD2D
+  {
+    /// <summary>
+    /// Gets the points that form the closed polygon.
+    /// </summary>
+    /// <value>
+    /// The points.
+    /// </value>
+    IList<PointD2D> Points { get; }
 
-		/// <summary>
-		/// Gets the points of the polygon which are sharp points. Points of the polygon which are not in this set are considered to be soft points.
-		/// </summary>
-		/// <value>
-		/// The sharp points.
-		/// </value>
-		ISet<PointD2D> SharpPoints { get; }
-	}
+    /// <summary>
+    /// Gets the points of the polygon which are sharp points. Points of the polygon which are not in this set are considered to be soft points.
+    /// </summary>
+    /// <value>
+    /// The sharp points.
+    /// </value>
+    ISet<PointD2D> SharpPoints { get; }
+  }
 }

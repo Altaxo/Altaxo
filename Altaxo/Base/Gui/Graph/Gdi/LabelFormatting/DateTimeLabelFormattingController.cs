@@ -31,74 +31,74 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-	public interface IDateTimeLabelFormattingView
-	{
-		IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get; }
+  public interface IDateTimeLabelFormattingView
+  {
+    IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get; }
 
-		void InitializeTimeConversion(SelectableListNodeList items);
+    void InitializeTimeConversion(SelectableListNodeList items);
 
-		string FormattingString { get; set; }
+    string FormattingString { get; set; }
 
-		string FormattingStringAlternate { get; set; }
+    string FormattingStringAlternate { get; set; }
 
-		bool ShowAlternateFormattingOnMidnight { get; set; }
+    bool ShowAlternateFormattingOnMidnight { get; set; }
 
-		bool ShowAlternateFormattingOnNoon { get; set; }
-	}
+    bool ShowAlternateFormattingOnNoon { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IDateTimeLabelFormattingView))]
-	[UserControllerForObject(typeof(DateTimeLabelFormatting), 110)]
-	public class DateTimeLabelFormattingController : MVCANControllerEditOriginalDocBase<DateTimeLabelFormatting, IDateTimeLabelFormattingView>
-	{
-		private SelectableListNodeList _timeConversionChoices;
-		private MultiLineLabelFormattingBaseController _baseController;
+  [ExpectedTypeOfView(typeof(IDateTimeLabelFormattingView))]
+  [UserControllerForObject(typeof(DateTimeLabelFormatting), 110)]
+  public class DateTimeLabelFormattingController : MVCANControllerEditOriginalDocBase<DateTimeLabelFormatting, IDateTimeLabelFormattingView>
+  {
+    private SelectableListNodeList _timeConversionChoices;
+    private MultiLineLabelFormattingBaseController _baseController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_timeConversionChoices = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _timeConversionChoices = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_baseController = new MultiLineLabelFormattingBaseController() { UseDocumentCopy = UseDocument.Directly };
-				_baseController.InitializeDocument(_doc);
-				_timeConversionChoices = new SelectableListNodeList(_doc.LabelTimeConversion);
-			}
+      if (initData)
+      {
+        _baseController = new MultiLineLabelFormattingBaseController() { UseDocumentCopy = UseDocument.Directly };
+        _baseController.InitializeDocument(_doc);
+        _timeConversionChoices = new SelectableListNodeList(_doc.LabelTimeConversion);
+      }
 
-			if (null != _view)
-			{
-				_baseController.ViewObject = _view.MultiLineLabelFormattingBaseView;
-				_view.InitializeTimeConversion(_timeConversionChoices);
-				_view.FormattingString = _doc.FormattingString;
-				_view.ShowAlternateFormattingOnMidnight = _doc.ShowAlternateFormattingAtMidnight;
-				_view.ShowAlternateFormattingOnNoon = _doc.ShowAlternateFormattingAtNoon;
-				_view.FormattingStringAlternate = _doc.FormattingStringAlternate;
-			}
-		}
+      if (null != _view)
+      {
+        _baseController.ViewObject = _view.MultiLineLabelFormattingBaseView;
+        _view.InitializeTimeConversion(_timeConversionChoices);
+        _view.FormattingString = _doc.FormattingString;
+        _view.ShowAlternateFormattingOnMidnight = _doc.ShowAlternateFormattingAtMidnight;
+        _view.ShowAlternateFormattingOnNoon = _doc.ShowAlternateFormattingAtNoon;
+        _view.FormattingStringAlternate = _doc.FormattingStringAlternate;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_baseController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_baseController.Apply(disposeController))
+        return false;
 
-			_doc.LabelTimeConversion = (DateTimeLabelFormatting.TimeConversion)_timeConversionChoices.FirstSelectedNode.Tag;
+      _doc.LabelTimeConversion = (DateTimeLabelFormatting.TimeConversion)_timeConversionChoices.FirstSelectedNode.Tag;
 
-			_doc.FormattingString = _view.FormattingString;
-			_doc.ShowAlternateFormattingAtMidnight = _view.ShowAlternateFormattingOnMidnight;
-			_doc.ShowAlternateFormattingAtNoon = _view.ShowAlternateFormattingOnNoon;
-			_doc.FormattingStringAlternate = _view.FormattingStringAlternate;
+      _doc.FormattingString = _view.FormattingString;
+      _doc.ShowAlternateFormattingAtMidnight = _view.ShowAlternateFormattingOnMidnight;
+      _doc.ShowAlternateFormattingAtNoon = _view.ShowAlternateFormattingOnNoon;
+      _doc.FormattingStringAlternate = _view.FormattingStringAlternate;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

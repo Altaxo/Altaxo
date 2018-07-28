@@ -25,41 +25,41 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Manages the list of display bindings, and the user's default settings (for Open With dialog)
-	/// </summary>
-	[GlobalService]
-	public interface IDisplayBindingService
-	{
-		/// <summary>
-		/// Attach secondary view contents to the view content.
-		/// </summary>
-		/// <param name="viewContent">The view content to attach to</param>
-		/// <param name="isReattaching">This is a reattaching pass</param>
-		void AttachSubWindows(IViewContent viewContent, bool isReattaching);
+  /// <summary>
+  /// Manages the list of display bindings, and the user's default settings (for Open With dialog)
+  /// </summary>
+  [GlobalService]
+  public interface IDisplayBindingService
+  {
+    /// <summary>
+    /// Attach secondary view contents to the view content.
+    /// </summary>
+    /// <param name="viewContent">The view content to attach to</param>
+    /// <param name="isReattaching">This is a reattaching pass</param>
+    void AttachSubWindows(IViewContent viewContent, bool isReattaching);
 
-		/// <summary>
-		/// Gets the primary display binding for the specified file name.
-		/// </summary>
-		IDisplayBinding GetBindingPerFileName(FileName filename);
+    /// <summary>
+    /// Gets the primary display binding for the specified file name.
+    /// </summary>
+    IDisplayBinding GetBindingPerFileName(FileName filename);
 
-		/// <summary>
-		/// Gets the default primary display binding for the specified file name.
-		/// </summary>
-		DisplayBindingDescriptor GetDefaultCodonPerFileName(FileName filename);
+    /// <summary>
+    /// Gets the default primary display binding for the specified file name.
+    /// </summary>
+    DisplayBindingDescriptor GetDefaultCodonPerFileName(FileName filename);
 
-		/// <summary>
-		/// Sets the default display binding for the specified file extension.
-		/// </summary>
-		void SetDefaultCodon(string extension, DisplayBindingDescriptor bindingDescriptor);
+    /// <summary>
+    /// Sets the default display binding for the specified file extension.
+    /// </summary>
+    void SetDefaultCodon(string extension, DisplayBindingDescriptor bindingDescriptor);
 
-		/// <summary>
-		/// Gets list of possible primary display bindings for the specified file name.
-		/// </summary>
-		IReadOnlyList<DisplayBindingDescriptor> GetCodonsPerFileName(FileName filename);
+    /// <summary>
+    /// Gets list of possible primary display bindings for the specified file name.
+    /// </summary>
+    IReadOnlyList<DisplayBindingDescriptor> GetCodonsPerFileName(FileName filename);
 
-		DisplayBindingDescriptor AddExternalProcessDisplayBinding(ExternalProcessDisplayBinding binding);
+    DisplayBindingDescriptor AddExternalProcessDisplayBinding(ExternalProcessDisplayBinding binding);
 
-		void RemoveExternalProcessDisplayBinding(ExternalProcessDisplayBinding binding);
-	}
+    void RemoveExternalProcessDisplayBinding(ExternalProcessDisplayBinding binding);
+  }
 }

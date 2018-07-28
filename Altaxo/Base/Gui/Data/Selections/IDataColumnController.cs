@@ -30,22 +30,22 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	/// <summary>
-	/// Signifies that this controller is controlling a row selection with one data column.
-	/// </summary>
-	public interface IDataColumnController
-	{
-		/// <summary>
-		/// Sets the index of this controller. Can be used in the view to show the index of the data column. The same index is shown in the
-		/// data column view again. In this way the column in the row selection can be matched with the column in the data column view.
-		/// </summary>
-		/// <param name="idx">The index.</param>
-		void SetIndex(int idx);
+  /// <summary>
+  /// Signifies that this controller is controlling a row selection with one data column.
+  /// </summary>
+  public interface IDataColumnController
+  {
+    /// <summary>
+    /// Sets the index of this controller. Can be used in the view to show the index of the data column. The same index is shown in the
+    /// data column view again. In this way the column in the row selection can be matched with the column in the data column view.
+    /// </summary>
+    /// <param name="idx">The index.</param>
+    void SetIndex(int idx);
 
-		void SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable, int supposedGroupNumber);
+    void SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable, int supposedGroupNumber);
 
-		IReadableColumn Column { get; }
+    IReadableColumn Column { get; }
 
-		string ColumnName { get; }
-	}
+    string ColumnName { get; }
+  }
 }

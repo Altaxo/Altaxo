@@ -33,80 +33,80 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// Interaction logic for FontStyleComboBox.xaml
-	/// </summary>
-	public partial class FontStyleComboBox : UserControl
-	{
-		public event DependencyPropertyChangedEventHandler SelectedFontStyleChanged;
+  /// <summary>
+  /// Interaction logic for FontStyleComboBox.xaml
+  /// </summary>
+  public partial class FontStyleComboBox : UserControl
+  {
+    public event DependencyPropertyChangedEventHandler SelectedFontStyleChanged;
 
-		private Altaxo.Main.TemporaryDisabler _eventDisabler = new Altaxo.Main.TemporaryDisabler(EhEventsReenabled);
+    private Altaxo.Main.TemporaryDisabler _eventDisabler = new Altaxo.Main.TemporaryDisabler(EhEventsReenabled);
 
-		public FontStyleComboBox()
-		{
-			InitializeComponent();
-		}
+    public FontStyleComboBox()
+    {
+      InitializeComponent();
+    }
 
-		#region Dependency property
+    #region Dependency property
 
-		private const string _nameOfValueProp = "SelectedFontStyle";
+    private const string _nameOfValueProp = "SelectedFontStyle";
 
-		public FontXStyle SelectedFontStyle
-		{
-			get { return (FontXStyle)GetValue(SelectedFontStyleProperty); }
-			set { SetValue(SelectedFontStyleProperty, value); }
-		}
+    public FontXStyle SelectedFontStyle
+    {
+      get { return (FontXStyle)GetValue(SelectedFontStyleProperty); }
+      set { SetValue(SelectedFontStyleProperty, value); }
+    }
 
-		public static readonly DependencyProperty SelectedFontStyleProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(FontXStyle), typeof(FontStyleComboBox),
-				new FrameworkPropertyMetadata(FontXStyle.Regular, EhSelectedFontStyleChanged));
+    public static readonly DependencyProperty SelectedFontStyleProperty =
+        DependencyProperty.Register(_nameOfValueProp, typeof(FontXStyle), typeof(FontStyleComboBox),
+        new FrameworkPropertyMetadata(FontXStyle.Regular, EhSelectedFontStyleChanged));
 
-		private static void EhSelectedFontStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((FontStyleComboBox)obj).OnSelectedFontStyleChanged(obj, args);
-		}
+    private static void EhSelectedFontStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((FontStyleComboBox)obj).OnSelectedFontStyleChanged(obj, args);
+    }
 
-		protected virtual void OnSelectedFontStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			if (null != SelectedFontStyleChanged)
-				SelectedFontStyleChanged(obj, args);
+    protected virtual void OnSelectedFontStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      if (null != SelectedFontStyleChanged)
+        SelectedFontStyleChanged(obj, args);
 
-			using (var token = _eventDisabler.SuspendGetToken())
-			{
-				UpdateChecks(SelectedFontStyle);
-			}
-		}
+      using (var token = _eventDisabler.SuspendGetToken())
+      {
+        UpdateChecks(SelectedFontStyle);
+      }
+    }
 
-		#endregion Dependency property
+    #endregion Dependency property
 
-		private static void EhEventsReenabled()
-		{
-		}
+    private static void EhEventsReenabled()
+    {
+    }
 
-		private void UpdateChecks(FontXStyle style)
-		{
-			_guiBold.IsChecked = style.HasFlag(FontXStyle.Bold);
-			_guiItalic.IsChecked = style.HasFlag(FontXStyle.Italic);
-			_guiUnderline.IsChecked = style.HasFlag(FontXStyle.Underline);
-			_guiStrikeout.IsChecked = style.HasFlag(FontXStyle.Strikeout);
-		}
+    private void UpdateChecks(FontXStyle style)
+    {
+      _guiBold.IsChecked = style.HasFlag(FontXStyle.Bold);
+      _guiItalic.IsChecked = style.HasFlag(FontXStyle.Italic);
+      _guiUnderline.IsChecked = style.HasFlag(FontXStyle.Underline);
+      _guiStrikeout.IsChecked = style.HasFlag(FontXStyle.Strikeout);
+    }
 
-		private void EhCheckChanged(object sender, RoutedEventArgs e)
-		{
-			if (!_eventDisabler.IsSuspended)
-			{
-				FontXStyle newStyle = FontXStyle.Regular;
-				if (true == _guiBold.IsChecked)
-					newStyle |= FontXStyle.Bold;
-				if (true == _guiItalic.IsChecked)
-					newStyle |= FontXStyle.Italic;
-				if (true == _guiUnderline.IsChecked)
-					newStyle |= FontXStyle.Underline;
-				if (true == _guiStrikeout.IsChecked)
-					newStyle |= FontXStyle.Strikeout;
+    private void EhCheckChanged(object sender, RoutedEventArgs e)
+    {
+      if (!_eventDisabler.IsSuspended)
+      {
+        FontXStyle newStyle = FontXStyle.Regular;
+        if (true == _guiBold.IsChecked)
+          newStyle |= FontXStyle.Bold;
+        if (true == _guiItalic.IsChecked)
+          newStyle |= FontXStyle.Italic;
+        if (true == _guiUnderline.IsChecked)
+          newStyle |= FontXStyle.Underline;
+        if (true == _guiStrikeout.IsChecked)
+          newStyle |= FontXStyle.Strikeout;
 
-				SetValue(SelectedFontStyleProperty, newStyle);
-			}
-		}
-	}
+        SetValue(SelectedFontStyleProperty, newStyle);
+      }
+    }
+  }
 }

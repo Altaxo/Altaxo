@@ -26,137 +26,137 @@ using System;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-	/// <summary>
-	/// Interface to how to scale the differences between real quantities (dependent variables) and fitted values.
-	/// </summary>
-	public interface IVarianceScaling : ICloneable
-	{
-		/// <summary>
-		/// Gets the weight in dependence of the real data (roughly spoken: inverse of variance).
-		/// </summary>
-		/// <param name="yreal">The real (measured) data.</param>
-		/// <param name="i">The index of the measured data point in the table.</param>
-		/// <returns>The weight used to scale the fit difference (yreal-yfit). In case a variance is given for the current data,
-		/// you should return (1/variance). </returns>
-		double GetWeight(double yreal, int i);
+  /// <summary>
+  /// Interface to how to scale the differences between real quantities (dependent variables) and fitted values.
+  /// </summary>
+  public interface IVarianceScaling : ICloneable
+  {
+    /// <summary>
+    /// Gets the weight in dependence of the real data (roughly spoken: inverse of variance).
+    /// </summary>
+    /// <param name="yreal">The real (measured) data.</param>
+    /// <param name="i">The index of the measured data point in the table.</param>
+    /// <returns>The weight used to scale the fit difference (yreal-yfit). In case a variance is given for the current data,
+    /// you should return (1/variance). </returns>
+    double GetWeight(double yreal, int i);
 
-		/// <summary>
-		/// Returns a short name for the scaling method. Used to display this short name in
-		/// the fit function dialog box.
-		/// </summary>
-		string ShortName { get; }
-	}
+    /// <summary>
+    /// Returns a short name for the scaling method. Used to display this short name in
+    /// the fit function dialog box.
+    /// </summary>
+    string ShortName { get; }
+  }
 
-	/// <summary>
-	/// The default scaling variance returns always 1.
-	/// </summary>
-	public class ConstantVarianceScaling : IVarianceScaling
-	{
-		private double _scaling = 1;
+  /// <summary>
+  /// The default scaling variance returns always 1.
+  /// </summary>
+  public class ConstantVarianceScaling : IVarianceScaling
+  {
+    private double _scaling = 1;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConstantVarianceScaling), 0)]
-		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				ConstantVarianceScaling s = (ConstantVarianceScaling)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConstantVarianceScaling), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ConstantVarianceScaling s = (ConstantVarianceScaling)obj;
 
-				info.AddValue("ScalingFactor", s._scaling);
-			}
+        info.AddValue("ScalingFactor", s._scaling);
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ConstantVarianceScaling s = o != null ? (ConstantVarianceScaling)o : new ConstantVarianceScaling();
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ConstantVarianceScaling s = o != null ? (ConstantVarianceScaling)o : new ConstantVarianceScaling();
 
-				s._scaling = info.GetDouble("ScalingFactor");
+        s._scaling = info.GetDouble("ScalingFactor");
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>
-		/// Returns true when the scaling factor is 1 (one).
-		/// </summary>
-		public bool IsDefault
-		{
-			get
-			{
-				return _scaling == 1;
-			}
-		}
+    /// <summary>
+    /// Returns true when the scaling factor is 1 (one).
+    /// </summary>
+    public bool IsDefault
+    {
+      get
+      {
+        return _scaling == 1;
+      }
+    }
 
-		public double GetWeight(double yr, int i)
-		{
-			return _scaling;
-		}
+    public double GetWeight(double yr, int i)
+    {
+      return _scaling;
+    }
 
-		public string ShortName
-		{
-			get { return "N2"; }
-		}
+    public string ShortName
+    {
+      get { return "N2"; }
+    }
 
-		public object Clone()
-		{
-			ConstantVarianceScaling result = new ConstantVarianceScaling();
-			result._scaling = this._scaling;
-			return result;
-		}
-	}
+    public object Clone()
+    {
+      ConstantVarianceScaling result = new ConstantVarianceScaling();
+      result._scaling = this._scaling;
+      return result;
+    }
+  }
 
-	/// <summary>
-	/// This is a variance which scales linearly with the measured value. Useful for
-	/// functions with a broad range of y-values. Make sure that no y-value is zero.
-	/// </summary>
-	public class RelativeVarianceScaling : IVarianceScaling
-	{
-		private double _scaling = 1;
+  /// <summary>
+  /// This is a variance which scales linearly with the measured value. Useful for
+  /// functions with a broad range of y-values. Make sure that no y-value is zero.
+  /// </summary>
+  public class RelativeVarianceScaling : IVarianceScaling
+  {
+    private double _scaling = 1;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeVarianceScaling), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				RelativeVarianceScaling s = (RelativeVarianceScaling)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeVarianceScaling), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        RelativeVarianceScaling s = (RelativeVarianceScaling)obj;
 
-				info.AddValue("ScalingFactor", s._scaling);
-			}
+        info.AddValue("ScalingFactor", s._scaling);
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				RelativeVarianceScaling s = o != null ? (RelativeVarianceScaling)o : new RelativeVarianceScaling();
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        RelativeVarianceScaling s = o != null ? (RelativeVarianceScaling)o : new RelativeVarianceScaling();
 
-				s._scaling = info.GetDouble("ScalingFactor");
+        s._scaling = info.GetDouble("ScalingFactor");
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public double GetWeight(double yr, int i)
-		{
-			if (yr == 0)
-				return _scaling;
-			else
-				return _scaling / Math.Abs(yr);
-		}
+    public double GetWeight(double yr, int i)
+    {
+      if (yr == 0)
+        return _scaling;
+      else
+        return _scaling / Math.Abs(yr);
+    }
 
-		public string ShortName
-		{
-			get { return "N1"; }
-		}
+    public string ShortName
+    {
+      get { return "N1"; }
+    }
 
-		public object Clone()
-		{
-			RelativeVarianceScaling result = new RelativeVarianceScaling();
-			result._scaling = this._scaling;
-			return result;
-		}
-	}
+    public object Clone()
+    {
+      RelativeVarianceScaling result = new RelativeVarianceScaling();
+      result._scaling = this._scaling;
+      return result;
+    }
+  }
 }

@@ -29,30 +29,30 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	public static class TransformedReadableColumnExtensions
-	{
-		/// <summary>
-		/// Gets the underlying data column (of type <see cref="DataColumn"/>) or the default value null.
-		/// </summary>
-		/// <param name="c">The transformed column for which to search the underlying <see cref="DataColumn"/>.</param>
-		/// <returns>The underlying data column (of type <see cref="DataColumn"/>) or the default value null.</returns>
-		public static DataColumn GetUnderlyingDataColumnOrDefault(this IReadableColumn c)
-		{
-			if (c is DataColumn)
-			{
-				return (DataColumn)c;
-			}
-			else if (c is ITransformedReadableColumn it)
-			{
-				while (null != it)
-				{
-					if (it.UnderlyingReadableColumn is DataColumn)
-						return (DataColumn)it.UnderlyingReadableColumn;
-					else if (it.UnderlyingReadableColumn is ITransformedReadableColumn)
-						it = (ITransformedReadableColumn)it.UnderlyingReadableColumn;
-				}
-			}
-			return null;
-		}
-	}
+  public static class TransformedReadableColumnExtensions
+  {
+    /// <summary>
+    /// Gets the underlying data column (of type <see cref="DataColumn"/>) or the default value null.
+    /// </summary>
+    /// <param name="c">The transformed column for which to search the underlying <see cref="DataColumn"/>.</param>
+    /// <returns>The underlying data column (of type <see cref="DataColumn"/>) or the default value null.</returns>
+    public static DataColumn GetUnderlyingDataColumnOrDefault(this IReadableColumn c)
+    {
+      if (c is DataColumn)
+      {
+        return (DataColumn)c;
+      }
+      else if (c is ITransformedReadableColumn it)
+      {
+        while (null != it)
+        {
+          if (it.UnderlyingReadableColumn is DataColumn)
+            return (DataColumn)it.UnderlyingReadableColumn;
+          else if (it.UnderlyingReadableColumn is ITransformedReadableColumn)
+            it = (ITransformedReadableColumn)it.UnderlyingReadableColumn;
+        }
+      }
+      return null;
+    }
+  }
 }

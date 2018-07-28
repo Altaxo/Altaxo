@@ -27,11 +27,11 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.Serialization
 {
-	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
-	public class SupportsSerializationVersioningAttribute : Attribute
-	{
-		public SupportsSerializationVersioningAttribute()
-		{
-		}
-	}
+  [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+  public class SupportsSerializationVersioningAttribute : Attribute
+  {
+    public SupportsSerializationVersioningAttribute()
+    {
+    }
+  }
 }

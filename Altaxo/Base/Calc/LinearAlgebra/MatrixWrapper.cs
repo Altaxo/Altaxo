@@ -27,125 +27,125 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-	/// <summary>
-	/// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
-	/// </summary>
-	internal class DataColumnToColumnMatrixWrapper : IROMatrix<double>
-	{
-		private Altaxo.Data.INumericColumn[] _columns;
-		private int _rows;
+  /// <summary>
+  /// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
+  /// </summary>
+  internal class DataColumnToColumnMatrixWrapper : IROMatrix<double>
+  {
+    private Altaxo.Data.INumericColumn[] _columns;
+    private int _rows;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="collection">Collection of <see>DataColumns</see>.</param>
-		/// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix.</param>
-		/// <param name="nRows">The number of rows that are part of the matrix. (Starting from index 0).</param>
-		public DataColumnToColumnMatrixWrapper(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
-		{
-			_columns = new Altaxo.Data.INumericColumn[selectedColumns.Count];
-			for (int i = selectedColumns.Count - 1; i >= 0; i--)
-				_columns[i] = (Altaxo.Data.INumericColumn)collection[selectedColumns[i]];
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="collection">Collection of <see>DataColumns</see>.</param>
+    /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix.</param>
+    /// <param name="nRows">The number of rows that are part of the matrix. (Starting from index 0).</param>
+    public DataColumnToColumnMatrixWrapper(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
+    {
+      _columns = new Altaxo.Data.INumericColumn[selectedColumns.Count];
+      for (int i = selectedColumns.Count - 1; i >= 0; i--)
+        _columns[i] = (Altaxo.Data.INumericColumn)collection[selectedColumns[i]];
 
-			_rows = nRows;
-		}
+      _rows = nRows;
+    }
 
-		#region IROMatrix Members
+    #region IROMatrix Members
 
-		/// <summary>
-		/// Number of rows of the matrix.
-		/// </summary>
-		public int RowCount
-		{
-			get
-			{
-				return _rows;
-			}
-		}
+    /// <summary>
+    /// Number of rows of the matrix.
+    /// </summary>
+    public int RowCount
+    {
+      get
+      {
+        return _rows;
+      }
+    }
 
-		/// <summary>
-		/// Element accessor.
-		/// </summary>
-		public double this[int row, int col]
-		{
-			get
-			{
-				return _columns[col][row];
-			}
-		}
+    /// <summary>
+    /// Element accessor.
+    /// </summary>
+    public double this[int row, int col]
+    {
+      get
+      {
+        return _columns[col][row];
+      }
+    }
 
-		/// <summary>
-		/// Number of columns of the matrix.
-		/// </summary>
-		public int ColumnCount
-		{
-			get
-			{
-				return _columns.Length;
-			}
-		}
+    /// <summary>
+    /// Number of columns of the matrix.
+    /// </summary>
+    public int ColumnCount
+    {
+      get
+      {
+        return _columns.Length;
+      }
+    }
 
-		#endregion IROMatrix Members
-	}
+    #endregion IROMatrix Members
+  }
 
-	/// <summary>
-	/// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
-	/// </summary>
-	internal class DataColumnToRowMatrixWrapper : IROMatrix<double>
-	{
-		private Altaxo.Data.INumericColumn[] _columns;
-		private int _nColumns;
+  /// <summary>
+  /// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
+  /// </summary>
+  internal class DataColumnToRowMatrixWrapper : IROMatrix<double>
+  {
+    private Altaxo.Data.INumericColumn[] _columns;
+    private int _nColumns;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
-		/// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix</param>
-		/// <param name="nColumns">The number of columns of the matrix. This parameter is equivalent to the number of rows of the data columns that are part of the matrix.</param>
-		public DataColumnToRowMatrixWrapper(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nColumns)
-		{
-			_columns = new Altaxo.Data.INumericColumn[selectedColumns.Count];
-			for (int i = selectedColumns.Count - 1; i >= 0; i--)
-				_columns[i] = (Altaxo.Data.INumericColumn)collection[selectedColumns[i]];
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
+    /// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix</param>
+    /// <param name="nColumns">The number of columns of the matrix. This parameter is equivalent to the number of rows of the data columns that are part of the matrix.</param>
+    public DataColumnToRowMatrixWrapper(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nColumns)
+    {
+      _columns = new Altaxo.Data.INumericColumn[selectedColumns.Count];
+      for (int i = selectedColumns.Count - 1; i >= 0; i--)
+        _columns[i] = (Altaxo.Data.INumericColumn)collection[selectedColumns[i]];
 
-			_nColumns = nColumns;
-		}
+      _nColumns = nColumns;
+    }
 
-		#region IROMatrix Members
+    #region IROMatrix Members
 
-		/// <summary>
-		/// Number of rows of the matrix.
-		/// </summary>
-		public int RowCount
-		{
-			get
-			{
-				return _columns.Length;
-			}
-		}
+    /// <summary>
+    /// Number of rows of the matrix.
+    /// </summary>
+    public int RowCount
+    {
+      get
+      {
+        return _columns.Length;
+      }
+    }
 
-		/// <summary>
-		/// Element accessor.
-		/// </summary>
-		public double this[int row, int col]
-		{
-			get
-			{
-				return _columns[row][col];
-			}
-		}
+    /// <summary>
+    /// Element accessor.
+    /// </summary>
+    public double this[int row, int col]
+    {
+      get
+      {
+        return _columns[row][col];
+      }
+    }
 
-		/// <summary>
-		/// Number of columns of the matrix.
-		/// </summary>
-		public int ColumnCount
-		{
-			get
-			{
-				return _nColumns;
-			}
-		}
+    /// <summary>
+    /// Number of columns of the matrix.
+    /// </summary>
+    public int ColumnCount
+    {
+      get
+      {
+        return _nColumns;
+      }
+    }
 
-		#endregion IROMatrix Members
-	}
+    #endregion IROMatrix Members
+  }
 }

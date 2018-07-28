@@ -30,46 +30,46 @@ using System.Text;
 
 namespace Altaxo.Com
 {
-	using UnmanagedApi.Ole32;
+  using UnmanagedApi.Ole32;
 
-	public static class RunningObjectTableHelper
-	{
-		#region Running Object Table management (ROT)
+  public static class RunningObjectTableHelper
+  {
+    #region Running Object Table management (ROT)
 
-		public static IRunningObjectTable GetROT()
-		{
-			IRunningObjectTable rot;
-			Int32 hr = Ole32Func.GetRunningObjectTable(0, out rot);
-			if (!(hr == ComReturnValue.NOERROR))
-				throw new InvalidOperationException("The COM operation was not successful");
-			return rot;
-		}
+    public static IRunningObjectTable GetROT()
+    {
+      IRunningObjectTable rot;
+      Int32 hr = Ole32Func.GetRunningObjectTable(0, out rot);
+      if (!(hr == ComReturnValue.NOERROR))
+        throw new InvalidOperationException("The COM operation was not successful");
+      return rot;
+    }
 
-		public static void ROTUnregister(ref int cookie)
-		{
-			// Revoke any existing file moniker. See Brockschmidt, Inside Ole 2nd ed. p988
-			IRunningObjectTable rot = GetROT();
-			if (0 != cookie)
-			{
-				rot.Revoke(cookie);
-				cookie = 0;
-			}
-		}
+    public static void ROTUnregister(ref int cookie)
+    {
+      // Revoke any existing file moniker. See Brockschmidt, Inside Ole 2nd ed. p988
+      IRunningObjectTable rot = GetROT();
+      if (0 != cookie)
+      {
+        rot.Revoke(cookie);
+        cookie = 0;
+      }
+    }
 
-		public static void ROTRegisterAsRunning(IMoniker new_moniker, object o, ref int rot_cookie, Type intf)
-		{
-			// Revoke any existing file moniker. See Brockschmidt, Inside Ole 2nd ed. p988
-			ROTUnregister(ref rot_cookie);
+    public static void ROTRegisterAsRunning(IMoniker new_moniker, object o, ref int rot_cookie, Type intf)
+    {
+      // Revoke any existing file moniker. See Brockschmidt, Inside Ole 2nd ed. p988
+      ROTUnregister(ref rot_cookie);
 
-			// Register the moniker in the running object table (ROT).
-			ComDebug.ReportInfo("Registering {0} in ROT", DataObjectHelper.GetDisplayName(new_moniker));
-			IRunningObjectTable rot = GetROT();
+      // Register the moniker in the running object table (ROT).
+      ComDebug.ReportInfo("Registering {0} in ROT", DataObjectHelper.GetDisplayName(new_moniker));
+      IRunningObjectTable rot = GetROT();
 
-			// This flag solved a terrible problem where Word would stop
-			// communicating after its first call to GetObject().
-			rot_cookie = rot.Register(1 /*ROTFLAGS_REGISTRATIONKEEPSALIVE*/, o, new_moniker);
-		}
+      // This flag solved a terrible problem where Word would stop
+      // communicating after its first call to GetObject().
+      rot_cookie = rot.Register(1 /*ROTFLAGS_REGISTRATIONKEEPSALIVE*/, o, new_moniker);
+    }
 
-		#endregion Running Object Table management (ROT)
-	}
+    #endregion Running Object Table management (ROT)
+  }
 }

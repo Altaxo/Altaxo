@@ -31,42 +31,42 @@ using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-	///<summary>
-	/// Defines a Vector of floats.
-	///</summary>
-	/// <remarks>
-	/// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-	/// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
-	/// </remarks>
-	[Serializable]
-	public partial class FloatVector : Vector<Single>
-	{
-		///<summary>Implicit cast conversion to <c>FloatVector</c> from <c>float</c> array</summary>
-		static public implicit operator FloatVector(float[] src)
-		{
-			return new FloatVector(src);
-		}
+  ///<summary>
+  /// Defines a Vector of floats.
+  ///</summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  [Serializable]
+  public partial class FloatVector : Vector<Single>
+  {
+    ///<summary>Implicit cast conversion to <c>FloatVector</c> from <c>float</c> array</summary>
+    static public implicit operator FloatVector(float[] src)
+    {
+      return new FloatVector(src);
+    }
 
-		///<summary>Implicit cast conversion to <c>FloatVector</c> from <c>float</c> array</summary>
-		static public FloatVector ToFloatVector(float[] src)
-		{
-			return new FloatVector(src);
-		}
+    ///<summary>Implicit cast conversion to <c>FloatVector</c> from <c>float</c> array</summary>
+    static public FloatVector ToFloatVector(float[] src)
+    {
+      return new FloatVector(src);
+    }
 
-		///<summary>Explicit cast conversion to <c>FloatVector</c> from <c>DoubleVector</c></summary>
-		static public explicit operator FloatVector(DoubleVector src)
-		{
-			if (src == null)
-			{
-				throw new ArgumentNullException("DoubleVector cannot be null");
-			}
-			FloatVector ret = new FloatVector(src.Length);
-			// Can't use Array.Copy to implicitly copy from a double[] to a float[]
-			for (int i = 0; i < src.Length; i++)
-			{
-				ret[i] = (float)src[i];
-			}
-			return ret;
-		}
-	}
+    ///<summary>Explicit cast conversion to <c>FloatVector</c> from <c>DoubleVector</c></summary>
+    static public explicit operator FloatVector(DoubleVector src)
+    {
+      if (src == null)
+      {
+        throw new ArgumentNullException("DoubleVector cannot be null");
+      }
+      FloatVector ret = new FloatVector(src.Length);
+      // Can't use Array.Copy to implicitly copy from a double[] to a float[]
+      for (int i = 0; i < src.Length; i++)
+      {
+        ret[i] = (float)src[i];
+      }
+      return ret;
+    }
+  }
 }

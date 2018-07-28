@@ -30,43 +30,43 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class VerticalBarInset : InsetBase
-	{
-		#region Serialization
+  public class VerticalBarInset : InsetBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VerticalBarInset), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
-			}
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VerticalBarInset), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (VerticalBarInset)o ?? new VerticalBarInset();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (VerticalBarInset)o ?? new VerticalBarInset();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
-		{
-			return new List<List<ClipperLib.IntPoint>>(1)
-			{
-				new List<ClipperLib.IntPoint>(4)
-				{
-				new ClipperLib.IntPoint(-relativeWidth*ClipperScalingDouble, -ClipperScalingInt),
-				new ClipperLib.IntPoint(relativeWidth * ClipperScalingDouble, -ClipperScalingInt),
-				new ClipperLib.IntPoint(relativeWidth * ClipperScalingDouble, ClipperScalingInt),
-				new ClipperLib.IntPoint(-relativeWidth * ClipperScalingDouble, ClipperScalingInt)
-			}
-			};
-		}
-	}
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
+    {
+      return new List<List<ClipperLib.IntPoint>>(1)
+      {
+        new List<ClipperLib.IntPoint>(4)
+        {
+        new ClipperLib.IntPoint(-relativeWidth*ClipperScalingDouble, -ClipperScalingInt),
+        new ClipperLib.IntPoint(relativeWidth * ClipperScalingDouble, -ClipperScalingInt),
+        new ClipperLib.IntPoint(relativeWidth * ClipperScalingDouble, ClipperScalingInt),
+        new ClipperLib.IntPoint(-relativeWidth * ClipperScalingDouble, ClipperScalingInt)
+      }
+      };
+    }
+  }
 }

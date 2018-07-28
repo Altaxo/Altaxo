@@ -33,28 +33,29 @@ using System.Windows.Markup;
 
 namespace Altaxo.Gui.Common.Converters
 {
-	public class BindingConverter : ExpressionConverter
-	{
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-		{
-			if (destinationType == typeof(MarkupExtension))
-				return true;
-			else return false;
-		}
+  public class BindingConverter : ExpressionConverter
+  {
+    public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+    {
+      if (destinationType == typeof(MarkupExtension))
+        return true;
+      else
+        return false;
+    }
 
-		public override object ConvertTo(ITypeDescriptorContext context,
-																		 System.Globalization.CultureInfo culture,
-																		 object value, Type destinationType)
-		{
-			if (destinationType == typeof(MarkupExtension))
-			{
-				BindingExpression bindingExpression = value as BindingExpression;
-				if (bindingExpression == null)
-					throw new Exception();
-				return bindingExpression.ParentBinding;
-			}
+    public override object ConvertTo(ITypeDescriptorContext context,
+                                     System.Globalization.CultureInfo culture,
+                                     object value, Type destinationType)
+    {
+      if (destinationType == typeof(MarkupExtension))
+      {
+        BindingExpression bindingExpression = value as BindingExpression;
+        if (bindingExpression == null)
+          throw new Exception();
+        return bindingExpression.ParentBinding;
+      }
 
-			return base.ConvertTo(context, culture, value, destinationType);
-		}
-	}
+      return base.ConvertTo(context, culture, value, destinationType);
+    }
+  }
 }

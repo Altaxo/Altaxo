@@ -30,31 +30,31 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
-	public class UICultureSettingsOptionPanel : OptionPanelBase<Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<CultureSettings>>
-	{
-		public override void Initialize(object optionPanelOwner)
-		{
-			CultureSettings docCulture = null;
-			CultureSettings sysCulture = null;
-			Current.PropertyService.UserSettings.TryGetValue(CultureSettings.PropertyKeyUICulture, out docCulture);
-			sysCulture = Current.PropertyService.GetValue(CultureSettings.PropertyKeyUICulture, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
+  public class UICultureSettingsOptionPanel : OptionPanelBase<Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<CultureSettings>>
+  {
+    public override void Initialize(object optionPanelOwner)
+    {
+      CultureSettings docCulture = null;
+      CultureSettings sysCulture = null;
+      Current.PropertyService.UserSettings.TryGetValue(CultureSettings.PropertyKeyUICulture, out docCulture);
+      sysCulture = Current.PropertyService.GetValue(CultureSettings.PropertyKeyUICulture, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
 
-			_controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<CultureSettings>(() => sysCulture.Clone(), () => sysCulture);
-			_controller.EnablingText = "Override system settings";
-			_controller.InitializeDocument(new object[] { docCulture, sysCulture });
-		}
+      _controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<CultureSettings>(() => sysCulture.Clone(), () => sysCulture);
+      _controller.EnablingText = "Override system settings";
+      _controller.InitializeDocument(new object[] { docCulture, sysCulture });
+    }
 
-		protected override void ProcessControllerResult()
-		{
-			if (null != _controller.ModelObject)
-			{
-				var docCulture = (CultureSettings)_controller.ModelObject;
-				Current.PropertyService.UserSettings.SetValue(CultureSettings.PropertyKeyUICulture, docCulture);
-			}
-			else
-			{
-				Current.PropertyService.UserSettings.RemoveValue(CultureSettings.PropertyKeyUICulture);
-			}
-		}
-	}
+    protected override void ProcessControllerResult()
+    {
+      if (null != _controller.ModelObject)
+      {
+        var docCulture = (CultureSettings)_controller.ModelObject;
+        Current.PropertyService.UserSettings.SetValue(CultureSettings.PropertyKeyUICulture, docCulture);
+      }
+      else
+      {
+        Current.PropertyService.UserSettings.RemoveValue(CultureSettings.PropertyKeyUICulture);
+      }
+    }
+  }
 }

@@ -30,28 +30,28 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-	/// <summary>
-	/// Interaction logic for NumericLabelFormattingScientificControl.xaml
-	/// </summary>
-	public partial class FreeLabelFormattingControl : UserControl, IFreeLabelFormattingView
-	{
-		public FreeLabelFormattingControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for NumericLabelFormattingScientificControl.xaml
+  /// </summary>
+  public partial class FreeLabelFormattingControl : UserControl, IFreeLabelFormattingView
+  {
+    public FreeLabelFormattingControl()
+    {
+      InitializeComponent();
+    }
 
-		public IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get { return _guiMultiLineLabelFormattingControl; } }
+    public IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get { return _guiMultiLineLabelFormattingControl; } }
 
-		public string FormatString
-		{
-			get
-			{
-				return _guiFormatString.Text;
-			}
-			set
-			{
-				_guiFormatString.Text = value;
-			}
-		}
-	}
+    public string FormatString
+    {
+      get
+      {
+        return _guiFormatString.Text;
+      }
+      set
+      {
+        _guiFormatString.Text = value;
+      }
+    }
+  }
 }

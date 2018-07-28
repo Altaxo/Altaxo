@@ -36,14 +36,14 @@ namespace Altaxo.Calc.LinearAlgebra
   public static partial class MatrixMath
   {
 
-// ******************************************* Unary functions not returning a vector, valid for all non-null vector types  ********************
+    // ******************************************* Unary functions not returning a vector, valid for all non-null vector types  ********************
 
-// ******************************************** Definitions for Double *******************************************
+    // ******************************************** Definitions for Double *******************************************
 
-		static void Test(double[][] arr)
-		{
-			// M[M][A];
-		}
+    static void Test(double[][] arr)
+    {
+      // M[M][A];
+    }
 
-	} // class
+  } // class
 } // namespace

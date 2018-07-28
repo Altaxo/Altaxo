@@ -55,247 +55,247 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
-	/// <summary>
-	/// Provides generation of bernoulli distributed random numbers.
-	/// </summary>
-	/// <remarks>
-	/// The bernoulli distribution generates only discrete numbers.<br />
-	/// The implementation of the <see cref="BernoulliDistribution"/> type bases upon information presented on
-	///   <a href="http://en.wikipedia.org/wiki/Bernoulli_distribution">Wikipedia - Bernoulli distribution</a>.
-	/// </remarks>
-	public class BernoulliDistribution : DiscreteDistribution
-	{
-		#region instance fields
+  /// <summary>
+  /// Provides generation of bernoulli distributed random numbers.
+  /// </summary>
+  /// <remarks>
+  /// The bernoulli distribution generates only discrete numbers.<br />
+  /// The implementation of the <see cref="BernoulliDistribution"/> type bases upon information presented on
+  ///   <a href="http://en.wikipedia.org/wiki/Bernoulli_distribution">Wikipedia - Bernoulli distribution</a>.
+  /// </remarks>
+  public class BernoulliDistribution : DiscreteDistribution
+  {
+    #region instance fields
 
-		/// <summary>
-		/// Gets or sets the parameter alpha which is used for generation of bernoulli distributed random numbers.
-		/// </summary>
-		/// <remarks>Call <see cref="IsValidProbability"/> to determine whether a value is valid and therefor assignable.</remarks>
-		public double Probability
-		{
-			get
-			{
-				return this._probability;
-			}
-			set
-			{
-				Initialize(value);
-			}
-		}
+    /// <summary>
+    /// Gets or sets the parameter alpha which is used for generation of bernoulli distributed random numbers.
+    /// </summary>
+    /// <remarks>Call <see cref="IsValidProbability"/> to determine whether a value is valid and therefor assignable.</remarks>
+    public double Probability
+    {
+      get
+      {
+        return this._probability;
+      }
+      set
+      {
+        Initialize(value);
+      }
+    }
 
-		public void Initialize(double probability)
-		{
-			if (!IsValidProbability(probability))
-				throw new ArgumentOutOfRangeException("probability has to be between 0 and 1");
+    public void Initialize(double probability)
+    {
+      if (!IsValidProbability(probability))
+        throw new ArgumentOutOfRangeException("probability has to be between 0 and 1");
 
-			this._probability = probability;
-		}
+      this._probability = probability;
+    }
 
-		/// <summary>
-		/// Stores the parameter alpha which is used for generation of bernoulli distributed random numbers.
-		/// </summary>
-		private double _probability;
+    /// <summary>
+    /// Stores the parameter alpha which is used for generation of bernoulli distributed random numbers.
+    /// </summary>
+    private double _probability;
 
-		#endregion instance fields
+    #endregion instance fields
 
-		#region construction
+    #region construction
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="BernoulliDistribution"/> class, using a
-		///   <see cref="StandardGenerator"/> as underlying random number generator.
-		/// </summary>
-		public BernoulliDistribution()
-			: this(DefaultGenerator)
-		{
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BernoulliDistribution"/> class, using a
+    ///   <see cref="StandardGenerator"/> as underlying random number generator.
+    /// </summary>
+    public BernoulliDistribution()
+      : this(DefaultGenerator)
+    {
+    }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="BernoulliDistribution"/> class, using the specified
-		///   <see cref="Generator"/> as underlying random number generator.
-		/// </summary>
-		/// <param name="generator">A <see cref="Generator"/> object.</param>
-		/// <exception cref="ArgumentNullException">
-		/// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-		/// </exception>
-		public BernoulliDistribution(Generator generator)
-			: this(0.5, generator)
-		{
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BernoulliDistribution"/> class, using the specified
+    ///   <see cref="Generator"/> as underlying random number generator.
+    /// </summary>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+    /// </exception>
+    public BernoulliDistribution(Generator generator)
+      : this(0.5, generator)
+    {
+    }
 
-		public BernoulliDistribution(double probability)
-			: this(probability, DefaultGenerator)
-		{
-		}
+    public BernoulliDistribution(double probability)
+      : this(probability, DefaultGenerator)
+    {
+    }
 
-		public BernoulliDistribution(double probability, Generator generator)
-			: base(generator)
-		{
-			Initialize(probability);
-		}
+    public BernoulliDistribution(double probability, Generator generator)
+      : base(generator)
+    {
+      Initialize(probability);
+    }
 
-		#endregion construction
+    #endregion construction
 
-		#region instance methods
+    #region instance methods
 
-		/// <summary>
-		/// Determines whether the specified value is valid for <see cref="Probability"/>.
-		/// </summary>
-		/// <param name="value">The value to check.</param>
-		/// <returns>
-		/// <see langword="true"/> if value is greater than or equal to 0.0, and less than or equal to 1.0; otherwise, <see langword="false"/>.
-		/// </returns>
-		public bool IsValidProbability(double value)
-		{
-			return (value >= 0.0 && value <= 1.0);
-		}
+    /// <summary>
+    /// Determines whether the specified value is valid for <see cref="Probability"/>.
+    /// </summary>
+    /// <param name="value">The value to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if value is greater than or equal to 0.0, and less than or equal to 1.0; otherwise, <see langword="false"/>.
+    /// </returns>
+    public bool IsValidProbability(double value)
+    {
+      return (value >= 0.0 && value <= 1.0);
+    }
 
-		/// <summary>
-		/// Returns a bernoulli distributed random number.
-		/// </summary>
-		/// <returns>A bernoulli distributed 32-bit signed integer.</returns>
-		public int Next()
-		{
-			if (this.Generator.NextDouble() < this._probability)
-			{
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
-		}
+    /// <summary>
+    /// Returns a bernoulli distributed random number.
+    /// </summary>
+    /// <returns>A bernoulli distributed 32-bit signed integer.</returns>
+    public int Next()
+    {
+      if (this.Generator.NextDouble() < this._probability)
+      {
+        return 1;
+      }
+      else
+      {
+        return 0;
+      }
+    }
 
-		#endregion instance methods
+    #endregion instance methods
 
-		#region overridden Distribution members
+    #region overridden Distribution members
 
-		/// <summary>
-		/// Gets the minimum possible value of bernoulli distributed random numbers.
-		/// </summary>
-		public override double Minimum
-		{
-			get
-			{
-				return 0.0;
-			}
-		}
+    /// <summary>
+    /// Gets the minimum possible value of bernoulli distributed random numbers.
+    /// </summary>
+    public override double Minimum
+    {
+      get
+      {
+        return 0.0;
+      }
+    }
 
-		/// <summary>
-		/// Gets the maximum possible value of bernoulli distributed random numbers.
-		/// </summary>
-		public override double Maximum
-		{
-			get
-			{
-				return 1.0;
-			}
-		}
+    /// <summary>
+    /// Gets the maximum possible value of bernoulli distributed random numbers.
+    /// </summary>
+    public override double Maximum
+    {
+      get
+      {
+        return 1.0;
+      }
+    }
 
-		/// <summary>
-		/// Gets the mean value of bernoulli distributed random numbers.
-		/// </summary>
-		public override double Mean
-		{
-			get
-			{
-				return this._probability;
-			}
-		}
+    /// <summary>
+    /// Gets the mean value of bernoulli distributed random numbers.
+    /// </summary>
+    public override double Mean
+    {
+      get
+      {
+        return this._probability;
+      }
+    }
 
-		/// <summary>
-		/// Gets the median of bernoulli distributed random numbers.
-		/// </summary>
-		public override double Median
-		{
-			get
-			{
-				return double.NaN;
-			}
-		}
+    /// <summary>
+    /// Gets the median of bernoulli distributed random numbers.
+    /// </summary>
+    public override double Median
+    {
+      get
+      {
+        return double.NaN;
+      }
+    }
 
-		/// <summary>
-		/// Gets the variance of bernoulli distributed random numbers.
-		/// </summary>
-		public override double Variance
-		{
-			get
-			{
-				return this._probability * (1.0 - this._probability);
-			}
-		}
+    /// <summary>
+    /// Gets the variance of bernoulli distributed random numbers.
+    /// </summary>
+    public override double Variance
+    {
+      get
+      {
+        return this._probability * (1.0 - this._probability);
+      }
+    }
 
-		/// <summary>
-		/// Gets the mode of bernoulli distributed random numbers.
-		/// </summary>
-		public override double[] Mode
-		{
-			get
-			{
-				if (this._probability > (1 - this._probability))
-				{
-					return new double[] { 1.0 };
-				}
-				else if (this._probability < (1 - this._probability))
-				{
-					return new double[] { 0.0 };
-				}
-				else
-				{
-					return new double[] { 0.0, 1.0 };
-				}
-			}
-		}
+    /// <summary>
+    /// Gets the mode of bernoulli distributed random numbers.
+    /// </summary>
+    public override double[] Mode
+    {
+      get
+      {
+        if (this._probability > (1 - this._probability))
+        {
+          return new double[] { 1.0 };
+        }
+        else if (this._probability < (1 - this._probability))
+        {
+          return new double[] { 0.0 };
+        }
+        else
+        {
+          return new double[] { 0.0, 1.0 };
+        }
+      }
+    }
 
-		/// <summary>
-		/// Returns a bernoulli distributed floating point random number.
-		/// </summary>
-		/// <returns>A bernoulli distributed double-precision floating point number.</returns>
-		public override double NextDouble()
-		{
-			if (this.Generator.NextDouble() < this._probability)
-			{
-				return 1.0;
-			}
-			else
-			{
-				return 0.0;
-			}
-		}
+    /// <summary>
+    /// Returns a bernoulli distributed floating point random number.
+    /// </summary>
+    /// <returns>A bernoulli distributed double-precision floating point number.</returns>
+    public override double NextDouble()
+    {
+      if (this.Generator.NextDouble() < this._probability)
+      {
+        return 1.0;
+      }
+      else
+      {
+        return 0.0;
+      }
+    }
 
-		#endregion overridden Distribution members
+    #endregion overridden Distribution members
 
-		#region CdfPdf
+    #region CdfPdf
 
-		public override double CDF(double x)
-		{
-			return CDF(x, this.Probability);
-		}
+    public override double CDF(double x)
+    {
+      return CDF(x, this.Probability);
+    }
 
-		public static double CDF(double x, double p)
-		{
-			if (x >= 0 && x < 1)
-				return 1 - p;
-			else if (x >= 1)
-				return 1;
-			else
-				return 0;
-		}
+    public static double CDF(double x, double p)
+    {
+      if (x >= 0 && x < 1)
+        return 1 - p;
+      else if (x >= 1)
+        return 1;
+      else
+        return 0;
+    }
 
-		public override double PDF(double x)
-		{
-			return PDF(x, this.Probability);
-		}
+    public override double PDF(double x)
+    {
+      return PDF(x, this.Probability);
+    }
 
-		public static double PDF(double x, double p)
-		{
-			if (x == 0)
-				return 1 - p;
-			else if (x == 1)
-				return p;
-			else
-				return 0;
-		}
+    public static double PDF(double x, double p)
+    {
+      if (x == 0)
+        return 1 - p;
+      else if (x == 1)
+        return p;
+      else
+        return 0;
+    }
 
-		#endregion CdfPdf
-	}
+    #endregion CdfPdf
+  }
 }

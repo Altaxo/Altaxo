@@ -32,70 +32,70 @@ using System.Text;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
-	public interface IRealFourierTransformationView
-	{
-		void SetColumnToTransform(string val);
+  public interface IRealFourierTransformationView
+  {
+    void SetColumnToTransform(string val);
 
-		void SetXIncrement(string val, bool bMarkAsWarning);
+    void SetXIncrement(string val, bool bMarkAsWarning);
 
-		void SetOutputQuantities(SelectableListNodeList list);
+    void SetOutputQuantities(SelectableListNodeList list);
 
-		void SetCreationOptions(SelectableListNodeList list);
-	}
+    void SetCreationOptions(SelectableListNodeList list);
+  }
 
-	[ExpectedTypeOfView(typeof(IRealFourierTransformationView))]
-	[UserControllerForObject(typeof(AnalysisRealFourierTransformationCommands.RealFourierTransformOptions))]
-	public class RealFourierTransformationController : MVCANControllerEditOriginalDocBase<AnalysisRealFourierTransformationCommands.RealFourierTransformOptions, IRealFourierTransformationView>
-	{
-		private SelectableListNodeList _outputQuantities;
-		private SelectableListNodeList _creationOptions;
+  [ExpectedTypeOfView(typeof(IRealFourierTransformationView))]
+  [UserControllerForObject(typeof(AnalysisRealFourierTransformationCommands.RealFourierTransformOptions))]
+  public class RealFourierTransformationController : MVCANControllerEditOriginalDocBase<AnalysisRealFourierTransformationCommands.RealFourierTransformOptions, IRealFourierTransformationView>
+  {
+    private SelectableListNodeList _outputQuantities;
+    private SelectableListNodeList _creationOptions;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_outputQuantities = null;
-			_creationOptions = null;
+    public override void Dispose(bool isDisposing)
+    {
+      _outputQuantities = null;
+      _creationOptions = null;
 
-			base.Dispose(isDisposing);
-		}
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_outputQuantities = new SelectableListNodeList();
-				_creationOptions = new SelectableListNodeList();
-			}
+      if (initData)
+      {
+        _outputQuantities = new SelectableListNodeList();
+        _creationOptions = new SelectableListNodeList();
+      }
 
-			if (_view != null)
-			{
-				var yColName = AbsoluteDocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);
-				_view.SetColumnToTransform(yColName);
+      if (_view != null)
+      {
+        var yColName = AbsoluteDocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);
+        _view.SetColumnToTransform(yColName);
 
-				string xInc = _doc.XIncrementValue.ToString();
-				if (_doc.XIncrementMessage != null)
-					xInc += string.Format(" ({0})", _doc.XIncrementMessage);
-				_view.SetXIncrement(xInc, _doc.XIncrementMessage != null);
+        string xInc = _doc.XIncrementValue.ToString();
+        if (_doc.XIncrementMessage != null)
+          xInc += string.Format(" ({0})", _doc.XIncrementMessage);
+        _view.SetXIncrement(xInc, _doc.XIncrementMessage != null);
 
-				_outputQuantities.FillWithFlagEnumeration(_doc.Output);
-				_view.SetOutputQuantities(_outputQuantities);
+        _outputQuantities.FillWithFlagEnumeration(_doc.Output);
+        _view.SetOutputQuantities(_outputQuantities);
 
-				_creationOptions.FillWithEnumeration(_doc.OutputPlacement);
-				_view.SetCreationOptions(_creationOptions);
-			}
-		}
+        _creationOptions.FillWithEnumeration(_doc.OutputPlacement);
+        _view.SetCreationOptions(_creationOptions);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.Output = (AnalysisRealFourierTransformationCommands.RealFourierTransformOutput)_outputQuantities.GetFlagEnumValueAsInt32();
-			_doc.OutputPlacement = (AnalysisRealFourierTransformationCommands.RealFourierTransformOutputPlacement)_creationOptions.FirstSelectedNode.Tag;
-			return ApplyEnd(true, disposeController);
-		}
-	}
+    public override bool Apply(bool disposeController)
+    {
+      _doc.Output = (AnalysisRealFourierTransformationCommands.RealFourierTransformOutput)_outputQuantities.GetFlagEnumValueAsInt32();
+      _doc.OutputPlacement = (AnalysisRealFourierTransformationCommands.RealFourierTransformOutputPlacement)_creationOptions.FirstSelectedNode.Tag;
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

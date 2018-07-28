@@ -29,18 +29,18 @@ using System.Text;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Interface for a high resolution clock. The delivered time value is relative, e.g. relative to the start of the timer. The values are guaranteed to
-	/// be continuously increasing, even if the system time of the computer is changed backwards.
-	/// </summary>
-	public interface IHighResolutionClock
-	{
-		/// <summary>
-		/// Gets the current time. This is a relative value, e.g. relative to the start of the timer.
-		/// </summary>
-		/// <value>
-		/// The current time value.
-		/// </value>
-		TimeSpan CurrentTime { get; }
-	}
+  /// <summary>
+  /// Interface for a high resolution clock. The delivered time value is relative, e.g. relative to the start of the timer. The values are guaranteed to
+  /// be continuously increasing, even if the system time of the computer is changed backwards.
+  /// </summary>
+  public interface IHighResolutionClock
+  {
+    /// <summary>
+    /// Gets the current time. This is a relative value, e.g. relative to the start of the timer.
+    /// </summary>
+    /// <value>
+    /// The current time value.
+    /// </value>
+    TimeSpan CurrentTime { get; }
+  }
 }

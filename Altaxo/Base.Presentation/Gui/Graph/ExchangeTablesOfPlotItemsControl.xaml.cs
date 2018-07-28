@@ -32,139 +32,139 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph
 {
-	/// <summary>
-	/// Interaction logic for ExchangeTablesOfPlotItemsControl.xaml
-	/// </summary>
-	public partial class ExchangeTablesOfPlotItemsControl : UserControl, IExchangeTablesOfPlotItemsView
-	{
-		public event Action ChooseTableForSelectedItems;
+  /// <summary>
+  /// Interaction logic for ExchangeTablesOfPlotItemsControl.xaml
+  /// </summary>
+  public partial class ExchangeTablesOfPlotItemsControl : UserControl, IExchangeTablesOfPlotItemsView
+  {
+    public event Action ChooseTableForSelectedItems;
 
-		public event Action ChooseFolderForSelectedItems;
+    public event Action ChooseFolderForSelectedItems;
 
-		public event Action TableSelectionChanged;
+    public event Action TableSelectionChanged;
 
-		public event Action ListOfCommonSubstringsSelectionChanged;
+    public event Action ListOfCommonSubstringsSelectionChanged;
 
-		public event Action ApplySubstringReplacement;
+    public event Action ApplySubstringReplacement;
 
-		public event Action CommonSubstringTextChanged;
+    public event Action CommonSubstringTextChanged;
 
-		public event Action ListOfSubstringReplacementCandidatesSelectionChanged;
+    public event Action ListOfSubstringReplacementCandidatesSelectionChanged;
 
-		public event Action SearchCommonSubstringsCharacterWiseChanged;
+    public event Action SearchCommonSubstringsCharacterWiseChanged;
 
-		public event Action CommonSubstringPanelVisibilityChanged;
+    public event Action CommonSubstringPanelVisibilityChanged;
 
-		public ExchangeTablesOfPlotItemsControl()
-		{
-			InitializeComponent();
-		}
+    public ExchangeTablesOfPlotItemsControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeExchangeTableList(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiTableList, list);
-		}
+    public void InitializeExchangeTableList(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiTableList, list);
+    }
 
-		public void InitializeListOfCommonSubstrings(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiListOfCommonSubstrings, list);
-		}
+    public void InitializeListOfCommonSubstrings(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiListOfCommonSubstrings, list);
+    }
 
-		public void InitializeListOfReplacementCandidates(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiListOfReplacementCandidates, list);
-		}
+    public void InitializeListOfReplacementCandidates(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiListOfReplacementCandidates, list);
+    }
 
-		public string CommonSubstringText { get { return _guiCommonSubstring.Text; } set { _guiCommonSubstring.Text = value; } }
+    public string CommonSubstringText { get { return _guiCommonSubstring.Text; } set { _guiCommonSubstring.Text = value; } }
 
-		private void EhTableList_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			e.Handled = true;
-		}
+    private void EhTableList_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      e.Handled = true;
+    }
 
-		private void EhChooseTable(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
-			if (null != ChooseTableForSelectedItems)
-				ChooseTableForSelectedItems();
-		}
+    private void EhChooseTable(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
+      if (null != ChooseTableForSelectedItems)
+        ChooseTableForSelectedItems();
+    }
 
-		private void EhChooseFolder(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
-			if (null != ChooseFolderForSelectedItems)
-				ChooseFolderForSelectedItems();
-		}
+    private void EhChooseFolder(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
+      if (null != ChooseFolderForSelectedItems)
+        ChooseFolderForSelectedItems();
+    }
 
-		private void EhItemsSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
-			if (null != TableSelectionChanged)
-			{
-				TableSelectionChanged();
-			}
-		}
+    private void EhItemsSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
+      if (null != TableSelectionChanged)
+      {
+        TableSelectionChanged();
+      }
+    }
 
-		private void EhListOfCommonSubstringsSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiListOfCommonSubstrings);
-			if (null != ListOfCommonSubstringsSelectionChanged)
-				ListOfCommonSubstringsSelectionChanged();
-		}
+    private void EhListOfCommonSubstringsSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiListOfCommonSubstrings);
+      if (null != ListOfCommonSubstringsSelectionChanged)
+        ListOfCommonSubstringsSelectionChanged();
+    }
 
-		private void EhListOfReplacementCandidatesSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiListOfReplacementCandidates);
+    private void EhListOfReplacementCandidatesSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiListOfReplacementCandidates);
 
-			if (null != _guiListOfReplacementCandidates.SelectedItem)
-				_guiReplacementCandidate.Text = _guiListOfReplacementCandidates.SelectedItem.ToString();
-			else
-				_guiReplacementCandidate.Text = null;
+      if (null != _guiListOfReplacementCandidates.SelectedItem)
+        _guiReplacementCandidate.Text = _guiListOfReplacementCandidates.SelectedItem.ToString();
+      else
+        _guiReplacementCandidate.Text = null;
 
-			if (null != ListOfSubstringReplacementCandidatesSelectionChanged)
-				ListOfSubstringReplacementCandidatesSelectionChanged();
-		}
+      if (null != ListOfSubstringReplacementCandidatesSelectionChanged)
+        ListOfSubstringReplacementCandidatesSelectionChanged();
+    }
 
-		private void EhApplyReplacementForCommonSubstring(object sender, RoutedEventArgs e)
-		{
-			if (null != ApplySubstringReplacement)
-				ApplySubstringReplacement();
-		}
+    private void EhApplyReplacementForCommonSubstring(object sender, RoutedEventArgs e)
+    {
+      if (null != ApplySubstringReplacement)
+        ApplySubstringReplacement();
+    }
 
-		private void EhCommonSubstringTextChanged(object sender, TextChangedEventArgs e)
-		{
-			if (null != CommonSubstringTextChanged)
-				CommonSubstringTextChanged();
-		}
+    private void EhCommonSubstringTextChanged(object sender, TextChangedEventArgs e)
+    {
+      if (null != CommonSubstringTextChanged)
+        CommonSubstringTextChanged();
+    }
 
-		public bool SearchCommonSubstringsCharacterWise
-		{
-			get
-			{
-				return true == _guiSearchCommonSubstringCharacterwise.IsChecked;
-			}
-			set
-			{
-				_guiSearchCommonSubstringCharacterwise.IsChecked = value;
-				_guiSearchCommonSubstringSubfolderwise.IsChecked = !value;
-			}
-		}
+    public bool SearchCommonSubstringsCharacterWise
+    {
+      get
+      {
+        return true == _guiSearchCommonSubstringCharacterwise.IsChecked;
+      }
+      set
+      {
+        _guiSearchCommonSubstringCharacterwise.IsChecked = value;
+        _guiSearchCommonSubstringSubfolderwise.IsChecked = !value;
+      }
+    }
 
-		private void EhSearchCommonSubstringCharacterWiseChanged(object sender, RoutedEventArgs e)
-		{
-			if (SearchCommonSubstringsCharacterWiseChanged != null)
-				SearchCommonSubstringsCharacterWiseChanged();
-		}
+    private void EhSearchCommonSubstringCharacterWiseChanged(object sender, RoutedEventArgs e)
+    {
+      if (SearchCommonSubstringsCharacterWiseChanged != null)
+        SearchCommonSubstringsCharacterWiseChanged();
+    }
 
-		private void EhCommonSubstringOperations_VisibilityChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != CommonSubstringPanelVisibilityChanged)
-				CommonSubstringPanelVisibilityChanged();
-		}
+    private void EhCommonSubstringOperations_VisibilityChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != CommonSubstringPanelVisibilityChanged)
+        CommonSubstringPanelVisibilityChanged();
+    }
 
-		public bool IsCommonSubstringPanelVisible
-		{
-			get { return _guiCommonSubstringPanel.IsExpanded; }
-		}
-	}
+    public bool IsCommonSubstringPanelVisible
+    {
+      get { return _guiCommonSubstringPanel.IsExpanded; }
+    }
+  }
 }

@@ -35,43 +35,43 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 {
-	/// <summary>
-	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
-	/// This base class implements Equals and GetHashCode.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public abstract class LineConnectionStyleBase : ILineConnectionStyle
-	{
-		/// <summary>
-		/// Template to make a line draw.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="range">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="pen">The pen to draw the line.</param>
-		/// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
-		/// This function is null if no symbol gap is required.</param>
-		/// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
-		/// <param name="connectCircular">If true, the end of the line is connected with the start of the line.</param>
-		public abstract void Paint(
-			IGraphicsContext3D g,
-			Processed3DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			PenX3D pen,
-			Func<int, double> symbolGap,
-			int skipFrequency,
-			bool connectCircular);
+  /// <summary>
+  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
+  /// This base class implements Equals and GetHashCode.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.IImmutable" />
+  public abstract class LineConnectionStyleBase : ILineConnectionStyle
+  {
+    /// <summary>
+    /// Template to make a line draw.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
+    /// <param name="range">The plot range to use.</param>
+    /// <param name="layer">Graphics layer.</param>
+    /// <param name="pen">The pen to draw the line.</param>
+    /// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
+    /// This function is null if no symbol gap is required.</param>
+    /// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
+    /// <param name="connectCircular">If true, the end of the line is connected with the start of the line.</param>
+    public abstract void Paint(
+      IGraphicsContext3D g,
+      Processed3DPlotData pdata,
+      PlotRange range,
+      IPlotArea layer,
+      PenX3D pen,
+      Func<int, double> symbolGap,
+      int skipFrequency,
+      bool connectCircular);
 
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode();
-		}
+    public override int GetHashCode()
+    {
+      return this.GetType().GetHashCode();
+    }
 
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType();
-		}
-	}
+    public override bool Equals(object obj)
+    {
+      return this.GetType() == obj?.GetType();
+    }
+  }
 }

@@ -31,34 +31,34 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
-	/// <summary>
-	/// Interaction logic for DensityImagePlotItemControl.xaml
-	/// </summary>
-	public partial class DensityImagePlotItemControl : UserControl, IDensityImagePlotItemOptionView
-	{
-		public DensityImagePlotItemControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for DensityImagePlotItemControl.xaml
+  /// </summary>
+  public partial class DensityImagePlotItemControl : UserControl, IDensityImagePlotItemOptionView
+  {
+    public DensityImagePlotItemControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhCopyImageToClipboard(object sender, RoutedEventArgs e)
-		{
-			if (null != CopyImageToClipboard)
-				CopyImageToClipboard();
-		}
+    private void EhCopyImageToClipboard(object sender, RoutedEventArgs e)
+    {
+      if (null != CopyImageToClipboard)
+        CopyImageToClipboard();
+    }
 
-		private void EhSaveImageToDisc(object sender, RoutedEventArgs e)
-		{
-			if (null != SaveImageToDisc)
-				SaveImageToDisc();
-		}
+    private void EhSaveImageToDisc(object sender, RoutedEventArgs e)
+    {
+      if (null != SaveImageToDisc)
+        SaveImageToDisc();
+    }
 
-		#region IDensityImagePlotItemOptionView
+    #region IDensityImagePlotItemOptionView
 
-		public event Action CopyImageToClipboard;
+    public event Action CopyImageToClipboard;
 
-		public event Action SaveImageToDisc;
+    public event Action SaveImageToDisc;
 
-		#endregion IDensityImagePlotItemOptionView
-	}
+    #endregion IDensityImagePlotItemOptionView
+  }
 }

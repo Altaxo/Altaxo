@@ -28,40 +28,40 @@ using System;
 
 namespace Altaxo.Gui.Worksheet
 {
-	/// <summary>
-	/// Controls the Smoothing parameter of a rational cubic spline.
-	/// </summary>
-	[UserControllerForObject(typeof(Altaxo.Calc.Interpolation.ExponentialSpline), 100)]
-	public class ExponentialSplineController : NumericDoubleValueController
-	{
-		private ExponentialSpline _spline;
+  /// <summary>
+  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// </summary>
+  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.ExponentialSpline), 100)]
+  public class ExponentialSplineController : NumericDoubleValueController
+  {
+    private ExponentialSpline _spline;
 
-		public ExponentialSplineController(ExponentialSpline spline)
-			: base(spline.Smoothing)
-		{
-			base._minimumValue = 0;
-			base._isMinimumValueIncluded = false;
-			_descriptionText = "Smoothing parameter p (p>0; default is 1) :";
-			_spline = spline;
-		}
+    public ExponentialSplineController(ExponentialSpline spline)
+      : base(spline.Smoothing)
+    {
+      base._minimumValue = 0;
+      base._isMinimumValueIncluded = false;
+      _descriptionText = "Smoothing parameter p (p>0; default is 1) :";
+      _spline = spline;
+    }
 
-		public override object ModelObject
-		{
-			get
-			{
-				return _spline;
-			}
-		}
+    public override object ModelObject
+    {
+      get
+      {
+        return _spline;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (base.Apply(disposeController))
-			{
-				this._spline.Smoothing = base._value1Double;
-				return true;
-			}
-			else
-				return false;
-		}
-	}
+    public override bool Apply(bool disposeController)
+    {
+      if (base.Apply(disposeController))
+      {
+        this._spline.Smoothing = base._value1Double;
+        return true;
+      }
+      else
+        return false;
+    }
+  }
 }

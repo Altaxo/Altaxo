@@ -28,34 +28,34 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// Summary description for ArrowLineDrawingMouseHandler.
-	/// </summary>
-	public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
-	{
-		public ArrowLineDrawingMouseHandler(GraphController grac)
-			: base(grac)
-		{
-			if (_grac != null)
-				_grac.SetPanelCursor(Cursors.Pen);
-		}
+  /// <summary>
+  /// Summary description for ArrowLineDrawingMouseHandler.
+  /// </summary>
+  public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
+  {
+    public ArrowLineDrawingMouseHandler(GraphController grac)
+      : base(grac)
+    {
+      if (_grac != null)
+        _grac.SetPanelCursor(Cursors.Pen);
+    }
 
-		public override GraphToolType GraphToolType
-		{
-			get { return GraphToolType.ArrowLineDrawing; }
-		}
+    public override GraphToolType GraphToolType
+    {
+      get { return GraphToolType.ArrowLineDrawing; }
+    }
 
-		protected override void FinishDrawing()
-		{
-			var context = _grac.Doc.GetPropertyContext();
-			LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, context);
+    protected override void FinishDrawing()
+    {
+      var context = _grac.Doc.GetPropertyContext();
+      LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, context);
 
-			var absArrowSize = go.Pen.Width * 8;
-			go.Pen.EndCap = new Altaxo.Graph.Gdi.LineCaps.ArrowF10LineCap(absArrowSize, 4);
+      var absArrowSize = go.Pen.Width * 8;
+      go.Pen.EndCap = new Altaxo.Graph.Gdi.LineCaps.ArrowF10LineCap(absArrowSize, 4);
 
-			// deselect the text tool
-			_grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-			_grac.ActiveLayer.GraphObjects.Add(go);
-		}
-	}
+      // deselect the text tool
+      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+      _grac.ActiveLayer.GraphObjects.Add(go);
+    }
+  }
 }

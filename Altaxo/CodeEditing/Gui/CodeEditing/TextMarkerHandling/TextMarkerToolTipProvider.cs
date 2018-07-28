@@ -26,45 +26,46 @@ using ICSharpCode.AvalonEdit.Document;
 
 namespace Altaxo.Gui.CodeEditing.TextMarkerHandling
 {
-	internal sealed class TextMarkerToolTipProvider
-	{
-		private readonly TextMarkerService _textMarkerService;
-		private readonly TextEditor _editor;
+  internal sealed class TextMarkerToolTipProvider
+  {
+    private readonly TextMarkerService _textMarkerService;
+    private readonly TextEditor _editor;
 
-		public TextMarkerToolTipProvider(TextMarkerService textMarkerService, TextEditor editor)
-		{
-			_textMarkerService = textMarkerService;
-			_editor = editor;
-		}
+    public TextMarkerToolTipProvider(TextMarkerService textMarkerService, TextEditor editor)
+    {
+      _textMarkerService = textMarkerService;
+      _editor = editor;
+    }
 
-		public void HandleToolTipRequest(ToolTipRequestEventArgs args)
-		{
-			if (!args.InDocument) return;
-			var offset = _editor.Document.GetOffset(args.LogicalPosition);
+    public void HandleToolTipRequest(ToolTipRequestEventArgs args)
+    {
+      if (!args.InDocument)
+        return;
+      var offset = _editor.Document.GetOffset(args.LogicalPosition);
 
-			//FoldingManager foldings = _editor.GetService(typeof(FoldingManager)) as FoldingManager;
-			//if (foldings != null)
-			//{
-			//    var foldingsAtOffset = foldings.GetFoldingsAt(offset);
-			//    FoldingSection collapsedSection = foldingsAtOffset.FirstOrDefault(section => section.IsFolded);
+      //FoldingManager foldings = _editor.GetService(typeof(FoldingManager)) as FoldingManager;
+      //if (foldings != null)
+      //{
+      //    var foldingsAtOffset = foldings.GetFoldingsAt(offset);
+      //    FoldingSection collapsedSection = foldingsAtOffset.FirstOrDefault(section => section.IsFolded);
 
-			//    if (collapsedSection != null)
-			//    {
-			//        args.SetToolTip(GetTooltipTextForCollapsedSection(args, collapsedSection));
-			//    }
-			//}
+      //    if (collapsedSection != null)
+      //    {
+      //        args.SetToolTip(GetTooltipTextForCollapsedSection(args, collapsedSection));
+      //    }
+      //}
 
-			var markersAtOffset = _textMarkerService.GetMarkersAtOffset(offset);
-			var markerWithToolTip = markersAtOffset.FirstOrDefault(marker => marker.ToolTip != null);
-			if (markerWithToolTip != null)
-			{
-				args.SetToolTip(markerWithToolTip.ToolTip);
-			}
-		}
+      var markersAtOffset = _textMarkerService.GetMarkersAtOffset(offset);
+      var markerWithToolTip = markersAtOffset.FirstOrDefault(marker => marker.ToolTip != null);
+      if (markerWithToolTip != null)
+      {
+        args.SetToolTip(markerWithToolTip.ToolTip);
+      }
+    }
 
-		//string GetTooltipTextForCollapsedSection(ToolTipRequestEventArgs args, FoldingSection foldingSection)
-		//{
-		//    return ToolTipUtils.GetAlignedText(_editor.Document, foldingSection.StartOffset, foldingSection.EndOffset);
-		//}
-	}
+    //string GetTooltipTextForCollapsedSection(ToolTipRequestEventArgs args, FoldingSection foldingSection)
+    //{
+    //    return ToolTipUtils.GetAlignedText(_editor.Document, foldingSection.StartOffset, foldingSection.EndOffset);
+    //}
+  }
 }

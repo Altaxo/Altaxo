@@ -29,55 +29,55 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	public static class IReadableColumnExtensions
-	{
-		/// <summary>
-		/// Try to get a common data table and a group number from all columns (here we don't rely on <see cref="DataTable"/> and GroupNumber of this document).
-		/// </summary>
-		/// <param name="columns">The columns to consider. <see cref="ITransformedReadableColumn"/> will be stripped to get the underlying data column.</param>
-		/// <param name="dataTableIsNotUniform">If the columns gives different result for their underlying data table, the result here will be true.</param>
-		/// <param name="commonDataTable">If the previous parameter results in false, this is the common data table of all columns. If the previous parameter is true, this is the first underlying data table that could be deduced from the columns. The result is null if no underlying table could be deduced from the columns.</param>
-		/// <param name="groupNumberIsNotUniform">If the columns gives different result for their group number, the result here will be true.</param>
-		/// <param name="commonGroupNumber">If the previous parameter results in false, this is the common group number of all columns. If the previous parameter results in true, this is the first group number that could be deduced from the columns. The result is null if no group number could be deduced from the columns.</param>
-		public static void GetCommonDataTableAndGroupNumberFromColumns(this IEnumerable<IReadableColumn> columns, out bool dataTableIsNotUniform, out DataTable commonDataTable, out bool groupNumberIsNotUniform, out int? commonGroupNumber)
-		{
-			dataTableIsNotUniform = false;
-			groupNumberIsNotUniform = false;
-			commonDataTable = null;
-			commonGroupNumber = null;
+  public static class IReadableColumnExtensions
+  {
+    /// <summary>
+    /// Try to get a common data table and a group number from all columns (here we don't rely on <see cref="DataTable"/> and GroupNumber of this document).
+    /// </summary>
+    /// <param name="columns">The columns to consider. <see cref="ITransformedReadableColumn"/> will be stripped to get the underlying data column.</param>
+    /// <param name="dataTableIsNotUniform">If the columns gives different result for their underlying data table, the result here will be true.</param>
+    /// <param name="commonDataTable">If the previous parameter results in false, this is the common data table of all columns. If the previous parameter is true, this is the first underlying data table that could be deduced from the columns. The result is null if no underlying table could be deduced from the columns.</param>
+    /// <param name="groupNumberIsNotUniform">If the columns gives different result for their group number, the result here will be true.</param>
+    /// <param name="commonGroupNumber">If the previous parameter results in false, this is the common group number of all columns. If the previous parameter results in true, this is the first group number that could be deduced from the columns. The result is null if no group number could be deduced from the columns.</param>
+    public static void GetCommonDataTableAndGroupNumberFromColumns(this IEnumerable<IReadableColumn> columns, out bool dataTableIsNotUniform, out DataTable commonDataTable, out bool groupNumberIsNotUniform, out int? commonGroupNumber)
+    {
+      dataTableIsNotUniform = false;
+      groupNumberIsNotUniform = false;
+      commonDataTable = null;
+      commonGroupNumber = null;
 
-			foreach (var col in columns)
-			{
-				IReadableColumn underlyingColumn = col;
+      foreach (var col in columns)
+      {
+        IReadableColumn underlyingColumn = col;
 
-				while (underlyingColumn is ITransformedReadableColumn)
-				{
-					underlyingColumn = (underlyingColumn as ITransformedReadableColumn).UnderlyingReadableColumn;
-				}
+        while (underlyingColumn is ITransformedReadableColumn)
+        {
+          underlyingColumn = (underlyingColumn as ITransformedReadableColumn).UnderlyingReadableColumn;
+        }
 
-				if (underlyingColumn is DataColumn)
-				{
-					var colColl = DataColumnCollection.GetParentDataColumnCollectionOf((DataColumn)underlyingColumn);
-					var dataTable = DataTable.GetParentDataTableOf(colColl);
-					int? groupNumber = colColl?.GetColumnGroup((DataColumn)underlyingColumn);
+        if (underlyingColumn is DataColumn)
+        {
+          var colColl = DataColumnCollection.GetParentDataColumnCollectionOf((DataColumn)underlyingColumn);
+          var dataTable = DataTable.GetParentDataTableOf(colColl);
+          int? groupNumber = colColl?.GetColumnGroup((DataColumn)underlyingColumn);
 
-					if (null != dataTable)
-					{
-						if (null == commonDataTable)
-							commonDataTable = dataTable;
-						else if (!object.ReferenceEquals(commonDataTable, dataTable))
-							dataTableIsNotUniform = true;
-					}
+          if (null != dataTable)
+          {
+            if (null == commonDataTable)
+              commonDataTable = dataTable;
+            else if (!object.ReferenceEquals(commonDataTable, dataTable))
+              dataTableIsNotUniform = true;
+          }
 
-					if (null != groupNumber)
-					{
-						if (null == commonGroupNumber)
-							commonGroupNumber = groupNumber;
-						else if (!(commonGroupNumber == groupNumber))
-							groupNumberIsNotUniform = true;
-					}
-				}
-			}
-		}
-	}
+          if (null != groupNumber)
+          {
+            if (null == commonGroupNumber)
+              commonGroupNumber = groupNumber;
+            else if (!(commonGroupNumber == groupNumber))
+              groupNumberIsNotUniform = true;
+          }
+        }
+      }
+    }
+  }
 }

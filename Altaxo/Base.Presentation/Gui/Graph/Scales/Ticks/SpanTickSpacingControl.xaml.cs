@@ -30,57 +30,57 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-	/// <summary>
-	/// Interaction logic for AngularTickSpacingControl.xaml
-	/// </summary>
-	public partial class SpanTickSpacingControl : UserControl, ISpanTickSpacingView
-	{
-		public SpanTickSpacingControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for AngularTickSpacingControl.xaml
+  /// </summary>
+  public partial class SpanTickSpacingControl : UserControl, ISpanTickSpacingView
+  {
+    public SpanTickSpacingControl()
+    {
+      InitializeComponent();
+    }
 
-		public double RelativePositionOfTick
-		{
-			get
-			{
-				return _guiRelTickPos.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_guiRelTickPos.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double RelativePositionOfTick
+    {
+      get
+      {
+        return _guiRelTickPos.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _guiRelTickPos.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public bool ShowEndOrgRatio
-		{
-			get
-			{
-				return _rbRatio.IsChecked == true;
-			}
-			set
-			{
-				_rbRatio.IsChecked = value;
-				_rbDifference.IsChecked = !value;
-			}
-		}
+    public bool ShowEndOrgRatio
+    {
+      get
+      {
+        return _rbRatio.IsChecked == true;
+      }
+      set
+      {
+        _rbRatio.IsChecked = value;
+        _rbDifference.IsChecked = !value;
+      }
+    }
 
-		public bool TransfoOperationIsMultiply
-		{
-			get { return _cbTransfoOperation.SelectedIndex == 1; }
-			set { _cbTransfoOperation.SelectedIndex = (value ? 1 : 0); }
-		}
+    public bool TransfoOperationIsMultiply
+    {
+      get { return _cbTransfoOperation.SelectedIndex == 1; }
+      set { _cbTransfoOperation.SelectedIndex = (value ? 1 : 0); }
+    }
 
-		public double DivideBy
-		{
-			get
-			{
-				return _edDivideBy.SelectedValue;
-			}
-			set
-			{
-				_edDivideBy.SelectedValue = value;
-			}
-		}
-	}
+    public double DivideBy
+    {
+      get
+      {
+        return _edDivideBy.SelectedValue;
+      }
+      set
+      {
+        _edDivideBy.SelectedValue = value;
+      }
+    }
+  }
 }

@@ -29,32 +29,32 @@ using System.Text;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Implementation of a high resolution clock. The delivered time value is relative, e.g. relative to the start of the timer. The values are guaranteed to
-	/// be continuously increasing, even if the system time of the computer is changed backwards.
-	/// </summary>
-	public class HighResolutionClock : IHighResolutionClock
-	{
-		private readonly System.Diagnostics.Stopwatch _clock;
+  /// <summary>
+  /// Implementation of a high resolution clock. The delivered time value is relative, e.g. relative to the start of the timer. The values are guaranteed to
+  /// be continuously increasing, even if the system time of the computer is changed backwards.
+  /// </summary>
+  public class HighResolutionClock : IHighResolutionClock
+  {
+    private readonly System.Diagnostics.Stopwatch _clock;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="HighResolutionClock"/> class.
-		/// </summary>
-		public HighResolutionClock()
-		{
-			_clock = new System.Diagnostics.Stopwatch();
-			_clock.Start();
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HighResolutionClock"/> class.
+    /// </summary>
+    public HighResolutionClock()
+    {
+      _clock = new System.Diagnostics.Stopwatch();
+      _clock.Start();
+    }
 
-		/// <summary>
-		/// Gets the current time. This is a relative value, e.g. relative to the start of the timer.
-		/// </summary>
-		/// <value>
-		/// The current time value.
-		/// </value>
-		public TimeSpan CurrentTime
-		{
-			get { return _clock.Elapsed; }
-		}
-	}
+    /// <summary>
+    /// Gets the current time. This is a relative value, e.g. relative to the start of the timer.
+    /// </summary>
+    /// <value>
+    /// The current time value.
+    /// </value>
+    public TimeSpan CurrentTime
+    {
+      get { return _clock.Elapsed; }
+    }
+  }
 }

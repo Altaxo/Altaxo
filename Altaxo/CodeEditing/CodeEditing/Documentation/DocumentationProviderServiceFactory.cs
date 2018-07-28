@@ -12,34 +12,34 @@ using Microsoft.CodeAnalysis.Host.Mef;
 
 namespace Altaxo.CodeEditing.Documentation
 {
-	[ExportWorkspaceServiceFactory(typeof(IDocumentationProviderService), ServiceLayer.Default), Shared]
-	internal sealed class DocumentationProviderServiceFactory : IWorkspaceServiceFactory
-	{
-		public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
-		{
-			return new DocumentationProviderService();
-		}
+  [ExportWorkspaceServiceFactory(typeof(IDocumentationProviderService), ServiceLayer.Default), Shared]
+  internal sealed class DocumentationProviderServiceFactory : IWorkspaceServiceFactory
+  {
+    public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
+    {
+      return new DocumentationProviderService();
+    }
 
-		internal sealed class DocumentationProviderService : IDocumentationProviderService
-		{
-			private readonly ConcurrentDictionary<string, DocumentationProvider> _assemblyPathToDocumentationProviderMap =
-					new ConcurrentDictionary<string, DocumentationProvider>();
+    internal sealed class DocumentationProviderService : IDocumentationProviderService
+    {
+      private readonly ConcurrentDictionary<string, DocumentationProvider> _assemblyPathToDocumentationProviderMap =
+          new ConcurrentDictionary<string, DocumentationProvider>();
 
-			public DocumentationProvider GetDocumentationProvider(string assemblyPath)
-			{
-				if (assemblyPath == null)
-				{
-					throw new ArgumentNullException(nameof(assemblyPath));
-				}
+      public DocumentationProvider GetDocumentationProvider(string assemblyPath)
+      {
+        if (assemblyPath == null)
+        {
+          throw new ArgumentNullException(nameof(assemblyPath));
+        }
 
-				assemblyPath = Path.ChangeExtension(assemblyPath, "xml");
-				if (!_assemblyPathToDocumentationProviderMap.TryGetValue(assemblyPath, out var provider))
-				{
-					provider = _assemblyPathToDocumentationProviderMap.GetOrAdd(assemblyPath, _path => XmlDocumentationProvider.CreateFromFile(_path));
-				}
+        assemblyPath = Path.ChangeExtension(assemblyPath, "xml");
+        if (!_assemblyPathToDocumentationProviderMap.TryGetValue(assemblyPath, out var provider))
+        {
+          provider = _assemblyPathToDocumentationProviderMap.GetOrAdd(assemblyPath, _path => XmlDocumentationProvider.CreateFromFile(_path));
+        }
 
-				return provider;
-			}
-		}
-	}
+        return provider;
+      }
+    }
+  }
 }

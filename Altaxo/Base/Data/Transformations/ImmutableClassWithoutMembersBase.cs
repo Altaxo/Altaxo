@@ -29,18 +29,18 @@ using System.Text;
 
 namespace Altaxo.Data.Transformations
 {
-	public class ImmutableClassWithoutMembersBase : Main.IImmutable
-	{
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode();
-		}
+  public class ImmutableClassWithoutMembersBase : Main.IImmutable
+  {
+    public override int GetHashCode()
+    {
+      return this.GetType().GetHashCode();
+    }
 
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType();
-		}
+    public override bool Equals(object obj)
+    {
+      return this.GetType() == obj?.GetType();
+    }
 
-		public bool IsEditable { get { return false; } }
-	}
+    public bool IsEditable { get { return false; } }
+  }
 }

@@ -27,60 +27,60 @@ using System.IO;
 
 namespace Altaxo.Worksheet
 {
-	/// <summary>
-	/// Routines for saving the worksheet layout and corresponding table.
-	/// </summary>
-	public static class FileCommands
-	{
-		/// <summary>
-		/// Saves the worksheet (data table and the corresponding layout, including scripts) into a xml file.
-		/// </summary>
-		/// <param name="worksheet">The worksheet to save.</param>
-		/// <param name="myStream">The stream where the xml data are to save into.</param>
-		/// <param name="saveAsTemplate">If true, the data are not saved, but only the layout of the worksheet (columns, property columns, scripts). If false, everything including the data is saved.</param>
-		public static void Save(this WorksheetLayout worksheet, System.IO.Stream myStream, bool saveAsTemplate)
-		{
-			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-			if (saveAsTemplate)
-			{
-				info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", "true");
-			}
-			info.BeginWriting(myStream);
+  /// <summary>
+  /// Routines for saving the worksheet layout and corresponding table.
+  /// </summary>
+  public static class FileCommands
+  {
+    /// <summary>
+    /// Saves the worksheet (data table and the corresponding layout, including scripts) into a xml file.
+    /// </summary>
+    /// <param name="worksheet">The worksheet to save.</param>
+    /// <param name="myStream">The stream where the xml data are to save into.</param>
+    /// <param name="saveAsTemplate">If true, the data are not saved, but only the layout of the worksheet (columns, property columns, scripts). If false, everything including the data is saved.</param>
+    public static void Save(this WorksheetLayout worksheet, System.IO.Stream myStream, bool saveAsTemplate)
+    {
+      Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+      if (saveAsTemplate)
+      {
+        info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", "true");
+      }
+      info.BeginWriting(myStream);
 
-			// TODO there is an issue with TableLayout that prevents a nice deserialization
-			// this is because TableLayout stores the name of its table during serialization
-			// onto deserialization this works well if the entire document is restored, but
-			// doesn't work if only a table and its layout is to be restored. In this case, the layout
-			// references the already present table with the same name in the document instead of the table
-			// deserialized. Also, the GUID isn't unique if the template is deserialized more than one time.
+      // TODO there is an issue with TableLayout that prevents a nice deserialization
+      // this is because TableLayout stores the name of its table during serialization
+      // onto deserialization this works well if the entire document is restored, but
+      // doesn't work if only a table and its layout is to be restored. In this case, the layout
+      // references the already present table with the same name in the document instead of the table
+      // deserialized. Also, the GUID isn't unique if the template is deserialized more than one time.
 
-			Altaxo.Worksheet.TablePlusLayout tableAndLayout =
-				new Altaxo.Worksheet.TablePlusLayout(worksheet.DataTable, worksheet);
-			info.AddValue("TablePlusLayout", tableAndLayout);
-			info.EndWriting();
-		}
+      Altaxo.Worksheet.TablePlusLayout tableAndLayout =
+        new Altaxo.Worksheet.TablePlusLayout(worksheet.DataTable, worksheet);
+      info.AddValue("TablePlusLayout", tableAndLayout);
+      info.EndWriting();
+    }
 
-		/// <summary>
-		/// Shows the SaveAs dialog and then saves the worksheet (data table and the corresponding layout, including scripts) into a xml file.
-		/// </summary>
-		/// <param name="worksheet">The worksheet to save.</param>
-		/// <param name="saveAsTemplate">If true, the data are not saved, but only the layout of the worksheet (columns, property columns, scripts). If false, everything including the data is saved.</param>
-		public static void ShowSaveAsDialog(this WorksheetLayout worksheet, bool saveAsTemplate)
-		{
-			var options = new Altaxo.Gui.SaveFileOptions();
-			options.AddFilter("*.axowks", "Altaxo worksheet files (*.axowks)");
-			options.AddFilter("*.*", "All files (*.*)");
-			options.FilterIndex = 0;
-			options.RestoreDirectory = true;
+    /// <summary>
+    /// Shows the SaveAs dialog and then saves the worksheet (data table and the corresponding layout, including scripts) into a xml file.
+    /// </summary>
+    /// <param name="worksheet">The worksheet to save.</param>
+    /// <param name="saveAsTemplate">If true, the data are not saved, but only the layout of the worksheet (columns, property columns, scripts). If false, everything including the data is saved.</param>
+    public static void ShowSaveAsDialog(this WorksheetLayout worksheet, bool saveAsTemplate)
+    {
+      var options = new Altaxo.Gui.SaveFileOptions();
+      options.AddFilter("*.axowks", "Altaxo worksheet files (*.axowks)");
+      options.AddFilter("*.*", "All files (*.*)");
+      options.FilterIndex = 0;
+      options.RestoreDirectory = true;
 
-			if (Current.Gui.ShowSaveFileDialog(options))
-			{
-				using (Stream myStream = new System.IO.FileStream(options.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
-				{
-					Save(worksheet, myStream, saveAsTemplate);
-					myStream.Close();
-				}
-			}
-		}
-	}
+      if (Current.Gui.ShowSaveFileDialog(options))
+      {
+        using (Stream myStream = new System.IO.FileStream(options.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+        {
+          Save(worksheet, myStream, saveAsTemplate);
+          myStream.Close();
+        }
+      }
+    }
+  }
 }

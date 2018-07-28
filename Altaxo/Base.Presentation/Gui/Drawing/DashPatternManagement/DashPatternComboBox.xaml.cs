@@ -44,89 +44,89 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-	public partial class DashPatternComboBox : DashPatternComboBoxBase, IDashPatternView
-	{
-		private DashPatternToItemNameConverter _itemToItemNameConverter;
+  public partial class DashPatternComboBox : DashPatternComboBoxBase, IDashPatternView
+  {
+    private DashPatternToItemNameConverter _itemToItemNameConverter;
 
-		#region Constructors
+    #region Constructors
 
-		public DashPatternComboBox()
-			: base(DashPatternListManager.Instance)
-		{
-			UpdateTreeViewTreeNodes();
+    public DashPatternComboBox()
+      : base(DashPatternListManager.Instance)
+    {
+      UpdateTreeViewTreeNodes();
 
-			InitializeComponent();
+      InitializeComponent();
 
-			_itemToItemNameConverter = new DashPatternToItemNameConverter(GuiComboBox);
+      _itemToItemNameConverter = new DashPatternToItemNameConverter(GuiComboBox);
 
-			UpdateComboBoxSourceSelection(SelectedItem);
-			UpdateTreeViewSelection();
+      UpdateComboBoxSourceSelection(SelectedItem);
+      UpdateTreeViewSelection();
 
-			var valueBinding = new Binding();
-			valueBinding.Source = this;
-			valueBinding.Path = new PropertyPath("SelectedItem");
-			valueBinding.Converter = _itemToItemNameConverter;
-			//valueBinding.ValidationRules.Add(new ValidationWithErrorString(_itemToItemNameConverter.EhValidateText));
-			GuiComboBox.SetBinding(ComboBox.TextProperty, valueBinding);
-		}
+      var valueBinding = new Binding();
+      valueBinding.Source = this;
+      valueBinding.Path = new PropertyPath("SelectedItem");
+      valueBinding.Converter = _itemToItemNameConverter;
+      //valueBinding.ValidationRules.Add(new ValidationWithErrorString(_itemToItemNameConverter.EhValidateText));
+      GuiComboBox.SetBinding(ComboBox.TextProperty, valueBinding);
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Implementation of abstract base class members
+    #region Implementation of abstract base class members
 
-		protected override TreeView GuiTreeView { get { return _guiTreeView; } }
+    protected override TreeView GuiTreeView { get { return _guiTreeView; } }
 
-		protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
+    protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
 
-		protected override IDashPattern GuiComboBoxSelectedValue
-		{
-			get
-			{
-				return _guiComboBox.SelectedDashStyle;
-			}
+    protected override IDashPattern GuiComboBoxSelectedValue
+    {
+      get
+      {
+        return _guiComboBox.SelectedDashStyle;
+      }
 
-			set
-			{
-				_guiComboBox.SelectedDashStyle = value;
-			}
-		}
+      set
+      {
+        _guiComboBox.SelectedDashStyle = value;
+      }
+    }
 
-		/// <summary>
-		/// Function that converts the <see cref="IDashPattern"/> items to <see cref="ImageComboBoxItem"/> items (the separators are not converted).
-		/// </summary>
-		/// <param name="source">The source items.</param>
-		/// <returns>Mixture of <see cref="ImageComboBoxItem"/> and separators.</returns>
-		protected override IEnumerable<object> ConvertComboBoxSourceItems(IEnumerable<object> source)
-		{
-			foreach (var item in source)
-			{
-				if (item is IDashPattern)
-					yield return new ImageComboBoxItem(_guiComboBox, item);
-				else
-					yield return item;
-			}
-		}
+    /// <summary>
+    /// Function that converts the <see cref="IDashPattern"/> items to <see cref="ImageComboBoxItem"/> items (the separators are not converted).
+    /// </summary>
+    /// <param name="source">The source items.</param>
+    /// <returns>Mixture of <see cref="ImageComboBoxItem"/> and separators.</returns>
+    protected override IEnumerable<object> ConvertComboBoxSourceItems(IEnumerable<object> source)
+    {
+      foreach (var item in source)
+      {
+        if (item is IDashPattern)
+          yield return new ImageComboBoxItem(_guiComboBox, item);
+        else
+          yield return item;
+      }
+    }
 
-		public override string GetDisplayName(IDashPattern item)
-		{
-			return (string)_itemToItemNameConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture);
-		}
+    public override string GetDisplayName(IDashPattern item)
+    {
+      return (string)_itemToItemNameConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture);
+    }
 
-		#endregion Implementation of abstract base class members
+    #endregion Implementation of abstract base class members
 
-		#region Tree View
+    #region Tree View
 
-		/// <summary>
-		/// Provides public access to the <see cref="DataTemplateSelector"/> that selected the data template for different nodes of the TreeView.
-		/// </summary>
-		public DataTemplateSelector TreeViewItemTemplateSelector
-		{
-			get
-			{
-				return new TreeViewDataTemplateSelector(this);
-			}
-		}
+    /// <summary>
+    /// Provides public access to the <see cref="DataTemplateSelector"/> that selected the data template for different nodes of the TreeView.
+    /// </summary>
+    public DataTemplateSelector TreeViewItemTemplateSelector
+    {
+      get
+      {
+        return new TreeViewDataTemplateSelector(this);
+      }
+    }
 
-		#endregion Tree View
-	}
+    #endregion Tree View
+  }
 }

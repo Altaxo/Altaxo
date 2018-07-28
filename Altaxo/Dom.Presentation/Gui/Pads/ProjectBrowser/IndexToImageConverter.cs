@@ -31,43 +31,43 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-	public class IndexToImageConverter : IValueConverter
-	{
-		private static List<ImageSource> _imageList;
+  public class IndexToImageConverter : IValueConverter
+  {
+    private static List<ImageSource> _imageList;
 
-		private static void Initialize()
-		{
-			_imageList = new List<ImageSource>();
+    private static void Initialize()
+    {
+      _imageList = new List<ImageSource>();
 
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Desktop"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.ClosedFolderBitmap"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.StandardWorksheet"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PlotLineScatter"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PropertyBag"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Editor"));
-		}
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Desktop"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.ClosedFolderBitmap"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.StandardWorksheet"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PlotLineScatter"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PropertyBag"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Editor"));
+    }
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			if (null == _imageList)
-				Initialize(); // this late initialization is done here to avoid errors during xaml browsing
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      if (null == _imageList)
+        Initialize(); // this late initialization is done here to avoid errors during xaml browsing
 
-			if (value is int)
-			{
-				int i = (int)value;
-				if (i >= 0 && i < _imageList.Count)
-					return _imageList[i];
-				else
-					return null;
-			}
-			else
-				return null;
-		}
+      if (value is int)
+      {
+        int i = (int)value;
+        if (i >= 0 && i < _imageList.Count)
+          return _imageList[i];
+        else
+          return null;
+      }
+      else
+        return null;
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

@@ -31,12 +31,12 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.GraphTemplates
 {
-	public static class TemplateBase
-	{
-		public static void AddStandardPropertiesToGraph(GraphDocument graph, IReadOnlyPropertyBag propertyContext)
-		{
-			// Set default font property exclusively for the graph
-			graph.PropertyBagNotNull.SetValue<FontX>(GraphDocument.PropertyKeyDefaultFont, propertyContext.GetValue<FontX>(GraphDocument.PropertyKeyDefaultFont));
-		}
-	}
+  public static class TemplateBase
+  {
+    public static void AddStandardPropertiesToGraph(GraphDocument graph, IReadOnlyPropertyBag propertyContext)
+    {
+      // Set default font property exclusively for the graph
+      graph.PropertyBagNotNull.SetValue<FontX>(GraphDocument.PropertyKeyDefaultFont, propertyContext.GetValue<FontX>(GraphDocument.PropertyKeyDefaultFont));
+    }
+  }
 }

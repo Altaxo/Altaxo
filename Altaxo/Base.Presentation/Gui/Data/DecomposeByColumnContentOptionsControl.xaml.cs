@@ -30,26 +30,26 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Data
 {
-	using Altaxo.Collections;
+  using Altaxo.Collections;
 
-	/// <summary>
-	/// Interaction logic for DecomposeByColumnContentControl.xaml
-	/// </summary>
-	public partial class DecomposeByColumnContentOptionsControl : UserControl, IDecomposeByColumnContentOptionsView
-	{
-		public DecomposeByColumnContentOptionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for DecomposeByColumnContentControl.xaml
+  /// </summary>
+  public partial class DecomposeByColumnContentOptionsControl : UserControl, IDecomposeByColumnContentOptionsView
+  {
+    public DecomposeByColumnContentOptionsControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeDestinationOutputFormat(SelectableListNodeList list)
-		{
-			_chDestinationOutput.Initialize(list);
-		}
+    public void InitializeDestinationOutputFormat(SelectableListNodeList list)
+    {
+      _chDestinationOutput.Initialize(list);
+    }
 
-		public void InitializeDestinationColumnSorting(SelectableListNodeList list)
-		{
-			_chDestinationColSort.Initialize(list);
-		}
-	}
+    public void InitializeDestinationColumnSorting(SelectableListNodeList list)
+    {
+      _chDestinationColSort.Initialize(list);
+    }
+  }
 }

@@ -33,41 +33,41 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Plot.Groups
 {
-	[ExpectedTypeOfView(typeof(IStyleListView))]
-	[UserControllerForObject(typeof(DashPatternGroupStyle))]
-	public class DashPatternGroupStyleController : MVCANControllerEditOriginalDocBase<DashPatternGroupStyle, IStyleListView>
-	{
-		private DashPatternListController _listController;
+  [ExpectedTypeOfView(typeof(IStyleListView))]
+  [UserControllerForObject(typeof(DashPatternGroupStyle))]
+  public class DashPatternGroupStyleController : MVCANControllerEditOriginalDocBase<DashPatternGroupStyle, IStyleListView>
+  {
+    private DashPatternListController _listController;
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_listController = new DashPatternListController();
-				_listController.InitializeDocument(_doc.ListOfValues);
-			}
+      if (initData)
+      {
+        _listController = new DashPatternListController();
+        _listController.InitializeDocument(_doc.ListOfValues);
+      }
 
-			if (null != _view)
-			{
-				_listController.ViewObject = _view;
-			}
-		}
+      if (null != _view)
+      {
+        _listController.ViewObject = _view;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_listController.Apply(disposeController))
-				return ApplyEnd(false, disposeController);
+    public override bool Apply(bool disposeController)
+    {
+      if (!_listController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
 
-			_doc.ListOfValues = (DashPatternList)_listController.ModelObject;
+      _doc.ListOfValues = (DashPatternList)_listController.ModelObject;
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_listController, () => _listController = null);
-		}
-	}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_listController, () => _listController = null);
+    }
+  }
 }

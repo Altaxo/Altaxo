@@ -30,53 +30,53 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common
 {
-	using swm = System.Windows.Media;
+  using swm = System.Windows.Media;
 
-	public class SortAdorner : Adorner
-	{
-		private readonly static swm.Geometry _AscGeometry =
-			 swm.Geometry.Parse("M 0,0 L 10,0 L 5,5 Z");
+  public class SortAdorner : Adorner
+  {
+    private readonly static swm.Geometry _AscGeometry =
+       swm.Geometry.Parse("M 0,0 L 10,0 L 5,5 Z");
 
-		private readonly static swm.Geometry _DescGeometry =
-				swm.Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
+    private readonly static swm.Geometry _DescGeometry =
+        swm.Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
 
-		public ListSortDirection Direction { get; private set; }
+    public ListSortDirection Direction { get; private set; }
 
-		public bool IsSecondaryAdorner { get; private set; }
+    public bool IsSecondaryAdorner { get; private set; }
 
-		public SortAdorner(UIElement element, ListSortDirection dir, bool isSecondaryAdorner)
-			: base(element)
-		{
-			Direction = dir;
-			IsSecondaryAdorner = isSecondaryAdorner;
-		}
+    public SortAdorner(UIElement element, ListSortDirection dir, bool isSecondaryAdorner)
+      : base(element)
+    {
+      Direction = dir;
+      IsSecondaryAdorner = isSecondaryAdorner;
+    }
 
-		protected override void OnRender(DrawingContext drawingContext)
-		{
-			base.OnRender(drawingContext);
+    protected override void OnRender(DrawingContext drawingContext)
+    {
+      base.OnRender(drawingContext);
 
-			if (AdornedElement.RenderSize.Width < 20)
-				return;
+      if (AdornedElement.RenderSize.Width < 20)
+        return;
 
-			drawingContext.PushTransform(
-					 new TranslateTransform(
-						 AdornedElement.RenderSize.Width - 15,
-						(AdornedElement.RenderSize.Height - 5) / 2));
+      drawingContext.PushTransform(
+           new TranslateTransform(
+             AdornedElement.RenderSize.Width - 15,
+            (AdornedElement.RenderSize.Height - 5) / 2));
 
-			if (IsSecondaryAdorner)
-			{
-				drawingContext.DrawGeometry(null, new Pen(Brushes.Black, 0.5),
-						Direction == ListSortDirection.Ascending ?
-							_AscGeometry : _DescGeometry);
-			}
-			else
-			{
-				drawingContext.DrawGeometry(Brushes.Black, null,
-						Direction == ListSortDirection.Ascending ?
-							_AscGeometry : _DescGeometry);
-			}
+      if (IsSecondaryAdorner)
+      {
+        drawingContext.DrawGeometry(null, new Pen(Brushes.Black, 0.5),
+            Direction == ListSortDirection.Ascending ?
+              _AscGeometry : _DescGeometry);
+      }
+      else
+      {
+        drawingContext.DrawGeometry(Brushes.Black, null,
+            Direction == ListSortDirection.Ascending ?
+              _AscGeometry : _DescGeometry);
+      }
 
-			drawingContext.Pop();
-		}
-	}
+      drawingContext.Pop();
+    }
+  }
 }

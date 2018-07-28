@@ -29,9 +29,9 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D
 {
-	public enum PenLineJoin
-	{
-		Miter = 0,
-		Bevel = 1
-	}
+  public enum PenLineJoin
+  {
+    Miter = 0,
+    Bevel = 1
+  }
 }

@@ -30,42 +30,42 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.Length
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Inch), 0)]
-	public class SerializationSurrogate0_Inch : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Inch), 0)]
+  public class SerializationSurrogate0_Inch : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Inch.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Inch.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Meter), 0)]
-	public class SerializationSurrogate0_Meter : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Meter), 0)]
+  public class SerializationSurrogate0_Meter : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Meter.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Meter.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Point), 0)]
-	public class SerializationSurrogate0_Point : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Point), 0)]
+  public class SerializationSurrogate0_Point : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Point.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Point.Instance;
+    }
+  }
 }

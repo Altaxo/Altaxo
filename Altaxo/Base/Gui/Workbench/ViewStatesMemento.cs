@@ -30,38 +30,38 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Stores the currently selected view, so that the last selected view can be selected again after loading a project.
-	/// </summary>
-	public class ViewStatesMemento
-	{
-		/// <summary>
-		/// Gets or sets the name of the zip entry of the view that was selected during storing the project.
-		/// </summary>
-		public string SelectedView_EntryName { get; set; }
+  /// <summary>
+  /// Stores the currently selected view, so that the last selected view can be selected again after loading a project.
+  /// </summary>
+  public class ViewStatesMemento
+  {
+    /// <summary>
+    /// Gets or sets the name of the zip entry of the view that was selected during storing the project.
+    /// </summary>
+    public string SelectedView_EntryName { get; set; }
 
-		#region "Serialization"
+    #region "Serialization"
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ViewStatesMemento), 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (ViewStatesMemento)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ViewStatesMemento), 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ViewStatesMemento)obj;
 
-				info.AddValue("SelectedView", s.SelectedView_EntryName);
-			}
+        info.AddValue("SelectedView", s.SelectedView_EntryName);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (ViewStatesMemento)o ?? new ViewStatesMemento();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (ViewStatesMemento)o ?? new ViewStatesMemento();
 
-				s.SelectedView_EntryName = info.GetString("SelectedView");
+        s.SelectedView_EntryName = info.GetString("SelectedView");
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion "Serialization"
-	}
+    #endregion "Serialization"
+  }
 }

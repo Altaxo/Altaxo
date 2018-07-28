@@ -34,53 +34,53 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class DownTriangle : ClosedSymbolBase
-	{
-		#region Serialization
+  public class DownTriangle : ClosedSymbolBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DownTriangle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DownTriangle), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 
-				SerializeSetV0((IScatterSymbol)obj, info);
-			}
+        SerializeSetV0((IScatterSymbol)obj, info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (DownTriangle)o ?? new DownTriangle();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (DownTriangle)o ?? new DownTriangle();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
-				return DeserializeSetV0(s, info, parent);
-			}
-		}
+        return DeserializeSetV0(s, info, parent);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public DownTriangle()
-		{
-		}
+    public DownTriangle()
+    {
+    }
 
-		public DownTriangle(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
-			: base(fillColor, isFillColorInfluencedByPlotColor)
-		{
-		}
+    public DownTriangle(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
+      : base(fillColor, isFillColorInfluencedByPlotColor)
+    {
+    }
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
-		{
-			var list = new List<ClipperLib.IntPoint>(3);
-			for (int i = 0; i < 3; ++i)
-			{
-				var phi = Math.PI * ((4 * i - 3) / 6.0);
-				list.Add(new IntPoint((int)(ClipperScalingInt * Math.Cos(phi)), (int)(ClipperScalingInt * Math.Sin(phi))));
-			}
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
+    {
+      var list = new List<ClipperLib.IntPoint>(3);
+      for (int i = 0; i < 3; ++i)
+      {
+        var phi = Math.PI * ((4 * i - 3) / 6.0);
+        list.Add(new IntPoint((int)(ClipperScalingInt * Math.Cos(phi)), (int)(ClipperScalingInt * Math.Sin(phi))));
+      }
 
-			return new List<List<ClipperLib.IntPoint>>(1) { list };
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1) { list };
+    }
+  }
 }

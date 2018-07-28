@@ -26,54 +26,54 @@ using Markdig.Extensions.Tables;
 
 namespace Altaxo.Text.Renderers.Maml.Extensions
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="Table"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{Table}" />
-	public class TableRenderer : MamlObjectRenderer<Table>
-	{
-		protected override void Write(MamlRenderer renderer, Table table)
-		{
-			renderer.Push(MamlElements.table);
-			renderer.Push(MamlElements.tableHeader);
+  /// <summary>
+  /// Maml renderer for a <see cref="Table"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{Table}" />
+  public class TableRenderer : MamlObjectRenderer<Table>
+  {
+    protected override void Write(MamlRenderer renderer, Table table)
+    {
+      renderer.Push(MamlElements.table);
+      renderer.Push(MamlElements.tableHeader);
 
-			foreach (TableRow row in table)
-			{
-				if (row.IsHeader)
-				{
-					renderer.Push(MamlElements.row);
+      foreach (TableRow row in table)
+      {
+        if (row.IsHeader)
+        {
+          renderer.Push(MamlElements.row);
 
-					foreach (TableCell cell in row)
-					{
-						renderer.Push(MamlElements.entry);
-						renderer.Write(cell);
-						renderer.PopTo(MamlElements.entry);
-					}
+          foreach (TableCell cell in row)
+          {
+            renderer.Push(MamlElements.entry);
+            renderer.Write(cell);
+            renderer.PopTo(MamlElements.entry);
+          }
 
-					renderer.PopTo(MamlElements.row);
-				}
-			}
+          renderer.PopTo(MamlElements.row);
+        }
+      }
 
-			renderer.PopTo(MamlElements.tableHeader);
+      renderer.PopTo(MamlElements.tableHeader);
 
-			foreach (TableRow row in table)
-			{
-				if (!row.IsHeader)
-				{
-					renderer.Push(MamlElements.row);
+      foreach (TableRow row in table)
+      {
+        if (!row.IsHeader)
+        {
+          renderer.Push(MamlElements.row);
 
-					foreach (TableCell cell in row)
-					{
-						renderer.Push(MamlElements.entry);
-						renderer.Write(cell);
-						renderer.PopTo(MamlElements.entry);
-					}
+          foreach (TableCell cell in row)
+          {
+            renderer.Push(MamlElements.entry);
+            renderer.Write(cell);
+            renderer.PopTo(MamlElements.entry);
+          }
 
-					renderer.PopTo(MamlElements.row);
-				}
-			}
+          renderer.PopTo(MamlElements.row);
+        }
+      }
 
-			renderer.PopTo(MamlElements.table);
-		}
-	}
+      renderer.PopTo(MamlElements.table);
+    }
+  }
 }

@@ -28,128 +28,128 @@ using System;
 
 namespace AltaxoTest.Calc.Fourier
 {
-	[TestFixture]
-	public class TestNativeSplittedComplexCorrelation
-	{
-		private const int nLowerLimit = 5;
-		private const int nUpperLimit = 100;
-		private const double maxTolerableEpsPerN = 1E-15;
+  [TestFixture]
+  public class TestNativeSplittedComplexCorrelation
+  {
+    private const int nLowerLimit = 5;
+    private const int nUpperLimit = 100;
+    private const double maxTolerableEpsPerN = 1E-15;
 
-		private SplittedComplexCorrelationTests _test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(NativeFourierMethods.CorrelationCyclic));
+    private SplittedComplexCorrelationTests _test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(NativeFourierMethods.CorrelationCyclic));
 
-		[Test]
-		public void Test01BothZero()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestBothZero(i);
-		}
+    [Test]
+    public void Test01BothZero()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestBothZero(i);
+    }
 
-		[Test]
-		public void Test02OneZero()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestOneZero(i);
-		}
+    [Test]
+    public void Test02OneZero()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestOneZero(i);
+    }
 
-		[Test]
-		public void Test03ReOne_ZeroPos()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestReOne_ZeroPos(i);
-		}
+    [Test]
+    public void Test03ReOne_ZeroPos()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestReOne_ZeroPos(i);
+    }
 
-		[Test]
-		public void Test04OneReOne_OtherRandom()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestOneReOne_OtherRandom(i);
-		}
+    [Test]
+    public void Test04OneReOne_OtherRandom()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestOneReOne_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test05OneImOne_OtherRandom()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestOneImOne_OtherRandom(i);
-		}
+    [Test]
+    public void Test05OneImOne_OtherRandom()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestOneImOne_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test06ReOne_OnePos_OtherRandom()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestReOne_OnePos_OtherRandom(i);
-		}
+    [Test]
+    public void Test06ReOne_OnePos_OtherRandom()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestReOne_OnePos_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test07ImOne_OnePos_OtherRandom()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestImOne_OnePos_OtherRandom(i);
-		}
+    [Test]
+    public void Test07ImOne_OnePos_OtherRandom()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestImOne_OnePos_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test08BothRandom()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestBothRandom(i);
-		}
-	}
+    [Test]
+    public void Test08BothRandom()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestBothRandom(i);
+    }
+  }
 
-	[TestFixture]
-	public class TestNativeRealCorrelation
-	{
-		private const int nLowerLimit = 5;
-		private const int nUpperLimit = 100;
-		private const double maxTolerableEpsPerN = 1E-15;
+  [TestFixture]
+  public class TestNativeRealCorrelation
+  {
+    private const int nLowerLimit = 5;
+    private const int nUpperLimit = 100;
+    private const double maxTolerableEpsPerN = 1E-15;
 
-		private RealCorrelationTests _test = new RealCorrelationTests(new RealCorrelationTests.CorrelationRoutine(NativeFourierMethods.CorrelationCyclic));
+    private RealCorrelationTests _test = new RealCorrelationTests(new RealCorrelationTests.CorrelationRoutine(NativeFourierMethods.CorrelationCyclic));
 
-		[Test]
-		public void Test01BothZero()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestBothZero(i);
-		}
+    [Test]
+    public void Test01BothZero()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestBothZero(i);
+    }
 
-		[Test]
-		public void Test02OneZero()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestOneZero(i);
-		}
+    [Test]
+    public void Test02OneZero()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestOneZero(i);
+    }
 
-		[Test]
-		public void Test03ReOne_ZeroPos()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestReOne_ZeroPos(i);
-		}
+    [Test]
+    public void Test03ReOne_ZeroPos()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestReOne_ZeroPos(i);
+    }
 
-		[Test]
-		public void Test04ReOne_ReOne_OnePos()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestReOne_ReOne_OnePos(i);
-		}
+    [Test]
+    public void Test04ReOne_ReOne_OnePos()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestReOne_ReOne_OnePos(i);
+    }
 
-		[Test]
-		public void Test05OneReOne_OtherRandom()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestOneReOne_OtherRandom(i);
-		}
+    [Test]
+    public void Test05OneReOne_OtherRandom()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestOneReOne_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test06ReOne_OnePos_OtherRandom()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestReOne_OnePos_OtherRandom(i);
-		}
+    [Test]
+    public void Test06ReOne_OnePos_OtherRandom()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestReOne_OnePos_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test07BothRandom()
-		{
-			for (int i = nLowerLimit; i <= nUpperLimit; i++)
-				_test.TestBothRandom(i);
-		}
-	}
+    [Test]
+    public void Test07BothRandom()
+    {
+      for (int i = nLowerLimit; i <= nUpperLimit; i++)
+        _test.TestBothRandom(i);
+    }
+  }
 }

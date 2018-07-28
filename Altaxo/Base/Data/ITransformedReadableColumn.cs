@@ -29,40 +29,40 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	/// <summary>
-	/// Interface to a readable column that is amended with a transformation.
-	/// </summary>
-	/// <seealso cref="Altaxo.Data.IReadableColumn" />
-	public interface ITransformedReadableColumn : IReadableColumn
-	{
-		/// <summary>
-		/// Gets the original readable column, i.e. the readable column without the transformation.
-		/// </summary>
-		/// <value>
-		/// The original readable column.
-		/// </value>
-		IReadableColumn UnderlyingReadableColumn { get; }
+  /// <summary>
+  /// Interface to a readable column that is amended with a transformation.
+  /// </summary>
+  /// <seealso cref="Altaxo.Data.IReadableColumn" />
+  public interface ITransformedReadableColumn : IReadableColumn
+  {
+    /// <summary>
+    /// Gets the original readable column, i.e. the readable column without the transformation.
+    /// </summary>
+    /// <value>
+    /// The original readable column.
+    /// </value>
+    IReadableColumn UnderlyingReadableColumn { get; }
 
-		/// <summary>
-		/// Gets a new instance of this class with the same transformation, but another underlying readable column.
-		/// </summary>
-		/// <param name="underlyingReadableColumn">The new original readable column.</param>
-		/// <returns>New instance of this class with the same transformation, but another underlying readable column.</returns>
-		ITransformedReadableColumn WithUnderlyingReadableColumn(IReadableColumn underlyingReadableColumn);
+    /// <summary>
+    /// Gets a new instance of this class with the same transformation, but another underlying readable column.
+    /// </summary>
+    /// <param name="underlyingReadableColumn">The new original readable column.</param>
+    /// <returns>New instance of this class with the same transformation, but another underlying readable column.</returns>
+    ITransformedReadableColumn WithUnderlyingReadableColumn(IReadableColumn underlyingReadableColumn);
 
-		/// <summary>
-		/// Gets the transformation.
-		/// </summary>
-		/// <value>
-		/// The transformation.
-		/// </value>
-		IVariantToVariantTransformation Transformation { get; }
+    /// <summary>
+    /// Gets the transformation.
+    /// </summary>
+    /// <value>
+    /// The transformation.
+    /// </value>
+    IVariantToVariantTransformation Transformation { get; }
 
-		/// <summary>
-		/// Gets a new instance of this class with the same underlying original column, but with another transformation.
-		/// </summary>
-		/// <param name="transformation">The new transformation.</param>
-		/// <returns>A new instance of this class with the same underlying original column, but with another transformation.</returns>
-		ITransformedReadableColumn WithTransformation(IVariantToVariantTransformation transformation);
-	}
+    /// <summary>
+    /// Gets a new instance of this class with the same underlying original column, but with another transformation.
+    /// </summary>
+    /// <param name="transformation">The new transformation.</param>
+    /// <returns>A new instance of this class with the same underlying original column, but with another transformation.</returns>
+    ITransformedReadableColumn WithTransformation(IVariantToVariantTransformation transformation);
+  }
 }

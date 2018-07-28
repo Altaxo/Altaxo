@@ -21,10 +21,10 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Message service that sets an owner for dialog boxes.
-	/// </summary>
-	public interface IDialogMessageService : IMessageService
-	{
-	}
+  /// <summary>
+  /// Message service that sets an owner for dialog boxes.
+  /// </summary>
+  public interface IDialogMessageService : IMessageService
+  {
+  }
 }

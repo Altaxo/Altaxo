@@ -32,116 +32,116 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
-	internal class ColorControllerHelper
-	{
-		#region Inner class
+  internal class ColorControllerHelper
+  {
+    #region Inner class
 
-		/// <summary>
-		/// Special tree node for a color set. This tree node fills its child items only when it gets expanded.
-		/// </summary>
-		private class NGTreeNodeForColorSet : NGTreeNode
-		{
-			public NGTreeNodeForColorSet(IColorSet colorSet)
-				: base(true)
-			{
-				_tag = colorSet;
-				_text = colorSet.Name;
-			}
+    /// <summary>
+    /// Special tree node for a color set. This tree node fills its child items only when it gets expanded.
+    /// </summary>
+    private class NGTreeNodeForColorSet : NGTreeNode
+    {
+      public NGTreeNodeForColorSet(IColorSet colorSet)
+        : base(true)
+      {
+        _tag = colorSet;
+        _text = colorSet.Name;
+      }
 
-			protected override void LoadChildren()
-			{
-				base.LoadChildren();
+      protected override void LoadChildren()
+      {
+        base.LoadChildren();
 
-				foreach (var c in (IColorSet)_tag)
-				{
-					Nodes.Add(new NGTreeNode() { Text = c.Name, Tag = c });
-				}
-			}
-		}
+        foreach (var c in (IColorSet)_tag)
+        {
+          Nodes.Add(new NGTreeNode() { Text = c.Name, Tag = c });
+        }
+      }
+    }
 
-		#endregion Inner class
+    #endregion Inner class
 
-		/// <summary>
-		/// Updates the TreeView tree nodes of the color tree.
-		/// </summary>
-		/// <param name="rootNode">The root node of the color tree.</param>
-		/// <param name="showPlotColorsOnly">if set to <c>true</c>, the tree will show plot colors only.</param>
-		/// <param name="currentSelectedObject">The current selected object. Can either be a <see cref="IColorSet"/> or a <see cref="NamedColor"/>.</param>
-		/// <exception cref="System.InvalidProgramException"></exception>
-		public static void UpdateColorTreeViewTreeNodes(NGTreeNode rootNode, bool showPlotColorsOnly, object currentSelectedObject)
-		{
-			var manager = ColorSetManager.Instance;
+    /// <summary>
+    /// Updates the TreeView tree nodes of the color tree.
+    /// </summary>
+    /// <param name="rootNode">The root node of the color tree.</param>
+    /// <param name="showPlotColorsOnly">if set to <c>true</c>, the tree will show plot colors only.</param>
+    /// <param name="currentSelectedObject">The current selected object. Can either be a <see cref="IColorSet"/> or a <see cref="NamedColor"/>.</param>
+    /// <exception cref="System.InvalidProgramException"></exception>
+    public static void UpdateColorTreeViewTreeNodes(NGTreeNode rootNode, bool showPlotColorsOnly, object currentSelectedObject)
+    {
+      var manager = ColorSetManager.Instance;
 
-			var builtIn = new NGTreeNode() { Text = "Builtin", Tag = Altaxo.Main.ItemDefinitionLevel.Builtin };
-			var app = new NGTreeNode() { Text = "Application", Tag = Altaxo.Main.ItemDefinitionLevel.Application };
-			var user = new NGTreeNode() { Text = "User", Tag = Altaxo.Main.ItemDefinitionLevel.UserDefined };
-			var proj = new NGTreeNode() { Text = "Project", Tag = Altaxo.Main.ItemDefinitionLevel.Project };
+      var builtIn = new NGTreeNode() { Text = "Builtin", Tag = Altaxo.Main.ItemDefinitionLevel.Builtin };
+      var app = new NGTreeNode() { Text = "Application", Tag = Altaxo.Main.ItemDefinitionLevel.Application };
+      var user = new NGTreeNode() { Text = "User", Tag = Altaxo.Main.ItemDefinitionLevel.UserDefined };
+      var proj = new NGTreeNode() { Text = "Project", Tag = Altaxo.Main.ItemDefinitionLevel.Project };
 
-			IColorSet parentColorSetOfColor = null;
-			NamedColor selectedColor;
-			if (currentSelectedObject is NamedColor)
-			{
-				selectedColor = (NamedColor)currentSelectedObject;
-				parentColorSetOfColor = selectedColor.ParentColorSet;
-			}
-			else
-			{
-				selectedColor = NamedColors.Black;
-			}
+      IColorSet parentColorSetOfColor = null;
+      NamedColor selectedColor;
+      if (currentSelectedObject is NamedColor)
+      {
+        selectedColor = (NamedColor)currentSelectedObject;
+        parentColorSetOfColor = selectedColor.ParentColorSet;
+      }
+      else
+      {
+        selectedColor = NamedColors.Black;
+      }
 
-			foreach (var set in manager.GetEntryValues())
-			{
-				if (showPlotColorsOnly && !set.IsPlotColorSet)
-					continue;
+      foreach (var set in manager.GetEntryValues())
+      {
+        if (showPlotColorsOnly && !set.IsPlotColorSet)
+          continue;
 
-				NGTreeNode newNode;
+        NGTreeNode newNode;
 
-				switch (set.Level)
-				{
-					case Altaxo.Main.ItemDefinitionLevel.Builtin:
-						builtIn.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
-						break;
+        switch (set.Level)
+        {
+          case Altaxo.Main.ItemDefinitionLevel.Builtin:
+            builtIn.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
+            break;
 
-					case Altaxo.Main.ItemDefinitionLevel.Application:
-						app.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
-						break;
+          case Altaxo.Main.ItemDefinitionLevel.Application:
+            app.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
+            break;
 
-					case Altaxo.Main.ItemDefinitionLevel.UserDefined:
-						user.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
-						break;
+          case Altaxo.Main.ItemDefinitionLevel.UserDefined:
+            user.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
+            break;
 
-					case Altaxo.Main.ItemDefinitionLevel.Project:
-						proj.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
-						break;
+          case Altaxo.Main.ItemDefinitionLevel.Project:
+            proj.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
+            break;
 
-					default:
-						throw new InvalidProgramException(string.Format("Unknown level {0}. Please report this error to the forum.", set.Level));
-				}
+          default:
+            throw new InvalidProgramException(string.Format("Unknown level {0}. Please report this error to the forum.", set.Level));
+        }
 
-				if (currentSelectedObject is IColorSet)
-				{
-					bool isCurrentlySelected = object.ReferenceEquals(set, currentSelectedObject);
-					newNode.IsSelected = isCurrentlySelected;
-					if (isCurrentlySelected)
-						newNode.IsExpanded = true;
-				}
-				else if (parentColorSetOfColor != null && object.ReferenceEquals(set, parentColorSetOfColor))
-				{
-					newNode.IsExpanded = true;
+        if (currentSelectedObject is IColorSet)
+        {
+          bool isCurrentlySelected = object.ReferenceEquals(set, currentSelectedObject);
+          newNode.IsSelected = isCurrentlySelected;
+          if (isCurrentlySelected)
+            newNode.IsExpanded = true;
+        }
+        else if (parentColorSetOfColor != null && object.ReferenceEquals(set, parentColorSetOfColor))
+        {
+          newNode.IsExpanded = true;
 
-					foreach (var node in newNode.Nodes)
-					{
-						if ((node.Tag is NamedColor) && ((NamedColor)node.Tag) == selectedColor)
-							node.IsSelected = true;
-					}
-				}
-			}
+          foreach (var node in newNode.Nodes)
+          {
+            if ((node.Tag is NamedColor) && ((NamedColor)node.Tag) == selectedColor)
+              node.IsSelected = true;
+          }
+        }
+      }
 
-			rootNode.Nodes.Clear();
-			rootNode.Nodes.Add(builtIn);
-			rootNode.Nodes.Add(app);
-			rootNode.Nodes.Add(user);
-			rootNode.Nodes.Add(proj);
-		}
-	}
+      rootNode.Nodes.Clear();
+      rootNode.Nodes.Add(builtIn);
+      rootNode.Nodes.Add(app);
+      rootNode.Nodes.Add(user);
+      rootNode.Nodes.Add(proj);
+    }
+  }
 }

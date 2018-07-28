@@ -32,40 +32,40 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	/// <summary>
-	/// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
-	/// </summary>
-	public partial class DensityImagePlotStyleControl : UserControl, IDensityImagePlotStyleView
-	{
-		public DensityImagePlotStyleControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
+  /// </summary>
+  public partial class DensityImagePlotStyleControl : UserControl, IDensityImagePlotStyleView
+  {
+    public DensityImagePlotStyleControl()
+    {
+      InitializeComponent();
+    }
 
-		#region IDensityImagePlotStyleView
+    #region IDensityImagePlotStyleView
 
-		public IDensityScaleView DensityScaleView
-		{
-			get { return _ctrlScale; }
-		}
+    public IDensityScaleView DensityScaleView
+    {
+      get { return _ctrlScale; }
+    }
 
-		public IColorProviderView ColorProviderView
-		{
-			get { return _colorProviderControl; }
-		}
+    public IColorProviderView ColorProviderView
+    {
+      get { return _colorProviderControl; }
+    }
 
-		public bool ClipToLayer
-		{
-			get
-			{
-				return true == _chkClipToLayer.IsChecked;
-			}
-			set
-			{
-				_chkClipToLayer.IsChecked = value;
-			}
-		}
+    public bool ClipToLayer
+    {
+      get
+      {
+        return true == _chkClipToLayer.IsChecked;
+      }
+      set
+      {
+        _chkClipToLayer.IsChecked = value;
+      }
+    }
 
-		#endregion IDensityImagePlotStyleView
-	}
+    #endregion IDensityImagePlotStyleView
+  }
 }

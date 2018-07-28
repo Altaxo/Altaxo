@@ -30,44 +30,44 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public class ImageComboBoxItem
-	{
-		public ImageComboBox Parent { get; set; }
+  public class ImageComboBoxItem
+  {
+    public ImageComboBox Parent { get; set; }
 
-		public object Value { get; set; }
+    public object Value { get; set; }
 
-		public ImageComboBoxItem()
-		{
-		}
+    public ImageComboBoxItem()
+    {
+    }
 
-		public ImageComboBoxItem(ImageComboBox parent, object item)
-		{
-			this.Parent = parent;
-			Value = item;
-		}
+    public ImageComboBoxItem(ImageComboBox parent, object item)
+    {
+      this.Parent = parent;
+      Value = item;
+    }
 
-		public virtual string Text
-		{
-			get
-			{
-				return null != Parent ? Parent.GetItemText(this.Value) : string.Empty;
-			}
-		}
+    public virtual string Text
+    {
+      get
+      {
+        return null != Parent ? Parent.GetItemText(this.Value) : string.Empty;
+      }
+    }
 
-		public override string ToString()
-		{
-			return this.Text;
-		}
+    public override string ToString()
+    {
+      return this.Text;
+    }
 
-		public virtual ImageSource Image
-		{
-			get
-			{
-				if (null != Parent)
-					return Parent.GetItemImage(this.Value);
-				else
-					return null;
-			}
-		}
-	}
+    public virtual ImageSource Image
+    {
+      get
+      {
+        if (null != Parent)
+          return Parent.GetItemImage(this.Value);
+        else
+          return null;
+      }
+    }
+  }
 }

@@ -31,48 +31,48 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// Interaction logic for PenAllPropertiesControl.xaml
-	/// </summary>
-	public partial class PenAllPropertiesControl : UserControl, IPenAllPropertiesView
-	{
-		private PenControlsGlue _glue;
+  /// <summary>
+  /// Interaction logic for PenAllPropertiesControl.xaml
+  /// </summary>
+  public partial class PenAllPropertiesControl : UserControl, IPenAllPropertiesView
+  {
+    private PenControlsGlue _glue;
 
-		public PenAllPropertiesControl()
-		{
-			InitializeComponent();
+    public PenAllPropertiesControl()
+    {
+      InitializeComponent();
 
-			_glue = new PenControlsGlue(true);
-			_glue.CbBrush = _cbBrush;
-			_glue.CbLineThickness = _cbThickness;
-			_glue.CbDashPattern = _cbDashStyle;
-			_glue.CbDashCap = _cbDashCap;
-			_glue.CbStartCap = _cbStartCap;
-			_glue.CbStartCapAbsSize = _cbStartCapSize;
-			_glue.CbStartCapRelSize = _edStartCapRelSize;
-			_glue.CbEndCap = _cbEndCap;
-			_glue.CbEndCapAbsSize = _cbEndCapSize;
-			_glue.CbEndCapRelSize = _edEndCapRelSize;
-			_glue.CbLineJoin = _cbLineJoin;
-			_glue.CbMiterLimit = _cbMiterLimit;
-			_glue.PreviewPanel = _previewPanel;
-		}
+      _glue = new PenControlsGlue(true);
+      _glue.CbBrush = _cbBrush;
+      _glue.CbLineThickness = _cbThickness;
+      _glue.CbDashPattern = _cbDashStyle;
+      _glue.CbDashCap = _cbDashCap;
+      _glue.CbStartCap = _cbStartCap;
+      _glue.CbStartCapAbsSize = _cbStartCapSize;
+      _glue.CbStartCapRelSize = _edStartCapRelSize;
+      _glue.CbEndCap = _cbEndCap;
+      _glue.CbEndCapAbsSize = _cbEndCapSize;
+      _glue.CbEndCapRelSize = _edEndCapRelSize;
+      _glue.CbLineJoin = _cbLineJoin;
+      _glue.CbMiterLimit = _cbMiterLimit;
+      _glue.PreviewPanel = _previewPanel;
+    }
 
-		public PenX Pen
-		{
-			get
-			{
-				return _glue.Pen;
-			}
-			set
-			{
-				_glue.Pen = value;
-			}
-		}
+    public PenX Pen
+    {
+      get
+      {
+        return _glue.Pen;
+      }
+      set
+      {
+        _glue.Pen = value;
+      }
+    }
 
-		public bool ShowPlotColorsOnly
-		{
-			set { _glue.ShowPlotColorsOnly = value; }
-		}
-	}
+    public bool ShowPlotColorsOnly
+    {
+      set { _glue.ShowPlotColorsOnly = value; }
+    }
+  }
 }

@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing
 {
-	public interface ICompletionDataEx : ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData
-	{
-		bool IsSelected { get; }
+  public interface ICompletionDataEx : ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData
+  {
+    bool IsSelected { get; }
 
-		string SortText { get; }
-	}
+    string SortText { get; }
+  }
 }

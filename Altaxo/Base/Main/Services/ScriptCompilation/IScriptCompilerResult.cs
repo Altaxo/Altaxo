@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
-	public interface IScriptCompilerResult
-	{
-		int ScriptTextCount { get; }
+  public interface IScriptCompilerResult
+  {
+    int ScriptTextCount { get; }
 
-		string ScriptText(int i);
+    string ScriptText(int i);
 
-		string ScriptTextHash { get; }
-	}
+    string ScriptTextHash { get; }
+  }
 }

@@ -27,30 +27,30 @@ using System;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// Summary description for RectangleDrawingMouseHandler.
-	/// </summary>
-	public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
-	{
-		public RectangleDrawingMouseHandler(GraphController grac)
-			: base(grac)
-		{
-		}
+  /// <summary>
+  /// Summary description for RectangleDrawingMouseHandler.
+  /// </summary>
+  public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
+  {
+    public RectangleDrawingMouseHandler(GraphController grac)
+      : base(grac)
+    {
+    }
 
-		public override GraphToolType GraphToolType
-		{
-			get { return GraphToolType.RectangleDrawing; }
-		}
+    public override GraphToolType GraphToolType
+    {
+      get { return GraphToolType.RectangleDrawing; }
+    }
 
-		protected override void FinishDrawing()
-		{
-			var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
-			RectangleShape go = new RectangleShape(_grac.Doc.GetPropertyContext());
-			go.SetParentSize(_grac.ActiveLayer.Size, false);
-			go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
-			// deselect the text tool
-			_grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-			_grac.ActiveLayer.GraphObjects.Add(go);
-		}
-	}
+    protected override void FinishDrawing()
+    {
+      var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
+      RectangleShape go = new RectangleShape(_grac.Doc.GetPropertyContext());
+      go.SetParentSize(_grac.ActiveLayer.Size, false);
+      go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
+      // deselect the text tool
+      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+      _grac.ActiveLayer.GraphObjects.Add(go);
+    }
+  }
 }

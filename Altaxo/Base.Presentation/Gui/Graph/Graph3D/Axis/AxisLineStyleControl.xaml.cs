@@ -31,234 +31,234 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
-	using Altaxo.Collections;
-	using Altaxo.Drawing.D3D;
-	using Altaxo.Graph.Graph3D;
-	using Drawing.D3D;
+  using Altaxo.Collections;
+  using Altaxo.Drawing.D3D;
+  using Altaxo.Graph.Graph3D;
+  using Drawing.D3D;
 
-	/// <summary>
-	/// Interaction logic for AxisLineStyleControl.xaml
-	/// </summary>
-	public partial class AxisLineStyleControl : UserControl, IAxisLineStyleView
-	{
-		private PenControlsGlue _linePenGlue;
-		private PenControlsGlue _majorPenGlue;
-		private PenControlsGlue _minorPenGlue;
+  /// <summary>
+  /// Interaction logic for AxisLineStyleControl.xaml
+  /// </summary>
+  public partial class AxisLineStyleControl : UserControl, IAxisLineStyleView
+  {
+    private PenControlsGlue _linePenGlue;
+    private PenControlsGlue _majorPenGlue;
+    private PenControlsGlue _minorPenGlue;
 
-		public AxisLineStyleControl()
-		{
-			InitializeComponent();
+    public AxisLineStyleControl()
+    {
+      InitializeComponent();
 
-			_linePenGlue = new PenControlsGlue(false);
-			_linePenGlue.CbBrush = _lineBrushColor;
-			_linePenGlue.CbLineThickness1 = _lineLineThickness;
+      _linePenGlue = new PenControlsGlue(false);
+      _linePenGlue.CbBrush = _lineBrushColor;
+      _linePenGlue.CbLineThickness1 = _lineLineThickness;
 
-			_majorPenGlue = new PenControlsGlue(false);
-			_majorPenGlue.CbBrush = _majorLineColor;
-			_majorPenGlue.CbLineThickness1 = _lineMajorThickness;
+      _majorPenGlue = new PenControlsGlue(false);
+      _majorPenGlue.CbBrush = _majorLineColor;
+      _majorPenGlue.CbLineThickness1 = _lineMajorThickness;
 
-			_minorPenGlue = new PenControlsGlue(false);
-			_minorPenGlue.CbBrush = _minorLineColor;
-			_minorPenGlue.CbLineThickness1 = _lineMinorThickness;
+      _minorPenGlue = new PenControlsGlue(false);
+      _minorPenGlue.CbBrush = _minorLineColor;
+      _minorPenGlue.CbLineThickness1 = _lineMinorThickness;
 
-			_linePenGlue.PenChanged += new EventHandler(EhLinePen_Changed);
-		}
+      _linePenGlue.PenChanged += new EventHandler(EhLinePen_Changed);
+    }
 
-		private void EhLinePen_Changed(object sender, EventArgs e)
-		{
-			if (false == _chkCustomMajorColor.IsChecked)
-			{
-				if (this._majorPenGlue.Pen != null)
-					this._majorPenGlue.Pen = _majorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
-			}
-			if (false == _chkCustomMinorColor.IsChecked)
-			{
-				if (this._minorPenGlue.Pen != null)
-					this._minorPenGlue.Pen = _minorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
-			}
+    private void EhLinePen_Changed(object sender, EventArgs e)
+    {
+      if (false == _chkCustomMajorColor.IsChecked)
+      {
+        if (this._majorPenGlue.Pen != null)
+          this._majorPenGlue.Pen = _majorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
+      }
+      if (false == _chkCustomMinorColor.IsChecked)
+      {
+        if (this._minorPenGlue.Pen != null)
+          this._minorPenGlue.Pen = _minorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
+      }
 
-			if (false == _chkCustomMajorThickness.IsChecked)
-				_lineMajorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
-			if (false == _chkCustomMinorThickness.IsChecked)
-				_lineMinorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
-		}
+      if (false == _chkCustomMajorThickness.IsChecked)
+        _lineMajorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
+      if (false == _chkCustomMinorThickness.IsChecked)
+        _lineMinorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
+    }
 
-		private void EhIndividualMajorColor_CheckChanged(object sender, RoutedEventArgs e)
-		{
-			if (false == _chkCustomMajorColor.IsChecked)
-				_majorLineColor.SelectedMaterial = _lineBrushColor.SelectedMaterial;
-			_majorLineColor.IsEnabled = true == _chkCustomMajorColor.IsChecked;
-		}
+    private void EhIndividualMajorColor_CheckChanged(object sender, RoutedEventArgs e)
+    {
+      if (false == _chkCustomMajorColor.IsChecked)
+        _majorLineColor.SelectedMaterial = _lineBrushColor.SelectedMaterial;
+      _majorLineColor.IsEnabled = true == _chkCustomMajorColor.IsChecked;
+    }
 
-		private void EhIndividualMajorThickness_CheckChanged(object sender, RoutedEventArgs e)
-		{
-			if (false == _chkCustomMajorThickness.IsChecked)
-				_lineMajorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
-			_lineMajorThickness.IsEnabled = true == _chkCustomMajorThickness.IsChecked;
-		}
+    private void EhIndividualMajorThickness_CheckChanged(object sender, RoutedEventArgs e)
+    {
+      if (false == _chkCustomMajorThickness.IsChecked)
+        _lineMajorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
+      _lineMajorThickness.IsEnabled = true == _chkCustomMajorThickness.IsChecked;
+    }
 
-		private void EhIndividualMinorColor_CheckChanged(object sender, RoutedEventArgs e)
-		{
-			if (false == _chkCustomMinorColor.IsChecked)
-				_minorLineColor.SelectedMaterial = _lineBrushColor.SelectedMaterial;
-			_minorLineColor.IsEnabled = true == _chkCustomMinorColor.IsChecked;
-		}
+    private void EhIndividualMinorColor_CheckChanged(object sender, RoutedEventArgs e)
+    {
+      if (false == _chkCustomMinorColor.IsChecked)
+        _minorLineColor.SelectedMaterial = _lineBrushColor.SelectedMaterial;
+      _minorLineColor.IsEnabled = true == _chkCustomMinorColor.IsChecked;
+    }
 
-		private void EhIndividualMinorThickness_CheckChanged(object sender, RoutedEventArgs e)
-		{
-			if (false == _chkCustomMinorThickness.IsChecked)
-				_lineMinorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
-			_lineMinorThickness.IsEnabled = true == _chkCustomMinorThickness.IsChecked;
-		}
+    private void EhIndividualMinorThickness_CheckChanged(object sender, RoutedEventArgs e)
+    {
+      if (false == _chkCustomMinorThickness.IsChecked)
+        _lineMinorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
+      _lineMinorThickness.IsEnabled = true == _chkCustomMinorThickness.IsChecked;
+    }
 
-		#region Helper
+    #region Helper
 
-		private bool CustomMajorThickness
-		{
-			set
-			{
-				_chkCustomMajorThickness.IsChecked = value;
-				_lineMajorThickness.IsEnabled = value;
-			}
-		}
+    private bool CustomMajorThickness
+    {
+      set
+      {
+        _chkCustomMajorThickness.IsChecked = value;
+        _lineMajorThickness.IsEnabled = value;
+      }
+    }
 
-		private bool CustomMinorThickness
-		{
-			set
-			{
-				_chkCustomMinorThickness.IsChecked = value;
-				_lineMinorThickness.IsEnabled = value;
-			}
-		}
+    private bool CustomMinorThickness
+    {
+      set
+      {
+        _chkCustomMinorThickness.IsChecked = value;
+        _lineMinorThickness.IsEnabled = value;
+      }
+    }
 
-		private bool CustomMajorColor
-		{
-			set
-			{
-				this._chkCustomMajorColor.IsChecked = value;
-				this._majorLineColor.IsEnabled = value;
-			}
-		}
+    private bool CustomMajorColor
+    {
+      set
+      {
+        this._chkCustomMajorColor.IsChecked = value;
+        this._majorLineColor.IsEnabled = value;
+      }
+    }
 
-		private bool CustomMinorColor
-		{
-			set
-			{
-				this._chkCustomMinorColor.IsChecked = value;
-				this._minorLineColor.IsEnabled = value;
-			}
-		}
+    private bool CustomMinorColor
+    {
+      set
+      {
+        this._chkCustomMinorColor.IsChecked = value;
+        this._minorLineColor.IsEnabled = value;
+      }
+    }
 
-		#endregion Helper
+    #endregion Helper
 
-		#region IAxisLineStyleView
+    #region IAxisLineStyleView
 
-		public bool ShowLine
-		{
-			get
-			{
-				return true == _chkEnableLine.IsChecked;
-			}
-			set
-			{
-				_chkEnableLine.IsChecked = value;
-			}
-		}
+    public bool ShowLine
+    {
+      get
+      {
+        return true == _chkEnableLine.IsChecked;
+      }
+      set
+      {
+        _chkEnableLine.IsChecked = value;
+      }
+    }
 
-		public PenX3D LinePen
-		{
-			get
-			{
-				return _linePenGlue.Pen;
-			}
-			set
-			{
-				_linePenGlue.Pen = value;
-			}
-		}
+    public PenX3D LinePen
+    {
+      get
+      {
+        return _linePenGlue.Pen;
+      }
+      set
+      {
+        _linePenGlue.Pen = value;
+      }
+    }
 
-		public PenX3D MajorPen
-		{
-			get
-			{
-				return _majorPenGlue.Pen;
-			}
-			set
-			{
-				_majorPenGlue.Pen = value;
-				if (value != null)
-				{
-					CustomMajorColor = !PenX3D.AreEqualUnlessThickness(value, _linePenGlue.Pen);
-					CustomMajorThickness = (value.Thickness1 != _linePenGlue.Pen.Thickness1);
-				}
-			}
-		}
+    public PenX3D MajorPen
+    {
+      get
+      {
+        return _majorPenGlue.Pen;
+      }
+      set
+      {
+        _majorPenGlue.Pen = value;
+        if (value != null)
+        {
+          CustomMajorColor = !PenX3D.AreEqualUnlessThickness(value, _linePenGlue.Pen);
+          CustomMajorThickness = (value.Thickness1 != _linePenGlue.Pen.Thickness1);
+        }
+      }
+    }
 
-		public PenX3D MinorPen
-		{
-			get
-			{
-				return _minorPenGlue.Pen;
-			}
-			set
-			{
-				_minorPenGlue.Pen = value;
-				if (value != null)
-				{
-					CustomMinorColor = !PenX3D.AreEqualUnlessThickness(value, _linePenGlue.Pen);
-					CustomMinorThickness = (value.Thickness1 != _linePenGlue.Pen.Thickness1);
-				}
-			}
-		}
+    public PenX3D MinorPen
+    {
+      get
+      {
+        return _minorPenGlue.Pen;
+      }
+      set
+      {
+        _minorPenGlue.Pen = value;
+        if (value != null)
+        {
+          CustomMinorColor = !PenX3D.AreEqualUnlessThickness(value, _linePenGlue.Pen);
+          CustomMinorThickness = (value.Thickness1 != _linePenGlue.Pen.Thickness1);
+        }
+      }
+    }
 
-		public double MajorTickLength
-		{
-			get
-			{
-				return _lineMajorLength.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_lineMajorLength.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double MajorTickLength
+    {
+      get
+      {
+        return _lineMajorLength.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _lineMajorLength.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double MinorTickLength
-		{
-			get
-			{
-				return _lineMinorLength.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_lineMinorLength.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double MinorTickLength
+    {
+      get
+      {
+        return _lineMinorLength.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _lineMinorLength.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public SelectableListNodeList MajorPenTicks
-		{
-			get
-			{
-				return (SelectableListNodeList)_majorWhichTicksLayout.ItemsSource;
-			}
-			set
-			{
-				_majorWhichTicksLayout.ItemsSource = value;
-			}
-		}
+    public SelectableListNodeList MajorPenTicks
+    {
+      get
+      {
+        return (SelectableListNodeList)_majorWhichTicksLayout.ItemsSource;
+      }
+      set
+      {
+        _majorWhichTicksLayout.ItemsSource = value;
+      }
+    }
 
-		public SelectableListNodeList MinorPenTicks
-		{
-			get
-			{
-				return (SelectableListNodeList)_minorWhichTicksLayout.ItemsSource;
-			}
-			set
-			{
-				_minorWhichTicksLayout.ItemsSource = value;
-			}
-		}
+    public SelectableListNodeList MinorPenTicks
+    {
+      get
+      {
+        return (SelectableListNodeList)_minorWhichTicksLayout.ItemsSource;
+      }
+      set
+      {
+        _minorWhichTicksLayout.ItemsSource = value;
+      }
+    }
 
-		#endregion IAxisLineStyleView
-	}
+    #endregion IAxisLineStyleView
+  }
 }

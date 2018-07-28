@@ -27,62 +27,62 @@ using System.Threading;
 
 namespace Altaxo.Com
 {
-	/// <summary>
-	/// Keeps a thread alive that continually collects and disposes unused objects.
-	/// </summary>
-	internal class GarbageCollector
-	{
-		protected bool _isThreadContinued;
-		protected bool _isGCWatchStopped;
-		protected int _interval_ms;
-		protected ManualResetEvent _eventThreadEnded;
+  /// <summary>
+  /// Keeps a thread alive that continually collects and disposes unused objects.
+  /// </summary>
+  internal class GarbageCollector
+  {
+    protected bool _isThreadContinued;
+    protected bool _isGCWatchStopped;
+    protected int _interval_ms;
+    protected ManualResetEvent _eventThreadEnded;
 
-		public GarbageCollector(int interval_ms)
-		{
-			_isThreadContinued = true;
-			_isGCWatchStopped = false;
-			_interval_ms = interval_ms;
-			_eventThreadEnded = new ManualResetEvent(false);
-		}
+    public GarbageCollector(int interval_ms)
+    {
+      _isThreadContinued = true;
+      _isGCWatchStopped = false;
+      _interval_ms = interval_ms;
+      _eventThreadEnded = new ManualResetEvent(false);
+    }
 
-		public void GCWatch()
-		{
-			ComDebug.ReportInfo("GarbageCollection.GCWatch() is now running on another thread.");
+    public void GCWatch()
+    {
+      ComDebug.ReportInfo("GarbageCollection.GCWatch() is now running on another thread.");
 
-			// Pause for a moment to provide a delay to make threads more apparent.
-			while (IsThreadContinued())
-			{
-				GC.Collect();
-				Thread.Sleep(_interval_ms);
-			}
+      // Pause for a moment to provide a delay to make threads more apparent.
+      while (IsThreadContinued())
+      {
+        GC.Collect();
+        Thread.Sleep(_interval_ms);
+      }
 
-			ComDebug.ReportInfo("Going to call m_EventThreadEnded.Set().");
-			_eventThreadEnded.Set();
-		}
+      ComDebug.ReportInfo("Going to call m_EventThreadEnded.Set().");
+      _eventThreadEnded.Set();
+    }
 
-		protected bool IsThreadContinued()
-		{
-			lock (this)
-			{
-				return _isThreadContinued;
-			}
-		}
+    protected bool IsThreadContinued()
+    {
+      lock (this)
+      {
+        return _isThreadContinued;
+      }
+    }
 
-		public void StopThread()
-		{
-			lock (this)
-			{
-				_isThreadContinued = false;
-			}
-		}
+    public void StopThread()
+    {
+      lock (this)
+      {
+        _isThreadContinued = false;
+      }
+    }
 
-		public void WaitForThreadToStop()
-		{
-			ComDebug.ReportInfo("WaitForThreadToStop().");
-			_eventThreadEnded.WaitOne();
-			_eventThreadEnded.Reset();
+    public void WaitForThreadToStop()
+    {
+      ComDebug.ReportInfo("WaitForThreadToStop().");
+      _eventThreadEnded.WaitOne();
+      _eventThreadEnded.Reset();
 
-			ComDebug.ReportInfo("WaitForThreadToStop() exiting.");
-		}
-	}
+      ComDebug.ReportInfo("WaitForThreadToStop() exiting.");
+    }
+  }
 }

@@ -30,93 +30,93 @@ using System.Text;
 
 namespace Altaxo.Gui.Worksheet
 {
-	public interface IMasterCurveCreationMainView
-	{
-		void InitializeDataTab(object guiControl);
+  public interface IMasterCurveCreationMainView
+  {
+    void InitializeDataTab(object guiControl);
 
-		void InitializeEditTab(object guiControl);
-	}
+    void InitializeEditTab(object guiControl);
+  }
 
-	[UserControllerForObject(typeof(MasterCurveCreation.Options))]
-	[ExpectedTypeOfView(typeof(IMasterCurveCreationMainView))]
-	internal class MasterCurveCreationMainController : IMVCANController
-	{
-		private MasterCurveCreation.Options _doc;
-		private IMasterCurveCreationMainView _view;
+  [UserControllerForObject(typeof(MasterCurveCreation.Options))]
+  [ExpectedTypeOfView(typeof(IMasterCurveCreationMainView))]
+  internal class MasterCurveCreationMainController : IMVCANController
+  {
+    private MasterCurveCreation.Options _doc;
+    private IMasterCurveCreationMainView _view;
 
-		private IMVCANController _dataController;
+    private IMVCANController _dataController;
 
-		private void Initialize(bool initData)
-		{
-			if (initData)
-			{
-				_dataController = new MasterCurveCreationDataController();
-				_dataController.InitializeDocument(_doc.ColumnGroups);
-				Current.Gui.FindAndAttachControlTo(_dataController);
-			}
+    private void Initialize(bool initData)
+    {
+      if (initData)
+      {
+        _dataController = new MasterCurveCreationDataController();
+        _dataController.InitializeDocument(_doc.ColumnGroups);
+        Current.Gui.FindAndAttachControlTo(_dataController);
+      }
 
-			if (null != _view)
-			{
-				_view.InitializeDataTab(_dataController.ViewObject);
-			}
-		}
+      if (null != _view)
+      {
+        _view.InitializeDataTab(_dataController.ViewObject);
+      }
+    }
 
-		public bool InitializeDocument(params object[] args)
-		{
-			if (null == args || 0 == args.Length || !(args[0] is MasterCurveCreation.Options))
-				return false;
+    public bool InitializeDocument(params object[] args)
+    {
+      if (null == args || 0 == args.Length || !(args[0] is MasterCurveCreation.Options))
+        return false;
 
-			_doc = args[0] as MasterCurveCreation.Options;
-			Initialize(true);
-			return true;
-		}
+      _doc = args[0] as MasterCurveCreation.Options;
+      Initialize(true);
+      return true;
+    }
 
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
+    public UseDocument UseDocumentCopy
+    {
+      set { }
+    }
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IMasterCurveCreationMainView;
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        _view = value as IMasterCurveCreationMainView;
 
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
+        if (null != _view)
+        {
+          Initialize(false);
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
+    public object ModelObject
+    {
+      get { return _doc; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		public bool Apply(bool disposeController)
-		{
-			return true;
-		}
+    public bool Apply(bool disposeController)
+    {
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-	}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
+  }
 }

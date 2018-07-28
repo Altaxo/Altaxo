@@ -29,246 +29,246 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	/// <summary>
-	/// This group style is intended to make sure that all substyles have the same line connection.
-	/// Thus it is only intended for local use (only amound substyles of a single plot item).
-	/// plot styles.
-	/// </summary>
-	public class LineConnection2DGroupStyle
-		:
-		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		IPlotGroupStyle
-	{
-		private bool _isInitialized;
+  /// <summary>
+  /// This group style is intended to make sure that all substyles have the same line connection.
+  /// Thus it is only intended for local use (only amound substyles of a single plot item).
+  /// plot styles.
+  /// </summary>
+  public class LineConnection2DGroupStyle
+    :
+    Main.SuspendableDocumentLeafNodeWithEventArgs,
+    IPlotGroupStyle
+  {
+    private bool _isInitialized;
 
-		private ILineConnectionStyle _lineConnectionStyle;
-		private bool _connectCircular;
+    private ILineConnectionStyle _lineConnectionStyle;
+    private bool _connectCircular;
 
-		private static readonly Type MyType = typeof(LineConnection2DGroupStyle);
+    private static readonly Type MyType = typeof(LineConnection2DGroupStyle);
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-11-17 Initial version
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineConnection2DGroupStyle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				LineConnection2DGroupStyle s = (LineConnection2DGroupStyle)obj;
-			}
+    /// <summary>
+    /// 2016-11-17 Initial version
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineConnection2DGroupStyle), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        LineConnection2DGroupStyle s = (LineConnection2DGroupStyle)obj;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				LineConnection2DGroupStyle s = null != o ? (LineConnection2DGroupStyle)o : new LineConnection2DGroupStyle();
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        LineConnection2DGroupStyle s = null != o ? (LineConnection2DGroupStyle)o : new LineConnection2DGroupStyle();
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		#region Constructors
+    #region Constructors
 
-		public LineConnection2DGroupStyle()
-		{
-		}
+    public LineConnection2DGroupStyle()
+    {
+    }
 
-		public LineConnection2DGroupStyle(LineConnection2DGroupStyle from)
-		{
-			this._isInitialized = from._isInitialized;
-			this._lineConnectionStyle = from._lineConnectionStyle;
-		}
+    public LineConnection2DGroupStyle(LineConnection2DGroupStyle from)
+    {
+      this._isInitialized = from._isInitialized;
+      this._lineConnectionStyle = from._lineConnectionStyle;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public LineConnection2DGroupStyle Clone()
-		{
-			return new LineConnection2DGroupStyle(this);
-		}
+    public LineConnection2DGroupStyle Clone()
+    {
+      return new LineConnection2DGroupStyle(this);
+    }
 
-		object ICloneable.Clone()
-		{
-			return new LineConnection2DGroupStyle(this);
-		}
+    object ICloneable.Clone()
+    {
+      return new LineConnection2DGroupStyle(this);
+    }
 
-		#endregion ICloneable Members
+    #endregion ICloneable Members
 
-		#region IGroupStyle Members
+    #region IGroupStyle Members
 
-		public void TransferFrom(IPlotGroupStyle fromb)
-		{
-			LineConnection2DGroupStyle from = (LineConnection2DGroupStyle)fromb;
-			this._isInitialized = from._isInitialized;
-			_lineConnectionStyle = from._lineConnectionStyle;
-		}
+    public void TransferFrom(IPlotGroupStyle fromb)
+    {
+      LineConnection2DGroupStyle from = (LineConnection2DGroupStyle)fromb;
+      this._isInitialized = from._isInitialized;
+      _lineConnectionStyle = from._lineConnectionStyle;
+    }
 
-		public void BeginPrepare()
-		{
-			_isInitialized = false;
-		}
+    public void BeginPrepare()
+    {
+      _isInitialized = false;
+    }
 
-		public void PrepareStep()
-		{
-		}
+    public void PrepareStep()
+    {
+    }
 
-		public void EndPrepare()
-		{
-		}
+    public void EndPrepare()
+    {
+    }
 
-		public bool CanCarryOver
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public bool CanCarryOver
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public bool CanStep
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public bool CanStep
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public int Step(int step)
-		{
-			return 0;
-		}
+    public int Step(int step)
+    {
+      return 0;
+    }
 
-		/// <summary>
-		/// Get/sets whether or not stepping is allowed.
-		/// </summary>
-		public bool IsStepEnabled
-		{
-			get
-			{
-				return false;
-			}
-			set
-			{
-			}
-		}
+    /// <summary>
+    /// Get/sets whether or not stepping is allowed.
+    /// </summary>
+    public bool IsStepEnabled
+    {
+      get
+      {
+        return false;
+      }
+      set
+      {
+      }
+    }
 
-		#endregion IGroupStyle Members
+    #endregion IGroupStyle Members
 
-		#region Other members
+    #region Other members
 
-		public bool IsInitialized
-		{
-			get
-			{
-				return _isInitialized;
-			}
-		}
+    public bool IsInitialized
+    {
+      get
+      {
+        return _isInitialized;
+      }
+    }
 
-		public void Initialize(ILineConnectionStyle lineConnectionStyle, bool connectCircular)
-		{
-			_isInitialized = true;
-			_lineConnectionStyle = lineConnectionStyle;
-			_connectCircular = connectCircular;
-		}
+    public void Initialize(ILineConnectionStyle lineConnectionStyle, bool connectCircular)
+    {
+      _isInitialized = true;
+      _lineConnectionStyle = lineConnectionStyle;
+      _connectCircular = connectCircular;
+    }
 
-		public ILineConnectionStyle LineConnectionStyle
-		{
-			get
-			{
-				return _lineConnectionStyle;
-			}
-		}
+    public ILineConnectionStyle LineConnectionStyle
+    {
+      get
+      {
+        return _lineConnectionStyle;
+      }
+    }
 
-		public bool ConnectCircular
-		{
-			get
-			{
-				return _connectCircular;
-			}
-		}
+    public bool ConnectCircular
+    {
+      get
+      {
+        return _connectCircular;
+      }
+    }
 
-		#endregion Other members
+    #endregion Other members
 
-		#region Static helpers
+    #region Static helpers
 
-		public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
-		{
-			// this group style is local only, so no addition is made here
-		}
+    public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
+    {
+      // this group style is local only, so no addition is made here
+    }
 
-		public static void AddLocalGroupStyle(
-		 IPlotGroupStyleCollection externalGroups,
-		 IPlotGroupStyleCollection localGroups)
-		{
-			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(LineConnection2DGroupStyle)))
-				localGroups.Add(new LineConnection2DGroupStyle());
-		}
+    public static void AddLocalGroupStyle(
+     IPlotGroupStyleCollection externalGroups,
+     IPlotGroupStyleCollection localGroups)
+    {
+      if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(LineConnection2DGroupStyle)))
+        localGroups.Add(new LineConnection2DGroupStyle());
+    }
 
-		/// <summary>
-		/// Prepares the style.
-		/// </summary>
-		/// <param name="externalGroups">The external groups.</param>
-		/// <param name="localGroups">The local groups.</param>
-		/// <param name="getter">The getter function. Item1 of the tuple is the line connection style, Item2 of the tuple is the ConnectCircular flag.</param>
-		public static void PrepareStyle(
-			IPlotGroupStyleCollection externalGroups,
-			IPlotGroupStyleCollection localGroups,
-			Func<Tuple<ILineConnectionStyle, bool>> getter)
-		{
-			if (!externalGroups.ContainsType(typeof(LineConnection2DGroupStyle))
-				&& null != localGroups
-				&& !localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
-			{
-				localGroups.Add(new LineConnection2DGroupStyle());
-			}
+    /// <summary>
+    /// Prepares the style.
+    /// </summary>
+    /// <param name="externalGroups">The external groups.</param>
+    /// <param name="localGroups">The local groups.</param>
+    /// <param name="getter">The getter function. Item1 of the tuple is the line connection style, Item2 of the tuple is the ConnectCircular flag.</param>
+    public static void PrepareStyle(
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
+      Func<Tuple<ILineConnectionStyle, bool>> getter)
+    {
+      if (!externalGroups.ContainsType(typeof(LineConnection2DGroupStyle))
+        && null != localGroups
+        && !localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
+      {
+        localGroups.Add(new LineConnection2DGroupStyle());
+      }
 
-			LineConnection2DGroupStyle grpStyle = null;
-			if (externalGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
-				grpStyle = (LineConnection2DGroupStyle)externalGroups.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
-			else if (localGroups != null)
-				grpStyle = (LineConnection2DGroupStyle)localGroups.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
+      LineConnection2DGroupStyle grpStyle = null;
+      if (externalGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
+        grpStyle = (LineConnection2DGroupStyle)externalGroups.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
+      else if (localGroups != null)
+        grpStyle = (LineConnection2DGroupStyle)localGroups.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
 
-			if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
-			{
-				var data = getter();
-				grpStyle.Initialize(data.Item1, data.Item2);
-			}
-		}
+      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+      {
+        var data = getter();
+        grpStyle.Initialize(data.Item1, data.Item2);
+      }
+    }
 
-		/// <summary>
-		/// Try to apply the symbol size group style. Returns true if successfull applied.
-		/// </summary>
-		/// <param name="externalGroups"></param>
-		/// <param name="localGroups"></param>
-		/// <param name="setter"></param>
-		/// <returns></returns>
-		public static bool ApplyStyle(
-			IPlotGroupStyleCollection externalGroups,
-			IPlotGroupStyleCollection localGroups,
-			Action<ILineConnectionStyle, bool> setter)
-		{
-			LineConnection2DGroupStyle grpStyle = null;
-			IPlotGroupStyleCollection grpColl = null;
-			if (externalGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
-				grpColl = externalGroups;
-			else if (localGroups != null && localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
-				grpColl = localGroups;
+    /// <summary>
+    /// Try to apply the symbol size group style. Returns true if successfull applied.
+    /// </summary>
+    /// <param name="externalGroups"></param>
+    /// <param name="localGroups"></param>
+    /// <param name="setter"></param>
+    /// <returns></returns>
+    public static bool ApplyStyle(
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
+      Action<ILineConnectionStyle, bool> setter)
+    {
+      LineConnection2DGroupStyle grpStyle = null;
+      IPlotGroupStyleCollection grpColl = null;
+      if (externalGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
+        grpColl = externalGroups;
+      else if (localGroups != null && localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
+        grpColl = localGroups;
 
-			if (null != grpColl)
-			{
-				grpStyle = (LineConnection2DGroupStyle)grpColl.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
-				grpColl.OnBeforeApplication(typeof(LineConnection2DGroupStyle));
-				setter(grpStyle.LineConnectionStyle, grpStyle._connectCircular);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+      if (null != grpColl)
+      {
+        grpStyle = (LineConnection2DGroupStyle)grpColl.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
+        grpColl.OnBeforeApplication(typeof(LineConnection2DGroupStyle));
+        setter(grpStyle.LineConnectionStyle, grpStyle._connectCircular);
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
-		#endregion Static helpers
-	}
+    #endregion Static helpers
+  }
 }

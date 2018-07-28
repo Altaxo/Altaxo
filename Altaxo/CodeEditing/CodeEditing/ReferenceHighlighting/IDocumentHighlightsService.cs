@@ -12,41 +12,41 @@ using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.ReferenceHighlighting
 {
-	public enum HighlightSpanKind
-	{
-		None,
-		Definition,
-		Reference,
-		WrittenReference,
-	}
+  public enum HighlightSpanKind
+  {
+    None,
+    Definition,
+    Reference,
+    WrittenReference,
+  }
 
-	public struct HighlightSpan
-	{
-		public TextSpan TextSpan { get; }
-		public HighlightSpanKind Kind { get; }
+  public struct HighlightSpan
+  {
+    public TextSpan TextSpan { get; }
+    public HighlightSpanKind Kind { get; }
 
-		public HighlightSpan(TextSpan textSpan, HighlightSpanKind kind) : this()
-		{
-			this.TextSpan = textSpan;
-			this.Kind = kind;
-		}
-	}
+    public HighlightSpan(TextSpan textSpan, HighlightSpanKind kind) : this()
+    {
+      this.TextSpan = textSpan;
+      this.Kind = kind;
+    }
+  }
 
-	public struct DocumentHighlights
-	{
-		public Document Document { get; }
-		public ImmutableArray<HighlightSpan> HighlightSpans { get; }
+  public struct DocumentHighlights
+  {
+    public Document Document { get; }
+    public ImmutableArray<HighlightSpan> HighlightSpans { get; }
 
-		public DocumentHighlights(Document document, ImmutableArray<HighlightSpan> highlightSpans)
-		{
-			this.Document = document;
-			this.HighlightSpans = highlightSpans;
-		}
-	}
+    public DocumentHighlights(Document document, ImmutableArray<HighlightSpan> highlightSpans)
+    {
+      this.Document = document;
+      this.HighlightSpans = highlightSpans;
+    }
+  }
 
-	public interface IDocumentHighlightsService : ILanguageService
-	{
-		Task<ImmutableArray<DocumentHighlights>> GetDocumentHighlightsAsync(
-				Document document, int position, IImmutableSet<Document> documentsToSearch, CancellationToken cancellationToken);
-	}
+  public interface IDocumentHighlightsService : ILanguageService
+  {
+    Task<ImmutableArray<DocumentHighlights>> GetDocumentHighlightsAsync(
+        Document document, int position, IImmutableSet<Document> documentsToSearch, CancellationToken cancellationToken);
+  }
 }

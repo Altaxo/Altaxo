@@ -28,65 +28,65 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-	public class DummyBoundaries : Main.SuspendableDocumentLeafNodeWithEventArgs, IPhysicalBoundaries
-	{
-		#region Serialization
+  public class DummyBoundaries : Main.SuspendableDocumentLeafNodeWithEventArgs, IPhysicalBoundaries
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DummyBoundaries), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DummyBoundaries), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (DummyBoundaries)o ?? new DummyBoundaries();
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (DummyBoundaries)o ?? new DummyBoundaries();
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		#region IPhysicalBoundaries Members
+    #region IPhysicalBoundaries Members
 
-		public bool Add(Altaxo.Data.IReadableColumn col, int idx)
-		{
-			return true;
-		}
+    public bool Add(Altaxo.Data.IReadableColumn col, int idx)
+    {
+      return true;
+    }
 
-		public bool Add(Altaxo.Data.AltaxoVariant item)
-		{
-			return true;
-		}
+    public bool Add(Altaxo.Data.AltaxoVariant item)
+    {
+      return true;
+    }
 
-		public void Reset()
-		{
-		}
+    public void Reset()
+    {
+    }
 
-		public int NumberOfItems
-		{
-			get { return 0; }
-		}
+    public int NumberOfItems
+    {
+      get { return 0; }
+    }
 
-		public bool IsEmpty
-		{
-			get { return true; }
-		}
+    public bool IsEmpty
+    {
+      get { return true; }
+    }
 
-		public void Add(IPhysicalBoundaries b)
-		{
-		}
+    public void Add(IPhysicalBoundaries b)
+    {
+    }
 
-		#endregion IPhysicalBoundaries Members
+    #endregion IPhysicalBoundaries Members
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public object Clone()
-		{
-			return new DummyBoundaries();
-		}
+    public object Clone()
+    {
+      return new DummyBoundaries();
+    }
 
-		#endregion ICloneable Members
-	}
+    #endregion ICloneable Members
+  }
 }

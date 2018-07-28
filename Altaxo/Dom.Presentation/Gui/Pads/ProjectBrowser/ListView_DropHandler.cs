@@ -32,52 +32,52 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-	public partial class ProjectBrowseControl : UserControl, IProjectBrowseView
-	{
-		public class ListView_DropHandler : IDropTarget
-		{
-			private ProjectBrowseControl _projectBrowseControl;
+  public partial class ProjectBrowseControl : UserControl, IProjectBrowseView
+  {
+    public class ListView_DropHandler : IDropTarget
+    {
+      private ProjectBrowseControl _projectBrowseControl;
 
-			public ListView_DropHandler(ProjectBrowseControl ctrl)
-			{
-				_projectBrowseControl = ctrl;
-			}
+      public ListView_DropHandler(ProjectBrowseControl ctrl)
+      {
+        _projectBrowseControl = ctrl;
+      }
 
-			public void DragOver(IDropInfo dropInfo)
-			{
-				DragDropEffects resultingEffect;
-				if (CanAcceptData(dropInfo, out resultingEffect))
-				{
-					dropInfo.Effects = resultingEffect;
-					dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
-				}
-			}
+      public void DragOver(IDropInfo dropInfo)
+      {
+        DragDropEffects resultingEffect;
+        if (CanAcceptData(dropInfo, out resultingEffect))
+        {
+          dropInfo.Effects = resultingEffect;
+          dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+        }
+      }
 
-			protected bool CanAcceptData(IDropInfo dropInfo, out System.Windows.DragDropEffects resultingEffect)
-			{
-				bool canCopy, canMove;
-				_projectBrowseControl._controller.ListView_DropCanAcceptData(
-					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
-					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
-					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
-					out canCopy, out canMove);
+      protected bool CanAcceptData(IDropInfo dropInfo, out System.Windows.DragDropEffects resultingEffect)
+      {
+        bool canCopy, canMove;
+        _projectBrowseControl._controller.ListView_DropCanAcceptData(
+          dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
+          dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
+          dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
+          out canCopy, out canMove);
 
-				resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
+        resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
 
-				return canCopy | canMove;
-			}
+        return canCopy | canMove;
+      }
 
-			public void Drop(IDropInfo dropInfo)
-			{
-				bool isCopy, isMove;
-				_projectBrowseControl._controller.ListView_Drop(
-					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
-					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
-					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
-					out isCopy, out isMove);
+      public void Drop(IDropInfo dropInfo)
+      {
+        bool isCopy, isMove;
+        _projectBrowseControl._controller.ListView_Drop(
+          dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
+          dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
+          dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
+          out isCopy, out isMove);
 
-				dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(isCopy, isMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
-			}
-		}
-	}
+        dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(isCopy, isMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
+      }
+    }
+  }
 }

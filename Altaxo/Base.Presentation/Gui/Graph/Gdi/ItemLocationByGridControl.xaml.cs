@@ -30,122 +30,122 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	/// <summary>
-	/// Interaction logic for LayerPositionControl.xaml
-	/// </summary>
-	public partial class ItemLocationByGridControl : UserControl, IItemLocationByGridView
-	{
-		public ItemLocationByGridControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for LayerPositionControl.xaml
+  /// </summary>
+  public partial class ItemLocationByGridControl : UserControl, IItemLocationByGridView
+  {
+    public ItemLocationByGridControl()
+    {
+      InitializeComponent();
+    }
 
-		public double Rotation
-		{
-			get
-			{
-				return _guiRotation.SelectedQuantityAsValueInDegrees;
-			}
-			set
-			{
-				_guiRotation.SelectedQuantityAsValueInDegrees = value;
-			}
-		}
+    public double Rotation
+    {
+      get
+      {
+        return _guiRotation.SelectedQuantityAsValueInDegrees;
+      }
+      set
+      {
+        _guiRotation.SelectedQuantityAsValueInDegrees = value;
+      }
+    }
 
-		public double ShearX
-		{
-			get
-			{
-				return _guiShear.SelectedQuantityInSIUnits;
-			}
-			set
-			{
-				_guiShear.SelectedQuantityInSIUnits = value;
-			}
-		}
+    public double ShearX
+    {
+      get
+      {
+        return _guiShear.SelectedQuantityInSIUnits;
+      }
+      set
+      {
+        _guiShear.SelectedQuantityInSIUnits = value;
+      }
+    }
 
-		public double ScaleX
-		{
-			get
-			{
-				return _guiScaleX.SelectedQuantityInSIUnits;
-			}
-			set
-			{
-				_guiScaleX.SelectedQuantityInSIUnits = value;
-			}
-		}
+    public double ScaleX
+    {
+      get
+      {
+        return _guiScaleX.SelectedQuantityInSIUnits;
+      }
+      set
+      {
+        _guiScaleX.SelectedQuantityInSIUnits = value;
+      }
+    }
 
-		public double ScaleY
-		{
-			get
-			{
-				return _guiScaleY.SelectedQuantityInSIUnits;
-			}
-			set
-			{
-				_guiScaleY.SelectedQuantityInSIUnits = value;
-			}
-		}
+    public double ScaleY
+    {
+      get
+      {
+        return _guiScaleY.SelectedQuantityInSIUnits;
+      }
+      set
+      {
+        _guiScaleY.SelectedQuantityInSIUnits = value;
+      }
+    }
 
-		public double GridColumn
-		{
-			get
-			{
-				return _guiXPosition.Value;
-			}
-			set
-			{
-				_guiXPosition.Value = value;
-			}
-		}
+    public double GridColumn
+    {
+      get
+      {
+        return _guiXPosition.Value;
+      }
+      set
+      {
+        _guiXPosition.Value = value;
+      }
+    }
 
-		public double GridRow
-		{
-			get
-			{
-				return _guiYPosition.Value;
-			}
-			set
-			{
-				_guiYPosition.Value = value;
-			}
-		}
+    public double GridRow
+    {
+      get
+      {
+        return _guiYPosition.Value;
+      }
+      set
+      {
+        _guiYPosition.Value = value;
+      }
+    }
 
-		public double GridColumnSpan
-		{
-			get
-			{
-				return _guiXSize.Value;
-			}
-			set
-			{
-				_guiXSize.Value = value;
-			}
-		}
+    public double GridColumnSpan
+    {
+      get
+      {
+        return _guiXSize.Value;
+      }
+      set
+      {
+        _guiXSize.Value = value;
+      }
+    }
 
-		public double GridRowSpan
-		{
-			get
-			{
-				return _guiYSize.Value;
-			}
-			set
-			{
-				_guiYSize.Value = value;
-			}
-		}
+    public double GridRowSpan
+    {
+      get
+      {
+        return _guiYSize.Value;
+      }
+      set
+      {
+        _guiYSize.Value = value;
+      }
+    }
 
-		public bool ForceFitIntoCell
-		{
-			get
-			{
-				return true == _guiForceFitIntoCell.IsChecked;
-			}
-			set
-			{
-				_guiForceFitIntoCell.IsChecked = value;
-			}
-		}
-	}
+    public bool ForceFitIntoCell
+    {
+      get
+      {
+        return true == _guiForceFitIntoCell.IsChecked;
+      }
+      set
+      {
+        _guiForceFitIntoCell.IsChecked = value;
+      }
+    }
+  }
 }

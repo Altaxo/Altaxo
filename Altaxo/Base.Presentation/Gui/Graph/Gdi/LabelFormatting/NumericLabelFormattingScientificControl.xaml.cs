@@ -30,26 +30,26 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-	/// <summary>
-	/// Interaction logic for NumericLabelFormattingScientificControl.xaml
-	/// </summary>
-	public partial class NumericLabelFormattingScientificControl : UserControl, INumericLabelFormattingScientificView
-	{
-		public NumericLabelFormattingScientificControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for NumericLabelFormattingScientificControl.xaml
+  /// </summary>
+  public partial class NumericLabelFormattingScientificControl : UserControl, INumericLabelFormattingScientificView
+  {
+    public NumericLabelFormattingScientificControl()
+    {
+      InitializeComponent();
+    }
 
-		public bool ShowExponentAlways
-		{
-			get
-			{
-				return true == _guiShowExponentAlways.IsChecked;
-			}
-			set
-			{
-				_guiShowExponentAlways.IsChecked = value;
-			}
-		}
-	}
+    public bool ShowExponentAlways
+    {
+      get
+      {
+        return true == _guiShowExponentAlways.IsChecked;
+      }
+      set
+      {
+        _guiShowExponentAlways.IsChecked = value;
+      }
+    }
+  }
 }

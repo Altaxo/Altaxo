@@ -30,74 +30,74 @@ using System.Text;
 
 namespace Altaxo.Data.Selections
 {
-	public class AllRows : Main.SuspendableDocumentLeafNodeWithEventArgs, IRowSelection
-	{
-		#region Serialization
+  public class AllRows : Main.SuspendableDocumentLeafNodeWithEventArgs, IRowSelection
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-09-25 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AllRows), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    /// <summary>
+    /// 2016-09-25 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AllRows), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return new AllRows();
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return new AllRows();
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public AllRows()
-		{
-		}
+    public AllRows()
+    {
+    }
 
-		public object Clone()
-		{
-			return new AllRows();
-		}
+    public object Clone()
+    {
+      return new AllRows();
+    }
 
-		/// <inheritdoc/>
-		public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
-		{
-			int endExclusive = Math.Min(maxIndexExclusive, totalRowCount);
+    /// <inheritdoc/>
+    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
+    {
+      int endExclusive = Math.Min(maxIndexExclusive, totalRowCount);
 
-			if (endExclusive > startIndex)
-				yield return (startIndex, endExclusive);
-		}
+      if (endExclusive > startIndex)
+        yield return (startIndex, endExclusive);
+    }
 
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode();
-		}
+    public override int GetHashCode()
+    {
+      return this.GetType().GetHashCode();
+    }
 
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType();
-		}
+    public override bool Equals(object obj)
+    {
+      return this.GetType() == obj?.GetType();
+    }
 
-		/// <inheritdoc/>
-		public IEnumerable<(
-			string ColumnLabel, // Column label
-			IReadableColumn Column, // the column as it was at the time of this call
-			string ColumnName, // the name of the column (last part of the column proxies document path)
-			Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
-			)> GetAdditionallyUsedColumns()
-		{
-			yield break;
-		}
+    /// <inheritdoc/>
+    public IEnumerable<(
+      string ColumnLabel, // Column label
+      IReadableColumn Column, // the column as it was at the time of this call
+      string ColumnName, // the name of the column (last part of the column proxies document path)
+      Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+      )> GetAdditionallyUsedColumns()
+    {
+      yield break;
+    }
 
-		/// <summary>
-		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-		/// to change a plot so that the plot items refer to another table.
-		/// </summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-		public void VisitDocumentReferences(DocNodeProxyReporter Report)
-		{
-		}
-	}
+    /// <summary>
+    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+    /// to change a plot so that the plot items refer to another table.
+    /// </summary>
+    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public void VisitDocumentReferences(DocNodeProxyReporter Report)
+    {
+    }
+  }
 }

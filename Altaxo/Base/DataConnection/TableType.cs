@@ -32,13 +32,13 @@ using System.Text;
 
 namespace Altaxo.DataConnection
 {
-	/// <summary>
-	/// Represents types of data tables.
-	/// </summary>
-	public enum TableType
-	{
-		Table,
-		View,
-		Procedure
-	}
+  /// <summary>
+  /// Represents types of data tables.
+  /// </summary>
+  public enum TableType
+  {
+    Table,
+    View,
+    Procedure
+  }
 }

@@ -31,29 +31,29 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Data
 {
-	/// <summary>
-	/// Interaction logic for RealFourierTransformation2DDataSourceControl.xaml
-	/// </summary>
-	public partial class ExpandCyclingVariableDataSourceControl : UserControl, ICommonDataSourceView
-	{
-		public ExpandCyclingVariableDataSourceControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for RealFourierTransformation2DDataSourceControl.xaml
+  /// </summary>
+  public partial class ExpandCyclingVariableDataSourceControl : UserControl, ICommonDataSourceView
+  {
+    public ExpandCyclingVariableDataSourceControl()
+    {
+      InitializeComponent();
+    }
 
-		public void SetProcessOptionsControl(object p)
-		{
-			_guiProcessOptionsHost.Child = p as UIElement;
-		}
+    public void SetProcessOptionsControl(object p)
+    {
+      _guiProcessOptionsHost.Child = p as UIElement;
+    }
 
-		public void SetImportOptionsControl(object p)
-		{
-			_guiImportOptionsHost.Child = p as UIElement;
-		}
+    public void SetImportOptionsControl(object p)
+    {
+      _guiImportOptionsHost.Child = p as UIElement;
+    }
 
-		public void SetProcessDataControl(object p)
-		{
-			_guiProcessDataHost.Child = p as UIElement;
-		}
-	}
+    public void SetProcessDataControl(object p)
+    {
+      _guiProcessDataHost.Child = p as UIElement;
+    }
+  }
 }

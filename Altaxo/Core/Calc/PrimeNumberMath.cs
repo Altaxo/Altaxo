@@ -29,34 +29,34 @@ using System.Text;
 
 namespace Altaxo.Calc
 {
-	/// <summary>
-	/// As a result of a prime factorization, this structure is used to represent a natural number (integers greater than or equal to 1) as product of prime numbers.
-	/// </summary>
-	public struct PrimeFactor
-	{
-		private int _prime;
-		private int _power;
+  /// <summary>
+  /// As a result of a prime factorization, this structure is used to represent a natural number (integers greater than or equal to 1) as product of prime numbers.
+  /// </summary>
+  public struct PrimeFactor
+  {
+    private int _prime;
+    private int _power;
 
-		public PrimeFactor(int primeNumber, int power)
-		{
-			_prime = primeNumber;
-			_power = power;
-		}
+    public PrimeFactor(int primeNumber, int power)
+    {
+      _prime = primeNumber;
+      _power = power;
+    }
 
-		/// <summary>Gets the prime number this factor represents.</summary>
-		public int PrimeNumber { get { return _prime; } }
+    /// <summary>Gets the prime number this factor represents.</summary>
+    public int PrimeNumber { get { return _prime; } }
 
-		/// <summary>Gets the power of this prime factor in the represented natural number.</summary>
-		public int Power { get { return _power; } }
-	}
+    /// <summary>Gets the power of this prime factor in the represented natural number.</summary>
+    public int Power { get { return _power; } }
+  }
 
-	public class PrimeNumberMath
-	{
-		#region Prime numbers up to 2^16
+  public class PrimeNumberMath
+  {
+    #region Prime numbers up to 2^16
 
-		private static readonly int[] _primeNumbers = new int[]
-		{
-			2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+    private static readonly int[] _primeNumbers = new int[]
+    {
+      2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
 73, 79, 83, 89, 97, 101, 103, 107, 109, 113,
 127, 131, 137, 139, 149, 151, 157, 163, 167, 173,
@@ -713,304 +713,304 @@ namespace Altaxo.Calc
 65519, 65521, 65537
 };
 
-		#endregion Prime numbers up to 2^16
+    #endregion Prime numbers up to 2^16
 
-		private static void ThrowIfMaximumPrimeNumberExceeded(int maxNumber)
-		{
-			if (maxNumber > _primeNumbers[_primeNumbers.Length - 1])
-				throw new NotImplementedException(string.Format("Prime numbers are supported only up to {0}", MaximumSupportedPrimeNumber));
-		}
+    private static void ThrowIfMaximumPrimeNumberExceeded(int maxNumber)
+    {
+      if (maxNumber > _primeNumbers[_primeNumbers.Length - 1])
+        throw new NotImplementedException(string.Format("Prime numbers are supported only up to {0}", MaximumSupportedPrimeNumber));
+    }
 
-		public static int MaximumSupportedPrimeNumber
-		{
-			get
-			{
-				return _primeNumbers[_primeNumbers.Length - 1];
-			}
-		}
+    public static int MaximumSupportedPrimeNumber
+    {
+      get
+      {
+        return _primeNumbers[_primeNumbers.Length - 1];
+      }
+    }
 
-		public static bool IsPrime(long x)
-		{
-			if (x <= 0)
-				throw new ArgumentOutOfRangeException("x <= 0");
-			if (x == 1)
-				return true;
-			if (x <= MaximumSupportedPrimeNumber && Array.BinarySearch(_primeNumbers, (int)x) >= 0)
-				return true;
+    public static bool IsPrime(long x)
+    {
+      if (x <= 0)
+        throw new ArgumentOutOfRangeException("x <= 0");
+      if (x == 1)
+        return true;
+      if (x <= MaximumSupportedPrimeNumber && Array.BinarySearch(_primeNumbers, (int)x) >= 0)
+        return true;
 
-			int maxSearch = (int)Math.Min(Math.Floor(Math.Sqrt(x)), MaximumSupportedPrimeNumber);
-			foreach (int prime in GetPrimeNumbersExcludingOneUpTo(maxSearch))
-			{
-				if (0 == x % prime)
-					return false;
-			}
+      int maxSearch = (int)Math.Min(Math.Floor(Math.Sqrt(x)), MaximumSupportedPrimeNumber);
+      foreach (int prime in GetPrimeNumbersExcludingOneUpTo(maxSearch))
+      {
+        if (0 == x % prime)
+          return false;
+      }
 
-			if (maxSearch <= MaximumSupportedPrimeNumber)
-				return true;
+      if (maxSearch <= MaximumSupportedPrimeNumber)
+        return true;
 
-			throw new NotImplementedException(string.Format("Can not decide if {0} is a prime number, because full support is guaranteed only for numbers up to {1}", x, MaximumSupportedPrimeNumber * (long)MaximumSupportedPrimeNumber));
-		}
+      throw new NotImplementedException(string.Format("Can not decide if {0} is a prime number, because full support is guaranteed only for numbers up to {1}", x, MaximumSupportedPrimeNumber * (long)MaximumSupportedPrimeNumber));
+    }
 
-		public static IEnumerable<int> GetPrimeNumbersIncludingOneUpTo(int maxNumber)
-		{
-			ThrowIfMaximumPrimeNumberExceeded(maxNumber);
-			yield return 1;
-			foreach (var p in _primeNumbers)
-			{
-				if (p <= maxNumber)
-					yield return p;
-				else
-					break;
-			}
-		}
+    public static IEnumerable<int> GetPrimeNumbersIncludingOneUpTo(int maxNumber)
+    {
+      ThrowIfMaximumPrimeNumberExceeded(maxNumber);
+      yield return 1;
+      foreach (var p in _primeNumbers)
+      {
+        if (p <= maxNumber)
+          yield return p;
+        else
+          break;
+      }
+    }
 
-		public static IEnumerable<int> GetPrimeNumbersExcludingOneUpTo(int maxNumber)
-		{
-			ThrowIfMaximumPrimeNumberExceeded(maxNumber);
-			foreach (var p in _primeNumbers)
-			{
-				if (p <= maxNumber)
-					yield return p;
-				else
-					break;
-			}
-		}
+    public static IEnumerable<int> GetPrimeNumbersExcludingOneUpTo(int maxNumber)
+    {
+      ThrowIfMaximumPrimeNumberExceeded(maxNumber);
+      foreach (var p in _primeNumbers)
+      {
+        if (p <= maxNumber)
+          yield return p;
+        else
+          break;
+      }
+    }
 
-		public static List<int> GetNeighbouringDivisors(long nominator, long searchCenter, long searchMaximum)
-		{
-			var primeList = PrimeFactorization(nominator, searchMaximum);
+    public static List<int> GetNeighbouringDivisors(long nominator, long searchCenter, long searchMaximum)
+    {
+      var primeList = PrimeFactorization(nominator, searchMaximum);
 
-			// now find the best fitting divisors
-			int bestDivisorLess = 0;
-			int bestDivisorGreater = int.MaxValue;
+      // now find the best fitting divisors
+      int bestDivisorLess = 0;
+      int bestDivisorGreater = int.MaxValue;
 
-			foreach (var div in GetDivisorsUpToStage(primeList.Count - 1, primeList))
-			{
-				if (div < searchCenter && (searchCenter - div) < (searchCenter - bestDivisorLess))
-					bestDivisorLess = div;
+      foreach (var div in GetDivisorsUpToStage(primeList.Count - 1, primeList))
+      {
+        if (div < searchCenter && (searchCenter - div) < (searchCenter - bestDivisorLess))
+          bestDivisorLess = div;
 
-				if (div > searchCenter && (div - searchCenter) < (bestDivisorGreater - searchCenter))
-					bestDivisorGreater = div;
-			}
+        if (div > searchCenter && (div - searchCenter) < (bestDivisorGreater - searchCenter))
+          bestDivisorGreater = div;
+      }
 
-			List<int> result = new List<int>();
-			if (bestDivisorLess > 0)
-				result.Add(bestDivisorLess);
-			if (bestDivisorGreater < int.MaxValue)
-				result.Add(bestDivisorGreater);
+      List<int> result = new List<int>();
+      if (bestDivisorLess > 0)
+        result.Add(bestDivisorLess);
+      if (bestDivisorGreater < int.MaxValue)
+        result.Add(bestDivisorGreater);
 
-			return result;
-		}
+      return result;
+    }
 
-		public static List<PrimeFactor> PrimeFactorization(long x)
-		{
-			if (x <= 0)
-			{
-				throw new NotImplementedException();
-			}
-			if (x == 1)
-			{
-				return new List<PrimeFactor> { new PrimeFactor(1, 1) };
-			}
-			else
-			{
-				return PrimeFactorization(x, double.MaxValue);
-			}
-		}
+    public static List<PrimeFactor> PrimeFactorization(long x)
+    {
+      if (x <= 0)
+      {
+        throw new NotImplementedException();
+      }
+      if (x == 1)
+      {
+        return new List<PrimeFactor> { new PrimeFactor(1, 1) };
+      }
+      else
+      {
+        return PrimeFactorization(x, double.MaxValue);
+      }
+    }
 
-		public static long GetNumberFromPrimeFactors(List<PrimeFactor> list)
-		{
-			long result = 1;
-			for (int i = list.Count - 1; i >= 0; --i)
-			{
-				int factor = list[i].PrimeNumber;
-				for (int j = list[i].Power; j > 0; --j)
-					result *= factor;
-			}
-			return result;
-		}
+    public static long GetNumberFromPrimeFactors(List<PrimeFactor> list)
+    {
+      long result = 1;
+      for (int i = list.Count - 1; i >= 0; --i)
+      {
+        int factor = list[i].PrimeNumber;
+        for (int j = list[i].Power; j > 0; --j)
+          result *= factor;
+      }
+      return result;
+    }
 
-		private static List<PrimeFactor> PrimeFactorization(long nominator, double maxPrime)
-		{
-			var primeList = new List<PrimeFactor>();
-			double sqrtOfCurrentNominator = Math.Sqrt(nominator);
-			bool isCompleteDecomposition = maxPrime >= sqrtOfCurrentNominator;
+    private static List<PrimeFactor> PrimeFactorization(long nominator, double maxPrime)
+    {
+      var primeList = new List<PrimeFactor>();
+      double sqrtOfCurrentNominator = Math.Sqrt(nominator);
+      bool isCompleteDecomposition = maxPrime >= sqrtOfCurrentNominator;
 
-			foreach (int prime in GetPrimeNumbersExcludingOneUpTo((int)Math.Min(maxPrime, MaximumSupportedPrimeNumber)))
-			{
-				int recurrences = 0;
-				if (0 == nominator % prime)
-				{
-					primeList.Add(new PrimeFactor(prime, ++recurrences));
-					nominator /= prime;
-					while (0 == nominator % prime)
-					{
-						primeList[primeList.Count - 1] = new PrimeFactor(prime, ++recurrences);
-						nominator /= prime;
-					}
-					if (nominator == 1)
-					{
-						break;
-					}
-					sqrtOfCurrentNominator = Math.Sqrt(nominator);
-				}
+      foreach (int prime in GetPrimeNumbersExcludingOneUpTo((int)Math.Min(maxPrime, MaximumSupportedPrimeNumber)))
+      {
+        int recurrences = 0;
+        if (0 == nominator % prime)
+        {
+          primeList.Add(new PrimeFactor(prime, ++recurrences));
+          nominator /= prime;
+          while (0 == nominator % prime)
+          {
+            primeList[primeList.Count - 1] = new PrimeFactor(prime, ++recurrences);
+            nominator /= prime;
+          }
+          if (nominator == 1)
+          {
+            break;
+          }
+          sqrtOfCurrentNominator = Math.Sqrt(nominator);
+        }
 
-				if (prime > sqrtOfCurrentNominator)
-				{
-					primeList.Add(new PrimeFactor((int)nominator, 1));
-					nominator = 1;
-					break;
-				}
-			}
+        if (prime > sqrtOfCurrentNominator)
+        {
+          primeList.Add(new PrimeFactor((int)nominator, 1));
+          nominator = 1;
+          break;
+        }
+      }
 
-			if (isCompleteDecomposition && nominator != 1)
-				throw new NotImplementedException(string.Format("Unable to decompose number {0} into prime factors because the number contains prime factors greater than {1}, which is not implemented now", nominator, MaximumSupportedPrimeNumber));
+      if (isCompleteDecomposition && nominator != 1)
+        throw new NotImplementedException(string.Format("Unable to decompose number {0} into prime factors because the number contains prime factors greater than {1}, which is not implemented now", nominator, MaximumSupportedPrimeNumber));
 
-			return primeList;
-		}
+      return primeList;
+    }
 
-		private static IEnumerable<PrimeFactor> EnumeratePrimeFactors(long nominator, double maxPrime)
-		{
-			double sqrtOfCurrentNominator = Math.Sqrt(nominator);
-			bool isCompleteDecomposition = maxPrime >= sqrtOfCurrentNominator;
-			int recurrences;
+    private static IEnumerable<PrimeFactor> EnumeratePrimeFactors(long nominator, double maxPrime)
+    {
+      double sqrtOfCurrentNominator = Math.Sqrt(nominator);
+      bool isCompleteDecomposition = maxPrime >= sqrtOfCurrentNominator;
+      int recurrences;
 
-			foreach (int prime in GetPrimeNumbersExcludingOneUpTo((int)Math.Min(maxPrime, MaximumSupportedPrimeNumber)))
-			{
-				recurrences = 0;
-				while (0 == nominator % prime)
-				{
-					++recurrences;
-					nominator /= prime;
-				}
+      foreach (int prime in GetPrimeNumbersExcludingOneUpTo((int)Math.Min(maxPrime, MaximumSupportedPrimeNumber)))
+      {
+        recurrences = 0;
+        while (0 == nominator % prime)
+        {
+          ++recurrences;
+          nominator /= prime;
+        }
 
-				if (recurrences > 0)
-				{
-					yield return new PrimeFactor(prime, recurrences);
-					if (nominator == 1)
-					{
-						break;
-					}
-					sqrtOfCurrentNominator = Math.Sqrt(nominator);
-				}
+        if (recurrences > 0)
+        {
+          yield return new PrimeFactor(prime, recurrences);
+          if (nominator == 1)
+          {
+            break;
+          }
+          sqrtOfCurrentNominator = Math.Sqrt(nominator);
+        }
 
-				if (prime > sqrtOfCurrentNominator) // it is better to compare with square root, because square root needs to be recalculated only if a new factor was found
-				{
-					yield return new PrimeFactor((int)nominator, 1);
-					nominator = 1;
-					break;
-				}
-			}
+        if (prime > sqrtOfCurrentNominator) // it is better to compare with square root, because square root needs to be recalculated only if a new factor was found
+        {
+          yield return new PrimeFactor((int)nominator, 1);
+          nominator = 1;
+          break;
+        }
+      }
 
-			if (isCompleteDecomposition && nominator != 1)
-				throw new NotImplementedException(string.Format("Unable to decompose number {0} into prime factors because the number contains prime factors greater than {1}, which is not implemented now", nominator, MaximumSupportedPrimeNumber));
-		}
+      if (isCompleteDecomposition && nominator != 1)
+        throw new NotImplementedException(string.Format("Unable to decompose number {0} into prime factors because the number contains prime factors greater than {1}, which is not implemented now", nominator, MaximumSupportedPrimeNumber));
+    }
 
-		public static IEnumerable<int> GetAllDivisors(long x)
-		{
-			var primeFactors = PrimeFactorization(x);
-			return GetDivisorsUpToStage(primeFactors.Count - 1, primeFactors);
-		}
+    public static IEnumerable<int> GetAllDivisors(long x)
+    {
+      var primeFactors = PrimeFactorization(x);
+      return GetDivisorsUpToStage(primeFactors.Count - 1, primeFactors);
+    }
 
-		public static IEnumerable<int> GetAllDivisors(IList<PrimeFactor> primeFactors)
-		{
-			return GetDivisorsUpToStage(primeFactors.Count - 1, primeFactors);
-		}
+    public static IEnumerable<int> GetAllDivisors(IList<PrimeFactor> primeFactors)
+    {
+      return GetDivisorsUpToStage(primeFactors.Count - 1, primeFactors);
+    }
 
-		private static IEnumerable<int> GetDivisorsUpToStage(int stage, IList<PrimeFactor> primeFactors)
-		{
-			if (stage < 0) // it is assumed that stage[0] is associated with the prime number 2, thus a negative stage is the factor 1
-			{
-				yield return 1;
-			}
-			else
-			{
-				var prime = primeFactors[stage].PrimeNumber;
-				int recurrences = primeFactors[stage].Power;
-				int factor = 1;
+    private static IEnumerable<int> GetDivisorsUpToStage(int stage, IList<PrimeFactor> primeFactors)
+    {
+      if (stage < 0) // it is assumed that stage[0] is associated with the prime number 2, thus a negative stage is the factor 1
+      {
+        yield return 1;
+      }
+      else
+      {
+        var prime = primeFactors[stage].PrimeNumber;
+        int recurrences = primeFactors[stage].Power;
+        int factor = 1;
 
-				for (int i = 0; i <= recurrences; ++i)
-				{
-					foreach (var divs in GetDivisorsUpToStage(stage - 1, primeFactors))
-						yield return factor * divs;
-					factor *= prime;
-				}
-			}
-		}
+        for (int i = 0; i <= recurrences; ++i)
+        {
+          foreach (var divs in GetDivisorsUpToStage(stage - 1, primeFactors))
+            yield return factor * divs;
+          factor *= prime;
+        }
+      }
+    }
 
-		private static long Pow(int x, int n)
-		{
-			long value = 1;
+    private static long Pow(int x, int n)
+    {
+      long value = 1;
 
-			/* repeated squaring method
+      /* repeated squaring method
 			 * returns 0.0^0 = 1.0, so continuous in x
 			 */
-			do
-			{
-				if (0 != (n & 1))
-					value *= x;  /* for n odd */
+      do
+      {
+        if (0 != (n & 1))
+          value *= x;  /* for n odd */
 
-				n >>= 1;
-				x *= x;
-			} while (n != 0);
+        n >>= 1;
+        x *= x;
+      } while (n != 0);
 
-			return value;
-		}
+      return value;
+    }
 
-		/// <summary>
-		/// Gets the least common multiple of the two numbers <paramref name="x"/> and <paramref name="y"/>.
-		/// </summary>
-		/// <param name="x">First number.</param>
-		/// <param name="y">Second number.</param>
-		/// <returns>Least common multiple of the two numbers <paramref name="x"/> and <paramref name="y"/>.</returns>
-		public static long LeastCommonMultiple(long x, long y)
-		{
-			if (x <= 0)
-				throw new ArgumentOutOfRangeException(nameof(x));
-			if (y <= 0)
-				throw new ArgumentOutOfRangeException(nameof(y));
-			if (x == 1)
-				return y;
-			if (y == 1)
-				return x;
+    /// <summary>
+    /// Gets the least common multiple of the two numbers <paramref name="x"/> and <paramref name="y"/>.
+    /// </summary>
+    /// <param name="x">First number.</param>
+    /// <param name="y">Second number.</param>
+    /// <returns>Least common multiple of the two numbers <paramref name="x"/> and <paramref name="y"/>.</returns>
+    public static long LeastCommonMultiple(long x, long y)
+    {
+      if (x <= 0)
+        throw new ArgumentOutOfRangeException(nameof(x));
+      if (y <= 0)
+        throw new ArgumentOutOfRangeException(nameof(y));
+      if (x == 1)
+        return y;
+      if (y == 1)
+        return x;
 
-			using (var xL = EnumeratePrimeFactors(x, double.MaxValue).GetEnumerator())
-			{
-				using (var yL = EnumeratePrimeFactors(y, double.MaxValue).GetEnumerator())
-				{
-					bool xValid = xL.MoveNext();
-					bool yValid = yL.MoveNext();
+      using (var xL = EnumeratePrimeFactors(x, double.MaxValue).GetEnumerator())
+      {
+        using (var yL = EnumeratePrimeFactors(y, double.MaxValue).GetEnumerator())
+        {
+          bool xValid = xL.MoveNext();
+          bool yValid = yL.MoveNext();
 
-					checked // aware of overflows in multiply
-					{
-						long r = 1;
-						for (; ; )
-						{
-							if (xValid && yValid && xL.Current.PrimeNumber == yL.Current.PrimeNumber)
-							{
-								r *= Pow(xL.Current.PrimeNumber, Math.Max(xL.Current.Power, yL.Current.Power));
-								xValid = xL.MoveNext();
-								yValid = yL.MoveNext();
-							}
-							else if (xValid && (!yValid || xL.Current.PrimeNumber < yL.Current.PrimeNumber))
-							{
-								r *= Pow(xL.Current.PrimeNumber, xL.Current.Power);
-								xValid = xL.MoveNext();
-							}
-							else if (yValid && (!xValid || xL.Current.PrimeNumber > yL.Current.PrimeNumber))
-							{
-								r *= Pow(yL.Current.PrimeNumber, yL.Current.Power);
-								yValid = yL.MoveNext();
-							}
-							else
-							{
-								break;
-							}
-						}
-						return r;
-					}
-				}
-			}
-		}
-	}
+          checked // aware of overflows in multiply
+          {
+            long r = 1;
+            for (; ; )
+            {
+              if (xValid && yValid && xL.Current.PrimeNumber == yL.Current.PrimeNumber)
+              {
+                r *= Pow(xL.Current.PrimeNumber, Math.Max(xL.Current.Power, yL.Current.Power));
+                xValid = xL.MoveNext();
+                yValid = yL.MoveNext();
+              }
+              else if (xValid && (!yValid || xL.Current.PrimeNumber < yL.Current.PrimeNumber))
+              {
+                r *= Pow(xL.Current.PrimeNumber, xL.Current.Power);
+                xValid = xL.MoveNext();
+              }
+              else if (yValid && (!xValid || xL.Current.PrimeNumber > yL.Current.PrimeNumber))
+              {
+                r *= Pow(yL.Current.PrimeNumber, yL.Current.Power);
+                yValid = yL.MoveNext();
+              }
+              else
+              {
+                break;
+              }
+            }
+            return r;
+          }
+        }
+      }
+    }
+  }
 }

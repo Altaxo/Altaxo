@@ -26,127 +26,127 @@ using System;
 
 namespace Altaxo.Gui.Worksheet
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IPLSPredictValueView
-	{
-		void InitializeCalibrationModelTables(string[] tables);
+  public interface IPLSPredictValueView
+  {
+    void InitializeCalibrationModelTables(string[] tables);
 
-		void InitializeDestinationTables(string[] tables);
+    void InitializeDestinationTables(string[] tables);
 
-		int GetCalibrationTableChoice();
+    int GetCalibrationTableChoice();
 
-		int GetDestinationTableChoice();
-	}
+    int GetDestinationTableChoice();
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Summary description for PLSPredictValueController.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(IPLSPredictValueView))]
-	public class PLSPredictValueController : IMVCAController
-	{
-		private IPLSPredictValueView _view;
-		private string[] _calibrationTables;
-		private string[] _destinationTables;
+  /// <summary>
+  /// Summary description for PLSPredictValueController.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(IPLSPredictValueView))]
+  public class PLSPredictValueController : IMVCAController
+  {
+    private IPLSPredictValueView _view;
+    private string[] _calibrationTables;
+    private string[] _destinationTables;
 
-		public string SelectedDestinationTableName;
-		public string SelectedCalibrationTableName;
+    public string SelectedDestinationTableName;
+    public string SelectedCalibrationTableName;
 
-		private void SetElements(bool bInit)
-		{
-			_calibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
-			_destinationTables = GetAvailableDestinationTables();
+    private void SetElements(bool bInit)
+    {
+      _calibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
+      _destinationTables = GetAvailableDestinationTables();
 
-			if (null != _view)
-			{
-				_view.InitializeCalibrationModelTables(_calibrationTables);
-				_view.InitializeDestinationTables(_destinationTables);
-			}
-		}
+      if (null != _view)
+      {
+        _view.InitializeCalibrationModelTables(_calibrationTables);
+        _view.InitializeDestinationTables(_destinationTables);
+      }
+    }
 
-		private string[] GetAvailableDestinationTables()
-		{
-			System.Collections.ArrayList result = new System.Collections.ArrayList();
-			result.Add("New table");
-			foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
-				result.Add(table.Name);
+    private string[] GetAvailableDestinationTables()
+    {
+      System.Collections.ArrayList result = new System.Collections.ArrayList();
+      result.Add("New table");
+      foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
+        result.Add(table.Name);
 
-			return (string[])result.ToArray(typeof(string));
-		}
+      return (string[])result.ToArray(typeof(string));
+    }
 
-		public IPLSPredictValueView View
-		{
-			get { return _view; }
-			set
-			{
-				_view = value;
+    public IPLSPredictValueView View
+    {
+      get { return _view; }
+      set
+      {
+        _view = value;
 
-				if (null != _view)
-				{
-					SetElements(false); // set only the view elements, dont't initialize the variables
-				}
-			}
-		}
+        if (null != _view)
+        {
+          SetElements(false); // set only the view elements, dont't initialize the variables
+        }
+      }
+    }
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public bool Apply(bool disposeController)
-		{
-			int sel;
-			sel = _view.GetCalibrationTableChoice();
-			if (sel < 0)
-				this.SelectedCalibrationTableName = null;
-			else
-				this.SelectedCalibrationTableName = this._calibrationTables[sel];
+    public bool Apply(bool disposeController)
+    {
+      int sel;
+      sel = _view.GetCalibrationTableChoice();
+      if (sel < 0)
+        this.SelectedCalibrationTableName = null;
+      else
+        this.SelectedCalibrationTableName = this._calibrationTables[sel];
 
-			sel = _view.GetDestinationTableChoice();
-			if (sel == 0)
-				this.SelectedDestinationTableName = null;
-			else
-				this.SelectedDestinationTableName = this._destinationTables[sel];
+      sel = _view.GetDestinationTableChoice();
+      if (sel == 0)
+        this.SelectedDestinationTableName = null;
+      else
+        this.SelectedDestinationTableName = this._destinationTables[sel];
 
-			return true;
-		}
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IApplyController Members
+    #endregion IApplyController Members
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				this.View = value as IPLSPredictValueView;
-			}
-		}
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        this.View = value as IPLSPredictValueView;
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return null; }
-		}
+    public object ModelObject
+    {
+      get { return null; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		#endregion IMVCController Members
-	}
+    #endregion IMVCController Members
+  }
 }

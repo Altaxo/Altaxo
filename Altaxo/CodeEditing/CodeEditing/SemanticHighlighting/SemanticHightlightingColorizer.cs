@@ -14,35 +14,35 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.SemanticHighlighting
 {
-	public class SemanticHighlightingColorizer : HighlightingColorizer
-	{
-		private readonly Workspace _workspace;
-		private readonly DocumentId _documentId;
+  public class SemanticHighlightingColorizer : HighlightingColorizer
+  {
+    private readonly Workspace _workspace;
+    private readonly DocumentId _documentId;
 
-		private ISemanticHighlightingColors _highlightingColors;
+    private ISemanticHighlightingColors _highlightingColors;
 
-		public SemanticHighlightingColorizer(Workspace workspace, DocumentId documentId, ISemanticHighlightingColors highlightingColors = null)
-		{
-			_workspace = workspace;
-			_documentId = documentId;
-			_highlightingColors = highlightingColors ?? TextHighlightingColorsAltaxoStyle.Instance;
-		}
+    public SemanticHighlightingColorizer(Workspace workspace, DocumentId documentId, ISemanticHighlightingColors highlightingColors = null)
+    {
+      _workspace = workspace;
+      _documentId = documentId;
+      _highlightingColors = highlightingColors ?? TextHighlightingColorsAltaxoStyle.Instance;
+    }
 
-		protected override IHighlighter CreateHighlighter(TextView textView, ICSharpCode.AvalonEdit.Document.TextDocument document)
-		{
-			return new SemanticHighlighter(_workspace, _documentId, document, _highlightingColors);
-		}
+    protected override IHighlighter CreateHighlighter(TextView textView, ICSharpCode.AvalonEdit.Document.TextDocument document)
+    {
+      return new SemanticHighlighter(_workspace, _documentId, document, _highlightingColors);
+    }
 
-		public ISemanticHighlightingColors HighlightingColors
-		{
-			get
-			{
-				return _highlightingColors;
-			}
-			set
-			{
-				_highlightingColors = value ?? throw new ArgumentNullException(nameof(value));
-			}
-		}
-	}
+    public ISemanticHighlightingColors HighlightingColors
+    {
+      get
+      {
+        return _highlightingColors;
+      }
+      set
+      {
+        _highlightingColors = value ?? throw new ArgumentNullException(nameof(value));
+      }
+    }
+  }
 }

@@ -30,57 +30,57 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
-	public interface INamedColorChoiceView
-	{
-		bool ShowPlotColorsOnly { set; }
+  public interface INamedColorChoiceView
+  {
+    bool ShowPlotColorsOnly { set; }
 
-		NamedColor SelectedColor { get; set; }
-	}
+    NamedColor SelectedColor { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(INamedColorChoiceView))]
-	public class NamedColorChoiceController : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorChoiceView>
-	{
-		public bool ShowPlotColorsOnly { get; set; }
+  [ExpectedTypeOfView(typeof(INamedColorChoiceView))]
+  public class NamedColorChoiceController : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorChoiceView>
+  {
+    public bool ShowPlotColorsOnly { get; set; }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				_view.ShowPlotColorsOnly = ShowPlotColorsOnly;
-				_view.SelectedColor = _doc;
-			}
-		}
+      if (initData)
+      {
+      }
+      if (null != _view)
+      {
+        _view.ShowPlotColorsOnly = ShowPlotColorsOnly;
+        _view.SelectedColor = _doc;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc = _view.SelectedColor;
+    public override bool Apply(bool disposeController)
+    {
+      _doc = _view.SelectedColor;
 
-			if (ShowPlotColorsOnly && _doc.ParentColorSet == null)
-			{
-				Current.Gui.ErrorMessageBox("You have chosen a custom color, but a plot color is required. Please choose one of the defined plot colors.", "Custom colors not allowed");
-				return false;
-			}
+      if (ShowPlotColorsOnly && _doc.ParentColorSet == null)
+      {
+        Current.Gui.ErrorMessageBox("You have chosen a custom color, but a plot color is required. Please choose one of the defined plot colors.", "Custom colors not allowed");
+        return false;
+      }
 
-			if (_doc.ParentColorSet == null)
-			{
-				if (!Current.Gui.YesNoMessageBox(
-					"You have chosen a custom color. This is not recommended, because a custom color does not belong to a color set.\r\n" +
-					"The recommended way is to define a new color set which contains the color of your choice.\r\n" +
-					"Do you want to use this color nevertheless?", "Warning", false))
-					return false;
-			}
+      if (_doc.ParentColorSet == null)
+      {
+        if (!Current.Gui.YesNoMessageBox(
+          "You have chosen a custom color. This is not recommended, because a custom color does not belong to a color set.\r\n" +
+          "The recommended way is to define a new color set which contains the color of your choice.\r\n" +
+          "Do you want to use this color nevertheless?", "Warning", false))
+          return false;
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

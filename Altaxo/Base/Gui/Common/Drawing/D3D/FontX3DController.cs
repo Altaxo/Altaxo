@@ -34,68 +34,68 @@ using System.Text;
 
 namespace Altaxo.Gui.Common.Drawing.D3D
 {
-	public interface IFontX3DView
-	{
-		string SelectedFontFamilyName { get; set; }
+  public interface IFontX3DView
+  {
+    string SelectedFontFamilyName { get; set; }
 
-		double SelectedFontSize { get; set; }
+    double SelectedFontSize { get; set; }
 
-		double SelectedFontDepth { get; set; }
-	}
+    double SelectedFontDepth { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IFontX3DView))]
-	public class FontX3DController : MVCANControllerEditImmutableDocBase<FontX3D, IFontX3DView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [ExpectedTypeOfView(typeof(IFontX3DView))]
+  public class FontX3DController : MVCANControllerEditImmutableDocBase<FontX3D, IFontX3DView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				// fill the font name combobox with all fonts
-				_view.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(_doc.Font);
-				_view.SelectedFontSize = _doc.Size;
-				_view.SelectedFontDepth = _doc.Depth;
-			}
-		}
+      if (initData)
+      {
+      }
+      if (null != _view)
+      {
+        // fill the font name combobox with all fonts
+        _view.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(_doc.Font);
+        _view.SelectedFontSize = _doc.Size;
+        _view.SelectedFontDepth = _doc.Depth;
+      }
+    }
 
-		private void ApplyFontFamily()
-		{
-			var ff = _view.SelectedFontFamilyName;
+    private void ApplyFontFamily()
+    {
+      var ff = _view.SelectedFontFamilyName;
 
-			// make sure that regular style is available
-			if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
-				this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Regular);
-			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
-				this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold);
-			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
-				this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Italic);
-			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
-				this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold | FontXStyle.Italic);
-		}
+      // make sure that regular style is available
+      if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
+        this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Regular);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
+        this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
+        this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Italic);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
+        this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold | FontXStyle.Italic);
+    }
 
-		private void ApplyFontSize()
-		{
-			var newSize = _view.SelectedFontSize;
-			this._doc = _doc.WithSize(_view.SelectedFontSize);
-		}
+    private void ApplyFontSize()
+    {
+      var newSize = _view.SelectedFontSize;
+      this._doc = _doc.WithSize(_view.SelectedFontSize);
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			ApplyFontFamily();
-			ApplyFontSize();
+    public override bool Apply(bool disposeController)
+    {
+      ApplyFontFamily();
+      ApplyFontSize();
 
-			_originalDoc = _doc; // this is safe because FontX is an immutable class
+      _originalDoc = _doc; // this is safe because FontX is an immutable class
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

@@ -31,51 +31,51 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
-	/// <summary>
-	/// Interaction logic for ColorProviderAHSBGradientControl.xaml
-	/// </summary>
-	public partial class VisibleLightSpectrumControl : UserControl, IVisibleLightSpectrumView
-	{
-		public event Action ChoiceChanged;
+  /// <summary>
+  /// Interaction logic for ColorProviderAHSBGradientControl.xaml
+  /// </summary>
+  public partial class VisibleLightSpectrumControl : UserControl, IVisibleLightSpectrumView
+  {
+    public event Action ChoiceChanged;
 
-		public VisibleLightSpectrumControl()
-		{
-			InitializeComponent();
-		}
+    public VisibleLightSpectrumControl()
+    {
+      InitializeComponent();
+    }
 
-		public IColorProviderBaseView BaseView
-		{
-			get { return _guiBaseControl; }
-		}
+    public IColorProviderBaseView BaseView
+    {
+      get { return _guiBaseControl; }
+    }
 
-		public double Gamma
-		{
-			get
-			{
-				return _guiGamma.ValueAsDouble;
-			}
-			set
-			{
-				_guiGamma.ValueAsDouble = value;
-			}
-		}
+    public double Gamma
+    {
+      get
+      {
+        return _guiGamma.ValueAsDouble;
+      }
+      set
+      {
+        _guiGamma.ValueAsDouble = value;
+      }
+    }
 
-		public double Brightness
-		{
-			get
-			{
-				return _guiBrightness.ValueAsDouble;
-			}
-			set
-			{
-				_guiBrightness.ValueAsDouble = value;
-			}
-		}
+    public double Brightness
+    {
+      get
+      {
+        return _guiBrightness.ValueAsDouble;
+      }
+      set
+      {
+        _guiBrightness.ValueAsDouble = value;
+      }
+    }
 
-		private void EhDoubleUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
-		{
-			if (null != ChoiceChanged)
-				ChoiceChanged();
-		}
-	}
+    private void EhDoubleUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
+    {
+      if (null != ChoiceChanged)
+        ChoiceChanged();
+    }
+  }
 }

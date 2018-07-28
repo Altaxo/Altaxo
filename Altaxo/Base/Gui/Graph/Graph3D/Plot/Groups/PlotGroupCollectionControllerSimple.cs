@@ -30,212 +30,212 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
-	#region Interfaces
+  #region Interfaces
 
-	/// <summary>
-	/// This view interface is for showing the options of the XYLineScatterPlotStyle
-	/// </summary>
-	public interface IPlotGroupCollectionViewSimple
-	{
-		/// <summary>
-		/// Initializes the plot group conditions.
-		/// </summary>
-		/// <param name="bColor">True if the color is changed.</param>
-		/// <param name="bLineType">True if the line type is changed.</param>
-		/// <param name="bSymbol">True if the symbol shape is changed.</param>
-		/// <param name="bConcurrently">True if all styles are changed concurrently.</param>
-		/// <param name="bStrict">True if the depending plot styles are enforced to have strictly the same properties than the parent style.</param>
-		void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict);
+  /// <summary>
+  /// This view interface is for showing the options of the XYLineScatterPlotStyle
+  /// </summary>
+  public interface IPlotGroupCollectionViewSimple
+  {
+    /// <summary>
+    /// Initializes the plot group conditions.
+    /// </summary>
+    /// <param name="bColor">True if the color is changed.</param>
+    /// <param name="bLineType">True if the line type is changed.</param>
+    /// <param name="bSymbol">True if the symbol shape is changed.</param>
+    /// <param name="bConcurrently">True if all styles are changed concurrently.</param>
+    /// <param name="bStrict">True if the depending plot styles are enforced to have strictly the same properties than the parent style.</param>
+    void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict);
 
-		#region Getter
+    #region Getter
 
-		Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict { get; }
+    Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict { get; }
 
-		bool PlotGroupColor { get; }
+    bool PlotGroupColor { get; }
 
-		bool PlotGroupLineType { get; }
+    bool PlotGroupLineType { get; }
 
-		bool PlotGroupSymbol { get; }
+    bool PlotGroupSymbol { get; }
 
-		bool PlotGroupConcurrently { get; }
+    bool PlotGroupConcurrently { get; }
 
-		bool PlotGroupUpdate { get; }
+    bool PlotGroupUpdate { get; }
 
-		#endregion Getter
-	}
+    #endregion Getter
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[ExpectedTypeOfView(typeof(IPlotGroupCollectionViewSimple))]
-	public class PlotGroupCollectionControllerSimple : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewSimple>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [ExpectedTypeOfView(typeof(IPlotGroupCollectionViewSimple))]
+  public class PlotGroupCollectionControllerSimple : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewSimple>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				bool bSerial;
-				bool color;
-				bool linestyle;
-				bool symbol;
+      if (null != _view)
+      {
+        bool bSerial;
+        bool color;
+        bool linestyle;
+        bool symbol;
 
-				IsSimplePlotGrouping(_doc, out bSerial, out color, out linestyle, out symbol);
+        IsSimplePlotGrouping(_doc, out bSerial, out color, out linestyle, out symbol);
 
-				_view.InitializePlotGroupConditions(
-					color,
-					linestyle,
-					symbol,
-					!bSerial, //_parentPlotGroup.ChangeStylesConcurrently,
-					PlotGroupStrictness.Normal //_parentPlotGroup.ChangeStylesStrictly
-					);
-			}
-		}
+        _view.InitializePlotGroupConditions(
+          color,
+          linestyle,
+          symbol,
+          !bSerial, //_parentPlotGroup.ChangeStylesConcurrently,
+          PlotGroupStrictness.Normal //_parentPlotGroup.ChangeStylesStrictly
+          );
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			bool color = _view.PlotGroupColor;
-			bool linestyle = _view.PlotGroupLineType;
-			bool symbol = _view.PlotGroupSymbol;
-			bool serial = !_view.PlotGroupConcurrently;
+    public override bool Apply(bool disposeController)
+    {
+      bool color = _view.PlotGroupColor;
+      bool linestyle = _view.PlotGroupLineType;
+      bool symbol = _view.PlotGroupSymbol;
+      bool serial = !_view.PlotGroupConcurrently;
 
-			ColorGroupStyle newColorGroupStyle = null;
-			DashPatternGroupStyle newLineStyleGroupStyle = null;
-			ScatterSymbolGroupStyle newScatterSymbolGroupStyle = null;
+      ColorGroupStyle newColorGroupStyle = null;
+      DashPatternGroupStyle newLineStyleGroupStyle = null;
+      ScatterSymbolGroupStyle newScatterSymbolGroupStyle = null;
 
-			if (_doc.ContainsType(typeof(ColorGroupStyle)))
-			{
-				newColorGroupStyle = (ColorGroupStyle)_doc.GetPlotGroupStyle(typeof(ColorGroupStyle)).Clone();
-				_doc.RemoveType(typeof(ColorGroupStyle));
-			}
-			if (_doc.ContainsType(typeof(DashPatternGroupStyle)))
-			{
-				newLineStyleGroupStyle = (DashPatternGroupStyle)_doc.GetPlotGroupStyle(typeof(DashPatternGroupStyle)).Clone();
-				_doc.RemoveType(typeof(DashPatternGroupStyle));
-			}
-			if (_doc.ContainsType(typeof(ScatterSymbolGroupStyle)))
-			{
-				newScatterSymbolGroupStyle = (ScatterSymbolGroupStyle)_doc.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle)).Clone();
-				_doc.RemoveType(typeof(ScatterSymbolGroupStyle));
-			}
+      if (_doc.ContainsType(typeof(ColorGroupStyle)))
+      {
+        newColorGroupStyle = (ColorGroupStyle)_doc.GetPlotGroupStyle(typeof(ColorGroupStyle)).Clone();
+        _doc.RemoveType(typeof(ColorGroupStyle));
+      }
+      if (_doc.ContainsType(typeof(DashPatternGroupStyle)))
+      {
+        newLineStyleGroupStyle = (DashPatternGroupStyle)_doc.GetPlotGroupStyle(typeof(DashPatternGroupStyle)).Clone();
+        _doc.RemoveType(typeof(DashPatternGroupStyle));
+      }
+      if (_doc.ContainsType(typeof(ScatterSymbolGroupStyle)))
+      {
+        newScatterSymbolGroupStyle = (ScatterSymbolGroupStyle)_doc.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle)).Clone();
+        _doc.RemoveType(typeof(ScatterSymbolGroupStyle));
+      }
 
-			if (color)
-			{
-				newColorGroupStyle = newColorGroupStyle ?? ColorGroupStyle.NewExternalGroupStyle();
-				newColorGroupStyle.IsStepEnabled = true;
-				_doc.Add(newColorGroupStyle);
-			}
-			if (linestyle)
-			{
-				newLineStyleGroupStyle = newLineStyleGroupStyle ?? new DashPatternGroupStyle();
-				newLineStyleGroupStyle.IsStepEnabled = true;
+      if (color)
+      {
+        newColorGroupStyle = newColorGroupStyle ?? ColorGroupStyle.NewExternalGroupStyle();
+        newColorGroupStyle.IsStepEnabled = true;
+        _doc.Add(newColorGroupStyle);
+      }
+      if (linestyle)
+      {
+        newLineStyleGroupStyle = newLineStyleGroupStyle ?? new DashPatternGroupStyle();
+        newLineStyleGroupStyle.IsStepEnabled = true;
 
-				if (serial && color)
-					_doc.Add(newLineStyleGroupStyle, typeof(ColorGroupStyle));
-				else
-					_doc.Add(newLineStyleGroupStyle);
-			}
-			if (symbol)
-			{
-				newScatterSymbolGroupStyle = newScatterSymbolGroupStyle ?? new ScatterSymbolGroupStyle();
-				newScatterSymbolGroupStyle.IsStepEnabled = true;
+        if (serial && color)
+          _doc.Add(newLineStyleGroupStyle, typeof(ColorGroupStyle));
+        else
+          _doc.Add(newLineStyleGroupStyle);
+      }
+      if (symbol)
+      {
+        newScatterSymbolGroupStyle = newScatterSymbolGroupStyle ?? new ScatterSymbolGroupStyle();
+        newScatterSymbolGroupStyle.IsStepEnabled = true;
 
-				if (serial && linestyle)
-					_doc.Add(newScatterSymbolGroupStyle, typeof(DashPatternGroupStyle));
-				else if (serial && color)
-					_doc.Add(newScatterSymbolGroupStyle, typeof(ColorGroupStyle));
-				else
-					_doc.Add(newScatterSymbolGroupStyle);
-			}
+        if (serial && linestyle)
+          _doc.Add(newScatterSymbolGroupStyle, typeof(DashPatternGroupStyle));
+        else if (serial && color)
+          _doc.Add(newScatterSymbolGroupStyle, typeof(ColorGroupStyle));
+        else
+          _doc.Add(newScatterSymbolGroupStyle);
+      }
 
-			_doc.PlotGroupStrictness = _view.PlotGroupStrict;
+      _doc.PlotGroupStrictness = _view.PlotGroupStrict;
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		/// <summary>
-		/// Determines if a PlotGroupStyleCollection fullfills the requirements to be presented by a simple controller.
-		/// </summary>
-		/// <param name="plotGroupStyles">The <see cref="PlotGroupStyleCollection"/> to investigate.</param>
-		/// <returns>True if the <see cref="PlotGroupStyleCollection"/> can be presented by a simple controller, otherwise False.</returns>
-		public static bool IsSimplePlotGrouping(PlotGroupStyleCollection plotGroupStyles)
-		{
-			bool b1, b2, b3, b4;
-			return IsSimplePlotGrouping(plotGroupStyles, out b1, out b2, out b3, out b4);
-		}
+    /// <summary>
+    /// Determines if a PlotGroupStyleCollection fullfills the requirements to be presented by a simple controller.
+    /// </summary>
+    /// <param name="plotGroupStyles">The <see cref="PlotGroupStyleCollection"/> to investigate.</param>
+    /// <returns>True if the <see cref="PlotGroupStyleCollection"/> can be presented by a simple controller, otherwise False.</returns>
+    public static bool IsSimplePlotGrouping(PlotGroupStyleCollection plotGroupStyles)
+    {
+      bool b1, b2, b3, b4;
+      return IsSimplePlotGrouping(plotGroupStyles, out b1, out b2, out b3, out b4);
+    }
 
-		/// <summary>
-		/// Determines if a PlotGroupStyleCollection fullfills the requirements to be presented by a simple controller.
-		/// </summary>
-		/// <param name="plotGroupStyles">The <see cref="PlotGroupStyleCollection"/> to investigate.</param>
-		/// <param name="isSteppingSerial">On return: is True if the styles are changed serial, i.e. first all colors, then the line style, then the symbol style.</param>
-		/// <param name="isGroupedByColor">On return: is True if the items are grouped by color.</param>
-		/// <param name="isGroupedByLineStyle">On return: is True if the items are grouped by line style.</param>
-		/// <param name="isGroupedBySymbolStyle">On return: is True if the items are grouped by symbol style.</param>
-		/// <returns>True if the <see cref="PlotGroupStyleCollection"/> can be presented by a simple controller, otherwise False.</returns>
-		public static bool IsSimplePlotGrouping(PlotGroupStyleCollection plotGroupStyles, out bool isSteppingSerial, out bool isGroupedByColor, out bool isGroupedByLineStyle, out bool isGroupedBySymbolStyle)
-		{
-			isSteppingSerial = false;
-			isGroupedByColor = false;
-			isGroupedByLineStyle = false;
-			isGroupedBySymbolStyle = false;
+    /// <summary>
+    /// Determines if a PlotGroupStyleCollection fullfills the requirements to be presented by a simple controller.
+    /// </summary>
+    /// <param name="plotGroupStyles">The <see cref="PlotGroupStyleCollection"/> to investigate.</param>
+    /// <param name="isSteppingSerial">On return: is True if the styles are changed serial, i.e. first all colors, then the line style, then the symbol style.</param>
+    /// <param name="isGroupedByColor">On return: is True if the items are grouped by color.</param>
+    /// <param name="isGroupedByLineStyle">On return: is True if the items are grouped by line style.</param>
+    /// <param name="isGroupedBySymbolStyle">On return: is True if the items are grouped by symbol style.</param>
+    /// <returns>True if the <see cref="PlotGroupStyleCollection"/> can be presented by a simple controller, otherwise False.</returns>
+    public static bool IsSimplePlotGrouping(PlotGroupStyleCollection plotGroupStyles, out bool isSteppingSerial, out bool isGroupedByColor, out bool isGroupedByLineStyle, out bool isGroupedBySymbolStyle)
+    {
+      isSteppingSerial = false;
+      isGroupedByColor = false;
+      isGroupedByLineStyle = false;
+      isGroupedBySymbolStyle = false;
 
-			if (plotGroupStyles != null)
-			{
-				if (plotGroupStyles.CoordinateTransformingStyle != null)
-					return false;
+      if (plotGroupStyles != null)
+      {
+        if (plotGroupStyles.CoordinateTransformingStyle != null)
+          return false;
 
-				isGroupedByColor = plotGroupStyles.ContainsType(typeof(ColorGroupStyle));
-				isGroupedByLineStyle = plotGroupStyles.ContainsType(typeof(DashPatternGroupStyle));
-				isGroupedBySymbolStyle = plotGroupStyles.ContainsType(typeof(ScatterSymbolGroupStyle));
+        isGroupedByColor = plotGroupStyles.ContainsType(typeof(ColorGroupStyle));
+        isGroupedByLineStyle = plotGroupStyles.ContainsType(typeof(DashPatternGroupStyle));
+        isGroupedBySymbolStyle = plotGroupStyles.ContainsType(typeof(ScatterSymbolGroupStyle));
 
-				if (plotGroupStyles.Count != (isGroupedByColor ? 1 : 0) + (isGroupedByLineStyle ? 1 : 0) + (isGroupedBySymbolStyle ? 1 : 0))
-					return false;
+        if (plotGroupStyles.Count != (isGroupedByColor ? 1 : 0) + (isGroupedByLineStyle ? 1 : 0) + (isGroupedBySymbolStyle ? 1 : 0))
+          return false;
 
-				var list = new List<Type>();
-				if (isGroupedByColor)
-					list.Add(typeof(ColorGroupStyle));
-				if (isGroupedByLineStyle)
-					list.Add(typeof(DashPatternGroupStyle));
-				if (isGroupedBySymbolStyle)
-					list.Add(typeof(ScatterSymbolGroupStyle));
+        var list = new List<Type>();
+        if (isGroupedByColor)
+          list.Add(typeof(ColorGroupStyle));
+        if (isGroupedByLineStyle)
+          list.Add(typeof(DashPatternGroupStyle));
+        if (isGroupedBySymbolStyle)
+          list.Add(typeof(ScatterSymbolGroupStyle));
 
-				// Test for concurrent stepping
-				bool isConcurrent = true;
-				foreach (var t in list)
-				{
-					if (0 != plotGroupStyles.GetTreeLevelOf(t) || !plotGroupStyles.GetPlotGroupStyle(t).IsStepEnabled) // Tree level has to be 0 for concurrent items, and stepping must be enabled
-					{
-						isConcurrent = false;
-						break;
-					}
-				}
+        // Test for concurrent stepping
+        bool isConcurrent = true;
+        foreach (var t in list)
+        {
+          if (0 != plotGroupStyles.GetTreeLevelOf(t) || !plotGroupStyles.GetPlotGroupStyle(t).IsStepEnabled) // Tree level has to be 0 for concurrent items, and stepping must be enabled
+          {
+            isConcurrent = false;
+            break;
+          }
+        }
 
-				// Test for serial stepping
-				isSteppingSerial = true;
-				for (int i = 0; i < list.Count; ++i)
-				{
-					var t = list[i];
+        // Test for serial stepping
+        isSteppingSerial = true;
+        for (int i = 0; i < list.Count; ++i)
+        {
+          var t = list[i];
 
-					if (i != plotGroupStyles.GetTreeLevelOf(t) || !plotGroupStyles.GetPlotGroupStyle(t).IsStepEnabled) // Tree level has to be i and step must be enabled
-					{
-						isSteppingSerial = false;
-						break;
-					}
-				}
+          if (i != plotGroupStyles.GetTreeLevelOf(t) || !plotGroupStyles.GetPlotGroupStyle(t).IsStepEnabled) // Tree level has to be i and step must be enabled
+          {
+            isSteppingSerial = false;
+            break;
+          }
+        }
 
-				if (!isConcurrent && !isSteppingSerial)
-					return false;
+        if (!isConcurrent && !isSteppingSerial)
+          return false;
 
-				return true;
-			}
+        return true;
+      }
 
-			return false;
-		}
-	}
+      return false;
+    }
+  }
 } // end of namespace

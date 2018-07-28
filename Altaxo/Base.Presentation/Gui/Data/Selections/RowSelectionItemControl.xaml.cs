@@ -39,59 +39,59 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	/// <summary>
-	/// Interaction logic for RowSelectionItemControl.xaml
-	/// </summary>
-	public partial class RowSelectionItemControl : Grid
-	{
-		private FrameworkElement _selectionDetailControl;
+  /// <summary>
+  /// Interaction logic for RowSelectionItemControl.xaml
+  /// </summary>
+  public partial class RowSelectionItemControl : Grid
+  {
+    private FrameworkElement _selectionDetailControl;
 
-		public RowSelectionItemControl()
-		{
-			InitializeComponent();
-		}
+    public RowSelectionItemControl()
+    {
+      InitializeComponent();
+    }
 
-		public RowSelectionItemControl(SelectableListNodeList rowSelectionTypes, object detailsControl)
-		{
-			InitializeComponent();
+    public RowSelectionItemControl(SelectableListNodeList rowSelectionTypes, object detailsControl)
+    {
+      InitializeComponent();
 
-			GuiHelper.Initialize(_guiRowSelectionType, rowSelectionTypes);
-			RowSelectionDetailControl = detailsControl;
-		}
+      GuiHelper.Initialize(_guiRowSelectionType, rowSelectionTypes);
+      RowSelectionDetailControl = detailsControl;
+    }
 
-		public object RowSelectionDetailControl
-		{
-			set
-			{
-				if (null != _selectionDetailControl)
-				{
-					this.Children.Remove(_selectionDetailControl);
-				}
+    public object RowSelectionDetailControl
+    {
+      set
+      {
+        if (null != _selectionDetailControl)
+        {
+          this.Children.Remove(_selectionDetailControl);
+        }
 
-				_selectionDetailControl = value as FrameworkElement;
+        _selectionDetailControl = value as FrameworkElement;
 
-				if (null != _selectionDetailControl)
-				{
-					_selectionDetailControl.SetValue(Grid.ColumnProperty, 1);
-					this.Children.Add(_selectionDetailControl);
-				}
-			}
-		}
+        if (null != _selectionDetailControl)
+        {
+          _selectionDetailControl.SetValue(Grid.ColumnProperty, 1);
+          this.Children.Add(_selectionDetailControl);
+        }
+      }
+    }
 
-		public int IndentationLevel
-		{
-			set
-			{
-				this.Margin = new Thickness(value * 10, 0, 0, 0);
-			}
-		}
+    public int IndentationLevel
+    {
+      set
+      {
+        this.Margin = new Thickness(value * 10, 0, 0, 0);
+      }
+    }
 
-		public object SelectedSelection
-		{
-			get
-			{
-				return _guiRowSelectionType.SelectedValue;
-			}
-		}
-	}
+    public object SelectedSelection
+    {
+      get
+      {
+        return _guiRowSelectionType.SelectedValue;
+      }
+    }
+  }
 }

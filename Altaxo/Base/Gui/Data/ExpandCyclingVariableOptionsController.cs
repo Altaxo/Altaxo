@@ -29,79 +29,79 @@ using System.Text;
 
 namespace Altaxo.Gui.Data
 {
-	using Altaxo.Collections;
-	using Altaxo.Data;
+  using Altaxo.Collections;
+  using Altaxo.Data;
 
-	public interface IExpandCyclingVariableOptionsView
-	{
-		void InitializeDestinationOutputFormat(SelectableListNodeList list);
+  public interface IExpandCyclingVariableOptionsView
+  {
+    void InitializeDestinationOutputFormat(SelectableListNodeList list);
 
-		void InitializeDestinationX(SelectableListNodeList list);
+    void InitializeDestinationX(SelectableListNodeList list);
 
-		void InitializeDestinationColumnSorting(SelectableListNodeList list);
+    void InitializeDestinationColumnSorting(SelectableListNodeList list);
 
-		void InitializeDestinationRowSorting(SelectableListNodeList list);
-	}
+    void InitializeDestinationRowSorting(SelectableListNodeList list);
+  }
 
-	[UserControllerForObject(typeof(ExpandCyclingVariableColumnOptions))]
-	[ExpectedTypeOfView(typeof(IExpandCyclingVariableOptionsView))]
-	public class ExpandCyclingVariableOptionsController : MVCANControllerEditOriginalDocBase<ExpandCyclingVariableColumnOptions, IExpandCyclingVariableOptionsView>
-	{
-		private SelectableListNodeList _choicesDestinationOutputFormat;
-		private SelectableListNodeList _choicesDestinationX;
-		private SelectableListNodeList _choicesDestinationColSort;
-		private SelectableListNodeList _choicesDestinationRowSort;
+  [UserControllerForObject(typeof(ExpandCyclingVariableColumnOptions))]
+  [ExpectedTypeOfView(typeof(IExpandCyclingVariableOptionsView))]
+  public class ExpandCyclingVariableOptionsController : MVCANControllerEditOriginalDocBase<ExpandCyclingVariableColumnOptions, IExpandCyclingVariableOptionsView>
+  {
+    private SelectableListNodeList _choicesDestinationOutputFormat;
+    private SelectableListNodeList _choicesDestinationX;
+    private SelectableListNodeList _choicesDestinationColSort;
+    private SelectableListNodeList _choicesDestinationRowSort;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_choicesDestinationOutputFormat = null;
-			_choicesDestinationX = null;
-			_choicesDestinationColSort = null;
-			_choicesDestinationRowSort = null;
+    public override void Dispose(bool isDisposing)
+    {
+      _choicesDestinationOutputFormat = null;
+      _choicesDestinationX = null;
+      _choicesDestinationColSort = null;
+      _choicesDestinationRowSort = null;
 
-			base.Dispose(isDisposing);
-		}
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_choicesDestinationOutputFormat = new SelectableListNodeList();
-				_choicesDestinationOutputFormat.FillWithEnumeration(_doc.DestinationOutput);
+      if (initData)
+      {
+        _choicesDestinationOutputFormat = new SelectableListNodeList();
+        _choicesDestinationOutputFormat.FillWithEnumeration(_doc.DestinationOutput);
 
-				_choicesDestinationX = new SelectableListNodeList();
-				_choicesDestinationX.FillWithEnumeration(_doc.DestinationX);
+        _choicesDestinationX = new SelectableListNodeList();
+        _choicesDestinationX.FillWithEnumeration(_doc.DestinationX);
 
-				_choicesDestinationColSort = new SelectableListNodeList();
-				_choicesDestinationColSort.FillWithEnumeration(_doc.DestinationColumnSorting);
+        _choicesDestinationColSort = new SelectableListNodeList();
+        _choicesDestinationColSort.FillWithEnumeration(_doc.DestinationColumnSorting);
 
-				_choicesDestinationRowSort = new SelectableListNodeList();
-				_choicesDestinationRowSort.FillWithEnumeration(_doc.DestinationRowSorting);
-			}
-			if (null != _view)
-			{
-				_view.InitializeDestinationOutputFormat(_choicesDestinationOutputFormat);
-				_view.InitializeDestinationX(_choicesDestinationX);
-				_view.InitializeDestinationColumnSorting(_choicesDestinationColSort);
-				_view.InitializeDestinationRowSorting(_choicesDestinationRowSort);
-			}
-		}
+        _choicesDestinationRowSort = new SelectableListNodeList();
+        _choicesDestinationRowSort.FillWithEnumeration(_doc.DestinationRowSorting);
+      }
+      if (null != _view)
+      {
+        _view.InitializeDestinationOutputFormat(_choicesDestinationOutputFormat);
+        _view.InitializeDestinationX(_choicesDestinationX);
+        _view.InitializeDestinationColumnSorting(_choicesDestinationColSort);
+        _view.InitializeDestinationRowSorting(_choicesDestinationRowSort);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.DestinationOutput = (ExpandCyclingVariableColumnOptions.OutputFormat)_choicesDestinationOutputFormat.FirstSelectedNode.Tag;
-			_doc.DestinationX = (ExpandCyclingVariableColumnOptions.DestinationXColumn)_choicesDestinationX.FirstSelectedNode.Tag;
-			_doc.DestinationColumnSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationColSort.FirstSelectedNode.Tag;
-			_doc.DestinationRowSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationRowSort.FirstSelectedNode.Tag;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.DestinationOutput = (ExpandCyclingVariableColumnOptions.OutputFormat)_choicesDestinationOutputFormat.FirstSelectedNode.Tag;
+      _doc.DestinationX = (ExpandCyclingVariableColumnOptions.DestinationXColumn)_choicesDestinationX.FirstSelectedNode.Tag;
+      _doc.DestinationColumnSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationColSort.FirstSelectedNode.Tag;
+      _doc.DestinationRowSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationRowSort.FirstSelectedNode.Tag;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

@@ -28,44 +28,44 @@ using System;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
-	/// <summary>
-	/// Contain statistic commands.
-	/// </summary>
-	public class StatisticCommands
-	{
-		#region Statistical commands
+  /// <summary>
+  /// Contain statistic commands.
+  /// </summary>
+  public class StatisticCommands
+  {
+    #region Statistical commands
 
-		public static void StatisticsOnColumns(IWorksheetController ctrl)
-		{
-			var table = ctrl.DataTable.DoStatisticsOnColumns(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
+    public static void StatisticsOnColumns(IWorksheetController ctrl)
+    {
+      var table = ctrl.DataTable.DoStatisticsOnColumns(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
 
-			Current.Project.DataTableCollection.Add(table);
-			// create a new worksheet without any columns
-			Current.ProjectService.CreateNewWorksheet(table);
-		}
+      Current.Project.DataTableCollection.Add(table);
+      // create a new worksheet without any columns
+      Current.ProjectService.CreateNewWorksheet(table);
+    }
 
-		public static void StatisticsOnRows(IWorksheetController ctrl)
-		{
-			var table = ctrl.DataTable.DoStatisticsOnRows(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
+    public static void StatisticsOnRows(IWorksheetController ctrl)
+    {
+      var table = ctrl.DataTable.DoStatisticsOnRows(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
 
-			Current.Project.DataTableCollection.Add(table);
-			// create a new worksheet without any columns
-			Current.ProjectService.CreateNewWorksheet(table);
-		}
+      Current.Project.DataTableCollection.Add(table);
+      // create a new worksheet without any columns
+      Current.ProjectService.CreateNewWorksheet(table);
+    }
 
-		#endregion Statistical commands
+    #endregion Statistical commands
 
-		public static void CreateHistogram(WorksheetController ctrl)
-		{
-			var table = Altaxo.Analysis.Statistics.Histograms.HistogramCreation.CreateHistogramOnColumns(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, Gui.UserInteractionLevel.InteractAlways);
+    public static void CreateHistogram(WorksheetController ctrl)
+    {
+      var table = Altaxo.Analysis.Statistics.Histograms.HistogramCreation.CreateHistogramOnColumns(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, Gui.UserInteractionLevel.InteractAlways);
 
-			if (null != table && !Current.Project.DataTableCollection.Contains(table))
-			{
-				Current.Project.DataTableCollection.Add(table);
+      if (null != table && !Current.Project.DataTableCollection.Contains(table))
+      {
+        Current.Project.DataTableCollection.Add(table);
 
-				// create a new worksheet without any columns
-				Current.ProjectService.CreateNewWorksheet(table);
-			}
-		}
-	}
+        // create a new worksheet without any columns
+        Current.ProjectService.CreateNewWorksheet(table);
+      }
+    }
+  }
 }

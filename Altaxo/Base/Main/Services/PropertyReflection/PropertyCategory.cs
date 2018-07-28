@@ -28,37 +28,37 @@ using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
-	/// <summary>
-	///
-	/// </summary>
-	/// <remarks>
-	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
-	/// </remarks>
-	public class PropertyCategory : PropertyCollection
-	{
-		#region Initialization
+  /// <summary>
+  ///
+  /// </summary>
+  /// <remarks>
+  /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
+  /// </remarks>
+  public class PropertyCategory : PropertyCollection
+  {
+    #region Initialization
 
-		public PropertyCategory()
-		{
-			this._categoryName = "Misc";
-		}
+    public PropertyCategory()
+    {
+      this._categoryName = "Misc";
+    }
 
-		public PropertyCategory(string categoryName)
-		{
-			this._categoryName = categoryName;
-		}
+    public PropertyCategory(string categoryName)
+    {
+      this._categoryName = categoryName;
+    }
 
-		public string Category
-		{
-			get { return _categoryName; }
-		}
+    public string Category
+    {
+      get { return _categoryName; }
+    }
 
-		#endregion Initialization
+    #endregion Initialization
 
-		#region Fields
+    #region Fields
 
-		private readonly string _categoryName;
+    private readonly string _categoryName;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

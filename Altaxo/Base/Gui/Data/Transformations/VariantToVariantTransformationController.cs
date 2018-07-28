@@ -31,8 +31,8 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Transformations
 {
-	[UserControllerForObject(typeof(IVariantToVariantTransformation), 90)]
-	public class VariantToVariantTransformationController : Altaxo.Gui.Common.SimpleImmutableObjectController<IVariantToVariantTransformation>
-	{
-	}
+  [UserControllerForObject(typeof(IVariantToVariantTransformation), 90)]
+  public class VariantToVariantTransformationController : Altaxo.Gui.Common.SimpleImmutableObjectController<IVariantToVariantTransformation>
+  {
+  }
 }

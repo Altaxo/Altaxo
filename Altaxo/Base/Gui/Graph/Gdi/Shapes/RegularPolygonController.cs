@@ -29,54 +29,54 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	public interface IRegularPolygonView
-	{
-		IClosedPathShapeView ShapeGraphicView { get; }
+  public interface IRegularPolygonView
+  {
+    IClosedPathShapeView ShapeGraphicView { get; }
 
-		int Vertices { get; set; }
+    int Vertices { get; set; }
 
-		double CornerRadiusPt { get; set; }
-	}
+    double CornerRadiusPt { get; set; }
+  }
 
-	[UserControllerForObject(typeof(RegularPolygon), 110)]
-	[ExpectedTypeOfView(typeof(IRegularPolygonView))]
-	public class RegularPolygonController : MVCANControllerEditOriginalDocBase<RegularPolygon, IRegularPolygonView>
-	{
-		private ClosedPathShapeController _shapeCtrl;
+  [UserControllerForObject(typeof(RegularPolygon), 110)]
+  [ExpectedTypeOfView(typeof(IRegularPolygonView))]
+  public class RegularPolygonController : MVCANControllerEditOriginalDocBase<RegularPolygon, IRegularPolygonView>
+  {
+    private ClosedPathShapeController _shapeCtrl;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_shapeCtrl, () => _shapeCtrl = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_shapeCtrl, () => _shapeCtrl = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_shapeCtrl = new ClosedPathShapeController() { UseDocumentCopy = UseDocument.Directly };
-				_shapeCtrl.InitializeDocument(_doc);
-			}
-			if (null != _view)
-			{
-				if (null == _shapeCtrl.ViewObject)
-					_shapeCtrl.ViewObject = _view.ShapeGraphicView;
+      if (initData)
+      {
+        _shapeCtrl = new ClosedPathShapeController() { UseDocumentCopy = UseDocument.Directly };
+        _shapeCtrl.InitializeDocument(_doc);
+      }
+      if (null != _view)
+      {
+        if (null == _shapeCtrl.ViewObject)
+          _shapeCtrl.ViewObject = _view.ShapeGraphicView;
 
-				_view.Vertices = _doc.NumberOfVertices;
-				_view.CornerRadiusPt = _doc.CornerRadius;
-			}
-		}
+        _view.Vertices = _doc.NumberOfVertices;
+        _view.CornerRadiusPt = _doc.CornerRadius;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_shapeCtrl.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_shapeCtrl.Apply(disposeController))
+        return false;
 
-			_doc.CornerRadius = _view.CornerRadiusPt;
-			_doc.NumberOfVertices = _view.Vertices;
+      _doc.CornerRadius = _view.CornerRadiusPt;
+      _doc.NumberOfVertices = _view.Vertices;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

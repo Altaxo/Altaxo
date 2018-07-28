@@ -27,135 +27,135 @@ using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Xml
 {
-	public interface IXmlDeserializationInfo
-	{
-		/// <summary>Returns the name of the current xml element.</summary>
-		string CurrentElementName { get; }
+  public interface IXmlDeserializationInfo
+  {
+    /// <summary>Returns the name of the current xml element.</summary>
+    string CurrentElementName { get; }
 
-		bool GetBoolean();
+    bool GetBoolean();
 
-		bool GetBoolean(string name);
+    bool GetBoolean(string name);
 
-		bool? GetNullableBoolean(string name);
+    bool? GetNullableBoolean(string name);
 
-		char GetChar(string name);
+    char GetChar(string name);
 
-		int GetInt32();
+    int GetInt32();
 
-		int GetInt32(string name);
+    int GetInt32(string name);
 
-		Int64 GetInt64(string name);
+    Int64 GetInt64(string name);
 
-		int? GetNullableInt32(string name);
+    int? GetNullableInt32(string name);
 
-		float GetSingle();
+    float GetSingle();
 
-		float GetSingle(string name);
+    float GetSingle(string name);
 
-		double GetDouble();
+    double GetDouble();
 
-		double GetDouble(string name);
+    double GetDouble(string name);
 
-		double? GetNullableDouble(string name);
+    double? GetNullableDouble(string name);
 
-		string GetString();
+    string GetString();
 
-		string GetString(string name);
+    string GetString(string name);
 
-		DateTime GetDateTime(string name);
+    DateTime GetDateTime(string name);
 
-		TimeSpan GetTimeSpan(string name);
+    TimeSpan GetTimeSpan(string name);
 
-		System.IO.MemoryStream GetMemoryStream(string name);
+    System.IO.MemoryStream GetMemoryStream(string name);
 
-		object GetEnum(string name, System.Type type); // see remarks on serialization
+    object GetEnum(string name, System.Type type); // see remarks on serialization
 
-		T? GetNullableEnum<T>(string name) where T : struct;
+    T? GetNullableEnum<T>(string name) where T : struct;
 
-		string GetNodeContent(); // gets the inner text of the node directly
+    string GetNodeContent(); // gets the inner text of the node directly
 
-		int GetInt32Attribute(string name);
+    int GetInt32Attribute(string name);
 
-		string GetStringAttribute(string name);
+    string GetStringAttribute(string name);
 
-		int OpenArray(); // get Number of Array elements
+    int OpenArray(); // get Number of Array elements
 
-		int OpenArray(string name);
+    int OpenArray(string name);
 
-		void CloseArray(int count);
+    void CloseArray(int count);
 
-		void GetArray(out float[] val);
+    void GetArray(out float[] val);
 
-		/// <summary>
-		/// Deserializes an array of double values. The array is allocated automatically.
-		/// </summary>
-		/// <param name="name">Name of the array.</param>
-		/// <param name="val">The resulting deserialized array.</param>
-		void GetArray(string name, out double[] val);
+    /// <summary>
+    /// Deserializes an array of double values. The array is allocated automatically.
+    /// </summary>
+    /// <param name="name">Name of the array.</param>
+    /// <param name="val">The resulting deserialized array.</param>
+    void GetArray(string name, out double[] val);
 
-		void GetArray(string name, out int[] val);
+    void GetArray(string name, out int[] val);
 
-		/// <summary>
-		/// Deserializes an array of double value. The xml node must be opened before with <see cref="OpenArray()" />
-		/// </summary>
-		/// <param name="val">The array, must be at least of length <c>count</c>.</param>
-		/// <param name="count">The number of elements to deserialize. If this is less than the number of elements in the xml stream, the other elements are safely ignored.</param>
-		void GetArray(double[] val, int count);
+    /// <summary>
+    /// Deserializes an array of double value. The xml node must be opened before with <see cref="OpenArray()" />
+    /// </summary>
+    /// <param name="val">The array, must be at least of length <c>count</c>.</param>
+    /// <param name="count">The number of elements to deserialize. If this is less than the number of elements in the xml stream, the other elements are safely ignored.</param>
+    void GetArray(double[] val, int count);
 
-		void GetArray(DateTime[] val, int count);
+    void GetArray(DateTime[] val, int count);
 
-		void GetArray(string name, out string[] val);
+    void GetArray(string name, out string[] val);
 
-		void GetArray(string[] val, int count);
+    void GetArray(string[] val, int count);
 
-		void OpenElement();
+    void OpenElement();
 
-		void CloseElement();
+    void CloseElement();
 
-		/// <summary>Retrieves the name of the current node</summary>
-		/// <returns>The name of the current node.</returns>
-		string GetNodeName();
+    /// <summary>Retrieves the name of the current node</summary>
+    /// <returns>The name of the current node.</returns>
+    string GetNodeName();
 
-		object GetValue(string name, object parent);
+    object GetValue(string name, object parent);
 
-		void GetBaseValueEmbedded(object instance, System.Type basetype, object parent);
+    void GetBaseValueEmbedded(object instance, System.Type basetype, object parent);
 
-		object GetBaseValueEmbedded(object instance, string fullyQualifiedBasetypeName, object parent);
+    object GetBaseValueEmbedded(object instance, string fullyQualifiedBasetypeName, object parent);
 
-		void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent);
+    void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent);
 
-		string GetElementAsOuterXml(string name);
+    string GetElementAsOuterXml(string name);
 
-		/// <summary>
-		/// Gets the property dictionary. This is a dictionary where some string/value pairs could be stored, and used during or after deserialization
-		/// </summary>
-		/// <value>
-		/// The property dictionary.
-		/// </value>
-		IDictionary<string, object> PropertyDictionary { get; }
+    /// <summary>
+    /// Gets the property dictionary. This is a dictionary where some string/value pairs could be stored, and used during or after deserialization
+    /// </summary>
+    /// <value>
+    /// The property dictionary.
+    /// </value>
+    IDictionary<string, object> PropertyDictionary { get; }
 
-		/// <summary>
-		/// Gets a property value from the property dictionary identified by the provided key string. If the property does not exist in the dictionary, the default value is returned.
-		/// </summary>
-		/// <typeparam name="T">Type of the property</typeparam>
-		/// <param name="propertyKey">The property key.</param>
-		/// <returns>If the property exists, the property value is returned; otherwise, the default value of the expected property value type is returned.</returns>
-		T GetPropertyOrDefault<T>(string propertyKey);
+    /// <summary>
+    /// Gets a property value from the property dictionary identified by the provided key string. If the property does not exist in the dictionary, the default value is returned.
+    /// </summary>
+    /// <typeparam name="T">Type of the property</typeparam>
+    /// <param name="propertyKey">The property key.</param>
+    /// <returns>If the property exists, the property value is returned; otherwise, the default value of the expected property value type is returned.</returns>
+    T GetPropertyOrDefault<T>(string propertyKey);
 
-		/// <summary>
-		/// This event is called if the deserialization process of all objects is finished and
-		/// the deserialized objects are sorted into the document. Then the application should
-		/// call AllFinished, which fires this event. The purpose of this event is to
-		/// resolve the references in the deserialized objects. This resolving process can be successfully
-		/// done only if the objects are put in the right places in the document, so that
-		/// the document paths can be resolved to the right objects.
-		/// </summary>
-		event XmlDeserializationCallbackEventHandler DeserializationFinished;
+    /// <summary>
+    /// This event is called if the deserialization process of all objects is finished and
+    /// the deserialized objects are sorted into the document. Then the application should
+    /// call AllFinished, which fires this event. The purpose of this event is to
+    /// resolve the references in the deserialized objects. This resolving process can be successfully
+    /// done only if the objects are put in the right places in the document, so that
+    /// the document paths can be resolved to the right objects.
+    /// </summary>
+    event XmlDeserializationCallbackEventHandler DeserializationFinished;
 
-		/// <summary>
-		/// Occurs after (!) the deserialization process has completely finished, and the dirty flag of the document was cleared. This callback is intended to activate
-		/// the data sources of the document, which should be suspended during the deserialization process.
-		/// </summary>
-		event Action AfterDeserializationHasCompletelyFinished;
-	}
+    /// <summary>
+    /// Occurs after (!) the deserialization process has completely finished, and the dirty flag of the document was cleared. This callback is intended to activate
+    /// the data sources of the document, which should be suspended during the deserialization process.
+    /// </summary>
+    event Action AfterDeserializationHasCompletelyFinished;
+  }
 }

@@ -33,48 +33,48 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Plot.Groups
 {
-	[ExpectedTypeOfView(typeof(IStyleListView))]
-	[UserControllerForObject(typeof(ColorGroupStyle))]
-	public class ColorGroupStyleController : MVCANControllerEditOriginalDocBase<ColorGroupStyle, IStyleListView>
-	{
-		private ColorSetController _listController;
+  [ExpectedTypeOfView(typeof(IStyleListView))]
+  [UserControllerForObject(typeof(ColorGroupStyle))]
+  public class ColorGroupStyleController : MVCANControllerEditOriginalDocBase<ColorGroupStyle, IStyleListView>
+  {
+    private ColorSetController _listController;
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_listController = new ColorSetController();
-				_listController.InitializeDocument(_doc.ListOfValues);
-			}
+      if (initData)
+      {
+        _listController = new ColorSetController();
+        _listController.InitializeDocument(_doc.ListOfValues);
+      }
 
-			if (null != _view)
-			{
-				_listController.ViewObject = _view;
-			}
-		}
+      if (null != _view)
+      {
+        _listController.ViewObject = _view;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_listController.Apply(disposeController))
-				return ApplyEnd(false, disposeController);
+    public override bool Apply(bool disposeController)
+    {
+      if (!_listController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
 
-			var colorSet = (IColorSet)_listController.ModelObject;
-			if (object.ReferenceEquals(colorSet, ColorSetManager.Instance.BuiltinKnownColors))
-			{
-				Current.Gui.ErrorMessageBox(string.Format("The color set '{0}' is not admitted to be used as plot color set. Please choose another color set, or derive a new color set from '{0}'.", ColorSetManager.Instance.BuiltinKnownColors.Name), "ColorSet not admitted");
-				return ApplyEnd(false, disposeController);
-			}
+      var colorSet = (IColorSet)_listController.ModelObject;
+      if (object.ReferenceEquals(colorSet, ColorSetManager.Instance.BuiltinKnownColors))
+      {
+        Current.Gui.ErrorMessageBox(string.Format("The color set '{0}' is not admitted to be used as plot color set. Please choose another color set, or derive a new color set from '{0}'.", ColorSetManager.Instance.BuiltinKnownColors.Name), "ColorSet not admitted");
+        return ApplyEnd(false, disposeController);
+      }
 
-			_doc.ListOfValues = colorSet;
+      _doc.ListOfValues = colorSet;
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_listController, () => _listController = null);
-		}
-	}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_listController, () => _listController = null);
+    }
+  }
 }

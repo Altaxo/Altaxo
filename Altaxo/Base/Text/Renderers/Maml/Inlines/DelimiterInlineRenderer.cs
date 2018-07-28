@@ -26,16 +26,16 @@ using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="DelimiterInline"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class DelimiterInlineRenderer : MamlObjectRenderer<DelimiterInline>
-	{
-		protected override void Write(MamlRenderer renderer, DelimiterInline obj)
-		{
-			renderer.WriteEscape(obj.ToLiteral());
-			renderer.WriteChildren(obj);
-		}
-	}
+  /// <summary>
+  /// Maml renderer for a <see cref="DelimiterInline"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class DelimiterInlineRenderer : MamlObjectRenderer<DelimiterInline>
+  {
+    protected override void Write(MamlRenderer renderer, DelimiterInline obj)
+    {
+      renderer.WriteEscape(obj.ToLiteral());
+      renderer.WriteChildren(obj);
+    }
+  }
 }

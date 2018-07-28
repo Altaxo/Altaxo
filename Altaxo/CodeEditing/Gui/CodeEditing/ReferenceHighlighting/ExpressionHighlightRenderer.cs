@@ -15,78 +15,78 @@ using Altaxo.CodeEditing.ReferenceHighlighting;
 
 namespace Altaxo.Gui.CodeEditing.ReferenceHightlighting
 {
-	/// <summary>
-	/// Highlights expressions (references to expression under current caret).
-	/// </summary>
-	public class ExpressionHighlightRenderer : IBackgroundRenderer
-	{
-		private ImmutableArray<DocumentHighlights> renderedReferences;
-		private Pen borderPen;
-		private Brush backgroundBrush;
-		private TextView textView;
-		private readonly Color borderColor = Color.FromArgb(52, 30, 130, 255);  //Color.FromArgb(180, 70, 230, 70))
-		private readonly Color fillColor = Color.FromArgb(22, 30, 130, 255);  //Color.FromArgb(40, 60, 255, 60)
-		private readonly int borderThickness = 1;
-		private readonly int cornerRadius = 1;
+  /// <summary>
+  /// Highlights expressions (references to expression under current caret).
+  /// </summary>
+  public class ExpressionHighlightRenderer : IBackgroundRenderer
+  {
+    private ImmutableArray<DocumentHighlights> renderedReferences;
+    private Pen borderPen;
+    private Brush backgroundBrush;
+    private TextView textView;
+    private readonly Color borderColor = Color.FromArgb(52, 30, 130, 255);  //Color.FromArgb(180, 70, 230, 70))
+    private readonly Color fillColor = Color.FromArgb(22, 30, 130, 255);  //Color.FromArgb(40, 60, 255, 60)
+    private readonly int borderThickness = 1;
+    private readonly int cornerRadius = 1;
 
-		public void SetHighlight(ImmutableArray<DocumentHighlights> renderedReferences)
-		{
-			if (this.renderedReferences != renderedReferences)
-			{
-				this.renderedReferences = renderedReferences;
-				textView.InvalidateLayer(this.Layer);
-			}
-		}
+    public void SetHighlight(ImmutableArray<DocumentHighlights> renderedReferences)
+    {
+      if (this.renderedReferences != renderedReferences)
+      {
+        this.renderedReferences = renderedReferences;
+        textView.InvalidateLayer(this.Layer);
+      }
+    }
 
-		public void ClearHighlight()
-		{
-			this.SetHighlight(ImmutableArray<DocumentHighlights>.Empty);
-		}
+    public void ClearHighlight()
+    {
+      this.SetHighlight(ImmutableArray<DocumentHighlights>.Empty);
+    }
 
-		public ExpressionHighlightRenderer(TextView textView)
-		{
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
-			this.borderPen = new Pen(new SolidColorBrush(borderColor), borderThickness);
-			this.backgroundBrush = new SolidColorBrush(fillColor);
-			this.borderPen.Freeze();
-			this.backgroundBrush.Freeze();
-			this.textView.BackgroundRenderers.Add(this);
-		}
+    public ExpressionHighlightRenderer(TextView textView)
+    {
+      if (textView == null)
+        throw new ArgumentNullException(nameof(textView));
+      this.textView = textView;
+      this.borderPen = new Pen(new SolidColorBrush(borderColor), borderThickness);
+      this.backgroundBrush = new SolidColorBrush(fillColor);
+      this.borderPen.Freeze();
+      this.backgroundBrush.Freeze();
+      this.textView.BackgroundRenderers.Add(this);
+    }
 
-		public KnownLayer Layer
-		{
-			get
-			{
-				return KnownLayer.Selection;
-			}
-		}
+    public KnownLayer Layer
+    {
+      get
+      {
+        return KnownLayer.Selection;
+      }
+    }
 
-		public void Draw(TextView textView, DrawingContext drawingContext)
-		{
-			if (this.renderedReferences == null)
-				return;
-			BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
-			builder.CornerRadius = cornerRadius;
-			builder.AlignToMiddleOfPixels = true;
-			foreach (var reference in this.renderedReferences)
-			{
-				foreach (var span in reference.HighlightSpans)
-				{
-					builder.AddSegment(textView, new TextSegment()
-					{
-						StartOffset = span.TextSpan.Start,
-						Length = span.TextSpan.Length
-					});
-					builder.CloseFigure();
-				}
-			}
-			Geometry geometry = builder.CreateGeometry();
-			if (geometry != null)
-			{
-				drawingContext.DrawGeometry(backgroundBrush, borderPen, geometry);
-			}
-		}
-	}
+    public void Draw(TextView textView, DrawingContext drawingContext)
+    {
+      if (this.renderedReferences == null)
+        return;
+      BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
+      builder.CornerRadius = cornerRadius;
+      builder.AlignToMiddleOfPixels = true;
+      foreach (var reference in this.renderedReferences)
+      {
+        foreach (var span in reference.HighlightSpans)
+        {
+          builder.AddSegment(textView, new TextSegment()
+          {
+            StartOffset = span.TextSpan.Start,
+            Length = span.TextSpan.Length
+          });
+          builder.CloseFigure();
+        }
+      }
+      Geometry geometry = builder.CreateGeometry();
+      if (geometry != null)
+      {
+        drawingContext.DrawGeometry(backgroundBrush, borderPen, geometry);
+      }
+    }
+  }
 }

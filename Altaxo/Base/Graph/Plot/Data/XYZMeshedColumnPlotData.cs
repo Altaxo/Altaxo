@@ -31,50 +31,50 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Plot.Data
 {
-	/// <summary>
-	/// Summary description for XYColumnPlotData.
-	/// </summary>
-	[Serializable]
-	public class XYZMeshedColumnPlotData
-		:
-		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		System.ICloneable
-	{
-		protected DataTableMatrixProxy _matrixProxy;
+  /// <summary>
+  /// Summary description for XYColumnPlotData.
+  /// </summary>
+  [Serializable]
+  public class XYZMeshedColumnPlotData
+    :
+    Main.SuspendableDocumentNodeWithSetOfEventArgs,
+    System.ICloneable
+  {
+    protected DataTableMatrixProxy _matrixProxy;
 
-		// cached or temporary data
-		[NonSerialized]
-		protected IPhysicalBoundaries _xBoundaries;
+    // cached or temporary data
+    [NonSerialized]
+    protected IPhysicalBoundaries _xBoundaries;
 
-		[NonSerialized]
-		protected IPhysicalBoundaries _yBoundaries;
+    [NonSerialized]
+    protected IPhysicalBoundaries _yBoundaries;
 
-		[NonSerialized]
-		protected IPhysicalBoundaries _vBoundaries;
+    [NonSerialized]
+    protected IPhysicalBoundaries _vBoundaries;
 
-		[NonSerialized]
-		protected bool _isCachedDataValid = false;
+    [NonSerialized]
+    protected bool _isCachedDataValid = false;
 
-		/// <summary>
-		/// Gets or sets the plot range start. Currently, this value is always 0.
-		/// </summary>
-		public int PlotRangeStart { get { return 0; } set { } }
+    /// <summary>
+    /// Gets or sets the plot range start. Currently, this value is always 0.
+    /// </summary>
+    public int PlotRangeStart { get { return 0; } set { } }
 
-		/// <summary>
-		/// Gets or sets the plot range length. Currently, this value is always <c>int.MaxValue</c>.
-		/// </summary>
-		public int PlotRangeLength { get { return int.MaxValue; } set { } }
+    /// <summary>
+    /// Gets or sets the plot range length. Currently, this value is always <c>int.MaxValue</c>.
+    /// </summary>
+    public int PlotRangeLength { get { return int.MaxValue; } set { } }
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYZEquidistantMeshColumnPlotData", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new ApplicationException("Calling a deprecated serialization handler for XYZMeshedColumnPlotData");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYZEquidistantMeshColumnPlotData", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new ApplicationException("Calling a deprecated serialization handler for XYZMeshedColumnPlotData");
+        /*
 				XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
 
 				if(s.m_XColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_XColumn).ParentObject))
@@ -114,145 +114,145 @@ namespace Altaxo.Graph.Plot.Data
 				info.AddValue("YBoundaries",s.m_yBoundaries);
 				info.AddValue("VBoundaries",s.m_vBoundaries);
 				*/
-			}
+      }
 
-			private Main.AbsoluteDocumentPath _xColumnPath = null;
-			private Main.AbsoluteDocumentPath _yColumnPath = null;
-			private Main.AbsoluteDocumentPath[] _vColumnPaths = null;
+      private Main.AbsoluteDocumentPath _xColumnPath = null;
+      private Main.AbsoluteDocumentPath _yColumnPath = null;
+      private Main.AbsoluteDocumentPath[] _vColumnPaths = null;
 
-			private IReadableColumnProxy _xColumnProxy = null;
-			private IReadableColumnProxy _yColumnProxy = null;
-			private IReadableColumnProxy[] _vColumnProxies = null;
+      private IReadableColumnProxy _xColumnProxy = null;
+      private IReadableColumnProxy _yColumnProxy = null;
+      private IReadableColumnProxy[] _vColumnProxies = null;
 
-			private XYZMeshedColumnPlotData _plotAssociation = null;
+      private XYZMeshedColumnPlotData _plotAssociation = null;
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				bool bSurrogateUsed = false;
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        bool bSurrogateUsed = false;
 
-				XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
+        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
 
-				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
 
 #pragma warning disable 618
-				s._matrixProxy = DataTableMatrixProxy.CreateEmptyInstance(); // this instance is replaced later in the deserialization callback function and is intended to avoid null reference errors
+        s._matrixProxy = DataTableMatrixProxy.CreateEmptyInstance(); // this instance is replaced later in the deserialization callback function and is intended to avoid null reference errors
 #pragma warning restore 618
 
-				object deserobj;
-				deserobj = info.GetValue("XColumn", s);
-				if (deserobj is Main.AbsoluteDocumentPath)
-				{
-					surr._xColumnPath = (Main.AbsoluteDocumentPath)deserobj;
-					bSurrogateUsed = true;
-				}
-				else
-				{
-					surr._xColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)deserobj);
-				}
+        object deserobj;
+        deserobj = info.GetValue("XColumn", s);
+        if (deserobj is Main.AbsoluteDocumentPath)
+        {
+          surr._xColumnPath = (Main.AbsoluteDocumentPath)deserobj;
+          bSurrogateUsed = true;
+        }
+        else
+        {
+          surr._xColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)deserobj);
+        }
 
-				deserobj = info.GetValue("YColumn", s);
-				if (deserobj is Main.AbsoluteDocumentPath)
-				{
-					surr._yColumnPath = (Main.AbsoluteDocumentPath)deserobj;
-					bSurrogateUsed = true;
-				}
-				else
-				{
-					surr._yColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)deserobj);
-				}
+        deserobj = info.GetValue("YColumn", s);
+        if (deserobj is Main.AbsoluteDocumentPath)
+        {
+          surr._yColumnPath = (Main.AbsoluteDocumentPath)deserobj;
+          bSurrogateUsed = true;
+        }
+        else
+        {
+          surr._yColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)deserobj);
+        }
 
-				int count = info.OpenArray();
-				surr._vColumnPaths = new Main.AbsoluteDocumentPath[count];
-				surr._vColumnProxies = new IReadableColumnProxy[count];
-				for (int i = 0; i < count; i++)
-				{
-					deserobj = info.GetValue("e", s);
-					if (deserobj is Main.AbsoluteDocumentPath)
-					{
-						surr._vColumnPaths[i] = (Main.AbsoluteDocumentPath)deserobj;
-						bSurrogateUsed = true;
-					}
-					else
-					{
-						surr._vColumnProxies[i] = ReadableColumnProxyBase.FromColumn((Altaxo.Data.IReadableColumn)deserobj);
-					}
-				}
-				info.CloseArray(count);
+        int count = info.OpenArray();
+        surr._vColumnPaths = new Main.AbsoluteDocumentPath[count];
+        surr._vColumnProxies = new IReadableColumnProxy[count];
+        for (int i = 0; i < count; i++)
+        {
+          deserobj = info.GetValue("e", s);
+          if (deserobj is Main.AbsoluteDocumentPath)
+          {
+            surr._vColumnPaths[i] = (Main.AbsoluteDocumentPath)deserobj;
+            bSurrogateUsed = true;
+          }
+          else
+          {
+            surr._vColumnProxies[i] = ReadableColumnProxyBase.FromColumn((Altaxo.Data.IReadableColumn)deserobj);
+          }
+        }
+        info.CloseArray(count);
 
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
-				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", s);
+        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
+        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
+        s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", s);
 
-				s._xBoundaries.ParentObject = s;
-				s._yBoundaries.ParentObject = s;
-				s._vBoundaries.ParentObject = s;
+        s._xBoundaries.ParentObject = s;
+        s._yBoundaries.ParentObject = s;
+        s._vBoundaries.ParentObject = s;
 
-				if (bSurrogateUsed)
-				{
-					surr._plotAssociation = s;
-					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
-				}
+        if (bSurrogateUsed)
+        {
+          surr._plotAssociation = s;
+          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        }
 
-				return s;
-			}
+        return s;
+      }
 
-			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
-			{
-				bool bAllResolved = true;
+      public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+      {
+        bool bAllResolved = true;
 
-				if (this._xColumnPath != null)
-				{
-					object xColumn = Main.AbsoluteDocumentPath.GetObject(this._xColumnPath, this._plotAssociation, documentRoot);
-					bAllResolved &= (null != xColumn);
-					if (xColumn is Altaxo.Data.INumericColumn)
-					{
-						this._xColumnPath = null;
-						this._xColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)xColumn);
-					}
-				}
+        if (this._xColumnPath != null)
+        {
+          object xColumn = Main.AbsoluteDocumentPath.GetObject(this._xColumnPath, this._plotAssociation, documentRoot);
+          bAllResolved &= (null != xColumn);
+          if (xColumn is Altaxo.Data.INumericColumn)
+          {
+            this._xColumnPath = null;
+            this._xColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)xColumn);
+          }
+        }
 
-				if (this._yColumnPath != null)
-				{
-					object yColumn = Main.AbsoluteDocumentPath.GetObject(this._yColumnPath, this._plotAssociation, documentRoot);
-					bAllResolved &= (null != yColumn);
-					if (yColumn is Altaxo.Data.INumericColumn)
-					{
-						this._yColumnPath = null;
-						this._yColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)yColumn);
-					}
-				}
+        if (this._yColumnPath != null)
+        {
+          object yColumn = Main.AbsoluteDocumentPath.GetObject(this._yColumnPath, this._plotAssociation, documentRoot);
+          bAllResolved &= (null != yColumn);
+          if (yColumn is Altaxo.Data.INumericColumn)
+          {
+            this._yColumnPath = null;
+            this._yColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)yColumn);
+          }
+        }
 
-				for (int i = 0; i < this._vColumnPaths.Length; i++)
-				{
-					if (this._vColumnPaths[i] != null)
-					{
-						object vColumn = Main.AbsoluteDocumentPath.GetObject(this._vColumnPaths[i], this._plotAssociation, documentRoot);
-						bAllResolved &= (null != vColumn);
-						if (vColumn is Altaxo.Data.IReadableColumn)
-						{
-							this._vColumnPaths[i] = null;
-							this._vColumnProxies[i] = ReadableColumnProxyBase.FromColumn((Altaxo.Data.IReadableColumn)vColumn);
-						}
-					}
-				}
+        for (int i = 0; i < this._vColumnPaths.Length; i++)
+        {
+          if (this._vColumnPaths[i] != null)
+          {
+            object vColumn = Main.AbsoluteDocumentPath.GetObject(this._vColumnPaths[i], this._plotAssociation, documentRoot);
+            bAllResolved &= (null != vColumn);
+            if (vColumn is Altaxo.Data.IReadableColumn)
+            {
+              this._vColumnPaths[i] = null;
+              this._vColumnProxies[i] = ReadableColumnProxyBase.FromColumn((Altaxo.Data.IReadableColumn)vColumn);
+            }
+          }
+        }
 
-				if (bAllResolved || isFinallyCall)
-				{
-					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+        if (bAllResolved || isFinallyCall)
+        {
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
 #pragma warning disable 618
-					_plotAssociation._matrixProxy = new DataTableMatrixProxy(_xColumnProxy, _yColumnProxy, _vColumnProxies) { ParentObject = _plotAssociation };
+          _plotAssociation._matrixProxy = new DataTableMatrixProxy(_xColumnProxy, _yColumnProxy, _vColumnProxies) { ParentObject = _plotAssociation };
 #pragma warning restore 618
-				}
-			}
-		}
+        }
+      }
+    }
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 2)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old versions not supported.");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 2)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Serialization of old versions not supported.");
+        /*
 
 				XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
 
@@ -270,340 +270,340 @@ namespace Altaxo.Graph.Plot.Data
 				info.AddValue("YBoundaries", s._yBoundaries);
 				info.AddValue("VBoundaries", s._vBoundaries);
 				*/
-			}
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
 
-				var _xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
-				var _yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
+        var _xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
+        var _yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
 
-				int count = info.OpenArray();
-				var _dataColumns = new IReadableColumnProxy[count];
-				for (int i = 0; i < count; i++)
-				{
-					_dataColumns[i] = (IReadableColumnProxy)info.GetValue("e", s);
-				}
-				info.CloseArray(count);
+        int count = info.OpenArray();
+        var _dataColumns = new IReadableColumnProxy[count];
+        for (int i = 0; i < count; i++)
+        {
+          _dataColumns[i] = (IReadableColumnProxy)info.GetValue("e", s);
+        }
+        info.CloseArray(count);
 
 #pragma warning disable 618
-				s._matrixProxy = new DataTableMatrixProxy(_xColumn, _yColumn, _dataColumns);
+        s._matrixProxy = new DataTableMatrixProxy(_xColumn, _yColumn, _dataColumns);
 #pragma warning restore 618
 
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
-				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", s);
+        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
+        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
+        s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", s);
 
-				s._matrixProxy.ParentObject = s;
-				s._xBoundaries.ParentObject = s;
-				s._yBoundaries.ParentObject = s;
-				s._vBoundaries.ParentObject = s;
+        s._matrixProxy.ParentObject = s;
+        s._xBoundaries.ParentObject = s;
+        s._yBoundaries.ParentObject = s;
+        s._vBoundaries.ParentObject = s;
 
-				s._isCachedDataValid = false;
+        s._isCachedDataValid = false;
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		/// <summary>2014-07-08 using _matrixProxy instead of single proxies for columns</summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 3)]
-		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
+    /// <summary>2014-07-08 using _matrixProxy instead of single proxies for columns</summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 3)]
+    private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
 
-				info.AddValue("MatrixProxy", s._matrixProxy);
+        info.AddValue("MatrixProxy", s._matrixProxy);
 
-				info.AddValue("XBoundaries", s._xBoundaries);
-				info.AddValue("YBoundaries", s._yBoundaries);
-				info.AddValue("VBoundaries", s._vBoundaries);
-			}
+        info.AddValue("XBoundaries", s._xBoundaries);
+        info.AddValue("YBoundaries", s._yBoundaries);
+        info.AddValue("VBoundaries", s._vBoundaries);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
 
-				s._matrixProxy = (DataTableMatrixProxy)info.GetValue("MatrixProxy", s);
+        s._matrixProxy = (DataTableMatrixProxy)info.GetValue("MatrixProxy", s);
 
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
-				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", s);
+        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
+        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
+        s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", s);
 
-				s._matrixProxy.ParentObject = s;
-				s._xBoundaries.ParentObject = s;
-				s._yBoundaries.ParentObject = s;
-				s._vBoundaries.ParentObject = s;
+        s._matrixProxy.ParentObject = s;
+        s._xBoundaries.ParentObject = s;
+        s._yBoundaries.ParentObject = s;
+        s._vBoundaries.ParentObject = s;
 
-				s._isCachedDataValid = false;
+        s._isCachedDataValid = false;
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>
-		/// Deserialization constructor.
-		/// </summary>
-		protected XYZMeshedColumnPlotData()
-		{
-		}
+    /// <summary>
+    /// Deserialization constructor.
+    /// </summary>
+    protected XYZMeshedColumnPlotData()
+    {
+    }
 
-		public XYZMeshedColumnPlotData(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
-		{
-			_matrixProxy = new DataTableMatrixProxy(table, selectedDataRows, selectedDataColumns, selectedPropertyColumns) { ParentObject = this };
-			this.SetXBoundsFromTemplate(new FiniteNumericalBoundaries());
-			this.SetYBoundsFromTemplate(new FiniteNumericalBoundaries());
-			this.SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
-		}
+    public XYZMeshedColumnPlotData(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
+    {
+      _matrixProxy = new DataTableMatrixProxy(table, selectedDataRows, selectedDataColumns, selectedPropertyColumns) { ParentObject = this };
+      this.SetXBoundsFromTemplate(new FiniteNumericalBoundaries());
+      this.SetYBoundsFromTemplate(new FiniteNumericalBoundaries());
+      this.SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
+    }
 
-		/// <summary>
-		/// Copy constructor.
-		/// </summary>
-		/// <param name="from">The object to copy from.</param>
-		/// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
-		public XYZMeshedColumnPlotData(XYZMeshedColumnPlotData from)
-		{
-			CopyHelper.Copy(ref _matrixProxy, from._matrixProxy);
-			_matrixProxy.ParentObject = this;
+    /// <summary>
+    /// Copy constructor.
+    /// </summary>
+    /// <param name="from">The object to copy from.</param>
+    /// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
+    public XYZMeshedColumnPlotData(XYZMeshedColumnPlotData from)
+    {
+      CopyHelper.Copy(ref _matrixProxy, from._matrixProxy);
+      _matrixProxy.ParentObject = this;
 
-			this.SetXBoundsFromTemplate(new FiniteNumericalBoundaries());
-			this.SetYBoundsFromTemplate(new FiniteNumericalBoundaries());
-			this.SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
-		}
+      this.SetXBoundsFromTemplate(new FiniteNumericalBoundaries());
+      this.SetYBoundsFromTemplate(new FiniteNumericalBoundaries());
+      this.SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			if (null != _matrixProxy)
-				yield return new Main.DocumentNodeAndName(_matrixProxy, "Matrix");
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      if (null != _matrixProxy)
+        yield return new Main.DocumentNodeAndName(_matrixProxy, "Matrix");
 
-			if (null != _xBoundaries)
-				yield return new Main.DocumentNodeAndName(_xBoundaries, "XBoundaries");
+      if (null != _xBoundaries)
+        yield return new Main.DocumentNodeAndName(_xBoundaries, "XBoundaries");
 
-			if (null != _yBoundaries)
-				yield return new Main.DocumentNodeAndName(_yBoundaries, "YBoundaries");
+      if (null != _yBoundaries)
+        yield return new Main.DocumentNodeAndName(_yBoundaries, "YBoundaries");
 
-			if (null != _vBoundaries)
-				yield return new Main.DocumentNodeAndName(_vBoundaries, "VBoundaries");
-		}
+      if (null != _vBoundaries)
+        yield return new Main.DocumentNodeAndName(_vBoundaries, "VBoundaries");
+    }
 
-		/// <summary>
-		/// Creates a cloned copy of this object.
-		/// </summary>
-		/// <returns>The cloned copy of this object.</returns>
-		/// <remarks>The data columns refered by this object are <b>not</b> cloned, only the reference is cloned here.</remarks>
-		public object Clone()
-		{
-			return new XYZMeshedColumnPlotData(this);
-		}
+    /// <summary>
+    /// Creates a cloned copy of this object.
+    /// </summary>
+    /// <returns>The cloned copy of this object.</returns>
+    /// <remarks>The data columns refered by this object are <b>not</b> cloned, only the reference is cloned here.</remarks>
+    public object Clone()
+    {
+      return new XYZMeshedColumnPlotData(this);
+    }
 
-		public DataTableMatrixProxy DataTableMatrix
-		{
-			get
-			{
-				return this._matrixProxy;
-			}
-		}
+    public DataTableMatrixProxy DataTableMatrix
+    {
+      get
+      {
+        return this._matrixProxy;
+      }
+    }
 
-		public void MergeXBoundsInto(IPhysicalBoundaries pb)
-		{
-			if (!this._isCachedDataValid)
-				this.CalculateCachedData();
-			pb.Add(_xBoundaries);
-		}
+    public void MergeXBoundsInto(IPhysicalBoundaries pb)
+    {
+      if (!this._isCachedDataValid)
+        this.CalculateCachedData();
+      pb.Add(_xBoundaries);
+    }
 
-		public void MergeYBoundsInto(IPhysicalBoundaries pb)
-		{
-			if (!this._isCachedDataValid)
-				this.CalculateCachedData();
-			pb.Add(_yBoundaries);
-		}
+    public void MergeYBoundsInto(IPhysicalBoundaries pb)
+    {
+      if (!this._isCachedDataValid)
+        this.CalculateCachedData();
+      pb.Add(_yBoundaries);
+    }
 
-		public void MergeVBoundsInto(IPhysicalBoundaries pb)
-		{
-			if (!this._isCachedDataValid)
-				this.CalculateCachedData();
-			pb.Add(_vBoundaries);
-		}
+    public void MergeVBoundsInto(IPhysicalBoundaries pb)
+    {
+      if (!this._isCachedDataValid)
+        this.CalculateCachedData();
+      pb.Add(_vBoundaries);
+    }
 
-		public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
-		{
-			if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
-			{
-				if (ChildCopyToMember(ref _xBoundaries, val))
-				{
-					this._isCachedDataValid = false;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+    public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
+    {
+      if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
+      {
+        if (ChildCopyToMember(ref _xBoundaries, val))
+        {
+          this._isCachedDataValid = false;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
-		{
-			if (null == _yBoundaries || val.GetType() != _yBoundaries.GetType())
-			{
-				if (ChildCopyToMember(ref _yBoundaries, val))
-				{
-					this._isCachedDataValid = false;
+    public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
+    {
+      if (null == _yBoundaries || val.GetType() != _yBoundaries.GetType())
+      {
+        if (ChildCopyToMember(ref _yBoundaries, val))
+        {
+          this._isCachedDataValid = false;
 
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public void SetVBoundsFromTemplate(IPhysicalBoundaries val)
-		{
-			if (null == _vBoundaries || val.GetType() != _vBoundaries.GetType())
-			{
-				if (ChildCopyToMember(ref _vBoundaries, val))
-				{
-					this._isCachedDataValid = false;
+    public void SetVBoundsFromTemplate(IPhysicalBoundaries val)
+    {
+      if (null == _vBoundaries || val.GetType() != _vBoundaries.GetType())
+      {
+        if (ChildCopyToMember(ref _vBoundaries, val))
+        {
+          this._isCachedDataValid = false;
 
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public int RowCount
-		{
-			get
-			{
-				return _matrixProxy.RowCount;
-			}
-		}
+    public int RowCount
+    {
+      get
+      {
+        return _matrixProxy.RowCount;
+      }
+    }
 
-		public int ColumnCount
-		{
-			get
-			{
-				return _matrixProxy.ColumnCount;
-			}
-		}
+    public int ColumnCount
+    {
+      get
+      {
+        return _matrixProxy.ColumnCount;
+      }
+    }
 
-		public Altaxo.Data.IReadableColumn GetDataColumn(int i)
-		{
-			return _matrixProxy.GetDataColumnProxy(i).Document;
-		}
+    public Altaxo.Data.IReadableColumn GetDataColumn(int i)
+    {
+      return _matrixProxy.GetDataColumnProxy(i).Document;
+    }
 
-		public Altaxo.Data.IReadableColumn XColumn
-		{
-			get
-			{
-				return _matrixProxy.RowHeaderColumn;
-			}
-		}
+    public Altaxo.Data.IReadableColumn XColumn
+    {
+      get
+      {
+        return _matrixProxy.RowHeaderColumn;
+      }
+    }
 
-		public Altaxo.Data.IReadableColumn YColumn
-		{
-			get
-			{
-				return _matrixProxy.ColumnHeaderColumn;
-			}
-		}
+    public Altaxo.Data.IReadableColumn YColumn
+    {
+      get
+      {
+        return _matrixProxy.ColumnHeaderColumn;
+      }
+    }
 
-		public override string ToString()
-		{
-			var colCount = _matrixProxy.ColumnCount;
+    public override string ToString()
+    {
+      var colCount = _matrixProxy.ColumnCount;
 
-			if (colCount > 0)
-				return String.Format("PictureData {0}-{1}", _matrixProxy.GetDataColumnProxy(0).GetName(2), _matrixProxy.GetDataColumnProxy(colCount - 1).GetName(2));
-			else
-				return "Empty (no data)";
-		}
+      if (colCount > 0)
+        return String.Format("PictureData {0}-{1}", _matrixProxy.GetDataColumnProxy(0).GetName(2), _matrixProxy.GetDataColumnProxy(colCount - 1).GetName(2));
+      else
+        return "Empty (no data)";
+    }
 
-		public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds, IPhysicalBoundaries zBounds = null)
-		{
-			if (this.IsDisposeInProgress)
-				return;
+    public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds, IPhysicalBoundaries zBounds = null)
+    {
+      if (this.IsDisposeInProgress)
+        return;
 
-			if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
-				this.SetXBoundsFromTemplate(xBounds);
+      if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
+        this.SetXBoundsFromTemplate(xBounds);
 
-			if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
-				this.SetYBoundsFromTemplate(yBounds);
+      if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
+        this.SetYBoundsFromTemplate(yBounds);
 
-			if (_vBoundaries == null || (zBounds != null && _vBoundaries.GetType() != zBounds.GetType()))
-				this.SetVBoundsFromTemplate(zBounds);
+      if (_vBoundaries == null || (zBounds != null && _vBoundaries.GetType() != zBounds.GetType()))
+        this.SetVBoundsFromTemplate(zBounds);
 
-			CalculateCachedData();
-		}
+      CalculateCachedData();
+    }
 
-		public void CalculateCachedData()
-		{
-			if (this.IsDisposeInProgress)
-				return;
+    public void CalculateCachedData()
+    {
+      if (this.IsDisposeInProgress)
+        return;
 
-			if (0 == RowCount || 0 == ColumnCount)
-				return;
+      if (0 == RowCount || 0 == ColumnCount)
+        return;
 
-			using (var suspendTokenX = this._xBoundaries.SuspendGetToken())
-			{
-				using (var suspendTokenY = this._yBoundaries.SuspendGetToken())
-				{
-					using (var suspendTokenV = this._vBoundaries.SuspendGetToken())
-					{
-						this._xBoundaries.Reset();
-						this._yBoundaries.Reset();
-						this._vBoundaries.Reset();
+      using (var suspendTokenX = this._xBoundaries.SuspendGetToken())
+      {
+        using (var suspendTokenY = this._yBoundaries.SuspendGetToken())
+        {
+          using (var suspendTokenV = this._vBoundaries.SuspendGetToken())
+          {
+            this._xBoundaries.Reset();
+            this._yBoundaries.Reset();
+            this._vBoundaries.Reset();
 
-						_matrixProxy.ForEachMatrixElementDo((col, idx) => this._vBoundaries.Add(col, idx));
-						_matrixProxy.ForEachRowHeaderElementDo((col, idx) => this._xBoundaries.Add(col, idx));
-						_matrixProxy.ForEachColumnHeaderElementDo((col, idx) => this._yBoundaries.Add(col, idx));
+            _matrixProxy.ForEachMatrixElementDo((col, idx) => this._vBoundaries.Add(col, idx));
+            _matrixProxy.ForEachRowHeaderElementDo((col, idx) => this._xBoundaries.Add(col, idx));
+            _matrixProxy.ForEachColumnHeaderElementDo((col, idx) => this._yBoundaries.Add(col, idx));
 
-						// now the cached data are valid
-						_isCachedDataValid = true;
+            // now the cached data are valid
+            _isCachedDataValid = true;
 
-						// now when the cached data are valid, we can reenable the events
-						suspendTokenV.Resume();
-					}
-					suspendTokenY.Resume();
-				}
-				suspendTokenX.Resume();
-			}
-		}
+            // now when the cached data are valid, we can reenable the events
+            suspendTokenV.Resume();
+          }
+          suspendTokenY.Resume();
+        }
+        suspendTokenX.Resume();
+      }
+    }
 
-		#region Changed event handling
+    #region Changed event handling
 
-		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
-		{
-			// If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
-			var eAsBCEA = e as BoundariesChangedEventArgs;
-			if (null != eAsBCEA)
-			{
-				if (object.ReferenceEquals(sender, _xBoundaries))
-				{
-					eAsBCEA.SetXBoundaryChangedFlag();
-				}
-				else if (object.ReferenceEquals(sender, _yBoundaries))
-				{
-					eAsBCEA.SetYBoundaryChangedFlag();
-				}
-				else if (object.ReferenceEquals(sender, _vBoundaries))
-				{
-					eAsBCEA.SetVBoundaryChangedFlag();
-				}
-			}
+    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    {
+      // If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
+      var eAsBCEA = e as BoundariesChangedEventArgs;
+      if (null != eAsBCEA)
+      {
+        if (object.ReferenceEquals(sender, _xBoundaries))
+        {
+          eAsBCEA.SetXBoundaryChangedFlag();
+        }
+        else if (object.ReferenceEquals(sender, _yBoundaries))
+        {
+          eAsBCEA.SetYBoundaryChangedFlag();
+        }
+        else if (object.ReferenceEquals(sender, _vBoundaries))
+        {
+          eAsBCEA.SetVBoundaryChangedFlag();
+        }
+      }
 
-			if (object.ReferenceEquals(sender, _matrixProxy))
-			{
-				_isCachedDataValid = false;
-			}
+      if (object.ReferenceEquals(sender, _matrixProxy))
+      {
+        _isCachedDataValid = false;
+      }
 
-			return base.HandleHighPriorityChildChangeCases(sender, ref e);
-		}
+      return base.HandleHighPriorityChildChangeCases(sender, ref e);
+    }
 
-		#endregion Changed event handling
+    #endregion Changed event handling
 
-		/// <summary>
-		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-		/// to change a plot so that the plot items refer to another table.
-		/// </summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-		public void VisitDocumentReferences(DocNodeProxyReporter Report)
-		{
-			_matrixProxy.VisitDocumentReferences(Report);
-		}
-	}
+    /// <summary>
+    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+    /// to change a plot so that the plot items refer to another table.
+    /// </summary>
+    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public void VisitDocumentReferences(DocNodeProxyReporter Report)
+    {
+      _matrixProxy.VisitDocumentReferences(Report);
+    }
+  }
 } // end name space

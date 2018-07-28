@@ -27,63 +27,63 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
-	/// <summary>
-	/// Summary description for NumericAxisLabelFormattingFixed.
-	/// </summary>
-	public class NumericLabelFormattingFixed : NumericLabelFormattingBase
-	{
-		#region Serialization
+  /// <summary>
+  /// Summary description for NumericAxisLabelFormattingFixed.
+  /// </summary>
+  public class NumericLabelFormattingFixed : NumericLabelFormattingBase
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingFixed", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingFixed), 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				NumericLabelFormattingFixed s = (NumericLabelFormattingFixed)obj;
-				info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingFixed", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingFixed), 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        NumericLabelFormattingFixed s = (NumericLabelFormattingFixed)obj;
+        info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				NumericLabelFormattingFixed s = null != o ? (NumericLabelFormattingFixed)o : new NumericLabelFormattingFixed();
-				info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingBase), parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        NumericLabelFormattingFixed s = null != o ? (NumericLabelFormattingFixed)o : new NumericLabelFormattingFixed();
+        info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingBase), parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public NumericLabelFormattingFixed()
-		{
-		}
+    public NumericLabelFormattingFixed()
+    {
+    }
 
-		public NumericLabelFormattingFixed(NumericLabelFormattingFixed from)
-			: base(from) // everything is done here, since CopyFrom is virtual
-		{
-		}
+    public NumericLabelFormattingFixed(NumericLabelFormattingFixed from)
+      : base(from) // everything is done here, since CopyFrom is virtual
+    {
+    }
 
-		public override object Clone()
-		{
-			return new NumericLabelFormattingFixed(this);
-		}
+    public override object Clone()
+    {
+      return new NumericLabelFormattingFixed(this);
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			yield break;
-		}
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      yield break;
+    }
 
-		protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
-		{
-			if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
-				return FormatItem((double)item);
-			else
-				return item.ToString();
-		}
+    protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
+    {
+      if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
+        return FormatItem((double)item);
+      else
+        return item.ToString();
+    }
 
-		public string FormatItem(double tick)
-		{
-			return _prefix + tick.ToString() + SuffixText;
-		}
-	}
+    public string FormatItem(double tick)
+    {
+      return _prefix + tick.ToString() + SuffixText;
+    }
+  }
 }

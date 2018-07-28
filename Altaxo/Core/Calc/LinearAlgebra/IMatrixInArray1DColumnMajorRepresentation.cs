@@ -29,18 +29,18 @@ using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-	/// <summary>
-	/// Designates that the matrix is represented as a linear array of <typeparamref name="TElement"/> values.
-	/// The linear array is in column-major order, i.e. the first elements of the linear array belong to the first column of the matrix (i.e. the row values change more quickly).
-	/// The index of the linear array is calculated as <c>index = row + column*NumberOfRows</c>. This representation is used for instance by Fortran, Julia, MATLAB, Octave, Scilab, GLSL and HLSL.
-	/// </summary>
-	/// <typeparam name="TElement">Type of the elements of the matrix.</typeparam>
-	public interface IMatrixInArray1DColumnMajorRepresentation<TElement>
-	{
-		/// <summary>
-		/// Gets the underlying linear array in column-major order.
-		/// </summary>
-		/// <returns>Underlying linear array in column-major order.</returns>
-		TElement[] GetArray1DColumnMajor();
-	}
+  /// <summary>
+  /// Designates that the matrix is represented as a linear array of <typeparamref name="TElement"/> values.
+  /// The linear array is in column-major order, i.e. the first elements of the linear array belong to the first column of the matrix (i.e. the row values change more quickly).
+  /// The index of the linear array is calculated as <c>index = row + column*NumberOfRows</c>. This representation is used for instance by Fortran, Julia, MATLAB, Octave, Scilab, GLSL and HLSL.
+  /// </summary>
+  /// <typeparam name="TElement">Type of the elements of the matrix.</typeparam>
+  public interface IMatrixInArray1DColumnMajorRepresentation<TElement>
+  {
+    /// <summary>
+    /// Gets the underlying linear array in column-major order.
+    /// </summary>
+    /// <returns>Underlying linear array in column-major order.</returns>
+    TElement[] GetArray1DColumnMajor();
+  }
 }

@@ -29,25 +29,25 @@ using System.Text;
 
 namespace Altaxo.Main.Services
 {
-	public class TextOutputServiceTemporary : TextOutputServiceBase
-	{
-		private StringBuilder _stb = new StringBuilder();
-		private object _locker = new object();
+  public class TextOutputServiceTemporary : TextOutputServiceBase
+  {
+    private StringBuilder _stb = new StringBuilder();
+    private object _locker = new object();
 
-		public string Text
-		{
-			get
-			{
-				return _stb.ToString();
-			}
-		}
+    public string Text
+    {
+      get
+      {
+        return _stb.ToString();
+      }
+    }
 
-		protected override void InternalWrite(string text)
-		{
-			lock (_locker)
-			{
-				_stb.Append(text);
-			}
-		}
-	}
+    protected override void InternalWrite(string text)
+    {
+      lock (_locker)
+      {
+        _stb.Append(text);
+      }
+    }
+  }
 }

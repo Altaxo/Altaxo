@@ -33,33 +33,33 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
-	public interface IGraphController : IMVCANController
-	{
-		/// <summary>
-		/// This returns the GraphDocument that is managed by this controller.
-		/// </summary>
-		GraphDocument Doc { get; }
+  public interface IGraphController : IMVCANController
+  {
+    /// <summary>
+    /// This returns the GraphDocument that is managed by this controller.
+    /// </summary>
+    GraphDocument Doc { get; }
 
-		/// <summary>
-		/// Returns the currently active layer, or null if there is no active layer.
-		/// </summary>
-		HostLayer ActiveLayer { get; }
+    /// <summary>
+    /// Returns the currently active layer, or null if there is no active layer.
+    /// </summary>
+    HostLayer ActiveLayer { get; }
 
-		/// <summary>
-		/// Get / sets the currently active plot by number.
-		/// </summary>
-		int CurrentPlotNumber { get; set; }
+    /// <summary>
+    /// Get / sets the currently active plot by number.
+    /// </summary>
+    int CurrentPlotNumber { get; set; }
 
-		/// <summary>
-		/// check the validity of the CurrentLayerNumber and correct it
-		/// </summary>
-		/// <returns>The currently active layer.</returns>
-		HostLayer EnsureValidityOfCurrentLayerNumber();
+    /// <summary>
+    /// check the validity of the CurrentLayerNumber and correct it
+    /// </summary>
+    /// <returns>The currently active layer.</returns>
+    HostLayer EnsureValidityOfCurrentLayerNumber();
 
-		/// <summary>
-		/// This ensures that the current plot number is valid. If there is no plot on the currently active layer,
-		/// the current plot number is set to -1.
-		/// </summary>
-		void EnsureValidityOfCurrentPlotNumber();
-	}
+    /// <summary>
+    /// This ensures that the current plot number is valid. If there is no plot on the currently active layer,
+    /// the current plot number is set to -1.
+    /// </summary>
+    void EnsureValidityOfCurrentPlotNumber();
+  }
 }

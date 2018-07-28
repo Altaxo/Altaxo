@@ -30,24 +30,24 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Worksheet
 {
-	/// <summary>
-	/// Interaction logic for MasterCurveCreationMainControl.xaml
-	/// </summary>
-	public partial class MasterCurveCreationMainControl : UserControl, IMasterCurveCreationMainView
-	{
-		public MasterCurveCreationMainControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for MasterCurveCreationMainControl.xaml
+  /// </summary>
+  public partial class MasterCurveCreationMainControl : UserControl, IMasterCurveCreationMainView
+  {
+    public MasterCurveCreationMainControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeDataTab(object guiControl)
-		{
-			_dataTab.Content = guiControl;
-		}
+    public void InitializeDataTab(object guiControl)
+    {
+      _dataTab.Content = guiControl;
+    }
 
-		public void InitializeEditTab(object guiControl)
-		{
-			_editTab.Content = guiControl;
-		}
-	}
+    public void InitializeEditTab(object guiControl)
+    {
+      _editTab.Content = guiControl;
+    }
+  }
 }

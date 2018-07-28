@@ -34,39 +34,39 @@ using System.Xml;
 
 namespace Altaxo.Text.Renderers
 {
-	public partial class MamlRenderer : TextRendererBase<MamlRenderer>
-	{
-		public void StorePngImageFile(Stream imageStream, string contentHash)
-		{
-			var fullFileName = Path.Combine(BasePathName, ImageFolderName, contentHash + ".png");
+  public partial class MamlRenderer : TextRendererBase<MamlRenderer>
+  {
+    public void StorePngImageFile(Stream imageStream, string contentHash)
+    {
+      var fullFileName = Path.Combine(BasePathName, ImageFolderName, contentHash + ".png");
 
-			using (var outStream = new FileStream(fullFileName, FileMode.Create, FileAccess.Write, FileShare.Read))
-			{
-				imageStream.CopyTo(outStream);
-				outStream.Close();
-			}
+      using (var outStream = new FileStream(fullFileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+      {
+        imageStream.CopyTo(outStream);
+        outStream.Close();
+      }
 
-			_imageFileNames.Add(fullFileName);
-		}
+      _imageFileNames.Add(fullFileName);
+    }
 
-		/// <summary>
-		/// Removes the old image files. This function will work only if there is a dedicated image folder, i.e. <see cref="ImageFileNames"/> has a value.
-		/// </summary>
-		public static void RemoveOldContentsOfImageFolder(string fullImageFolderName)
-		{
-			var dir = new DirectoryInfo(fullImageFolderName);
-			if (!dir.Exists)
-				return;
+    /// <summary>
+    /// Removes the old image files. This function will work only if there is a dedicated image folder, i.e. <see cref="ImageFileNames"/> has a value.
+    /// </summary>
+    public static void RemoveOldContentsOfImageFolder(string fullImageFolderName)
+    {
+      var dir = new DirectoryInfo(fullImageFolderName);
+      if (!dir.Exists)
+        return;
 
-			var filesToDelete = new HashSet<string>();
-			foreach (var extension in new string[] { ".png", ".tif", ".jpg", ".jpeg", ".bmp" })
-			{
-				filesToDelete.AddRange(dir.GetFiles("????????????????" + extension).Select(x => x.FullName));
-			}
+      var filesToDelete = new HashSet<string>();
+      foreach (var extension in new string[] { ".png", ".tif", ".jpg", ".jpeg", ".bmp" })
+      {
+        filesToDelete.AddRange(dir.GetFiles("????????????????" + extension).Select(x => x.FullName));
+      }
 
-			// now delete the files
-			foreach (var file in filesToDelete)
-				File.Delete(file);
-		}
-	}
+      // now delete the files
+      foreach (var file in filesToDelete)
+        File.Delete(file);
+    }
+  }
 }

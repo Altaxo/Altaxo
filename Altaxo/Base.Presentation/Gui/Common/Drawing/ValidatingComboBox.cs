@@ -33,91 +33,91 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
-	public class ValidatingComboBox : ComboBox
-	{
-		private NotifyChangedValue<string> _validatedText = new NotifyChangedValue<string>();
-		private bool _isInitialTextModified;
-		private bool _isValidatedSuccessfully = true;
+  public class ValidatingComboBox : ComboBox
+  {
+    private NotifyChangedValue<string> _validatedText = new NotifyChangedValue<string>();
+    private bool _isInitialTextModified;
+    private bool _isValidatedSuccessfully = true;
 
-		public ValidatingComboBox()
-		{
-			var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBox.TextProperty, this.GetType());
-			dpd.AddValueChanged(this, EhTextChanged);
+    public ValidatingComboBox()
+    {
+      var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBox.TextProperty, this.GetType());
+      dpd.AddValueChanged(this, EhTextChanged);
 
-			var binding = new Binding();
-			binding.Source = this;
-			binding.Path = new PropertyPath("ValidatedText");
-			binding.ValidationRules.Add(new ValidationWithErrorString(this.EhValidateText));
-			this.SetBinding(TextBox.TextProperty, binding);
-		}
+      var binding = new Binding();
+      binding.Source = this;
+      binding.Path = new PropertyPath("ValidatedText");
+      binding.ValidationRules.Add(new ValidationWithErrorString(this.EhValidateText));
+      this.SetBinding(TextBox.TextProperty, binding);
+    }
 
-		#region Dependency property
+    #region Dependency property
 
-		public string ValidatedText
-		{
-			get { var result = (string)GetValue(ValidatedTextProperty); return result; }
-			set { SetValue(ValidatedTextProperty, value); _isValidatedSuccessfully = true; }
-		}
+    public string ValidatedText
+    {
+      get { var result = (string)GetValue(ValidatedTextProperty); return result; }
+      set { SetValue(ValidatedTextProperty, value); _isValidatedSuccessfully = true; }
+    }
 
-		public static readonly DependencyProperty ValidatedTextProperty =
-				DependencyProperty.Register("ValidatedText", typeof(string), typeof(ValidatingComboBox),
-				new FrameworkPropertyMetadata(OnValidatedTextChanged));
+    public static readonly DependencyProperty ValidatedTextProperty =
+        DependencyProperty.Register("ValidatedText", typeof(string), typeof(ValidatingComboBox),
+        new FrameworkPropertyMetadata(OnValidatedTextChanged));
 
-		private static void OnValidatedTextChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-		}
+    private static void OnValidatedTextChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+    }
 
-		#endregion Dependency property
+    #endregion Dependency property
 
-		public string InitialText
-		{
-			set
-			{
-				base.Text = value;
-				_isInitialTextModified = false;
-				_isValidatedSuccessfully = true;
-			}
-		}
+    public string InitialText
+    {
+      set
+      {
+        base.Text = value;
+        _isInitialTextModified = false;
+        _isValidatedSuccessfully = true;
+      }
+    }
 
-		public bool IsInitialTextModified
-		{
-			get
-			{
-				return _isInitialTextModified;
-			}
-		}
+    public bool IsInitialTextModified
+    {
+      get
+      {
+        return _isInitialTextModified;
+      }
+    }
 
-		public bool IsValidatedSuccessfully
-		{
-			get
-			{
-				return _isValidatedSuccessfully;
-			}
-		}
+    public bool IsValidatedSuccessfully
+    {
+      get
+      {
+        return _isValidatedSuccessfully;
+      }
+    }
 
-		protected virtual void EhTextChanged(object sender, EventArgs e)
-		{
-			_isInitialTextModified = true;
-		}
+    protected virtual void EhTextChanged(object sender, EventArgs e)
+    {
+      _isInitialTextModified = true;
+    }
 
-		/// <summary>
-		/// Is called when the content of the TextBox needs validation.
-		/// </summary>
-		public event ValidatingStringEventHandler Validating;
+    /// <summary>
+    /// Is called when the content of the TextBox needs validation.
+    /// </summary>
+    public event ValidatingStringEventHandler Validating;
 
-		public string EhValidateText(object obj, System.Globalization.CultureInfo info)
-		{
-			var evt = Validating;
-			if (null != evt)
-			{
-				var e = new ValidationEventArgs<string>((string)this.GetValue(TextBox.TextProperty), info);
-				evt(this, e);
-				return e.ErrorText;
-			}
-			else
-			{
-				return null;
-			}
-		}
-	}
+    public string EhValidateText(object obj, System.Globalization.CultureInfo info)
+    {
+      var evt = Validating;
+      if (null != evt)
+      {
+        var e = new ValidationEventArgs<string>((string)this.GetValue(TextBox.TextProperty), info);
+        evt(this, e);
+        return e.ErrorText;
+      }
+      else
+      {
+        return null;
+      }
+    }
+  }
 }

@@ -31,37 +31,37 @@ using System.Windows.Forms;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Helper class to retrieve on which screen a Wpf window is mainly located.
-	/// See <see href=" https://social.msdn.microsoft.com/Forums/vstudio/en-US/2ca2fab6-b349-4c08-915f-373c71bd636a/show-and-maximize-wpf-window-on-a-specific-screen?forum=wpf"/>
-	/// </summary>
-	public static class ScreenHandler
-	{
-		/// <summary>
-		/// Gets the current screen from a window
-		/// </summary>
-		/// <param name="window">The window.</param>
-		/// <returns>The screen the window is located in.</returns>
-		public static Screen GetCurrentScreen(System.Windows.Window window)
-		{
-			var parentArea = new System.Drawing.Rectangle((int)window.Left, (int)window.Top, (int)window.Width, (int)window.Height);
-			return Screen.FromRectangle(parentArea);
-		}
+  /// <summary>
+  /// Helper class to retrieve on which screen a Wpf window is mainly located.
+  /// See <see href=" https://social.msdn.microsoft.com/Forums/vstudio/en-US/2ca2fab6-b349-4c08-915f-373c71bd636a/show-and-maximize-wpf-window-on-a-specific-screen?forum=wpf"/>
+  /// </summary>
+  public static class ScreenHandler
+  {
+    /// <summary>
+    /// Gets the current screen from a window
+    /// </summary>
+    /// <param name="window">The window.</param>
+    /// <returns>The screen the window is located in.</returns>
+    public static Screen GetCurrentScreen(System.Windows.Window window)
+    {
+      var parentArea = new System.Drawing.Rectangle((int)window.Left, (int)window.Top, (int)window.Width, (int)window.Height);
+      return Screen.FromRectangle(parentArea);
+    }
 
-		/// <summary>
-		/// Gets a screen by number.
-		/// </summary>
-		/// <param name="requestedScreen">The requested screen number.</param>
-		/// <returns>The screen.</returns>
-		public static Screen GetScreen(int requestedScreen)
-		{
-			var screens = Screen.AllScreens;
-			var mainScreen = 0;
-			if (screens.Length > 1 && mainScreen < screens.Length)
-			{
-				return screens[requestedScreen];
-			}
-			return screens[0];
-		}
-	}
+    /// <summary>
+    /// Gets a screen by number.
+    /// </summary>
+    /// <param name="requestedScreen">The requested screen number.</param>
+    /// <returns>The screen.</returns>
+    public static Screen GetScreen(int requestedScreen)
+    {
+      var screens = Screen.AllScreens;
+      var mainScreen = 0;
+      if (screens.Length > 1 && mainScreen < screens.Length)
+      {
+        return screens[requestedScreen];
+      }
+      return screens[0];
+    }
+  }
 }

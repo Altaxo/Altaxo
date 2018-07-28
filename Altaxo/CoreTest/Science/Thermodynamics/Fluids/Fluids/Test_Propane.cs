@@ -32,45 +32,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-	/// <summary>
-	/// Tests and test data for <see cref="Propane"/>.
-	/// </summary>
-	/// <remarks>
-	/// <para>Reference:</para>
+  /// <summary>
+  /// Tests and test data for <see cref="Propane"/>.
+  /// </summary>
+  /// <remarks>
+  /// <para>Reference:</para>
   /// <para>The test data was created automatically using calls into the TREND.DLL of the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-	/// </remarks>
+  /// </remarks>
   [TestFixture]
   public class Test_Propane : FluidTestBase
-    {
+  {
 
     public Test_Propane()
-      {
+    {
       _fluid = Propane.Instance;
 
-    _testDataMolecularWeight = 0.04409562;
+      _testDataMolecularWeight = 0.04409562;
 
-    _testDataTriplePointTemperature = 85.525;
+      _testDataTriplePointTemperature = 85.525;
 
-    _testDataTriplePointPressure = 0.000172;
+      _testDataTriplePointPressure = 0.000172;
 
-    _testDataTriplePointLiquidMoleDensity = 16625.8055596502;
+      _testDataTriplePointLiquidMoleDensity = 16625.8055596502;
 
-    _testDataTriplePointVaporMoleDensity = 2.4194535056959E-07;
+      _testDataTriplePointVaporMoleDensity = 2.4194535056959E-07;
 
-    _testDataCriticalPointTemperature = 369.89;
+      _testDataCriticalPointTemperature = 369.89;
 
-    _testDataCriticalPointPressure = 4251164.63411214;
+      _testDataCriticalPointPressure = 4251164.63411214;
 
-    _testDataCriticalPointMoleDensity = 5000;
+      _testDataCriticalPointMoleDensity = 5000;
 
-    _testDataNormalBoilingPointTemperature = 231.036214644318;
+      _testDataNormalBoilingPointTemperature = 231.036214644318;
 
-    _testDataNormalSublimationPointTemperature = null;
+      _testDataNormalSublimationPointTemperature = null;
 
-    _testDataIsMeltingCurveImplemented = true;
+      _testDataIsMeltingCurveImplemented = true;
 
-    _testDataIsSublimationCurveImplemented = false;
+      _testDataIsSublimationCurveImplemented = false;
 
       // TestData contains:
       // 0. Temperature (Kelvin)
@@ -82,7 +82,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 6. Isochoric heat capacity (J/(mol K))
       // 7. Isobaric heat capacity (J/(mol K))
       // 8. Speed of sound (m/s)
-      _testDataEquationOfState = new (double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
+      _testDataEquationOfState = new(double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
       {
       ( 100, 3.10302326284946E-07, 0.000258000000006728, 15898.298434303, 16729.745633219, 231.555708335731, 32.9620746236096, 41.2765466708448, 153.661128738813 ),
       ( 150, 2.06868217325418E-07, 0.000258000000001888, 17742.8329310012, 18990.0037305447, 249.781331251897, 40.5466525071214, 48.8611245200304, 184.616055095379 ),
@@ -253,7 +253,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 1. Pressure (Pa)
       // 2. Saturated liquid density (mol/m³
       // 3. Saturated vapor density (mol/m³)
-      _testDataSaturatedProperties = new (double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
+      _testDataSaturatedProperties = new(double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
       {
       ( 121.070625, 3.64346529769034, 15799.9687652764, 0.00361947476691038 ),
       ( 156.61625, 596.819890199935, 14983.9460087082, 0.458662694979833 ),
@@ -265,10 +265,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       };
 
       // TestData contains:
-		   // 0. Temperature (Kelvin)
-		   // 1. Pressure (Pa
-		   _testDataMeltingLine = new (double temperature, double pressure)[]
-      {
+      // 0. Temperature (Kelvin)
+      // 1. Pressure (Pa
+      _testDataMeltingLine = new(double temperature, double pressure)[]
+     {
       ( 85.5250000000001, 0.000172046181512321 ),
       ( 85.5250000000045, 0.000251188643150958 ),
       ( 85.5250000000125, 0.000398107170553497 ),
@@ -334,7 +334,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       ( 120.567810039106, 398107170.553496 ),
       ( 139.737954654202, 630957344.480194 ),
       ( 168.699583975758, 999999999.999999 ),
-      };
+     };
     }
 
     [Test]

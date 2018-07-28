@@ -21,45 +21,45 @@ using System.Collections.Generic;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Interface to a class that stores recently open files and projects.
-	/// </summary>
-	/// <see cref="IFileService.RecentOpen" />
-	public interface IRecentOpen
-	{
-		/// <summary>
-		/// Gets the collection of recently opened files (other than project files).
-		/// </summary>
-		IReadOnlyList<FileName> RecentFiles { get; }
+  /// <summary>
+  /// Interface to a class that stores recently open files and projects.
+  /// </summary>
+  /// <see cref="IFileService.RecentOpen" />
+  public interface IRecentOpen
+  {
+    /// <summary>
+    /// Gets the collection of recently opened files (other than project files).
+    /// </summary>
+    IReadOnlyList<FileName> RecentFiles { get; }
 
-		/// <summary>
-		/// Gets the collection of recently opened project files.
-		/// </summary>
-		IReadOnlyList<FileName> RecentProjects { get; }
+    /// <summary>
+    /// Gets the collection of recently opened project files.
+    /// </summary>
+    IReadOnlyList<FileName> RecentProjects { get; }
 
-		/// <summary>
-		/// Clears the collection of recently opened files (other than project files).
-		/// </summary>
-		void ClearRecentFiles();
+    /// <summary>
+    /// Clears the collection of recently opened files (other than project files).
+    /// </summary>
+    void ClearRecentFiles();
 
-		/// <summary>
-		/// Clears the collection of recently opened project files.
-		/// </summary>
-		void ClearRecentProjects();
+    /// <summary>
+    /// Clears the collection of recently opened project files.
+    /// </summary>
+    void ClearRecentProjects();
 
-		/// <summary>
-		/// Removes one project file from the collection of recently opened project files.
-		/// </summary>
-		void RemoveRecentProject(FileName fileName);
+    /// <summary>
+    /// Removes one project file from the collection of recently opened project files.
+    /// </summary>
+    void RemoveRecentProject(FileName fileName);
 
-		/// <summary>
-		/// Adds a file to the collection of recently opened files (other than project files).
-		/// </summary>
-		void AddRecentFile(FileName fileName);
+    /// <summary>
+    /// Adds a file to the collection of recently opened files (other than project files).
+    /// </summary>
+    void AddRecentFile(FileName fileName);
 
-		/// <summary>
-		/// Adds a project file to the collection of recently opened project files.
-		/// </summary>
-		void AddRecentProject(FileName fileName);
-	}
+    /// <summary>
+    /// Adds a project file to the collection of recently opened project files.
+    /// </summary>
+    void AddRecentProject(FileName fileName);
+  }
 }

@@ -31,142 +31,142 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	public interface INamedColorView
-	{
-		void InitializeSubViews(IEnumerable<Tuple<string, object>> tabsNamesAndViews);
+  public interface INamedColorView
+  {
+    void InitializeSubViews(IEnumerable<Tuple<string, object>> tabsNamesAndViews);
 
-		void SetOldColor(AxoColor oldColor);
+    void SetOldColor(AxoColor oldColor);
 
-		void SetNewColor(AxoColor oldColor);
+    void SetNewColor(AxoColor oldColor);
 
-		string ColorName { get; set; }
+    string ColorName { get; set; }
 
-		/// <summary>
-		/// Occurs when the sub view has changed. Parameter is the content (view) of the subview currently selected.
-		/// </summary>
-		event Action<object> SubViewChanged;
-	}
+    /// <summary>
+    /// Occurs when the sub view has changed. Parameter is the content (view) of the subview currently selected.
+    /// </summary>
+    event Action<object> SubViewChanged;
+  }
 
-	[ExpectedTypeOfView(typeof(INamedColorView))]
-	public class NamedColorController : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorView>
-	{
-		private ColorModelController _subControllerColorModel;
+  [ExpectedTypeOfView(typeof(INamedColorView))]
+  public class NamedColorController : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorView>
+  {
+    private ColorModelController _subControllerColorModel;
 
-		private ColorCircleController _subControllerColorCircle;
+    private ColorCircleController _subControllerColorCircle;
 
-		private ColorPickerController _subControllerColorPicker;
+    private ColorPickerController _subControllerColorPicker;
 
-		private NamedColor _initialColor;
+    private NamedColor _initialColor;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_subControllerColorModel, () => _subControllerColorModel = null);
-			yield return new ControllerAndSetNullMethod(_subControllerColorCircle, () => _subControllerColorCircle = null);
-			yield return new ControllerAndSetNullMethod(_subControllerColorPicker, () => _subControllerColorPicker = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_subControllerColorModel, () => _subControllerColorModel = null);
+      yield return new ControllerAndSetNullMethod(_subControllerColorCircle, () => _subControllerColorCircle = null);
+      yield return new ControllerAndSetNullMethod(_subControllerColorPicker, () => _subControllerColorPicker = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_initialColor = _doc;
+      if (initData)
+      {
+        _initialColor = _doc;
 
-				_subControllerColorModel = new ColorModelController();
-				_subControllerColorModel.InitializeDocument(_doc.Color);
-				_subControllerColorModel.MadeDirty += EhController_Dirty;
+        _subControllerColorModel = new ColorModelController();
+        _subControllerColorModel.InitializeDocument(_doc.Color);
+        _subControllerColorModel.MadeDirty += EhController_Dirty;
 
-				_subControllerColorCircle = new ColorCircleController();
-				_subControllerColorCircle.InitializeDocument(_doc.Color);
-				_subControllerColorCircle.MadeDirty += EhController_Dirty;
+        _subControllerColorCircle = new ColorCircleController();
+        _subControllerColorCircle.InitializeDocument(_doc.Color);
+        _subControllerColorCircle.MadeDirty += EhController_Dirty;
 
-				_subControllerColorPicker = new ColorPickerController();
-				_subControllerColorPicker.InitializeDocument(_doc.Color);
-				_subControllerColorPicker.MadeDirty += EhController_Dirty;
-			}
-			if (null != _view)
-			{
-				_view.InitializeSubViews(GetTabNamesAndViews());
-				_view.SetOldColor(_initialColor);
-				_view.SetNewColor(_doc);
-				_view.ColorName = _doc.Name;
-			}
-		}
+        _subControllerColorPicker = new ColorPickerController();
+        _subControllerColorPicker.InitializeDocument(_doc.Color);
+        _subControllerColorPicker.MadeDirty += EhController_Dirty;
+      }
+      if (null != _view)
+      {
+        _view.InitializeSubViews(GetTabNamesAndViews());
+        _view.SetOldColor(_initialColor);
+        _view.SetNewColor(_doc);
+        _view.ColorName = _doc.Name;
+      }
+    }
 
-		private IEnumerable<Tuple<string, object>> GetTabNamesAndViews()
-		{
-			if (null != _subControllerColorModel)
-			{
-				if (_subControllerColorModel.ViewObject == null)
-					Current.Gui.FindAndAttachControlTo(_subControllerColorModel);
-				if (_subControllerColorModel.ViewObject != null)
-					yield return new Tuple<string, object>("Models", _subControllerColorModel.ViewObject);
-			}
+    private IEnumerable<Tuple<string, object>> GetTabNamesAndViews()
+    {
+      if (null != _subControllerColorModel)
+      {
+        if (_subControllerColorModel.ViewObject == null)
+          Current.Gui.FindAndAttachControlTo(_subControllerColorModel);
+        if (_subControllerColorModel.ViewObject != null)
+          yield return new Tuple<string, object>("Models", _subControllerColorModel.ViewObject);
+      }
 
-			if (null != _subControllerColorCircle)
-			{
-				if (_subControllerColorCircle.ViewObject == null)
-					Current.Gui.FindAndAttachControlTo(_subControllerColorCircle);
-				if (_subControllerColorCircle.ViewObject != null)
-					yield return new Tuple<string, object>("Circle", _subControllerColorCircle.ViewObject);
-			}
+      if (null != _subControllerColorCircle)
+      {
+        if (_subControllerColorCircle.ViewObject == null)
+          Current.Gui.FindAndAttachControlTo(_subControllerColorCircle);
+        if (_subControllerColorCircle.ViewObject != null)
+          yield return new Tuple<string, object>("Circle", _subControllerColorCircle.ViewObject);
+      }
 
-			if (null != _subControllerColorPicker)
-			{
-				if (_subControllerColorPicker.ViewObject == null)
-					Current.Gui.FindAndAttachControlTo(_subControllerColorPicker);
-				if (_subControllerColorPicker.ViewObject != null)
-					yield return new Tuple<string, object>("Picker", _subControllerColorPicker.ViewObject);
-			}
-		}
+      if (null != _subControllerColorPicker)
+      {
+        if (_subControllerColorPicker.ViewObject == null)
+          Current.Gui.FindAndAttachControlTo(_subControllerColorPicker);
+        if (_subControllerColorPicker.ViewObject != null)
+          yield return new Tuple<string, object>("Picker", _subControllerColorPicker.ViewObject);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			var userColorName = _view.ColorName;
+    public override bool Apply(bool disposeController)
+    {
+      var userColorName = _view.ColorName;
 
-			if (!string.IsNullOrEmpty(userColorName) && userColorName != NamedColor.GetColorName(_doc.Color))
-			{
-				_doc = new NamedColor(_doc.Color, userColorName);
+      if (!string.IsNullOrEmpty(userColorName) && userColorName != NamedColor.GetColorName(_doc.Color))
+      {
+        _doc = new NamedColor(_doc.Color, userColorName);
 
-				// TODO if the user has provided a color name, then store this color in a list of colors
-			}
+        // TODO if the user has provided a color name, then store this color in a list of colors
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
+    protected override void AttachView()
+    {
+      base.AttachView();
 
-			_view.SubViewChanged += EhSubViewChanged;
-		}
+      _view.SubViewChanged += EhSubViewChanged;
+    }
 
-		protected override void DetachView()
-		{
-			_view.SubViewChanged -= EhSubViewChanged;
-			base.DetachView();
-		}
+    protected override void DetachView()
+    {
+      _view.SubViewChanged -= EhSubViewChanged;
+      base.DetachView();
+    }
 
-		private void EhSubViewChanged(object obj)
-		{
-			// Find controller correspondig to subview
-			foreach (var ctrl in new IMVCANDController[] { _subControllerColorModel, _subControllerColorCircle, _subControllerColorPicker })
-			{
-				if (object.ReferenceEquals(obj, ctrl.ViewObject))
-				{
-					ctrl.InitializeDocument(_doc.Color);
-				}
-			}
-		}
+    private void EhSubViewChanged(object obj)
+    {
+      // Find controller correspondig to subview
+      foreach (var ctrl in new IMVCANDController[] { _subControllerColorModel, _subControllerColorCircle, _subControllerColorPicker })
+      {
+        if (object.ReferenceEquals(obj, ctrl.ViewObject))
+        {
+          ctrl.InitializeDocument(_doc.Color);
+        }
+      }
+    }
 
-		private void EhController_Dirty(IMVCANDController ctrl)
-		{
-			var color = (AxoColor)ctrl.ModelObject;
-			color.IsFromArgb = true;
-			_doc = new NamedColor(color);
-			_view?.SetNewColor(color);
-			_view.ColorName = _doc.Name;
-		}
-	}
+    private void EhController_Dirty(IMVCANDController ctrl)
+    {
+      var color = (AxoColor)ctrl.ModelObject;
+      color.IsFromArgb = true;
+      _doc = new NamedColor(color);
+      _view?.SetNewColor(color);
+      _view.ColorName = _doc.Name;
+    }
+  }
 }

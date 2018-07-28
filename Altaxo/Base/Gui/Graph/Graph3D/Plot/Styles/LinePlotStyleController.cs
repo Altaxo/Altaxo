@@ -37,197 +37,197 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-	#region Interfaces
+  #region Interfaces
 
-	/// <summary>
-	/// This view interface is for showing the options of the XYZPlotLineStyle
-	/// </summary>
-	public interface ILinePlotStyleView
-	{
-		bool ShowPlotColorsOnlyForLinePen { set; }
+  /// <summary>
+  /// This view interface is for showing the options of the XYZPlotLineStyle
+  /// </summary>
+  public interface ILinePlotStyleView
+  {
+    bool ShowPlotColorsOnlyForLinePen { set; }
 
-		bool IndependentLineColor { get; set; }
+    bool IndependentLineColor { get; set; }
 
-		bool IndependentDashStyle { get; set; }
+    bool IndependentDashStyle { get; set; }
 
-		PenX3D LinePen { get; set; }
+    PenX3D LinePen { get; set; }
 
-		bool IndependentSymbolSize { get; set; }
+    bool IndependentSymbolSize { get; set; }
 
-		double SymbolSize { get; set; }
+    double SymbolSize { get; set; }
 
-		bool UseSymbolGap { get; set; }
+    bool UseSymbolGap { get; set; }
 
-		double SymbolGapOffset { get; set; }
+    double SymbolGapOffset { get; set; }
 
-		double SymbolGapFactor { get; set; }
+    double SymbolGapFactor { get; set; }
 
-		bool ConnectCircular { get; set; }
+    bool ConnectCircular { get; set; }
 
-		bool IgnoreMissingDataPoints { get; set; }
+    bool IgnoreMissingDataPoints { get; set; }
 
-		/// <summary>
-		/// Initializes the Line connection combobox.
-		/// </summary>
-		/// <param name="list">List of possible selections.</param>
-		void InitializeLineConnect(SelectableListNodeList list);
+    /// <summary>
+    /// Initializes the Line connection combobox.
+    /// </summary>
+    /// <param name="list">List of possible selections.</param>
+    void InitializeLineConnect(SelectableListNodeList list);
 
-		#region events
+    #region events
 
-		/// <summary>Occurs when the user choice for IndependentColor of the frame pen has changed.</summary>
-		event Action IndependentLineColorChanged;
+    /// <summary>Occurs when the user choice for IndependentColor of the frame pen has changed.</summary>
+    event Action IndependentLineColorChanged;
 
-		/// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
-		event Action UseLineChanged;
+    /// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
+    event Action UseLineChanged;
 
-		/// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
-		event Action LinePenChanged;
+    /// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
+    event Action LinePenChanged;
 
-		#endregion events
-	}
+    #endregion events
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Summary description for XYPlotLineStyleController.
-	/// </summary>
-	[UserControllerForObject(typeof(LinePlotStyle))]
-	[ExpectedTypeOfView(typeof(ILinePlotStyleView))]
-	public class LinePlotStyleController : MVCANControllerEditOriginalDocBase<LinePlotStyle, ILinePlotStyleView>
-	{
-		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
-		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
+  /// <summary>
+  /// Summary description for XYPlotLineStyleController.
+  /// </summary>
+  [UserControllerForObject(typeof(LinePlotStyle))]
+  [ExpectedTypeOfView(typeof(ILinePlotStyleView))]
+  public class LinePlotStyleController : MVCANControllerEditOriginalDocBase<LinePlotStyle, ILinePlotStyleView>
+  {
+    /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
+    private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-		private SelectableListNodeList _lineConnectChoices;
+    private SelectableListNodeList _lineConnectChoices;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_colorGroupStyleTracker = null;
+    public override void Dispose(bool isDisposing)
+    {
+      _colorGroupStyleTracker = null;
 
-			_lineConnectChoices = null;
+      _lineConnectChoices = null;
 
-			base.Dispose(isDisposing);
-		}
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
-				InitializeLineConnectionChoices();
-			}
+      if (initData)
+      {
+        _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
+        InitializeLineConnectionChoices();
+      }
 
-			if (_view != null)
-			{
-				// Line properties
-				_view.InitializeLineConnect(_lineConnectChoices);
-				_view.ConnectCircular = _doc.ConnectCircular;
-				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
-				_view.IndependentLineColor = _doc.IndependentLineColor;
-				_view.IndependentDashStyle = _doc.IndependentDashStyle;
-				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
-				_view.LinePen = _doc.LinePen;
+      if (_view != null)
+      {
+        // Line properties
+        _view.InitializeLineConnect(_lineConnectChoices);
+        _view.ConnectCircular = _doc.ConnectCircular;
+        _view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
+        _view.IndependentLineColor = _doc.IndependentLineColor;
+        _view.IndependentDashStyle = _doc.IndependentDashStyle;
+        _view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
+        _view.LinePen = _doc.LinePen;
 
-				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
-				_view.SymbolSize = _doc.SymbolSize;
-				_view.UseSymbolGap = _doc.UseSymbolGap;
-				_view.SymbolGapOffset = _doc.SymbolGapOffset;
-				_view.SymbolGapFactor = _doc.SymbolGapFactor;
-			}
-		}
+        _view.IndependentSymbolSize = _doc.IndependentSymbolSize;
+        _view.SymbolSize = _doc.SymbolSize;
+        _view.UseSymbolGap = _doc.UseSymbolGap;
+        _view.SymbolGapOffset = _doc.SymbolGapOffset;
+        _view.SymbolGapFactor = _doc.SymbolGapFactor;
+      }
+    }
 
-		private void InitializeLineConnectionChoices()
-		{
-			if (null == _lineConnectChoices)
-				_lineConnectChoices = new SelectableListNodeList();
-			else
-				_lineConnectChoices.Clear();
+    private void InitializeLineConnectionChoices()
+    {
+      if (null == _lineConnectChoices)
+        _lineConnectChoices = new SelectableListNodeList();
+      else
+        _lineConnectChoices.Clear();
 
-			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ILineConnectionStyle));
+      var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ILineConnectionStyle));
 
-			foreach (var t in types)
-			{
-				_lineConnectChoices.Add(new SelectableListNode(t.Name, t, t == _doc.Connection.GetType()));
-			}
-		}
+      foreach (var t in types)
+      {
+        _lineConnectChoices.Add(new SelectableListNode(t.Name, t, t == _doc.Connection.GetType()));
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			// don't trust user input, so all into a try statement
-			try
-			{
-				_doc.ConnectCircular = _view.ConnectCircular;
-				_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
+    public override bool Apply(bool disposeController)
+    {
+      // don't trust user input, so all into a try statement
+      try
+      {
+        _doc.ConnectCircular = _view.ConnectCircular;
+        _doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
 
-				// Pen
-				_doc.IndependentLineColor = _view.IndependentLineColor;
-				_doc.IndependentDashStyle = _view.IndependentDashStyle;
-				_doc.LinePen = _view.LinePen;
+        // Pen
+        _doc.IndependentLineColor = _view.IndependentLineColor;
+        _doc.IndependentDashStyle = _view.IndependentDashStyle;
+        _doc.LinePen = _view.LinePen;
 
-				// Line Connect
+        // Line Connect
 
-				var selNode = _lineConnectChoices.FirstSelectedNode;
-				var connectionType = (Type)(selNode.Tag);
-				if (connectionType == typeof(NoConnection))
-					_doc.Connection = NoConnection.Instance;
-				else
-					_doc.Connection = (ILineConnectionStyle)Activator.CreateInstance(connectionType);
+        var selNode = _lineConnectChoices.FirstSelectedNode;
+        var connectionType = (Type)(selNode.Tag);
+        if (connectionType == typeof(NoConnection))
+          _doc.Connection = NoConnection.Instance;
+        else
+          _doc.Connection = (ILineConnectionStyle)Activator.CreateInstance(connectionType);
 
-				_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
-				_doc.SymbolSize = _view.SymbolSize;
-				_doc.UseSymbolGap = _view.UseSymbolGap;
-				_doc.SymbolGapOffset = _view.SymbolGapOffset;
-				_doc.SymbolGapFactor = _view.SymbolGapFactor;
+        _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
+        _doc.SymbolSize = _view.SymbolSize;
+        _doc.UseSymbolGap = _view.UseSymbolGap;
+        _doc.SymbolGapOffset = _view.SymbolGapOffset;
+        _doc.SymbolGapFactor = _view.SymbolGapFactor;
 
-				return ApplyEnd(true, disposeController);
-			}
-			catch (Exception ex)
-			{
-				Current.Gui.ErrorMessageBox("A problem occured. " + ex.Message);
-				return false;
-			}
-		}
+        return ApplyEnd(true, disposeController);
+      }
+      catch (Exception ex)
+      {
+        Current.Gui.ErrorMessageBox("A problem occured. " + ex.Message);
+        return false;
+      }
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
+    protected override void AttachView()
+    {
+      base.AttachView();
 
-			_view.IndependentLineColorChanged += EhIndependentLineColorChanged;
-		}
+      _view.IndependentLineColorChanged += EhIndependentLineColorChanged;
+    }
 
-		protected override void DetachView()
-		{
-			_view.IndependentLineColorChanged -= EhIndependentLineColorChanged;
-			base.DetachView();
-		}
+    protected override void DetachView()
+    {
+      _view.IndependentLineColorChanged -= EhIndependentLineColorChanged;
+      base.DetachView();
+    }
 
-		#region Color management
+    #region Color management
 
-		private void EhColorGroupStyleAddedOrRemoved()
-		{
-			if (null != _view)
-			{
-				_doc.IndependentLineColor = _view.IndependentLineColor;
-				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
-			}
-		}
+    private void EhColorGroupStyleAddedOrRemoved()
+    {
+      if (null != _view)
+      {
+        _doc.IndependentLineColor = _view.IndependentLineColor;
+        _view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
+      }
+    }
 
-		private void EhIndependentLineColorChanged()
-		{
-			if (null != _view)
-			{
-				_doc.IndependentLineColor = _view.IndependentLineColor;
-				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
-			}
-		}
+    private void EhIndependentLineColorChanged()
+    {
+      if (null != _view)
+      {
+        _doc.IndependentLineColor = _view.IndependentLineColor;
+        _view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
+      }
+    }
 
-		#endregion Color management
-	} // end of class XYPlotLineStyleController
+    #endregion Color management
+  } // end of class XYPlotLineStyleController
 } // end of namespace

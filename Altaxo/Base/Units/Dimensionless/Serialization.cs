@@ -30,42 +30,42 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.Dimensionless
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Unity), 0)]
-	public class SerializationSurrogate0_Unity : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Unity), 0)]
+  public class SerializationSurrogate0_Unity : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Unity.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Unity.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Percent), 0)]
-	public class SerializationSurrogate0_Percent : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Percent), 0)]
+  public class SerializationSurrogate0_Percent : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Percent.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Percent.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Permille), 0)]
-	public class SerializationSurrogate0_Permille : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Permille), 0)]
+  public class SerializationSurrogate0_Permille : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Permille.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Permille.Instance;
+    }
+  }
 }

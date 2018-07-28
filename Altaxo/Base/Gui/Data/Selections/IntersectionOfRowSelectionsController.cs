@@ -29,33 +29,33 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	using Altaxo.Data.Selections;
+  using Altaxo.Data.Selections;
 
-	public interface IIntersectionOfRowSelectionView
-	{
-	}
+  public interface IIntersectionOfRowSelectionView
+  {
+  }
 
-	[UserControllerForObject(typeof(IntersectionOfRowSelections), 100)]
-	[ExpectedTypeOfView(typeof(IIntersectionOfRowSelectionView))]
-	public class IntersectionOfRowSelectionsController : MVCANControllerEditImmutableDocBase<IntersectionOfRowSelections, IIntersectionOfRowSelectionView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(IntersectionOfRowSelections), 100)]
+  [ExpectedTypeOfView(typeof(IIntersectionOfRowSelectionView))]
+  public class IntersectionOfRowSelectionsController : MVCANControllerEditImmutableDocBase<IntersectionOfRowSelections, IIntersectionOfRowSelectionView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
-		}
+      if (initData)
+      {
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			return ApplyEnd(true, disposeController);
-		}
-	}
+    public override bool Apply(bool disposeController)
+    {
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

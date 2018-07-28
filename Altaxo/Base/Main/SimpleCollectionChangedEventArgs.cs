@@ -5,76 +5,76 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Accumulatable event arg that can be used for general purposes to indicate a change in a collection.
-	/// The only parameter here is the originator, i.e. the collection in which the change took place.
-	/// </summary>
-	public class SimpleCollectionChangedEventArgs : SelfAccumulateableEventArgs
-	{
-		/// <summary>
-		/// Gets or sets the originator of this event, i.e. the collection in which the change took place.
-		/// </summary>
-		/// <value>
-		/// The originator of the event, i.e. the collection in which the change took place.
-		/// </value>
-		public IDocumentLeafNode Originator { get; protected set; }
+  /// <summary>
+  /// Accumulatable event arg that can be used for general purposes to indicate a change in a collection.
+  /// The only parameter here is the originator, i.e. the collection in which the change took place.
+  /// </summary>
+  public class SimpleCollectionChangedEventArgs : SelfAccumulateableEventArgs
+  {
+    /// <summary>
+    /// Gets or sets the originator of this event, i.e. the collection in which the change took place.
+    /// </summary>
+    /// <value>
+    /// The originator of the event, i.e. the collection in which the change took place.
+    /// </value>
+    public IDocumentLeafNode Originator { get; protected set; }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SimpleCollectionChangedEventArgs"/> class.
-		/// </summary>
-		/// <param name="originator">The originator.</param>
-		/// <exception cref="System.ArgumentNullException">originator</exception>
-		public SimpleCollectionChangedEventArgs(IDocumentLeafNode originator)
-		{
-			if (null == originator)
-				throw new ArgumentNullException("originator");
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleCollectionChangedEventArgs"/> class.
+    /// </summary>
+    /// <param name="originator">The originator.</param>
+    /// <exception cref="System.ArgumentNullException">originator</exception>
+    public SimpleCollectionChangedEventArgs(IDocumentLeafNode originator)
+    {
+      if (null == originator)
+        throw new ArgumentNullException("originator");
 
-			Originator = originator;
-		}
+      Originator = originator;
+    }
 
-		/// <summary>
-		/// Returns a hash code for this instance.
-		/// </summary>
-		/// <returns>
-		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
-		/// </returns>
-		public override int GetHashCode()
-		{
-			return 7 * this.GetType().GetHashCode() + 13 * Originator.GetHashCode();
-		}
+    /// <summary>
+    /// Returns a hash code for this instance.
+    /// </summary>
+    /// <returns>
+    /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
+    /// </returns>
+    public override int GetHashCode()
+    {
+      return 7 * this.GetType().GetHashCode() + 13 * Originator.GetHashCode();
+    }
 
-		/// <summary>
-		/// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
-		/// </summary>
-		/// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
-		/// <returns>
-		///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
-		/// </returns>
-		public override bool Equals(object obj)
-		{
-			var from = obj as SimpleCollectionChangedEventArgs;
-			if (null == from)
-				return false;
+    /// <summary>
+    /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+    /// </summary>
+    /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+    /// </returns>
+    public override bool Equals(object obj)
+    {
+      var from = obj as SimpleCollectionChangedEventArgs;
+      if (null == from)
+        return false;
 
-			return object.ReferenceEquals(this.Originator, from.Originator);
-		}
+      return object.ReferenceEquals(this.Originator, from.Originator);
+    }
 
-		/// <summary>
-		/// Adds the specified event args e.
-		/// </summary>
-		/// <param name="e">The <see cref="Altaxo.Main.SelfAccumulateableEventArgs" /> instance containing the event data.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// Argument e should be of type SimpleCollectionChangedEventArgs
-		/// or
-		/// Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.
-		/// </exception>
-		public override void Add(SelfAccumulateableEventArgs e)
-		{
-			var other = e as SimpleCollectionChangedEventArgs;
-			if (other == null)
-				throw new ArgumentOutOfRangeException("Argument e should be of type SimpleCollectionChangedEventArgs");
-			if (!object.ReferenceEquals(this.Originator, other.Originator))
-				throw new ArgumentOutOfRangeException("Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.");
-		}
-	}
+    /// <summary>
+    /// Adds the specified event args e.
+    /// </summary>
+    /// <param name="e">The <see cref="Altaxo.Main.SelfAccumulateableEventArgs" /> instance containing the event data.</param>
+    /// <exception cref="System.ArgumentOutOfRangeException">
+    /// Argument e should be of type SimpleCollectionChangedEventArgs
+    /// or
+    /// Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.
+    /// </exception>
+    public override void Add(SelfAccumulateableEventArgs e)
+    {
+      var other = e as SimpleCollectionChangedEventArgs;
+      if (other == null)
+        throw new ArgumentOutOfRangeException("Argument e should be of type SimpleCollectionChangedEventArgs");
+      if (!object.ReferenceEquals(this.Originator, other.Originator))
+        throw new ArgumentOutOfRangeException("Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.");
+    }
+  }
 }

@@ -31,20 +31,20 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Worksheet
 {
-	/// <summary>
-	/// Interaction logic for MasterCurveCreationEditControl.xaml
-	/// </summary>
-	public partial class MasterCurveCreationEditControl : UserControl
-	{
-		public MasterCurveCreationEditControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for MasterCurveCreationEditControl.xaml
+  /// </summary>
+  public partial class MasterCurveCreationEditControl : UserControl
+  {
+    public MasterCurveCreationEditControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhAutoShift_Click(object sender, RoutedEventArgs e)
-		{
-			var row = ((FrameworkElement)sender).DataContext;
-			// cast row to a known type
-		}
-	}
+    private void EhAutoShift_Click(object sender, RoutedEventArgs e)
+    {
+      var row = ((FrameworkElement)sender).DataContext;
+      // cast row to a known type
+    }
+  }
 }

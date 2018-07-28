@@ -32,34 +32,34 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	/// <summary>
-	/// Combines a material with one or more clip planes.
-	/// </summary>
-	public class MaterialPlusClippingPlusColorProviderKey : MaterialPlusClippingKey
-	{
-		public Gdi.Plot.IColorProvider ColorProvider { get; private set; }
+  /// <summary>
+  /// Combines a material with one or more clip planes.
+  /// </summary>
+  public class MaterialPlusClippingPlusColorProviderKey : MaterialPlusClippingKey
+  {
+    public Gdi.Plot.IColorProvider ColorProvider { get; private set; }
 
-		public MaterialPlusClippingPlusColorProviderKey(IMaterial material, PlaneD3D[] clipPlanes, Gdi.Plot.IColorProvider colorProvider)
-			: base(material, clipPlanes)
-		{
-			if (null == colorProvider)
-				throw new ArgumentNullException(nameof(colorProvider));
+    public MaterialPlusClippingPlusColorProviderKey(IMaterial material, PlaneD3D[] clipPlanes, Gdi.Plot.IColorProvider colorProvider)
+      : base(material, clipPlanes)
+    {
+      if (null == colorProvider)
+        throw new ArgumentNullException(nameof(colorProvider));
 
-			this.ColorProvider = colorProvider;
-		}
+      this.ColorProvider = colorProvider;
+    }
 
-		public override bool Equals(object obj)
-		{
-			var from = obj as MaterialPlusClippingPlusColorProviderKey;
-			if (null == from)
-				return false;
+    public override bool Equals(object obj)
+    {
+      var from = obj as MaterialPlusClippingPlusColorProviderKey;
+      if (null == from)
+        return false;
 
-			return base.Equals(from) && this.ColorProvider.Equals(from.ColorProvider);
-		}
+      return base.Equals(from) && this.ColorProvider.Equals(from.ColorProvider);
+    }
 
-		public override int GetHashCode()
-		{
-			return base.GetHashCode() + 73 * ColorProvider.GetHashCode();
-		}
-	}
+    public override int GetHashCode()
+    {
+      return base.GetHashCode() + 73 * ColorProvider.GetHashCode();
+    }
+  }
 }

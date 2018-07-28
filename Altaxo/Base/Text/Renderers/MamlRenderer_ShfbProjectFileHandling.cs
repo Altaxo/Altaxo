@@ -33,166 +33,166 @@ using System.Xml;
 
 namespace Altaxo.Text.Renderers
 {
-	public partial class MamlRenderer : TextRendererBase<MamlRenderer>
-	{
-		/// <summary>
-		/// Extracts the file name of the content layout file (extension: .content)  from the Sandcastle help file builder project.
-		/// </summary>
-		/// <param name="shfbProjectFileName">Name of the Sandcastle help file builder project file.</param>
-		/// <returns>The full name of the content file (if it could be extracted from the project file), or null.</returns>
-		public static string ExtractContentLayoutFileNameFromShfbproj(string shfbProjectFileName)
-		{
-			var doc = new XmlDocument();
-			//Load the the document with the last book node.
-			doc.Load(shfbProjectFileName);
+  public partial class MamlRenderer : TextRendererBase<MamlRenderer>
+  {
+    /// <summary>
+    /// Extracts the file name of the content layout file (extension: .content)  from the Sandcastle help file builder project.
+    /// </summary>
+    /// <param name="shfbProjectFileName">Name of the Sandcastle help file builder project file.</param>
+    /// <returns>The full name of the content file (if it could be extracted from the project file), or null.</returns>
+    public static string ExtractContentLayoutFileNameFromShfbproj(string shfbProjectFileName)
+    {
+      var doc = new XmlDocument();
+      //Load the the document with the last book node.
+      doc.Load(shfbProjectFileName);
 
-			XmlNode currNode = doc.DocumentElement.FirstChild;
-			while (null != currNode)
-			{
-				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
-				{
-					var clFileName = currNode.FirstChild.Attributes["Include"];
-					return Path.Combine(Path.GetDirectoryName(shfbProjectFileName), clFileName.Value);
-				}
+      XmlNode currNode = doc.DocumentElement.FirstChild;
+      while (null != currNode)
+      {
+        if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
+        {
+          var clFileName = currNode.FirstChild.Attributes["Include"];
+          return Path.Combine(Path.GetDirectoryName(shfbProjectFileName), clFileName.Value);
+        }
 
-				currNode = currNode.NextSibling;
-			}
+        currNode = currNode.NextSibling;
+      }
 
-			return null;
-		}
+      return null;
+    }
 
-		/// <summary>
-		/// Updates the Sandcastle help file builder project file. This update removes old .aml files and old referenced images and
-		/// replaces them with new .aml files and image files.
-		/// </summary>
-		/// <param name="shfbProjectFileName">Sandcastle help file builder project file.</param>
-		/// <param name="contentLayoutFileName">Name of the content layout file (extension: .content).</param>
-		/// <param name="amlFileNames">Enumeration of all .aml files that should be included in the Sandcastle help file builder project.</param>
-		/// <param name="imageFileNames">Enumeration of the names of all image files that should be included in the Sandcastle help file builder project.</param>
-		public static void UpdateShfbproj(string shfbProjectFileName, string contentLayoutFileName, IEnumerable<string> amlFileNames, IEnumerable<string> imageFileNames)
-		{
-			XmlNode contentLayoutNode = null;
-			XmlNode amlFilesNode = null;
-			XmlNode imageFilesNode = null;
+    /// <summary>
+    /// Updates the Sandcastle help file builder project file. This update removes old .aml files and old referenced images and
+    /// replaces them with new .aml files and image files.
+    /// </summary>
+    /// <param name="shfbProjectFileName">Sandcastle help file builder project file.</param>
+    /// <param name="contentLayoutFileName">Name of the content layout file (extension: .content).</param>
+    /// <param name="amlFileNames">Enumeration of all .aml files that should be included in the Sandcastle help file builder project.</param>
+    /// <param name="imageFileNames">Enumeration of the names of all image files that should be included in the Sandcastle help file builder project.</param>
+    public static void UpdateShfbproj(string shfbProjectFileName, string contentLayoutFileName, IEnumerable<string> amlFileNames, IEnumerable<string> imageFileNames)
+    {
+      XmlNode contentLayoutNode = null;
+      XmlNode amlFilesNode = null;
+      XmlNode imageFilesNode = null;
 
-			string projectDirectory = Path.GetDirectoryName(shfbProjectFileName);
+      string projectDirectory = Path.GetDirectoryName(shfbProjectFileName);
 
-			var doc = new XmlDocument();
-			//Load the the document with the last book node.
-			doc.Load(shfbProjectFileName);
+      var doc = new XmlDocument();
+      //Load the the document with the last book node.
+      doc.Load(shfbProjectFileName);
 
-			XmlNode currNode = doc.DocumentElement.FirstChild;
-			while (null != currNode)
-			{
-				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
-				{
-					contentLayoutNode = currNode;
-				}
-				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "Image")
-				{
-					imageFilesNode = currNode;
-				}
-				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "None")
-				{
-					amlFilesNode = currNode;
-				}
+      XmlNode currNode = doc.DocumentElement.FirstChild;
+      while (null != currNode)
+      {
+        if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
+        {
+          contentLayoutNode = currNode;
+        }
+        if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "Image")
+        {
+          imageFilesNode = currNode;
+        }
+        if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "None")
+        {
+          amlFilesNode = currNode;
+        }
 
-				currNode = currNode.NextSibling;
-			}
+        currNode = currNode.NextSibling;
+      }
 
-			if (null == contentLayoutNode)
-			{
-				var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
+      if (null == contentLayoutNode)
+      {
+        var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
 
-				doc.DocumentElement.AppendChild(itemGroup);
-				contentLayoutNode = itemGroup;
-			}
+        doc.DocumentElement.AppendChild(itemGroup);
+        contentLayoutNode = itemGroup;
+      }
 
-			if (null == amlFilesNode && amlFileNames.Any())
-			{
-				var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
-				doc.DocumentElement.AppendChild(itemGroup);
-				amlFilesNode = itemGroup;
-			}
+      if (null == amlFilesNode && amlFileNames.Any())
+      {
+        var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
+        doc.DocumentElement.AppendChild(itemGroup);
+        amlFilesNode = itemGroup;
+      }
 
-			if (null == imageFilesNode && imageFileNames.Any())
-			{
-				var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
-				doc.DocumentElement.AppendChild(itemGroup);
-				imageFilesNode = itemGroup;
-			}
+      if (null == imageFilesNode && imageFileNames.Any())
+      {
+        var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
+        doc.DocumentElement.AppendChild(itemGroup);
+        imageFilesNode = itemGroup;
+      }
 
-			if (null != contentLayoutNode)
-			{
-				contentLayoutNode.RemoveAll();
+      if (null != contentLayoutNode)
+      {
+        contentLayoutNode.RemoveAll();
 
-				var layoutNode = doc.CreateElement("ContentLayout", doc.DocumentElement.NamespaceURI);
-				var inclAttr = doc.CreateAttribute("Include");
-				inclAttr.Value = GetFileNameRelativeTo(contentLayoutFileName, projectDirectory);
-				layoutNode.Attributes.Append(inclAttr);
-				contentLayoutNode.AppendChild(layoutNode);
-			}
+        var layoutNode = doc.CreateElement("ContentLayout", doc.DocumentElement.NamespaceURI);
+        var inclAttr = doc.CreateAttribute("Include");
+        inclAttr.Value = GetFileNameRelativeTo(contentLayoutFileName, projectDirectory);
+        layoutNode.Attributes.Append(inclAttr);
+        contentLayoutNode.AppendChild(layoutNode);
+      }
 
-			if (null != amlFilesNode)
-			{
-				amlFilesNode.RemoveAll();
+      if (null != amlFilesNode)
+      {
+        amlFilesNode.RemoveAll();
 
-				foreach (var amlFileName in amlFileNames)
-				{
-					var noneNode = doc.CreateElement("None", doc.DocumentElement.NamespaceURI);
-					var inclAttr = doc.CreateAttribute("Include");
-					inclAttr.Value = GetFileNameRelativeTo(amlFileName, projectDirectory);
-					noneNode.Attributes.Append(inclAttr);
-					amlFilesNode.AppendChild(noneNode);
-				}
-			}
+        foreach (var amlFileName in amlFileNames)
+        {
+          var noneNode = doc.CreateElement("None", doc.DocumentElement.NamespaceURI);
+          var inclAttr = doc.CreateAttribute("Include");
+          inclAttr.Value = GetFileNameRelativeTo(amlFileName, projectDirectory);
+          noneNode.Attributes.Append(inclAttr);
+          amlFilesNode.AppendChild(noneNode);
+        }
+      }
 
-			if (null != imageFilesNode)
-			{
-				imageFilesNode.RemoveAll();
+      if (null != imageFilesNode)
+      {
+        imageFilesNode.RemoveAll();
 
-				foreach (var imageFileName in imageFileNames)
-				{
-					var imgNode = doc.CreateElement("Image", doc.DocumentElement.NamespaceURI);
-					var inclAttr = doc.CreateAttribute("Include");
-					inclAttr.Value = GetFileNameRelativeTo(imageFileName, projectDirectory);
-					imgNode.Attributes.Append(inclAttr);
+        foreach (var imageFileName in imageFileNames)
+        {
+          var imgNode = doc.CreateElement("Image", doc.DocumentElement.NamespaceURI);
+          var inclAttr = doc.CreateAttribute("Include");
+          inclAttr.Value = GetFileNameRelativeTo(imageFileName, projectDirectory);
+          imgNode.Attributes.Append(inclAttr);
 
-					var imgId = doc.CreateElement("ImageId", doc.DocumentElement.NamespaceURI);
-					imgId.InnerText = Path.GetFileNameWithoutExtension(imageFileName);
-					imgNode.AppendChild(imgId);
+          var imgId = doc.CreateElement("ImageId", doc.DocumentElement.NamespaceURI);
+          imgId.InnerText = Path.GetFileNameWithoutExtension(imageFileName);
+          imgNode.AppendChild(imgId);
 
-					var altText = doc.CreateElement("AlternateText", doc.DocumentElement.NamespaceURI);
-					altText.InnerText = Path.GetFileNameWithoutExtension(imageFileName);
-					imgNode.AppendChild(altText);
+          var altText = doc.CreateElement("AlternateText", doc.DocumentElement.NamespaceURI);
+          altText.InnerText = Path.GetFileNameWithoutExtension(imageFileName);
+          imgNode.AppendChild(altText);
 
-					imageFilesNode.AppendChild(imgNode);
-				}
-			}
+          imageFilesNode.AppendChild(imgNode);
+        }
+      }
 
-			// Finally, save the sandcastle help file builder project
-			doc.Save(shfbProjectFileName);
-		}
+      // Finally, save the sandcastle help file builder project
+      doc.Save(shfbProjectFileName);
+    }
 
-		/// <summary>
-		/// Gets the file name relative to a directory. The returned relative file name is HTML friendly.
-		/// </summary>
-		/// <param name="fullFileName">Full name of the file.</param>
-		/// <param name="baseDirectory">The full name of the directory.</param>
-		/// <returns>The path name relative to the provided directory. Backslashes are replaced with slashes to conform with HTML style.</returns>
-		public static string GetFileNameRelativeTo(string fullFileName, string baseDirectory)
-		{
-			if (!Path.IsPathRooted(fullFileName))
-				throw new ArgumentException("Path is not rooted", nameof(fullFileName));
+    /// <summary>
+    /// Gets the file name relative to a directory. The returned relative file name is HTML friendly.
+    /// </summary>
+    /// <param name="fullFileName">Full name of the file.</param>
+    /// <param name="baseDirectory">The full name of the directory.</param>
+    /// <returns>The path name relative to the provided directory. Backslashes are replaced with slashes to conform with HTML style.</returns>
+    public static string GetFileNameRelativeTo(string fullFileName, string baseDirectory)
+    {
+      if (!Path.IsPathRooted(fullFileName))
+        throw new ArgumentException("Path is not rooted", nameof(fullFileName));
 
-			var dir = Path.GetDirectoryName(fullFileName);
+      var dir = Path.GetDirectoryName(fullFileName);
 
-			if (!dir.StartsWith(baseDirectory))
-				throw new ArgumentException("File must be in the base directory or in a subdirectory", nameof(fullFileName));
+      if (!dir.StartsWith(baseDirectory))
+        throw new ArgumentException("File must be in the base directory or in a subdirectory", nameof(fullFileName));
 
-			int addLength = baseDirectory.EndsWith("" + Path.DirectorySeparatorChar) ? 0 : 1;
+      int addLength = baseDirectory.EndsWith("" + Path.DirectorySeparatorChar) ? 0 : 1;
 
-			return fullFileName.Substring(baseDirectory.Length + addLength).Replace('\\', '/');
-		}
-	}
+      return fullFileName.Substring(baseDirectory.Length + addLength).Replace('\\', '/');
+    }
+  }
 }

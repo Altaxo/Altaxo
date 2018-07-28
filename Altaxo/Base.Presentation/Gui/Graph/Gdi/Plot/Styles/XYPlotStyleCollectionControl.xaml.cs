@@ -33,83 +33,83 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	/// <summary>
-	/// Interaction logic for XYPlotStyleCollectionControl.xaml
-	/// </summary>
-	public partial class XYPlotStyleCollectionControl : UserControl, IXYPlotStyleCollectionView, Altaxo.Gui.Graph.Graph3D.Plot.Styles.IXYZPlotStyleCollectionView
-	{
-		public event Action RequestAddStyle;
+  /// <summary>
+  /// Interaction logic for XYPlotStyleCollectionControl.xaml
+  /// </summary>
+  public partial class XYPlotStyleCollectionControl : UserControl, IXYPlotStyleCollectionView, Altaxo.Gui.Graph.Graph3D.Plot.Styles.IXYZPlotStyleCollectionView
+  {
+    public event Action RequestAddStyle;
 
-		public event Action RequestStyleUp;
+    public event Action RequestStyleUp;
 
-		public event Action RequestStyleDown;
+    public event Action RequestStyleDown;
 
-		public event Action RequestStyleEdit;
+    public event Action RequestStyleEdit;
 
-		public event Action RequestStyleRemove;
+    public event Action RequestStyleRemove;
 
-		public event Action PredefinedStyleSelected;
+    public event Action PredefinedStyleSelected;
 
-		public XYPlotStyleCollectionControl()
-		{
-			InitializeComponent();
-		}
+    public XYPlotStyleCollectionControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhPredefinedSets_DoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			if (PredefinedStyleSelected != null && null != _predefinedSetsAvailable.SelectedItem)
-			{
-				GuiHelper.SynchronizeSelectionFromGui(_predefinedSetsAvailable);
-				PredefinedStyleSelected?.Invoke();
-			}
-		}
+    private void EhPredefinedSets_DoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      if (PredefinedStyleSelected != null && null != _predefinedSetsAvailable.SelectedItem)
+      {
+        GuiHelper.SynchronizeSelectionFromGui(_predefinedSetsAvailable);
+        PredefinedStyleSelected?.Invoke();
+      }
+    }
 
-		private void EhSingleStylesAvailable_DoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			if (RequestAddStyle != null && _singleStylesAvailable.SelectedItem != null)
-			{
-				GuiHelper.SynchronizeSelectionFromGui(_singleStylesAvailable);
-				RequestAddStyle?.Invoke();
-			}
-		}
+    private void EhSingleStylesAvailable_DoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      if (RequestAddStyle != null && _singleStylesAvailable.SelectedItem != null)
+      {
+        GuiHelper.SynchronizeSelectionFromGui(_singleStylesAvailable);
+        RequestAddStyle?.Invoke();
+      }
+    }
 
-		private void EhCurrentStyles_DoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			RequestStyleEdit?.Invoke();
-		}
+    private void EhCurrentStyles_DoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      RequestStyleEdit?.Invoke();
+    }
 
-		private void EhStyleUp_Click(object sender, RoutedEventArgs e)
-		{
-			RequestStyleUp?.Invoke();
-		}
+    private void EhStyleUp_Click(object sender, RoutedEventArgs e)
+    {
+      RequestStyleUp?.Invoke();
+    }
 
-		private void EhStyleDown_Click(object sender, RoutedEventArgs e)
-		{
-			RequestStyleDown?.Invoke();
-		}
+    private void EhStyleDown_Click(object sender, RoutedEventArgs e)
+    {
+      RequestStyleDown?.Invoke();
+    }
 
-		private void EhStyleRemove_Click(object sender, RoutedEventArgs e)
-		{
-			RequestStyleRemove?.Invoke();
-		}
+    private void EhStyleRemove_Click(object sender, RoutedEventArgs e)
+    {
+      RequestStyleRemove?.Invoke();
+    }
 
-		#region IXYPlotStyleCollectionView
+    #region IXYPlotStyleCollectionView
 
-		public void InitializePredefinedStyles(SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_predefinedSetsAvailable, list);
-		}
+    public void InitializePredefinedStyles(SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_predefinedSetsAvailable, list);
+    }
 
-		public void InitializeStyleList(SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_lbStyles, list);
-		}
+    public void InitializeStyleList(SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_lbStyles, list);
+    }
 
-		public void InitializeAvailableStyleList(SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_singleStylesAvailable, list);
-		}
+    public void InitializeAvailableStyleList(SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_singleStylesAvailable, list);
+    }
 
-		#endregion IXYPlotStyleCollectionView
-	}
+    #endregion IXYPlotStyleCollectionView
+  }
 }

@@ -22,33 +22,33 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Utility/helper methods for IFileService to avoid changing the IFileService interface.
-	/// </summary>
-	public static class FileHelpers
-	{
-		/// <summary>
-		/// Checks that the rename/overwrite operation is possible.
-		/// </summary>
-		public static bool CheckRenameOrReplacePossible(FileRenameEventArgs e, bool replaceAllowed = false)
-		{
-			if (e.IsDirectory && Directory.Exists(e.SourceFile))
-			{
-				if (!replaceAllowed && Directory.Exists(e.TargetFile))
-				{
-					MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
-					return false;
-				}
-			}
-			else if (File.Exists(e.SourceFile))
-			{
-				if (!replaceAllowed && File.Exists(e.TargetFile))
-				{
-					MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
-					return false;
-				}
-			}
-			return true;
-		}
-	}
+  /// <summary>
+  /// Utility/helper methods for IFileService to avoid changing the IFileService interface.
+  /// </summary>
+  public static class FileHelpers
+  {
+    /// <summary>
+    /// Checks that the rename/overwrite operation is possible.
+    /// </summary>
+    public static bool CheckRenameOrReplacePossible(FileRenameEventArgs e, bool replaceAllowed = false)
+    {
+      if (e.IsDirectory && Directory.Exists(e.SourceFile))
+      {
+        if (!replaceAllowed && Directory.Exists(e.TargetFile))
+        {
+          MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
+          return false;
+        }
+      }
+      else if (File.Exists(e.SourceFile))
+      {
+        if (!replaceAllowed && File.Exists(e.TargetFile))
+        {
+          MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
+          return false;
+        }
+      }
+      return true;
+    }
+  }
 }

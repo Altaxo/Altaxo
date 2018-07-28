@@ -31,12 +31,12 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.CodeEditing
 {
-	/// <summary>
-	/// Contains WPF routed commands for SharpDevelop-specific commands.
-	/// </summary>
-	public static class RoutedCommands
-	{
-		public static readonly RoutedCommand SplitView = new RoutedCommand(
-			"SplitView", typeof(RoutedCommands));
-	}
+  /// <summary>
+  /// Contains WPF routed commands for SharpDevelop-specific commands.
+  /// </summary>
+  public static class RoutedCommands
+  {
+    public static readonly RoutedCommand SplitView = new RoutedCommand(
+      "SplitView", typeof(RoutedCommands));
+  }
 }

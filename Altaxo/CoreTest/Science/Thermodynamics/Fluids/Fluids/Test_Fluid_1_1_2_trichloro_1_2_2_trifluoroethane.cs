@@ -32,45 +32,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-	/// <summary>
-	/// Tests and test data for <see cref="Fluid_1_1_2_trichloro_1_2_2_trifluoroethane"/>.
-	/// </summary>
-	/// <remarks>
-	/// <para>Reference:</para>
+  /// <summary>
+  /// Tests and test data for <see cref="Fluid_1_1_2_trichloro_1_2_2_trifluoroethane"/>.
+  /// </summary>
+  /// <remarks>
+  /// <para>Reference:</para>
   /// <para>The test data was created automatically using calls into the TREND.DLL of the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-	/// </remarks>
+  /// </remarks>
   [TestFixture]
   public class Test_Fluid_1_1_2_trichloro_1_2_2_trifluoroethane : FluidTestBase
-    {
+  {
 
     public Test_Fluid_1_1_2_trichloro_1_2_2_trifluoroethane()
-      {
+    {
       _fluid = Fluid_1_1_2_trichloro_1_2_2_trifluoroethane.Instance;
 
-    _testDataMolecularWeight = 0.187375;
+      _testDataMolecularWeight = 0.187375;
 
-    _testDataTriplePointTemperature = 236.93;
+      _testDataTriplePointTemperature = 236.93;
 
-    _testDataTriplePointPressure = 1871;
+      _testDataTriplePointPressure = 1871;
 
-    _testDataTriplePointLiquidMoleDensity = 9098.73877849907;
+      _testDataTriplePointLiquidMoleDensity = 9098.73877849907;
 
-    _testDataTriplePointVaporMoleDensity = 0.951990576014551;
+      _testDataTriplePointVaporMoleDensity = 0.951990576014551;
 
-    _testDataCriticalPointTemperature = 487.21;
+      _testDataCriticalPointTemperature = 487.21;
 
-    _testDataCriticalPointPressure = 3392266.20990703;
+      _testDataCriticalPointPressure = 3392266.20990703;
 
-    _testDataCriticalPointMoleDensity = 2988.659;
+      _testDataCriticalPointMoleDensity = 2988.659;
 
-    _testDataNormalBoilingPointTemperature = 320.735175529454;
+      _testDataNormalBoilingPointTemperature = 320.735175529454;
 
-    _testDataNormalSublimationPointTemperature = null;
+      _testDataNormalSublimationPointTemperature = null;
 
-    _testDataIsMeltingCurveImplemented = false;
+      _testDataIsMeltingCurveImplemented = false;
 
-    _testDataIsSublimationCurveImplemented = false;
+      _testDataIsSublimationCurveImplemented = false;
 
       // TestData contains:
       // 0. Temperature (Kelvin)
@@ -82,7 +82,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 6. Isochoric heat capacity (J/(mol K))
       // 7. Isobaric heat capacity (J/(mol K))
       // 8. Speed of sound (m/s)
-      _testDataEquationOfState = new (double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
+      _testDataEquationOfState = new(double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
       {
       ( 236.93, 0.508196938278693, 1000.00000000029, 61283.1627341062, 63250.9038294921, 303.138166187379, 98.8379362121805, 107.207597489316, 106.668168188124 ),
       ( 250, 0.48152712317628, 1000.00000000015, 62597.6813365205, 64674.4075516585, 308.985611083442, 102.228478151953, 110.585073538828, 109.445500755768 ),
@@ -225,7 +225,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 1. Pressure (Pa)
       // 2. Saturated liquid density (mol/m³
       // 3. Saturated vapor density (mol/m³)
-      _testDataSaturatedProperties = new (double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
+      _testDataSaturatedProperties = new(double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
       {
       ( 268.215, 11779.4872148782, 8716.14365878501, 5.32701029752388 ),
       ( 299.5, 47263.1215538279, 8324.64976746073, 19.4379825615401 ),

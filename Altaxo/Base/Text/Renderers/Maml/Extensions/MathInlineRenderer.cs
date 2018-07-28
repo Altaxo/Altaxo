@@ -33,54 +33,54 @@ using System.IO;
 
 namespace Altaxo.Text.Renderers.Maml.Extensions
 {
-	public class MathInlineRenderer : MamlObjectRenderer<MathInline>
-	{
-		protected override void Write(MamlRenderer renderer, MathInline obj)
-		{
-			var formulaText = obj.Content.Text.Substring(obj.Content.Start, obj.Content.Length);
+  public class MathInlineRenderer : MamlObjectRenderer<MathInline>
+  {
+    protected override void Write(MamlRenderer renderer, MathInline obj)
+    {
+      var formulaText = obj.Content.Text.Substring(obj.Content.Start, obj.Content.Length);
 
-			if (string.IsNullOrEmpty(formulaText))
-				return;
+      if (string.IsNullOrEmpty(formulaText))
+        return;
 
-			var formulaService = Current.GetRequiredService<ILaTeXFormulaImageStreamProvider>();
+      var formulaService = Current.GetRequiredService<ILaTeXFormulaImageStreamProvider>();
 
-			var (stream, placement, width, height) = formulaService.Parse(formulaText, renderer.BodyTextFontFamily, renderer.BodyTextFontSize, 192, renderer.IsIntendedForHelp1File);
+      var (stream, placement, width, height) = formulaService.Parse(formulaText, renderer.BodyTextFontFamily, renderer.BodyTextFontSize, 192, renderer.IsIntendedForHelp1File);
 
-			if (null == stream)
-				return;
+      if (null == stream)
+        return;
 
-			stream.Seek(0, SeekOrigin.Begin);
-			var streamHash = MemoryStreamImageProxy.ComputeStreamHash(stream);
-			stream.Seek(0, SeekOrigin.Begin);
+      stream.Seek(0, SeekOrigin.Begin);
+      var streamHash = MemoryStreamImageProxy.ComputeStreamHash(stream);
+      stream.Seek(0, SeekOrigin.Begin);
 
-			try
-			{
-				renderer.StorePngImageFile(stream, streamHash);
-				stream.Close();
-			}
-			finally
-			{
-				stream.Dispose();
-			}
+      try
+      {
+        renderer.StorePngImageFile(stream, streamHash);
+        stream.Close();
+      }
+      finally
+      {
+        stream.Dispose();
+      }
 
-			// now render to Maml file
+      // now render to Maml file
 
-			string localUrl = "../media/" + streamHash + ".png";
+      string localUrl = "../media/" + streamHash + ".png";
 
-			var attributes = new Dictionary<string, string>();
-			attributes.Add("src", localUrl);
-			attributes.Add("align", placement);
+      var attributes = new Dictionary<string, string>();
+      attributes.Add("src", localUrl);
+      attributes.Add("align", placement);
 
-			attributes.Add("width", System.Xml.XmlConvert.ToString(width));
-			attributes.Add("height", System.Xml.XmlConvert.ToString(height));
+      attributes.Add("width", System.Xml.XmlConvert.ToString(width));
+      attributes.Add("height", System.Xml.XmlConvert.ToString(height));
 
-			renderer.Push(MamlElements.markup);
+      renderer.Push(MamlElements.markup);
 
-			renderer.Push(MamlElements.a, new[] { new KeyValuePair<string, string>("href", renderer.ImageTopicFileGuid + ".htm#" + streamHash) });
+      renderer.Push(MamlElements.a, new[] { new KeyValuePair<string, string>("href", renderer.ImageTopicFileGuid + ".htm#" + streamHash) });
 
-			renderer.Push(MamlElements.img, attributes);
+      renderer.Push(MamlElements.img, attributes);
 
-			renderer.PopTo(MamlElements.markup);
-		}
-	}
+      renderer.PopTo(MamlElements.markup);
+    }
+  }
 }

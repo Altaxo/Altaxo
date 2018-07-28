@@ -29,51 +29,51 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class DiamondBulletPointInset : InsetBase
-	{
-		#region Serialization
+  public class DiamondBulletPointInset : InsetBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DiamondBulletPointInset), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
-			}
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DiamondBulletPointInset), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (DiamondBulletPointInset)o ?? new DiamondBulletPointInset();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (DiamondBulletPointInset)o ?? new DiamondBulletPointInset();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		private ClipperLib.IntPoint GetPoint(double w, double h)
-		{
-			const double Scale = 2 * 0.707106781186547524400844;
-			return new ClipperLib.IntPoint((int)(Scale * (w + h) * ClipperScalingDouble), (int)(Scale * (h - w) * ClipperScalingDouble));
-		}
+    private ClipperLib.IntPoint GetPoint(double w, double h)
+    {
+      const double Scale = 2 * 0.707106781186547524400844;
+      return new ClipperLib.IntPoint((int)(Scale * (w + h) * ClipperScalingDouble), (int)(Scale * (h - w) * ClipperScalingDouble));
+    }
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
-		{
-			double w = relativeWidth;
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
+    {
+      double w = relativeWidth;
 
-			return new List<List<ClipperLib.IntPoint>>(1)
-			{
-				new List<ClipperLib.IntPoint>(4)
-				{
-				GetPoint(-w, -w),
-				GetPoint(w, -w),
-				GetPoint(w, w),
-				GetPoint(-w, w)
-			}
-			};
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1)
+      {
+        new List<ClipperLib.IntPoint>(4)
+        {
+        GetPoint(-w, -w),
+        GetPoint(w, -w),
+        GetPoint(w, w),
+        GetPoint(-w, w)
+      }
+      };
+    }
+  }
 }

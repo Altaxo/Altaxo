@@ -29,32 +29,32 @@ using System.Text;
 
 namespace Altaxo
 {
-	/// <summary>
-	/// Base class for classes that should implement <see cref="IDisposable"/>.
-	/// </summary>
-	public abstract class DisposableBase : IDisposable
-	{
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+  /// <summary>
+  /// Base class for classes that should implement <see cref="IDisposable"/>.
+  /// </summary>
+  public abstract class DisposableBase : IDisposable
+  {
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
 
-		/// <summary>
-		/// Releases unmanaged and - optionally - managed resources.
-		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-		protected abstract void Dispose(bool disposing);
+    /// <summary>
+    /// Releases unmanaged and - optionally - managed resources.
+    /// </summary>
+    /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+    protected abstract void Dispose(bool disposing);
 
-		/// <summary>
-		/// Finalizes an instance of the <see cref="DisposableBase"/> class.
-		/// </summary>
-		~DisposableBase()
-		{
-			Dispose(false);
-		}
-	}
+    /// <summary>
+    /// Finalizes an instance of the <see cref="DisposableBase"/> class.
+    /// </summary>
+    ~DisposableBase()
+    {
+      Dispose(false);
+    }
+  }
 }

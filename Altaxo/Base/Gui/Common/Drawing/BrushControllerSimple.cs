@@ -29,36 +29,36 @@ using System.Text;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public interface IBrushViewSimple
-	{
-		BrushX Brush { get; set; }
-	}
+  public interface IBrushViewSimple
+  {
+    BrushX Brush { get; set; }
+  }
 
-	[UserControllerForObject(typeof(BrushX))]
-	[ExpectedTypeOfView(typeof(IBrushViewSimple))]
-	public class BrushControllerSimple : MVCANControllerEditOriginalDocBase<BrushX, IBrushViewSimple>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(BrushX))]
+  [ExpectedTypeOfView(typeof(IBrushViewSimple))]
+  public class BrushControllerSimple : MVCANControllerEditOriginalDocBase<BrushX, IBrushViewSimple>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (_view != null)
-			{
-				_view.Brush = _doc;
-			}
-		}
+      if (_view != null)
+      {
+        _view.Brush = _doc;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (_doc != null || _view.Brush.IsVisible)
-				_doc = _view.Brush;
+    public override bool Apply(bool disposeController)
+    {
+      if (_doc != null || _view.Brush.IsVisible)
+        _doc = _view.Brush;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

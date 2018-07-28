@@ -40,78 +40,78 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	/// <summary>
-	/// Interaction logic for RangeOfPhysicalValuesControl.xaml
-	/// </summary>
-	public partial class RangeOfNumericalValuesControl : UserControl, IRangeOfNumericalValuesView
-	{
-		public RangeOfNumericalValuesControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for RangeOfPhysicalValuesControl.xaml
+  /// </summary>
+  public partial class RangeOfNumericalValuesControl : UserControl, IRangeOfNumericalValuesView
+  {
+    public RangeOfNumericalValuesControl()
+    {
+      InitializeComponent();
+    }
 
-		public void Init_Column(string boxText, string toolTip, int status)
-		{
-			this._guiColumn.Text = boxText;
-			this._guiColumn.ToolTip = toolTip;
-			this._guiColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-		}
+    public void Init_Column(string boxText, string toolTip, int status)
+    {
+      this._guiColumn.Text = boxText;
+      this._guiColumn.ToolTip = toolTip;
+      this._guiColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+    }
 
-		public void Init_ColumnTransformation(string boxText, string toolTip)
-		{
-			if (null == boxText)
-			{
-				this._guiColumnTransformation.Visibility = Visibility.Collapsed;
-			}
-			else
-			{
-				this._guiColumnTransformation.Text = boxText;
-				this._guiColumnTransformation.ToolTip = toolTip;
-				this._guiColumnTransformation.Visibility = Visibility.Visible;
-			}
-		}
+    public void Init_ColumnTransformation(string boxText, string toolTip)
+    {
+      if (null == boxText)
+      {
+        this._guiColumnTransformation.Visibility = Visibility.Collapsed;
+      }
+      else
+      {
+        this._guiColumnTransformation.Text = boxText;
+        this._guiColumnTransformation.ToolTip = toolTip;
+        this._guiColumnTransformation.Visibility = Visibility.Visible;
+      }
+    }
 
-		public void Init_LowerInclusive(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiLowerInclusive, list);
-		}
+    public void Init_LowerInclusive(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiLowerInclusive, list);
+    }
 
-		public void Init_UpperInclusive(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiUpperInclusive, list);
-		}
+    public void Init_UpperInclusive(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiUpperInclusive, list);
+    }
 
-		public void Init_Index(int idx)
-		{
-			_guiDataLabel.Content = string.Format("Col#{0}:", idx);
-		}
+    public void Init_Index(int idx)
+    {
+      _guiDataLabel.Content = string.Format("Col#{0}:", idx);
+    }
 
-		public double LowerValue
-		{
-			get { return _guiFromValue.Value; }
-			set
-			{
-				_guiFromValue.Value = value;
-			}
-		}
+    public double LowerValue
+    {
+      get { return _guiFromValue.Value; }
+      set
+      {
+        _guiFromValue.Value = value;
+      }
+    }
 
-		public double UpperValue
-		{
-			get { return _guiToValue.Value; }
-			set
-			{
-				_guiToValue.Value = value;
-			}
-		}
+    public double UpperValue
+    {
+      get { return _guiToValue.Value; }
+      set
+      {
+        _guiToValue.Value = value;
+      }
+    }
 
-		private void EhLowerInclusiveChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiLowerInclusive);
-		}
+    private void EhLowerInclusiveChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiLowerInclusive);
+    }
 
-		private void EhUpperInclusiveChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiUpperInclusive);
-		}
-	}
+    private void EhUpperInclusiveChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiUpperInclusive);
+    }
+  }
 }

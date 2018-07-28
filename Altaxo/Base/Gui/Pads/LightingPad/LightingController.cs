@@ -29,80 +29,80 @@ using System.ComponentModel;
 
 namespace Altaxo.Gui.Pads.LightingPad
 {
-	public interface ILightingView
-	{
-		LightSettings Lighting { get; set; }
-		bool IsEnabled { get; set; }
+  public interface ILightingView
+  {
+    LightSettings Lighting { get; set; }
+    bool IsEnabled { get; set; }
 
-		event EventHandler LightingChanged;
-	}
+    event EventHandler LightingChanged;
+  }
 
-	/// <summary>
-	/// Responsible for showing the notes of worksheets and graph windows.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(ILightingView))]
-	public class LightingController : AbstractPadContent
-	{
-		private ILightingView _view;
+  /// <summary>
+  /// Responsible for showing the notes of worksheets and graph windows.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(ILightingView))]
+  public class LightingController : AbstractPadContent
+  {
+    private ILightingView _view;
 
-		/// <summary>The currently active view content to which the text belongs.</summary>
-		private WeakReference _currentActiveViewContent = new WeakReference(null);
+    /// <summary>The currently active view content to which the text belongs.</summary>
+    private WeakReference _currentActiveViewContent = new WeakReference(null);
 
-		public LightingController()
-		{
-			Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchActiveViewContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
-		}
+    public LightingController()
+    {
+      Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchActiveViewContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
+    }
 
-		private void EhView_LightingChanged(object sender, EventArgs e)
-		{
-			if (_currentActiveViewContent.IsAlive && object.ReferenceEquals(_currentActiveViewContent.Target, Current.Workbench.ActiveViewContent))
-			{
-				var ctrl = ActiveViewContentAsGraph3DController;
-				if (null != ctrl)
-				{
-					ctrl.Doc.Lighting = _view.Lighting;
-				}
-			}
-		}
+    private void EhView_LightingChanged(object sender, EventArgs e)
+    {
+      if (_currentActiveViewContent.IsAlive && object.ReferenceEquals(_currentActiveViewContent.Target, Current.Workbench.ActiveViewContent))
+      {
+        var ctrl = ActiveViewContentAsGraph3DController;
+        if (null != ctrl)
+        {
+          ctrl.Doc.Lighting = _view.Lighting;
+        }
+      }
+    }
 
-		private Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ActiveViewContentAsGraph3DController
-		{
-			get
-			{
-				var cnt = Current.Workbench.ActiveViewContent;
-				if (cnt is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController grctrl)
-					return grctrl;
-				else
-					return null;
-			}
-		}
+    private Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ActiveViewContentAsGraph3DController
+    {
+      get
+      {
+        var cnt = Current.Workbench.ActiveViewContent;
+        if (cnt is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController grctrl)
+          return grctrl;
+        else
+          return null;
+      }
+    }
 
-		private void EhWorkbenchActiveViewContentChanged(object sender, EventArgs e)
-		{
-			if (null == _view)
-				return; // happens during shutdown or during creation
+    private void EhWorkbenchActiveViewContentChanged(object sender, EventArgs e)
+    {
+      if (null == _view)
+        return; // happens during shutdown or during creation
 
-			_currentActiveViewContent = new WeakReference(Current.Workbench.ActiveViewContent);
+      _currentActiveViewContent = new WeakReference(Current.Workbench.ActiveViewContent);
 
-			bool enable = true;
+      bool enable = true;
 
-			var ctrl = ActiveViewContentAsGraph3DController;
+      var ctrl = ActiveViewContentAsGraph3DController;
 
-			if (null != ctrl)
-			{
-				_view.Lighting = ctrl.Doc.Lighting;
-				enable = true;
-			}
-			else
-			{
-				_view.Lighting = null;
-				enable = false;
-			}
+      if (null != ctrl)
+      {
+        _view.Lighting = ctrl.Doc.Lighting;
+        enable = true;
+      }
+      else
+      {
+        _view.Lighting = null;
+        enable = false;
+      }
 
-			_view.IsEnabled = enable;
+      _view.IsEnabled = enable;
 
-			// uncomment the following if we want to activate the lighting pad each time a Graph3D window is activated
-			/*
+      // uncomment the following if we want to activate the lighting pad each time a Graph3D window is activated
+      /*
 			if (enable && _view.Lighting != null)
 			{
 				ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
@@ -114,65 +114,65 @@ namespace Altaxo.Gui.Pads.LightingPad
 				ww.SelectWindow();
 			}
 			*/
-		}
+    }
 
-		/// <summary>
-		/// Stores the text in the text control back to the graph document or worksheet.
-		/// </summary>
+    /// <summary>
+    /// Stores the text in the text control back to the graph document or worksheet.
+    /// </summary>
 
-		#region IPadContent Members
+    #region IPadContent Members
 
-		private void AttachView()
-		{
-			_view.LightingChanged += EhView_LightingChanged;
-			_view.IsEnabled = false;
+    private void AttachView()
+    {
+      _view.LightingChanged += EhView_LightingChanged;
+      _view.IsEnabled = false;
 
-			EhWorkbenchActiveViewContentChanged(Current.Workbench, EventArgs.Empty); // Find out if the active workbench window is a Graph3d
-		}
+      EhWorkbenchActiveViewContentChanged(Current.Workbench, EventArgs.Empty); // Find out if the active workbench window is a Graph3d
+    }
 
-		private void DetachView()
-		{
-			_view.LightingChanged -= EhView_LightingChanged;
-		}
+    private void DetachView()
+    {
+      _view.LightingChanged -= EhView_LightingChanged;
+    }
 
-		public override object ViewObject
-		{
-			get
-			{
-				return this._view;
-			}
-			set
-			{
-				if (!object.ReferenceEquals(value, _view))
-				{
-					if (null != _view)
-						DetachView();
+    public override object ViewObject
+    {
+      get
+      {
+        return this._view;
+      }
+      set
+      {
+        if (!object.ReferenceEquals(value, _view))
+        {
+          if (null != _view)
+            DetachView();
 
-					_view = value as ILightingView;
+          _view = value as ILightingView;
 
-					if (null != _view)
-						AttachView();
-				}
-			}
-		}
+          if (null != _view)
+            AttachView();
+        }
+      }
+    }
 
-		public override object ModelObject
-		{
-			get
-			{
-				return null;
-			}
-		}
+    public override object ModelObject
+    {
+      get
+      {
+        return null;
+      }
+    }
 
-		#endregion IPadContent Members
+    #endregion IPadContent Members
 
-		#region IDisposable Members
+    #region IDisposable Members
 
-		public override void Dispose()
-		{
-			_view = null;
-		}
+    public override void Dispose()
+    {
+      _view = null;
+    }
 
-		#endregion IDisposable Members
-	}
+    #endregion IDisposable Members
+  }
 }

@@ -20,78 +20,78 @@ using System;
 
 namespace Altaxo.Main.Services
 {
-	public class FileRenamingEventArgs : FileRenameEventArgs
-	{
-		private bool cancel;
+  public class FileRenamingEventArgs : FileRenameEventArgs
+  {
+    private bool cancel;
 
-		public bool Cancel
-		{
-			get
-			{
-				return cancel;
-			}
-			set
-			{
-				cancel = value;
-			}
-		}
+    public bool Cancel
+    {
+      get
+      {
+        return cancel;
+      }
+      set
+      {
+        cancel = value;
+      }
+    }
 
-		private bool operationAlreadyDone;
+    private bool operationAlreadyDone;
 
-		public bool OperationAlreadyDone
-		{
-			get
-			{
-				return operationAlreadyDone;
-			}
-			set
-			{
-				operationAlreadyDone = value;
-			}
-		}
+    public bool OperationAlreadyDone
+    {
+      get
+      {
+        return operationAlreadyDone;
+      }
+      set
+      {
+        operationAlreadyDone = value;
+      }
+    }
 
-		public FileRenamingEventArgs(string sourceFile, string targetFile, bool isDirectory)
-				: base(sourceFile, targetFile, isDirectory)
-		{
-		}
-	}
+    public FileRenamingEventArgs(string sourceFile, string targetFile, bool isDirectory)
+        : base(sourceFile, targetFile, isDirectory)
+    {
+    }
+  }
 
-	public class FileRenameEventArgs : EventArgs
-	{
-		private bool isDirectory;
+  public class FileRenameEventArgs : EventArgs
+  {
+    private bool isDirectory;
 
-		private string sourceFile;
-		private string targetFile;
+    private string sourceFile;
+    private string targetFile;
 
-		public string SourceFile
-		{
-			get
-			{
-				return sourceFile;
-			}
-		}
+    public string SourceFile
+    {
+      get
+      {
+        return sourceFile;
+      }
+    }
 
-		public string TargetFile
-		{
-			get
-			{
-				return targetFile;
-			}
-		}
+    public string TargetFile
+    {
+      get
+      {
+        return targetFile;
+      }
+    }
 
-		public bool IsDirectory
-		{
-			get
-			{
-				return isDirectory;
-			}
-		}
+    public bool IsDirectory
+    {
+      get
+      {
+        return isDirectory;
+      }
+    }
 
-		public FileRenameEventArgs(string sourceFile, string targetFile, bool isDirectory)
-		{
-			this.sourceFile = sourceFile;
-			this.targetFile = targetFile;
-			this.isDirectory = isDirectory;
-		}
-	}
+    public FileRenameEventArgs(string sourceFile, string targetFile, bool isDirectory)
+    {
+      this.sourceFile = sourceFile;
+      this.targetFile = targetFile;
+      this.isDirectory = isDirectory;
+    }
+  }
 }

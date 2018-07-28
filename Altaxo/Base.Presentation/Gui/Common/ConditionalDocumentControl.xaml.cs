@@ -31,45 +31,45 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for ConditionalDocumentControl.xaml
-	/// </summary>
-	public partial class ConditionalDocumentControl : UserControl, IConditionalDocumentView
-	{
-		public ConditionalDocumentControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ConditionalDocumentControl.xaml
+  /// </summary>
+  public partial class ConditionalDocumentControl : UserControl, IConditionalDocumentView
+  {
+    public ConditionalDocumentControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhEnabledChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != ConditionalViewEnabledChanged)
-				ConditionalViewEnabledChanged();
-		}
+    private void EhEnabledChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != ConditionalViewEnabledChanged)
+        ConditionalViewEnabledChanged();
+    }
 
-		public bool IsConditionalViewEnabled
-		{
-			get
-			{
-				return true == _guiEnableState.IsChecked;
-			}
-			set
-			{
-				_guiEnableState.IsChecked = value;
-				_guiContentHost.IsEnabled = value;
-			}
-		}
+    public bool IsConditionalViewEnabled
+    {
+      get
+      {
+        return true == _guiEnableState.IsChecked;
+      }
+      set
+      {
+        _guiEnableState.IsChecked = value;
+        _guiContentHost.IsEnabled = value;
+      }
+    }
 
-		public event Action ConditionalViewEnabledChanged;
+    public event Action ConditionalViewEnabledChanged;
 
-		public object ConditionalView
-		{
-			set { _guiContentHost.Child = value as UIElement; }
-		}
+    public object ConditionalView
+    {
+      set { _guiContentHost.Child = value as UIElement; }
+    }
 
-		public string EnablingText
-		{
-			set { _guiEnableState.Content = value; }
-		}
-	}
+    public string EnablingText
+    {
+      set { _guiEnableState.Content = value; }
+    }
+  }
 }

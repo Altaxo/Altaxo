@@ -31,38 +31,38 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
-	/// <summary>
-	/// Interaction logic for RealFourierTransformationControl.xaml
-	/// </summary>
-	public partial class RealFourierTransformationControl : UserControl, IRealFourierTransformationView
-	{
-		public RealFourierTransformationControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for RealFourierTransformationControl.xaml
+  /// </summary>
+  public partial class RealFourierTransformationControl : UserControl, IRealFourierTransformationView
+  {
+    public RealFourierTransformationControl()
+    {
+      InitializeComponent();
+    }
 
-		public void SetColumnToTransform(string val)
-		{
-			_columnToTransform.Text = val;
-		}
+    public void SetColumnToTransform(string val)
+    {
+      _columnToTransform.Text = val;
+    }
 
-		public void SetXIncrement(string val, bool bMarkAsWarning)
-		{
-			_xIncrement.Text = val;
-			if (bMarkAsWarning)
-				_xIncrement.Foreground = Brushes.Red;
-			else
-				_xIncrement.Foreground = Brushes.Black;
-		}
+    public void SetXIncrement(string val, bool bMarkAsWarning)
+    {
+      _xIncrement.Text = val;
+      if (bMarkAsWarning)
+        _xIncrement.Foreground = Brushes.Red;
+      else
+        _xIncrement.Foreground = Brushes.Black;
+    }
 
-		public void SetOutputQuantities(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.InitializeChoicePanel<CheckBox>(_outputColumns, list);
-		}
+    public void SetOutputQuantities(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.InitializeChoicePanel<CheckBox>(_outputColumns, list);
+    }
 
-		public void SetCreationOptions(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.InitializeChoicePanel<RadioButton>(_creationOptions, list);
-		}
-	}
+    public void SetCreationOptions(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.InitializeChoicePanel<RadioButton>(_creationOptions, list);
+    }
+  }
 }

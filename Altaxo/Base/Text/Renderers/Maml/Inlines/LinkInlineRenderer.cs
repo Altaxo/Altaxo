@@ -29,158 +29,158 @@ using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="LinkInline"/>.
-	/// </summary>
-	public class LinkInlineRenderer : MamlObjectRenderer<LinkInline>
-	{
-		/// <inheritdoc/>
-		protected override void Write(MamlRenderer renderer, LinkInline link)
-		{
-			var url = link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url;
+  /// <summary>
+  /// Maml renderer for a <see cref="LinkInline"/>.
+  /// </summary>
+  public class LinkInlineRenderer : MamlObjectRenderer<LinkInline>
+  {
+    /// <inheritdoc/>
+    protected override void Write(MamlRenderer renderer, LinkInline link)
+    {
+      var url = link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url;
 
-			if (link.IsImage)
-			{
-				RenderImage(renderer, link, url);
-			}
-			else // link is not an image
-			{
-				if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
-				{
-					renderer.Push(MamlElements.externalLink);
-					renderer.Push(MamlElements.linkText);
-					renderer.WriteChildren(link);
-					renderer.PopTo(MamlElements.linkText);
+      if (link.IsImage)
+      {
+        RenderImage(renderer, link, url);
+      }
+      else // link is not an image
+      {
+        if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+        {
+          renderer.Push(MamlElements.externalLink);
+          renderer.Push(MamlElements.linkText);
+          renderer.WriteChildren(link);
+          renderer.PopTo(MamlElements.linkText);
 
-					renderer.Push(MamlElements.linkUri);
-					renderer.Write(url);
-					renderer.PopTo(MamlElements.linkUri);
-					renderer.PopTo(MamlElements.externalLink);
-				}
-				else // not a well formed Uri String - then it is probably a fragment reference
-				{
-					// the challenge here is to find out where (in which file) our target is. The file might even not be defined in the moment
-					var (fileGuid, localUrl) = renderer.FindFragmentLink(url);
-					string totalAddress = string.Empty;
-					if (null != fileGuid && null != localUrl)
-					{
-						totalAddress = fileGuid + "#" + localUrl;
-					}
+          renderer.Push(MamlElements.linkUri);
+          renderer.Write(url);
+          renderer.PopTo(MamlElements.linkUri);
+          renderer.PopTo(MamlElements.externalLink);
+        }
+        else // not a well formed Uri String - then it is probably a fragment reference
+        {
+          // the challenge here is to find out where (in which file) our target is. The file might even not be defined in the moment
+          var (fileGuid, localUrl) = renderer.FindFragmentLink(url);
+          string totalAddress = string.Empty;
+          if (null != fileGuid && null != localUrl)
+          {
+            totalAddress = fileGuid + "#" + localUrl;
+          }
 
-					renderer.Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", totalAddress) });
-					renderer.WriteChildren(link);
-					renderer.PopTo(MamlElements.link);
-				}
-			}
-		}
+          renderer.Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", totalAddress) });
+          renderer.WriteChildren(link);
+          renderer.PopTo(MamlElements.link);
+        }
+      }
+    }
 
-		private void RenderImage(MamlRenderer renderer, LinkInline link, string url)
-		{
-			double? width = null, height = null;
+    private void RenderImage(MamlRenderer renderer, LinkInline link, string url)
+    {
+      double? width = null, height = null;
 
-			if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
-			{
-				var htmlAttributes = (Markdig.Renderers.Html.HtmlAttributes)link.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-				if (null != htmlAttributes.Properties)
-				{
-					foreach (var entry in htmlAttributes.Properties)
-					{
-						switch (entry.Key.ToLowerInvariant())
-						{
-							case "width":
-								width = GetLength(entry.Value);
-								break;
+      if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
+      {
+        var htmlAttributes = (Markdig.Renderers.Html.HtmlAttributes)link.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
+        if (null != htmlAttributes.Properties)
+        {
+          foreach (var entry in htmlAttributes.Properties)
+          {
+            switch (entry.Key.ToLowerInvariant())
+            {
+              case "width":
+                width = GetLength(entry.Value);
+                break;
 
-							case "height":
-								height = GetLength(entry.Value);
-								break;
-						}
-					}
-				}
-			}
+              case "height":
+                height = GetLength(entry.Value);
+                break;
+            }
+          }
+        }
+      }
 
-			if (null != renderer.OldToNewImageUris && renderer.OldToNewImageUris.ContainsKey(url))
-				url = renderer.OldToNewImageUris[url];
+      if (null != renderer.OldToNewImageUris && renderer.OldToNewImageUris.ContainsKey(url))
+        url = renderer.OldToNewImageUris[url];
 
-			if (width == null && height == null) // if we include the image in its native resolution, we do not need a link to the native resolution image
-			{
-				string localUrl = System.IO.Path.GetFileNameWithoutExtension(url);
+      if (width == null && height == null) // if we include the image in its native resolution, we do not need a link to the native resolution image
+      {
+        string localUrl = System.IO.Path.GetFileNameWithoutExtension(url);
 
-				renderer.Push(MamlElements.mediaLinkInline);
+        renderer.Push(MamlElements.mediaLinkInline);
 
-				renderer.Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
+        renderer.Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
 
-				renderer.PopTo(MamlElements.image);
+        renderer.PopTo(MamlElements.image);
 
-				renderer.PopTo(MamlElements.mediaLinkInline);
-			}
-			else // width or height or both specified
-			{
-				string localUrl = "../media/" + System.IO.Path.GetFileName(url);
+        renderer.PopTo(MamlElements.mediaLinkInline);
+      }
+      else // width or height or both specified
+      {
+        string localUrl = "../media/" + System.IO.Path.GetFileName(url);
 
-				var attributes = new Dictionary<string, string>();
-				attributes.Add("src", localUrl);
-				if (width.HasValue)
-					attributes.Add("width", System.Xml.XmlConvert.ToString(Math.Round(width.Value)));
-				if (height.HasValue)
-					attributes.Add("height", System.Xml.XmlConvert.ToString(height.Value));
+        var attributes = new Dictionary<string, string>();
+        attributes.Add("src", localUrl);
+        if (width.HasValue)
+          attributes.Add("width", System.Xml.XmlConvert.ToString(Math.Round(width.Value)));
+        if (height.HasValue)
+          attributes.Add("height", System.Xml.XmlConvert.ToString(height.Value));
 
-				renderer.Push(MamlElements.markup);
+        renderer.Push(MamlElements.markup);
 
-				renderer.Push(MamlElements.a, new[] { new KeyValuePair<string, string>("href", renderer.ImageTopicFileGuid + ".htm#" + System.IO.Path.GetFileNameWithoutExtension(url)) });
+        renderer.Push(MamlElements.a, new[] { new KeyValuePair<string, string>("href", renderer.ImageTopicFileGuid + ".htm#" + System.IO.Path.GetFileNameWithoutExtension(url)) });
 
-				renderer.Push(MamlElements.img, attributes);
+        renderer.Push(MamlElements.img, attributes);
 
-				renderer.PopTo(MamlElements.markup);
-			}
-		}
+        renderer.PopTo(MamlElements.markup);
+      }
+    }
 
-		/// <summary>
-		/// Gets the length in 1/96th inch.
-		/// </summary>
-		/// <param name="lenString">The length string.</param>
-		/// <returns></returns>
-		private double? GetLength(string lenString)
-		{
-			if (string.IsNullOrEmpty(lenString))
-				return null;
+    /// <summary>
+    /// Gets the length in 1/96th inch.
+    /// </summary>
+    /// <param name="lenString">The length string.</param>
+    /// <returns></returns>
+    private double? GetLength(string lenString)
+    {
+      if (string.IsNullOrEmpty(lenString))
+        return null;
 
-			lenString = lenString.ToLowerInvariant().Trim();
+      lenString = lenString.ToLowerInvariant().Trim();
 
-			double factor = 1;
-			string numberString = lenString;
+      double factor = 1;
+      string numberString = lenString;
 
-			if (lenString.EndsWith("pt"))
-			{
-				factor = 96 / 72.0;
-				numberString = lenString.Substring(0, lenString.Length - 2);
-			}
-			else if (lenString.EndsWith("cm"))
-			{
-				factor = 96 / 2.54;
-				numberString = lenString.Substring(0, lenString.Length - 2);
-			}
-			else if (lenString.EndsWith("mm"))
-			{
-				factor = 96 / 25.4;
-				numberString = lenString.Substring(0, lenString.Length - 2);
-			}
-			else if (lenString.EndsWith("px"))
-			{
-				factor = 1;
-				numberString = lenString.Substring(0, lenString.Length - 2);
-			}
-			else if (lenString.EndsWith("in"))
-			{
-				factor = 96;
-				numberString = lenString.Substring(0, lenString.Length - 2);
-			}
+      if (lenString.EndsWith("pt"))
+      {
+        factor = 96 / 72.0;
+        numberString = lenString.Substring(0, lenString.Length - 2);
+      }
+      else if (lenString.EndsWith("cm"))
+      {
+        factor = 96 / 2.54;
+        numberString = lenString.Substring(0, lenString.Length - 2);
+      }
+      else if (lenString.EndsWith("mm"))
+      {
+        factor = 96 / 25.4;
+        numberString = lenString.Substring(0, lenString.Length - 2);
+      }
+      else if (lenString.EndsWith("px"))
+      {
+        factor = 1;
+        numberString = lenString.Substring(0, lenString.Length - 2);
+      }
+      else if (lenString.EndsWith("in"))
+      {
+        factor = 96;
+        numberString = lenString.Substring(0, lenString.Length - 2);
+      }
 
-			if (double.TryParse(numberString, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var result))
-			{
-				return result * factor;
-			}
-			return null;
-		}
-	}
+      if (double.TryParse(numberString, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var result))
+      {
+        return result * factor;
+      }
+      return null;
+    }
+  }
 }

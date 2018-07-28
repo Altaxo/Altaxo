@@ -30,37 +30,37 @@ using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
-	/// <summary>
-	///
-	/// </summary>
-	/// <remarks>
-	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
-	/// </remarks>
-	internal class ExpandableProperty : Property
-	{
-		private PropertyCollection _propertyCollection;
-		private bool _automaticlyExpandObjects;
-		private string _filter;
+  /// <summary>
+  ///
+  /// </summary>
+  /// <remarks>
+  /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
+  /// </remarks>
+  internal class ExpandableProperty : Property
+  {
+    private PropertyCollection _propertyCollection;
+    private bool _automaticlyExpandObjects;
+    private string _filter;
 
-		public ExpandableProperty(object instance, PropertyDescriptor property, bool automaticlyExpandObjects, string filter)
-			: base(instance, property)
-		{
-			_automaticlyExpandObjects = automaticlyExpandObjects;
-			_filter = filter;
-		}
+    public ExpandableProperty(object instance, PropertyDescriptor property, bool automaticlyExpandObjects, string filter)
+      : base(instance, property)
+    {
+      _automaticlyExpandObjects = automaticlyExpandObjects;
+      _filter = filter;
+    }
 
-		public ObservableCollection<Item> Items
-		{
-			get
-			{
-				if (_propertyCollection == null)
-				{
-					//Lazy initialisation prevent from deep search and looping
-					_propertyCollection = new PropertyCollection(_property.GetValue(_instance), true, _automaticlyExpandObjects, _filter);
-				}
+    public ObservableCollection<Item> Items
+    {
+      get
+      {
+        if (_propertyCollection == null)
+        {
+          //Lazy initialisation prevent from deep search and looping
+          _propertyCollection = new PropertyCollection(_property.GetValue(_instance), true, _automaticlyExpandObjects, _filter);
+        }
 
-				return _propertyCollection.Items;
-			}
-		}
-	}
+        return _propertyCollection.Items;
+      }
+    }
+  }
 }

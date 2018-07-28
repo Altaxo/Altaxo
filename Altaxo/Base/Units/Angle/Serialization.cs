@@ -30,42 +30,42 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.Angle
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Pi), 0)]
-	public class SerializationSurrogate0_Pi : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Pi), 0)]
+  public class SerializationSurrogate0_Pi : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Pi.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Pi.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Degree), 0)]
-	public class SerializationSurrogate0_Degree : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Degree), 0)]
+  public class SerializationSurrogate0_Degree : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Degree.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Degree.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Radian), 0)]
-	public class SerializationSurrogate0_Radian : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Radian), 0)]
+  public class SerializationSurrogate0_Radian : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Radian.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Radian.Instance;
+    }
+  }
 }

@@ -40,119 +40,119 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Geometry
 {
-	/// <summary>
-	/// Interaction logic for Direction3DSphericalControl.xaml
-	/// </summary>
-	public partial class Position3DCartesianControl : UserControl
-	{
-		private double[] _position = new double[3];
+  /// <summary>
+  /// Interaction logic for Direction3DSphericalControl.xaml
+  /// </summary>
+  public partial class Position3DCartesianControl : UserControl
+  {
+    private double[] _position = new double[3];
 
-		public event EventHandler SelectedValueChanged;
+    public event EventHandler SelectedValueChanged;
 
-		private Common.NumericDoubleTextBox[] _guiPositionBoxes;
+    private Common.NumericDoubleTextBox[] _guiPositionBoxes;
 
-		private Slider[] _guiPositionSliders;
+    private Slider[] _guiPositionSliders;
 
-		private GuiChangeLocker _lock;
+    private GuiChangeLocker _lock;
 
-		public Position3DCartesianControl()
-		{
-			InitializeComponent();
+    public Position3DCartesianControl()
+    {
+      InitializeComponent();
 
-			_guiPositionBoxes = new Common.NumericDoubleTextBox[3] { _guiPositionXBox, _guiPositionYBox, _guiPositionZBox };
-			_guiPositionSliders = new Slider[3] { _guiPositionXSlider, _guiPositionYSlider, _guiPositionZSlider };
-		}
+      _guiPositionBoxes = new Common.NumericDoubleTextBox[3] { _guiPositionXBox, _guiPositionYBox, _guiPositionZBox };
+      _guiPositionSliders = new Slider[3] { _guiPositionXSlider, _guiPositionYSlider, _guiPositionZSlider };
+    }
 
-		/// <summary>
-		/// Gets or sets the position.
-		/// </summary>
-		/// <value>
-		/// The position.
-		/// </value>
-		public PointD3D SelectedValue
-		{
-			get
-			{
-				return new PointD3D(_position[0], _position[1], _position[2]);
-			}
-			set
-			{
-				_position[0] = value.X;
-				_position[1] = value.Y;
-				_position[2] = value.Z;
+    /// <summary>
+    /// Gets or sets the position.
+    /// </summary>
+    /// <value>
+    /// The position.
+    /// </value>
+    public PointD3D SelectedValue
+    {
+      get
+      {
+        return new PointD3D(_position[0], _position[1], _position[2]);
+      }
+      set
+      {
+        _position[0] = value.X;
+        _position[1] = value.Y;
+        _position[2] = value.Z;
 
-				_lock.ExecuteLocked(
-					() =>
-					{
-						for (int i = 0; i < 3; ++i)
-						{
-							_guiPositionBoxes[i].SelectedValue = _position[i];
-							if (_guiPositionSliders[i].Minimum > _position[i])
-								_guiPositionSliders[i].Minimum = _position[i];
-							if (_guiPositionSliders[i].Maximum < _position[i])
-								_guiPositionSliders[i].Maximum = _position[i];
-							_guiPositionSliders[i].Value = _position[i];
-						}
-					});
-			}
-		}
+        _lock.ExecuteLocked(
+          () =>
+          {
+            for (int i = 0; i < 3; ++i)
+            {
+              _guiPositionBoxes[i].SelectedValue = _position[i];
+              if (_guiPositionSliders[i].Minimum > _position[i])
+                _guiPositionSliders[i].Minimum = _position[i];
+              if (_guiPositionSliders[i].Maximum < _position[i])
+                _guiPositionSliders[i].Maximum = _position[i];
+              _guiPositionSliders[i].Value = _position[i];
+            }
+          });
+      }
+    }
 
-		private void EhPositionBoxValueChanged(int index)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-				() =>
-				{
-					_position[index] = _guiPositionBoxes[index].SelectedValue;
+    private void EhPositionBoxValueChanged(int index)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+        () =>
+        {
+          _position[index] = _guiPositionBoxes[index].SelectedValue;
 
-					if (_guiPositionSliders[index].Minimum > _position[index])
-						_guiPositionSliders[index].Minimum = _position[index];
-					if (_guiPositionSliders[index].Maximum < _position[index])
+          if (_guiPositionSliders[index].Minimum > _position[index])
+            _guiPositionSliders[index].Minimum = _position[index];
+          if (_guiPositionSliders[index].Maximum < _position[index])
 
-						_guiPositionSliders[index].Value = _position[index];
-				},
-				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
-				);
-		}
+            _guiPositionSliders[index].Value = _position[index];
+        },
+        () => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+        );
+    }
 
-		private void PositionSliderValueChanged(int index)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-			() =>
-			{
-				_position[index] = _guiPositionSliders[index].Value;
-				_guiPositionBoxes[index].SelectedValue = _position[index];
-			},
-			() => SelectedValueChanged?.Invoke(this, EventArgs.Empty));
-		}
+    private void PositionSliderValueChanged(int index)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+      () =>
+      {
+        _position[index] = _guiPositionSliders[index].Value;
+        _guiPositionBoxes[index].SelectedValue = _position[index];
+      },
+      () => SelectedValueChanged?.Invoke(this, EventArgs.Empty));
+    }
 
-		private void EhPositionXBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			EhPositionBoxValueChanged(0);
-		}
+    private void EhPositionXBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      EhPositionBoxValueChanged(0);
+    }
 
-		private void EhPositionYBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			EhPositionBoxValueChanged(1);
-		}
+    private void EhPositionYBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      EhPositionBoxValueChanged(1);
+    }
 
-		private void EhPositionZBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			EhPositionBoxValueChanged(2);
-		}
+    private void EhPositionZBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      EhPositionBoxValueChanged(2);
+    }
 
-		private void EhPositionXSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			PositionSliderValueChanged(0);
-		}
+    private void EhPositionXSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+      PositionSliderValueChanged(0);
+    }
 
-		private void EhPositionYSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			PositionSliderValueChanged(1);
-		}
+    private void EhPositionYSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+      PositionSliderValueChanged(1);
+    }
 
-		private void EhPositionZSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			PositionSliderValueChanged(2);
-		}
-	}
+    private void EhPositionZSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+      PositionSliderValueChanged(2);
+    }
+  }
 }

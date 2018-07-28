@@ -29,88 +29,88 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
-	public class AngularRescaleConditions
-		:
-		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		IScaleRescaleConditions
-	{
-		/// <summary>Origin of the scale in degrees.</summary>
-		protected int _scaleOrigin;
+  public class AngularRescaleConditions
+    :
+    Main.SuspendableDocumentLeafNodeWithEventArgs,
+    IScaleRescaleConditions
+  {
+    /// <summary>Origin of the scale in degrees.</summary>
+    protected int _scaleOrigin;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRescaleConditions), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				AngularRescaleConditions s = (AngularRescaleConditions)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRescaleConditions), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        AngularRescaleConditions s = (AngularRescaleConditions)obj;
 
-				info.AddValue("ScaleOrigin", s._scaleOrigin);
-			}
+        info.AddValue("ScaleOrigin", s._scaleOrigin);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				AngularRescaleConditions s = SDeserialize(o, info, parent);
-				return s;
-			}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AngularRescaleConditions s = SDeserialize(o, info, parent);
+        return s;
+      }
 
-			protected virtual AngularRescaleConditions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				AngularRescaleConditions s = null != o ? (AngularRescaleConditions)o : new AngularRescaleConditions();
+      protected virtual AngularRescaleConditions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AngularRescaleConditions s = null != o ? (AngularRescaleConditions)o : new AngularRescaleConditions();
 
-				s._scaleOrigin = info.GetInt32("ScaleOrigin");
+        s._scaleOrigin = info.GetInt32("ScaleOrigin");
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public AngularRescaleConditions()
-		{
-		}
+    public AngularRescaleConditions()
+    {
+    }
 
-		public AngularRescaleConditions(AngularRescaleConditions from)
-		{
-			CopyFrom(from);
-		}
+    public AngularRescaleConditions(AngularRescaleConditions from)
+    {
+      CopyFrom(from);
+    }
 
-		public virtual bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
+    public virtual bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
 
-			var from = obj as AngularRescaleConditions;
-			if (null == from)
-				return false;
+      var from = obj as AngularRescaleConditions;
+      if (null == from)
+        return false;
 
-			this._scaleOrigin = from._scaleOrigin;
+      this._scaleOrigin = from._scaleOrigin;
 
-			EhSelfChanged();
+      EhSelfChanged();
 
-			return true;
-		}
+      return true;
+    }
 
-		public virtual object Clone()
-		{
-			return new AngularRescaleConditions(this);
-		}
+    public virtual object Clone()
+    {
+      return new AngularRescaleConditions(this);
+    }
 
-		/// <summary>Origin of the scale in degrees.</summary>
-		public int ScaleOrigin
-		{
-			get
-			{
-				return _scaleOrigin;
-			}
-			set
-			{
-				var oldValue = _scaleOrigin;
-				_scaleOrigin = value;
-				if (value != oldValue)
-					EhSelfChanged();
-			}
-		}
-	}
+    /// <summary>Origin of the scale in degrees.</summary>
+    public int ScaleOrigin
+    {
+      get
+      {
+        return _scaleOrigin;
+      }
+      set
+      {
+        var oldValue = _scaleOrigin;
+        _scaleOrigin = value;
+        if (value != oldValue)
+          EhSelfChanged();
+      }
+    }
+  }
 }

@@ -29,18 +29,18 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D
 {
-	using Altaxo.Geometry;
-	using Altaxo.Graph;
+  using Altaxo.Geometry;
+  using Altaxo.Graph;
 
-	public class IndexedTriangles
-	{
-		public PointD2D[] Vertices { get; private set; }
-		public int[] TriangleIndices { get; private set; }
+  public class IndexedTriangles
+  {
+    public PointD2D[] Vertices { get; private set; }
+    public int[] TriangleIndices { get; private set; }
 
-		public IndexedTriangles(PointD2D[] vertices, int[] triangleIndices)
-		{
-			Vertices = vertices;
-			TriangleIndices = triangleIndices;
-		}
-	}
+    public IndexedTriangles(PointD2D[] vertices, int[] triangleIndices)
+    {
+      Vertices = vertices;
+      TriangleIndices = triangleIndices;
+    }
+  }
 }

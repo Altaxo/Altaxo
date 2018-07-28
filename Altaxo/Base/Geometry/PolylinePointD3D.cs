@@ -29,54 +29,54 @@ using System.Text;
 
 namespace Altaxo.Geometry
 {
-	/// <summary>
-	/// Represents a polyline point with forward, west, and north vector, and its position.
-	/// This is equivalent to a <see cref="Matrix4x3"/>, but without the overhead for calculating the determinant.
-	/// </summary>
-	public struct PolylinePointD3D
-	{
-		public VectorD3D ForwardVector;
-		public VectorD3D WestVector;
-		public VectorD3D NorthVector;
-		public PointD3D Position;
+  /// <summary>
+  /// Represents a polyline point with forward, west, and north vector, and its position.
+  /// This is equivalent to a <see cref="Matrix4x3"/>, but without the overhead for calculating the determinant.
+  /// </summary>
+  public struct PolylinePointD3D
+  {
+    public VectorD3D ForwardVector;
+    public VectorD3D WestVector;
+    public VectorD3D NorthVector;
+    public PointD3D Position;
 
-		public PolylinePointD3D(VectorD3D forwardVector, VectorD3D westVector, VectorD3D northVector, PointD3D position)
-		{
-			Position = position;
-			WestVector = westVector;
-			NorthVector = northVector;
-			ForwardVector = forwardVector;
-		}
+    public PolylinePointD3D(VectorD3D forwardVector, VectorD3D westVector, VectorD3D northVector, PointD3D position)
+    {
+      Position = position;
+      WestVector = westVector;
+      NorthVector = northVector;
+      ForwardVector = forwardVector;
+    }
 
-		public PolylinePointD3D WithPosition(PointD3D position)
-		{
-			var result = this;
-			result.Position = position;
-			return result;
-		}
-	}
+    public PolylinePointD3D WithPosition(PointD3D position)
+    {
+      var result = this;
+      result.Position = position;
+      return result;
+    }
+  }
 
-	/// <summary>
-	/// Represents a polyline point with forward, west, and north vector, and its position.
-	/// This is equivalent to a <see cref="Matrix4x3"/>, but without the overhead for calculating the determinant.
-	/// </summary>
-	public class PolylinePointD3DAsClass
-	{
-		public VectorD3D ForwardVector;
-		public VectorD3D WestVector;
-		public VectorD3D NorthVector;
-		public PointD3D Position;
+  /// <summary>
+  /// Represents a polyline point with forward, west, and north vector, and its position.
+  /// This is equivalent to a <see cref="Matrix4x3"/>, but without the overhead for calculating the determinant.
+  /// </summary>
+  public class PolylinePointD3DAsClass
+  {
+    public VectorD3D ForwardVector;
+    public VectorD3D WestVector;
+    public VectorD3D NorthVector;
+    public PointD3D Position;
 
-		public PolylinePointD3DAsClass()
-		{
-		}
+    public PolylinePointD3DAsClass()
+    {
+    }
 
-		public PolylinePointD3DAsClass(VectorD3D forwardVector, VectorD3D westVector, VectorD3D northVector, PointD3D position)
-		{
-			Position = position;
-			WestVector = westVector;
-			NorthVector = northVector;
-			ForwardVector = forwardVector;
-		}
-	}
+    public PolylinePointD3DAsClass(VectorD3D forwardVector, VectorD3D westVector, VectorD3D northVector, PointD3D position)
+    {
+      Position = position;
+      WestVector = westVector;
+      NorthVector = northVector;
+      ForwardVector = forwardVector;
+    }
+  }
 }

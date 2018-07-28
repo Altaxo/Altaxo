@@ -32,30 +32,30 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
-	public static class GuiDensityUnits
-	{
-		private static ReadOnlyCollection<IUnit> _instance;
+  public static class GuiDensityUnits
+  {
+    private static ReadOnlyCollection<IUnit> _instance;
 
-		static GuiDensityUnits()
-		{
-			var instance = new List<IUnit>
-						{
-								GramPerCubicCentimeter.Instance,
-								KilogramPerCubicMeter.Instance
-						};
+    static GuiDensityUnits()
+    {
+      var instance = new List<IUnit>
+            {
+                GramPerCubicCentimeter.Instance,
+                KilogramPerCubicMeter.Instance
+            };
 
-			_instance = instance.AsReadOnly();
-		}
+      _instance = instance.AsReadOnly();
+    }
 
-		/// <summary>
-		/// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
-		/// </summary>
-		public static IList<IUnit> Collection
-		{
-			get
-			{
-				return _instance;
-			}
-		}
-	}
+    /// <summary>
+    /// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
+    /// </summary>
+    public static IList<IUnit> Collection
+    {
+      get
+      {
+        return _instance;
+      }
+    }
+  }
 }

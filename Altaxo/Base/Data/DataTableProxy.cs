@@ -27,128 +27,128 @@ using System;
 
 namespace Altaxo.Data
 {
-	/// <summary>
-	/// Summary description for DataColumnPlaceHolder.
-	/// </summary>
-	[Serializable]
-	public class DataTableProxy : DocNodeProxy
-	{
-		#region Serialization
+  /// <summary>
+  /// Summary description for DataColumnPlaceHolder.
+  /// </summary>
+  [Serializable]
+  public class DataTableProxy : DocNodeProxy
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTableProxy", 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old version");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTableProxy", 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
 				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType); // serialize the base class
 				*/
-			}
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (DataTableProxy)o ?? new DataTableProxy(info);
-				var baseobj = info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (DataTableProxy)o ?? new DataTableProxy(info);
+        var baseobj = info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
 
-				if (!object.ReferenceEquals(s, baseobj))
-				{
-					return null;
-				}
+        if (!object.ReferenceEquals(s, baseobj))
+        {
+          return null;
+        }
 
-				if (!(null != s.InternalDocumentPath))
-					throw new InvalidOperationException();
-				return s;
-			}
-		}
+        if (!(null != s.InternalDocumentPath))
+          throw new InvalidOperationException();
+        return s;
+      }
+    }
 
-		/// <summary>
-		/// 2014-12-26 From here on it is ensured that document path has always a value
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableProxy), 1)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType); // serialize the base class
-			}
+    /// <summary>
+    /// 2014-12-26 From here on it is ensured that document path has always a value
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableProxy), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType); // serialize the base class
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (DataTableProxy)o ?? new DataTableProxy(info);
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);         // deserialize the base class
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (DataTableProxy)o ?? new DataTableProxy(info);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);         // deserialize the base class
 
-				if (!(null != s.InternalDocumentPath))
-					throw new InvalidOperationException();
+        if (!(null != s.InternalDocumentPath))
+          throw new InvalidOperationException();
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public DataTableProxy(DataTable table)
-			: base(table)
-		{
-		}
+    public DataTableProxy(DataTable table)
+      : base(table)
+    {
+    }
 
-		/// <summary>
-		/// For deserialization purposes only.
-		/// </summary>
-		protected DataTableProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-			: base(info)
-		{
-		}
+    /// <summary>
+    /// For deserialization purposes only.
+    /// </summary>
+    protected DataTableProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+      : base(info)
+    {
+    }
 
-		/// <summary>
-		/// Cloning constructor.
-		/// </summary>
-		/// <param name="from">Object to clone from.</param>
-		public DataTableProxy(DataTableProxy from)
-			: base(from)
-		{
-		}
+    /// <summary>
+    /// Cloning constructor.
+    /// </summary>
+    /// <param name="from">Object to clone from.</param>
+    public DataTableProxy(DataTableProxy from)
+      : base(from)
+    {
+    }
 
-		protected override bool IsValidDocument(object obj)
-		{
-			return (obj is DataTable) || obj == null;
-		}
+    protected override bool IsValidDocument(object obj)
+    {
+      return (obj is DataTable) || obj == null;
+    }
 
-		public DataTable Document
-		{
-			get
-			{
-				return (DataTable)base.DocumentObject;
-			}
-		}
+    public DataTable Document
+    {
+      get
+      {
+        return (DataTable)base.DocumentObject;
+      }
+    }
 
-		public override object Clone()
-		{
-			return new DataTableProxy(this);
-		}
+    public override object Clone()
+    {
+      return new DataTableProxy(this);
+    }
 
-		public string GetName(int level)
-		{
-			var table = this.Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
-			if (null != table)
-			{
-				return table.Name;
-			}
-			else
-			{
-				string path = InternalDocumentPath.ToString();
-				int idx = 0;
-				if (level <= 0)
-				{
-					idx = path.LastIndexOf('/');
-					if (idx < 0)
-						idx = 0;
-					else
-						idx++;
-				}
+    public string GetName(int level)
+    {
+      var table = this.Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
+      if (null != table)
+      {
+        return table.Name;
+      }
+      else
+      {
+        string path = InternalDocumentPath.ToString();
+        int idx = 0;
+        if (level <= 0)
+        {
+          idx = path.LastIndexOf('/');
+          if (idx < 0)
+            idx = 0;
+          else
+            idx++;
+        }
 
-				return path.Substring(idx);
-			}
-		}
-	}
+        return path.Substring(idx);
+      }
+    }
+  }
 }

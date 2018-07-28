@@ -36,144 +36,145 @@ using System.Windows.Documents;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	/// <summary>
-	/// Interaction logic for CardinalSplinePointsControl.xaml
-	/// </summary>
-	public partial class CardinalSplinePointsControl : UserControl, ICardinalSplinePointsView
-	{
-		public event Action CurvePointsCopyTriggered;
+  /// <summary>
+  /// Interaction logic for CardinalSplinePointsControl.xaml
+  /// </summary>
+  public partial class CardinalSplinePointsControl : UserControl, ICardinalSplinePointsView
+  {
+    public event Action CurvePointsCopyTriggered;
 
-		public event Action CurvePointsCopyAsPhysicalTriggered;
+    public event Action CurvePointsCopyAsPhysicalTriggered;
 
-		public event Action CurvePointsCopyAsLogicalTriggered;
+    public event Action CurvePointsCopyAsLogicalTriggered;
 
-		public event Action CurvePointsPasteTriggered;
+    public event Action CurvePointsPasteTriggered;
 
-		public event Action CurvePointsPastePhysicalTriggered;
+    public event Action CurvePointsPastePhysicalTriggered;
 
-		public event Action CurvePointsPasteLogicalTriggered;
+    public event Action CurvePointsPasteLogicalTriggered;
 
-		public CardinalSplinePointsControl()
-		{
-			InitializeComponent();
-		}
+    public CardinalSplinePointsControl()
+    {
+      InitializeComponent();
+    }
 
-		public double Tension
-		{
-			get
-			{
-				return _guiTension.SelectedQuantity.AsValueInSIUnits;
-			}
-			set
-			{
-				_guiTension.SelectedQuantity = new DimensionfulQuantity(value, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(_guiTension.UnitEnvironment.DefaultUnit);
-			}
-		}
+    public double Tension
+    {
+      get
+      {
+        return _guiTension.SelectedQuantity.AsValueInSIUnits;
+      }
+      set
+      {
+        _guiTension.SelectedQuantity = new DimensionfulQuantity(value, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(_guiTension.UnitEnvironment.DefaultUnit);
+      }
+    }
 
-		private class PointD2DClass : System.ComponentModel.IEditableObject
-		{
-			public PointD2DClass()
-			{
-			}
+    private class PointD2DClass : System.ComponentModel.IEditableObject
+    {
+      public PointD2DClass()
+      {
+      }
 
-			public PointD2DClass(PointD2D p)
-			{
-				X = p.X; Y = p.Y;
-			}
+      public PointD2DClass(PointD2D p)
+      {
+        X = p.X;
+        Y = p.Y;
+      }
 
-			public double X { get; set; }
+      public double X { get; set; }
 
-			public double Y { get; set; }
+      public double Y { get; set; }
 
-			public DimensionfulQuantity XQuantity
-			{
-				get
-				{
-					return new DimensionfulQuantity(X, Altaxo.Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
-				}
-				set
-				{
-					X = value.AsValueIn(Altaxo.Units.Length.Point.Instance);
-				}
-			}
+      public DimensionfulQuantity XQuantity
+      {
+        get
+        {
+          return new DimensionfulQuantity(X, Altaxo.Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+        }
+        set
+        {
+          X = value.AsValueIn(Altaxo.Units.Length.Point.Instance);
+        }
+      }
 
-			public DimensionfulQuantity YQuantity
-			{
-				get
-				{
-					return new DimensionfulQuantity(Y, Altaxo.Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
-				}
-				set
-				{
-					Y = value.AsValueIn(Altaxo.Units.Length.Point.Instance);
-				}
-			}
+      public DimensionfulQuantity YQuantity
+      {
+        get
+        {
+          return new DimensionfulQuantity(Y, Altaxo.Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+        }
+        set
+        {
+          Y = value.AsValueIn(Altaxo.Units.Length.Point.Instance);
+        }
+      }
 
-			public void BeginEdit()
-			{
-			}
+      public void BeginEdit()
+      {
+      }
 
-			public void CancelEdit()
-			{
-			}
+      public void CancelEdit()
+      {
+      }
 
-			public void EndEdit()
-			{
-			}
-		}
+      public void EndEdit()
+      {
+      }
+    }
 
-		private ObservableCollection<PointD2DClass> _curvePoints = new ObservableCollection<PointD2DClass>();
+    private ObservableCollection<PointD2DClass> _curvePoints = new ObservableCollection<PointD2DClass>();
 
-		public List<PointD2D> CurvePoints
-		{
-			get
-			{
-				List<PointD2D> pts = new List<PointD2D>();
-				foreach (var p in _curvePoints)
-					pts.Add(new PointD2D(p.X, p.Y));
-				return pts;
-			}
-			set
-			{
-				_curvePoints.Clear();
-				foreach (var p in value)
-					_curvePoints.Add(new PointD2DClass(p));
+    public List<PointD2D> CurvePoints
+    {
+      get
+      {
+        List<PointD2D> pts = new List<PointD2D>();
+        foreach (var p in _curvePoints)
+          pts.Add(new PointD2D(p.X, p.Y));
+        return pts;
+      }
+      set
+      {
+        _curvePoints.Clear();
+        foreach (var p in value)
+          _curvePoints.Add(new PointD2DClass(p));
 
-				_guiCurvePoints.DataContext = null;
-				_guiCurvePoints.DataContext = _curvePoints;
-			}
-		}
+        _guiCurvePoints.DataContext = null;
+        _guiCurvePoints.DataContext = _curvePoints;
+      }
+    }
 
-		private void EhCopyCurvePoints(object sender, RoutedEventArgs e)
-		{
-			if (null != CurvePointsCopyTriggered)
-				CurvePointsCopyTriggered();
-		}
+    private void EhCopyCurvePoints(object sender, RoutedEventArgs e)
+    {
+      if (null != CurvePointsCopyTriggered)
+        CurvePointsCopyTriggered();
+    }
 
-		private void EhCopyCurvePointsAsPhysical(object sender, RoutedEventArgs e)
-		{
-			CurvePointsCopyAsPhysicalTriggered?.Invoke();
-		}
+    private void EhCopyCurvePointsAsPhysical(object sender, RoutedEventArgs e)
+    {
+      CurvePointsCopyAsPhysicalTriggered?.Invoke();
+    }
 
-		private void EhCopyCurvePointsAsLogical(object sender, RoutedEventArgs e)
-		{
-			CurvePointsCopyAsLogicalTriggered?.Invoke();
-		}
+    private void EhCopyCurvePointsAsLogical(object sender, RoutedEventArgs e)
+    {
+      CurvePointsCopyAsLogicalTriggered?.Invoke();
+    }
 
-		private void EhPasteCurvePoints(object sender, RoutedEventArgs e)
-		{
-			if (null != CurvePointsPasteTriggered)
-				CurvePointsPasteTriggered();
-		}
+    private void EhPasteCurvePoints(object sender, RoutedEventArgs e)
+    {
+      if (null != CurvePointsPasteTriggered)
+        CurvePointsPasteTriggered();
+    }
 
-		private void EhPasteCurvePointsAsPhysical(object sender, RoutedEventArgs e)
-		{
-			CurvePointsPastePhysicalTriggered.Invoke();
-		}
+    private void EhPasteCurvePointsAsPhysical(object sender, RoutedEventArgs e)
+    {
+      CurvePointsPastePhysicalTriggered.Invoke();
+    }
 
-		private void EhPasteCurvePointsAsLogical(object sender, RoutedEventArgs e)
-		{
-			CurvePointsPasteLogicalTriggered.Invoke();
-		}
-	}
+    private void EhPasteCurvePointsAsLogical(object sender, RoutedEventArgs e)
+    {
+      CurvePointsPasteLogicalTriggered.Invoke();
+    }
+  }
 }

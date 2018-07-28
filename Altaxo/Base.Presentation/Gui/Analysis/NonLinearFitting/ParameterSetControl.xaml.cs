@@ -30,31 +30,31 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-	/// <summary>
-	/// Interaction logic for ParameterSetControl.xaml
-	/// </summary>
-	public partial class ParameterSetControl : UserControl, IParameterSetView
-	{
-		public ParameterSetControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ParameterSetControl.xaml
+  /// </summary>
+  public partial class ParameterSetControl : UserControl, IParameterSetView
+  {
+    public ParameterSetControl()
+    {
+      InitializeComponent();
+    }
 
-		#region IParameterSetView
+    #region IParameterSetView
 
-		private List<ParameterSetViewItem> _itemsSource;
+    private List<ParameterSetViewItem> _itemsSource;
 
-		public void Initialize(List<ParameterSetViewItem> list)
-		{
-			_itemsSource = list;
-			_dataGrid.ItemsSource = _itemsSource;
-		}
+    public void Initialize(List<ParameterSetViewItem> list)
+    {
+      _itemsSource = list;
+      _dataGrid.ItemsSource = _itemsSource;
+    }
 
-		public List<ParameterSetViewItem> GetList()
-		{
-			return _itemsSource;
-		}
+    public List<ParameterSetViewItem> GetList()
+    {
+      return _itemsSource;
+    }
 
-		#endregion IParameterSetView
-	}
+    #endregion IParameterSetView
+  }
 }

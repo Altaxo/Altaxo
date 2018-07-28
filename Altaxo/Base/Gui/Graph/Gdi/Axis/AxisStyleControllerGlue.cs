@@ -28,133 +28,133 @@ using System;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
-	/// <summary>
-	/// Glues a controller for the axis title/line style, and two conditional controllers for the major and minor label styles together. This class should be used if the existence of the axis style is ensured,
-	/// i.e. the axis style can neither be removed or created.
-	/// If, in contrast, one should be able to remove or create an axis style, you should rather use an instance of the <see cref="AxisStyleControllerConditionalGlue"/> class.
-	/// </summary>
-	public class AxisStyleControllerGlue
-	{
-		private AxisStyle _doc;
+  /// <summary>
+  /// Glues a controller for the axis title/line style, and two conditional controllers for the major and minor label styles together. This class should be used if the existence of the axis style is ensured,
+  /// i.e. the axis style can neither be removed or created.
+  /// If, in contrast, one should be able to remove or create an axis style, you should rather use an instance of the <see cref="AxisStyleControllerConditionalGlue"/> class.
+  /// </summary>
+  public class AxisStyleControllerGlue
+  {
+    private AxisStyle _doc;
 
-		public AxisStyleController AxisStyleController { get; private set; }
+    public AxisStyleController AxisStyleController { get; private set; }
 
-		public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController { get; private set; }
+    public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController { get; private set; }
 
-		public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController { get; private set; }
+    public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController { get; private set; }
 
-		private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
+    private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
 
-		public AxisStyleControllerGlue(AxisStyle axisStyle)
-		{
-			_doc = axisStyle;
-			InternalInitialize();
-		}
+    public AxisStyleControllerGlue(AxisStyle axisStyle)
+    {
+      _doc = axisStyle;
+      InternalInitialize();
+    }
 
-		public object AxisStyleView
-		{
-			get
-			{
-				if (AxisStyleController == null)
-					throw new InvalidOperationException("Instance is not initialized!");
+    public object AxisStyleView
+    {
+      get
+      {
+        if (AxisStyleController == null)
+          throw new InvalidOperationException("Instance is not initialized!");
 
-				if (null == AxisStyleController.ViewObject)
-					Current.Gui.FindAndAttachControlTo(AxisStyleController);
-				return AxisStyleController.ViewObject;
-			}
-			set
-			{
-				if (AxisStyleController == null)
-					throw new InvalidOperationException("Instance is not initialized!");
-				AxisStyleController.ViewObject = value;
-			}
-		}
+        if (null == AxisStyleController.ViewObject)
+          Current.Gui.FindAndAttachControlTo(AxisStyleController);
+        return AxisStyleController.ViewObject;
+      }
+      set
+      {
+        if (AxisStyleController == null)
+          throw new InvalidOperationException("Instance is not initialized!");
+        AxisStyleController.ViewObject = value;
+      }
+    }
 
-		public IConditionalDocumentView MajorLabelCondView
-		{
-			get
-			{
-				if (MajorLabelCondController == null)
-					throw new InvalidOperationException("Instance is not initialized!");
+    public IConditionalDocumentView MajorLabelCondView
+    {
+      get
+      {
+        if (MajorLabelCondController == null)
+          throw new InvalidOperationException("Instance is not initialized!");
 
-				if (null == MajorLabelCondController.ViewObject)
-					Current.Gui.FindAndAttachControlTo(MajorLabelCondController);
-				return (IConditionalDocumentView)MajorLabelCondController.ViewObject;
-			}
-			set
-			{
-				if (MajorLabelCondController == null)
-					throw new InvalidOperationException("Instance is not initialized!");
-				MajorLabelCondController.ViewObject = value;
-			}
-		}
+        if (null == MajorLabelCondController.ViewObject)
+          Current.Gui.FindAndAttachControlTo(MajorLabelCondController);
+        return (IConditionalDocumentView)MajorLabelCondController.ViewObject;
+      }
+      set
+      {
+        if (MajorLabelCondController == null)
+          throw new InvalidOperationException("Instance is not initialized!");
+        MajorLabelCondController.ViewObject = value;
+      }
+    }
 
-		public IConditionalDocumentView MinorLabelCondView
-		{
-			get
-			{
-				if (MinorLabelCondController == null)
-					throw new InvalidOperationException("Instance is not initialized!");
+    public IConditionalDocumentView MinorLabelCondView
+    {
+      get
+      {
+        if (MinorLabelCondController == null)
+          throw new InvalidOperationException("Instance is not initialized!");
 
-				if (null == MinorLabelCondController.ViewObject)
-					Current.Gui.FindAndAttachControlTo(MinorLabelCondController);
-				return (IConditionalDocumentView)MinorLabelCondController.ViewObject;
-			}
-			set
-			{
-				if (MinorLabelCondController == null)
-					throw new InvalidOperationException("Instance is not initialized!");
-				MinorLabelCondController.ViewObject = value;
-			}
-		}
+        if (null == MinorLabelCondController.ViewObject)
+          Current.Gui.FindAndAttachControlTo(MinorLabelCondController);
+        return (IConditionalDocumentView)MinorLabelCondController.ViewObject;
+      }
+      set
+      {
+        if (MinorLabelCondController == null)
+          throw new InvalidOperationException("Instance is not initialized!");
+        MinorLabelCondController.ViewObject = value;
+      }
+    }
 
-		private void EhAxisStyleControllerDirty(IMVCANController ctrl)
-		{
-			MajorLabelCondController.AnnounceEnabledChanged(_doc.AreMajorLabelsEnabled);
-			MinorLabelCondController.AnnounceEnabledChanged(_doc.AreMinorLabelsEnabled);
-		}
+    private void EhAxisStyleControllerDirty(IMVCANController ctrl)
+    {
+      MajorLabelCondController.AnnounceEnabledChanged(_doc.AreMajorLabelsEnabled);
+      MinorLabelCondController.AnnounceEnabledChanged(_doc.AreMinorLabelsEnabled);
+    }
 
-		private AxisLabelStyle CreateMajorLabel()
-		{
-			_doc.ShowMajorLabels(_context);
-			AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
-			return _doc.MajorLabelStyle;
-		}
+    private AxisLabelStyle CreateMajorLabel()
+    {
+      _doc.ShowMajorLabels(_context);
+      AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
+      return _doc.MajorLabelStyle;
+    }
 
-		private void RemoveMajorLabel()
-		{
-			_doc.HideMajorLabels();
-			AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
-		}
+    private void RemoveMajorLabel()
+    {
+      _doc.HideMajorLabels();
+      AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
+    }
 
-		private AxisLabelStyle CreateMinorLabel()
-		{
-			_doc.ShowMinorLabels(_context);
-			AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
-			return _doc.MinorLabelStyle;
-		}
+    private AxisLabelStyle CreateMinorLabel()
+    {
+      _doc.ShowMinorLabels(_context);
+      AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
+      return _doc.MinorLabelStyle;
+    }
 
-		private void RemoveMinorLabel()
-		{
-			_doc.HideMinorLabels();
-			AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
-		}
+    private void RemoveMinorLabel()
+    {
+      _doc.HideMinorLabels();
+      AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
+    }
 
-		private void InternalInitialize()
-		{
-			_context = _doc.GetPropertyContext();
+    private void InternalInitialize()
+    {
+      _context = _doc.GetPropertyContext();
 
-			AxisStyleController = new AxisStyleController() { UseDocumentCopy = UseDocument.Directly };
-			AxisStyleController.MadeDirty += this.EhAxisStyleControllerDirty;
+      AxisStyleController = new AxisStyleController() { UseDocumentCopy = UseDocument.Directly };
+      AxisStyleController.MadeDirty += this.EhAxisStyleControllerDirty;
 
-			MajorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMajorLabel, RemoveMajorLabel) { UseDocumentCopy = UseDocument.Directly };
-			MinorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMinorLabel, RemoveMinorLabel) { UseDocumentCopy = UseDocument.Directly };
+      MajorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMajorLabel, RemoveMajorLabel) { UseDocumentCopy = UseDocument.Directly };
+      MinorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMinorLabel, RemoveMinorLabel) { UseDocumentCopy = UseDocument.Directly };
 
-			AxisStyleController.InitializeDocument(_doc);
-			if (_doc.AreMajorLabelsEnabled)
-				MajorLabelCondController.InitializeDocument(_doc.MajorLabelStyle);
-			if (_doc.AreMinorLabelsEnabled)
-				MinorLabelCondController.InitializeDocument(_doc.MinorLabelStyle);
-		}
-	}
+      AxisStyleController.InitializeDocument(_doc);
+      if (_doc.AreMajorLabelsEnabled)
+        MajorLabelCondController.InitializeDocument(_doc.MajorLabelStyle);
+      if (_doc.AreMinorLabelsEnabled)
+        MinorLabelCondController.InitializeDocument(_doc.MinorLabelStyle);
+    }
+  }
 }

@@ -31,30 +31,30 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	public class BooleanValueControl : CheckBox, IBooleanValueView
-	{
-		public void InitializeDescription(string value)
-		{
-			this.Content = value;
-		}
+  public class BooleanValueControl : CheckBox, IBooleanValueView
+  {
+    public void InitializeDescription(string value)
+    {
+      this.Content = value;
+    }
 
-		public void InitializeBool1(bool value)
-		{
-			this.IsChecked = value;
-		}
+    public void InitializeBool1(bool value)
+    {
+      this.IsChecked = value;
+    }
 
-		public event Action<bool> Bool1Changed;
+    public event Action<bool> Bool1Changed;
 
-		protected override void OnChecked(System.Windows.RoutedEventArgs e)
-		{
-			base.OnChecked(e);
-			Bool1Changed?.Invoke(this.IsChecked == true);
-		}
+    protected override void OnChecked(System.Windows.RoutedEventArgs e)
+    {
+      base.OnChecked(e);
+      Bool1Changed?.Invoke(this.IsChecked == true);
+    }
 
-		protected override void OnUnchecked(System.Windows.RoutedEventArgs e)
-		{
-			base.OnUnchecked(e);
-			Bool1Changed?.Invoke(this.IsChecked == true);
-		}
-	}
+    protected override void OnUnchecked(System.Windows.RoutedEventArgs e)
+    {
+      base.OnUnchecked(e);
+      Bool1Changed?.Invoke(this.IsChecked == true);
+    }
+  }
 }

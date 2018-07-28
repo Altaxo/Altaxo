@@ -29,21 +29,21 @@ using System.Text;
 
 namespace Altaxo.Serialization.Clipboard
 {
-	public class ProjectItemsPasteOptions : ICloneable
-	{
-		/// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
-		/// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
-		public bool? RelocateReferences { get; set; }
+  public class ProjectItemsPasteOptions : ICloneable
+  {
+    /// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
+    /// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
+    public bool? RelocateReferences { get; set; }
 
-		/// <summary>
-		/// When true, at serialization the internal references are tried to keep internal, i.e. if for instance a table have to be renamed, the plot items in the deserialized graphs
-		/// will be relocated to the renamed table.
-		/// </summary>
-		public bool? TryToKeepInternalReferences { get; set; }
+    /// <summary>
+    /// When true, at serialization the internal references are tried to keep internal, i.e. if for instance a table have to be renamed, the plot items in the deserialized graphs
+    /// will be relocated to the renamed table.
+    /// </summary>
+    public bool? TryToKeepInternalReferences { get; set; }
 
-		public object Clone()
-		{
-			return this.MemberwiseClone();
-		}
-	}
+    public object Clone()
+    {
+      return this.MemberwiseClone();
+    }
+  }
 }

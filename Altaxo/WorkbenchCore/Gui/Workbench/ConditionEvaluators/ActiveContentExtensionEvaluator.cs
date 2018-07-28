@@ -22,44 +22,44 @@ using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Tests the file extension of the file edited in the active window content.
-	/// </summary>
-	/// <attribute name="activeextension">
-	/// The file extension the file should have.
-	/// </attribute>
-	/// <example title="Test if a C# file is being edited">
-	/// &lt;Condition name = "ActiveContentExtension" activeextension=".cs"&gt;
-	/// </example>
-	public class ActiveContentExtensionConditionEvaluator : IConditionEvaluator
-	{
-		public bool IsValid(object caller, Condition condition)
-		{
-			var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
-			if (workbench == null || workbench.ActiveViewContent == null)
-			{
-				return false;
-			}
+  /// <summary>
+  /// Tests the file extension of the file edited in the active window content.
+  /// </summary>
+  /// <attribute name="activeextension">
+  /// The file extension the file should have.
+  /// </attribute>
+  /// <example title="Test if a C# file is being edited">
+  /// &lt;Condition name = "ActiveContentExtension" activeextension=".cs"&gt;
+  /// </example>
+  public class ActiveContentExtensionConditionEvaluator : IConditionEvaluator
+  {
+    public bool IsValid(object caller, Condition condition)
+    {
+      var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
+      if (workbench == null || workbench.ActiveViewContent == null)
+      {
+        return false;
+      }
 
-			if (!(workbench.ActiveViewContent is IFileViewContent fileViewContent))
-				return false;
+      if (!(workbench.ActiveViewContent is IFileViewContent fileViewContent))
+        return false;
 
-			try
-			{
-				string name = fileViewContent.PrimaryFileName;
+      try
+      {
+        string name = fileViewContent.PrimaryFileName;
 
-				if (name == null)
-				{
-					return false;
-				}
+        if (name == null)
+        {
+          return false;
+        }
 
-				string extension = Path.GetExtension(name);
-				return extension.ToUpperInvariant() == condition.Properties["activeextension"].ToUpperInvariant();
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-		}
-	}
+        string extension = Path.GetExtension(name);
+        return extension.ToUpperInvariant() == condition.Properties["activeextension"].ToUpperInvariant();
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+  }
 }

@@ -31,43 +31,43 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for TypeAndInstanceControl.xaml
-	/// </summary>
-	public partial class TypeAndInstanceControl : UserControl, ITypeAndInstanceView
-	{
-		public TypeAndInstanceControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for TypeAndInstanceControl.xaml
+  /// </summary>
+  public partial class TypeAndInstanceControl : UserControl, ITypeAndInstanceView
+  {
+    public TypeAndInstanceControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
-		{
-			e.Handled = true;
-			GuiHelper.SynchronizeSelectionFromGui(_cbTypeChoice);
-			if (null != TypeChoiceChanged)
-				TypeChoiceChanged(this, EventArgs.Empty);
-		}
+    private void EhSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
+    {
+      e.Handled = true;
+      GuiHelper.SynchronizeSelectionFromGui(_cbTypeChoice);
+      if (null != TypeChoiceChanged)
+        TypeChoiceChanged(this, EventArgs.Empty);
+    }
 
-		#region ITypeAndInstanceView
+    #region ITypeAndInstanceView
 
-		public string TypeLabel
-		{
-			set { _lblCSType.Content = value; }
-		}
+    public string TypeLabel
+    {
+      set { _lblCSType.Content = value; }
+    }
 
-		public void InitializeTypeNames(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbTypeChoice, list);
-		}
+    public void InitializeTypeNames(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_cbTypeChoice, list);
+    }
 
-		public void SetInstanceControl(object instanceControl)
-		{
-			_instanceHost.Child = instanceControl as UIElement;
-		}
+    public void SetInstanceControl(object instanceControl)
+    {
+      _instanceHost.Child = instanceControl as UIElement;
+    }
 
-		public event EventHandler TypeChoiceChanged;
-	}
+    public event EventHandler TypeChoiceChanged;
+  }
 
-	#endregion ITypeAndInstanceView
+  #endregion ITypeAndInstanceView
 }

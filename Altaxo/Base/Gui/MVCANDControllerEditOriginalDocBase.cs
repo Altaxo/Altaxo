@@ -30,90 +30,90 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Base of all controllers that edit the original document directly (live), and that indicates any changes of the document by the <see cref="MadeDirty"/> event.
-	/// </summary>
-	/// <typeparam name="TModel">The type of the document to edit.</typeparam>
-	/// <typeparam name="TView">The type of the view.</typeparam>
-	public abstract class MVCANDControllerEditOriginalDocBase<TModel, TView> : MVCANControllerEditOriginalDocBase<TModel, TView>, IMVCANDController
-		where TView : class
-		where TModel : ICloneable
-	{
-		/// <summary>
-		/// Used to suppress the <see cref="MadeDirty"/> event of this controller.
-		/// </summary>
-		protected Altaxo.Main.SuspendableObject _suppressDirtyEvent = new Altaxo.Main.SuspendableObject();
+  /// <summary>
+  /// Base of all controllers that edit the original document directly (live), and that indicates any changes of the document by the <see cref="MadeDirty"/> event.
+  /// </summary>
+  /// <typeparam name="TModel">The type of the document to edit.</typeparam>
+  /// <typeparam name="TView">The type of the view.</typeparam>
+  public abstract class MVCANDControllerEditOriginalDocBase<TModel, TView> : MVCANControllerEditOriginalDocBase<TModel, TView>, IMVCANDController
+    where TView : class
+    where TModel : ICloneable
+  {
+    /// <summary>
+    /// Used to suppress the <see cref="MadeDirty"/> event of this controller.
+    /// </summary>
+    protected Altaxo.Main.SuspendableObject _suppressDirtyEvent = new Altaxo.Main.SuspendableObject();
 
-		/// <summary>
-		/// Event fired when the user changed some data that will change the model.
-		/// </summary>
-		public event Action<IMVCANDController> MadeDirty;
+    /// <summary>
+    /// Event fired when the user changed some data that will change the model.
+    /// </summary>
+    public event Action<IMVCANDController> MadeDirty;
 
-		/// <summary>
-		/// Initialize the controller with the document. If successfull, the function has to return true.
-		/// </summary>
-		/// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
-		/// <returns>
-		/// Returns <see langword="true" /> if successfull; otherwise <see langword="false" />.
-		/// </returns>
-		public override bool InitializeDocument(params object[] args)
-		{
-			bool result;
+    /// <summary>
+    /// Initialize the controller with the document. If successfull, the function has to return true.
+    /// </summary>
+    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
+    /// <returns>
+    /// Returns <see langword="true" /> if successfull; otherwise <see langword="false" />.
+    /// </returns>
+    public override bool InitializeDocument(params object[] args)
+    {
+      bool result;
 
-			using (var suspendToken = _suppressDirtyEvent.SuspendGetToken())
-			{
-				result = base.InitializeDocument(args);
+      using (var suspendToken = _suppressDirtyEvent.SuspendGetToken())
+      {
+        result = base.InitializeDocument(args);
 
-				suspendToken.Resume();
-			}
+        suspendToken.Resume();
+      }
 
-			return result;
-		}
+      return result;
+    }
 
-		/// <summary>
-		/// Returns the Gui element that shows the model to the user. When attaching a new view, the <see cref="MadeDirty"/> event is suppressed.
-		/// </summary>
-		public override object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					DetachView();
-				}
+    /// <summary>
+    /// Returns the Gui element that shows the model to the user. When attaching a new view, the <see cref="MadeDirty"/> event is suppressed.
+    /// </summary>
+    public override object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        if (null != _view)
+        {
+          DetachView();
+        }
 
-				_view = value as TView;
+        _view = value as TView;
 
-				if (null != _view)
-				{
-					using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
-					{
-						Initialize(false);
-						AttachView();
-					}
-				}
-			}
-		}
+        if (null != _view)
+        {
+          using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
+          {
+            Initialize(false);
+            AttachView();
+          }
+        }
+      }
+    }
 
-		/// <summary>
-		/// Fires the <see cref="MadeDirty"/> event (if it is not suppressed).
-		/// </summary>
-		protected virtual void OnMadeDirty()
-		{
-			if (!_suppressDirtyEvent.IsSuspended && null != MadeDirty)
-				MadeDirty(this);
-		}
+    /// <summary>
+    /// Fires the <see cref="MadeDirty"/> event (if it is not suppressed).
+    /// </summary>
+    protected virtual void OnMadeDirty()
+    {
+      if (!_suppressDirtyEvent.IsSuspended && null != MadeDirty)
+        MadeDirty(this);
+    }
 
-		/// <summary>
-		/// Gets the provisional model object. This is the model object that is based on the current user input. In this class of controller, it is identical to the edited document (because the original document is edited).
-		/// </summary>
-		public object ProvisionalModelObject
-		{
-			get { return _doc; }
-		}
-	}
+    /// <summary>
+    /// Gets the provisional model object. This is the model object that is based on the current user input. In this class of controller, it is identical to the edited document (because the original document is edited).
+    /// </summary>
+    public object ProvisionalModelObject
+    {
+      get { return _doc; }
+    }
+  }
 }

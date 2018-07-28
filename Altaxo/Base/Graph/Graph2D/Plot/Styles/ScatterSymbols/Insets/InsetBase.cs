@@ -30,74 +30,74 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public abstract class InsetBase : IScatterSymbolInset
-	{
-		protected const double ClipperScalingDouble = SymbolBase.ClipperScalingDouble;
-		protected const int ClipperScalingInt = SymbolBase.ClipperScalingInt;
+  public abstract class InsetBase : IScatterSymbolInset
+  {
+    protected const double ClipperScalingDouble = SymbolBase.ClipperScalingDouble;
+    protected const int ClipperScalingInt = SymbolBase.ClipperScalingInt;
 
-		protected NamedColor _color = NamedColors.White;
+    protected NamedColor _color = NamedColors.White;
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InsetBase), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (InsetBase)obj;
-				info.AddValue("Color", s._color);
-			}
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InsetBase), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (InsetBase)obj;
+        info.AddValue("Color", s._color);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (InsetBase)o;
-				s._color = (NamedColor)info.GetValue("Color", s);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (InsetBase)o;
+        s._color = (NamedColor)info.GetValue("Color", s);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public abstract List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth);
+    public abstract List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth);
 
-		public NamedColor Color
-		{
-			get
-			{
-				return _color;
-			}
-		}
+    public NamedColor Color
+    {
+      get
+      {
+        return _color;
+      }
+    }
 
-		public InsetBase WithColor(NamedColor value)
-		{
-			if (_color == value)
-			{
-				return this;
-			}
-			else
-			{
-				var result = (InsetBase)this.MemberwiseClone();
-				result._color = value;
-				return result;
-			}
-		}
+    public InsetBase WithColor(NamedColor value)
+    {
+      if (_color == value)
+      {
+        return this;
+      }
+      else
+      {
+        var result = (InsetBase)this.MemberwiseClone();
+        result._color = value;
+        return result;
+      }
+    }
 
-		IScatterSymbolInset IScatterSymbolInset.WithColor(NamedColor color)
-		{
-			return WithColor(color);
-		}
+    IScatterSymbolInset IScatterSymbolInset.WithColor(NamedColor color)
+    {
+      return WithColor(color);
+    }
 
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType() && this._color == ((InsetBase)obj)._color;
-		}
+    public override bool Equals(object obj)
+    {
+      return this.GetType() == obj?.GetType() && this._color == ((InsetBase)obj)._color;
+    }
 
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode() + 17 * _color.GetHashCode();
-		}
-	}
+    public override int GetHashCode()
+    {
+      return this.GetType().GetHashCode() + 17 * _color.GetHashCode();
+    }
+  }
 }

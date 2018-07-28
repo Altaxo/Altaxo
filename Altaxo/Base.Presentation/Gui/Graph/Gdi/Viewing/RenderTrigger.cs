@@ -31,28 +31,28 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
-	/// <summary>
-	/// Helper control that fires the action <see cref="RenderTriggered"/> when its (empty) content is rendered.
-	/// By calling InvalidateVisual on this control, the rendering is done with RenderPriority. This helps the bundle repetitive calls to render into one render call.
-	/// </summary>
-	public class RenderTrigger : Control
-	{
-		/// <summary>
-		/// Event fired when the Gui calls OnRender. The two arguments are the actual x and y size of the RenderTrigger area.
-		/// </summary>
-		public event Action<double, double> RenderTriggered;
+  /// <summary>
+  /// Helper control that fires the action <see cref="RenderTriggered"/> when its (empty) content is rendered.
+  /// By calling InvalidateVisual on this control, the rendering is done with RenderPriority. This helps the bundle repetitive calls to render into one render call.
+  /// </summary>
+  public class RenderTrigger : Control
+  {
+    /// <summary>
+    /// Event fired when the Gui calls OnRender. The two arguments are the actual x and y size of the RenderTrigger area.
+    /// </summary>
+    public event Action<double, double> RenderTriggered;
 
-		protected override void OnRender(DrawingContext drawingContext)
-		{
-			base.OnRender(drawingContext);
-			// Trigger the rendering
-			var action = RenderTriggered;
-			if (null != action)
-			{
-				//System.Diagnostics.Debug.WriteLine("Before firing event RenderTriggered");
-				action(this.ActualWidth, this.ActualHeight);
-				//System.Diagnostics.Debug.WriteLine("After firing event RenderTriggered");
-			}
-		}
-	}
+    protected override void OnRender(DrawingContext drawingContext)
+    {
+      base.OnRender(drawingContext);
+      // Trigger the rendering
+      var action = RenderTriggered;
+      if (null != action)
+      {
+        //System.Diagnostics.Debug.WriteLine("Before firing event RenderTriggered");
+        action(this.ActualWidth, this.ActualHeight);
+        //System.Diagnostics.Debug.WriteLine("After firing event RenderTriggered");
+      }
+    }
+  }
 }

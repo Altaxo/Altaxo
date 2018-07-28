@@ -20,10 +20,10 @@ using System;
 
 namespace Altaxo.Gui
 {
-	public interface IStatusUpdate
-	{
-		void UpdateText();
+  public interface IStatusUpdate
+  {
+    void UpdateText();
 
-		void UpdateStatus();
-	}
+    void UpdateStatus();
+  }
 }

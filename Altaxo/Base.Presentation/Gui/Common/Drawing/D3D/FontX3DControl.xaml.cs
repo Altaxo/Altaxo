@@ -30,50 +30,50 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Drawing.D3D
 {
-	/// <summary>
-	/// Interaction logic for FontXControl.xaml
-	/// </summary>
-	public partial class FontX3DControl : UserControl, IFontX3DView
-	{
-		public FontX3DControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for FontXControl.xaml
+  /// </summary>
+  public partial class FontX3DControl : UserControl, IFontX3DView
+  {
+    public FontX3DControl()
+    {
+      InitializeComponent();
+    }
 
-		public string SelectedFontFamilyName
-		{
-			get
-			{
-				return _guiFontFamily.SelectedFontFamilyName;
-			}
-			set
-			{
-				_guiFontFamily.SelectedFontFamilyName = value;
-			}
-		}
+    public string SelectedFontFamilyName
+    {
+      get
+      {
+        return _guiFontFamily.SelectedFontFamilyName;
+      }
+      set
+      {
+        _guiFontFamily.SelectedFontFamilyName = value;
+      }
+    }
 
-		public double SelectedFontSize
-		{
-			get
-			{
-				return _guiFontSize.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_guiFontSize.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double SelectedFontSize
+    {
+      get
+      {
+        return _guiFontSize.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _guiFontSize.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double SelectedFontDepth
-		{
-			get
-			{
-				return _guiFontDepth.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_guiFontDepth.SelectedQuantityAsValueInPoints = value;
-			}
-		}
-	}
+    public double SelectedFontDepth
+    {
+      get
+      {
+        return _guiFontDepth.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _guiFontDepth.SelectedQuantityAsValueInPoints = value;
+      }
+    }
+  }
 }

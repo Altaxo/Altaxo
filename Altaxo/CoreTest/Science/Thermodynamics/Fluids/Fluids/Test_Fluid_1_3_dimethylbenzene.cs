@@ -32,45 +32,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-	/// <summary>
-	/// Tests and test data for <see cref="Fluid_1_3_dimethylbenzene"/>.
-	/// </summary>
-	/// <remarks>
-	/// <para>Reference:</para>
+  /// <summary>
+  /// Tests and test data for <see cref="Fluid_1_3_dimethylbenzene"/>.
+  /// </summary>
+  /// <remarks>
+  /// <para>Reference:</para>
   /// <para>The test data was created automatically using calls into the TREND.DLL of the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-	/// </remarks>
+  /// </remarks>
   [TestFixture]
   public class Test_Fluid_1_3_dimethylbenzene : FluidTestBase
-    {
+  {
 
     public Test_Fluid_1_3_dimethylbenzene()
-      {
+    {
       _fluid = Fluid_1_3_dimethylbenzene.Instance;
 
-    _testDataMolecularWeight = 0.106165;
+      _testDataMolecularWeight = 0.106165;
 
-    _testDataTriplePointTemperature = 225.3;
+      _testDataTriplePointTemperature = 225.3;
 
-    _testDataTriplePointPressure = 3.123;
+      _testDataTriplePointPressure = 3.123;
 
-    _testDataTriplePointLiquidMoleDensity = 8676.64949514403;
+      _testDataTriplePointLiquidMoleDensity = 8676.64949514403;
 
-    _testDataTriplePointVaporMoleDensity = 0.00166731739938104;
+      _testDataTriplePointVaporMoleDensity = 0.00166731739938104;
 
-    _testDataCriticalPointTemperature = 616.89;
+      _testDataCriticalPointTemperature = 616.89;
 
-    _testDataCriticalPointPressure = 3534599.06260618;
+      _testDataCriticalPointPressure = 3534599.06260618;
 
-    _testDataCriticalPointMoleDensity = 2665;
+      _testDataCriticalPointMoleDensity = 2665;
 
-    _testDataNormalBoilingPointTemperature = 412.213947892214;
+      _testDataNormalBoilingPointTemperature = 412.213947892214;
 
-    _testDataNormalSublimationPointTemperature = null;
+      _testDataNormalSublimationPointTemperature = null;
 
-    _testDataIsMeltingCurveImplemented = false;
+      _testDataIsMeltingCurveImplemented = false;
 
-    _testDataIsSublimationCurveImplemented = false;
+      _testDataIsSublimationCurveImplemented = false;
 
       // TestData contains:
       // 0. Temperature (Kelvin)
@@ -82,7 +82,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 6. Isochoric heat capacity (J/(mol K))
       // 7. Isobaric heat capacity (J/(mol K))
       // 8. Speed of sound (m/s)
-      _testDataEquationOfState = new (double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
+      _testDataEquationOfState = new(double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
       {
       ( 250, 0.00225368831514989, 4.68450111956338, 11977.4089723341, 14056.0021336301, 103.304724103759, 96.8003754929508, 105.115344359813, 145.809562828666 ),
       ( 300, 0.00187806263055588, 4.6845005832686, 17343.7377856848, 19838.0638571652, 124.329632381276, 118.060978349089, 126.375726062681, 158.585407363722 ),
@@ -241,7 +241,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 1. Pressure (Pa)
       // 2. Saturated liquid density (mol/m³
       // 3. Saturated vapor density (mol/m³)
-      _testDataSaturatedProperties = new (double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
+      _testDataSaturatedProperties = new(double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
       {
       ( 274.24875, 242.546863411025, 8290.98581506802, 0.106416795853459 ),
       ( 323.1975, 4170.40751436378, 7894.13259655296, 1.55853401972228 ),

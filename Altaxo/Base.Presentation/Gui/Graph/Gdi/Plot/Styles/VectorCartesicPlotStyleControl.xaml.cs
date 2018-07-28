@@ -36,306 +36,306 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	/// <summary>
-	/// Interaction logic for ErrorBarPlotStyleControl.xaml
-	/// </summary>
-	public partial class VectorCartesicPlotStyleControl : UserControl, IVectorCartesicPlotStyleView
-	{
-		private PenControlsGlue _strokePenGlue;
+  /// <summary>
+  /// Interaction logic for ErrorBarPlotStyleControl.xaml
+  /// </summary>
+  public partial class VectorCartesicPlotStyleControl : UserControl, IVectorCartesicPlotStyleView
+  {
+    private PenControlsGlue _strokePenGlue;
 
-		public event Action IndependentColorChanged;
+    public event Action IndependentColorChanged;
 
-		public VectorCartesicPlotStyleControl()
-		{
-			InitializeComponent();
+    public VectorCartesicPlotStyleControl()
+    {
+      InitializeComponent();
 
-			_strokePenGlue = new PenControlsGlue();
-			_strokePenGlue.CbBrush = _guiPenColor;
-			_strokePenGlue.CbEndCap = _guiLineEndCap;
-		}
+      _strokePenGlue = new PenControlsGlue();
+      _strokePenGlue.CbBrush = _guiPenColor;
+      _strokePenGlue.CbEndCap = _guiLineEndCap;
+    }
 
-		#region IErrorBarPlotStyleView Members
+    #region IErrorBarPlotStyleView Members
 
-		public bool IndependentColor
-		{
-			get
-			{
-				return true == _chkIndependentColor.IsChecked;
-			}
-			set
-			{
-				_chkIndependentColor.IsChecked = value;
-			}
-		}
+    public bool IndependentColor
+    {
+      get
+      {
+        return true == _chkIndependentColor.IsChecked;
+      }
+      set
+      {
+        _chkIndependentColor.IsChecked = value;
+      }
+    }
 
-		public PenX Pen
-		{
-			get
-			{
-				return _strokePenGlue.Pen;
-			}
-			set
-			{
-				_strokePenGlue.Pen = value;
-			}
-		}
+    public PenX Pen
+    {
+      get
+      {
+        return _strokePenGlue.Pen;
+      }
+      set
+      {
+        _strokePenGlue.Pen = value;
+      }
+    }
 
-		public bool IgnoreMissingDataPoints
-		{
-			get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
-			set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
-		}
+    public bool IgnoreMissingDataPoints
+    {
+      get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
+      set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+    }
 
-		public bool IndependentOnShiftingGroupStyles
-		{
-			get
-			{
-				return true == _guiIndependentOnShiftingGroupStyles.IsChecked;
-			}
-			set
-			{
-				_guiIndependentOnShiftingGroupStyles.IsChecked = value;
-			}
-		}
+    public bool IndependentOnShiftingGroupStyles
+    {
+      get
+      {
+        return true == _guiIndependentOnShiftingGroupStyles.IsChecked;
+      }
+      set
+      {
+        _guiIndependentOnShiftingGroupStyles.IsChecked = value;
+      }
+    }
 
-		public int SkipFrequency
-		{
-			get
-			{
-				return _edSkipFrequency.Value;
-			}
-			set
-			{
-				_edSkipFrequency.Value = value;
-			}
-		}
+    public int SkipFrequency
+    {
+      get
+      {
+        return _edSkipFrequency.Value;
+      }
+      set
+      {
+        _edSkipFrequency.Value = value;
+      }
+    }
 
-		#endregion IErrorBarPlotStyleView Members
+    #endregion IErrorBarPlotStyleView Members
 
-		public bool ShowPlotColorsOnly
-		{
-			set { _strokePenGlue.ShowPlotColorsOnly = value; }
-		}
+    public bool ShowPlotColorsOnly
+    {
+      set { _strokePenGlue.ShowPlotColorsOnly = value; }
+    }
 
-		public bool IndependentSymbolSize
-		{
-			get
-			{
-				return true == _guiIndependentSymbolSize.IsChecked;
-			}
+    public bool IndependentSymbolSize
+    {
+      get
+      {
+        return true == _guiIndependentSymbolSize.IsChecked;
+      }
 
-			set
-			{
-				_guiIndependentSymbolSize.IsChecked = value;
-			}
-		}
+      set
+      {
+        _guiIndependentSymbolSize.IsChecked = value;
+      }
+    }
 
-		public double SymbolSize
-		{
-			get
-			{
-				return _guiSymbolSize.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_guiSymbolSize.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double SymbolSize
+    {
+      get
+      {
+        return _guiSymbolSize.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _guiSymbolSize.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double LineWidth1Offset
-		{
-			get
-			{
-				return _guiLineWidth1Offset.SelectedQuantityAsValueInPoints;
-			}
+    public double LineWidth1Offset
+    {
+      get
+      {
+        return _guiLineWidth1Offset.SelectedQuantityAsValueInPoints;
+      }
 
-			set
-			{
-				_guiLineWidth1Offset.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+      set
+      {
+        _guiLineWidth1Offset.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double LineWidth1Factor
-		{
-			get
-			{
-				return _guiLineWidth1Factor.SelectedQuantityAsValueInSIUnits;
-			}
+    public double LineWidth1Factor
+    {
+      get
+      {
+        return _guiLineWidth1Factor.SelectedQuantityAsValueInSIUnits;
+      }
 
-			set
-			{
-				_guiLineWidth1Factor.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+      set
+      {
+        _guiLineWidth1Factor.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double EndCapSizeOffset
-		{
-			get
-			{
-				return _guiEndCapSizeOffset.SelectedQuantityAsValueInPoints;
-			}
+    public double EndCapSizeOffset
+    {
+      get
+      {
+        return _guiEndCapSizeOffset.SelectedQuantityAsValueInPoints;
+      }
 
-			set
-			{
-				_guiEndCapSizeOffset.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+      set
+      {
+        _guiEndCapSizeOffset.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double EndCapSizeFactor
-		{
-			get
-			{
-				return _guiEndCapSizeFactor.SelectedQuantityAsValueInSIUnits;
-			}
+    public double EndCapSizeFactor
+    {
+      get
+      {
+        return _guiEndCapSizeFactor.SelectedQuantityAsValueInSIUnits;
+      }
 
-			set
-			{
-				_guiEndCapSizeFactor.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+      set
+      {
+        _guiEndCapSizeFactor.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public bool UseSymbolGap
-		{
-			get
-			{
-				return _guiUseLineSymbolGap.IsChecked == true;
-			}
+    public bool UseSymbolGap
+    {
+      get
+      {
+        return _guiUseLineSymbolGap.IsChecked == true;
+      }
 
-			set
-			{
-				_guiUseLineSymbolGap.IsChecked = value;
-			}
-		}
+      set
+      {
+        _guiUseLineSymbolGap.IsChecked = value;
+      }
+    }
 
-		public double SymbolGapOffset
-		{
-			get
-			{
-				return _guiSymbolGapOffset.SelectedQuantityAsValueInPoints;
-			}
+    public double SymbolGapOffset
+    {
+      get
+      {
+        return _guiSymbolGapOffset.SelectedQuantityAsValueInPoints;
+      }
 
-			set
-			{
-				_guiSymbolGapOffset.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+      set
+      {
+        _guiSymbolGapOffset.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double SymbolGapFactor
-		{
-			get
-			{
-				return _guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits;
-			}
+    public double SymbolGapFactor
+    {
+      get
+      {
+        return _guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits;
+      }
 
-			set
-			{
-				_guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+      set
+      {
+        _guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public bool UseManualVectorLength
-		{
-			get
-			{
-				return _guiUseManualVectorLength.IsChecked == true;
-			}
+    public bool UseManualVectorLength
+    {
+      get
+      {
+        return _guiUseManualVectorLength.IsChecked == true;
+      }
 
-			set
-			{
-				_guiUseManualVectorLength.IsChecked = value;
-			}
-		}
+      set
+      {
+        _guiUseManualVectorLength.IsChecked = value;
+      }
+    }
 
-		public double VectorLengthOffset
-		{
-			get
-			{
-				return _guiVectorLengthOffset.SelectedQuantityAsValueInPoints;
-			}
+    public double VectorLengthOffset
+    {
+      get
+      {
+        return _guiVectorLengthOffset.SelectedQuantityAsValueInPoints;
+      }
 
-			set
-			{
-				_guiVectorLengthOffset.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+      set
+      {
+        _guiVectorLengthOffset.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double VectorLengthFactor
-		{
-			get
-			{
-				return _guiVectorLengthFactor.SelectedQuantityAsValueInSIUnits;
-			}
+    public double VectorLengthFactor
+    {
+      get
+      {
+        return _guiVectorLengthFactor.SelectedQuantityAsValueInSIUnits;
+      }
 
-			set
-			{
-				_guiVectorLengthFactor.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+      set
+      {
+        _guiVectorLengthFactor.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public bool IndependentSkipFrequency
-		{
-			get
-			{
-				return _guiIndependentSkipFrequency.IsChecked == true;
-			}
+    public bool IndependentSkipFrequency
+    {
+      get
+      {
+        return _guiIndependentSkipFrequency.IsChecked == true;
+      }
 
-			set
-			{
-				_guiIndependentSkipFrequency.IsChecked = value;
-			}
-		}
+      set
+      {
+        _guiIndependentSkipFrequency.IsChecked = value;
+      }
+    }
 
-		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != IndependentColorChanged)
-				IndependentColorChanged();
-		}
+    private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != IndependentColorChanged)
+        IndependentColorChanged();
+    }
 
-		public void Initialize_ColumnX(string boxText, string toolTip, int status)
-		{
-			this._guiColumnX.Text = boxText;
-			this._guiColumnX.ToolTip = toolTip;
-			this._guiColumnX.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-		}
+    public void Initialize_ColumnX(string boxText, string toolTip, int status)
+    {
+      this._guiColumnX.Text = boxText;
+      this._guiColumnX.ToolTip = toolTip;
+      this._guiColumnX.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+    }
 
-		public void Initialize_ColumnXTransformation(string transformationTextToShow, string transformationToolTip)
-		{
-			if (null == transformationTextToShow)
-			{
-				this._guiColumnXTransformation.Visibility = Visibility.Collapsed;
-			}
-			else
-			{
-				this._guiColumnXTransformation.Text = transformationTextToShow;
-				this._guiColumnXTransformation.ToolTip = transformationToolTip;
-				this._guiColumnXTransformation.Visibility = Visibility.Visible;
-			}
-		}
+    public void Initialize_ColumnXTransformation(string transformationTextToShow, string transformationToolTip)
+    {
+      if (null == transformationTextToShow)
+      {
+        this._guiColumnXTransformation.Visibility = Visibility.Collapsed;
+      }
+      else
+      {
+        this._guiColumnXTransformation.Text = transformationTextToShow;
+        this._guiColumnXTransformation.ToolTip = transformationToolTip;
+        this._guiColumnXTransformation.Visibility = Visibility.Visible;
+      }
+    }
 
-		public void Initialize_ColumnY(string boxText, string toolTip, int status)
-		{
-			this._guiColumnY.Text = boxText;
-			this._guiColumnY.ToolTip = toolTip;
-			this._guiColumnY.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-		}
+    public void Initialize_ColumnY(string boxText, string toolTip, int status)
+    {
+      this._guiColumnY.Text = boxText;
+      this._guiColumnY.ToolTip = toolTip;
+      this._guiColumnY.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+    }
 
-		public void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip)
-		{
-			if (null == transformationTextToShow)
-			{
-				this._guiColumnYTransformation.Visibility = Visibility.Collapsed;
-			}
-			else
-			{
-				this._guiColumnYTransformation.Text = transformationTextToShow;
-				this._guiColumnYTransformation.ToolTip = transformationToolTip;
-				this._guiColumnYTransformation.Visibility = Visibility.Visible;
-			}
-		}
+    public void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip)
+    {
+      if (null == transformationTextToShow)
+      {
+        this._guiColumnYTransformation.Visibility = Visibility.Collapsed;
+      }
+      else
+      {
+        this._guiColumnYTransformation.Text = transformationTextToShow;
+        this._guiColumnYTransformation.ToolTip = transformationToolTip;
+        this._guiColumnYTransformation.Visibility = Visibility.Visible;
+      }
+    }
 
-		public void Initialize_MeaningOfValues(SelectableListNodeList list)
-		{
-			_guiMeaningOfValues.Initialize(list);
-		}
-	}
+    public void Initialize_MeaningOfValues(SelectableListNodeList list)
+    {
+      _guiMeaningOfValues.Initialize(list);
+    }
+  }
 }

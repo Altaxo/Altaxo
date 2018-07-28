@@ -27,50 +27,50 @@ using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
-	/// <summary>
-	/// Immutable key for Ascii line analysis dictionary. Contains the separation strategy, the number format and the date/time format used to analyze a single line of Ascii data.
-	/// </summary>
-	public class AsciiLineAnalysisOption
-	{
-		private IAsciiSeparationStrategy _separationStrategy;
-		private System.Globalization.CultureInfo _numberFormat;
-		private System.Globalization.CultureInfo _dateTimeFormat;
-		private int _cachedHashCode;
+  /// <summary>
+  /// Immutable key for Ascii line analysis dictionary. Contains the separation strategy, the number format and the date/time format used to analyze a single line of Ascii data.
+  /// </summary>
+  public class AsciiLineAnalysisOption
+  {
+    private IAsciiSeparationStrategy _separationStrategy;
+    private System.Globalization.CultureInfo _numberFormat;
+    private System.Globalization.CultureInfo _dateTimeFormat;
+    private int _cachedHashCode;
 
-		public AsciiLineAnalysisOption(IAsciiSeparationStrategy s, System.Globalization.CultureInfo n, System.Globalization.CultureInfo d)
-		{
-			_separationStrategy = s;
-			_numberFormat = n;
-			_dateTimeFormat = d;
+    public AsciiLineAnalysisOption(IAsciiSeparationStrategy s, System.Globalization.CultureInfo n, System.Globalization.CultureInfo d)
+    {
+      _separationStrategy = s;
+      _numberFormat = n;
+      _dateTimeFormat = d;
 
-			_cachedHashCode = _separationStrategy.GetHashCode() ^ _numberFormat.GetHashCode() ^ _dateTimeFormat.GetHashCode();
-		}
+      _cachedHashCode = _separationStrategy.GetHashCode() ^ _numberFormat.GetHashCode() ^ _dateTimeFormat.GetHashCode();
+    }
 
-		public IAsciiSeparationStrategy SeparationStrategy { get { return _separationStrategy; } }
+    public IAsciiSeparationStrategy SeparationStrategy { get { return _separationStrategy; } }
 
-		public System.Globalization.CultureInfo NumberFormat { get { return _numberFormat; } }
+    public System.Globalization.CultureInfo NumberFormat { get { return _numberFormat; } }
 
-		public System.Globalization.CultureInfo DateTimeFormat { get { return _dateTimeFormat; } }
+    public System.Globalization.CultureInfo DateTimeFormat { get { return _dateTimeFormat; } }
 
-		public override bool Equals(object obj)
-		{
-			if (obj == null || GetType() != obj.GetType())
-			{
-				return false;
-			}
+    public override bool Equals(object obj)
+    {
+      if (obj == null || GetType() != obj.GetType())
+      {
+        return false;
+      }
 
-			var from = (AsciiLineAnalysisOption)obj;
-			return this._separationStrategy.Equals(from._separationStrategy) && this._numberFormat.Equals(from._numberFormat) && this._dateTimeFormat.Equals(from._dateTimeFormat);
-		}
+      var from = (AsciiLineAnalysisOption)obj;
+      return this._separationStrategy.Equals(from._separationStrategy) && this._numberFormat.Equals(from._numberFormat) && this._dateTimeFormat.Equals(from._dateTimeFormat);
+    }
 
-		public override int GetHashCode()
-		{
-			return _cachedHashCode;
-		}
+    public override int GetHashCode()
+    {
+      return _cachedHashCode;
+    }
 
-		public override string ToString()
-		{
-			return string.Format("{0} {1} {2}", _separationStrategy, _numberFormat, _dateTimeFormat);
-		}
-	}
+    public override string ToString()
+    {
+      return string.Format("{0} {1} {2}", _separationStrategy, _numberFormat, _dateTimeFormat);
+    }
+  }
 }

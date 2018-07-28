@@ -27,71 +27,71 @@ using System.Windows.Threading;
 
 namespace Altaxo.Gui.AddInItems
 {
-	internal sealed class ToolBarCheckBox : CheckBox, IStatusUpdate
-	{
-		private readonly Codon codon;
-		private readonly object caller;
-		private BindingExpressionBase isCheckedBinding;
-		private readonly IEnumerable<ICondition> conditions;
+  internal sealed class ToolBarCheckBox : CheckBox, IStatusUpdate
+  {
+    private readonly Codon codon;
+    private readonly object caller;
+    private BindingExpressionBase isCheckedBinding;
+    private readonly IEnumerable<ICondition> conditions;
 
-		public ToolBarCheckBox(Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
-		{
-			ToolTipService.SetShowOnDisabled(this, true);
+    public ToolBarCheckBox(Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
+    {
+      ToolTipService.SetShowOnDisabled(this, true);
 
-			this.codon = codon;
-			this.caller = caller;
-			this.conditions = conditions;
-			this.Command = CommandWrapper.CreateCommand(codon, conditions);
-			this.CommandParameter = caller;
-			ICheckableMenuCommand cmd = CommandWrapper.Unwrap(this.Command) as ICheckableMenuCommand;
-			if (cmd != null)
-			{
-				isCheckedBinding = SetBinding(IsCheckedProperty, new Binding("IsChecked") { Source = cmd, Mode = BindingMode.OneWay });
-			}
+      this.codon = codon;
+      this.caller = caller;
+      this.conditions = conditions;
+      this.Command = CommandWrapper.CreateCommand(codon, conditions);
+      this.CommandParameter = caller;
+      ICheckableMenuCommand cmd = CommandWrapper.Unwrap(this.Command) as ICheckableMenuCommand;
+      if (cmd != null)
+      {
+        isCheckedBinding = SetBinding(IsCheckedProperty, new Binding("IsChecked") { Source = cmd, Mode = BindingMode.OneWay });
+      }
 
-			this.Content = ToolBarService.CreateToolBarItemContent(codon);
-			if (codon.Properties.Contains("name"))
-			{
-				this.Name = codon.Properties["name"];
-			}
-			UpdateText();
+      this.Content = ToolBarService.CreateToolBarItemContent(codon);
+      if (codon.Properties.Contains("name"))
+      {
+        this.Name = codon.Properties["name"];
+      }
+      UpdateText();
 
-			SetResourceReference(FrameworkElement.StyleProperty, ToolBar.CheckBoxStyleKey);
-		}
+      SetResourceReference(FrameworkElement.StyleProperty, ToolBar.CheckBoxStyleKey);
+    }
 
-		public void UpdateText()
-		{
-			if (codon.Properties.Contains("tooltip"))
-			{
-				this.ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
-			}
-			if (codon.Properties.Contains("label"))
-			{
-				this.Content = ToolBarService.CreateToolBarItemContent(codon);
-			}
-		}
+    public void UpdateText()
+    {
+      if (codon.Properties.Contains("tooltip"))
+      {
+        this.ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
+      }
+      if (codon.Properties.Contains("label"))
+      {
+        this.Content = ToolBarService.CreateToolBarItemContent(codon);
+      }
+    }
 
-		public void UpdateStatus()
-		{
-			if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-				this.Visibility = Visibility.Collapsed;
-			else
-				this.Visibility = Visibility.Visible;
-			if (isCheckedBinding != null)
-				isCheckedBinding.UpdateTarget();
-		}
+    public void UpdateStatus()
+    {
+      if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
+        this.Visibility = Visibility.Collapsed;
+      else
+        this.Visibility = Visibility.Visible;
+      if (isCheckedBinding != null)
+        isCheckedBinding.UpdateTarget();
+    }
 
-		protected override void OnClick()
-		{
-			base.OnClick();
-			Dispatcher.BeginInvoke(
-				DispatcherPriority.DataBind,
-				new Action(
-					delegate
-					{
-						if (isCheckedBinding != null)
-							isCheckedBinding.UpdateTarget();
-					}));
-		}
-	}
+    protected override void OnClick()
+    {
+      base.OnClick();
+      Dispatcher.BeginInvoke(
+        DispatcherPriority.DataBind,
+        new Action(
+          delegate
+          {
+            if (isCheckedBinding != null)
+              isCheckedBinding.UpdateTarget();
+          }));
+    }
+  }
 }

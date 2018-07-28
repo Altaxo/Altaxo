@@ -33,104 +33,104 @@ using Altaxo.Gui;
 
 namespace Altaxo.Text
 {
-	/// <summary>
-	/// Options to export a <see cref="TextDocument"/> into an external markdown file, including all the referenced graphs and local images.
-	/// </summary>
-	public class MarkdownExportOptions
-	{
-		/// <summary>
-		/// Name of the folder relative to the markdown document, in which the images (graphs and local images) are stored.
-		/// </summary>
-		public string ImageDirectoryName { get; } = "Images";
+  /// <summary>
+  /// Options to export a <see cref="TextDocument"/> into an external markdown file, including all the referenced graphs and local images.
+  /// </summary>
+  public class MarkdownExportOptions
+  {
+    /// <summary>
+    /// Name of the folder relative to the markdown document, in which the images (graphs and local images) are stored.
+    /// </summary>
+    public string ImageDirectoryName { get; } = "Images";
 
-		/// <summary>
-		/// Given the folder where the markdown file resides, this gets the full folder name of the image folder.
-		/// </summary>
-		/// <param name="markdownPathName">Name of the folder of the markdown file.</param>
-		/// <returns>Full folder name of the image folder</returns>
-		private string GetImagePath(string markdownPathName)
-		{
-			return Path.Combine(markdownPathName, "Images");
-		}
+    /// <summary>
+    /// Given the folder where the markdown file resides, this gets the full folder name of the image folder.
+    /// </summary>
+    /// <param name="markdownPathName">Name of the folder of the markdown file.</param>
+    /// <returns>Full folder name of the image folder</returns>
+    private string GetImagePath(string markdownPathName)
+    {
+      return Path.Combine(markdownPathName, "Images");
+    }
 
-		/// <summary>
-		/// Exports the <see cref="TextDocument"/> to a markdown file, showing first the file save dialog.
-		/// </summary>
-		/// <param name="document">The document to export.</param>
-		public static void ExportShowDialog(TextDocument document)
-		{
-			var options = new MarkdownExportOptions();
+    /// <summary>
+    /// Exports the <see cref="TextDocument"/> to a markdown file, showing first the file save dialog.
+    /// </summary>
+    /// <param name="document">The document to export.</param>
+    public static void ExportShowDialog(TextDocument document)
+    {
+      var options = new MarkdownExportOptions();
 
-			var dlg = new SaveFileOptions();
-			dlg.AddFilter("*.md", "Markdown files (*.md)");
-			dlg.AddFilter("*.txt", "Text files (*.txt)");
-			dlg.AddFilter("*.*", "All files (*.*)");
+      var dlg = new SaveFileOptions();
+      dlg.AddFilter("*.md", "Markdown files (*.md)");
+      dlg.AddFilter("*.txt", "Text files (*.txt)");
+      dlg.AddFilter("*.*", "All files (*.*)");
 
-			dlg.AddExtension = true;
+      dlg.AddExtension = true;
 
-			if (true == Current.Gui.ShowSaveFileDialog(dlg))
-			{
-				options.Export(document, dlg.FileName);
-			}
-		}
+      if (true == Current.Gui.ShowSaveFileDialog(dlg))
+      {
+        options.Export(document, dlg.FileName);
+      }
+    }
 
-		/// <summary>
-		/// Exports the specified <see cref="TextDocument"/> to an external markdown file.
-		/// </summary>
-		/// <param name="document">The document to export.</param>
-		/// <param name="fileName">Full name of the markdown file to export to.</param>
-		public void Export(TextDocument document, string fileName)
-		{
-			var path = Path.GetDirectoryName(fileName);
+    /// <summary>
+    /// Exports the specified <see cref="TextDocument"/> to an external markdown file.
+    /// </summary>
+    /// <param name="document">The document to export.</param>
+    /// <param name="fileName">Full name of the markdown file to export to.</param>
+    public void Export(TextDocument document, string fileName)
+    {
+      var path = Path.GetDirectoryName(fileName);
 
-			var imagePath = GetImagePath(path);
+      var imagePath = GetImagePath(path);
 
-			var sourceDoc = new System.Text.StringBuilder(document.SourceText);
+      var sourceDoc = new System.Text.StringBuilder(document.SourceText);
 
-			var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>(document.ReferencedImageUrls);
+      var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>(document.ReferencedImageUrls);
 
-			list.Sort((x, y) => Comparer<int>.Default.Compare(y.urlSpanEnd, x.urlSpanEnd)); // Note the inverse order of x and y to sort urlSpanEnd descending
+      list.Sort((x, y) => Comparer<int>.Default.Compare(y.urlSpanEnd, x.urlSpanEnd)); // Note the inverse order of x and y to sort urlSpanEnd descending
 
-			var imageStreamProvider = new ImageStreamProvider();
+      var imageStreamProvider = new ImageStreamProvider();
 
-			// Export images
-			foreach (var (Url, urlSpanStart, urlSpanEnd) in list)
-			{
-				using (var stream = new System.IO.MemoryStream())
-				{
-					var (isStreamImage, extension, errorMessage) = imageStreamProvider.GetImageStream(stream, Url, 300, Altaxo.Main.ProjectFolder.GetFolderPart(document.Name), document.Images);
+      // Export images
+      foreach (var (Url, urlSpanStart, urlSpanEnd) in list)
+      {
+        using (var stream = new System.IO.MemoryStream())
+        {
+          var (isStreamImage, extension, errorMessage) = imageStreamProvider.GetImageStream(stream, Url, 300, Altaxo.Main.ProjectFolder.GetFolderPart(document.Name), document.Images);
 
-					if (isStreamImage && null == errorMessage)
-					{
-						var hashName = MemoryStreamImageProxy.ComputeStreamHash(stream);
+          if (isStreamImage && null == errorMessage)
+          {
+            var hashName = MemoryStreamImageProxy.ComputeStreamHash(stream);
 
-						var imageFileName = hashName + extension;
+            var imageFileName = hashName + extension;
 
-						if (!Directory.Exists(imagePath))
-							Directory.CreateDirectory(imagePath);
+            if (!Directory.Exists(imagePath))
+              Directory.CreateDirectory(imagePath);
 
-						// Copy stream to FileSystem
-						using (var fileStream = new System.IO.FileStream(Path.Combine(imagePath, imageFileName), FileMode.Create, FileAccess.Write, FileShare.Read))
-						{
-							stream.Seek(0, SeekOrigin.Begin);
-							stream.CopyTo(fileStream);
-						}
+            // Copy stream to FileSystem
+            using (var fileStream = new System.IO.FileStream(Path.Combine(imagePath, imageFileName), FileMode.Create, FileAccess.Write, FileShare.Read))
+            {
+              stream.Seek(0, SeekOrigin.Begin);
+              stream.CopyTo(fileStream);
+            }
 
-						// now change the url in the markdown text
-						var newUrl = ImageDirectoryName + "/" + imageFileName;
+            // now change the url in the markdown text
+            var newUrl = ImageDirectoryName + "/" + imageFileName;
 
-						sourceDoc.Remove(urlSpanStart, 1 + urlSpanEnd - urlSpanStart);
-						sourceDoc.Insert(urlSpanStart, newUrl);
-					}
-				}
-			}
+            sourceDoc.Remove(urlSpanStart, 1 + urlSpanEnd - urlSpanStart);
+            sourceDoc.Insert(urlSpanStart, newUrl);
+          }
+        }
+      }
 
-			// now save the markdown document
+      // now save the markdown document
 
-			using (var markdownStream = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 4096))
-			{
-				markdownStream.Write(sourceDoc.ToString());
-			}
-		}
-	}
+      using (var markdownStream = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 4096))
+      {
+        markdownStream.Write(sourceDoc.ToString());
+      }
+    }
+  }
 }

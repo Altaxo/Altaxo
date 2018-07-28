@@ -31,68 +31,68 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Represents a workbench state that is not minimized, i.e. either maximized or normal.
-	/// </summary>
-	public class WorkbenchState
-	{
-		public RectangleD2D Bounds { get; set; }
+  /// <summary>
+  /// Represents a workbench state that is not minimized, i.e. either maximized or normal.
+  /// </summary>
+  public class WorkbenchState
+  {
+    public RectangleD2D Bounds { get; set; }
 
-		public bool IsMaximized { get; set; }
+    public bool IsMaximized { get; set; }
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		///
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.Workbench.AltaxoWorkbench+WorkbenchState", 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old version");
-				/*
+    /// <summary>
+    ///
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.Workbench.AltaxoWorkbench+WorkbenchState", 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
 				var s = (WorkbenchState)obj;
 
 				info.AddValue("Bounds", s.Bounds);
 				info.AddValue("WindowState", (int)s.WindowState);
 				*/
-			}
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = o as WorkbenchState ?? new WorkbenchState();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = o as WorkbenchState ?? new WorkbenchState();
 
-				s.Bounds = (RectangleD2D)info.GetValue("Bounds", null);
-				s.IsMaximized = 2 == info.GetInt32("WindowState");
-				return s;
-			}
-		}
+        s.Bounds = (RectangleD2D)info.GetValue("Bounds", null);
+        s.IsMaximized = 2 == info.GetInt32("WindowState");
+        return s;
+      }
+    }
 
-		/// <summary>
-		/// 2017-12-02 Moved to new assembly (AltaxoState). WindowState replaced by boolean IsMaximized
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorkbenchState), 1)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (WorkbenchState)obj;
+    /// <summary>
+    /// 2017-12-02 Moved to new assembly (AltaxoState). WindowState replaced by boolean IsMaximized
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorkbenchState), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (WorkbenchState)obj;
 
-				info.AddValue("Bounds", s.Bounds);
-				info.AddValue("IsMaximized", s.IsMaximized);
-			}
+        info.AddValue("Bounds", s.Bounds);
+        info.AddValue("IsMaximized", s.IsMaximized);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = o as WorkbenchState ?? new WorkbenchState();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = o as WorkbenchState ?? new WorkbenchState();
 
-				s.Bounds = (RectangleD2D)info.GetValue("Bounds", null);
-				s.IsMaximized = info.GetBoolean("IsMaximized");
-				return s;
-			}
-		}
+        s.Bounds = (RectangleD2D)info.GetValue("Bounds", null);
+        s.IsMaximized = info.GetBoolean("IsMaximized");
+        return s;
+      }
+    }
 
-		#endregion Serialization
-	}
+    #endregion Serialization
+  }
 }

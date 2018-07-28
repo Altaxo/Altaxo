@@ -20,27 +20,27 @@ using System;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// IDisposable implementation that disposes multiple disposables.
-	/// </summary>
-	public class CompositeDisposable : IDisposable
-	{
-		private IDisposable[] disposables;
+  /// <summary>
+  /// IDisposable implementation that disposes multiple disposables.
+  /// </summary>
+  public class CompositeDisposable : IDisposable
+  {
+    private IDisposable[] disposables;
 
-		public CompositeDisposable(params IDisposable[] disposables)
-		{
-			if (disposables == null)
-				throw new ArgumentNullException("disposables");
-			this.disposables = disposables;
-		}
+    public CompositeDisposable(params IDisposable[] disposables)
+    {
+      if (disposables == null)
+        throw new ArgumentNullException("disposables");
+      this.disposables = disposables;
+    }
 
-		public void Dispose()
-		{
-			foreach (var disposable in disposables)
-			{
-				if (disposable != null)
-					disposable.Dispose();
-			}
-		}
-	}
+    public void Dispose()
+    {
+      foreach (var disposable in disposables)
+      {
+        if (disposable != null)
+          disposable.Dispose();
+      }
+    }
+  }
 }

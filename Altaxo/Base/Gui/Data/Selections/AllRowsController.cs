@@ -29,33 +29,33 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	using Altaxo.Data.Selections;
+  using Altaxo.Data.Selections;
 
-	public interface IAllRowsView
-	{
-	}
+  public interface IAllRowsView
+  {
+  }
 
-	[UserControllerForObject(typeof(AllRows), 100)]
-	[ExpectedTypeOfView(typeof(IAllRowsView))]
-	public class AllRowsController : MVCANControllerEditImmutableDocBase<AllRows, IAllRowsView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(AllRows), 100)]
+  [ExpectedTypeOfView(typeof(IAllRowsView))]
+  public class AllRowsController : MVCANControllerEditImmutableDocBase<AllRows, IAllRowsView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
-		}
+      if (initData)
+      {
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			return ApplyEnd(true, disposeController);
-		}
-	}
+    public override bool Apply(bool disposeController)
+    {
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

@@ -29,48 +29,48 @@ using System;
 
 namespace Altaxo.Graph.Gdi
 {
-	/// <summary>
-	/// Interface used for all plot items and styles to get information for plotting their data.
-	/// </summary>
-	public interface IPlotArea
-	{
-		/// <summary>
-		/// Returns true when this is a 3D area, i.e. it utilizes 3 Scales and a 3D Coordinate system.
-		/// </summary>
-		bool Is3D { get; }
+  /// <summary>
+  /// Interface used for all plot items and styles to get information for plotting their data.
+  /// </summary>
+  public interface IPlotArea
+  {
+    /// <summary>
+    /// Returns true when this is a 3D area, i.e. it utilizes 3 Scales and a 3D Coordinate system.
+    /// </summary>
+    bool Is3D { get; }
 
-		/// <summary>
-		/// Gets the axis of the independent variable.
-		/// </summary>
-		Scale XAxis { get; }
+    /// <summary>
+    /// Gets the axis of the independent variable.
+    /// </summary>
+    Scale XAxis { get; }
 
-		/// <summary>
-		/// Gets the axis of the dependent variable.
-		/// </summary>
-		Scale YAxis { get; }
+    /// <summary>
+    /// Gets the axis of the dependent variable.
+    /// </summary>
+    Scale YAxis { get; }
 
-		ScaleCollection Scales { get; }
+    ScaleCollection Scales { get; }
 
-		G2DCoordinateSystem CoordinateSystem { get; }
+    G2DCoordinateSystem CoordinateSystem { get; }
 
-		/// <summary>
-		/// Returns the size of the rectangular layer area.
-		/// </summary>
-		PointD2D Size { get; }
+    /// <summary>
+    /// Returns the size of the rectangular layer area.
+    /// </summary>
+    PointD2D Size { get; }
 
-		Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx);
+    Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx);
 
-		Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y);
+    Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y);
 
-		/// <summary>
-		/// Returns a list of the used axis style ids for this layer.
-		/// </summary>
-		System.Collections.Generic.IEnumerable<CSLineID> AxisStyleIDs { get; }
+    /// <summary>
+    /// Returns a list of the used axis style ids for this layer.
+    /// </summary>
+    System.Collections.Generic.IEnumerable<CSLineID> AxisStyleIDs { get; }
 
-		/// <summary>
-		/// Updates the logical value of a plane id in case it uses a physical value.
-		/// </summary>
-		/// <param name="id">The plane identifier</param>
-		CSPlaneID UpdateCSPlaneID(CSPlaneID id);
-	}
+    /// <summary>
+    /// Updates the logical value of a plane id in case it uses a physical value.
+    /// </summary>
+    /// <param name="id">The plane identifier</param>
+    CSPlaneID UpdateCSPlaneID(CSPlaneID id);
+  }
 }

@@ -30,17 +30,17 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing
 {
-	/// <summary>
-	/// Implemented by Gui classes that can provide a caret offset.
-	/// </summary>
-	public interface ICaretOffsetProvider
-	{
-		/// <summary>
-		/// Gets or sets the caret offset.
-		/// </summary>
-		/// <value>
-		/// The caret offset.
-		/// </value>
-		int CaretOffset { get; set; }
-	}
+  /// <summary>
+  /// Implemented by Gui classes that can provide a caret offset.
+  /// </summary>
+  public interface ICaretOffsetProvider
+  {
+    /// <summary>
+    /// Gets or sets the caret offset.
+    /// </summary>
+    /// <value>
+    /// The caret offset.
+    /// </value>
+    int CaretOffset { get; set; }
+  }
 }

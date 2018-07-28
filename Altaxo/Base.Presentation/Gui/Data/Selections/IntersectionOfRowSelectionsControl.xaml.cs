@@ -38,14 +38,14 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	/// <summary>
-	/// Interaction logic for IntersectionOfRowSelectionsControl.xaml
-	/// </summary>
-	public partial class IntersectionOfRowSelectionsControl : UserControl, IIntersectionOfRowSelectionView
-	{
-		public IntersectionOfRowSelectionsControl()
-		{
-			InitializeComponent();
-		}
-	}
+  /// <summary>
+  /// Interaction logic for IntersectionOfRowSelectionsControl.xaml
+  /// </summary>
+  public partial class IntersectionOfRowSelectionsControl : UserControl, IIntersectionOfRowSelectionView
+  {
+    public IntersectionOfRowSelectionsControl()
+    {
+      InitializeComponent();
+    }
+  }
 }

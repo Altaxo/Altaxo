@@ -29,64 +29,64 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.CS
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IG3DCartesicCSView
-	{
-		bool ExchangeXY { get; set; }
+  public interface IG3DCartesicCSView
+  {
+    bool ExchangeXY { get; set; }
 
-		bool ReverseX { get; set; }
+    bool ReverseX { get; set; }
 
-		bool ReverseY { get; set; }
+    bool ReverseY { get; set; }
 
-		bool ReverseZ { get; set; }
-	}
+    bool ReverseZ { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[UserControllerForObject(typeof(G3DCartesicCoordinateSystem), 101)]
-	[ExpectedTypeOfView(typeof(IG3DCartesicCSView))]
-	public class G3DCartesicCSController : MVCANControllerEditImmutableDocBase<G3DCartesicCoordinateSystem, IG3DCartesicCSView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(G3DCartesicCoordinateSystem), 101)]
+  [ExpectedTypeOfView(typeof(IG3DCartesicCSView))]
+  public class G3DCartesicCSController : MVCANControllerEditImmutableDocBase<G3DCartesicCoordinateSystem, IG3DCartesicCSView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public G3DCartesicCSController()
-		{
-		}
+    public G3DCartesicCSController()
+    {
+    }
 
-		public G3DCartesicCSController(G3DCartesicCoordinateSystem doc)
-		{
-			InitializeDocument(doc);
-		}
+    public G3DCartesicCSController(G3DCartesicCoordinateSystem doc)
+    {
+      InitializeDocument(doc);
+    }
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (_view != null)
-			{
-				_view.ExchangeXY = _doc.IsXYInterchanged;
-				_view.ReverseX = _doc.IsXReversed;
-				_view.ReverseY = _doc.IsYReversed;
-				_view.ReverseZ = _doc.IsZReversed;
-			}
-		}
+      if (_view != null)
+      {
+        _view.ExchangeXY = _doc.IsXYInterchanged;
+        _view.ReverseX = _doc.IsXReversed;
+        _view.ReverseY = _doc.IsYReversed;
+        _view.ReverseZ = _doc.IsZReversed;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc = _doc.WithXYInterchangedAndXYZReversed(
-			isXYInterchanged: _view.ExchangeXY,
-			isXReversed: _view.ReverseX,
-			isYReversed: _view.ReverseY,
-			isZReversed: _view.ReverseZ);
-			return ApplyEnd(true, disposeController);
-		}
+    public override bool Apply(bool disposeController)
+    {
+      _doc = _doc.WithXYInterchangedAndXYZReversed(
+      isXYInterchanged: _view.ExchangeXY,
+      isXReversed: _view.ReverseX,
+      isYReversed: _view.ReverseY,
+      isZReversed: _view.ReverseZ);
+      return ApplyEnd(true, disposeController);
+    }
 
-		#endregion IMVCController Members
-	}
+    #endregion IMVCController Members
+  }
 }

@@ -21,53 +21,53 @@ using System;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Static class that can be used to weakly bind to the <see cref="LanguageChanged"/> event that is fired if the Gui language has changed.
-	/// </summary>
-	public static class LanguageChangeWeakEventManager
-	{
-		private static WeakDelegate<Action> _languageChanged = new WeakDelegate<Action>();
-		private static IResourceService _resourceService;
+  /// <summary>
+  /// Static class that can be used to weakly bind to the <see cref="LanguageChanged"/> event that is fired if the Gui language has changed.
+  /// </summary>
+  public static class LanguageChangeWeakEventManager
+  {
+    private static WeakDelegate<Action> _languageChanged = new WeakDelegate<Action>();
+    private static IResourceService _resourceService;
 
-		/// <summary>
-		/// Occurs when the Gui language has changed. The event is hold weak, thus you can safely add your handler without running in memory leaks.
-		/// </summary>
-		public static event Action LanguageChanged
-		{
-			add
-			{
-				_languageChanged.Combine(value);
-			}
-			remove
-			{
-				_languageChanged.Remove(value);
-			}
-		}
+    /// <summary>
+    /// Occurs when the Gui language has changed. The event is hold weak, thus you can safely add your handler without running in memory leaks.
+    /// </summary>
+    public static event Action LanguageChanged
+    {
+      add
+      {
+        _languageChanged.Combine(value);
+      }
+      remove
+      {
+        _languageChanged.Remove(value);
+      }
+    }
 
-		static LanguageChangeWeakEventManager()
-		{
-			Current.ServiceChanged += EhServiceChanged;
-			EhServiceChanged();
-		}
+    static LanguageChangeWeakEventManager()
+    {
+      Current.ServiceChanged += EhServiceChanged;
+      EhServiceChanged();
+    }
 
-		private static void EhServiceChanged()
-		{
-			if (null != _resourceService)
-			{
-				_resourceService.LanguageChanged -= EhLanguageChanged;
-			}
+    private static void EhServiceChanged()
+    {
+      if (null != _resourceService)
+      {
+        _resourceService.LanguageChanged -= EhLanguageChanged;
+      }
 
-			_resourceService = Altaxo.Current.GetService<IResourceService>();
+      _resourceService = Altaxo.Current.GetService<IResourceService>();
 
-			if (null != _resourceService)
-			{
-				_resourceService.LanguageChanged += EhLanguageChanged;
-			}
-		}
+      if (null != _resourceService)
+      {
+        _resourceService.LanguageChanged += EhLanguageChanged;
+      }
+    }
 
-		private static void EhLanguageChanged(object sender, EventArgs e)
-		{
-			_languageChanged.Target?.Invoke();
-		}
-	}
+    private static void EhLanguageChanged(object sender, EventArgs e)
+    {
+      _languageChanged.Target?.Invoke();
+    }
+  }
 }

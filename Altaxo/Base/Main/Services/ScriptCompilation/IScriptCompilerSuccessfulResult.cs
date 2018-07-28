@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
-	public interface IScriptCompilerSuccessfulResult : IScriptCompilerResult
-	{
-		System.Reflection.Assembly ScriptAssembly { get; }
-	}
+  public interface IScriptCompilerSuccessfulResult : IScriptCompilerResult
+  {
+    System.Reflection.Assembly ScriptAssembly { get; }
+  }
 }

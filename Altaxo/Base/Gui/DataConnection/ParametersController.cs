@@ -29,79 +29,79 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
-	public interface IParametersView
-	{
-		void SetParametersSource(List<System.Data.OleDb.OleDbParameter> parms);
+  public interface IParametersView
+  {
+    void SetParametersSource(List<System.Data.OleDb.OleDbParameter> parms);
 
-		void ReadParameter();
-	}
+    void ReadParameter();
+  }
 
-	[ExpectedTypeOfView(typeof(IParametersView))]
-	public class ParametersController : IMVCAController
-	{
-		private IParametersView _view;
-		private List<System.Data.OleDb.OleDbParameter> _doc;
+  [ExpectedTypeOfView(typeof(IParametersView))]
+  public class ParametersController : IMVCAController
+  {
+    private IParametersView _view;
+    private List<System.Data.OleDb.OleDbParameter> _doc;
 
-		public ParametersController(List<System.Data.OleDb.OleDbParameter> parms)
-		{
-			// TODO: Complete member initialization
-			this._doc = parms;
-			Initialize(true);
-		}
+    public ParametersController(List<System.Data.OleDb.OleDbParameter> parms)
+    {
+      // TODO: Complete member initialization
+      this._doc = parms;
+      Initialize(true);
+    }
 
-		private void Initialize(bool initData)
-		{
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				_view.SetParametersSource(_doc);
-			}
-		}
+    private void Initialize(bool initData)
+    {
+      if (initData)
+      {
+      }
+      if (null != _view)
+      {
+        _view.SetParametersSource(_doc);
+      }
+    }
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IParametersView;
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        _view = value as IParametersView;
+        if (null != _view)
+        {
+          Initialize(false);
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
+    public object ModelObject
+    {
+      get { return _doc; }
+    }
 
-		public void Dispose()
-		{
-			ViewObject = null;
-		}
+    public void Dispose()
+    {
+      ViewObject = null;
+    }
 
-		public bool Apply(bool disposeController)
-		{
-			_view.ReadParameter();
-			return true;
-		}
+    public bool Apply(bool disposeController)
+    {
+      _view.ReadParameter();
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-	}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
+  }
 }

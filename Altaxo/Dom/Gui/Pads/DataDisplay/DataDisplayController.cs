@@ -27,119 +27,119 @@ using System;
 
 namespace Altaxo.Gui.Pads.DataDisplay
 {
-	public interface IDataDisplayView
-	{
-		string Text { get; set; }
-	}
+  public interface IDataDisplayView
+  {
+    string Text { get; set; }
+  }
 
-	/// <summary>
-	/// Controls the data display window pad that shows the data obtained from the data reader.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(IDataDisplayView))]
-	public class DataDisplayController : AbstractPadContent, Altaxo.Main.Services.IDataDisplayService
-	{
-		private IDataDisplayView _view;
+  /// <summary>
+  /// Controls the data display window pad that shows the data obtained from the data reader.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(IDataDisplayView))]
+  public class DataDisplayController : AbstractPadContent, Altaxo.Main.Services.IDataDisplayService
+  {
+    private IDataDisplayView _view;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DataDisplayController"/> class.
-		/// Since this is created as a pad codon, it is not created in a service codon, thus we register it as a service
-		/// in this constructor.
-		/// </summary>
-		public DataDisplayController()
-		{
-			Current.AddService<Altaxo.Main.Services.IDataDisplayService>(this);
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataDisplayController"/> class.
+    /// Since this is created as a pad codon, it is not created in a service codon, thus we register it as a service
+    /// in this constructor.
+    /// </summary>
+    public DataDisplayController()
+    {
+      Current.AddService<Altaxo.Main.Services.IDataDisplayService>(this);
+    }
 
-		#region IPadContent Members
+    #region IPadContent Members
 
-		private void AttachView()
-		{
-		}
+    private void AttachView()
+    {
+    }
 
-		private void DetachView()
-		{
-		}
+    private void DetachView()
+    {
+    }
 
-		public override object ViewObject
-		{
-			get
-			{
-				return this._view;
-			}
-			set
-			{
-				if (!object.ReferenceEquals(_view, value))
-				{
-					if (null != _view)
-						DetachView();
+    public override object ViewObject
+    {
+      get
+      {
+        return this._view;
+      }
+      set
+      {
+        if (!object.ReferenceEquals(_view, value))
+        {
+          if (null != _view)
+            DetachView();
 
-					_view = value as IDataDisplayView;
+          _view = value as IDataDisplayView;
 
-					if (null != _view)
-						AttachView();
-				}
-			}
-		}
+          if (null != _view)
+            AttachView();
+        }
+      }
+    }
 
-		public override object ModelObject
-		{
-			get { return null; }
-		}
+    public override object ModelObject
+    {
+      get { return null; }
+    }
 
-		#endregion IPadContent Members
+    #endregion IPadContent Members
 
-		private void InternalWrite(string text)
-		{
-			_view.Text = text;
+    private void InternalWrite(string text)
+    {
+      _view.Text = text;
 
-			if (!(IsSelected && IsVisible))
-			{
-				var ww = Current.Workbench.ActiveContent;
+      if (!(IsSelected && IsVisible))
+      {
+        var ww = Current.Workbench.ActiveContent;
 
-				// bring this pad to front
-				this.IsActive = true;
-				this.IsSelected = true;
-				this.IsVisible = true;
+        // bring this pad to front
+        this.IsActive = true;
+        this.IsSelected = true;
+        this.IsVisible = true;
 
-				// afterwards, bring originally view content to view
-				if (ww is IViewContent)
-				{
-					ww.IsActive = true;
-					ww.IsSelected = true;
-				}
-			}
-		}
+        // afterwards, bring originally view content to view
+        if (ww is IViewContent)
+        {
+          ww.IsActive = true;
+          ww.IsSelected = true;
+        }
+      }
+    }
 
-		#region IDataDisplayService Members
+    #region IDataDisplayService Members
 
-		/// <summary>Writes a string to the output.</summary>
-		/// <param name="text">The text to write to the output.</param>
-		public void WriteOneLine(string text)
-		{
-			InternalWrite(text);
-		}
+    /// <summary>Writes a string to the output.</summary>
+    /// <param name="text">The text to write to the output.</param>
+    public void WriteOneLine(string text)
+    {
+      InternalWrite(text);
+    }
 
-		/// <summary>
-		/// Writes two lines to the window.
-		/// </summary>
-		/// <param name="line1">First line.</param>
-		/// <param name="line2">Second line.</param>
-		public void WriteTwoLines(string line1, string line2)
-		{
-			InternalWrite(line1 + System.Environment.NewLine + line2);
-		}
+    /// <summary>
+    /// Writes two lines to the window.
+    /// </summary>
+    /// <param name="line1">First line.</param>
+    /// <param name="line2">Second line.</param>
+    public void WriteTwoLines(string line1, string line2)
+    {
+      InternalWrite(line1 + System.Environment.NewLine + line2);
+    }
 
-		/// <summary>
-		/// Writes three lines to the output.
-		/// </summary>
-		/// <param name="line1">First line.</param>
-		/// <param name="line2">Second line.</param>
-		/// <param name="line3">Three line.</param>
-		public void WriteThreeLines(string line1, string line2, string line3)
-		{
-			InternalWrite(line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3);
-		}
+    /// <summary>
+    /// Writes three lines to the output.
+    /// </summary>
+    /// <param name="line1">First line.</param>
+    /// <param name="line2">Second line.</param>
+    /// <param name="line3">Three line.</param>
+    public void WriteThreeLines(string line1, string line2, string line3)
+    {
+      InternalWrite(line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3);
+    }
 
-		#endregion IDataDisplayService Members
-	}
+    #endregion IDataDisplayService Members
+  }
 }

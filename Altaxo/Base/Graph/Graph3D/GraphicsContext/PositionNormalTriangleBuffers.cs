@@ -30,19 +30,19 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	public struct PositionNormalIndexedTriangleBuffers
-	{
-		public IIndexedTriangleBuffer IndexedTriangleBuffer;
-		public IPositionNormalIndexedTriangleBuffer PositionNormalIndexedTriangleBuffer;
-		public IPositionNormalColorIndexedTriangleBuffer PositionNormalColorIndexedTriangleBuffer;
-		public IPositionNormalUVIndexedTriangleBuffer PositionNormalUVIndexedTriangleBuffer;
-	}
+  public struct PositionNormalIndexedTriangleBuffers
+  {
+    public IIndexedTriangleBuffer IndexedTriangleBuffer;
+    public IPositionNormalIndexedTriangleBuffer PositionNormalIndexedTriangleBuffer;
+    public IPositionNormalColorIndexedTriangleBuffer PositionNormalColorIndexedTriangleBuffer;
+    public IPositionNormalUVIndexedTriangleBuffer PositionNormalUVIndexedTriangleBuffer;
+  }
 
-	public struct PositionIndexedTriangleBuffers
-	{
-		public IIndexedTriangleBuffer IndexedTriangleBuffer;
-		public IPositionIndexedTriangleBuffer PositionIndexedTriangleBuffer;
-		public IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffer;
-		public IPositionUVIndexedTriangleBuffer PositionUVIndexedTriangleBuffer;
-	}
+  public struct PositionIndexedTriangleBuffers
+  {
+    public IIndexedTriangleBuffer IndexedTriangleBuffer;
+    public IPositionIndexedTriangleBuffer PositionIndexedTriangleBuffer;
+    public IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffer;
+    public IPositionUVIndexedTriangleBuffer PositionUVIndexedTriangleBuffer;
+  }
 }

@@ -30,36 +30,36 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D
 {
-	public class CharacterGeometry
-	{
-		private List<PolygonClosedWithNormalsD2D> _characterContour;
+  public class CharacterGeometry
+  {
+    private List<PolygonClosedWithNormalsD2D> _characterContour;
 
-		private IndexedTriangles _frontFace;
+    private IndexedTriangles _frontFace;
 
-		public IList<PolygonClosedWithNormalsD2D> CharacterContour { get { return _characterContour; } }
+    public IList<PolygonClosedWithNormalsD2D> CharacterContour { get { return _characterContour; } }
 
-		public IndexedTriangles FrontFace { get { return _frontFace; } }
+    public IndexedTriangles FrontFace { get { return _frontFace; } }
 
-		public double FontSize { get; protected set; }
-		public double LineSpacing { get; protected set; }
-		public double BaseLine { get; protected set; }
-		public double AdvanceWidth { get; protected set; }
-		public double LeftSideBearing { get; protected set; }
-		public double RightSideBearing { get; protected set; }
+    public double FontSize { get; protected set; }
+    public double LineSpacing { get; protected set; }
+    public double BaseLine { get; protected set; }
+    public double AdvanceWidth { get; protected set; }
+    public double LeftSideBearing { get; protected set; }
+    public double RightSideBearing { get; protected set; }
 
-		public CharacterGeometry(List<PolygonClosedWithNormalsD2D> characterContour, IndexedTriangles frontFace,
-			double fontSize, double lineSpacing, double baseLine,
-			double advanceWidth, double leftSideBearing, double rightSideBearing)
-		{
-			_characterContour = characterContour;
-			_frontFace = frontFace;
+    public CharacterGeometry(List<PolygonClosedWithNormalsD2D> characterContour, IndexedTriangles frontFace,
+      double fontSize, double lineSpacing, double baseLine,
+      double advanceWidth, double leftSideBearing, double rightSideBearing)
+    {
+      _characterContour = characterContour;
+      _frontFace = frontFace;
 
-			FontSize = fontSize;
-			LineSpacing = lineSpacing;
-			BaseLine = baseLine;
-			AdvanceWidth = advanceWidth;
-			LeftSideBearing = leftSideBearing;
-			RightSideBearing = rightSideBearing;
-		}
-	}
+      FontSize = fontSize;
+      LineSpacing = lineSpacing;
+      BaseLine = baseLine;
+      AdvanceWidth = advanceWidth;
+      LeftSideBearing = leftSideBearing;
+      RightSideBearing = rightSideBearing;
+    }
+  }
 }

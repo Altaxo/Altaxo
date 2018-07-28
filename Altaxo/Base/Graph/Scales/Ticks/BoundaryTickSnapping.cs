@@ -29,11 +29,11 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
-	public enum BoundaryTickSnapping
-	{
-		SnapToNothing,
-		SnapToMinorOrMajor,
-		SnapToMajorOnly,
-		SnapToMinorOnly,
-	}
+  public enum BoundaryTickSnapping
+  {
+    SnapToNothing,
+    SnapToMinorOrMajor,
+    SnapToMajorOnly,
+    SnapToMinorOnly,
+  }
 }

@@ -29,18 +29,18 @@ using System;
 
 namespace AltaxoTest.Calc.Integration
 {
-	[TestFixture]
-	public class QAWCTests
-	{
-		[Test]
-		public void TestSqrt()
-		{
-			const double expected = 1.0656799507071;
-			double result, abserr;
-			GSL_ERROR error;
-			error = QawcIntegration.Integration(z => Math.Sqrt(z), 0, 2, 1, 0, 1E-6, 100, out result, out abserr);
+  [TestFixture]
+  public class QAWCTests
+  {
+    [Test]
+    public void TestSqrt()
+    {
+      const double expected = 1.0656799507071;
+      double result, abserr;
+      GSL_ERROR error;
+      error = QawcIntegration.Integration(z => Math.Sqrt(z), 0, 2, 1, 0, 1E-6, 100, out result, out abserr);
 
-			NUnit.Framework.Assert.AreEqual(expected, result, expected * 1E-6);
-		}
-	}
+      NUnit.Framework.Assert.AreEqual(expected, result, expected * 1E-6);
+    }
+  }
 }

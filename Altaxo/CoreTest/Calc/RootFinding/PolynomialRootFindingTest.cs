@@ -30,148 +30,148 @@ using System.Collections.Generic;
 
 namespace Calc.RootFinding
 {
-	[TestFixture]
-	public class PolynomialRootFindingTest
-	{
-		/// <summary>Coefficients of the real polynomial (x-0)*(x-1)*(x-2)*...*(x-9). Lowest order coefficient comes first.</summary>
-		private static readonly double[] realCoefficients1 = { 0, -362880, 1026576, -1172700, 723680, -269325, 63273, -9450, 870, -45, 1 };
+  [TestFixture]
+  public class PolynomialRootFindingTest
+  {
+    /// <summary>Coefficients of the real polynomial (x-0)*(x-1)*(x-2)*...*(x-9). Lowest order coefficient comes first.</summary>
+    private static readonly double[] realCoefficients1 = { 0, -362880, 1026576, -1172700, 723680, -269325, 63273, -9450, 870, -45, 1 };
 
-		/// <summary>
-		/// Coefficients of the complex polynomial (x-4-4i)*(x-3-3i)*... *(x+3+3i)*(x+4+4i)
-		/// </summary>
-		private static readonly Complex[] complexCoefficients1 = { new Complex(0, 0), new Complex(9216, 0), new Complex(0, 0), new Complex(0, 6560), new Complex(0, 0), new Complex(-1092, 0), new Complex(0, 0), new Complex(0, -60), new Complex(0, 0), new Complex(1, 0) };
+    /// <summary>
+    /// Coefficients of the complex polynomial (x-4-4i)*(x-3-3i)*... *(x+3+3i)*(x+4+4i)
+    /// </summary>
+    private static readonly Complex[] complexCoefficients1 = { new Complex(0, 0), new Complex(9216, 0), new Complex(0, 0), new Complex(0, 6560), new Complex(0, 0), new Complex(-1092, 0), new Complex(0, 0), new Complex(0, -60), new Complex(0, 0), new Complex(1, 0) };
 
-		/// <summary>
-		/// Polynomial (x-0)*(x-1)*(x-2)*... *(x-9) should return the real roots 0, 1, 2, ... 9.
-		/// </summary>
-		[Test]
-		public void Test10DegreeRealPolynomial()
-		{
-			var roots = RealPolynomialRootFinder_JenkinsTraub.FindRoots(realCoefficients1);
+    /// <summary>
+    /// Polynomial (x-0)*(x-1)*(x-2)*... *(x-9) should return the real roots 0, 1, 2, ... 9.
+    /// </summary>
+    [Test]
+    public void Test10DegreeRealPolynomial()
+    {
+      var roots = RealPolynomialRootFinder_JenkinsTraub.FindRoots(realCoefficients1);
 
-			Assert.AreEqual(10, roots.Count);
-			for (int i = 0; i < roots.Count; ++i)
-				Assert.AreEqual(0, roots[i].Im);
+      Assert.AreEqual(10, roots.Count);
+      for (int i = 0; i < roots.Count; ++i)
+        Assert.AreEqual(0, roots[i].Im);
 
-			roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
+      roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
 
-			for (int i = 0; i < roots.Count; ++i)
-				Assert.AreEqual(i, roots[i].Re, 1E-7);
-		}
+      for (int i = 0; i < roots.Count; ++i)
+        Assert.AreEqual(i, roots[i].Re, 1E-7);
+    }
 
-		/// <summary>
-		/// Polynomial (x-0)*(x-1)*(x-2)*... *(x-9) should return the real roots 0, 1, 2, ... 9.
-		/// </summary>
-		[Test]
-		public void Test10DegreeComplexPolynomial()
-		{
-			Complex[] ccoeffs = new Complex[realCoefficients1.Length];
-			for (int i = 0; i < realCoefficients1.Length; ++i)
-				ccoeffs[i] = realCoefficients1[i];
+    /// <summary>
+    /// Polynomial (x-0)*(x-1)*(x-2)*... *(x-9) should return the real roots 0, 1, 2, ... 9.
+    /// </summary>
+    [Test]
+    public void Test10DegreeComplexPolynomial()
+    {
+      Complex[] ccoeffs = new Complex[realCoefficients1.Length];
+      for (int i = 0; i < realCoefficients1.Length; ++i)
+        ccoeffs[i] = realCoefficients1[i];
 
-			var roots = ComplexPolynomialRootFinder_JenkinsTraub.FindRoots(ccoeffs);
+      var roots = ComplexPolynomialRootFinder_JenkinsTraub.FindRoots(ccoeffs);
 
-			Assert.AreEqual(10, roots.Count);
-			for (int i = 0; i < roots.Count; ++i)
-				Assert.AreEqual(0, roots[i].Im, 1E-11);
+      Assert.AreEqual(10, roots.Count);
+      for (int i = 0; i < roots.Count; ++i)
+        Assert.AreEqual(0, roots[i].Im, 1E-11);
 
-			roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
+      roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
 
-			for (int i = 0; i < roots.Count; ++i)
-				Assert.AreEqual(i, roots[i].Re, 1E-7);
-		}
+      for (int i = 0; i < roots.Count; ++i)
+        Assert.AreEqual(i, roots[i].Re, 1E-7);
+    }
 
-		/// <summary>
-		/// Polynomial (x-4-4i)*(x-3-3i)*... *(x+3+3i)*(x+4+4i) should return the complex roots -4-4i, -3-3i, ... 4+4i
-		/// </summary>
-		[Test]
-		public void Test9DegreeComplexPolynomial()
-		{
-			var roots = ComplexPolynomialRootFinder_JenkinsTraub.FindRoots(complexCoefficients1);
-			Assert.AreEqual(9, roots.Count);
+    /// <summary>
+    /// Polynomial (x-4-4i)*(x-3-3i)*... *(x+3+3i)*(x+4+4i) should return the complex roots -4-4i, -3-3i, ... 4+4i
+    /// </summary>
+    [Test]
+    public void Test9DegreeComplexPolynomial()
+    {
+      var roots = ComplexPolynomialRootFinder_JenkinsTraub.FindRoots(complexCoefficients1);
+      Assert.AreEqual(9, roots.Count);
 
-			roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
+      roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
 
-			for (int i = 0; i < roots.Count; ++i)
-			{
-				Assert.AreEqual(i - 4, roots[i].Im, 1E-12);
-				Assert.AreEqual(i - 4, roots[i].Re, 1E-12);
-			}
-		}
+      for (int i = 0; i < roots.Count; ++i)
+      {
+        Assert.AreEqual(i - 4, roots[i].Im, 1E-12);
+        Assert.AreEqual(i - 4, roots[i].Re, 1E-12);
+      }
+    }
 
-		[Test]
-		public void TestRootsToCoefficientsReal()
-		{
-			var r = new double[10];
-			for (int i = 0; i < r.Length; ++i)
-				r[i] = i;
+    [Test]
+    public void TestRootsToCoefficientsReal()
+    {
+      var r = new double[10];
+      for (int i = 0; i < r.Length; ++i)
+        r[i] = i;
 
-			var c = CoefficientsFromRoots(r);
-			Assert.AreEqual(realCoefficients1.Length, c.Length);
-			for (int i = 0; i < c.Length; ++i)
-				Assert.AreEqual(realCoefficients1[i], c[i]);
-		}
+      var c = CoefficientsFromRoots(r);
+      Assert.AreEqual(realCoefficients1.Length, c.Length);
+      for (int i = 0; i < c.Length; ++i)
+        Assert.AreEqual(realCoefficients1[i], c[i]);
+    }
 
-		[Test]
-		public void TestRootsToCoefficientsComplex()
-		{
-			var r = new Complex[9];
-			for (int i = 0; i < r.Length; ++i)
-				r[i] = new Complex(i - 4, i - 4);
+    [Test]
+    public void TestRootsToCoefficientsComplex()
+    {
+      var r = new Complex[9];
+      for (int i = 0; i < r.Length; ++i)
+        r[i] = new Complex(i - 4, i - 4);
 
-			var c = CoefficientsFromRoots(r);
-			Assert.AreEqual(complexCoefficients1.Length, c.Length);
-			for (int i = 0; i < c.Length; ++i)
-			{
-				Assert.AreEqual(complexCoefficients1[i].Re, c[i].Re);
-				Assert.AreEqual(complexCoefficients1[i].Im, c[i].Im);
-			}
-		}
+      var c = CoefficientsFromRoots(r);
+      Assert.AreEqual(complexCoefficients1.Length, c.Length);
+      for (int i = 0; i < c.Length; ++i)
+      {
+        Assert.AreEqual(complexCoefficients1[i].Re, c[i].Re);
+        Assert.AreEqual(complexCoefficients1[i].Im, c[i].Im);
+      }
+    }
 
-		/// <summary>
-		/// Calculate the coefficients of a polynom from it's roots.
-		/// </summary>
-		/// <param name="roots">The roots.</param>
-		/// <returns>The coefficients of the polynom, with the lowest order coefficient at index 0. The highest order coefficient is at index [number of roots] and is always 1.</returns>
-		private static double[] CoefficientsFromRoots(double[] roots)
-		{
-			var coeff = new double[roots.Length + 1];
-			coeff[0] = 1;
+    /// <summary>
+    /// Calculate the coefficients of a polynom from it's roots.
+    /// </summary>
+    /// <param name="roots">The roots.</param>
+    /// <returns>The coefficients of the polynom, with the lowest order coefficient at index 0. The highest order coefficient is at index [number of roots] and is always 1.</returns>
+    private static double[] CoefficientsFromRoots(double[] roots)
+    {
+      var coeff = new double[roots.Length + 1];
+      coeff[0] = 1;
 
-			for (int i = 0; i < roots.Length; ++i)
-			{
-				var root = -roots[i];
+      for (int i = 0; i < roots.Length; ++i)
+      {
+        var root = -roots[i];
 
-				for (int j = i + 1; j > 0; --j)
-					coeff[j] = coeff[j] * root + coeff[j - 1];
+        for (int j = i + 1; j > 0; --j)
+          coeff[j] = coeff[j] * root + coeff[j - 1];
 
-				coeff[0] = coeff[0] * root;
-			}
+        coeff[0] = coeff[0] * root;
+      }
 
-			return coeff;
-		}
+      return coeff;
+    }
 
-		/// <summary>
-		/// Calculate the coefficients of a polynom from it's roots.
-		/// </summary>
-		/// <param name="roots">The roots.</param>
-		/// <returns>The coefficients of the polynom, with the lowest order coefficient at index 0. The highest order coefficient is at index [number of roots] and is always 1.</returns>
-		private static Complex[] CoefficientsFromRoots(Complex[] roots)
-		{
-			var coeff = new Complex[roots.Length + 1];
-			coeff[0] = 1;
+    /// <summary>
+    /// Calculate the coefficients of a polynom from it's roots.
+    /// </summary>
+    /// <param name="roots">The roots.</param>
+    /// <returns>The coefficients of the polynom, with the lowest order coefficient at index 0. The highest order coefficient is at index [number of roots] and is always 1.</returns>
+    private static Complex[] CoefficientsFromRoots(Complex[] roots)
+    {
+      var coeff = new Complex[roots.Length + 1];
+      coeff[0] = 1;
 
-			for (int i = 0; i < roots.Length; ++i)
-			{
-				var root = -roots[i];
+      for (int i = 0; i < roots.Length; ++i)
+      {
+        var root = -roots[i];
 
-				for (int j = i + 1; j > 0; --j)
-					coeff[j] = coeff[j] * root + coeff[j - 1];
+        for (int j = i + 1; j > 0; --j)
+          coeff[j] = coeff[j] * root + coeff[j - 1];
 
-				coeff[0] = coeff[0] * root;
-			}
+        coeff[0] = coeff[0] * root;
+      }
 
-			return coeff;
-		}
-	}
+      return coeff;
+    }
+  }
 }

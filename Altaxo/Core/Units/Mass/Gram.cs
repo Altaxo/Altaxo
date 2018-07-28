@@ -30,45 +30,45 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.Mass
 {
-	[UnitDescription("Mass", 0, 1, 0, 0, 0, 0, 0)]
-	public class Gram : UnitBase, IUnit
-	{
-		private static readonly Gram _instance = new Gram();
+  [UnitDescription("Mass", 0, 1, 0, 0, 0, 0, 0)]
+  public class Gram : UnitBase, IUnit
+  {
+    private static readonly Gram _instance = new Gram();
 
-		public static Gram Instance { get { return _instance; } }
+    public static Gram Instance { get { return _instance; } }
 
-		private Gram()
-		{
-		}
+    private Gram()
+    {
+    }
 
-		public string Name
-		{
-			get { return "Gram"; }
-		}
+    public string Name
+    {
+      get { return "Gram"; }
+    }
 
-		public string ShortCut
-		{
-			get { return "g"; }
-		}
+    public string ShortCut
+    {
+      get { return "g"; }
+    }
 
-		public double ToSIUnit(double x)
-		{
-			return x / 1000;
-		}
+    public double ToSIUnit(double x)
+    {
+      return x / 1000;
+    }
 
-		public double FromSIUnit(double x)
-		{
-			return x * 1000;
-		}
+    public double FromSIUnit(double x)
+    {
+      return x * 1000;
+    }
 
-		public ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithAllKnownPrefixes; }
-		}
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithAllKnownPrefixes; }
+    }
 
-		public SIUnit SIUnit
-		{
-			get { return Kilogram.Instance; }
-		}
-	}
+    public SIUnit SIUnit
+    {
+      get { return Kilogram.Instance; }
+    }
+  }
 }

@@ -29,148 +29,148 @@ using System.Text;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-	public class ListViewDragDropDataObject : Altaxo.Serialization.Clipboard.IDataObject
-	{
-		public const string Format_ApplicationInstanceGuid = "Altaxo.Current.ApplicationInstanceGuid";
-		public const string Format_ProjectFolder = "Altaxo.Gui.Pads.ProjectBrowser.FolderName";
-		public const string Format_ItemList = "Altaxo.Gui.Pads.ProjectBrowser.ItemList";
-		public const string Format_ItemReferenceList = "Altaxo.Gui.Pads.ProjectBrowser.ItemReferenceList";
+  public class ListViewDragDropDataObject : Altaxo.Serialization.Clipboard.IDataObject
+  {
+    public const string Format_ApplicationInstanceGuid = "Altaxo.Current.ApplicationInstanceGuid";
+    public const string Format_ProjectFolder = "Altaxo.Gui.Pads.ProjectBrowser.FolderName";
+    public const string Format_ItemList = "Altaxo.Gui.Pads.ProjectBrowser.ItemList";
+    public const string Format_ItemReferenceList = "Altaxo.Gui.Pads.ProjectBrowser.ItemReferenceList";
 
-		private List<string> _availableFormats;
+    private List<string> _availableFormats;
 
-		public string FolderName { get; set; }
+    public string FolderName { get; set; }
 
-		/// <summary>
-		/// Gets or sets the item list. This list either contains project items (for foreign applications) or DocNodeProxies (for our own application instance).
-		/// </summary>
-		/// <value>
-		/// The item list.
-		/// </value>
-		public List<Altaxo.Main.IProjectItem> ItemList { get; set; }
+    /// <summary>
+    /// Gets or sets the item list. This list either contains project items (for foreign applications) or DocNodeProxies (for our own application instance).
+    /// </summary>
+    /// <value>
+    /// The item list.
+    /// </value>
+    public List<Altaxo.Main.IProjectItem> ItemList { get; set; }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the item list was rendered.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if item list was rendered; otherwise, <c>false</c>.
-		/// </value>
-		public bool ItemListWasRendered { get; protected set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether the item list was rendered.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if item list was rendered; otherwise, <c>false</c>.
+    /// </value>
+    public bool ItemListWasRendered { get; protected set; }
 
-		public object GetData(string format, bool autoConvert)
-		{
-			object result = null;
-			switch (format)
-			{
-				case Format_ProjectFolder:
-					result = FolderName;
-					break;
+    public object GetData(string format, bool autoConvert)
+    {
+      object result = null;
+      switch (format)
+      {
+        case Format_ProjectFolder:
+          result = FolderName;
+          break;
 
-				case Format_ApplicationInstanceGuid:
-					result = Current.ApplicationInstanceGuid.ToString();
-					break;
+        case Format_ApplicationInstanceGuid:
+          result = Current.ApplicationInstanceGuid.ToString();
+          break;
 
-				case Format_ItemList:
-					{
-						var items = new Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList(ItemList, FolderName);
-						var stb = Altaxo.Serialization.Clipboard.ClipboardSerialization.SerializeToStringBuilder(items);
-						result = stb.ToString();
-						ItemListWasRendered = true;
-					}
-					break;
+        case Format_ItemList:
+          {
+            var items = new Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList(ItemList, FolderName);
+            var stb = Altaxo.Serialization.Clipboard.ClipboardSerialization.SerializeToStringBuilder(items);
+            result = stb.ToString();
+            ItemListWasRendered = true;
+          }
+          break;
 
-				case Format_ItemReferenceList:
-					{
-						var itemReferenceList = new List<Altaxo.Main.DocNodeProxy>(ItemList.Select(x => new Altaxo.Main.DocNodeProxy(x)));
-						var items = new Altaxo.Main.Commands.ProjectItemCommands.ProjectItemReferenceClipboardList(itemReferenceList, FolderName);
-						var stb = Altaxo.Serialization.Clipboard.ClipboardSerialization.SerializeToStringBuilder(items);
-						result = stb.ToString();
-					}
-					break;
+        case Format_ItemReferenceList:
+          {
+            var itemReferenceList = new List<Altaxo.Main.DocNodeProxy>(ItemList.Select(x => new Altaxo.Main.DocNodeProxy(x)));
+            var items = new Altaxo.Main.Commands.ProjectItemCommands.ProjectItemReferenceClipboardList(itemReferenceList, FolderName);
+            var stb = Altaxo.Serialization.Clipboard.ClipboardSerialization.SerializeToStringBuilder(items);
+            result = stb.ToString();
+          }
+          break;
 
-				default:
-					result = null;
-					break;
-			}
+        default:
+          result = null;
+          break;
+      }
 
-			return result;
-		}
+      return result;
+    }
 
-		public object GetData(string format)
-		{
-			return GetData(format, true);
-		}
+    public object GetData(string format)
+    {
+      return GetData(format, true);
+    }
 
-		public bool GetDataPresent(string format, bool autoConvert)
-		{
-			if (null == _availableFormats)
-				SetFormats();
+    public bool GetDataPresent(string format, bool autoConvert)
+    {
+      if (null == _availableFormats)
+        SetFormats();
 
-			return _availableFormats.Contains(format);
-		}
+      return _availableFormats.Contains(format);
+    }
 
-		public bool GetDataPresent(string format)
-		{
-			return GetDataPresent(format, true);
-		}
+    public bool GetDataPresent(string format)
+    {
+      return GetDataPresent(format, true);
+    }
 
-		public string[] GetFormats(bool autoConvert)
-		{
-			if (null == _availableFormats)
-				SetFormats();
+    public string[] GetFormats(bool autoConvert)
+    {
+      if (null == _availableFormats)
+        SetFormats();
 
-			return _availableFormats.ToArray();
-		}
+      return _availableFormats.ToArray();
+    }
 
-		public string[] GetFormats()
-		{
-			return GetFormats(true);
-		}
+    public string[] GetFormats()
+    {
+      return GetFormats(true);
+    }
 
-		public void SetFormats()
-		{
-			_availableFormats = new List<string>();
+    public void SetFormats()
+    {
+      _availableFormats = new List<string>();
 
-			if (null != FolderName)
-				_availableFormats.Add(Format_ProjectFolder);
+      if (null != FolderName)
+        _availableFormats.Add(Format_ProjectFolder);
 
-			_availableFormats.Add(Format_ApplicationInstanceGuid);
+      _availableFormats.Add(Format_ApplicationInstanceGuid);
 
-			_availableFormats.Add(Format_ItemList);
-			_availableFormats.Add(Format_ItemReferenceList);
-		}
+      _availableFormats.Add(Format_ItemList);
+      _availableFormats.Add(Format_ItemReferenceList);
+    }
 
-		#region Not implemented interface functions
+    #region Not implemented interface functions
 
-		public object GetData(Type format)
-		{
-			throw new NotImplementedException();
-		}
+    public object GetData(Type format)
+    {
+      throw new NotImplementedException();
+    }
 
-		public bool GetDataPresent(Type format)
-		{
-			throw new NotImplementedException();
-		}
+    public bool GetDataPresent(Type format)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void SetData(string format, object data, bool autoConvert)
-		{
-			throw new NotImplementedException();
-		}
+    public void SetData(string format, object data, bool autoConvert)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void SetData(Type format, object data)
-		{
-			throw new NotImplementedException();
-		}
+    public void SetData(Type format, object data)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void SetData(string format, object data)
-		{
-			throw new NotImplementedException();
-		}
+    public void SetData(string format, object data)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void SetData(object data)
-		{
-			throw new NotImplementedException();
-		}
+    public void SetData(object data)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Not implemented interface functions
-	}
+    #endregion Not implemented interface functions
+  }
 }

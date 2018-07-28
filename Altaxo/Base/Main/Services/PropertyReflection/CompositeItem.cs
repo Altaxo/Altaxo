@@ -29,47 +29,47 @@ using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
-	/// <summary>
-	///
-	/// </summary>
-	/// <remarks>
-	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
-	/// </remarks>
-	public abstract class CompositeItem : Item
-	{
-		#region Fields
+  /// <summary>
+  ///
+  /// </summary>
+  /// <remarks>
+  /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
+  /// </remarks>
+  public abstract class CompositeItem : Item
+  {
+    #region Fields
 
-		private readonly ObservableCollection<Item> _items = new ObservableCollection<Item>();
+    private readonly ObservableCollection<Item> _items = new ObservableCollection<Item>();
 
-		#endregion Fields
+    #endregion Fields
 
-		#region Properties
+    #region Properties
 
-		public ObservableCollection<Item> Items
-		{
-			get { return _items; }
-		}
+    public ObservableCollection<Item> Items
+    {
+      get { return _items; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region IDisposable Members
+    #region IDisposable Members
 
-		protected override void Dispose(bool disposing)
-		{
-			if (Disposed)
-			{
-				return;
-			}
-			if (disposing)
-			{
-				foreach (Item item in Items)
-				{
-					item.Dispose();
-				}
-			}
-			base.Dispose(disposing);
-		}
+    protected override void Dispose(bool disposing)
+    {
+      if (Disposed)
+      {
+        return;
+      }
+      if (disposing)
+      {
+        foreach (Item item in Items)
+        {
+          item.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#endregion IDisposable Members
-	}
+    #endregion IDisposable Members
+  }
 }

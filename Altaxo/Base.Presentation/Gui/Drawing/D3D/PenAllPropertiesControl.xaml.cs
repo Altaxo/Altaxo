@@ -33,62 +33,62 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
-	/// <summary>
-	/// Interaction logic for PenAllPropertiesControl.xaml
-	/// </summary>
-	public partial class PenAllPropertiesControl : UserControl, IPenAllPropertiesView
-	{
-		private PenControlsGlue _glue;
+  /// <summary>
+  /// Interaction logic for PenAllPropertiesControl.xaml
+  /// </summary>
+  public partial class PenAllPropertiesControl : UserControl, IPenAllPropertiesView
+  {
+    private PenControlsGlue _glue;
 
-		public PenAllPropertiesControl()
-		{
-			InitializeComponent();
+    public PenAllPropertiesControl()
+    {
+      InitializeComponent();
 
-			_glue = new PenControlsGlue(true);
-			_glue.CbBrush = _cbBrush;
-			_glue.CbLineThickness1 = _cbThickness1;
-			_glue.CbLineThickness2 = _cbThickness2;
-			_glue.CbCrossSection = _guiCrossSection;
+      _glue = new PenControlsGlue(true);
+      _glue.CbBrush = _cbBrush;
+      _glue.CbLineThickness1 = _cbThickness1;
+      _glue.CbLineThickness2 = _cbThickness2;
+      _glue.CbCrossSection = _guiCrossSection;
 
-			_glue.CbLineStartCap = _cbLineStartCap;
-			_glue.CbLineStartCapAbsSize = _cbLineStartCapSize;
-			_glue.CbLineStartCapRelSize = _edLineStartCapRelSize;
+      _glue.CbLineStartCap = _cbLineStartCap;
+      _glue.CbLineStartCapAbsSize = _cbLineStartCapSize;
+      _glue.CbLineStartCapRelSize = _edLineStartCapRelSize;
 
-			_glue.CbLineEndCap = _cbLineEndCap;
-			_glue.CbLineEndCapAbsSize = _cbLineEndCapSize;
-			_glue.CbLineEndCapRelSize = _edLineEndCapRelSize;
+      _glue.CbLineEndCap = _cbLineEndCap;
+      _glue.CbLineEndCapAbsSize = _cbLineEndCapSize;
+      _glue.CbLineEndCapRelSize = _edLineEndCapRelSize;
 
-			_glue.CbDashPattern = _cbDashStyle;
+      _glue.CbDashPattern = _cbDashStyle;
 
-			_glue.CbDashStartCap = _cbDashStartCap;
-			_glue.CbDashStartCapAbsSize = _cbDashStartCapSize;
-			_glue.CbDashStartCapRelSize = _edDashStartCapRelSize;
+      _glue.CbDashStartCap = _cbDashStartCap;
+      _glue.CbDashStartCapAbsSize = _cbDashStartCapSize;
+      _glue.CbDashStartCapRelSize = _edDashStartCapRelSize;
 
-			_glue.CbDashEndCap = _cbDashEndCap;
-			_glue.CbDashEndCapAbsSize = _cbDashEndCapSize;
-			_glue.CbDashEndCapRelSize = _edDashEndCapRelSize;
+      _glue.CbDashEndCap = _cbDashEndCap;
+      _glue.CbDashEndCapAbsSize = _cbDashEndCapSize;
+      _glue.CbDashEndCapRelSize = _edDashEndCapRelSize;
 
-			_glue.CbLineJoin = _cbLineJoin;
-			_glue.CbMiterLimit = _cbMiterLimit;
+      _glue.CbLineJoin = _cbLineJoin;
+      _glue.CbMiterLimit = _cbMiterLimit;
 
-			_glue.PreviewPanel = _previewPanel;
-		}
+      _glue.PreviewPanel = _previewPanel;
+    }
 
-		public PenX3D Pen
-		{
-			get
-			{
-				return _glue.Pen;
-			}
-			set
-			{
-				_glue.Pen = value;
-			}
-		}
+    public PenX3D Pen
+    {
+      get
+      {
+        return _glue.Pen;
+      }
+      set
+      {
+        _glue.Pen = value;
+      }
+    }
 
-		public bool ShowPlotColorsOnly
-		{
-			set { _glue.ShowPlotColorsOnly = value; }
-		}
-	}
+    public bool ShowPlotColorsOnly
+    {
+      set { _glue.ShowPlotColorsOnly = value; }
+    }
+  }
 }

@@ -30,65 +30,65 @@ using System.Text;
 
 namespace Altaxo.Geometry
 {
-	/// <summary>
-	/// Stores a closed polygon and the normals. In order to distinguish between soft vertices and sharp vertices, the sharp vertices are
-	/// stored twice, because every sharp vertex has two normals. Thus there is a 1:1 relationship between the indices of the normals and the points.
-	/// </summary>
-	public class PolygonClosedWithNormalsD2D
-	{
-		private PointD2D[] _points;
-		private PointD2D[] _normals;
+  /// <summary>
+  /// Stores a closed polygon and the normals. In order to distinguish between soft vertices and sharp vertices, the sharp vertices are
+  /// stored twice, because every sharp vertex has two normals. Thus there is a 1:1 relationship between the indices of the normals and the points.
+  /// </summary>
+  public class PolygonClosedWithNormalsD2D
+  {
+    private PointD2D[] _points;
+    private PointD2D[] _normals;
 
-		public PointD2D[] Points { get { return _points; } }
-		public PointD2D[] Normals { get { return _normals; } }
+    public PointD2D[] Points { get { return _points; } }
+    public PointD2D[] Normals { get { return _normals; } }
 
-		public PolygonClosedWithNormalsD2D(PolygonClosedD2D template)
-		{
-			var numPoints = template.Points.Length + template.SharpPoints.Count;
+    public PolygonClosedWithNormalsD2D(PolygonClosedD2D template)
+    {
+      var numPoints = template.Points.Length + template.SharpPoints.Count;
 
-			_points = new PointD2D[numPoints];
-			_normals = new PointD2D[numPoints];
+      _points = new PointD2D[numPoints];
+      _normals = new PointD2D[numPoints];
 
-			var srcPoints = template.Points;
-			var srcCount = srcPoints.Length;
-			var startPoint = srcPoints[srcCount - 1];
+      var srcPoints = template.Points;
+      var srcCount = srcPoints.Length;
+      var startPoint = srcPoints[srcCount - 1];
 
-			int destIdx = 0;
-			for (int i = 0; i < srcCount; ++i)
-			{
-				var toHereVector = srcPoints[i] - startPoint;
-				var fromHereVector = srcPoints[(i + 1) % srcCount] - srcPoints[i];
+      int destIdx = 0;
+      for (int i = 0; i < srcCount; ++i)
+      {
+        var toHereVector = srcPoints[i] - startPoint;
+        var fromHereVector = srcPoints[(i + 1) % srcCount] - srcPoints[i];
 
-				if (template.SharpPoints.Contains(srcPoints[i]))
-				{
-					var normal = GetNormal(toHereVector, template.IsHole);
-					_points[destIdx] = srcPoints[i];
-					_normals[destIdx] = normal;
-					++destIdx;
+        if (template.SharpPoints.Contains(srcPoints[i]))
+        {
+          var normal = GetNormal(toHereVector, template.IsHole);
+          _points[destIdx] = srcPoints[i];
+          _normals[destIdx] = normal;
+          ++destIdx;
 
-					normal = GetNormal(fromHereVector, template.IsHole);
-					_points[destIdx] = srcPoints[i];
-					_normals[destIdx] = normal;
-					++destIdx;
-				}
-				else
-				{
-					var normal = GetNormal(toHereVector + fromHereVector, template.IsHole);
-					_points[destIdx] = srcPoints[i];
-					_normals[destIdx] = normal;
-					++destIdx;
-				}
+          normal = GetNormal(fromHereVector, template.IsHole);
+          _points[destIdx] = srcPoints[i];
+          _normals[destIdx] = normal;
+          ++destIdx;
+        }
+        else
+        {
+          var normal = GetNormal(toHereVector + fromHereVector, template.IsHole);
+          _points[destIdx] = srcPoints[i];
+          _normals[destIdx] = normal;
+          ++destIdx;
+        }
 
-				startPoint = srcPoints[i];
-			}
+        startPoint = srcPoints[i];
+      }
 
-			if (!(numPoints == destIdx))
-				throw new InvalidProgramException();
-		}
+      if (!(numPoints == destIdx))
+        throw new InvalidProgramException();
+    }
 
-		private PointD2D GetNormal(PointD2D polygonVector, bool isHole)
-		{
-			return new PointD2D(polygonVector.Y, -polygonVector.X) / polygonVector.VectorLength;
-		}
-	}
+    private PointD2D GetNormal(PointD2D polygonVector, bool isHole)
+    {
+      return new PointD2D(polygonVector.Y, -polygonVector.X) / polygonVector.VectorLength;
+    }
+  }
 }

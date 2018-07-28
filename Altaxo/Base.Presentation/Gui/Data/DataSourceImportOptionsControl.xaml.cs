@@ -30,103 +30,103 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Data
 {
-	/// <summary>
-	/// Interaction logic for DataSourceImportOptionsControl.xaml
-	/// </summary>
-	public partial class DataSourceImportOptionsControl : UserControl, IDataSourceImportOptionsView
-	{
-		public DataSourceImportOptionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for DataSourceImportOptionsControl.xaml
+  /// </summary>
+  public partial class DataSourceImportOptionsControl : UserControl, IDataSourceImportOptionsView
+  {
+    public DataSourceImportOptionsControl()
+    {
+      InitializeComponent();
+    }
 
-		public bool DoNotSaveTableData
-		{
-			get
-			{
-				return _guiDoNotSaveTableData.IsChecked == true;
-			}
-			set
-			{
-				_guiDoNotSaveTableData.IsChecked = value;
-			}
-		}
+    public bool DoNotSaveTableData
+    {
+      get
+      {
+        return _guiDoNotSaveTableData.IsChecked == true;
+      }
+      set
+      {
+        _guiDoNotSaveTableData.IsChecked = value;
+      }
+    }
 
-		public bool ExecuteScriptAfterImport
-		{
-			get
-			{
-				return _guiExecuteWksScriptAfterImport.IsChecked == true;
-			}
-			set
-			{
-				_guiExecuteWksScriptAfterImport.IsChecked = value;
-			}
-		}
+    public bool ExecuteScriptAfterImport
+    {
+      get
+      {
+        return _guiExecuteWksScriptAfterImport.IsChecked == true;
+      }
+      set
+      {
+        _guiExecuteWksScriptAfterImport.IsChecked = value;
+      }
+    }
 
-		public void InitializeTriggerSource(Altaxo.Collections.SelectableListNodeList list)
-		{
-			_guiTrigger.Initialize(list);
-		}
+    public void InitializeTriggerSource(Altaxo.Collections.SelectableListNodeList list)
+    {
+      _guiTrigger.Initialize(list);
+    }
 
-		public double MinimumWaitingTimeAfterUpdateInSeconds
-		{
-			get
-			{
-				return _guiMinTimeAfterUpdate.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_guiMinTimeAfterUpdate.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double MinimumWaitingTimeAfterUpdateInSeconds
+    {
+      get
+      {
+        return _guiMinTimeAfterUpdate.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _guiMinTimeAfterUpdate.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double MaximumWaitingTimeAfterUpdateInSeconds
-		{
-			get
-			{
-				return _guiMaxTimeAfterUpdate.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_guiMaxTimeAfterUpdate.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double MaximumWaitingTimeAfterUpdateInSeconds
+    {
+      get
+      {
+        return _guiMaxTimeAfterUpdate.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _guiMaxTimeAfterUpdate.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double MinimumWaitingTimeAfterFirstTriggerInSeconds
-		{
-			get
-			{
-				return _guiMinimumTimeAfterFirstTrigger.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_guiMinimumTimeAfterFirstTrigger.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double MinimumWaitingTimeAfterFirstTriggerInSeconds
+    {
+      get
+      {
+        return _guiMinimumTimeAfterFirstTrigger.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _guiMinimumTimeAfterFirstTrigger.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double MaximumWaitingTimeAfterFirstTriggerInSeconds
-		{
-			get
-			{
-				return _guiMaximumTimeAfterFirstTrigger.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_guiMaximumTimeAfterFirstTrigger.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double MaximumWaitingTimeAfterFirstTriggerInSeconds
+    {
+      get
+      {
+        return _guiMaximumTimeAfterFirstTrigger.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _guiMaximumTimeAfterFirstTrigger.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double MinimumWaitingTimeAfterLastTriggerInSeconds
-		{
-			get
-			{
-				return _guiMinimumTimeAfterLastTrigger.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_guiMinimumTimeAfterLastTrigger.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
-	}
+    public double MinimumWaitingTimeAfterLastTriggerInSeconds
+    {
+      get
+      {
+        return _guiMinimumTimeAfterLastTrigger.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _guiMinimumTimeAfterLastTrigger.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
+  }
 }

@@ -31,132 +31,132 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// Handles the drawing of a straight single line.
-	/// </summary>
-	public class SingleLineDrawingMouseHandler : MouseStateHandler
-	{
-		#region Member variables
+  /// <summary>
+  /// Handles the drawing of a straight single line.
+  /// </summary>
+  public class SingleLineDrawingMouseHandler : MouseStateHandler
+  {
+    #region Member variables
 
-		protected GraphController _grac;
+    protected GraphController _grac;
 
-		protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
+    protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
-		protected POINT[] _Points = new POINT[2];
-		protected int _currentPoint;
+    protected POINT[] _Points = new POINT[2];
+    protected int _currentPoint;
 
-		#endregion Member variables
+    #endregion Member variables
 
-		public SingleLineDrawingMouseHandler(GraphController view)
-		{
-			this._grac = view;
+    public SingleLineDrawingMouseHandler(GraphController view)
+    {
+      this._grac = view;
 
-			if (_grac != null)
-				_grac.SetPanelCursor(Cursors.Pen);
-		}
+      if (_grac != null)
+        _grac.SetPanelCursor(Cursors.Pen);
+    }
 
-		public override GraphToolType GraphToolType
-		{
-			get { return GraphToolType.SingleLineDrawing; }
-		}
+    public override GraphToolType GraphToolType
+    {
+      get { return GraphToolType.SingleLineDrawing; }
+    }
 
-		/// <summary>
-		/// Handles the drawing of a straight single line.
-		/// </summary>
-		/// <param name="position">Mouse position.</param>
-		/// <param name="e">EventArgs.</param>
-		/// <returns>The mouse state handler for handling the next mouse events.</returns>
-		public override void OnClick(PointD2D position, MouseButtonEventArgs e)
-		{
-			base.OnClick(position, e);
+    /// <summary>
+    /// Handles the drawing of a straight single line.
+    /// </summary>
+    /// <param name="position">Mouse position.</param>
+    /// <param name="e">EventArgs.</param>
+    /// <returns>The mouse state handler for handling the next mouse events.</returns>
+    public override void OnClick(PointD2D position, MouseButtonEventArgs e)
+    {
+      base.OnClick(position, e);
 
-			if (0 == _currentPoint)
-			{
-				_cachedActiveLayer = _grac.ActiveLayer;
-				_cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-				_cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
-			}
+      if (0 == _currentPoint)
+      {
+        _cachedActiveLayer = _grac.ActiveLayer;
+        _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+        _cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+      }
 
-			// get the page coordinates (in Point (1/72") units)
-			var rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
-			// with knowledge of the current active layer, calculate the layer coordinates from them
-			var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
+      // get the page coordinates (in Point (1/72") units)
+      var rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
+      // with knowledge of the current active layer, calculate the layer coordinates from them
+      var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
-			_Points[_currentPoint].LayerCoordinates = layerCoord;
-			_Points[_currentPoint].RootLayerCoordinates = rootLayerCoord;
-			_currentPoint++;
+      _Points[_currentPoint].LayerCoordinates = layerCoord;
+      _Points[_currentPoint].RootLayerCoordinates = rootLayerCoord;
+      _currentPoint++;
 
-			if (2 == _currentPoint)
-			{
-				FinishDrawing();
-				_currentPoint = 0;
-				_grac.SetGraphToolFromInternal(NextMouseHandlerType);
-			}
-		}
+      if (2 == _currentPoint)
+      {
+        FinishDrawing();
+        _currentPoint = 0;
+        _grac.SetGraphToolFromInternal(NextMouseHandlerType);
+      }
+    }
 
-		public override void OnMouseMove(PointD2D position, MouseEventArgs e)
-		{
-			base.OnMouseMove(position, e);
+    public override void OnMouseMove(PointD2D position, MouseEventArgs e)
+    {
+      base.OnMouseMove(position, e);
 
-			_positionCurrentMouseInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
+      _positionCurrentMouseInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
 
-			ModifyCurrentMousePrintAreaCoordinate();
+      ModifyCurrentMousePrintAreaCoordinate();
 
-			_grac.RenderOverlay();
-		}
+      _grac.RenderOverlay();
+    }
 
-		protected virtual void ModifyCurrentMousePrintAreaCoordinate()
-		{
-			if (_currentPoint > 0)
-			{
-				bool bControlKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Control); // Control pressed
-				bool bShiftKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
-				// draw a temporary lines of all points to the current mouse position
+    protected virtual void ModifyCurrentMousePrintAreaCoordinate()
+    {
+      if (_currentPoint > 0)
+      {
+        bool bControlKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Control); // Control pressed
+        bool bShiftKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+        // draw a temporary lines of all points to the current mouse position
 
-				if (bShiftKey && _currentPoint > 0)
-				{
-					double x = _positionCurrentMouseInRootLayerCoordinates.X - _Points[_currentPoint - 1].RootLayerCoordinates.X;
-					double y = _positionCurrentMouseInRootLayerCoordinates.Y - _Points[_currentPoint - 1].RootLayerCoordinates.Y;
+        if (bShiftKey && _currentPoint > 0)
+        {
+          double x = _positionCurrentMouseInRootLayerCoordinates.X - _Points[_currentPoint - 1].RootLayerCoordinates.X;
+          double y = _positionCurrentMouseInRootLayerCoordinates.Y - _Points[_currentPoint - 1].RootLayerCoordinates.Y;
 
-					double r = Math.Sqrt(x * x + y * y);
-					double d = Math.Atan2(y, x);
+          double r = Math.Sqrt(x * x + y * y);
+          double d = Math.Atan2(y, x);
 
-					d = Math.Floor(0.5 + 12 * d / Math.PI); // lock every 15 degrees
-					d = d * Math.PI / 12;
+          d = Math.Floor(0.5 + 12 * d / Math.PI); // lock every 15 degrees
+          d = d * Math.PI / 12;
 
-					x = r * Math.Cos(d);
-					y = r * Math.Sin(d);
+          x = r * Math.Cos(d);
+          y = r * Math.Sin(d);
 
-					_positionCurrentMouseInRootLayerCoordinates = new PointD2D(
-						(x + _Points[_currentPoint - 1].RootLayerCoordinates.X),
-						(y + _Points[_currentPoint - 1].RootLayerCoordinates.Y)
-						);
-				}
-			}
-		}
+          _positionCurrentMouseInRootLayerCoordinates = new PointD2D(
+            (x + _Points[_currentPoint - 1].RootLayerCoordinates.X),
+            (y + _Points[_currentPoint - 1].RootLayerCoordinates.Y)
+            );
+        }
+      }
+    }
 
-		/// <summary>
-		/// Draws the temporary line(s) from the first point to the mouse.
-		/// </summary>
-		/// <param name="g"></param>
-		public override void AfterPaint(Graphics g)
-		{
-			base.AfterPaint(g);
+    /// <summary>
+    /// Draws the temporary line(s) from the first point to the mouse.
+    /// </summary>
+    /// <param name="g"></param>
+    public override void AfterPaint(Graphics g)
+    {
+      base.AfterPaint(g);
 
-			for (int i = 1; i < this._currentPoint; i++)
-				g.DrawLine(Pens.Blue, (PointF)_Points[i - 1].RootLayerCoordinates, (PointF)_Points[i].RootLayerCoordinates);
+      for (int i = 1; i < this._currentPoint; i++)
+        g.DrawLine(Pens.Blue, (PointF)_Points[i - 1].RootLayerCoordinates, (PointF)_Points[i].RootLayerCoordinates);
 
-			if (_currentPoint > 0)
-				g.DrawLine(Pens.Blue, (PointF)_Points[_currentPoint - 1].RootLayerCoordinates, (PointF)_positionCurrentMouseInRootLayerCoordinates);
-		}
+      if (_currentPoint > 0)
+        g.DrawLine(Pens.Blue, (PointF)_Points[_currentPoint - 1].RootLayerCoordinates, (PointF)_positionCurrentMouseInRootLayerCoordinates);
+    }
 
-		protected virtual void FinishDrawing()
-		{
-			LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, _grac.Doc.GetPropertyContext());
+    protected virtual void FinishDrawing()
+    {
+      LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, _grac.Doc.GetPropertyContext());
 
-			// deselect the text tool
-			_grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-			_grac.ActiveLayer.GraphObjects.Add(go);
-		}
-	}
+      // deselect the text tool
+      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+      _grac.ActiveLayer.GraphObjects.Add(go);
+    }
+  }
 }

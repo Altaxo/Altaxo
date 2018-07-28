@@ -39,24 +39,24 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data
 {
-	/// <summary>
-	/// Interaction logic for DataTableProxyControl.xaml
-	/// </summary>
-	public partial class DataTableProxyControl : UserControl, IDataTableProxyView
-	{
-		public DataTableProxyControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for DataTableProxyControl.xaml
+  /// </summary>
+  public partial class DataTableProxyControl : UserControl, IDataTableProxyView
+  {
+    public DataTableProxyControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeTables(SelectableListNodeList tables)
-		{
-			GuiHelper.Initialize(_guiDataTables, tables);
-		}
+    public void InitializeTables(SelectableListNodeList tables)
+    {
+      GuiHelper.Initialize(_guiDataTables, tables);
+    }
 
-		private void EhDataTableChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiDataTables);
-		}
-	}
+    private void EhDataTableChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiDataTables);
+    }
+  }
 }

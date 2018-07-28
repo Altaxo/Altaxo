@@ -29,204 +29,204 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Collections;
-	using Altaxo.Graph;
-	using Altaxo.Graph.Gdi;
+  using Altaxo.Collections;
+  using Altaxo.Graph;
+  using Altaxo.Graph.Gdi;
 
-	public interface ISingleGraphPrintOptionsView
-	{
-		void Init_PrintLocation(SelectableListNodeList list);
+  public interface ISingleGraphPrintOptionsView
+  {
+    void Init_PrintLocation(SelectableListNodeList list);
 
-		void Init_FitGraphToPrintIfLarger(bool val);
+    void Init_FitGraphToPrintIfLarger(bool val);
 
-		void Init_FitGraphToPrintIfSmaller(bool val);
+    void Init_FitGraphToPrintIfSmaller(bool val);
 
-		void Init_PrintCopMarks(bool val);
+    void Init_PrintCopMarks(bool val);
 
-		void Init_RotatePageAutomatically(bool value);
+    void Init_RotatePageAutomatically(bool value);
 
-		void Init_TilePages(bool value);
+    void Init_TilePages(bool value);
 
-		void Init_UseFixedZoomFactor(bool val);
+    void Init_UseFixedZoomFactor(bool val);
 
-		void Init_ZoomFactor(double val);
+    void Init_ZoomFactor(double val);
 
-		event Action PrintLocationChanged;
+    event Action PrintLocationChanged;
 
-		event Action<bool> FitGraphToPrintIfLargerChanged;
+    event Action<bool> FitGraphToPrintIfLargerChanged;
 
-		event Action<bool> FitGraphToPrintIfSmallerChanged;
+    event Action<bool> FitGraphToPrintIfSmallerChanged;
 
-		event Action<bool> PrintCropMarksChanged;
+    event Action<bool> PrintCropMarksChanged;
 
-		event Action<bool> RotatePageAutomaticallyChanged;
+    event Action<bool> RotatePageAutomaticallyChanged;
 
-		event Action<bool> TilePagesChanged;
+    event Action<bool> TilePagesChanged;
 
-		event Action<bool> UseFixedZoomFactorChanged;
+    event Action<bool> UseFixedZoomFactorChanged;
 
-		event Action<double> ZoomFactorChanged;
-	}
+    event Action<double> ZoomFactorChanged;
+  }
 
-	[ExpectedTypeOfView(typeof(ISingleGraphPrintOptionsView))]
-	[UserControllerForObject(typeof(SingleGraphPrintOptions))]
-	public class SingleGraphPrintOptionsController : IMVCANController
-	{
-		private SingleGraphPrintOptions _doc, _originalDoc;
-		private ISingleGraphPrintOptionsView _view;
-		private UseDocument _useDocumentCopy;
+  [ExpectedTypeOfView(typeof(ISingleGraphPrintOptionsView))]
+  [UserControllerForObject(typeof(SingleGraphPrintOptions))]
+  public class SingleGraphPrintOptionsController : IMVCANController
+  {
+    private SingleGraphPrintOptions _doc, _originalDoc;
+    private ISingleGraphPrintOptionsView _view;
+    private UseDocument _useDocumentCopy;
 
-		private SelectableListNodeList _printLocationList;
+    private SelectableListNodeList _printLocationList;
 
-		private void Initialize(bool initData)
-		{
-			if (initData)
-			{
-				_printLocationList = new SelectableListNodeList(_doc.PrintLocation);
-			}
-			if (null != _view)
-			{
-				_view.Init_PrintLocation(_printLocationList);
-				_view.Init_FitGraphToPrintIfLarger(_doc.FitGraphToPrintIfLarger);
-				_view.Init_FitGraphToPrintIfSmaller(_doc.FitGraphToPrintIfSmaller);
-				_view.Init_PrintCopMarks(_doc.PrintCropMarks);
-				_view.Init_RotatePageAutomatically(_doc.RotatePageAutomatically);
-				_view.Init_TilePages(_doc.TilePages);
-				_view.Init_UseFixedZoomFactor(_doc.UseFixedZoomFactor);
-				_view.Init_ZoomFactor(_doc.ZoomFactor);
-			}
-		}
+    private void Initialize(bool initData)
+    {
+      if (initData)
+      {
+        _printLocationList = new SelectableListNodeList(_doc.PrintLocation);
+      }
+      if (null != _view)
+      {
+        _view.Init_PrintLocation(_printLocationList);
+        _view.Init_FitGraphToPrintIfLarger(_doc.FitGraphToPrintIfLarger);
+        _view.Init_FitGraphToPrintIfSmaller(_doc.FitGraphToPrintIfSmaller);
+        _view.Init_PrintCopMarks(_doc.PrintCropMarks);
+        _view.Init_RotatePageAutomatically(_doc.RotatePageAutomatically);
+        _view.Init_TilePages(_doc.TilePages);
+        _view.Init_UseFixedZoomFactor(_doc.UseFixedZoomFactor);
+        _view.Init_ZoomFactor(_doc.ZoomFactor);
+      }
+    }
 
-		private void EhPrintLocationChanged()
-		{
-			_doc.PrintLocation = (SingleGraphPrintLocation)_printLocationList.FirstSelectedNode.Tag;
-		}
+    private void EhPrintLocationChanged()
+    {
+      _doc.PrintLocation = (SingleGraphPrintLocation)_printLocationList.FirstSelectedNode.Tag;
+    }
 
-		private void EhFitGraphToPrintIfLargerChanged(bool val)
-		{
-			_doc.FitGraphToPrintIfLarger = val;
-		}
+    private void EhFitGraphToPrintIfLargerChanged(bool val)
+    {
+      _doc.FitGraphToPrintIfLarger = val;
+    }
 
-		private void EhFitGraphToPrintIfSmallerChanged(bool val)
-		{
-			_doc.FitGraphToPrintIfSmaller = val;
-		}
+    private void EhFitGraphToPrintIfSmallerChanged(bool val)
+    {
+      _doc.FitGraphToPrintIfSmaller = val;
+    }
 
-		private void EhPrintCropMarksChanged(bool val)
-		{
-			_doc.PrintCropMarks = val;
-		}
+    private void EhPrintCropMarksChanged(bool val)
+    {
+      _doc.PrintCropMarks = val;
+    }
 
-		private void EhRotatePageAutomaticallyChanged(bool val)
-		{
-			_doc.RotatePageAutomatically = val;
-		}
+    private void EhRotatePageAutomaticallyChanged(bool val)
+    {
+      _doc.RotatePageAutomatically = val;
+    }
 
-		private void EhTilePagesChanged(bool val)
-		{
-			_doc.TilePages = val;
-		}
+    private void EhTilePagesChanged(bool val)
+    {
+      _doc.TilePages = val;
+    }
 
-		private void EhUseFixedZoomFactorChanged(bool val)
-		{
-			_doc.UseFixedZoomFactor = val;
-		}
+    private void EhUseFixedZoomFactorChanged(bool val)
+    {
+      _doc.UseFixedZoomFactor = val;
+    }
 
-		private void EhZoomFactorChanged(double val)
-		{
-			_doc.ZoomFactor = val;
-		}
+    private void EhZoomFactorChanged(double val)
+    {
+      _doc.ZoomFactor = val;
+    }
 
-		#region IMVCANController
+    #region IMVCANController
 
-		public bool InitializeDocument(params object[] args)
-		{
-			if (null == args || args.Length == 0 || !(args[0] is SingleGraphPrintOptions))
-				return false;
+    public bool InitializeDocument(params object[] args)
+    {
+      if (null == args || args.Length == 0 || !(args[0] is SingleGraphPrintOptions))
+        return false;
 
-			_originalDoc = (SingleGraphPrintOptions)args[0];
-			if (_useDocumentCopy == UseDocument.Copy)
-				_doc = (SingleGraphPrintOptions)_originalDoc.Clone();
-			else
-				_doc = _originalDoc;
+      _originalDoc = (SingleGraphPrintOptions)args[0];
+      if (_useDocumentCopy == UseDocument.Copy)
+        _doc = (SingleGraphPrintOptions)_originalDoc.Clone();
+      else
+        _doc = _originalDoc;
 
-			Initialize(true);
+      Initialize(true);
 
-			return true;
-		}
+      return true;
+    }
 
-		public UseDocument UseDocumentCopy
-		{
-			set { _useDocumentCopy = value; }
-		}
+    public UseDocument UseDocumentCopy
+    {
+      set { _useDocumentCopy = value; }
+    }
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.PrintLocationChanged -= this.EhPrintLocationChanged;
-					_view.FitGraphToPrintIfLargerChanged -= this.EhFitGraphToPrintIfLargerChanged;
-					_view.FitGraphToPrintIfSmallerChanged -= this.EhFitGraphToPrintIfSmallerChanged;
-					_view.PrintCropMarksChanged -= this.EhPrintCropMarksChanged;
-					_view.RotatePageAutomaticallyChanged -= this.EhRotatePageAutomaticallyChanged;
-					_view.TilePagesChanged -= this.EhTilePagesChanged;
-					_view.UseFixedZoomFactorChanged -= this.EhUseFixedZoomFactorChanged;
-					_view.ZoomFactorChanged -= this.EhZoomFactorChanged;
-				}
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        if (null != _view)
+        {
+          _view.PrintLocationChanged -= this.EhPrintLocationChanged;
+          _view.FitGraphToPrintIfLargerChanged -= this.EhFitGraphToPrintIfLargerChanged;
+          _view.FitGraphToPrintIfSmallerChanged -= this.EhFitGraphToPrintIfSmallerChanged;
+          _view.PrintCropMarksChanged -= this.EhPrintCropMarksChanged;
+          _view.RotatePageAutomaticallyChanged -= this.EhRotatePageAutomaticallyChanged;
+          _view.TilePagesChanged -= this.EhTilePagesChanged;
+          _view.UseFixedZoomFactorChanged -= this.EhUseFixedZoomFactorChanged;
+          _view.ZoomFactorChanged -= this.EhZoomFactorChanged;
+        }
 
-				_view = value as ISingleGraphPrintOptionsView;
+        _view = value as ISingleGraphPrintOptionsView;
 
-				if (null != _view)
-				{
-					Initialize(false);
+        if (null != _view)
+        {
+          Initialize(false);
 
-					_view.PrintLocationChanged += this.EhPrintLocationChanged;
-					_view.FitGraphToPrintIfLargerChanged += this.EhFitGraphToPrintIfLargerChanged;
-					_view.FitGraphToPrintIfSmallerChanged += this.EhFitGraphToPrintIfSmallerChanged;
-					_view.PrintCropMarksChanged += this.EhPrintCropMarksChanged;
-					_view.RotatePageAutomaticallyChanged += this.EhRotatePageAutomaticallyChanged;
-					_view.TilePagesChanged += this.EhTilePagesChanged;
-					_view.UseFixedZoomFactorChanged += this.EhUseFixedZoomFactorChanged;
-					_view.ZoomFactorChanged += this.EhZoomFactorChanged;
-				}
-			}
-		}
+          _view.PrintLocationChanged += this.EhPrintLocationChanged;
+          _view.FitGraphToPrintIfLargerChanged += this.EhFitGraphToPrintIfLargerChanged;
+          _view.FitGraphToPrintIfSmallerChanged += this.EhFitGraphToPrintIfSmallerChanged;
+          _view.PrintCropMarksChanged += this.EhPrintCropMarksChanged;
+          _view.RotatePageAutomaticallyChanged += this.EhRotatePageAutomaticallyChanged;
+          _view.TilePagesChanged += this.EhTilePagesChanged;
+          _view.UseFixedZoomFactorChanged += this.EhUseFixedZoomFactorChanged;
+          _view.ZoomFactorChanged += this.EhZoomFactorChanged;
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return _originalDoc; }
-		}
+    public object ModelObject
+    {
+      get { return _originalDoc; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		public bool Apply(bool disposeController)
-		{
-			if (_useDocumentCopy == UseDocument.Copy)
-				_originalDoc.CopyFrom(_doc);
+    public bool Apply(bool disposeController)
+    {
+      if (_useDocumentCopy == UseDocument.Copy)
+        _originalDoc.CopyFrom(_doc);
 
-			return true;
-		}
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IMVCANController
-	}
+    #endregion IMVCANController
+  }
 }

@@ -30,323 +30,323 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-	public interface IAscendingIntegerCollectionView
-	{
-		void SetRangeListSource(IEnumerable<object> source);
+  public interface IAscendingIntegerCollectionView
+  {
+    void SetRangeListSource(IEnumerable<object> source);
 
-		void SwitchEasyAdvanced(bool showAdvanced);
+    void SwitchEasyAdvanced(bool showAdvanced);
 
-		int EasyRangeFrom { get; set; }
+    int EasyRangeFrom { get; set; }
 
-		int EasyRangeTo { get; set; }
+    int EasyRangeTo { get; set; }
 
-		event Action SwitchToAdvandedView;
+    event Action SwitchToAdvandedView;
 
-		event Action<object> InitializingNewRangeItem;
+    event Action<object> InitializingNewRangeItem;
 
-		event Action<int, int> AdvancedAddRange;
+    event Action<int, int> AdvancedAddRange;
 
-		event Action<int, int> AdvancedRemoveRange;
-	}
+    event Action<int, int> AdvancedRemoveRange;
+  }
 
-	[ExpectedTypeOfView(typeof(IAscendingIntegerCollectionView))]
-	[UserControllerForObject(typeof(AscendingIntegerCollection))]
-	public class AscendingIntegerCollectionController : MVCANControllerEditOriginalDocBase<AscendingIntegerCollection, IAscendingIntegerCollectionView>
-	{
-		#region Internal class
+  [ExpectedTypeOfView(typeof(IAscendingIntegerCollectionView))]
+  [UserControllerForObject(typeof(AscendingIntegerCollection))]
+  public class AscendingIntegerCollectionController : MVCANControllerEditOriginalDocBase<AscendingIntegerCollection, IAscendingIntegerCollectionView>
+  {
+    #region Internal class
 
-		private class MyRange : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IEditableObject
-		{
-			private int _from, _to;
-			private MyRange _savedRange;
+    private class MyRange : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IEditableObject
+    {
+      private int _from, _to;
+      private MyRange _savedRange;
 
-			public RangeCollection Parent { get; set; }
+      public RangeCollection Parent { get; set; }
 
-			public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+      public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-			public int From
-			{
-				get
-				{
-					return _from;
-				}
-				set
-				{
-					var oldValue = _from;
-					_from = value;
-					if (oldValue != value)
-						OnPropertyChanged("From");
-				}
-			}
+      public int From
+      {
+        get
+        {
+          return _from;
+        }
+        set
+        {
+          var oldValue = _from;
+          _from = value;
+          if (oldValue != value)
+            OnPropertyChanged("From");
+        }
+      }
 
-			public int To
-			{
-				get
-				{
-					return _to;
-				}
-				set
-				{
-					var oldValue = _to;
-					_to = Math.Max(_from, value);
-					if (oldValue != value || _to != value)
-						OnPropertyChanged("To");
-				}
-			}
+      public int To
+      {
+        get
+        {
+          return _to;
+        }
+        set
+        {
+          var oldValue = _to;
+          _to = Math.Max(_from, value);
+          if (oldValue != value || _to != value)
+            OnPropertyChanged("To");
+        }
+      }
 
-			private void OnPropertyChanged(string name)
-			{
-				var ev = PropertyChanged;
-				if (null != ev)
-					ev(this, new System.ComponentModel.PropertyChangedEventArgs(name));
-			}
+      private void OnPropertyChanged(string name)
+      {
+        var ev = PropertyChanged;
+        if (null != ev)
+          ev(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+      }
 
-			public void Exclude(MyRange excluded, out MyRange rangeLeft, out MyRange rangeRight)
-			{
-				int leftTo = Math.Min(this.To, Math.Max(this.From - 1, excluded.From - 1));
-				int rightFrom = Math.Max(this.From, Math.Min(this.To + 1, excluded.To + 1));
+      public void Exclude(MyRange excluded, out MyRange rangeLeft, out MyRange rangeRight)
+      {
+        int leftTo = Math.Min(this.To, Math.Max(this.From - 1, excluded.From - 1));
+        int rightFrom = Math.Max(this.From, Math.Min(this.To + 1, excluded.To + 1));
 
-				rangeLeft = rangeRight = null;
+        rangeLeft = rangeRight = null;
 
-				if (leftTo >= this.From)
-					rangeLeft = new MyRange { From = this.From, To = leftTo };
-				if (rightFrom <= this.To)
-					rangeRight = new MyRange { From = rightFrom, To = this.To };
-			}
+        if (leftTo >= this.From)
+          rangeLeft = new MyRange { From = this.From, To = leftTo };
+        if (rightFrom <= this.To)
+          rangeRight = new MyRange { From = rightFrom, To = this.To };
+      }
 
-			public void BeginEdit()
-			{
-				_savedRange = new MyRange { From = this.From, To = this.To };
-			}
+      public void BeginEdit()
+      {
+        _savedRange = new MyRange { From = this.From, To = this.To };
+      }
 
-			public void CancelEdit()
-			{
-				if (null != _savedRange)
-				{
-					this.From = _savedRange.From;
-					this.To = _savedRange.To;
-					_savedRange = null;
-				}
-			}
+      public void CancelEdit()
+      {
+        if (null != _savedRange)
+        {
+          this.From = _savedRange.From;
+          this.To = _savedRange.To;
+          _savedRange = null;
+        }
+      }
 
-			public void EndEdit()
-			{
-				var savedRange = _savedRange;
-				_savedRange = null;
+      public void EndEdit()
+      {
+        var savedRange = _savedRange;
+        _savedRange = null;
 
-				if (null != savedRange && (this.To != savedRange.To || this.From != savedRange.From))
-				{
-					Parent.NormalizeRanges();
-				}
-			}
-		}
+        if (null != savedRange && (this.To != savedRange.To || this.From != savedRange.From))
+        {
+          Parent.NormalizeRanges();
+        }
+      }
+    }
 
-		private class RangeCollection : System.Collections.ObjectModel.ObservableCollection<MyRange>
-		{
-			protected override void InsertItem(int index, MyRange item)
-			{
-				item.Parent = this;
-				base.InsertItem(index, item);
-			}
+    private class RangeCollection : System.Collections.ObjectModel.ObservableCollection<MyRange>
+    {
+      protected override void InsertItem(int index, MyRange item)
+      {
+        item.Parent = this;
+        base.InsertItem(index, item);
+      }
 
-			protected override void SetItem(int index, MyRange item)
-			{
-				item.Parent = this;
-				base.SetItem(index, item);
-			}
+      protected override void SetItem(int index, MyRange item)
+      {
+        item.Parent = this;
+        base.SetItem(index, item);
+      }
 
-			public void NormalizeRanges(IEnumerable<MyRange> rangeSource)
-			{
-				var ranges = rangeSource.Where(x => x.From <= x.To).OrderBy(x => x.From).ToArray();
-				var list = new List<MyRange>();
+      public void NormalizeRanges(IEnumerable<MyRange> rangeSource)
+      {
+        var ranges = rangeSource.Where(x => x.From <= x.To).OrderBy(x => x.From).ToArray();
+        var list = new List<MyRange>();
 
-				foreach (var range in ranges)
-				{
-					if (list.Count == 0)
-					{
-						list.Add(new MyRange { From = range.From, To = range.To });
-					}
-					else
-					{
-						var prevRange = list[list.Count - 1];
-						if (range.From <= (1 + prevRange.To))
-							prevRange.To = Math.Max(prevRange.To, range.To);
-						else
-							list.Add(new MyRange { From = range.From, To = range.To });
-					}
-				}
+        foreach (var range in ranges)
+        {
+          if (list.Count == 0)
+          {
+            list.Add(new MyRange { From = range.From, To = range.To });
+          }
+          else
+          {
+            var prevRange = list[list.Count - 1];
+            if (range.From <= (1 + prevRange.To))
+              prevRange.To = Math.Max(prevRange.To, range.To);
+            else
+              list.Add(new MyRange { From = range.From, To = range.To });
+          }
+        }
 
-				this.ClearItems();
-				this.AddRange(list);
-			}
+        this.ClearItems();
+        this.AddRange(list);
+      }
 
-			public void NormalizeRanges()
-			{
-				NormalizeRanges(this);
-			}
+      public void NormalizeRanges()
+      {
+        NormalizeRanges(this);
+      }
 
-			public void IncludeRange(int from, int to)
-			{
-				if (to < from)
-					return;
+      public void IncludeRange(int from, int to)
+      {
+        if (to < from)
+          return;
 
-				this.Add(new MyRange { From = from, To = to });
-				NormalizeRanges();
-			}
+        this.Add(new MyRange { From = from, To = to });
+        NormalizeRanges();
+      }
 
-			public void ExcludeRange(int from, int to)
-			{
-				if (to < from)
-					return;
+      public void ExcludeRange(int from, int to)
+      {
+        if (to < from)
+          return;
 
-				var excludedRange = new MyRange { From = from, To = to };
-				var list = new List<MyRange>();
-				MyRange leftRange, rightRange;
-				foreach (var range in this)
-				{
-					range.Exclude(excludedRange, out leftRange, out rightRange);
-					if (null != leftRange)
-						list.Add(leftRange);
-					if (null != rightRange)
-						list.Add(rightRange);
-				}
+        var excludedRange = new MyRange { From = from, To = to };
+        var list = new List<MyRange>();
+        MyRange leftRange, rightRange;
+        foreach (var range in this)
+        {
+          range.Exclude(excludedRange, out leftRange, out rightRange);
+          if (null != leftRange)
+            list.Add(leftRange);
+          if (null != rightRange)
+            list.Add(rightRange);
+        }
 
-				NormalizeRanges(list);
-			}
-		}
+        NormalizeRanges(list);
+      }
+    }
 
-		#endregion Internal class
+    #endregion Internal class
 
-		private RangeCollection _ranges = new RangeCollection();
-		private bool _isInAdvancedView;
+    private RangeCollection _ranges = new RangeCollection();
+    private bool _isInAdvancedView;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				InitRanges();
-			}
-			if (null != _view)
-			{
-				if (_ranges.Count > 1)
-				{
-					_view.SetRangeListSource(_ranges);
-					_view.SwitchEasyAdvanced(_isInAdvancedView = true);
-				}
-				else
-				{
-					if (_ranges.Count > 0)
-					{
-						_view.EasyRangeFrom = _ranges[0].From;
-						_view.EasyRangeTo = _ranges[0].To;
-					}
-					_view.SwitchEasyAdvanced(_isInAdvancedView = false);
-				}
-			}
-		}
+      if (initData)
+      {
+        InitRanges();
+      }
+      if (null != _view)
+      {
+        if (_ranges.Count > 1)
+        {
+          _view.SetRangeListSource(_ranges);
+          _view.SwitchEasyAdvanced(_isInAdvancedView = true);
+        }
+        else
+        {
+          if (_ranges.Count > 0)
+          {
+            _view.EasyRangeFrom = _ranges[0].From;
+            _view.EasyRangeTo = _ranges[0].To;
+          }
+          _view.SwitchEasyAdvanced(_isInAdvancedView = false);
+        }
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (_isInAdvancedView)
-			{
-				_doc.Clear();
-				foreach (var range in _ranges)
-					_doc.AddRange(range.From, range.To - range.From + 1);
-			}
-			else
-			{
-				int from = _view.EasyRangeFrom;
-				int to = _view.EasyRangeTo;
+    public override bool Apply(bool disposeController)
+    {
+      if (_isInAdvancedView)
+      {
+        _doc.Clear();
+        foreach (var range in _ranges)
+          _doc.AddRange(range.From, range.To - range.From + 1);
+      }
+      else
+      {
+        int from = _view.EasyRangeFrom;
+        int to = _view.EasyRangeTo;
 
-				if (!(from < to))
-				{
-					Current.Gui.ErrorMessageBox("'Range start ('From') should be less than range end ('to')!");
-					return false;
-				}
+        if (!(from < to))
+        {
+          Current.Gui.ErrorMessageBox("'Range start ('From') should be less than range end ('to')!");
+          return false;
+        }
 
-				_doc.Clear();
-				_doc.AddRange(from, to - from + 1);
-			}
+        _doc.Clear();
+        _doc.AddRange(from, to - from + 1);
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.SwitchToAdvandedView += EhSwitchToAdvancedView;
-			_view.InitializingNewRangeItem += EhInitializingNewRangeItem;
-			_view.AdvancedAddRange += EhAdvancedAddRange;
-			_view.AdvancedRemoveRange += EhAdvancedRemoveRange;
-		}
+    protected override void AttachView()
+    {
+      base.AttachView();
+      _view.SwitchToAdvandedView += EhSwitchToAdvancedView;
+      _view.InitializingNewRangeItem += EhInitializingNewRangeItem;
+      _view.AdvancedAddRange += EhAdvancedAddRange;
+      _view.AdvancedRemoveRange += EhAdvancedRemoveRange;
+    }
 
-		protected override void DetachView()
-		{
-			_view.SwitchToAdvandedView -= EhSwitchToAdvancedView;
-			_view.InitializingNewRangeItem -= EhInitializingNewRangeItem;
-			_view.AdvancedAddRange -= EhAdvancedAddRange;
-			_view.AdvancedRemoveRange -= EhAdvancedRemoveRange;
+    protected override void DetachView()
+    {
+      _view.SwitchToAdvandedView -= EhSwitchToAdvancedView;
+      _view.InitializingNewRangeItem -= EhInitializingNewRangeItem;
+      _view.AdvancedAddRange -= EhAdvancedAddRange;
+      _view.AdvancedRemoveRange -= EhAdvancedRemoveRange;
 
-			base.DetachView();
-		}
+      base.DetachView();
+    }
 
-		private void EhSwitchToAdvancedView()
-		{
-			int from = _view.EasyRangeFrom;
-			int to = _view.EasyRangeTo;
+    private void EhSwitchToAdvancedView()
+    {
+      int from = _view.EasyRangeFrom;
+      int to = _view.EasyRangeTo;
 
-			if (!(from < to))
-			{
-				Current.Gui.ErrorMessageBox("'Range start ('From') should be less than range end ('to')!");
-				return;
-			}
-			_ranges.Clear();
-			_ranges.Add(new MyRange { From = from, To = to });
+      if (!(from < to))
+      {
+        Current.Gui.ErrorMessageBox("'Range start ('From') should be less than range end ('to')!");
+        return;
+      }
+      _ranges.Clear();
+      _ranges.Add(new MyRange { From = from, To = to });
 
-			_view.SetRangeListSource(_ranges);
-			_view.SwitchEasyAdvanced(_isInAdvancedView = true);
-		}
+      _view.SetRangeListSource(_ranges);
+      _view.SwitchEasyAdvanced(_isInAdvancedView = true);
+    }
 
-		private void EhInitializingNewRangeItem(object obj)
-		{
-			if (null == obj)
-				return;
-			if (_ranges.Count < 2)
-				return;
+    private void EhInitializingNewRangeItem(object obj)
+    {
+      if (null == obj)
+        return;
+      if (_ranges.Count < 2)
+        return;
 
-			var lastRange = _ranges[_ranges.Count - 2];
+      var lastRange = _ranges[_ranges.Count - 2];
 
-			var item = (MyRange)obj;
-			item.From = item.To = lastRange.To + 2;
-		}
+      var item = (MyRange)obj;
+      item.From = item.To = lastRange.To + 2;
+    }
 
-		private void EhAdvancedRemoveRange(int from, int to)
-		{
-			_ranges.ExcludeRange(from, to);
-		}
+    private void EhAdvancedRemoveRange(int from, int to)
+    {
+      _ranges.ExcludeRange(from, to);
+    }
 
-		private void EhAdvancedAddRange(int from, int to)
-		{
-			_ranges.IncludeRange(from, to);
-		}
+    private void EhAdvancedAddRange(int from, int to)
+    {
+      _ranges.IncludeRange(from, to);
+    }
 
-		private void InitRanges()
-		{
-			_ranges.Clear();
-			foreach (var range in _doc.RangesAscending)
-			{
-				_ranges.Add(new MyRange { From = range.Start, To = range.LastInclusive });
-			}
+    private void InitRanges()
+    {
+      _ranges.Clear();
+      foreach (var range in _doc.RangesAscending)
+      {
+        _ranges.Add(new MyRange { From = range.Start, To = range.LastInclusive });
+      }
 
-			if (null != _view)
-				_view.SetRangeListSource(_ranges);
-		}
-	}
+      if (null != _view)
+        _view.SetRangeListSource(_ranges);
+    }
+  }
 }

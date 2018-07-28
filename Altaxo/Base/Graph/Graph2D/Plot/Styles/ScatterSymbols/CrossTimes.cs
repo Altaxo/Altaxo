@@ -34,73 +34,73 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class CrossTimes : OpenSymbolBase
-	{
-		#region Serialization
+  public class CrossTimes : OpenSymbolBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossTimes), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossTimes), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 
-				SerializeSetV0((IScatterSymbol)obj, info);
-			}
+        SerializeSetV0((IScatterSymbol)obj, info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (CrossTimes)o ?? new CrossTimes();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (CrossTimes)o ?? new CrossTimes();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
-				return DeserializeSetV0(s, info, parent);
-			}
-		}
+        return DeserializeSetV0(s, info, parent);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public CrossTimes()
-		{
-		}
+    public CrossTimes()
+    {
+    }
 
-		public CrossTimes(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
-			: base(fillColor, isFillColorInfluencedByPlotColor)
-		{
-		}
+    public CrossTimes(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
+      : base(fillColor, isFillColorInfluencedByPlotColor)
+    {
+    }
 
-		private ClipperLib.IntPoint GetPoint(double w, double h)
-		{
-			const double Sqrt05 = 0.707106781186547524400844;
-			return new ClipperLib.IntPoint((int)(Sqrt05 * (w + h) * ClipperScalingDouble), (int)(Sqrt05 * (h - w) * ClipperScalingDouble));
-		}
+    private ClipperLib.IntPoint GetPoint(double w, double h)
+    {
+      const double Sqrt05 = 0.707106781186547524400844;
+      return new ClipperLib.IntPoint((int)(Sqrt05 * (w + h) * ClipperScalingDouble), (int)(Sqrt05 * (h - w) * ClipperScalingDouble));
+    }
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth)
-		{
-			relativeStructureWidth = Altaxo.Calc.RMath.ClampToInterval(relativeStructureWidth, 0, 0.5);
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth)
+    {
+      relativeStructureWidth = Altaxo.Calc.RMath.ClampToInterval(relativeStructureWidth, 0, 0.5);
 
-			var h = Math.Sqrt(1 - relativeStructureWidth * relativeStructureWidth);
-			var w = relativeStructureWidth;
+      var h = Math.Sqrt(1 - relativeStructureWidth * relativeStructureWidth);
+      var w = relativeStructureWidth;
 
-			var list = new List<ClipperLib.IntPoint>(12)
-				{
-				GetPoint(-w, -h),
-				GetPoint(w, -h),
-				GetPoint(w, -w),
-				GetPoint(h, -w),
-				GetPoint(h, w),
-				GetPoint(w, w),
-				GetPoint(w, h),
-				GetPoint(-w, h),
-				GetPoint(-w, w),
-				GetPoint(-h, w),
-				GetPoint(-h, -w),
-				GetPoint(-w, -w),
-			};
+      var list = new List<ClipperLib.IntPoint>(12)
+        {
+        GetPoint(-w, -h),
+        GetPoint(w, -h),
+        GetPoint(w, -w),
+        GetPoint(h, -w),
+        GetPoint(h, w),
+        GetPoint(w, w),
+        GetPoint(w, h),
+        GetPoint(-w, h),
+        GetPoint(-w, w),
+        GetPoint(-h, w),
+        GetPoint(-h, -w),
+        GetPoint(-w, -w),
+      };
 
-			return new List<List<ClipperLib.IntPoint>>(1) { list };
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1) { list };
+    }
+  }
 }

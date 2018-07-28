@@ -33,105 +33,105 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public partial class RotationComboBox : DimensionfulQuantityImageComboBox
-	{
-		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+  public partial class RotationComboBox : DimensionfulQuantityImageComboBox
+  {
+    private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		private static readonly double[] _initialValues = new double[] { 0, 45, 90, 135, 180, 225, 270, 315 };
+    private static readonly double[] _initialValues = new double[] { 0, 45, 90, 135, 180, 225, 270, 315 };
 
-		static RotationComboBox()
-		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(RotationComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Degree.Instance)));
-		}
+    static RotationComboBox()
+    {
+      SelectedQuantityProperty.OverrideMetadata(typeof(RotationComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Degree.Instance)));
+    }
 
-		public RotationComboBox()
-		{
-			UnitEnvironment = AngleEnvironment.Instance;
-			InitializeComponent();
+    public RotationComboBox()
+    {
+      UnitEnvironment = AngleEnvironment.Instance;
+      InitializeComponent();
 
-			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Degree.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
+      foreach (var e in _initialValues)
+        Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Degree.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
 
-			_img.Source = GetImage(SelectedQuantityAsValueInDegrees);
-		}
+      _img.Source = GetImage(SelectedQuantityAsValueInDegrees);
+    }
 
-		public double SelectedQuantityAsValueInDegrees
-		{
-			get { return SelectedQuantity.AsValueIn(Degree.Instance); }
-			set
-			{
-				var quant = new DimensionfulQuantity(value, Degree.Instance);
-				if (null != UnitEnvironment)
-					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
-				SelectedQuantity = quant;
-			}
-		}
+    public double SelectedQuantityAsValueInDegrees
+    {
+      get { return SelectedQuantity.AsValueIn(Degree.Instance); }
+      set
+      {
+        var quant = new DimensionfulQuantity(value, Degree.Instance);
+        if (null != UnitEnvironment)
+          quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
+        SelectedQuantity = quant;
+      }
+    }
 
-		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			base.OnSelectedQuantityChanged(obj, args);
+    protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      base.OnSelectedQuantityChanged(obj, args);
 
-			if (null != _img)
-			{
-				var val = SelectedQuantityAsValueInDegrees;
-				_img.Source = GetImage(val);
-			}
-		}
+      if (null != _img)
+      {
+        var val = SelectedQuantityAsValueInDegrees;
+        _img.Source = GetImage(val);
+      }
+    }
 
-		public override ImageSource GetItemImage(object item)
-		{
-			double val = ((DimensionfulQuantity)item).AsValueIn(Degree.Instance);
-			ImageSource result;
-			if (!_cachedImages.TryGetValue(val, out result))
-				_cachedImages.Add(val, result = GetImage(val));
-			return result;
-		}
+    public override ImageSource GetItemImage(object item)
+    {
+      double val = ((DimensionfulQuantity)item).AsValueIn(Degree.Instance);
+      ImageSource result;
+      if (!_cachedImages.TryGetValue(val, out result))
+        _cachedImages.Add(val, result = GetImage(val));
+      return result;
+    }
 
-		public override string GetItemText(object item)
-		{
-			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
-		}
+    public override string GetItemText(object item)
+    {
+      return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
+    }
 
-		public static ImageSource GetImage(double angle)
-		{
-			double AngleRad = (angle / 180) * Math.PI;
+    public static ImageSource GetImage(double angle)
+    {
+      double AngleRad = (angle / 180) * Math.PI;
 
-			const double DesignHeight = 1;
-			double offset = 0.5 * DesignHeight;
-			double radius = 0.40 * DesignHeight;
-			double lineWidth = 0.08 * DesignHeight;
+      const double DesignHeight = 1;
+      double offset = 0.5 * DesignHeight;
+      double radius = 0.40 * DesignHeight;
+      double lineWidth = 0.08 * DesignHeight;
 
-			// draws a transparent outline to fix the borders
-			var outlineDrawing = new GeometryDrawing();
-			outlineDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, DesignHeight, DesignHeight));
-			outlineDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      // draws a transparent outline to fix the borders
+      var outlineDrawing = new GeometryDrawing();
+      outlineDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, DesignHeight, DesignHeight));
+      outlineDrawing.Pen = new Pen(Brushes.Transparent, 0);
 
-			// now the geometry itself
-			GeometryGroup ellipses = new GeometryGroup();
-			ellipses.Children.Add(
-					new EllipseGeometry(new Point(offset, offset), radius, radius)
-					);
+      // now the geometry itself
+      GeometryGroup ellipses = new GeometryGroup();
+      ellipses.Children.Add(
+          new EllipseGeometry(new Point(offset, offset), radius, radius)
+          );
 
-			ellipses.Children.Add(new LineGeometry(new Point(offset, offset), new Point(offset + radius * Math.Cos(AngleRad), offset + radius * Math.Sin(-AngleRad))));
-			GeometryDrawing geometryDrawing = new GeometryDrawing();
-			geometryDrawing.Geometry = ellipses;
-			// fill with a gradient brush
-			geometryDrawing.Brush =
-					new LinearGradientBrush(
-							Color.FromRgb(100, 100, 255),
-							Color.FromRgb(204, 204, 255),
-							new Point(0, 0),
-							new Point(1, 1));
-			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth);
+      ellipses.Children.Add(new LineGeometry(new Point(offset, offset), new Point(offset + radius * Math.Cos(AngleRad), offset + radius * Math.Sin(-AngleRad))));
+      GeometryDrawing geometryDrawing = new GeometryDrawing();
+      geometryDrawing.Geometry = ellipses;
+      // fill with a gradient brush
+      geometryDrawing.Brush =
+          new LinearGradientBrush(
+              Color.FromRgb(100, 100, 255),
+              Color.FromRgb(204, 204, 255),
+              new Point(0, 0),
+              new Point(1, 1));
+      geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth);
 
-			var group = new DrawingGroup();
-			group.Children.Add(outlineDrawing);
-			group.Children.Add(geometryDrawing);
-			var geometryImage = new DrawingImage(group);
+      var group = new DrawingGroup();
+      group.Children.Add(outlineDrawing);
+      group.Children.Add(geometryDrawing);
+      var geometryImage = new DrawingImage(group);
 
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
-		}
-	}
+      // Freeze the DrawingImage for performance benefits.
+      geometryImage.Freeze();
+      return geometryImage;
+    }
+  }
 }

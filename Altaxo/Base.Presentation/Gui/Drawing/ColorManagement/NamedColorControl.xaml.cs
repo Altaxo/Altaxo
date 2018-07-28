@@ -40,61 +40,61 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	/// <summary>
-	/// Interaction logic for NamedColorControl.xaml
-	/// </summary>
-	public partial class NamedColorControl : UserControl, INamedColorView
-	{
-		public event Action<object> SubViewChanged;
+  /// <summary>
+  /// Interaction logic for NamedColorControl.xaml
+  /// </summary>
+  public partial class NamedColorControl : UserControl, INamedColorView
+  {
+    public event Action<object> SubViewChanged;
 
-		public NamedColorControl()
-		{
-			InitializeComponent();
-		}
+    public NamedColorControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeSubViews(IEnumerable<Tuple<string, object>> tabsNamesAndViews)
-		{
-			_guiTabControl.Items.Clear();
+    public void InitializeSubViews(IEnumerable<Tuple<string, object>> tabsNamesAndViews)
+    {
+      _guiTabControl.Items.Clear();
 
-			foreach (var item in tabsNamesAndViews)
-			{
-				var tab = new TabItem() { Header = item.Item1, Content = item.Item2 };
-				_guiTabControl.Items.Add(tab);
-			}
-		}
+      foreach (var item in tabsNamesAndViews)
+      {
+        var tab = new TabItem() { Header = item.Item1, Content = item.Item2 };
+        _guiTabControl.Items.Add(tab);
+      }
+    }
 
-		private void EhAlphaValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
-		{
-		}
+    private void EhAlphaValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
+    {
+    }
 
-		public void SetOldColor(AxoColor oldColor)
-		{
-			_guiOldColorRectangle.Fill = new SolidColorBrush(GuiHelper.ToWpf(oldColor));
-		}
+    public void SetOldColor(AxoColor oldColor)
+    {
+      _guiOldColorRectangle.Fill = new SolidColorBrush(GuiHelper.ToWpf(oldColor));
+    }
 
-		public void SetNewColor(AxoColor newColor)
-		{
-			_guiNewColorRectangle.Fill = new SolidColorBrush(GuiHelper.ToWpf(newColor));
-		}
+    public void SetNewColor(AxoColor newColor)
+    {
+      _guiNewColorRectangle.Fill = new SolidColorBrush(GuiHelper.ToWpf(newColor));
+    }
 
-		public string ColorName
-		{
-			get
-			{
-				return _guiColorName.Text;
-			}
-			set
-			{
-				_guiColorName.Text = value;
-			}
-		}
+    public string ColorName
+    {
+      get
+      {
+        return _guiColorName.Text;
+      }
+      set
+      {
+        _guiColorName.Text = value;
+      }
+    }
 
-		private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (e.AddedItems.Count == 1 && e.AddedItems[0] is TabItem newTabItem)
-			{
-				SubViewChanged?.Invoke(newTabItem.Content);
-			}
-		}
-	}
+    private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      if (e.AddedItems.Count == 1 && e.AddedItems[0] is TabItem newTabItem)
+      {
+        SubViewChanged?.Invoke(newTabItem.Content);
+      }
+    }
+  }
 }

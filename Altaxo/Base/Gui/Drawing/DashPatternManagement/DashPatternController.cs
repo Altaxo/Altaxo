@@ -31,35 +31,35 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-	public interface IDashPatternView
-	{
-		IDashPattern SelectedItem { get; set; }
-	}
+  public interface IDashPatternView
+  {
+    IDashPattern SelectedItem { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IDashPatternView))]
-	[UserControllerForObject(typeof(IDashPattern))]
-	public class DashPatternController : MVCANControllerEditImmutableDocBase<IDashPattern, IDashPatternView>
-	{
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+  [ExpectedTypeOfView(typeof(IDashPatternView))]
+  [UserControllerForObject(typeof(IDashPattern))]
+  public class DashPatternController : MVCANControllerEditImmutableDocBase<IDashPattern, IDashPatternView>
+  {
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.SelectedItem = _doc;
-			}
-		}
+      if (null != _view)
+      {
+        _view.SelectedItem = _doc;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc = _view.SelectedItem;
+    public override bool Apply(bool disposeController)
+    {
+      _doc = _view.SelectedItem;
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
-	}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+  }
 }

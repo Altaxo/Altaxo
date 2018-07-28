@@ -32,127 +32,127 @@ using System.Text;
 
 namespace Altaxo.Geometry
 {
-	[TestFixture]
-	public class TestMatrixD3D
-	{
-		private static System.Random _random = new Random(432);
+  [TestFixture]
+  public class TestMatrixD3D
+  {
+    private static System.Random _random = new Random(432);
 
-		public static Matrix4x3 GetRndMatrix()
-		{
-			Func<int> r = () => _random.Next(1, 100);
-			return new Matrix4x3(r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r());
-		}
+    public static Matrix4x3 GetRndMatrix()
+    {
+      Func<int> r = () => _random.Next(1, 100);
+      return new Matrix4x3(r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r());
+    }
 
-		public static PointD3D GetRndPoint()
-		{
-			Func<int> r = () => _random.Next(1, 100);
-			return new PointD3D(r(), r(), r());
-		}
+    public static PointD3D GetRndPoint()
+    {
+      Func<int> r = () => _random.Next(1, 100);
+      return new PointD3D(r(), r(), r());
+    }
 
-		public static VectorD3D GetRndVector()
-		{
-			Func<int> r = () => _random.Next(1, 100);
-			return new VectorD3D(r(), r(), r());
-		}
+    public static VectorD3D GetRndVector()
+    {
+      Func<int> r = () => _random.Next(1, 100);
+      return new VectorD3D(r(), r(), r());
+    }
 
-		[Test]
-		public static void Test_AppendTransformMatrix_WithPoints()
-		{
-			for (int i = 0; i < 5; ++i)
-			{
-				var m1 = GetRndMatrix();
-				var m2 = GetRndMatrix();
+    [Test]
+    public static void Test_AppendTransformMatrix_WithPoints()
+    {
+      for (int i = 0; i < 5; ++i)
+      {
+        var m1 = GetRndMatrix();
+        var m2 = GetRndMatrix();
 
-				var p1 = GetRndPoint();
+        var p1 = GetRndPoint();
 
-				var p2 = m1.Transform(p1);
+        var p2 = m1.Transform(p1);
 
-				var p3 = m2.Transform(p2);
+        var p3 = m2.Transform(p2);
 
-				var m3 = m1;
-				m3.AppendTransform(m2);
+        var m3 = m1;
+        m3.AppendTransform(m2);
 
-				var p3s = m3.Transform(p1);
+        var p3s = m3.Transform(p1);
 
-				Assert.AreEqual(p3.X, p3s.X, 0);
-				Assert.AreEqual(p3.Y, p3s.Y, 0);
-				Assert.AreEqual(p3.Z, p3s.Z, 0);
-			}
-		}
+        Assert.AreEqual(p3.X, p3s.X, 0);
+        Assert.AreEqual(p3.Y, p3s.Y, 0);
+        Assert.AreEqual(p3.Z, p3s.Z, 0);
+      }
+    }
 
-		[Test]
-		public static void Test_PrependTransformMatrix_WithPoints()
-		{
-			for (int i = 0; i < 5; ++i)
-			{
-				var m1 = GetRndMatrix();
-				var m2 = GetRndMatrix();
+    [Test]
+    public static void Test_PrependTransformMatrix_WithPoints()
+    {
+      for (int i = 0; i < 5; ++i)
+      {
+        var m1 = GetRndMatrix();
+        var m2 = GetRndMatrix();
 
-				var p1 = GetRndPoint();
+        var p1 = GetRndPoint();
 
-				var p2 = m1.Transform(p1);
+        var p2 = m1.Transform(p1);
 
-				var p3 = m2.Transform(p2);
+        var p3 = m2.Transform(p2);
 
-				var m3 = m2;
-				m3.PrependTransform(m1);
+        var m3 = m2;
+        m3.PrependTransform(m1);
 
-				var p3s = m3.Transform(p1);
+        var p3s = m3.Transform(p1);
 
-				Assert.AreEqual(p3.X, p3s.X, 0);
-				Assert.AreEqual(p3.Y, p3s.Y, 0);
-				Assert.AreEqual(p3.Z, p3s.Z, 0);
-			}
-		}
+        Assert.AreEqual(p3.X, p3s.X, 0);
+        Assert.AreEqual(p3.Y, p3s.Y, 0);
+        Assert.AreEqual(p3.Z, p3s.Z, 0);
+      }
+    }
 
-		[Test]
-		public static void Test_AppendTransformMatrix_WithVectors()
-		{
-			for (int i = 0; i < 5; ++i)
-			{
-				var m1 = GetRndMatrix();
-				var m2 = GetRndMatrix();
+    [Test]
+    public static void Test_AppendTransformMatrix_WithVectors()
+    {
+      for (int i = 0; i < 5; ++i)
+      {
+        var m1 = GetRndMatrix();
+        var m2 = GetRndMatrix();
 
-				var p1 = GetRndVector();
+        var p1 = GetRndVector();
 
-				var p2 = m1.Transform(p1);
+        var p2 = m1.Transform(p1);
 
-				var p3 = m2.Transform(p2);
+        var p3 = m2.Transform(p2);
 
-				var m3 = m1;
-				m3.AppendTransform(m2);
+        var m3 = m1;
+        m3.AppendTransform(m2);
 
-				var p3s = m3.Transform(p1);
+        var p3s = m3.Transform(p1);
 
-				Assert.AreEqual(p3.X, p3s.X, 0);
-				Assert.AreEqual(p3.Y, p3s.Y, 0);
-				Assert.AreEqual(p3.Z, p3s.Z, 0);
-			}
-		}
+        Assert.AreEqual(p3.X, p3s.X, 0);
+        Assert.AreEqual(p3.Y, p3s.Y, 0);
+        Assert.AreEqual(p3.Z, p3s.Z, 0);
+      }
+    }
 
-		[Test]
-		public static void Test_PrependTransformMatrix_WithVectors()
-		{
-			for (int i = 0; i < 5; ++i)
-			{
-				var m1 = GetRndMatrix();
-				var m2 = GetRndMatrix();
+    [Test]
+    public static void Test_PrependTransformMatrix_WithVectors()
+    {
+      for (int i = 0; i < 5; ++i)
+      {
+        var m1 = GetRndMatrix();
+        var m2 = GetRndMatrix();
 
-				var p1 = GetRndVector();
+        var p1 = GetRndVector();
 
-				var p2 = m1.Transform(p1);
+        var p2 = m1.Transform(p1);
 
-				var p3 = m2.Transform(p2);
+        var p3 = m2.Transform(p2);
 
-				var m3 = m2;
-				m3.PrependTransform(m1);
+        var m3 = m2;
+        m3.PrependTransform(m1);
 
-				var p3s = m3.Transform(p1);
+        var p3s = m3.Transform(p1);
 
-				Assert.AreEqual(p3.X, p3s.X, 0);
-				Assert.AreEqual(p3.Y, p3s.Y, 0);
-				Assert.AreEqual(p3.Z, p3s.Z, 0);
-			}
-		}
-	}
+        Assert.AreEqual(p3.X, p3s.X, 0);
+        Assert.AreEqual(p3.Y, p3s.Y, 0);
+        Assert.AreEqual(p3.Z, p3s.Z, 0);
+      }
+    }
+  }
 }

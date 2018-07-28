@@ -31,42 +31,42 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Scales
 {
-	/// <summary>
-	/// Interaction logic for DensityScaleControl.xaml
-	/// </summary>
-	public partial class DensityScaleControl : UserControl, IDensityScaleView
-	{
-		public DensityScaleControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for DensityScaleControl.xaml
+  /// </summary>
+  public partial class DensityScaleControl : UserControl, IDensityScaleView
+  {
+    public DensityScaleControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhScaleSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_cbScales);
-			if (null != AxisTypeChanged)
-				AxisTypeChanged();
-		}
+    private void EhScaleSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_cbScales);
+      if (null != AxisTypeChanged)
+        AxisTypeChanged();
+    }
 
-		#region IDensityScaleView Members
+    #region IDensityScaleView Members
 
-		public void InitializeAxisType(Altaxo.Collections.SelectableListNodeList names)
-		{
-			GuiHelper.Initialize(_cbScales, names);
-		}
+    public void InitializeAxisType(Altaxo.Collections.SelectableListNodeList names)
+    {
+      GuiHelper.Initialize(_cbScales, names);
+    }
 
-		public void SetRescalingView(object guiobject)
-		{
-			_boundaryHost.Child = guiobject as UIElement;
-		}
+    public void SetRescalingView(object guiobject)
+    {
+      _boundaryHost.Child = guiobject as UIElement;
+    }
 
-		public void SetScaleView(object guiobject)
-		{
-			_scaleViewHost.Child = guiobject as UIElement;
-		}
+    public void SetScaleView(object guiobject)
+    {
+      _scaleViewHost.Child = guiobject as UIElement;
+    }
 
-		public event Action AxisTypeChanged;
+    public event Action AxisTypeChanged;
 
-		#endregion IDensityScaleView Members
-	}
+    #endregion IDensityScaleView Members
+  }
 }

@@ -30,19 +30,19 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	/// <summary>
-	/// Interface to a buffer that stores indexed triangle data consisting of position and texture coordinates.
-	/// </summary>
-	public interface IPositionUVIndexedTriangleBuffer : IIndexedTriangleBuffer
-	{
-		/// <summary>
-		/// Adds the specified vertex.
-		/// </summary>
-		/// <param name="x">The x position.</param>
-		/// <param name="y">The y position.</param>
-		/// <param name="z">The z position.</param>
-		/// <param name="u">The u texture coordinate.</param>
-		/// <param name="v">The v texture coordinate.</param>
-		void AddTriangleVertex(double x, double y, double z, double u, double v);
-	}
+  /// <summary>
+  /// Interface to a buffer that stores indexed triangle data consisting of position and texture coordinates.
+  /// </summary>
+  public interface IPositionUVIndexedTriangleBuffer : IIndexedTriangleBuffer
+  {
+    /// <summary>
+    /// Adds the specified vertex.
+    /// </summary>
+    /// <param name="x">The x position.</param>
+    /// <param name="y">The y position.</param>
+    /// <param name="z">The z position.</param>
+    /// <param name="u">The u texture coordinate.</param>
+    /// <param name="v">The v texture coordinate.</param>
+    void AddTriangleVertex(double x, double y, double z, double u, double v);
+  }
 }

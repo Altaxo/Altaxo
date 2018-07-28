@@ -27,79 +27,79 @@ using System;
 
 namespace Altaxo.Gui.Graph.Scales
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IAxisLinkView
-	{
-		/// <summary>
-		/// Initializes the type of the link. If <c>true</c>, the linke is initialized as 1:1 link and all other fields are ignored.
-		/// </summary>
-		bool IsStraightLink { get; set; }
+  public interface IAxisLinkView
+  {
+    /// <summary>
+    /// Initializes the type of the link. If <c>true</c>, the linke is initialized as 1:1 link and all other fields are ignored.
+    /// </summary>
+    bool IsStraightLink { get; set; }
 
-		/// <summary>
-		/// Initializes the content of the OrgA edit box.
-		/// </summary>
-		double OrgA { get; set; }
+    /// <summary>
+    /// Initializes the content of the OrgA edit box.
+    /// </summary>
+    double OrgA { get; set; }
 
-		/// <summary>
-		/// Initializes the content of the OrgB edit box.
-		/// </summary>
-		double OrgB { get; set; }
+    /// <summary>
+    /// Initializes the content of the OrgB edit box.
+    /// </summary>
+    double OrgB { get; set; }
 
-		/// <summary>
-		/// Initializes the content of the EndA edit box.
-		/// </summary>
-		double EndA { get; set; }
+    /// <summary>
+    /// Initializes the content of the EndA edit box.
+    /// </summary>
+    double EndA { get; set; }
 
-		/// <summary>
-		/// Initializes the content of the EndB edit box.
-		/// </summary>
-		double EndB { get; set; }
-	}
+    /// <summary>
+    /// Initializes the content of the EndB edit box.
+    /// </summary>
+    double EndB { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Summary description for LinkAxisController.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(IAxisLinkView))]
-	[UserControllerForObject(typeof(LinkedScaleParameters))]
-	public class AxisLinkController : MVCANControllerEditOriginalDocBase<LinkedScaleParameters, IAxisLinkView>
-	{
-		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  /// <summary>
+  /// Summary description for LinkAxisController.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(IAxisLinkView))]
+  [UserControllerForObject(typeof(LinkedScaleParameters))]
+  public class AxisLinkController : MVCANControllerEditOriginalDocBase<LinkedScaleParameters, IAxisLinkView>
+  {
+    public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.OrgA = _doc.OrgA;
-				_view.OrgB = _doc.OrgB;
-				_view.EndA = _doc.EndA;
-				_view.EndB = _doc.EndB;
-				_view.IsStraightLink = _doc.IsStraightLink;
-			}
-		}
+      if (null != _view)
+      {
+        _view.OrgA = _doc.OrgA;
+        _view.OrgB = _doc.OrgB;
+        _view.EndA = _doc.EndA;
+        _view.EndB = _doc.EndB;
+        _view.IsStraightLink = _doc.IsStraightLink;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (_view.IsStraightLink)
-			{
-				_doc.SetToStraightLink();
-			}
-			else
-			{
-				_doc.OrgA = _view.OrgA;
-				_doc.OrgB = _view.OrgB;
-				_doc.EndA = _view.EndA;
-				_doc.EndB = _view.EndB;
-			}
+    public override bool Apply(bool disposeController)
+    {
+      if (_view.IsStraightLink)
+      {
+        _doc.SetToStraightLink();
+      }
+      else
+      {
+        _doc.OrgA = _view.OrgA;
+        _doc.OrgB = _view.OrgB;
+        _doc.EndA = _view.EndA;
+        _doc.EndB = _view.EndB;
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

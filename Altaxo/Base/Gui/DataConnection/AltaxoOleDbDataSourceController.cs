@@ -30,63 +30,63 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
-	public interface IAltaxoOleDbDataSourceView
-	{
-		void SetQueryView(object viewObject);
+  public interface IAltaxoOleDbDataSourceView
+  {
+    void SetQueryView(object viewObject);
 
-		void SetImportOptionsView(object viewObject);
-	}
+    void SetImportOptionsView(object viewObject);
+  }
 
-	[ExpectedTypeOfView(typeof(IAltaxoOleDbDataSourceView))]
-	[UserControllerForObject(typeof(AltaxoOleDbDataSource))]
-	public class AltaxoOleDbDataSourceController : MVCANControllerEditOriginalDocBase<AltaxoOleDbDataSource, IAltaxoOleDbDataSourceView>
-	{
-		private OleDbDataQueryController _connectionMainController;
-		private Altaxo.Gui.Data.DataSourceImportOptionsController _importOptionsController;
+  [ExpectedTypeOfView(typeof(IAltaxoOleDbDataSourceView))]
+  [UserControllerForObject(typeof(AltaxoOleDbDataSource))]
+  public class AltaxoOleDbDataSourceController : MVCANControllerEditOriginalDocBase<AltaxoOleDbDataSource, IAltaxoOleDbDataSourceView>
+  {
+    private OleDbDataQueryController _connectionMainController;
+    private Altaxo.Gui.Data.DataSourceImportOptionsController _importOptionsController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_connectionMainController, () => _connectionMainController = null);
-			yield return new ControllerAndSetNullMethod(_importOptionsController, () => _importOptionsController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_connectionMainController, () => _connectionMainController = null);
+      yield return new ControllerAndSetNullMethod(_importOptionsController, () => _importOptionsController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_importOptionsController = new Data.DataSourceImportOptionsController() { UseDocumentCopy = UseDocument.Directly };
-				_importOptionsController.InitializeDocument(_doc.ImportOptions);
+      if (initData)
+      {
+        _importOptionsController = new Data.DataSourceImportOptionsController() { UseDocumentCopy = UseDocument.Directly };
+        _importOptionsController.InitializeDocument(_doc.ImportOptions);
 
-				_connectionMainController = new OleDbDataQueryController() { UseDocumentCopy = UseDocument.Directly };
-				_connectionMainController.InitializeDocument(_doc.DataQuery);
-			}
+        _connectionMainController = new OleDbDataQueryController() { UseDocumentCopy = UseDocument.Directly };
+        _connectionMainController.InitializeDocument(_doc.DataQuery);
+      }
 
-			if (null != _view)
-			{
-				if (null == _importOptionsController.ViewObject)
-					Current.Gui.FindAndAttachControlTo(_importOptionsController);
+      if (null != _view)
+      {
+        if (null == _importOptionsController.ViewObject)
+          Current.Gui.FindAndAttachControlTo(_importOptionsController);
 
-				if (null == _connectionMainController.ViewObject)
-					Current.Gui.FindAndAttachControlTo(_connectionMainController);
+        if (null == _connectionMainController.ViewObject)
+          Current.Gui.FindAndAttachControlTo(_connectionMainController);
 
-				_view.SetImportOptionsView(_importOptionsController.ViewObject);
-				_view.SetQueryView(_connectionMainController.ViewObject);
-			}
-		}
+        _view.SetImportOptionsView(_importOptionsController.ViewObject);
+        _view.SetQueryView(_connectionMainController.ViewObject);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_importOptionsController.Apply(disposeController))
-				return false;
-			if (!_connectionMainController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_importOptionsController.Apply(disposeController))
+        return false;
+      if (!_connectionMainController.Apply(disposeController))
+        return false;
 
-			_doc.ImportOptions = (Altaxo.Data.DataSourceImportOptions)_importOptionsController.ModelObject;
-			_doc.DataQuery = (OleDbDataQuery)_connectionMainController.ModelObject;
+      _doc.ImportOptions = (Altaxo.Data.DataSourceImportOptions)_importOptionsController.ModelObject;
+      _doc.DataQuery = (OleDbDataQuery)_connectionMainController.ModelObject;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

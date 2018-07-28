@@ -23,67 +23,67 @@ using System.Windows.Interop;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	///
-	/// </summary>
-	public class FullScreenEnabledWindow : Window
-	{
-		public static readonly DependencyProperty FullScreenProperty =
-				DependencyProperty.Register("FullScreen", typeof(bool), typeof(FullScreenEnabledWindow));
+  /// <summary>
+  ///
+  /// </summary>
+  public class FullScreenEnabledWindow : Window
+  {
+    public static readonly DependencyProperty FullScreenProperty =
+        DependencyProperty.Register("FullScreen", typeof(bool), typeof(FullScreenEnabledWindow));
 
-		public bool FullScreen
-		{
-			get { return (bool)GetValue(FullScreenProperty); }
-			set { SetValue(FullScreenProperty, value); }
-		}
+    public bool FullScreen
+    {
+      get { return (bool)GetValue(FullScreenProperty); }
+      set { SetValue(FullScreenProperty, value); }
+    }
 
-		private System.Windows.WindowState previousWindowState = System.Windows.WindowState.Maximized;
-		private double oldLeft, oldTop, oldWidth, oldHeight;
+    private System.Windows.WindowState previousWindowState = System.Windows.WindowState.Maximized;
+    private double oldLeft, oldTop, oldWidth, oldHeight;
 
-		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-		{
-			base.OnPropertyChanged(e);
-			if (e.Property == FullScreenProperty)
-			{
-				if ((bool)e.NewValue)
-				{
-					// enable fullscreen mode
-					// remember previous window state
-					if (this.WindowState == System.Windows.WindowState.Normal || this.WindowState == System.Windows.WindowState.Maximized)
-						previousWindowState = this.WindowState;
-					oldLeft = this.Left;
-					oldTop = this.Top;
-					oldWidth = this.Width;
-					oldHeight = this.Height;
+    protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+    {
+      base.OnPropertyChanged(e);
+      if (e.Property == FullScreenProperty)
+      {
+        if ((bool)e.NewValue)
+        {
+          // enable fullscreen mode
+          // remember previous window state
+          if (this.WindowState == System.Windows.WindowState.Normal || this.WindowState == System.Windows.WindowState.Maximized)
+            previousWindowState = this.WindowState;
+          oldLeft = this.Left;
+          oldTop = this.Top;
+          oldWidth = this.Width;
+          oldHeight = this.Height;
 
-					WindowInteropHelper interop = new WindowInteropHelper(this);
-					interop.EnsureHandle();
-					Screen screen = Screen.FromHandle(interop.Handle);
+          WindowInteropHelper interop = new WindowInteropHelper(this);
+          interop.EnsureHandle();
+          Screen screen = Screen.FromHandle(interop.Handle);
 
-					Rect bounds = screen.Bounds.ToWpf().TransformFromDevice(this);
+          Rect bounds = screen.Bounds.ToWpf().TransformFromDevice(this);
 
-					this.ResizeMode = ResizeMode.NoResize;
-					this.Left = bounds.Left;
-					this.Top = bounds.Top;
-					this.Width = bounds.Width;
-					this.Height = bounds.Height;
-					this.WindowState = System.Windows.WindowState.Normal;
-					this.WindowStyle = WindowStyle.None;
-				}
-				else
-				{
-					ClearValue(WindowStyleProperty);
-					ClearValue(ResizeModeProperty);
-					ClearValue(MaxWidthProperty);
-					ClearValue(MaxHeightProperty);
-					this.WindowState = previousWindowState;
+          this.ResizeMode = ResizeMode.NoResize;
+          this.Left = bounds.Left;
+          this.Top = bounds.Top;
+          this.Width = bounds.Width;
+          this.Height = bounds.Height;
+          this.WindowState = System.Windows.WindowState.Normal;
+          this.WindowStyle = WindowStyle.None;
+        }
+        else
+        {
+          ClearValue(WindowStyleProperty);
+          ClearValue(ResizeModeProperty);
+          ClearValue(MaxWidthProperty);
+          ClearValue(MaxHeightProperty);
+          this.WindowState = previousWindowState;
 
-					this.Left = oldLeft;
-					this.Top = oldTop;
-					this.Width = oldWidth;
-					this.Height = oldHeight;
-				}
-			}
-		}
-	}
+          this.Left = oldLeft;
+          this.Top = oldTop;
+          this.Width = oldWidth;
+          this.Height = oldHeight;
+        }
+      }
+    }
+  }
 }

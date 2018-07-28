@@ -30,59 +30,59 @@ using System.Text;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	public interface IColorPickerView
-	{
-		AxoColor SelectedColor { get; set; }
+  public interface IColorPickerView
+  {
+    AxoColor SelectedColor { get; set; }
 
-		event Action<AxoColor> CurrentColorChanged;
-	}
+    event Action<AxoColor> CurrentColorChanged;
+  }
 
-	/// <summary>
-	/// Controller to pick up a custom color
-	/// </summary>
-	[ExpectedTypeOfView(typeof(IColorPickerView))]
-	public class ColorPickerController : MVCANDControllerEditImmutableDocBase<AxoColor, IColorPickerView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  /// <summary>
+  /// Controller to pick up a custom color
+  /// </summary>
+  [ExpectedTypeOfView(typeof(IColorPickerView))]
+  public class ColorPickerController : MVCANDControllerEditImmutableDocBase<AxoColor, IColorPickerView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.SelectedColor = _doc;
-			}
-		}
+      if (null != _view)
+      {
+        _view.SelectedColor = _doc;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc = _view.SelectedColor;
+    public override bool Apply(bool disposeController)
+    {
+      _doc = _view.SelectedColor;
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
+    protected override void AttachView()
+    {
+      base.AttachView();
 
-			_view.CurrentColorChanged += EhCurrentColorChanged;
-		}
+      _view.CurrentColorChanged += EhCurrentColorChanged;
+    }
 
-		protected override void DetachView()
-		{
-			_view.CurrentColorChanged -= EhCurrentColorChanged;
+    protected override void DetachView()
+    {
+      _view.CurrentColorChanged -= EhCurrentColorChanged;
 
-			base.DetachView();
-		}
+      base.DetachView();
+    }
 
-		private void EhCurrentColorChanged(AxoColor color)
-		{
-			_doc = color;
-			OnMadeDirty();
-		}
-	}
+    private void EhCurrentColorChanged(AxoColor color)
+    {
+      _doc = color;
+      OnMadeDirty();
+    }
+  }
 }

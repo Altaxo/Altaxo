@@ -31,43 +31,43 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	/// <summary>
-	/// Interaction logic for RegularPolygonControl.xaml
-	/// </summary>
-	public partial class RegularPolygonControl : UserControl, IRegularPolygonView
-	{
-		public RegularPolygonControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for RegularPolygonControl.xaml
+  /// </summary>
+  public partial class RegularPolygonControl : UserControl, IRegularPolygonView
+  {
+    public RegularPolygonControl()
+    {
+      InitializeComponent();
+    }
 
-		public IClosedPathShapeView ShapeGraphicView
-		{
-			get { return _guiShapeControl; }
-		}
+    public IClosedPathShapeView ShapeGraphicView
+    {
+      get { return _guiShapeControl; }
+    }
 
-		public int Vertices
-		{
-			get
-			{
-				return _guiNumberOfVertices.Value;
-			}
-			set
-			{
-				_guiNumberOfVertices.Value = value;
-			}
-		}
+    public int Vertices
+    {
+      get
+      {
+        return _guiNumberOfVertices.Value;
+      }
+      set
+      {
+        _guiNumberOfVertices.Value = value;
+      }
+    }
 
-		public double CornerRadiusPt
-		{
-			get
-			{
-				return _guiCornerRadius.SelectedQuantity.AsValueIn(Altaxo.Units.Length.Point.Instance);
-			}
-			set
-			{
-				_guiCornerRadius.SelectedQuantity = new DimensionfulQuantity(value, Altaxo.Units.Length.Point.Instance).AsQuantityIn(_guiCornerRadius.UnitEnvironment.DefaultUnit);
-			}
-		}
-	}
+    public double CornerRadiusPt
+    {
+      get
+      {
+        return _guiCornerRadius.SelectedQuantity.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      }
+      set
+      {
+        _guiCornerRadius.SelectedQuantity = new DimensionfulQuantity(value, Altaxo.Units.Length.Point.Instance).AsQuantityIn(_guiCornerRadius.UnitEnvironment.DefaultUnit);
+      }
+    }
+  }
 }

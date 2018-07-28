@@ -30,31 +30,31 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.ElectricPotential
 {
-	[UnitDescription("Electric potential", 2, 1, -3, -1, 0, 0, 0)]
-	public class Volt : SIUnit
-	{
-		private static readonly Volt _instance = new Volt();
+  [UnitDescription("Electric potential", 2, 1, -3, -1, 0, 0, 0)]
+  public class Volt : SIUnit
+  {
+    private static readonly Volt _instance = new Volt();
 
-		public static Volt Instance { get { return _instance; } }
+    public static Volt Instance { get { return _instance; } }
 
-		private Volt()
-				: base(2, 1, -3, -1, 0, 0, 0)
-		{
-		}
+    private Volt()
+        : base(2, 1, -3, -1, 0, 0, 0)
+    {
+    }
 
-		public override string Name
-		{
-			get { return "Volt"; }
-		}
+    public override string Name
+    {
+      get { return "Volt"; }
+    }
 
-		public override string ShortCut
-		{
-			get { return "V"; }
-		}
+    public override string ShortCut
+    {
+      get { return "V"; }
+    }
 
-		public override ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithAllKnownPrefixes; }
-		}
-	}
+    public override ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithAllKnownPrefixes; }
+    }
+  }
 }

@@ -34,188 +34,188 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Background
 {
-	public class BackgroundControlsGlue : FrameworkElement
-	{
-		public BackgroundControlsGlue()
-		{
-		}
+  public class BackgroundControlsGlue : FrameworkElement
+  {
+    public BackgroundControlsGlue()
+    {
+    }
 
-		#region IBackgroundStyle
+    #region IBackgroundStyle
 
-		private IBackgroundStyle _doc;
+    private IBackgroundStyle _doc;
 
-		public IBackgroundStyle BackgroundStyle
-		{
-			get
-			{
-				return _doc;
-			}
-			set
-			{
-				_doc = value;
+    public IBackgroundStyle BackgroundStyle
+    {
+      get
+      {
+        return _doc;
+      }
+      set
+      {
+        _doc = value;
 
-				CbStyle = _cbStyle;
-				CbBrush = _cbBrush;
-			}
-		}
+        CbStyle = _cbStyle;
+        CbBrush = _cbBrush;
+      }
+    }
 
-		/// <summary>
-		/// Occurs when the background style instance changed to another instance. This event is <b>not</b> fired when only members of the background style changed (e.g. the brush).
-		/// </summary>
-		public event EventHandler BackgroundStyleChanged;
+    /// <summary>
+    /// Occurs when the background style instance changed to another instance. This event is <b>not</b> fired when only members of the background style changed (e.g. the brush).
+    /// </summary>
+    public event EventHandler BackgroundStyleChanged;
 
-		protected virtual void OnBackgroundStyleChanged()
-		{
-			if (BackgroundStyleChanged != null)
-				BackgroundStyleChanged(this, EventArgs.Empty);
-		}
+    protected virtual void OnBackgroundStyleChanged()
+    {
+      if (BackgroundStyleChanged != null)
+        BackgroundStyleChanged(this, EventArgs.Empty);
+    }
 
-		#endregion IBackgroundStyle
+    #endregion IBackgroundStyle
 
-		#region Style
+    #region Style
 
-		private System.Type[] _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
-		private ComboBox _cbStyle;
+    private System.Type[] _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
+    private ComboBox _cbStyle;
 
-		public ComboBox CbStyle
-		{
-			get { return _cbStyle; }
-			set
-			{
-				if (_cbStyle != null)
-					_cbStyle.SelectionChanged -= EhStyle_SelectionChangeCommitted;
+    public ComboBox CbStyle
+    {
+      get { return _cbStyle; }
+      set
+      {
+        if (_cbStyle != null)
+          _cbStyle.SelectionChanged -= EhStyle_SelectionChangeCommitted;
 
-				_cbStyle = value;
+        _cbStyle = value;
 
-				if (_cbStyle != null)
-				{
-					InitializeBackgroundStyle();
-					_cbStyle.SelectionChanged += EhStyle_SelectionChangeCommitted;
-				}
-			}
-		}
+        if (_cbStyle != null)
+        {
+          InitializeBackgroundStyle();
+          _cbStyle.SelectionChanged += EhStyle_SelectionChangeCommitted;
+        }
+      }
+    }
 
-		private void EhStyle_SelectionChangeCommitted(object sender, EventArgs e)
-		{
-			if (_cbStyle.SelectedIndex > 0)
-				_doc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[_cbStyle.SelectedIndex - 1]);
-			else
-				_doc = null;
+    private void EhStyle_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_cbStyle.SelectedIndex > 0)
+        _doc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[_cbStyle.SelectedIndex - 1]);
+      else
+        _doc = null;
 
-			// Apply the currently selected brush to the newly created instance
-			if (_doc != null && _cbBrush != null)
-				_doc.Brush = _cbBrush.SelectedBrush;
+      // Apply the currently selected brush to the newly created instance
+      if (_doc != null && _cbBrush != null)
+        _doc.Brush = _cbBrush.SelectedBrush;
 
-			OnBackgroundStyleChanged();
-			UpdateBrushState();
-		}
+      OnBackgroundStyleChanged();
+      UpdateBrushState();
+    }
 
-		private void InitializeBackgroundStyle()
-		{
-			int sel = Array.IndexOf(this._backgroundStyles, this._doc == null ? null : this._doc.GetType());
-			string[] names = Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true);
-			_cbStyle.Items.Clear();
-			//_cbStyle.Items.Add("<none>");
-			foreach (string name in names)
-				_cbStyle.Items.Add(name);
+    private void InitializeBackgroundStyle()
+    {
+      int sel = Array.IndexOf(this._backgroundStyles, this._doc == null ? null : this._doc.GetType());
+      string[] names = Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true);
+      _cbStyle.Items.Clear();
+      //_cbStyle.Items.Add("<none>");
+      foreach (string name in names)
+        _cbStyle.Items.Add(name);
 
-			_cbStyle.SelectedIndex = sel + 1;
-		}
+      _cbStyle.SelectedIndex = sel + 1;
+    }
 
-		#endregion Style
+    #endregion Style
 
-		#region Brush
+    #region Brush
 
-		/// <summary>
-		/// Occurs when the background brush changed.
-		/// </summary>
-		public event EventHandler BackgroundBrushChanged;
+    /// <summary>
+    /// Occurs when the background brush changed.
+    /// </summary>
+    public event EventHandler BackgroundBrushChanged;
 
-		protected virtual void OnBackgroundBrushChanged()
-		{
-			if (BackgroundBrushChanged != null)
-				BackgroundBrushChanged(this, EventArgs.Empty);
-		}
+    protected virtual void OnBackgroundBrushChanged()
+    {
+      if (BackgroundBrushChanged != null)
+        BackgroundBrushChanged(this, EventArgs.Empty);
+    }
 
-		private BrushComboBox _cbBrush;
+    private BrushComboBox _cbBrush;
 
-		public BrushComboBox CbBrush
-		{
-			get { return _cbBrush; }
-			set
-			{
-				if (_cbBrush != null)
-				{
-					_cbBrush.SelectedBrushChanged -= EhBrush_SelectionChangeCommitted;
-				}
+    public BrushComboBox CbBrush
+    {
+      get { return _cbBrush; }
+      set
+      {
+        if (_cbBrush != null)
+        {
+          _cbBrush.SelectedBrushChanged -= EhBrush_SelectionChangeCommitted;
+        }
 
-				_cbBrush = value;
-				_cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
-				_cbBrush.SelectedBrush = new BrushX(NamedColors.Aqua);
+        _cbBrush = value;
+        _cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
+        _cbBrush.SelectedBrush = new BrushX(NamedColors.Aqua);
 
-				if (_doc != null && _cbBrush != null && _doc.Brush != null)
-					_cbBrush.SelectedBrush = _doc.Brush;
+        if (_doc != null && _cbBrush != null && _doc.Brush != null)
+          _cbBrush.SelectedBrush = _doc.Brush;
 
-				if (_cbBrush != null)
-				{
-					_cbBrush.SelectedBrushChanged += EhBrush_SelectionChangeCommitted;
-				}
+        if (_cbBrush != null)
+        {
+          _cbBrush.SelectedBrushChanged += EhBrush_SelectionChangeCommitted;
+        }
 
-				UpdateBrushState();
-			}
-		}
+        UpdateBrushState();
+      }
+    }
 
-		private void EhBrush_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (_doc != null)
-			{
-				_doc.Brush = _cbBrush.SelectedBrush;
-				OnBackgroundBrushChanged();
-			}
-		}
+    private void EhBrush_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (_doc != null)
+      {
+        _doc.Brush = _cbBrush.SelectedBrush;
+        OnBackgroundBrushChanged();
+      }
+    }
 
-		private Control _lblBrush;
+    private Control _lblBrush;
 
-		public Control LabelBrush
-		{
-			get
-			{
-				return _lblBrush;
-			}
-			set
-			{
-				_lblBrush = value;
-				UpdateBrushState();
-			}
-		}
+    public Control LabelBrush
+    {
+      get
+      {
+        return _lblBrush;
+      }
+      set
+      {
+        _lblBrush = value;
+        UpdateBrushState();
+      }
+    }
 
-		private void UpdateBrushState()
-		{
-			bool vis = _doc != null && _doc.SupportsBrush;
+    private void UpdateBrushState()
+    {
+      bool vis = _doc != null && _doc.SupportsBrush;
 
-			if (_cbBrush != null)
-				_cbBrush.IsEnabled = vis;
-			if (_lblBrush != null)
-				_lblBrush.IsEnabled = vis;
-		}
+      if (_cbBrush != null)
+        _cbBrush.IsEnabled = vis;
+      if (_lblBrush != null)
+        _lblBrush.IsEnabled = vis;
+    }
 
-		#endregion Brush
+    #endregion Brush
 
-		#region ShowPlotColorsOnly
+    #region ShowPlotColorsOnly
 
-		private bool _showPlotColorsOnly;
+    private bool _showPlotColorsOnly;
 
-		public bool ShowPlotColorsOnly
-		{
-			get { return _showPlotColorsOnly; }
-			set
-			{
-				_showPlotColorsOnly = value;
-				if (null != _cbBrush)
-					_cbBrush.ShowPlotColorsOnly = value;
-			}
-		}
+    public bool ShowPlotColorsOnly
+    {
+      get { return _showPlotColorsOnly; }
+      set
+      {
+        _showPlotColorsOnly = value;
+        if (null != _cbBrush)
+          _cbBrush.ShowPlotColorsOnly = value;
+      }
+    }
 
-		#endregion ShowPlotColorsOnly
-	}
+    #endregion ShowPlotColorsOnly
+  }
 }

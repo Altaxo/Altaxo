@@ -30,60 +30,60 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class CrossTimesInset : InsetBase
-	{
-		private const double Sqrt05 = 0.707106781186547524400844;
+  public class CrossTimesInset : InsetBase
+  {
+    private const double Sqrt05 = 0.707106781186547524400844;
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossTimesInset), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
-			}
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossTimesInset), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (CrossTimesInset)o ?? new CrossTimesInset();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (CrossTimesInset)o ?? new CrossTimesInset();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		private ClipperLib.IntPoint GetPoint(double w, double h)
-		{
-			return new ClipperLib.IntPoint((int)(Sqrt05 * (w + h) * ClipperScalingDouble), (int)(Sqrt05 * (h - w) * ClipperScalingDouble));
-		}
+    private ClipperLib.IntPoint GetPoint(double w, double h)
+    {
+      return new ClipperLib.IntPoint((int)(Sqrt05 * (w + h) * ClipperScalingDouble), (int)(Sqrt05 * (h - w) * ClipperScalingDouble));
+    }
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
-		{
-			var w = relativeWidth;
-			var h = 1;
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
+    {
+      var w = relativeWidth;
+      var h = 1;
 
-			var list = new List<ClipperLib.IntPoint>(12)
-				{
-				GetPoint(-w, -h),
-				GetPoint(w, -h),
-				GetPoint(w, -w),
-				GetPoint(h, -w),
-				GetPoint(h, w),
-				GetPoint(w, w),
-				GetPoint(w, h),
-				GetPoint(-w, h),
-				GetPoint(-w, w),
-				GetPoint(-h, w),
-				GetPoint(-h, -w),
-				GetPoint(-w, -w),
-			};
+      var list = new List<ClipperLib.IntPoint>(12)
+        {
+        GetPoint(-w, -h),
+        GetPoint(w, -h),
+        GetPoint(w, -w),
+        GetPoint(h, -w),
+        GetPoint(h, w),
+        GetPoint(w, w),
+        GetPoint(w, h),
+        GetPoint(-w, h),
+        GetPoint(-w, w),
+        GetPoint(-h, w),
+        GetPoint(-h, -w),
+        GetPoint(-w, -w),
+      };
 
-			return new List<List<ClipperLib.IntPoint>>(1) { list };
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1) { list };
+    }
+  }
 }

@@ -30,37 +30,37 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-	using Altaxo.Collections;
+  using Altaxo.Collections;
 
-	/// <summary>
-	/// Interaction logic for FixedColumnWidthWithTabSeparationStrategyControl.xaml
-	/// </summary>
-	public partial class FixedColumnWidthWithTabSeparationStrategyControl : UserControl, IFixedColumnWidthWithTabSeparationStrategyView
-	{
-		public FixedColumnWidthWithTabSeparationStrategyControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for FixedColumnWidthWithTabSeparationStrategyControl.xaml
+  /// </summary>
+  public partial class FixedColumnWidthWithTabSeparationStrategyControl : UserControl, IFixedColumnWidthWithTabSeparationStrategyView
+  {
+    public FixedColumnWidthWithTabSeparationStrategyControl()
+    {
+      InitializeComponent();
+    }
 
-		public int TabSize
-		{
-			get
-			{
-				return _guiTabSize.Value;
-			}
-			set
-			{
-				_guiTabSize.Value = value;
-			}
-		}
+    public int TabSize
+    {
+      get
+      {
+        return _guiTabSize.Value;
+      }
+      set
+      {
+        _guiTabSize.Value = value;
+      }
+    }
 
-		public System.Collections.ObjectModel.ObservableCollection<Boxed<int>> StartPositions
-		{
-			set
-			{
-				_guiStartPositions.ItemsSource = null;
-				_guiStartPositions.ItemsSource = value;
-			}
-		}
-	}
+    public System.Collections.ObjectModel.ObservableCollection<Boxed<int>> StartPositions
+    {
+      set
+      {
+        _guiStartPositions.ItemsSource = null;
+        _guiStartPositions.ItemsSource = value;
+      }
+    }
+  }
 }

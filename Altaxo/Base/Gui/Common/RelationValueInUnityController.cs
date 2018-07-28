@@ -31,17 +31,17 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-	[ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
-	public class RelationValueInUnityController : ValueInSomeUnitControllerBase
-	{
-		protected override IUnit UnitOfValue
-		{
-			get { return Unity.Instance; }
-		}
+  [ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
+  public class RelationValueInUnityController : ValueInSomeUnitControllerBase
+  {
+    protected override IUnit UnitOfValue
+    {
+      get { return Unity.Instance; }
+    }
 
-		protected override QuantityWithUnitGuiEnvironment UnitEnvironment
-		{
-			get { return RelationEnvironment.Instance; }
-		}
-	}
+    protected override QuantityWithUnitGuiEnvironment UnitEnvironment
+    {
+      get { return RelationEnvironment.Instance; }
+    }
+  }
 }

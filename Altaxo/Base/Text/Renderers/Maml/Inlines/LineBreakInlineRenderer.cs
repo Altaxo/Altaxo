@@ -26,22 +26,22 @@ using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="LineBreakInline"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class LineBreakInlineRenderer : MamlObjectRenderer<LineBreakInline>
-	{
-		protected override void Write(MamlRenderer renderer, LineBreakInline obj)
-		{
-			if (obj.IsHard)
-			{
-				renderer.WriteLine("<lineBreak/>");
-			}
-			else
-			{
-				renderer.WriteLine();
-			}
-		}
-	}
+  /// <summary>
+  /// Maml renderer for a <see cref="LineBreakInline"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class LineBreakInlineRenderer : MamlObjectRenderer<LineBreakInline>
+  {
+    protected override void Write(MamlRenderer renderer, LineBreakInline obj)
+    {
+      if (obj.IsHard)
+      {
+        renderer.WriteLine("<lineBreak/>");
+      }
+      else
+      {
+        renderer.WriteLine();
+      }
+    }
+  }
 }

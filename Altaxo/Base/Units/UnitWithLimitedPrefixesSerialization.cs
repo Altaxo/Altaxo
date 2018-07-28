@@ -30,33 +30,33 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UnitWithLimitedPrefixes), 0)]
-	public class SerializationSurrogate0_UnitWithLimitedPrefixes : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			var s = (UnitWithLimitedPrefixes)obj;
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UnitWithLimitedPrefixes), 0)]
+  public class SerializationSurrogate0_UnitWithLimitedPrefixes : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var s = (UnitWithLimitedPrefixes)obj;
 
-			info.AddValue("Unit", s.Unit);
+      info.AddValue("Unit", s.Unit);
 
-			info.CreateArray("PrefixList", s.Prefixes.Count);
-			foreach (var prefix in s.Prefixes)
-				info.AddValue("e", prefix);
-			info.CommitArray();
-		}
+      info.CreateArray("PrefixList", s.Prefixes.Count);
+      foreach (var prefix in s.Prefixes)
+        info.AddValue("e", prefix);
+      info.CommitArray();
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			var unit = (IUnit)info.GetValue("Unit", parent);
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      var unit = (IUnit)info.GetValue("Unit", parent);
 
-			int count = info.OpenArray("PrefixList");
+      int count = info.OpenArray("PrefixList");
 
-			var list = new SIPrefix[count];
-			for (int i = 0; i < count; ++i)
-				list[i] = (SIPrefix)info.GetValue("e", parent);
-			info.CloseArray(count);
+      var list = new SIPrefix[count];
+      for (int i = 0; i < count; ++i)
+        list[i] = (SIPrefix)info.GetValue("e", parent);
+      info.CloseArray(count);
 
-			return new UnitWithLimitedPrefixes(unit, list);
-		}
-	}
+      return new UnitWithLimitedPrefixes(unit, list);
+    }
+  }
 }

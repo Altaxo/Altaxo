@@ -31,36 +31,36 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	public class MultipleChoiceListView : ListView
-	{
-		private SelectableListNodeList _choices;
+  public class MultipleChoiceListView : ListView
+  {
+    private SelectableListNodeList _choices;
 
-		public void Initialize(SelectableListNodeList choices)
-		{
-			this.SelectionChanged -= EhSelectionChanged; // prevent firing event here
+    public void Initialize(SelectableListNodeList choices)
+    {
+      this.SelectionChanged -= EhSelectionChanged; // prevent firing event here
 
-			_choices = choices;
-			this.Items.Clear();
-			foreach (var choice in _choices)
-			{
-				var item = new ListViewItem();
-				item.Content = choice.Text;
-				item.Tag = choice;
-				Items.Add(item);
-			}
-			int selIndex = _choices.FirstSelectedNodeIndex;
-			if (selIndex >= 0)
-				this.SelectedIndex = selIndex;
+      _choices = choices;
+      this.Items.Clear();
+      foreach (var choice in _choices)
+      {
+        var item = new ListViewItem();
+        item.Content = choice.Text;
+        item.Tag = choice;
+        Items.Add(item);
+      }
+      int selIndex = _choices.FirstSelectedNodeIndex;
+      if (selIndex >= 0)
+        this.SelectedIndex = selIndex;
 
-			this.SelectionChanged += EhSelectionChanged; // now allow event again
-		}
+      this.SelectionChanged += EhSelectionChanged; // now allow event again
+    }
 
-		private void EhSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			e.Handled = true;
-			_choices.ClearSelectionsAll();
-			if (SelectedIndex >= 0)
-				_choices[SelectedIndex].IsSelected = true;
-		}
-	}
+    private void EhSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      e.Handled = true;
+      _choices.ClearSelectionsAll();
+      if (SelectedIndex >= 0)
+        _choices[SelectedIndex].IsSelected = true;
+    }
+  }
 }

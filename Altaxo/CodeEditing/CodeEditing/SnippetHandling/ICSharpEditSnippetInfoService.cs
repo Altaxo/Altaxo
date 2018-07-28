@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.SnippetHandling
 {
-	public interface ICSharpEditSnippetInfoService
-	{
-		IEnumerable<SnippetInfo> GetSnippets();
-	}
+  public interface ICSharpEditSnippetInfoService
+  {
+    IEnumerable<SnippetInfo> GetSnippets();
+  }
 }

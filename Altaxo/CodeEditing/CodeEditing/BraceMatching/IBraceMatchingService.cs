@@ -9,21 +9,21 @@ using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.BraceMatching
 {
-	public interface IBraceMatchingService
-	{
-		Task<BraceMatchingResult?> GetMatchingBracesAsync(Document document, int position, CancellationToken cancellationToken = default(CancellationToken));
-	}
+  public interface IBraceMatchingService
+  {
+    Task<BraceMatchingResult?> GetMatchingBracesAsync(Document document, int position, CancellationToken cancellationToken = default(CancellationToken));
+  }
 
-	public struct BraceMatchingResult
-	{
-		public TextSpan LeftSpan { get; }
-		public TextSpan RightSpan { get; }
+  public struct BraceMatchingResult
+  {
+    public TextSpan LeftSpan { get; }
+    public TextSpan RightSpan { get; }
 
-		public BraceMatchingResult(TextSpan leftSpan, TextSpan rightSpan)
-				: this()
-		{
-			this.LeftSpan = leftSpan;
-			this.RightSpan = rightSpan;
-		}
-	}
+    public BraceMatchingResult(TextSpan leftSpan, TextSpan rightSpan)
+        : this()
+    {
+      this.LeftSpan = leftSpan;
+      this.RightSpan = rightSpan;
+    }
+  }
 }

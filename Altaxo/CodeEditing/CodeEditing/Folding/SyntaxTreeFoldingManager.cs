@@ -35,61 +35,61 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.Folding
 {
-	/// <summary>
-	/// Responsible for the folding markers in the text editor.
-	/// </summary>
-	public class SyntaxTreeFoldingStrategy
-	{
-		protected bool _isFirstUpdate = true;
+  /// <summary>
+  /// Responsible for the folding markers in the text editor.
+  /// </summary>
+  public class SyntaxTreeFoldingStrategy
+  {
+    protected bool _isFirstUpdate = true;
 
-		/// <summary>
-		/// Central routine of the folding strategy. Uses the provided syntax tree in <paramref name="parseInfo"/>
-		/// to calculate all folding positions.
-		/// </summary>
-		/// <param name="parseInfo">The syntax tree of a document.</param>
-		/// <returns>Enumeration of foldings.</returns>
-		public virtual IEnumerable<NewFolding> GetNewFoldings(SyntaxTree parseInfo)
-		{
-			var newFoldMarkers = new List<NewFolding>();
+    /// <summary>
+    /// Central routine of the folding strategy. Uses the provided syntax tree in <paramref name="parseInfo"/>
+    /// to calculate all folding positions.
+    /// </summary>
+    /// <param name="parseInfo">The syntax tree of a document.</param>
+    /// <returns>Enumeration of foldings.</returns>
+    public virtual IEnumerable<NewFolding> GetNewFoldings(SyntaxTree parseInfo)
+    {
+      var newFoldMarkers = new List<NewFolding>();
 
-			if (parseInfo != null)
-			{
-				var root = parseInfo.GetRoot();
-				// 1st) add foldings for all class declarations
-				foreach (var classInfo in root.DescendantNodes().OfType<Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax>())
-				{
-					newFoldMarkers.Add(new NewFolding(classInfo.Identifier.Span.End, classInfo.Span.End));
-				}
+      if (parseInfo != null)
+      {
+        var root = parseInfo.GetRoot();
+        // 1st) add foldings for all class declarations
+        foreach (var classInfo in root.DescendantNodes().OfType<Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax>())
+        {
+          newFoldMarkers.Add(new NewFolding(classInfo.Identifier.Span.End, classInfo.Span.End));
+        }
 
-				// 2nd) add foldings for #region / #endregion pairs
-				var regionStack = new Stack<Microsoft.CodeAnalysis.SyntaxTrivia>();
+        // 2nd) add foldings for #region / #endregion pairs
+        var regionStack = new Stack<Microsoft.CodeAnalysis.SyntaxTrivia>();
 
-				foreach (var trivia in root.DescendantTrivia())
-				{
-					if (trivia.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.RegionDirectiveTrivia))
-					{
-						regionStack.Push(trivia);
-					}
-					else if (trivia.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.EndRegionDirectiveTrivia) && regionStack.Count > 0)
-					{
-						var regionStartTrivia = regionStack.Pop();
+        foreach (var trivia in root.DescendantTrivia())
+        {
+          if (trivia.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.RegionDirectiveTrivia))
+          {
+            regionStack.Push(trivia);
+          }
+          else if (trivia.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.EndRegionDirectiveTrivia) && regionStack.Count > 0)
+          {
+            var regionStartTrivia = regionStack.Pop();
 
-						var name = regionStartTrivia.ToFullString().Trim();
-						if (regionStartTrivia.HasStructure && regionStartTrivia.GetStructure() is Microsoft.CodeAnalysis.CSharp.Syntax.RegionDirectiveTriviaSyntax node)
-						{
-							name = node.EndOfDirectiveToken.ToFullString().Trim();
-						}
+            var name = regionStartTrivia.ToFullString().Trim();
+            if (regionStartTrivia.HasStructure && regionStartTrivia.GetStructure() is Microsoft.CodeAnalysis.CSharp.Syntax.RegionDirectiveTriviaSyntax node)
+            {
+              name = node.EndOfDirectiveToken.ToFullString().Trim();
+            }
 
-						var newFolding = new NewFolding(regionStartTrivia.Span.Start, trivia.Span.End)
-						{
-							DefaultClosed = _isFirstUpdate,
-							Name = name
-						};
-						newFoldMarkers.Add(newFolding);
-					}
-				}
-			}
-			return newFoldMarkers.OrderBy(f => f.StartOffset);
-		}
-	}
+            var newFolding = new NewFolding(regionStartTrivia.Span.Start, trivia.Span.End)
+            {
+              DefaultClosed = _isFirstUpdate,
+              Name = name
+            };
+            newFoldMarkers.Add(newFolding);
+          }
+        }
+      }
+      return newFoldMarkers.OrderBy(f => f.StartOffset);
+    }
+  }
 }

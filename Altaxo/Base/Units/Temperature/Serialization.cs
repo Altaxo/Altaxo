@@ -30,42 +30,42 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.Temperature
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Kelvin), 0)]
-	public class SerializationSurrogate0_Kelvin : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Kelvin), 0)]
+  public class SerializationSurrogate0_Kelvin : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Kelvin.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Kelvin.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DegreesCelsius), 0)]
-	public class SerializationSurrogate0_DegreesCelsius : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DegreesCelsius), 0)]
+  public class SerializationSurrogate0_DegreesCelsius : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return DegreesCelsius.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return DegreesCelsius.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DegreesFahrenheit), 0)]
-	public class SerializationSurrogate0_DegreesFahrenheit : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DegreesFahrenheit), 0)]
+  public class SerializationSurrogate0_DegreesFahrenheit : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return DegreesFahrenheit.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return DegreesFahrenheit.Instance;
+    }
+  }
 }

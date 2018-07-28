@@ -31,32 +31,32 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	public class PositionUVIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionUVIndexedTriangleBuffer
-	{
-		public PositionUVIndexedTriangleBuffer(ITransformationContext parent)
-			: base(parent)
-		{
-		}
+  public class PositionUVIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionUVIndexedTriangleBuffer
+  {
+    public PositionUVIndexedTriangleBuffer(ITransformationContext parent)
+      : base(parent)
+    {
+    }
 
-		protected override int BytesPerVertex { get { return 6 * 4; } }
+    protected override int BytesPerVertex { get { return 6 * 4; } }
 
-		public void AddTriangleVertex(double x, double y, double z, double u, double v)
-		{
-			var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));
+    public void AddTriangleVertex(double x, double y, double z, double u, double v)
+    {
+      var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));
 
-			int offs = _numberOfVertices * 6;
+      int offs = _numberOfVertices * 6;
 
-			if (offs + 6 >= _vertexStream.Length)
-				Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
+      if (offs + 6 >= _vertexStream.Length)
+        Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
 
-			_vertexStream[offs + 0] = (float)pt.X;
-			_vertexStream[offs + 1] = (float)pt.Y;
-			_vertexStream[offs + 2] = (float)pt.Z;
-			_vertexStream[offs + 3] = 1;
+      _vertexStream[offs + 0] = (float)pt.X;
+      _vertexStream[offs + 1] = (float)pt.Y;
+      _vertexStream[offs + 2] = (float)pt.Z;
+      _vertexStream[offs + 3] = 1;
 
-			_vertexStream[offs + 4] = (float)u;
-			_vertexStream[offs + 5] = (float)v;
-			++_numberOfVertices;
-		}
-	}
+      _vertexStream[offs + 4] = (float)u;
+      _vertexStream[offs + 5] = (float)v;
+      ++_numberOfVertices;
+    }
+  }
 }

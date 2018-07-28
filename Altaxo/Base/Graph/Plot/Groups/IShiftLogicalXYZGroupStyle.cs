@@ -29,33 +29,33 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	/// <summary>
-	/// Interface to a group style that needs to shift the items, e.g. the <see cref="BarSizePosition3DGroupStyle"/>. The shift is independet on the row index of the underlying data.
-	/// </summary>
-	public interface IShiftLogicalXYZGroupStyle
-	{
-		/// <summary>
-		/// Gets a value indicating whether the shift is constant, i.e. independent on the row index, or not.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if this instance is constant; otherwise, <c>false</c>.
-		/// </value>
-		bool IsConstant { get; }
+  /// <summary>
+  /// Interface to a group style that needs to shift the items, e.g. the <see cref="BarSizePosition3DGroupStyle"/>. The shift is independet on the row index of the underlying data.
+  /// </summary>
+  public interface IShiftLogicalXYZGroupStyle
+  {
+    /// <summary>
+    /// Gets a value indicating whether the shift is constant, i.e. independent on the row index, or not.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this instance is constant; otherwise, <c>false</c>.
+    /// </value>
+    bool IsConstant { get; }
 
-		/// <summary>
-		/// Get the logical shift values applied to the items. Use this function if <see cref="IsConstant"/> returns true.
-		/// </summary>
-		/// <param name="logicalShiftX">The logical shift x applied to the items.</param>
-		/// <param name="logicalShiftY">The logical shift y applied to the items.</param>
-		/// <param name="logicalShiftZ">The logical shift z applied to the items.</param>
-		void Apply(out double logicalShiftX, out double logicalShiftY, out double logicalShiftZ);
+    /// <summary>
+    /// Get the logical shift values applied to the items. Use this function if <see cref="IsConstant"/> returns true.
+    /// </summary>
+    /// <param name="logicalShiftX">The logical shift x applied to the items.</param>
+    /// <param name="logicalShiftY">The logical shift y applied to the items.</param>
+    /// <param name="logicalShiftZ">The logical shift z applied to the items.</param>
+    void Apply(out double logicalShiftX, out double logicalShiftY, out double logicalShiftZ);
 
-		/// <summary>
-		/// Get the logical shift values applied to the items. Use this function if <see cref="IsConstant"/> returns false.
-		/// </summary>
-		/// <param name="logicalShiftX">The function to get the logical shift x applied to the items. Parameter is the original row index of the item.</param>
-		/// <param name="logicalShiftY">The function to get the logical shift y applied to the items. Parameter is the original row index of the item.</param>
-		/// <param name="logicalShiftZ">The function to get the logical shift z applied to the items. Parameter is the original row index of the item.</param>
-		void Apply(out Func<int, double> logicalShiftX, out Func<int, double> logicalShiftY, out Func<int, double> logicalShiftZ);
-	}
+    /// <summary>
+    /// Get the logical shift values applied to the items. Use this function if <see cref="IsConstant"/> returns false.
+    /// </summary>
+    /// <param name="logicalShiftX">The function to get the logical shift x applied to the items. Parameter is the original row index of the item.</param>
+    /// <param name="logicalShiftY">The function to get the logical shift y applied to the items. Parameter is the original row index of the item.</param>
+    /// <param name="logicalShiftZ">The function to get the logical shift z applied to the items. Parameter is the original row index of the item.</param>
+    void Apply(out Func<int, double> logicalShiftX, out Func<int, double> logicalShiftY, out Func<int, double> logicalShiftZ);
+  }
 }

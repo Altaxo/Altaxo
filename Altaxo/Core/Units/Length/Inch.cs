@@ -29,45 +29,45 @@ using System.Text;
 
 namespace Altaxo.Units.Length
 {
-	[UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]
-	public class Inch : UnitBase, IUnit
-	{
-		private static readonly Inch _instance = new Inch();
+  [UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]
+  public class Inch : UnitBase, IUnit
+  {
+    private static readonly Inch _instance = new Inch();
 
-		public static Inch Instance { get { return _instance; } }
+    public static Inch Instance { get { return _instance; } }
 
-		protected Inch()
-		{
-		}
+    protected Inch()
+    {
+    }
 
-		public string Name
-		{
-			get { return "Inch"; }
-		}
+    public string Name
+    {
+      get { return "Inch"; }
+    }
 
-		public string ShortCut
-		{
-			get { return "in"; }
-		}
+    public string ShortCut
+    {
+      get { return "in"; }
+    }
 
-		public double ToSIUnit(double x)
-		{
-			return x * (2.54E-2);
-		}
+    public double ToSIUnit(double x)
+    {
+      return x * (2.54E-2);
+    }
 
-		public double FromSIUnit(double x)
-		{
-			return x / 2.54E-2;
-		}
+    public double FromSIUnit(double x)
+    {
+      return x / 2.54E-2;
+    }
 
-		public ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithNonePrefixOnly; }
-		}
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
 
-		public SIUnit SIUnit
-		{
-			get { return Meter.Instance; }
-		}
-	}
+    public SIUnit SIUnit
+    {
+      get { return Meter.Instance; }
+    }
+  }
 }

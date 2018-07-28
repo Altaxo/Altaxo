@@ -3,269 +3,269 @@
 										xmlns:local="clr-namespace:Altaxo.Gui.Common"
 										xmlns:axogaddin="clr-namespace:Altaxo.Gui.AddInItems">
 
-	<!-- *********************** Style for main window ************************************** -->
-	<Style TargetType="{x:Type Window}" x:Key="{x:Static local:GlobalStyles.WindowStyleKey}">
-		<Setter Property="UseLayoutRounding" Value="True" />
-		<Setter Property="TextOptions.TextFormattingMode" Value="Display" />
-		<Setter Property="FlowDirection" Value="{DynamicResource {x:Static local:GlobalStyles.FlowDirectionKey}}" />
-	</Style>
+  <!-- *********************** Style for main window ************************************** -->
+  <Style TargetType="{x:Type Window}" x:Key="{x:Static local:GlobalStyles.WindowStyleKey}">
+    <Setter Property="UseLayoutRounding" Value="True" />
+    <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+    <Setter Property="FlowDirection" Value="{DynamicResource {x:Static local:GlobalStyles.FlowDirectionKey}}" />
+  </Style>
 
-	<!-- *********************** Style for DialogWindow(s) ************************************** -->
-	<Style TargetType="{x:Type Window}" x:Key="{x:Static local:GlobalStyles.DialogWindowStyleKey}">
-		<Setter Property="UseLayoutRounding" Value="True" />
-		<Setter Property="TextOptions.TextFormattingMode" Value="Display" />
-		<Setter Property="FlowDirection" Value="{DynamicResource {x:Static local:GlobalStyles.FlowDirectionKey}}" />
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-		<Setter Property="ShowInTaskbar" Value="False" />
-	</Style>
+  <!-- *********************** Style for DialogWindow(s) ************************************** -->
+  <Style TargetType="{x:Type Window}" x:Key="{x:Static local:GlobalStyles.DialogWindowStyleKey}">
+    <Setter Property="UseLayoutRounding" Value="True" />
+    <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+    <Setter Property="FlowDirection" Value="{DynamicResource {x:Static local:GlobalStyles.FlowDirectionKey}}" />
+    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+    <Setter Property="ShowInTaskbar" Value="False" />
+  </Style>
 
-	<!-- *********************** Styles for NumericDoubleTextBox ************************************** -->
-	<Style TargetType="{x:Type axogc:NumericDoubleTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
-		<Style.Triggers>
-			<Trigger Property="Validation.HasError" Value="true">
-				<Setter Property="ToolTip"
+  <!-- *********************** Styles for NumericDoubleTextBox ************************************** -->
+  <Style TargetType="{x:Type axogc:NumericDoubleTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
+    <Style.Triggers>
+      <Trigger Property="Validation.HasError" Value="true">
+        <Setter Property="ToolTip"
 													Value="{Binding RelativeSource={x:Static RelativeSource.Self},
 												Path=(Validation.Errors)[0].ErrorContent}" />
-			</Trigger>
-		</Style.Triggers>
-		<Style.Setters>
-			<Setter Property="HorizontalContentAlignment" Value="Right" />
-		</Style.Setters>
-	</Style>
+      </Trigger>
+    </Style.Triggers>
+    <Style.Setters>
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style.Setters>
+  </Style>
 
-	<!-- *********************** Styles for DateTimeTextBox ************************************** -->
-	<Style TargetType="{x:Type axogc:DateTimeTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
-		<Style.Triggers>
-			<Trigger Property="Validation.HasError" Value="true">
-				<Setter Property="ToolTip"
+  <!-- *********************** Styles for DateTimeTextBox ************************************** -->
+  <Style TargetType="{x:Type axogc:DateTimeTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
+    <Style.Triggers>
+      <Trigger Property="Validation.HasError" Value="true">
+        <Setter Property="ToolTip"
 													Value="{Binding RelativeSource={x:Static RelativeSource.Self},
 												Path=(Validation.Errors)[0].ErrorContent}" />
-			</Trigger>
-		</Style.Triggers>
-		<Style.Setters>
-			<Setter Property="HorizontalContentAlignment" Value="Right" />
-		</Style.Setters>
-	</Style>
+      </Trigger>
+    </Style.Triggers>
+    <Style.Setters>
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style.Setters>
+  </Style>
 
-	<!-- *********************** Styles for TimeSpanTextBox ************************************** -->
-	<Style TargetType="{x:Type axogc:TimeSpanTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
-		<Style.Triggers>
-			<Trigger Property="Validation.HasError" Value="true">
-				<Setter Property="ToolTip"
+  <!-- *********************** Styles for TimeSpanTextBox ************************************** -->
+  <Style TargetType="{x:Type axogc:TimeSpanTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
+    <Style.Triggers>
+      <Trigger Property="Validation.HasError" Value="true">
+        <Setter Property="ToolTip"
 													Value="{Binding RelativeSource={x:Static RelativeSource.Self},
 												Path=(Validation.Errors)[0].ErrorContent}" />
-			</Trigger>
-		</Style.Triggers>
-		<Style.Setters>
-			<Setter Property="HorizontalContentAlignment" Value="Right" />
-		</Style.Setters>
-	</Style>
+      </Trigger>
+    </Style.Triggers>
+    <Style.Setters>
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style.Setters>
+  </Style>
 
-	<!-- *********************** Styles for the QuantityWithUnitTextBox ************************************** -->
-	<Style TargetType="{x:Type axogc:QuantityWithUnitTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
-		<Style.Triggers>
-			<Trigger Property="Validation.HasError" Value="true">
-				<Setter Property="ToolTip"
+  <!-- *********************** Styles for the QuantityWithUnitTextBox ************************************** -->
+  <Style TargetType="{x:Type axogc:QuantityWithUnitTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
+    <Style.Triggers>
+      <Trigger Property="Validation.HasError" Value="true">
+        <Setter Property="ToolTip"
 													Value="{Binding RelativeSource={x:Static RelativeSource.Self},
 												Path=(Validation.Errors)[0].ErrorContent}" />
-			</Trigger>
-		</Style.Triggers>
-		<Style.Setters>
-			<Setter Property="HorizontalContentAlignment" Value="Right" />
-			<Setter Property="ContextMenu">
-				<Setter.Value>
-					<ContextMenu>
-						<MenuItem Header="Copy" Command="Copy" />
-						<MenuItem Header="Cut" Command="Cut" />
-						<MenuItem Header="Paste" Command="Paste" />
-						<MenuItem Header="Convert to.." Tag="TagConvertTo" />
-						<!--MenuItem Header="Change unit.." Tag="TagChangeUnitTo"/-->
-						<MenuItem Header="Set number of digits displayed.." Tag="TagSetDigits" />
-					</ContextMenu>
-				</Setter.Value>
-			</Setter>
-		</Style.Setters>
-	</Style>
+      </Trigger>
+    </Style.Triggers>
+    <Style.Setters>
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+      <Setter Property="ContextMenu">
+        <Setter.Value>
+          <ContextMenu>
+            <MenuItem Header="Copy" Command="Copy" />
+            <MenuItem Header="Cut" Command="Cut" />
+            <MenuItem Header="Paste" Command="Paste" />
+            <MenuItem Header="Convert to.." Tag="TagConvertTo" />
+            <!--MenuItem Header="Change unit.." Tag="TagChangeUnitTo"/-->
+            <MenuItem Header="Set number of digits displayed.." Tag="TagSetDigits" />
+          </ContextMenu>
+        </Setter.Value>
+      </Setter>
+    </Style.Setters>
+  </Style>
 
-	<!-- *********************** Styles for the DimensionfulQuantityImageComboBox ************************************** -->
-	<Style TargetType="{x:Type axogcd:DimensionfulQuantityImageComboBox}" xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" BasedOn="{StaticResource {x:Type ComboBox}}">
-		<Style.Triggers>
-			<Trigger Property="Validation.HasError" Value="true">
-				<Setter Property="ToolTip"
+  <!-- *********************** Styles for the DimensionfulQuantityImageComboBox ************************************** -->
+  <Style TargetType="{x:Type axogcd:DimensionfulQuantityImageComboBox}" xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" BasedOn="{StaticResource {x:Type ComboBox}}">
+    <Style.Triggers>
+      <Trigger Property="Validation.HasError" Value="true">
+        <Setter Property="ToolTip"
 													Value="{Binding RelativeSource={x:Static RelativeSource.Self},
 												Path=(Validation.Errors)[0].ErrorContent}" />
-			</Trigger>
-		</Style.Triggers>
-		<Style.Setters>
-			<Setter Property="ContextMenu">
-				<Setter.Value>
-					<ContextMenu>
-						<MenuItem Header="Copy" Command="Copy" />
-						<MenuItem Header="Cut" Command="Cut" />
-						<MenuItem Header="Paste" Command="Paste" />
-						<MenuItem Header="Convert to.." Tag="TagConvertTo" />
-						<MenuItem Header="Set number of digits displayed.." Tag="TagSetDigits" />
-					</ContextMenu>
-				</Setter.Value>
-			</Setter>
-		</Style.Setters>
-	</Style>
+      </Trigger>
+    </Style.Triggers>
+    <Style.Setters>
+      <Setter Property="ContextMenu">
+        <Setter.Value>
+          <ContextMenu>
+            <MenuItem Header="Copy" Command="Copy" />
+            <MenuItem Header="Cut" Command="Cut" />
+            <MenuItem Header="Paste" Command="Paste" />
+            <MenuItem Header="Convert to.." Tag="TagConvertTo" />
+            <MenuItem Header="Set number of digits displayed.." Tag="TagSetDigits" />
+          </ContextMenu>
+        </Setter.Value>
+      </Setter>
+    </Style.Setters>
+  </Style>
 
-	<!-- *********************** Styles for the MultiSelctTreeView ************************************** -->
-	<Style TargetType="{x:Type axogc:MultiSelectTreeView}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common">
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-		<Setter Property="Border.BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" />
-		<Setter Property="Border.BorderThickness" Value="1" />
-		<Setter Property="Padding" Value="4" />
-		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
-		<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type axogc:MultiSelectTreeView}">
-					<Border SnapsToDevicePixels="true"
+  <!-- *********************** Styles for the MultiSelctTreeView ************************************** -->
+  <Style TargetType="{x:Type axogc:MultiSelectTreeView}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common">
+    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+    <Setter Property="Border.BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" />
+    <Setter Property="Border.BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="4" />
+    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type axogc:MultiSelectTreeView}">
+          <Border SnapsToDevicePixels="true"
 										x:Name="Border"
 										BorderBrush="{TemplateBinding Border.BorderBrush}"
 										BorderThickness="{TemplateBinding Border.BorderThickness}">
-						<ScrollViewer Focusable="true"
+            <ScrollViewer Focusable="true"
 														SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
 														Background="{TemplateBinding Background}"
 														Padding="{TemplateBinding Padding}"
 														CanContentScroll="false"
 														HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
 														VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-							<ItemsPresenter />
-						</ScrollViewer>
-					</Border>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+              <ItemsPresenter />
+            </ScrollViewer>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-	<!-- *********************** Styles for NumericUpDownBase ************************************** -->
-	<Style TargetType="{x:Type axogc:NumericUpDownBase}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common">
-		<Setter Property="HorizontalAlignment" Value="Stretch" />
-		<Setter Property="VerticalAlignment" Value="Stretch" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type axogc:NumericUpDownBase}">
-					<Border BorderThickness="1" BorderBrush="Gray" Margin="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
-						<Grid Margin="0">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="*" />
-								<RowDefinition Height="*" />
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="Auto" MinWidth="16" />
-								<ColumnDefinition Width="Auto" />
-							</Grid.ColumnDefinitions>
+  <!-- *********************** Styles for NumericUpDownBase ************************************** -->
+  <Style TargetType="{x:Type axogc:NumericUpDownBase}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type axogc:NumericUpDownBase}">
+          <Border BorderThickness="1" BorderBrush="Gray" Margin="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <Grid Margin="0">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" MinWidth="16" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
 
-							<TextBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" TextAlignment="Right" x:Name="_textBox">
-								<!-- Note that the Binding for TextBox.Text is located in the OnApplyTemplate function (it was neccessary because the converter and the validation rule needs a reference to the control) -->
-								<TextBox.Style>
-									<Style TargetType="{x:Type TextBox}">
-										<Style.Triggers>
-											<Trigger Property="Validation.HasError" Value="true">
-												<Setter Property="ToolTip"
+              <TextBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" TextAlignment="Right" x:Name="_textBox">
+                <!-- Note that the Binding for TextBox.Text is located in the OnApplyTemplate function (it was neccessary because the converter and the validation rule needs a reference to the control) -->
+                <TextBox.Style>
+                  <Style TargetType="{x:Type TextBox}">
+                    <Style.Triggers>
+                      <Trigger Property="Validation.HasError" Value="true">
+                        <Setter Property="ToolTip"
 													Value="{Binding RelativeSource={x:Static RelativeSource.Self},
 												Path=(Validation.Errors)[0].ErrorContent}" />
-											</Trigger>
-										</Style.Triggers>
-									</Style>
-								</TextBox.Style>
-							</TextBox>
+                      </Trigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBox.Style>
+              </TextBox>
 
-							<RepeatButton Command="{x:Static axogc:NumericUpDownBase.IncreaseCommand}"  Grid.Column="1" Grid.Row="0">
-								<Path HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
-									<Path.Data>
-										<Geometry>M 0 4 L 3.5 0 L 7 4 Z</Geometry>
-									</Path.Data>
-								</Path>
-							</RepeatButton>
+              <RepeatButton Command="{x:Static axogc:NumericUpDownBase.IncreaseCommand}"  Grid.Column="1" Grid.Row="0">
+                <Path HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
+                  <Path.Data>
+                    <Geometry>M 0 4 L 3.5 0 L 7 4 Z</Geometry>
+                  </Path.Data>
+                </Path>
+              </RepeatButton>
 
-							<RepeatButton Command="{x:Static axogc:NumericUpDownBase.DecreaseCommand}"  Grid.Column="1" Grid.Row="1">
-								<Path HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
-									<Path.Data>
-										<Geometry>M 0 0 L 3.5 4 L 7 0 Z</Geometry>
-									</Path.Data>
-								</Path>
-							</RepeatButton>
+              <RepeatButton Command="{x:Static axogc:NumericUpDownBase.DecreaseCommand}"  Grid.Column="1" Grid.Row="1">
+                <Path HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
+                  <Path.Data>
+                    <Geometry>M 0 0 L 3.5 4 L 7 0 Z</Geometry>
+                  </Path.Data>
+                </Path>
+              </RepeatButton>
 
-							<RepeatButton Command="{x:Static axogc:NumericUpDownBase.GotoMaximumCommand}"  Grid.Column="2" Grid.Row="0">
-								<RepeatButton.Visibility>
-									<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="IsGotoMinimumAndMaximumVisible">
-										<Binding.Converter>
-											<BooleanToVisibilityConverter />
-										</Binding.Converter>
-									</Binding>
-								</RepeatButton.Visibility>
-								<Path HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
-									<Path.Data>
-										<Geometry>M 0 5 L 4 1 L 0 1 L 0 0 L 8 0 L 8 1 L 4 1 L 8 5 Z</Geometry>
-									</Path.Data>
-								</Path>
-							</RepeatButton>
+              <RepeatButton Command="{x:Static axogc:NumericUpDownBase.GotoMaximumCommand}"  Grid.Column="2" Grid.Row="0">
+                <RepeatButton.Visibility>
+                  <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="IsGotoMinimumAndMaximumVisible">
+                    <Binding.Converter>
+                      <BooleanToVisibilityConverter />
+                    </Binding.Converter>
+                  </Binding>
+                </RepeatButton.Visibility>
+                <Path HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
+                  <Path.Data>
+                    <Geometry>M 0 5 L 4 1 L 0 1 L 0 0 L 8 0 L 8 1 L 4 1 L 8 5 Z</Geometry>
+                  </Path.Data>
+                </Path>
+              </RepeatButton>
 
-							<RepeatButton Command="{x:Static axogc:NumericUpDownBase.GotoMinimumCommand}"  Grid.Column="2" Grid.Row="1">
-								<RepeatButton.Visibility>
-									<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="IsGotoMinimumAndMaximumVisible">
-										<Binding.Converter>
-											<BooleanToVisibilityConverter />
-										</Binding.Converter>
-									</Binding>
-								</RepeatButton.Visibility>
-								<Path HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
-									<Path.Data>
-										<Geometry>M 0 0 L 4 4 L 0 4 L 0 5 L 8 5 L 8 4 L 4 4 L 8 0 Z</Geometry>
-									</Path.Data>
-								</Path>
-							</RepeatButton>
-						</Grid>
-					</Border>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+              <RepeatButton Command="{x:Static axogc:NumericUpDownBase.GotoMinimumCommand}"  Grid.Column="2" Grid.Row="1">
+                <RepeatButton.Visibility>
+                  <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="IsGotoMinimumAndMaximumVisible">
+                    <Binding.Converter>
+                      <BooleanToVisibilityConverter />
+                    </Binding.Converter>
+                  </Binding>
+                </RepeatButton.Visibility>
+                <Path HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
+                  <Path.Data>
+                    <Geometry>M 0 0 L 4 4 L 0 4 L 0 5 L 8 5 L 8 4 L 4 4 L 8 0 Z</Geometry>
+                  </Path.Data>
+                </Path>
+              </RepeatButton>
+            </Grid>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-	<!-- *********************** Style for the images in ToolbarItems, if the items are disabled -->
-	<Style TargetType="{x:Type Image}" x:Key="{x:Static axogaddin:ToolBarService.ImageStyleKey}">
-		<Style.Triggers>
-			<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
-				<Setter Property="Opacity" Value="0.30" />
-			</DataTrigger>
-		</Style.Triggers>
-	</Style>
+  <!-- *********************** Style for the images in ToolbarItems, if the items are disabled -->
+  <Style TargetType="{x:Type Image}" x:Key="{x:Static axogaddin:ToolBarService.ImageStyleKey}">
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
+        <Setter Property="Opacity" Value="0.30" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
 
-	<!-- Colors for DropDownButton and SplitButton -->
-	<SolidColorBrush x:Key="{ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}" Color="#FF0A246A" />
-	<SolidColorBrush x:Key="{ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}" Color="#FFB6BDD2" />
-	<SolidColorBrush x:Key="{ComponentResourceKey {x:Type local:SplitButton}, PressedBackground}" Color="#FF8592B5" />
+  <!-- Colors for DropDownButton and SplitButton -->
+  <SolidColorBrush x:Key="{ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}" Color="#FF0A246A" />
+  <SolidColorBrush x:Key="{ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}" Color="#FFB6BDD2" />
+  <SolidColorBrush x:Key="{ComponentResourceKey {x:Type local:SplitButton}, PressedBackground}" Color="#FF8592B5" />
 
-	<!-- Style and Template for DropDownButton -->
-	<Style TargetType="{x:Type local:DropDownButton}">
-		<Setter Property="TextElement.Foreground" Value = "{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-		<Setter Property="Control.Padding" Value="2,2,2,2" />
-		<Setter Property="Border.BorderThickness" Value="1,1,1,1" />
-		<Setter Property="Panel.Background" Value="Transparent" />
-		<Setter Property="Border.BorderBrush" Value="Transparent" />
-		<Setter Property="FrameworkElement.HorizontalAlignment" Value="Center" />
-		<Setter Property="FrameworkElement.VerticalAlignment" Value="Center" />
-		<Setter Property="Control.HorizontalContentAlignment" Value="Center" />
-		<Setter Property="Control.VerticalContentAlignment" Value="Center" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="local:DropDownButton"
+  <!-- Style and Template for DropDownButton -->
+  <Style TargetType="{x:Type local:DropDownButton}">
+    <Setter Property="TextElement.Foreground" Value = "{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+    <Setter Property="Control.Padding" Value="2,2,2,2" />
+    <Setter Property="Border.BorderThickness" Value="1,1,1,1" />
+    <Setter Property="Panel.Background" Value="Transparent" />
+    <Setter Property="Border.BorderBrush" Value="Transparent" />
+    <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center" />
+    <Setter Property="FrameworkElement.VerticalAlignment" Value="Center" />
+    <Setter Property="Control.HorizontalContentAlignment" Value="Center" />
+    <Setter Property="Control.VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="local:DropDownButton"
 				                 xmlns:s="clr-namespace:System;assembly=mscorlib">
-					<Border
+          <Border
 						BorderThickness="{TemplateBinding Border.BorderThickness}"
 						BorderBrush="{TemplateBinding Border.BorderBrush}"
 						Background="{TemplateBinding Panel.Background}"
 						Name="OuterBorder"
 						SnapsToDevicePixels="True">
-						<StackPanel Orientation="Horizontal">
-							<ContentPresenter
+            <StackPanel Orientation="Horizontal">
+              <ContentPresenter
 								Margin="{TemplateBinding Control.Padding}"
 								Content="{TemplateBinding ContentControl.Content}"
 								ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
@@ -273,61 +273,61 @@
 								HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
 								VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
 								SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-							<Path Margin="0,2,2,2"
+              <Path Margin="0,2,2,2"
 							      Data = "M0,0 L1,0 0.5,1 z"
 							      Fill = "{TemplateBinding TextElement.Foreground}"
 							      Width = "7"
 							      Height = "3.5"
 							      Stretch = "Fill" />
-						</StackPanel>
-					</Border>
-					<ControlTemplate.Triggers>
-						<Trigger Property="UIElement.IsMouseOver" Value="True">
-							<Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
-							<Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
-						</Trigger>
-						<Trigger Property="UIElement.IsKeyboardFocused" Value="True">
-							<Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
-							<Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
-						</Trigger>
-						<Trigger Property="UIElement.IsEnabled" Value="False">
-							<Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-						</Trigger>
-						<Trigger Property="local:DropDownButton.IsDropDownMenuOpen" Value="True">
-							<Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
-							<Setter Property="Border.BorderThickness" TargetName="OuterBorder" Value="1,1,1,0" />
-							<Setter Property="Border.Padding" TargetName="OuterBorder" Value="0,0,0,1" />
-							<Setter Property="Panel.Background" TargetName="OuterBorder" Value="Transparent" />
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+            </StackPanel>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="UIElement.IsMouseOver" Value="True">
+              <Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
+              <Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
+            </Trigger>
+            <Trigger Property="UIElement.IsKeyboardFocused" Value="True">
+              <Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
+              <Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
+            </Trigger>
+            <Trigger Property="UIElement.IsEnabled" Value="False">
+              <Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+            </Trigger>
+            <Trigger Property="local:DropDownButton.IsDropDownMenuOpen" Value="True">
+              <Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
+              <Setter Property="Border.BorderThickness" TargetName="OuterBorder" Value="1,1,1,0" />
+              <Setter Property="Border.Padding" TargetName="OuterBorder" Value="0,0,0,1" />
+              <Setter Property="Panel.Background" TargetName="OuterBorder" Value="Transparent" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-	<!-- Style and Template for SplitButton -->
-	<Style TargetType="{x:Type local:SplitButton}">
-		<Setter Property="TextElement.Foreground" Value = "{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-		<Setter Property="Control.Padding" Value="2,2,2,2" />
-		<Setter Property="Border.BorderThickness" Value="1,1,1,1" />
-		<Setter Property="Panel.Background" Value="Transparent" />
-		<Setter Property="Border.BorderBrush" Value="Transparent" />
-		<Setter Property="FrameworkElement.HorizontalAlignment" Value="Center" />
-		<Setter Property="FrameworkElement.VerticalAlignment" Value="Center" />
-		<Setter Property="Control.HorizontalContentAlignment" Value="Center" />
-		<Setter Property="Control.VerticalContentAlignment" Value="Center" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="local:SplitButton"
+  <!-- Style and Template for SplitButton -->
+  <Style TargetType="{x:Type local:SplitButton}">
+    <Setter Property="TextElement.Foreground" Value = "{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+    <Setter Property="Control.Padding" Value="2,2,2,2" />
+    <Setter Property="Border.BorderThickness" Value="1,1,1,1" />
+    <Setter Property="Panel.Background" Value="Transparent" />
+    <Setter Property="Border.BorderBrush" Value="Transparent" />
+    <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center" />
+    <Setter Property="FrameworkElement.VerticalAlignment" Value="Center" />
+    <Setter Property="Control.HorizontalContentAlignment" Value="Center" />
+    <Setter Property="Control.VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="local:SplitButton"
 				                 xmlns:s="clr-namespace:System;assembly=mscorlib">
-					<Border
+          <Border
 						BorderThickness="{TemplateBinding Border.BorderThickness}"
 						BorderBrush="{TemplateBinding Border.BorderBrush}"
 						Background="{TemplateBinding Panel.Background}"
 						Name="OuterBorder"
 						SnapsToDevicePixels="True">
-						<StackPanel Orientation="Horizontal">
-							<ContentPresenter
+            <StackPanel Orientation="Horizontal">
+              <ContentPresenter
 								Margin="{TemplateBinding Control.Padding}"
 								Content="{TemplateBinding ContentControl.Content}"
 								ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
@@ -335,125 +335,125 @@
 								HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
 								VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
 								SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-							<Border
+              <Border
 								Name="PART_DropDownArrow"
 								BorderThickness="1,0,0,0"
 								BorderBrush="{Binding ElementName=OuterBorder, Path=BorderBrush}"
 								SnapsToDevicePixels="True">
-								<Path Margin="2"
+                <Path Margin="2"
 								      Data = "M0,0 L1,0 0.5,1 z"
 								      Fill = "{TemplateBinding TextElement.Foreground}"
 								      Width = "7"
 								      Height = "3.5"
 								      Stretch = "Fill" />
-							</Border>
-						</StackPanel>
-					</Border>
-					<ControlTemplate.Triggers>
-						<Trigger Property="UIElement.IsMouseOver" Value="True">
-							<Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
-							<Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
-							<Setter Property="Panel.Background" TargetName="PART_DropDownArrow" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
-						</Trigger>
-						<Trigger Property="UIElement.IsKeyboardFocused" Value="True">
-							<Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
-							<Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
-							<Setter Property="Panel.Background" TargetName="PART_DropDownArrow" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
-						</Trigger>
-						<Trigger Property="ButtonBase.IsPressed" Value="True">
-							<Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
-							<Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:SplitButton}, PressedBackground}}" />
-						</Trigger>
-						<Trigger Property="UIElement.IsEnabled" Value="False">
-							<Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-						</Trigger>
-						<Trigger Property="local:SplitButton.IsDropDownMenuOpen" Value="True">
-							<Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
-							<Setter Property="Border.BorderBrush" TargetName="PART_DropDownArrow" Value="Transparent" />
-							<Setter Property="Border.BorderThickness" TargetName="OuterBorder" Value="1,1,1,0" />
-							<Setter Property="Border.Padding" TargetName="OuterBorder" Value="0,0,0,1" />
-							<Setter Property="Panel.Background" TargetName="OuterBorder" Value="Transparent" />
-							<Setter Property="Panel.Background" TargetName="PART_DropDownArrow" Value="Transparent" />
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+              </Border>
+            </StackPanel>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="UIElement.IsMouseOver" Value="True">
+              <Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
+              <Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
+              <Setter Property="Panel.Background" TargetName="PART_DropDownArrow" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
+            </Trigger>
+            <Trigger Property="UIElement.IsKeyboardFocused" Value="True">
+              <Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
+              <Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
+              <Setter Property="Panel.Background" TargetName="PART_DropDownArrow" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBackground}}" />
+            </Trigger>
+            <Trigger Property="ButtonBase.IsPressed" Value="True">
+              <Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:DropDownButton}, ActiveBorder}}" />
+              <Setter Property="Panel.Background" TargetName="OuterBorder" Value="{DynamicResource {ComponentResourceKey {x:Type local:SplitButton}, PressedBackground}}" />
+            </Trigger>
+            <Trigger Property="UIElement.IsEnabled" Value="False">
+              <Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+            </Trigger>
+            <Trigger Property="local:SplitButton.IsDropDownMenuOpen" Value="True">
+              <Setter Property="Border.BorderBrush" TargetName="OuterBorder" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
+              <Setter Property="Border.BorderBrush" TargetName="PART_DropDownArrow" Value="Transparent" />
+              <Setter Property="Border.BorderThickness" TargetName="OuterBorder" Value="1,1,1,0" />
+              <Setter Property="Border.Padding" TargetName="OuterBorder" Value="0,0,0,1" />
+              <Setter Property="Panel.Background" TargetName="OuterBorder" Value="Transparent" />
+              <Setter Property="Panel.Background" TargetName="PART_DropDownArrow" Value="Transparent" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-	<!-- SortableGridViewColumn. Displays an up arrow or down arrow in the column header when the grid is sorted using that column.	-->
-	<local:ColumnSortDirectionToVisibilityConverter x:Key="ColumnSortDirectionToVisibilityConverter" />
-	<DataTemplate x:Key="{ComponentResourceKey {x:Type local:SortableGridViewColumn}, ColumnHeaderTemplate}">
-		<StackPanel Orientation="Horizontal">
-			<TextBlock HorizontalAlignment="Center" Text="{Binding}" />
-			<Path x:Name="upArrow"
+  <!-- SortableGridViewColumn. Displays an up arrow or down arrow in the column header when the grid is sorted using that column.	-->
+  <local:ColumnSortDirectionToVisibilityConverter x:Key="ColumnSortDirectionToVisibilityConverter" />
+  <DataTemplate x:Key="{ComponentResourceKey {x:Type local:SortableGridViewColumn}, ColumnHeaderTemplate}">
+    <StackPanel Orientation="Horizontal">
+      <TextBlock HorizontalAlignment="Center" Text="{Binding}" />
+      <Path x:Name="upArrow"
 			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static local:ColumnSortDirection.Ascending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
 			      Fill            = "Gray"
 			      Data            = "M 5,10 L 15,10 L 10,5 L 5,10" />
-			<Path x:Name="downArrow"
+      <Path x:Name="downArrow"
 			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static local:ColumnSortDirection.Descending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
 			      Fill            = "Gray"
 			      Data            = "M 5,5 L 10,10 L 15,5 L 5,5" />
-		</StackPanel>
-	</DataTemplate>
+    </StackPanel>
+  </DataTemplate>
 
-	<!-- This style replaces the default ListBoxItem template with one that highlights the focused item instead of the selected item -->
-	<Style x:Key="{x:Static local:GlobalStyles.ListBoxItemFocusHighlightStyleKey}" TargetType="{x:Type ListBoxItem}">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type ListBoxItem}">
-					<Border Name="Bd"
+  <!-- This style replaces the default ListBoxItem template with one that highlights the focused item instead of the selected item -->
+  <Style x:Key="{x:Static local:GlobalStyles.ListBoxItemFocusHighlightStyleKey}" TargetType="{x:Type ListBoxItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+          <Border Name="Bd"
 					        Background="{TemplateBinding Background}"
 					        BorderBrush="{TemplateBinding BorderBrush}"
 					        BorderThickness="{TemplateBinding BorderThickness}"
 					        Padding="{TemplateBinding Padding}"
 					        SnapsToDevicePixels="true">
-						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
 							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-					</Border>
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsKeyboardFocusWithin"
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsKeyboardFocusWithin"
 						         Value="true">
-							<Setter TargetName="Bd"
+              <Setter TargetName="Bd"
 							        Property="Background"
 							        Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-							<Setter Property="Foreground"
+              <Setter Property="Foreground"
 							        Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-	<!-- This style replaces the default ListViewItem template with one that highlights the focused item instead of the selected items -->
-	<Style x:Key="{x:Static local:GlobalStyles.ListViewItemFocusHighlightStyleKey}" TargetType="{x:Type ListViewItem}">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type ListViewItem}">
-					<Border Name="Bd"
+  <!-- This style replaces the default ListViewItem template with one that highlights the focused item instead of the selected items -->
+  <Style x:Key="{x:Static local:GlobalStyles.ListViewItemFocusHighlightStyleKey}" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Border Name="Bd"
 					        Background="{TemplateBinding Background}"
 					        BorderBrush="{TemplateBinding BorderBrush}"
 					        BorderThickness="{TemplateBinding BorderThickness}"
 					        Padding="{TemplateBinding Padding}"
 					        SnapsToDevicePixels="true">
-						<GridViewRowPresenter Content="{TemplateBinding Content}" Columns="{TemplateBinding GridView.ColumnCollection}" />
-					</Border>
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsKeyboardFocusWithin"
+            <GridViewRowPresenter Content="{TemplateBinding Content}" Columns="{TemplateBinding GridView.ColumnCollection}" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsKeyboardFocusWithin"
 						         Value="true">
-							<Setter TargetName="Bd"
+              <Setter TargetName="Bd"
 							        Property="Background"
 							        Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-							<Setter Property="Foreground"
+              <Setter Property="Foreground"
 							        Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 </ResourceDictionary>

@@ -40,89 +40,89 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.CodeEditing
 {
-	/// <summary>
-	/// Interaction logic for MessageControl.xaml
-	/// </summary>
-	public partial class DiagnosticMessageControl : UserControl
-	{
-		public DiagnosticMessageControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for MessageControl.xaml
+  /// </summary>
+  public partial class DiagnosticMessageControl : UserControl
+  {
+    public DiagnosticMessageControl()
+    {
+      InitializeComponent();
+    }
 
-		/// <summary>
-		/// Occurs when the user wants to go to the location that corresponds to a diagnostic he has clicked.
-		/// </summary>
-		public event Action<AltaxoDiagnostic> DiagnosticClicked;
+    /// <summary>
+    /// Occurs when the user wants to go to the location that corresponds to a diagnostic he has clicked.
+    /// </summary>
+    public event Action<AltaxoDiagnostic> DiagnosticClicked;
 
-		public void SetMessages(IReadOnlyList<AltaxoDiagnostic> diagnostics)
-		{
-			_guiMessageList.ItemsSource = diagnostics;
-		}
+    public void SetMessages(IReadOnlyList<AltaxoDiagnostic> diagnostics)
+    {
+      _guiMessageList.ItemsSource = diagnostics;
+    }
 
-		private void EhListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			var listItem = GetListViewItemFromMouseEvent(e);
+    private void EhListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      var listItem = GetListViewItemFromMouseEvent(e);
 
-			if (listItem != null)
-			{
-				// wenn we have double clicked on a listview item, we can use the selected value property to get the clicked item
-				if (_guiMessageList.SelectedValue is AltaxoDiagnostic diag)
-				{
-					DiagnosticClicked(diag);
-				}
-			}
-		}
+      if (listItem != null)
+      {
+        // wenn we have double clicked on a listview item, we can use the selected value property to get the clicked item
+        if (_guiMessageList.SelectedValue is AltaxoDiagnostic diag)
+        {
+          DiagnosticClicked(diag);
+        }
+      }
+    }
 
-		public ListViewItem GetListViewItemFromMouseEvent(MouseButtonEventArgs e)
-		{
-			DependencyObject obj = (DependencyObject)e.OriginalSource;
+    public ListViewItem GetListViewItemFromMouseEvent(MouseButtonEventArgs e)
+    {
+      DependencyObject obj = (DependencyObject)e.OriginalSource;
 
-			while (obj != null && obj != _guiMessageList)
-			{
-				if (obj is ListViewItem lvi)
-				{
-					return lvi;
-				}
-				obj = VisualTreeHelper.GetParent(obj);
-			}
-			return null;
-		}
-	}
+      while (obj != null && obj != _guiMessageList)
+      {
+        if (obj is ListViewItem lvi)
+        {
+          return lvi;
+        }
+        obj = VisualTreeHelper.GetParent(obj);
+      }
+      return null;
+    }
+  }
 
-	[ValueConversion(typeof(int), typeof(Brush))]
-	public class MessageLevelToBrushConverter : IValueConverter
-	{
-		private static Brush _hiddenBrush = new SolidColorBrush(Colors.LightGray);
-		private static Brush _infoBrush = new SolidColorBrush(Colors.LightGreen);
-		private static Brush _warningBrush = new SolidColorBrush(Colors.Yellow);
-		private static Brush _errorBrush = new SolidColorBrush(Colors.LightPink);
+  [ValueConversion(typeof(int), typeof(Brush))]
+  public class MessageLevelToBrushConverter : IValueConverter
+  {
+    private static Brush _hiddenBrush = new SolidColorBrush(Colors.LightGray);
+    private static Brush _infoBrush = new SolidColorBrush(Colors.LightGreen);
+    private static Brush _warningBrush = new SolidColorBrush(Colors.Yellow);
+    private static Brush _errorBrush = new SolidColorBrush(Colors.LightPink);
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			var c1 = (int)value;
-			switch (c1)
-			{
-				case 0:
-					return _hiddenBrush;
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      var c1 = (int)value;
+      switch (c1)
+      {
+        case 0:
+          return _hiddenBrush;
 
-				case 1:
-					return _infoBrush;
+        case 1:
+          return _infoBrush;
 
-				case 2:
-					return _warningBrush;
+        case 2:
+          return _warningBrush;
 
-				case 3:
-					return _errorBrush;
+        case 3:
+          return _errorBrush;
 
-				default:
-					throw new NotImplementedException("Unknown MessageLevel");
-			}
-		}
+        default:
+          throw new NotImplementedException("Unknown MessageLevel");
+      }
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

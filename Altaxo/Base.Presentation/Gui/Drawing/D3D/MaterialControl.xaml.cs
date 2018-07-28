@@ -38,53 +38,53 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
-	/// <summary>
-	/// Interaction logic for MaterialView.xaml
-	/// </summary>
-	public partial class MaterialControl : UserControl, IMaterialView
-	{
-		public MaterialControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for MaterialView.xaml
+  /// </summary>
+  public partial class MaterialControl : UserControl, IMaterialView
+  {
+    public MaterialControl()
+    {
+      InitializeComponent();
+    }
 
-		public double Smoothness
-		{
-			get
-			{
-				return _guiSmoothness.Value;
-			}
+    public double Smoothness
+    {
+      get
+      {
+        return _guiSmoothness.Value;
+      }
 
-			set
-			{
-				_guiSmoothness.Value = value;
-			}
-		}
+      set
+      {
+        _guiSmoothness.Value = value;
+      }
+    }
 
-		public double IndexOfRefraction
-		{
-			get
-			{
-				return _guiIndexOfRefraction.Value;
-			}
+    public double IndexOfRefraction
+    {
+      get
+      {
+        return _guiIndexOfRefraction.Value;
+      }
 
-			set
-			{
-				_guiIndexOfRefraction.Value = value;
-			}
-		}
+      set
+      {
+        _guiIndexOfRefraction.Value = value;
+      }
+    }
 
-		public double Metalness
-		{
-			get
-			{
-				return _guiMetalness.Value;
-			}
+    public double Metalness
+    {
+      get
+      {
+        return _guiMetalness.Value;
+      }
 
-			set
-			{
-				_guiMetalness.Value = value;
-			}
-		}
-	}
+      set
+      {
+        _guiMetalness.Value = value;
+      }
+    }
+  }
 }

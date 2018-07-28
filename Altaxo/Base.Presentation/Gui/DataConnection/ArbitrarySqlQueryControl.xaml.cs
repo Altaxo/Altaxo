@@ -31,75 +31,75 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.DataConnection
 {
-	/// <summary>
-	/// Interaction logic for ArbitrarySqlQueryControl.xaml
-	/// </summary>
-	public partial class ArbitrarySqlQueryControl : UserControl, IArbitrarySqlQueryView
-	{
-		public event Action CheckSql;
+  /// <summary>
+  /// Interaction logic for ArbitrarySqlQueryControl.xaml
+  /// </summary>
+  public partial class ArbitrarySqlQueryControl : UserControl, IArbitrarySqlQueryView
+  {
+    public event Action CheckSql;
 
-		public event Action ViewResults;
+    public event Action ViewResults;
 
-		public event Action ClearQuery;
+    public event Action ClearQuery;
 
-		public event Action SqlTextChanged;
+    public event Action SqlTextChanged;
 
-		public ArbitrarySqlQueryControl()
-		{
-			InitializeComponent();
-		}
+    public ArbitrarySqlQueryControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhCheckSql_Click(object sender, RoutedEventArgs e)
-		{
-			var ev = CheckSql;
-			if (null != ev)
-			{
-				ev();
-			}
-		}
+    private void EhCheckSql_Click(object sender, RoutedEventArgs e)
+    {
+      var ev = CheckSql;
+      if (null != ev)
+      {
+        ev();
+      }
+    }
 
-		private void EhViewResults_Click(object sender, RoutedEventArgs e)
-		{
-			var ev = ViewResults;
-			if (null != ev)
-			{
-				ev();
-			}
-		}
+    private void EhViewResults_Click(object sender, RoutedEventArgs e)
+    {
+      var ev = ViewResults;
+      if (null != ev)
+      {
+        ev();
+      }
+    }
 
-		private void EhClearQuery_Click(object sender, RoutedEventArgs e)
-		{
-			var ev = ClearQuery;
-			if (null != ev)
-			{
-				ev();
-			}
-		}
+    private void EhClearQuery_Click(object sender, RoutedEventArgs e)
+    {
+      var ev = ClearQuery;
+      if (null != ev)
+      {
+        ev();
+      }
+    }
 
-		public string SqlText
-		{
-			get
-			{
-				return _txtSql.Text;
-			}
-			set
-			{
-				_txtSql.Text = value;
-			}
-		}
+    public string SqlText
+    {
+      get
+      {
+        return _txtSql.Text;
+      }
+      set
+      {
+        _txtSql.Text = value;
+      }
+    }
 
-		public void UpdateStatus(bool isConnectionStringEmpty, bool isSelectionStatementEmpty)
-		{
-			_guiCheckSql.IsEnabled = !isConnectionStringEmpty && !isSelectionStatementEmpty;
-			_guiClearQuery.IsEnabled = true;
-			_guiViewResults.IsEnabled = !isConnectionStringEmpty && !isSelectionStatementEmpty;
-		}
+    public void UpdateStatus(bool isConnectionStringEmpty, bool isSelectionStatementEmpty)
+    {
+      _guiCheckSql.IsEnabled = !isConnectionStringEmpty && !isSelectionStatementEmpty;
+      _guiClearQuery.IsEnabled = true;
+      _guiViewResults.IsEnabled = !isConnectionStringEmpty && !isSelectionStatementEmpty;
+    }
 
-		private void EhSqlTextChanged(object sender, TextChangedEventArgs e)
-		{
-			var ev = SqlTextChanged;
-			if (null != ev)
-				ev();
-		}
-	}
+    private void EhSqlTextChanged(object sender, TextChangedEventArgs e)
+    {
+      var ev = SqlTextChanged;
+      if (null != ev)
+        ev();
+    }
+  }
 }

@@ -17,12 +17,12 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Markdown
 {
-	public enum ViewingConfiguration
-	{
-		ConfigurationEditorLeftViewerRight = 0,
-		ConfigurationEditorTopViewerBottom = 1,
-		ConfigurationEditorRightViewerLeft = 2,
-		ConfigurationEditorBottomViewerTop = 3,
-		ConfigurationTabbedEditorAndViewer = 4,
-	};
+  public enum ViewingConfiguration
+  {
+    ConfigurationEditorLeftViewerRight = 0,
+    ConfigurationEditorTopViewerBottom = 1,
+    ConfigurationEditorRightViewerLeft = 2,
+    ConfigurationEditorBottomViewerTop = 3,
+    ConfigurationTabbedEditorAndViewer = 4,
+  };
 }

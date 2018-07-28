@@ -10,326 +10,326 @@ using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.QuickInfo
 {
-	using Altaxo.Gui.CodeEditing;
-	using Completion;
+  using Altaxo.Gui.CodeEditing;
+  using Completion;
 
-	[Export(typeof(IDeferredQuickInfoContentProvider))]
-	internal class DeferredQuickInfoContentProvider : IDeferredQuickInfoContentProvider
-	{
-		public IDeferredQuickInfoContent CreateQuickInfoDisplayDeferredContent(
-				ISymbol symbol,
-				bool showWarningGlyph,
-				bool showSymbolGlyph,
-				IList<TaggedText> mainDescription,
-				IDeferredQuickInfoContent documentation,
-				IList<TaggedText> typeParameterMap,
-				IList<TaggedText> anonymousTypes,
-				IList<TaggedText> usageText,
-				IList<TaggedText> exceptionText)
-		{
-			return new QuickInfoDisplayDeferredContent(
-					symbolGlyph: showSymbolGlyph ? CreateGlyphDeferredContent(symbol) : null,
-					warningGlyph: showWarningGlyph ? CreateWarningGlyph() : null,
-					mainDescription: CreateClassifiableDeferredContent(mainDescription),
-					documentation: documentation,
-					typeParameterMap: CreateClassifiableDeferredContent(typeParameterMap),
-					anonymousTypes: CreateClassifiableDeferredContent(anonymousTypes),
-					usageText: CreateClassifiableDeferredContent(usageText),
-					exceptionText: CreateClassifiableDeferredContent(exceptionText));
-		}
+  [Export(typeof(IDeferredQuickInfoContentProvider))]
+  internal class DeferredQuickInfoContentProvider : IDeferredQuickInfoContentProvider
+  {
+    public IDeferredQuickInfoContent CreateQuickInfoDisplayDeferredContent(
+        ISymbol symbol,
+        bool showWarningGlyph,
+        bool showSymbolGlyph,
+        IList<TaggedText> mainDescription,
+        IDeferredQuickInfoContent documentation,
+        IList<TaggedText> typeParameterMap,
+        IList<TaggedText> anonymousTypes,
+        IList<TaggedText> usageText,
+        IList<TaggedText> exceptionText)
+    {
+      return new QuickInfoDisplayDeferredContent(
+          symbolGlyph: showSymbolGlyph ? CreateGlyphDeferredContent(symbol) : null,
+          warningGlyph: showWarningGlyph ? CreateWarningGlyph() : null,
+          mainDescription: CreateClassifiableDeferredContent(mainDescription),
+          documentation: documentation,
+          typeParameterMap: CreateClassifiableDeferredContent(typeParameterMap),
+          anonymousTypes: CreateClassifiableDeferredContent(anonymousTypes),
+          usageText: CreateClassifiableDeferredContent(usageText),
+          exceptionText: CreateClassifiableDeferredContent(exceptionText));
+    }
 
-		private static IDeferredQuickInfoContent CreateGlyphDeferredContent(ISymbol symbol)
-		{
-			return new SymbolGlyphDeferredContent(symbol.GetGlyph());
-		}
+    private static IDeferredQuickInfoContent CreateGlyphDeferredContent(ISymbol symbol)
+    {
+      return new SymbolGlyphDeferredContent(symbol.GetGlyph());
+    }
 
-		private static IDeferredQuickInfoContent CreateWarningGlyph()
-		{
-			return new SymbolGlyphDeferredContent(Glyph.CompletionWarning);
-		}
+    private static IDeferredQuickInfoContent CreateWarningGlyph()
+    {
+      return new SymbolGlyphDeferredContent(Glyph.CompletionWarning);
+    }
 
-		public IDeferredQuickInfoContent CreateDocumentationCommentDeferredContent(string documentationComment)
-		{
-			return new DocumentationCommentDeferredContent(documentationComment);
-		}
+    public IDeferredQuickInfoContent CreateDocumentationCommentDeferredContent(string documentationComment)
+    {
+      return new DocumentationCommentDeferredContent(documentationComment);
+    }
 
-		public IDeferredQuickInfoContent CreateClassifiableDeferredContent(IList<TaggedText> content)
-		{
-			return new ClassifiableDeferredContent(content);
-		}
+    public IDeferredQuickInfoContent CreateClassifiableDeferredContent(IList<TaggedText> content)
+    {
+      return new ClassifiableDeferredContent(content);
+    }
 
-		private class QuickInfoDisplayDeferredContent : IDeferredQuickInfoContent
-		{
-			private readonly IDeferredQuickInfoContent _symbolGlyph;
-			private readonly IDeferredQuickInfoContent _mainDescription;
-			private readonly IDeferredQuickInfoContent _documentation;
-			private readonly IDeferredQuickInfoContent _typeParameterMap;
-			private readonly IDeferredQuickInfoContent _anonymousTypes;
-			private readonly IDeferredQuickInfoContent _usageText;
-			private readonly IDeferredQuickInfoContent _exceptionText;
-			private readonly IDeferredQuickInfoContent _warningGlyph;
+    private class QuickInfoDisplayDeferredContent : IDeferredQuickInfoContent
+    {
+      private readonly IDeferredQuickInfoContent _symbolGlyph;
+      private readonly IDeferredQuickInfoContent _mainDescription;
+      private readonly IDeferredQuickInfoContent _documentation;
+      private readonly IDeferredQuickInfoContent _typeParameterMap;
+      private readonly IDeferredQuickInfoContent _anonymousTypes;
+      private readonly IDeferredQuickInfoContent _usageText;
+      private readonly IDeferredQuickInfoContent _exceptionText;
+      private readonly IDeferredQuickInfoContent _warningGlyph;
 
-			public QuickInfoDisplayDeferredContent(IDeferredQuickInfoContent symbolGlyph, IDeferredQuickInfoContent warningGlyph, IDeferredQuickInfoContent mainDescription, IDeferredQuickInfoContent documentation, IDeferredQuickInfoContent typeParameterMap, IDeferredQuickInfoContent anonymousTypes, IDeferredQuickInfoContent usageText, IDeferredQuickInfoContent exceptionText)
-			{
-				_symbolGlyph = symbolGlyph;
-				_warningGlyph = warningGlyph;
-				_mainDescription = mainDescription;
-				_documentation = documentation;
-				_typeParameterMap = typeParameterMap;
-				_anonymousTypes = anonymousTypes;
-				_usageText = usageText;
-				_exceptionText = exceptionText;
-			}
+      public QuickInfoDisplayDeferredContent(IDeferredQuickInfoContent symbolGlyph, IDeferredQuickInfoContent warningGlyph, IDeferredQuickInfoContent mainDescription, IDeferredQuickInfoContent documentation, IDeferredQuickInfoContent typeParameterMap, IDeferredQuickInfoContent anonymousTypes, IDeferredQuickInfoContent usageText, IDeferredQuickInfoContent exceptionText)
+      {
+        _symbolGlyph = symbolGlyph;
+        _warningGlyph = warningGlyph;
+        _mainDescription = mainDescription;
+        _documentation = documentation;
+        _typeParameterMap = typeParameterMap;
+        _anonymousTypes = anonymousTypes;
+        _usageText = usageText;
+        _exceptionText = exceptionText;
+      }
 
-			public object Create()
-			{
-				object warningGlyph = null;
-				if (_warningGlyph != null)
-				{
-					warningGlyph = _warningGlyph.Create();
-				}
-				object symbolGlyph = null;
-				if (_symbolGlyph != null)
-				{
-					symbolGlyph = _symbolGlyph.Create();
-				}
-				return new QuickInfoDisplayPanel(
-						(FrameworkElement)symbolGlyph,
-						(FrameworkElement)warningGlyph,
-						(FrameworkElement)_mainDescription.Create(),
-						(FrameworkElement)_documentation.Create(),
-						(FrameworkElement)_typeParameterMap.Create(),
-						(FrameworkElement)_anonymousTypes.Create(),
-						(FrameworkElement)_usageText.Create(),
-						(FrameworkElement)_exceptionText.Create());
-			}
-		}
+      public object Create()
+      {
+        object warningGlyph = null;
+        if (_warningGlyph != null)
+        {
+          warningGlyph = _warningGlyph.Create();
+        }
+        object symbolGlyph = null;
+        if (_symbolGlyph != null)
+        {
+          symbolGlyph = _symbolGlyph.Create();
+        }
+        return new QuickInfoDisplayPanel(
+            (FrameworkElement)symbolGlyph,
+            (FrameworkElement)warningGlyph,
+            (FrameworkElement)_mainDescription.Create(),
+            (FrameworkElement)_documentation.Create(),
+            (FrameworkElement)_typeParameterMap.Create(),
+            (FrameworkElement)_anonymousTypes.Create(),
+            (FrameworkElement)_usageText.Create(),
+            (FrameworkElement)_exceptionText.Create());
+      }
+    }
 
-		private class QuickInfoDisplayPanel : StackPanel
-		{
-			private TextBlock MainDescription { get; }
-			private TextBlock Documentation { get; }
-			private TextBlock TypeParameterMap { get; }
-			private TextBlock AnonymousTypes { get; }
-			private TextBlock UsageText { get; }
-			private TextBlock ExceptionText { get; }
+    private class QuickInfoDisplayPanel : StackPanel
+    {
+      private TextBlock MainDescription { get; }
+      private TextBlock Documentation { get; }
+      private TextBlock TypeParameterMap { get; }
+      private TextBlock AnonymousTypes { get; }
+      private TextBlock UsageText { get; }
+      private TextBlock ExceptionText { get; }
 
-			public QuickInfoDisplayPanel(
-					FrameworkElement symbolGlyph,
-					FrameworkElement warningGlyph,
-					FrameworkElement mainDescription,
-					FrameworkElement documentation,
-					FrameworkElement typeParameterMap,
-					FrameworkElement anonymousTypes,
-					FrameworkElement usageText,
-					FrameworkElement exceptionText)
-			{
-				MainDescription = (TextBlock)mainDescription;
-				Documentation = (TextBlock)documentation;
-				TypeParameterMap = (TextBlock)typeParameterMap;
-				AnonymousTypes = (TextBlock)anonymousTypes;
-				UsageText = (TextBlock)usageText;
-				ExceptionText = (TextBlock)exceptionText;
+      public QuickInfoDisplayPanel(
+          FrameworkElement symbolGlyph,
+          FrameworkElement warningGlyph,
+          FrameworkElement mainDescription,
+          FrameworkElement documentation,
+          FrameworkElement typeParameterMap,
+          FrameworkElement anonymousTypes,
+          FrameworkElement usageText,
+          FrameworkElement exceptionText)
+      {
+        MainDescription = (TextBlock)mainDescription;
+        Documentation = (TextBlock)documentation;
+        TypeParameterMap = (TextBlock)typeParameterMap;
+        AnonymousTypes = (TextBlock)anonymousTypes;
+        UsageText = (TextBlock)usageText;
+        ExceptionText = (TextBlock)exceptionText;
 
-				Orientation = Orientation.Vertical;
+        Orientation = Orientation.Vertical;
 
-				Border symbolGlyphBorder = null;
-				if (symbolGlyph != null)
-				{
-					symbolGlyph.Margin = new Thickness(1, 1, 3, 1);
-					symbolGlyphBorder = new Border()
-					{
-						BorderThickness = new Thickness(0),
-						BorderBrush = Brushes.Transparent,
-						VerticalAlignment = VerticalAlignment.Top,
-						Child = symbolGlyph
-					};
-				}
+        Border symbolGlyphBorder = null;
+        if (symbolGlyph != null)
+        {
+          symbolGlyph.Margin = new Thickness(1, 1, 3, 1);
+          symbolGlyphBorder = new Border()
+          {
+            BorderThickness = new Thickness(0),
+            BorderBrush = Brushes.Transparent,
+            VerticalAlignment = VerticalAlignment.Top,
+            Child = symbolGlyph
+          };
+        }
 
-				mainDescription.Margin = new Thickness(1);
-				var mainDescriptionBorder = new Border()
-				{
-					BorderThickness = new Thickness(0),
-					BorderBrush = Brushes.Transparent,
-					VerticalAlignment = VerticalAlignment.Center,
-					Child = mainDescription
-				};
+        mainDescription.Margin = new Thickness(1);
+        var mainDescriptionBorder = new Border()
+        {
+          BorderThickness = new Thickness(0),
+          BorderBrush = Brushes.Transparent,
+          VerticalAlignment = VerticalAlignment.Center,
+          Child = mainDescription
+        };
 
-				var symbolGlyphAndMainDescriptionDock = new DockPanel()
-				{
-					LastChildFill = true,
-					HorizontalAlignment = HorizontalAlignment.Stretch,
-					Background = Brushes.Transparent
-				};
+        var symbolGlyphAndMainDescriptionDock = new DockPanel()
+        {
+          LastChildFill = true,
+          HorizontalAlignment = HorizontalAlignment.Stretch,
+          Background = Brushes.Transparent
+        };
 
-				if (symbolGlyphBorder != null)
-				{
-					symbolGlyphAndMainDescriptionDock.Children.Add(symbolGlyphBorder);
-				}
+        if (symbolGlyphBorder != null)
+        {
+          symbolGlyphAndMainDescriptionDock.Children.Add(symbolGlyphBorder);
+        }
 
-				symbolGlyphAndMainDescriptionDock.Children.Add(mainDescriptionBorder);
+        symbolGlyphAndMainDescriptionDock.Children.Add(mainDescriptionBorder);
 
-				if (warningGlyph != null)
-				{
-					warningGlyph.Margin = new Thickness(1, 1, 3, 1);
-					var warningGlyphBorder = new Border()
-					{
-						BorderThickness = new Thickness(0),
-						BorderBrush = Brushes.Transparent,
-						VerticalAlignment = VerticalAlignment.Center,
-						HorizontalAlignment = HorizontalAlignment.Right,
-						Child = warningGlyph
-					};
+        if (warningGlyph != null)
+        {
+          warningGlyph.Margin = new Thickness(1, 1, 3, 1);
+          var warningGlyphBorder = new Border()
+          {
+            BorderThickness = new Thickness(0),
+            BorderBrush = Brushes.Transparent,
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Child = warningGlyph
+          };
 
-					symbolGlyphAndMainDescriptionDock.Children.Add(warningGlyphBorder);
-				}
+          symbolGlyphAndMainDescriptionDock.Children.Add(warningGlyphBorder);
+        }
 
-				Children.Add(symbolGlyphAndMainDescriptionDock);
-				Children.Add(documentation);
-				Children.Add(usageText);
-				Children.Add(typeParameterMap);
-				Children.Add(anonymousTypes);
-				Children.Add(exceptionText);
-			}
+        Children.Add(symbolGlyphAndMainDescriptionDock);
+        Children.Add(documentation);
+        Children.Add(usageText);
+        Children.Add(typeParameterMap);
+        Children.Add(anonymousTypes);
+        Children.Add(exceptionText);
+      }
 
-			public override string ToString()
-			{
-				var sb = new StringBuilder();
+      public override string ToString()
+      {
+        var sb = new StringBuilder();
 
-				BuildStringFromInlineCollection(MainDescription.Inlines, sb);
+        BuildStringFromInlineCollection(MainDescription.Inlines, sb);
 
-				if (Documentation.Inlines.Count > 0)
-				{
-					sb.AppendLine();
-					BuildStringFromInlineCollection(Documentation.Inlines, sb);
-				}
+        if (Documentation.Inlines.Count > 0)
+        {
+          sb.AppendLine();
+          BuildStringFromInlineCollection(Documentation.Inlines, sb);
+        }
 
-				if (TypeParameterMap.Inlines.Count > 0)
-				{
-					sb.AppendLine();
-					BuildStringFromInlineCollection(TypeParameterMap.Inlines, sb);
-				}
+        if (TypeParameterMap.Inlines.Count > 0)
+        {
+          sb.AppendLine();
+          BuildStringFromInlineCollection(TypeParameterMap.Inlines, sb);
+        }
 
-				if (AnonymousTypes.Inlines.Count > 0)
-				{
-					sb.AppendLine();
-					BuildStringFromInlineCollection(AnonymousTypes.Inlines, sb);
-				}
+        if (AnonymousTypes.Inlines.Count > 0)
+        {
+          sb.AppendLine();
+          BuildStringFromInlineCollection(AnonymousTypes.Inlines, sb);
+        }
 
-				if (UsageText.Inlines.Count > 0)
-				{
-					sb.AppendLine();
-					BuildStringFromInlineCollection(UsageText.Inlines, sb);
-				}
+        if (UsageText.Inlines.Count > 0)
+        {
+          sb.AppendLine();
+          BuildStringFromInlineCollection(UsageText.Inlines, sb);
+        }
 
-				if (ExceptionText.Inlines.Count > 0)
-				{
-					sb.AppendLine();
-					BuildStringFromInlineCollection(ExceptionText.Inlines, sb);
-				}
+        if (ExceptionText.Inlines.Count > 0)
+        {
+          sb.AppendLine();
+          BuildStringFromInlineCollection(ExceptionText.Inlines, sb);
+        }
 
-				return sb.ToString();
-			}
+        return sb.ToString();
+      }
 
-			private static void BuildStringFromInlineCollection(InlineCollection inlines, StringBuilder sb)
-			{
-				foreach (var inline in inlines)
-				{
-					if (inline != null)
-					{
-						var inlineText = GetStringFromInline(inline);
-						if (!string.IsNullOrEmpty(inlineText))
-						{
-							sb.Append(inlineText);
-						}
-					}
-				}
-			}
+      private static void BuildStringFromInlineCollection(InlineCollection inlines, StringBuilder sb)
+      {
+        foreach (var inline in inlines)
+        {
+          if (inline != null)
+          {
+            var inlineText = GetStringFromInline(inline);
+            if (!string.IsNullOrEmpty(inlineText))
+            {
+              sb.Append(inlineText);
+            }
+          }
+        }
+      }
 
-			private static string GetStringFromInline(Inline currentInline)
-			{
-				var lineBreak = currentInline as LineBreak;
-				if (lineBreak != null)
-				{
-					return Environment.NewLine;
-				}
+      private static string GetStringFromInline(Inline currentInline)
+      {
+        var lineBreak = currentInline as LineBreak;
+        if (lineBreak != null)
+        {
+          return Environment.NewLine;
+        }
 
-				var run = currentInline as Run;
-				return run?.Text;
-			}
-		}
+        var run = currentInline as Run;
+        return run?.Text;
+      }
+    }
 
-		private class SymbolGlyphDeferredContent : IDeferredQuickInfoContent
-		{
-			public SymbolGlyphDeferredContent(Glyph glyph)
-			{
-				Glyph = glyph;
-			}
+    private class SymbolGlyphDeferredContent : IDeferredQuickInfoContent
+    {
+      public SymbolGlyphDeferredContent(Glyph glyph)
+      {
+        Glyph = glyph;
+      }
 
-			public object Create()
-			{
-				var image = new Image
-				{
-					Width = 16,
-					Height = 16,
-					Source = Application.Current?.TryFindResource(Glyph) as ImageSource
-				};
-				return image;
-			}
+      public object Create()
+      {
+        var image = new Image
+        {
+          Width = 16,
+          Height = 16,
+          Source = Application.Current?.TryFindResource(Glyph) as ImageSource
+        };
+        return image;
+      }
 
-			private Glyph Glyph { get; }
-		}
+      private Glyph Glyph { get; }
+    }
 
-		private class ClassifiableDeferredContent : IDeferredQuickInfoContent
-		{
-			private readonly IList<TaggedText> _classifiableContent;
+    private class ClassifiableDeferredContent : IDeferredQuickInfoContent
+    {
+      private readonly IList<TaggedText> _classifiableContent;
 
-			public ClassifiableDeferredContent(IList<TaggedText> content)
-			{
-				_classifiableContent = content;
-			}
+      public ClassifiableDeferredContent(IList<TaggedText> content)
+      {
+        _classifiableContent = content;
+      }
 
-			public object Create()
-			{
-				var textBlock = _classifiableContent.ToTextBlock();
-				if (textBlock.Inlines.Count == 0)
-					textBlock.Visibility = Visibility.Collapsed;
-				return textBlock;
-			}
-		}
+      public object Create()
+      {
+        var textBlock = _classifiableContent.ToTextBlock();
+        if (textBlock.Inlines.Count == 0)
+          textBlock.Visibility = Visibility.Collapsed;
+        return textBlock;
+      }
+    }
 
-		private class DocumentationCommentDeferredContent : IDeferredQuickInfoContent
-		{
-			private readonly string _documentationComment;
+    private class DocumentationCommentDeferredContent : IDeferredQuickInfoContent
+    {
+      private readonly string _documentationComment;
 
-			public DocumentationCommentDeferredContent(string documentationComment)
-			{
-				_documentationComment = documentationComment;
-			}
+      public DocumentationCommentDeferredContent(string documentationComment)
+      {
+        _documentationComment = documentationComment;
+      }
 
-			public object Create()
-			{
-				var documentationTextBlock = new TextBlock
-				{
-					TextWrapping = TextWrapping.Wrap
-				};
+      public object Create()
+      {
+        var documentationTextBlock = new TextBlock
+        {
+          TextWrapping = TextWrapping.Wrap
+        };
 
-				UpdateDocumentationTextBlock(documentationTextBlock);
-				return documentationTextBlock;
-			}
+        UpdateDocumentationTextBlock(documentationTextBlock);
+        return documentationTextBlock;
+      }
 
-			private void UpdateDocumentationTextBlock(TextBlock documentationTextBlock)
-			{
-				if (!string.IsNullOrEmpty(_documentationComment))
-				{
-					documentationTextBlock.Text = _documentationComment;
-				}
-				else
-				{
-					documentationTextBlock.Text = string.Empty;
-					documentationTextBlock.Visibility = Visibility.Collapsed;
-				}
-			}
-		}
-	}
+      private void UpdateDocumentationTextBlock(TextBlock documentationTextBlock)
+      {
+        if (!string.IsNullOrEmpty(_documentationComment))
+        {
+          documentationTextBlock.Text = _documentationComment;
+        }
+        else
+        {
+          documentationTextBlock.Text = string.Empty;
+          documentationTextBlock.Visibility = Visibility.Collapsed;
+        }
+      }
+    }
+  }
 }

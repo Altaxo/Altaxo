@@ -29,131 +29,131 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-	public class CSPlaneIDList : IReadOnlyList<CSPlaneID>
-	{
-		private List<CSPlaneID> _innerList = new List<CSPlaneID>();
+  public class CSPlaneIDList : IReadOnlyList<CSPlaneID>
+  {
+    private List<CSPlaneID> _innerList = new List<CSPlaneID>();
 
-		#region Serialization
+    #region Serialization
 
-		#region Version 0
+    #region Version 0
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSPlaneIDList), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				CSPlaneIDList s = (CSPlaneIDList)obj;
-				info.CreateArray("PlaneIDs", s.Count);
-				foreach (CSPlaneID plane in s)
-					info.AddValue("e", plane);
-				info.CommitArray();
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSPlaneIDList), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        CSPlaneIDList s = (CSPlaneIDList)obj;
+        info.CreateArray("PlaneIDs", s.Count);
+        foreach (CSPlaneID plane in s)
+          info.AddValue("e", plane);
+        info.CommitArray();
+      }
 
-			protected virtual CSPlaneIDList SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = new CSPlaneIDList(info);
+      protected virtual CSPlaneIDList SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = new CSPlaneIDList(info);
 
-				return s;
-			}
+        return s;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				CSPlaneIDList s = SDeserialize(o, info, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        CSPlaneIDList s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
 
-		#endregion Version 0
+    #endregion Version 0
 
-		private CSPlaneIDList(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			_innerList = new List<CSPlaneID>();
-			int count = info.OpenArray("PlaneIDs");
-			for (int i = count; i > 0; i--)
-				_innerList.Add((CSPlaneID)info.GetValue("e", null));
-			info.CloseArray(count);
-		}
+    private CSPlaneIDList(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      _innerList = new List<CSPlaneID>();
+      int count = info.OpenArray("PlaneIDs");
+      for (int i = count; i > 0; i--)
+        _innerList.Add((CSPlaneID)info.GetValue("e", null));
+      info.CloseArray(count);
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		#region Constructors
+    #region Constructors
 
-		private CSPlaneIDList()
-		{
-			_innerList = new List<CSPlaneID>();
-		}
+    private CSPlaneIDList()
+    {
+      _innerList = new List<CSPlaneID>();
+    }
 
-		public static CSPlaneIDList Empty { get; private set; }
+    public static CSPlaneIDList Empty { get; private set; }
 
-		static CSPlaneIDList()
-		{
-			Empty = new CSPlaneIDList();
-		}
+    static CSPlaneIDList()
+    {
+      Empty = new CSPlaneIDList();
+    }
 
-		public CSPlaneIDList(IEnumerable<CSPlaneID> ids)
-		{
-			_innerList = new List<CSPlaneID>(ids);
-		}
+    public CSPlaneIDList(IEnumerable<CSPlaneID> ids)
+    {
+      _innerList = new List<CSPlaneID>(ids);
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region IList<CSPlaneID> Members
+    #region IList<CSPlaneID> Members
 
-		public int IndexOf(CSPlaneID item)
-		{
-			return _innerList.IndexOf(item);
-		}
+    public int IndexOf(CSPlaneID item)
+    {
+      return _innerList.IndexOf(item);
+    }
 
-		public CSPlaneID this[int index]
-		{
-			get
-			{
-				return _innerList[index];
-			}
-		}
+    public CSPlaneID this[int index]
+    {
+      get
+      {
+        return _innerList[index];
+      }
+    }
 
-		#endregion IList<CSPlaneID> Members
+    #endregion IList<CSPlaneID> Members
 
-		#region ICollection<CSPlaneID> Members
+    #region ICollection<CSPlaneID> Members
 
-		public bool Contains(CSPlaneID item)
-		{
-			return _innerList.Contains(item);
-		}
+    public bool Contains(CSPlaneID item)
+    {
+      return _innerList.Contains(item);
+    }
 
-		public void CopyTo(CSPlaneID[] array, int arrayIndex)
-		{
-			_innerList.CopyTo(array, arrayIndex);
-		}
+    public void CopyTo(CSPlaneID[] array, int arrayIndex)
+    {
+      _innerList.CopyTo(array, arrayIndex);
+    }
 
-		public int Count
-		{
-			get { return _innerList.Count; }
-		}
+    public int Count
+    {
+      get { return _innerList.Count; }
+    }
 
-		public bool IsReadOnly
-		{
-			get { return true; }
-		}
+    public bool IsReadOnly
+    {
+      get { return true; }
+    }
 
-		#endregion ICollection<CSPlaneID> Members
+    #endregion ICollection<CSPlaneID> Members
 
-		#region IEnumerable<CSPlaneID> Members
+    #region IEnumerable<CSPlaneID> Members
 
-		public IEnumerator<CSPlaneID> GetEnumerator()
-		{
-			return _innerList.GetEnumerator();
-		}
+    public IEnumerator<CSPlaneID> GetEnumerator()
+    {
+      return _innerList.GetEnumerator();
+    }
 
-		#endregion IEnumerable<CSPlaneID> Members
+    #endregion IEnumerable<CSPlaneID> Members
 
-		#region IEnumerable Members
+    #region IEnumerable Members
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			return _innerList.GetEnumerator();
-		}
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return _innerList.GetEnumerator();
+    }
 
-		#endregion IEnumerable Members
-	}
+    #endregion IEnumerable Members
+  }
 }

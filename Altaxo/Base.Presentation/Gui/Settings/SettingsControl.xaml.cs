@@ -33,72 +33,72 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Settings
 {
-	/// <summary>
-	/// Interaction logic for SettingsView.xaml
-	/// </summary>
-	public partial class SettingsControl : UserControl, ISettingsView
-	{
-		/// <summary>Occurs when the current topic view was entered.</summary>
-		public event Action CurrentTopicViewMadeDirty;
+  /// <summary>
+  /// Interaction logic for SettingsView.xaml
+  /// </summary>
+  public partial class SettingsControl : UserControl, ISettingsView
+  {
+    /// <summary>Occurs when the current topic view was entered.</summary>
+    public event Action CurrentTopicViewMadeDirty;
 
-		public SettingsControl()
-		{
-			InitializeComponent();
-			_guiControlHost.PreviewGotKeyboardFocus += new KeyboardFocusChangedEventHandler(EhHostControlKeyboardFocused);
-		}
+    public SettingsControl()
+    {
+      InitializeComponent();
+      _guiControlHost.PreviewGotKeyboardFocus += new KeyboardFocusChangedEventHandler(EhHostControlKeyboardFocused);
+    }
 
-		private void EhHostControlKeyboardFocused(object sender, KeyboardFocusChangedEventArgs e)
-		{
-			if (null != CurrentTopicViewMadeDirty)
-				CurrentTopicViewMadeDirty();
-		}
+    private void EhHostControlKeyboardFocused(object sender, KeyboardFocusChangedEventArgs e)
+    {
+      if (null != CurrentTopicViewMadeDirty)
+        CurrentTopicViewMadeDirty();
+    }
 
-		private void EhTopicChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-		{
-			if (TopicSelectionChanged != null)
-				TopicSelectionChanged((Collections.NGTreeNode)e.NewValue);
-		}
+    private void EhTopicChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+      if (TopicSelectionChanged != null)
+        TopicSelectionChanged((Collections.NGTreeNode)e.NewValue);
+    }
 
-		public event Action<Collections.NGTreeNode> TopicSelectionChanged;
+    public event Action<Collections.NGTreeNode> TopicSelectionChanged;
 
-		public void InitializeTopics(Collections.NGTreeNodeCollection topics)
-		{
-			_guiTopics.ItemsSource = topics;
-		}
+    public void InitializeTopics(Collections.NGTreeNodeCollection topics)
+    {
+      _guiTopics.ItemsSource = topics;
+    }
 
-		public void InitializeTopicView(string title, object guiTopicObject)
-		{
-			_guiTopicLabel.Content = title;
-			_guiControlHost.Content = guiTopicObject as UIElement;
-		}
+    public void InitializeTopicView(string title, object guiTopicObject)
+    {
+      _guiTopicLabel.Content = title;
+      _guiControlHost.Content = guiTopicObject as UIElement;
+    }
 
-		public void InitializeTopicViewDirtyIndicator(int dirtyIndicator)
-		{
-			switch (dirtyIndicator)
-			{
-				case 0:
-					_guiDirtyIndicator.Fill = Brushes.Transparent;
-					break;
+    public void InitializeTopicViewDirtyIndicator(int dirtyIndicator)
+    {
+      switch (dirtyIndicator)
+      {
+        case 0:
+          _guiDirtyIndicator.Fill = Brushes.Transparent;
+          break;
 
-				case 1:
-					_guiDirtyIndicator.Fill = Brushes.Black;
-					break;
+        case 1:
+          _guiDirtyIndicator.Fill = Brushes.Black;
+          break;
 
-				case 2:
-					_guiDirtyIndicator.Fill = Brushes.Red;
-					break;
-			}
-		}
+        case 2:
+          _guiDirtyIndicator.Fill = Brushes.Red;
+          break;
+      }
+    }
 
-		public void SetSelectedNode(Collections.NGTreeNode node)
-		{
-			var item = _guiTopics.ItemContainerGenerator.ContainerFromItem(node) as TreeViewItem;
+    public void SetSelectedNode(Collections.NGTreeNode node)
+    {
+      var item = _guiTopics.ItemContainerGenerator.ContainerFromItem(node) as TreeViewItem;
 
-			if (null != item)
-			{
-				item.Focus();
-				item.IsSelected = true;
-			}
-		}
-	}
+      if (null != item)
+      {
+        item.Focus();
+        item.IsSelected = true;
+      }
+    }
+  }
 }

@@ -29,61 +29,61 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
-	/// <summary>
-	/// Interaction logic for ColorProviderControl.xaml
-	/// </summary>
-	public partial class ColorProviderControl : UserControl, IColorProviderView
-	{
-		private GdiToWpfBitmap _previewBitmap = new GdiToWpfBitmap(4, 4);
+  /// <summary>
+  /// Interaction logic for ColorProviderControl.xaml
+  /// </summary>
+  public partial class ColorProviderControl : UserControl, IColorProviderView
+  {
+    private GdiToWpfBitmap _previewBitmap = new GdiToWpfBitmap(4, 4);
 
-		public ColorProviderControl()
-		{
-			InitializeComponent();
-		}
+    public ColorProviderControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhColorProviderChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_cbColorProvider);
-			if (null != ColorProviderChanged)
-				ColorProviderChanged();
-		}
+    private void EhColorProviderChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_cbColorProvider);
+      if (null != ColorProviderChanged)
+        ColorProviderChanged();
+    }
 
-		#region
+    #region
 
-		public void InitializeAvailableClasses(Collections.SelectableListNodeList names)
-		{
-			GuiHelper.Initialize(_cbColorProvider, names);
-		}
+    public void InitializeAvailableClasses(Collections.SelectableListNodeList names)
+    {
+      GuiHelper.Initialize(_cbColorProvider, names);
+    }
 
-		public void SetDetailView(object guiobject)
-		{
-			_detailsPanel.Child = guiobject as UIElement;
-		}
+    public void SetDetailView(object guiobject)
+    {
+      _detailsPanel.Child = guiobject as UIElement;
+    }
 
-		/// <summary>
-		/// Gets a bitmap with a certain size.
-		/// </summary>
-		/// <param name="width">Pixel width of the bitmap.</param>
-		/// <param name="height">Pixel height of the bitmap.</param>
-		/// <returns>A bitmap that can be used for drawing.</returns>
-		public System.Drawing.Bitmap GetPreviewBitmap(int width, int height)
-		{
-			if (_previewBitmap.GdiBitmap.Width != width || _previewBitmap.GdiBitmap.Height != height)
-			{
-				_previewBitmap.Resize(width, height);
-				_previewPanel.Source = _previewBitmap.WpfBitmap;
-			}
+    /// <summary>
+    /// Gets a bitmap with a certain size.
+    /// </summary>
+    /// <param name="width">Pixel width of the bitmap.</param>
+    /// <param name="height">Pixel height of the bitmap.</param>
+    /// <returns>A bitmap that can be used for drawing.</returns>
+    public System.Drawing.Bitmap GetPreviewBitmap(int width, int height)
+    {
+      if (_previewBitmap.GdiBitmap.Width != width || _previewBitmap.GdiBitmap.Height != height)
+      {
+        _previewBitmap.Resize(width, height);
+        _previewPanel.Source = _previewBitmap.WpfBitmap;
+      }
 
-			return _previewBitmap.GdiBitmap;
-		}
+      return _previewBitmap.GdiBitmap;
+    }
 
-		public void SetPreviewBitmap(System.Drawing.Bitmap bitmap)
-		{
-			_previewBitmap.EndGdiPainting();
-		}
+    public void SetPreviewBitmap(System.Drawing.Bitmap bitmap)
+    {
+      _previewBitmap.EndGdiPainting();
+    }
 
-		public event Action ColorProviderChanged;
+    public event Action ColorProviderChanged;
 
-		#endregion
-	}
+    #endregion
+  }
 }

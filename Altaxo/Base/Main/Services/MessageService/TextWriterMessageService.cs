@@ -21,154 +21,154 @@ using System.IO;
 
 namespace Altaxo.Main.Services.Implementation
 {
-	/// <summary>
-	/// IMessageService implementation that writes messages to a text writer.
-	/// User input is not implemented by this service.
-	/// </summary>
-	public class TextWriterMessageService : IMessageService
-	{
-		private readonly TextWriter writer;
+  /// <summary>
+  /// IMessageService implementation that writes messages to a text writer.
+  /// User input is not implemented by this service.
+  /// </summary>
+  public class TextWriterMessageService : IMessageService
+  {
+    private readonly TextWriter writer;
 
-		public TextWriterMessageService(TextWriter writer)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-			this.writer = writer;
-			this.DefaultMessageBoxTitle = this.ProductName = "SharpDevelop";
-		}
+    public TextWriterMessageService(TextWriter writer)
+    {
+      if (writer == null)
+        throw new ArgumentNullException("writer");
+      this.writer = writer;
+      this.DefaultMessageBoxTitle = this.ProductName = "SharpDevelop";
+    }
 
-		public void WriteErrorLine(string caption, string message)
-		{
-			writer.WriteLine(caption ?? string.Empty + " " + message ?? string.Empty);
-		}
+    public void WriteErrorLine(string caption, string message)
+    {
+      writer.WriteLine(caption ?? string.Empty + " " + message ?? string.Empty);
+    }
 
-		public void WriteErrorLine(string caption, string message, params object[] args)
-		{
-			if (string.IsNullOrEmpty(caption))
-				writer.WriteLine(string.Format(message, args));
-			else
-				writer.WriteLine(caption + ": " + string.Format(message, args));
-		}
+    public void WriteErrorLine(string caption, string message, params object[] args)
+    {
+      if (string.IsNullOrEmpty(caption))
+        writer.WriteLine(string.Format(message, args));
+      else
+        writer.WriteLine(caption + ": " + string.Format(message, args));
+    }
 
-		public void WriteLine(MessageLevel level, string caption, string message)
-		{
-			switch (level)
-			{
-				case MessageLevel.Info:
-					ShowMessage(message, caption);
-					break;
+    public void WriteLine(MessageLevel level, string caption, string message)
+    {
+      switch (level)
+      {
+        case MessageLevel.Info:
+          ShowMessage(message, caption);
+          break;
 
-				case MessageLevel.Warning:
-					ShowWarning(caption + message);
-					break;
+        case MessageLevel.Warning:
+          ShowWarning(caption + message);
+          break;
 
-				case MessageLevel.Error:
-					WriteErrorLine(caption, message);
-					break;
+        case MessageLevel.Error:
+          WriteErrorLine(caption, message);
+          break;
 
-				default:
-					break;
-			}
-		}
+        default:
+          break;
+      }
+    }
 
-		public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
-		{
-			throw new NotImplementedException();
-		}
+    public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args)
-		{
-			throw new NotImplementedException();
-		}
+    public void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void ShowError(string message)
-		{
-			writer.WriteLine(message);
-		}
+    public void ShowError(string message)
+    {
+      writer.WriteLine(message);
+    }
 
-		public void ShowException(Exception ex, string message = null)
-		{
-			if (message != null)
-			{
-				writer.WriteLine(message);
-			}
-			if (ex != null)
-			{
-				writer.WriteLine(ex.ToString());
-			}
-		}
+    public void ShowException(Exception ex, string message = null)
+    {
+      if (message != null)
+      {
+        writer.WriteLine(message);
+      }
+      if (ex != null)
+      {
+        writer.WriteLine(ex.ToString());
+      }
+    }
 
-		public void ShowHandledException(Exception ex, string message = null)
-		{
-			if (message != null)
-			{
-				writer.WriteLine(message);
-			}
-			if (ex != null)
-			{
-				writer.WriteLine(ex.Message);
-			}
-		}
+    public void ShowHandledException(Exception ex, string message = null)
+    {
+      if (message != null)
+      {
+        writer.WriteLine(message);
+      }
+      if (ex != null)
+      {
+        writer.WriteLine(ex.Message);
+      }
+    }
 
-		public void ShowWarning(string message)
-		{
-			writer.WriteLine(message);
-		}
+    public void ShowWarning(string message)
+    {
+      writer.WriteLine(message);
+    }
 
-		public bool AskQuestion(string question, string caption)
-		{
-			writer.WriteLine(caption + ": " + question);
-			return false;
-		}
+    public bool AskQuestion(string question, string caption)
+    {
+      writer.WriteLine(caption + ": " + question);
+      return false;
+    }
 
-		public int ShowCustomDialog(string caption, string dialogText, int acceptButtonIndex, int cancelButtonIndex, params string[] buttontexts)
-		{
-			writer.WriteLine(caption + ": " + dialogText);
-			return cancelButtonIndex;
-		}
+    public int ShowCustomDialog(string caption, string dialogText, int acceptButtonIndex, int cancelButtonIndex, params string[] buttontexts)
+    {
+      writer.WriteLine(caption + ": " + dialogText);
+      return cancelButtonIndex;
+    }
 
-		public string ShowInputBox(string caption, string dialogText, string defaultValue)
-		{
-			writer.WriteLine(caption + ": " + dialogText);
-			return defaultValue;
-		}
+    public string ShowInputBox(string caption, string dialogText, string defaultValue)
+    {
+      writer.WriteLine(caption + ": " + dialogText);
+      return defaultValue;
+    }
 
-		public void ShowMessage(string message, string caption)
-		{
-			writer.WriteLine(caption + ": " + message);
-		}
+    public void ShowMessage(string message, string caption)
+    {
+      writer.WriteLine(caption + ": " + message);
+    }
 
-		public void InformSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot)
-		{
-			writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
-			if (exceptionGot != null)
-				writer.WriteLine(exceptionGot.ToString());
-		}
+    public void InformSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot)
+    {
+      writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
+      if (exceptionGot != null)
+        writer.WriteLine(exceptionGot.ToString());
+    }
 
-		public ChooseSaveErrorResult ChooseSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
-		{
-			writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
-			if (exceptionGot != null)
-				writer.WriteLine(exceptionGot.ToString());
-			return ChooseSaveErrorResult.Ignore;
-		}
+    public ChooseSaveErrorResult ChooseSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
+    {
+      writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
+      if (exceptionGot != null)
+        writer.WriteLine(exceptionGot.ToString());
+      return ChooseSaveErrorResult.Ignore;
+    }
 
-		public void ShowErrorFormatted(string formatstring, params object[] formatitems)
-		{
-			writer.WriteLine(StringParser.Format(formatstring, formatitems));
-		}
+    public void ShowErrorFormatted(string formatstring, params object[] formatitems)
+    {
+      writer.WriteLine(StringParser.Format(formatstring, formatitems));
+    }
 
-		public void ShowWarningFormatted(string formatstring, params object[] formatitems)
-		{
-			writer.WriteLine(StringParser.Format(formatstring, formatitems));
-		}
+    public void ShowWarningFormatted(string formatstring, params object[] formatitems)
+    {
+      writer.WriteLine(StringParser.Format(formatstring, formatitems));
+    }
 
-		public void ShowMessageFormatted(string formatstring, string caption, params object[] formatitems)
-		{
-			writer.WriteLine(StringParser.Format(formatstring, formatitems));
-		}
+    public void ShowMessageFormatted(string formatstring, string caption, params object[] formatitems)
+    {
+      writer.WriteLine(StringParser.Format(formatstring, formatitems));
+    }
 
-		public string DefaultMessageBoxTitle { get; set; }
-		public string ProductName { get; set; }
-	}
+    public string DefaultMessageBoxTitle { get; set; }
+    public string ProductName { get; set; }
+  }
 }

@@ -29,31 +29,31 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
-	[UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
-	public class Second : SIUnit
-	{
-		private static readonly Second _instance = new Second();
+  [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
+  public class Second : SIUnit
+  {
+    private static readonly Second _instance = new Second();
 
-		public static Second Instance { get { return _instance; } }
+    public static Second Instance { get { return _instance; } }
 
-		private Second()
-				: base(0, 0, 1, 0, 0, 0, 0)
-		{
-		}
+    private Second()
+        : base(0, 0, 1, 0, 0, 0, 0)
+    {
+    }
 
-		public override string Name
-		{
-			get { return "Second"; }
-		}
+    public override string Name
+    {
+      get { return "Second"; }
+    }
 
-		public override string ShortCut
-		{
-			get { return "s"; }
-		}
+    public override string ShortCut
+    {
+      get { return "s"; }
+    }
 
-		public override ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithAllKnownPrefixes; }
-		}
-	}
+    public override ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithAllKnownPrefixes; }
+    }
+  }
 }

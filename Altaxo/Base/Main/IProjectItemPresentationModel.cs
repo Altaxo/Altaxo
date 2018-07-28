@@ -29,17 +29,17 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Interface to a class that amends a project document with additional data, used for presentation of the document in a view.
-	/// </summary>
-	public interface IProjectItemPresentationModel
-	{
-		/// <summary>
-		/// Gets the Document this presentation data is based on.
-		/// </summary>
-		/// <value>
-		/// The project item.
-		/// </value>
-		IProjectItem Document { get; }
-	}
+  /// <summary>
+  /// Interface to a class that amends a project document with additional data, used for presentation of the document in a view.
+  /// </summary>
+  public interface IProjectItemPresentationModel
+  {
+    /// <summary>
+    /// Gets the Document this presentation data is based on.
+    /// </summary>
+    /// <value>
+    /// The project item.
+    /// </value>
+    IProjectItem Document { get; }
+  }
 }

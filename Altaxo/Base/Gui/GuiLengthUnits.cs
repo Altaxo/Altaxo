@@ -32,29 +32,29 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
-	public static class GuiLengthUnits
-	{
-		private static ReadOnlyCollection<IUnit> _instance;
+  public static class GuiLengthUnits
+  {
+    private static ReadOnlyCollection<IUnit> _instance;
 
-		static GuiLengthUnits()
-		{
-			var instance = new List<IUnit>();
+    static GuiLengthUnits()
+    {
+      var instance = new List<IUnit>();
 
-			instance.Add(Point.Instance);
-			instance.Add(new UnitWithLimitedPrefixes(Meter.Instance, new SIPrefix[] { SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci }));
-			instance.Add(Inch.Instance);
-			_instance = instance.AsReadOnly();
-		}
+      instance.Add(Point.Instance);
+      instance.Add(new UnitWithLimitedPrefixes(Meter.Instance, new SIPrefix[] { SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci }));
+      instance.Add(Inch.Instance);
+      _instance = instance.AsReadOnly();
+    }
 
-		/// <summary>
-		/// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
-		/// </summary>
-		public static IList<IUnit> Collection
-		{
-			get
-			{
-				return _instance;
-			}
-		}
-	}
+    /// <summary>
+    /// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
+    /// </summary>
+    public static IList<IUnit> Collection
+    {
+      get
+      {
+        return _instance;
+      }
+    }
+  }
 }

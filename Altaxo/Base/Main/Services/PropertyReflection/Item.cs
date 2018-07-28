@@ -29,56 +29,56 @@ using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
-	/// <summary>
-	///
-	/// </summary>
-	/// <remarks>
-	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
-	/// </remarks>
-	public abstract class Item : INotifyPropertyChanged, IDisposable
-	{
-		#region Notify Property Changed Members
+  /// <summary>
+  ///
+  /// </summary>
+  /// <remarks>
+  /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
+  /// </remarks>
+  public abstract class Item : INotifyPropertyChanged, IDisposable
+  {
+    #region Notify Property Changed Members
 
-		protected void NotifyPropertyChanged(string property)
-		{
-			if (PropertyChanged != null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(property));
-			}
-		}
+    protected void NotifyPropertyChanged(string property)
+    {
+      if (PropertyChanged != null)
+      {
+        PropertyChanged(this, new PropertyChangedEventArgs(property));
+      }
+    }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
-		#endregion Notify Property Changed Members
+    #endregion Notify Property Changed Members
 
-		#region IDisposable Members
+    #region IDisposable Members
 
-		private bool _disposed = false;
+    private bool _disposed = false;
 
-		protected bool Disposed
-		{
-			get { return _disposed; }
-		}
+    protected bool Disposed
+    {
+      get { return _disposed; }
+    }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!Disposed)
-			{
-				_disposed = true;
-			}
-		}
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!Disposed)
+      {
+        _disposed = true;
+      }
+    }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
 
-		~Item()
-		{
-			Dispose(false);
-		}
+    ~Item()
+    {
+      Dispose(false);
+    }
 
-		#endregion IDisposable Members
-	}
+    #endregion IDisposable Members
+  }
 }

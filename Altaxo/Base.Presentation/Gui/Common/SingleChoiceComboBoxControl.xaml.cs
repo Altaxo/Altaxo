@@ -30,43 +30,43 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for SingleChoiceComboBoxControl.xaml
-	/// </summary>
-	[UserControlForController(typeof(ISingleChoiceViewEventSink))]
-	public partial class SingleChoiceComboBoxControl : UserControl, ISingleChoiceView
-	{
-		public SingleChoiceComboBoxControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for SingleChoiceComboBoxControl.xaml
+  /// </summary>
+  [UserControlForController(typeof(ISingleChoiceViewEventSink))]
+  public partial class SingleChoiceComboBoxControl : UserControl, ISingleChoiceView
+  {
+    public SingleChoiceComboBoxControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (null != _controller)
-				_controller.EhChoiceChanged(_comboBox.SelectedIndex);
-		}
+    private void EhSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      if (null != _controller)
+        _controller.EhChoiceChanged(_comboBox.SelectedIndex);
+    }
 
-		#region ISingleChoiceView
+    #region ISingleChoiceView
 
-		private ISingleChoiceViewEventSink _controller;
+    private ISingleChoiceViewEventSink _controller;
 
-		public ISingleChoiceViewEventSink Controller
-		{
-			set { _controller = value; }
-		}
+    public ISingleChoiceViewEventSink Controller
+    {
+      set { _controller = value; }
+    }
 
-		public void InitializeDescription(string value)
-		{
-			_label.Content = value;
-		}
+    public void InitializeDescription(string value)
+    {
+      _label.Content = value;
+    }
 
-		public void InitializeChoice(string[] values, int initialchoice)
-		{
-			_comboBox.ItemsSource = values;
-			_comboBox.SelectedIndex = initialchoice;
-		}
+    public void InitializeChoice(string[] values, int initialchoice)
+    {
+      _comboBox.ItemsSource = values;
+      _comboBox.SelectedIndex = initialchoice;
+    }
 
-		#endregion ISingleChoiceView
-	}
+    #endregion ISingleChoiceView
+  }
 }

@@ -26,108 +26,108 @@ using System;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-	/// <summary>
-	/// Marks a class as containing one or more static functions that create a fit function class.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Class)]
-	public class FitFunctionClassAttribute : System.Attribute
-	{
-	}
+  /// <summary>
+  /// Marks a class as containing one or more static functions that create a fit function class.
+  /// </summary>
+  [AttributeUsage(AttributeTargets.Class)]
+  public class FitFunctionClassAttribute : System.Attribute
+  {
+  }
 
-	/// <summary>
-	/// Marks a static function to return a new instance of a <see href="IFitFunction" /> class.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Method)]
-	public class FitFunctionCreatorAttribute : System.Attribute, IComparable
-	{
-		private string _name;
-		private string _category;
-		private string _descriptionResource;
-		private int _numberOfIndependentVariables;
-		private int _numberOfDependentVariables;
-		private int _numberOfParameters;
+  /// <summary>
+  /// Marks a static function to return a new instance of a <see href="IFitFunction" /> class.
+  /// </summary>
+  [AttributeUsage(AttributeTargets.Method)]
+  public class FitFunctionCreatorAttribute : System.Attribute, IComparable
+  {
+    private string _name;
+    private string _category;
+    private string _descriptionResource;
+    private int _numberOfIndependentVariables;
+    private int _numberOfDependentVariables;
+    private int _numberOfParameters;
 
-		public FitFunctionCreatorAttribute(
-		string name,
-		string category,
-		int numIndependentVariables,
-		int numDependentVariables,
-		int numParameters)
-			: this(name, category, numIndependentVariables, numDependentVariables, numParameters, null)
-		{
-		}
+    public FitFunctionCreatorAttribute(
+    string name,
+    string category,
+    int numIndependentVariables,
+    int numDependentVariables,
+    int numParameters)
+      : this(name, category, numIndependentVariables, numDependentVariables, numParameters, null)
+    {
+    }
 
-		public FitFunctionCreatorAttribute(
-			string name,
-			string category,
-			int numIndependentVariables,
-			int numDependentVariables,
-			int numParameters,
-			string descriptionResource)
-		{
-			_name = name;
-			_category = category;
-			_numberOfIndependentVariables = numIndependentVariables;
-			_numberOfDependentVariables = numDependentVariables;
-			_numberOfParameters = numParameters;
-			_descriptionResource = descriptionResource;
-		}
+    public FitFunctionCreatorAttribute(
+      string name,
+      string category,
+      int numIndependentVariables,
+      int numDependentVariables,
+      int numParameters,
+      string descriptionResource)
+    {
+      _name = name;
+      _category = category;
+      _numberOfIndependentVariables = numIndependentVariables;
+      _numberOfDependentVariables = numDependentVariables;
+      _numberOfParameters = numParameters;
+      _descriptionResource = descriptionResource;
+    }
 
-		public string Name
-		{
-			get
-			{
-				return _name;
-			}
-		}
+    public string Name
+    {
+      get
+      {
+        return _name;
+      }
+    }
 
-		public string Category
-		{
-			get
-			{
-				return _category;
-			}
-		}
+    public string Category
+    {
+      get
+      {
+        return _category;
+      }
+    }
 
-		public string DescriptionResource
-		{
-			get
-			{
-				return _descriptionResource;
-			}
-		}
+    public string DescriptionResource
+    {
+      get
+      {
+        return _descriptionResource;
+      }
+    }
 
-		public int NumberOfIndependentVariables
-		{
-			get
-			{
-				return _numberOfIndependentVariables;
-			}
-		}
+    public int NumberOfIndependentVariables
+    {
+      get
+      {
+        return _numberOfIndependentVariables;
+      }
+    }
 
-		public int NumberOfDependentVariables
-		{
-			get
-			{
-				return _numberOfDependentVariables;
-			}
-		}
+    public int NumberOfDependentVariables
+    {
+      get
+      {
+        return _numberOfDependentVariables;
+      }
+    }
 
-		public int NumberOfParameters
-		{
-			get
-			{
-				return _numberOfParameters;
-			}
-		}
+    public int NumberOfParameters
+    {
+      get
+      {
+        return _numberOfParameters;
+      }
+    }
 
-		int IComparable.CompareTo(object obj)
-		{
-			FitFunctionCreatorAttribute other = (FitFunctionCreatorAttribute)obj;
-			int result = this._category.CompareTo(other._category);
-			if (result == 0)
-				result = this._name.CompareTo(other._name);
-			return result;
-		}
-	}
+    int IComparable.CompareTo(object obj)
+    {
+      FitFunctionCreatorAttribute other = (FitFunctionCreatorAttribute)obj;
+      int result = this._category.CompareTo(other._category);
+      if (result == 0)
+        result = this._name.CompareTo(other._name);
+      return result;
+    }
+  }
 }

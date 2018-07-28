@@ -26,9 +26,9 @@ using System;
 
 namespace Altaxo.Main
 {
-	public interface IProjectItemDisplayBindingDescriptor
-	{
-		Type ProjectItemType { get; }
-		Type ViewContentType { get; }
-	}
+  public interface IProjectItemDisplayBindingDescriptor
+  {
+    Type ProjectItemType { get; }
+    Type ViewContentType { get; }
+  }
 }

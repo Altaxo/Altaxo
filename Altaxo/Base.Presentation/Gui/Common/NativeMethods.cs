@@ -22,10 +22,10 @@ using System.Runtime.InteropServices;
 
 namespace Altaxo.Gui.Common
 {
-	internal static class NativeMethods
-	{
-		[DllImport("gdi32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool DeleteObject(IntPtr hObject);
-	}
+  internal static class NativeMethods
+  {
+    [DllImport("gdi32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool DeleteObject(IntPtr hObject);
+  }
 }

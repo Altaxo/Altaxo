@@ -30,29 +30,29 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefixList), 0)]
-	public class SerializationSurrogate0_SIPrefixList : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			var s = (SIPrefixList)obj;
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefixList), 0)]
+  public class SerializationSurrogate0_SIPrefixList : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var s = (SIPrefixList)obj;
 
-			info.CreateArray("PrefixList", s.Count);
-			foreach (var prefix in s)
-				info.AddValue("e", prefix);
-			info.CommitArray();
-		}
+      info.CreateArray("PrefixList", s.Count);
+      foreach (var prefix in s)
+        info.AddValue("e", prefix);
+      info.CommitArray();
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			int count = info.OpenArray("PrefixList");
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      int count = info.OpenArray("PrefixList");
 
-			var list = new SIPrefix[count];
-			for (int i = 0; i < count; ++i)
-				list[i] = (SIPrefix)info.GetValue("e", parent);
-			info.CloseArray(count);
+      var list = new SIPrefix[count];
+      for (int i = 0; i < count; ++i)
+        list[i] = (SIPrefix)info.GetValue("e", parent);
+      info.CloseArray(count);
 
-			return new SIPrefixList(list);
-		}
-	}
+      return new SIPrefixList(list);
+    }
+  }
 }

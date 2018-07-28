@@ -7,12 +7,12 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Altaxo.CodeEditing.BraceMatching.CSharp
 {
-	[ExportBraceMatcher(LanguageNames.CSharp)]
-	internal class OpenCloseBraceBraceMatcher : AbstractCSharpBraceMatcher
-	{
-		public OpenCloseBraceBraceMatcher()
-				: base(SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken)
-		{
-		}
-	}
+  [ExportBraceMatcher(LanguageNames.CSharp)]
+  internal class OpenCloseBraceBraceMatcher : AbstractCSharpBraceMatcher
+  {
+    public OpenCloseBraceBraceMatcher()
+        : base(SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken)
+    {
+    }
+  }
 }

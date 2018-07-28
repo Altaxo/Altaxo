@@ -26,26 +26,26 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
 {
-	public interface ICrossSectionOfLine : Altaxo.Main.IImmutable
-	{
-		double Size1 { get; }
-		double Size2 { get; }
+  public interface ICrossSectionOfLine : Altaxo.Main.IImmutable
+  {
+    double Size1 { get; }
+    double Size2 { get; }
 
-		ICrossSectionOfLine WithSize(double size1, double size2);
+    ICrossSectionOfLine WithSize(double size1, double size2);
 
-		ICrossSectionOfLine WithSize1(double size1);
+    ICrossSectionOfLine WithSize1(double size1);
 
-		ICrossSectionOfLine WithSize2(double size2);
+    ICrossSectionOfLine WithSize2(double size2);
 
-		bool IsVertexSharp(int idx);
+    bool IsVertexSharp(int idx);
 
-		VectorD2D Normals(int i);
+    VectorD2D Normals(int i);
 
-		int NumberOfNormals { get; }
-		int NumberOfVertices { get; }
+    int NumberOfNormals { get; }
+    int NumberOfVertices { get; }
 
-		PointD2D Vertices(int i);
+    PointD2D Vertices(int i);
 
-		double GetMaximalDistanceFromCenter();
-	}
+    double GetMaximalDistanceFromCenter();
+  }
 }

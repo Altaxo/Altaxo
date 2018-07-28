@@ -31,87 +31,87 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for CheckableGroupBox.xaml
-	/// </summary>
-	public partial class CheckableGroupBox : GroupBox
-	{
-		public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register(
-	"IsChecked",
-	typeof(bool?),
-	typeof(CheckableGroupBox), new PropertyMetadata(false)
-	);
+  /// <summary>
+  /// Interaction logic for CheckableGroupBox.xaml
+  /// </summary>
+  public partial class CheckableGroupBox : GroupBox
+  {
+    public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register(
+  "IsChecked",
+  typeof(bool?),
+  typeof(CheckableGroupBox), new PropertyMetadata(false)
+  );
 
-		public static readonly DependencyProperty EnableContentWithCheckProperty = DependencyProperty.Register(
-	"EnableContentWithCheck",
-	typeof(bool),
-	typeof(CheckableGroupBox)
-	);
+    public static readonly DependencyProperty EnableContentWithCheckProperty = DependencyProperty.Register(
+  "EnableContentWithCheck",
+  typeof(bool),
+  typeof(CheckableGroupBox)
+  );
 
-		public event RoutedEventHandler Checked;
+    public event RoutedEventHandler Checked;
 
-		public event RoutedEventHandler Unchecked;
+    public event RoutedEventHandler Unchecked;
 
-		public CheckableGroupBox()
-		{
-			InitializeComponent();
-		}
+    public CheckableGroupBox()
+    {
+      InitializeComponent();
+    }
 
-		public bool? IsChecked
-		{
-			get
-			{
-				return (bool?)GetValue(CheckableGroupBox.IsCheckedProperty);
-			}
-			set
-			{
-				SetValue(CheckableGroupBox.IsCheckedProperty, value);
-			}
-		}
+    public bool? IsChecked
+    {
+      get
+      {
+        return (bool?)GetValue(CheckableGroupBox.IsCheckedProperty);
+      }
+      set
+      {
+        SetValue(CheckableGroupBox.IsCheckedProperty, value);
+      }
+    }
 
-		/// <summary>
-		/// If set to true, the content of the group box is enabled when the CheckBox is checked, and disabled, when it is unchecked.
-		/// </summary>
-		public bool EnableContentWithCheck
-		{
-			get
-			{
-				return (bool)GetValue(CheckableGroupBox.EnableContentWithCheckProperty);
-			}
-			set
-			{
-				SetValue(CheckableGroupBox.EnableContentWithCheckProperty, value);
-			}
-		}
+    /// <summary>
+    /// If set to true, the content of the group box is enabled when the CheckBox is checked, and disabled, when it is unchecked.
+    /// </summary>
+    public bool EnableContentWithCheck
+    {
+      get
+      {
+        return (bool)GetValue(CheckableGroupBox.EnableContentWithCheckProperty);
+      }
+      set
+      {
+        SetValue(CheckableGroupBox.EnableContentWithCheckProperty, value);
+      }
+    }
 
-		private void EhCheckBox_Checked(object sender, RoutedEventArgs e)
-		{
-			if (EnableContentWithCheck && Content is UIElement)
-				(Content as UIElement).IsEnabled = true;
+    private void EhCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+      if (EnableContentWithCheck && Content is UIElement)
+        (Content as UIElement).IsEnabled = true;
 
-			if (null != Checked)
-				Checked(this, e);
-		}
+      if (null != Checked)
+        Checked(this, e);
+    }
 
-		private void EhCheckBox_Unchecked(object sender, RoutedEventArgs e)
-		{
-			if (EnableContentWithCheck && Content is UIElement)
-				(Content as UIElement).IsEnabled = false;
+    private void EhCheckBox_Unchecked(object sender, RoutedEventArgs e)
+    {
+      if (EnableContentWithCheck && Content is UIElement)
+        (Content as UIElement).IsEnabled = false;
 
-			if (null != Unchecked)
-				Unchecked(this, e);
-		}
+      if (null != Unchecked)
+        Unchecked(this, e);
+    }
 
-		protected override void OnContentChanged(object oldContent, object newContent)
-		{
-			base.OnContentChanged(oldContent, newContent);
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+      base.OnContentChanged(oldContent, newContent);
 
-			if (EnableContentWithCheck)
-			{
-				var uicontent = newContent as UIElement;
-				if (null != uicontent)
-					uicontent.IsEnabled = IsChecked == true;
-			}
-		}
-	}
+      if (EnableContentWithCheck)
+      {
+        var uicontent = newContent as UIElement;
+        if (null != uicontent)
+          uicontent.IsEnabled = IsChecked == true;
+      }
+    }
+  }
 }

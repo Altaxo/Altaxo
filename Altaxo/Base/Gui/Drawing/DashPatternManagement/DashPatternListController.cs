@@ -34,38 +34,38 @@ using System.Text;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-	public interface IDashPatternListView : IStyleListView
-	{
-		event Action<IDashPattern> UserRequest_AddCustomColorToList;
-	}
+  public interface IDashPatternListView : IStyleListView
+  {
+    event Action<IDashPattern> UserRequest_AddCustomColorToList;
+  }
 
-	[ExpectedTypeOfView(typeof(IDashPatternListView))]
-	[UserControllerForObject(typeof(DashPatternList))]
-	public class DashPatternListController : StyleListController<DashPatternListManager, DashPatternList, IDashPattern>
-	{
-		public DashPatternListController()
-			: base(DashPatternListManager.Instance)
-		{
-		}
+  [ExpectedTypeOfView(typeof(IDashPatternListView))]
+  [UserControllerForObject(typeof(DashPatternList))]
+  public class DashPatternListController : StyleListController<DashPatternListManager, DashPatternList, IDashPattern>
+  {
+    public DashPatternListController()
+      : base(DashPatternListManager.Instance)
+    {
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
+    protected override void AttachView()
+    {
+      base.AttachView();
 
-			((IDashPatternListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomDashPatternToList;
-		}
+      ((IDashPatternListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomDashPatternToList;
+    }
 
-		protected override void DetachView()
-		{
-			((IDashPatternListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomDashPatternToList;
+    protected override void DetachView()
+    {
+      ((IDashPatternListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomDashPatternToList;
 
-			base.DetachView();
-		}
+      base.DetachView();
+    }
 
-		private void EhUserRequest_AddCustomDashPatternToList(IDashPattern dashPattern)
-		{
-			_currentItems.Add(new SelectableListNode(ToDisplayName(dashPattern), dashPattern, false));
-			SetListDirty();
-		}
-	}
+    private void EhUserRequest_AddCustomDashPatternToList(IDashPattern dashPattern)
+    {
+      _currentItems.Add(new SelectableListNode(ToDisplayName(dashPattern), dashPattern, false));
+      SetListDirty();
+    }
+  }
 }

@@ -31,63 +31,63 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for TabbedElementControl.xaml
-	/// </summary>
-	public partial class TabbedElementControl : UserControl, ITabbedElementView
-	{
-		public TabbedElementControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for TabbedElementControl.xaml
+  /// </summary>
+  public partial class TabbedElementControl : UserControl, ITabbedElementView
+  {
+    public TabbedElementControl()
+    {
+      InitializeComponent();
+    }
 
-		public void ClearTabs()
-		{
-			foreach (TabItem item in _tabControl.Items)
-			{
-				item.LostFocus -= item_LostFocus;
-				item.GotFocus -= item_GotFocus;
-				item.Content = null;
-			}
+    public void ClearTabs()
+    {
+      foreach (TabItem item in _tabControl.Items)
+      {
+        item.LostFocus -= item_LostFocus;
+        item.GotFocus -= item_GotFocus;
+        item.Content = null;
+      }
 
-			_tabControl.Items.Clear();
-		}
+      _tabControl.Items.Clear();
+    }
 
-		public void AddTab(string title, object view)
-		{
-			var item = new TabItem();
-			item.Header = title;
+    public void AddTab(string title, object view)
+    {
+      var item = new TabItem();
+      item.Header = title;
 
-			item.Content = (UIElement)view;
+      item.Content = (UIElement)view;
 
-			item.LostFocus += item_LostFocus;
-			item.GotFocus += item_GotFocus;
+      item.LostFocus += item_LostFocus;
+      item.GotFocus += item_GotFocus;
 
-			_tabControl.Items.Add(item);
-		}
+      _tabControl.Items.Add(item);
+    }
 
-		private void item_GotFocus(object sender, RoutedEventArgs e)
-		{
-			if (null != ChildControl_Entered)
-				ChildControl_Entered(sender, EventArgs.Empty);
-		}
+    private void item_GotFocus(object sender, RoutedEventArgs e)
+    {
+      if (null != ChildControl_Entered)
+        ChildControl_Entered(sender, EventArgs.Empty);
+    }
 
-		private void item_LostFocus(object sender, RoutedEventArgs e)
-		{
-			if (null != ChildControl_Validated)
-				ChildControl_Validated(sender, EventArgs.Empty);
-		}
+    private void item_LostFocus(object sender, RoutedEventArgs e)
+    {
+      if (null != ChildControl_Validated)
+        ChildControl_Validated(sender, EventArgs.Empty);
+    }
 
-		public void BringTabToFront(int index)
-		{
-			_tabControl.SelectedIndex = index;
-			var selItem = _tabControl.SelectedItem as TabItem;
-			if (selItem != null)
-				selItem.Focus();
-		}
+    public void BringTabToFront(int index)
+    {
+      _tabControl.SelectedIndex = index;
+      var selItem = _tabControl.SelectedItem as TabItem;
+      if (selItem != null)
+        selItem.Focus();
+    }
 
-		public event EventHandler ChildControl_Entered;
+    public event EventHandler ChildControl_Entered;
 
-		public event EventHandler ChildControl_Validated;
-	}
+    public event EventHandler ChildControl_Validated;
+  }
 }

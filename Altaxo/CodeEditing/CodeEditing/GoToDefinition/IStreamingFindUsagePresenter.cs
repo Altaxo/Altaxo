@@ -11,50 +11,50 @@ using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.GoToDefinition
 {
-	internal static class IStreamingFindUsagesPresenterExtensions
-	{
-		/// <summary>
-		/// If there's only a single item, navigates to it.  Otherwise, presents all the
-		/// items to the user.
-		/// </summary>
-		public static async Task<bool> TryNavigateToOrPresentItemsAsync(
-				object /* this IStreamingFindUsagesPresenter */ presenter,
-				Workspace workspace,
-				string title,
-				ImmutableArray<DefinitionItem> items, bool alwaysShowDeclarations)
-		{
-			// Ignore any definitions that we can't navigate to.
-			var definitions = items.WhereAsArray(d => d.CanNavigateTo(workspace));
+  internal static class IStreamingFindUsagesPresenterExtensions
+  {
+    /// <summary>
+    /// If there's only a single item, navigates to it.  Otherwise, presents all the
+    /// items to the user.
+    /// </summary>
+    public static async Task<bool> TryNavigateToOrPresentItemsAsync(
+        object /* this IStreamingFindUsagesPresenter */ presenter,
+        Workspace workspace,
+        string title,
+        ImmutableArray<DefinitionItem> items, bool alwaysShowDeclarations)
+    {
+      // Ignore any definitions that we can't navigate to.
+      var definitions = items.WhereAsArray(d => d.CanNavigateTo(workspace));
 
-			// See if there's a third party external item we can navigate to.  If so, defer
-			// to that item and finish.
-			var externalItems = definitions.WhereAsArray(d => d.IsExternal);
-			foreach (var item in externalItems)
-			{
-				if (item.TryNavigateTo(workspace, isPreview: true))
-				{
-					return true;
-				}
-			}
+      // See if there's a third party external item we can navigate to.  If so, defer
+      // to that item and finish.
+      var externalItems = definitions.WhereAsArray(d => d.IsExternal);
+      foreach (var item in externalItems)
+      {
+        if (item.TryNavigateTo(workspace, isPreview: true))
+        {
+          return true;
+        }
+      }
 
-			var nonExternalItems = definitions.WhereAsArray(d => !d.IsExternal);
-			if (nonExternalItems.Length == 0)
-			{
-				return false;
-			}
+      var nonExternalItems = definitions.WhereAsArray(d => !d.IsExternal);
+      if (nonExternalItems.Length == 0)
+      {
+        return false;
+      }
 
-			if (nonExternalItems.Length == 1 &&
-					nonExternalItems[0].SourceSpans.Length <= 1)
-			{
-				// There was only one location to navigate to.  Just directly go to that location.
-				return nonExternalItems[0].TryNavigateTo(workspace, isPreview: true);
-			}
+      if (nonExternalItems.Length == 1 &&
+          nonExternalItems[0].SourceSpans.Length <= 1)
+      {
+        // There was only one location to navigate to.  Just directly go to that location.
+        return nonExternalItems[0].TryNavigateTo(workspace, isPreview: true);
+      }
 
-			if (presenter != null)
-			{
-				throw new NotImplementedException("Found multiple locations, this is not implemented yet");
+      if (presenter != null)
+      {
+        throw new NotImplementedException("Found multiple locations, this is not implemented yet");
 
-				/*
+        /*
 				// We have multiple definitions, or we have definitions with multiple locations.
 				// Present this to the user so they can decide where they want to go to.
 
@@ -71,78 +71,78 @@ namespace Altaxo.CodeEditing.GoToDefinition
 				// and we don't want to run any more code code in this particular context.
 				await context.OnCompletedAsync().ConfigureAwait(false);
 				*/
-			}
+      }
 
-			return true;
-		}
-	}
+      return true;
+    }
+  }
 
-	public static class ImmutableArrayExtensions
-	{
-		/// <summary>
-		/// Creates a new immutable array based on filtered elements by the predicate. The array must not be null.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="array">The array to process</param>
-		/// <param name="predicate">The delegate that defines the conditions of the element to search for.</param>
-		/// <returns></returns>
-		public static ImmutableArray<T> WhereAsArray<T>(this ImmutableArray<T> array, Func<T, bool> predicate)
-		{
-			ImmutableArray<T>.Builder builder = null;
-			bool none = true;
-			bool all = true;
+  public static class ImmutableArrayExtensions
+  {
+    /// <summary>
+    /// Creates a new immutable array based on filtered elements by the predicate. The array must not be null.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="array">The array to process</param>
+    /// <param name="predicate">The delegate that defines the conditions of the element to search for.</param>
+    /// <returns></returns>
+    public static ImmutableArray<T> WhereAsArray<T>(this ImmutableArray<T> array, Func<T, bool> predicate)
+    {
+      ImmutableArray<T>.Builder builder = null;
+      bool none = true;
+      bool all = true;
 
-			int n = array.Length;
-			for (int i = 0; i < n; i++)
-			{
-				var a = array[i];
-				if (predicate(a))
-				{
-					none = false;
-					if (all)
-					{
-						continue;
-					}
+      int n = array.Length;
+      for (int i = 0; i < n; i++)
+      {
+        var a = array[i];
+        if (predicate(a))
+        {
+          none = false;
+          if (all)
+          {
+            continue;
+          }
 
-					if (builder == null)
-					{
-						builder = ImmutableArray.CreateBuilder<T>();
-					}
+          if (builder == null)
+          {
+            builder = ImmutableArray.CreateBuilder<T>();
+          }
 
-					builder.Add(a);
-				}
-				else
-				{
-					if (none)
-					{
-						all = false;
-						continue;
-					}
+          builder.Add(a);
+        }
+        else
+        {
+          if (none)
+          {
+            all = false;
+            continue;
+          }
 
-					if (all)
-					{
-						all = false;
-						builder = ImmutableArray.CreateBuilder<T>();
-						for (int j = 0; j < i; j++)
-						{
-							builder.Add(array[j]);
-						}
-					}
-				}
-			}
+          if (all)
+          {
+            all = false;
+            builder = ImmutableArray.CreateBuilder<T>();
+            for (int j = 0; j < i; j++)
+            {
+              builder.Add(array[j]);
+            }
+          }
+        }
+      }
 
-			if (builder != null)
-			{
-				return builder.ToImmutable();
-			}
-			else if (all)
-			{
-				return array;
-			}
-			else
-			{
-				return ImmutableArray<T>.Empty;
-			}
-		}
-	}
+      if (builder != null)
+      {
+        return builder.ToImmutable();
+      }
+      else if (all)
+      {
+        return array;
+      }
+      else
+      {
+        return ImmutableArray<T>.Empty;
+      }
+    }
+  }
 }

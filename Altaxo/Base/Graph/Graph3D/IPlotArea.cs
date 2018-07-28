@@ -29,58 +29,58 @@ using System;
 
 namespace Altaxo.Graph.Graph3D
 {
-	/// <summary>
-	/// Interface used for all plot items and styles to get information for plotting their data.
-	/// </summary>
-	public interface IPlotArea
-	{
-		/// <summary>
-		/// Returns true when this is a 3D area, i.e. it utilizes 3 Scales and a 3D Coordinate system.
-		/// </summary>
-		bool Is3D { get; }
+  /// <summary>
+  /// Interface used for all plot items and styles to get information for plotting their data.
+  /// </summary>
+  public interface IPlotArea
+  {
+    /// <summary>
+    /// Returns true when this is a 3D area, i.e. it utilizes 3 Scales and a 3D Coordinate system.
+    /// </summary>
+    bool Is3D { get; }
 
-		/// <summary>
-		/// Gets the axis of the first independent variable.
-		/// </summary>
-		Scale XAxis { get; }
+    /// <summary>
+    /// Gets the axis of the first independent variable.
+    /// </summary>
+    Scale XAxis { get; }
 
-		/// <summary>
-		/// Gets the axis of the second independent variable.
-		/// </summary>
-		Scale YAxis { get; }
+    /// <summary>
+    /// Gets the axis of the second independent variable.
+    /// </summary>
+    Scale YAxis { get; }
 
-		/// <summary>
-		/// Gets the axis of the dependent variable.
-		/// </summary>
-		Scale ZAxis { get; }
+    /// <summary>
+    /// Gets the axis of the dependent variable.
+    /// </summary>
+    Scale ZAxis { get; }
 
-		ScaleCollection Scales { get; }
+    ScaleCollection Scales { get; }
 
-		G3DCoordinateSystem CoordinateSystem { get; }
+    G3DCoordinateSystem CoordinateSystem { get; }
 
-		/// <summary>
-		/// Returns the size of the rectangular layer area.
-		/// </summary>
-		VectorD3D Size { get; }
+    /// <summary>
+    /// Returns the size of the rectangular layer area.
+    /// </summary>
+    VectorD3D Size { get; }
 
-		Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx);
+    Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx);
 
-		Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y, AltaxoVariant z);
+    Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y, AltaxoVariant z);
 
-		/// <summary>
-		/// Returns a list of the used axis style ids for this layer.
-		/// </summary>
-		System.Collections.Generic.IEnumerable<CSLineID> AxisStyleIDs { get; }
+    /// <summary>
+    /// Returns a list of the used axis style ids for this layer.
+    /// </summary>
+    System.Collections.Generic.IEnumerable<CSLineID> AxisStyleIDs { get; }
 
-		/// <summary>
-		/// Updates the logical value of a plane id in case it uses a physical value.
-		/// </summary>
-		/// <param name="id">The plane identifier</param>
-		CSPlaneID UpdateCSPlaneID(CSPlaneID id);
+    /// <summary>
+    /// Updates the logical value of a plane id in case it uses a physical value.
+    /// </summary>
+    /// <param name="id">The plane identifier</param>
+    CSPlaneID UpdateCSPlaneID(CSPlaneID id);
 
-		/// <summary>
-		/// Determines whether plot data are clipped to the frame boundaries or not.
-		/// </summary>
-		LayerDataClipping ClipDataToFrame { get; }
-	}
+    /// <summary>
+    /// Determines whether plot data are clipped to the frame boundaries or not.
+    /// </summary>
+    LayerDataClipping ClipDataToFrame { get; }
+  }
 }

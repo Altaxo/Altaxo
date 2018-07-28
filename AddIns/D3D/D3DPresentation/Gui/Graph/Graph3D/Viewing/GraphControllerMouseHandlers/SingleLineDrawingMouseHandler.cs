@@ -30,86 +30,86 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// Handles the drawing of a straight single line.
-	/// </summary>
-	public class SingleLineDrawingMouseHandler : MouseStateHandler
-	{
-		#region Member variables
+  /// <summary>
+  /// Handles the drawing of a straight single line.
+  /// </summary>
+  public class SingleLineDrawingMouseHandler : MouseStateHandler
+  {
+    #region Member variables
 
-		protected Graph3DController _grac;
+    protected Graph3DController _grac;
 
-		protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
+    protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
-		protected PointD3D[] _Points = new PointD3D[2];
-		protected int _currentPoint;
-		protected PointD3D _positionCurrentMouseInActiveLayerCoordinates;
+    protected PointD3D[] _Points = new PointD3D[2];
+    protected int _currentPoint;
+    protected PointD3D _positionCurrentMouseInActiveLayerCoordinates;
 
-		#endregion Member variables
+    #endregion Member variables
 
-		public SingleLineDrawingMouseHandler(Graph3DController grac)
-		{
-			this._grac = grac;
+    public SingleLineDrawingMouseHandler(Graph3DController grac)
+    {
+      this._grac = grac;
 
-			_grac?.View?.SetPanelCursor(Cursors.Pen);
-		}
+      _grac?.View?.SetPanelCursor(Cursors.Pen);
+    }
 
-		public override GraphToolType GraphToolType
-		{
-			get { return GraphToolType.SingleLineDrawing; }
-		}
+    public override GraphToolType GraphToolType
+    {
+      get { return GraphToolType.SingleLineDrawing; }
+    }
 
-		/// <summary>
-		/// Handles the drawing of a straight single line.
-		/// </summary>
-		/// <param name="position">Mouse position.</param>
-		/// <param name="e">EventArgs.</param>
-		/// <returns>The mouse state handler for handling the next mouse events.</returns>
-		public override void OnClick(PointD3D position, MouseButtonEventArgs e)
-		{
-			base.OnClick(position, e);
+    /// <summary>
+    /// Handles the drawing of a straight single line.
+    /// </summary>
+    /// <param name="position">Mouse position.</param>
+    /// <param name="e">EventArgs.</param>
+    /// <returns>The mouse state handler for handling the next mouse events.</returns>
+    public override void OnClick(PointD3D position, MouseButtonEventArgs e)
+    {
+      base.OnClick(position, e);
 
-			if (0 == _currentPoint)
-			{
-				_cachedActiveLayer = _grac.ActiveLayer;
-				_cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-			}
+      if (0 == _currentPoint)
+      {
+        _cachedActiveLayer = _grac.ActiveLayer;
+        _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+      }
 
-			PointD3D hitPointOnLayerPlaneInLayerCoordinates;
-			VectorD3D rotationsRadian;
-			GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
-			_positionCurrentMouseInActiveLayerCoordinates = hitPointOnLayerPlaneInLayerCoordinates;
+      PointD3D hitPointOnLayerPlaneInLayerCoordinates;
+      VectorD3D rotationsRadian;
+      GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
+      _positionCurrentMouseInActiveLayerCoordinates = hitPointOnLayerPlaneInLayerCoordinates;
 
-			_Points[_currentPoint] = _positionCurrentMouseInActiveLayerCoordinates;
-			_currentPoint++;
+      _Points[_currentPoint] = _positionCurrentMouseInActiveLayerCoordinates;
+      _currentPoint++;
 
-			if (2 == _currentPoint)
-			{
-				FinishDrawing();
-				_currentPoint = 0;
-				_grac.CurrentGraphTool = NextMouseHandlerType;
-			}
-		}
+      if (2 == _currentPoint)
+      {
+        FinishDrawing();
+        _currentPoint = 0;
+        _grac.CurrentGraphTool = NextMouseHandlerType;
+      }
+    }
 
-		public override void OnMouseMove(PointD3D position, MouseEventArgs e)
-		{
-			base.OnMouseMove(position, e);
+    public override void OnMouseMove(PointD3D position, MouseEventArgs e)
+    {
+      base.OnMouseMove(position, e);
 
-			if (null != _cachedActiveLayer)
-			{
-				PointD3D hitPointOnLayerPlaneInLayerCoordinates;
-				VectorD3D rotationsRadian;
-				GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _cachedActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
-				_positionCurrentMouseInActiveLayerCoordinates = hitPointOnLayerPlaneInLayerCoordinates;
-				ModifyCurrentMousePrintAreaCoordinate();
+      if (null != _cachedActiveLayer)
+      {
+        PointD3D hitPointOnLayerPlaneInLayerCoordinates;
+        VectorD3D rotationsRadian;
+        GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _cachedActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
+        _positionCurrentMouseInActiveLayerCoordinates = hitPointOnLayerPlaneInLayerCoordinates;
+        ModifyCurrentMousePrintAreaCoordinate();
 
-				_grac.View?.RenderOverlay();
-			}
-		}
+        _grac.View?.RenderOverlay();
+      }
+    }
 
-		protected virtual void ModifyCurrentMousePrintAreaCoordinate()
-		{
-			/*
+    protected virtual void ModifyCurrentMousePrintAreaCoordinate()
+    {
+      /*
 			if (_currentPoint > 0)
 			{
 				bool bControlKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Control); // Control pressed
@@ -137,41 +137,41 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 				}
 			}
 			*/
-		}
+    }
 
-		/// <summary>
-		/// Draws the temporary line(s) from the first point to the mouse.
-		/// </summary>
-		/// <param name="g"></param>
-		public override void AfterPaint(IOverlayContext3D g)
-		{
-			base.AfterPaint(g);
+    /// <summary>
+    /// Draws the temporary line(s) from the first point to the mouse.
+    /// </summary>
+    /// <param name="g"></param>
+    public override void AfterPaint(IOverlayContext3D g)
+    {
+      base.AfterPaint(g);
 
-			PointD3D p0, p1;
+      PointD3D p0, p1;
 
-			for (int i = 1; i < this._currentPoint; i++)
-			{
-				// first transform this points to root layer coordinates
-				p0 = _cachedActiveLayerTransformation.Transform(_Points[i - 1]);
-				p1 = _cachedActiveLayerTransformation.Transform(_Points[i]);
-				g.PositionColorLineListBuffer.AddLine(p0.X, p0.Y, p0.Z, p1.X, p1.Y, p1.Z, 0, 0, 1, 1);
-			}
+      for (int i = 1; i < this._currentPoint; i++)
+      {
+        // first transform this points to root layer coordinates
+        p0 = _cachedActiveLayerTransformation.Transform(_Points[i - 1]);
+        p1 = _cachedActiveLayerTransformation.Transform(_Points[i]);
+        g.PositionColorLineListBuffer.AddLine(p0.X, p0.Y, p0.Z, p1.X, p1.Y, p1.Z, 0, 0, 1, 1);
+      }
 
-			if (_currentPoint > 0)
-			{
-				p0 = _cachedActiveLayerTransformation.Transform(_Points[_currentPoint - 1]);
-				p1 = _cachedActiveLayerTransformation.Transform(_positionCurrentMouseInActiveLayerCoordinates);
-				g.PositionColorLineListBuffer.AddLine(p0.X, p0.Y, p0.Z, p1.X, p1.Y, p1.Z, 0, 0, 1, 1);
-			}
-		}
+      if (_currentPoint > 0)
+      {
+        p0 = _cachedActiveLayerTransformation.Transform(_Points[_currentPoint - 1]);
+        p1 = _cachedActiveLayerTransformation.Transform(_positionCurrentMouseInActiveLayerCoordinates);
+        g.PositionColorLineListBuffer.AddLine(p0.X, p0.Y, p0.Z, p1.X, p1.Y, p1.Z, 0, 0, 1, 1);
+      }
+    }
 
-		protected virtual void FinishDrawing()
-		{
-			LineShape go = new LineShape(_Points[0], _Points[1], _grac.Doc.GetPropertyContext());
+    protected virtual void FinishDrawing()
+    {
+      LineShape go = new LineShape(_Points[0], _Points[1], _grac.Doc.GetPropertyContext());
 
-			// deselect the text tool
-			_grac.CurrentGraphTool = GraphToolType.ObjectPointer;
-			_grac.ActiveLayer.GraphObjects.Add(go);
-		}
-	}
+      // deselect the text tool
+      _grac.CurrentGraphTool = GraphToolType.ObjectPointer;
+      _grac.ActiveLayer.GraphObjects.Add(go);
+    }
+  }
 }

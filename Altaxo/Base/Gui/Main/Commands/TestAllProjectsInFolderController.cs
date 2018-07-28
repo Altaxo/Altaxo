@@ -30,45 +30,45 @@ using System.Text;
 
 namespace Altaxo.Gui.Common.Tools
 {
-	public interface ITestAllProjectsInFolderView
-	{
-		string FolderPaths { get; set; }
+  public interface ITestAllProjectsInFolderView
+  {
+    string FolderPaths { get; set; }
 
-		bool TestSavingAndReopening { get; set; }
+    bool TestSavingAndReopening { get; set; }
 
-		string ProtocolFileName { get; set; }
-	}
+    string ProtocolFileName { get; set; }
+  }
 
-	[UserControllerForObject(typeof(TestAllProjectsInFolderOptions))]
-	[ExpectedTypeOfView(typeof(ITestAllProjectsInFolderView))]
-	public class TestAllProjectsInFolderController : MVCANControllerEditOriginalDocBase<TestAllProjectsInFolderOptions, ITestAllProjectsInFolderView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(TestAllProjectsInFolderOptions))]
+  [ExpectedTypeOfView(typeof(ITestAllProjectsInFolderView))]
+  public class TestAllProjectsInFolderController : MVCANControllerEditOriginalDocBase<TestAllProjectsInFolderOptions, ITestAllProjectsInFolderView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.FolderPaths = _doc.FolderPaths;
-				_view.TestSavingAndReopening = _doc.TestSavingAndReopening;
-				_view.ProtocolFileName = _doc.ProtocolFileName ?? @"C:\TEMP\AltaxoVerifyOpeningOfDocumentsLogFile.txt";
-			}
-		}
+      if (null != _view)
+      {
+        _view.FolderPaths = _doc.FolderPaths;
+        _view.TestSavingAndReopening = _doc.TestSavingAndReopening;
+        _view.ProtocolFileName = _doc.ProtocolFileName ?? @"C:\TEMP\AltaxoVerifyOpeningOfDocumentsLogFile.txt";
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.TestSavingAndReopening = _view.TestSavingAndReopening;
-			_doc.FolderPaths = _view.FolderPaths;
-			_doc.ProtocolFileName = _view.ProtocolFileName;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.TestSavingAndReopening = _view.TestSavingAndReopening;
+      _doc.FolderPaths = _view.FolderPaths;
+      _doc.ProtocolFileName = _view.ProtocolFileName;
 
-			var applyResult = !string.IsNullOrEmpty(_doc.FolderPaths);
+      var applyResult = !string.IsNullOrEmpty(_doc.FolderPaths);
 
-			return ApplyEnd(applyResult, disposeController);
-		}
-	}
+      return ApplyEnd(applyResult, disposeController);
+    }
+  }
 }

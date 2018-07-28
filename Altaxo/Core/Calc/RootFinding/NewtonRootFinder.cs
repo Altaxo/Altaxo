@@ -30,46 +30,46 @@ using System;
 
 namespace Altaxo.Calc.RootFinding
 {
-	public class NewtonRootFinder : AbstractRootFinder
-	{
-		protected Func<double, double> _derivativeOfFunction;
+  public class NewtonRootFinder : AbstractRootFinder
+  {
+    protected Func<double, double> _derivativeOfFunction;
 
-		public NewtonRootFinder(Func<double, double> function, Func<double, double> derivativeOfFunction)
-			: base(function)
-		{
-			_derivativeOfFunction = derivativeOfFunction;
-		}
+    public NewtonRootFinder(Func<double, double> function, Func<double, double> derivativeOfFunction)
+      : base(function)
+    {
+      _derivativeOfFunction = derivativeOfFunction;
+    }
 
-		public NewtonRootFinder(Func<double, double> function, Func<double, double> derivativeOfFunction, int maxNumberOfIterations, double accuracy)
-			: base(function, maxNumberOfIterations, accuracy)
-		{
-			_derivativeOfFunction = derivativeOfFunction;
-		}
+    public NewtonRootFinder(Func<double, double> function, Func<double, double> derivativeOfFunction, int maxNumberOfIterations, double accuracy)
+      : base(function, maxNumberOfIterations, accuracy)
+    {
+      _derivativeOfFunction = derivativeOfFunction;
+    }
 
-		protected override double Find()
-		{
-			double dx = 0;
-			double x;
+    protected override double Find()
+    {
+      double dx = 0;
+      double x;
 
-			if (_xMin >= _xMax)
-				throw new RootFinderException(MessageRangeArgumentInvalid, 0, new Range(_xMin, _xMax), 0.0);
+      if (_xMin >= _xMax)
+        throw new RootFinderException(MessageRangeArgumentInvalid, 0, new Range(_xMin, _xMax), 0.0);
 
-			x = 0.5 * (_xMin + _xMax);
-			int iiter = 0;
-			for (; iiter < _maximumNumberOfIterations; iiter++)
-			{
-				dx = _function(x) / _derivativeOfFunction(x);
-				x -= dx;
+      x = 0.5 * (_xMin + _xMax);
+      int iiter = 0;
+      for (; iiter < _maximumNumberOfIterations; iiter++)
+      {
+        dx = _function(x) / _derivativeOfFunction(x);
+        x -= dx;
 
-				if (Sign(_xMin - x) != Sign(x - _xMax))
-					throw new RootFinderException(MessageInvalidRange, iiter, new Range(x, x + dx), Math.Abs(dx));
+        if (Sign(_xMin - x) != Sign(x - _xMax))
+          throw new RootFinderException(MessageInvalidRange, iiter, new Range(x, x + dx), Math.Abs(dx));
 
-				if (Math.Abs(dx) < _accuracy)
-					return x;
-			}
+        if (Math.Abs(dx) < _accuracy)
+          return x;
+      }
 
-			// L'algorithme a dépassé le nombre d'itérations autorisé
-			throw new RootFinderException(MessageInvalidRange, iiter, new Range(x, x + dx), Math.Abs(dx));
-		}
-	}
+      // L'algorithme a dépassé le nombre d'itérations autorisé
+      throw new RootFinderException(MessageInvalidRange, iiter, new Range(x, x + dx), Math.Abs(dx));
+    }
+  }
 }

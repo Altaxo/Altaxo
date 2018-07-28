@@ -29,47 +29,47 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	using Altaxo.Data.Selections;
+  using Altaxo.Data.Selections;
 
-	public interface IPeriodicRowIndexSegmentsView
-	{
-		int StartIndex { get; set; }
-		int LengthOfPeriod { get; set; }
-		int NumberOfItemsPerPeriod { get; set; }
-	}
+  public interface IPeriodicRowIndexSegmentsView
+  {
+    int StartIndex { get; set; }
+    int LengthOfPeriod { get; set; }
+    int NumberOfItemsPerPeriod { get; set; }
+  }
 
-	[UserControllerForObject(typeof(PeriodicRowIndexSegments), 100)]
-	[ExpectedTypeOfView(typeof(IPeriodicRowIndexSegmentsView))]
-	public class PeriodicRowIndexSegmentsController : MVCANControllerEditImmutableDocBase<PeriodicRowIndexSegments, IPeriodicRowIndexSegmentsView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(PeriodicRowIndexSegments), 100)]
+  [ExpectedTypeOfView(typeof(IPeriodicRowIndexSegmentsView))]
+  public class PeriodicRowIndexSegmentsController : MVCANControllerEditImmutableDocBase<PeriodicRowIndexSegments, IPeriodicRowIndexSegmentsView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				_view.StartIndex = _doc.Start;
-				_view.LengthOfPeriod = _doc.LengthOfPeriod;
-				_view.NumberOfItemsPerPeriod = _doc.NumberOfItemsPerPeriod;
-			}
-		}
+      if (initData)
+      {
+      }
+      if (null != _view)
+      {
+        _view.StartIndex = _doc.Start;
+        _view.LengthOfPeriod = _doc.LengthOfPeriod;
+        _view.NumberOfItemsPerPeriod = _doc.NumberOfItemsPerPeriod;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			int start = _view.StartIndex;
-			int lengthPeriod = _view.LengthOfPeriod;
-			int itemsPerPeriod = _view.NumberOfItemsPerPeriod;
-			_doc = new PeriodicRowIndexSegments(start, lengthPeriod, itemsPerPeriod);
+    public override bool Apply(bool disposeController)
+    {
+      int start = _view.StartIndex;
+      int lengthPeriod = _view.LengthOfPeriod;
+      int itemsPerPeriod = _view.NumberOfItemsPerPeriod;
+      _doc = new PeriodicRowIndexSegments(start, lengthPeriod, itemsPerPeriod);
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

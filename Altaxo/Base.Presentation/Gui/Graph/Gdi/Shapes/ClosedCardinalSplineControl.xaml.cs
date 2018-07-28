@@ -30,24 +30,24 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	/// <summary>
-	/// Interaction logic for RegularPolygonControl.xaml
-	/// </summary>
-	public partial class ClosedCardinalSplineControl : UserControl, IClosedCardinalSplineView
-	{
-		public ClosedCardinalSplineControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for RegularPolygonControl.xaml
+  /// </summary>
+  public partial class ClosedCardinalSplineControl : UserControl, IClosedCardinalSplineView
+  {
+    public ClosedCardinalSplineControl()
+    {
+      InitializeComponent();
+    }
 
-		public IClosedPathShapeView ShapeGraphicView
-		{
-			get { return _guiShapeControl; }
-		}
+    public IClosedPathShapeView ShapeGraphicView
+    {
+      get { return _guiShapeControl; }
+    }
 
-		public ICardinalSplinePointsView SplinePointsView
-		{
-			get { return _guiPointsControl; }
-		}
-	}
+    public ICardinalSplinePointsView SplinePointsView
+    {
+      get { return _guiPointsControl; }
+    }
+  }
 }

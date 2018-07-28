@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.CodeEditing
 {
-	public static class FrozenExtensions
-	{
-		public static HighlightingColor AsFrozen(this HighlightingColor color)
-		{
-			if (!color.IsFrozen)
-			{
-				color.Freeze();
-			}
-			return color;
-		}
-	}
+  public static class FrozenExtensions
+  {
+    public static HighlightingColor AsFrozen(this HighlightingColor color)
+    {
+      if (!color.IsFrozen)
+      {
+        color.Freeze();
+      }
+      return color;
+    }
+  }
 }

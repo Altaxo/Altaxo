@@ -31,82 +31,82 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for MultiChildControl.xaml
-	/// </summary>
-	public partial class MultiChildControl : UserControl, IMultiChildView
-	{
-		/// <summary>Event fired when one of the child controls is entered.</summary>
-		public event EventHandler ChildControlEntered;
+  /// <summary>
+  /// Interaction logic for MultiChildControl.xaml
+  /// </summary>
+  public partial class MultiChildControl : UserControl, IMultiChildView
+  {
+    /// <summary>Event fired when one of the child controls is entered.</summary>
+    public event EventHandler ChildControlEntered;
 
-		/// <summary>Event fired when one of the child controls is validated.</summary>
-		public event EventHandler ChildControlValidated;
+    /// <summary>Event fired when one of the child controls is validated.</summary>
+    public event EventHandler ChildControlValidated;
 
-		public MultiChildControl()
-		{
-			InitializeComponent();
-		}
+    public MultiChildControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeBegin()
-		{
-		}
+    public void InitializeBegin()
+    {
+    }
 
-		public void InitializeEnd()
-		{
-		}
+    public void InitializeEnd()
+    {
+    }
 
-		public void InitializeLayout(bool horizontalLayout)
-		{
-			_stackPanel.Orientation = horizontalLayout ? Orientation.Horizontal : Orientation.Vertical;
-		}
+    public void InitializeLayout(bool horizontalLayout)
+    {
+      _stackPanel.Orientation = horizontalLayout ? Orientation.Horizontal : Orientation.Vertical;
+    }
 
-		public void InitializeDescription(string value)
-		{
-			_lblDescription.Content = value;
-		}
+    public void InitializeDescription(string value)
+    {
+      _lblDescription.Content = value;
+    }
 
-		public void InitializeChilds(ViewDescriptionElement[] childs, int initialFocusedChild)
-		{
-			foreach (UIElement uiEle in _stackPanel.Children)
-			{
-				uiEle.GotFocus -= EhUIElement_GotFocus;
-				uiEle.LostFocus -= EhUIElement_LostFocus;
-			}
+    public void InitializeChilds(ViewDescriptionElement[] childs, int initialFocusedChild)
+    {
+      foreach (UIElement uiEle in _stackPanel.Children)
+      {
+        uiEle.GotFocus -= EhUIElement_GotFocus;
+        uiEle.LostFocus -= EhUIElement_LostFocus;
+      }
 
-			_stackPanel.Children.Clear();
-			foreach (var child in childs)
-			{
-				UIElement uiEle;
+      _stackPanel.Children.Clear();
+      foreach (var child in childs)
+      {
+        UIElement uiEle;
 
-				uiEle = (UIElement)child.View;
+        uiEle = (UIElement)child.View;
 
-				uiEle.GotFocus += EhUIElement_GotFocus;
-				uiEle.LostFocus += EhUIElement_LostFocus;
+        uiEle.GotFocus += EhUIElement_GotFocus;
+        uiEle.LostFocus += EhUIElement_LostFocus;
 
-				if (!string.IsNullOrEmpty(child.Title))
-				{
-					var gbox = new GroupBox();
-					gbox.Header = child.Title;
-					gbox.Content = uiEle;
-					uiEle = gbox;
-				}
+        if (!string.IsNullOrEmpty(child.Title))
+        {
+          var gbox = new GroupBox();
+          gbox.Header = child.Title;
+          gbox.Content = uiEle;
+          uiEle = gbox;
+        }
 
-				_stackPanel.Children.Add(uiEle);
-			}
+        _stackPanel.Children.Add(uiEle);
+      }
 
-			_stackPanel.Children[initialFocusedChild].Focus();
-		}
+      _stackPanel.Children[initialFocusedChild].Focus();
+    }
 
-		private void EhUIElement_LostFocus(object sender, RoutedEventArgs e)
-		{
-			if (null != ChildControlValidated)
-				ChildControlValidated(this, EventArgs.Empty);
-		}
+    private void EhUIElement_LostFocus(object sender, RoutedEventArgs e)
+    {
+      if (null != ChildControlValidated)
+        ChildControlValidated(this, EventArgs.Empty);
+    }
 
-		private void EhUIElement_GotFocus(object sender, RoutedEventArgs e)
-		{
-			if (null != ChildControlEntered)
-				ChildControlEntered(this, EventArgs.Empty);
-		}
-	}
+    private void EhUIElement_GotFocus(object sender, RoutedEventArgs e)
+    {
+      if (null != ChildControlEntered)
+        ChildControlEntered(this, EventArgs.Empty);
+    }
+  }
 }

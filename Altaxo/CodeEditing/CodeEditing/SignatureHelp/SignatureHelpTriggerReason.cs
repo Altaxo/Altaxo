@@ -4,10 +4,10 @@
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {
-	public enum SignatureHelpTriggerReason
-	{
-		InvokeSignatureHelpCommand,
-		TypeCharCommand,
-		RetriggerCommand
-	}
+  public enum SignatureHelpTriggerReason
+  {
+    InvokeSignatureHelpCommand,
+    TypeCharCommand,
+    RetriggerCommand
+  }
 }

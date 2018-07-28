@@ -29,24 +29,24 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-	/// <summary>
-	/// Designates an alignment, for instance of strings.
-	/// </summary>
-	public enum Alignment
-	{
-		/// <summary>
-		/// The alignment position is near to the reference position. For instance with a string drawn from left to right, the reference position is the left position, thus the alignment is left.
-		/// </summary>
-		Near = 0,
+  /// <summary>
+  /// Designates an alignment, for instance of strings.
+  /// </summary>
+  public enum Alignment
+  {
+    /// <summary>
+    /// The alignment position is near to the reference position. For instance with a string drawn from left to right, the reference position is the left position, thus the alignment is left.
+    /// </summary>
+    Near = 0,
 
-		/// <summary>
-		/// The alignment position is in the center of the item.
-		/// </summary>
-		Center = 1,
+    /// <summary>
+    /// The alignment position is in the center of the item.
+    /// </summary>
+    Center = 1,
 
-		/// <summary>
-		/// The alignment position is on the far side compared to the reference position. For instance with a string drawn from left to right, the reference position is the left position, thus the alignment position is right.
-		/// </summary>
-		Far = 2
-	}
+    /// <summary>
+    /// The alignment position is on the far side compared to the reference position. For instance with a string drawn from left to right, the reference position is the left position, thus the alignment position is right.
+    /// </summary>
+    Far = 2
+  }
 }

@@ -29,94 +29,94 @@ using System.Text;
 
 namespace Altaxo.Gui.Main
 {
-	using Altaxo.Collections;
-	using Altaxo.Main.Properties;
+  using Altaxo.Collections;
+  using Altaxo.Main.Properties;
 
-	public interface IPropertyBagView
-	{
-		SelectableListNodeList PropertyList { set; }
-	}
+  public interface IPropertyBagView
+  {
+    SelectableListNodeList PropertyList { set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IPropertyBagView))]
-	[UserControllerForObject(typeof(PropertyBag))]
-	public class PropertyBagController : MVCANControllerEditOriginalDocBase<PropertyBag, IPropertyBagView>
-	{
-		#region Inner types
+  [ExpectedTypeOfView(typeof(IPropertyBagView))]
+  [UserControllerForObject(typeof(PropertyBag))]
+  public class PropertyBagController : MVCANControllerEditOriginalDocBase<PropertyBag, IPropertyBagView>
+  {
+    #region Inner types
 
-		private class MyListNode : SelectableListNode
-		{
-			private string[] _subText = new string[3];
+    private class MyListNode : SelectableListNode
+    {
+      private string[] _subText = new string[3];
 
-			public MyListNode(string text, object tag)
-				: base(text, tag, false)
-			{
-			}
+      public MyListNode(string text, object tag)
+        : base(text, tag, false)
+      {
+      }
 
-			public override int SubItemCount
-			{
-				get
-				{
-					return _subText.Length;
-				}
-			}
+      public override int SubItemCount
+      {
+        get
+        {
+          return _subText.Length;
+        }
+      }
 
-			public override string SubItemText(int i)
-			{
-				return _subText[i - 1];
-			}
+      public override string SubItemText(int i)
+      {
+        return _subText[i - 1];
+      }
 
-			public string Text1a { set { _subText[0] = value; } }
+      public string Text1a { set { _subText[0] = value; } }
 
-			public string Text2a { set { _subText[1] = value; } }
+      public string Text2a { set { _subText[1] = value; } }
 
-			public string Text3a { set { _subText[2] = value; } }
-		}
+      public string Text3a { set { _subText[2] = value; } }
+    }
 
-		#endregion Inner types
+    #endregion Inner types
 
-		private SelectableListNodeList _propertyList;
+    private SelectableListNodeList _propertyList;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_propertyList = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _propertyList = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_propertyList = new SelectableListNodeList();
-				foreach (var entry in _doc)
-				{
-					string key = entry.Key;
-					object value = entry.Value;
+      if (initData)
+      {
+        _propertyList = new SelectableListNodeList();
+        foreach (var entry in _doc)
+        {
+          string key = entry.Key;
+          object value = entry.Value;
 
-					var node = new MyListNode(key, key)
-					{
-						Text1a = value == null ? "n.a." : value.GetType().Name,
-						Text2a = value == null ? "null" : value.ToString()
-					};
+          var node = new MyListNode(key, key)
+          {
+            Text1a = value == null ? "n.a." : value.GetType().Name,
+            Text2a = value == null ? "null" : value.ToString()
+          };
 
-					_propertyList.Add(node);
-				}
-			}
-			if (null != _view)
-			{
-				_view.PropertyList = _propertyList;
-			}
-		}
+          _propertyList.Add(node);
+        }
+      }
+      if (null != _view)
+      {
+        _view.PropertyList = _propertyList;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			return ApplyEnd(true, disposeController);
-		}
-	}
+    public override bool Apply(bool disposeController)
+    {
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

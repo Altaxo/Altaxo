@@ -27,19 +27,19 @@ using System;
 
 namespace Altaxo.Worksheet.Commands
 {
-	/// <summary>
-	/// Evaluates the condition, whether or not a data source is present for a table.
-	/// </summary>
-	public class TableDataSourcePresentConditionEvaluator : IConditionEvaluator
-	{
-		public bool IsValid(object caller, Condition condition)
-		{
-			if (Current.Workbench.ActiveViewContent == null)
-				return false;
-			if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
-				return false;
+  /// <summary>
+  /// Evaluates the condition, whether or not a data source is present for a table.
+  /// </summary>
+  public class TableDataSourcePresentConditionEvaluator : IConditionEvaluator
+  {
+    public bool IsValid(object caller, Condition condition)
+    {
+      if (Current.Workbench.ActiveViewContent == null)
+        return false;
+      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
+        return false;
 
-			return ctrl.DataTable.DataSource != null;
-		}
-	}
+      return ctrl.DataTable.DataSource != null;
+    }
+  }
 }

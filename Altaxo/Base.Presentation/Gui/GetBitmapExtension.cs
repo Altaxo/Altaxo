@@ -28,25 +28,25 @@ using System.Windows.Media.Imaging;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Markup extension that gets a BitmapSource object for a ResourceService bitmap.
-	/// </summary>
-	[MarkupExtensionReturnType(typeof(BitmapSource))]
-	public class GetBitmapExtension : MarkupExtension
-	{
-		protected string _key;
+  /// <summary>
+  /// Markup extension that gets a BitmapSource object for a ResourceService bitmap.
+  /// </summary>
+  [MarkupExtensionReturnType(typeof(BitmapSource))]
+  public class GetBitmapExtension : MarkupExtension
+  {
+    protected string _key;
 
-		public GetBitmapExtension(string key)
-		{
-			this._key = key;
-		}
+    public GetBitmapExtension(string key)
+    {
+      this._key = key;
+    }
 
-		public override object ProvideValue(IServiceProvider serviceProvider)
-		{
-			if (PresentationResourceService.InstanceAvailable)
-				return PresentationResourceService.GetBitmapSource(_key);
-			else
-				return _key;
-		}
-	}
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+      if (PresentationResourceService.InstanceAvailable)
+        return PresentationResourceService.GetBitmapSource(_key);
+      else
+        return _key;
+    }
+  }
 }

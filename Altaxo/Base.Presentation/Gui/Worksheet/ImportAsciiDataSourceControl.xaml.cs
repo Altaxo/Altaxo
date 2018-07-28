@@ -32,85 +32,85 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Worksheet
 {
-	/// <summary>
-	/// Interaction logic for RealFourierTransformation2DDataSourceControl.xaml
-	/// </summary>
-	public partial class ImportAsciiDataSourceControl : UserControl, IImportAsciiDataSourceView
-	{
-		public event Action BrowseSelectedFileName;
+  /// <summary>
+  /// Interaction logic for RealFourierTransformation2DDataSourceControl.xaml
+  /// </summary>
+  public partial class ImportAsciiDataSourceControl : UserControl, IImportAsciiDataSourceView
+  {
+    public event Action BrowseSelectedFileName;
 
-		public event Action DeleteSelectedFileName;
+    public event Action DeleteSelectedFileName;
 
-		public event Action MoveUpSelectedFileName;
+    public event Action MoveUpSelectedFileName;
 
-		public event Action MoveDownSelectedFileName;
+    public event Action MoveDownSelectedFileName;
 
-		public event Action AddNewFileName;
+    public event Action AddNewFileName;
 
-		public event Action NewFileNameExclusively;
+    public event Action NewFileNameExclusively;
 
-		public event Action SortFileNamesAscending;
+    public event Action SortFileNamesAscending;
 
-		public ImportAsciiDataSourceControl()
-		{
-			InitializeComponent();
-		}
+    public ImportAsciiDataSourceControl()
+    {
+      InitializeComponent();
+    }
 
-		public void SetAsciiImportOptionsControl(object p)
-		{
-			_guiAsciiImportOptionsHost.Child = p as UIElement;
-		}
+    public void SetAsciiImportOptionsControl(object p)
+    {
+      _guiAsciiImportOptionsHost.Child = p as UIElement;
+    }
 
-		public void SetImportOptionsControl(object p)
-		{
-			_guiImportOptionsHost.Child = p as UIElement;
-		}
+    public void SetImportOptionsControl(object p)
+    {
+      _guiImportOptionsHost.Child = p as UIElement;
+    }
 
-		public Collections.SelectableListNodeList FileNames
-		{
-			set { GuiHelper.Initialize(_guiFileNames, value); }
-		}
+    public Collections.SelectableListNodeList FileNames
+    {
+      set { GuiHelper.Initialize(_guiFileNames, value); }
+    }
 
-		private void EhFileNamesMouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
-			BrowseSelectedFileName?.Invoke();
-		}
+    private void EhFileNamesMouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+      BrowseSelectedFileName?.Invoke();
+    }
 
-		private void EhRemoveFileName(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
-			DeleteSelectedFileName?.Invoke();
-		}
+    private void EhRemoveFileName(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+      DeleteSelectedFileName?.Invoke();
+    }
 
-		private void EhAddNewFileName(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
-			AddNewFileName?.Invoke();
-		}
+    private void EhAddNewFileName(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+      AddNewFileName?.Invoke();
+    }
 
-		private void EhNewFileNameExclusively(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
-			NewFileNameExclusively?.Invoke();
-		}
+    private void EhNewFileNameExclusively(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+      NewFileNameExclusively?.Invoke();
+    }
 
-		private void EhMoveDownFileName(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
-			MoveDownSelectedFileName?.Invoke();
-		}
+    private void EhMoveDownFileName(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+      MoveDownSelectedFileName?.Invoke();
+    }
 
-		private void EhMoveUpFileName(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
-			MoveUpSelectedFileName?.Invoke();
-		}
+    private void EhMoveUpFileName(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+      MoveUpSelectedFileName?.Invoke();
+    }
 
-		private void EhSortFileNamesAscending(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
-			SortFileNamesAscending?.Invoke();
-		}
-	}
+    private void EhSortFileNamesAscending(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+      SortFileNamesAscending?.Invoke();
+    }
+  }
 }

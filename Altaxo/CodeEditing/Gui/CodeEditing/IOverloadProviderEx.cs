@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing
 {
-	public interface IOverloadProviderEx : ICSharpCode.AvalonEdit.CodeCompletion.IOverloadProvider
-	{
-		void Refresh();
-	}
+  public interface IOverloadProviderEx : ICSharpCode.AvalonEdit.CodeCompletion.IOverloadProvider
+  {
+    void Refresh();
+  }
 }

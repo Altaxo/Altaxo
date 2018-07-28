@@ -28,25 +28,26 @@ using System;
 
 namespace AltaxoTest.Calc.Integration
 {
-	[TestFixture]
-	public class QAGSTests
-	{
-		[Test]
-		public void TestSin()
-		{
-			double result, abserr;
-			QagsIntegration.Integration(Math.Sin, 0, Math.PI, 0, 1E-6, 100, out result, out abserr);
+  [TestFixture]
+  public class QAGSTests
+  {
+    [Test]
+    public void TestSin()
+    {
+      double result, abserr;
+      QagsIntegration.Integration(Math.Sin, 0, Math.PI, 0, 1E-6, 100, out result, out abserr);
 
-			NUnit.Framework.Assert.AreEqual(2.0, result, 2.0 * 1E-6);
-		}
+      NUnit.Framework.Assert.AreEqual(2.0, result, 2.0 * 1E-6);
+    }
 
-		[Test]
-		public void TestOneBySqrtX()
-		{
-			double result, abserr;
-			QagsIntegration.Integration(delegate (double x) { return 1 / Math.Sqrt(x); }, 0, 1, 0, 1E-6, 100, out result, out abserr);
+    [Test]
+    public void TestOneBySqrtX()
+    {
+      double result, abserr;
+      QagsIntegration.Integration(delegate (double x)
+      { return 1 / Math.Sqrt(x); }, 0, 1, 0, 1E-6, 100, out result, out abserr);
 
-			NUnit.Framework.Assert.AreEqual(2.0, result, 2.0 * 1E-6);
-		}
-	}
+      NUnit.Framework.Assert.AreEqual(2.0, result, 2.0 * 1E-6);
+    }
+  }
 }

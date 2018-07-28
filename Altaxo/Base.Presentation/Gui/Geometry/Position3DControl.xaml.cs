@@ -40,96 +40,96 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Geometry
 {
-	/// <summary>
-	/// Interaction logic for Direction3DSphericalControl.xaml
-	/// </summary>
-	public partial class Position3DControl : UserControl
-	{
-		private PointD3D _position;
+  /// <summary>
+  /// Interaction logic for Direction3DSphericalControl.xaml
+  /// </summary>
+  public partial class Position3DControl : UserControl
+  {
+    private PointD3D _position;
 
-		private GuiChangeLocker _lock;
+    private GuiChangeLocker _lock;
 
-		public event EventHandler SelectedValueChanged;
+    public event EventHandler SelectedValueChanged;
 
-		public Position3DControl()
-		{
-			InitializeComponent();
-		}
+    public Position3DControl()
+    {
+      InitializeComponent();
+    }
 
-		public PointD3D SelectedValue
-		{
-			get
-			{
-				if (_guiCartesian.IsKeyboardFocusWithin)
-					return _guiCartesian.SelectedValue;
-				else if (_guiSpherical.IsKeyboardFocusWithin)
-					return _guiSpherical.SelectedValue;
-				else
-					return _position;
-			}
-			set
-			{
-				_lock.ExecuteLocked(
-					() =>
-					{
-						_position = value;
-						_guiSpherical.SelectedValue = _position;
-						_guiCartesian.SelectedValue = _position;
-					});
-			}
-		}
+    public PointD3D SelectedValue
+    {
+      get
+      {
+        if (_guiCartesian.IsKeyboardFocusWithin)
+          return _guiCartesian.SelectedValue;
+        else if (_guiSpherical.IsKeyboardFocusWithin)
+          return _guiSpherical.SelectedValue;
+        else
+          return _position;
+      }
+      set
+      {
+        _lock.ExecuteLocked(
+          () =>
+          {
+            _position = value;
+            _guiSpherical.SelectedValue = _position;
+            _guiCartesian.SelectedValue = _position;
+          });
+      }
+    }
 
-		private void EhCartesianValueChanged(object sender, EventArgs e)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-				() =>
-				{
-					_position = _guiCartesian.SelectedValue;
-					_guiSpherical.SelectedValue = _position;
-				},
-				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
-				);
-		}
+    private void EhCartesianValueChanged(object sender, EventArgs e)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+        () =>
+        {
+          _position = _guiCartesian.SelectedValue;
+          _guiSpherical.SelectedValue = _position;
+        },
+        () => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+        );
+    }
 
-		private void EhSphericalValueChanged(object sender, EventArgs e)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-				() =>
-				{
-					_position = _guiSpherical.SelectedValue;
-					_guiCartesian.SelectedValue = _position;
-				},
-				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
-				);
-		}
+    private void EhSphericalValueChanged(object sender, EventArgs e)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+        () =>
+        {
+          _position = _guiSpherical.SelectedValue;
+          _guiCartesian.SelectedValue = _position;
+        },
+        () => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+        );
+    }
 
-		private void EhRadioButtonChanged(object sender, RoutedEventArgs e)
-		{
-			if (null == _guiCartesian || null == _guiSpherical)
-				return; // Design mode or just during control creation
+    private void EhRadioButtonChanged(object sender, RoutedEventArgs e)
+    {
+      if (null == _guiCartesian || null == _guiSpherical)
+        return; // Design mode or just during control creation
 
-			string tag = (string)((RadioButton)sender).Tag;
+      string tag = (string)((RadioButton)sender).Tag;
 
-			switch (tag)
-			{
-				case "Cartesian":
-					_guiSpherical.Visibility = Visibility.Collapsed;
-					_guiCartesian.Visibility = Visibility.Visible;
-					break;
+      switch (tag)
+      {
+        case "Cartesian":
+          _guiSpherical.Visibility = Visibility.Collapsed;
+          _guiCartesian.Visibility = Visibility.Visible;
+          break;
 
-				case "Spherical":
-					_guiCartesian.Visibility = Visibility.Collapsed;
-					_guiSpherical.Visibility = Visibility.Visible;
-					break;
+        case "Spherical":
+          _guiCartesian.Visibility = Visibility.Collapsed;
+          _guiSpherical.Visibility = Visibility.Visible;
+          break;
 
-				case "Both":
-					_guiCartesian.Visibility = Visibility.Visible;
-					_guiSpherical.Visibility = Visibility.Visible;
-					break;
+        case "Both":
+          _guiCartesian.Visibility = Visibility.Visible;
+          _guiSpherical.Visibility = Visibility.Visible;
+          break;
 
-				default:
-					throw new NotImplementedException("Tag");
-			}
-		}
-	}
+        default:
+          throw new NotImplementedException("Tag");
+      }
+    }
+  }
 }

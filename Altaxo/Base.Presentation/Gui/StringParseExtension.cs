@@ -24,37 +24,37 @@ using System.Windows.Markup;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Markup extension that works like StringParser.Parse. This extension uses a given string directly (the string is <b>not</b> a resource key), then
-	/// passes it to <see cref="StringParser.Parse(string)"/>. If <see cref="UsesAccessors"/> is set to true, the string is additionally
-	/// converted to Wpf accessor syntax.
-	/// </summary>
-	[MarkupExtensionReturnType(typeof(string))]
-	public sealed class StringParseExtension : LanguageDependentExtension
-	{
-		private string text;
+  /// <summary>
+  /// Markup extension that works like StringParser.Parse. This extension uses a given string directly (the string is <b>not</b> a resource key), then
+  /// passes it to <see cref="StringParser.Parse(string)"/>. If <see cref="UsesAccessors"/> is set to true, the string is additionally
+  /// converted to Wpf accessor syntax.
+  /// </summary>
+  [MarkupExtensionReturnType(typeof(string))]
+  public sealed class StringParseExtension : LanguageDependentExtension
+  {
+    private string text;
 
-		public StringParseExtension(string text)
-		{
-			this.text = text;
-			this.UsesAccessors = true;
-		}
+    public StringParseExtension(string text)
+    {
+      this.text = text;
+      this.UsesAccessors = true;
+    }
 
-		/// <summary>
-		/// Set whether the text uses accessors.
-		/// If set to true (default), accessors will be converted to WPF syntax.
-		/// </summary>
-		public bool UsesAccessors { get; set; }
+    /// <summary>
+    /// Set whether the text uses accessors.
+    /// If set to true (default), accessors will be converted to WPF syntax.
+    /// </summary>
+    public bool UsesAccessors { get; set; }
 
-		public override string Value
-		{
-			get
-			{
-				string result = StringParser.Parse(text);
-				if (UsesAccessors)
-					result = MenuService.ConvertLabel(result);
-				return result;
-			}
-		}
-	}
+    public override string Value
+    {
+      get
+      {
+        string result = StringParser.Parse(text);
+        if (UsesAccessors)
+          result = MenuService.ConvertLabel(result);
+        return result;
+      }
+    }
+  }
 }

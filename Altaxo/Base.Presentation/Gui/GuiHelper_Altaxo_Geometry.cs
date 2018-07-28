@@ -40,43 +40,43 @@ using System.Xml;
 
 namespace Altaxo.Gui
 {
-	public static partial class GuiHelper
-	{
-		#region Graphics primitives
+  public static partial class GuiHelper
+  {
+    #region Graphics primitives
 
-		#region Point
+    #region Point
 
-		public static Point ToWpf(this Altaxo.Geometry.PointD2D pt)
-		{
-			return new Point(pt.X, pt.Y);
-		}
+    public static Point ToWpf(this Altaxo.Geometry.PointD2D pt)
+    {
+      return new Point(pt.X, pt.Y);
+    }
 
-		public static PointD2D ToAltaxo(this Point pt)
-		{
-			return new PointD2D(pt.X, pt.Y);
-		}
+    public static PointD2D ToAltaxo(this Point pt)
+    {
+      return new PointD2D(pt.X, pt.Y);
+    }
 
-		#endregion Point
+    #endregion Point
 
-		#region Rectangle
+    #region Rectangle
 
-		public static Rect ToWpf(this RectangleD2D rect)
-		{
-			return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
-		}
+    public static Rect ToWpf(this RectangleD2D rect)
+    {
+      return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
+    }
 
-		public static RectangleD2D ToAltaxo(this Rect rect)
-		{
-			return new RectangleD2D(rect.X, rect.Y, rect.Width, rect.Height);
-		}
+    public static RectangleD2D ToAltaxo(this Rect rect)
+    {
+      return new RectangleD2D(rect.X, rect.Y, rect.Width, rect.Height);
+    }
 
-		public static System.Drawing.RectangleF ToSysDraw(this RectangleD2D rect)
-		{
-			return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
-		}
+    public static System.Drawing.RectangleF ToSysDraw(this RectangleD2D rect)
+    {
+      return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
+    }
 
-		#endregion Rectangle
+    #endregion Rectangle
 
-		#endregion Graphics primitives
-	}
+    #endregion Graphics primitives
+  }
 }

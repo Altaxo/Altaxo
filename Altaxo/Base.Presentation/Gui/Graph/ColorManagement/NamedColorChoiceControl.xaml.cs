@@ -33,39 +33,39 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
-	/// <summary>
-	/// Interaction logic for NamedColorChoiceControl.xaml
-	/// </summary>
-	public partial class NamedColorChoiceControl : UserControl, INamedColorChoiceView
-	{
-		public NamedColorChoiceControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for NamedColorChoiceControl.xaml
+  /// </summary>
+  public partial class NamedColorChoiceControl : UserControl, INamedColorChoiceView
+  {
+    public NamedColorChoiceControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhSelectedColorChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			_guiColorPreview.Fill = new SolidColorBrush(_guiColor.SelectedWpfColor);
-		}
+    private void EhSelectedColorChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      _guiColorPreview.Fill = new SolidColorBrush(_guiColor.SelectedWpfColor);
+    }
 
-		public bool ShowPlotColorsOnly
-		{
-			set
-			{
-				_guiColor.ShowPlotColorsOnly = value;
-			}
-		}
+    public bool ShowPlotColorsOnly
+    {
+      set
+      {
+        _guiColor.ShowPlotColorsOnly = value;
+      }
+    }
 
-		public NamedColor SelectedColor
-		{
-			get
-			{
-				return _guiColor.SelectedColor;
-			}
-			set
-			{
-				_guiColor.SelectedColor = value;
-			}
-		}
-	}
+    public NamedColor SelectedColor
+    {
+      get
+      {
+        return _guiColor.SelectedColor;
+      }
+      set
+      {
+        _guiColor.SelectedColor = value;
+      }
+    }
+  }
 }

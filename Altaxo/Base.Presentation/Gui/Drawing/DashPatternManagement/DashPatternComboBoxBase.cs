@@ -43,13 +43,13 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-	/// <summary>
-	/// Only to go from a class with type parameters to a class without type parameter, because Xaml can not handle class with type parameters.
-	/// </summary>
-	public abstract class DashPatternComboBoxBase : Altaxo.Gui.Drawing.StyleListComboBoxBase<DashPatternListManager, DashPatternList, IDashPattern>
-	{
-		public DashPatternComboBoxBase(DashPatternListManager manager) : base(manager)
-		{
-		}
-	}
+  /// <summary>
+  /// Only to go from a class with type parameters to a class without type parameter, because Xaml can not handle class with type parameters.
+  /// </summary>
+  public abstract class DashPatternComboBoxBase : Altaxo.Gui.Drawing.StyleListComboBoxBase<DashPatternListManager, DashPatternList, IDashPattern>
+  {
+    public DashPatternComboBoxBase(DashPatternListManager manager) : base(manager)
+    {
+    }
+  }
 }

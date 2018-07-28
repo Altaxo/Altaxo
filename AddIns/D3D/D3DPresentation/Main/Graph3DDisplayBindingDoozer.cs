@@ -28,68 +28,68 @@ using System.Collections;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Graph3DDisplayBindingDoozer generates a class with interface <see cref="IProjectItemDisplayBindingDescriptor"/>, which can be used
-	/// to bind the project item of type <see cref="Altaxo.Graph.Graph3D.GraphDocument"/> to the appropriate view content.
-	///
-	/// </summary>
-	public class Graph3DDisplayBindingDoozer : IDoozer
-	{
-		/// <summary>
-		/// Gets if the doozer handles codon conditions on its own.
-		/// If this property return false, the item is excluded when the condition is not met.
-		/// </summary>
-		public bool HandleConditions
-		{
-			get
-			{
-				return false;
-			}
-		}
+  /// <summary>
+  /// Graph3DDisplayBindingDoozer generates a class with interface <see cref="IProjectItemDisplayBindingDescriptor"/>, which can be used
+  /// to bind the project item of type <see cref="Altaxo.Graph.Graph3D.GraphDocument"/> to the appropriate view content.
+  ///
+  /// </summary>
+  public class Graph3DDisplayBindingDoozer : IDoozer
+  {
+    /// <summary>
+    /// Gets if the doozer handles codon conditions on its own.
+    /// If this property return false, the item is excluded when the condition is not met.
+    /// </summary>
+    public bool HandleConditions
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		/// <summary>
-		/// Creates an item with the specified sub items. And the current
-		/// Condition status for this item.
-		/// </summary>
-		public object BuildItem(BuildItemArgs args)
-		{
-			return new Graph3DDisplayBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Gui.Graph.Graph3D.Viewing.Graph3DController));
-		}
+    /// <summary>
+    /// Creates an item with the specified sub items. And the current
+    /// Condition status for this item.
+    /// </summary>
+    public object BuildItem(BuildItemArgs args)
+    {
+      return new Graph3DDisplayBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Gui.Graph.Graph3D.Viewing.Graph3DController));
+    }
 
-		private class Graph3DDisplayBindingDescriptor : IProjectItemDisplayBindingDescriptor
-		{
-			private Type _projectItemType;
-			private Type _viewContentType;
-			public Type ProjectItemType { get { return _projectItemType; } }
-			public Type ViewContentType { get { return _viewContentType; } }
+    private class Graph3DDisplayBindingDescriptor : IProjectItemDisplayBindingDescriptor
+    {
+      private Type _projectItemType;
+      private Type _viewContentType;
+      public Type ProjectItemType { get { return _projectItemType; } }
+      public Type ViewContentType { get { return _viewContentType; } }
 
-			private Codon _codon;
+      private Codon _codon;
 
-			public string Id { get; set; }
-			public string Title { get; set; }
+      public string Id { get; set; }
+      public string Title { get; set; }
 
-			public Graph3DDisplayBindingDescriptor(Codon codon, Type projectItemType, Type viewContentType)
-			{
-				if (codon == null)
-					throw new ArgumentNullException(nameof(codon));
+      public Graph3DDisplayBindingDescriptor(Codon codon, Type projectItemType, Type viewContentType)
+      {
+        if (codon == null)
+          throw new ArgumentNullException(nameof(codon));
 
-				this._codon = codon;
-				this.Id = codon.Id;
+        this._codon = codon;
+        this.Id = codon.Id;
 
-				string title = codon.Properties["title"];
-				if (string.IsNullOrEmpty(title))
-					this.Title = codon.Id;
-				else
-					this.Title = title;
+        string title = codon.Properties["title"];
+        if (string.IsNullOrEmpty(title))
+          this.Title = codon.Id;
+        else
+          this.Title = title;
 
-				_projectItemType = projectItemType;
-				_viewContentType = viewContentType;
-			}
+        _projectItemType = projectItemType;
+        _viewContentType = viewContentType;
+      }
 
-			public override string ToString()
-			{
-				return string.Format("[Graph3DDisplayBindingDescriptor ItemClass={0} ControllerClass={1}]", ProjectItemType, ViewContentType);
-			}
-		}
-	}
+      public override string ToString()
+      {
+        return string.Format("[Graph3DDisplayBindingDescriptor ItemClass={0} ControllerClass={1}]", ProjectItemType, ViewContentType);
+      }
+    }
+  }
 }

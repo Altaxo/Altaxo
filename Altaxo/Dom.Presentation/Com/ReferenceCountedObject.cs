@@ -27,29 +27,29 @@ using System.Runtime.InteropServices;
 
 namespace Altaxo.Com
 {
-	/// <summary>
-	/// Base class for Com objects. Keeps a reference to the ComManager, which keeps a count of all Com objects that are alive.
-	/// </summary>
-	[ComVisible(false)]
-	public class ReferenceCountedObjectBase
-	{
-		protected ComManager _comManager;
+  /// <summary>
+  /// Base class for Com objects. Keeps a reference to the ComManager, which keeps a count of all Com objects that are alive.
+  /// </summary>
+  [ComVisible(false)]
+  public class ReferenceCountedObjectBase
+  {
+    protected ComManager _comManager;
 
-		public ReferenceCountedObjectBase(ComManager comManager)
-		{
-			_comManager = comManager;
-			_comManager.InterlockedIncrementObjectsCount();
+    public ReferenceCountedObjectBase(ComManager comManager)
+    {
+      _comManager = comManager;
+      _comManager.InterlockedIncrementObjectsCount();
 
-			ComDebug.ReportInfo("{0}.Constructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
-		}
+      ComDebug.ReportInfo("{0}.Constructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
+    }
 
-		~ReferenceCountedObjectBase()
-		{
-			_comManager.InterlockedDecrementObjectsCount();
+    ~ReferenceCountedObjectBase()
+    {
+      _comManager.InterlockedDecrementObjectsCount();
 
-			ComDebug.ReportInfo("{0}.Destructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
+      ComDebug.ReportInfo("{0}.Destructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
 
-			_comManager.AttemptToTerminateServer();
-		}
-	}
+      _comManager.AttemptToTerminateServer();
+    }
+  }
 }

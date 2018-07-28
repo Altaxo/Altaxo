@@ -27,147 +27,147 @@ using System.Diagnostics;
 
 namespace Altaxo.Gui.Workbench
 {
-	internal sealed class FileServiceOpenedFile : OpenedFile
-	{
-		private readonly FileService fileService;
-		private List<IFileViewContent> registeredViews = new List<IFileViewContent>();
-		//private FileChangeWatcher fileChangeWatcher;
+  internal sealed class FileServiceOpenedFile : OpenedFile
+  {
+    private readonly FileService fileService;
+    private List<IFileViewContent> registeredViews = new List<IFileViewContent>();
+    //private FileChangeWatcher fileChangeWatcher;
 
-		protected override void ChangeFileName(FileName newValue)
-		{
-			fileService.OpenedFileFileNameChange(this, this.FileName, newValue);
-			base.ChangeFileName(newValue);
-		}
+    protected override void ChangeFileName(FileName newValue)
+    {
+      fileService.OpenedFileFileNameChange(this, this.FileName, newValue);
+      base.ChangeFileName(newValue);
+    }
 
-		internal FileServiceOpenedFile(FileService fileService, FileName fileName)
-		{
-			this.fileService = fileService;
-			this.FileName = fileName;
-			IsUntitled = false;
-			//fileChangeWatcher = new FileChangeWatcher(this);
-		}
+    internal FileServiceOpenedFile(FileService fileService, FileName fileName)
+    {
+      this.fileService = fileService;
+      this.FileName = fileName;
+      IsUntitled = false;
+      //fileChangeWatcher = new FileChangeWatcher(this);
+    }
 
-		internal FileServiceOpenedFile(FileService fileService, byte[] fileData)
-		{
-			this.fileService = fileService;
-			this.FileName = null;
-			SetData(fileData);
-			IsUntitled = true;
-			MakeDirty();
-			//fileChangeWatcher = new FileChangeWatcher(this);
-		}
+    internal FileServiceOpenedFile(FileService fileService, byte[] fileData)
+    {
+      this.fileService = fileService;
+      this.FileName = null;
+      SetData(fileData);
+      IsUntitled = true;
+      MakeDirty();
+      //fileChangeWatcher = new FileChangeWatcher(this);
+    }
 
-		/// <summary>
-		/// Gets the list of view contents registered with this opened file.
-		/// </summary>
-		public override IList<IFileViewContent> RegisteredViewContents
-		{
-			get { return registeredViews.AsReadOnly(); }
-		}
+    /// <summary>
+    /// Gets the list of view contents registered with this opened file.
+    /// </summary>
+    public override IList<IFileViewContent> RegisteredViewContents
+    {
+      get { return registeredViews.AsReadOnly(); }
+    }
 
-		public override void ForceInitializeView(IFileViewContent view)
-		{
-			if (view == null)
-				throw new ArgumentNullException("view");
-			if (!registeredViews.Contains(view))
-				throw new ArgumentException("registeredViews must contain view");
+    public override void ForceInitializeView(IFileViewContent view)
+    {
+      if (view == null)
+        throw new ArgumentNullException("view");
+      if (!registeredViews.Contains(view))
+        throw new ArgumentException("registeredViews must contain view");
 
-			base.ForceInitializeView(view);
-		}
+      base.ForceInitializeView(view);
+    }
 
-		public override void RegisterView(IFileViewContent view)
-		{
-			if (view == null)
-				throw new ArgumentNullException("view");
-			if (registeredViews.Contains(view))
-				throw new ArgumentException("registeredViews already contains view");
+    public override void RegisterView(IFileViewContent view)
+    {
+      if (view == null)
+        throw new ArgumentNullException("view");
+      if (registeredViews.Contains(view))
+        throw new ArgumentException("registeredViews already contains view");
 
-			registeredViews.Add(view);
+      registeredViews.Add(view);
 
-			if (Altaxo.Current.GetService<IWorkbench>() != null)
-			{
-				Altaxo.Current.GetRequiredService<IWorkbenchEx>().ActiveViewContentChanged += WorkbenchActiveViewContentChanged;
-				if (Altaxo.Current.Workbench.ActiveViewContent == view)
-				{
-					SwitchedToView(view);
-				}
-			}
+      if (Altaxo.Current.GetService<IWorkbench>() != null)
+      {
+        Altaxo.Current.GetRequiredService<IWorkbenchEx>().ActiveViewContentChanged += WorkbenchActiveViewContentChanged;
+        if (Altaxo.Current.Workbench.ActiveViewContent == view)
+        {
+          SwitchedToView(view);
+        }
+      }
 #if DEBUG
-			view.Disposed += ViewDisposed;
+      view.Disposed += ViewDisposed;
 #endif
-		}
+    }
 
-		public override void UnregisterView(IFileViewContent view)
-		{
-			if (view == null)
-				throw new ArgumentNullException("view");
-			Debug.Assert(registeredViews.Contains(view));
+    public override void UnregisterView(IFileViewContent view)
+    {
+      if (view == null)
+        throw new ArgumentNullException("view");
+      Debug.Assert(registeredViews.Contains(view));
 
-			if (Altaxo.Current.GetService<IWorkbench>() != null)
-			{
-				Altaxo.Current.GetRequiredService<IWorkbenchEx>().ActiveViewContentChanged -= WorkbenchActiveViewContentChanged;
-			}
+      if (Altaxo.Current.GetService<IWorkbench>() != null)
+      {
+        Altaxo.Current.GetRequiredService<IWorkbenchEx>().ActiveViewContentChanged -= WorkbenchActiveViewContentChanged;
+      }
 #if DEBUG
-			view.Disposed -= ViewDisposed;
-#endif
-
-			registeredViews.Remove(view);
-			if (registeredViews.Count > 0)
-			{
-				if (currentView == view)
-				{
-					SaveCurrentView();
-					currentView = null;
-				}
-			}
-			else
-			{
-				// all views to the file were closed
-				CloseIfAllViewsClosed();
-			}
-		}
-
-		public override void CloseIfAllViewsClosed()
-		{
-			if (registeredViews.Count == 0)
-			{
-				bool wasDirty = this.IsDirty;
-				fileService.OpenedFileClosed(this);
-
-				FileClosed(this, EventArgs.Empty);
-			}
-		}
-
-#if DEBUG
-
-		private void ViewDisposed(object sender, EventArgs e)
-		{
-			Debug.Fail("View was disposed while still registered with OpenedFile!");
-		}
-
+      view.Disposed -= ViewDisposed;
 #endif
 
-		private void WorkbenchActiveViewContentChanged(object sender, EventArgs e)
-		{
-			var newView = Altaxo.Current.GetRequiredService<IWorkbench>().ActiveViewContent as IFileViewContent;
+      registeredViews.Remove(view);
+      if (registeredViews.Count > 0)
+      {
+        if (currentView == view)
+        {
+          SaveCurrentView();
+          currentView = null;
+        }
+      }
+      else
+      {
+        // all views to the file were closed
+        CloseIfAllViewsClosed();
+      }
+    }
 
-			if (!registeredViews.Contains(newView))
-				return;
+    public override void CloseIfAllViewsClosed()
+    {
+      if (registeredViews.Count == 0)
+      {
+        bool wasDirty = this.IsDirty;
+        fileService.OpenedFileClosed(this);
 
-			SwitchedToView(newView);
-		}
+        FileClosed(this, EventArgs.Empty);
+      }
+    }
 
-		public override void SaveToDisk()
-		{
-			try
-			{
-				base.SaveToDisk();
-			}
-			finally
-			{
-			}
-		}
+#if DEBUG
 
-		public override event EventHandler FileClosed = delegate { };
-	}
+    private void ViewDisposed(object sender, EventArgs e)
+    {
+      Debug.Fail("View was disposed while still registered with OpenedFile!");
+    }
+
+#endif
+
+    private void WorkbenchActiveViewContentChanged(object sender, EventArgs e)
+    {
+      var newView = Altaxo.Current.GetRequiredService<IWorkbench>().ActiveViewContent as IFileViewContent;
+
+      if (!registeredViews.Contains(newView))
+        return;
+
+      SwitchedToView(newView);
+    }
+
+    public override void SaveToDisk()
+    {
+      try
+      {
+        base.SaveToDisk();
+      }
+      finally
+      {
+      }
+    }
+
+    public override event EventHandler FileClosed = delegate { };
+  }
 }

@@ -28,59 +28,59 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
-	public interface IColorSetsView
-	{
-		NGTreeNode ColorSetTree { set; }
-	}
+  public interface IColorSetsView
+  {
+    NGTreeNode ColorSetTree { set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IColorSetsView))]
-	public class ColorSetChoiceController : MVCANControllerEditImmutableDocBase<ColorSetIdentifier, IColorSetsView>
-	{
-		private NGTreeNode _treeRootNode = new NGTreeNode();
+  [ExpectedTypeOfView(typeof(IColorSetsView))]
+  public class ColorSetChoiceController : MVCANControllerEditImmutableDocBase<ColorSetIdentifier, IColorSetsView>
+  {
+    private NGTreeNode _treeRootNode = new NGTreeNode();
 
-		public bool ShowPlotColorsOnly { get; set; }
+    public bool ShowPlotColorsOnly { get; set; }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				ColorSetManagerEntryValue value;
+      if (initData)
+      {
+        ColorSetManagerEntryValue value;
 
-				ColorSetManager.Instance.TryGetList(_doc.Name, out value);
-				ColorControllerHelper.UpdateColorTreeViewTreeNodes(_treeRootNode, ShowPlotColorsOnly, value.List);
-			}
-			if (null != _view)
-			{
-				_view.ColorSetTree = _treeRootNode;
-			}
-		}
+        ColorSetManager.Instance.TryGetList(_doc.Name, out value);
+        ColorControllerHelper.UpdateColorTreeViewTreeNodes(_treeRootNode, ShowPlotColorsOnly, value.List);
+      }
+      if (null != _view)
+      {
+        _view.ColorSetTree = _treeRootNode;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			var selNode = _treeRootNode.AnyBetweenHereAndLeaves(node => node.IsSelected);
+    public override bool Apply(bool disposeController)
+    {
+      var selNode = _treeRootNode.AnyBetweenHereAndLeaves(node => node.IsSelected);
 
-			if (null == selNode)
-				return false;
+      if (null == selNode)
+        return false;
 
-			var tag = selNode.Tag as IColorSet;
+      var tag = selNode.Tag as IColorSet;
 
-			if (null == tag)
-			{
-				string insteadOf = selNode.Tag != null ? selNode.Tag.GetType().Name : "nothing";
-				Current.Gui.ErrorMessageBox("Please select a color set instead of " + insteadOf, "Wrong selection");
-				return false;
-			}
+      if (null == tag)
+      {
+        string insteadOf = selNode.Tag != null ? selNode.Tag.GetType().Name : "nothing";
+        Current.Gui.ErrorMessageBox("Please select a color set instead of " + insteadOf, "Wrong selection");
+        return false;
+      }
 
-			_doc = new ColorSetIdentifier(Altaxo.Main.ItemDefinitionLevel.Project, tag.Name);
+      _doc = new ColorSetIdentifier(Altaxo.Main.ItemDefinitionLevel.Project, tag.Name);
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

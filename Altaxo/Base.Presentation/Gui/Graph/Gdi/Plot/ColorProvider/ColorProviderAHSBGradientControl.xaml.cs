@@ -31,123 +31,123 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
-	/// <summary>
-	/// Interaction logic for ColorProviderAHSBGradientControl.xaml
-	/// </summary>
-	public partial class ColorProviderAHSBGradientControl : UserControl, IColorProviderAHSBGradientView
-	{
-		public event Action ChoiceChanged;
+  /// <summary>
+  /// Interaction logic for ColorProviderAHSBGradientControl.xaml
+  /// </summary>
+  public partial class ColorProviderAHSBGradientControl : UserControl, IColorProviderAHSBGradientView
+  {
+    public event Action ChoiceChanged;
 
-		public ColorProviderAHSBGradientControl()
-		{
-			InitializeComponent();
-		}
+    public ColorProviderAHSBGradientControl()
+    {
+      InitializeComponent();
+    }
 
-		public IColorProviderBaseView BaseView
-		{
-			get { return _guiBaseControl; }
-		}
+    public IColorProviderBaseView BaseView
+    {
+      get { return _guiBaseControl; }
+    }
 
-		public double Hue0
-		{
-			get
-			{
-				return _guiHue0.ValueAsDouble;
-			}
-			set
-			{
-				_guiHue0.ValueAsDouble = value;
-			}
-		}
+    public double Hue0
+    {
+      get
+      {
+        return _guiHue0.ValueAsDouble;
+      }
+      set
+      {
+        _guiHue0.ValueAsDouble = value;
+      }
+    }
 
-		public double Hue1
-		{
-			get
-			{
-				return _guiHue1.ValueAsDouble;
-			}
-			set
-			{
-				_guiHue1.ValueAsDouble = value;
-			}
-		}
+    public double Hue1
+    {
+      get
+      {
+        return _guiHue1.ValueAsDouble;
+      }
+      set
+      {
+        _guiHue1.ValueAsDouble = value;
+      }
+    }
 
-		public double Saturation0
-		{
-			get
-			{
-				return _guiSaturation0.ValueAsDouble;
-			}
-			set
-			{
-				_guiSaturation0.ValueAsDouble = value;
-			}
-		}
+    public double Saturation0
+    {
+      get
+      {
+        return _guiSaturation0.ValueAsDouble;
+      }
+      set
+      {
+        _guiSaturation0.ValueAsDouble = value;
+      }
+    }
 
-		public double Saturation1
-		{
-			get
-			{
-				return _guiSaturation1.ValueAsDouble;
-			}
-			set
-			{
-				_guiSaturation1.ValueAsDouble = value;
-			}
-		}
+    public double Saturation1
+    {
+      get
+      {
+        return _guiSaturation1.ValueAsDouble;
+      }
+      set
+      {
+        _guiSaturation1.ValueAsDouble = value;
+      }
+    }
 
-		public double Brightness0
-		{
-			get
-			{
-				return _guiBrightness0.ValueAsDouble;
-			}
-			set
-			{
-				_guiBrightness0.ValueAsDouble = value;
-			}
-		}
+    public double Brightness0
+    {
+      get
+      {
+        return _guiBrightness0.ValueAsDouble;
+      }
+      set
+      {
+        _guiBrightness0.ValueAsDouble = value;
+      }
+    }
 
-		public double Brightness1
-		{
-			get
-			{
-				return _guiBrightness1.ValueAsDouble;
-			}
-			set
-			{
-				_guiBrightness1.ValueAsDouble = value;
-			}
-		}
+    public double Brightness1
+    {
+      get
+      {
+        return _guiBrightness1.ValueAsDouble;
+      }
+      set
+      {
+        _guiBrightness1.ValueAsDouble = value;
+      }
+    }
 
-		public double Opaqueness0
-		{
-			get
-			{
-				return _guiOpaqueness0.ValueAsDouble;
-			}
-			set
-			{
-				_guiOpaqueness0.ValueAsDouble = value;
-			}
-		}
+    public double Opaqueness0
+    {
+      get
+      {
+        return _guiOpaqueness0.ValueAsDouble;
+      }
+      set
+      {
+        _guiOpaqueness0.ValueAsDouble = value;
+      }
+    }
 
-		public double Opaqueness1
-		{
-			get
-			{
-				return _guiOpaqueness1.ValueAsDouble;
-			}
-			set
-			{
-				_guiOpaqueness1.ValueAsDouble = value;
-			}
-		}
+    public double Opaqueness1
+    {
+      get
+      {
+        return _guiOpaqueness1.ValueAsDouble;
+      }
+      set
+      {
+        _guiOpaqueness1.ValueAsDouble = value;
+      }
+    }
 
-		private void EhDoubleUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
-		{
-			if (null != ChoiceChanged)
-				ChoiceChanged();
-		}
-	}
+    private void EhDoubleUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
+    {
+      if (null != ChoiceChanged)
+        ChoiceChanged();
+    }
+  }
 }

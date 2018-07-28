@@ -29,33 +29,33 @@ using System.Text;
 
 namespace Altaxo.Main.Properties
 {
-	/// <summary>
-	/// Stores information about a property bag.
-	/// </summary>
-	public struct PropertyBagInformation
-	{
-		/// <summary>The name of the property bag.</summary>
-		public string Name { get; private set; }
+  /// <summary>
+  /// Stores information about a property bag.
+  /// </summary>
+  public struct PropertyBagInformation
+  {
+    /// <summary>The name of the property bag.</summary>
+    public string Name { get; private set; }
 
-		/// <summary>The bag's application level.</summary>
-		public PropertyLevel ApplicationLevel { get; private set; }
+    /// <summary>The bag's application level.</summary>
+    public PropertyLevel ApplicationLevel { get; private set; }
 
-		/// <summary>
-		/// The bag's application item type.
-		/// </summary>
-		public System.Type ApplicationItemType { get; private set; }
+    /// <summary>
+    /// The bag's application item type.
+    /// </summary>
+    public System.Type ApplicationItemType { get; private set; }
 
-		public PropertyBagInformation(string name, PropertyLevel applicationLevel)
-			: this(name, applicationLevel, null)
-		{
-		}
+    public PropertyBagInformation(string name, PropertyLevel applicationLevel)
+      : this(name, applicationLevel, null)
+    {
+    }
 
-		public PropertyBagInformation(string name, PropertyLevel applicationLevel, System.Type applicationItemType)
-			: this()
-		{
-			Name = name;
-			ApplicationLevel = applicationLevel;
-			ApplicationItemType = applicationItemType;
-		}
-	}
+    public PropertyBagInformation(string name, PropertyLevel applicationLevel, System.Type applicationItemType)
+      : this()
+    {
+      Name = name;
+      ApplicationLevel = applicationLevel;
+      ApplicationItemType = applicationItemType;
+    }
+  }
 }

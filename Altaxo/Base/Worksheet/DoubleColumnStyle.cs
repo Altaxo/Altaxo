@@ -31,81 +31,81 @@ using System.Drawing;
 
 namespace Altaxo.Worksheet
 {
-	public class DoubleColumnStyle : Altaxo.Worksheet.ColumnStyle
-	{
-		#region Serialization
+  public class DoubleColumnStyle : Altaxo.Worksheet.ColumnStyle
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DoubleColumnStyle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				DoubleColumnStyle s = (DoubleColumnStyle)obj;
-				info.AddBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DoubleColumnStyle), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        DoubleColumnStyle s = (DoubleColumnStyle)obj;
+        info.AddBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				DoubleColumnStyle s = null != o ? (DoubleColumnStyle)o : new DoubleColumnStyle();
-				info.GetBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        DoubleColumnStyle s = null != o ? (DoubleColumnStyle)o : new DoubleColumnStyle();
+        info.GetBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public DoubleColumnStyle()
-			: base(ColumnStyleType.DataCell)
-		{
-			_textFormat.Alignment = StringAlignment.Far;
-			_textFormat.FormatFlags = StringFormatFlags.LineLimit;
-		}
+    public DoubleColumnStyle()
+      : base(ColumnStyleType.DataCell)
+    {
+      _textFormat.Alignment = StringAlignment.Far;
+      _textFormat.FormatFlags = StringFormatFlags.LineLimit;
+    }
 
-		public DoubleColumnStyle(DoubleColumnStyle ds)
-			: base(ds)
-		{
-		}
+    public DoubleColumnStyle(DoubleColumnStyle ds)
+      : base(ds)
+    {
+    }
 
-		public override object Clone()
-		{
-			Altaxo.Worksheet.DoubleColumnStyle ns = new Altaxo.Worksheet.DoubleColumnStyle(this);
-			return ns;
-		}
+    public override object Clone()
+    {
+      Altaxo.Worksheet.DoubleColumnStyle ns = new Altaxo.Worksheet.DoubleColumnStyle(this);
+      return ns;
+    }
 
-		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
-		{
-			double val = ((Altaxo.Data.DoubleColumn)data)[nRow];
-			return Double.IsNaN(val) ? "" : val.ToString(Altaxo.Settings.GuiCulture.Instance);
-		}
+    public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
+    {
+      double val = ((Altaxo.Data.DoubleColumn)data)[nRow];
+      return Double.IsNaN(val) ? "" : val.ToString(Altaxo.Settings.GuiCulture.Instance);
+    }
 
-		public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
-		{
-			if (!double.TryParse(s, System.Globalization.NumberStyles.Float, Altaxo.Settings.GuiCulture.Instance, out var result))
-				result = double.NaN;
-			((Altaxo.Data.DoubleColumn)data)[nRow] = result;
-		}
+    public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
+    {
+      if (!double.TryParse(s, System.Globalization.NumberStyles.Float, Altaxo.Settings.GuiCulture.Instance, out var result))
+        result = double.NaN;
+      ((Altaxo.Data.DoubleColumn)data)[nRow] = result;
+    }
 
-		public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
-		{
-			PaintBackground(dc, cellRectangle, bSelected);
+    public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+    {
+      PaintBackground(dc, cellRectangle, bSelected);
 
-			string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
+      string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
 
-			if (bSelected)
-				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _defaultSelectedTextBrush, cellRectangle, _textFormat);
-			else
-				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), TextBrush, cellRectangle, _textFormat);
-		}
+      if (bSelected)
+        dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _defaultSelectedTextBrush, cellRectangle, _textFormat);
+      else
+        dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), TextBrush, cellRectangle, _textFormat);
+    }
 
-		public static Dictionary<System.Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
+    public static Dictionary<System.Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
 
-		public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
-		{
-			Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool> action;
-			if (RegisteredPaintMethods.TryGetValue(dctype, out action))
-				action(this, dc, cellRectangle, nRow, data, bSelected);
-			else
-				throw new NotImplementedException("Paint method is not implemented for context type " + dc.GetType().ToString());
-		}
-	} // end of class Altaxo.Worksheet.DoubleColumnStyle
+    public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+    {
+      Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool> action;
+      if (RegisteredPaintMethods.TryGetValue(dctype, out action))
+        action(this, dc, cellRectangle, nRow, data, bSelected);
+      else
+        throw new NotImplementedException("Paint method is not implemented for context type " + dc.GetType().ToString());
+    }
+  } // end of class Altaxo.Worksheet.DoubleColumnStyle
 }

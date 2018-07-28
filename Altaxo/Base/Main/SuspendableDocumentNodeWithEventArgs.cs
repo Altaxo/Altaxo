@@ -29,17 +29,17 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Implements a <see cref="T:Altaxo.Main.SuspendableDocumentNodeWithSingleAccumulatedData{System.EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
-	/// </summary>
-	public abstract class SuspendableDocumentNodeWithEventArgs : SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
-	{
-		/// <summary>
-		/// Calls EhSelfChanged with EventArgs.Empty
-		/// </summary>
-		public virtual void EhSelfChanged()
-		{
-			EhSelfChanged(EventArgs.Empty);
-		}
-	}
+  /// <summary>
+  /// Implements a <see cref="T:Altaxo.Main.SuspendableDocumentNodeWithSingleAccumulatedData{System.EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
+  /// </summary>
+  public abstract class SuspendableDocumentNodeWithEventArgs : SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
+  {
+    /// <summary>
+    /// Calls EhSelfChanged with EventArgs.Empty
+    /// </summary>
+    public virtual void EhSelfChanged()
+    {
+      EhSelfChanged(EventArgs.Empty);
+    }
+  }
 }

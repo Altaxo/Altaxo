@@ -30,42 +30,42 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
-	public class FlatCap : LineCapExtension
-	{
-		public FlatCap()
-		{
-		}
+  public class FlatCap : LineCapExtension
+  {
+    public FlatCap()
+    {
+    }
 
-		private FlatCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-			: base(minimumAbsoluteSizePt, minimumRelativeSize)
-		{
-		}
+    private FlatCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
+    {
+    }
 
-		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
-		{
-			return new FlatCap(minimumAbsoluteSizePt, minimumRelativeSize);
-		}
+    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    {
+      return new FlatCap(minimumAbsoluteSizePt, minimumRelativeSize);
+    }
 
-		public override string Name
-		{
-			get
-			{
-				return "Flat";
-			}
-		}
+    public override string Name
+    {
+      get
+      {
+        return "Flat";
+      }
+    }
 
-		public override double DefaultMinimumAbsoluteSizePt { get { return 0; } }
+    public override double DefaultMinimumAbsoluteSizePt { get { return 0; } }
 
-		public override double DefaultMinimumRelativeSize { get { return 0; } }
+    public override double DefaultMinimumRelativeSize { get { return 0; } }
 
-		public override void SetStartCap(Pen pen, float size)
-		{
-			pen.StartCap = LineCap.Flat;
-		}
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Flat;
+    }
 
-		public override void SetEndCap(Pen pen, float size)
-		{
-			pen.StartCap = LineCap.Flat;
-		}
-	}
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Flat;
+    }
+  }
 }

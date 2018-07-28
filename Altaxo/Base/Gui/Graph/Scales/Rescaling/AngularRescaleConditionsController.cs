@@ -30,62 +30,62 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IAngularRescaleConditionsView
-	{
-		SelectableListNodeList Origin { set; }
-	}
+  public interface IAngularRescaleConditionsView
+  {
+    SelectableListNodeList Origin { set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[UserControllerForObject(typeof(AngularRescaleConditions))]
-	[ExpectedTypeOfView(typeof(IAngularRescaleConditionsView))]
-	public class AngularRescaleConditionsController : MVCANControllerEditOriginalDocBase<AngularRescaleConditions, IAngularRescaleConditionsView>
-	{
-		private SelectableListNodeList _originList;
+  [UserControllerForObject(typeof(AngularRescaleConditions))]
+  [ExpectedTypeOfView(typeof(IAngularRescaleConditionsView))]
+  public class AngularRescaleConditionsController : MVCANControllerEditOriginalDocBase<AngularRescaleConditions, IAngularRescaleConditionsView>
+  {
+    private SelectableListNodeList _originList;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_originList = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _originList = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				BuildOriginList();
-			}
+      if (initData)
+      {
+        BuildOriginList();
+      }
 
-			if (_view != null)
-			{
-				_view.Origin = _originList;
-			}
-		}
+      if (_view != null)
+      {
+        _view.Origin = _originList;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Tag;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Tag;
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		private void BuildOriginList()
-		{
-			_originList = new SelectableListNodeList();
-			_originList.Add(new SelectableListNode("-90°", -1, -1 == _doc.ScaleOrigin));
-			_originList.Add(new SelectableListNode("0°", 0, 0 == _doc.ScaleOrigin));
-			_originList.Add(new SelectableListNode("90°", 1, 1 == _doc.ScaleOrigin));
-			_originList.Add(new SelectableListNode("180°", 2, 2 == _doc.ScaleOrigin));
-			_originList.Add(new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin));
-		}
-	}
+    private void BuildOriginList()
+    {
+      _originList = new SelectableListNodeList();
+      _originList.Add(new SelectableListNode("-90°", -1, -1 == _doc.ScaleOrigin));
+      _originList.Add(new SelectableListNode("0°", 0, 0 == _doc.ScaleOrigin));
+      _originList.Add(new SelectableListNode("90°", 1, 1 == _doc.ScaleOrigin));
+      _originList.Add(new SelectableListNode("180°", 2, 2 == _doc.ScaleOrigin));
+      _originList.Add(new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin));
+    }
+  }
 }

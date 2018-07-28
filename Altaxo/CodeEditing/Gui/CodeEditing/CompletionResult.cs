@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing
 {
-	public sealed class CompletionResult
-	{
-		public CompletionResult(IList<ICompletionDataEx> completionData, IOverloadProviderEx overloadProvider, bool useHardSelection)
-		{
-			CompletionData = completionData;
-			OverloadProvider = overloadProvider;
-			UseHardSelection = useHardSelection;
-		}
+  public sealed class CompletionResult
+  {
+    public CompletionResult(IList<ICompletionDataEx> completionData, IOverloadProviderEx overloadProvider, bool useHardSelection)
+    {
+      CompletionData = completionData;
+      OverloadProvider = overloadProvider;
+      UseHardSelection = useHardSelection;
+    }
 
-		public bool UseHardSelection { get; }
+    public bool UseHardSelection { get; }
 
-		public IList<ICompletionDataEx> CompletionData { get; }
+    public IList<ICompletionDataEx> CompletionData { get; }
 
-		public IOverloadProviderEx OverloadProvider { get; }
-	}
+    public IOverloadProviderEx OverloadProvider { get; }
+  }
 }

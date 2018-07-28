@@ -29,67 +29,67 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Plot.Groups
 {
-	using Altaxo.Graph.Plot.Groups;
+  using Altaxo.Graph.Plot.Groups;
 
-	/// <summary>
-	/// Tracks the presence or absence of a <see cref="Altaxo.Graph.Plot.Groups.ColorGroupStyle"/> in the group style collection relevant that is relevant for a plot style.
-	/// </summary>
-	public class ColorGroupStylePresenceTracker
-	{
-		private Action _actionIfGroupStyleRemovedOrAdded;
+  /// <summary>
+  /// Tracks the presence or absence of a <see cref="Altaxo.Graph.Plot.Groups.ColorGroupStyle"/> in the group style collection relevant that is relevant for a plot style.
+  /// </summary>
+  public class ColorGroupStylePresenceTracker
+  {
+    private Action _actionIfGroupStyleRemovedOrAdded;
 
-		/// <summary>Contains the color group style of the parent plot item collection (if present).</summary>
-		private Altaxo.Graph.Plot.Groups.ColorGroupStyle _colorGroupStyle;
+    /// <summary>Contains the color group style of the parent plot item collection (if present).</summary>
+    private Altaxo.Graph.Plot.Groups.ColorGroupStyle _colorGroupStyle;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ColorGroupStylePresenceTracker"/> class.
-		/// </summary>
-		/// <param name="plotStyle">The plot style.</param>
-		/// <param name="actionIfGroupStyleRemovedOrAdded">The action to do if the group style is removed or added to the group style collection.</param>
-		public ColorGroupStylePresenceTracker(Altaxo.Main.IDocumentLeafNode plotStyle, Action actionIfGroupStyleRemovedOrAdded)
-		{
-			_colorGroupStyle = GetColorGroupStyle(plotStyle);
-			_actionIfGroupStyleRemovedOrAdded = actionIfGroupStyleRemovedOrAdded;
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorGroupStylePresenceTracker"/> class.
+    /// </summary>
+    /// <param name="plotStyle">The plot style.</param>
+    /// <param name="actionIfGroupStyleRemovedOrAdded">The action to do if the group style is removed or added to the group style collection.</param>
+    public ColorGroupStylePresenceTracker(Altaxo.Main.IDocumentLeafNode plotStyle, Action actionIfGroupStyleRemovedOrAdded)
+    {
+      _colorGroupStyle = GetColorGroupStyle(plotStyle);
+      _actionIfGroupStyleRemovedOrAdded = actionIfGroupStyleRemovedOrAdded;
+    }
 
-		/// <summary>
-		/// Gets a value indicating whether a color group style is present in the group style collection.
-		/// </summary>
-		/// <value>
-		///	<c>True</c> if a color group style is present; otherwise, <c>false</c>.
-		/// </value>
-		public bool IsColorGroupStyleActive { get { return null != _colorGroupStyle; } }
+    /// <summary>
+    /// Gets a value indicating whether a color group style is present in the group style collection.
+    /// </summary>
+    /// <value>
+    ///	<c>True</c> if a color group style is present; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsColorGroupStyleActive { get { return null != _colorGroupStyle; } }
 
-		/// <summary>
-		/// Queries, if only plot colors should be shown in the Gui interface of the plot style.
-		/// </summary>
-		/// <param name="isIndependentColorChosen">Indicates if <c>true</c>, that in the Gui interface the checkbox "Independent color" is checked..</param>
-		/// <returns><c>True</c> if in the Gui interface of the plot style only plot colors are allowed to choose; otherwise, <c>false</c>.</returns>
-		public bool MustUsePlotColorsOnly(bool isIndependentColorChosen)
-		{
-			return null != _colorGroupStyle && !isIndependentColorChosen;
-		}
+    /// <summary>
+    /// Queries, if only plot colors should be shown in the Gui interface of the plot style.
+    /// </summary>
+    /// <param name="isIndependentColorChosen">Indicates if <c>true</c>, that in the Gui interface the checkbox "Independent color" is checked..</param>
+    /// <returns><c>True</c> if in the Gui interface of the plot style only plot colors are allowed to choose; otherwise, <c>false</c>.</returns>
+    public bool MustUsePlotColorsOnly(bool isIndependentColorChosen)
+    {
+      return null != _colorGroupStyle && !isIndependentColorChosen;
+    }
 
-		/// <summary>
-		/// Queries, if only plot colors should be shown in the Gui interface of the plot style.
-		/// </summary>
-		/// <param name="colorLinkage">Indicates how the color is linked to other colors in the same or in other plot styles, <see cref="ColorLinkage"/>.</param>
-		/// <returns><c>True</c> if in the Gui interface of the plot style only plot colors are allowed to choose; otherwise, <c>false</c>.</returns>
-		public bool MustUsePlotColorsOnly(ColorLinkage colorLinkage)
-		{
-			return null != _colorGroupStyle && colorLinkage == ColorLinkage.Dependent;
-		}
+    /// <summary>
+    /// Queries, if only plot colors should be shown in the Gui interface of the plot style.
+    /// </summary>
+    /// <param name="colorLinkage">Indicates how the color is linked to other colors in the same or in other plot styles, <see cref="ColorLinkage"/>.</param>
+    /// <returns><c>True</c> if in the Gui interface of the plot style only plot colors are allowed to choose; otherwise, <c>false</c>.</returns>
+    public bool MustUsePlotColorsOnly(ColorLinkage colorLinkage)
+    {
+      return null != _colorGroupStyle && colorLinkage == ColorLinkage.Dependent;
+    }
 
-		public static Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle(Altaxo.Main.IDocumentLeafNode doc)
-		{
-			var plotItemCollection = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(doc);
-			if (null == plotItemCollection)
-				return null;
+    public static Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle(Altaxo.Main.IDocumentLeafNode doc)
+    {
+      var plotItemCollection = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(doc);
+      if (null == plotItemCollection)
+        return null;
 
-			if (plotItemCollection.GroupStyles.ContainsType(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle)))
-				return (Altaxo.Graph.Plot.Groups.ColorGroupStyle)plotItemCollection.GroupStyles.GetPlotGroupStyle(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle));
-			else
-				return null;
-		}
-	}
+      if (plotItemCollection.GroupStyles.ContainsType(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle)))
+        return (Altaxo.Graph.Plot.Groups.ColorGroupStyle)plotItemCollection.GroupStyles.GetPlotGroupStyle(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle));
+      else
+        return null;
+    }
+  }
 }

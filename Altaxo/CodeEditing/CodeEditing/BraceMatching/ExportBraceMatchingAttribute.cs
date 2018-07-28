@@ -7,16 +7,16 @@ using System.Composition;
 
 namespace Altaxo.CodeEditing.BraceMatching
 {
-	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class)]
-	internal class ExportBraceMatcherAttribute : ExportAttribute
-	{
-		public string Language { get; }
+  [MetadataAttribute]
+  [AttributeUsage(AttributeTargets.Class)]
+  internal class ExportBraceMatcherAttribute : ExportAttribute
+  {
+    public string Language { get; }
 
-		public ExportBraceMatcherAttribute(string language)
-				: base(typeof(IBraceMatcher))
-		{
-			this.Language = language ?? throw new ArgumentNullException(nameof(language));
-		}
-	}
+    public ExportBraceMatcherAttribute(string language)
+        : base(typeof(IBraceMatcher))
+    {
+      this.Language = language ?? throw new ArgumentNullException(nameof(language));
+    }
+  }
 }

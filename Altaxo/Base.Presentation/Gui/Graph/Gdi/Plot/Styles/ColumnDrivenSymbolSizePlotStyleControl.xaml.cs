@@ -33,116 +33,116 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	/// <summary>
-	/// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
-	/// </summary>
-	public partial class ColumnDrivenSymbolSizePlotStyleControl : UserControl, IColumnDrivenSymbolSizePlotStyleView
-	{
-		public ColumnDrivenSymbolSizePlotStyleControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
+  /// </summary>
+  public partial class ColumnDrivenSymbolSizePlotStyleControl : UserControl, IColumnDrivenSymbolSizePlotStyleView
+  {
+    public ColumnDrivenSymbolSizePlotStyleControl()
+    {
+      InitializeComponent();
+    }
 
-		public void Init_DataColumn(string boxText, string toolTip, int status)
-		{
-			this._guiDataColumn.Text = boxText;
-			this._guiDataColumn.ToolTip = toolTip;
-			this._guiDataColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-		}
+    public void Init_DataColumn(string boxText, string toolTip, int status)
+    {
+      this._guiDataColumn.Text = boxText;
+      this._guiDataColumn.ToolTip = toolTip;
+      this._guiDataColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+    }
 
-		public void Init_DataColumnTransformation(string boxText, string toolTip)
-		{
-			if (null == boxText)
-			{
-				this._guiDataColumnTransformation.Visibility = Visibility.Collapsed;
-			}
-			else
-			{
-				this._guiDataColumnTransformation.Text = boxText;
-				this._guiDataColumnTransformation.ToolTip = toolTip;
-				this._guiDataColumnTransformation.Visibility = Visibility.Visible;
-			}
-		}
+    public void Init_DataColumnTransformation(string boxText, string toolTip)
+    {
+      if (null == boxText)
+      {
+        this._guiDataColumnTransformation.Visibility = Visibility.Collapsed;
+      }
+      else
+      {
+        this._guiDataColumnTransformation.Text = boxText;
+        this._guiDataColumnTransformation.ToolTip = toolTip;
+        this._guiDataColumnTransformation.Visibility = Visibility.Visible;
+      }
+    }
 
-		#region IColumnDrivenSymbolSizePlotStyleView
+    #region IColumnDrivenSymbolSizePlotStyleView
 
-		public IDensityScaleView ScaleView
-		{
-			get { return _ctrlScale; }
-		}
+    public IDensityScaleView ScaleView
+    {
+      get { return _ctrlScale; }
+    }
 
-		public double SymbolSizeAt0
-		{
-			get
-			{
-				return _cbSymbolSizeAt0.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_cbSymbolSizeAt0.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double SymbolSizeAt0
+    {
+      get
+      {
+        return _cbSymbolSizeAt0.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _cbSymbolSizeAt0.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double SymbolSizeAt1
-		{
-			get
-			{
-				return _cbSymbolSizeAt1.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_cbSymbolSizeAt1.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double SymbolSizeAt1
+    {
+      get
+      {
+        return _cbSymbolSizeAt1.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _cbSymbolSizeAt1.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double SymbolSizeAbove
-		{
-			get
-			{
-				return _cbSymbolSizeAbove.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_cbSymbolSizeAbove.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double SymbolSizeAbove
+    {
+      get
+      {
+        return _cbSymbolSizeAbove.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _cbSymbolSizeAbove.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double SymbolSizeBelow
-		{
-			get
-			{
-				return _cbSymbolSizeBelow.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_cbSymbolSizeBelow.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double SymbolSizeBelow
+    {
+      get
+      {
+        return _cbSymbolSizeBelow.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _cbSymbolSizeBelow.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double SymbolSizeInvalid
-		{
-			get
-			{
-				return _cbSymbolSizeInvalid.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_cbSymbolSizeInvalid.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double SymbolSizeInvalid
+    {
+      get
+      {
+        return _cbSymbolSizeInvalid.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _cbSymbolSizeInvalid.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public int NumberOfSteps
-		{
-			get
-			{
-				return (int)_edNumberOfSteps.Value;
-			}
-			set
-			{
-				_edNumberOfSteps.Value = value;
-			}
-		}
+    public int NumberOfSteps
+    {
+      get
+      {
+        return (int)_edNumberOfSteps.Value;
+      }
+      set
+      {
+        _edNumberOfSteps.Value = value;
+      }
+    }
 
-		#endregion IColumnDrivenSymbolSizePlotStyleView
-	}
+    #endregion IColumnDrivenSymbolSizePlotStyleView
+  }
 }

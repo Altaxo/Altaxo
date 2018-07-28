@@ -32,51 +32,51 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-	public partial class ProjectBrowseControl : UserControl, IProjectBrowseView
-	{
-		public object GetService(Type serviceType)
-		{
-			throw new NotImplementedException();
-		}
+  public partial class ProjectBrowseControl : UserControl, IProjectBrowseView
+  {
+    public object GetService(Type serviceType)
+    {
+      throw new NotImplementedException();
+    }
 
-		public class ListView_DragHandler : IDragSource
-		{
-			private ProjectBrowseControl _projectBrowseControl;
+    public class ListView_DragHandler : IDragSource
+    {
+      private ProjectBrowseControl _projectBrowseControl;
 
-			public ListView_DragHandler(ProjectBrowseControl ctrl)
-			{
-				_projectBrowseControl = ctrl;
-			}
+      public ListView_DragHandler(ProjectBrowseControl ctrl)
+      {
+        _projectBrowseControl = ctrl;
+      }
 
-			public void StartDrag(IDragInfo dragInfo)
-			{
-				Altaxo.Serialization.Clipboard.IDataObject dao;
-				bool canCopy, canMove;
-				_projectBrowseControl._controller.ItemList_StartDrag(out dao, out canCopy, out canMove);
+      public void StartDrag(IDragInfo dragInfo)
+      {
+        Altaxo.Serialization.Clipboard.IDataObject dao;
+        bool canCopy, canMove;
+        _projectBrowseControl._controller.ItemList_StartDrag(out dao, out canCopy, out canMove);
 
-				dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
+        dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
 
-				if (null != dao)
-					dragInfo.DataObject = GuiHelper.ToWpf(dao);
-			}
+        if (null != dao)
+          dragInfo.DataObject = GuiHelper.ToWpf(dao);
+      }
 
-			public bool CanStartDrag(IDragInfo dragInfo)
-			{
-				return _projectBrowseControl._controller.ItemList_CanStartDrag();
-			}
+      public bool CanStartDrag(IDragInfo dragInfo)
+      {
+        return _projectBrowseControl._controller.ItemList_CanStartDrag();
+      }
 
-			public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
-			{
-				bool isCopy, isMove;
-				GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+      public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
+      {
+        bool isCopy, isMove;
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
 
-				_projectBrowseControl._controller.ItemList_DragEnded(isCopy, isMove);
-			}
+        _projectBrowseControl._controller.ItemList_DragEnded(isCopy, isMove);
+      }
 
-			public void DragCancelled()
-			{
-				_projectBrowseControl._controller.ItemList_DragCancelled();
-			}
-		}
-	}
+      public void DragCancelled()
+      {
+        _projectBrowseControl._controller.ItemList_DragCancelled();
+      }
+    }
+  }
 }

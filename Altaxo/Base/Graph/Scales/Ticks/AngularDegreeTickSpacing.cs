@@ -29,62 +29,62 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
-	public class AngularDegreeTickSpacing : AngularTickSpacing
-	{
-		#region Serialization
+  public class AngularDegreeTickSpacing : AngularTickSpacing
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularDegreeTickSpacing), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, typeof(AngularTickSpacing));
-				AngularDegreeTickSpacing s = (AngularDegreeTickSpacing)obj;
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularDegreeTickSpacing), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, typeof(AngularTickSpacing));
+        AngularDegreeTickSpacing s = (AngularDegreeTickSpacing)obj;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				AngularDegreeTickSpacing s = SDeserialize(o, info, parent);
-				OnAfterDeserialization(s);
-				return s;
-			}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AngularDegreeTickSpacing s = SDeserialize(o, info, parent);
+        OnAfterDeserialization(s);
+        return s;
+      }
 
-			protected virtual void OnAfterDeserialization(AngularDegreeTickSpacing s)
-			{
-			}
+      protected virtual void OnAfterDeserialization(AngularDegreeTickSpacing s)
+      {
+      }
 
-			protected virtual AngularDegreeTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				AngularDegreeTickSpacing s = null != o ? (AngularDegreeTickSpacing)o : new AngularDegreeTickSpacing();
-				info.GetBaseValueEmbedded(s, typeof(AngularTickSpacing), s);
-				return s;
-			}
-		}
+      protected virtual AngularDegreeTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AngularDegreeTickSpacing s = null != o ? (AngularDegreeTickSpacing)o : new AngularDegreeTickSpacing();
+        info.GetBaseValueEmbedded(s, typeof(AngularTickSpacing), s);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public AngularDegreeTickSpacing()
-		{
-		}
+    public AngularDegreeTickSpacing()
+    {
+    }
 
-		public AngularDegreeTickSpacing(AngularDegreeTickSpacing from)
-			: base(from) // everything is done here, since CopyFrom is virtual!
-		{
-		}
+    public AngularDegreeTickSpacing(AngularDegreeTickSpacing from)
+      : base(from) // everything is done here, since CopyFrom is virtual!
+    {
+    }
 
-		public override object Clone()
-		{
-			return new AngularDegreeTickSpacing(this);
-		}
+    public override object Clone()
+    {
+      return new AngularDegreeTickSpacing(this);
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			yield break;
-		}
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      yield break;
+    }
 
-		public override bool UseDegree
-		{
-			get { return true; }
-		}
-	}
+    public override bool UseDegree
+    {
+      get { return true; }
+    }
+  }
 }

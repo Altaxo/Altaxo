@@ -30,228 +30,228 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Document class that bundles a text question with a predefined set of choices.
-	/// </summary>
-	public class TextChoice
-	{
-		protected string[] _choices;
-		protected int _selection;
-		private bool _allowFreeText;
-		private string _choosenText;
-		private string _description = string.Empty;
-		private Func<string, string> _textValidationFunction;
+  /// <summary>
+  /// Document class that bundles a text question with a predefined set of choices.
+  /// </summary>
+  public class TextChoice
+  {
+    protected string[] _choices;
+    protected int _selection;
+    private bool _allowFreeText;
+    private string _choosenText;
+    private string _description = string.Empty;
+    private Func<string, string> _textValidationFunction;
 
-		public TextChoice(string[] choices, int selection, bool allowFreeText)
-		{
-			_choices = (string[])choices.Clone();
-			_selection = selection;
-			_allowFreeText = allowFreeText;
-		}
+    public TextChoice(string[] choices, int selection, bool allowFreeText)
+    {
+      _choices = (string[])choices.Clone();
+      _selection = selection;
+      _allowFreeText = allowFreeText;
+    }
 
-		public string[] Choices
-		{
-			get
-			{
-				return (string[])_choices.Clone();
-			}
-		}
+    public string[] Choices
+    {
+      get
+      {
+        return (string[])_choices.Clone();
+      }
+    }
 
-		/// <summary>
-		/// If a predefined choice is selected, this gets the index of the choice. If free text is
-		/// given, the value is -1.
-		/// </summary>
-		public int SelectedIndex
-		{
-			get
-			{
-				return _selection;
-			}
-			set
-			{
-				_selection = value;
-			}
-		}
+    /// <summary>
+    /// If a predefined choice is selected, this gets the index of the choice. If free text is
+    /// given, the value is -1.
+    /// </summary>
+    public int SelectedIndex
+    {
+      get
+      {
+        return _selection;
+      }
+      set
+      {
+        _selection = value;
+      }
+    }
 
-		/// <summary>
-		/// Gets/sets whether free text choice is allowed or not allowed.
-		/// </summary>
-		public bool AllowFreeText
-		{
-			get
-			{
-				return _allowFreeText;
-			}
-			set
-			{
-				_allowFreeText = value;
-			}
-		}
+    /// <summary>
+    /// Gets/sets whether free text choice is allowed or not allowed.
+    /// </summary>
+    public bool AllowFreeText
+    {
+      get
+      {
+        return _allowFreeText;
+      }
+      set
+      {
+        _allowFreeText = value;
+      }
+    }
 
-		/// <summary>
-		/// Get/sets the Text that is choosen by the user or entered as free text.
-		/// </summary>
-		public string Text
-		{
-			get { return _choosenText; }
-			set { _choosenText = value; }
-		}
+    /// <summary>
+    /// Get/sets the Text that is choosen by the user or entered as free text.
+    /// </summary>
+    public string Text
+    {
+      get { return _choosenText; }
+      set { _choosenText = value; }
+    }
 
-		/// <summary>
-		/// Description string that is shown close to the gui element where you enter the text.
-		/// </summary>
-		public string Description
-		{
-			get { return _description; }
-			set { _description = value; }
-		}
+    /// <summary>
+    /// Description string that is shown close to the gui element where you enter the text.
+    /// </summary>
+    public string Description
+    {
+      get { return _description; }
+      set { _description = value; }
+    }
 
-		public Func<string, string> TextValidationFunction
-		{
-			get
-			{
-				return _textValidationFunction;
-			}
-			set
-			{
-				_textValidationFunction = value;
-			}
-		}
-	}
+    public Func<string, string> TextValidationFunction
+    {
+      get
+      {
+        return _textValidationFunction;
+      }
+      set
+      {
+        _textValidationFunction = value;
+      }
+    }
+  }
 
-	public interface IFreeTextChoiceView
-	{
-		/// <summary>
-		/// Fired if the user has changed the selection from the selection list.
-		/// </summary>
-		event Action<int> SelectionChangeCommitted;
+  public interface IFreeTextChoiceView
+  {
+    /// <summary>
+    /// Fired if the user has changed the selection from the selection list.
+    /// </summary>
+    event Action<int> SelectionChangeCommitted;
 
-		/// <summary>Fired if free text was entered and needs to be validated. Make sure that this event is fired only,
-		/// if free text was entered, and is not fired if the user has choosen from the selection list.</summary>
-		event Action<string, CancelEventArgs> TextValidating;
+    /// <summary>Fired if free text was entered and needs to be validated. Make sure that this event is fired only,
+    /// if free text was entered, and is not fired if the user has choosen from the selection list.</summary>
+    event Action<string, CancelEventArgs> TextValidating;
 
-		void SetDescription(string value);
+    void SetDescription(string value);
 
-		void SetChoices(string[] values, int initialselection, bool allowFreeText);
-	}
+    void SetChoices(string[] values, int initialselection, bool allowFreeText);
+  }
 
-	[UserControllerForObject(typeof(TextChoice))]
-	[ExpectedTypeOfView(typeof(IFreeTextChoiceView))]
-	public class TextChoiceController : IMVCANController
-	{
-		private IFreeTextChoiceView _view;
-		private TextChoice _doc;
+  [UserControllerForObject(typeof(TextChoice))]
+  [ExpectedTypeOfView(typeof(IFreeTextChoiceView))]
+  public class TextChoiceController : IMVCANController
+  {
+    private IFreeTextChoiceView _view;
+    private TextChoice _doc;
 
-		private void Initialize(bool initData)
-		{
-			if (null != _view)
-			{
-				_view.SetDescription(_doc.Description);
-				_view.SetChoices(_doc.Choices, _doc.SelectedIndex, _doc.AllowFreeText);
-			}
-		}
+    private void Initialize(bool initData)
+    {
+      if (null != _view)
+      {
+        _view.SetDescription(_doc.Description);
+        _view.SetChoices(_doc.Choices, _doc.SelectedIndex, _doc.AllowFreeText);
+      }
+    }
 
-		private void EhSelectionChangeCommitted(int selIndex)
-		{
-			_doc.SelectedIndex = selIndex;
+    private void EhSelectionChangeCommitted(int selIndex)
+    {
+      _doc.SelectedIndex = selIndex;
 
-			if (selIndex >= 0)
-				_doc.Text = _doc.Choices[selIndex];
-		}
+      if (selIndex >= 0)
+        _doc.Text = _doc.Choices[selIndex];
+    }
 
-		private void EhTextValidating(string text, CancelEventArgs e)
-		{
-			string validationResult = null;
-			if (null != _doc.TextValidationFunction)
-			{
-				validationResult = _doc.TextValidationFunction(text);
-			}
-			if (null == validationResult)
-			{
-				_doc.Text = text;
-				_doc.SelectedIndex = -1;
-			}
-			else
-			{
-				e.Cancel = true;
-			}
-		}
+    private void EhTextValidating(string text, CancelEventArgs e)
+    {
+      string validationResult = null;
+      if (null != _doc.TextValidationFunction)
+      {
+        validationResult = _doc.TextValidationFunction(text);
+      }
+      if (null == validationResult)
+      {
+        _doc.Text = text;
+        _doc.SelectedIndex = -1;
+      }
+      else
+      {
+        e.Cancel = true;
+      }
+    }
 
-		#region IMVCANController Members
+    #region IMVCANController Members
 
-		public bool InitializeDocument(params object[] args)
-		{
-			if (null == args || 0 == args.Length || !(args[0] is TextChoice))
-				return false;
+    public bool InitializeDocument(params object[] args)
+    {
+      if (null == args || 0 == args.Length || !(args[0] is TextChoice))
+        return false;
 
-			_doc = (TextChoice)args[0];
-			return true;
-		}
+      _doc = (TextChoice)args[0];
+      return true;
+    }
 
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
+    public UseDocument UseDocumentCopy
+    {
+      set { }
+    }
 
-		#endregion IMVCANController Members
+    #endregion IMVCANController Members
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.SelectionChangeCommitted -= EhSelectionChangeCommitted;
-					_view.TextValidating -= EhTextValidating;
-				}
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        if (null != _view)
+        {
+          _view.SelectionChangeCommitted -= EhSelectionChangeCommitted;
+          _view.TextValidating -= EhTextValidating;
+        }
 
-				_view = value as IFreeTextChoiceView;
+        _view = value as IFreeTextChoiceView;
 
-				if (null != _view)
-				{
-					Initialize(false);
-					_view.SelectionChangeCommitted += EhSelectionChangeCommitted;
-					_view.TextValidating += EhTextValidating;
-				}
-			}
-		}
+        if (null != _view)
+        {
+          Initialize(false);
+          _view.SelectionChangeCommitted += EhSelectionChangeCommitted;
+          _view.TextValidating += EhTextValidating;
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
+    public object ModelObject
+    {
+      get { return _doc; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		#endregion IMVCController Members
+    #endregion IMVCController Members
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public bool Apply(bool disposeController)
-		{
-			return true;
-		}
+    public bool Apply(bool disposeController)
+    {
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IApplyController Members
-	}
+    #endregion IApplyController Members
+  }
 }

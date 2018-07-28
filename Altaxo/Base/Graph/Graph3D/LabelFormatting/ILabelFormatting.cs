@@ -28,47 +28,47 @@ using System;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
-	using Drawing.D3D;
-	using GraphicsContext;
+  using Drawing.D3D;
+  using GraphicsContext;
 
-	/// <summary>
-	/// Procedures to format an item of the <see cref="Altaxo.Data.AltaxoVariant" /> class.
-	/// </summary>
-	public interface ILabelFormatting : Main.IDocumentLeafNode, Main.ICopyFrom
-	{
-		/// <summary>
-		/// Measures the item, i.e. returns the size of the item.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="font">The font that is used to draw the item.</param>
-		/// <param name="mtick">The item to draw.</param>
-		/// <param name="morg">The location the item will be drawn.</param>
-		/// <returns>The size of the item if it would be drawn.</returns>
-		VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, Data.AltaxoVariant mtick, PointD3D morg);
+  /// <summary>
+  /// Procedures to format an item of the <see cref="Altaxo.Data.AltaxoVariant" /> class.
+  /// </summary>
+  public interface ILabelFormatting : Main.IDocumentLeafNode, Main.ICopyFrom
+  {
+    /// <summary>
+    /// Measures the item, i.e. returns the size of the item.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="font">The font that is used to draw the item.</param>
+    /// <param name="mtick">The item to draw.</param>
+    /// <param name="morg">The location the item will be drawn.</param>
+    /// <returns>The size of the item if it would be drawn.</returns>
+    VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, Data.AltaxoVariant mtick, PointD3D morg);
 
-		/// <summary>
-		/// Draws the item to a specified location.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="brush">Brush used to draw the item.</param>
-		/// <param name="font">Font used to draw the item.</param>
-		/// <param name="item">The item to draw.</param>
-		/// <param name="morg">The location where the item is drawn to.</param>
-		void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, AltaxoVariant item, PointD3D morg);
+    /// <summary>
+    /// Draws the item to a specified location.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="brush">Brush used to draw the item.</param>
+    /// <param name="font">Font used to draw the item.</param>
+    /// <param name="item">The item to draw.</param>
+    /// <param name="morg">The location where the item is drawn to.</param>
+    void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, AltaxoVariant item, PointD3D morg);
 
-		/// <summary>
-		/// Measured a couple of items and prepares them for being drawn.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="font">Font used.</param>
-		/// <param name="items">Array of items to be drawn.</param>
-		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
-		IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items);
+    /// <summary>
+    /// Measured a couple of items and prepares them for being drawn.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="font">Font used.</param>
+    /// <param name="items">Array of items to be drawn.</param>
+    /// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
+    IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items);
 
-		/// <summary>Fixed Text that appears before the formatted label.</summary>
-		string PrefixText { get; set; }
+    /// <summary>Fixed Text that appears before the formatted label.</summary>
+    string PrefixText { get; set; }
 
-		/// <summary>Fixed text that appears after the formatted label.</summary>
-		string SuffixText { get; set; }
-	}
+    /// <summary>Fixed text that appears after the formatted label.</summary>
+    string SuffixText { get; set; }
+  }
 }

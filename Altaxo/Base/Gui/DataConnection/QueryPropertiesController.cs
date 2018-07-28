@@ -31,110 +31,110 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
-	public interface IQueryPropertiesView
-	{
-		void UpdateDialogValues(bool isDistinct, int topN, SelectableListNodeList groupBy);
+  public interface IQueryPropertiesView
+  {
+    void UpdateDialogValues(bool isDistinct, int topN, SelectableListNodeList groupBy);
 
-		int GetTopN();
+    int GetTopN();
 
-		bool GetDistinct();
-	}
+    bool GetDistinct();
+  }
 
-	[ExpectedTypeOfView(typeof(IQueryPropertiesView))]
-	public class QueryPropertiesController : IMVCAController
-	{
-		private IQueryPropertiesView _view;
-		private QueryBuilder _builder;
-		private SelectableListNodeList _groupByChoices;
+  [ExpectedTypeOfView(typeof(IQueryPropertiesView))]
+  public class QueryPropertiesController : IMVCAController
+  {
+    private IQueryPropertiesView _view;
+    private QueryBuilder _builder;
+    private SelectableListNodeList _groupByChoices;
 
-		public QueryPropertiesController(QueryBuilder builder)
-		{
-			_builder = builder;
-			Initialize(true);
-		}
+    public QueryPropertiesController(QueryBuilder builder)
+    {
+      _builder = builder;
+      Initialize(true);
+    }
 
-		public QueryBuilder QueryBuilder
-		{
-			get { return _builder; }
-			set
-			{
-				if (_builder != value)
-				{
-					_builder = value;
-					Initialize(false);
-				}
-			}
-		}
+    public QueryBuilder QueryBuilder
+    {
+      get { return _builder; }
+      set
+      {
+        if (_builder != value)
+        {
+          _builder = value;
+          Initialize(false);
+        }
+      }
+    }
 
-		private void Initialize(bool initData)
-		{
-			if (initData)
-			{
-				_groupByChoices = new SelectableListNodeList();
-				_groupByChoices.FillWithEnumeration(_builder.GroupByExtension);
-			}
-			if (null != _view)
-			{
-				_groupByChoices.ClearSelectionsAll();
-				if (_builder.GroupBy)
-				{
-					_groupByChoices[(int)_builder.GroupByExtension].IsSelected = true;
-				}
-				_view.UpdateDialogValues(_builder.Distinct, _builder.Top, _groupByChoices);
-			}
-		}
+    private void Initialize(bool initData)
+    {
+      if (initData)
+      {
+        _groupByChoices = new SelectableListNodeList();
+        _groupByChoices.FillWithEnumeration(_builder.GroupByExtension);
+      }
+      if (null != _view)
+      {
+        _groupByChoices.ClearSelectionsAll();
+        if (_builder.GroupBy)
+        {
+          _groupByChoices[(int)_builder.GroupByExtension].IsSelected = true;
+        }
+        _view.UpdateDialogValues(_builder.Distinct, _builder.Top, _groupByChoices);
+      }
+    }
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-				}
-				_view = value as IQueryPropertiesView;
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        if (null != _view)
+        {
+        }
+        _view = value as IQueryPropertiesView;
+        if (null != _view)
+        {
+          Initialize(false);
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return null; }
-		}
+    public object ModelObject
+    {
+      get { return null; }
+    }
 
-		public void Dispose()
-		{
-			ViewObject = null;
-		}
+    public void Dispose()
+    {
+      ViewObject = null;
+    }
 
-		public bool Apply(bool disposeController)
-		{
-			_builder.Top = _view.GetTopN();
-			if (_builder.GroupBy)
-			{
-				_builder.GroupByExtension = (GroupByExtension)_groupByChoices.FirstSelectedNode.Tag;
-			}
-			_builder.Distinct = true == _view.GetDistinct();
+    public bool Apply(bool disposeController)
+    {
+      _builder.Top = _view.GetTopN();
+      if (_builder.GroupBy)
+      {
+        _builder.GroupByExtension = (GroupByExtension)_groupByChoices.FirstSelectedNode.Tag;
+      }
+      _builder.Distinct = true == _view.GetDistinct();
 
-			return true;
-		}
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-	}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
+  }
 }

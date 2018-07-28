@@ -30,217 +30,217 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-	[Serializable]
-	public class TextBoundaries : Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<BoundariesChangedEventArgs>, IPhysicalBoundaries
-	{
-		private SetList<string> _itemList;
+  [Serializable]
+  public class TextBoundaries : Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<BoundariesChangedEventArgs>, IPhysicalBoundaries
+  {
+    private SetList<string> _itemList;
 
-		[NonSerialized]
-		protected string[] _savedItems;
+    [NonSerialized]
+    protected string[] _savedItems;
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextBoundaries), 10)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				TextBoundaries s = (TextBoundaries)obj;
-				info.CreateArray("Items", s._itemList.Count);
-				foreach (string name in s._itemList)
-					info.AddValue("e", name);
-				info.CommitArray();
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextBoundaries), 10)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        TextBoundaries s = (TextBoundaries)obj;
+        info.CreateArray("Items", s._itemList.Count);
+        foreach (string name in s._itemList)
+          info.AddValue("e", name);
+        info.CommitArray();
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				TextBoundaries s = null != o ? (TextBoundaries)o : new TextBoundaries();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        TextBoundaries s = null != o ? (TextBoundaries)o : new TextBoundaries();
 
-				int count = info.OpenArray("Items");
-				for (int i = 0; i < count; i++)
-					s._itemList.Add(info.GetString("e"));
-				info.CloseArray(count);
+        int count = info.OpenArray("Items");
+        for (int i = 0; i < count; i++)
+          s._itemList.Add(info.GetString("e"));
+        info.CloseArray(count);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		public TextBoundaries()
-		{
-			_itemList = new SetList<string>();
-		}
+    public TextBoundaries()
+    {
+      _itemList = new SetList<string>();
+    }
 
-		public TextBoundaries(TextBoundaries from)
-		{
-			_itemList = new SetList<string>();
-			Add(from);
-		}
+    public TextBoundaries(TextBoundaries from)
+    {
+      _itemList = new SetList<string>();
+      Add(from);
+    }
 
-		/// <summary>
-		/// Try to find the text item and returns the index in the collection. If the
-		/// item is not found, the function returns -1.
-		/// </summary>
-		/// <param name="item">The text item to find.</param>
-		/// <returns>The ordinal number  or double.NaN if the item is not found.</returns>
-		public int IndexOf(string item)
-		{
-			return _itemList.IndexOf(item);
-		}
+    /// <summary>
+    /// Try to find the text item and returns the index in the collection. If the
+    /// item is not found, the function returns -1.
+    /// </summary>
+    /// <param name="item">The text item to find.</param>
+    /// <returns>The ordinal number  or double.NaN if the item is not found.</returns>
+    public int IndexOf(string item)
+    {
+      return _itemList.IndexOf(item);
+    }
 
-		public string GetItem(int i)
-		{
-			return _itemList[i];
-		}
+    public string GetItem(int i)
+    {
+      return _itemList[i];
+    }
 
-		#region AbstractPhysicalBoundaries implementation
+    #region AbstractPhysicalBoundaries implementation
 
-		/// <summary>
-		/// Processes a single value from a data column.
-		/// If the data value is text, the boundaries are
-		/// updated and the number of items is increased by one (if not contained already). The function returns true
-		/// in this case. On the other hand, if the value is outside the range, the function has to
-		/// return false.
-		/// </summary>
-		/// <param name="col">The data column</param>
-		/// <param name="idx">The index into this data column where the data value is located.</param>
-		/// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
-		public bool Add(Altaxo.Data.IReadableColumn col, int idx)
-		{
-			return Add(col[idx]);
-		}
+    /// <summary>
+    /// Processes a single value from a data column.
+    /// If the data value is text, the boundaries are
+    /// updated and the number of items is increased by one (if not contained already). The function returns true
+    /// in this case. On the other hand, if the value is outside the range, the function has to
+    /// return false.
+    /// </summary>
+    /// <param name="col">The data column</param>
+    /// <param name="idx">The index into this data column where the data value is located.</param>
+    /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
+    public bool Add(Altaxo.Data.IReadableColumn col, int idx)
+    {
+      return Add(col[idx]);
+    }
 
-		/// <summary>
-		/// Processes a single value .
-		/// If the data value is text, the boundaries are
-		/// updated and the number of items is increased by one (if not contained already). The function returns true
-		/// in this case. On the other hand, if the value is outside the range, the function has to
-		/// return false.
-		/// </summary>
-		/// <param name="item">The data item.</param>
-		/// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
-		public bool Add(Altaxo.Data.AltaxoVariant item)
-		{
-			if (!(item.IsType(Altaxo.Data.AltaxoVariant.Content.VString)))
-				return false;
+    /// <summary>
+    /// Processes a single value .
+    /// If the data value is text, the boundaries are
+    /// updated and the number of items is increased by one (if not contained already). The function returns true
+    /// in this case. On the other hand, if the value is outside the range, the function has to
+    /// return false.
+    /// </summary>
+    /// <param name="item">The data item.</param>
+    /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
+    public bool Add(Altaxo.Data.AltaxoVariant item)
+    {
+      if (!(item.IsType(Altaxo.Data.AltaxoVariant.Content.VString)))
+        return false;
 
-			string s = item.ToString();
+      string s = item.ToString();
 
-			if (string.IsNullOrEmpty(s))
-				return false; // we consider empty string as invalid data here
+      if (string.IsNullOrEmpty(s))
+        return false; // we consider empty string as invalid data here
 
-			if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
-			{
-				if (!_itemList.Contains(s))
-					_itemList.Add(s);
-			}
-			else  // not suspended: normal behaviour with change notification
-			{
-				if (!_itemList.Contains(s))
-				{
-					_itemList.Add(s);
-					EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.NumberOfItemsChanged | BoundariesChangedData.UpperBoundChanged));
-				}
-			}
-			return true;
-		}
+      if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
+      {
+        if (!_itemList.Contains(s))
+          _itemList.Add(s);
+      }
+      else  // not suspended: normal behaviour with change notification
+      {
+        if (!_itemList.Contains(s))
+        {
+          _itemList.Add(s);
+          EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.NumberOfItemsChanged | BoundariesChangedData.UpperBoundChanged));
+        }
+      }
+      return true;
+    }
 
-		public void Add(IPhysicalBoundaries b)
-		{
-			if (b is TextBoundaries from)
-			{
-				using (var suspendToken = SuspendGetToken()) // Performance tweak; see OnSuspended and OnResumed
-				{
-					foreach (string s in from._itemList)
-					{
-						if (!_itemList.Contains(s))
-							_itemList.Add(s); // it is OK that this does not trigger a changed event : Performance tweak; see OnSuspended and OnResumed
-					}
-					suspendToken.Resume(); // Performance tweak; see OnResumed
-				}
-			}
-		}
+    public void Add(IPhysicalBoundaries b)
+    {
+      if (b is TextBoundaries from)
+      {
+        using (var suspendToken = SuspendGetToken()) // Performance tweak; see OnSuspended and OnResumed
+        {
+          foreach (string s in from._itemList)
+          {
+            if (!_itemList.Contains(s))
+              _itemList.Add(s); // it is OK that this does not trigger a changed event : Performance tweak; see OnSuspended and OnResumed
+          }
+          suspendToken.Resume(); // Performance tweak; see OnResumed
+        }
+      }
+    }
 
-		public object Clone()
-		{
-			return new TextBoundaries(this);
-		}
+    public object Clone()
+    {
+      return new TextBoundaries(this);
+    }
 
-		#endregion AbstractPhysicalBoundaries implementation
+    #endregion AbstractPhysicalBoundaries implementation
 
-		#region IPhysicalBoundaries Members
+    #region IPhysicalBoundaries Members
 
-		public void Reset()
-		{
-			var hasChanged = (_itemList.Count > 0);
-			_itemList.Clear();
+    public void Reset()
+    {
+      var hasChanged = (_itemList.Count > 0);
+      _itemList.Clear();
 
-			if (hasChanged && !IsSuspended) // Performance tweak; see OnSuspended and OnResumed
-				EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.NumberOfItemsChanged | BoundariesChangedData.UpperBoundChanged));
-		}
+      if (hasChanged && !IsSuspended) // Performance tweak; see OnSuspended and OnResumed
+        EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.NumberOfItemsChanged | BoundariesChangedData.UpperBoundChanged));
+    }
 
-		public int NumberOfItems
-		{
-			get
-			{
-				return _itemList.Count;
-			}
-		}
+    public int NumberOfItems
+    {
+      get
+      {
+        return _itemList.Count;
+      }
+    }
 
-		public bool IsEmpty
-		{
-			get
-			{
-				return _itemList.Count == 0;
-			}
-		}
+    public bool IsEmpty
+    {
+      get
+      {
+        return _itemList.Count == 0;
+      }
+    }
 
-		#endregion IPhysicalBoundaries Members
+    #endregion IPhysicalBoundaries Members
 
-		#region Changed event handling
+    #region Changed event handling
 
-		/// <summary>
-		/// For performance reasons, we save the current state of this instance here if the item is suspended. When the item is resumed, we compare the saved state
-		/// with the current state and set our accumulated data accordingly.
-		/// </summary>
-		protected override void OnSuspended()
-		{
-			// because not only the number of items matter, but also their order, we have to save a full copy of the items
-			// to compare it during the call to OnResume
-			this._savedItems = this._itemList.ToArray();
+    /// <summary>
+    /// For performance reasons, we save the current state of this instance here if the item is suspended. When the item is resumed, we compare the saved state
+    /// with the current state and set our accumulated data accordingly.
+    /// </summary>
+    protected override void OnSuspended()
+    {
+      // because not only the number of items matter, but also their order, we have to save a full copy of the items
+      // to compare it during the call to OnResume
+      this._savedItems = this._itemList.ToArray();
 
-			base.OnSuspended();
-		}
+      base.OnSuspended();
+    }
 
-		/// <summary>
-		/// For performance reasons, we don't call EhSelfChanged during the suspended state. Instead, when we resume here, we compare the saved state of this instance with the current state of the instance
-		/// and and set our accumulated data accordingly.
-		/// </summary>
-		protected override void OnResume()
-		{
-			BoundariesChangedData data = 0;
-			// if anything changed in the meantime, fire the event
-			if (!EnumerableExtensions.AreStructurallyEqual(this._savedItems, this._itemList))
-			{
-				data |= BoundariesChangedData.ComplexChange;
-			}
+    /// <summary>
+    /// For performance reasons, we don't call EhSelfChanged during the suspended state. Instead, when we resume here, we compare the saved state of this instance with the current state of the instance
+    /// and and set our accumulated data accordingly.
+    /// </summary>
+    protected override void OnResume()
+    {
+      BoundariesChangedData data = 0;
+      // if anything changed in the meantime, fire the event
+      if (!EnumerableExtensions.AreStructurallyEqual(this._savedItems, this._itemList))
+      {
+        data |= BoundariesChangedData.ComplexChange;
+      }
 
-			if (0 != data)
-				_accumulatedEventData = new BoundariesChangedEventArgs(data);
+      if (0 != data)
+        _accumulatedEventData = new BoundariesChangedEventArgs(data);
 
-			_savedItems = null;
-			base.OnResume();
-		}
+      _savedItems = null;
+      base.OnResume();
+    }
 
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			var eAsBCEA = e as BoundariesChangedEventArgs;
-			if (null == eAsBCEA)
-				throw new ArgumentOutOfRangeException(string.Format("Argument e should be of type {0}, but is {1}", typeof(BoundariesChangedEventArgs), e.GetType()));
+    protected override void AccumulateChangeData(object sender, EventArgs e)
+    {
+      var eAsBCEA = e as BoundariesChangedEventArgs;
+      if (null == eAsBCEA)
+        throw new ArgumentOutOfRangeException(string.Format("Argument e should be of type {0}, but is {1}", typeof(BoundariesChangedEventArgs), e.GetType()));
 
-			if (null == _accumulatedEventData)
-				_accumulatedEventData = eAsBCEA;
-			else
-				_accumulatedEventData.Add(eAsBCEA);
-		}
+      if (null == _accumulatedEventData)
+        _accumulatedEventData = eAsBCEA;
+      else
+        _accumulatedEventData.Add(eAsBCEA);
+    }
 
-		#endregion Changed event handling
-	}
+    #endregion Changed event handling
+  }
 }

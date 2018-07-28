@@ -34,70 +34,70 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.AddInItems
 {
-	/// <summary>
-	/// A tool bar button that opens a drop down menu.
-	/// </summary>
-	public class ToolBarComboBox : ComboBox, IStatusUpdate
-	{
-		private readonly Codon codon;
-		private readonly object caller;
-		private readonly IEnumerable<ICondition> conditions;
+  /// <summary>
+  /// A tool bar button that opens a drop down menu.
+  /// </summary>
+  public class ToolBarComboBox : ComboBox, IStatusUpdate
+  {
+    private readonly Codon codon;
+    private readonly object caller;
+    private readonly IEnumerable<ICondition> conditions;
 
-		public ToolBarComboBox(Codon codon, object caller, IEnumerable<ICondition> conditions)
-		{
-			ToolTipService.SetShowOnDisabled(this, true);
+    public ToolBarComboBox(Codon codon, object caller, IEnumerable<ICondition> conditions)
+    {
+      ToolTipService.SetShowOnDisabled(this, true);
 
-			this.codon = codon;
-			this.caller = caller;
-			this.conditions = conditions;
+      this.codon = codon;
+      this.caller = caller;
+      this.conditions = conditions;
 
-			if (codon.Properties.Contains("name"))
-			{
-				this.Name = codon.Properties["name"];
-			}
-			InitializeContent();
-			UpdateText();
-		}
+      if (codon.Properties.Contains("name"))
+      {
+        this.Name = codon.Properties["name"];
+      }
+      InitializeContent();
+      UpdateText();
+    }
 
-		public void UpdateText()
-		{
-			if (codon.Properties.Contains("tooltip"))
-			{
-				this.ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
-			}
-		}
+    public void UpdateText()
+    {
+      if (codon.Properties.Contains("tooltip"))
+      {
+        this.ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
+      }
+    }
 
-		public void UpdateStatus()
-		{
-			if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-				this.Visibility = Visibility.Collapsed;
-			else
-				this.Visibility = Visibility.Visible;
-		}
+    public void UpdateStatus()
+    {
+      if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
+        this.Visibility = Visibility.Collapsed;
+      else
+        this.Visibility = Visibility.Visible;
+    }
 
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			if (e.Key == System.Windows.Input.Key.Enter)
-			{
-				if (CanExecute(null))
-					Execute(null);
-				e.Handled = true;
-			}
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Enter)
+      {
+        if (CanExecute(null))
+          Execute(null);
+        e.Handled = true;
+      }
 
-			base.OnKeyDown(e);
-		}
+      base.OnKeyDown(e);
+    }
 
-		public virtual void InitializeContent()
-		{
-		}
+    public virtual void InitializeContent()
+    {
+    }
 
-		public virtual bool CanExecute(object parameter)
-		{
-			return true;
-		}
+    public virtual bool CanExecute(object parameter)
+    {
+      return true;
+    }
 
-		public virtual void Execute(object parameter)
-		{
-		}
-	}
+    public virtual void Execute(object parameter)
+    {
+    }
+  }
 }

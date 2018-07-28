@@ -22,30 +22,30 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Is thrown when the ServiceManager cannot find a required service.
-	/// </summary>
-	[Serializable()]
-	public class ServiceNotFoundException : BaseException
-	{
-		public ServiceNotFoundException() : base()
-		{
-		}
+  /// <summary>
+  /// Is thrown when the ServiceManager cannot find a required service.
+  /// </summary>
+  [Serializable()]
+  public class ServiceNotFoundException : BaseException
+  {
+    public ServiceNotFoundException() : base()
+    {
+    }
 
-		public ServiceNotFoundException(Type serviceType) : base("Required service not found: " + serviceType.FullName)
-		{
-		}
+    public ServiceNotFoundException(Type serviceType) : base("Required service not found: " + serviceType.FullName)
+    {
+    }
 
-		public ServiceNotFoundException(string message) : base(message)
-		{
-		}
+    public ServiceNotFoundException(string message) : base(message)
+    {
+    }
 
-		public ServiceNotFoundException(string message, Exception innerException) : base(message, innerException)
-		{
-		}
+    public ServiceNotFoundException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 
-		protected ServiceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-		}
-	}
+    protected ServiceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
+  }
 }

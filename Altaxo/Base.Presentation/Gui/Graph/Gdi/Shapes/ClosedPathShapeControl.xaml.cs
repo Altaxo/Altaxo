@@ -31,50 +31,50 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	/// <summary>
-	/// Interaction logic for ShapeGraphicControl.xaml
-	/// </summary>
-	public partial class ClosedPathShapeControl : UserControl, IClosedPathShapeView
-	{
-		public ClosedPathShapeControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ShapeGraphicControl.xaml
+  /// </summary>
+  public partial class ClosedPathShapeControl : UserControl, IClosedPathShapeView
+  {
+    public ClosedPathShapeControl()
+    {
+      InitializeComponent();
+    }
 
-		#region IShapeGraphicView
+    #region IShapeGraphicView
 
-		public Altaxo.Graph.Gdi.PenX DocPen
-		{
-			get
-			{
-				return _outlinePenControl.SelectedPen;
-			}
-			set
-			{
-				_outlinePenControl.SelectedPen = value;
-			}
-		}
+    public Altaxo.Graph.Gdi.PenX DocPen
+    {
+      get
+      {
+        return _outlinePenControl.SelectedPen;
+      }
+      set
+      {
+        _outlinePenControl.SelectedPen = value;
+      }
+    }
 
-		public Altaxo.Graph.Gdi.BrushX DocBrush
-		{
-			get
-			{
-				return _fillingBrushControl.SelectedBrush;
-			}
-			set
-			{
-				_fillingBrushControl.SelectedBrush = value;
-			}
-		}
+    public Altaxo.Graph.Gdi.BrushX DocBrush
+    {
+      get
+      {
+        return _fillingBrushControl.SelectedBrush;
+      }
+      set
+      {
+        _fillingBrushControl.SelectedBrush = value;
+      }
+    }
 
-		public object LocationView
-		{
-			set
-			{
-				_guiLocationHost.Child = (UIElement)value;
-			}
-		}
+    public object LocationView
+    {
+      set
+      {
+        _guiLocationHost.Child = (UIElement)value;
+      }
+    }
 
-		#endregion IShapeGraphicView
-	}
+    #endregion IShapeGraphicView
+  }
 }

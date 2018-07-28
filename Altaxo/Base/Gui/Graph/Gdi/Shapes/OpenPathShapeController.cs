@@ -31,63 +31,63 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	public interface IOpenPathShapeView
-	{
-		PenX DocPen { get; set; }
+  public interface IOpenPathShapeView
+  {
+    PenX DocPen { get; set; }
 
-		object LocationView { set; }
-	}
+    object LocationView { set; }
+  }
 
-	[UserControllerForObject(typeof(OpenPathShapeBase), 101)]
-	[ExpectedTypeOfView(typeof(IOpenPathShapeView))]
-	public class OpenPathShapeController : MVCANControllerEditOriginalDocBase<OpenPathShapeBase, IOpenPathShapeView>
-	{
-		private IMVCANController _locationController;
+  [UserControllerForObject(typeof(OpenPathShapeBase), 101)]
+  [ExpectedTypeOfView(typeof(IOpenPathShapeView))]
+  public class OpenPathShapeController : MVCANControllerEditOriginalDocBase<OpenPathShapeBase, IOpenPathShapeView>
+  {
+    private IMVCANController _locationController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-				Current.Gui.FindAndAttachControlTo(_locationController);
-			}
-			if (_view != null)
-			{
-				_view.DocPen = _doc.Pen;
-				_view.LocationView = _locationController.ViewObject;
-			}
-		}
+      if (initData)
+      {
+        _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+        Current.Gui.FindAndAttachControlTo(_locationController);
+      }
+      if (_view != null)
+      {
+        _view.DocPen = _doc.Pen;
+        _view.LocationView = _locationController.ViewObject;
+      }
+    }
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public override bool Apply(bool disposeController)
-		{
-			try
-			{
-				if (!_locationController.Apply(disposeController))
-					return false;
+    public override bool Apply(bool disposeController)
+    {
+      try
+      {
+        if (!_locationController.Apply(disposeController))
+          return false;
 
-				if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
-					_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+        if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
+          _doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-				_doc.Pen = _view.DocPen;
-			}
-			catch (Exception ex)
-			{
-				Current.Gui.ErrorMessageBox(string.Format("An exception has occured during applying of your settings. The message is: {0}", ex.Message));
-				return false;
-			}
+        _doc.Pen = _view.DocPen;
+      }
+      catch (Exception ex)
+      {
+        Current.Gui.ErrorMessageBox(string.Format("An exception has occured during applying of your settings. The message is: {0}", ex.Message));
+        return false;
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		#endregion IApplyController Members
-	}
+    #endregion IApplyController Members
+  }
 }

@@ -29,57 +29,57 @@ using System.Text;
 
 namespace Altaxo.Gui.Data
 {
-	using Altaxo.Data;
+  using Altaxo.Data;
 
-	public interface IDecomposeByColumnContentView
-	{
-		void SetDataControl(object control);
+  public interface IDecomposeByColumnContentView
+  {
+    void SetDataControl(object control);
 
-		void SetOptionsControl(object control);
-	}
+    void SetOptionsControl(object control);
+  }
 
-	[UserControllerForObject(typeof(DecomposeByColumnContentDataAndOptions))]
-	[ExpectedTypeOfView(typeof(IDecomposeByColumnContentView))]
-	public class DecomposeByColumnContentController : MVCANControllerEditOriginalDocBase<DecomposeByColumnContentDataAndOptions, IDecomposeByColumnContentView>
-	{
-		private IMVCANController _dataController;
-		private IMVCANController _optionsController;
+  [UserControllerForObject(typeof(DecomposeByColumnContentDataAndOptions))]
+  [ExpectedTypeOfView(typeof(IDecomposeByColumnContentView))]
+  public class DecomposeByColumnContentController : MVCANControllerEditOriginalDocBase<DecomposeByColumnContentDataAndOptions, IDecomposeByColumnContentView>
+  {
+    private IMVCANController _dataController;
+    private IMVCANController _optionsController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
-			yield return new ControllerAndSetNullMethod(_optionsController, () => _optionsController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
+      yield return new ControllerAndSetNullMethod(_optionsController, () => _optionsController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_dataController = new DecomposeByColumnContentDataController() { UseDocumentCopy = UseDocument.Directly };
-				_dataController.InitializeDocument(_doc.Data);
+      if (initData)
+      {
+        _dataController = new DecomposeByColumnContentDataController() { UseDocumentCopy = UseDocument.Directly };
+        _dataController.InitializeDocument(_doc.Data);
 
-				_optionsController = new DecomposeByColumnContentOptionsController { UseDocumentCopy = UseDocument.Directly };
-				_optionsController.InitializeDocument(_doc.Options);
-				Current.Gui.FindAndAttachControlTo(_dataController);
-				Current.Gui.FindAndAttachControlTo(_optionsController);
-			}
-			if (null != _view)
-			{
-				_view.SetDataControl(_dataController.ViewObject);
-				_view.SetOptionsControl(_optionsController.ViewObject);
-			}
-		}
+        _optionsController = new DecomposeByColumnContentOptionsController { UseDocumentCopy = UseDocument.Directly };
+        _optionsController.InitializeDocument(_doc.Options);
+        Current.Gui.FindAndAttachControlTo(_dataController);
+        Current.Gui.FindAndAttachControlTo(_optionsController);
+      }
+      if (null != _view)
+      {
+        _view.SetDataControl(_dataController.ViewObject);
+        _view.SetOptionsControl(_optionsController.ViewObject);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_dataController.Apply(disposeController))
-				return false;
-			if (!_optionsController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_dataController.Apply(disposeController))
+        return false;
+      if (!_optionsController.Apply(disposeController))
+        return false;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

@@ -34,67 +34,67 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class CrossPlus : OpenSymbolBase
-	{
-		#region Serialization
+  public class CrossPlus : OpenSymbolBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPlus), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPlus), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 
-				SerializeSetV0((IScatterSymbol)obj, info);
-			}
+        SerializeSetV0((IScatterSymbol)obj, info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (CrossPlus)o ?? new CrossPlus();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (CrossPlus)o ?? new CrossPlus();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
-				return DeserializeSetV0(s, info, parent);
-			}
-		}
+        return DeserializeSetV0(s, info, parent);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public CrossPlus()
-		{
-		}
+    public CrossPlus()
+    {
+    }
 
-		public CrossPlus(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
-			: base(fillColor, isFillColorInfluencedByPlotColor)
-		{
-		}
+    public CrossPlus(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
+      : base(fillColor, isFillColorInfluencedByPlotColor)
+    {
+    }
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth)
-		{
-			relativeStructureWidth = Altaxo.Calc.RMath.ClampToInterval(relativeStructureWidth, 0, 0.5);
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth)
+    {
+      relativeStructureWidth = Altaxo.Calc.RMath.ClampToInterval(relativeStructureWidth, 0, 0.5);
 
-			var h = (int)Math.Round(0.25 + Math.Sqrt(1 - relativeStructureWidth * relativeStructureWidth) * ClipperScalingInt);
-			var w = (int)Math.Round(0.25 + relativeStructureWidth * ClipperScalingInt);
+      var h = (int)Math.Round(0.25 + Math.Sqrt(1 - relativeStructureWidth * relativeStructureWidth) * ClipperScalingInt);
+      var w = (int)Math.Round(0.25 + relativeStructureWidth * ClipperScalingInt);
 
-			var list = new List<ClipperLib.IntPoint>(12)
-				{
-				new ClipperLib.IntPoint(-w, -h),
-				new ClipperLib.IntPoint(w, -h),
-				new ClipperLib.IntPoint(w, -w),
-				new ClipperLib.IntPoint(h, -w),
-				new ClipperLib.IntPoint(h, w),
-				new ClipperLib.IntPoint(w, w),
-				new ClipperLib.IntPoint(w, h),
-				new ClipperLib.IntPoint(-w, h),
-				new ClipperLib.IntPoint(-w, w),
-				new ClipperLib.IntPoint(-h, w),
-				new ClipperLib.IntPoint(-h, -w),
-				new ClipperLib.IntPoint(-w, -w),
-			};
+      var list = new List<ClipperLib.IntPoint>(12)
+        {
+        new ClipperLib.IntPoint(-w, -h),
+        new ClipperLib.IntPoint(w, -h),
+        new ClipperLib.IntPoint(w, -w),
+        new ClipperLib.IntPoint(h, -w),
+        new ClipperLib.IntPoint(h, w),
+        new ClipperLib.IntPoint(w, w),
+        new ClipperLib.IntPoint(w, h),
+        new ClipperLib.IntPoint(-w, h),
+        new ClipperLib.IntPoint(-w, w),
+        new ClipperLib.IntPoint(-h, w),
+        new ClipperLib.IntPoint(-h, -w),
+        new ClipperLib.IntPoint(-w, -w),
+      };
 
-			return new List<List<ClipperLib.IntPoint>>(1) { list };
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1) { list };
+    }
+  }
 }

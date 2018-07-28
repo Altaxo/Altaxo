@@ -30,32 +30,32 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph
 {
-	/// <summary>
-	/// Interaction logic for PositionSizeRotationScaleControl.xaml
-	/// </summary>
-	public partial class PositionSizeRotationScaleControl : UserControl
-	{
-		public PositionSizeRotationScaleControl()
-		{
-			InitializeComponent();
+  /// <summary>
+  /// Interaction logic for PositionSizeRotationScaleControl.xaml
+  /// </summary>
+  public partial class PositionSizeRotationScaleControl : UserControl
+  {
+    public PositionSizeRotationScaleControl()
+    {
+      InitializeComponent();
 
-			_positionSizeGlue.EdPositionX = _edPositionX;
-			_positionSizeGlue.EdPositionY = _edPositionY;
-			_positionSizeGlue.EdSizeX = _edSizeX;
-			_positionSizeGlue.EdSizeY = _edSizeY;
+      _positionSizeGlue.EdPositionX = _edPositionX;
+      _positionSizeGlue.EdPositionY = _edPositionY;
+      _positionSizeGlue.EdSizeX = _edSizeX;
+      _positionSizeGlue.EdSizeY = _edSizeY;
 
-			_positionSizeGlue.GuiShear = _edShear;
-			_positionSizeGlue.CbRotation = _edRotation;
-			_positionSizeGlue.GuiScaleX = _edScaleX;
-			_positionSizeGlue.GuiScaleY = _edScaleY;
-		}
+      _positionSizeGlue.GuiShear = _edShear;
+      _positionSizeGlue.CbRotation = _edRotation;
+      _positionSizeGlue.GuiScaleX = _edScaleX;
+      _positionSizeGlue.GuiScaleY = _edScaleY;
+    }
 
-		public ObjectPositionAndSizeGlue PositionSizeGlue
-		{
-			get
-			{
-				return _positionSizeGlue;
-			}
-		}
-	}
+    public ObjectPositionAndSizeGlue PositionSizeGlue
+    {
+      get
+      {
+        return _positionSizeGlue;
+      }
+    }
+  }
 }

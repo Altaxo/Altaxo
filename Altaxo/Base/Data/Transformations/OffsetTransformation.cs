@@ -29,117 +29,117 @@ using System.Text;
 
 namespace Altaxo.Data.Transformations
 {
-	public class OffsetTransformation : IVariantToVariantTransformation
-	{
-		/// <summary>
-		/// The transformations. The innermost (i.e. first transformation to carry out, the rightmost transformation) is located at index 0.
-		/// </summary>
-		private double _offset;
+  public class OffsetTransformation : IVariantToVariantTransformation
+  {
+    /// <summary>
+    /// The transformations. The innermost (i.e. first transformation to carry out, the rightmost transformation) is located at index 0.
+    /// </summary>
+    private double _offset;
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-06-27 Initial version.
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OffsetTransformation), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (OffsetTransformation)obj;
-				info.AddValue("Scale", s._offset);
-			}
+    /// <summary>
+    /// 2016-06-27 Initial version.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OffsetTransformation), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (OffsetTransformation)obj;
+        info.AddValue("Scale", s._offset);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var scale = info.GetDouble("Scale");
-				return new OffsetTransformation(scale);
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var scale = info.GetDouble("Scale");
+        return new OffsetTransformation(scale);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <inheritdoc/>
-		public Type InputValueType { get { return typeof(double); } }
+    /// <inheritdoc/>
+    public Type InputValueType { get { return typeof(double); } }
 
-		/// <inheritdoc/>
-		public Type OutputValueType { get { return typeof(double); } }
+    /// <inheritdoc/>
+    public Type OutputValueType { get { return typeof(double); } }
 
-		public OffsetTransformation()
-		{
-			_offset = 0;
-		}
+    public OffsetTransformation()
+    {
+      _offset = 0;
+    }
 
-		public OffsetTransformation(double offset)
-		{
-			_offset = offset;
-		}
+    public OffsetTransformation(double offset)
+    {
+      _offset = offset;
+    }
 
-		public AltaxoVariant Transform(AltaxoVariant value)
-		{
-			return _offset + value;
-		}
+    public AltaxoVariant Transform(AltaxoVariant value)
+    {
+      return _offset + value;
+    }
 
-		public string RepresentationAsFunction
-		{
-			get { return GetRepresentationAsFunction("x"); }
-		}
+    public string RepresentationAsFunction
+    {
+      get { return GetRepresentationAsFunction("x"); }
+    }
 
-		public string GetRepresentationAsFunction(string arg)
-		{
-			return Altaxo.Serialization.GUIConversion.ToString(_offset) + " + " + arg;
-		}
+    public string GetRepresentationAsFunction(string arg)
+    {
+      return Altaxo.Serialization.GUIConversion.ToString(_offset) + " + " + arg;
+    }
 
-		public string RepresentationAsOperator
-		{
-			get
-			{
-				return Altaxo.Serialization.GUIConversion.ToString(_offset) + " +";
-			}
-		}
+    public string RepresentationAsOperator
+    {
+      get
+      {
+        return Altaxo.Serialization.GUIConversion.ToString(_offset) + " +";
+      }
+    }
 
-		public IVariantToVariantTransformation BackTransformation
-		{
-			get
-			{
-				return new OffsetTransformation(-_offset);
-			}
-		}
+    public IVariantToVariantTransformation BackTransformation
+    {
+      get
+      {
+        return new OffsetTransformation(-_offset);
+      }
+    }
 
-		public double Offset
-		{
-			get
-			{
-				return _offset;
-			}
-		}
+    public double Offset
+    {
+      get
+      {
+        return _offset;
+      }
+    }
 
-		public OffsetTransformation WithOffset(double offset)
-		{
-			if (offset == _offset)
-				return this;
-			else
-				return new OffsetTransformation(offset);
-		}
+    public OffsetTransformation WithOffset(double offset)
+    {
+      if (offset == _offset)
+        return this;
+      else
+        return new OffsetTransformation(offset);
+    }
 
-		public override bool Equals(object obj)
-		{
-			var from = obj as OffsetTransformation;
-			if (null == from)
-				return false;
+    public override bool Equals(object obj)
+    {
+      var from = obj as OffsetTransformation;
+      if (null == from)
+        return false;
 
-			if (this._offset != from._offset)
-				return false;
+      if (this._offset != from._offset)
+        return false;
 
-			return true;
-		}
+      return true;
+    }
 
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode() + 17 * _offset.GetHashCode();
-		}
+    public override int GetHashCode()
+    {
+      return this.GetType().GetHashCode() + 17 * _offset.GetHashCode();
+    }
 
-		public bool IsEditable { get { return true; } }
-	}
+    public bool IsEditable { get { return true; } }
+  }
 }

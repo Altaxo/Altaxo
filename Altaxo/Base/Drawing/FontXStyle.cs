@@ -29,47 +29,47 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-	/// <summary>
-	/// Font styles that are numerically compatible to the <see cref="System.Drawing.FontStyle"/> enumeration.
-	/// </summary>
-	[Flags]
-	public enum FontXStyle
-	{
-		/// <summary>Normal text.</summary>
-		Regular = 0,
+  /// <summary>
+  /// Font styles that are numerically compatible to the <see cref="System.Drawing.FontStyle"/> enumeration.
+  /// </summary>
+  [Flags]
+  public enum FontXStyle
+  {
+    /// <summary>Normal text.</summary>
+    Regular = 0,
 
-		/// <summary>Bold text.</summary>
-		Bold = 1,
+    /// <summary>Bold text.</summary>
+    Bold = 1,
 
-		/// <summary>Italic text.</summary>
-		Italic = 2,
+    /// <summary>Italic text.</summary>
+    Italic = 2,
 
-		/// <summary>Underlined text.</summary>
-		Underline = 4,
+    /// <summary>Underlined text.</summary>
+    Underline = 4,
 
-		/// <summary>Striked out text.</summary>
-		Strikeout = 8
-	}
+    /// <summary>Striked out text.</summary>
+    Strikeout = 8
+  }
 
-	/// <summary>
-	/// Designates whether for a given font the specified styles are available.
-	/// </summary>
-	[Flags]
-	public enum FontStylePresence
-	{
-		/// <summary>No style is available at all.</summary>
-		NoStyleAvailable = 0,
+  /// <summary>
+  /// Designates whether for a given font the specified styles are available.
+  /// </summary>
+  [Flags]
+  public enum FontStylePresence
+  {
+    /// <summary>No style is available at all.</summary>
+    NoStyleAvailable = 0,
 
-		/// <summary>A regular style is available for the font.</summary>
-		RegularStyleAvailable = 1,
+    /// <summary>A regular style is available for the font.</summary>
+    RegularStyleAvailable = 1,
 
-		/// <summary>The bold style is available for the font.</summary>
-		BoldStyleAvailable = 2,
+    /// <summary>The bold style is available for the font.</summary>
+    BoldStyleAvailable = 2,
 
-		/// <summary>The italic style is available for the font.</summary>
-		ItalicStyleAvailable = 4,
+    /// <summary>The italic style is available for the font.</summary>
+    ItalicStyleAvailable = 4,
 
-		/// <summary>The bold and italic style is available for the font.</summary>
-		BoldAndItalicStyleAvailable = 8
-	};
+    /// <summary>The bold and italic style is available for the font.</summary>
+    BoldAndItalicStyleAvailable = 8
+  };
 }

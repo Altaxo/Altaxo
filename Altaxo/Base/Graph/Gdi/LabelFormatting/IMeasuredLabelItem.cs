@@ -27,22 +27,22 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
-	/// <summary>
-	/// Interface for an label item that is ready to draw and was already measured.
-	/// </summary>
-	public interface IMeasuredLabelItem
-	{
-		/// <summary>
-		/// Size of the enclosing rectangle of the label item.
-		/// </summary>
-		SizeF Size { get; }
+  /// <summary>
+  /// Interface for an label item that is ready to draw and was already measured.
+  /// </summary>
+  public interface IMeasuredLabelItem
+  {
+    /// <summary>
+    /// Size of the enclosing rectangle of the label item.
+    /// </summary>
+    SizeF Size { get; }
 
-		/// <summary>
-		/// Draws the label to a specified point.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="brush">The brush to use for the drawing.</param>
-		/// <param name="point">The point where to draw the item.</param>
-		void Draw(Graphics g, BrushX brush, PointF point);
-	}
+    /// <summary>
+    /// Draws the label to a specified point.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="brush">The brush to use for the drawing.</param>
+    /// <param name="point">The point where to draw the item.</param>
+    void Draw(Graphics g, BrushX brush, PointF point);
+  }
 }

@@ -30,52 +30,52 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface ISpanTickSpacingView
-	{
-		double RelativePositionOfTick { get; set; }
+  public interface ISpanTickSpacingView
+  {
+    double RelativePositionOfTick { get; set; }
 
-		bool ShowEndOrgRatio { get; set; }
+    bool ShowEndOrgRatio { get; set; }
 
-		double DivideBy { get; set; }
+    double DivideBy { get; set; }
 
-		bool TransfoOperationIsMultiply { get; set; }
-	}
+    bool TransfoOperationIsMultiply { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[UserControllerForObject(typeof(SpanTickSpacing), 200)]
-	[ExpectedTypeOfView(typeof(ISpanTickSpacingView))]
-	public class SpanTickSpacingController : MVCANControllerEditOriginalDocBase<SpanTickSpacing, ISpanTickSpacingView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(SpanTickSpacing), 200)]
+  [ExpectedTypeOfView(typeof(ISpanTickSpacingView))]
+  public class SpanTickSpacingController : MVCANControllerEditOriginalDocBase<SpanTickSpacing, ISpanTickSpacingView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.RelativePositionOfTick = _doc.RelativeTickPosition;
-				_view.ShowEndOrgRatio = _doc.ShowEndOrgRatioInsteadOfDifference;
-				_view.DivideBy = _doc.TransformationDivider;
-				_view.TransfoOperationIsMultiply = _doc.TransformationOperationIsMultiply;
-			}
-		}
+      if (null != _view)
+      {
+        _view.RelativePositionOfTick = _doc.RelativeTickPosition;
+        _view.ShowEndOrgRatio = _doc.ShowEndOrgRatioInsteadOfDifference;
+        _view.DivideBy = _doc.TransformationDivider;
+        _view.TransfoOperationIsMultiply = _doc.TransformationOperationIsMultiply;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.RelativeTickPosition = _view.RelativePositionOfTick;
-			_doc.ShowEndOrgRatioInsteadOfDifference = _view.ShowEndOrgRatio;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.RelativeTickPosition = _view.RelativePositionOfTick;
+      _doc.ShowEndOrgRatioInsteadOfDifference = _view.ShowEndOrgRatio;
 
-			_doc.TransformationDivider = _view.DivideBy;
-			_doc.TransformationOperationIsMultiply = _view.TransfoOperationIsMultiply;
+      _doc.TransformationDivider = _view.DivideBy;
+      _doc.TransformationOperationIsMultiply = _view.TransfoOperationIsMultiply;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

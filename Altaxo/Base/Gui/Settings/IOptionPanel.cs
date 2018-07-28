@@ -29,14 +29,14 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
-	public interface IOptionPanel
-	{
-		void Initialize(object optionPanelOwner);
+  public interface IOptionPanel
+  {
+    void Initialize(object optionPanelOwner);
 
-		object ViewObject { get; }
+    object ViewObject { get; }
 
-		bool Apply();
+    bool Apply();
 
-		object Owner { get; set; }
-	}
+    object Owner { get; set; }
+  }
 }

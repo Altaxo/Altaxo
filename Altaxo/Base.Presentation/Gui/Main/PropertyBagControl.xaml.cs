@@ -30,19 +30,19 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Main
 {
-	/// <summary>
-	/// Interaction logic for PropertyBagControl.xaml
-	/// </summary>
-	public partial class PropertyBagControl : UserControl, IPropertyBagView
-	{
-		public PropertyBagControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for PropertyBagControl.xaml
+  /// </summary>
+  public partial class PropertyBagControl : UserControl, IPropertyBagView
+  {
+    public PropertyBagControl()
+    {
+      InitializeComponent();
+    }
 
-		public Collections.SelectableListNodeList PropertyList
-		{
-			set { GuiHelper.Initialize(_guiPropertyList, value); }
-		}
-	}
+    public Collections.SelectableListNodeList PropertyList
+    {
+      set { GuiHelper.Initialize(_guiPropertyList, value); }
+    }
+  }
 }

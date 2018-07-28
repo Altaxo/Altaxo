@@ -27,63 +27,63 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Data
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IDataTableTransposeOptionsView
-	{
-		string ColumnNamingPreString { get; set; }
+  public interface IDataTableTransposeOptionsView
+  {
+    string ColumnNamingPreString { get; set; }
 
-		/// <summary>
-		/// Get/sets the number of data columns that are moved to the property columns before transposing the data columns.
-		/// </summary>
-		int DataColumnsMoveToPropertyColumns { get; set; }
+    /// <summary>
+    /// Get/sets the number of data columns that are moved to the property columns before transposing the data columns.
+    /// </summary>
+    int DataColumnsMoveToPropertyColumns { get; set; }
 
-		/// <summary>
-		/// Get/sets the number of property columns that are moved after transposing the data columns to the data columns collection.
-		/// </summary>
-		int PropertyColumnsMoveToDataColumns { get; set; }
+    /// <summary>
+    /// Get/sets the number of property columns that are moved after transposing the data columns to the data columns collection.
+    /// </summary>
+    int PropertyColumnsMoveToDataColumns { get; set; }
 
-		bool StoreDataColumnNamesInFirstDataColumn { get; set; }
-		bool UseFirstDataColumnForColumnNaming { get; set; }
-	}
+    bool StoreDataColumnNamesInFirstDataColumn { get; set; }
+    bool UseFirstDataColumnForColumnNaming { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Summary description for TransposeWorksheetController.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(IDataTableTransposeOptionsView))]
-	[UserControllerForObject(typeof(Altaxo.Data.DataTableTransposeOptions))]
-	public class DataTableTransposeOptionsController : MVCANControllerEditOriginalDocBase<Altaxo.Data.DataTableTransposeOptions, IDataTableTransposeOptionsView>
-	{
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+  /// <summary>
+  /// Summary description for TransposeWorksheetController.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(IDataTableTransposeOptionsView))]
+  [UserControllerForObject(typeof(Altaxo.Data.DataTableTransposeOptions))]
+  public class DataTableTransposeOptionsController : MVCANControllerEditOriginalDocBase<Altaxo.Data.DataTableTransposeOptions, IDataTableTransposeOptionsView>
+  {
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.DataColumnsMoveToPropertyColumns = _doc.DataColumnsMoveToPropertyColumns;
-				_view.PropertyColumnsMoveToDataColumns = _doc.PropertyColumnsMoveToDataColumns;
-				_view.StoreDataColumnNamesInFirstDataColumn = _doc.StoreDataColumnNamesInFirstDataColumn;
-				_view.UseFirstDataColumnForColumnNaming = _doc.UseFirstDataColumnForColumnNaming;
-				_view.ColumnNamingPreString = _doc.ColumnNamingPreString;
-			}
-		}
+      if (null != _view)
+      {
+        _view.DataColumnsMoveToPropertyColumns = _doc.DataColumnsMoveToPropertyColumns;
+        _view.PropertyColumnsMoveToDataColumns = _doc.PropertyColumnsMoveToDataColumns;
+        _view.StoreDataColumnNamesInFirstDataColumn = _doc.StoreDataColumnNamesInFirstDataColumn;
+        _view.UseFirstDataColumnForColumnNaming = _doc.UseFirstDataColumnForColumnNaming;
+        _view.ColumnNamingPreString = _doc.ColumnNamingPreString;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.DataColumnsMoveToPropertyColumns = _view.DataColumnsMoveToPropertyColumns;
-			_doc.PropertyColumnsMoveToDataColumns = _view.PropertyColumnsMoveToDataColumns;
-			_doc.StoreDataColumnNamesInFirstDataColumn = _view.StoreDataColumnNamesInFirstDataColumn;
-			_doc.UseFirstDataColumnForColumnNaming = _view.UseFirstDataColumnForColumnNaming;
-			_doc.ColumnNamingPreString = _view.ColumnNamingPreString;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.DataColumnsMoveToPropertyColumns = _view.DataColumnsMoveToPropertyColumns;
+      _doc.PropertyColumnsMoveToDataColumns = _view.PropertyColumnsMoveToDataColumns;
+      _doc.StoreDataColumnNamesInFirstDataColumn = _view.StoreDataColumnNamesInFirstDataColumn;
+      _doc.UseFirstDataColumnForColumnNaming = _view.UseFirstDataColumnForColumnNaming;
+      _doc.ColumnNamingPreString = _view.ColumnNamingPreString;
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
-	}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+  }
 }

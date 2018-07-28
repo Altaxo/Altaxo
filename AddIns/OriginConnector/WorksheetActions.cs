@@ -31,704 +31,704 @@ using System.Text;
 
 namespace Altaxo.Addins.OriginConnector
 {
-	public static class WorksheetActions
-	{
-		public static readonly string[] LongNamePropertyColumnNames = new string[] { "LongName", "Long Name", "Langname" };
+  public static class WorksheetActions
+  {
+    public static readonly string[] LongNamePropertyColumnNames = new string[] { "LongName", "Long Name", "Langname" };
 
-		public static readonly string[] UnitPropertyColumnNames = new string[] { "Unit", "Units", "Einheit", "Einheiten" };
-
-		public static readonly string[] CommentPropertyColumnNames = new string[] { "Comment", "Comments", "Kommentar", "Kommentare" };
+    public static readonly string[] UnitPropertyColumnNames = new string[] { "Unit", "Units", "Einheit", "Einheiten" };
+
+    public static readonly string[] CommentPropertyColumnNames = new string[] { "Comment", "Comments", "Kommentar", "Kommentare" };
 
-		#region Conversion of Altaxo types to/from Origin Types
-
-		public static Altaxo.Data.ColumnKind OriginToAltaxoColumnKind(Origin.COLTYPES originType)
-		{
-			Altaxo.Data.ColumnKind altaxoType;
-
-			switch (originType)
-			{
-				case COLTYPES.COLTYPE_ERROR:
-					altaxoType = ColumnKind.Err;
-					break;
+    #region Conversion of Altaxo types to/from Origin Types
+
+    public static Altaxo.Data.ColumnKind OriginToAltaxoColumnKind(Origin.COLTYPES originType)
+    {
+      Altaxo.Data.ColumnKind altaxoType;
+
+      switch (originType)
+      {
+        case COLTYPES.COLTYPE_ERROR:
+          altaxoType = ColumnKind.Err;
+          break;
 
-				case COLTYPES.COLTYPE_GROUP:
-					altaxoType = ColumnKind.V;
-					break;
-
-				case COLTYPES.COLTYPE_LABEL:
-					altaxoType = ColumnKind.Label;
-					break;
-
-				case COLTYPES.COLTYPE_NONE:
-					altaxoType = ColumnKind.V;
-					break;
-
-				case COLTYPES.COLTYPE_NO_CHANGE:
-					altaxoType = ColumnKind.V;
-					break;
-
-				case COLTYPES.COLTYPE_SUBJECT:
-					altaxoType = ColumnKind.V;
-					break;
-
-				case COLTYPES.COLTYPE_X:
-					altaxoType = ColumnKind.X;
-					break;
-
-				case COLTYPES.COLTYPE_X_ERROR:
-					altaxoType = ColumnKind.Err;
-					break;
-
-				case COLTYPES.COLTYPE_Y:
-					altaxoType = ColumnKind.V;
-					break;
-
-				case COLTYPES.COLTYPE_Z:
-					altaxoType = ColumnKind.Y;
-					break;
-
-				default:
-					altaxoType = ColumnKind.V;
-					break;
-			}
-
-			return altaxoType;
-		}
-
-		public static Origin.COLTYPES AltaxoToOriginColumnType(Altaxo.Data.ColumnKind altaxoType)
-		{
-			COLTYPES originType;
-
-			switch (altaxoType)
-			{
-				case ColumnKind.V:
-					originType = COLTYPES.COLTYPE_Y;
-					break;
-
-				case ColumnKind.X:
-					originType = COLTYPES.COLTYPE_X;
-					break;
-
-				case ColumnKind.Y:
-					originType = COLTYPES.COLTYPE_Z;
-					break;
-
-				case ColumnKind.Z:
-					originType = COLTYPES.COLTYPE_Z;
-					break;
-
-				case ColumnKind.Err:
-					originType = COLTYPES.COLTYPE_ERROR;
-					break;
-
-				case ColumnKind.pErr:
-					originType = COLTYPES.COLTYPE_ERROR;
-					break;
-
-				case ColumnKind.mErr:
-					originType = COLTYPES.COLTYPE_ERROR;
-					break;
-
-				case ColumnKind.Label:
-					originType = COLTYPES.COLTYPE_LABEL;
-					break;
-
-				case ColumnKind.Condition:
-					originType = COLTYPES.COLTYPE_NONE;
-					break;
-
-				default:
-					originType = COLTYPES.COLTYPE_NO_CHANGE;
-					break;
-			}
-
-			return originType;
-		}
-
-		public static DataColumn GetAltaxoColumnFromOriginDataFormat(COLDATAFORMAT originColDataFormat)
-		{
-			// create a column
-			Altaxo.Data.DataColumn destCol = null;
-
-			switch (originColDataFormat)
-			{
-				case COLDATAFORMAT.DF_BYTE:
-					destCol = new Altaxo.Data.DoubleColumn();
-					break;
-
-				case COLDATAFORMAT.DF_CHAR:
-					destCol = new Altaxo.Data.DoubleColumn();
-					break;
-
-				case COLDATAFORMAT.DF_COMPLEX:
-					destCol = new Altaxo.Data.DoubleColumn();
-					break;
-
-				case COLDATAFORMAT.DF_DATE:
-					destCol = new Altaxo.Data.DateTimeColumn();
-					break;
-
-				case COLDATAFORMAT.DF_DOUBLE:
-					destCol = new Altaxo.Data.DoubleColumn();
-					break;
-
-				case COLDATAFORMAT.DF_FLOAT:
-					destCol = new Altaxo.Data.DoubleColumn();
-					break;
-
-				case COLDATAFORMAT.DF_LONG:
-					destCol = new Altaxo.Data.DoubleColumn();
-					break;
-
-				case COLDATAFORMAT.DF_SHORT:
-					destCol = new Altaxo.Data.DoubleColumn();
-					break;
-
-				case COLDATAFORMAT.DF_TEXT:
-					destCol = new Altaxo.Data.TextColumn();
-					break;
-
-				case COLDATAFORMAT.DF_TEXT_NUMERIC:
-					destCol = new Altaxo.Data.TextColumn();
-					break;
-
-				case COLDATAFORMAT.DF_TIME:
-					destCol = new Altaxo.Data.DateTimeColumn();
-					break;
-
-				case COLDATAFORMAT.DF_ULONG:
-					destCol = new Altaxo.Data.DoubleColumn();
-					break;
-
-				case COLDATAFORMAT.DF_USHORT:
-					destCol = new Altaxo.Data.DoubleColumn();
-					break;
-
-				default:
-					destCol = new Altaxo.Data.TextColumn();
-					break;
-			}
-			return destCol;
-		}
-
-		#endregion Conversion of Altaxo types to/from Origin Types
-
-		#region Helper functions
-
-		/// <summary>
-		/// Determines whether the <paramref name="name"/> in contained in any of the <paramref name="names"/> (comparison is case insensitive).
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <param name="names">The names to test against.</param>
-		/// <returns><c>true</c> if <paramref name="name"/> in contained in any of the <paramref name="names"/></returns>
-		private static bool IsLikeAnyOf(string name, string[] names)
-		{
-			foreach (var candidate in names)
-				if (0 == string.Compare(name, candidate, true))
-					return true;
-
-			return false;
-		}
-
-		private static void ShowErrorMessage(string strMsg)
-		{
-			Altaxo.Current.Gui.ErrorMessageBox(strMsg);
-		}
-
-		#endregion Helper functions
-
-		#region Send worksheet data to origin
-
-		/// <summary>
-		/// Gets a folder by name in a parent folder. If this folder does not exist, it is created. To get the folder, the folder is searched at first by the short name and if unsuccessfull, by the long name.
-		/// </summary>
-		/// <param name="parentFolder">The parent folder.</param>
-		/// <param name="folderName">Name of the folder to get or create.</param>
-		/// <returns>The child folder of the provided parentFolder, which has the folderName (either as short name, or as long name).</returns>
-		public static Origin.Folder GetOrCreateSingleFolder(Origin.Folder parentFolder, string folderName)
-		{
-			// test if folder with short folderName is existent
-			var folder = parentFolder.Folders[folderName];
-			if (null != folder)
-				return folder;
-
-			// else we must iterate through all folders and look for a folder with the same long folder name
-			for (int i = 0; i < parentFolder.Folders.Count; ++i)
-			{
-				folder = parentFolder.Folders[i];
-				if (folder.LongName == folderName)
-					return folder;
-			}
-
-			// else we create this folder and return it
-			folder = parentFolder.Folders.Add(folderName);
-			folder.LongName = folderName;
-			return folder;
-		}
-
-		public static Origin.Folder GetOrCreateFullFolderPath(Origin.IOApplication originApp, string altaxoFullFolderPath)
-		{
-			var folderParts = altaxoFullFolderPath.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
-			var currFolder = originApp.RootFolder;
-			for (int i = 0; i < folderParts.Length; ++i)
-			{
-				var nextFolderName = folderParts[i];
-				var nextFolder = GetOrCreateSingleFolder(currFolder, nextFolderName);
-				currFolder = nextFolder;
-			}
-			return currFolder;
-		}
-
-		/// <summary>
-		/// Gets a worksheetpage by name in a parent folder. If this worksheetpage does not exist, it is created. To get the worksheet page, the parent folder is searched at first by the short name and if unsuccessfull, by the long name of the worksheet page.
-		/// </summary>
-		/// <param name="parentFolder">The parent folder.</param>
-		/// <param name="folderName">Name of the worksheet page to get or create.</param>
-		/// <returns>The worksheet page (either previously existing or newly created) of the provided parentFolder, which has the provided name (either as short name, or as long name).</returns>
-		public static Origin.WorksheetPage GetOrCreateWorksheetPage(Origin.Folder parentFolder, string worksheetName)
-		{
-			// test if folder with short folderName is existent
-			var worksheet = parentFolder.PageBases[worksheetName] as Origin.WorksheetPage;
-			if (null != worksheet)
-				return worksheet;
-
-			// else we must iterate through all Pages and look for a worksheetpage with the same long folder name
-			for (int i = 0; i < parentFolder.Folders.Count; ++i)
-			{
-				worksheet = parentFolder.PageBases[i] as Origin.WorksheetPage;
-				if (null != worksheet && worksheet.LongName == worksheetName)
-					return worksheet;
-			}
-
-			// else we create this worksheetpage and return it
-			parentFolder.Activate(); // by making the folder active, the worksheet is later created in this folder
-			worksheet = parentFolder.Application.WorksheetPages.Add();
-			worksheet.Name = worksheetName;
-			worksheet.LongName = worksheetName;
-
-			return worksheet;
-		}
-
-		public static void PutTable(this OriginConnection conn, Altaxo.Data.DataTable srcTable, bool appendRows)
-		{
-			if (IsColumnReorderingNeccessaryForPuttingTableToOrigin(srcTable))
-			{
-				srcTable = (DataTable)srcTable.Clone();
-				ReorderColumnsInTableForCompatibilityWithOrigin(srcTable);
-			}
-
-			var stb = new System.Text.StringBuilder();
-			string strWksName = srcTable.ShortName;
-
-			strWksName.Trim();
-			// Validate worksheet name:
-			if (0 == strWksName.Length)
-			{
-				ShowErrorMessage("Please specify a worksheet name first.");
-				return;
-			}
-
-			int nColumns = srcTable.DataColumnCount;
-			int nRows = srcTable.DataRowCount;
-			// Validate the number of columns and the number of rows:
-			if (nColumns <= 0 || nRows <= 0)
-			{
-				ShowErrorMessage("Data table is empty, thus nothing needs to be copyied to Origin!");
-				return;
-			}
-
-			var app = conn.Application;
-
-			var originFolder = GetOrCreateFullFolderPath(app, srcTable.FolderName);
-			var wbk = GetOrCreateWorksheetPage(originFolder, strWksName);
-
-			// for every group in our worksheet, make a separate origin worksheet
-
-			Origin.Worksheet wks = wbk.Layers[0] as Origin.Worksheet;
-			wks.ClearData();
-			wks.Cols = 0;
-			wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_LONG_NAME, true);
-
-			// Set the column names
-
-			for (int i = 0; i < srcTable.DataColumnCount; ++i)
-			{
-				var srcCol = srcTable.DataColumns[i];
-				var srcGroup = srcTable.DataColumns.GetColumnGroup(srcCol);
-
-				Origin.Column col = wks.Columns.Add(srcTable.DataColumns.GetColumnName(i));
-				col.LongName = srcTable.DataColumns.GetColumnName(i);
-
-				if (srcCol is DoubleColumn)
-				{
-					col.DataFormat = COLDATAFORMAT.DF_DOUBLE;
-					col.SetData((srcCol as DoubleColumn).Array);
-				}
-				else if (srcCol is DateTimeColumn)
-				{
-					col.DataFormat = COLDATAFORMAT.DF_DATE;
-					col.SetData((srcCol as DateTimeColumn).Array);
-				}
-				else if (srcCol is TextColumn)
-				{
-					col.DataFormat = COLDATAFORMAT.DF_TEXT;
-					col.SetData((srcCol as TextColumn).Array);
-				}
-				else
-				{
-					throw new NotImplementedException("Type of column not implemented");
-				}
-
-				col.Type = AltaxoToOriginColumnType(srcTable.DataColumns.GetColumnKind(srcCol));
-			} // end of loop for all data columns
-
-			// now put the property columns to ORIGIN
-			// note that ORIGIN has only special property columns
-			// LongName (but this is set already), Units, Comments
-			// and more generic property columns accessible by Parameter(0), Parameter(1) and so on
-
-			var usedPropColIndices = new HashSet<int>();
-
-			// Longname
-			for (int i = 0; i < srcTable.PropCols.ColumnCount; ++i)
-			{
-				if (usedPropColIndices.Contains(i))
-					continue;
-				if (IsLikeAnyOf(srcTable.PropCols.GetColumnName(i), LongNamePropertyColumnNames))
-				{
-					usedPropColIndices.Add(i);
-					for (int j = 0; j < srcTable.DataColumnCount; ++j)
-					{
-						wks.Columns[j].LongName = srcTable.PropCols[i][j].ToString();
-					}
-					wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_LONG_NAME, true);
-				}
-			}
-
-			// Units
-			for (int i = 0; i < srcTable.PropCols.ColumnCount; ++i)
-			{
-				if (usedPropColIndices.Contains(i))
-					continue;
-				if (IsLikeAnyOf(srcTable.PropCols.GetColumnName(i), UnitPropertyColumnNames))
-				{
-					usedPropColIndices.Add(i);
-					for (int j = 0; j < srcTable.DataColumnCount; ++j)
-					{
-						wks.Columns[j].Units = srcTable.PropCols[i][j].ToString();
-					}
-					wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_UNIT, true);
-				}
-			}
-			// Comments
-			for (int i = 0; i < srcTable.PropCols.ColumnCount; ++i)
-			{
-				if (usedPropColIndices.Contains(i))
-					continue;
-				if (IsLikeAnyOf(srcTable.PropCols.GetColumnName(i), CommentPropertyColumnNames))
-				{
-					usedPropColIndices.Add(i);
-					for (int j = 0; j < srcTable.DataColumnCount; ++j)
-					{
-						wks.Columns[j].Comments = srcTable.PropCols[i][j].ToString();
-					}
-					wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_COMMENT, true);
-				}
-			}
-
-			// other property columns
-
-			for (int i = 0, k = 0; i < srcTable.PropCols.ColumnCount; ++i)
-			{
-				if (usedPropColIndices.Contains(i))
-					continue;
-				usedPropColIndices.Add(i);
-				for (int j = 0; j < srcTable.DataColumnCount; ++j)
-				{
-					wks.Columns[j].Parameter[k] = srcTable.PropCols[i][j].ToString();
-				}
-				wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_PARAM, true);
-				++k;
-			}
-		}
-
-		/// <summary>
-		/// Tests if column reordering is neccessary in order to put a table to origin. Column reordering is neccessary if the table contains more than
-		/// one column group, and the x column of every column group is not the first column. Origin only supports table with multiple groups if the first column
-		/// of every group is the x-column.
-		/// </summary>
-		/// <param name="table">The table to test.</param>
-		/// <returns>True if column reodering is neccessary, false otherwise.</returns>
-		public static bool IsColumnReorderingNeccessaryForPuttingTableToOrigin(Data.DataTable table)
-		{
-			// Testen, wieviele Gruppen
-			var groupColumns = new Dictionary<int, int>(); // counts the number of columns per group
-			for (int i = 0; i < table.DataColumnCount; i++)
-			{
-				int currentGroup = table.DataColumns.GetColumnGroup(i);
-
-				if (groupColumns.ContainsKey(currentGroup))
-					groupColumns[currentGroup] += 1;
-				else
-					groupColumns.Add(currentGroup, 1);
-
-				var currentKind = table.DataColumns.GetColumnKind(i);
-
-				if (groupColumns.Count > 1 && groupColumns[currentGroup] > 1)
-				{
-					if (currentKind == Altaxo.Data.ColumnKind.X)
-						return true;
-
-					if (currentGroup != table.DataColumns.GetColumnGroup(i - 1))
-						return true;
-				}
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Reorders the columns so that they can be copyied into an Origin table.
-		/// </summary>
-		/// <param name="table">The table to reorder.</param>
-		public static void ReorderColumnsInTableForCompatibilityWithOrigin(Data.DataTable table)
-		{
-			var groupBegin = new Dictionary<int, Data.DataColumn>();
-			var groupEnd = new Dictionary<int, Data.DataColumn>();
-
-			for (int i = 0; i < table.DataColumnCount; i++)
-			{
-				var currentCol = table[i];
-				int currentGroup = table.DataColumns.GetColumnGroup(i);
-
-				if (!groupBegin.ContainsKey(currentGroup))
-				{
-					groupBegin.Add(currentGroup, currentCol);
-					groupEnd.Add(currentGroup, currentCol);
-				}
-
-				var currentKind = table.DataColumns.GetColumnKind(i);
-				// if the column is a x-column, then move it to the begin of the group
-				if (currentKind == Altaxo.Data.ColumnKind.X && !object.ReferenceEquals(currentCol, groupBegin[currentGroup]))
-				{
-					int destIndex = table.DataColumns.GetColumnNumber(groupBegin[currentGroup]);
-					table.ChangeColumnPosition(Collections.ContiguousIntegerRange.FromStartAndCount(i, 1), destIndex);
-					groupBegin[currentGroup] = currentCol;
-					continue;
-				}
-
-				// if the column is away from the rest of the group, move it to the end of the group
-				int lastIndex = table.DataColumns.GetColumnNumber(groupEnd[currentGroup]);
-				if (i > 1 + lastIndex)
-				{
-					int destIndex = 1 + lastIndex;
-					table.ChangeColumnPosition(Collections.ContiguousIntegerRange.FromStartAndCount(i, 1), destIndex);
-					groupEnd[currentGroup] = currentCol;
-					continue;
-				}
-
-				groupEnd[currentGroup] = currentCol;
-			}
-		}
-
-		#endregion Send worksheet data to origin
-
-		#region Get data from origin
-
-		/// <summary>
-		/// Retrieves the data columns from an Origin table.
-		/// </summary>
-		/// <param name="wks">The Origin worksheet to retrieve the data from.</param>
-		/// <returns>The data columns with the data from the Origin worksheet.</returns>
-		public static Altaxo.Data.DataColumnCollection GetDataColumns(this Origin.Worksheet wks)
-		{
-			var culture = Current.PropertyService.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin).Culture;
-
-			int nCols = wks.Cols;
-
-			Altaxo.Data.DataColumnCollection result = new Altaxo.Data.DataColumnCollection();
-
-			for (int c = 0; c < nCols; c++)
-			{
-				var srcCol = wks.Columns[c];
-
-				Altaxo.Data.DataColumn destCol = GetAltaxoColumnFromOriginDataFormat(srcCol.DataFormat);
-
-				int groupNumber = -1;
-
-				var altaxoColumnKind = OriginToAltaxoColumnKind(srcCol.Type);
-
-				if (altaxoColumnKind == Altaxo.Data.ColumnKind.X)
-					groupNumber++;
-
-				if (destCol is DoubleColumn)
-				{
-					var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_NUMERIC, 0, -1, 0);
-					(destCol as DoubleColumn).Array = (double[])data;
-				}
-				else if (destCol is DateTimeColumn)
-				{
-					var data = (double[])srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_NUMERIC, 0, -1, 0);
-					const double refDateAsDouble = 2451910; // this is the number of days in julian calendar belonging to the date below...
-					DateTime refDate = DateTime.Parse("2001-01-01", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal);
-					for (int i = data.Length - 1; i >= 0; --i)
-					{
-						destCol[i] = refDate.AddDays(data[i] - refDateAsDouble);
-					}
-				}
-				else if (destCol is TextColumn && srcCol.DataFormat == COLDATAFORMAT.DF_TEXT_NUMERIC)
-				{
-					var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_VARIANT, 0, -1, 0);
-
-					var destColNum = new Altaxo.Data.DoubleColumn();
-
-					object[] oarr;
-					if (null != (oarr = data as object[]))
-					{
-						int numberOfNums = 0;
-						int numberOfObjects = 0;
-						for (int i = 0; i < oarr.Length; ++i)
-						{
-							if (oarr[i] is double)
-							{
-								destColNum[i] = (double)oarr[i];
-								++numberOfNums;
-							}
-							if (oarr[i] != null)
-							{
-								destCol[i] = string.Format(culture, "{0}", oarr[i]);
-								++numberOfObjects;
-							}
-						}
-						// if the column consist mostly of numerics, then exchange it with destcol
-						if (numberOfNums >= 0.99 * numberOfObjects || numberOfNums >= numberOfObjects - 2)
-						{
-							destCol = destColNum;
-						}
-					}
-				}
-				else if (destCol is TextColumn)
-				{
-					var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_TEXT, 0, -1, 0);
-					string[] sarr;
-					object[] oarr;
-
-					if (null != (sarr = data as string[]))
-					{
-						(destCol as TextColumn).Array = sarr;
-					}
-					else if (null != (oarr = data as object[]))
-					{
-						for (int i = 0; i < oarr.Length; ++i)
-						{
-							if (null != oarr[i])
-							{
-								destCol[i] = string.Format(culture, "{0}", oarr[i]);
-							}
-							else
-							{
-								destCol[i] = null;
-							}
-						}
-					}
-				}
-
-				result.Add(destCol, (!string.IsNullOrEmpty(srcCol.LongName) ? srcCol.LongName : srcCol.Name), altaxoColumnKind, Math.Max(0, groupNumber));
-			}
-
-			return result;
-		}
-
-		public static DataColumnCollection GetPropertyColumns(this Origin.Worksheet wks)
-		{
-			if (null == wks)
-				throw new ArgumentNullException("wks");
-
-			DataColumnCollection result = new DataColumnCollection();
-
-			// I found no way to ask, if a label column is used or not
-			// therefore, we have to try all cells inside the longname, the units and the comments label column
-
-			Dictionary<string, Altaxo.Data.TextColumn> labelCols = new Dictionary<string, Altaxo.Data.TextColumn>();
-
-			DataColumn destLongNameCol = null, destUnitCol = null, destCommentCol = null;
-			DataColumn[] paraCol = new DataColumn[20];
-
-			var srcDataCols = wks.Cols;
-
-			for (int i = 0; i < srcDataCols; ++i)
-			{
-				var srcCol = wks.Columns[i];
-
-				if (!string.IsNullOrEmpty(srcCol.LongName))
-				{
-					if (null == destLongNameCol)
-						destLongNameCol = result.EnsureExistence("LongName", typeof(TextColumn), ColumnKind.V, 0);
-					destLongNameCol[i] = srcCol.LongName;
-				}
-
-				if (!string.IsNullOrEmpty(srcCol.Units))
-				{
-					if (null == destUnitCol)
-						destUnitCol = result.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
-					destUnitCol[i] = srcCol.Units;
-				}
-
-				if (!string.IsNullOrEmpty(srcCol.Comments))
-				{
-					if (null == destCommentCol)
-						destCommentCol = result.EnsureExistence("Comments", typeof(TextColumn), ColumnKind.V, 0);
-					destCommentCol[i] = srcCol.Comments;
-				}
-
-				for (int nPara = 0; nPara <= 11; ++nPara)
-				{
-					if (!string.IsNullOrEmpty(srcCol.Parameter[nPara]))
-					{
-						if (null == paraCol[nPara])
-							paraCol[nPara] = result.EnsureExistence("Parameter" + nPara.ToString(), typeof(TextColumn), ColumnKind.V, 0);
-						paraCol[nPara][i] = srcCol.Parameter[nPara];
-					}
-				}
-			}
-
-			return result;
-		}
-
-		public static string GetTable(this OriginConnection conn, string originWorksheetName, Altaxo.Data.DataTable destTable)
-		{
-			if (!conn.IsConnected())
-				return "Not connected to Origin";
-
-			var app = conn.Application;
-
-			Origin.WorksheetPage wbk;
-			if (null == (wbk = app.WorksheetPages[originWorksheetName]))
-			{
-				return string.Format("No origin worksheet named {0} found!", originWorksheetName);
-			}
-
-			return GetTable(wbk, destTable);
-		}
-
-		public static string GetTable(Origin.WorksheetPage wbk, Altaxo.Data.DataTable destTable)
-		{
-			Origin.Worksheet wks = wbk.Layers[0] as Origin.Worksheet;
-
-			var dataTemplate = GetDataColumns(wks);
-			var propCols = GetPropertyColumns(wks);
-
-			var data = destTable.DataColumns;
-			data.RemoveColumnsAll();
-			data.CopyAllColumnsFrom(dataTemplate);
-
-			var prop = destTable.PropCols;
-			prop.RemoveColumnsAll();
-			prop.CopyAllColumnsFrom(propCols);
-
-			return null;
-		}
-
-		#endregion Get data from origin
-	}
+        case COLTYPES.COLTYPE_GROUP:
+          altaxoType = ColumnKind.V;
+          break;
+
+        case COLTYPES.COLTYPE_LABEL:
+          altaxoType = ColumnKind.Label;
+          break;
+
+        case COLTYPES.COLTYPE_NONE:
+          altaxoType = ColumnKind.V;
+          break;
+
+        case COLTYPES.COLTYPE_NO_CHANGE:
+          altaxoType = ColumnKind.V;
+          break;
+
+        case COLTYPES.COLTYPE_SUBJECT:
+          altaxoType = ColumnKind.V;
+          break;
+
+        case COLTYPES.COLTYPE_X:
+          altaxoType = ColumnKind.X;
+          break;
+
+        case COLTYPES.COLTYPE_X_ERROR:
+          altaxoType = ColumnKind.Err;
+          break;
+
+        case COLTYPES.COLTYPE_Y:
+          altaxoType = ColumnKind.V;
+          break;
+
+        case COLTYPES.COLTYPE_Z:
+          altaxoType = ColumnKind.Y;
+          break;
+
+        default:
+          altaxoType = ColumnKind.V;
+          break;
+      }
+
+      return altaxoType;
+    }
+
+    public static Origin.COLTYPES AltaxoToOriginColumnType(Altaxo.Data.ColumnKind altaxoType)
+    {
+      COLTYPES originType;
+
+      switch (altaxoType)
+      {
+        case ColumnKind.V:
+          originType = COLTYPES.COLTYPE_Y;
+          break;
+
+        case ColumnKind.X:
+          originType = COLTYPES.COLTYPE_X;
+          break;
+
+        case ColumnKind.Y:
+          originType = COLTYPES.COLTYPE_Z;
+          break;
+
+        case ColumnKind.Z:
+          originType = COLTYPES.COLTYPE_Z;
+          break;
+
+        case ColumnKind.Err:
+          originType = COLTYPES.COLTYPE_ERROR;
+          break;
+
+        case ColumnKind.pErr:
+          originType = COLTYPES.COLTYPE_ERROR;
+          break;
+
+        case ColumnKind.mErr:
+          originType = COLTYPES.COLTYPE_ERROR;
+          break;
+
+        case ColumnKind.Label:
+          originType = COLTYPES.COLTYPE_LABEL;
+          break;
+
+        case ColumnKind.Condition:
+          originType = COLTYPES.COLTYPE_NONE;
+          break;
+
+        default:
+          originType = COLTYPES.COLTYPE_NO_CHANGE;
+          break;
+      }
+
+      return originType;
+    }
+
+    public static DataColumn GetAltaxoColumnFromOriginDataFormat(COLDATAFORMAT originColDataFormat)
+    {
+      // create a column
+      Altaxo.Data.DataColumn destCol = null;
+
+      switch (originColDataFormat)
+      {
+        case COLDATAFORMAT.DF_BYTE:
+          destCol = new Altaxo.Data.DoubleColumn();
+          break;
+
+        case COLDATAFORMAT.DF_CHAR:
+          destCol = new Altaxo.Data.DoubleColumn();
+          break;
+
+        case COLDATAFORMAT.DF_COMPLEX:
+          destCol = new Altaxo.Data.DoubleColumn();
+          break;
+
+        case COLDATAFORMAT.DF_DATE:
+          destCol = new Altaxo.Data.DateTimeColumn();
+          break;
+
+        case COLDATAFORMAT.DF_DOUBLE:
+          destCol = new Altaxo.Data.DoubleColumn();
+          break;
+
+        case COLDATAFORMAT.DF_FLOAT:
+          destCol = new Altaxo.Data.DoubleColumn();
+          break;
+
+        case COLDATAFORMAT.DF_LONG:
+          destCol = new Altaxo.Data.DoubleColumn();
+          break;
+
+        case COLDATAFORMAT.DF_SHORT:
+          destCol = new Altaxo.Data.DoubleColumn();
+          break;
+
+        case COLDATAFORMAT.DF_TEXT:
+          destCol = new Altaxo.Data.TextColumn();
+          break;
+
+        case COLDATAFORMAT.DF_TEXT_NUMERIC:
+          destCol = new Altaxo.Data.TextColumn();
+          break;
+
+        case COLDATAFORMAT.DF_TIME:
+          destCol = new Altaxo.Data.DateTimeColumn();
+          break;
+
+        case COLDATAFORMAT.DF_ULONG:
+          destCol = new Altaxo.Data.DoubleColumn();
+          break;
+
+        case COLDATAFORMAT.DF_USHORT:
+          destCol = new Altaxo.Data.DoubleColumn();
+          break;
+
+        default:
+          destCol = new Altaxo.Data.TextColumn();
+          break;
+      }
+      return destCol;
+    }
+
+    #endregion Conversion of Altaxo types to/from Origin Types
+
+    #region Helper functions
+
+    /// <summary>
+    /// Determines whether the <paramref name="name"/> in contained in any of the <paramref name="names"/> (comparison is case insensitive).
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <param name="names">The names to test against.</param>
+    /// <returns><c>true</c> if <paramref name="name"/> in contained in any of the <paramref name="names"/></returns>
+    private static bool IsLikeAnyOf(string name, string[] names)
+    {
+      foreach (var candidate in names)
+        if (0 == string.Compare(name, candidate, true))
+          return true;
+
+      return false;
+    }
+
+    private static void ShowErrorMessage(string strMsg)
+    {
+      Altaxo.Current.Gui.ErrorMessageBox(strMsg);
+    }
+
+    #endregion Helper functions
+
+    #region Send worksheet data to origin
+
+    /// <summary>
+    /// Gets a folder by name in a parent folder. If this folder does not exist, it is created. To get the folder, the folder is searched at first by the short name and if unsuccessfull, by the long name.
+    /// </summary>
+    /// <param name="parentFolder">The parent folder.</param>
+    /// <param name="folderName">Name of the folder to get or create.</param>
+    /// <returns>The child folder of the provided parentFolder, which has the folderName (either as short name, or as long name).</returns>
+    public static Origin.Folder GetOrCreateSingleFolder(Origin.Folder parentFolder, string folderName)
+    {
+      // test if folder with short folderName is existent
+      var folder = parentFolder.Folders[folderName];
+      if (null != folder)
+        return folder;
+
+      // else we must iterate through all folders and look for a folder with the same long folder name
+      for (int i = 0; i < parentFolder.Folders.Count; ++i)
+      {
+        folder = parentFolder.Folders[i];
+        if (folder.LongName == folderName)
+          return folder;
+      }
+
+      // else we create this folder and return it
+      folder = parentFolder.Folders.Add(folderName);
+      folder.LongName = folderName;
+      return folder;
+    }
+
+    public static Origin.Folder GetOrCreateFullFolderPath(Origin.IOApplication originApp, string altaxoFullFolderPath)
+    {
+      var folderParts = altaxoFullFolderPath.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+      var currFolder = originApp.RootFolder;
+      for (int i = 0; i < folderParts.Length; ++i)
+      {
+        var nextFolderName = folderParts[i];
+        var nextFolder = GetOrCreateSingleFolder(currFolder, nextFolderName);
+        currFolder = nextFolder;
+      }
+      return currFolder;
+    }
+
+    /// <summary>
+    /// Gets a worksheetpage by name in a parent folder. If this worksheetpage does not exist, it is created. To get the worksheet page, the parent folder is searched at first by the short name and if unsuccessfull, by the long name of the worksheet page.
+    /// </summary>
+    /// <param name="parentFolder">The parent folder.</param>
+    /// <param name="folderName">Name of the worksheet page to get or create.</param>
+    /// <returns>The worksheet page (either previously existing or newly created) of the provided parentFolder, which has the provided name (either as short name, or as long name).</returns>
+    public static Origin.WorksheetPage GetOrCreateWorksheetPage(Origin.Folder parentFolder, string worksheetName)
+    {
+      // test if folder with short folderName is existent
+      var worksheet = parentFolder.PageBases[worksheetName] as Origin.WorksheetPage;
+      if (null != worksheet)
+        return worksheet;
+
+      // else we must iterate through all Pages and look for a worksheetpage with the same long folder name
+      for (int i = 0; i < parentFolder.Folders.Count; ++i)
+      {
+        worksheet = parentFolder.PageBases[i] as Origin.WorksheetPage;
+        if (null != worksheet && worksheet.LongName == worksheetName)
+          return worksheet;
+      }
+
+      // else we create this worksheetpage and return it
+      parentFolder.Activate(); // by making the folder active, the worksheet is later created in this folder
+      worksheet = parentFolder.Application.WorksheetPages.Add();
+      worksheet.Name = worksheetName;
+      worksheet.LongName = worksheetName;
+
+      return worksheet;
+    }
+
+    public static void PutTable(this OriginConnection conn, Altaxo.Data.DataTable srcTable, bool appendRows)
+    {
+      if (IsColumnReorderingNeccessaryForPuttingTableToOrigin(srcTable))
+      {
+        srcTable = (DataTable)srcTable.Clone();
+        ReorderColumnsInTableForCompatibilityWithOrigin(srcTable);
+      }
+
+      var stb = new System.Text.StringBuilder();
+      string strWksName = srcTable.ShortName;
+
+      strWksName.Trim();
+      // Validate worksheet name:
+      if (0 == strWksName.Length)
+      {
+        ShowErrorMessage("Please specify a worksheet name first.");
+        return;
+      }
+
+      int nColumns = srcTable.DataColumnCount;
+      int nRows = srcTable.DataRowCount;
+      // Validate the number of columns and the number of rows:
+      if (nColumns <= 0 || nRows <= 0)
+      {
+        ShowErrorMessage("Data table is empty, thus nothing needs to be copyied to Origin!");
+        return;
+      }
+
+      var app = conn.Application;
+
+      var originFolder = GetOrCreateFullFolderPath(app, srcTable.FolderName);
+      var wbk = GetOrCreateWorksheetPage(originFolder, strWksName);
+
+      // for every group in our worksheet, make a separate origin worksheet
+
+      Origin.Worksheet wks = wbk.Layers[0] as Origin.Worksheet;
+      wks.ClearData();
+      wks.Cols = 0;
+      wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_LONG_NAME, true);
+
+      // Set the column names
+
+      for (int i = 0; i < srcTable.DataColumnCount; ++i)
+      {
+        var srcCol = srcTable.DataColumns[i];
+        var srcGroup = srcTable.DataColumns.GetColumnGroup(srcCol);
+
+        Origin.Column col = wks.Columns.Add(srcTable.DataColumns.GetColumnName(i));
+        col.LongName = srcTable.DataColumns.GetColumnName(i);
+
+        if (srcCol is DoubleColumn)
+        {
+          col.DataFormat = COLDATAFORMAT.DF_DOUBLE;
+          col.SetData((srcCol as DoubleColumn).Array);
+        }
+        else if (srcCol is DateTimeColumn)
+        {
+          col.DataFormat = COLDATAFORMAT.DF_DATE;
+          col.SetData((srcCol as DateTimeColumn).Array);
+        }
+        else if (srcCol is TextColumn)
+        {
+          col.DataFormat = COLDATAFORMAT.DF_TEXT;
+          col.SetData((srcCol as TextColumn).Array);
+        }
+        else
+        {
+          throw new NotImplementedException("Type of column not implemented");
+        }
+
+        col.Type = AltaxoToOriginColumnType(srcTable.DataColumns.GetColumnKind(srcCol));
+      } // end of loop for all data columns
+
+      // now put the property columns to ORIGIN
+      // note that ORIGIN has only special property columns
+      // LongName (but this is set already), Units, Comments
+      // and more generic property columns accessible by Parameter(0), Parameter(1) and so on
+
+      var usedPropColIndices = new HashSet<int>();
+
+      // Longname
+      for (int i = 0; i < srcTable.PropCols.ColumnCount; ++i)
+      {
+        if (usedPropColIndices.Contains(i))
+          continue;
+        if (IsLikeAnyOf(srcTable.PropCols.GetColumnName(i), LongNamePropertyColumnNames))
+        {
+          usedPropColIndices.Add(i);
+          for (int j = 0; j < srcTable.DataColumnCount; ++j)
+          {
+            wks.Columns[j].LongName = srcTable.PropCols[i][j].ToString();
+          }
+          wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_LONG_NAME, true);
+        }
+      }
+
+      // Units
+      for (int i = 0; i < srcTable.PropCols.ColumnCount; ++i)
+      {
+        if (usedPropColIndices.Contains(i))
+          continue;
+        if (IsLikeAnyOf(srcTable.PropCols.GetColumnName(i), UnitPropertyColumnNames))
+        {
+          usedPropColIndices.Add(i);
+          for (int j = 0; j < srcTable.DataColumnCount; ++j)
+          {
+            wks.Columns[j].Units = srcTable.PropCols[i][j].ToString();
+          }
+          wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_UNIT, true);
+        }
+      }
+      // Comments
+      for (int i = 0; i < srcTable.PropCols.ColumnCount; ++i)
+      {
+        if (usedPropColIndices.Contains(i))
+          continue;
+        if (IsLikeAnyOf(srcTable.PropCols.GetColumnName(i), CommentPropertyColumnNames))
+        {
+          usedPropColIndices.Add(i);
+          for (int j = 0; j < srcTable.DataColumnCount; ++j)
+          {
+            wks.Columns[j].Comments = srcTable.PropCols[i][j].ToString();
+          }
+          wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_COMMENT, true);
+        }
+      }
+
+      // other property columns
+
+      for (int i = 0, k = 0; i < srcTable.PropCols.ColumnCount; ++i)
+      {
+        if (usedPropColIndices.Contains(i))
+          continue;
+        usedPropColIndices.Add(i);
+        for (int j = 0; j < srcTable.DataColumnCount; ++j)
+        {
+          wks.Columns[j].Parameter[k] = srcTable.PropCols[i][j].ToString();
+        }
+        wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_PARAM, true);
+        ++k;
+      }
+    }
+
+    /// <summary>
+    /// Tests if column reordering is neccessary in order to put a table to origin. Column reordering is neccessary if the table contains more than
+    /// one column group, and the x column of every column group is not the first column. Origin only supports table with multiple groups if the first column
+    /// of every group is the x-column.
+    /// </summary>
+    /// <param name="table">The table to test.</param>
+    /// <returns>True if column reodering is neccessary, false otherwise.</returns>
+    public static bool IsColumnReorderingNeccessaryForPuttingTableToOrigin(Data.DataTable table)
+    {
+      // Testen, wieviele Gruppen
+      var groupColumns = new Dictionary<int, int>(); // counts the number of columns per group
+      for (int i = 0; i < table.DataColumnCount; i++)
+      {
+        int currentGroup = table.DataColumns.GetColumnGroup(i);
+
+        if (groupColumns.ContainsKey(currentGroup))
+          groupColumns[currentGroup] += 1;
+        else
+          groupColumns.Add(currentGroup, 1);
+
+        var currentKind = table.DataColumns.GetColumnKind(i);
+
+        if (groupColumns.Count > 1 && groupColumns[currentGroup] > 1)
+        {
+          if (currentKind == Altaxo.Data.ColumnKind.X)
+            return true;
+
+          if (currentGroup != table.DataColumns.GetColumnGroup(i - 1))
+            return true;
+        }
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// Reorders the columns so that they can be copyied into an Origin table.
+    /// </summary>
+    /// <param name="table">The table to reorder.</param>
+    public static void ReorderColumnsInTableForCompatibilityWithOrigin(Data.DataTable table)
+    {
+      var groupBegin = new Dictionary<int, Data.DataColumn>();
+      var groupEnd = new Dictionary<int, Data.DataColumn>();
+
+      for (int i = 0; i < table.DataColumnCount; i++)
+      {
+        var currentCol = table[i];
+        int currentGroup = table.DataColumns.GetColumnGroup(i);
+
+        if (!groupBegin.ContainsKey(currentGroup))
+        {
+          groupBegin.Add(currentGroup, currentCol);
+          groupEnd.Add(currentGroup, currentCol);
+        }
+
+        var currentKind = table.DataColumns.GetColumnKind(i);
+        // if the column is a x-column, then move it to the begin of the group
+        if (currentKind == Altaxo.Data.ColumnKind.X && !object.ReferenceEquals(currentCol, groupBegin[currentGroup]))
+        {
+          int destIndex = table.DataColumns.GetColumnNumber(groupBegin[currentGroup]);
+          table.ChangeColumnPosition(Collections.ContiguousIntegerRange.FromStartAndCount(i, 1), destIndex);
+          groupBegin[currentGroup] = currentCol;
+          continue;
+        }
+
+        // if the column is away from the rest of the group, move it to the end of the group
+        int lastIndex = table.DataColumns.GetColumnNumber(groupEnd[currentGroup]);
+        if (i > 1 + lastIndex)
+        {
+          int destIndex = 1 + lastIndex;
+          table.ChangeColumnPosition(Collections.ContiguousIntegerRange.FromStartAndCount(i, 1), destIndex);
+          groupEnd[currentGroup] = currentCol;
+          continue;
+        }
+
+        groupEnd[currentGroup] = currentCol;
+      }
+    }
+
+    #endregion Send worksheet data to origin
+
+    #region Get data from origin
+
+    /// <summary>
+    /// Retrieves the data columns from an Origin table.
+    /// </summary>
+    /// <param name="wks">The Origin worksheet to retrieve the data from.</param>
+    /// <returns>The data columns with the data from the Origin worksheet.</returns>
+    public static Altaxo.Data.DataColumnCollection GetDataColumns(this Origin.Worksheet wks)
+    {
+      var culture = Current.PropertyService.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin).Culture;
+
+      int nCols = wks.Cols;
+
+      Altaxo.Data.DataColumnCollection result = new Altaxo.Data.DataColumnCollection();
+
+      for (int c = 0; c < nCols; c++)
+      {
+        var srcCol = wks.Columns[c];
+
+        Altaxo.Data.DataColumn destCol = GetAltaxoColumnFromOriginDataFormat(srcCol.DataFormat);
+
+        int groupNumber = -1;
+
+        var altaxoColumnKind = OriginToAltaxoColumnKind(srcCol.Type);
+
+        if (altaxoColumnKind == Altaxo.Data.ColumnKind.X)
+          groupNumber++;
+
+        if (destCol is DoubleColumn)
+        {
+          var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_NUMERIC, 0, -1, 0);
+          (destCol as DoubleColumn).Array = (double[])data;
+        }
+        else if (destCol is DateTimeColumn)
+        {
+          var data = (double[])srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_NUMERIC, 0, -1, 0);
+          const double refDateAsDouble = 2451910; // this is the number of days in julian calendar belonging to the date below...
+          DateTime refDate = DateTime.Parse("2001-01-01", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal);
+          for (int i = data.Length - 1; i >= 0; --i)
+          {
+            destCol[i] = refDate.AddDays(data[i] - refDateAsDouble);
+          }
+        }
+        else if (destCol is TextColumn && srcCol.DataFormat == COLDATAFORMAT.DF_TEXT_NUMERIC)
+        {
+          var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_VARIANT, 0, -1, 0);
+
+          var destColNum = new Altaxo.Data.DoubleColumn();
+
+          object[] oarr;
+          if (null != (oarr = data as object[]))
+          {
+            int numberOfNums = 0;
+            int numberOfObjects = 0;
+            for (int i = 0; i < oarr.Length; ++i)
+            {
+              if (oarr[i] is double)
+              {
+                destColNum[i] = (double)oarr[i];
+                ++numberOfNums;
+              }
+              if (oarr[i] != null)
+              {
+                destCol[i] = string.Format(culture, "{0}", oarr[i]);
+                ++numberOfObjects;
+              }
+            }
+            // if the column consist mostly of numerics, then exchange it with destcol
+            if (numberOfNums >= 0.99 * numberOfObjects || numberOfNums >= numberOfObjects - 2)
+            {
+              destCol = destColNum;
+            }
+          }
+        }
+        else if (destCol is TextColumn)
+        {
+          var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_TEXT, 0, -1, 0);
+          string[] sarr;
+          object[] oarr;
+
+          if (null != (sarr = data as string[]))
+          {
+            (destCol as TextColumn).Array = sarr;
+          }
+          else if (null != (oarr = data as object[]))
+          {
+            for (int i = 0; i < oarr.Length; ++i)
+            {
+              if (null != oarr[i])
+              {
+                destCol[i] = string.Format(culture, "{0}", oarr[i]);
+              }
+              else
+              {
+                destCol[i] = null;
+              }
+            }
+          }
+        }
+
+        result.Add(destCol, (!string.IsNullOrEmpty(srcCol.LongName) ? srcCol.LongName : srcCol.Name), altaxoColumnKind, Math.Max(0, groupNumber));
+      }
+
+      return result;
+    }
+
+    public static DataColumnCollection GetPropertyColumns(this Origin.Worksheet wks)
+    {
+      if (null == wks)
+        throw new ArgumentNullException("wks");
+
+      DataColumnCollection result = new DataColumnCollection();
+
+      // I found no way to ask, if a label column is used or not
+      // therefore, we have to try all cells inside the longname, the units and the comments label column
+
+      Dictionary<string, Altaxo.Data.TextColumn> labelCols = new Dictionary<string, Altaxo.Data.TextColumn>();
+
+      DataColumn destLongNameCol = null, destUnitCol = null, destCommentCol = null;
+      DataColumn[] paraCol = new DataColumn[20];
+
+      var srcDataCols = wks.Cols;
+
+      for (int i = 0; i < srcDataCols; ++i)
+      {
+        var srcCol = wks.Columns[i];
+
+        if (!string.IsNullOrEmpty(srcCol.LongName))
+        {
+          if (null == destLongNameCol)
+            destLongNameCol = result.EnsureExistence("LongName", typeof(TextColumn), ColumnKind.V, 0);
+          destLongNameCol[i] = srcCol.LongName;
+        }
+
+        if (!string.IsNullOrEmpty(srcCol.Units))
+        {
+          if (null == destUnitCol)
+            destUnitCol = result.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
+          destUnitCol[i] = srcCol.Units;
+        }
+
+        if (!string.IsNullOrEmpty(srcCol.Comments))
+        {
+          if (null == destCommentCol)
+            destCommentCol = result.EnsureExistence("Comments", typeof(TextColumn), ColumnKind.V, 0);
+          destCommentCol[i] = srcCol.Comments;
+        }
+
+        for (int nPara = 0; nPara <= 11; ++nPara)
+        {
+          if (!string.IsNullOrEmpty(srcCol.Parameter[nPara]))
+          {
+            if (null == paraCol[nPara])
+              paraCol[nPara] = result.EnsureExistence("Parameter" + nPara.ToString(), typeof(TextColumn), ColumnKind.V, 0);
+            paraCol[nPara][i] = srcCol.Parameter[nPara];
+          }
+        }
+      }
+
+      return result;
+    }
+
+    public static string GetTable(this OriginConnection conn, string originWorksheetName, Altaxo.Data.DataTable destTable)
+    {
+      if (!conn.IsConnected())
+        return "Not connected to Origin";
+
+      var app = conn.Application;
+
+      Origin.WorksheetPage wbk;
+      if (null == (wbk = app.WorksheetPages[originWorksheetName]))
+      {
+        return string.Format("No origin worksheet named {0} found!", originWorksheetName);
+      }
+
+      return GetTable(wbk, destTable);
+    }
+
+    public static string GetTable(Origin.WorksheetPage wbk, Altaxo.Data.DataTable destTable)
+    {
+      Origin.Worksheet wks = wbk.Layers[0] as Origin.Worksheet;
+
+      var dataTemplate = GetDataColumns(wks);
+      var propCols = GetPropertyColumns(wks);
+
+      var data = destTable.DataColumns;
+      data.RemoveColumnsAll();
+      data.CopyAllColumnsFrom(dataTemplate);
+
+      var prop = destTable.PropCols;
+      prop.RemoveColumnsAll();
+      prop.CopyAllColumnsFrom(propCols);
+
+      return null;
+    }
+
+    #endregion Get data from origin
+  }
 }

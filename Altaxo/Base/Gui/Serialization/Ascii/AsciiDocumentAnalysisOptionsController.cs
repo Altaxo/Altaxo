@@ -33,103 +33,103 @@ using System.Text;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-	public interface IAsciiDocumentAnalysisOptionsView
-	{
-		int NumberOfLinesToAnalyze { get; set; }
+  public interface IAsciiDocumentAnalysisOptionsView
+  {
+    int NumberOfLinesToAnalyze { get; set; }
 
-		void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
+    void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
 
-		void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
-	}
+    void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
+  }
 
-	[ExpectedTypeOfView(typeof(IAsciiDocumentAnalysisOptionsView))]
-	[UserControllerForObject(typeof(AsciiDocumentAnalysisOptions))]
-	public class AsciiDocumentAnalysisOptionsController : MVCANControllerEditOriginalDocBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
-	{
-		private SelectableListNodeList _availableCultureList;
+  [ExpectedTypeOfView(typeof(IAsciiDocumentAnalysisOptionsView))]
+  [UserControllerForObject(typeof(AsciiDocumentAnalysisOptions))]
+  public class AsciiDocumentAnalysisOptionsController : MVCANControllerEditOriginalDocBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
+  {
+    private SelectableListNodeList _availableCultureList;
 
-		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
-		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
+    private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
+    private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_numberFormatsToAnalyze = null;
-			_dateTimeFormatsToAnalyze = null;
+    public override void Dispose(bool isDisposing)
+    {
+      _numberFormatsToAnalyze = null;
+      _dateTimeFormatsToAnalyze = null;
 
-			base.Dispose(isDisposing);
-		}
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				GetAvailableCultures(ref _availableCultureList);
+      if (initData)
+      {
+        GetAvailableCultures(ref _availableCultureList);
 
-				_numberFormatsToAnalyze = new System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>>();
-				foreach (var item in _availableCultureList)
-					if (_doc.NumberFormatsToTest.Contains((CultureInfo)item.Tag))
-						_numberFormatsToAnalyze.Add(item);
+        _numberFormatsToAnalyze = new System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>>();
+        foreach (var item in _availableCultureList)
+          if (_doc.NumberFormatsToTest.Contains((CultureInfo)item.Tag))
+            _numberFormatsToAnalyze.Add(item);
 
-				_dateTimeFormatsToAnalyze = new System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>>();
+        _dateTimeFormatsToAnalyze = new System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>>();
 
-				foreach (var item in _availableCultureList)
-					if (_doc.DateTimeFormatsToTest.Contains((CultureInfo)item.Tag))
-						_dateTimeFormatsToAnalyze.Add(item);
-			}
+        foreach (var item in _availableCultureList)
+          if (_doc.DateTimeFormatsToTest.Contains((CultureInfo)item.Tag))
+            _dateTimeFormatsToAnalyze.Add(item);
+      }
 
-			if (null != _view)
-			{
-				_view.NumberOfLinesToAnalyze = _doc.NumberOfLinesToAnalyze;
-				_view.SetNumberFormatsToAnalyze(_availableCultureList, _numberFormatsToAnalyze);
-				_view.SetDateTimeFormatsToAnalyze(_availableCultureList, _dateTimeFormatsToAnalyze);
-			}
-		}
+      if (null != _view)
+      {
+        _view.NumberOfLinesToAnalyze = _doc.NumberOfLinesToAnalyze;
+        _view.SetNumberFormatsToAnalyze(_availableCultureList, _numberFormatsToAnalyze);
+        _view.SetDateTimeFormatsToAnalyze(_availableCultureList, _dateTimeFormatsToAnalyze);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.NumberOfLinesToAnalyze = _view.NumberOfLinesToAnalyze;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.NumberOfLinesToAnalyze = _view.NumberOfLinesToAnalyze;
 
-			_doc.NumberFormatsToTest.Clear();
-			_doc.DateTimeFormatsToTest.Clear();
-			foreach (var item in _numberFormatsToAnalyze)
-				_doc.NumberFormatsToTest.Add((CultureInfo)item.Value.Tag);
-			foreach (var item in _dateTimeFormatsToAnalyze)
-				_doc.DateTimeFormatsToTest.Add((CultureInfo)item.Value.Tag);
+      _doc.NumberFormatsToTest.Clear();
+      _doc.DateTimeFormatsToTest.Clear();
+      foreach (var item in _numberFormatsToAnalyze)
+        _doc.NumberFormatsToTest.Add((CultureInfo)item.Value.Tag);
+      foreach (var item in _dateTimeFormatsToAnalyze)
+        _doc.DateTimeFormatsToTest.Add((CultureInfo)item.Value.Tag);
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		private int CompareCultures(CultureInfo x, CultureInfo y)
-		{
-			return string.Compare(x.DisplayName, y.DisplayName);
-		}
+    private int CompareCultures(CultureInfo x, CultureInfo y)
+    {
+      return string.Compare(x.DisplayName, y.DisplayName);
+    }
 
-		private void GetAvailableCultures(ref SelectableListNodeList list)
-		{
-			list = new SelectableListNodeList();
-			var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
-			Array.Sort(cultures, CompareCultures);
+    private void GetAvailableCultures(ref SelectableListNodeList list)
+    {
+      list = new SelectableListNodeList();
+      var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+      Array.Sort(cultures, CompareCultures);
 
-			var invCult = System.Globalization.CultureInfo.InvariantCulture;
-			AddCulture(list, invCult, false);
+      var invCult = System.Globalization.CultureInfo.InvariantCulture;
+      AddCulture(list, invCult, false);
 
-			foreach (var cult in cultures)
-				AddCulture(list, cult, false);
+      foreach (var cult in cultures)
+        AddCulture(list, cult, false);
 
-			if (null == list.FirstSelectedNode)
-				list[0].IsSelected = true;
-		}
+      if (null == list.FirstSelectedNode)
+        list[0].IsSelected = true;
+    }
 
-		private void AddCulture(SelectableListNodeList cultureList, CultureInfo cult, bool isSelected)
-		{
-			cultureList.Add(new SelectableListNode(cult.DisplayName, cult, isSelected));
-		}
-	}
+    private void AddCulture(SelectableListNodeList cultureList, CultureInfo cult, bool isSelected)
+    {
+      cultureList.Add(new SelectableListNode(cult.DisplayName, cult, isSelected));
+    }
+  }
 }

@@ -30,104 +30,104 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	public abstract class IndexedTriangleBuffer : IIndexedTriangleBuffer
-	{
-		protected ITransformationContext _parent;
-		protected float[] _vertexStream;
-		protected int[] _indexStream;
-		protected int _numberOfVertices;
-		protected int _numberOfTriangles;
+  public abstract class IndexedTriangleBuffer : IIndexedTriangleBuffer
+  {
+    protected ITransformationContext _parent;
+    protected float[] _vertexStream;
+    protected int[] _indexStream;
+    protected int _numberOfVertices;
+    protected int _numberOfTriangles;
 
-		protected IndexedTriangleBuffer(ITransformationContext parent)
-		{
-			_parent = parent;
+    protected IndexedTriangleBuffer(ITransformationContext parent)
+    {
+      _parent = parent;
 
-			_vertexStream = new float[8 * 65536];
-			_indexStream = new int[3 * 65536];
-		}
+      _vertexStream = new float[8 * 65536];
+      _indexStream = new int[3 * 65536];
+    }
 
-		protected abstract int BytesPerVertex { get; }
+    protected abstract int BytesPerVertex { get; }
 
-		public int TriangleCount
-		{
-			get
-			{
-				return _numberOfTriangles;
-			}
-		}
+    public int TriangleCount
+    {
+      get
+      {
+        return _numberOfTriangles;
+      }
+    }
 
-		public int VertexCount
-		{
-			get
-			{
-				return _numberOfVertices;
-			}
-		}
+    public int VertexCount
+    {
+      get
+      {
+        return _numberOfVertices;
+      }
+    }
 
-		public float[] VertexStream
-		{
-			get
-			{
-				return _vertexStream;
-			}
-		}
+    public float[] VertexStream
+    {
+      get
+      {
+        return _vertexStream;
+      }
+    }
 
-		public int VertexStreamLength
-		{
-			get
-			{
-				return _numberOfVertices * BytesPerVertex;
-			}
-		}
+    public int VertexStreamLength
+    {
+      get
+      {
+        return _numberOfVertices * BytesPerVertex;
+      }
+    }
 
-		public int[] IndexStream
-		{
-			get
-			{
-				return _indexStream;
-			}
-		}
+    public int[] IndexStream
+    {
+      get
+      {
+        return _indexStream;
+      }
+    }
 
-		public int IndexStreamLength
-		{
-			get
-			{
-				return _numberOfTriangles * (3 * 4);
-			}
-		}
+    public int IndexStreamLength
+    {
+      get
+      {
+        return _numberOfTriangles * (3 * 4);
+      }
+    }
 
-		public void AddTriangleIndices(int v1, int v2, int v3)
-		{
-			int offs = _numberOfTriangles * 3;
+    public void AddTriangleIndices(int v1, int v2, int v3)
+    {
+      int offs = _numberOfTriangles * 3;
 
-			if (offs + 3 >= _indexStream.Length)
-				Array.Resize(ref _indexStream, _indexStream.Length * 2);
+      if (offs + 3 >= _indexStream.Length)
+        Array.Resize(ref _indexStream, _indexStream.Length * 2);
 
-			_indexStream[offs + 0] = v1;
-			_indexStream[offs + 1] = v3;
-			_indexStream[offs + 2] = v2;
-			++_numberOfTriangles;
-		}
+      _indexStream[offs + 0] = v1;
+      _indexStream[offs + 1] = v3;
+      _indexStream[offs + 2] = v2;
+      ++_numberOfTriangles;
+    }
 
-		public void AddTriangleIndices(int v1, int v2, int v3, bool isLeftHandedCOS)
-		{
-			int offs = _numberOfTriangles * 3;
+    public void AddTriangleIndices(int v1, int v2, int v3, bool isLeftHandedCOS)
+    {
+      int offs = _numberOfTriangles * 3;
 
-			if (offs + 3 >= _indexStream.Length)
-				Array.Resize(ref _indexStream, _indexStream.Length * 2);
+      if (offs + 3 >= _indexStream.Length)
+        Array.Resize(ref _indexStream, _indexStream.Length * 2);
 
-			_indexStream[offs + 0] = v1;
-			if (isLeftHandedCOS)
-			{
-				_indexStream[offs + 1] = v2;
-				_indexStream[offs + 2] = v3;
-			}
-			else
-			{
-				_indexStream[offs + 1] = v3;
-				_indexStream[offs + 2] = v2;
-			}
-			++_numberOfTriangles;
-		}
-	}
+      _indexStream[offs + 0] = v1;
+      if (isLeftHandedCOS)
+      {
+        _indexStream[offs + 1] = v2;
+        _indexStream[offs + 2] = v3;
+      }
+      else
+      {
+        _indexStream[offs + 1] = v3;
+        _indexStream[offs + 2] = v2;
+      }
+      ++_numberOfTriangles;
+    }
+  }
 }

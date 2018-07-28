@@ -36,250 +36,255 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
-	/// <summary>
-	/// Generates Binomial distributed random numbers.
-	/// </summary>
-	/// <remarks><code>
-	/// Returns a binomial distributed deviate (integer returned in a double)
-	/// according to the distribution:
-	///
-	///              j+eps                 / n \    j      n-j
-	///      integral       p   (m) dm  = |     |  q  (1-q)
-	///              j-eps   n,q           \ j /
-	///
-	/// References:
-	/// D. E. Knuth: The Art of Computer Programming, Vol. 2, Seminumerical
-	/// Algorithms, pp. 120, 2nd edition, 1981.
-	///                             //
-	/// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
-	/// Numerical Recipies in C, Cambridge Univ. Press, 1988.
-	/// </code></remarks>
-	public class BinomialDistribution : DiscreteDistribution
-	{
-		protected double scale, scalepi, p, pc, plog, pclog, np, npexp, en, en1, gamen1, sq;
-		protected int n;
-		protected bool sym;
+  /// <summary>
+  /// Generates Binomial distributed random numbers.
+  /// </summary>
+  /// <remarks><code>
+  /// Returns a binomial distributed deviate (integer returned in a double)
+  /// according to the distribution:
+  ///
+  ///              j+eps                 / n \    j      n-j
+  ///      integral       p   (m) dm  = |     |  q  (1-q)
+  ///              j-eps   n,q           \ j /
+  ///
+  /// References:
+  /// D. E. Knuth: The Art of Computer Programming, Vol. 2, Seminumerical
+  /// Algorithms, pp. 120, 2nd edition, 1981.
+  ///                             //
+  /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
+  /// Numerical Recipies in C, Cambridge Univ. Press, 1988.
+  /// </code></remarks>
+  public class BinomialDistribution : DiscreteDistribution
+  {
+    protected double scale, scalepi, p, pc, plog, pclog, np, npexp, en, en1, gamen1, sq;
+    protected int n;
+    protected bool sym;
 
-		protected void Initialize(double pp, int nn)
-		{
-			if (nn < 0)
-				throw new ArgumentOutOfRangeException("Num has to be >=0");
-			if (pp < 0 || pp > 1)
-				throw new ArgumentOutOfRangeException("Probability must be within [0,1]");
+    protected void Initialize(double pp, int nn)
+    {
+      if (nn < 0)
+        throw new ArgumentOutOfRangeException("Num has to be >=0");
+      if (pp < 0 || pp > 1)
+        throw new ArgumentOutOfRangeException("Probability must be within [0,1]");
 
-			scale = 1.0 / generator.Maximum;
-			scalepi = Math.PI / generator.Maximum;
+      scale = 1.0 / generator.Maximum;
+      scalepi = Math.PI / generator.Maximum;
 
-			if (pp <= 0.5)
-			{ // use invariance under  p  <==> 1-p
-				p = pp; sym = false;
-			}
-			else
-			{
-				p = 1.0 - pp; sym = true;
-			}
+      if (pp <= 0.5)
+      { // use invariance under  p  <==> 1-p
+        p = pp;
+        sym = false;
+      }
+      else
+      {
+        p = 1.0 - pp;
+        sym = true;
+      }
 
-			n = nn;
-			np = n * p;
-			npexp = Math.Exp(-np);
+      n = nn;
+      np = n * p;
+      npexp = Math.Exp(-np);
 
-			en = n;
-			en1 = en + 1.0;
-			gamen1 = GammaRelated.LnGamma(en1);
-			pc = 1.0 - p;
-			plog = Math.Log(p);
-			pclog = Math.Log(pc);
-			sq = Math.Sqrt(2 * np * pc);
-		}
+      en = n;
+      en1 = en + 1.0;
+      gamen1 = GammaRelated.LnGamma(en1);
+      pc = 1.0 - p;
+      plog = Math.Log(p);
+      pclog = Math.Log(pc);
+      sq = Math.Sqrt(2 * np * pc);
+    }
 
-		public BinomialDistribution()
-			: this(DefaultGenerator)
-		{
-		}
+    public BinomialDistribution()
+      : this(DefaultGenerator)
+    {
+    }
 
-		public BinomialDistribution(Generator generator)
-			: this(1, 0.5, generator)
-		{
-		}
+    public BinomialDistribution(Generator generator)
+      : this(1, 0.5, generator)
+    {
+    }
 
-		public BinomialDistribution(int num, double prob)
-			: this(num, prob, DefaultGenerator)
-		{
-		}
+    public BinomialDistribution(int num, double prob)
+      : this(num, prob, DefaultGenerator)
+    {
+    }
 
-		public BinomialDistribution(int num, double prob, Generator ran)
-			: base(ran)
-		{
-			Initialize(prob, num);
-		}
+    public BinomialDistribution(int num, double prob, Generator ran)
+      : base(ran)
+    {
+      Initialize(prob, num);
+    }
 
-		public override double NextDouble()
-		{
-			double bnl;
+    public override double NextDouble()
+    {
+      double bnl;
 
-			if (n < 25)
-			{   // direct method for moderate n
-				bnl = 0.0;
-				for (int j = 0; j < n; j++)
-					if (scale * generator.Next() < p) bnl++;
-			}
-			else if (np < 1.0)
-			{ // use direct Poisson method
-				int j;
-				double t = 1.0;
-				for (j = 0; j <= n; j++)
-				{
-					t *= scale * generator.Next();
-					if (t < npexp) break;
-				}
-				bnl = (j <= n ? j : n);
-			}
-			else
-			{     // use rejection method
-				double em, y, t;
-				do
-				{
-					do
-					{
-						y = Math.Tan(scalepi * generator.Next());
-						em = sq * y + np;
-					} while (em < 0.0 || em >= en1);
-					em = Math.Floor(em);
-					t = 1.2 * sq * (1.0 + y * y) * Math.Exp(gamen1
-						- GammaRelated.LnGamma(em + 1.0)
-						- GammaRelated.LnGamma(en1 - em)
-						+ em * plog
-						+ (en - em) * pclog);
-				} while (scale * generator.Next() > t);
-				bnl = em;
-			}
+      if (n < 25)
+      {   // direct method for moderate n
+        bnl = 0.0;
+        for (int j = 0; j < n; j++)
+          if (scale * generator.Next() < p)
+            bnl++;
+      }
+      else if (np < 1.0)
+      { // use direct Poisson method
+        int j;
+        double t = 1.0;
+        for (j = 0; j <= n; j++)
+        {
+          t *= scale * generator.Next();
+          if (t < npexp)
+            break;
+        }
+        bnl = (j <= n ? j : n);
+      }
+      else
+      {     // use rejection method
+        double em, y, t;
+        do
+        {
+          do
+          {
+            y = Math.Tan(scalepi * generator.Next());
+            em = sq * y + np;
+          } while (em < 0.0 || em >= en1);
+          em = Math.Floor(em);
+          t = 1.2 * sq * (1.0 + y * y) * Math.Exp(gamen1
+            - GammaRelated.LnGamma(em + 1.0)
+            - GammaRelated.LnGamma(en1 - em)
+            + em * plog
+            + (en - em) * pclog);
+        } while (scale * generator.Next() > t);
+        bnl = em;
+      }
 
-			if (sym) bnl = n - bnl; // undo symmetry transformation
+      if (sym)
+        bnl = n - bnl; // undo symmetry transformation
 
-			return bnl;
-		}
+      return bnl;
+    }
 
-		/// <summary>
-		/// Gets the parameter 'probability' of this distribution.
-		/// </summary>
-		public double Probability
-		{
-			get { return sym ? 1 - p : p; }
-			set
-			{
-				Initialize(value, n);
-			}
-		}
+    /// <summary>
+    /// Gets the parameter 'probability' of this distribution.
+    /// </summary>
+    public double Probability
+    {
+      get { return sym ? 1 - p : p; }
+      set
+      {
+        Initialize(value, n);
+      }
+    }
 
-		/// <summary>
-		/// Gets the parameter 'maximum value' of this distribution.
-		/// </summary>
-		public int Number
-		{
-			get { return n; }
-			set
-			{
-				Initialize(Probability, value);
-			}
-		}
+    /// <summary>
+    /// Gets the parameter 'maximum value' of this distribution.
+    /// </summary>
+    public int Number
+    {
+      get { return n; }
+      set
+      {
+        Initialize(Probability, value);
+      }
+    }
 
-		#region overridden Distribution members
+    #region overridden Distribution members
 
-		/// <summary>
-		/// Gets the minimum possible value of binomial distributed random numbers.
-		/// </summary>
-		public override double Minimum
-		{
-			get
-			{
-				return 0.0;
-			}
-		}
+    /// <summary>
+    /// Gets the minimum possible value of binomial distributed random numbers.
+    /// </summary>
+    public override double Minimum
+    {
+      get
+      {
+        return 0.0;
+      }
+    }
 
-		/// <summary>
-		/// Gets the maximum possible value of binomial distributed random numbers.
-		/// </summary>
-		public override double Maximum
-		{
-			get
-			{
-				return this.n;
-			}
-		}
+    /// <summary>
+    /// Gets the maximum possible value of binomial distributed random numbers.
+    /// </summary>
+    public override double Maximum
+    {
+      get
+      {
+        return this.n;
+      }
+    }
 
-		/// <summary>
-		/// Gets the mean value of binomial distributed random numbers.
-		/// </summary>
-		public override double Mean
-		{
-			get
-			{
-				return this.Probability * this.n;
-			}
-		}
+    /// <summary>
+    /// Gets the mean value of binomial distributed random numbers.
+    /// </summary>
+    public override double Mean
+    {
+      get
+      {
+        return this.Probability * this.n;
+      }
+    }
 
-		/// <summary>
-		/// Gets the median of binomial distributed random numbers.
-		/// </summary>
-		public override double Median
-		{
-			get
-			{
-				return double.NaN;
-			}
-		}
+    /// <summary>
+    /// Gets the median of binomial distributed random numbers.
+    /// </summary>
+    public override double Median
+    {
+      get
+      {
+        return double.NaN;
+      }
+    }
 
-		/// <summary>
-		/// Gets the variance of binomial distributed random numbers.
-		/// </summary>
-		public override double Variance
-		{
-			get
-			{
-				return this.p * (1.0 - this.p) * this.n;
-			}
-		}
+    /// <summary>
+    /// Gets the variance of binomial distributed random numbers.
+    /// </summary>
+    public override double Variance
+    {
+      get
+      {
+        return this.p * (1.0 - this.p) * this.n;
+      }
+    }
 
-		/// <summary>
-		/// Gets the mode of binomial distributed random numbers.
-		/// </summary>
-		public override double[] Mode
-		{
-			get
-			{
-				return new double[] { Math.Floor(this.Probability * (this.n + 1.0)) };
-			}
-		}
+    /// <summary>
+    /// Gets the mode of binomial distributed random numbers.
+    /// </summary>
+    public override double[] Mode
+    {
+      get
+      {
+        return new double[] { Math.Floor(this.Probability * (this.n + 1.0)) };
+      }
+    }
 
-		#endregion overridden Distribution members
+    #endregion overridden Distribution members
 
-		#region CdfPdf
+    #region CdfPdf
 
-		public override double CDF(double x)
-		{
-			return CDF(x, this.Probability, n);
-		}
+    public override double CDF(double x)
+    {
+      return CDF(x, this.Probability, n);
+    }
 
-		public static double CDF(double x, double p, int n)
-		{
-			return Calc.GammaRelated.BetaRegularized(1 - p, n - Math.Floor(x), 1 + Math.Floor(x));
-		}
+    public static double CDF(double x, double p, int n)
+    {
+      return Calc.GammaRelated.BetaRegularized(1 - p, n - Math.Floor(x), 1 + Math.Floor(x));
+    }
 
-		public override double PDF(double x)
-		{
-			return PDF(x, this.Probability, n);
-		}
+    public override double PDF(double x)
+    {
+      return PDF(x, this.Probability, n);
+    }
 
-		public static double PDF(double x, double p, int n)
-		{
-			return Math.Pow(1 - p, n - x) * Math.Pow(p, x) * Calc.GammaRelated.Binomial(n, x);
-		}
+    public static double PDF(double x, double p, int n)
+    {
+      return Math.Pow(1 - p, n - x) * Math.Pow(p, x) * Calc.GammaRelated.Binomial(n, x);
+    }
 
-		#endregion CdfPdf
+    #endregion CdfPdf
 
-		public override double Quantile(double x)
-		{
-			throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
-		}
-	}
+    public override double Quantile(double x)
+    {
+      throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
+    }
+  }
 }

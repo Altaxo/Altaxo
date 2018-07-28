@@ -31,18 +31,18 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.Commands
 {
-	public class CopyDocumentAsComObjectToClipboard : AbstractGraph3DControllerCommand
-	{
-		public override void Run(Graph3DController ctrl)
-		{
-			var doc = ctrl.Doc;
+  public class CopyDocumentAsComObjectToClipboard : AbstractGraph3DControllerCommand
+  {
+    public override void Run(Graph3DController ctrl)
+    {
+      var doc = ctrl.Doc;
 
-			var comManager = (Com.ComManager)Current.ComManager;
+      var comManager = (Com.ComManager)Current.ComManager;
 
-			var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
+      var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
 
-			if (null != dataObject)
-				System.Windows.Clipboard.SetDataObject(dataObject);
-		}
-	}
+      if (null != dataObject)
+        System.Windows.Clipboard.SetDataObject(dataObject);
+    }
+  }
 }

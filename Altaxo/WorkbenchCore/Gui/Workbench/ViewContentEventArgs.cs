@@ -21,23 +21,23 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Workbench
 {
-	public class ViewContentEventArgs : EventArgs
-	{
-		private IViewContent content;
+  public class ViewContentEventArgs : EventArgs
+  {
+    private IViewContent content;
 
-		public IViewContent Content
-		{
-			get
-			{
-				return content;
-			}
-		}
+    public IViewContent Content
+    {
+      get
+      {
+        return content;
+      }
+    }
 
-		public ViewContentEventArgs(IViewContent content)
-		{
-			if (content == null)
-				throw new ArgumentNullException("content");
-			this.content = content;
-		}
-	}
+    public ViewContentEventArgs(IViewContent content)
+    {
+      if (content == null)
+        throw new ArgumentNullException("content");
+      this.content = content;
+    }
+  }
 }

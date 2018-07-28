@@ -22,67 +22,67 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// A wrap panel that can restricted either in width or in height (or in both directions).
-	/// </summary>
-	/// <example>
-	/// To restrict the width of the wrap panel:
-	/// <code>
-	/// &lt;RestrictDesiredSizeWrapPanel RestrictWidth="true" .....
-	/// </code>
-	/// To restrict the height of the wrap panel:
-	/// <code>
-	/// &lt;RestrictDesiredSizeWrapPanel RestrictHeight="true" .....
-	/// </code>
-	/// </example>
-	public class RestrictDesiredSizeWrapPanel : WrapPanel
-	{
-		public static readonly DependencyProperty RestrictWidthProperty =
-				DependencyProperty.Register("RestrictWidth", typeof(bool), typeof(RestrictDesiredSizeWrapPanel),
-																																new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
+  /// <summary>
+  /// A wrap panel that can restricted either in width or in height (or in both directions).
+  /// </summary>
+  /// <example>
+  /// To restrict the width of the wrap panel:
+  /// <code>
+  /// &lt;RestrictDesiredSizeWrapPanel RestrictWidth="true" .....
+  /// </code>
+  /// To restrict the height of the wrap panel:
+  /// <code>
+  /// &lt;RestrictDesiredSizeWrapPanel RestrictHeight="true" .....
+  /// </code>
+  /// </example>
+  public class RestrictDesiredSizeWrapPanel : WrapPanel
+  {
+    public static readonly DependencyProperty RestrictWidthProperty =
+        DependencyProperty.Register("RestrictWidth", typeof(bool), typeof(RestrictDesiredSizeWrapPanel),
+                                                                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
 
-		public bool RestrictWidth
-		{
-			get { return (bool)GetValue(RestrictWidthProperty); }
-			set { SetValue(RestrictWidthProperty, value); }
-		}
+    public bool RestrictWidth
+    {
+      get { return (bool)GetValue(RestrictWidthProperty); }
+      set { SetValue(RestrictWidthProperty, value); }
+    }
 
-		public static readonly DependencyProperty RestrictHeightProperty =
-				DependencyProperty.Register("RestrictHeight", typeof(bool), typeof(RestrictDesiredSizeWrapPanel),
-																																new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
+    public static readonly DependencyProperty RestrictHeightProperty =
+        DependencyProperty.Register("RestrictHeight", typeof(bool), typeof(RestrictDesiredSizeWrapPanel),
+                                                                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
 
-		public bool RestrictHeight
-		{
-			get { return (bool)GetValue(RestrictHeightProperty); }
-			set { SetValue(RestrictHeightProperty, value); }
-		}
+    public bool RestrictHeight
+    {
+      get { return (bool)GetValue(RestrictHeightProperty); }
+      set { SetValue(RestrictHeightProperty, value); }
+    }
 
-		private Size _lastArrangeSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
-		private Size _lastMeasureSize = new Size(double.NaN, double.NaN);
+    private Size _lastArrangeSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
+    private Size _lastMeasureSize = new Size(double.NaN, double.NaN);
 
-		protected override Size MeasureOverride(Size constraint)
-		{
-			if (RestrictWidth && RestrictHeight)
-				return new Size(0, 0);
+    protected override Size MeasureOverride(Size constraint)
+    {
+      if (RestrictWidth && RestrictHeight)
+        return new Size(0, 0);
 
-			if (RestrictWidth && constraint.Width > _lastArrangeSize.Width)
-				constraint.Width = _lastArrangeSize.Width;
-			if (RestrictHeight && constraint.Height > _lastArrangeSize.Height)
-				constraint.Height = _lastArrangeSize.Height;
-			_lastMeasureSize = constraint;
-			Size baseSize = base.MeasureOverride(constraint);
-			return new Size(RestrictWidth ? 0 : baseSize.Width, RestrictHeight ? 0 : baseSize.Height);
-		}
+      if (RestrictWidth && constraint.Width > _lastArrangeSize.Width)
+        constraint.Width = _lastArrangeSize.Width;
+      if (RestrictHeight && constraint.Height > _lastArrangeSize.Height)
+        constraint.Height = _lastArrangeSize.Height;
+      _lastMeasureSize = constraint;
+      Size baseSize = base.MeasureOverride(constraint);
+      return new Size(RestrictWidth ? 0 : baseSize.Width, RestrictHeight ? 0 : baseSize.Height);
+    }
 
-		protected override Size ArrangeOverride(Size arrangeSize)
-		{
-			if (_lastMeasureSize != arrangeSize)
-			{
-				_lastMeasureSize = arrangeSize;
-				base.MeasureOverride(arrangeSize);
-			}
-			_lastArrangeSize = arrangeSize;
-			return base.ArrangeOverride(arrangeSize);
-		}
-	}
+    protected override Size ArrangeOverride(Size arrangeSize)
+    {
+      if (_lastMeasureSize != arrangeSize)
+      {
+        _lastMeasureSize = arrangeSize;
+        base.MeasureOverride(arrangeSize);
+      }
+      _lastArrangeSize = arrangeSize;
+      return base.ArrangeOverride(arrangeSize);
+    }
+  }
 }

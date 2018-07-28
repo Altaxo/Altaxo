@@ -27,16 +27,16 @@ using System.Threading;
 
 namespace Altaxo.Main.Services
 {
-	public interface IExternalDrivenBackgroundMonitor : IProgressReporter, IProgressMonitor
-	{
-		/// <summary>
-		/// Sets the <see cref="IProgressReporter.ShouldReportNow"/> flag to <c>True</c> to indicate that the worker thread should report its progress.
-		/// </summary>
-		void SetShouldReportNow();
+  public interface IExternalDrivenBackgroundMonitor : IProgressReporter, IProgressMonitor
+  {
+    /// <summary>
+    /// Sets the <see cref="IProgressReporter.ShouldReportNow"/> flag to <c>True</c> to indicate that the worker thread should report its progress.
+    /// </summary>
+    void SetShouldReportNow();
 
-		/// <summary>
-		/// Sets the <see cref="IProgressReporter.CancellationPending"/> flag to <c>True</c> to indicate that the worker thread should cancel its activity.
-		/// </summary>
-		void SetCancellationPending();
-	}
+    /// <summary>
+    /// Sets the <see cref="IProgressReporter.CancellationPending"/> flag to <c>True</c> to indicate that the worker thread should cancel its activity.
+    /// </summary>
+    void SetCancellationPending();
+  }
 }

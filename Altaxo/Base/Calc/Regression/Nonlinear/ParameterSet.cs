@@ -27,86 +27,86 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-	/// <summary>
-	/// Holds a bunch of <see cref="ParameterSetElement"/>, i.e. a collection of fit parameters together with their values.
-	/// </summary>
-	public class ParameterSet : System.Collections.CollectionBase, ICloneable, IEnumerable<ParameterSetElement>
-	{
-		/// <summary>
-		/// Event is fired if the main initialization is finished. This event can be fired
-		/// multiple times (every time the set has changed basically.
-		/// </summary>
-		public event EventHandler InitializationFinished;
+  /// <summary>
+  /// Holds a bunch of <see cref="ParameterSetElement"/>, i.e. a collection of fit parameters together with their values.
+  /// </summary>
+  public class ParameterSet : System.Collections.CollectionBase, ICloneable, IEnumerable<ParameterSetElement>
+  {
+    /// <summary>
+    /// Event is fired if the main initialization is finished. This event can be fired
+    /// multiple times (every time the set has changed basically.
+    /// </summary>
+    public event EventHandler InitializationFinished;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSet), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				ParameterSet s = (ParameterSet)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSet), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ParameterSet s = (ParameterSet)obj;
 
-				info.CreateArray("Parameters", s.Count);
-				for (int i = 0; i < s.Count; ++i)
-					info.AddValue("e", s[i]);
-				info.CommitArray();
-			}
+        info.CreateArray("Parameters", s.Count);
+        for (int i = 0; i < s.Count; ++i)
+          info.AddValue("e", s[i]);
+        info.CommitArray();
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ParameterSet s = o != null ? (ParameterSet)o : new ParameterSet();
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ParameterSet s = o != null ? (ParameterSet)o : new ParameterSet();
 
-				int arraycount = info.OpenArray();
-				for (int i = 0; i < arraycount; ++i)
-					s.Add((ParameterSetElement)info.GetValue("e", s));
-				info.CloseArray(arraycount);
+        int arraycount = info.OpenArray();
+        for (int i = 0; i < arraycount; ++i)
+          s.Add((ParameterSetElement)info.GetValue("e", s));
+        info.CloseArray(arraycount);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public ParameterSet()
-		{
-		}
+    public ParameterSet()
+    {
+    }
 
-		public void OnInitializationFinished()
-		{
-			InitializationFinished?.Invoke(this, EventArgs.Empty);
-		}
+    public void OnInitializationFinished()
+    {
+      InitializationFinished?.Invoke(this, EventArgs.Empty);
+    }
 
-		public ParameterSetElement this[int i]
-		{
-			get
-			{
-				return (ParameterSetElement)this.InnerList[i];
-			}
-		}
+    public ParameterSetElement this[int i]
+    {
+      get
+      {
+        return (ParameterSetElement)this.InnerList[i];
+      }
+    }
 
-		public void Add(ParameterSetElement ele)
-		{
-			this.InnerList.Add(ele);
-		}
+    public void Add(ParameterSetElement ele)
+    {
+      this.InnerList.Add(ele);
+    }
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public object Clone()
-		{
-			ParameterSet result = new ParameterSet();
-			for (int i = 0; i < Count; ++i)
-				result.Add((ParameterSetElement)this[i].Clone());
+    public object Clone()
+    {
+      ParameterSet result = new ParameterSet();
+      for (int i = 0; i < Count; ++i)
+        result.Add((ParameterSetElement)this[i].Clone());
 
-			return result;
-		}
+      return result;
+    }
 
-		IEnumerator<ParameterSetElement> IEnumerable<ParameterSetElement>.GetEnumerator()
-		{
-			foreach (var e in InnerList)
-				yield return (ParameterSetElement)e;
-		}
+    IEnumerator<ParameterSetElement> IEnumerable<ParameterSetElement>.GetEnumerator()
+    {
+      foreach (var e in InnerList)
+        yield return (ParameterSetElement)e;
+    }
 
-		#endregion ICloneable Members
-	}
+    #endregion ICloneable Members
+  }
 }

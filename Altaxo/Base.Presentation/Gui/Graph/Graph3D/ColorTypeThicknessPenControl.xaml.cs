@@ -33,50 +33,50 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-	/// <summary>
-	/// Interaction logic for ColorTypeThicknessPenControl.xaml
-	/// </summary>
-	public partial class ColorTypeThicknessPenControl : UserControl, IColorTypeThicknessPenView
-	{
-		private PenControlsGlue _glue;
+  /// <summary>
+  /// Interaction logic for ColorTypeThicknessPenControl.xaml
+  /// </summary>
+  public partial class ColorTypeThicknessPenControl : UserControl, IColorTypeThicknessPenView
+  {
+    private PenControlsGlue _glue;
 
-		public ColorTypeThicknessPenControl()
-		{
-			InitializeComponent();
+    public ColorTypeThicknessPenControl()
+    {
+      InitializeComponent();
 
-			_glue = new PenControlsGlue(false);
-			_glue.CbBrush = _cbColor;
-			_glue.CbDashPattern = _cbLineType;
-			_glue.CbLineThickness1 = _cbThickness;
-		}
+      _glue = new PenControlsGlue(false);
+      _glue.CbBrush = _cbColor;
+      _glue.CbDashPattern = _cbLineType;
+      _glue.CbLineThickness1 = _cbThickness;
+    }
 
-		#region IColorTypeThicknessPenView
+    #region IColorTypeThicknessPenView
 
-		private IColorTypeThicknessPenViewEventSink _controller;
+    private IColorTypeThicknessPenViewEventSink _controller;
 
-		public IColorTypeThicknessPenViewEventSink Controller
-		{
-			get { return _controller; }
-			set { _controller = value; }
-		}
+    public IColorTypeThicknessPenViewEventSink Controller
+    {
+      get { return _controller; }
+      set { _controller = value; }
+    }
 
-		public PenX3D DocPen
-		{
-			get
-			{
-				return _glue.Pen;
-			}
-			set
-			{
-				_glue.Pen = value;
-			}
-		}
+    public PenX3D DocPen
+    {
+      get
+      {
+        return _glue.Pen;
+      }
+      set
+      {
+        _glue.Pen = value;
+      }
+    }
 
-		public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
-		{
-			_glue.CbBrush.ShowPlotColorsOnly = restrictChoiceToThisCollection;
-		}
+    public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
+    {
+      _glue.CbBrush.ShowPlotColorsOnly = restrictChoiceToThisCollection;
+    }
 
-		#endregion IColorTypeThicknessPenView
-	}
+    #endregion IColorTypeThicknessPenView
+  }
 }

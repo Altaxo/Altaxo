@@ -31,50 +31,50 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
-	/// <summary>
-	/// Interaction logic for PlotGroupCollectionControl.xaml
-	/// </summary>
-	public partial class PlotGroupCollectionControl : UserControl, IPlotGroupCollectionView, Altaxo.Gui.Graph.Graph3D.Plot.Groups.IPlotGroupCollectionView
-	{
-		public PlotGroupCollectionControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for PlotGroupCollectionControl.xaml
+  /// </summary>
+  public partial class PlotGroupCollectionControl : UserControl, IPlotGroupCollectionView, Altaxo.Gui.Graph.Graph3D.Plot.Groups.IPlotGroupCollectionView
+  {
+    public PlotGroupCollectionControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhGotoAdvanced(object sender, RoutedEventArgs e)
-		{
-			if (null != GotoAdvanced)
-				GotoAdvanced();
-		}
+    private void EhGotoAdvanced(object sender, RoutedEventArgs e)
+    {
+      if (null != GotoAdvanced)
+        GotoAdvanced();
+    }
 
-		private void EhGotoSimple(object sender, RoutedEventArgs e)
-		{
-			if (null != GotoSimple)
-				GotoSimple();
-		}
+    private void EhGotoSimple(object sender, RoutedEventArgs e)
+    {
+      if (null != GotoSimple)
+        GotoSimple();
+    }
 
-		#region IPlotGroupCollectionView
+    #region IPlotGroupCollectionView
 
-		public event Action GotoAdvanced;
+    public event Action GotoAdvanced;
 
-		public event Action GotoSimple;
+    public event Action GotoSimple;
 
-		public void SetSimpleView(object viewObject)
-		{
-			_controlHost.Child = null;
-			_controlHost.Child = (UIElement)viewObject;
-			_btGotoSimple.Visibility = System.Windows.Visibility.Collapsed;
-			_btGotoAdvanced.Visibility = System.Windows.Visibility.Visible;
-		}
+    public void SetSimpleView(object viewObject)
+    {
+      _controlHost.Child = null;
+      _controlHost.Child = (UIElement)viewObject;
+      _btGotoSimple.Visibility = System.Windows.Visibility.Collapsed;
+      _btGotoAdvanced.Visibility = System.Windows.Visibility.Visible;
+    }
 
-		public void SetAdvancedView(object viewObject)
-		{
-			_controlHost.Child = null;
-			_controlHost.Child = (UIElement)viewObject;
-			_btGotoAdvanced.Visibility = System.Windows.Visibility.Collapsed;
-			_btGotoSimple.Visibility = System.Windows.Visibility.Visible;
-		}
+    public void SetAdvancedView(object viewObject)
+    {
+      _controlHost.Child = null;
+      _controlHost.Child = (UIElement)viewObject;
+      _btGotoAdvanced.Visibility = System.Windows.Visibility.Collapsed;
+      _btGotoSimple.Visibility = System.Windows.Visibility.Visible;
+    }
 
-		#endregion IPlotGroupCollectionView
-	}
+    #endregion IPlotGroupCollectionView
+  }
 }

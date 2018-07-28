@@ -29,45 +29,45 @@ using System.Text;
 
 namespace Altaxo.Units.Angle
 {
-	[UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
-	public class Pi : UnitBase, IUnit
-	{
-		private static readonly Pi _instance = new Pi();
+  [UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
+  public class Pi : UnitBase, IUnit
+  {
+    private static readonly Pi _instance = new Pi();
 
-		public static Pi Instance { get { return _instance; } }
+    public static Pi Instance { get { return _instance; } }
 
-		protected Pi()
-		{
-		}
+    protected Pi()
+    {
+    }
 
-		public string Name
-		{
-			get { return "Pi"; }
-		}
+    public string Name
+    {
+      get { return "Pi"; }
+    }
 
-		public string ShortCut
-		{
-			get { return "π"; }
-		}
+    public string ShortCut
+    {
+      get { return "π"; }
+    }
 
-		public double ToSIUnit(double x)
-		{
-			return x * Math.PI;
-		}
+    public double ToSIUnit(double x)
+    {
+      return x * Math.PI;
+    }
 
-		public double FromSIUnit(double x)
-		{
-			return x / Math.PI;
-		}
+    public double FromSIUnit(double x)
+    {
+      return x / Math.PI;
+    }
 
-		public ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithNonePrefixOnly; }
-		}
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
 
-		public SIUnit SIUnit
-		{
-			get { return Radian.Instance; }
-		}
-	}
+    public SIUnit SIUnit
+    {
+      get { return Radian.Instance; }
+    }
+  }
 }

@@ -34,56 +34,56 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
-	/// <summary>
-	/// XYAxisStyle is responsible for painting the axes on rectangular two dimensional layers.
-	/// </summary>
-	public class AxisLineStyle
-		:
-		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		IRoutedPropertyReceiver,
-		Main.ICopyFrom
-	{
-		/// <summary>Pen used for painting of the axis.</summary>
-		protected PenX _axisPen;
+  /// <summary>
+  /// XYAxisStyle is responsible for painting the axes on rectangular two dimensional layers.
+  /// </summary>
+  public class AxisLineStyle
+    :
+    Main.SuspendableDocumentNodeWithSetOfEventArgs,
+    IRoutedPropertyReceiver,
+    Main.ICopyFrom
+  {
+    /// <summary>Pen used for painting of the axis.</summary>
+    protected PenX _axisPen;
 
-		/// <summary>Pen used for painting of the major ticks.</summary>
-		protected PenX _majorTickPen;
+    /// <summary>Pen used for painting of the major ticks.</summary>
+    protected PenX _majorTickPen;
 
-		/// <summary>Pen used for painting of the minor ticks.</summary>
-		protected PenX _minorTickPen;
+    /// <summary>Pen used for painting of the minor ticks.</summary>
+    protected PenX _minorTickPen;
 
-		/// <summary>Length of the major ticks in points (1/72 inch).</summary>
-		protected double _majorTickLength;
+    /// <summary>Length of the major ticks in points (1/72 inch).</summary>
+    protected double _majorTickLength;
 
-		/// <summary>Length of the minor ticks in points (1/72 inch).</summary>
-		protected double _minorTickLength;
+    /// <summary>Length of the minor ticks in points (1/72 inch).</summary>
+    protected double _minorTickLength;
 
-		/// <summary>True if major ticks should be painted outside of the layer.</summary>
-		protected bool _showFirstUpMajorTicks;
+    /// <summary>True if major ticks should be painted outside of the layer.</summary>
+    protected bool _showFirstUpMajorTicks;
 
-		/// <summary>True if major ticks should be painted inside of the layer.</summary>
-		protected bool _showFirstDownMajorTicks;
+    /// <summary>True if major ticks should be painted inside of the layer.</summary>
+    protected bool _showFirstDownMajorTicks;
 
-		/// <summary>True if minor ticks should be painted outside of the layer.</summary>
-		protected bool _showFirstUpMinorTicks;
+    /// <summary>True if minor ticks should be painted outside of the layer.</summary>
+    protected bool _showFirstUpMinorTicks;
 
-		/// <summary>True if major ticks should be painted inside of the layer.</summary>
-		protected bool _showFirstDownMinorTicks;
+    /// <summary>True if major ticks should be painted inside of the layer.</summary>
+    protected bool _showFirstDownMinorTicks;
 
-		/// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
-		protected RADouble _axisPosition; // if relative, then relative to layer size, if absolute then in points
+    /// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
+    protected RADouble _axisPosition; // if relative, then relative to layer size, if absolute then in points
 
-		protected CSAxisInformation _cachedAxisStyleInfo;
+    protected CSAxisInformation _cachedAxisStyleInfo;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisStyle", 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisStyle", 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
+        /*
 				XYAxisStyle s = (XYAxisStyle)obj;
 				info.AddValue("Edge",s.m_Edge);
 				info.AddValue("AxisPen",s.m_AxisPen);
@@ -97,580 +97,581 @@ namespace Altaxo.Graph.Gdi.Axis
 				info.AddValue("MinorInner",s.m_bInnerMinorTicks);
 				info.AddValue("AxisPosition",s.m_AxisPosition);
 				*/
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle(info);
-
-				Edge edge = (Edge)info.GetValue("Edge", s);
-				s._axisPen = (PenX)info.GetValue("AxisPen", s);
-				s._majorTickPen = (PenX)info.GetValue("MajorPen", s);
-				s._minorTickPen = (PenX)info.GetValue("MinorPen", s);
-
-				s._majorTickLength = info.GetDouble("MajorLength");
-				s._minorTickLength = info.GetDouble("MinorLength");
-				bool bOuterMajorTicks = (bool)info.GetBoolean("MajorOuter");
-				bool bInnerMajorTicks = (bool)info.GetBoolean("MajorInner");
-				bool bOuterMinorTicks = (bool)info.GetBoolean("MinorOuter");
-				bool bInnerMinorTicks = (bool)info.GetBoolean("MinorInner");
-				s._axisPosition = (RADouble)info.GetValue("AxisPosition", s);
-
-				if (edge.TypeOfEdge == EdgeType.Top || edge.TypeOfEdge == EdgeType.Right)
-				{
-					s._showFirstUpMajorTicks = bOuterMajorTicks;
-					s._showFirstDownMajorTicks = bInnerMajorTicks;
-					s._showFirstUpMinorTicks = bOuterMinorTicks;
-					s._showFirstDownMinorTicks = bInnerMinorTicks;
-				}
-				else
-				{
-					s._showFirstUpMajorTicks = bInnerMajorTicks;
-					s._showFirstDownMajorTicks = bOuterMajorTicks;
-					s._showFirstUpMinorTicks = bInnerMinorTicks;
-					s._showFirstDownMinorTicks = bOuterMinorTicks;
-				}
-
-				return s;
-			}
-		}
-
-		// 2006-09-08 Renaming XYAxisStyle in G2DAxisLineStyle
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLineStyle), 1)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				AxisLineStyle s = (AxisLineStyle)obj;
-				info.AddValue("AxisPen", s._axisPen);
-				info.AddValue("MajorPen", s._majorTickPen);
-				info.AddValue("MinorPen", s._minorTickPen);
-				info.AddValue("MajorLength", s._majorTickLength);
-				info.AddValue("MinorLength", s._minorTickLength);
-				info.AddValue("AxisPosition", s._axisPosition);
-				info.AddValue("Major1Up", s._showFirstUpMajorTicks);
-				info.AddValue("Major1Dw", s._showFirstDownMajorTicks);
-				info.AddValue("Minor1Up", s._showFirstUpMinorTicks);
-				info.AddValue("Minor1Dw", s._showFirstDownMinorTicks);
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle(info);
-
-				s._axisPen = (PenX)info.GetValue("AxisPen", s);
-				s._majorTickPen = (PenX)info.GetValue("MajorPen", s);
-				s._minorTickPen = (PenX)info.GetValue("MinorPen", s);
-
-				s._majorTickLength = info.GetDouble("MajorLength");
-				s._minorTickLength = info.GetDouble("MinorLength");
-				s._axisPosition = (RADouble)info.GetValue("AxisPosition", s);
-				s._showFirstUpMajorTicks = (bool)info.GetBoolean("Major1Up");
-				s._showFirstDownMajorTicks = (bool)info.GetBoolean("Major1Dw");
-				s._showFirstUpMinorTicks = (bool)info.GetBoolean("Minor1Up");
-				s._showFirstDownMinorTicks = (bool)info.GetBoolean("Minor1Dw");
-
-				return s;
-			}
-		}
-
-		#endregion Serialization
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AxisLineStyle"/> class for deserialization purposes only.
-		/// </summary>
-		/// <param name="info">The deserialization information.</param>
-		protected AxisLineStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-		}
-
-		/// <summary>
-		/// Creates a default axis style.
-		/// </summary>
-		public AxisLineStyle(Main.Properties.IReadOnlyPropertyBag context)
-		{
-			double penWidth = GraphDocument.GetDefaultPenWidth(context);
-			double majorTickLength = GraphDocument.GetDefaultMajorTickLength(context);
-			var color = GraphDocument.GetDefaultForeColor(context);
-
-			_axisPen = new PenX(color, penWidth) { ParentObject = this };
-			_majorTickPen = new PenX(color, penWidth) { ParentObject = this };
-			_minorTickPen = new PenX(color, penWidth) { ParentObject = this };
-			_majorTickLength = majorTickLength;
-			_minorTickLength = majorTickLength / 2;
-			_showFirstUpMajorTicks = true; // true if right major ticks should be visible
-			_showFirstDownMajorTicks = true; // true if left major ticks should be visible
-			_showFirstUpMinorTicks = true; // true if right minor ticks should be visible
-			_showFirstDownMinorTicks = true; // true if left minor ticks should be visible
-		}
-
-		/// <summary>
-		/// Copy constructor.
-		/// </summary>
-		/// <param name="from">The AxisStyle to copy from</param>
-		public AxisLineStyle(AxisLineStyle from)
-		{
-			CopyFrom(from);
-		}
-
-		/// <summary>
-		/// Copy operation.
-		/// </summary>
-		/// <param name="obj">The AxisStyle to copy from</param>
-		public bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			var from = obj as AxisLineStyle;
-			if (null == from)
-				return false;
-
-			using (var suspendToken = SuspendGetToken())
-			{
-				ChildCopyToMember(ref _axisPen, from._axisPen);
-				this._axisPosition = from._axisPosition;
-				this._showFirstDownMajorTicks = from._showFirstDownMajorTicks;
-				this._showFirstDownMinorTicks = from._showFirstDownMinorTicks;
-				this._showFirstUpMajorTicks = from._showFirstUpMajorTicks;
-				this._showFirstUpMinorTicks = from._showFirstUpMinorTicks;
-				this._majorTickLength = from._majorTickLength;
-				ChildCopyToMember(ref _majorTickPen, from._majorTickPen);
-				this._minorTickLength = from._minorTickLength;
-				ChildCopyToMember(ref _minorTickPen, from._minorTickPen);
-
-				this._cachedAxisStyleInfo = from._cachedAxisStyleInfo;
-
-				EhSelfChanged(EventArgs.Empty);
-
-				suspendToken.Resume();
-			}
-			return true;
-		}
-
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			if (null != _axisPen)
-				yield return new Main.DocumentNodeAndName(_axisPen, "AxisPen");
-
-			if (null != _majorTickPen)
-				yield return new Main.DocumentNodeAndName(_majorTickPen, "MajorTickPen");
-
-			if (null != _minorTickPen)
-				yield return new Main.DocumentNodeAndName(_minorTickPen, "MinorTickPen");
-		}
-
-		/// <summary>
-		/// Creates a clone of this object.
-		/// </summary>
-		/// <returns>The cloned object.</returns>
-		public object Clone()
-		{
-			return new AxisLineStyle(this);
-		}
-
-		public CSLineID AxisStyleID
-		{
-			get
-			{
-				return _cachedAxisStyleInfo == null ? null : _cachedAxisStyleInfo.Identifier;
-			}
-		}
-
-		public CSAxisInformation CachedAxisInformation
-		{
-			get
-			{
-				return _cachedAxisStyleInfo;
-			}
-			set
-			{
-				_cachedAxisStyleInfo = value;
-			}
-		}
-
-		public virtual IHitTestObject HitTest(IPlotArea layer, PointD2D pt, bool withTicks)
-		{
-			GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
-			return selectionPath.IsVisible((PointF)pt) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
-		}
-
-		public virtual IHitTestObject HitTest(IPlotArea layer, HitTestRectangularData hitData, bool withTicks)
-		{
-			GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
-			return hitData.IsCovering(selectionPath.PathPoints) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
-		}
-
-		/// <summary>
-		/// Returns the used space from the middle line of the axis
-		/// to the last outer object (either the outer major thicks or half
-		/// of the axis thickness)
-		/// </summary>
-		/// <param name="side">The side of the axis at which the outer distance is returned.</param>
-		public double GetOuterDistance(CSAxisSide side)
-		{
-			double retVal = _axisPen.Width / 2; // half of the axis thickness
-			if (CSAxisSide.FirstUp == side)
-			{
-				retVal = System.Math.Max(retVal, _showFirstUpMajorTicks ? _majorTickLength : 0);
-				retVal = System.Math.Max(retVal, _showFirstUpMinorTicks ? _minorTickLength : 0);
-			}
-			else if (CSAxisSide.FirstDown == side)
-			{
-				retVal = System.Math.Max(retVal, _showFirstDownMajorTicks ? _majorTickLength : 0);
-				retVal = System.Math.Max(retVal, _showFirstDownMinorTicks ? _minorTickLength : 0);
-			}
-			else
-			{
-				retVal = 0;
-			}
-			return retVal;
-		}
-
-		/// <summary>
-		/// GetOffset returns the distance of the axis to the layer edge in points
-		/// in most cases, the axis position is exactly onto the layer edge and offset is zero,
-		/// if the axis is outside the layer, offset is a positive value,
-		/// if the axis is shifted inside the layer, offset is negative
-		/// </summary>
-		public float GetOffset(SizeF layerSize)
-		{
-			throw new NotImplementedException("Old stuff");
-			//return (float)m_AxisPosition.GetValueRelativeTo(m_Edge.GetOppositeEdgeLength(layerSize));
-		}
-
-		public PenX AxisPen
-		{
-			get { return _axisPen; }
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException("value");
-
-				if (ChildSetMember(ref _axisPen, value))
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		public PenX MajorPen
-		{
-			get { return _majorTickPen; }
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException("value");
-
-				if (ChildSetMember(ref _majorTickPen, value))
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		public PenX MinorPen
-		{
-			get { return _minorTickPen; }
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException("value");
-
-				if (ChildSetMember(ref _minorTickPen, value))
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>Get/sets the major tick length.</summary>
-		/// <value>The major tick length in point units (1/72 inch).</value>
-		public double MajorTickLength
-		{
-			get { return this._majorTickLength; }
-			set
-			{
-				if (value != _majorTickLength)
-				{
-					_majorTickLength = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>Get/sets the minor tick length.</summary>
-		/// <value>The minor tick length in point units (1/72 inch).</value>
-		public double MinorTickLength
-		{
-			get { return this._minorTickLength; }
-			set
-			{
-				if (value != _minorTickLength)
-				{
-					_minorTickLength = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>Get/sets if outer major ticks are drawn.</summary>
-		/// <value>True if outer major ticks are drawn.</value>
-		public bool FirstUpMajorTicks
-		{
-			get { return this._showFirstUpMajorTicks; }
-			set
-			{
-				if (value != _showFirstUpMajorTicks)
-				{
-					this._showFirstUpMajorTicks = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>Get/sets if inner major ticks are drawn.</summary>
-		/// <value>True if inner major ticks are drawn.</value>
-		public bool FirstDownMajorTicks
-		{
-			get { return this._showFirstDownMajorTicks; }
-			set
-			{
-				if (value != _showFirstDownMajorTicks)
-				{
-					this._showFirstDownMajorTicks = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>Get/sets if outer minor ticks are drawn.</summary>
-		/// <value>True if outer minor ticks are drawn.</value>
-		public bool FirstUpMinorTicks
-		{
-			get { return this._showFirstUpMinorTicks; }
-			set
-			{
-				if (value != _showFirstUpMinorTicks)
-				{
-					this._showFirstUpMinorTicks = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>Get/sets if inner minor ticks are drawn.</summary>
-		/// <value>True if inner minor ticks are drawn.</value>
-		public bool FirstDownMinorTicks
-		{
-			get { return this._showFirstDownMinorTicks; }
-			set
-			{
-				if (value != _showFirstDownMinorTicks)
-				{
-					this._showFirstDownMinorTicks = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets/sets the axis thickness.
-		/// </summary>
-		/// <value>Returns the thickness of the axis pen. On setting this value, it sets
-		/// the thickness of the axis pen, the tickness of the major ticks pen, and the
-		/// thickness of the minor ticks pen together.</value>
-		public double Thickness
-		{
-			get { return this._axisPen.Width; }
-			set
-			{
-				this._axisPen.Width = value;
-				this._majorTickPen.Width = value;
-				this._minorTickPen.Width = value;
-				EhSelfChanged(EventArgs.Empty);
-			}
-		}
-
-		/// <summary>
-		/// Get/sets the axis color.
-		/// </summary>
-		/// <value>Returns the color of the axis pen. On setting this value, it sets
-		/// the color of the axis pen along with the color of the major ticks pen and the
-		/// color of the minor ticks pen together.</value>
-		public NamedColor Color
-		{
-			get { return this._axisPen.Color; }
-			set
-			{
-				this._axisPen.Color = value;
-				this._majorTickPen.Color = value;
-				this._minorTickPen.Color = value;
-				EhSelfChanged(EventArgs.Empty);
-			}
-		}
-
-		/// <summary>
-		/// Get/set the axis shift position value.
-		/// </summary>
-		/// <value>Zero if the axis is not shifted (normal case). Else the shift value, either as
-		/// absolute value in point units (1/72 inch), or relative to the corresponding layer dimension (i.e layer width for bottom axis).</value>
-		public RADouble Position
-		{
-			get { return this._axisPosition; }
-			set
-			{
-				if (value != _axisPosition)
-				{
-					_axisPosition = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gives the path which encloses the axis line only.
-		/// </summary>
-		/// <param name="layer"></param>
-		/// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
-		/// <returns>The graphics path of the axis line.</returns>
-		public virtual GraphicsPath GetObjectPath(IPlotArea layer, bool withTicks)
-		{
-			return GetPath(layer, withTicks, 0);
-		}
-
-		/// <summary>
-		/// Gives the path where the hit test is successfull.
-		/// </summary>
-		/// <param name="layer"></param>
-		/// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
-		/// <returns>The graphics path of the selection rectangle.</returns>
-		public virtual GraphicsPath GetSelectionPath(IPlotArea layer, bool withTicks)
-		{
-			return GetPath(layer, withTicks, 3);
-		}
-
-		/// <summary>
-		/// Gives the path where the hit test is successfull.
-		/// </summary>
-		/// <param name="layer"></param>
-		/// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
-		/// <param name="inflateby">Value in points, that the calculated path is inflated.</param>
-		/// <returns>The graphics path of the selection rectangle.</returns>
-		protected GraphicsPath GetPath(IPlotArea layer, bool withTicks, double inflateby)
-		{
-			Logical3D r0 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisOrg);
-			Logical3D r1 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisEnd);
-			GraphicsPath gp = new GraphicsPath();
-			layer.CoordinateSystem.GetIsoline(gp, r0, r1);
-
-			if (withTicks)
-			{
-				if (this._showFirstDownMajorTicks || this._showFirstUpMajorTicks)
-					inflateby = Math.Max(inflateby, this._majorTickLength);
-				if (this._showFirstDownMinorTicks || this._showFirstUpMinorTicks)
-					inflateby = Math.Max(inflateby, this._minorTickLength);
-			}
-
-			Pen widenPen = new Pen(System.Drawing.Color.Black, (float)(2 * inflateby));
-
-			gp.Widen(widenPen);
-
-			return gp;
-		}
-
-		/// <summary>
-		/// Paint the axis in the Graphics context.
-		/// </summary>
-		/// <param name="g">The graphics context painting to.</param>
-		/// <param name="layer">The layer the axis belongs to.</param>
-		/// <param name="styleInfo">The axis information of the axis to paint.</param>
-		/// <param name="customTickSpacing">If not <c>null</c>, this parameter provides a custom tick spacing that is used instead of the default tick spacing of the scale.</param>
-		public void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
-		{
-			CSLineID styleID = styleInfo.Identifier;
-			_cachedAxisStyleInfo = styleInfo;
-			Scale axis = layer.Scales[styleID.ParallelAxisNumber];
-
-			TickSpacing ticking = null != customTickSpacing ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
-
-			Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
-			Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
-
-			layer.CoordinateSystem.DrawIsoline(g, _axisPen, r0, r1);
-
-			Logical3D outer;
-
-			// now the major ticks
-			PointD2D outVector;
-			double[] majorticks = ticking.GetMajorTicksNormal(axis);
-			for (int i = 0; i < majorticks.Length; i++)
-			{
-				double r = majorticks[i];
-
-				if (_showFirstUpMajorTicks)
-				{
-					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					var tickend = tickorg + outVector * _majorTickLength;
-					g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
-				}
-				if (_showFirstDownMajorTicks)
-				{
-					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					var tickend = tickorg + outVector * _majorTickLength;
-					g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
-				}
-			}
-			// now the major ticks
-			double[] minorticks = ticking.GetMinorTicksNormal(axis);
-			for (int i = 0; i < minorticks.Length; i++)
-			{
-				double r = minorticks[i];
-
-				if (_showFirstUpMinorTicks)
-				{
-					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					var tickend = tickorg + outVector * _minorTickLength;
-					g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
-				}
-				if (_showFirstDownMinorTicks)
-				{
-					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					var tickend = tickorg + outVector * _minorTickLength;
-					g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
-				}
-			}
-		}
-
-		protected virtual void OnPenChangedEventHandler(object sender, EventArgs e)
-		{
-			EhSelfChanged(EventArgs.Empty);
-		}
-
-		#region IRoutedPropertyReceiver Members
-
-		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
-		{
-			switch (propertyName)
-			{
-				case "StrokeWidth":
-					yield return (propertyName, _axisPen.Width, (value) => _axisPen.Width = (double)value);
-					yield return (propertyName, _majorTickPen.Width, (value) => _majorTickPen.Width = (double)value);
-					yield return (propertyName, _minorTickPen.Width, (value) => _minorTickPen.Width = (double)value);
-					break;
-
-				case "MajorTickLength":
-					yield return (propertyName, _majorTickLength, (value) => { MajorTickLength = (double)value; MinorTickLength = 0.5 * (double)value; });
-					break;
-			}
-
-			yield break;
-		}
-
-		#endregion IRoutedPropertyReceiver Members
-	}
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle(info);
+
+        Edge edge = (Edge)info.GetValue("Edge", s);
+        s._axisPen = (PenX)info.GetValue("AxisPen", s);
+        s._majorTickPen = (PenX)info.GetValue("MajorPen", s);
+        s._minorTickPen = (PenX)info.GetValue("MinorPen", s);
+
+        s._majorTickLength = info.GetDouble("MajorLength");
+        s._minorTickLength = info.GetDouble("MinorLength");
+        bool bOuterMajorTicks = (bool)info.GetBoolean("MajorOuter");
+        bool bInnerMajorTicks = (bool)info.GetBoolean("MajorInner");
+        bool bOuterMinorTicks = (bool)info.GetBoolean("MinorOuter");
+        bool bInnerMinorTicks = (bool)info.GetBoolean("MinorInner");
+        s._axisPosition = (RADouble)info.GetValue("AxisPosition", s);
+
+        if (edge.TypeOfEdge == EdgeType.Top || edge.TypeOfEdge == EdgeType.Right)
+        {
+          s._showFirstUpMajorTicks = bOuterMajorTicks;
+          s._showFirstDownMajorTicks = bInnerMajorTicks;
+          s._showFirstUpMinorTicks = bOuterMinorTicks;
+          s._showFirstDownMinorTicks = bInnerMinorTicks;
+        }
+        else
+        {
+          s._showFirstUpMajorTicks = bInnerMajorTicks;
+          s._showFirstDownMajorTicks = bOuterMajorTicks;
+          s._showFirstUpMinorTicks = bInnerMinorTicks;
+          s._showFirstDownMinorTicks = bOuterMinorTicks;
+        }
+
+        return s;
+      }
+    }
+
+    // 2006-09-08 Renaming XYAxisStyle in G2DAxisLineStyle
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLineStyle), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        AxisLineStyle s = (AxisLineStyle)obj;
+        info.AddValue("AxisPen", s._axisPen);
+        info.AddValue("MajorPen", s._majorTickPen);
+        info.AddValue("MinorPen", s._minorTickPen);
+        info.AddValue("MajorLength", s._majorTickLength);
+        info.AddValue("MinorLength", s._minorTickLength);
+        info.AddValue("AxisPosition", s._axisPosition);
+        info.AddValue("Major1Up", s._showFirstUpMajorTicks);
+        info.AddValue("Major1Dw", s._showFirstDownMajorTicks);
+        info.AddValue("Minor1Up", s._showFirstUpMinorTicks);
+        info.AddValue("Minor1Dw", s._showFirstDownMinorTicks);
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle(info);
+
+        s._axisPen = (PenX)info.GetValue("AxisPen", s);
+        s._majorTickPen = (PenX)info.GetValue("MajorPen", s);
+        s._minorTickPen = (PenX)info.GetValue("MinorPen", s);
+
+        s._majorTickLength = info.GetDouble("MajorLength");
+        s._minorTickLength = info.GetDouble("MinorLength");
+        s._axisPosition = (RADouble)info.GetValue("AxisPosition", s);
+        s._showFirstUpMajorTicks = (bool)info.GetBoolean("Major1Up");
+        s._showFirstDownMajorTicks = (bool)info.GetBoolean("Major1Dw");
+        s._showFirstUpMinorTicks = (bool)info.GetBoolean("Minor1Up");
+        s._showFirstDownMinorTicks = (bool)info.GetBoolean("Minor1Dw");
+
+        return s;
+      }
+    }
+
+    #endregion Serialization
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AxisLineStyle"/> class for deserialization purposes only.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    protected AxisLineStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+    }
+
+    /// <summary>
+    /// Creates a default axis style.
+    /// </summary>
+    public AxisLineStyle(Main.Properties.IReadOnlyPropertyBag context)
+    {
+      double penWidth = GraphDocument.GetDefaultPenWidth(context);
+      double majorTickLength = GraphDocument.GetDefaultMajorTickLength(context);
+      var color = GraphDocument.GetDefaultForeColor(context);
+
+      _axisPen = new PenX(color, penWidth) { ParentObject = this };
+      _majorTickPen = new PenX(color, penWidth) { ParentObject = this };
+      _minorTickPen = new PenX(color, penWidth) { ParentObject = this };
+      _majorTickLength = majorTickLength;
+      _minorTickLength = majorTickLength / 2;
+      _showFirstUpMajorTicks = true; // true if right major ticks should be visible
+      _showFirstDownMajorTicks = true; // true if left major ticks should be visible
+      _showFirstUpMinorTicks = true; // true if right minor ticks should be visible
+      _showFirstDownMinorTicks = true; // true if left minor ticks should be visible
+    }
+
+    /// <summary>
+    /// Copy constructor.
+    /// </summary>
+    /// <param name="from">The AxisStyle to copy from</param>
+    public AxisLineStyle(AxisLineStyle from)
+    {
+      CopyFrom(from);
+    }
+
+    /// <summary>
+    /// Copy operation.
+    /// </summary>
+    /// <param name="obj">The AxisStyle to copy from</param>
+    public bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
+
+      var from = obj as AxisLineStyle;
+      if (null == from)
+        return false;
+
+      using (var suspendToken = SuspendGetToken())
+      {
+        ChildCopyToMember(ref _axisPen, from._axisPen);
+        this._axisPosition = from._axisPosition;
+        this._showFirstDownMajorTicks = from._showFirstDownMajorTicks;
+        this._showFirstDownMinorTicks = from._showFirstDownMinorTicks;
+        this._showFirstUpMajorTicks = from._showFirstUpMajorTicks;
+        this._showFirstUpMinorTicks = from._showFirstUpMinorTicks;
+        this._majorTickLength = from._majorTickLength;
+        ChildCopyToMember(ref _majorTickPen, from._majorTickPen);
+        this._minorTickLength = from._minorTickLength;
+        ChildCopyToMember(ref _minorTickPen, from._minorTickPen);
+
+        this._cachedAxisStyleInfo = from._cachedAxisStyleInfo;
+
+        EhSelfChanged(EventArgs.Empty);
+
+        suspendToken.Resume();
+      }
+      return true;
+    }
+
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      if (null != _axisPen)
+        yield return new Main.DocumentNodeAndName(_axisPen, "AxisPen");
+
+      if (null != _majorTickPen)
+        yield return new Main.DocumentNodeAndName(_majorTickPen, "MajorTickPen");
+
+      if (null != _minorTickPen)
+        yield return new Main.DocumentNodeAndName(_minorTickPen, "MinorTickPen");
+    }
+
+    /// <summary>
+    /// Creates a clone of this object.
+    /// </summary>
+    /// <returns>The cloned object.</returns>
+    public object Clone()
+    {
+      return new AxisLineStyle(this);
+    }
+
+    public CSLineID AxisStyleID
+    {
+      get
+      {
+        return _cachedAxisStyleInfo == null ? null : _cachedAxisStyleInfo.Identifier;
+      }
+    }
+
+    public CSAxisInformation CachedAxisInformation
+    {
+      get
+      {
+        return _cachedAxisStyleInfo;
+      }
+      set
+      {
+        _cachedAxisStyleInfo = value;
+      }
+    }
+
+    public virtual IHitTestObject HitTest(IPlotArea layer, PointD2D pt, bool withTicks)
+    {
+      GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
+      return selectionPath.IsVisible((PointF)pt) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
+    }
+
+    public virtual IHitTestObject HitTest(IPlotArea layer, HitTestRectangularData hitData, bool withTicks)
+    {
+      GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
+      return hitData.IsCovering(selectionPath.PathPoints) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
+    }
+
+    /// <summary>
+    /// Returns the used space from the middle line of the axis
+    /// to the last outer object (either the outer major thicks or half
+    /// of the axis thickness)
+    /// </summary>
+    /// <param name="side">The side of the axis at which the outer distance is returned.</param>
+    public double GetOuterDistance(CSAxisSide side)
+    {
+      double retVal = _axisPen.Width / 2; // half of the axis thickness
+      if (CSAxisSide.FirstUp == side)
+      {
+        retVal = System.Math.Max(retVal, _showFirstUpMajorTicks ? _majorTickLength : 0);
+        retVal = System.Math.Max(retVal, _showFirstUpMinorTicks ? _minorTickLength : 0);
+      }
+      else if (CSAxisSide.FirstDown == side)
+      {
+        retVal = System.Math.Max(retVal, _showFirstDownMajorTicks ? _majorTickLength : 0);
+        retVal = System.Math.Max(retVal, _showFirstDownMinorTicks ? _minorTickLength : 0);
+      }
+      else
+      {
+        retVal = 0;
+      }
+      return retVal;
+    }
+
+    /// <summary>
+    /// GetOffset returns the distance of the axis to the layer edge in points
+    /// in most cases, the axis position is exactly onto the layer edge and offset is zero,
+    /// if the axis is outside the layer, offset is a positive value,
+    /// if the axis is shifted inside the layer, offset is negative
+    /// </summary>
+    public float GetOffset(SizeF layerSize)
+    {
+      throw new NotImplementedException("Old stuff");
+      //return (float)m_AxisPosition.GetValueRelativeTo(m_Edge.GetOppositeEdgeLength(layerSize));
+    }
+
+    public PenX AxisPen
+    {
+      get { return _axisPen; }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException("value");
+
+        if (ChildSetMember(ref _axisPen, value))
+        {
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    public PenX MajorPen
+    {
+      get { return _majorTickPen; }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException("value");
+
+        if (ChildSetMember(ref _majorTickPen, value))
+        {
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    public PenX MinorPen
+    {
+      get { return _minorTickPen; }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException("value");
+
+        if (ChildSetMember(ref _minorTickPen, value))
+        {
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>Get/sets the major tick length.</summary>
+    /// <value>The major tick length in point units (1/72 inch).</value>
+    public double MajorTickLength
+    {
+      get { return this._majorTickLength; }
+      set
+      {
+        if (value != _majorTickLength)
+        {
+          _majorTickLength = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>Get/sets the minor tick length.</summary>
+    /// <value>The minor tick length in point units (1/72 inch).</value>
+    public double MinorTickLength
+    {
+      get { return this._minorTickLength; }
+      set
+      {
+        if (value != _minorTickLength)
+        {
+          _minorTickLength = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>Get/sets if outer major ticks are drawn.</summary>
+    /// <value>True if outer major ticks are drawn.</value>
+    public bool FirstUpMajorTicks
+    {
+      get { return this._showFirstUpMajorTicks; }
+      set
+      {
+        if (value != _showFirstUpMajorTicks)
+        {
+          this._showFirstUpMajorTicks = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>Get/sets if inner major ticks are drawn.</summary>
+    /// <value>True if inner major ticks are drawn.</value>
+    public bool FirstDownMajorTicks
+    {
+      get { return this._showFirstDownMajorTicks; }
+      set
+      {
+        if (value != _showFirstDownMajorTicks)
+        {
+          this._showFirstDownMajorTicks = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>Get/sets if outer minor ticks are drawn.</summary>
+    /// <value>True if outer minor ticks are drawn.</value>
+    public bool FirstUpMinorTicks
+    {
+      get { return this._showFirstUpMinorTicks; }
+      set
+      {
+        if (value != _showFirstUpMinorTicks)
+        {
+          this._showFirstUpMinorTicks = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>Get/sets if inner minor ticks are drawn.</summary>
+    /// <value>True if inner minor ticks are drawn.</value>
+    public bool FirstDownMinorTicks
+    {
+      get { return this._showFirstDownMinorTicks; }
+      set
+      {
+        if (value != _showFirstDownMinorTicks)
+        {
+          this._showFirstDownMinorTicks = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets/sets the axis thickness.
+    /// </summary>
+    /// <value>Returns the thickness of the axis pen. On setting this value, it sets
+    /// the thickness of the axis pen, the tickness of the major ticks pen, and the
+    /// thickness of the minor ticks pen together.</value>
+    public double Thickness
+    {
+      get { return this._axisPen.Width; }
+      set
+      {
+        this._axisPen.Width = value;
+        this._majorTickPen.Width = value;
+        this._minorTickPen.Width = value;
+        EhSelfChanged(EventArgs.Empty);
+      }
+    }
+
+    /// <summary>
+    /// Get/sets the axis color.
+    /// </summary>
+    /// <value>Returns the color of the axis pen. On setting this value, it sets
+    /// the color of the axis pen along with the color of the major ticks pen and the
+    /// color of the minor ticks pen together.</value>
+    public NamedColor Color
+    {
+      get { return this._axisPen.Color; }
+      set
+      {
+        this._axisPen.Color = value;
+        this._majorTickPen.Color = value;
+        this._minorTickPen.Color = value;
+        EhSelfChanged(EventArgs.Empty);
+      }
+    }
+
+    /// <summary>
+    /// Get/set the axis shift position value.
+    /// </summary>
+    /// <value>Zero if the axis is not shifted (normal case). Else the shift value, either as
+    /// absolute value in point units (1/72 inch), or relative to the corresponding layer dimension (i.e layer width for bottom axis).</value>
+    public RADouble Position
+    {
+      get { return this._axisPosition; }
+      set
+      {
+        if (value != _axisPosition)
+        {
+          _axisPosition = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gives the path which encloses the axis line only.
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
+    /// <returns>The graphics path of the axis line.</returns>
+    public virtual GraphicsPath GetObjectPath(IPlotArea layer, bool withTicks)
+    {
+      return GetPath(layer, withTicks, 0);
+    }
+
+    /// <summary>
+    /// Gives the path where the hit test is successfull.
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
+    /// <returns>The graphics path of the selection rectangle.</returns>
+    public virtual GraphicsPath GetSelectionPath(IPlotArea layer, bool withTicks)
+    {
+      return GetPath(layer, withTicks, 3);
+    }
+
+    /// <summary>
+    /// Gives the path where the hit test is successfull.
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
+    /// <param name="inflateby">Value in points, that the calculated path is inflated.</param>
+    /// <returns>The graphics path of the selection rectangle.</returns>
+    protected GraphicsPath GetPath(IPlotArea layer, bool withTicks, double inflateby)
+    {
+      Logical3D r0 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisOrg);
+      Logical3D r1 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisEnd);
+      GraphicsPath gp = new GraphicsPath();
+      layer.CoordinateSystem.GetIsoline(gp, r0, r1);
+
+      if (withTicks)
+      {
+        if (this._showFirstDownMajorTicks || this._showFirstUpMajorTicks)
+          inflateby = Math.Max(inflateby, this._majorTickLength);
+        if (this._showFirstDownMinorTicks || this._showFirstUpMinorTicks)
+          inflateby = Math.Max(inflateby, this._minorTickLength);
+      }
+
+      Pen widenPen = new Pen(System.Drawing.Color.Black, (float)(2 * inflateby));
+
+      gp.Widen(widenPen);
+
+      return gp;
+    }
+
+    /// <summary>
+    /// Paint the axis in the Graphics context.
+    /// </summary>
+    /// <param name="g">The graphics context painting to.</param>
+    /// <param name="layer">The layer the axis belongs to.</param>
+    /// <param name="styleInfo">The axis information of the axis to paint.</param>
+    /// <param name="customTickSpacing">If not <c>null</c>, this parameter provides a custom tick spacing that is used instead of the default tick spacing of the scale.</param>
+    public void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
+    {
+      CSLineID styleID = styleInfo.Identifier;
+      _cachedAxisStyleInfo = styleInfo;
+      Scale axis = layer.Scales[styleID.ParallelAxisNumber];
+
+      TickSpacing ticking = null != customTickSpacing ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
+
+      Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
+      Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
+
+      layer.CoordinateSystem.DrawIsoline(g, _axisPen, r0, r1);
+
+      Logical3D outer;
+
+      // now the major ticks
+      PointD2D outVector;
+      double[] majorticks = ticking.GetMajorTicksNormal(axis);
+      for (int i = 0; i < majorticks.Length; i++)
+      {
+        double r = majorticks[i];
+
+        if (_showFirstUpMajorTicks)
+        {
+          outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
+          var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+          var tickend = tickorg + outVector * _majorTickLength;
+          g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
+        }
+        if (_showFirstDownMajorTicks)
+        {
+          outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
+          var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+          var tickend = tickorg + outVector * _majorTickLength;
+          g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
+        }
+      }
+      // now the major ticks
+      double[] minorticks = ticking.GetMinorTicksNormal(axis);
+      for (int i = 0; i < minorticks.Length; i++)
+      {
+        double r = minorticks[i];
+
+        if (_showFirstUpMinorTicks)
+        {
+          outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
+          var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+          var tickend = tickorg + outVector * _minorTickLength;
+          g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
+        }
+        if (_showFirstDownMinorTicks)
+        {
+          outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
+          var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+          var tickend = tickorg + outVector * _minorTickLength;
+          g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
+        }
+      }
+    }
+
+    protected virtual void OnPenChangedEventHandler(object sender, EventArgs e)
+    {
+      EhSelfChanged(EventArgs.Empty);
+    }
+
+    #region IRoutedPropertyReceiver Members
+
+    public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+    {
+      switch (propertyName)
+      {
+        case "StrokeWidth":
+          yield return (propertyName, _axisPen.Width, (value) => _axisPen.Width = (double)value);
+          yield return (propertyName, _majorTickPen.Width, (value) => _majorTickPen.Width = (double)value);
+          yield return (propertyName, _minorTickPen.Width, (value) => _minorTickPen.Width = (double)value);
+          break;
+
+        case "MajorTickLength":
+          yield return (propertyName, _majorTickLength, (value) => { MajorTickLength = (double)value; MinorTickLength = 0.5 * (double)value; }
+          );
+          break;
+      }
+
+      yield break;
+    }
+
+    #endregion IRoutedPropertyReceiver Members
+  }
 }

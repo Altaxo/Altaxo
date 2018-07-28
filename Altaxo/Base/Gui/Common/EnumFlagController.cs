@@ -30,177 +30,177 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-	public interface IEnumFlagView
-	{
-		/// <summary>
-		/// Initializes the names. The view can set i.e. checks for each item which is selected. The view is responsible for updating
-		/// the <see cref="SelectableListNode.IsSelected"/> property when a check is set or unset.
-		/// </summary>
-		/// <param name="names"></param>
-		void Initialize(SelectableListNodeList names);
-	}
+  public interface IEnumFlagView
+  {
+    /// <summary>
+    /// Initializes the names. The view can set i.e. checks for each item which is selected. The view is responsible for updating
+    /// the <see cref="SelectableListNode.IsSelected"/> property when a check is set or unset.
+    /// </summary>
+    /// <param name="names"></param>
+    void Initialize(SelectableListNodeList names);
+  }
 
-	[UserControllerForObject(typeof(System.Enum))]
-	[ExpectedTypeOfView(typeof(IEnumFlagView))]
-	internal class EnumFlagController : IMVCANController
-	{
-		private System.Enum _doc;
-		private long _tempDoc;
-		private IEnumFlagView _view;
+  [UserControllerForObject(typeof(System.Enum))]
+  [ExpectedTypeOfView(typeof(IEnumFlagView))]
+  internal class EnumFlagController : IMVCANController
+  {
+    private System.Enum _doc;
+    private long _tempDoc;
+    private IEnumFlagView _view;
 
-		private SelectableListNodeList _list;
+    private SelectableListNodeList _list;
 
-		private int _checkedChangeLock = 0;
+    private int _checkedChangeLock = 0;
 
-		private void Initialize(bool initData)
-		{
-			if (initData)
-			{
-				_list = new SelectableListNodeList();
-				var values = System.Enum.GetValues(_doc.GetType());
-				foreach (var val in values)
-				{
-					var node = new SelectableListNode(System.Enum.GetName(_doc.GetType(), val), val, IsChecked(val, _tempDoc));
-					node.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNode_PropertyChanged);
-					_list.Add(node);
-				}
-			}
+    private void Initialize(bool initData)
+    {
+      if (initData)
+      {
+        _list = new SelectableListNodeList();
+        var values = System.Enum.GetValues(_doc.GetType());
+        foreach (var val in values)
+        {
+          var node = new SelectableListNode(System.Enum.GetName(_doc.GetType(), val), val, IsChecked(val, _tempDoc));
+          node.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNode_PropertyChanged);
+          _list.Add(node);
+        }
+      }
 
-			if (_view != null)
-			{
-				_view.Initialize(_list);
-			}
-		}
+      if (_view != null)
+      {
+        _view.Initialize(_list);
+      }
+    }
 
-		private void EhNode_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if (0 != _checkedChangeLock || "IsSelected" != e.PropertyName)
-				return;
+    private void EhNode_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      if (0 != _checkedChangeLock || "IsSelected" != e.PropertyName)
+        return;
 
-			var node = (SelectableListNode)sender;
+      var node = (SelectableListNode)sender;
 
-			bool b = node.IsSelected;
-			long x = Convert.ToInt64(node.Tag); // get the selected flag
+      bool b = node.IsSelected;
+      long x = Convert.ToInt64(node.Tag); // get the selected flag
 
-			if (b && (x == 0)) // if the "None" flag is selected, then no flag should be selected, so _tempDoc must be 0
-			{
-				_tempDoc = 0;
-			}
-			else // a "normal" flag is selected
-			{
-				if (b)
-					_tempDoc |= x;
-				else
-					_tempDoc &= ~x;
-			}
+      if (b && (x == 0)) // if the "None" flag is selected, then no flag should be selected, so _tempDoc must be 0
+      {
+        _tempDoc = 0;
+      }
+      else // a "normal" flag is selected
+      {
+        if (b)
+          _tempDoc |= x;
+        else
+          _tempDoc &= ~x;
+      }
 
-			++_checkedChangeLock; // avoid recursive calls when changing the checks in the view
-			CalculateChecksFromDoc();
-			--_checkedChangeLock;
-		}
+      ++_checkedChangeLock; // avoid recursive calls when changing the checks in the view
+      CalculateChecksFromDoc();
+      --_checkedChangeLock;
+    }
 
-		private static bool IsChecked(object flag, long document)
-		{
-			long x = Convert.ToInt64(flag);
-			if (x == 0)
-				return 0 == document;
-			else
-				return (x == (x & document));
-		}
+    private static bool IsChecked(object flag, long document)
+    {
+      long x = Convert.ToInt64(flag);
+      if (x == 0)
+        return 0 == document;
+      else
+        return (x == (x & document));
+    }
 
-		private void CalculateChecksFromDoc()
-		{
-			foreach (var n in _list)
-			{
-				n.IsSelected = IsChecked(n.Tag, _tempDoc);
-			}
-		}
+    private void CalculateChecksFromDoc()
+    {
+      foreach (var n in _list)
+      {
+        n.IsSelected = IsChecked(n.Tag, _tempDoc);
+      }
+    }
 
-		private void CalculateEnumFromChecks()
-		{
-			// calculate enum from checks
-			long sum = 0;
-			for (int i = 0; i < _list.Count; i++)
-			{
-				long x = Convert.ToInt64(_list[i].Tag);
-				if (_list[i].IsSelected)
-					sum |= x;
-			}
-			_tempDoc = sum;
-		}
+    private void CalculateEnumFromChecks()
+    {
+      // calculate enum from checks
+      long sum = 0;
+      for (int i = 0; i < _list.Count; i++)
+      {
+        long x = Convert.ToInt64(_list[i].Tag);
+        if (_list[i].IsSelected)
+          sum |= x;
+      }
+      _tempDoc = sum;
+    }
 
-		#region IMVCANController Members
+    #region IMVCANController Members
 
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args.Length == 0 || !(args[0] is System.Enum))
-				return false;
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args.Length == 0 || !(args[0] is System.Enum))
+        return false;
 
-			_doc = (System.Enum)args[0];
-			_tempDoc = ((IConvertible)_doc).ToInt64(System.Globalization.CultureInfo.InvariantCulture);
+      _doc = (System.Enum)args[0];
+      _tempDoc = ((IConvertible)_doc).ToInt64(System.Globalization.CultureInfo.InvariantCulture);
 
-			Initialize(true);
+      Initialize(true);
 
-			return true;
-		}
+      return true;
+    }
 
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
+    public UseDocument UseDocumentCopy
+    {
+      set { }
+    }
 
-		#endregion IMVCANController Members
+    #endregion IMVCANController Members
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IEnumFlagView;
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        _view = value as IEnumFlagView;
 
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
+        if (null != _view)
+        {
+          Initialize(false);
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
+    public object ModelObject
+    {
+      get { return _doc; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		#endregion IMVCController Members
+    #endregion IMVCController Members
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public bool Apply(bool disposeController)
-		{
-			_doc = (System.Enum)System.Enum.ToObject(_doc.GetType(), _tempDoc);
-			return true;
-		}
+    public bool Apply(bool disposeController)
+    {
+      _doc = (System.Enum)System.Enum.ToObject(_doc.GetType(), _tempDoc);
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IApplyController Members
-	}
+    #endregion IApplyController Members
+  }
 }

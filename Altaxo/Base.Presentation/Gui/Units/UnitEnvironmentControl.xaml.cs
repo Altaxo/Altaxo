@@ -15,14 +15,14 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Units
 {
-	/// <summary>
-	/// Interaction logic for UnitEnvironmentControl1.xaml
-	/// </summary>
-	public partial class UnitEnvironmentControl : UserControl, IUnitEnvironmentView
-	{
-		public UnitEnvironmentControl()
-		{
-			InitializeComponent();
-		}
-	}
+  /// <summary>
+  /// Interaction logic for UnitEnvironmentControl1.xaml
+  /// </summary>
+  public partial class UnitEnvironmentControl : UserControl, IUnitEnvironmentView
+  {
+    public UnitEnvironmentControl()
+    {
+      InitializeComponent();
+    }
+  }
 }

@@ -29,47 +29,47 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
-	[UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
-	public class Minute : UnitBase, IUnit
-	{
-		public const double OneMinuteInSeconds = 60;
+  [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
+  public class Minute : UnitBase, IUnit
+  {
+    public const double OneMinuteInSeconds = 60;
 
-		private static readonly Minute _instance = new Minute();
+    private static readonly Minute _instance = new Minute();
 
-		public static Minute Instance { get { return _instance; } }
+    public static Minute Instance { get { return _instance; } }
 
-		protected Minute()
-		{
-		}
+    protected Minute()
+    {
+    }
 
-		public string Name
-		{
-			get { return "Minute"; }
-		}
+    public string Name
+    {
+      get { return "Minute"; }
+    }
 
-		public string ShortCut
-		{
-			get { return "min"; }
-		}
+    public string ShortCut
+    {
+      get { return "min"; }
+    }
 
-		public double ToSIUnit(double x)
-		{
-			return x * OneMinuteInSeconds;
-		}
+    public double ToSIUnit(double x)
+    {
+      return x * OneMinuteInSeconds;
+    }
 
-		public double FromSIUnit(double x)
-		{
-			return x / OneMinuteInSeconds;
-		}
+    public double FromSIUnit(double x)
+    {
+      return x / OneMinuteInSeconds;
+    }
 
-		public ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithNonePrefixOnly; }
-		}
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
 
-		public SIUnit SIUnit
-		{
-			get { return Second.Instance; }
-		}
-	}
+    public SIUnit SIUnit
+    {
+      get { return Second.Instance; }
+    }
+  }
 }

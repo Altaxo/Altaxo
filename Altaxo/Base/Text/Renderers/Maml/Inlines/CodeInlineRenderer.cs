@@ -26,17 +26,17 @@ using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="CodeInline"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class CodeInlineRenderer : MamlObjectRenderer<CodeInline>
-	{
-		protected override void Write(MamlRenderer renderer, CodeInline obj)
-		{
-			renderer.Push(MamlElements.codeInline);
-			renderer.WriteEscape(obj.Content);
-			renderer.PopTo(MamlElements.codeInline);
-		}
-	}
+  /// <summary>
+  /// Maml renderer for a <see cref="CodeInline"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class CodeInlineRenderer : MamlObjectRenderer<CodeInline>
+  {
+    protected override void Write(MamlRenderer renderer, CodeInline obj)
+    {
+      renderer.Push(MamlElements.codeInline);
+      renderer.WriteEscape(obj.Content);
+      renderer.PopTo(MamlElements.codeInline);
+    }
+  }
 }

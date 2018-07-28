@@ -30,86 +30,87 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	internal class ReadableColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, IReadableColumnProxy
-	{
-		private IReadableColumn _column;
+  internal class ReadableColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, IReadableColumnProxy
+  {
+    private IReadableColumn _column;
 
-		public static ReadableColumnProxyForStandaloneColumns FromColumn(IReadableColumn column)
-		{
-			var colAsDocumentNode = column as IDocumentLeafNode;
-			if (null != colAsDocumentNode)
-				throw new ArgumentException(string.Format("column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
+    public static ReadableColumnProxyForStandaloneColumns FromColumn(IReadableColumn column)
+    {
+      var colAsDocumentNode = column as IDocumentLeafNode;
+      if (null != colAsDocumentNode)
+        throw new ArgumentException(string.Format("column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
-			return new ReadableColumnProxyForStandaloneColumns(column); ;
-		}
+      return new ReadableColumnProxyForStandaloneColumns(column);
+      ;
+    }
 
-		/// <summary>
-		/// Constructor by giving a numeric column.
-		/// </summary>
-		/// <param name="column">The numeric column to hold.</param>
-		protected ReadableColumnProxyForStandaloneColumns(IReadableColumn column)
-		{
-			_column = column;
-		}
+    /// <summary>
+    /// Constructor by giving a numeric column.
+    /// </summary>
+    /// <param name="column">The numeric column to hold.</param>
+    protected ReadableColumnProxyForStandaloneColumns(IReadableColumn column)
+    {
+      _column = column;
+    }
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2014-12-26 Initial version
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxyForStandaloneColumns), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (ReadableColumnProxyForStandaloneColumns)obj;
-				info.AddValue("Column", s._column);
-			}
+    /// <summary>
+    /// 2014-12-26 Initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxyForStandaloneColumns), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ReadableColumnProxyForStandaloneColumns)obj;
+        info.AddValue("Column", s._column);
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (ReadableColumnProxyForStandaloneColumns)o ?? new ReadableColumnProxyForStandaloneColumns(null);
-				object node = info.GetValue("Column", s);
-				s._column = (IReadableColumn)node;
-				return s;
-			}
-		}
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (ReadableColumnProxyForStandaloneColumns)o ?? new ReadableColumnProxyForStandaloneColumns(null);
+        object node = info.GetValue("Column", s);
+        s._column = (IReadableColumn)node;
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public IReadableColumn Document
-		{
-			get { return _column; }
-		}
+    public IReadableColumn Document
+    {
+      get { return _column; }
+    }
 
-		public object Clone()
-		{
-			return FromColumn(_column);
-		}
+    public object Clone()
+    {
+      return FromColumn(_column);
+    }
 
-		public bool IsEmpty
-		{
-			get { return null == _column; }
-		}
+    public bool IsEmpty
+    {
+      get { return null == _column; }
+    }
 
-		public string GetName(int level)
-		{
-			return _column == null ? string.Empty : _column.ToString();
-		}
+    public string GetName(int level)
+    {
+      return _column == null ? string.Empty : _column.ToString();
+    }
 
-		public object DocumentObject
-		{
-			get { return _column; }
-		}
+    public object DocumentObject
+    {
+      get { return _column; }
+    }
 
-		public AbsoluteDocumentPath DocumentPath
-		{
-			get { return AbsoluteDocumentPath.DocumentPathOfRootNode; }
-		}
+    public AbsoluteDocumentPath DocumentPath
+    {
+      get { return AbsoluteDocumentPath.DocumentPathOfRootNode; }
+    }
 
-		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
-		{
-			return false;
-		}
-	}
+    public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
+    {
+      return false;
+    }
+  }
 }

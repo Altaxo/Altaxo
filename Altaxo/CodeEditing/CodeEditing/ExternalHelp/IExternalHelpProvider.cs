@@ -32,8 +32,8 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.ExternalHelp
 {
-	public interface IExternalHelpProvider
-	{
-		Task<ExternalHelpItem> GetExternalHelpItem(Document document, int position, CancellationToken cancellationToken);
-	}
+  public interface IExternalHelpProvider
+  {
+    Task<ExternalHelpItem> GetExternalHelpItem(Document document, int position, CancellationToken cancellationToken);
+  }
 }

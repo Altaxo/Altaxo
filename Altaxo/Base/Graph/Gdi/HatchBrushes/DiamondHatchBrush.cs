@@ -31,58 +31,58 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
-	public class DiamondHatchBrush : HatchBrushBase
-	{
-		#region Serialization
+  public class DiamondHatchBrush : HatchBrushBase
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DiamondHatchBrush), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (DiamondHatchBrush)obj;
-				info.AddBaseValueEmbedded(s, typeof(DiamondHatchBrush).BaseType);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DiamondHatchBrush), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DiamondHatchBrush)obj;
+        info.AddBaseValueEmbedded(s, typeof(DiamondHatchBrush).BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = null != o ? (DiamondHatchBrush)o : new DiamondHatchBrush();
-				info.GetBaseValueEmbedded(s, typeof(DiamondHatchBrush).BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = null != o ? (DiamondHatchBrush)o : new DiamondHatchBrush();
+        info.GetBaseValueEmbedded(s, typeof(DiamondHatchBrush).BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
-		{
-			int pixelDim = GetPixelDimensions(maxEffectiveResolutionDpi);
-			Bitmap bmp = new Bitmap(pixelDim, pixelDim, PixelFormat.Format32bppArgb);
-			using (Graphics g = Graphics.FromImage(bmp))
-			{
-				using (var brush = new SolidBrush(backColor))
-				{
-					g.FillRectangle(brush, new Rectangle(Point.Empty, bmp.Size));
-				}
+    public override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
+    {
+      int pixelDim = GetPixelDimensions(maxEffectiveResolutionDpi);
+      Bitmap bmp = new Bitmap(pixelDim, pixelDim, PixelFormat.Format32bppArgb);
+      using (Graphics g = Graphics.FromImage(bmp))
+      {
+        using (var brush = new SolidBrush(backColor))
+        {
+          g.FillRectangle(brush, new Rectangle(Point.Empty, bmp.Size));
+        }
 
-				g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy; // we want the foreground color to be not influenced by the background color if we have a transparent foreground color
+        g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy; // we want the foreground color to be not influenced by the background color if we have a transparent foreground color
 
-				using (var brush = new SolidBrush(foreColor))
-				{
-					float s = (float)(0.5 * pixelDim - pixelDim * _structureFactor);
-					var points = new PointF[] { new PointF(s, 0.5f * pixelDim), new PointF(0.5f * pixelDim, s), new PointF(pixelDim - s, 0.5f * pixelDim), new PointF(0.5f * pixelDim, pixelDim - s) };
-					g.FillPolygon(brush, points);
-				}
-			}
+        using (var brush = new SolidBrush(foreColor))
+        {
+          float s = (float)(0.5 * pixelDim - pixelDim * _structureFactor);
+          var points = new PointF[] { new PointF(s, 0.5f * pixelDim), new PointF(0.5f * pixelDim, s), new PointF(pixelDim - s, 0.5f * pixelDim), new PointF(0.5f * pixelDim, pixelDim - s) };
+          g.FillPolygon(brush, points);
+        }
+      }
 
-			return bmp;
-		}
+      return bmp;
+    }
 
-		public override object Clone()
-		{
-			var result = new DiamondHatchBrush();
-			result.CopyFrom(this);
-			return result;
-		}
-	}
+    public override object Clone()
+    {
+      var result = new DiamondHatchBrush();
+      result.CopyFrom(this);
+      return result;
+    }
+  }
 }

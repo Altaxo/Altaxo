@@ -33,241 +33,241 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
-	[Serializable]
-	public class GridStyle
-		:
-		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		ICloneable
-	{
-		private PenX3D _minorPen;
-		private PenX3D _majorPen;
-		private bool _showGrid;
+  [Serializable]
+  public class GridStyle
+    :
+    Main.SuspendableDocumentNodeWithSetOfEventArgs,
+    ICloneable
+  {
+    private PenX3D _minorPen;
+    private PenX3D _majorPen;
+    private bool _showGrid;
 
-		private bool _showMinor;
-		private bool _showZeroOnly;
+    private bool _showMinor;
+    private bool _showZeroOnly;
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2015-11-14 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridStyle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				GridStyle s = (GridStyle)obj;
+    /// <summary>
+    /// 2015-11-14 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridStyle), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        GridStyle s = (GridStyle)obj;
 
-				info.AddValue("Visible", s._showGrid);
-				if (s._showGrid)
-				{
-					info.AddValue("ZeroOnly", s._showZeroOnly);
-					info.AddValue("MajorPen", s._majorPen);
-					info.AddValue("ShowMinor", s._showMinor);
-					if (s._showMinor)
-						info.AddValue("MinorPen", s._minorPen);
-				}
-			}
+        info.AddValue("Visible", s._showGrid);
+        if (s._showGrid)
+        {
+          info.AddValue("ZeroOnly", s._showZeroOnly);
+          info.AddValue("MajorPen", s._majorPen);
+          info.AddValue("ShowMinor", s._showMinor);
+          if (s._showMinor)
+            info.AddValue("MinorPen", s._minorPen);
+        }
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				GridStyle s = SDeserialize(o, info, parent);
-				return s;
-			}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        GridStyle s = SDeserialize(o, info, parent);
+        return s;
+      }
 
-			protected virtual GridStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				GridStyle s = null != o ? (GridStyle)o : new GridStyle();
+      protected virtual GridStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        GridStyle s = null != o ? (GridStyle)o : new GridStyle();
 
-				s._showGrid = info.GetBoolean("Visible");
-				if (s._showGrid)
-				{
-					s._showZeroOnly = info.GetBoolean("ZeroOnly");
-					s._majorPen = (PenX3D)info.GetValue("MajorPen", s);
+        s._showGrid = info.GetBoolean("Visible");
+        if (s._showGrid)
+        {
+          s._showZeroOnly = info.GetBoolean("ZeroOnly");
+          s._majorPen = (PenX3D)info.GetValue("MajorPen", s);
 
-					s._showMinor = info.GetBoolean("ShowMinor");
-					if (s._showMinor)
-					{
-						s._minorPen = (PenX3D)info.GetValue("MinorPen", s);
-					}
-				}
+          s._showMinor = info.GetBoolean("ShowMinor");
+          if (s._showMinor)
+          {
+            s._minorPen = (PenX3D)info.GetValue("MinorPen", s);
+          }
+        }
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public GridStyle()
-		{
-			_showGrid = true;
-		}
+    public GridStyle()
+    {
+      _showGrid = true;
+    }
 
-		public GridStyle(GridStyle from)
-		{
-			CopyFrom(from);
-		}
+    public GridStyle(GridStyle from)
+    {
+      CopyFrom(from);
+    }
 
-		public void CopyFrom(GridStyle from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
+    public void CopyFrom(GridStyle from)
+    {
+      if (object.ReferenceEquals(this, from))
+        return;
 
-			this.MajorPen = from._majorPen;
-			this.MinorPen = from._minorPen;
-			this._showGrid = from._showGrid;
-			this._showMinor = from._showMinor;
-			this._showZeroOnly = from._showZeroOnly;
-		}
+      this.MajorPen = from._majorPen;
+      this.MinorPen = from._minorPen;
+      this._showGrid = from._showGrid;
+      this._showMinor = from._showMinor;
+      this._showZeroOnly = from._showZeroOnly;
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			yield break;
-		}
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      yield break;
+    }
 
-		public PenX3D MajorPen
-		{
-			get
-			{
-				if (null == _majorPen)
-					MajorPen = new PenX3D(NamedColors.Blue, 1);
-				return _majorPen;
-			}
-			set
-			{
-				var oldValue = _majorPen;
-				_majorPen = value;
-				if (!object.ReferenceEquals(oldValue, value))
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+    public PenX3D MajorPen
+    {
+      get
+      {
+        if (null == _majorPen)
+          MajorPen = new PenX3D(NamedColors.Blue, 1);
+        return _majorPen;
+      }
+      set
+      {
+        var oldValue = _majorPen;
+        _majorPen = value;
+        if (!object.ReferenceEquals(oldValue, value))
+        {
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public PenX3D MinorPen
-		{
-			get
-			{
-				if (null == _minorPen)
-					MinorPen = new PenX3D(NamedColors.LightBlue, 1);
+    public PenX3D MinorPen
+    {
+      get
+      {
+        if (null == _minorPen)
+          MinorPen = new PenX3D(NamedColors.LightBlue, 1);
 
-				return _minorPen;
-			}
-			set
-			{
-				var oldValue = _majorPen;
-				_minorPen = value;
-				if (!object.ReferenceEquals(oldValue, value))
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+        return _minorPen;
+      }
+      set
+      {
+        var oldValue = _majorPen;
+        _minorPen = value;
+        if (!object.ReferenceEquals(oldValue, value))
+        {
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public bool ShowGrid
-		{
-			get { return _showGrid; }
-			set
-			{
-				if (value != _showGrid)
-				{
-					_showGrid = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+    public bool ShowGrid
+    {
+      get { return _showGrid; }
+      set
+      {
+        if (value != _showGrid)
+        {
+          _showGrid = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public bool ShowMinor
-		{
-			get { return _showMinor; }
-			set
-			{
-				if (value != _showMinor)
-				{
-					_showMinor = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+    public bool ShowMinor
+    {
+      get { return _showMinor; }
+      set
+      {
+        if (value != _showMinor)
+        {
+          _showMinor = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public bool ShowZeroOnly
-		{
-			get { return _showZeroOnly; }
-			set
-			{
-				if (value != _showZeroOnly)
-				{
-					_showZeroOnly = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+    public bool ShowZeroOnly
+    {
+      get { return _showZeroOnly; }
+      set
+      {
+        if (value != _showZeroOnly)
+        {
+          _showZeroOnly = value;
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public void Paint(IGraphicsContext3D g, IPlotArea layer, CSPlaneID plane, int axisnumber)
-		{
-			if (!_showGrid)
-				return;
+    public void Paint(IGraphicsContext3D g, IPlotArea layer, CSPlaneID plane, int axisnumber)
+    {
+      if (!_showGrid)
+        return;
 
-			Scale axis = layer.Scales[axisnumber];
-			TickSpacing ticking = layer.Scales[axisnumber].TickSpacing;
+      Scale axis = layer.Scales[axisnumber];
+      TickSpacing ticking = layer.Scales[axisnumber].TickSpacing;
 
-			RectangleD3D layerRect = new RectangleD3D(PointD3D.Empty, layer.Size);
+      RectangleD3D layerRect = new RectangleD3D(PointD3D.Empty, layer.Size);
 
-			if (_showZeroOnly)
-			{
-				Altaxo.Data.AltaxoVariant var = new Altaxo.Data.AltaxoVariant(0.0);
-				double rel = axis.PhysicalVariantToNormal(var);
-				//_majorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
-				if (rel >= 0 && rel <= 1)
-				{
-					Logical3D logV = new Logical3D();
-					logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
-					logV.SetR(axisnumber, rel);
-					var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
-					var line = layer.CoordinateSystem.GetIsoline(logV.WithR(thirdAxisNumber, 0), logV.WithR(thirdAxisNumber, 1));
-					g.DrawLine(MajorPen, line);
-				}
-			}
-			else
-			{
-				double[] ticks;
+      if (_showZeroOnly)
+      {
+        Altaxo.Data.AltaxoVariant var = new Altaxo.Data.AltaxoVariant(0.0);
+        double rel = axis.PhysicalVariantToNormal(var);
+        //_majorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
+        if (rel >= 0 && rel <= 1)
+        {
+          Logical3D logV = new Logical3D();
+          logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
+          logV.SetR(axisnumber, rel);
+          var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
+          var line = layer.CoordinateSystem.GetIsoline(logV.WithR(thirdAxisNumber, 0), logV.WithR(thirdAxisNumber, 1));
+          g.DrawLine(MajorPen, line);
+        }
+      }
+      else
+      {
+        double[] ticks;
 
-				if (_showMinor)
-				{
-					//_minorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
-					ticks = ticking.GetMinorTicksNormal(axis);
-					for (int i = 0; i < ticks.Length; ++i)
-					{
-						Logical3D logV = new Logical3D();
-						logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
-						logV.SetR(axisnumber, ticks[i]);
-						var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
-						var line = layer.CoordinateSystem.GetIsoline(logV.WithR(thirdAxisNumber, 0), logV.WithR(thirdAxisNumber, 1));
-						g.DrawLine(MinorPen, line);
-					}
-				}
+        if (_showMinor)
+        {
+          //_minorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
+          ticks = ticking.GetMinorTicksNormal(axis);
+          for (int i = 0; i < ticks.Length; ++i)
+          {
+            Logical3D logV = new Logical3D();
+            logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
+            logV.SetR(axisnumber, ticks[i]);
+            var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
+            var line = layer.CoordinateSystem.GetIsoline(logV.WithR(thirdAxisNumber, 0), logV.WithR(thirdAxisNumber, 1));
+            g.DrawLine(MinorPen, line);
+          }
+        }
 
-				//MajorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
-				ticks = ticking.GetMajorTicksNormal(axis);
-				for (int i = 0; i < ticks.Length; ++i)
-				{
-					Logical3D logV = new Logical3D();
-					logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
-					logV.SetR(axisnumber, ticks[i]);
-					var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
-					var line = layer.CoordinateSystem.GetIsoline(logV.WithR(thirdAxisNumber, 0), logV.WithR(thirdAxisNumber, 1));
-					g.DrawLine(MajorPen, line);
-				}
-			}
-		}
+        //MajorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
+        ticks = ticking.GetMajorTicksNormal(axis);
+        for (int i = 0; i < ticks.Length; ++i)
+        {
+          Logical3D logV = new Logical3D();
+          logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
+          logV.SetR(axisnumber, ticks[i]);
+          var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
+          var line = layer.CoordinateSystem.GetIsoline(logV.WithR(thirdAxisNumber, 0), logV.WithR(thirdAxisNumber, 1));
+          g.DrawLine(MajorPen, line);
+        }
+      }
+    }
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public object Clone()
-		{
-			return new GridStyle(this);
-		}
+    public object Clone()
+    {
+      return new GridStyle(this);
+    }
 
-		#endregion ICloneable Members
-	}
+    #endregion ICloneable Members
+  }
 }

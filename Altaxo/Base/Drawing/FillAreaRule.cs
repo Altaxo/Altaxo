@@ -29,17 +29,17 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-	/// <summary>
-	/// Rule to fill an 2D area.
-	/// </summary>
-	public enum FillAreaRule
-	{
-		/// <summary>The even odd rule. Gdi: Alternate, SVG: evenodd.</summary>
-		EvenOdd = 0,
+  /// <summary>
+  /// Rule to fill an 2D area.
+  /// </summary>
+  public enum FillAreaRule
+  {
+    /// <summary>The even odd rule. Gdi: Alternate, SVG: evenodd.</summary>
+    EvenOdd = 0,
 
-		/// <summary>
-		/// The non zero rule: Gdi: Winding, SVG: nonzero
-		/// </summary>
-		NonZero = 1,
-	}
+    /// <summary>
+    /// The non zero rule: Gdi: Winding, SVG: nonzero
+    /// </summary>
+    NonZero = 1,
+  }
 }

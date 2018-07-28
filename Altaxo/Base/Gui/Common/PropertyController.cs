@@ -29,72 +29,72 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-	public interface IPropertyView
-	{
-		object[] SelectedObjectsToView { get; set; }
-	}
+  public interface IPropertyView
+  {
+    object[] SelectedObjectsToView { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IPropertyView))]
-	public class PropertyController : IMVCAController
-	{
-		private IPropertyView _view;
-		private object _doc;
+  [ExpectedTypeOfView(typeof(IPropertyView))]
+  public class PropertyController : IMVCAController
+  {
+    private IPropertyView _view;
+    private object _doc;
 
-		public PropertyController(object doc)
-		{
-			_doc = doc;
-			Initialize();
-		}
+    public PropertyController(object doc)
+    {
+      _doc = doc;
+      Initialize();
+    }
 
-		private void Initialize()
-		{
-			if (_view != null)
-			{
-				_view.SelectedObjectsToView = new object[] { _doc };
-			}
-		}
+    private void Initialize()
+    {
+      if (_view != null)
+      {
+        _view.SelectedObjectsToView = new object[] { _doc };
+      }
+    }
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = (IPropertyView)value;
-				Initialize();
-			}
-		}
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        _view = (IPropertyView)value;
+        Initialize();
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
+    public object ModelObject
+    {
+      get { return _doc; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		public bool Apply(bool disposeController)
-		{
-			return true;
-		}
+    public bool Apply(bool disposeController)
+    {
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IMVCController Members
-	}
+    #endregion IMVCController Members
+  }
 }

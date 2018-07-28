@@ -33,117 +33,117 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public class EditableImageComboBox : ImageComboBox
-	{
-		protected Image _img;
-		protected ColumnDefinition _imgColumnDefinition;
+  public class EditableImageComboBox : ImageComboBox
+  {
+    protected Image _img;
+    protected ColumnDefinition _imgColumnDefinition;
 
-		/// <summary>
-		/// This is the edit box inside the editable ComboBox that is used to enter text.
-		/// </summary>
-		protected TextBox _editBox;
+    /// <summary>
+    /// This is the edit box inside the editable ComboBox that is used to enter text.
+    /// </summary>
+    protected TextBox _editBox;
 
-		/// <summary>
-		/// Get around the bug that the context menu of the editable part is not bound to the combobox
-		/// (<see href="http://www.wpfmentor.com/2008/12/setting-context-menu-on-editable.html"/>)
-		/// </summary>
-		public override void OnApplyTemplate()
-		{
-			base.OnApplyTemplate();
+    /// <summary>
+    /// Get around the bug that the context menu of the editable part is not bound to the combobox
+    /// (<see href="http://www.wpfmentor.com/2008/12/setting-context-menu-on-editable.html"/>)
+    /// </summary>
+    public override void OnApplyTemplate()
+    {
+      base.OnApplyTemplate();
 
-			// Use Snoop to find the name of the TextBox part
-			// http://wpfmentor.blogspot.com/2008/11/understand-bubbling-and-tunnelling-in-5.html
-			_editBox = (TextBox)Template.FindName("PART_EditableTextBox", this);
-			_editBox.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Right;
+      // Use Snoop to find the name of the TextBox part
+      // http://wpfmentor.blogspot.com/2008/11/understand-bubbling-and-tunnelling-in-5.html
+      _editBox = (TextBox)Template.FindName("PART_EditableTextBox", this);
+      _editBox.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Right;
 
-			// Create a template-binding in code
-			Binding binding = new Binding("ContextMenu");
-			binding.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
-			BindingOperations.SetBinding(_editBox, FrameworkElement.ContextMenuProperty, binding);
-		}
+      // Create a template-binding in code
+      Binding binding = new Binding("ContextMenu");
+      binding.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
+      BindingOperations.SetBinding(_editBox, FrameworkElement.ContextMenuProperty, binding);
+    }
 
-		public EditableImageComboBox()
-		{
-			_img = new Image();
-			this.IsEditable = true;
-			var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ComboBox.TextProperty, this.GetType());
-			dpd.AddValueChanged(this, EhTextChanged);
-		}
+    public EditableImageComboBox()
+    {
+      _img = new Image();
+      this.IsEditable = true;
+      var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ComboBox.TextProperty, this.GetType());
+      dpd.AddValueChanged(this, EhTextChanged);
+    }
 
-		protected virtual void EhTextChanged(object sender, EventArgs e)
-		{
-			SetImageFromContent();
-		}
+    protected virtual void EhTextChanged(object sender, EventArgs e)
+    {
+      SetImageFromContent();
+    }
 
-		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-		{
-			base.OnRenderSizeChanged(sizeInfo);
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+      base.OnRenderSizeChanged(sizeInfo);
 
-			if (null == _img.Parent)
-			{
-				ImplantImage(sizeInfo.NewSize.Height * _relativeImageWidth, sizeInfo.NewSize.Height);
-				SetImageFromContent();
-			}
-		}
+      if (null == _img.Parent)
+      {
+        ImplantImage(sizeInfo.NewSize.Height * _relativeImageWidth, sizeInfo.NewSize.Height);
+        SetImageFromContent();
+      }
+    }
 
-		protected virtual void ImplantImage(double width, double height)
-		{
-			_img.Height = _editBox.ActualHeight;
-			_img.Margin = _editBox.Margin;
-			_img.Stretch = Stretch.Uniform;
+    protected virtual void ImplantImage(double width, double height)
+    {
+      _img.Height = _editBox.ActualHeight;
+      _img.Margin = _editBox.Margin;
+      _img.Stretch = Stretch.Uniform;
 
-			var parent = _editBox.Parent;
+      var parent = _editBox.Parent;
 
-			var stackPanel = new StackPanel();
-			stackPanel.Orientation = Orientation.Horizontal;
-			stackPanel.Children.Add(_img);
-			// stackPanel.Children.Add(_editBox); // this must be postponed here, since _editBox is still into the hierarchy
+      var stackPanel = new StackPanel();
+      stackPanel.Orientation = Orientation.Horizontal;
+      stackPanel.Children.Add(_img);
+      // stackPanel.Children.Add(_editBox); // this must be postponed here, since _editBox is still into the hierarchy
 
-			if (parent is ContentControl)
-			{
-				((ContentControl)parent).Content = stackPanel;
-			}
-			else if (parent is Decorator)
-			{
-				((Decorator)parent).Child = stackPanel;
-			}
-			else if (parent is Panel)
-			{
-				var panel = (Panel)parent;
-				var idx = panel.Children.IndexOf(_editBox);
-				if (idx < 0)
-					throw new InvalidOperationException(string.Format("The parent of the EditBox is a {0}, but the parent's children collection does not contain the EditBox", panel.GetType()));
-				panel.Children.RemoveAt(idx);
-				panel.Children.Insert(idx, stackPanel);
-			}
-			else
-			{
-				var stb = new StringBuilder();
-				stb.AppendFormat("Unexpected location of the EditBox within {0}", this.ToString());
-				stb.AppendLine();
-				stb.AppendFormat("The parent of the editbox is {0}", _editBox.Parent.ToString());
-				stb.AppendLine();
-				stb.AppendLine("The hierarchy of childs is as follows:");
-				PrintVisualChilds(this, 0, stb);
-				throw new ApplicationException(stb.ToString());
-			}
+      if (parent is ContentControl)
+      {
+        ((ContentControl)parent).Content = stackPanel;
+      }
+      else if (parent is Decorator)
+      {
+        ((Decorator)parent).Child = stackPanel;
+      }
+      else if (parent is Panel)
+      {
+        var panel = (Panel)parent;
+        var idx = panel.Children.IndexOf(_editBox);
+        if (idx < 0)
+          throw new InvalidOperationException(string.Format("The parent of the EditBox is a {0}, but the parent's children collection does not contain the EditBox", panel.GetType()));
+        panel.Children.RemoveAt(idx);
+        panel.Children.Insert(idx, stackPanel);
+      }
+      else
+      {
+        var stb = new StringBuilder();
+        stb.AppendFormat("Unexpected location of the EditBox within {0}", this.ToString());
+        stb.AppendLine();
+        stb.AppendFormat("The parent of the editbox is {0}", _editBox.Parent.ToString());
+        stb.AppendLine();
+        stb.AppendLine("The hierarchy of childs is as follows:");
+        PrintVisualChilds(this, 0, stb);
+        throw new ApplicationException(stb.ToString());
+      }
 
-			stackPanel.Children.Add(_editBox);
+      stackPanel.Children.Add(_editBox);
 
-			// now some special properties
-			if (parent is Grid)
-			{
-				foreach (DependencyProperty dp in new DependencyProperty[] { Grid.RowProperty, Grid.ColumnProperty, Grid.RowSpanProperty, Grid.ColumnSpanProperty })
-				{
-					stackPanel.SetValue(dp, _editBox.GetValue(dp));
-				}
-			}
-			if (parent is DockPanel)
-			{
-				stackPanel.SetValue(DockPanel.DockProperty, _editBox.GetValue(DockPanel.DockProperty));
-			}
+      // now some special properties
+      if (parent is Grid)
+      {
+        foreach (DependencyProperty dp in new DependencyProperty[] { Grid.RowProperty, Grid.ColumnProperty, Grid.RowSpanProperty, Grid.ColumnSpanProperty })
+        {
+          stackPanel.SetValue(dp, _editBox.GetValue(dp));
+        }
+      }
+      if (parent is DockPanel)
+      {
+        stackPanel.SetValue(DockPanel.DockProperty, _editBox.GetValue(DockPanel.DockProperty));
+      }
 
-			/*
+      /*
 
 			if (_editBox.Parent is Grid) // most Windows version have the TextBox located inside a Grid
 			{
@@ -191,31 +191,31 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 
 			*/
-		}
+    }
 
-		/// <summary>Prints the visual childs recursively (intended only for debugging).</summary>
-		/// <param name="start">The parent.</param>
-		/// <param name="level">The level number.</param>
-		/// <param name="stb">The StringBuilder where the information should be printed to.</param>
-		private void PrintVisualChilds(DependencyObject start, int level, StringBuilder stb)
-		{
-			int count = VisualTreeHelper.GetChildrenCount(start);
-			for (int i = 0; i < count; ++i)
-			{
-				var child = VisualTreeHelper.GetChild(start, i);
-				for (int j = 0; j < level; ++j)
-					stb.Append("  ");
-				if (child is Grid)
-					stb.AppendFormat("child[{0}]: {1} (#cols:{2})", i, child.ToString(), ((Grid)child).ColumnDefinitions.Count);
-				else
-					stb.AppendFormat("child[{0}]: {1}", i, child.ToString());
-				stb.AppendLine();
-				PrintVisualChilds(child, level + 1, stb);
-			}
-		}
+    /// <summary>Prints the visual childs recursively (intended only for debugging).</summary>
+    /// <param name="start">The parent.</param>
+    /// <param name="level">The level number.</param>
+    /// <param name="stb">The StringBuilder where the information should be printed to.</param>
+    private void PrintVisualChilds(DependencyObject start, int level, StringBuilder stb)
+    {
+      int count = VisualTreeHelper.GetChildrenCount(start);
+      for (int i = 0; i < count; ++i)
+      {
+        var child = VisualTreeHelper.GetChild(start, i);
+        for (int j = 0; j < level; ++j)
+          stb.Append("  ");
+        if (child is Grid)
+          stb.AppendFormat("child[{0}]: {1} (#cols:{2})", i, child.ToString(), ((Grid)child).ColumnDefinitions.Count);
+        else
+          stb.AppendFormat("child[{0}]: {1}", i, child.ToString());
+        stb.AppendLine();
+        PrintVisualChilds(child, level + 1, stb);
+      }
+    }
 
-		protected virtual void SetImageFromContent()
-		{
-		}
-	}
+    protected virtual void SetImageFromContent()
+    {
+    }
+  }
 }

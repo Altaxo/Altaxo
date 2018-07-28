@@ -30,53 +30,53 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class CrossPlusInset : InsetBase
-	{
-		#region Serialization
+  public class CrossPlusInset : InsetBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPlusInset), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
-			}
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPlusInset), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (CrossPlusInset)o ?? new CrossPlusInset();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (CrossPlusInset)o ?? new CrossPlusInset();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
-		{
-			var w = relativeWidth * ClipperScalingDouble;
-			var h = ClipperScalingInt;
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
+    {
+      var w = relativeWidth * ClipperScalingDouble;
+      var h = ClipperScalingInt;
 
-			var list = new List<ClipperLib.IntPoint>(12)
-				{
-				new ClipperLib.IntPoint(-w, -h),
-				new ClipperLib.IntPoint(w, -h),
-				new ClipperLib.IntPoint(w, -w),
-				new ClipperLib.IntPoint(h, -w),
-				new ClipperLib.IntPoint(h, w),
-				new ClipperLib.IntPoint(w, w),
-				new ClipperLib.IntPoint(w, h),
-				new ClipperLib.IntPoint(-w, h),
-				new ClipperLib.IntPoint(-w, w),
-				new ClipperLib.IntPoint(-h, w),
-				new ClipperLib.IntPoint(-h, -w),
-				new ClipperLib.IntPoint(-w, -w),
-			};
+      var list = new List<ClipperLib.IntPoint>(12)
+        {
+        new ClipperLib.IntPoint(-w, -h),
+        new ClipperLib.IntPoint(w, -h),
+        new ClipperLib.IntPoint(w, -w),
+        new ClipperLib.IntPoint(h, -w),
+        new ClipperLib.IntPoint(h, w),
+        new ClipperLib.IntPoint(w, w),
+        new ClipperLib.IntPoint(w, h),
+        new ClipperLib.IntPoint(-w, h),
+        new ClipperLib.IntPoint(-w, w),
+        new ClipperLib.IntPoint(-h, w),
+        new ClipperLib.IntPoint(-h, -w),
+        new ClipperLib.IntPoint(-w, -w),
+      };
 
-			return new List<List<ClipperLib.IntPoint>>(1) { list };
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1) { list };
+    }
+  }
 }

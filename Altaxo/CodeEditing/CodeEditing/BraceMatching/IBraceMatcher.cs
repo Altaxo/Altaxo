@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.BraceMatching
 {
-	public interface IBraceMatcher
-	{
-		Task<BraceMatchingResult?> FindBracesAsync(Document document, int position, CancellationToken cancellationToken = default(CancellationToken));
-	}
+  public interface IBraceMatcher
+  {
+    Task<BraceMatchingResult?> FindBracesAsync(Document document, int position, CancellationToken cancellationToken = default(CancellationToken));
+  }
 }

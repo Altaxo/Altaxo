@@ -21,82 +21,82 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// The IWorkbenchWindow is the basic interface to a window which
-	/// shows a view (represented by the IViewContent object).
-	/// </summary>
-	public interface IWorkbenchWindow
-	{
-		/// <summary>
-		/// The window title.
-		/// </summary>
-		string Title
-		{
-			get;
-		}
+  /// <summary>
+  /// The IWorkbenchWindow is the basic interface to a window which
+  /// shows a view (represented by the IViewContent object).
+  /// </summary>
+  public interface IWorkbenchWindow
+  {
+    /// <summary>
+    /// The window title.
+    /// </summary>
+    string Title
+    {
+      get;
+    }
 
-		/// <summary>
-		/// Gets if the workbench window has been disposed.
-		/// </summary>
-		[Obsolete("This property always returns false.")]
-		bool IsDisposed
-		{
-			get;
-		}
+    /// <summary>
+    /// Gets if the workbench window has been disposed.
+    /// </summary>
+    [Obsolete("This property always returns false.")]
+    bool IsDisposed
+    {
+      get;
+    }
 
-		/// <summary>
-		/// Gets/Sets current view content which is shown inside this window.
-		/// </summary>
-		IViewContent ActiveViewContent
-		{
-			get;
-			set;
-		}
+    /// <summary>
+    /// Gets/Sets current view content which is shown inside this window.
+    /// </summary>
+    IViewContent ActiveViewContent
+    {
+      get;
+      set;
+    }
 
-		/// <summary>
-		/// Gets/Sets the icon of the view content. If the window is a Wpf window, the retured object should be a System.Windows.Media.ImageSource;
-		/// in case of other Gui technologies it should be the native image format of that technology.
-		/// </summary>
-		object IconObject
-		{
-			get;
-			set;
-		}
+    /// <summary>
+    /// Gets/Sets the icon of the view content. If the window is a Wpf window, the retured object should be a System.Windows.Media.ImageSource;
+    /// in case of other Gui technologies it should be the native image format of that technology.
+    /// </summary>
+    object IconObject
+    {
+      get;
+      set;
+    }
 
-		/// <summary>
-		/// Is raised when the ActiveViewContent property has changed.
-		/// </summary>
-		event EventHandler ActiveViewContentChanged;
+    /// <summary>
+    /// Is raised when the ActiveViewContent property has changed.
+    /// </summary>
+    event EventHandler ActiveViewContentChanged;
 
-		/// <summary>
-		/// Gets the list of view contents displayed in this window
-		/// </summary>
-		IList<IViewContent> ViewContents
-		{
-			get;
-		}
+    /// <summary>
+    /// Gets the list of view contents displayed in this window
+    /// </summary>
+    IList<IViewContent> ViewContents
+    {
+      get;
+    }
 
-		/// <summary>
-		/// Activates the view with the specified index.
-		/// </summary>
-		void SwitchView(int viewNumber);
+    /// <summary>
+    /// Activates the view with the specified index.
+    /// </summary>
+    void SwitchView(int viewNumber);
 
-		/// <summary>
-		/// Closes the window, if force == true it closes the window
-		/// without asking, even the content is dirty.
-		/// </summary>
-		/// <returns>true, if window is closed</returns>
-		bool CloseWindow(bool force);
+    /// <summary>
+    /// Closes the window, if force == true it closes the window
+    /// without asking, even the content is dirty.
+    /// </summary>
+    /// <returns>true, if window is closed</returns>
+    bool CloseWindow(bool force);
 
-		/// <summary>
-		/// Brings this window to front and sets the user focus to this
-		/// window.
-		/// </summary>
-		void SelectWindow();
+    /// <summary>
+    /// Brings this window to front and sets the user focus to this
+    /// window.
+    /// </summary>
+    void SelectWindow();
 
-		/// <summary>
-		/// Is called when the title of this window has changed.
-		/// </summary>
-		event EventHandler TitleChanged;
-	}
+    /// <summary>
+    /// Is called when the title of this window has changed.
+    /// </summary>
+    event EventHandler TitleChanged;
+  }
 }

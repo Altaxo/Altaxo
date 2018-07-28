@@ -30,25 +30,25 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Drawing
 {
-	/// <summary>
-	/// Holds Information about the metrics of a font.
-	/// </summary>
-	public class FontInfo
-	{
-		public double cyLineSpace { get; private set; } // cached linespace value of the font
+  /// <summary>
+  /// Holds Information about the metrics of a font.
+  /// </summary>
+  public class FontInfo
+  {
+    public double cyLineSpace { get; private set; } // cached linespace value of the font
 
-		public double cyAscent { get; private set; }    // cached ascent value of the font
+    public double cyAscent { get; private set; }    // cached ascent value of the font
 
-		public double cyDescent { get; private set; } /// cached descent value of the font
+    public double cyDescent { get; private set; } /// cached descent value of the font
 
-		public double Size { get; private set; }
+    public double Size { get; private set; }
 
-		public FontInfo(double cylinespace, double cyascent, double cydescent, double size)
-		{
-			cyLineSpace = cylinespace;
-			cyAscent = cyascent;
-			cyDescent = cydescent;
-			Size = size;
-		}
-	}
+    public FontInfo(double cylinespace, double cyascent, double cydescent, double size)
+    {
+      cyLineSpace = cylinespace;
+      cyAscent = cyascent;
+      cyDescent = cydescent;
+      Size = size;
+    }
+  }
 }

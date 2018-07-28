@@ -13,7 +13,7 @@ using System;
 
 namespace Altaxo.CodeEditing.BraceMatching.CSharp
 {
-	/* There is no easy way to use this with Roslyn 2.0 RC2
+  /* There is no easy way to use this with Roslyn 2.0 RC2
 
     [ExportBraceMatcher(LanguageNames.CSharp)]
     internal class CSharpDirectiveTriviaBraceMatcher : AbstractDirectiveTriviaBraceMatcher<DirectiveTriviaSyntax,

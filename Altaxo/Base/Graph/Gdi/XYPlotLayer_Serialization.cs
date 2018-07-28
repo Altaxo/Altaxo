@@ -32,70 +32,70 @@ using System.Linq;
 
 namespace Altaxo.Graph.Gdi
 {
-	using Axis;
-	using Plot;
-	using Shapes;
+  using Axis;
+  using Plot;
+  using Shapes;
 
-	public partial class XYPlotLayer
-		:
-		HostLayer,
-		IPlotArea
-	{
-		#region Serialization
+  public partial class XYPlotLayer
+    :
+    HostLayer,
+    IPlotArea
+  {
+    #region Serialization
 
-		private void SetupOldAxis(int idx, Altaxo.Graph.Scales.Deprecated.Scale axis, bool isLinked, double orgA, double orgB, double endA, double endB)
-		{
-			Scale transScale = null;
-			if (axis is Altaxo.Graph.Scales.Deprecated.TextScale)
-				transScale = new TextScale();
-			else if (axis is Altaxo.Graph.Scales.Deprecated.DateTimeScale)
-				transScale = new DateTimeScale();
-			else if (axis is Altaxo.Graph.Scales.Deprecated.Log10Scale)
-				transScale = new Log10Scale();
-			else if (axis is Altaxo.Graph.Scales.Deprecated.AngularScale)
-				transScale = (axis as Altaxo.Graph.Scales.Deprecated.AngularScale).UseDegrees ? (Scale)new AngularDegreeScale() : (Scale)new AngularRadianScale();
-			else if (axis is Altaxo.Graph.Scales.Deprecated.LinearScale)
-				transScale = new LinearScale();
-			else
-				throw new ArgumentException("Axis type unknown");
+    private void SetupOldAxis(int idx, Altaxo.Graph.Scales.Deprecated.Scale axis, bool isLinked, double orgA, double orgB, double endA, double endB)
+    {
+      Scale transScale = null;
+      if (axis is Altaxo.Graph.Scales.Deprecated.TextScale)
+        transScale = new TextScale();
+      else if (axis is Altaxo.Graph.Scales.Deprecated.DateTimeScale)
+        transScale = new DateTimeScale();
+      else if (axis is Altaxo.Graph.Scales.Deprecated.Log10Scale)
+        transScale = new Log10Scale();
+      else if (axis is Altaxo.Graph.Scales.Deprecated.AngularScale)
+        transScale = (axis as Altaxo.Graph.Scales.Deprecated.AngularScale).UseDegrees ? (Scale)new AngularDegreeScale() : (Scale)new AngularRadianScale();
+      else if (axis is Altaxo.Graph.Scales.Deprecated.LinearScale)
+        transScale = new LinearScale();
+      else
+        throw new ArgumentException("Axis type unknown");
 
-			if (transScale.RescalingObject is IUnboundNumericScaleRescaleConditions)
-				(transScale.RescalingObject as IUnboundNumericScaleRescaleConditions).SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.OrgAsVariant, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.EndAsVariant);
+      if (transScale.RescalingObject is IUnboundNumericScaleRescaleConditions)
+        (transScale.RescalingObject as IUnboundNumericScaleRescaleConditions).SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.OrgAsVariant, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.EndAsVariant);
 
-			if (transScale.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions &&
-				axis.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)
-			{
-				((Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)transScale.RescalingObject).CopyFrom((Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)axis.RescalingObject);
-			}
+      if (transScale.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions &&
+        axis.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)
+      {
+        ((Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)transScale.RescalingObject).CopyFrom((Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)axis.RescalingObject);
+      }
 
-			if (isLinked)
-			{
+      if (isLinked)
+      {
 #pragma warning disable CS0618 // Type or member is obsolete
-				LinkedScale ls = new LinkedScale(transScale, idx);
+        LinkedScale ls = new LinkedScale(transScale, idx);
 #pragma warning restore CS0618 // Type or member is obsolete
-				ls.SetLinkParameter(orgA, orgB, endA, endB);
-				transScale = ls;
-			}
+        ls.SetLinkParameter(orgA, orgB, endA, endB);
+        transScale = ls;
+      }
 
-			_scales[idx] = transScale;
-		}
+      _scales[idx] = transScale;
+    }
 
-		private void SetupOldAxes(Altaxo.Graph.Scales.Deprecated.LinkedScaleCollection linkedScales)
-		{
-			SetupOldAxis(0, linkedScales.X.Scale, linkedScales.X.AxisLinkType != ScaleLinkType.None, linkedScales.X.LinkOrgA, linkedScales.X.LinkOrgB, linkedScales.X.LinkEndA, linkedScales.X.LinkEndB);
-			SetupOldAxis(1, linkedScales.Y.Scale, linkedScales.Y.AxisLinkType != ScaleLinkType.None, linkedScales.Y.LinkOrgA, linkedScales.Y.LinkOrgB, linkedScales.Y.LinkEndA, linkedScales.Y.LinkEndB);
-		}
+    private void SetupOldAxes(Altaxo.Graph.Scales.Deprecated.LinkedScaleCollection linkedScales)
+    {
+      SetupOldAxis(0, linkedScales.X.Scale, linkedScales.X.AxisLinkType != ScaleLinkType.None, linkedScales.X.LinkOrgA, linkedScales.X.LinkOrgB, linkedScales.X.LinkEndA, linkedScales.X.LinkEndB);
+      SetupOldAxis(1, linkedScales.Y.Scale, linkedScales.Y.AxisLinkType != ScaleLinkType.None, linkedScales.Y.LinkOrgA, linkedScales.Y.LinkOrgB, linkedScales.Y.LinkEndA, linkedScales.Y.LinkEndB);
+    }
 
-		#region Version 0 and 1
+    #region Version 0 and 1
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new ApplicationException("Calling of an outdated serialization routine");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new ApplicationException("Calling of an outdated serialization routine");
+        /*
 				XYPlotLayer s = (XYPlotLayer)obj;
 				// XYPlotLayer style
 				info.AddValue("FillLayerArea",s._fillLayerArea);
@@ -162,163 +162,164 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("GraphicsObjectCollection",s._graphObjects);
 				info.AddValue("Plots",s._plotItems);
 				*/
-			}
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = SDeserialize(o, info, parent);
-				s.CalculateMatrix();
-				info.DeserializationFinished += s.EhDeserializationFinished;
-				return s;
-			}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = SDeserialize(o, info, parent);
+        s.CalculateMatrix();
+        info.DeserializationFinished += s.EhDeserializationFinished;
+        return s;
+      }
 
-			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = null != o ? (XYPlotLayer)o : new XYPlotLayer(info);
+      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = null != o ? (XYPlotLayer)o : new XYPlotLayer(info);
 
-				bool fillLayerArea = info.GetBoolean("FillLayerArea");
-				BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", s);
+        bool fillLayerArea = info.GetBoolean("FillLayerArea");
+        BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", s);
 
-				if (fillLayerArea)
-				{
-					if (!s.GridPlanes.Contains(CSPlaneID.Front))
-						s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-					s.GridPlanes[CSPlaneID.Front].Background = layerAreaFillBrush;
-				}
+        if (fillLayerArea)
+        {
+          if (!s.GridPlanes.Contains(CSPlaneID.Front))
+            s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
+          s.GridPlanes[CSPlaneID.Front].Background = layerAreaFillBrush;
+        }
 
-				// size, position, rotation and scale
+        // size, position, rotation and scale
 
-				var widthType = (XYPlotLayerSizeType)info.GetValue("WidthType", s);
-				var heightType = (XYPlotLayerSizeType)info.GetValue("HeightType", s);
-				var width = info.GetDouble("Width");
-				var height = info.GetDouble("Height");
-				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
-				s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
+        var widthType = (XYPlotLayerSizeType)info.GetValue("WidthType", s);
+        var heightType = (XYPlotLayerSizeType)info.GetValue("HeightType", s);
+        var width = info.GetDouble("Width");
+        var height = info.GetDouble("Height");
+        s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
+        s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
-				var xPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType", s);
-				var yPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType", s);
-				var xPosition = info.GetDouble("XPosition");
-				var yPosition = info.GetDouble("YPosition");
-				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
-				var rotation = info.GetSingle("Rotation");
-				var scale = info.GetSingle("Scale");
-				s.Location = new XYPlotLayerPositionAndSize_V0(widthType, width, heightType, height, xPositionType, xPosition, yPositionType, yPosition, rotation, scale).ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
+        var xPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType", s);
+        var yPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType", s);
+        var xPosition = info.GetDouble("XPosition");
+        var yPosition = info.GetDouble("YPosition");
+        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
+        var rotation = info.GetSingle("Rotation");
+        var scale = info.GetSingle("Scale");
+        s.Location = new XYPlotLayerPositionAndSize_V0(widthType, width, heightType, height, xPositionType, xPosition, yPositionType, yPosition, rotation, scale).ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
-				// axis related
+        // axis related
 
-				var xAxis = (Altaxo.Graph.Scales.Deprecated.Scale)info.GetValue("XAxis", s);
-				var yAxis = (Altaxo.Graph.Scales.Deprecated.Scale)info.GetValue("YAxis", s);
-				bool xIsLinked = info.GetBoolean("LinkXAxis");
-				bool yIsLinked = info.GetBoolean("LinkYAxis");
-				double xOrgA = info.GetDouble("LinkXAxisOrgA");
-				double xOrgB = info.GetDouble("LinkXAxisOrgB");
-				double xEndA = info.GetDouble("LinkXAxisEndA");
-				double xEndB = info.GetDouble("LinkXAxisEndB");
-				double yOrgA = info.GetDouble("LinkYAxisOrgA");
-				double yOrgB = info.GetDouble("LinkYAxisOrgB");
-				double yEndA = info.GetDouble("LinkYAxisEndA");
-				double yEndB = info.GetDouble("LinkYAxisEndB");
-				s.SetupOldAxis(0, xAxis, xIsLinked, xOrgA, xOrgB, xEndA, xEndB);
-				s.SetupOldAxis(1, yAxis, yIsLinked, yOrgA, yOrgB, yEndA, yEndB);
+        var xAxis = (Altaxo.Graph.Scales.Deprecated.Scale)info.GetValue("XAxis", s);
+        var yAxis = (Altaxo.Graph.Scales.Deprecated.Scale)info.GetValue("YAxis", s);
+        bool xIsLinked = info.GetBoolean("LinkXAxis");
+        bool yIsLinked = info.GetBoolean("LinkYAxis");
+        double xOrgA = info.GetDouble("LinkXAxisOrgA");
+        double xOrgB = info.GetDouble("LinkXAxisOrgB");
+        double xEndA = info.GetDouble("LinkXAxisEndA");
+        double xEndB = info.GetDouble("LinkXAxisEndB");
+        double yOrgA = info.GetDouble("LinkYAxisOrgA");
+        double yOrgB = info.GetDouble("LinkYAxisOrgB");
+        double yEndA = info.GetDouble("LinkYAxisEndA");
+        double yEndB = info.GetDouble("LinkYAxisEndB");
+        s.SetupOldAxis(0, xAxis, xIsLinked, xOrgA, xOrgB, xEndA, xEndB);
+        s.SetupOldAxis(1, yAxis, yIsLinked, yOrgA, yOrgB, yEndA, yEndB);
 
-				// Styles
-				bool showLeft = info.GetBoolean("ShowLeftAxis");
-				bool showBottom = info.GetBoolean("ShowBottomAxis");
-				bool showRight = info.GetBoolean("ShowRightAxis");
-				bool showTop = info.GetBoolean("ShowTopAxis");
+        // Styles
+        bool showLeft = info.GetBoolean("ShowLeftAxis");
+        bool showBottom = info.GetBoolean("ShowBottomAxis");
+        bool showRight = info.GetBoolean("ShowRightAxis");
+        bool showTop = info.GetBoolean("ShowTopAxis");
 
-				s._axisStyles.AxisStyleEnsured(CSLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", s);
-				s._axisStyles.AxisStyleEnsured(CSLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", s);
-				s._axisStyles.AxisStyleEnsured(CSLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", s);
-				s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", s);
+        s._axisStyles.AxisStyleEnsured(CSLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", s);
+        s._axisStyles.AxisStyleEnsured(CSLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", s);
+        s._axisStyles.AxisStyleEnsured(CSLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", s);
+        s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", s);
 
-				s._axisStyles[CSLineID.Y0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("LeftLabelStyle", s);
-				s._axisStyles[CSLineID.X0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("BottomLabelStyle", s);
-				s._axisStyles[CSLineID.Y1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("RightLabelStyle", s);
-				s._axisStyles[CSLineID.X1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("TopLabelStyle", s);
+        s._axisStyles[CSLineID.Y0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("LeftLabelStyle", s);
+        s._axisStyles[CSLineID.X0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("BottomLabelStyle", s);
+        s._axisStyles[CSLineID.Y1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("RightLabelStyle", s);
+        s._axisStyles[CSLineID.X1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("TopLabelStyle", s);
 
-				// Titles and legend
-				s._axisStyles[CSLineID.Y0].Title = (TextGraphic)info.GetValue("LeftAxisTitle", s);
-				s._axisStyles[CSLineID.X0].Title = (TextGraphic)info.GetValue("BottomAxisTitle", s);
-				s._axisStyles[CSLineID.Y1].Title = (TextGraphic)info.GetValue("RightAxisTitle", s);
-				s._axisStyles[CSLineID.X1].Title = (TextGraphic)info.GetValue("TopAxisTitle", s);
+        // Titles and legend
+        s._axisStyles[CSLineID.Y0].Title = (TextGraphic)info.GetValue("LeftAxisTitle", s);
+        s._axisStyles[CSLineID.X0].Title = (TextGraphic)info.GetValue("BottomAxisTitle", s);
+        s._axisStyles[CSLineID.Y1].Title = (TextGraphic)info.GetValue("RightAxisTitle", s);
+        s._axisStyles[CSLineID.X1].Title = (TextGraphic)info.GetValue("TopAxisTitle", s);
 
-				if (!showLeft)
-					s._axisStyles.Remove(CSLineID.Y0);
-				if (!showRight)
-					s._axisStyles.Remove(CSLineID.Y1);
-				if (!showBottom)
-					s._axisStyles.Remove(CSLineID.X0);
-				if (!showTop)
-					s._axisStyles.Remove(CSLineID.X1);
+        if (!showLeft)
+          s._axisStyles.Remove(CSLineID.Y0);
+        if (!showRight)
+          s._axisStyles.Remove(CSLineID.Y1);
+        if (!showBottom)
+          s._axisStyles.Remove(CSLineID.X0);
+        if (!showTop)
+          s._axisStyles.Remove(CSLineID.X1);
 
-				var legend = (TextGraphic)info.GetValue("Legend", s);
+        var legend = (TextGraphic)info.GetValue("Legend", s);
 
-				// XYPlotLayer specific
-				object linkedLayer = info.GetValue("LinkedLayer", s);
-				if (linkedLayer is Main.AbsoluteDocumentPath)
-				{
-					ProvideLinkedScalesWithLinkedLayerIndex(s, (Main.AbsoluteDocumentPath)linkedLayer, info);
-				}
-				else if (linkedLayer is Main.RelativeDocumentPath)
-				{
-					ProvideLinkedScalesWithLinkedLayerIndex(s, (Main.RelativeDocumentPath)linkedLayer, info);
-				}
-				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
+        // XYPlotLayer specific
+        object linkedLayer = info.GetValue("LinkedLayer", s);
+        if (linkedLayer is Main.AbsoluteDocumentPath)
+        {
+          ProvideLinkedScalesWithLinkedLayerIndex(s, (Main.AbsoluteDocumentPath)linkedLayer, info);
+        }
+        else if (linkedLayer is Main.RelativeDocumentPath)
+        {
+          ProvideLinkedScalesWithLinkedLayerIndex(s, (Main.RelativeDocumentPath)linkedLayer, info);
+        }
+        s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
 
-				s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
-				if (null != s._plotItems) s._plotItems.ParentObject = s;
+        s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
+        if (null != s._plotItems)
+          s._plotItems.ParentObject = s;
 
-				if (null != legend)
-				{
-					var legend1 = new LegendText(legend);
-					s._graphObjects.Add(legend1);
-				}
+        if (null != legend)
+        {
+          var legend1 = new LegendText(legend);
+          s._graphObjects.Add(legend1);
+        }
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Version 0 and 1
+    #endregion Version 0 and 1
 
-		#region Version 2
+    #region Version 2
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 2)]
-		private class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
-		{
-			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new NotSupportedException("Serialization of old versions not supported, maybe a programming error");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 2)]
+    private class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
+    {
+      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotSupportedException("Serialization of old versions not supported, maybe a programming error");
+        /*
 				base.Serialize(obj, info);
 
 				XYPlotLayer s = (XYPlotLayer)obj;
 				// XYPlotLayer style
 				info.AddValue("ClipDataToFrame", s._dataClipping);
 				*/
-			}
+      }
 
-			protected override XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = base.SDeserialize(o, info, parent);
+      protected override XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = base.SDeserialize(o, info, parent);
 
-				bool clipDataToFrame = info.GetBoolean("ClipDataToFrame");
-				s.ClipDataToFrame = clipDataToFrame ? LayerDataClipping.StrictToCS : LayerDataClipping.None;
-				return s;
-			}
-		}
+        bool clipDataToFrame = info.GetBoolean("ClipDataToFrame");
+        s.ClipDataToFrame = clipDataToFrame ? LayerDataClipping.StrictToCS : LayerDataClipping.None;
+        return s;
+      }
+    }
 
-		#endregion Version 2
+    #endregion Version 2
 
-		#region Version 3
+    #region Version 3
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 3)]
-		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new NotSupportedException("Serialization of old versions is not supported");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 3)]
+    private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotSupportedException("Serialization of old versions is not supported");
+        /*
 				XYPlotLayer s = (XYPlotLayer)obj;
 
 				// Background
@@ -352,88 +353,88 @@ namespace Altaxo.Graph.Gdi
 
 				info.AddValue("Plots", s._plotItems);
 				*/
-			}
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = SDeserialize(o, info, parent);
-				s.CalculateMatrix();
-				info.DeserializationFinished += s.EhDeserializationFinished;
-				return s;
-			}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = SDeserialize(o, info, parent);
+        s.CalculateMatrix();
+        info.DeserializationFinished += s.EhDeserializationFinished;
+        return s;
+      }
 
-			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
-				int count;
+      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
+        int count;
 
-				// Background
-				IBackgroundStyle bgs = (IBackgroundStyle)info.GetValue("Background", s);
-				if (null != bgs)
-				{
-					if (!s.GridPlanes.Contains(CSPlaneID.Front))
-						s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-					s.GridPlanes[CSPlaneID.Front].Background = bgs.Brush;
-				}
+        // Background
+        IBackgroundStyle bgs = (IBackgroundStyle)info.GetValue("Background", s);
+        if (null != bgs)
+        {
+          if (!s.GridPlanes.Contains(CSPlaneID.Front))
+            s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
+          s.GridPlanes[CSPlaneID.Front].Background = bgs.Brush;
+        }
 
-				// size, position, rotation and scale
-				var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
-				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
-				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
-				s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
-				s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
+        // size, position, rotation and scale
+        var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
+        s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
+        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
+        s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
+        s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
-				// LayerProperties
-				bool clipDataToFrame = info.GetBoolean("ClipDataToFrame");
-				s._dataClipping = clipDataToFrame ? LayerDataClipping.StrictToCS : LayerDataClipping.None;
+        // LayerProperties
+        bool clipDataToFrame = info.GetBoolean("ClipDataToFrame");
+        s._dataClipping = clipDataToFrame ? LayerDataClipping.StrictToCS : LayerDataClipping.None;
 
-				// axis related
-				var linkedScales = (Altaxo.Graph.Scales.Deprecated.LinkedScaleCollection)info.GetValue("AxisProperties", s);
-				s.SetupOldAxes(linkedScales);
+        // axis related
+        var linkedScales = (Altaxo.Graph.Scales.Deprecated.LinkedScaleCollection)info.GetValue("AxisProperties", s);
+        s.SetupOldAxes(linkedScales);
 
-				// Styles
-				G2DScaleStyleCollection ssc = (G2DScaleStyleCollection)info.GetValue("AxisStyles", s);
-				GridPlane gplane = new GridPlane(CSPlaneID.Front);
-				gplane.GridStyle[0] = ssc.ScaleStyle(0).GridStyle;
-				gplane.GridStyle[1] = ssc.ScaleStyle(1).GridStyle;
-				s.GridPlanes.Add(gplane);
-				foreach (AxisStyle ax in ssc.AxisStyles)
-					s._axisStyles.Add(ax);
+        // Styles
+        G2DScaleStyleCollection ssc = (G2DScaleStyleCollection)info.GetValue("AxisStyles", s);
+        GridPlane gplane = new GridPlane(CSPlaneID.Front);
+        gplane.GridStyle[0] = ssc.ScaleStyle(0).GridStyle;
+        gplane.GridStyle[1] = ssc.ScaleStyle(1).GridStyle;
+        s.GridPlanes.Add(gplane);
+        foreach (AxisStyle ax in ssc.AxisStyles)
+          s._axisStyles.Add(ax);
 
-				// Legends
-				count = info.OpenArray("Legends");
-				var legend = (TextGraphic)info.GetValue("e", s);
-				info.CloseArray(count);
+        // Legends
+        count = info.OpenArray("Legends");
+        var legend = (TextGraphic)info.GetValue("e", s);
+        info.CloseArray(count);
 
-				// XYPlotLayer specific
-				count = info.OpenArray("LinkedLayers");
-				var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
-				info.CloseArray(count);
-				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
+        // XYPlotLayer specific
+        count = info.OpenArray("LinkedLayers");
+        var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+        info.CloseArray(count);
+        ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
 
-				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphicGlyphs", s));
-				if (null != legend)
-				{
-					var legend1 = new LegendText(legend);
-					s.GraphObjects.Add(legend1);
-				}
-				s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
+        s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphicGlyphs", s));
+        if (null != legend)
+        {
+          var legend1 = new LegendText(legend);
+          s.GraphObjects.Add(legend1);
+        }
+        s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Version 3
+    #endregion Version 3
 
-		#region Version 4
+    #region Version 4
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 4)]
-		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old version");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 4)]
+    private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
 				XYPlotLayer s = (XYPlotLayer)obj;
 
 				// size, position, rotation and scale
@@ -470,86 +471,86 @@ namespace Altaxo.Graph.Gdi
 				// Plots
 				info.AddValue("Plots", s._plotItems);
 				*/
-			}
+      }
 
-			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
-				int count;
+      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
+        int count;
 
-				// size, position, rotation and scale
-				var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
-				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
-				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
-				s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
+        // size, position, rotation and scale
+        var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
+        s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
+        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
+        s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
-				// CoordinateSystem
-				s.CoordinateSystem = (G2DCoordinateSystem)info.GetValue("CoordinateSystem", s);
-				s.CoordinateSystem.UpdateAreaSize(s._cachedLayerSize);
+        // CoordinateSystem
+        s.CoordinateSystem = (G2DCoordinateSystem)info.GetValue("CoordinateSystem", s);
+        s.CoordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
-				// linked layers
-				count = info.OpenArray("LinkedLayers");
-				var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
-				info.CloseArray(count);
+        // linked layers
+        count = info.OpenArray("LinkedLayers");
+        var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+        info.CloseArray(count);
 
-				// Scales
-				var linkedScales = (Altaxo.Graph.Scales.Deprecated.LinkedScaleCollection)info.GetValue("Scales", s);
-				s.SetupOldAxes(linkedScales);
-				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
+        // Scales
+        var linkedScales = (Altaxo.Graph.Scales.Deprecated.LinkedScaleCollection)info.GetValue("Scales", s);
+        s.SetupOldAxes(linkedScales);
+        ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
 
-				// Grid planes
-				s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
+        // Grid planes
+        s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
 
-				// Axis Styles
-				s.AxisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", s);
+        // Axis Styles
+        s.AxisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", s);
 
-				// Legends
-				var legends = (IList<IGraphicBase>)info.GetValue("Legends", s);
+        // Legends
+        var legends = (IList<IGraphicBase>)info.GetValue("Legends", s);
 
-				// Graphic objects
-				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
+        // Graphic objects
+        s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
 
-				foreach (var item in legends)
-				{
-					if (item is TextGraphic)
-					{
-						var l = new LegendText((TextGraphic)item);
-						s.GraphObjects.Add(l);
-					}
-				}
+        foreach (var item in legends)
+        {
+          if (item is TextGraphic)
+          {
+            var l = new LegendText((TextGraphic)item);
+            s.GraphObjects.Add(l);
+          }
+        }
 
-				// Data Clipping
-				s.ClipDataToFrame = (LayerDataClipping)info.GetValue("DataClipping", s);
+        // Data Clipping
+        s.ClipDataToFrame = (LayerDataClipping)info.GetValue("DataClipping", s);
 
-				// PlotItemCollection
-				s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
+        // PlotItemCollection
+        s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
 
-				return s;
-			}
+        return s;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = SDeserialize(o, info, parent);
-				s.CalculateMatrix();
-				info.DeserializationFinished += s.EhDeserializationFinished;
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = SDeserialize(o, info, parent);
+        s.CalculateMatrix();
+        info.DeserializationFinished += s.EhDeserializationFinished;
+        return s;
+      }
+    }
 
-		#endregion Version 4
+    #endregion Version 4
 
-		#region Version 5
+    #region Version 5
 
-		/// <summary>
-		/// In Version 5 we changed the Scales and divided into pure Scale and TickSpacing
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 5)]
-		private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old version");
-				/*
+    /// <summary>
+    /// In Version 5 we changed the Scales and divided into pure Scale and TickSpacing
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 5)]
+    private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
 				XYPlotLayer s = (XYPlotLayer)obj;
 
 				// size, position, rotation and scale
@@ -586,204 +587,204 @@ namespace Altaxo.Graph.Gdi
 				// Plots
 				info.AddValue("Plots", s._plotItems);
 				*/
-			}
+      }
 
-			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
-				int count;
+      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
+        int count;
 
-				// size, position, rotation and scale
-				var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
-				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
-				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
-				s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
+        // size, position, rotation and scale
+        var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
+        s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
+        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
+        s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
-				// CoordinateSystem
-				s.CoordinateSystem = (G2DCoordinateSystem)info.GetValue("CoordinateSystem", s);
-				s.CoordinateSystem.UpdateAreaSize(s._cachedLayerSize);
+        // CoordinateSystem
+        s.CoordinateSystem = (G2DCoordinateSystem)info.GetValue("CoordinateSystem", s);
+        s.CoordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
-				// linked layers
-				count = info.OpenArray("LinkedLayers");
-				var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
-				info.CloseArray(count);
+        // linked layers
+        count = info.OpenArray("LinkedLayers");
+        var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+        info.CloseArray(count);
 
-				// Scales
-				s.Scales = (ScaleCollection)info.GetValue("Scales", s);
+        // Scales
+        s.Scales = (ScaleCollection)info.GetValue("Scales", s);
 
-				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
+        ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
 
-				// Grid planes
-				s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
+        // Grid planes
+        s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
 
-				// Axis Styles
-				s.AxisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", s);
+        // Axis Styles
+        s.AxisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", s);
 
-				// Legends
-				var legends = (IList<IGraphicBase>)info.GetValue("Legends", s);
+        // Legends
+        var legends = (IList<IGraphicBase>)info.GetValue("Legends", s);
 
-				// Graphic objects
-				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
+        // Graphic objects
+        s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
 
-				foreach (var item in legends)
-				{
-					if (item is TextGraphic)
-					{
-						var l = new LegendText((TextGraphic)item);
-						s.GraphObjects.Add(l);
-					}
-				}
+        foreach (var item in legends)
+        {
+          if (item is TextGraphic)
+          {
+            var l = new LegendText((TextGraphic)item);
+            s.GraphObjects.Add(l);
+          }
+        }
 
-				// Data Clipping
-				s.ClipDataToFrame = (LayerDataClipping)info.GetValue("DataClipping", s);
+        // Data Clipping
+        s.ClipDataToFrame = (LayerDataClipping)info.GetValue("DataClipping", s);
 
-				// PlotItemCollection
-				s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
+        // PlotItemCollection
+        s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
 
-				return s;
-			}
+        return s;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = SDeserialize(o, info, parent);
-				s.CalculateMatrix();
-				info.DeserializationFinished += s.EhDeserializationFinished;
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = SDeserialize(o, info, parent);
+        s.CalculateMatrix();
+        info.DeserializationFinished += s.EhDeserializationFinished;
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Version 5
+    #endregion Version 5
 
-		#region Version 6
+    #region Version 6
 
-		/// <summary>
-		/// 2013-11-27 we now have <see cref="HostLayer"/> as base class.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 6)]
-		private class XmlSerializationSurrogate6 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				XYPlotLayer s = (XYPlotLayer)obj;
+    /// <summary>
+    /// 2013-11-27 we now have <see cref="HostLayer"/> as base class.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 6)]
+    private class XmlSerializationSurrogate6 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYPlotLayer s = (XYPlotLayer)obj;
 
-				info.AddBaseValueEmbedded(obj, typeof(HostLayer));
+        info.AddBaseValueEmbedded(obj, typeof(HostLayer));
 
-				// CoordinateSystem
-				info.AddValue("CoordinateSystem", s._coordinateSystem);
+        // CoordinateSystem
+        info.AddValue("CoordinateSystem", s._coordinateSystem);
 
-				// Scales
-				info.AddValue("Scales", s._scales);
+        // Scales
+        info.AddValue("Scales", s._scales);
 
-				// Grid planes
-				info.AddValue("GridPlanes", s._gridPlanes);
+        // Grid planes
+        info.AddValue("GridPlanes", s._gridPlanes);
 
-				// Axis styles
-				info.AddValue("AxisStyles", s._axisStyles);
+        // Axis styles
+        info.AddValue("AxisStyles", s._axisStyles);
 
-				// Data clipping
-				info.AddValue("DataClipping", s._dataClipping);
+        // Data clipping
+        info.AddValue("DataClipping", s._dataClipping);
 
-				// Plots
-				info.AddValue("Plots", s._plotItems);
-			}
+        // Plots
+        info.AddValue("Plots", s._plotItems);
+      }
 
-			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
+      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
 
-				info.GetBaseValueEmbedded(s, typeof(HostLayer), parent);
+        info.GetBaseValueEmbedded(s, typeof(HostLayer), parent);
 
-				// CoordinateSystem
-				s.CoordinateSystem = (G2DCoordinateSystem)info.GetValue("CoordinateSystem", s);
-				s.CoordinateSystem.UpdateAreaSize(s._cachedLayerSize);
+        // CoordinateSystem
+        s.CoordinateSystem = (G2DCoordinateSystem)info.GetValue("CoordinateSystem", s);
+        s.CoordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
-				// Scales
-				s.Scales = (ScaleCollection)info.GetValue("Scales", s);
+        // Scales
+        s.Scales = (ScaleCollection)info.GetValue("Scales", s);
 
-				// Grid planes
-				s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
+        // Grid planes
+        s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
 
-				// Axis Styles
-				s.AxisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", s);
+        // Axis Styles
+        s.AxisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", s);
 
-				// Data Clipping
-				s.ClipDataToFrame = (LayerDataClipping)info.GetValue("DataClipping", s);
+        // Data Clipping
+        s.ClipDataToFrame = (LayerDataClipping)info.GetValue("DataClipping", s);
 
-				// PlotItemCollection
-				s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
+        // PlotItemCollection
+        s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
 
-				return s;
-			}
+        return s;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYPlotLayer s = SDeserialize(o, info, parent);
-				info.DeserializationFinished += s.EhDeserializationFinished;
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLayer s = SDeserialize(o, info, parent);
+        info.DeserializationFinished += s.EhDeserializationFinished;
+        return s;
+      }
+    }
 
-		#endregion Version 6
+    #endregion Version 6
 
-		/// <summary>
-		/// Takes final measures after the deserialization has finished, but before the dirty flag is cleared. Here, the scale bounds are updated with
-		/// the data from the project.
-		/// </summary>
-		/// <param name="info">The deserialization information.</param>
-		/// <param name="documentRoot">The document root of the current document.</param>
-		/// <param name="isFinallyCall">If set to <c>true</c> this is the last callback before the dirty flag is cleared for the document.</param>
-		protected virtual void EhDeserializationFinished(Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
-		{
-			if (isFinallyCall)
-			{
-				// after deserialisation the data bounds object of the scale is empty:
-				// then we have to rescale the axis
-				if (this.Scales.X.DataBoundsObject.IsEmpty)
-					this.InitializeXScaleDataBounds();
-				if (this.Scales.Y.DataBoundsObject.IsEmpty)
-					this.InitializeYScaleDataBounds();
-			}
-		}
+    /// <summary>
+    /// Takes final measures after the deserialization has finished, but before the dirty flag is cleared. Here, the scale bounds are updated with
+    /// the data from the project.
+    /// </summary>
+    /// <param name="info">The deserialization information.</param>
+    /// <param name="documentRoot">The document root of the current document.</param>
+    /// <param name="isFinallyCall">If set to <c>true</c> this is the last callback before the dirty flag is cleared for the document.</param>
+    protected virtual void EhDeserializationFinished(Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+    {
+      if (isFinallyCall)
+      {
+        // after deserialisation the data bounds object of the scale is empty:
+        // then we have to rescale the axis
+        if (this.Scales.X.DataBoundsObject.IsEmpty)
+          this.InitializeXScaleDataBounds();
+        if (this.Scales.Y.DataBoundsObject.IsEmpty)
+          this.InitializeYScaleDataBounds();
+      }
+    }
 
-		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy linkedLayer, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			if (null != linkedLayer)
-			{
-				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer.DocumentPath, info);
-			}
-		}
+    private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy linkedLayer, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      if (null != linkedLayer)
+      {
+        ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer.DocumentPath, info);
+      }
+    }
 
-		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.AbsoluteDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			if (null != path && path.Count > 0)
-			{
-				var pathend = path[path.Count - 1];
-				// extract layer number
-				int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
-				foreach (var scaleAndTick in s.Scales)
-					if (scaleAndTick is LinkedScale)
+    private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.AbsoluteDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      if (null != path && path.Count > 0)
+      {
+        var pathend = path[path.Count - 1];
+        // extract layer number
+        int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
+        foreach (var scaleAndTick in s.Scales)
+          if (scaleAndTick is LinkedScale)
 #pragma warning disable CS0612 // Type or member is obsolete
-						((LinkedScale)scaleAndTick).SetLinkedLayerIndex(layerNum, info);
+            ((LinkedScale)scaleAndTick).SetLinkedLayerIndex(layerNum, info);
 #pragma warning restore CS0612 // Type or member is obsolete
-			}
-		}
+      }
+    }
 
-		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelativeDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			if (null != path && path.Count > 0)
-			{
-				var pathend = path[path.Count - 1];
-				// extract layer number
-				int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
-				foreach (var scaleAndTick in s.Scales)
-					if (scaleAndTick is LinkedScale)
+    private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelativeDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      if (null != path && path.Count > 0)
+      {
+        var pathend = path[path.Count - 1];
+        // extract layer number
+        int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
+        foreach (var scaleAndTick in s.Scales)
+          if (scaleAndTick is LinkedScale)
 #pragma warning disable CS0612 // Type or member is obsolete
-						((LinkedScale)scaleAndTick).SetLinkedLayerIndex(layerNum, info);
+            ((LinkedScale)scaleAndTick).SetLinkedLayerIndex(layerNum, info);
 #pragma warning restore CS0612 // Type or member is obsolete
-			}
-		}
+      }
+    }
 
-		#endregion Serialization
-	}
+    #endregion Serialization
+  }
 }

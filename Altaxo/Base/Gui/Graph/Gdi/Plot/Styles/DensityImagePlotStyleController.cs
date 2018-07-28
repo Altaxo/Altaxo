@@ -32,76 +32,76 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	using Altaxo.Graph.Scales;
-	using ColorProvider;
-	using Scales;
+  using Altaxo.Graph.Scales;
+  using ColorProvider;
+  using Scales;
 
-	#region Interfaces
+  #region Interfaces
 
-	public interface IDensityImagePlotStyleView
-	{
-		IDensityScaleView DensityScaleView { get; }
+  public interface IDensityImagePlotStyleView
+  {
+    IDensityScaleView DensityScaleView { get; }
 
-		IColorProviderView ColorProviderView { get; }
+    IColorProviderView ColorProviderView { get; }
 
-		/// <summary>
-		/// Initializes the content of the ClipToLayer checkbox
-		/// </summary>
-		bool ClipToLayer { get; set; }
-	}
+    /// <summary>
+    /// Initializes the content of the ClipToLayer checkbox
+    /// </summary>
+    bool ClipToLayer { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Controller for the density image plot style
-	/// </summary>
-	[UserControllerForObject(typeof(DensityImagePlotStyle))]
-	[ExpectedTypeOfView(typeof(IDensityImagePlotStyleView))]
-	public class DensityImagePlotStyleController : MVCANControllerEditOriginalDocBase<DensityImagePlotStyle, IDensityImagePlotStyleView>
-	{
-		private IMVCANController _scaleController;
-		private IMVCANController _colorProviderController;
+  /// <summary>
+  /// Controller for the density image plot style
+  /// </summary>
+  [UserControllerForObject(typeof(DensityImagePlotStyle))]
+  [ExpectedTypeOfView(typeof(IDensityImagePlotStyleView))]
+  public class DensityImagePlotStyleController : MVCANControllerEditOriginalDocBase<DensityImagePlotStyle, IDensityImagePlotStyleView>
+  {
+    private IMVCANController _scaleController;
+    private IMVCANController _colorProviderController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
-			yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
+      yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_scaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
-				_scaleController.InitializeDocument(_doc.Scale);
+      if (initData)
+      {
+        _scaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
+        _scaleController.InitializeDocument(_doc.Scale);
 
-				_colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
-				_colorProviderController.InitializeDocument(_doc.ColorProvider);
-			}
+        _colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
+        _colorProviderController.InitializeDocument(_doc.ColorProvider);
+      }
 
-			if (_view != null)
-			{
-				_scaleController.ViewObject = _view.DensityScaleView;
-				_colorProviderController.ViewObject = _view.ColorProviderView;
-				_view.ClipToLayer = _doc.ClipToLayer;
-			}
-		}
+      if (_view != null)
+      {
+        _scaleController.ViewObject = _view.DensityScaleView;
+        _colorProviderController.ViewObject = _view.ColorProviderView;
+        _view.ClipToLayer = _doc.ClipToLayer;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_scaleController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_scaleController.Apply(disposeController))
+        return false;
 
-			if (!_colorProviderController.Apply(disposeController))
-				return false;
+      if (!_colorProviderController.Apply(disposeController))
+        return false;
 
-			_doc.ClipToLayer = _view.ClipToLayer;
-			_doc.Scale = (NumericalScale)_scaleController.ModelObject;
-			_doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
+      _doc.ClipToLayer = _view.ClipToLayer;
+      _doc.Scale = (NumericalScale)_scaleController.ModelObject;
+      _doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

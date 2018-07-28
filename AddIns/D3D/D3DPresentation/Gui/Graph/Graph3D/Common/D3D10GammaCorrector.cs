@@ -29,116 +29,116 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
-	using SharpDX;
-	using SharpDX.D3DCompiler;
-	using SharpDX.Direct3D10;
-	using SharpDX.DXGI;
-	using System;
-	using Buffer = SharpDX.Direct3D10.Buffer;
-	using Device = SharpDX.Direct3D10.Device;
+  using SharpDX;
+  using SharpDX.D3DCompiler;
+  using SharpDX.Direct3D10;
+  using SharpDX.DXGI;
+  using System;
+  using Buffer = SharpDX.Direct3D10.Buffer;
+  using Device = SharpDX.Direct3D10.Device;
 
-	public class D3D10GammaCorrector : IDisposable
-	{
-		private InputLayout _vertexLayout;
-		private Buffer _vertices;
-		private Effect _effect;
-		private Device _cachedDevice;
-		private bool _isDisposed = false;
+  public class D3D10GammaCorrector : IDisposable
+  {
+    private InputLayout _vertexLayout;
+    private Buffer _vertices;
+    private Effect _effect;
+    private Device _cachedDevice;
+    private bool _isDisposed = false;
 
-		public D3D10GammaCorrector(Device device, string gammaCorrectorResourcePath)
-		{
-			if (device == null)
-				throw new ArgumentNullException(nameof(device));
+    public D3D10GammaCorrector(Device device, string gammaCorrectorResourcePath)
+    {
+      if (device == null)
+        throw new ArgumentNullException(nameof(device));
 
-			_cachedDevice = device;
+      _cachedDevice = device;
 
-			ShaderBytecode shaderBytes = null;
-			using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(gammaCorrectorResourcePath))
-			{
-				if (null == stream)
-					throw new InvalidOperationException(string.Format("Compiled shader resource not found: {0}", gammaCorrectorResourcePath));
+      ShaderBytecode shaderBytes = null;
+      using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(gammaCorrectorResourcePath))
+      {
+        if (null == stream)
+          throw new InvalidOperationException(string.Format("Compiled shader resource not found: {0}", gammaCorrectorResourcePath));
 
-				using (shaderBytes = ShaderBytecode.FromStream(stream))
-				{
-					this._effect = new Effect(device, shaderBytes);
-				}
-			}
+        using (shaderBytes = ShaderBytecode.FromStream(stream))
+        {
+          this._effect = new Effect(device, shaderBytes);
+        }
+      }
 
-			EffectTechnique technique = this._effect.GetTechniqueByIndex(0);
-			EffectPass pass = technique.GetPassByIndex(0);
+      EffectTechnique technique = this._effect.GetTechniqueByIndex(0);
+      EffectPass pass = technique.GetPassByIndex(0);
 
-			this._vertexLayout = new InputLayout(device, pass.Description.Signature, new[] {
-																new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-																new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0) });
+      this._vertexLayout = new InputLayout(device, pass.Description.Signature, new[] {
+                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0) });
 
-			this._vertices = Buffer.Create(device, BindFlags.VertexBuffer, new[]
-																			 {
+      this._vertices = Buffer.Create(device, BindFlags.VertexBuffer, new[]
+                                       {
                                       // 3D coordinates              UV Texture coordinates
                                        -1.0f, 1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
-																			 1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
-																			 -1.0f, -1.0f, 0.5f, 1.0f,     0.0f, 1.0f,
-																			 -1.0f, 1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
-																			 1.0f,  1.0f, 0.5f, 1.0f,      1.0f, 0.0f,
-																			 1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
-						});
-		}
+                                       1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
+                                       -1.0f, -1.0f, 0.5f, 1.0f,     0.0f, 1.0f,
+                                       -1.0f, 1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
+                                       1.0f,  1.0f, 0.5f, 1.0f,      1.0f, 0.0f,
+                                       1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
+            });
+    }
 
-		#region IDisposable Support
+    #region IDisposable Support
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!_isDisposed)
-			{
-				if (disposing)
-				{
-					Disposer.RemoveAndDispose(ref this._vertexLayout);
-					Disposer.RemoveAndDispose(ref this._vertices);
-					Disposer.RemoveAndDispose(ref this._effect);
-					_cachedDevice = null;
-				}
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!_isDisposed)
+      {
+        if (disposing)
+        {
+          Disposer.RemoveAndDispose(ref this._vertexLayout);
+          Disposer.RemoveAndDispose(ref this._vertices);
+          Disposer.RemoveAndDispose(ref this._effect);
+          _cachedDevice = null;
+        }
 
-				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-				// TODO: set large fields to null.
+        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+        // TODO: set large fields to null.
 
-				_isDisposed = true;
-			}
-		}
+        _isDisposed = true;
+      }
+    }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			// uncomment the following line if the finalizer is overridden.
-			// GC.SuppressFinalize(this);
-		}
+    public void Dispose()
+    {
+      Dispose(true);
+      // uncomment the following line if the finalizer is overridden.
+      // GC.SuppressFinalize(this);
+    }
 
-		#endregion IDisposable Support
+    #endregion IDisposable Support
 
-		public void Render(Device device, ShaderResourceView textureView)
-		{
-			if (_isDisposed)
-				throw new ObjectDisposedException(this.GetType().Name);
+    public void Render(Device device, ShaderResourceView textureView)
+    {
+      if (_isDisposed)
+        throw new ObjectDisposedException(this.GetType().Name);
 
-			if (device == null)
-				return;
+      if (device == null)
+        return;
 
-			if (!object.ReferenceEquals(device, _cachedDevice))
-				throw new InvalidOperationException(string.Format("Argument {0} and member {1} do not match!", nameof(device), nameof(_cachedDevice)));
+      if (!object.ReferenceEquals(device, _cachedDevice))
+        throw new InvalidOperationException(string.Format("Argument {0} and member {1} do not match!", nameof(device), nameof(_cachedDevice)));
 
-			device.InputAssembler.InputLayout = this._vertexLayout;
-			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this._vertices, 24, 0));
+      device.InputAssembler.InputLayout = this._vertexLayout;
+      device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+      device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this._vertices, 24, 0));
 
-			EffectTechnique technique = this._effect.GetTechniqueByIndex(0);
-			EffectPass pass = technique.GetPassByIndex(0);
-			var shaderResourceObj = this._effect.GetVariableByName("ShaderTexture");
-			EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
-			shaderResource.SetResource(textureView);
+      EffectTechnique technique = this._effect.GetTechniqueByIndex(0);
+      EffectPass pass = technique.GetPassByIndex(0);
+      var shaderResourceObj = this._effect.GetVariableByName("ShaderTexture");
+      EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
+      shaderResource.SetResource(textureView);
 
-			for (int i = 0; i < technique.Description.PassCount; ++i)
-			{
-				pass.Apply();
-				device.Draw(6, 0);
-			}
-		}
-	}
+      for (int i = 0; i < technique.Description.PassCount; ++i)
+      {
+        pass.Apply();
+        device.Draw(6, 0);
+      }
+    }
+  }
 }

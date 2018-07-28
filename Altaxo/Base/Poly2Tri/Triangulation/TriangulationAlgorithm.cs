@@ -31,8 +31,8 @@
 
 namespace Poly2Tri
 {
-	public enum TriangulationAlgorithm
-	{
-		DTSweep
-	}
+  public enum TriangulationAlgorithm
+  {
+    DTSweep
+  }
 }

@@ -29,105 +29,105 @@ using System.Text;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	using Altaxo.Graph.Gdi;
+  using Altaxo.Graph.Gdi;
 
-	#region Interfaces
+  #region Interfaces
 
-	public interface IPenAllPropertiesView
-	{
-		PenX Pen { get; set; }
+  public interface IPenAllPropertiesView
+  {
+    PenX Pen { get; set; }
 
-		bool ShowPlotColorsOnly { set; }
-	}
+    bool ShowPlotColorsOnly { set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[ExpectedTypeOfView(typeof(IPenAllPropertiesView))]
-	public class PenAllPropertiesController : IMVCAController
-	{
-		private IPenAllPropertiesView _view;
-		private PenX _doc;
-		private bool _showPlotColorsOnly;
+  [ExpectedTypeOfView(typeof(IPenAllPropertiesView))]
+  public class PenAllPropertiesController : IMVCAController
+  {
+    private IPenAllPropertiesView _view;
+    private PenX _doc;
+    private bool _showPlotColorsOnly;
 
-		public PenAllPropertiesController(PenX doc)
-		{
-			_doc = doc;
-			Initialize(true);
-		}
+    public PenAllPropertiesController(PenX doc)
+    {
+      _doc = doc;
+      Initialize(true);
+    }
 
-		private void Initialize(bool initData)
-		{
-			if (_view != null)
-			{
-				_view.ShowPlotColorsOnly = _showPlotColorsOnly;
-				_view.Pen = _doc;
-			}
-		}
+    private void Initialize(bool initData)
+    {
+      if (_view != null)
+      {
+        _view.ShowPlotColorsOnly = _showPlotColorsOnly;
+        _view.Pen = _doc;
+      }
+    }
 
-		public bool ShowPlotColorsOnly
-		{
-			get
-			{
-				return _showPlotColorsOnly;
-			}
-			set
-			{
-				_showPlotColorsOnly = value;
-				if (null != _view)
-					_view.ShowPlotColorsOnly = value;
-			}
-		}
+    public bool ShowPlotColorsOnly
+    {
+      get
+      {
+        return _showPlotColorsOnly;
+      }
+      set
+      {
+        _showPlotColorsOnly = value;
+        if (null != _view)
+          _view.ShowPlotColorsOnly = value;
+      }
+    }
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IPenAllPropertiesView;
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        _view = value as IPenAllPropertiesView;
 
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
+        if (null != _view)
+        {
+          Initialize(false);
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
+    public object ModelObject
+    {
+      get { return _doc; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		#endregion IMVCController Members
+    #endregion IMVCController Members
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public bool Apply(bool disposeController)
-		{
-			_doc = _view.Pen;
-			return true;
-		}
+    public bool Apply(bool disposeController)
+    {
+      _doc = _view.Pen;
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IApplyController Members
-	}
+    #endregion IApplyController Members
+  }
 }

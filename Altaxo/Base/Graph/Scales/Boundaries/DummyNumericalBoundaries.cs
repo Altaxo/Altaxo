@@ -28,52 +28,52 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-	public class DummyNumericalBoundaries : NumericalBoundaries
-	{
-		#region Serialization
+  public class DummyNumericalBoundaries : NumericalBoundaries
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DummyNumericalBoundaries), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DummyNumericalBoundaries), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (DummyNumericalBoundaries)o ?? new DummyNumericalBoundaries();
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (DummyNumericalBoundaries)o ?? new DummyNumericalBoundaries();
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public DummyNumericalBoundaries()
-		{
-		}
+    public DummyNumericalBoundaries()
+    {
+    }
 
-		public DummyNumericalBoundaries(DummyNumericalBoundaries from)
-			: base(from)
-		{
-		}
+    public DummyNumericalBoundaries(DummyNumericalBoundaries from)
+      : base(from)
+    {
+    }
 
-		public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
-		{
-			return true;
-		}
+    public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
+    {
+      return true;
+    }
 
-		public override bool Add(Altaxo.Data.AltaxoVariant item)
-		{
-			return true;
-		}
+    public override bool Add(Altaxo.Data.AltaxoVariant item)
+    {
+      return true;
+    }
 
-		public override object Clone()
-		{
-			return new DummyNumericalBoundaries(this);
-		}
+    public override object Clone()
+    {
+      return new DummyNumericalBoundaries(this);
+    }
 
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-		}
-	}
+    protected override void AccumulateChangeData(object sender, EventArgs e)
+    {
+    }
+  }
 }

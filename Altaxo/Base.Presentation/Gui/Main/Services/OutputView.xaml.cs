@@ -14,41 +14,42 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Main.Services
 {
-	/// <summary>
-	/// Interaction logic for OutputView.xaml
-	/// </summary>
-	public partial class OutputView : UserControl, IOutputView
-	{
-		public event Action EnabledChanged;
+  /// <summary>
+  /// Interaction logic for OutputView.xaml
+  /// </summary>
+  public partial class OutputView : UserControl, IOutputView
+  {
+    public event Action EnabledChanged;
 
-		public OutputView()
-		{
-			InitializeComponent();
-		}
+    public OutputView()
+    {
+      InitializeComponent();
+    }
 
-		#region IOutputView Members
+    #region IOutputView Members
 
-		private void InternalSetText(string text)
-		{
-			_view.Text = text;
-		}
+    private void InternalSetText(string text)
+    {
+      _view.Text = text;
+    }
 
-		public void SetText(string text)
-		{
-			if (this.Dispatcher.CheckAccess())
-				_view.Text = text;
-			else
-				this.Dispatcher.BeginInvoke((Action)delegate () { InternalSetText(text); }, System.Windows.Threading.DispatcherPriority.Normal, null);
-		}
+    public void SetText(string text)
+    {
+      if (this.Dispatcher.CheckAccess())
+        _view.Text = text;
+      else
+        this.Dispatcher.BeginInvoke((Action)delegate ()
+        { InternalSetText(text); }, System.Windows.Threading.DispatcherPriority.Normal, null);
+    }
 
-		bool IOutputView.IsEnabled { get { return _menuTextAppendEnabled.IsChecked; } set { _menuTextAppendEnabled.IsChecked = value; } }
+    bool IOutputView.IsEnabled { get { return _menuTextAppendEnabled.IsChecked; } set { _menuTextAppendEnabled.IsChecked = value; } }
 
-		#endregion IOutputView Members
+    #endregion IOutputView Members
 
-		private void EhMenuTextAppendEnabled1(object sender, RoutedEventArgs e)
-		{
-			if (null != EnabledChanged)
-				EnabledChanged();
-		}
-	}
+    private void EhMenuTextAppendEnabled1(object sender, RoutedEventArgs e)
+    {
+      if (null != EnabledChanged)
+        EnabledChanged();
+    }
+  }
 }

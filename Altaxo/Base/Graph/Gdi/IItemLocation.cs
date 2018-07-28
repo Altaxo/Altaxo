@@ -29,17 +29,17 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
-	public interface IItemLocation
-	:
-	Altaxo.Main.IDocumentLeafNode,
-	Altaxo.Main.ICopyFrom
-	{
-		double Rotation { get; set; }
+  public interface IItemLocation
+  :
+  Altaxo.Main.IDocumentLeafNode,
+  Altaxo.Main.ICopyFrom
+  {
+    double Rotation { get; set; }
 
-		double ShearX { get; set; }
+    double ShearX { get; set; }
 
-		double ScaleX { get; set; }
+    double ScaleX { get; set; }
 
-		double ScaleY { get; set; }
-	}
+    double ScaleY { get; set; }
+  }
 }

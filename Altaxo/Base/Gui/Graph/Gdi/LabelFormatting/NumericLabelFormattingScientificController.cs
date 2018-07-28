@@ -30,35 +30,35 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-	public interface INumericLabelFormattingScientificView
-	{
-		bool ShowExponentAlways { get; set; }
-	}
+  public interface INumericLabelFormattingScientificView
+  {
+    bool ShowExponentAlways { get; set; }
+  }
 
-	[UserControllerForObject(typeof(NumericLabelFormattingScientific))]
-	[ExpectedTypeOfView(typeof(INumericLabelFormattingScientificView))]
-	public class NumericLabelFormattingScientificController : MVCANControllerEditOriginalDocBase<NumericLabelFormattingScientific, INumericLabelFormattingScientificView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(NumericLabelFormattingScientific))]
+  [ExpectedTypeOfView(typeof(INumericLabelFormattingScientificView))]
+  public class NumericLabelFormattingScientificController : MVCANControllerEditOriginalDocBase<NumericLabelFormattingScientific, INumericLabelFormattingScientificView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.ShowExponentAlways = _doc.ShowExponentAlways;
-			}
-		}
+      if (null != _view)
+      {
+        _view.ShowExponentAlways = _doc.ShowExponentAlways;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.ShowExponentAlways = _view.ShowExponentAlways;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.ShowExponentAlways = _view.ShowExponentAlways;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

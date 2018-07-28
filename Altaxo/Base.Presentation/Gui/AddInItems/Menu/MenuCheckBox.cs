@@ -24,39 +24,39 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.AddInItems
 {
-	internal sealed class MenuCheckBox : CoreMenuItem
-	{
-		private ICheckableMenuCommand cmd;
+  internal sealed class MenuCheckBox : CoreMenuItem
+  {
+    private ICheckableMenuCommand cmd;
 
-		// We need to keep the reference to the event handler around
-		// because the IsCheckedChanged event may be a weak event
-		private EventHandler isCheckedChangedHandler;
+    // We need to keep the reference to the event handler around
+    // because the IsCheckedChanged event may be a weak event
+    private EventHandler isCheckedChangedHandler;
 
-		public MenuCheckBox(UIElement inputBindingOwner, Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
-			: base(codon, caller, conditions)
-		{
-			this.Command = CommandWrapper.CreateCommand(codon, conditions);
-			this.CommandParameter = caller;
+    public MenuCheckBox(UIElement inputBindingOwner, Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
+      : base(codon, caller, conditions)
+    {
+      this.Command = CommandWrapper.CreateCommand(codon, conditions);
+      this.CommandParameter = caller;
 
-			cmd = CommandWrapper.Unwrap(this.Command) as ICheckableMenuCommand;
-			if (cmd != null)
-			{
-				isCheckedChangedHandler = cmd_IsCheckedChanged;
-				cmd.IsCheckedChanged += isCheckedChangedHandler;
-				this.IsChecked = cmd.IsChecked(caller);
-			}
+      cmd = CommandWrapper.Unwrap(this.Command) as ICheckableMenuCommand;
+      if (cmd != null)
+      {
+        isCheckedChangedHandler = cmd_IsCheckedChanged;
+        cmd.IsCheckedChanged += isCheckedChangedHandler;
+        this.IsChecked = cmd.IsChecked(caller);
+      }
 
-			if (!string.IsNullOrEmpty(codon.Properties["shortcut"]))
-			{
-				KeyGesture kg = MenuService.ParseShortcut(codon.Properties["shortcut"]);
-				MenuCommand.AddGestureToInputBindingOwner(inputBindingOwner, kg, this.Command, null);
-				this.InputGestureText = MenuService.GetDisplayStringForShortcut(kg);
-			}
-		}
+      if (!string.IsNullOrEmpty(codon.Properties["shortcut"]))
+      {
+        KeyGesture kg = MenuService.ParseShortcut(codon.Properties["shortcut"]);
+        MenuCommand.AddGestureToInputBindingOwner(inputBindingOwner, kg, this.Command, null);
+        this.InputGestureText = MenuService.GetDisplayStringForShortcut(kg);
+      }
+    }
 
-		private void cmd_IsCheckedChanged(object sender, EventArgs e)
-		{
-			this.IsChecked = cmd.IsChecked(_caller);
-		}
-	}
+    private void cmd_IsCheckedChanged(object sender, EventArgs e)
+    {
+      this.IsChecked = cmd.IsChecked(_caller);
+    }
+  }
 }

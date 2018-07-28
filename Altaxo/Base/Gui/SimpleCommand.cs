@@ -20,18 +20,18 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Base class for ICommand implementations.
-	/// </summary>
-	public abstract class SimpleCommand : ICommand
-	{
-		public virtual event EventHandler CanExecuteChanged { add { } remove { } }
+  /// <summary>
+  /// Base class for ICommand implementations.
+  /// </summary>
+  public abstract class SimpleCommand : ICommand
+  {
+    public virtual event EventHandler CanExecuteChanged { add { } remove { } }
 
-		public virtual bool CanExecute(object parameter)
-		{
-			return true;
-		}
+    public virtual bool CanExecute(object parameter)
+    {
+      return true;
+    }
 
-		public abstract void Execute(object parameter);
-	}
+    public abstract void Execute(object parameter);
+  }
 }

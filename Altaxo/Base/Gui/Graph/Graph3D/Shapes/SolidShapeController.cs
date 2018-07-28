@@ -31,51 +31,51 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
-	public interface ISolidShapeView
-	{
-		Altaxo.Drawing.D3D.IMaterial Material { get; set; }
+  public interface ISolidShapeView
+  {
+    Altaxo.Drawing.D3D.IMaterial Material { get; set; }
 
-		object LocationView { set; }
-	}
+    object LocationView { set; }
+  }
 
-	[UserControllerForObject(typeof(SolidBodyShapeBase))]
-	[ExpectedTypeOfView(typeof(ISolidShapeView))]
-	public class ClosedPathShapeController : MVCANControllerEditOriginalDocBase<SolidBodyShapeBase, ISolidShapeView>
-	{
-		private IMVCANController _locationController;
+  [UserControllerForObject(typeof(SolidBodyShapeBase))]
+  [ExpectedTypeOfView(typeof(ISolidShapeView))]
+  public class ClosedPathShapeController : MVCANControllerEditOriginalDocBase<SolidBodyShapeBase, ISolidShapeView>
+  {
+    private IMVCANController _locationController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-				Current.Gui.FindAndAttachControlTo(_locationController);
-			}
-			if (_view != null)
-			{
-				_view.Material = _doc.Material;
-				_view.LocationView = _locationController.ViewObject;
-			}
-		}
+      if (initData)
+      {
+        _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+        Current.Gui.FindAndAttachControlTo(_locationController);
+      }
+      if (_view != null)
+      {
+        _view.Material = _doc.Material;
+        _view.LocationView = _locationController.ViewObject;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_locationController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_locationController.Apply(disposeController))
+        return false;
 
-			_doc.Material = _view.Material;
+      _doc.Material = _view.Material;
 
-			if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
-				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+      if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
+        _doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

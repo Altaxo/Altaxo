@@ -30,11 +30,11 @@ using System.Text;
 
 namespace Altaxo.UnmanagedApi.Advapi32
 {
-	[StructLayout(LayoutKind.Sequential)]
-	public struct SECURITY_ATTRIBUTES
-	{
-		public int nLength;
-		public IntPtr lpSecurityDescriptor;
-		public int bInheritHandle;
-	}
+  [StructLayout(LayoutKind.Sequential)]
+  public struct SECURITY_ATTRIBUTES
+  {
+    public int nLength;
+    public IntPtr lpSecurityDescriptor;
+    public int bInheritHandle;
+  }
 }

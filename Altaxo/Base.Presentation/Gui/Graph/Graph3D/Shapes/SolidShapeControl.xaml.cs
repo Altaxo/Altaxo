@@ -31,38 +31,38 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
-	/// <summary>
-	/// Interaction logic for ShapeGraphicControl.xaml
-	/// </summary>
-	public partial class SolidShapeControl : UserControl, ISolidShapeView
-	{
-		public SolidShapeControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ShapeGraphicControl.xaml
+  /// </summary>
+  public partial class SolidShapeControl : UserControl, ISolidShapeView
+  {
+    public SolidShapeControl()
+    {
+      InitializeComponent();
+    }
 
-		#region ISolidShapeView
+    #region ISolidShapeView
 
-		public Altaxo.Drawing.D3D.IMaterial Material
-		{
-			get
-			{
-				return _guiMaterial.SelectedMaterial;
-			}
-			set
-			{
-				_guiMaterial.SelectedMaterial = value;
-			}
-		}
+    public Altaxo.Drawing.D3D.IMaterial Material
+    {
+      get
+      {
+        return _guiMaterial.SelectedMaterial;
+      }
+      set
+      {
+        _guiMaterial.SelectedMaterial = value;
+      }
+    }
 
-		public object LocationView
-		{
-			set
-			{
-				_guiLocationHost.Child = (UIElement)value;
-			}
-		}
+    public object LocationView
+    {
+      set
+      {
+        _guiLocationHost.Child = (UIElement)value;
+      }
+    }
 
-		#endregion ISolidShapeView
-	}
+    #endregion ISolidShapeView
+  }
 }

@@ -30,22 +30,22 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	/// <summary>
-	/// Interface to a buffer that stores indexed triangle data consisting of position, normal and texture coordinates.
-	/// </summary>
-	public interface IPositionNormalUVIndexedTriangleBuffer : IIndexedTriangleBuffer
-	{
-		/// <summary>
-		/// Adds the specified vertex.
-		/// </summary>
-		/// <param name="x">The x position.</param>
-		/// <param name="y">The y position.</param>
-		/// <param name="z">The z position.</param>
-		/// <param name="nx">The x component of the normal.</param>
-		/// <param name="ny">The y component of the normal.</param>
-		/// <param name="nz">The z component of the normal.</param>
-		/// <param name="u">The u texture coordinate.</param>
-		/// <param name="v">The v texture coordinate.</param>
-		void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz, double u, double v);
-	}
+  /// <summary>
+  /// Interface to a buffer that stores indexed triangle data consisting of position, normal and texture coordinates.
+  /// </summary>
+  public interface IPositionNormalUVIndexedTriangleBuffer : IIndexedTriangleBuffer
+  {
+    /// <summary>
+    /// Adds the specified vertex.
+    /// </summary>
+    /// <param name="x">The x position.</param>
+    /// <param name="y">The y position.</param>
+    /// <param name="z">The z position.</param>
+    /// <param name="nx">The x component of the normal.</param>
+    /// <param name="ny">The y component of the normal.</param>
+    /// <param name="nz">The z component of the normal.</param>
+    /// <param name="u">The u texture coordinate.</param>
+    /// <param name="v">The v texture coordinate.</param>
+    void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz, double u, double v);
+  }
 }

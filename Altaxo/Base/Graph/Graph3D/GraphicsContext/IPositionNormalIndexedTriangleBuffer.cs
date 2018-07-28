@@ -30,20 +30,20 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	/// <summary>
-	/// Interface to a buffer that stores indexed triangle data consisting of position and normal.
-	/// </summary>
-	public interface IPositionNormalIndexedTriangleBuffer : IIndexedTriangleBuffer
-	{
-		/// <summary>
-		/// Adds the specified vertex.
-		/// </summary>
-		/// <param name="x">The x position.</param>
-		/// <param name="y">The y position.</param>
-		/// <param name="z">The z position.</param>
-		/// <param name="nx">The x component of the normal.</param>
-		/// <param name="ny">The y component of the normal.</param>
-		/// <param name="nz">The z component of the normal.</param>
-		void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz);
-	}
+  /// <summary>
+  /// Interface to a buffer that stores indexed triangle data consisting of position and normal.
+  /// </summary>
+  public interface IPositionNormalIndexedTriangleBuffer : IIndexedTriangleBuffer
+  {
+    /// <summary>
+    /// Adds the specified vertex.
+    /// </summary>
+    /// <param name="x">The x position.</param>
+    /// <param name="y">The y position.</param>
+    /// <param name="z">The z position.</param>
+    /// <param name="nx">The x component of the normal.</param>
+    /// <param name="ny">The y component of the normal.</param>
+    /// <param name="nz">The z component of the normal.</param>
+    void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz);
+  }
 }

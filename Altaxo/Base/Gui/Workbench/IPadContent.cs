@@ -20,46 +20,46 @@ using System;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// The IPadContent interface is interface of the viewmodel of all "tool" windows.</summary>
-	public interface IPadContent : IWorkbenchContent, IDisposable
-	{
-		/// <summary>
-		/// Returns the category (this is used for defining where the menu item to
-		/// this pad goes)
-		/// </summary>
-		string Category { get; set; }
+  /// <summary>
+  /// The IPadContent interface is interface of the viewmodel of all "tool" windows.</summary>
+  public interface IPadContent : IWorkbenchContent, IDisposable
+  {
+    /// <summary>
+    /// Returns the category (this is used for defining where the menu item to
+    /// this pad goes)
+    /// </summary>
+    string Category { get; set; }
 
-		/// <summary>
-		/// Returns the icon bitmap resource name of the pad. May be an empty string
-		/// if the pad has no icon defined.
-		/// </summary>
-		string IconSource { get; }
+    /// <summary>
+    /// Returns the icon bitmap resource name of the pad. May be an empty string
+    /// if the pad has no icon defined.
+    /// </summary>
+    string IconSource { get; }
 
-		/// <summary>
-		/// Returns the menu shortcut for the view menu item.
-		/// </summary>
-		string Shortcut { get; set; }
+    /// <summary>
+    /// Returns the menu shortcut for the view menu item.
+    /// </summary>
+    string Shortcut { get; set; }
 
-		/// <summary>
-		/// Gets a string which uniquely identifies the content.
-		/// </summary>
-		string ContentId { get; }
+    /// <summary>
+    /// Gets a string which uniquely identifies the content.
+    /// </summary>
+    string ContentId { get; }
 
-		/// <summary>
-		/// Gets the default position of this pad.
-		/// </summary>
-		/// <value>
-		/// The default pad position.
-		/// </value>
-		DefaultPadPositions DefaultPosition { get; }
+    /// <summary>
+    /// Gets the default position of this pad.
+    /// </summary>
+    /// <value>
+    /// The default pad position.
+    /// </value>
+    DefaultPadPositions DefaultPosition { get; }
 
-		/// <summary>
-		/// Gets or sets the pad descriptor that has created this pad content.
-		/// </summary>
-		/// <value>
-		/// The pad descriptor.
-		/// </value>
-		PadDescriptor PadDescriptor { get; set; }
-	}
+    /// <summary>
+    /// Gets or sets the pad descriptor that has created this pad content.
+    /// </summary>
+    /// <value>
+    /// The pad descriptor.
+    /// </value>
+    PadDescriptor PadDescriptor { get; set; }
+  }
 }

@@ -28,59 +28,59 @@ using System;
 
 namespace AltaxoTest.Data
 {
-	/// <summary>
-	/// Summary description for DoubleColumn_Test.
-	/// </summary>
-	[TestFixture]
-	public class DataColumnCollection_Test
-	{
-		[Test]
-		public void ZeroColumns()
-		{
-			DataColumnCollection d = new DataColumnCollection();
-			Assert.AreEqual(0, d.ColumnCount);
-			Assert.AreEqual(0, d.RowCount);
-			Assert.AreEqual(false, d.IsDirty);
-			Assert.AreEqual(false, d.IsSuspended);
-		}
+  /// <summary>
+  /// Summary description for DoubleColumn_Test.
+  /// </summary>
+  [TestFixture]
+  public class DataColumnCollection_Test
+  {
+    [Test]
+    public void ZeroColumns()
+    {
+      DataColumnCollection d = new DataColumnCollection();
+      Assert.AreEqual(0, d.ColumnCount);
+      Assert.AreEqual(0, d.RowCount);
+      Assert.AreEqual(false, d.IsDirty);
+      Assert.AreEqual(false, d.IsSuspended);
+    }
 
-		[Test]
-		public void TenEmptyColumns()
-		{
-			DataColumnCollection d = new DataColumnCollection();
+    [Test]
+    public void TenEmptyColumns()
+    {
+      DataColumnCollection d = new DataColumnCollection();
 
-			DataColumn[] cols = new DataColumn[10];
-			for (int i = 0; i < 10; i++)
-			{
-				cols[i] = new DoubleColumn();
-				d.Add(cols[i]);
-			}
+      DataColumn[] cols = new DataColumn[10];
+      for (int i = 0; i < 10; i++)
+      {
+        cols[i] = new DoubleColumn();
+        d.Add(cols[i]);
+      }
 
-			Assert.AreEqual(10, d.ColumnCount);
-			Assert.AreEqual(0, d.RowCount);
-			Assert.AreEqual(false, d.IsDirty);
-			Assert.AreEqual(false, d.IsSuspended);
+      Assert.AreEqual(10, d.ColumnCount);
+      Assert.AreEqual(0, d.RowCount);
+      Assert.AreEqual(false, d.IsDirty);
+      Assert.AreEqual(false, d.IsSuspended);
 
-			Assert.AreEqual("A", d.GetColumnName(0));
-			Assert.AreEqual("A", d[0].Name);
+      Assert.AreEqual("A", d.GetColumnName(0));
+      Assert.AreEqual("A", d[0].Name);
 
-			Assert.AreEqual("J", d.GetColumnName(9));
-			Assert.AreEqual("J", d[9].Name);
+      Assert.AreEqual("J", d.GetColumnName(9));
+      Assert.AreEqual("J", d[9].Name);
 
-			// Test index to column resolution
-			for (int i = 0; i < 10; i++)
-				Assert.AreEqual(cols[i], d[i]);
+      // Test index to column resolution
+      for (int i = 0; i < 10; i++)
+        Assert.AreEqual(cols[i], d[i]);
 
-			// test name to column resolution
+      // test name to column resolution
 
-			for (int i = 0; i < 10; i++)
-			{
-				char name = (char)('A' + i);
-				Assert.AreEqual(cols[i], d[name.ToString()], "Column to name resolution of col " + name.ToString());
-			}
-			// test column to number resolution
-			for (int i = 0; i < 10; i++)
-				Assert.AreEqual(i, d.GetColumnNumber(cols[i]));
-		}
-	}
+      for (int i = 0; i < 10; i++)
+      {
+        char name = (char)('A' + i);
+        Assert.AreEqual(cols[i], d[name.ToString()], "Column to name resolution of col " + name.ToString());
+      }
+      // test column to number resolution
+      for (int i = 0; i < 10; i++)
+        Assert.AreEqual(i, d.GetColumnNumber(cols[i]));
+    }
+  }
 }

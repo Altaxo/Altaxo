@@ -23,40 +23,40 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Minimum requirements to a status bar.
-	/// </summary>
-	[GlobalService("StatusBar")]
-	public interface IStatusBarService : IDisposable
-	{
-		/// <summary>
-		/// Sets text that is displayed in the right corner of the status bar. This is intended for volative text, like clock time.
-		/// Do not use it for static text messages.
-		/// </summary>
-		/// <param name="text">The text.</param>
-		void SetRightCornerText(string text);
+  /// <summary>
+  /// Minimum requirements to a status bar.
+  /// </summary>
+  [GlobalService("StatusBar")]
+  public interface IStatusBarService : IDisposable
+  {
+    /// <summary>
+    /// Sets text that is displayed in the right corner of the status bar. This is intended for volative text, like clock time.
+    /// Do not use it for static text messages.
+    /// </summary>
+    /// <param name="text">The text.</param>
+    void SetRightCornerText(string text);
 
-		/// <summary>
-		/// Sets the message shown in the left-most pane in the status bar.
-		/// </summary>
-		/// <param name="message">The message text.</param>
-		/// <param name="highlighted">Whether to highlight the text</param>
-		/// <param name="icon">Icon to show next to the text. If this parameter is a string, it will be interpreted as a resource string.</param>
-		void SetMessage(string message, bool highlighted = false, object icon = null);
+    /// <summary>
+    /// Sets the message shown in the left-most pane in the status bar.
+    /// </summary>
+    /// <param name="message">The message text.</param>
+    /// <param name="highlighted">Whether to highlight the text</param>
+    /// <param name="icon">Icon to show next to the text. If this parameter is a string, it will be interpreted as a resource string.</param>
+    void SetMessage(string message, bool highlighted = false, object icon = null);
 
-		/// <summary>
-		/// Creates a new <see cref="IProgressMonitor"/> that can be used to report
-		/// progress to the status bar.
-		/// </summary>
-		/// <param name="cancellationToken">Cancellation token to use for
-		/// <see cref="IProgressReporter.CancellationToken"/></param>
-		/// <returns>The new IProgressMonitor instance. This return value must be disposed
-		/// once the background task has completed.</returns>
-		IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken));
+    /// <summary>
+    /// Creates a new <see cref="IProgressMonitor"/> that can be used to report
+    /// progress to the status bar.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token to use for
+    /// <see cref="IProgressReporter.CancellationToken"/></param>
+    /// <returns>The new IProgressMonitor instance. This return value must be disposed
+    /// once the background task has completed.</returns>
+    IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>
-		/// Shows progress for the specified ProgressCollector in the status bar.
-		/// </summary>
-		void AddProgress(ProgressCollector progress);
-	}
+    /// <summary>
+    /// Shows progress for the specified ProgressCollector in the status bar.
+    /// </summary>
+    void AddProgress(ProgressCollector progress);
+  }
 }

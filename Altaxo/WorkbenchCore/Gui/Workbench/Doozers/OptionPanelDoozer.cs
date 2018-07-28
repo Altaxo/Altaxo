@@ -25,59 +25,59 @@ using Altaxo.Gui.Settings;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Creates DefaultOptionPanelDescriptor objects that are used in option dialogs.
-	/// </summary>
-	/// <attribute name="class">
-	/// Name of the IOptionPanel class. Optional if the page has subpages.
-	/// </attribute>
-	/// <attribute name="label" use="required">
-	/// Caption of the dialog panel.
-	/// </attribute>
-	/// <children childTypes="OptionPanel">
-	/// In options, option pages can have subpages by specifying them
-	/// as children in the AddInTree.
-	/// </children>
-	/// <returns>
-	/// A DefaultOptionPanelDescriptor object.
-	/// </returns>
-	public class OptionPanelDoozer : IDoozer
-	{
-		/// <summary>
-		/// Gets if the doozer handles codon conditions on its own.
-		/// If this property return false, the item is excluded when the condition is not met.
-		/// </summary>
-		public bool HandleConditions
-		{
-			get
-			{
-				return false;
-			}
-		}
+  /// <summary>
+  /// Creates DefaultOptionPanelDescriptor objects that are used in option dialogs.
+  /// </summary>
+  /// <attribute name="class">
+  /// Name of the IOptionPanel class. Optional if the page has subpages.
+  /// </attribute>
+  /// <attribute name="label" use="required">
+  /// Caption of the dialog panel.
+  /// </attribute>
+  /// <children childTypes="OptionPanel">
+  /// In options, option pages can have subpages by specifying them
+  /// as children in the AddInTree.
+  /// </children>
+  /// <returns>
+  /// A DefaultOptionPanelDescriptor object.
+  /// </returns>
+  public class OptionPanelDoozer : IDoozer
+  {
+    /// <summary>
+    /// Gets if the doozer handles codon conditions on its own.
+    /// If this property return false, the item is excluded when the condition is not met.
+    /// </summary>
+    public bool HandleConditions
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		/// <summary>
-		/// Creates an item with the specified sub items. And the current
-		/// Condition status for this item.
-		/// </summary>
-		public object BuildItem(BuildItemArgs args)
-		{
-			string label = args.Codon["label"];
-			string id = args.Codon.Id;
+    /// <summary>
+    /// Creates an item with the specified sub items. And the current
+    /// Condition status for this item.
+    /// </summary>
+    public object BuildItem(BuildItemArgs args)
+    {
+      string label = args.Codon["label"];
+      string id = args.Codon.Id;
 
-			var subItems = args.BuildSubItems<IOptionPanelDescriptor>();
-			if (subItems.Count == 0)
-			{
-				if (args.Codon.Properties.Contains("class"))
-				{
-					return new DefaultOptionPanelDescriptor(id, StringParser.Parse(label), args.AddIn, args.Parameter, args.Codon["class"]);
-				}
-				else
-				{
-					return new DefaultOptionPanelDescriptor(id, StringParser.Parse(label));
-				}
-			}
+      var subItems = args.BuildSubItems<IOptionPanelDescriptor>();
+      if (subItems.Count == 0)
+      {
+        if (args.Codon.Properties.Contains("class"))
+        {
+          return new DefaultOptionPanelDescriptor(id, StringParser.Parse(label), args.AddIn, args.Parameter, args.Codon["class"]);
+        }
+        else
+        {
+          return new DefaultOptionPanelDescriptor(id, StringParser.Parse(label));
+        }
+      }
 
-			return new DefaultOptionPanelDescriptor(id, StringParser.Parse(label), subItems);
-		}
-	}
+      return new DefaultOptionPanelDescriptor(id, StringParser.Parse(label), subItems);
+    }
+  }
 }

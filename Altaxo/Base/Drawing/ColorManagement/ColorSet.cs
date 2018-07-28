@@ -31,31 +31,31 @@ using System.Text;
 
 namespace Altaxo.Drawing.ColorManagement
 {
-	public class ColorSet : IColorSet
-	{
-		/// <summary>First part of the key that is used during serialization to decide whether a color set was already serialized before.</summary>
-		private static readonly string _serializationRegistrationKey = typeof(ColorSet).FullName + " ";
+  public class ColorSet : IColorSet
+  {
+    /// <summary>First part of the key that is used during serialization to decide whether a color set was already serialized before.</summary>
+    private static readonly string _serializationRegistrationKey = typeof(ColorSet).FullName + " ";
 
-		private NamedColor[] _innerList;
-		protected readonly string _name;
+    private NamedColor[] _innerList;
+    protected readonly string _name;
 
-		protected Lazy<Dictionary<string, int>> _nameToIndexDictionary;
-		protected Lazy<Dictionary<AxoColor, int>> _colorToIndexDictionary;
-		protected Lazy<Dictionary<ColorNameKey, int>> _namecolorToIndexDictionary;
+    protected Lazy<Dictionary<string, int>> _nameToIndexDictionary;
+    protected Lazy<Dictionary<AxoColor, int>> _colorToIndexDictionary;
+    protected Lazy<Dictionary<ColorNameKey, int>> _namecolorToIndexDictionary;
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2015-11-15 Version 1 moved to Altaxo.Drawing.ColorManagement namespace.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ColorManagement.ColorSet", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Drawing.ColorManagement.ColorSet", 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old version is not supported");
-				/*
+    /// <summary>
+    /// 2015-11-15 Version 1 moved to Altaxo.Drawing.ColorManagement namespace.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ColorManagement.ColorSet", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Drawing.ColorManagement.ColorSet", 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Serialization of old version is not supported");
+        /*
 				var s = (ColorSet)obj;
 				info.AddValue("Name", s._originalName);
 				info.AddEnum("Level", s._originalColorSetLevel);
@@ -74,382 +74,382 @@ namespace Altaxo.Drawing.ColorManagement
 
 				info.CommitArray();
 				*/
-			}
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				string colorSetName = info.GetString("Name");
-				var colorSetLevel = (Altaxo.Main.ItemDefinitionLevel)info.GetEnum("Level", typeof(Altaxo.Main.ItemDefinitionLevel));
-				var creationDate = info.GetDateTime("CreationDate");
-				var isPlotColorSet = info.GetBoolean("IsPlotColorSet");
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        string colorSetName = info.GetString("Name");
+        var colorSetLevel = (Altaxo.Main.ItemDefinitionLevel)info.GetEnum("Level", typeof(Altaxo.Main.ItemDefinitionLevel));
+        var creationDate = info.GetDateTime("CreationDate");
+        var isPlotColorSet = info.GetBoolean("IsPlotColorSet");
 
-				int count = info.OpenArray("Colors");
-				var colors = new NamedColor[count];
-				for (int i = 0; i < count; ++i)
-				{
-					string name = info.GetStringAttribute("Name");
-					string cvalue = info.GetString("e");
-					colors[i] = new NamedColor(AxoColor.FromInvariantString(cvalue), name);
-				}
+        int count = info.OpenArray("Colors");
+        var colors = new NamedColor[count];
+        for (int i = 0; i < count; ++i)
+        {
+          string name = info.GetStringAttribute("Name");
+          string cvalue = info.GetString("e");
+          colors[i] = new NamedColor(AxoColor.FromInvariantString(cvalue), name);
+        }
 
-				info.CloseArray(count);
+        info.CloseArray(count);
 
-				return new ColorSet(colorSetName, colors);
-			}
-		}
+        return new ColorSet(colorSetName, colors);
+      }
+    }
 
-		/// <summary>
-		/// 2016-08-15 Simplification and Immutability of ColorSet
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorSet), 2)]
-		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (ColorSet)obj;
+    /// <summary>
+    /// 2016-08-15 Simplification and Immutability of ColorSet
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorSet), 2)]
+    private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ColorSet)obj;
 
-				info.SetProperty(GetSerializationRegistrationKey(s), "True"); // Register a property to note that this color set is already serialized.
+        info.SetProperty(GetSerializationRegistrationKey(s), "True"); // Register a property to note that this color set is already serialized.
 
-				info.AddValue("Name", s._name);
+        info.AddValue("Name", s._name);
 
-				info.CreateArray("Colors", s._innerList.Length);
+        info.CreateArray("Colors", s._innerList.Length);
 
-				foreach (NamedColor c in s)
-				{
-					info.CreateElement("e");
-					info.AddAttributeValue("Name", c.Name);
-					info.SetNodeContent(c.Color.ToInvariantString());
-					info.CommitElement();
-				}
+        foreach (NamedColor c in s)
+        {
+          info.CreateElement("e");
+          info.AddAttributeValue("Name", c.Name);
+          info.SetNodeContent(c.Color.ToInvariantString());
+          info.CommitElement();
+        }
 
-				info.CommitArray();
-			}
+        info.CommitArray();
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return new ColorSet(info);
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return new ColorSet(info);
+      }
+    }
 
-		private ColorSet(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			_name = info.GetString("Name");
+    private ColorSet(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      _name = info.GetString("Name");
 
-			int count = info.OpenArray("Colors");
-			_innerList = new NamedColor[count];
-			for (int i = 0; i < count; ++i)
-			{
-				string name = info.GetStringAttribute("Name");
-				string cvalue = info.GetString("e");
-				_innerList[i] = new NamedColor(AxoColor.FromInvariantString(cvalue), name, this);
-			}
-			info.CloseArray(count);
+      int count = info.OpenArray("Colors");
+      _innerList = new NamedColor[count];
+      for (int i = 0; i < count; ++i)
+      {
+        string name = info.GetStringAttribute("Name");
+        string cvalue = info.GetString("e");
+        _innerList[i] = new NamedColor(AxoColor.FromInvariantString(cvalue), name, this);
+      }
+      info.CloseArray(count);
 
-			InitLazyVariables();
-		}
+      InitLazyVariables();
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>
-		/// Creates a new collection of plot colors with a given name. The initial items will be copied from another plot color collection.
-		/// </summary>
-		/// <param name="name">Name of this plot color collection.</param>
-		/// <param name="colors">The colors for this set.</param>
-		public ColorSet(string name, IEnumerable<NamedColor> colors)
-		{
-			if (string.IsNullOrEmpty(name))
-				throw new ArgumentNullException(nameof(name));
+    /// <summary>
+    /// Creates a new collection of plot colors with a given name. The initial items will be copied from another plot color collection.
+    /// </summary>
+    /// <param name="name">Name of this plot color collection.</param>
+    /// <param name="colors">The colors for this set.</param>
+    public ColorSet(string name, IEnumerable<NamedColor> colors)
+    {
+      if (string.IsNullOrEmpty(name))
+        throw new ArgumentNullException(nameof(name));
 
-			_name = name;
-			_innerList = colors.Select(c => new NamedColor(c.Color, c.Name, this)).ToArray(); // use c.Name here to make Name explicit (not autogenerated any more).
-			InitLazyVariables();
-		}
+      _name = name;
+      _innerList = colors.Select(c => new NamedColor(c.Color, c.Name, this)).ToArray(); // use c.Name here to make Name explicit (not autogenerated any more).
+      InitLazyVariables();
+    }
 
-		private void InitLazyVariables()
-		{
-			_nameToIndexDictionary = new Lazy<Dictionary<string, int>>(BuildNameToIndexDict);
-			_colorToIndexDictionary = new Lazy<Dictionary<AxoColor, int>>(BuildColorToIndexDictionary);
-			_namecolorToIndexDictionary = new Lazy<Dictionary<ColorNameKey, int>>(BuildNameColorToIndexDictionary);
-		}
+    private void InitLazyVariables()
+    {
+      _nameToIndexDictionary = new Lazy<Dictionary<string, int>>(BuildNameToIndexDict);
+      _colorToIndexDictionary = new Lazy<Dictionary<AxoColor, int>>(BuildColorToIndexDictionary);
+      _namecolorToIndexDictionary = new Lazy<Dictionary<ColorNameKey, int>>(BuildNameColorToIndexDictionary);
+    }
 
-		/// <summary>
-		/// Gets a key that is used during serialization to decide whether or not a color set was already serialized.
-		/// Use the returned key to retrieve a string from the properties of the serialization info. If the returned property string
-		/// is null, then the color set needs to be serialized; otherwise, it was already serialized before.
-		/// </summary>
-		/// <param name="set">The color set for which the property key should be evaluated.</param>
-		/// <returns>The property key to be used to retrieve a property from the serialization info.</returns>
-		public static string GetSerializationRegistrationKey(IColorSet set)
-		{
-			return _serializationRegistrationKey + set.Name;
-		}
+    /// <summary>
+    /// Gets a key that is used during serialization to decide whether or not a color set was already serialized.
+    /// Use the returned key to retrieve a string from the properties of the serialization info. If the returned property string
+    /// is null, then the color set needs to be serialized; otherwise, it was already serialized before.
+    /// </summary>
+    /// <param name="set">The color set for which the property key should be evaluated.</param>
+    /// <returns>The property key to be used to retrieve a property from the serialization info.</returns>
+    public static string GetSerializationRegistrationKey(IColorSet set)
+    {
+      return _serializationRegistrationKey + set.Name;
+    }
 
-		private Dictionary<string, int> BuildNameToIndexDict()
-		{
-			var nameToIndexDictionary = new Dictionary<string, int>();
-			for (int i = this._innerList.Length - 1; i >= 0; --i)
-			{
-				nameToIndexDictionary[this._innerList[i].Name] = i;
-			}
-			return nameToIndexDictionary;
-		}
+    private Dictionary<string, int> BuildNameToIndexDict()
+    {
+      var nameToIndexDictionary = new Dictionary<string, int>();
+      for (int i = this._innerList.Length - 1; i >= 0; --i)
+      {
+        nameToIndexDictionary[this._innerList[i].Name] = i;
+      }
+      return nameToIndexDictionary;
+    }
 
-		private Dictionary<AxoColor, int> BuildColorToIndexDictionary()
-		{
-			var colorToIndexDictionary = new Dictionary<AxoColor, int>();
+    private Dictionary<AxoColor, int> BuildColorToIndexDictionary()
+    {
+      var colorToIndexDictionary = new Dictionary<AxoColor, int>();
 
-			for (int i = this._innerList.Length - 1; i >= 0; --i)
-			{
-				colorToIndexDictionary[this._innerList[i].Color] = i;
-			}
-			return colorToIndexDictionary;
-		}
+      for (int i = this._innerList.Length - 1; i >= 0; --i)
+      {
+        colorToIndexDictionary[this._innerList[i].Color] = i;
+      }
+      return colorToIndexDictionary;
+    }
 
-		private Dictionary<ColorNameKey, int> BuildNameColorToIndexDictionary()
-		{
-			var namecolorToIndexDictionary = new Dictionary<ColorNameKey, int>();
+    private Dictionary<ColorNameKey, int> BuildNameColorToIndexDictionary()
+    {
+      var namecolorToIndexDictionary = new Dictionary<ColorNameKey, int>();
 
-			for (int i = this._innerList.Length - 1; i >= 0; --i)
-			{
-				var c = this._innerList[i];
-				namecolorToIndexDictionary[new ColorNameKey(c.Color, c.Name)] = i;
-			}
-			return namecolorToIndexDictionary;
-		}
+      for (int i = this._innerList.Length - 1; i >= 0; --i)
+      {
+        var c = this._innerList[i];
+        namecolorToIndexDictionary[new ColorNameKey(c.Color, c.Name)] = i;
+      }
+      return namecolorToIndexDictionary;
+    }
 
-		/// <summary>
-		/// Gets the name of this collection of plot colors (without prefix like 'Application', 'Project' etc.).
-		/// Note that the name can not be changed. To change the name, create a new plot color collection and copy the items to it.
-		/// </summary>
-		public string Name
-		{
-			get
-			{
-				return _name;
-			}
-		}
+    /// <summary>
+    /// Gets the name of this collection of plot colors (without prefix like 'Application', 'Project' etc.).
+    /// Note that the name can not be changed. To change the name, create a new plot color collection and copy the items to it.
+    /// </summary>
+    public string Name
+    {
+      get
+      {
+        return _name;
+      }
+    }
 
-		public int Count
-		{
-			get
-			{
-				return _innerList.Length;
-			}
-		}
+    public int Count
+    {
+      get
+      {
+        return _innerList.Length;
+      }
+    }
 
-		public bool IsReadOnly
-		{
-			get
-			{
-				return true;
-			}
-		}
+    public bool IsReadOnly
+    {
+      get
+      {
+        return true;
+      }
+    }
 
-		public NamedColor this[int index]
-		{
-			get
-			{
-				return _innerList[index];
-			}
+    public NamedColor this[int index]
+    {
+      get
+      {
+        return _innerList[index];
+      }
 
-			set
-			{
-				throw new InvalidOperationException();
-			}
-		}
+      set
+      {
+        throw new InvalidOperationException();
+      }
+    }
 
-		/// <summary>
-		/// Copies all color items to an array.
-		/// </summary>
-		/// <returns>Array with all colors in this set.</returns>
-		public NamedColor[] ToArray()
-		{
-			return this._innerList.ToArray();
-		}
+    /// <summary>
+    /// Copies all color items to an array.
+    /// </summary>
+    /// <returns>Array with all colors in this set.</returns>
+    public NamedColor[] ToArray()
+    {
+      return this._innerList.ToArray();
+    }
 
-		/// <summary>
-		/// Tries to find a color with a given name.
-		/// </summary>
-		/// <param name="colorName">The name of the color to find.</param>
-		/// <param name="namedColor">If the color is contained in this collection, the color with the given name is returned. Otherwise, the result is undefined.</param>
-		/// <returns>
-		///   <c>True</c>, if the color with the given name is contained in this collection. Otherwise, <c>false</c> is returned.
-		/// </returns>
-		public bool TryGetValue(string colorName, out NamedColor namedColor)
-		{
-			int idx;
-			if (_nameToIndexDictionary.Value.TryGetValue(colorName, out idx))
-			{
-				namedColor = this._innerList[idx];
-				return true;
-			}
-			else
-			{
-				namedColor = default(NamedColor);
-				return false;
-			}
-		}
+    /// <summary>
+    /// Tries to find a color with a given name.
+    /// </summary>
+    /// <param name="colorName">The name of the color to find.</param>
+    /// <param name="namedColor">If the color is contained in this collection, the color with the given name is returned. Otherwise, the result is undefined.</param>
+    /// <returns>
+    ///   <c>True</c>, if the color with the given name is contained in this collection. Otherwise, <c>false</c> is returned.
+    /// </returns>
+    public bool TryGetValue(string colorName, out NamedColor namedColor)
+    {
+      int idx;
+      if (_nameToIndexDictionary.Value.TryGetValue(colorName, out idx))
+      {
+        namedColor = this._innerList[idx];
+        return true;
+      }
+      else
+      {
+        namedColor = default(NamedColor);
+        return false;
+      }
+    }
 
-		/// <summary>
-		/// Tries to find a color with a given color value.
-		/// </summary>
-		/// <param name="colorValue">The color to find.</param>
-		/// <param name="namedColor">If the color is contained in this collection, the color with the given name is returned. Otherwise, the result is undefined.</param>
-		/// <returns>
-		///   <c>True</c>, if the color with the given name is contained in this collection. Otherwise, <c>false</c> is returned.
-		/// </returns>
-		public bool TryGetValue(AxoColor colorValue, out NamedColor namedColor)
-		{
-			int idx;
-			if (_colorToIndexDictionary.Value.TryGetValue(colorValue, out idx))
-			{
-				namedColor = this._innerList[idx];
-				return true;
-			}
-			else
-			{
-				namedColor = default(NamedColor);
-				return false;
-			}
-		}
+    /// <summary>
+    /// Tries to find a color with a given color value.
+    /// </summary>
+    /// <param name="colorValue">The color to find.</param>
+    /// <param name="namedColor">If the color is contained in this collection, the color with the given name is returned. Otherwise, the result is undefined.</param>
+    /// <returns>
+    ///   <c>True</c>, if the color with the given name is contained in this collection. Otherwise, <c>false</c> is returned.
+    /// </returns>
+    public bool TryGetValue(AxoColor colorValue, out NamedColor namedColor)
+    {
+      int idx;
+      if (_colorToIndexDictionary.Value.TryGetValue(colorValue, out idx))
+      {
+        namedColor = this._innerList[idx];
+        return true;
+      }
+      else
+      {
+        namedColor = default(NamedColor);
+        return false;
+      }
+    }
 
-		/// <summary>
-		/// Tries to find a color with the color and the name of the given named color.
-		/// </summary>
-		/// <param name="colorValue">The color value to find.</param>
-		/// <param name="colorName">The color name to find.</param>
-		/// <param name="namedColor">On return, if a color with the same color value and name is found in the collection, that color is returned.</param>
-		/// <returns>
-		///   <c>True</c>, if the color with the given color value and name is found in this collection. Otherwise, <c>false</c> is returned.
-		/// </returns>
-		public bool TryGetValue(AxoColor colorValue, string colorName, out NamedColor namedColor)
-		{
-			int idx;
-			if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(colorValue, colorName), out idx))
-			{
-				namedColor = this._innerList[idx];
-				return true;
-			}
-			else
-			{
-				namedColor = default(NamedColor);
-				return false;
-			}
-		}
+    /// <summary>
+    /// Tries to find a color with the color and the name of the given named color.
+    /// </summary>
+    /// <param name="colorValue">The color value to find.</param>
+    /// <param name="colorName">The color name to find.</param>
+    /// <param name="namedColor">On return, if a color with the same color value and name is found in the collection, that color is returned.</param>
+    /// <returns>
+    ///   <c>True</c>, if the color with the given color value and name is found in this collection. Otherwise, <c>false</c> is returned.
+    /// </returns>
+    public bool TryGetValue(AxoColor colorValue, string colorName, out NamedColor namedColor)
+    {
+      int idx;
+      if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(colorValue, colorName), out idx))
+      {
+        namedColor = this._innerList[idx];
+        return true;
+      }
+      else
+      {
+        namedColor = default(NamedColor);
+        return false;
+      }
+    }
 
-		/// <summary>
-		/// Get the index of the given color in the ColorSet.
-		/// </summary>
-		/// <param name="color">The color.</param>
-		/// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
-		public virtual int IndexOf(NamedColor color)
-		{
-			int idx;
-			if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(color.Color, color.Name), out idx))
-			{
-				return idx;
-			}
-			else
-			{
-				return -1;
-			}
-		}
+    /// <summary>
+    /// Get the index of the given color in the ColorSet.
+    /// </summary>
+    /// <param name="color">The color.</param>
+    /// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
+    public virtual int IndexOf(NamedColor color)
+    {
+      int idx;
+      if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(color.Color, color.Name), out idx))
+      {
+        return idx;
+      }
+      else
+      {
+        return -1;
+      }
+    }
 
-		/// <summary>
-		/// Get the index of the given color in the ColorSet.
-		/// </summary>
-		/// <param name="color">The color.</param>
-		/// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
-		public virtual int IndexOf(AxoColor color)
-		{
-			int idx;
-			if (_colorToIndexDictionary.Value.TryGetValue(color, out idx))
-			{
-				return idx;
-			}
-			else
-			{
-				return -1;
-			}
-		}
+    /// <summary>
+    /// Get the index of the given color in the ColorSet.
+    /// </summary>
+    /// <param name="color">The color.</param>
+    /// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
+    public virtual int IndexOf(AxoColor color)
+    {
+      int idx;
+      if (_colorToIndexDictionary.Value.TryGetValue(color, out idx))
+      {
+        return idx;
+      }
+      else
+      {
+        return -1;
+      }
+    }
 
-		public IStyleList<NamedColor> WithName(string name)
-		{
-			if (this.Name == name)
-				return this;
-			else
-				return new ColorSet(name, this._innerList);
-		}
+    public IStyleList<NamedColor> WithName(string name)
+    {
+      if (this.Name == name)
+        return this;
+      else
+        return new ColorSet(name, this._innerList);
+    }
 
-		public bool IsStructuralEquivalentTo(IEnumerable<NamedColor> l1)
-		{
-			if (l1 == null)
-				return false;
+    public bool IsStructuralEquivalentTo(IEnumerable<NamedColor> l1)
+    {
+      if (l1 == null)
+        return false;
 
-			var l2 = this;
+      var l2 = this;
 
-			int i = 0;
-			int len2 = l2._innerList.Length;
-			foreach (var item1 in l1)
-			{
-				if (i >= len2)
-					return false;
+      int i = 0;
+      int len2 = l2._innerList.Length;
+      foreach (var item1 in l1)
+      {
+        if (i >= len2)
+          return false;
 
-				if (!item1.EqualsInNameAndColor(l2._innerList[i]))
-					return false;
-				++i;
-			}
+        if (!item1.EqualsInNameAndColor(l2._innerList[i]))
+          return false;
+        ++i;
+      }
 
-			if (i != l2._innerList.Length)
-				return false;
+      if (i != l2._innerList.Length)
+        return false;
 
-			return true;
-		}
+      return true;
+    }
 
-		public void Insert(int index, NamedColor item)
-		{
-			throw new NotImplementedException();
-		}
+    public void Insert(int index, NamedColor item)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void RemoveAt(int index)
-		{
-			throw new NotImplementedException();
-		}
+    public void RemoveAt(int index)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void Add(NamedColor item)
-		{
-			throw new NotImplementedException();
-		}
+    public void Add(NamedColor item)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void Clear()
-		{
-			throw new NotImplementedException();
-		}
+    public void Clear()
+    {
+      throw new NotImplementedException();
+    }
 
-		public bool Contains(NamedColor item)
-		{
-			return _innerList.Contains(item);
-		}
+    public bool Contains(NamedColor item)
+    {
+      return _innerList.Contains(item);
+    }
 
-		public void CopyTo(NamedColor[] array, int arrayIndex)
-		{
-			_innerList.CopyTo(array, arrayIndex);
-		}
+    public void CopyTo(NamedColor[] array, int arrayIndex)
+    {
+      _innerList.CopyTo(array, arrayIndex);
+    }
 
-		public bool Remove(NamedColor item)
-		{
-			throw new NotImplementedException();
-		}
+    public bool Remove(NamedColor item)
+    {
+      throw new NotImplementedException();
+    }
 
-		public IEnumerator<NamedColor> GetEnumerator()
-		{
-			return ((IList<NamedColor>)_innerList).GetEnumerator();
-		}
+    public IEnumerator<NamedColor> GetEnumerator()
+    {
+      return ((IList<NamedColor>)_innerList).GetEnumerator();
+    }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return _innerList.GetEnumerator();
-		}
-	}
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return _innerList.GetEnumerator();
+    }
+  }
 }

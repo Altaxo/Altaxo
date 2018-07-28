@@ -28,12 +28,12 @@ using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
-	/// <summary>
-	///
-	/// </summary>
-	/// <remarks>
-	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
-	/// </remarks>
-	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	public sealed class FlatAttribute : Attribute { }
+  /// <summary>
+  ///
+  /// </summary>
+  /// <remarks>
+  /// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
+  /// </remarks>
+  [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+  public sealed class FlatAttribute : Attribute { }
 }

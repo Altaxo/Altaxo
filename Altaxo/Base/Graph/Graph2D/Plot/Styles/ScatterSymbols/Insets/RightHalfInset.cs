@@ -30,46 +30,46 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class RightHalfInset : InsetBase
-	{
-		#region Serialization
+  public class RightHalfInset : InsetBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RightHalfInset), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
-			}
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RightHalfInset), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (RightHalfInset)o ?? new RightHalfInset();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (RightHalfInset)o ?? new RightHalfInset();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double structureScale)
-		{
-			var h = ClipperScalingInt;
-			var w = (int)Math.Round(0.25 + 0.5 * ClipperScalingInt);
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double structureScale)
+    {
+      var h = ClipperScalingInt;
+      var w = (int)Math.Round(0.25 + 0.5 * ClipperScalingInt);
 
-			return new List<List<ClipperLib.IntPoint>>(1)
-			{
-				new List<ClipperLib.IntPoint>(4)
-				{
-				new ClipperLib.IntPoint( 0, -h),
-				new ClipperLib.IntPoint( h, -h),
-				new ClipperLib.IntPoint( h, h),
-				new ClipperLib.IntPoint( 0, h)
-			}
-			};
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1)
+      {
+        new List<ClipperLib.IntPoint>(4)
+        {
+        new ClipperLib.IntPoint( 0, -h),
+        new ClipperLib.IntPoint( h, -h),
+        new ClipperLib.IntPoint( h, h),
+        new ClipperLib.IntPoint( 0, h)
+      }
+      };
+    }
+  }
 }

@@ -30,31 +30,31 @@ using System.Linq;
 
 namespace AltaxoTest.Collections
 {
-	[TestFixture]
-	internal class TestPriorityQueue_Key
-	{
-		[Test]
-		public void TestOrder()
-		{
-			const int numberOfElements = 10000;
-			var rnd = new System.Random();
+  [TestFixture]
+  internal class TestPriorityQueue_Key
+  {
+    [Test]
+    public void TestOrder()
+    {
+      const int numberOfElements = 10000;
+      var rnd = new System.Random();
 
-			var queue = new PriorityQueue<int>();
+      var queue = new PriorityQueue<int>();
 
-			for (int i = 0; i < numberOfElements; ++i)
-				queue.Enqueue(100 + rnd.Next(numberOfElements));
+      for (int i = 0; i < numberOfElements; ++i)
+        queue.Enqueue(100 + rnd.Next(numberOfElements));
 
-			Assert.AreEqual(numberOfElements, queue.Count);
+      Assert.AreEqual(numberOfElements, queue.Count);
 
-			int previous = int.MinValue;
-			for (int i = 0; i < numberOfElements; ++i)
-			{
-				int curr = queue.Dequeue();
-				Assert.GreaterOrEqual(curr, previous);
-				previous = curr;
-			}
+      int previous = int.MinValue;
+      for (int i = 0; i < numberOfElements; ++i)
+      {
+        int curr = queue.Dequeue();
+        Assert.GreaterOrEqual(curr, previous);
+        previous = curr;
+      }
 
-			Assert.AreEqual(0, queue.Count);
-		}
-	}
+      Assert.AreEqual(0, queue.Count);
+    }
+  }
 }

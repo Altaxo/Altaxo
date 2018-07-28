@@ -29,95 +29,95 @@ using System;
 
 namespace Altaxo.Worksheet.Commands
 {
-	#region Plot 3D commands
+  #region Plot 3D commands
 
-	public class Plot3DLine : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotLine(ctrl, true, false);
-		}
-	}
+  public class Plot3DLine : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotLine(ctrl, true, false);
+    }
+  }
 
-	public class Plot3DLineStack : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotLineStack(ctrl);
-		}
-	}
+  public class Plot3DLineStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotLineStack(ctrl);
+    }
+  }
 
-	public class Plot3DLineRelativeStack : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotLineRelativeStack(ctrl);
-		}
-	}
+  public class Plot3DLineRelativeStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotLineRelativeStack(ctrl);
+    }
+  }
 
-	public class Plot3DScatter : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotLine(ctrl, false, true);
-		}
-	}
+  public class Plot3DScatter : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotLine(ctrl, false, true);
+    }
+  }
 
-	public class Plot3DLineAndScatter : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotLine(ctrl, true, true);
-		}
-	}
+  public class Plot3DLineAndScatter : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotLine(ctrl, true, true);
+    }
+  }
 
-	public class Plot3DBarChartNormal : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotBarChartNormal(ctrl);
-		}
-	}
+  public class Plot3DBarChartNormal : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotBarChartNormal(ctrl);
+    }
+  }
 
-	public class Plot3DBarChartStack : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotBarChartStack(ctrl);
-		}
-	}
+  public class Plot3DBarChartStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotBarChartStack(ctrl);
+    }
+  }
 
-	public class Plot3DBarChartRelativeStack : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotBarChartRelativeStack(ctrl);
-		}
-	}
+  public class Plot3DBarChartRelativeStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotBarChartRelativeStack(ctrl);
+    }
+  }
 
-	public class Plot3DColumnChartNormal : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotColumnChartNormal(ctrl);
-		}
-	}
+  public class Plot3DColumnChartNormal : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotColumnChartNormal(ctrl);
+    }
+  }
 
-	public class Plot3DColumnChartStack : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotColumnChartStack(ctrl);
-		}
-	}
+  public class Plot3DColumnChartStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotColumnChartStack(ctrl);
+    }
+  }
 
-	public class Plot3DColumnChartRelativeStack : AbstractWorksheetControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-		{
-			PlotCommands3D.PlotColumnChartRelativeStack(ctrl);
-		}
-	}
+  public class Plot3DColumnChartRelativeStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PlotCommands3D.PlotColumnChartRelativeStack(ctrl);
+    }
+  }
 
-	#endregion Plot 3D commands
+  #endregion Plot 3D commands
 }

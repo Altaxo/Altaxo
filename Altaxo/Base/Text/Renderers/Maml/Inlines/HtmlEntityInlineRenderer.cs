@@ -26,15 +26,15 @@ using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="HtmlEntityInline"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class HtmlEntityInlineRenderer : MamlObjectRenderer<HtmlEntityInline>
-	{
-		protected override void Write(MamlRenderer renderer, HtmlEntityInline obj)
-		{
-			renderer.WriteEscape(obj.Transcoded);
-		}
-	}
+  /// <summary>
+  /// Maml renderer for a <see cref="HtmlEntityInline"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class HtmlEntityInlineRenderer : MamlObjectRenderer<HtmlEntityInline>
+  {
+    protected override void Write(MamlRenderer renderer, HtmlEntityInline obj)
+    {
+      renderer.WriteEscape(obj.Transcoded);
+    }
+  }
 }

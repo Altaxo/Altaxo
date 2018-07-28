@@ -29,30 +29,30 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Interface that all Altaxo project items must support. Currently, project items are the base items of an Altaxo<see cref="T:Altaxo.Main.Document"/>,
-	/// i.e. <see cref="T:Altaxo.Data.DataTable"/>s, <see cref="T:Altaxo.Graph.Gdi.GraphDocument"/>s and <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>.
-	/// </summary>
-	public interface IProjectItem :
-		IDocumentLeafNode, // Project items are document nodes of the project tree
-		INameOwner, // Project items must have a name and could be renamed
-		IEventIndicatedDisposable, // project items must announce themselves when disposed
-		ICloneable, // project items could be cloned
-		ISuspendableByToken
-	{
-		/// <summary>
-		/// Has to enumerate all references to other items in the project (<see cref="DocNodeProxy"/>) which are used in this project item and in all childs of this project item. The references
-		/// has to be reported to the <paramref name="ProxyProcessing"/> function. This function is responsible for processing of the proxies, for instance to relocated the path.
-		/// </summary>
-		/// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy"/> instances.</param>
-		void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing);
+  /// <summary>
+  /// Interface that all Altaxo project items must support. Currently, project items are the base items of an Altaxo<see cref="T:Altaxo.Main.Document"/>,
+  /// i.e. <see cref="T:Altaxo.Data.DataTable"/>s, <see cref="T:Altaxo.Graph.Gdi.GraphDocument"/>s and <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>.
+  /// </summary>
+  public interface IProjectItem :
+    IDocumentLeafNode, // Project items are document nodes of the project tree
+    INameOwner, // Project items must have a name and could be renamed
+    IEventIndicatedDisposable, // project items must announce themselves when disposed
+    ICloneable, // project items could be cloned
+    ISuspendableByToken
+  {
+    /// <summary>
+    /// Has to enumerate all references to other items in the project (<see cref="DocNodeProxy"/>) which are used in this project item and in all childs of this project item. The references
+    /// has to be reported to the <paramref name="ProxyProcessing"/> function. This function is responsible for processing of the proxies, for instance to relocated the path.
+    /// </summary>
+    /// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy"/> instances.</param>
+    void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing);
 
-		/// <summary>
-		/// Gets the time this project item was created (in universal time UTC).
-		/// </summary>
-		/// <value>
-		/// The UTC creation time of the project item.
-		/// </value>
-		DateTime CreationTimeUtc { get; }
-	}
+    /// <summary>
+    /// Gets the time this project item was created (in universal time UTC).
+    /// </summary>
+    /// <value>
+    /// The UTC creation time of the project item.
+    /// </value>
+    DateTime CreationTimeUtc { get; }
+  }
 }

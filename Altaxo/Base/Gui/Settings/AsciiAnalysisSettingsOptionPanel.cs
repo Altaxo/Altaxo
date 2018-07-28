@@ -30,34 +30,34 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
-	public class AsciiAnalysisSettingsOptionPanel : OptionPanelBase<Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>>
-	{
-		public override void Initialize(object optionPanelOwner)
-		{
-			AsciiDocumentAnalysisOptions userDoc = null;
-			AsciiDocumentAnalysisOptions sysDoc = null;
+  public class AsciiAnalysisSettingsOptionPanel : OptionPanelBase<Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>>
+  {
+    public override void Initialize(object optionPanelOwner)
+    {
+      AsciiDocumentAnalysisOptions userDoc = null;
+      AsciiDocumentAnalysisOptions sysDoc = null;
 
-			Current.PropertyService.UserSettings.TryGetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, out userDoc);
-			sysDoc = Current.PropertyService.GetValue<AsciiDocumentAnalysisOptions>(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
-			if (null == sysDoc)
-				throw new ApplicationException("AsciiDocumentAnalysisOptions not properly registered with builtin settings!");
+      Current.PropertyService.UserSettings.TryGetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, out userDoc);
+      sysDoc = Current.PropertyService.GetValue<AsciiDocumentAnalysisOptions>(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
+      if (null == sysDoc)
+        throw new ApplicationException("AsciiDocumentAnalysisOptions not properly registered with builtin settings!");
 
-			_controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>(() => sysDoc.Clone(), () => sysDoc);
-			_controller.EnablingText = "Override system settings";
-			_controller.InitializeDocument(new object[] { userDoc, sysDoc });
-		}
+      _controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>(() => sysDoc.Clone(), () => sysDoc);
+      _controller.EnablingText = "Override system settings";
+      _controller.InitializeDocument(new object[] { userDoc, sysDoc });
+    }
 
-		protected override void ProcessControllerResult()
-		{
-			if (null != _controller.ModelObject)
-			{
-				var userDoc = (AsciiDocumentAnalysisOptions)_controller.ModelObject;
-				Current.PropertyService.UserSettings.SetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, userDoc);
-			}
-			else
-			{
-				Current.PropertyService.UserSettings.RemoveValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions);
-			}
-		}
-	}
+    protected override void ProcessControllerResult()
+    {
+      if (null != _controller.ModelObject)
+      {
+        var userDoc = (AsciiDocumentAnalysisOptions)_controller.ModelObject;
+        Current.PropertyService.UserSettings.SetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, userDoc);
+      }
+      else
+      {
+        Current.PropertyService.UserSettings.RemoveValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions);
+      }
+    }
+  }
 }

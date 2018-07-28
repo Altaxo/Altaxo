@@ -30,56 +30,56 @@ using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
-	/// <summary>
-	/// Responsible to start the download of auto update files.
-	/// </summary>
-	public class UpdateDownloaderStarter
-	{
-		/// <summary>
-		/// Starts the downloader.
-		/// </summary>
-		public static void Run()
-		{
-			var updateSettings = Current.PropertyService.GetValue(Altaxo.Settings.AutoUpdateSettings.PropertyKeyAutoUpdate, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new Altaxo.Settings.AutoUpdateSettings());
+  /// <summary>
+  /// Responsible to start the download of auto update files.
+  /// </summary>
+  public class UpdateDownloaderStarter
+  {
+    /// <summary>
+    /// Starts the downloader.
+    /// </summary>
+    public static void Run()
+    {
+      var updateSettings = Current.PropertyService.GetValue(Altaxo.Settings.AutoUpdateSettings.PropertyKeyAutoUpdate, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new Altaxo.Settings.AutoUpdateSettings());
 
-			if (!updateSettings.EnableAutoUpdates)
-				return;
+      if (!updateSettings.EnableAutoUpdates)
+        return;
 
-			if (updateSettings.DownloadIntervalInDays > 0)
-			{
-				var lastCheckUtc = PackageInfo.GetLastUpdateCheckTimeUtc(updateSettings.DownloadUnstableVersion);
-				if ((DateTime.UtcNow - lastCheckUtc).TotalDays < updateSettings.DownloadIntervalInDays)
-					return;
-			}
+      if (updateSettings.DownloadIntervalInDays > 0)
+      {
+        var lastCheckUtc = PackageInfo.GetLastUpdateCheckTimeUtc(updateSettings.DownloadUnstableVersion);
+        if ((DateTime.UtcNow - lastCheckUtc).TotalDays < updateSettings.DownloadIntervalInDays)
+          return;
+      }
 
-			var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
-			string assemblyLocation = entryAssembly.Location;
-			string binPath = Path.GetDirectoryName(assemblyLocation);
-			string downLoadExe = Path.Combine(binPath, "AltaxoUpdateDownloader.exe");
+      var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
+      string assemblyLocation = entryAssembly.Location;
+      string binPath = Path.GetDirectoryName(assemblyLocation);
+      string downLoadExe = Path.Combine(binPath, "AltaxoUpdateDownloader.exe");
 
-			var args = string.Format("{0}\t{1}", PackageInfo.GetStableIdentifier(updateSettings.DownloadUnstableVersion), entryAssembly.GetName().Version);
+      var args = string.Format("{0}\t{1}", PackageInfo.GetStableIdentifier(updateSettings.DownloadUnstableVersion), entryAssembly.GetName().Version);
 
-			var processInfo = new System.Diagnostics.ProcessStartInfo(downLoadExe, args);
+      var processInfo = new System.Diagnostics.ProcessStartInfo(downLoadExe, args);
 
-			if (updateSettings.ShowDownloadWindow)
-			{
-				processInfo.CreateNoWindow = false;
-				processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
-			}
-			else
-			{
-				processInfo.CreateNoWindow = true;
-				processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-			}
+      if (updateSettings.ShowDownloadWindow)
+      {
+        processInfo.CreateNoWindow = false;
+        processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+      }
+      else
+      {
+        processInfo.CreateNoWindow = true;
+        processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+      }
 
-			try
-			{
-				var proc = System.Diagnostics.Process.Start(processInfo);
-				proc.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
-			}
-			catch (Exception)
-			{
-			}
-		}
-	}
+      try
+      {
+        var proc = System.Diagnostics.Process.Start(processInfo);
+        proc.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+      }
+      catch (Exception)
+      {
+      }
+    }
+  }
 }

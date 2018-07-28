@@ -30,27 +30,27 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Worksheet
 {
-	/// <summary>
-	/// Interaction logic for MasterCurveCreationDataColumnControl.xaml
-	/// </summary>
-	public partial class MasterCurveCreationDataColumnControl : UserControl
-	{
-		public MasterCurveCreationDataColumnControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for MasterCurveCreationDataColumnControl.xaml
+  /// </summary>
+  public partial class MasterCurveCreationDataColumnControl : UserControl
+  {
+    public MasterCurveCreationDataColumnControl()
+    {
+      InitializeComponent();
+    }
 
-		public ListBox ItemList
-		{
-			get
-			{
-				return _itemList;
-			}
-		}
+    public ListBox ItemList
+    {
+      get
+      {
+        return _itemList;
+      }
+    }
 
-		public void SetTitle(string title)
-		{
-			_headerLabel.Content = title;
-		}
-	}
+    public void SetTitle(string title)
+    {
+      _headerLabel.Content = title;
+    }
+  }
 }

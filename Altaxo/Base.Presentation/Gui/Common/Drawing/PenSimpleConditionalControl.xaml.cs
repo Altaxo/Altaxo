@@ -32,53 +32,53 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// Interaction logic for PenSimpleConditionalControl.xaml
-	/// </summary>
-	public partial class PenSimpleConditionalControl : UserControl
-	{
-		private PenControlsGlue _glue;
+  /// <summary>
+  /// Interaction logic for PenSimpleConditionalControl.xaml
+  /// </summary>
+  public partial class PenSimpleConditionalControl : UserControl
+  {
+    private PenControlsGlue _glue;
 
-		public PenSimpleConditionalControl()
-		{
-			InitializeComponent();
+    public PenSimpleConditionalControl()
+    {
+      InitializeComponent();
 
-			_glue = new PenControlsGlue(false);
-			_glue.CbBrush = _cbBrush;
-			_glue.CbDashPattern = _cbDashStyle;
-			_glue.CbLineThickness = _cbThickness;
-		}
+      _glue = new PenControlsGlue(false);
+      _glue.CbBrush = _cbBrush;
+      _glue.CbDashPattern = _cbDashStyle;
+      _glue.CbLineThickness = _cbThickness;
+    }
 
-		public Altaxo.Graph.Gdi.PenX SelectedPen
-		{
-			get
-			{
-				if (_chkDoShowThis.IsChecked == true)
-				{
-					return _glue.Pen;
-				}
-				else
-				{
-					var pen = _glue.Pen;
-					pen.Color = NamedColors.Transparent;
-					return pen;
-				}
-			}
-			set
-			{
-				_glue.Pen = value;
-				_chkDoShowThis.IsChecked = value.IsVisible;
-			}
-		}
+    public Altaxo.Graph.Gdi.PenX SelectedPen
+    {
+      get
+      {
+        if (_chkDoShowThis.IsChecked == true)
+        {
+          return _glue.Pen;
+        }
+        else
+        {
+          var pen = _glue.Pen;
+          pen.Color = NamedColors.Transparent;
+          return pen;
+        }
+      }
+      set
+      {
+        _glue.Pen = value;
+        _chkDoShowThis.IsChecked = value.IsVisible;
+      }
+    }
 
-		private void EhShowOutline_Checked(object sender, RoutedEventArgs e)
-		{
-			if (!_glue.Pen.IsVisible)
-			{
-				var pen = _glue.Pen;
-				pen.Color = NamedColors.Black;
-				_glue.Pen = pen;
-			}
-		}
-	}
+    private void EhShowOutline_Checked(object sender, RoutedEventArgs e)
+    {
+      if (!_glue.Pen.IsVisible)
+      {
+        var pen = _glue.Pen;
+        pen.Color = NamedColors.Black;
+        _glue.Pen = pen;
+      }
+    }
+  }
 }

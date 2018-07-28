@@ -32,125 +32,125 @@ using System.Text;
 
 namespace Altaxo.Gui.Worksheet
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IMasterCurveCreationDataView
-	{
-		void InitializeListData(List<SelectableListNodeList> list);
-	}
+  public interface IMasterCurveCreationDataView
+  {
+    void InitializeListData(List<SelectableListNodeList> list);
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Responsible for the ordering of multiple curves that subsequently can be used to form a master curve.
-	/// </summary>
-	[UserControllerForObject(typeof(List<List<DoubleColumn>>))]
-	[ExpectedTypeOfView(typeof(IMasterCurveCreationDataView))]
-	public class MasterCurveCreationDataController : IMVCANController
-	{
-		private IMasterCurveCreationDataView _view;
-		private List<List<DoubleColumn>> _doc;
-		private List<List<DoubleColumn>> _docOriginal;
+  /// <summary>
+  /// Responsible for the ordering of multiple curves that subsequently can be used to form a master curve.
+  /// </summary>
+  [UserControllerForObject(typeof(List<List<DoubleColumn>>))]
+  [ExpectedTypeOfView(typeof(IMasterCurveCreationDataView))]
+  public class MasterCurveCreationDataController : IMVCANController
+  {
+    private IMasterCurveCreationDataView _view;
+    private List<List<DoubleColumn>> _doc;
+    private List<List<DoubleColumn>> _docOriginal;
 
-		private List<SelectableListNodeList> _viewList;
+    private List<SelectableListNodeList> _viewList;
 
-		private void Initialize(bool initData)
-		{
-			if (initData)
-			{
-				_viewList = new List<SelectableListNodeList>();
+    private void Initialize(bool initData)
+    {
+      if (initData)
+      {
+        _viewList = new List<SelectableListNodeList>();
 
-				foreach (var srcGroup in _doc)
-				{
-					var destGroup = new SelectableListNodeList();
-					_viewList.Add(destGroup);
-					foreach (var srcEle in srcGroup)
-					{
-						var destEle = new SelectableListNode(AbsoluteDocumentPath.GetAbsolutePath(srcEle).ToString(), srcEle, false);
-						destGroup.Add(destEle);
-					}
-				}
-			}
-			if (null != _view)
-			{
-				_view.InitializeListData(_viewList);
-			}
-		}
+        foreach (var srcGroup in _doc)
+        {
+          var destGroup = new SelectableListNodeList();
+          _viewList.Add(destGroup);
+          foreach (var srcEle in srcGroup)
+          {
+            var destEle = new SelectableListNode(AbsoluteDocumentPath.GetAbsolutePath(srcEle).ToString(), srcEle, false);
+            destGroup.Add(destEle);
+          }
+        }
+      }
+      if (null != _view)
+      {
+        _view.InitializeListData(_viewList);
+      }
+    }
 
-		private void CopyDoc(List<List<DoubleColumn>> src, List<List<DoubleColumn>> dest)
-		{
-			dest.Clear();
-			foreach (var e1 in src)
-			{
-				var destElement = new List<DoubleColumn>();
-				dest.Add(destElement);
-				foreach (var e2 in e1)
-				{
-					destElement.Add(e2);
-				}
-			}
-		}
+    private void CopyDoc(List<List<DoubleColumn>> src, List<List<DoubleColumn>> dest)
+    {
+      dest.Clear();
+      foreach (var e1 in src)
+      {
+        var destElement = new List<DoubleColumn>();
+        dest.Add(destElement);
+        foreach (var e2 in e1)
+        {
+          destElement.Add(e2);
+        }
+      }
+    }
 
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args == null || args.Length == 0 || !(args[0] is List<List<DoubleColumn>>))
-				return false;
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args == null || args.Length == 0 || !(args[0] is List<List<DoubleColumn>>))
+        return false;
 
-			_docOriginal = args[0] as List<List<DoubleColumn>>;
-			_doc = new List<List<DoubleColumn>>();
-			CopyDoc(_docOriginal, _doc);
+      _docOriginal = args[0] as List<List<DoubleColumn>>;
+      _doc = new List<List<DoubleColumn>>();
+      CopyDoc(_docOriginal, _doc);
 
-			Initialize(true);
+      Initialize(true);
 
-			return true;
-		}
+      return true;
+    }
 
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
+    public UseDocument UseDocumentCopy
+    {
+      set { }
+    }
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IMasterCurveCreationDataView;
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        _view = value as IMasterCurveCreationDataView;
 
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
+        if (null != _view)
+        {
+          Initialize(false);
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return _docOriginal; }
-		}
+    public object ModelObject
+    {
+      get { return _docOriginal; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		public bool Apply(bool disposeController)
-		{
-			return true;
-		}
+    public bool Apply(bool disposeController)
+    {
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-	}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
+  }
 }

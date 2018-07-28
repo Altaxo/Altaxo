@@ -30,94 +30,94 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	using Altaxo.Geometry;
-	using Altaxo.Graph.Graph3D.GraphicsContext;
-	using Drawing.D3D;
+  using Altaxo.Geometry;
+  using Altaxo.Graph.Graph3D.GraphicsContext;
+  using Drawing.D3D;
 
-	public class D3D10OverlayContext : GraphicsContextD3DPrimitivesBase, IOverlayContext3D, IDisposable
-	{
-		protected PositionColorIndexedTriangleBuffer _positionColorIndexedTriangleBuffer;
-		protected PositionColorLineListBuffer _positionColorLineListBuffer;
+  public class D3D10OverlayContext : GraphicsContextD3DPrimitivesBase, IOverlayContext3D, IDisposable
+  {
+    protected PositionColorIndexedTriangleBuffer _positionColorIndexedTriangleBuffer;
+    protected PositionColorLineListBuffer _positionColorLineListBuffer;
 
-		private Matrix4x3 _transformation = Matrix4x3.Identity;
+    private Matrix4x3 _transformation = Matrix4x3.Identity;
 
-		public D3D10OverlayContext()
-		{
-			_positionColorIndexedTriangleBuffer = new PositionColorIndexedTriangleBuffer(this);
-		}
+    public D3D10OverlayContext()
+    {
+      _positionColorIndexedTriangleBuffer = new PositionColorIndexedTriangleBuffer(this);
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		public IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffers
-		{
-			get
-			{
-				return _positionColorIndexedTriangleBuffer;
-			}
-		}
+    public IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffers
+    {
+      get
+      {
+        return _positionColorIndexedTriangleBuffer;
+      }
+    }
 
-		public IPositionColorLineListBuffer PositionColorLineListBuffer
-		{
-			get
-			{
-				if (null == _positionColorLineListBuffer)
-					_positionColorLineListBuffer = new D3D.PositionColorLineListBuffer(this);
+    public IPositionColorLineListBuffer PositionColorLineListBuffer
+    {
+      get
+      {
+        if (null == _positionColorLineListBuffer)
+          _positionColorLineListBuffer = new D3D.PositionColorLineListBuffer(this);
 
-				return _positionColorLineListBuffer;
-			}
-		}
+        return _positionColorLineListBuffer;
+      }
+    }
 
-		#region Transformation
+    #region Transformation
 
-		public Matrix4x3 Transformation
-		{
-			get
-			{
-				return _transformation;
-			}
-		}
+    public Matrix4x3 Transformation
+    {
+      get
+      {
+        return _transformation;
+      }
+    }
 
-		public Matrix3x3 TransposedInverseTransformation
-		{
-			get
-			{
-				throw new NotImplementedException("TransposedInverseTransformation should not be needed in this overlay context, because we don't use normals here");
-			}
-		}
+    public Matrix3x3 TransposedInverseTransformation
+    {
+      get
+      {
+        throw new NotImplementedException("TransposedInverseTransformation should not be needed in this overlay context, because we don't use normals here");
+      }
+    }
 
-		public object SaveGraphicsState()
-		{
-			return new GraphicState { Transformation = _transformation };
-		}
+    public object SaveGraphicsState()
+    {
+      return new GraphicState { Transformation = _transformation };
+    }
 
-		public void RestoreGraphicsState(object graphicsState)
-		{
-			var gs = graphicsState as GraphicState;
-			if (null != gs)
-			{
-				_transformation = gs.Transformation;
-			}
-			else
-				throw new ArgumentException(nameof(graphicsState) + " is not a valid graphic state!");
-		}
+    public void RestoreGraphicsState(object graphicsState)
+    {
+      var gs = graphicsState as GraphicState;
+      if (null != gs)
+      {
+        _transformation = gs.Transformation;
+      }
+      else
+        throw new ArgumentException(nameof(graphicsState) + " is not a valid graphic state!");
+    }
 
-		public void PrependTransform(Matrix4x3 m)
-		{
-			_transformation.PrependTransform(m);
-		}
+    public void PrependTransform(Matrix4x3 m)
+    {
+      _transformation.PrependTransform(m);
+    }
 
-		public void TranslateTransform(double x, double y, double z)
-		{
-			_transformation.TranslatePrepend(x, y, z);
-		}
+    public void TranslateTransform(double x, double y, double z)
+    {
+      _transformation.TranslatePrepend(x, y, z);
+    }
 
-		private class GraphicState
-		{
-			internal Matrix4x3 Transformation;
-		}
+    private class GraphicState
+    {
+      internal Matrix4x3 Transformation;
+    }
 
-		#endregion Transformation
-	}
+    #endregion Transformation
+  }
 }

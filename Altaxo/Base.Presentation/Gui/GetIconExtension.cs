@@ -28,35 +28,35 @@ using System.Windows.Markup;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Markup extension that gets an Image with the size of 16 x 16 directly for usage in buttons, tree view items etc.
-	/// </summary>
-	[MarkupExtensionReturnType(typeof(Image))]
-	public class GetIconExtension : MarkupExtension
-	{
-		protected string _key;
+  /// <summary>
+  /// Markup extension that gets an Image with the size of 16 x 16 directly for usage in buttons, tree view items etc.
+  /// </summary>
+  [MarkupExtensionReturnType(typeof(Image))]
+  public class GetIconExtension : MarkupExtension
+  {
+    protected string _key;
 
-		public GetIconExtension(string key)
-		{
-			this._key = key;
-		}
+    public GetIconExtension(string key)
+    {
+      this._key = key;
+    }
 
-		public override object ProvideValue(IServiceProvider serviceProvider)
-		{
-			if (PresentationResourceService.InstanceAvailable)
-			{
-				var imgSource = PresentationResourceService.GetBitmapSource(_key);
-				return new System.Windows.Controls.Image
-				{
-					Height = 16,
-					Width = 16,
-					Source = imgSource
-				};
-			}
-			else
-			{
-				return new Image();
-			}
-		}
-	}
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+      if (PresentationResourceService.InstanceAvailable)
+      {
+        var imgSource = PresentationResourceService.GetBitmapSource(_key);
+        return new System.Windows.Controls.Image
+        {
+          Height = 16,
+          Width = 16,
+          Source = imgSource
+        };
+      }
+      else
+      {
+        return new Image();
+      }
+    }
+  }
 }

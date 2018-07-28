@@ -33,63 +33,63 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing
 {
-	public class ClassDeclarationVisitor : CSharpSyntaxRewriter
-	{
-		public List<ClassDeclarationSyntax> Classes { get; } = new List<ClassDeclarationSyntax>();
+  public class ClassDeclarationVisitor : CSharpSyntaxRewriter
+  {
+    public List<ClassDeclarationSyntax> Classes { get; } = new List<ClassDeclarationSyntax>();
 
-		public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
-		{
-			node = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
-			Classes.Add(node); // save your visited classes
-			return node;
-		}
+    public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
+    {
+      node = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
+      Classes.Add(node); // save your visited classes
+      return node;
+    }
 
-		public static IEnumerable<ClassDeclarationSyntax> GetAllClasses(SyntaxNode rootNode)
-		{
-			var visitor = new ClassDeclarationVisitor();
-			visitor.Visit(rootNode);
-			return visitor.Classes;
-		}
-	}
+    public static IEnumerable<ClassDeclarationSyntax> GetAllClasses(SyntaxNode rootNode)
+    {
+      var visitor = new ClassDeclarationVisitor();
+      visitor.Visit(rootNode);
+      return visitor.Classes;
+    }
+  }
 
-	public class MethodVisitor : CSharpSyntaxRewriter
-	{
-		public List<SyntaxNode> Symbols { get; } = new List<SyntaxNode>();
+  public class MethodVisitor : CSharpSyntaxRewriter
+  {
+    public List<SyntaxNode> Symbols { get; } = new List<SyntaxNode>();
 
-		public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
-		{
-			Symbols.Add(node);
-			return base.VisitMethodDeclaration(node);
-		}
+    public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
+    {
+      Symbols.Add(node);
+      return base.VisitMethodDeclaration(node);
+    }
 
-		public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
-		{
-			Symbols.Add(node);
-			return base.VisitPropertyDeclaration(node);
-		}
+    public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
+    {
+      Symbols.Add(node);
+      return base.VisitPropertyDeclaration(node);
+    }
 
-		public override SyntaxNode VisitEventDeclaration(EventDeclarationSyntax node)
-		{
-			Symbols.Add(node);
-			return base.VisitEventDeclaration(node);
-		}
+    public override SyntaxNode VisitEventDeclaration(EventDeclarationSyntax node)
+    {
+      Symbols.Add(node);
+      return base.VisitEventDeclaration(node);
+    }
 
-		public override SyntaxNode VisitEventFieldDeclaration(EventFieldDeclarationSyntax node)
-		{
-			Symbols.Add(node);
-			return base.VisitEventFieldDeclaration(node);
-		}
+    public override SyntaxNode VisitEventFieldDeclaration(EventFieldDeclarationSyntax node)
+    {
+      Symbols.Add(node);
+      return base.VisitEventFieldDeclaration(node);
+    }
 
-		public override SyntaxNode VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
-		{
-			Symbols.Add(node);
-			return base.VisitConstructorDeclaration(node);
-		}
+    public override SyntaxNode VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
+    {
+      Symbols.Add(node);
+      return base.VisitConstructorDeclaration(node);
+    }
 
-		public override SyntaxNode VisitFieldDeclaration(FieldDeclarationSyntax node)
-		{
-			Symbols.Add(node);
-			return base.VisitFieldDeclaration(node);
-		}
-	}
+    public override SyntaxNode VisitFieldDeclaration(FieldDeclarationSyntax node)
+    {
+      Symbols.Add(node);
+      return base.VisitFieldDeclaration(node);
+    }
+  }
 }

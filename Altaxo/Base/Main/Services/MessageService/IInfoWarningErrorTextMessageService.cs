@@ -25,40 +25,40 @@ using System.Collections.ObjectModel;
 
 namespace Altaxo.Main.Services
 {
-	public struct InfoWarningErrorTextMessageItem
-	{
-		public MessageLevel Level { get; set; }
-		public string Source { get; set; }
-		public string Message { get; set; }
-		public DateTime TimeUtc { get; set; }
+  public struct InfoWarningErrorTextMessageItem
+  {
+    public MessageLevel Level { get; set; }
+    public string Source { get; set; }
+    public string Message { get; set; }
+    public DateTime TimeUtc { get; set; }
 
-		public DateTime Time
-		{
-			get { return TimeUtc.ToLocalTime(); }
-		}
+    public DateTime Time
+    {
+      get { return TimeUtc.ToLocalTime(); }
+    }
 
-		public InfoWarningErrorTextMessageItem(MessageLevel level, string source, string message, DateTime timeUtc)
-		{
-			Level = level;
-			Source = source;
-			Message = message;
-			TimeUtc = timeUtc;
-		}
-	}
+    public InfoWarningErrorTextMessageItem(MessageLevel level, string source, string message, DateTime timeUtc)
+    {
+      Level = level;
+      Source = source;
+      Message = message;
+      TimeUtc = timeUtc;
+    }
+  }
 
-	/// <summary>
-	/// Service that usually display infos, warnings, and errors in a pad window at the bottom of the workbench. Typically,
-	/// the messages will be displayed in different colors according to their warning level.
-	/// </summary>
-	[GlobalService("InfoWarningErrorTextMessageService")]
-	public interface IInfoWarningErrorTextMessageService
-	{
-		void WriteLine(MessageLevel messageLevel, string source, string message);
+  /// <summary>
+  /// Service that usually display infos, warnings, and errors in a pad window at the bottom of the workbench. Typically,
+  /// the messages will be displayed in different colors according to their warning level.
+  /// </summary>
+  [GlobalService("InfoWarningErrorTextMessageService")]
+  public interface IInfoWarningErrorTextMessageService
+  {
+    void WriteLine(MessageLevel messageLevel, string source, string message);
 
-		void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args);
+    void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args);
 
-		void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args);
+    void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args);
 
-		event Action<InfoWarningErrorTextMessageItem> MessageAdded;
-	}
+    event Action<InfoWarningErrorTextMessageItem> MessageAdded;
+  }
 }

@@ -26,174 +26,174 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
-	[ExpectedTypeOfView(typeof(ISingleValueView))]
-	[UserControllerForObject(typeof(int))]
-	public class IntegerValueInputController : IMVCAController
-	{
-		private ISingleValueView m_View;
+  [ExpectedTypeOfView(typeof(ISingleValueView))]
+  [UserControllerForObject(typeof(int))]
+  public class IntegerValueInputController : IMVCAController
+  {
+    private ISingleValueView m_View;
 
-		private int m_InitialContents;
+    private int m_InitialContents;
 
-		private int m_EnteredContents;
+    private int m_EnteredContents;
 
-		private string _description;
+    private string _description;
 
-		private IIntegerValidator m_Validator;
+    private IIntegerValidator m_Validator;
 
-		public IntegerValueInputController(int initialcontents)
-			: this(initialcontents, "Value: ")
-		{
-		}
+    public IntegerValueInputController(int initialcontents)
+      : this(initialcontents, "Value: ")
+    {
+    }
 
-		public IntegerValueInputController(int initialcontents, string description)
-		{
-			m_InitialContents = initialcontents;
-			m_EnteredContents = initialcontents;
-			_description = description;
-		}
+    public IntegerValueInputController(int initialcontents, string description)
+    {
+      m_InitialContents = initialcontents;
+      m_EnteredContents = initialcontents;
+      _description = description;
+    }
 
-		private void Initialize()
-		{
-			m_View.DescriptionText = _description;
-		}
+    private void Initialize()
+    {
+      m_View.DescriptionText = _description;
+    }
 
-		private ISingleValueView View
-		{
-			get { return m_View; }
-			set
-			{
-				if (m_View != null)
-					m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+    private ISingleValueView View
+    {
+      get { return m_View; }
+      set
+      {
+        if (m_View != null)
+          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
 
-				m_View = value;
-				Initialize();
+        m_View = value;
+        Initialize();
 
-				if (m_View != null)
-					m_View.ValueText_Validating += this.EhView_ValidatingValue1;
-			}
-		}
+        if (m_View != null)
+          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+      }
+    }
 
-		public int EnteredContents
-		{
-			get { return m_EnteredContents; }
-		}
+    public int EnteredContents
+    {
+      get { return m_EnteredContents; }
+    }
 
-		public IIntegerValidator Validator
-		{
-			set { m_Validator = value; }
-		}
+    public IIntegerValidator Validator
+    {
+      set { m_Validator = value; }
+    }
 
-		public bool Validate()
-		{
-			string value = m_View.ValueText;
-			string err = null;
-			if (Altaxo.Serialization.GUIConversion.IsInteger(value, out m_EnteredContents))
-			{
-				if (null != this.m_Validator)
-					err = m_Validator.Validate(m_EnteredContents);
-			}
-			else
-			{
-				err = "You must enter a integer value!";
-			}
+    public bool Validate()
+    {
+      string value = m_View.ValueText;
+      string err = null;
+      if (Altaxo.Serialization.GUIConversion.IsInteger(value, out m_EnteredContents))
+      {
+        if (null != this.m_Validator)
+          err = m_Validator.Validate(m_EnteredContents);
+      }
+      else
+      {
+        err = "You must enter a integer value!";
+      }
 
-			if (null != err)
-				Current.Gui.ErrorMessageBox(err);
+      if (null != err)
+        Current.Gui.ErrorMessageBox(err);
 
-			return null == err;
-		}
+      return null == err;
+    }
 
-		#region ISingleValueFormController Members
+    #region ISingleValueFormController Members
 
-		public void EhView_ValidatingValue1(ValidationEventArgs<string> e)
-		{
-			int val;
-			if (!int.TryParse(e.ValueToValidate, out val))
-				e.AddError("Value has to be a valid integer");
-		}
+    public void EhView_ValidatingValue1(ValidationEventArgs<string> e)
+    {
+      int val;
+      if (!int.TryParse(e.ValueToValidate, out val))
+        e.AddError("Value has to be a valid integer");
+    }
 
-		#endregion ISingleValueFormController Members
+    #endregion ISingleValueFormController Members
 
-		/// <summary>
-		/// Provides an interface to a validator to validates the user input
-		/// </summary>
-		public interface IIntegerValidator
-		{
-			/// <summary>
-			/// Validates if the user input number i is valid user input.
-			/// </summary>
-			/// <param name="i">The number entered by the user.</param>
-			/// <returns>Null if this input is valid, error message else.</returns>
-			string Validate(int i);
-		}
+    /// <summary>
+    /// Provides an interface to a validator to validates the user input
+    /// </summary>
+    public interface IIntegerValidator
+    {
+      /// <summary>
+      /// Validates if the user input number i is valid user input.
+      /// </summary>
+      /// <param name="i">The number entered by the user.</param>
+      /// <returns>Null if this input is valid, error message else.</returns>
+      string Validate(int i);
+    }
 
-		public class ZeroOrPositiveIntegerValidator : IIntegerValidator
-		{
-			public string Validate(int i)
-			{
-				if (i < 0)
-					return "The provided number must be zero or positive!";
-				else
-					return null;
-			}
-		}
+    public class ZeroOrPositiveIntegerValidator : IIntegerValidator
+    {
+      public string Validate(int i)
+      {
+        if (i < 0)
+          return "The provided number must be zero or positive!";
+        else
+          return null;
+      }
+    }
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public object ViewObject
-		{
-			get
-			{
-				return m_View;
-			}
-			set
-			{
-				if (m_View != null)
-					m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+    public object ViewObject
+    {
+      get
+      {
+        return m_View;
+      }
+      set
+      {
+        if (m_View != null)
+          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
 
-				m_View = value as ISingleValueView;
-				if (m_View != null)
-				{
-					Initialize();
-					m_View.ValueText_Validating += this.EhView_ValidatingValue1;
-				}
-			}
-		}
+        m_View = value as ISingleValueView;
+        if (m_View != null)
+        {
+          Initialize();
+          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return m_InitialContents; }
-		}
+    public object ModelObject
+    {
+      get { return m_InitialContents; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		#endregion IMVCController Members
+    #endregion IMVCController Members
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public bool Apply(bool disposeController)
-		{
-			if (!Validate())
-				return false;
+    public bool Apply(bool disposeController)
+    {
+      if (!Validate())
+        return false;
 
-			m_InitialContents = m_EnteredContents;
-			return true;
-		}
+      m_InitialContents = m_EnteredContents;
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IApplyController Members
-	} // end of class IntegerValueInputController
+    #endregion IApplyController Members
+  } // end of class IntegerValueInputController
 }

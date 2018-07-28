@@ -30,57 +30,57 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
-	public class ArrowF10LineCap : LineCapExtension
-	{
-		public ArrowF10LineCap()
-		{
-		}
+  public class ArrowF10LineCap : LineCapExtension
+  {
+    public ArrowF10LineCap()
+    {
+    }
 
-		public ArrowF10LineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-			: base(minimumAbsoluteSizePt, minimumRelativeSize)
-		{
-		}
+    public ArrowF10LineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
+    {
+    }
 
-		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
-		{
-			return new ArrowF10LineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-		}
+    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    {
+      return new ArrowF10LineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+    }
 
-		public override string Name { get { return "ArrowF10"; } }
+    public override string Name { get { return "ArrowF10"; } }
 
-		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
-		public override double DefaultMinimumRelativeSize { get { return 4; } }
+    public override double DefaultMinimumRelativeSize { get { return 4; } }
 
-		private CustomLineCap GetClone(Pen pen, float size)
-		{
-			float scale = pen.Width == 0 ? 1 : size / (2 * pen.Width);
-			if (scale <= 0)
-				scale = 1e-3f;
+    private CustomLineCap GetClone(Pen pen, float size)
+    {
+      float scale = pen.Width == 0 ? 1 : size / (2 * pen.Width);
+      if (scale <= 0)
+        scale = 1e-3f;
 
-			GraphicsPath hPath = new GraphicsPath();
-			hPath.AddPolygon(new PointF[]{
-			new PointF(0, 0),
-			new PointF(-1, -2),
-			new PointF(1, -2),
-		});
+      GraphicsPath hPath = new GraphicsPath();
+      hPath.AddPolygon(new PointF[]{
+      new PointF(0, 0),
+      new PointF(-1, -2),
+      new PointF(1, -2),
+    });
 
-			// Construct the hook-shaped end cap.
-			CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 2); // we set the stroke path only
-			clone.WidthScale = scale;
-			return clone;
-		}
+      // Construct the hook-shaped end cap.
+      CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 2); // we set the stroke path only
+      clone.WidthScale = scale;
+      return clone;
+    }
 
-		public override void SetStartCap(Pen pen, float size)
-		{
-			pen.StartCap = LineCap.Custom;
-			pen.CustomStartCap = GetClone(pen, size);
-		}
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Custom;
+      pen.CustomStartCap = GetClone(pen, size);
+    }
 
-		public override void SetEndCap(Pen pen, float size)
-		{
-			pen.EndCap = LineCap.Custom;
-			pen.CustomEndCap = GetClone(pen, size);
-		}
-	}
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.EndCap = LineCap.Custom;
+      pen.CustomEndCap = GetClone(pen, size);
+    }
+  }
 }

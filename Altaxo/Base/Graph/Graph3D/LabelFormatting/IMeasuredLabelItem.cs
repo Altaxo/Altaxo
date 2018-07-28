@@ -27,25 +27,25 @@ using System;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
-	using Drawing.D3D;
-	using GraphicsContext;
+  using Drawing.D3D;
+  using GraphicsContext;
 
-	/// <summary>
-	/// Interface for an label item that is ready to draw and was already measured.
-	/// </summary>
-	public interface IMeasuredLabelItem
-	{
-		/// <summary>
-		/// Size of the enclosing rectangle of the label item.
-		/// </summary>
-		VectorD3D Size { get; }
+  /// <summary>
+  /// Interface for an label item that is ready to draw and was already measured.
+  /// </summary>
+  public interface IMeasuredLabelItem
+  {
+    /// <summary>
+    /// Size of the enclosing rectangle of the label item.
+    /// </summary>
+    VectorD3D Size { get; }
 
-		/// <summary>
-		/// Draws the label to a specified point.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="brush">The brush to use for the drawing.</param>
-		/// <param name="point">The point where to draw the item.</param>
-		void Draw(IGraphicsContext3D g, IMaterial brush, PointD3D point);
-	}
+    /// <summary>
+    /// Draws the label to a specified point.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="brush">The brush to use for the drawing.</param>
+    /// <param name="point">The point where to draw the item.</param>
+    void Draw(IGraphicsContext3D g, IMaterial brush, PointD3D point);
+  }
 }

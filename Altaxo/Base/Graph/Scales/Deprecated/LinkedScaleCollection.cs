@@ -27,168 +27,168 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
-	[Serializable]
-	public class LinkedScaleCollection
-		:
-		Main.SuspendableDocumentNodeWithSetOfEventArgs
-	{
-		private LinkedScale[] _linkedScales = new LinkedScale[2];
+  [Serializable]
+  public class LinkedScaleCollection
+    :
+    Main.SuspendableDocumentNodeWithSetOfEventArgs
+  {
+    private LinkedScale[] _linkedScales = new LinkedScale[2];
 
-		/// <summary>
-		/// Fired if one of the scale has changed (or its boundaries).
-		/// </summary>
-		[field: NonSerialized]
-		public event EventHandler ScalesChanged;
+    /// <summary>
+    /// Fired if one of the scale has changed (or its boundaries).
+    /// </summary>
+    [field: NonSerialized]
+    public event EventHandler ScalesChanged;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisPropertiesCollection", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScaleCollection", 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				LinkedScaleCollection s = (LinkedScaleCollection)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisPropertiesCollection", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScaleCollection", 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        LinkedScaleCollection s = (LinkedScaleCollection)obj;
 
-				info.CreateArray("Properties", s._linkedScales.Length);
-				for (int i = 0; i < s._linkedScales.Length; ++i)
-					info.AddValue("e", s._linkedScales[i]);
-				info.CommitArray();
-			}
+        info.CreateArray("Properties", s._linkedScales.Length);
+        for (int i = 0; i < s._linkedScales.Length; ++i)
+          info.AddValue("e", s._linkedScales[i]);
+        info.CommitArray();
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				LinkedScaleCollection s = SDeserialize(o, info, parent);
-				return s;
-			}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        LinkedScaleCollection s = SDeserialize(o, info, parent);
+        return s;
+      }
 
-			protected virtual LinkedScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				LinkedScaleCollection s = null != o ? (LinkedScaleCollection)o : new LinkedScaleCollection();
+      protected virtual LinkedScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        LinkedScaleCollection s = null != o ? (LinkedScaleCollection)o : new LinkedScaleCollection();
 
-				int count = info.OpenArray("Properties");
-				s._linkedScales = new LinkedScale[count];
-				for (int i = 0; i < count; ++i)
-					s.SetLinkedScale((LinkedScale)info.GetValue("e", s), i);
-				info.CloseArray(count);
+        int count = info.OpenArray("Properties");
+        s._linkedScales = new LinkedScale[count];
+        for (int i = 0; i < count; ++i)
+          s.SetLinkedScale((LinkedScale)info.GetValue("e", s), i);
+        info.CloseArray(count);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public LinkedScaleCollection()
-		{
-			_linkedScales = new LinkedScale[2];
-			this.SetLinkedScale(new LinkedScale(), 0);
-			this.SetLinkedScale(new LinkedScale(), 1);
-		}
+    public LinkedScaleCollection()
+    {
+      _linkedScales = new LinkedScale[2];
+      this.SetLinkedScale(new LinkedScale(), 0);
+      this.SetLinkedScale(new LinkedScale(), 1);
+    }
 
-		public LinkedScaleCollection(LinkedScaleCollection from)
-		{
-			CopyFrom(from);
-		}
+    public LinkedScaleCollection(LinkedScaleCollection from)
+    {
+      CopyFrom(from);
+    }
 
-		public void CopyFrom(LinkedScaleCollection from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
+    public void CopyFrom(LinkedScaleCollection from)
+    {
+      if (object.ReferenceEquals(this, from))
+        return;
 
-			if (_linkedScales != null)
-			{
-				for (int i = 0; i < _linkedScales.Length; ++i)
-				{
-					if (_linkedScales[i] != null)
-						_linkedScales[i].LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
-					_linkedScales[i] = null;
-				}
-			}
+      if (_linkedScales != null)
+      {
+        for (int i = 0; i < _linkedScales.Length; ++i)
+        {
+          if (_linkedScales[i] != null)
+            _linkedScales[i].LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
+          _linkedScales[i] = null;
+        }
+      }
 
-			_linkedScales = new LinkedScale[from._linkedScales.Length];
-			for (int i = 0; i < from._linkedScales.Length; i++)
-			{
-				_linkedScales[i] = from._linkedScales[i].Clone();
-				_linkedScales[i].LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
-			}
+      _linkedScales = new LinkedScale[from._linkedScales.Length];
+      for (int i = 0; i < from._linkedScales.Length; i++)
+      {
+        _linkedScales[i] = from._linkedScales[i].Clone();
+        _linkedScales[i].LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
+      }
 
-			EhSelfChanged(EventArgs.Empty);
-		}
+      EhSelfChanged(EventArgs.Empty);
+    }
 
-		public LinkedScaleCollection Clone()
-		{
-			return new LinkedScaleCollection(this);
-		}
+    public LinkedScaleCollection Clone()
+    {
+      return new LinkedScaleCollection(this);
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			if (null != _linkedScales)
-			{
-				for (int i = 0; i < _linkedScales.Length; ++i)
-				{
-					if (null != _linkedScales[i])
-						yield return new Main.DocumentNodeAndName(_linkedScales[i], "LinkedScale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
-				}
-			}
-		}
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      if (null != _linkedScales)
+      {
+        for (int i = 0; i < _linkedScales.Length; ++i)
+        {
+          if (null != _linkedScales[i])
+            yield return new Main.DocumentNodeAndName(_linkedScales[i], "LinkedScale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        }
+      }
+    }
 
-		public LinkedScale X
-		{
-			get
-			{
-				return _linkedScales[0];
-			}
-		}
+    public LinkedScale X
+    {
+      get
+      {
+        return _linkedScales[0];
+      }
+    }
 
-		public LinkedScale Y
-		{
-			get
-			{
-				return _linkedScales[1];
-			}
-		}
+    public LinkedScale Y
+    {
+      get
+      {
+        return _linkedScales[1];
+      }
+    }
 
-		public Scale Scale(int i)
-		{
-			return _linkedScales[i].Scale;
-		}
+    public Scale Scale(int i)
+    {
+      return _linkedScales[i].Scale;
+    }
 
-		public void SetScale(int i, Scale ax)
-		{
-			_linkedScales[i].Scale = ax;
-		}
+    public void SetScale(int i, Scale ax)
+    {
+      _linkedScales[i].Scale = ax;
+    }
 
-		public int IndexOf(Scale ax)
-		{
-			for (int i = 0; i < _linkedScales.Length; i++)
-			{
-				if (_linkedScales[i].Scale == ax)
-					return i;
-			}
+    public int IndexOf(Scale ax)
+    {
+      for (int i = 0; i < _linkedScales.Length; i++)
+      {
+        if (_linkedScales[i].Scale == ax)
+          return i;
+      }
 
-			return -1;
-		}
+      return -1;
+    }
 
-		protected void SetLinkedScale(LinkedScale newvalue, int i)
-		{
-			LinkedScale oldvalue = _linkedScales[i];
-			_linkedScales[i] = newvalue;
+    protected void SetLinkedScale(LinkedScale newvalue, int i)
+    {
+      LinkedScale oldvalue = _linkedScales[i];
+      _linkedScales[i] = newvalue;
 
-			if (!object.ReferenceEquals(oldvalue, newvalue))
-			{
-				if (null != oldvalue)
-					oldvalue.LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
-				if (null != newvalue)
-					newvalue.LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
-			}
-		}
+      if (!object.ReferenceEquals(oldvalue, newvalue))
+      {
+        if (null != oldvalue)
+          oldvalue.LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
+        if (null != newvalue)
+          newvalue.LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
+      }
+    }
 
-		private void EhLinkPropertiesChanged(object sender, EventArgs e)
-		{
-			if (ScalesChanged != null)
-				ScalesChanged(this, EventArgs.Empty);
+    private void EhLinkPropertiesChanged(object sender, EventArgs e)
+    {
+      if (ScalesChanged != null)
+        ScalesChanged(this, EventArgs.Empty);
 
-			EhSelfChanged(EventArgs.Empty);
-		}
-	}
+      EhSelfChanged(EventArgs.Empty);
+    }
+  }
 }

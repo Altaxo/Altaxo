@@ -29,15 +29,15 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-	public class PlotColumnTag
-	{
-		public PlotColumnTag(int groupNumber, int columnNumber)
-		{
-			GroupNumber = groupNumber;
-			ColumnNumber = columnNumber;
-		}
+  public class PlotColumnTag
+  {
+    public PlotColumnTag(int groupNumber, int columnNumber)
+    {
+      GroupNumber = groupNumber;
+      ColumnNumber = columnNumber;
+    }
 
-		public int GroupNumber { get; private set; }
-		public int ColumnNumber { get; private set; }
-	}
+    public int GroupNumber { get; private set; }
+    public int ColumnNumber { get; private set; }
+  }
 }

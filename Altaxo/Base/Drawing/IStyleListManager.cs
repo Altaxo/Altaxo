@@ -29,99 +29,99 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-	/// <summary>
-	/// Manager for style lists. Usually only a single instance of this manager should exist in the application.
-	/// </summary>
-	/// <typeparam name="TList">The type of the style list.</typeparam>
-	/// <typeparam name="T">The type of the style</typeparam>
-	public interface IStyleListManager<TList, T> where TList : IStyleList<T> where T : Main.IImmutable
-	{
-		/// <summary>
-		/// Occurs when a list is added or removed from the manager or when the properties of a list (e.g. list level) have changed.
-		/// </summary>
-		event Action Changed;
+  /// <summary>
+  /// Manager for style lists. Usually only a single instance of this manager should exist in the application.
+  /// </summary>
+  /// <typeparam name="TList">The type of the style list.</typeparam>
+  /// <typeparam name="T">The type of the style</typeparam>
+  public interface IStyleListManager<TList, T> where TList : IStyleList<T> where T : Main.IImmutable
+  {
+    /// <summary>
+    /// Occurs when a list is added or removed from the manager or when the properties of a list (e.g. list level) have changed.
+    /// </summary>
+    event Action Changed;
 
-		/// <summary>
-		/// Gets the builtin default list.
-		/// </summary>
-		/// <value>
-		/// The builtin default list;
-		/// </value>
-		TList BuiltinDefault { get; }
+    /// <summary>
+    /// Gets the builtin default list.
+    /// </summary>
+    /// <value>
+    /// The builtin default list;
+    /// </value>
+    TList BuiltinDefault { get; }
 
-		/// <summary>
-		/// Gets the names of all entries (styles) in the list.
-		/// </summary>
-		/// <returns>The names of all entries (styles) in the list.</returns>
-		IEnumerable<string> GetAllListNames();
+    /// <summary>
+    /// Gets the names of all entries (styles) in the list.
+    /// </summary>
+    /// <returns>The names of all entries (styles) in the list.</returns>
+    IEnumerable<string> GetAllListNames();
 
-		/// <summary>
-		/// Gets all lists together with their definition level.
-		/// </summary>
-		/// <returns>The lists together with their definition level.</returns>
-		IEnumerable<StyleListManagerBaseEntryValue<TList, T>> GetEntryValues();
+    /// <summary>
+    /// Gets all lists together with their definition level.
+    /// </summary>
+    /// <returns>The lists together with their definition level.</returns>
+    IEnumerable<StyleListManagerBaseEntryValue<TList, T>> GetEntryValues();
 
-		/// <summary>
-		/// Determines whether the specified name contains a list (style) with the provided name.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <returns>
-		///   <c>true</c> if the specified name contains a list (style) with the provided name; otherwise, <c>false</c>.
-		/// </returns>
-		bool ContainsList(string name);
+    /// <summary>
+    /// Determines whether the specified name contains a list (style) with the provided name.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified name contains a list (style) with the provided name; otherwise, <c>false</c>.
+    /// </returns>
+    bool ContainsList(string name);
 
-		/// <summary>
-		/// Gets the list (style) with the provided name.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <returns>The list (style) with the provided name.</returns>
-		TList GetList(string name);
+    /// <summary>
+    /// Gets the list (style) with the provided name.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <returns>The list (style) with the provided name.</returns>
+    TList GetList(string name);
 
-		/// <summary>
-		/// Gets the list (style) with the provided name together with the level.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <returns>The list (style) with the provided name together with its definition level.</returns>
-		StyleListManagerBaseEntryValue<TList, T> GetEntryValue(string name);
+    /// <summary>
+    /// Gets the list (style) with the provided name together with the level.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <returns>The list (style) with the provided name together with its definition level.</returns>
+    StyleListManagerBaseEntryValue<TList, T> GetEntryValue(string name);
 
-		/// <summary>
-		/// Switches the item definition level between user and project, i.e. a list that was at user level before is switched to project level,
-		/// and a list that was at project level before is switched to user level.
-		/// </summary>
-		/// <param name="name">The name of the list.</param>
-		void SwitchItemDefinitionLevelBetweenUserAndProject(string name);
+    /// <summary>
+    /// Switches the item definition level between user and project, i.e. a list that was at user level before is switched to project level,
+    /// and a list that was at project level before is switched to user level.
+    /// </summary>
+    /// <param name="name">The name of the list.</param>
+    void SwitchItemDefinitionLevelBetweenUserAndProject(string name);
 
-		/// <summary>
-		/// Try to find an existing list by using only the values of the items. A hint to the name of the existing list can speed up the search, but is not used otherwise.
-		/// </summary>
-		/// <param name="symbols">The items of the list.</param>
-		/// <param name="nameHint">The name of the existing list, to which the items belong. Can be <c>null</c>.</param>
-		/// <param name="nameOfExistingList">If found (the return value is then <c>true</c>), the name of existing list.</param>
-		/// <returns>True if a list with such items was found in the manager, otherwise, <c>false</c>.</returns>
-		bool TryGetListByMembers(IEnumerable<T> symbols, string nameHint, out string nameOfExistingList);
+    /// <summary>
+    /// Try to find an existing list by using only the values of the items. A hint to the name of the existing list can speed up the search, but is not used otherwise.
+    /// </summary>
+    /// <param name="symbols">The items of the list.</param>
+    /// <param name="nameHint">The name of the existing list, to which the items belong. Can be <c>null</c>.</param>
+    /// <param name="nameOfExistingList">If found (the return value is then <c>true</c>), the name of existing list.</param>
+    /// <returns>True if a list with such items was found in the manager, otherwise, <c>false</c>.</returns>
+    bool TryGetListByMembers(IEnumerable<T> symbols, string nameHint, out string nameOfExistingList);
 
-		/// <summary>
-		/// Try to register the provided list.
-		/// </summary>
-		/// <param name="instance">The new list which is tried to register.</param>
-		/// <param name="level">The level on which this list is defined.</param>
-		/// <param name="storedList">On return, this is the list which is either registered, or is an already registed list with exactly the same elements.</param>
-		/// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
-		bool TryRegisterList(TList instance, Main.ItemDefinitionLevel level, out TList storedList);
+    /// <summary>
+    /// Try to register the provided list.
+    /// </summary>
+    /// <param name="instance">The new list which is tried to register.</param>
+    /// <param name="level">The level on which this list is defined.</param>
+    /// <param name="storedList">On return, this is the list which is either registered, or is an already registed list with exactly the same elements.</param>
+    /// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
+    bool TryRegisterList(TList instance, Main.ItemDefinitionLevel level, out TList storedList);
 
-		/// <summary>
-		/// Creates a new standard list of items.
-		/// </summary>
-		/// <param name="listName">The name of the list.</param>
-		/// <param name="listItems">The items of the list.</param>
-		/// <returns></returns>
-		TList CreateNewList(string listName, IEnumerable<T> listItems);
+    /// <summary>
+    /// Creates a new standard list of items.
+    /// </summary>
+    /// <param name="listName">The name of the list.</param>
+    /// <param name="listItems">The items of the list.</param>
+    /// <returns></returns>
+    TList CreateNewList(string listName, IEnumerable<T> listItems);
 
-		/// <summary>
-		/// Gets the parent list of the item
-		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <returns>The parent list of the item.</returns>
-		TList GetParentList(T item);
-	}
+    /// <summary>
+    /// Gets the parent list of the item
+    /// </summary>
+    /// <param name="item">The item.</param>
+    /// <returns>The parent list of the item.</returns>
+    TList GetParentList(T item);
+  }
 }

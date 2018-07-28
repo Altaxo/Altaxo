@@ -25,37 +25,37 @@ using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
-	/// <summary>
-	/// Command to open web sites.
-	/// </summary>
-	/// <seealso cref="Altaxo.Gui.SimpleCommand" />
-	public class LinkCommand : SimpleCommand
-	{
-		private string site;
+  /// <summary>
+  /// Command to open web sites.
+  /// </summary>
+  /// <seealso cref="Altaxo.Gui.SimpleCommand" />
+  public class LinkCommand : SimpleCommand
+  {
+    private string site;
 
-		public LinkCommand(string site)
-		{
-			this.site = site;
-		}
+    public LinkCommand(string site)
+    {
+      this.site = site;
+    }
 
-		public override void Execute(object parameter)
-		{
-			if (site.StartsWith("home://"))
-			{
-				string file = Path.Combine(FileUtility.ApplicationRootPath, site.Substring(7).Replace('/', Path.DirectorySeparatorChar));
-				try
-				{
-					Process.Start(file);
-				}
-				catch (Exception)
-				{
-					MessageService.ShowError("Can't execute/view " + file + "\n Please check that the file exists and that you can open this file.");
-				}
-			}
-			else
-			{
-				Process.Start(site);
-			}
-		}
-	}
+    public override void Execute(object parameter)
+    {
+      if (site.StartsWith("home://"))
+      {
+        string file = Path.Combine(FileUtility.ApplicationRootPath, site.Substring(7).Replace('/', Path.DirectorySeparatorChar));
+        try
+        {
+          Process.Start(file);
+        }
+        catch (Exception)
+        {
+          MessageService.ShowError("Can't execute/view " + file + "\n Please check that the file exists and that you can open this file.");
+        }
+      }
+      else
+      {
+        Process.Start(site);
+      }
+    }
+  }
 }

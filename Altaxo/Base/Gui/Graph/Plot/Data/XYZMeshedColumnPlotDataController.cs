@@ -30,44 +30,45 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-	public interface IXYZMeshedColumnPlotDataView
-	{
-		void SetDataView(object viewObject);
-	}
+  public interface IXYZMeshedColumnPlotDataView
+  {
+    void SetDataView(object viewObject);
+  }
 
-	[ExpectedTypeOfView(typeof(IXYZMeshedColumnPlotDataView))]
-	[UserControllerForObject(typeof(XYZMeshedColumnPlotData))]
-	public class XYZMeshedColumnPlotDataController : MVCANControllerEditOriginalDocBase<XYZMeshedColumnPlotData, IXYZMeshedColumnPlotDataView>
-	{
-		private IMVCANController _dataProxyController;
+  [ExpectedTypeOfView(typeof(IXYZMeshedColumnPlotDataView))]
+  [UserControllerForObject(typeof(XYZMeshedColumnPlotData))]
+  public class XYZMeshedColumnPlotDataController : MVCANControllerEditOriginalDocBase<XYZMeshedColumnPlotData, IXYZMeshedColumnPlotDataView>
+  {
+    private IMVCANController _dataProxyController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_dataProxyController, () => _dataProxyController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_dataProxyController, () => _dataProxyController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_dataProxyController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataTableMatrix }, typeof(IMVCANController), UseDocument.Directly);
-			}
-			if (null != _view)
-			{
-				_view.SetDataView(_dataProxyController.ViewObject);
-			}
-		}
+      if (initData)
+      {
+        _dataProxyController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataTableMatrix }, typeof(IMVCANController), UseDocument.Directly);
+      }
+      if (null != _view)
+      {
+        _view.SetDataView(_dataProxyController.ViewObject);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			bool result;
+    public override bool Apply(bool disposeController)
+    {
+      bool result;
 
-			result = _dataProxyController.Apply(disposeController);
-			if (!result) return result;
+      result = _dataProxyController.Apply(disposeController);
+      if (!result)
+        return result;
 
-			return ApplyEnd(result, disposeController);
-		}
-	}
+      return ApplyEnd(result, disposeController);
+    }
+  }
 }

@@ -22,70 +22,75 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common
 {
-	public static class WpfTreeNavigation
-	{
-		/// <summary>
-		/// Returns the first occurence of object of type <paramref name="T" /> in the visual tree of <paramref name="dependencyObject" />.
-		/// <param name="root">Start node.</param>
-		/// </summary>
-		public static T TryFindChild<T>(DependencyObject root) where T : DependencyObject
-		{
-			if (root is T)
-				return (T)root;
-			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
-			{
-				var foundChild = TryFindChild<T>(VisualTreeHelper.GetChild(root, i));
-				if (foundChild != null)
-					return foundChild;
-			}
-			return null;
-		}
+  public static class WpfTreeNavigation
+  {
+    /// <summary>
+    /// Returns the first occurence of object of type <paramref name="T" /> in the visual tree of <paramref name="dependencyObject" />.
+    /// <param name="root">Start node.</param>
+    /// </summary>
+    public static T TryFindChild<T>(DependencyObject root) where T : DependencyObject
+    {
+      if (root is T)
+        return (T)root;
+      for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+      {
+        var foundChild = TryFindChild<T>(VisualTreeHelper.GetChild(root, i));
+        if (foundChild != null)
+          return foundChild;
+      }
+      return null;
+    }
 
-		/// <summary>
-		/// Returns the first occurence of object of type <paramref name="T" /> in the visual tree of <paramref name="dependencyObject" />.
-		/// </summary>
-		/// <param name="child">Start node</param>
-		/// <returns></returns>
-		public static T TryFindParent<T>(DependencyObject child, bool includeItSelf = true) where T : DependencyObject
-		{
-			if (includeItSelf && child is T) return child as T;
+    /// <summary>
+    /// Returns the first occurence of object of type <paramref name="T" /> in the visual tree of <paramref name="dependencyObject" />.
+    /// </summary>
+    /// <param name="child">Start node</param>
+    /// <returns></returns>
+    public static T TryFindParent<T>(DependencyObject child, bool includeItSelf = true) where T : DependencyObject
+    {
+      if (includeItSelf && child is T)
+        return child as T;
 
-			DependencyObject parentObject = GetParentObject(child);
-			if (parentObject == null) return null;
+      DependencyObject parentObject = GetParentObject(child);
+      if (parentObject == null)
+        return null;
 
-			var parent = parentObject as T;
-			if (parent != null && parent is T)
-			{
-				return parent;
-			}
-			else
-			{
-				return TryFindParent<T>(parentObject);
-			}
-		}
+      var parent = parentObject as T;
+      if (parent != null && parent is T)
+      {
+        return parent;
+      }
+      else
+      {
+        return TryFindParent<T>(parentObject);
+      }
+    }
 
-		private static DependencyObject GetParentObject(DependencyObject child)
-		{
-			if (child == null) return null;
+    private static DependencyObject GetParentObject(DependencyObject child)
+    {
+      if (child == null)
+        return null;
 
-			ContentElement contentElement = child as ContentElement;
-			if (contentElement != null)
-			{
-				DependencyObject parent = ContentOperations.GetParent(contentElement);
-				if (parent != null) return parent;
+      ContentElement contentElement = child as ContentElement;
+      if (contentElement != null)
+      {
+        DependencyObject parent = ContentOperations.GetParent(contentElement);
+        if (parent != null)
+          return parent;
 
-				FrameworkContentElement fce = contentElement as FrameworkContentElement;
-				return fce != null ? fce.Parent : null;
-			}
+        FrameworkContentElement fce = contentElement as FrameworkContentElement;
+        return fce != null ? fce.Parent : null;
+      }
 
-			FrameworkElement frameworkElement = child as FrameworkElement;
-			if (frameworkElement != null)
-			{
-				DependencyObject parent = frameworkElement.Parent;
-				if (parent != null) return parent;
-			}
+      FrameworkElement frameworkElement = child as FrameworkElement;
+      if (frameworkElement != null)
+      {
+        DependencyObject parent = frameworkElement.Parent;
+        if (parent != null)
+          return parent;
+      }
 
-			return VisualTreeHelper.GetParent(child);
-		}
-	}
+      return VisualTreeHelper.GetParent(child);
+    }
+  }
 }

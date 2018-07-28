@@ -35,72 +35,72 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
-	/// <summary>
-	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public class NoConnection : LineConnectionStyleBase
-	{
-		public static NoConnection Instance { get; private set; } = new NoConnection();
+  /// <summary>
+  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.IImmutable" />
+  public class NoConnection : LineConnectionStyleBase
+  {
+    public static NoConnection Instance { get; private set; } = new NoConnection();
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-05-09 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoConnection), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    /// <summary>
+    /// 2016-05-09 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoConnection), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return Instance;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return Instance;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>
-		/// Template to make a line draw.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="allLinePoints">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="range">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="pen">The pen to draw the line.</param>
-		/// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
-		/// This function is null if no symbol gap is required.</param>
-		/// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
-		public override void PaintOneRange(
-			Graphics g,
-			PointF[] allLinePoints,
-			IPlotRange range,
-			IPlotArea layer,
-			PenX pen,
-			Func<int, double> symbolGap,
-			int skipFrequency,
-			bool connectCircular,
-			LinePlotStyle linePlotStyle)
-		{
-		}
+    /// <summary>
+    /// Template to make a line draw.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="allLinePoints">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
+    /// <param name="range">The plot range to use.</param>
+    /// <param name="layer">Graphics layer.</param>
+    /// <param name="pen">The pen to draw the line.</param>
+    /// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
+    /// This function is null if no symbol gap is required.</param>
+    /// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
+    public override void PaintOneRange(
+      Graphics g,
+      PointF[] allLinePoints,
+      IPlotRange range,
+      IPlotArea layer,
+      PenX pen,
+      Func<int, double> symbolGap,
+      int skipFrequency,
+      bool connectCircular,
+      LinePlotStyle linePlotStyle)
+    {
+    }
 
-		/// <inheritdoc/>
-		public override void FillOneRange(
-		GraphicsPath gp,
-			Processed2DPlotData pdata,
-			IPlotRange rangeRaw,
-			IPlotArea layer,
-			CSPlaneID fillDirection,
-			bool ignoreMissingDataPoints,
-			bool connectCircular,
-			PointF[] allLinePointsShiftedAlready,
-			double logicalShiftX,
-			double logicalShiftY
-		)
-		{
-		}
-	}
+    /// <inheritdoc/>
+    public override void FillOneRange(
+    GraphicsPath gp,
+      Processed2DPlotData pdata,
+      IPlotRange rangeRaw,
+      IPlotArea layer,
+      CSPlaneID fillDirection,
+      bool ignoreMissingDataPoints,
+      bool connectCircular,
+      PointF[] allLinePointsShiftedAlready,
+      double logicalShiftX,
+      double logicalShiftY
+    )
+    {
+    }
+  }
 }

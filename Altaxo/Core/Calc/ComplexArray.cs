@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -58,196 +58,205 @@ using System.Diagnostics;
 
 namespace Altaxo.Calc
 {
-	// Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
-	// Version: May 4, 2002
+  // Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
+  // Version: May 4, 2002
 
-	/// <summary>
-	/// <p>A set of array utilities for complex number arrays</p>
-	/// </summary>
-	public class ComplexArray
-	{
-		//---------------------------------------------------------------------------------------------
+  /// <summary>
+  /// <p>A set of array utilities for complex number arrays</p>
+  /// </summary>
+  public class ComplexArray
+  {
+    //---------------------------------------------------------------------------------------------
 
-		private ComplexArray()
-		{
-		}
+    private ComplexArray()
+    {
+    }
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Clamp length (modulus) of the elements in the complex array
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="fMinimum"></param>
-		/// <param name="fMaximum"></param>
-		static public void ClampLength(Complex[] array, double fMinimum, double fMaximum)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i] = Complex.FromModulusArgument(Math.Max(fMinimum, Math.Min(fMaximum, array[i].GetModulus())), array[i].GetArgument());
-			}
-		}
+    /// <summary>
+    /// Clamp length (modulus) of the elements in the complex array
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="fMinimum"></param>
+    /// <param name="fMaximum"></param>
+    static public void ClampLength(Complex[] array, double fMinimum, double fMaximum)
+    {
+      for (int i = 0; i < array.Length; i++)
+      {
+        array[i] = Complex.FromModulusArgument(Math.Max(fMinimum, Math.Min(fMaximum, array[i].GetModulus())), array[i].GetArgument());
+      }
+    }
 
-		/// <summary>
-		/// Clamp elements in the complex array to range [minimum,maximum]
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="minimum"></param>
-		/// <param name="maximum"></param>
-		static public void Clamp(Complex[] array, Complex minimum, Complex maximum)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].Re = Math.Min(Math.Max(array[i].Re, minimum.Re), maximum.Re);
-				array[i].Im = Math.Min(Math.Max(array[i].Re, minimum.Im), maximum.Im);
-			}
-		}
+    /// <summary>
+    /// Clamp elements in the complex array to range [minimum,maximum]
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="minimum"></param>
+    /// <param name="maximum"></param>
+    static public void Clamp(Complex[] array, Complex minimum, Complex maximum)
+    {
+      for (int i = 0; i < array.Length; i++)
+      {
+        array[i].Re = Math.Min(Math.Max(array[i].Re, minimum.Re), maximum.Re);
+        array[i].Im = Math.Min(Math.Max(array[i].Re, minimum.Im), maximum.Im);
+      }
+    }
 
-		/// <summary>
-		/// Clamp elements in the complex array to real unit range (i.e. [0,1])
-		/// </summary>
-		/// <param name="array"></param>
-		static public void ClampToRealUnit(Complex[] array)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].Re = Math.Min(Math.Max(array[i].Re, 0), 1);
-				array[i].Im = 0;
-			}
-		}
+    /// <summary>
+    /// Clamp elements in the complex array to real unit range (i.e. [0,1])
+    /// </summary>
+    /// <param name="array"></param>
+    static public void ClampToRealUnit(Complex[] array)
+    {
+      for (int i = 0; i < array.Length; i++)
+      {
+        array[i].Re = Math.Min(Math.Max(array[i].Re, 0), 1);
+        array[i].Im = 0;
+      }
+    }
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		static private bool _workspaceFLocked = false;
-		static private ComplexFloat[] _workspaceF = new ComplexFloat[0];
+    static private bool _workspaceFLocked = false;
+    static private ComplexFloat[] _workspaceF = new ComplexFloat[0];
 
-		static private void LockWorkspaceF(int length, ref ComplexFloat[] workspace)
-		{
-			if (!(_workspaceFLocked == false)) throw new InvalidProgramException();
-			_workspaceFLocked = true;
-			if (length >= _workspaceF.Length)
-			{
-				_workspaceF = new ComplexFloat[length];
-			}
-			workspace = _workspaceF;
-		}
+    static private void LockWorkspaceF(int length, ref ComplexFloat[] workspace)
+    {
+      if (!(_workspaceFLocked == false))
+        throw new InvalidProgramException();
+      _workspaceFLocked = true;
+      if (length >= _workspaceF.Length)
+      {
+        _workspaceF = new ComplexFloat[length];
+      }
+      workspace = _workspaceF;
+    }
 
-		static private void UnlockWorkspaceF(ref ComplexFloat[] workspace)
-		{
-			if (!(_workspaceF == workspace)) throw new InvalidProgramException();
-			if (!(_workspaceFLocked == true)) throw new InvalidProgramException();
-			_workspaceFLocked = false;
-			workspace = null;
-		}
+    static private void UnlockWorkspaceF(ref ComplexFloat[] workspace)
+    {
+      if (!(_workspaceF == workspace))
+        throw new InvalidProgramException();
+      if (!(_workspaceFLocked == true))
+        throw new InvalidProgramException();
+      _workspaceFLocked = false;
+      workspace = null;
+    }
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Shift (offset) the elements in the array
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="offset"></param>
-		static public void Shift(Complex[] array, int offset)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
-			if (!(offset >= 0)) throw new ArgumentOutOfRangeException(nameof(offset) + " should be >= 0");
-			if (!(offset < array.Length)) throw new ArgumentOutOfRangeException(nameof(offset) + " should be < array.Length");
+    /// <summary>
+    /// Shift (offset) the elements in the array
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="offset"></param>
+    static public void Shift(Complex[] array, int offset)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
+      if (!(offset >= 0))
+        throw new ArgumentOutOfRangeException(nameof(offset) + " should be >= 0");
+      if (!(offset < array.Length))
+        throw new ArgumentOutOfRangeException(nameof(offset) + " should be < array.Length");
 
-			if (offset == 0)
-			{
-				return;
-			}
+      if (offset == 0)
+      {
+        return;
+      }
 
-			int length = array.Length;
-			Complex[] temp = new Complex[length];
+      int length = array.Length;
+      Complex[] temp = new Complex[length];
 
-			for (int i = 0; i < length; i++)
-			{
-				temp[(i + offset) % length] = array[i];
-			}
-			for (int i = 0; i < length; i++)
-			{
-				array[i] = temp[i];
-			}
-		}
+      for (int i = 0; i < length; i++)
+      {
+        temp[(i + offset) % length] = array[i];
+      }
+      for (int i = 0; i < length; i++)
+      {
+        array[i] = temp[i];
+      }
+    }
 
-		/// <summary>
-		/// Shift (offset) the elements in the array
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="offset"></param>
-		static public void Shift(ComplexFloat[] array, int offset)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
-			if (!(offset >= 0)) throw new ArgumentOutOfRangeException(nameof(offset) + " should be >= 0");
-			if (!(offset < array.Length)) throw new ArgumentOutOfRangeException(nameof(offset) + " should be < array.Length");
+    /// <summary>
+    /// Shift (offset) the elements in the array
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="offset"></param>
+    static public void Shift(ComplexFloat[] array, int offset)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
+      if (!(offset >= 0))
+        throw new ArgumentOutOfRangeException(nameof(offset) + " should be >= 0");
+      if (!(offset < array.Length))
+        throw new ArgumentOutOfRangeException(nameof(offset) + " should be < array.Length");
 
-			if (offset == 0)
-			{
-				return;
-			}
+      if (offset == 0)
+      {
+        return;
+      }
 
-			int length = array.Length;
-			ComplexFloat[] workspace = null;
-			ComplexArray.LockWorkspaceF(length, ref workspace);
+      int length = array.Length;
+      ComplexFloat[] workspace = null;
+      ComplexArray.LockWorkspaceF(length, ref workspace);
 
-			for (int i = 0; i < length; i++)
-			{
-				workspace[(i + offset) % length] = array[i];
-			}
-			for (int i = 0; i < length; i++)
-			{
-				array[i] = workspace[i];
-			}
+      for (int i = 0; i < length; i++)
+      {
+        workspace[(i + offset) % length] = array[i];
+      }
+      for (int i = 0; i < length; i++)
+      {
+        array[i] = workspace[i];
+      }
 
-			ComplexArray.UnlockWorkspaceF(ref workspace);
-		}
+      ComplexArray.UnlockWorkspaceF(ref workspace);
+    }
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Get the range of element lengths
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="minimum"></param>
-		/// <param name="maximum"></param>
-		static public void GetLengthRange(Complex[] array, ref double minimum, ref double maximum)
-		{
-			minimum = +double.MaxValue;
-			maximum = -double.MaxValue;
-			for (int i = 0; i < array.Length; i++)
-			{
-				double temp = array[i].GetModulus();
-				minimum = Math.Min(temp, minimum);
-				maximum = Math.Max(temp, maximum);
-			}
-		}
+    /// <summary>
+    /// Get the range of element lengths
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="minimum"></param>
+    /// <param name="maximum"></param>
+    static public void GetLengthRange(Complex[] array, ref double minimum, ref double maximum)
+    {
+      minimum = +double.MaxValue;
+      maximum = -double.MaxValue;
+      for (int i = 0; i < array.Length; i++)
+      {
+        double temp = array[i].GetModulus();
+        minimum = Math.Min(temp, minimum);
+        maximum = Math.Max(temp, maximum);
+      }
+    }
 
-		/// <summary>
-		/// Get the range of element lengths
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="minimum"></param>
-		/// <param name="maximum"></param>
-		static public void GetLengthRange(ComplexFloat[] array, ref float minimum, ref float maximum)
-		{
-			minimum = +float.MaxValue;
-			maximum = -float.MaxValue;
-			for (int i = 0; i < array.Length; i++)
-			{
-				float temp = array[i].GetModulus();
-				minimum = Math.Min(temp, minimum);
-				maximum = Math.Max(temp, maximum);
-			}
-		}
+    /// <summary>
+    /// Get the range of element lengths
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="minimum"></param>
+    /// <param name="maximum"></param>
+    static public void GetLengthRange(ComplexFloat[] array, ref float minimum, ref float maximum)
+    {
+      minimum = +float.MaxValue;
+      maximum = -float.MaxValue;
+      for (int i = 0; i < array.Length; i++)
+      {
+        float temp = array[i].GetModulus();
+        minimum = Math.Min(temp, minimum);
+        maximum = Math.Max(temp, maximum);
+      }
+    }
 
-		// // <summary>
-		// // Conver the complex array to a double array
-		// // </summary>
-		// // <param name="array"></param>
-		// // <param name="style"></param>
-		// // <returns></returns>
-		/* static public double[] ConvertToDoubleArray( Complex[] array, ConversionStyle style ) {
+    // // <summary>
+    // // Conver the complex array to a double array
+    // // </summary>
+    // // <param name="array"></param>
+    // // <param name="style"></param>
+    // // <returns></returns>
+    /* static public double[] ConvertToDoubleArray( Complex[] array, ConversionStyle style ) {
 			double[] newArray = new double[ array.Length ];
 			switch( style ) {
 			case ConversionStyle.Length:
@@ -275,401 +284,441 @@ namespace Altaxo.Calc
 			return  newArray;
 		}  */
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Determine whether the elements in the two arrays are the same
-		/// </summary>
-		/// <param name="array1"></param>
-		/// <param name="array2"></param>
-		/// <param name="tolerance"></param>
-		/// <returns></returns>
-		static public bool IsEqual(Complex[] array1, Complex[] array2, double tolerance)
-		{
-			if (array1.Length != array2.Length)
-			{
-				return false;
-			}
-			for (int i = 0; i < array1.Length; i++)
-			{
-				if (Complex.IsEqual(array1[i], array2[i], tolerance) == false)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
+    /// <summary>
+    /// Determine whether the elements in the two arrays are the same
+    /// </summary>
+    /// <param name="array1"></param>
+    /// <param name="array2"></param>
+    /// <param name="tolerance"></param>
+    /// <returns></returns>
+    static public bool IsEqual(Complex[] array1, Complex[] array2, double tolerance)
+    {
+      if (array1.Length != array2.Length)
+      {
+        return false;
+      }
+      for (int i = 0; i < array1.Length; i++)
+      {
+        if (Complex.IsEqual(array1[i], array2[i], tolerance) == false)
+        {
+          return false;
+        }
+      }
+      return true;
+    }
 
-		/// <summary>
-		///  Determine whether the elements in the two arrays are the same
-		/// </summary>
-		/// <param name="array1"></param>
-		/// <param name="array2"></param>
-		/// <param name="tolerance"></param>
-		/// <returns></returns>
-		static public bool IsEqual(ComplexFloat[] array1, ComplexFloat[] array2, float tolerance)
-		{
-			if (array1.Length != array2.Length)
-			{
-				return false;
-			}
-			for (int i = 0; i < array1.Length; i++)
-			{
-				if (ComplexFloat.IsEqual(array1[i], array2[i], tolerance) == false)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
+    /// <summary>
+    ///  Determine whether the elements in the two arrays are the same
+    /// </summary>
+    /// <param name="array1"></param>
+    /// <param name="array2"></param>
+    /// <param name="tolerance"></param>
+    /// <returns></returns>
+    static public bool IsEqual(ComplexFloat[] array1, ComplexFloat[] array2, float tolerance)
+    {
+      if (array1.Length != array2.Length)
+      {
+        return false;
+      }
+      for (int i = 0; i < array1.Length; i++)
+      {
+        if (ComplexFloat.IsEqual(array1[i], array2[i], tolerance) == false)
+        {
+          return false;
+        }
+      }
+      return true;
+    }
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Add a specific value to each element in the array
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="offset"></param>
-		static public void Offset(Complex[] array, double offset)
-		{
-			int length = array.Length;
-			for (int i = 0; i < length; i++)
-			{
-				array[i].Re += offset;
-			}
-		}
+    /// <summary>
+    /// Add a specific value to each element in the array
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="offset"></param>
+    static public void Offset(Complex[] array, double offset)
+    {
+      int length = array.Length;
+      for (int i = 0; i < length; i++)
+      {
+        array[i].Re += offset;
+      }
+    }
 
-		/// <summary>
-		/// Add a specific value to each element in the array
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="offset"></param>
-		static public void Offset(Complex[] array, Complex offset)
-		{
-			int length = array.Length;
-			for (int i = 0; i < length; i++)
-			{
-				array[i] += offset;
-			}
-		}
+    /// <summary>
+    /// Add a specific value to each element in the array
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="offset"></param>
+    static public void Offset(Complex[] array, Complex offset)
+    {
+      int length = array.Length;
+      for (int i = 0; i < length; i++)
+      {
+        array[i] += offset;
+      }
+    }
 
-		/// <summary>
-		/// Add a specific value to each element in the array
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="offset"></param>
-		static public void Offset(ComplexFloat[] array, float offset)
-		{
-			int length = array.Length;
-			for (int i = 0; i < length; i++)
-			{
-				array[i].Re += offset;
-			}
-		}
+    /// <summary>
+    /// Add a specific value to each element in the array
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="offset"></param>
+    static public void Offset(ComplexFloat[] array, float offset)
+    {
+      int length = array.Length;
+      for (int i = 0; i < length; i++)
+      {
+        array[i].Re += offset;
+      }
+    }
 
-		/// <summary>
-		/// Add a specific value to each element in the array
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="offset"></param>
-		static public void Offset(ComplexFloat[] array, ComplexFloat offset)
-		{
-			int length = array.Length;
-			for (int i = 0; i < length; i++)
-			{
-				array[i] += offset;
-			}
-		}
+    /// <summary>
+    /// Add a specific value to each element in the array
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="offset"></param>
+    static public void Offset(ComplexFloat[] array, ComplexFloat offset)
+    {
+      int length = array.Length;
+      for (int i = 0; i < length; i++)
+      {
+        array[i] += offset;
+      }
+    }
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Multiply each element in the array by a specific value
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="scale"></param>
-		static public void Scale(Complex[] array, double scale)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+    /// <summary>
+    /// Multiply each element in the array by a specific value
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="scale"></param>
+    static public void Scale(Complex[] array, double scale)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
 
-			int length = array.Length;
-			for (int i = 0; i < length; i++)
-			{
-				array[i] *= scale;
-			}
-		}
+      int length = array.Length;
+      for (int i = 0; i < length; i++)
+      {
+        array[i] *= scale;
+      }
+    }
 
-		/// <summary>
-		///  Multiply each element in the array by a specific value
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="scale"></param>
-		/// <param name="start"></param>
-		/// <param name="length"></param>
-		static public void Scale(Complex[] array, double scale, int start, int length)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
-			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-			if (!(length >= 0)) throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
-			if (!((start + length) < array.Length)) throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
+    /// <summary>
+    ///  Multiply each element in the array by a specific value
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="scale"></param>
+    /// <param name="start"></param>
+    /// <param name="length"></param>
+    static public void Scale(Complex[] array, double scale, int start, int length)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
+      if (!(start >= 0))
+        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+      if (!(length >= 0))
+        throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
+      if (!((start + length) < array.Length))
+        throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
 
-			for (int i = 0; i < length; i++)
-			{
-				array[i + start] *= scale;
-			}
-		}
+      for (int i = 0; i < length; i++)
+      {
+        array[i + start] *= scale;
+      }
+    }
 
-		/// <summary>
-		/// Multiply each element in the array by a specific value
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="scale"></param>
-		static public void Scale(Complex[] array, Complex scale)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+    /// <summary>
+    /// Multiply each element in the array by a specific value
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="scale"></param>
+    static public void Scale(Complex[] array, Complex scale)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
 
-			int length = array.Length;
-			for (int i = 0; i < length; i++)
-			{
-				array[i] *= scale;
-			}
-		}
+      int length = array.Length;
+      for (int i = 0; i < length; i++)
+      {
+        array[i] *= scale;
+      }
+    }
 
-		/// <summary>
-		/// Multiply each element in the array by a specific value
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="scale"></param>
-		/// <param name="start"></param>
-		/// <param name="length"></param>
-		static public void Scale(Complex[] array, Complex scale, int start, int length)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
-			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-			if (!(length >= 0)) throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
-			if (!((start + length) < array.Length)) throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
+    /// <summary>
+    /// Multiply each element in the array by a specific value
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="scale"></param>
+    /// <param name="start"></param>
+    /// <param name="length"></param>
+    static public void Scale(Complex[] array, Complex scale, int start, int length)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
+      if (!(start >= 0))
+        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+      if (!(length >= 0))
+        throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
+      if (!((start + length) < array.Length))
+        throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
 
-			for (int i = 0; i < length; i++)
-			{
-				array[i + start] *= scale;
-			}
-		}
+      for (int i = 0; i < length; i++)
+      {
+        array[i + start] *= scale;
+      }
+    }
 
-		/// <summary>
-		/// Multiply each element in the array by a specific value
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="scale"></param>
-		static public void Scale(ComplexFloat[] array, float scale)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+    /// <summary>
+    /// Multiply each element in the array by a specific value
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="scale"></param>
+    static public void Scale(ComplexFloat[] array, float scale)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
 
-			int length = array.Length;
-			for (int i = 0; i < length; i++)
-			{
-				array[i] *= scale;
-			}
-		}
+      int length = array.Length;
+      for (int i = 0; i < length; i++)
+      {
+        array[i] *= scale;
+      }
+    }
 
-		/// <summary>
-		/// Multiply each element in the array by a specific value
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="scale"></param>
-		/// <param name="start"></param>
-		/// <param name="length"></param>
-		static public void Scale(ComplexFloat[] array, float scale, int start, int length)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
-			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-			if (!(length >= 0)) throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
-			if (!((start + length) < array.Length)) throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
+    /// <summary>
+    /// Multiply each element in the array by a specific value
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="scale"></param>
+    /// <param name="start"></param>
+    /// <param name="length"></param>
+    static public void Scale(ComplexFloat[] array, float scale, int start, int length)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
+      if (!(start >= 0))
+        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+      if (!(length >= 0))
+        throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
+      if (!((start + length) < array.Length))
+        throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
 
-			for (int i = 0; i < length; i++)
-			{
-				array[i + start] *= scale;
-			}
-		}
+      for (int i = 0; i < length; i++)
+      {
+        array[i + start] *= scale;
+      }
+    }
 
-		/// <summary>
-		/// Multiply each element in the array by a specific value
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="scale"></param>
-		static public void Scale(ComplexFloat[] array, ComplexFloat scale)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+    /// <summary>
+    /// Multiply each element in the array by a specific value
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="scale"></param>
+    static public void Scale(ComplexFloat[] array, ComplexFloat scale)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
 
-			int length = array.Length;
-			for (int i = 0; i < length; i++)
-			{
-				array[i] *= scale;
-			}
-		}
+      int length = array.Length;
+      for (int i = 0; i < length; i++)
+      {
+        array[i] *= scale;
+      }
+    }
 
-		/// <summary>
-		/// Multiply each element in the array by a specific value
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="scale"></param>
-		/// <param name="start"></param>
-		/// <param name="length"></param>
-		static public void Scale(ComplexFloat[] array, ComplexFloat scale, int start, int length)
-		{
-			if (!(array != null)) throw new ArgumentNullException(nameof(array));
-			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
-			if (!(length >= 0)) throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
-			if (!((start + length) < array.Length)) throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
+    /// <summary>
+    /// Multiply each element in the array by a specific value
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="scale"></param>
+    /// <param name="start"></param>
+    /// <param name="length"></param>
+    static public void Scale(ComplexFloat[] array, ComplexFloat scale, int start, int length)
+    {
+      if (!(array != null))
+        throw new ArgumentNullException(nameof(array));
+      if (!(start >= 0))
+        throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+      if (!(length >= 0))
+        throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
+      if (!((start + length) < array.Length))
+        throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
 
-			for (int i = 0; i < length; i++)
-			{
-				array[i + start] *= scale;
-			}
-		}
+      for (int i = 0; i < length; i++)
+      {
+        array[i + start] *= scale;
+      }
+    }
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Multiply each element in target array with corresponding element in rhs array
-		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="rhs"></param>
-		static public void Multiply(Complex[] target, Complex[] rhs)
-		{
-			ComplexArray.Multiply(target, rhs, target);
-		}
+    /// <summary>
+    /// Multiply each element in target array with corresponding element in rhs array
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="rhs"></param>
+    static public void Multiply(Complex[] target, Complex[] rhs)
+    {
+      ComplexArray.Multiply(target, rhs, target);
+    }
 
-		/// <summary>
-		/// Multiply each element in lhs array with corresponding element in rhs array and
-		/// put product in result array
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="result"></param>
-		static public void Multiply(Complex[] lhs, Complex[] rhs, Complex[] result)
-		{
-			if (!(lhs != null)) throw new ArgumentNullException(nameof(lhs));
-			if (!(rhs != null)) throw new ArgumentNullException(nameof(rhs));
-			if (!(result != null)) throw new ArgumentNullException(nameof(result));
-			if (!(lhs.Length == rhs.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
-			if (!(lhs.Length == result.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
+    /// <summary>
+    /// Multiply each element in lhs array with corresponding element in rhs array and
+    /// put product in result array
+    /// </summary>
+    /// <param name="lhs"></param>
+    /// <param name="rhs"></param>
+    /// <param name="result"></param>
+    static public void Multiply(Complex[] lhs, Complex[] rhs, Complex[] result)
+    {
+      if (!(lhs != null))
+        throw new ArgumentNullException(nameof(lhs));
+      if (!(rhs != null))
+        throw new ArgumentNullException(nameof(rhs));
+      if (!(result != null))
+        throw new ArgumentNullException(nameof(result));
+      if (!(lhs.Length == rhs.Length))
+        throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
+      if (!(lhs.Length == result.Length))
+        throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
 
-			int length = lhs.Length;
-			for (int i = 0; i < length; i++)
-			{
-				result[i] = lhs[i] * rhs[i];
-			}
-		}
+      int length = lhs.Length;
+      for (int i = 0; i < length; i++)
+      {
+        result[i] = lhs[i] * rhs[i];
+      }
+    }
 
-		/// <summary>
-		/// Multiply each element in target array with corresponding element in rhs array
-		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="rhs"></param>
-		static public void Multiply(ComplexFloat[] target, ComplexFloat[] rhs)
-		{
-			ComplexArray.Multiply(target, rhs, target);
-		}
+    /// <summary>
+    /// Multiply each element in target array with corresponding element in rhs array
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="rhs"></param>
+    static public void Multiply(ComplexFloat[] target, ComplexFloat[] rhs)
+    {
+      ComplexArray.Multiply(target, rhs, target);
+    }
 
-		/// <summary>
-		/// Multiply each element in lhs array with corresponding element in rhs array and
-		/// put product in result array
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="result"></param>
-		static public void Multiply(ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result)
-		{
-			if (!(lhs != null)) throw new ArgumentNullException(nameof(lhs));
-			if (!(rhs != null)) throw new ArgumentNullException(nameof(rhs));
-			if (!(result != null)) throw new ArgumentNullException(nameof(result));
-			if (!(lhs.Length == rhs.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
-			if (!(lhs.Length == result.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
+    /// <summary>
+    /// Multiply each element in lhs array with corresponding element in rhs array and
+    /// put product in result array
+    /// </summary>
+    /// <param name="lhs"></param>
+    /// <param name="rhs"></param>
+    /// <param name="result"></param>
+    static public void Multiply(ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result)
+    {
+      if (!(lhs != null))
+        throw new ArgumentNullException(nameof(lhs));
+      if (!(rhs != null))
+        throw new ArgumentNullException(nameof(rhs));
+      if (!(result != null))
+        throw new ArgumentNullException(nameof(result));
+      if (!(lhs.Length == rhs.Length))
+        throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
+      if (!(lhs.Length == result.Length))
+        throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
 
-			int length = lhs.Length;
-			for (int i = 0; i < length; i++)
-			{
-				result[i] = lhs[i] * rhs[i];
-			}
-		}
+      int length = lhs.Length;
+      for (int i = 0; i < length; i++)
+      {
+        result[i] = lhs[i] * rhs[i];
+      }
+    }
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Divide each element in target array with corresponding element in rhs array
-		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="rhs"></param>
-		static public void Divide(Complex[] target, Complex[] rhs)
-		{
-			ComplexArray.Divide(target, rhs, target);
-		}
+    /// <summary>
+    /// Divide each element in target array with corresponding element in rhs array
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="rhs"></param>
+    static public void Divide(Complex[] target, Complex[] rhs)
+    {
+      ComplexArray.Divide(target, rhs, target);
+    }
 
-		/// <summary>
-		/// Divide each element in lhs array with corresponding element in rhs array and
-		/// put product in result array
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="result"></param>
-		static public void Divide(Complex[] lhs, Complex[] rhs, Complex[] result)
-		{
-			if (!(lhs != null)) throw new ArgumentNullException(nameof(lhs));
-			if (!(rhs != null)) throw new ArgumentNullException(nameof(rhs));
-			if (!(result != null)) throw new ArgumentNullException(nameof(result));
-			if (!(lhs.Length == rhs.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
-			if (!(lhs.Length == result.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
+    /// <summary>
+    /// Divide each element in lhs array with corresponding element in rhs array and
+    /// put product in result array
+    /// </summary>
+    /// <param name="lhs"></param>
+    /// <param name="rhs"></param>
+    /// <param name="result"></param>
+    static public void Divide(Complex[] lhs, Complex[] rhs, Complex[] result)
+    {
+      if (!(lhs != null))
+        throw new ArgumentNullException(nameof(lhs));
+      if (!(rhs != null))
+        throw new ArgumentNullException(nameof(rhs));
+      if (!(result != null))
+        throw new ArgumentNullException(nameof(result));
+      if (!(lhs.Length == rhs.Length))
+        throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
+      if (!(lhs.Length == result.Length))
+        throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
 
-			int length = lhs.Length;
-			for (int i = 0; i < length; i++)
-			{
-				result[i] = lhs[i] / rhs[i];
-			}
-		}
+      int length = lhs.Length;
+      for (int i = 0; i < length; i++)
+      {
+        result[i] = lhs[i] / rhs[i];
+      }
+    }
 
-		/// <summary>
-		/// Divide each element in target array with corresponding element in rhs array
-		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="rhs"></param>
-		static public void Divide(ComplexFloat[] target, ComplexFloat[] rhs)
-		{
-			ComplexArray.Divide(target, rhs, target);
-		}
+    /// <summary>
+    /// Divide each element in target array with corresponding element in rhs array
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="rhs"></param>
+    static public void Divide(ComplexFloat[] target, ComplexFloat[] rhs)
+    {
+      ComplexArray.Divide(target, rhs, target);
+    }
 
-		/// <summary>
-		/// Divide each element in lhs array with corresponding element in rhs array and
-		/// put product in result array
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="result"></param>
-		static public void Divide(ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result)
-		{
-			if (!(lhs != null)) throw new ArgumentNullException(nameof(lhs));
-			if (!(rhs != null)) throw new ArgumentNullException(nameof(rhs));
-			if (!(result != null)) throw new ArgumentNullException(nameof(result));
-			if (!(lhs.Length == rhs.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
-			if (!(lhs.Length == result.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
+    /// <summary>
+    /// Divide each element in lhs array with corresponding element in rhs array and
+    /// put product in result array
+    /// </summary>
+    /// <param name="lhs"></param>
+    /// <param name="rhs"></param>
+    /// <param name="result"></param>
+    static public void Divide(ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result)
+    {
+      if (!(lhs != null))
+        throw new ArgumentNullException(nameof(lhs));
+      if (!(rhs != null))
+        throw new ArgumentNullException(nameof(rhs));
+      if (!(result != null))
+        throw new ArgumentNullException(nameof(result));
+      if (!(lhs.Length == rhs.Length))
+        throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
+      if (!(lhs.Length == result.Length))
+        throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
 
-			ComplexFloat zero = ComplexFloat.Zero;
-			int length = lhs.Length;
-			for (int i = 0; i < length; i++)
-			{
-				if (rhs[i] != zero)
-				{
-					result[i] = lhs[i] / rhs[i];
-				}
-				else
-				{
-					result[i] = zero;
-				}
-			}
-		}
+      ComplexFloat zero = ComplexFloat.Zero;
+      int length = lhs.Length;
+      for (int i = 0; i < length; i++)
+      {
+        if (rhs[i] != zero)
+        {
+          result[i] = lhs[i] / rhs[i];
+        }
+        else
+        {
+          result[i] = zero;
+        }
+      }
+    }
 
-		//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
 
-		/*static public void Flip( ComplexFloat[] array, Size3 size ) {
+    /*static public void Flip( ComplexFloat[] array, Size3 size ) {
 			if(!(array != null)) throw new ArgumentNullException(nameof(array));
 
 			ComplexFloat[]  workspace = null;
@@ -692,105 +741,111 @@ namespace Altaxo.Calc
 			ComplexArray.UnlockWorkspaceF( ref workspace );
 		}  */
 
-		/// <summary>
-		/// Copy an array
-		/// </summary>
-		/// <param name="dest"></param>
-		/// <param name="source"></param>
-		static public void Copy(Complex[] dest, Complex[] source)
-		{
-			if (!(dest != null)) throw new ArgumentNullException(nameof(dest));
-			if (!(source != null)) throw new ArgumentNullException(nameof(source));
-			if (!(dest.Length == source.Length)) throw new ArgumentException("Length of " + nameof(dest) + " and " + nameof(source) + " are different");
-			for (int i = 0; i < dest.Length; i++)
-			{
-				dest[i] = source[i];
-			}
-		}
+    /// <summary>
+    /// Copy an array
+    /// </summary>
+    /// <param name="dest"></param>
+    /// <param name="source"></param>
+    static public void Copy(Complex[] dest, Complex[] source)
+    {
+      if (!(dest != null))
+        throw new ArgumentNullException(nameof(dest));
+      if (!(source != null))
+        throw new ArgumentNullException(nameof(source));
+      if (!(dest.Length == source.Length))
+        throw new ArgumentException("Length of " + nameof(dest) + " and " + nameof(source) + " are different");
+      for (int i = 0; i < dest.Length; i++)
+      {
+        dest[i] = source[i];
+      }
+    }
 
-		/// <summary>
-		/// Copy an array
-		/// </summary>
-		/// <param name="dest"></param>
-		/// <param name="source"></param>
-		static public void Copy(ComplexFloat[] dest, ComplexFloat[] source)
-		{
-			if (!(dest != null)) throw new ArgumentNullException(nameof(dest));
-			if (!(source != null)) throw new ArgumentNullException(nameof(source));
-			if (!(dest.Length == source.Length)) throw new ArgumentException("Length of " + nameof(dest) + " and " + nameof(source) + " are different");
+    /// <summary>
+    /// Copy an array
+    /// </summary>
+    /// <param name="dest"></param>
+    /// <param name="source"></param>
+    static public void Copy(ComplexFloat[] dest, ComplexFloat[] source)
+    {
+      if (!(dest != null))
+        throw new ArgumentNullException(nameof(dest));
+      if (!(source != null))
+        throw new ArgumentNullException(nameof(source));
+      if (!(dest.Length == source.Length))
+        throw new ArgumentException("Length of " + nameof(dest) + " and " + nameof(source) + " are different");
 
-			for (int i = 0; i < dest.Length; i++)
-			{
-				dest[i] = source[i];
-			}
-		}
+      for (int i = 0; i < dest.Length; i++)
+      {
+        dest[i] = source[i];
+      }
+    }
 
-		/// <summary>
-		/// Reverse the elements in the array
-		/// </summary>
-		/// <param name="array"></param>
-		static public void Reverse(Complex[] array)
-		{
-			Complex temp;
-			int length = array.Length;
-			for (int i = 0; i < length / 2; i++)
-			{
-				temp = array[i];
-				array[i] = array[length - 1 - i];
-				array[length - 1 - i] = temp;
-			}
-		}
+    /// <summary>
+    /// Reverse the elements in the array
+    /// </summary>
+    /// <param name="array"></param>
+    static public void Reverse(Complex[] array)
+    {
+      Complex temp;
+      int length = array.Length;
+      for (int i = 0; i < length / 2; i++)
+      {
+        temp = array[i];
+        array[i] = array[length - 1 - i];
+        array[length - 1 - i] = temp;
+      }
+    }
 
-		/// <summary>
-		/// Scale and offset the elements in the array so that the
-		/// overall range is [0, 1]
-		/// </summary>
-		/// <param name="array"></param>
-		static public void Normalize(Complex[] array)
-		{
-			double min = 0, max = 0;
-			GetLengthRange(array, ref min, ref max);
-			Scale(array, (1 / (max - min)));
-			Offset(array, (-min / (max - min)));
-		}
+    /// <summary>
+    /// Scale and offset the elements in the array so that the
+    /// overall range is [0, 1]
+    /// </summary>
+    /// <param name="array"></param>
+    static public void Normalize(Complex[] array)
+    {
+      double min = 0, max = 0;
+      GetLengthRange(array, ref min, ref max);
+      Scale(array, (1 / (max - min)));
+      Offset(array, (-min / (max - min)));
+    }
 
-		/// <summary>
-		/// Scale and offset the elements in the array so that the
-		/// overall range is [0, 1]
-		/// </summary>
-		/// <param name="array"></param>
-		static public void Normalize(ComplexFloat[] array)
-		{
-			float min = 0, max = 0;
-			GetLengthRange(array, ref min, ref max);
-			Scale(array, (1 / (max - min)));
-			Offset(array, (-min / (max - min)));
-		}
+    /// <summary>
+    /// Scale and offset the elements in the array so that the
+    /// overall range is [0, 1]
+    /// </summary>
+    /// <param name="array"></param>
+    static public void Normalize(ComplexFloat[] array)
+    {
+      float min = 0, max = 0;
+      GetLengthRange(array, ref min, ref max);
+      Scale(array, (1 / (max - min)));
+      Offset(array, (-min / (max - min)));
+    }
 
-		/// <summary>
-		/// Invert each element in the array
-		/// </summary>
-		/// <param name="array"></param>
-		static public void Invert(Complex[] array)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i] = ((Complex)1) / array[i];
-			}
-		}
+    /// <summary>
+    /// Invert each element in the array
+    /// </summary>
+    /// <param name="array"></param>
+    static public void Invert(Complex[] array)
+    {
+      for (int i = 0; i < array.Length; i++)
+      {
+        array[i] = ((Complex)1) / array[i];
+      }
+    }
 
-		/// <summary>
-		/// Invert each element in the array
-		/// </summary>
-		/// <param name="array"></param>
-		static public void Invert(ComplexFloat[] array)
-		{
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i] = ((ComplexFloat)1) / array[i];
-			}
-		}
+    /// <summary>
+    /// Invert each element in the array
+    /// </summary>
+    /// <param name="array"></param>
+    static public void Invert(ComplexFloat[] array)
+    {
+      for (int i = 0; i < array.Length; i++)
+      {
+        array[i] = ((ComplexFloat)1) / array[i];
+      }
+    }
 
-		//----------------------------------------------------------------------------------------
-	}
+    //----------------------------------------------------------------------------------------
+  }
 }

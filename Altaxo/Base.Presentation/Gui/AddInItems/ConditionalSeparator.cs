@@ -24,37 +24,37 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.AddInItems
 {
-	/// <summary>
-	/// A Separator that is invisible when it is excluded by a condition.
-	/// </summary>
-	internal sealed class ConditionalSeparator : Separator, IStatusUpdate
-	{
-		private readonly Codon codon;
-		private readonly object caller;
-		private readonly IEnumerable<ICondition> conditions;
+  /// <summary>
+  /// A Separator that is invisible when it is excluded by a condition.
+  /// </summary>
+  internal sealed class ConditionalSeparator : Separator, IStatusUpdate
+  {
+    private readonly Codon codon;
+    private readonly object caller;
+    private readonly IEnumerable<ICondition> conditions;
 
-		public ConditionalSeparator(Codon codon, object caller, bool inToolbar, IEnumerable<ICondition> conditions)
-		{
-			this.codon = codon;
-			this.caller = caller;
-			this.conditions = conditions;
+    public ConditionalSeparator(Codon codon, object caller, bool inToolbar, IEnumerable<ICondition> conditions)
+    {
+      this.codon = codon;
+      this.caller = caller;
+      this.conditions = conditions;
 
-			if (inToolbar)
-			{
-				SetResourceReference(FrameworkElement.StyleProperty, ToolBar.SeparatorStyleKey);
-			}
-		}
+      if (inToolbar)
+      {
+        SetResourceReference(FrameworkElement.StyleProperty, ToolBar.SeparatorStyleKey);
+      }
+    }
 
-		public void UpdateText()
-		{
-		}
+    public void UpdateText()
+    {
+    }
 
-		public void UpdateStatus()
-		{
-			if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-				this.Visibility = Visibility.Collapsed;
-			else
-				this.Visibility = Visibility.Visible;
-		}
-	}
+    public void UpdateStatus()
+    {
+      if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
+        this.Visibility = Visibility.Collapsed;
+      else
+        this.Visibility = Visibility.Visible;
+    }
+  }
 }

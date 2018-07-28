@@ -30,273 +30,273 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
-	[Serializable]
-	public class GridPlane :
-		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		ICloneable
-	{
-		/// <summary>
-		/// Identifies the plane by the axis that is perpendicular to the plane.
-		/// </summary>
-		private CSPlaneID _planeID;
+  [Serializable]
+  public class GridPlane :
+    Main.SuspendableDocumentNodeWithSetOfEventArgs,
+    ICloneable
+  {
+    /// <summary>
+    /// Identifies the plane by the axis that is perpendicular to the plane.
+    /// </summary>
+    private CSPlaneID _planeID;
 
-		/// <summary>
-		/// Gridstyle of the smaller of the two axis numbers.
-		/// </summary>
-		private GridStyle _grid1;
+    /// <summary>
+    /// Gridstyle of the smaller of the two axis numbers.
+    /// </summary>
+    private GridStyle _grid1;
 
-		/// <summary>
-		/// Gridstyle of the greater axis number.
-		/// </summary>
-		private GridStyle _grid2;
+    /// <summary>
+    /// Gridstyle of the greater axis number.
+    /// </summary>
+    private GridStyle _grid2;
 
-		/// <summary>
-		/// Background of the grid plane.
-		/// </summary>
-		private IMaterial _background;
+    /// <summary>
+    /// Background of the grid plane.
+    /// </summary>
+    private IMaterial _background;
 
-		[NonSerialized]
-		private GridIndexer _cachedIndexer;
+    [NonSerialized]
+    private GridIndexer _cachedIndexer;
 
-		private void CopyFrom(GridPlane from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
+    private void CopyFrom(GridPlane from)
+    {
+      if (object.ReferenceEquals(this, from))
+        return;
 
-			this._planeID = from._planeID;
-			this.GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
-			this.GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
-			this.Background = from._background;
-		}
+      this._planeID = from._planeID;
+      this.GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
+      this.GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
+      this.Background = from._background;
+    }
 
-		#region Serialization
+    #region Serialization
 
-		#region Version 0
+    #region Version 0
 
-		/// <summary>
-		/// 2015-11-14 initial version-
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlane), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				GridPlane s = (GridPlane)obj;
+    /// <summary>
+    /// 2015-11-14 initial version-
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlane), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        GridPlane s = (GridPlane)obj;
 
-				info.AddValue("ID", s._planeID);
-				info.AddValue("Grid1", s._grid1);
-				info.AddValue("Grid2", s._grid2);
-				info.AddValue("Background", s._background);
-			}
+        info.AddValue("ID", s._planeID);
+        info.AddValue("Grid1", s._grid1);
+        info.AddValue("Grid2", s._grid2);
+        info.AddValue("Background", s._background);
+      }
 
-			protected virtual GridPlane SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				CSPlaneID id = (CSPlaneID)info.GetValue("ID", null);
-				GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
-				s.GridStyleFirst = (GridStyle)info.GetValue("Grid1", s);
-				s.GridStyleSecond = (GridStyle)info.GetValue("Grid2", s);
-				s.Background = (IMaterial)info.GetValue("Background", s);
+      protected virtual GridPlane SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        CSPlaneID id = (CSPlaneID)info.GetValue("ID", null);
+        GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
+        s.GridStyleFirst = (GridStyle)info.GetValue("Grid1", s);
+        s.GridStyleSecond = (GridStyle)info.GetValue("Grid2", s);
+        s.Background = (IMaterial)info.GetValue("Background", s);
 
-				return s;
-			}
+        return s;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				GridPlane s = SDeserialize(o, info, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        GridPlane s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
 
-		#endregion Version 0
+    #endregion Version 0
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public GridPlane(CSPlaneID id)
-		{
-			_cachedIndexer = new GridIndexer(this);
-			_planeID = id;
-		}
+    public GridPlane(CSPlaneID id)
+    {
+      _cachedIndexer = new GridIndexer(this);
+      _planeID = id;
+    }
 
-		public GridPlane(GridPlane from)
-		{
-			_cachedIndexer = new GridIndexer(this);
-			CopyFrom(from);
-		}
+    public GridPlane(GridPlane from)
+    {
+      _cachedIndexer = new GridIndexer(this);
+      CopyFrom(from);
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			if (null != _grid1)
-				yield return new Main.DocumentNodeAndName(_grid1, "Grid1");
-			if (null != _grid2)
-				yield return new Main.DocumentNodeAndName(_grid2, "Grid2");
-		}
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      if (null != _grid1)
+        yield return new Main.DocumentNodeAndName(_grid1, "Grid1");
+      if (null != _grid2)
+        yield return new Main.DocumentNodeAndName(_grid2, "Grid2");
+    }
 
-		public GridPlane Clone()
-		{
-			return new GridPlane(this);
-		}
+    public GridPlane Clone()
+    {
+      return new GridPlane(this);
+    }
 
-		object ICloneable.Clone()
-		{
-			return new GridPlane(this);
-		}
+    object ICloneable.Clone()
+    {
+      return new GridPlane(this);
+    }
 
-		public CSPlaneID PlaneID
-		{
-			get
-			{
-				return _planeID;
-			}
-		}
+    public CSPlaneID PlaneID
+    {
+      get
+      {
+        return _planeID;
+      }
+    }
 
-		public GridStyle GridStyleFirst
-		{
-			get { return _grid1; }
-			set
-			{
-				if (ChildSetMember(ref _grid1, value))
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+    public GridStyle GridStyleFirst
+    {
+      get { return _grid1; }
+      set
+      {
+        if (ChildSetMember(ref _grid1, value))
+        {
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public GridStyle GridStyleSecond
-		{
-			get { return _grid2; }
-			set
-			{
-				if (ChildSetMember(ref _grid2, value))
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
+    public GridStyle GridStyleSecond
+    {
+      get { return _grid2; }
+      set
+      {
+        if (ChildSetMember(ref _grid2, value))
+        {
+          EhSelfChanged(EventArgs.Empty);
+        }
+      }
+    }
 
-		public Altaxo.Collections.IArray<GridStyle> GridStyle
-		{
-			get { return _cachedIndexer; }
-		}
+    public Altaxo.Collections.IArray<GridStyle> GridStyle
+    {
+      get { return _cachedIndexer; }
+    }
 
-		public IMaterial Background
-		{
-			get { return _background; }
-			set
-			{
-				var oldValue = _background;
-				_background = value;
-				if (!object.ReferenceEquals(oldValue, _background))
-					EhSelfChanged(EventArgs.Empty);
-			}
-		}
+    public IMaterial Background
+    {
+      get { return _background; }
+      set
+      {
+        var oldValue = _background;
+        _background = value;
+        if (!object.ReferenceEquals(oldValue, _background))
+          EhSelfChanged(EventArgs.Empty);
+      }
+    }
 
-		/// <summary>
-		/// Indicates if this grid is used, i.e. hase some visible elements. Returns false
-		/// if Grid1 and Grid2 and Background are null.
-		/// </summary>
-		public bool IsUsed
-		{
-			get
-			{
-				return _grid1 != null || _grid2 != null || _background != null;
-			}
-		}
+    /// <summary>
+    /// Indicates if this grid is used, i.e. hase some visible elements. Returns false
+    /// if Grid1 and Grid2 and Background are null.
+    /// </summary>
+    public bool IsUsed
+    {
+      get
+      {
+        return _grid1 != null || _grid2 != null || _background != null;
+      }
+    }
 
-		public void PaintBackground(IGraphicsContext3D g, IPlotArea layer)
-		{
-			if (null == _background)
-				return;
+    public void PaintBackground(IGraphicsContext3D g, IPlotArea layer)
+    {
+      if (null == _background)
+        return;
 
-			var cs = layer.CoordinateSystem;
-			if (layer.CoordinateSystem is CS.G3DCartesicCoordinateSystem)
-			{
-				var p = new PointD3D[4];
-				p[0] = cs.GetPointOnPlane(_planeID, 0, 0);
-				p[1] = cs.GetPointOnPlane(_planeID, 0, 1);
-				p[2] = cs.GetPointOnPlane(_planeID, 1, 0);
-				p[3] = cs.GetPointOnPlane(_planeID, 1, 1);
+      var cs = layer.CoordinateSystem;
+      if (layer.CoordinateSystem is CS.G3DCartesicCoordinateSystem)
+      {
+        var p = new PointD3D[4];
+        p[0] = cs.GetPointOnPlane(_planeID, 0, 0);
+        p[1] = cs.GetPointOnPlane(_planeID, 0, 1);
+        p[2] = cs.GetPointOnPlane(_planeID, 1, 0);
+        p[3] = cs.GetPointOnPlane(_planeID, 1, 1);
 
-				var normal = VectorD3D.CrossProduct(p[1] - p[0], p[2] - p[0]).Normalized;
+        var normal = VectorD3D.CrossProduct(p[1] - p[0], p[2] - p[0]).Normalized;
 
-				var buffer = g.GetPositionNormalIndexedTriangleBuffer(_background);
+        var buffer = g.GetPositionNormalIndexedTriangleBuffer(_background);
 
-				if (null != buffer.PositionNormalIndexedTriangleBuffer)
-				{
-					// front faces
-					var offs = buffer.IndexedTriangleBuffer.VertexCount;
-					for (int i = 0; i < 4; ++i)
-						buffer.PositionNormalIndexedTriangleBuffer.AddTriangleVertex(p[i].X, p[i].Y, p[i].Z, normal.X, normal.Y, normal.Z);
+        if (null != buffer.PositionNormalIndexedTriangleBuffer)
+        {
+          // front faces
+          var offs = buffer.IndexedTriangleBuffer.VertexCount;
+          for (int i = 0; i < 4; ++i)
+            buffer.PositionNormalIndexedTriangleBuffer.AddTriangleVertex(p[i].X, p[i].Y, p[i].Z, normal.X, normal.Y, normal.Z);
 
-					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 1 + offs, 3 + offs);
-					buffer.IndexedTriangleBuffer.AddTriangleIndices(2 + offs, 0 + offs, 3 + offs);
+          buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 1 + offs, 3 + offs);
+          buffer.IndexedTriangleBuffer.AddTriangleIndices(2 + offs, 0 + offs, 3 + offs);
 
-					// back faces
-					offs = buffer.IndexedTriangleBuffer.VertexCount;
-					for (int i = 0; i < 4; ++i)
-						buffer.PositionNormalIndexedTriangleBuffer.AddTriangleVertex(p[i].X, p[i].Y, p[i].Z, -normal.X, -normal.Y, -normal.Z);
+          // back faces
+          offs = buffer.IndexedTriangleBuffer.VertexCount;
+          for (int i = 0; i < 4; ++i)
+            buffer.PositionNormalIndexedTriangleBuffer.AddTriangleVertex(p[i].X, p[i].Y, p[i].Z, -normal.X, -normal.Y, -normal.Z);
 
-					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 3 + offs, 1 + offs);
-					buffer.IndexedTriangleBuffer.AddTriangleIndices(2 + offs, 3 + offs, 0 + offs);
-				}
-				else
-					throw new NotImplementedException();
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
-		}
+          buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 3 + offs, 1 + offs);
+          buffer.IndexedTriangleBuffer.AddTriangleIndices(2 + offs, 3 + offs, 0 + offs);
+        }
+        else
+          throw new NotImplementedException();
+      }
+      else
+      {
+        throw new NotImplementedException();
+      }
+    }
 
-		public void PaintGrid(IGraphicsContext3D g, IPlotArea layer)
-		{
-			if (null != _grid1)
-				_grid1.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber1);
-			if (null != _grid2)
-				_grid2.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber2);
-		}
+    public void PaintGrid(IGraphicsContext3D g, IPlotArea layer)
+    {
+      if (null != _grid1)
+        _grid1.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber1);
+      if (null != _grid2)
+        _grid2.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber2);
+    }
 
-		public void Paint(IGraphicsContext3D g, IPlotArea layer)
-		{
-			PaintBackground(g, layer);
-			PaintGrid(g, layer);
-		}
+    public void Paint(IGraphicsContext3D g, IPlotArea layer)
+    {
+      PaintBackground(g, layer);
+      PaintGrid(g, layer);
+    }
 
-		#region Inner class GridIndexer
+    #region Inner class GridIndexer
 
-		private class GridIndexer : Altaxo.Collections.IArray<GridStyle>
-		{
-			private GridPlane _parent;
+    private class GridIndexer : Altaxo.Collections.IArray<GridStyle>
+    {
+      private GridPlane _parent;
 
-			public GridIndexer(GridPlane parent)
-			{
-				_parent = parent;
-			}
+      public GridIndexer(GridPlane parent)
+      {
+        _parent = parent;
+      }
 
-			#region IArray<GridStyle> Members
+      #region IArray<GridStyle> Members
 
-			public GridStyle this[int i]
-			{
-				get
-				{
-					return 0 == i ? _parent._grid1 : _parent._grid2;
-				}
-				set
-				{
-					if (0 == i)
-						_parent.GridStyleFirst = value;
-					else
-						_parent.GridStyleSecond = value;
-				}
-			}
+      public GridStyle this[int i]
+      {
+        get
+        {
+          return 0 == i ? _parent._grid1 : _parent._grid2;
+        }
+        set
+        {
+          if (0 == i)
+            _parent.GridStyleFirst = value;
+          else
+            _parent.GridStyleSecond = value;
+        }
+      }
 
-			public int Count
-			{
-				get { return 2; }
-			}
+      public int Count
+      {
+        get { return 2; }
+      }
 
-			#endregion IArray<GridStyle> Members
-		}
+      #endregion IArray<GridStyle> Members
+    }
 
-		#endregion Inner class GridIndexer
-	}
+    #endregion Inner class GridIndexer
+  }
 }

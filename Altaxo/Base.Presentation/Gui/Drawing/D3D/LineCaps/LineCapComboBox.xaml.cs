@@ -36,159 +36,159 @@ using sdd = System.Drawing.Drawing2D;
 
 namespace Altaxo.Gui.Drawing.D3D.LineCaps
 {
-	/// <summary>
-	/// Interaction logic for LineJoinComboBox.xaml
-	/// </summary>
-	public partial class LineCapComboBox : Common.Drawing.ImageComboBox
-	{
-		#region Converter
+  /// <summary>
+  /// Interaction logic for LineJoinComboBox.xaml
+  /// </summary>
+  public partial class LineCapComboBox : Common.Drawing.ImageComboBox
+  {
+    #region Converter
 
-		private class Converter : IValueConverter
-		{
-			private LineCapComboBox _cb;
+    private class Converter : IValueConverter
+    {
+      private LineCapComboBox _cb;
 
-			public Converter(LineCapComboBox c)
-			{
-				_cb = c;
-			}
+      public Converter(LineCapComboBox c)
+      {
+        _cb = c;
+      }
 
-			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				var val = (ILineCap)value;
-				if (null == val)
-					return _cb._cachedItems[Altaxo.Drawing.D3D.LineCaps.Flat.Instance.Name];
-				else
-					return _cb._cachedItems[val.Name];
-			}
+      public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        var val = (ILineCap)value;
+        if (null == val)
+          return _cb._cachedItems[Altaxo.Drawing.D3D.LineCaps.Flat.Instance.Name];
+        else
+          return _cb._cachedItems[val.Name];
+      }
 
-			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				return ((Common.Drawing.ImageComboBoxItem)value).Value;
-			}
-		}
+      public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        return ((Common.Drawing.ImageComboBoxItem)value).Value;
+      }
+    }
 
-		#endregion Converter
+    #endregion Converter
 
-		private static Dictionary<string, ImageSource> _cachedImagesForStartCap = new Dictionary<string, ImageSource>();
-		private static Dictionary<string, ImageSource> _cachedImagesForEndCap = new Dictionary<string, ImageSource>();
+    private static Dictionary<string, ImageSource> _cachedImagesForStartCap = new Dictionary<string, ImageSource>();
+    private static Dictionary<string, ImageSource> _cachedImagesForEndCap = new Dictionary<string, ImageSource>();
 
-		private Dictionary<string, Common.Drawing.ImageComboBoxItem> _cachedItems = new Dictionary<string, Common.Drawing.ImageComboBoxItem>();
+    private Dictionary<string, Common.Drawing.ImageComboBoxItem> _cachedItems = new Dictionary<string, Common.Drawing.ImageComboBoxItem>();
 
-		private static GdiToWpfBitmap _interopBitmap;
+    private static GdiToWpfBitmap _interopBitmap;
 
-		private bool _isForEndCap;
+    private bool _isForEndCap;
 
-		public LineCapComboBox()
-		{
-			InitializeComponent();
-			SetDefaultValues();
+    public LineCapComboBox()
+    {
+      InitializeComponent();
+      SetDefaultValues();
 
-			var binding = new Binding();
-			binding.Source = this;
-			binding.Path = new PropertyPath(_nameOfValueProp);
-			binding.Converter = new Converter(this);
-			this.SetBinding(ComboBox.SelectedItemProperty, binding);
-		}
+      var binding = new Binding();
+      binding.Source = this;
+      binding.Path = new PropertyPath(_nameOfValueProp);
+      binding.Converter = new Converter(this);
+      this.SetBinding(ComboBox.SelectedItemProperty, binding);
+    }
 
-		public bool IsForEndCap
-		{
-			get { return _isForEndCap; }
-			set { _isForEndCap = value; }
-		}
+    public bool IsForEndCap
+    {
+      get { return _isForEndCap; }
+      set { _isForEndCap = value; }
+    }
 
-		private void SetDefaultValues()
-		{
-			var lineCapTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ILineCap));
+    private void SetDefaultValues()
+    {
+      var lineCapTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ILineCap));
 
-			foreach (var capType in lineCapTypes)
-			{
-				try
-				{
-					var cap = (ILineCap)Activator.CreateInstance(capType);
-					var item = new Common.Drawing.ImageComboBoxItem(this, cap);
-					_cachedItems.Add(cap.Name, item);
-					this.Items.Add(item);
-				}
-				catch (Exception)
-				{
-				}
-			}
-		}
+      foreach (var capType in lineCapTypes)
+      {
+        try
+        {
+          var cap = (ILineCap)Activator.CreateInstance(capType);
+          var item = new Common.Drawing.ImageComboBoxItem(this, cap);
+          _cachedItems.Add(cap.Name, item);
+          this.Items.Add(item);
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
 
-		#region Dependency property
+    #region Dependency property
 
-		private const string _nameOfValueProp = "SelectedLineCap";
+    private const string _nameOfValueProp = "SelectedLineCap";
 
-		public ILineCap SelectedLineCap
-		{
-			get { return (ILineCap)GetValue(SelectedLineCapProperty); }
-			set { SetValue(SelectedLineCapProperty, value); }
-		}
+    public ILineCap SelectedLineCap
+    {
+      get { return (ILineCap)GetValue(SelectedLineCapProperty); }
+      set { SetValue(SelectedLineCapProperty, value); }
+    }
 
-		public static readonly DependencyProperty SelectedLineCapProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(ILineCap), typeof(LineCapComboBox),
-				new FrameworkPropertyMetadata(Altaxo.Drawing.D3D.LineCaps.Flat.Instance, OnSelectedLineCapChanged));
+    public static readonly DependencyProperty SelectedLineCapProperty =
+        DependencyProperty.Register(_nameOfValueProp, typeof(ILineCap), typeof(LineCapComboBox),
+        new FrameworkPropertyMetadata(Altaxo.Drawing.D3D.LineCaps.Flat.Instance, OnSelectedLineCapChanged));
 
-		private static void OnSelectedLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-		}
+    private static void OnSelectedLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+    }
 
-		#endregion Dependency property
+    #endregion Dependency property
 
-		public override string GetItemText(object item)
-		{
-			var value = (ILineCap)item;
-			return value.GetType().Name;
-		}
+    public override string GetItemText(object item)
+    {
+      var value = (ILineCap)item;
+      return value.GetType().Name;
+    }
 
-		public override ImageSource GetItemImage(object item)
-		{
-			var val = (ILineCap)item;
-			ImageSource result;
-			if (_isForEndCap)
-			{
-				if (!_cachedImagesForEndCap.TryGetValue(val.Name, out result))
-					_cachedImagesForEndCap.Add(val.Name, result = GetImage(val, _isForEndCap));
-			}
-			else
-			{
-				if (!_cachedImagesForStartCap.TryGetValue(val.Name, out result))
-					_cachedImagesForStartCap.Add(val.Name, result = GetImage(val, _isForEndCap));
-			}
-			return result;
-		}
+    public override ImageSource GetItemImage(object item)
+    {
+      var val = (ILineCap)item;
+      ImageSource result;
+      if (_isForEndCap)
+      {
+        if (!_cachedImagesForEndCap.TryGetValue(val.Name, out result))
+          _cachedImagesForEndCap.Add(val.Name, result = GetImage(val, _isForEndCap));
+      }
+      else
+      {
+        if (!_cachedImagesForStartCap.TryGetValue(val.Name, out result))
+          _cachedImagesForStartCap.Add(val.Name, result = GetImage(val, _isForEndCap));
+      }
+      return result;
+    }
 
-		public static ImageSource GetImage(ILineCap join, bool isForEndCap)
-		{
-			const int bmpHeight = 24;
-			const int bmpWidth = 48;
-			const double lineWidth = bmpHeight * 0.4;
+    public static ImageSource GetImage(ILineCap join, bool isForEndCap)
+    {
+      const int bmpHeight = 24;
+      const int bmpWidth = 48;
+      const double lineWidth = bmpHeight * 0.4;
 
-			if (null == _interopBitmap)
-				_interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);
+      if (null == _interopBitmap)
+        _interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);
 
-			using (var grfx = _interopBitmap.BeginGdiPainting())
-			{
-				grfx.CompositingMode = sdd.CompositingMode.SourceCopy;
-				grfx.FillRectangle(System.Drawing.Brushes.Transparent, 0, 0, bmpWidth, bmpHeight);
+      using (var grfx = _interopBitmap.BeginGdiPainting())
+      {
+        grfx.CompositingMode = sdd.CompositingMode.SourceCopy;
+        grfx.FillRectangle(System.Drawing.Brushes.Transparent, 0, 0, bmpWidth, bmpHeight);
 
-				var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
-				if (isForEndCap)
-				{
-					//join.SetEndCap(linePen);
-					//grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth * (1 - 0.25f), 0.5f * bmpHeight);
-				}
-				else
-				{
-					//join.SetStartCap(linePen);
-					//grfx.DrawLine(linePen, 0.25f * bmpWidth, 0.5f * bmpHeight, bmpWidth, 0.5f * bmpHeight);
-				}
-				_interopBitmap.EndGdiPainting();
-			}
+        var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
+        if (isForEndCap)
+        {
+          //join.SetEndCap(linePen);
+          //grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth * (1 - 0.25f), 0.5f * bmpHeight);
+        }
+        else
+        {
+          //join.SetStartCap(linePen);
+          //grfx.DrawLine(linePen, 0.25f * bmpWidth, 0.5f * bmpHeight, bmpWidth, 0.5f * bmpHeight);
+        }
+        _interopBitmap.EndGdiPainting();
+      }
 
-			var img = new WriteableBitmap(_interopBitmap.WpfBitmap);
-			img.Freeze();
-			return img;
-		}
-	}
+      var img = new WriteableBitmap(_interopBitmap.WpfBitmap);
+      img.Freeze();
+      return img;
+    }
+  }
 }

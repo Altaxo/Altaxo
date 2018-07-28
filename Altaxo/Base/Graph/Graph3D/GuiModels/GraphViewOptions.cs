@@ -31,92 +31,92 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.GuiModels
 {
-	/// <summary>
-	/// Stores information about how a graph is shown in the graph view.
-	/// </summary>
-	public class GraphViewOptions : IProjectItemPresentationModel
-	{
-		private Altaxo.Graph.Graph3D.GraphDocument _graphDocument;
+  /// <summary>
+  /// Stores information about how a graph is shown in the graph view.
+  /// </summary>
+  public class GraphViewOptions : IProjectItemPresentationModel
+  {
+    private Altaxo.Graph.Graph3D.GraphDocument _graphDocument;
 
-		/// <summary>
-		/// If null, the global settings are used to decide to show root layer markers. If true, root layer markers will be shown. If false, root layer markers will not be shown.
-		/// </summary>
-		private RootLayerMarkersVisibility? _rootLayerMarkersVisibility;
+    /// <summary>
+    /// If null, the global settings are used to decide to show root layer markers. If true, root layer markers will be shown. If false, root layer markers will not be shown.
+    /// </summary>
+    private RootLayerMarkersVisibility? _rootLayerMarkersVisibility;
 
-		/// <summary>Initializes a new instance of the <see cref="GraphViewOptions"/> class.</summary>
-		/// <param name="graphDocument">The graph document.</param>
-		/// <param name="rootLayerMarkersVisibility">The visibility of the root layer markers.</param>
-		public GraphViewOptions(GraphDocument graphDocument, RootLayerMarkersVisibility? rootLayerMarkersVisibility)
-		{
-			_graphDocument = graphDocument;
-			_rootLayerMarkersVisibility = rootLayerMarkersVisibility;
-		}
+    /// <summary>Initializes a new instance of the <see cref="GraphViewOptions"/> class.</summary>
+    /// <param name="graphDocument">The graph document.</param>
+    /// <param name="rootLayerMarkersVisibility">The visibility of the root layer markers.</param>
+    public GraphViewOptions(GraphDocument graphDocument, RootLayerMarkersVisibility? rootLayerMarkersVisibility)
+    {
+      _graphDocument = graphDocument;
+      _rootLayerMarkersVisibility = rootLayerMarkersVisibility;
+    }
 
-		/// <summary>Private constructor for deserialization.</summary>
-		private GraphViewOptions(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-		}
+    /// <summary>Private constructor for deserialization.</summary>
+    private GraphViewOptions(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+    }
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2013-12-01: added _positionOfViewportsUpperLeftCornerInRootLayerCoordinates. Zoom and ViewPortOffset is serialized only if AutoZoom is false.
-		/// 2015-11-14 Version 2 Moved to Altaxo.Graph.Gdi namespace
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphViewOptions), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			private AbsoluteDocumentPath _pathToGraphDocument;
-			private GraphViewOptions _deserializedObject;
+    /// <summary>
+    /// 2013-12-01: added _positionOfViewportsUpperLeftCornerInRootLayerCoordinates. Zoom and ViewPortOffset is serialized only if AutoZoom is false.
+    /// 2015-11-14 Version 2 Moved to Altaxo.Graph.Gdi namespace
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphViewOptions), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      private AbsoluteDocumentPath _pathToGraphDocument;
+      private GraphViewOptions _deserializedObject;
 
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (GraphViewOptions)obj;
-				info.AddValue("Graph", AbsoluteDocumentPath.GetAbsolutePath(s._graphDocument));
-				info.AddNullableEnum("RootLayerMarkersVisibility", s._rootLayerMarkersVisibility);
-			}
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (GraphViewOptions)obj;
+        info.AddValue("Graph", AbsoluteDocumentPath.GetAbsolutePath(s._graphDocument));
+        info.AddNullableEnum("RootLayerMarkersVisibility", s._rootLayerMarkersVisibility);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (GraphViewOptions)o ?? new GraphViewOptions(info);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (GraphViewOptions)o ?? new GraphViewOptions(info);
 
-				var pathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s);
-				s._rootLayerMarkersVisibility = info.GetNullableEnum<RootLayerMarkersVisibility>("RootLayerMarkersVisibility");
+        var pathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s);
+        s._rootLayerMarkersVisibility = info.GetNullableEnum<RootLayerMarkersVisibility>("RootLayerMarkersVisibility");
 
-				var surr = new XmlSerializationSurrogate0() { _deserializedObject = s, _pathToGraphDocument = pathToGraph };
-				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+        var surr = new XmlSerializationSurrogate0() { _deserializedObject = s, _pathToGraphDocument = pathToGraph };
+        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
-				return s;
-			}
+        return s;
+      }
 
-			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IDocumentNode documentRoot, bool isFinallyCall)
-			{
-				var o = AbsoluteDocumentPath.GetObject(_pathToGraphDocument, documentRoot);
-				if (o is GraphDocument)
-				{
-					_deserializedObject._graphDocument = (GraphDocument)o;
-				}
+      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IDocumentNode documentRoot, bool isFinallyCall)
+      {
+        var o = AbsoluteDocumentPath.GetObject(_pathToGraphDocument, documentRoot);
+        if (o is GraphDocument)
+        {
+          _deserializedObject._graphDocument = (GraphDocument)o;
+        }
 
-				if (null != _deserializedObject._graphDocument || isFinallyCall)
-				{
-					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
-				}
-			}
-		}
+        if (null != _deserializedObject._graphDocument || isFinallyCall)
+        {
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+        }
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>Get the instance of the graph document that is shown in the view.</summary>
-		public GraphDocument GraphDocument { get { return _graphDocument; } }
+    /// <summary>Get the instance of the graph document that is shown in the view.</summary>
+    public GraphDocument GraphDocument { get { return _graphDocument; } }
 
-		public RootLayerMarkersVisibility? RootLayerMarkersVisibility { get { return _rootLayerMarkersVisibility; } }
+    public RootLayerMarkersVisibility? RootLayerMarkersVisibility { get { return _rootLayerMarkersVisibility; } }
 
-		IProjectItem IProjectItemPresentationModel.Document
-		{
-			get
-			{
-				return _graphDocument;
-			}
-		}
-	}
+    IProjectItem IProjectItemPresentationModel.Document
+    {
+      get
+      {
+        return _graphDocument;
+      }
+    }
+  }
 }

@@ -31,60 +31,60 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles
 {
-	/// <summary>
-	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable. They still need to be cloneable,
-	/// because in a list of scatter symbols we need unique instances.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public interface IScatterSymbol : Main.IImmutable, ICloneable
-	{
-		ScatterSymbols.IScatterSymbolFrame Frame { get; }
+  /// <summary>
+  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable. They still need to be cloneable,
+  /// because in a list of scatter symbols we need unique instances.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.IImmutable" />
+  public interface IScatterSymbol : Main.IImmutable, ICloneable
+  {
+    ScatterSymbols.IScatterSymbolFrame Frame { get; }
 
-		IScatterSymbol WithFrame(ScatterSymbols.IScatterSymbolFrame frame);
+    IScatterSymbol WithFrame(ScatterSymbols.IScatterSymbolFrame frame);
 
-		ScatterSymbols.IScatterSymbolInset Inset { get; }
+    ScatterSymbols.IScatterSymbolInset Inset { get; }
 
-		IScatterSymbol WithInset(ScatterSymbols.IScatterSymbolInset inset);
+    IScatterSymbol WithInset(ScatterSymbols.IScatterSymbolInset inset);
 
-		NamedColor FillColor { get; }
+    NamedColor FillColor { get; }
 
-		IScatterSymbol WithFillColor(NamedColor fillColor);
+    IScatterSymbol WithFillColor(NamedColor fillColor);
 
-		/// <summary>Determines which colors of the scatter symbol are affected by the plot color.</summary>
-		ScatterSymbols.PlotColorInfluence PlotColorInfluence { get; }
+    /// <summary>Determines which colors of the scatter symbol are affected by the plot color.</summary>
+    ScatterSymbols.PlotColorInfluence PlotColorInfluence { get; }
 
-		IScatterSymbol WithPlotColorInfluence(ScatterSymbols.PlotColorInfluence plotColorInfluence);
+    IScatterSymbol WithPlotColorInfluence(ScatterSymbols.PlotColorInfluence plotColorInfluence);
 
-		/// <summary>
-		/// Gets the width of internal structures (line e.g. the frame), relative to the symbol size.
-		/// </summary>
-		/// <value>
-		/// The width of internal structures (line e.g. the frame), relative to the symbol size.
-		/// </value>
-		double RelativeStructureWidth { get; }
+    /// <summary>
+    /// Gets the width of internal structures (line e.g. the frame), relative to the symbol size.
+    /// </summary>
+    /// <value>
+    /// The width of internal structures (line e.g. the frame), relative to the symbol size.
+    /// </value>
+    double RelativeStructureWidth { get; }
 
-		IScatterSymbol WithRelativeStructureWidth(double relativeStructureWidth);
+    IScatterSymbol WithRelativeStructureWidth(double relativeStructureWidth);
 
-		/// <summary>
-		/// Gets the design size of this scatter symbol.
-		/// </summary>
-		/// <value>
-		/// The design size of this scatter symbol.
-		/// </value>
-		double DesignSize { get; }
+    /// <summary>
+    /// Gets the design size of this scatter symbol.
+    /// </summary>
+    /// <value>
+    /// The design size of this scatter symbol.
+    /// </value>
+    double DesignSize { get; }
 
-		/// <summary>
-		/// Calculates the polygons of the outer frame, the inner frame, and the inset.
-		/// </summary>
-		/// <param name="relativeStructureWidth">The relative width of the internal structures, e.g. the frame, relative to the symbol size.
-		/// If this argument is null, the value of this instance (<see cref="RelativeStructureWidth"/>) will be used.</param>
-		/// <param name="framePolygon">On return: the frame polygon.</param>
-		/// <param name="insetPolygon">On return: the inset polygon.</param>
-		/// <param name="fillPolygon">On return: the fill polygon.</param>
-		void CalculatePolygons(
-			double? relativeStructureWidth,
-			out List<List<ClipperLib.IntPoint>> framePolygon,
-			out List<List<ClipperLib.IntPoint>> insetPolygon,
-			out List<List<ClipperLib.IntPoint>> fillPolygon);
-	}
+    /// <summary>
+    /// Calculates the polygons of the outer frame, the inner frame, and the inset.
+    /// </summary>
+    /// <param name="relativeStructureWidth">The relative width of the internal structures, e.g. the frame, relative to the symbol size.
+    /// If this argument is null, the value of this instance (<see cref="RelativeStructureWidth"/>) will be used.</param>
+    /// <param name="framePolygon">On return: the frame polygon.</param>
+    /// <param name="insetPolygon">On return: the inset polygon.</param>
+    /// <param name="fillPolygon">On return: the fill polygon.</param>
+    void CalculatePolygons(
+      double? relativeStructureWidth,
+      out List<List<ClipperLib.IntPoint>> framePolygon,
+      out List<List<ClipperLib.IntPoint>> insetPolygon,
+      out List<List<ClipperLib.IntPoint>> fillPolygon);
+  }
 }

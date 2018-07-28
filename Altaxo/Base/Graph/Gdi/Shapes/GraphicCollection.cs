@@ -29,51 +29,51 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	/// <summary>
-	/// Summary description for GraphicsObjectCollection.
-	/// </summary>
-	[Serializable]
-	public class GraphicCollection
-		:
-		PartitionableList<IGraphicBase>
-	{
-		#region "Serialization"
+  /// <summary>
+  /// Summary description for GraphicsObjectCollection.
+  /// </summary>
+  [Serializable]
+  public class GraphicCollection
+    :
+    PartitionableList<IGraphicBase>
+  {
+    #region "Serialization"
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphicsObjectCollection", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicCollection), 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				GraphicCollection s = (GraphicCollection)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphicsObjectCollection", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicCollection), 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        GraphicCollection s = (GraphicCollection)obj;
 
-				info.CreateArray("GraphObjects", s.Count);
-				for (int i = 0; i < s.Count; i++)
-					info.AddValue("GraphicsObject", s[i]);
-				info.CommitArray();
-			}
+        info.CreateArray("GraphObjects", s.Count);
+        for (int i = 0; i < s.Count; i++)
+          info.AddValue("GraphicsObject", s[i]);
+        info.CommitArray();
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				IList<IGraphicBase> s = null != o ? (IList<IGraphicBase>)o : new List<IGraphicBase>();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        IList<IGraphicBase> s = null != o ? (IList<IGraphicBase>)o : new List<IGraphicBase>();
 
-				int count = info.OpenArray();
-				for (int i = 0; i < count; i++)
-				{
-					IGraphicBase go = (IGraphicBase)info.GetValue("e", s);
-					s.Add(go);
-				}
-				info.CloseArray(count);
+        int count = info.OpenArray();
+        for (int i = 0; i < count; i++)
+        {
+          IGraphicBase go = (IGraphicBase)info.GetValue("e", s);
+          s.Add(go);
+        }
+        info.CloseArray(count);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion "Serialization"
+    #endregion "Serialization"
 
-		public GraphicCollection(Action<IGraphicBase> insertAction)
-			: base(insertAction)
-		{
-		}
-	} // end class GraphicsObjectCollection
+    public GraphicCollection(Action<IGraphicBase> insertAction)
+      : base(insertAction)
+    {
+    }
+  } // end class GraphicsObjectCollection
 }

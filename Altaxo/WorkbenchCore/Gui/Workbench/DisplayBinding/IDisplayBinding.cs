@@ -23,33 +23,33 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// This class defines the display binding interface, it is a factory
-	/// structure, which creates IViewContents.
-	/// </summary>
-	public interface IDisplayBinding
-	{
-		bool IsPreferredBindingForFile(FileName fileName);
+  /// <summary>
+  /// This class defines the display binding interface, it is a factory
+  /// structure, which creates IViewContents.
+  /// </summary>
+  public interface IDisplayBinding
+  {
+    bool IsPreferredBindingForFile(FileName fileName);
 
-		/// <remarks>
-		/// This function determines, if this display binding is able to create
-		/// an IViewContent for the file given by fileName.
-		/// </remarks>
-		/// <returns>
-		/// true, if this display binding is able to create
-		/// an IViewContent for the file given by fileName.
-		/// false otherwise
-		/// </returns>
-		bool CanCreateContentForFile(FileName fileName);
+    /// <remarks>
+    /// This function determines, if this display binding is able to create
+    /// an IViewContent for the file given by fileName.
+    /// </remarks>
+    /// <returns>
+    /// true, if this display binding is able to create
+    /// an IViewContent for the file given by fileName.
+    /// false otherwise
+    /// </returns>
+    bool CanCreateContentForFile(FileName fileName);
 
-		double AutoDetectFileContent(FileName fileName, Stream fileContent, string detectedMimeType);
+    double AutoDetectFileContent(FileName fileName, Stream fileContent, string detectedMimeType);
 
-		/// <remarks>
-		/// Creates a new IViewContent object for the file fileName
-		/// </remarks>
-		/// <returns>
-		/// A newly created IViewContent object.
-		/// </returns>
-		IViewContent CreateContentForFile(OpenedFile file);
-	}
+    /// <remarks>
+    /// Creates a new IViewContent object for the file fileName
+    /// </remarks>
+    /// <returns>
+    /// A newly created IViewContent object.
+    /// </returns>
+    IViewContent CreateContentForFile(OpenedFile file);
+  }
 }

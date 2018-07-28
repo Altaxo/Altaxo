@@ -32,282 +32,282 @@ using System.Text;
 
 namespace Altaxo.Drawing.ColorManagement
 {
-	public class ColorSetManagerEntryValue : StyleListManagerBaseEntryValue<IColorSet, NamedColor>
-	{
-		public bool IsPlotColorSet { get; private set; }
+  public class ColorSetManagerEntryValue : StyleListManagerBaseEntryValue<IColorSet, NamedColor>
+  {
+    public bool IsPlotColorSet { get; private set; }
 
-		public ColorSetManagerEntryValue(IColorSet colorSet, Main.ItemDefinitionLevel level, bool isPlotColorSet)
-			: base(colorSet, level)
-		{
-			IsPlotColorSet = isPlotColorSet;
-		}
-	}
+    public ColorSetManagerEntryValue(IColorSet colorSet, Main.ItemDefinitionLevel level, bool isPlotColorSet)
+      : base(colorSet, level)
+    {
+      IsPlotColorSet = isPlotColorSet;
+    }
+  }
 
-	/// <summary>
-	/// Manages the set of colors for the application. This class has only a single instance (see <see cref="Instance"/>).
-	/// </summary>
-	public class ColorSetManager : StyleListManagerBase<IColorSet, NamedColor, ColorSetManagerEntryValue>
-	{
-		public static readonly Main.Properties.PropertyKey<ColorSetBag> PropertyKeyUserDefinedColorSets;
+  /// <summary>
+  /// Manages the set of colors for the application. This class has only a single instance (see <see cref="Instance"/>).
+  /// </summary>
+  public class ColorSetManager : StyleListManagerBase<IColorSet, NamedColor, ColorSetManagerEntryValue>
+  {
+    public static readonly Main.Properties.PropertyKey<ColorSetBag> PropertyKeyUserDefinedColorSets;
 
-		/// <summary>
-		/// Stores the only instance of this class.
-		/// </summary>
-		private static ColorSetManager _instance;
+    /// <summary>
+    /// Stores the only instance of this class.
+    /// </summary>
+    private static ColorSetManager _instance;
 
-		private IColorSet _builtinKnownColors;
-		private IColorSet _builtinDarkPlotColors;
+    private IColorSet _builtinKnownColors;
+    private IColorSet _builtinDarkPlotColors;
 
-		static ColorSetManager()
-		{
-			PropertyKeyUserDefinedColorSets =
-				new Main.Properties.PropertyKey<ColorSetBag>(
-				"98C37A90-D75A-4058-B6C6-8C180F37DD71",
-				"Graph\\Colors\\UserDefinedColors",
-				Main.Properties.PropertyLevel.Application,
-				() => new ColorSetBag(Enumerable.Empty<Tuple<IColorSet, bool>>()));
+    static ColorSetManager()
+    {
+      PropertyKeyUserDefinedColorSets =
+        new Main.Properties.PropertyKey<ColorSetBag>(
+        "98C37A90-D75A-4058-B6C6-8C180F37DD71",
+        "Graph\\Colors\\UserDefinedColors",
+        Main.Properties.PropertyLevel.Application,
+        () => new ColorSetBag(Enumerable.Empty<Tuple<IColorSet, bool>>()));
 
-			Instance = new ColorSetManager();
-		}
+      Instance = new ColorSetManager();
+    }
 
-		private ColorSetManager()
-			: base(
-					(level, list) => new ColorSetManagerEntryValue(level, list, false),
-					NamedColors.Instance
-					)
-		{
-			_builtinKnownColors = NamedColors.Instance;
+    private ColorSetManager()
+      : base(
+          (level, list) => new ColorSetManagerEntryValue(level, list, false),
+          NamedColors.Instance
+          )
+    {
+      _builtinKnownColors = NamedColors.Instance;
 
-			_builtinDarkPlotColors = new ColorSet("PlotColorsDark", GetPlotColorsDark_Version0());
-			_allLists.Add(_builtinDarkPlotColors.Name, new ColorSetManagerEntryValue(_builtinDarkPlotColors, Main.ItemDefinitionLevel.Builtin, true));
+      _builtinDarkPlotColors = new ColorSet("PlotColorsDark", GetPlotColorsDark_Version0());
+      _allLists.Add(_builtinDarkPlotColors.Name, new ColorSetManagerEntryValue(_builtinDarkPlotColors, Main.ItemDefinitionLevel.Builtin, true));
 
-			ColorSetBag userColorSets;
-			Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedColorSets, out userColorSets);
-			if (null != userColorSets)
-			{
-				IColorSet dummy;
-				foreach (var userColorSet in userColorSets.ColorSets)
-				{
-					InternalTryRegisterList(userColorSet.Item1, ItemDefinitionLevel.UserDefined, out dummy, false);
-					if (userColorSet.Item2) // .IsPlotColorSet
-						_allLists[dummy.Name] = new ColorSetManagerEntryValue(dummy, _allLists[dummy.Name].Level, true);
-				}
-			}
-		}
+      ColorSetBag userColorSets;
+      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedColorSets, out userColorSets);
+      if (null != userColorSets)
+      {
+        IColorSet dummy;
+        foreach (var userColorSet in userColorSets.ColorSets)
+        {
+          InternalTryRegisterList(userColorSet.Item1, ItemDefinitionLevel.UserDefined, out dummy, false);
+          if (userColorSet.Item2) // .IsPlotColorSet
+            _allLists[dummy.Name] = new ColorSetManagerEntryValue(dummy, _allLists[dummy.Name].Level, true);
+        }
+      }
+    }
 
-		#region Buildin
+    #region Buildin
 
-		private static NamedColor[] GetPlotColorsDark_Version0() // Version 2012-09-10
-		{
-			return new NamedColor[]{
-			NamedColors.Black,
-			NamedColors.Red,
-			NamedColors.Green,
-			NamedColors.Blue,
-			NamedColors.Magenta,
-			NamedColors.Goldenrod,
-			NamedColors.Coral
-			};
-		}
+    private static NamedColor[] GetPlotColorsDark_Version0() // Version 2012-09-10
+    {
+      return new NamedColor[]{
+      NamedColors.Black,
+      NamedColors.Red,
+      NamedColors.Green,
+      NamedColors.Blue,
+      NamedColors.Magenta,
+      NamedColors.Goldenrod,
+      NamedColors.Coral
+      };
+    }
 
-		#endregion Buildin
+    #endregion Buildin
 
-		/// <summary>
-		/// Gets the (single) instance of this class.
-		/// </summary>
-		public static ColorSetManager Instance
-		{
-			get
-			{
-				return _instance;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
+    /// <summary>
+    /// Gets the (single) instance of this class.
+    /// </summary>
+    public static ColorSetManager Instance
+    {
+      get
+      {
+        return _instance;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException(nameof(value));
 
-				if (null != _instance)
-				{
-					Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
-				}
+        if (null != _instance)
+        {
+          Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
+        }
 
-				_instance = value;
+        _instance = value;
 
-				if (null != _instance)
-				{
-					Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
-				}
-			}
-		}
+        if (null != _instance)
+        {
+          Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
+        }
+      }
+    }
 
-		public override IColorSet CreateNewList(string name, IEnumerable<NamedColor> symbols)
-		{
-			return new ColorSet(name, symbols);
-		}
+    public override IColorSet CreateNewList(string name, IEnumerable<NamedColor> symbols)
+    {
+      return new ColorSet(name, symbols);
+    }
 
-		public override IColorSet GetParentList(NamedColor item)
-		{
-			return item.ParentColorSet;
-		}
+    public override IColorSet GetParentList(NamedColor item)
+    {
+      return item.ParentColorSet;
+    }
 
-		/// <summary>
-		/// Gets the builtin set of known colors.
-		/// </summary>
-		public IColorSet BuiltinKnownColors
-		{
-			get
-			{
-				return _builtinKnownColors;
-			}
-		}
+    /// <summary>
+    /// Gets the builtin set of known colors.
+    /// </summary>
+    public IColorSet BuiltinKnownColors
+    {
+      get
+      {
+        return _builtinKnownColors;
+      }
+    }
 
-		/// <summary>
-		/// Gets the builtin set of dark plot colors.
-		/// </summary>
-		public IColorSet BuiltinDarkPlotColors
-		{
-			get
-			{
-				return _builtinDarkPlotColors;
-			}
-		}
+    /// <summary>
+    /// Gets the builtin set of dark plot colors.
+    /// </summary>
+    public IColorSet BuiltinDarkPlotColors
+    {
+      get
+      {
+        return _builtinDarkPlotColors;
+      }
+    }
 
-		public bool IsPlotColorSet(IColorSet colorSet)
-		{
-			if (null == colorSet)
-				return false;
+    public bool IsPlotColorSet(IColorSet colorSet)
+    {
+      if (null == colorSet)
+        return false;
 
-			ColorSetManagerEntryValue value;
-			if (_allLists.TryGetValue(colorSet.Name, out value))
-				return value.IsPlotColorSet;
+      ColorSetManagerEntryValue value;
+      if (_allLists.TryGetValue(colorSet.Name, out value))
+        return value.IsPlotColorSet;
 
-			return false;
-		}
+      return false;
+    }
 
-		public void DeclareAsPlotColorList(IColorSet colorSet)
-		{
-			if (null == colorSet)
-				throw new ArgumentNullException(nameof(colorSet));
-			if (!_allLists.ContainsKey(colorSet.Name))
-				throw new ArgumentException("Provided ColorSet is not registered in ColorSetManager", nameof(colorSet));
+    public void DeclareAsPlotColorList(IColorSet colorSet)
+    {
+      if (null == colorSet)
+        throw new ArgumentNullException(nameof(colorSet));
+      if (!_allLists.ContainsKey(colorSet.Name))
+        throw new ArgumentException("Provided ColorSet is not registered in ColorSetManager", nameof(colorSet));
 
-			var value = _allLists[colorSet.Name];
-			if (!value.IsPlotColorSet)
-			{
-				_allLists[colorSet.Name] = new ColorSetManagerEntryValue(colorSet, value.Level, true);
-				OnListAdded(colorSet, value.Level);
-			}
-		}
+      var value = _allLists[colorSet.Name];
+      if (!value.IsPlotColorSet)
+      {
+        _allLists[colorSet.Name] = new ColorSetManagerEntryValue(colorSet, value.Level, true);
+        OnListAdded(colorSet, value.Level);
+      }
+    }
 
-		#region Deserialization of colors
+    #region Deserialization of colors
 
-		public bool TryFindColorSetContaining(AxoColor color, out IColorSet value)
-		{
-			NamedColor namedColor;
+    public bool TryFindColorSetContaining(AxoColor color, out IColorSet value)
+    {
+      NamedColor namedColor;
 
-			foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
-			{
-				foreach (var entry in _allLists)
-				{
-					if (entry.Value.Level != level)
-						continue;
+      foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
+      {
+        foreach (var entry in _allLists)
+        {
+          if (entry.Value.Level != level)
+            continue;
 
-					if (entry.Value.List.TryGetValue(color, out namedColor))
-					{
-						value = entry.Value.List;
-						return true;
-					}
-				}
-			}
+          if (entry.Value.List.TryGetValue(color, out namedColor))
+          {
+            value = entry.Value.List;
+            return true;
+          }
+        }
+      }
 
-			value = null;
-			return false;
-		}
+      value = null;
+      return false;
+    }
 
-		public bool TryFindColorSetContaining(AxoColor colorValue, string colorName, out IColorSet value)
-		{
-			NamedColor namedColor;
+    public bool TryFindColorSetContaining(AxoColor colorValue, string colorName, out IColorSet value)
+    {
+      NamedColor namedColor;
 
-			foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
-			{
-				foreach (var entry in _allLists)
-				{
-					if (entry.Value.Level != level)
-						continue;
+      foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
+      {
+        foreach (var entry in _allLists)
+        {
+          if (entry.Value.Level != level)
+            continue;
 
-					if (entry.Value.List.TryGetValue(colorValue, colorName, out namedColor))
-					{
-						value = entry.Value.List;
-						return true;
-					}
-				}
-			}
+          if (entry.Value.List.TryGetValue(colorValue, colorName, out namedColor))
+          {
+            value = entry.Value.List;
+            return true;
+          }
+        }
+      }
 
-			value = null;
-			return false;
-		}
+      value = null;
+      return false;
+    }
 
-		public NamedColor GetDeserializedColorWithNoSet(AxoColor color, string name)
-		{
-			// test if it is a standard color
-			NamedColor foundColor;
-			if (_builtinKnownColors.TryGetValue(name, out foundColor) && color.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
-				return foundColor; // then return this found color
+    public NamedColor GetDeserializedColorWithNoSet(AxoColor color, string name)
+    {
+      // test if it is a standard color
+      NamedColor foundColor;
+      if (_builtinKnownColors.TryGetValue(name, out foundColor) && color.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
+        return foundColor; // then return this found color
 
-			if (_builtinKnownColors.TryGetValue(color, out foundColor)) // if only the color value matches, then return the found color, even if it has another name than the deserialized color
-				return foundColor;
+      if (_builtinKnownColors.TryGetValue(color, out foundColor)) // if only the color value matches, then return the found color, even if it has another name than the deserialized color
+        return foundColor;
 
-			// Note that name for a deserialized color can be null or empty. If this is the case, use the constructor without name
-			return string.IsNullOrEmpty(name) ? new NamedColor(color) : new NamedColor(color, name); // if it is not a known color, then return the color without a color set as parent
-		}
+      // Note that name for a deserialized color can be null or empty. If this is the case, use the constructor without name
+      return string.IsNullOrEmpty(name) ? new NamedColor(color) : new NamedColor(color, name); // if it is not a known color, then return the color without a color set as parent
+    }
 
-		public NamedColor GetDeserializedColorFromBuiltinSet(AxoColor color, string colorName, IColorSet builtinColorSet)
-		{
-			return new NamedColor(color, colorName, builtinColorSet);
-		}
+    public NamedColor GetDeserializedColorFromBuiltinSet(AxoColor color, string colorName, IColorSet builtinColorSet)
+    {
+      return new NamedColor(color, colorName, builtinColorSet);
+    }
 
-		public NamedColor GetDeserializedColorFromLevelAndSetName(Altaxo.Serialization.Xml.IXmlDeserializationInfo deserializationInfo, AxoColor colorValue, string colorName, string colorSetName)
-		{
-			ColorSetManagerEntryValue foundSet;
-			NamedColor foundColor;
+    public NamedColor GetDeserializedColorFromLevelAndSetName(Altaxo.Serialization.Xml.IXmlDeserializationInfo deserializationInfo, AxoColor colorValue, string colorName, string colorSetName)
+    {
+      ColorSetManagerEntryValue foundSet;
+      NamedColor foundColor;
 
-			// first have a look in the rename dictionary - maybe our color set has been renamed during deserialization
-			var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
-			if (null != renameDictionary && renameDictionary.ContainsKey(colorSetName))
-				colorSetName = renameDictionary[colorSetName];
+      // first have a look in the rename dictionary - maybe our color set has been renamed during deserialization
+      var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
+      if (null != renameDictionary && renameDictionary.ContainsKey(colorSetName))
+        colorSetName = renameDictionary[colorSetName];
 
-			if (_allLists.TryGetValue(colorSetName, out foundSet)) // if a set with the give name and level was found
-			{
-				if (foundSet.List.TryGetValue(colorName, out foundColor) && colorValue.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
-					return foundColor;                                                                  // then return this found color
-				if (foundSet.List.TryGetValue(colorValue, out foundColor)) // if only the color value matches,
-					return foundColor;                            // then return the found color, even if it has another name than the deserialized color
+      if (_allLists.TryGetValue(colorSetName, out foundSet)) // if a set with the give name and level was found
+      {
+        if (foundSet.List.TryGetValue(colorName, out foundColor) && colorValue.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
+          return foundColor;                                                                  // then return this found color
+        if (foundSet.List.TryGetValue(colorValue, out foundColor)) // if only the color value matches,
+          return foundColor;                            // then return the found color, even if it has another name than the deserialized color
 
-				// set was found, but color is not therein -> return a color without set (or use the first set where the color could be found
-				IColorSet cset;
-				TryFindColorSetContaining(colorValue, colorName, out cset);
-				var result = new NamedColor(colorValue, colorName, cset);
-				return result;
-			}
-			else // the color set with the given name was not found by name
-			{
-				IColorSet cset;
-				TryFindColorSetContaining(colorValue, colorName, out cset);
-				var result = new NamedColor(colorValue, colorName, cset);
-				return result;
-			}
-		}
+        // set was found, but color is not therein -> return a color without set (or use the first set where the color could be found
+        IColorSet cset;
+        TryFindColorSetContaining(colorValue, colorName, out cset);
+        var result = new NamedColor(colorValue, colorName, cset);
+        return result;
+      }
+      else // the color set with the given name was not found by name
+      {
+        IColorSet cset;
+        TryFindColorSetContaining(colorValue, colorName, out cset);
+        var result = new NamedColor(colorValue, colorName, cset);
+        return result;
+      }
+    }
 
-		#endregion Deserialization of colors
+    #endregion Deserialization of colors
 
-		#region User defined color sets
+    #region User defined color sets
 
-		protected override void OnUserDefinedListAddedChangedRemoved(IColorSet list)
-		{
-			var colorSetBag = new ColorSetBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => new Tuple<IColorSet, bool>(entry.List, entry.IsPlotColorSet)));
-			Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedColorSets, colorSetBag);
-		}
+    protected override void OnUserDefinedListAddedChangedRemoved(IColorSet list)
+    {
+      var colorSetBag = new ColorSetBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => new Tuple<IColorSet, bool>(entry.List, entry.IsPlotColorSet)));
+      Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedColorSets, colorSetBag);
+    }
 
-		#endregion User defined color sets
-	}
+    #endregion User defined color sets
+  }
 }

@@ -34,115 +34,115 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// ComboBox for <see cref="HatchStyle"/>.
-	/// </summary>
-	public partial class HatchStyleComboBox : ImageComboBox
-	{
-		private class CC : IValueConverter
-		{
-			private HatchStyleComboBox _cb;
+  /// <summary>
+  /// ComboBox for <see cref="HatchStyle"/>.
+  /// </summary>
+  public partial class HatchStyleComboBox : ImageComboBox
+  {
+    private class CC : IValueConverter
+    {
+      private HatchStyleComboBox _cb;
 
-			public CC(HatchStyleComboBox c)
-			{
-				_cb = c;
-			}
+      public CC(HatchStyleComboBox c)
+      {
+        _cb = c;
+      }
 
-			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				var val = (HatchStyle)value;
-				return _cb._cachedItems[val];
-			}
+      public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        var val = (HatchStyle)value;
+        return _cb._cachedItems[val];
+      }
 
-			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				return ((ImageComboBoxItem)value).Value;
-			}
-		}
+      public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        return ((ImageComboBoxItem)value).Value;
+      }
+    }
 
-		private static Dictionary<HatchStyle, ImageSource> _cachedImages = new Dictionary<HatchStyle, ImageSource>();
+    private static Dictionary<HatchStyle, ImageSource> _cachedImages = new Dictionary<HatchStyle, ImageSource>();
 
-		private Dictionary<HatchStyle, ImageComboBoxItem> _cachedItems = new Dictionary<HatchStyle, ImageComboBoxItem>();
+    private Dictionary<HatchStyle, ImageComboBoxItem> _cachedItems = new Dictionary<HatchStyle, ImageComboBoxItem>();
 
-		static HatchStyleComboBox()
-		{
-		}
+    static HatchStyleComboBox()
+    {
+    }
 
-		public HatchStyleComboBox()
-		{
-			InitializeComponent();
+    public HatchStyleComboBox()
+    {
+      InitializeComponent();
 
-			foreach (var e in new HatchStyle[] { HatchStyle.Horizontal, HatchStyle.Vertical, HatchStyle.ForwardDiagonal, HatchStyle.BackwardDiagonal })
-			{
-				_cachedItems.Add(e, new ImageComboBoxItem(this, e));
-				Items.Add(_cachedItems[e]);
-			}
+      foreach (var e in new HatchStyle[] { HatchStyle.Horizontal, HatchStyle.Vertical, HatchStyle.ForwardDiagonal, HatchStyle.BackwardDiagonal })
+      {
+        _cachedItems.Add(e, new ImageComboBoxItem(this, e));
+        Items.Add(_cachedItems[e]);
+      }
 
-			var _valueBinding = new Binding();
-			_valueBinding.Source = this;
-			_valueBinding.Path = new PropertyPath(_nameOfValueProp);
-			_valueBinding.Converter = new CC(this);
-			this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
-		}
+      var _valueBinding = new Binding();
+      _valueBinding.Source = this;
+      _valueBinding.Path = new PropertyPath(_nameOfValueProp);
+      _valueBinding.Converter = new CC(this);
+      this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
+    }
 
-		#region Dependency property
+    #region Dependency property
 
-		private const string _nameOfValueProp = "HatchStyle";
+    private const string _nameOfValueProp = "HatchStyle";
 
-		public HatchStyle HatchStyle
-		{
-			get { return (HatchStyle)GetValue(HatchStyleProperty); }
-			set { SetValue(HatchStyleProperty, value); }
-		}
+    public HatchStyle HatchStyle
+    {
+      get { return (HatchStyle)GetValue(HatchStyleProperty); }
+      set { SetValue(HatchStyleProperty, value); }
+    }
 
-		public static readonly DependencyProperty HatchStyleProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(HatchStyle), typeof(HatchStyleComboBox),
-				new FrameworkPropertyMetadata(HatchStyle.ForwardDiagonal, OnHatchStyleChanged));
+    public static readonly DependencyProperty HatchStyleProperty =
+        DependencyProperty.Register(_nameOfValueProp, typeof(HatchStyle), typeof(HatchStyleComboBox),
+        new FrameworkPropertyMetadata(HatchStyle.ForwardDiagonal, OnHatchStyleChanged));
 
-		private static void OnHatchStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((HatchStyleComboBox)obj).EhHatchStyleChanged(obj, args);
-		}
+    private static void OnHatchStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((HatchStyleComboBox)obj).EhHatchStyleChanged(obj, args);
+    }
 
-		#endregion Dependency property
+    #endregion Dependency property
 
-		protected virtual void EhHatchStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-		}
+    protected virtual void EhHatchStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+    }
 
-		public override string GetItemText(object item)
-		{
-			var val = (HatchStyle)item;
-			return val.ToString();
-		}
+    public override string GetItemText(object item)
+    {
+      var val = (HatchStyle)item;
+      return val.ToString();
+    }
 
-		public override ImageSource GetItemImage(object item)
-		{
-			var val = (HatchStyle)item;
-			ImageSource result;
-			if (!_cachedImages.TryGetValue(val, out result))
-				_cachedImages.Add(val, result = GetImage(val));
-			return result;
-		}
+    public override ImageSource GetItemImage(object item)
+    {
+      var val = (HatchStyle)item;
+      ImageSource result;
+      if (!_cachedImages.TryGetValue(val, out result))
+        _cachedImages.Add(val, result = GetImage(val));
+      return result;
+    }
 
-		public static DrawingImage GetImage(HatchStyle val)
-		{
-			double height = 1;
-			double width = 2;
+    public static DrawingImage GetImage(HatchStyle val)
+    {
+      double height = 1;
+      double width = 2;
 
-			//
-			// Create the Geometry to draw.
-			//
-			GeometryGroup geometryGroup = new GeometryGroup();
-			geometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, width, height)));
+      //
+      // Create the Geometry to draw.
+      //
+      GeometryGroup geometryGroup = new GeometryGroup();
+      geometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, width, height)));
 
-			var geometryDrawing = new GeometryDrawing() { Geometry = geometryGroup };
+      var geometryDrawing = new GeometryDrawing() { Geometry = geometryGroup };
 
-			DrawingImage geometryImage = new DrawingImage(geometryDrawing);
+      DrawingImage geometryImage = new DrawingImage(geometryDrawing);
 
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
-		}
-	}
+      // Freeze the DrawingImage for performance benefits.
+      geometryImage.Freeze();
+      return geometryImage;
+    }
+  }
 }

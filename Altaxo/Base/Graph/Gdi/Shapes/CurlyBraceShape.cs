@@ -28,238 +28,238 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	[Serializable]
-	public class CurlyBraceShape : OpenPathShapeBase
-	{
-		#region Serialization
+  [Serializable]
+  public class CurlyBraceShape : OpenPathShapeBase
+  {
+    #region Serialization
 
-		private class DeprecatedCurlyBraceShape : ClosedPathShapeBase
-		{
-			public DeprecatedCurlyBraceShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-				: base(new ItemLocationDirect(), info)
-			{ }
+    private class DeprecatedCurlyBraceShape : ClosedPathShapeBase
+    {
+      public DeprecatedCurlyBraceShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+        : base(new ItemLocationDirect(), info)
+      { }
 
-			/// <summary>
-			/// Get the object outline for arrangements in object world coordinates.
-			/// </summary>
-			/// <returns>Object outline for arrangements in object world coordinates</returns>
-			public override GraphicsPath GetObjectOutlineForArrangements()
-			{
-				throw new NotImplementedException();
-			}
+      /// <summary>
+      /// Get the object outline for arrangements in object world coordinates.
+      /// </summary>
+      /// <returns>Object outline for arrangements in object world coordinates</returns>
+      public override GraphicsPath GetObjectOutlineForArrangements()
+      {
+        throw new NotImplementedException();
+      }
 
-			public override void Paint(Graphics g, IPaintContext context)
-			{
-				throw new NotImplementedException();
-			}
+      public override void Paint(Graphics g, IPaintContext context)
+      {
+        throw new NotImplementedException();
+      }
 
-			public override object Clone()
-			{
-				throw new NotImplementedException();
-			}
-		}
+      public override object Clone()
+      {
+        throw new NotImplementedException();
+      }
+    }
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.CurlyBraceShape", 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.CurlyBraceShape", 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
+        /*
 				CurlyBraceShape s = (CurlyBraceShape)obj;
 				info.AddBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType);
 				*/
-			}
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = null != o ? (DeprecatedCurlyBraceShape)o : new DeprecatedCurlyBraceShape(info);
-				info.GetBaseValueEmbedded(s, typeof(DeprecatedCurlyBraceShape).BaseType, parent);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = null != o ? (DeprecatedCurlyBraceShape)o : new DeprecatedCurlyBraceShape(info);
+        info.GetBaseValueEmbedded(s, typeof(DeprecatedCurlyBraceShape).BaseType, parent);
 
-				var l = new CurlyBraceShape(info);
-				l.CopyFrom(s);
-				l.Pen = s.Pen; // we don't need to clone, since it is abandoned anyway
+        var l = new CurlyBraceShape(info);
+        l.CopyFrom(s);
+        l.Pen = s.Pen; // we don't need to clone, since it is abandoned anyway
 
-				return l;
-			}
-		}
+        return l;
+      }
+    }
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CurlyBraceShape), 1)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (CurlyBraceShape)obj;
-				info.AddBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CurlyBraceShape), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (CurlyBraceShape)obj;
+        info.AddBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = null != o ? (CurlyBraceShape)o : new CurlyBraceShape(info);
-				info.GetBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType, parent);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = null != o ? (CurlyBraceShape)o : new CurlyBraceShape(info);
+        info.GetBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType, parent);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		#region Constructors
+    #region Constructors
 
-		protected CurlyBraceShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-			: base(new ItemLocationDirect(), info)
-		{
-		}
+    protected CurlyBraceShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+      : base(new ItemLocationDirect(), info)
+    {
+    }
 
-		public CurlyBraceShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-			: base(new ItemLocationDirect(), context)
-		{
-		}
+    public CurlyBraceShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+      : base(new ItemLocationDirect(), context)
+    {
+    }
 
-		public CurlyBraceShape(CurlyBraceShape from)
-			:
-			base(from) // all is done here, since CopyFrom is virtual!
-		{
-		}
+    public CurlyBraceShape(CurlyBraceShape from)
+      :
+      base(from) // all is done here, since CopyFrom is virtual!
+    {
+    }
 
-		public static CurlyBraceShape FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-		{
-			if (left > right)
-				Exchange(ref left, ref right);
-			if (top > bottom)
-				Exchange(ref top, ref bottom);
+    public static CurlyBraceShape FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+    {
+      if (left > right)
+        Exchange(ref left, ref right);
+      if (top > bottom)
+        Exchange(ref top, ref bottom);
 
-			var result = new CurlyBraceShape(context);
-			result._location.SizeX = RADouble.NewAbs(right - left);
-			result._location.SizeY = RADouble.NewAbs(bottom - top);
-			result._location.PositionX = RADouble.NewAbs(left);
-			result._location.PositionY = RADouble.NewAbs(top);
-			return result;
-		}
+      var result = new CurlyBraceShape(context);
+      result._location.SizeX = RADouble.NewAbs(right - left);
+      result._location.SizeY = RADouble.NewAbs(bottom - top);
+      result._location.PositionX = RADouble.NewAbs(left);
+      result._location.PositionY = RADouble.NewAbs(top);
+      return result;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		public override object Clone()
-		{
-			return new CurlyBraceShape(this);
-		}
+    public override object Clone()
+    {
+      return new CurlyBraceShape(this);
+    }
 
-		/// <summary>
-		/// Get the object outline for arrangements in object world coordinates.
-		/// </summary>
-		/// <returns>Object outline for arrangements in object world coordinates</returns>
-		public override GraphicsPath GetObjectOutlineForArrangements()
-		{
-			return GetRectangularObjectOutline();
-		}
+    /// <summary>
+    /// Get the object outline for arrangements in object world coordinates.
+    /// </summary>
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
+    {
+      return GetRectangularObjectOutline();
+    }
 
-		public override void Paint(Graphics g, IPaintContext context)
-		{
-			GraphicsState gs = g.Save();
-			TransformGraphics(g);
+    public override void Paint(Graphics g, IPaintContext context)
+    {
+      GraphicsState gs = g.Save();
+      TransformGraphics(g);
 
-			var bounds = Bounds;
-			var boundsF = (RectangleF)bounds;
+      var bounds = Bounds;
+      var boundsF = (RectangleF)bounds;
 
-			Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-			var path = GetPath();
-			g.DrawPath(Pen, path);
+      Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+      var path = GetPath();
+      g.DrawPath(Pen, path);
 
-			if (_outlinePen != null && _outlinePen.IsVisible)
-			{
-				path.Widen(Pen);
-				_outlinePen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-				g.DrawPath(_outlinePen, path);
-			}
+      if (_outlinePen != null && _outlinePen.IsVisible)
+      {
+        path.Widen(Pen);
+        _outlinePen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+        g.DrawPath(_outlinePen, path);
+      }
 
-			g.Restore(gs);
-		}
+      g.Restore(gs);
+    }
 
-		public override IHitTestObject HitTest(HitTestPointData htd)
-		{
-			HitTestObjectBase result = null;
-			GraphicsPath gp = GetPath();
-			if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
-			{
-				result = new GraphicBaseHitTestObject(this);
-			}
-			else
-			{
-				gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
-				if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
-				{
-					result = new GraphicBaseHitTestObject(this);
-				}
-			}
+    public override IHitTestObject HitTest(HitTestPointData htd)
+    {
+      HitTestObjectBase result = null;
+      GraphicsPath gp = GetPath();
+      if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
+      {
+        result = new GraphicBaseHitTestObject(this);
+      }
+      else
+      {
+        gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
+        if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+        {
+          result = new GraphicBaseHitTestObject(this);
+        }
+      }
 
-			if (result != null)
-				result.DoubleClick = EhHitDoubleClick;
+      if (result != null)
+        result.DoubleClick = EhHitDoubleClick;
 
-			return result;
-		}
+      return result;
+    }
 
-		private static bool EhHitDoubleClick(IHitTestObject o)
-		{
-			object hitted = o.HittedObject;
-			Current.Gui.ShowDialog(ref hitted, "Graphics properties", true);
-			((CurlyBraceShape)hitted).EhSelfChanged(EventArgs.Empty);
-			return true;
-		}
+    private static bool EhHitDoubleClick(IHitTestObject o)
+    {
+      object hitted = o.HittedObject;
+      Current.Gui.ShowDialog(ref hitted, "Graphics properties", true);
+      ((CurlyBraceShape)hitted).EhSelfChanged(EventArgs.Empty);
+      return true;
+    }
 
-		/// <summary>
-		/// Gets the untranslated and unrotated path of this shape.
-		/// </summary>
-		/// <returns>Untranslated and unrotated path of this shape</returns>
-		private GraphicsPath GetPath()
-		{
-			var path = new GraphicsPath();
+    /// <summary>
+    /// Gets the untranslated and unrotated path of this shape.
+    /// </summary>
+    /// <returns>Untranslated and unrotated path of this shape</returns>
+    private GraphicsPath GetPath()
+    {
+      var path = new GraphicsPath();
 
-			float angle = 90;
-			var bounds = Bounds;
-			if (bounds.Height > 0.5 * bounds.Width)
-			{
-				double dy = 2 - bounds.Width / bounds.Height;
-				angle = (float)(180 * Math.Asin(8 / (4 + dy * dy) - 1) / Math.PI);
-			}
+      float angle = 90;
+      var bounds = Bounds;
+      if (bounds.Height > 0.5 * bounds.Width)
+      {
+        double dy = 2 - bounds.Width / bounds.Height;
+        angle = (float)(180 * Math.Asin(8 / (4 + dy * dy) - 1) / Math.PI);
+      }
 
-			path.AddArc(
-				(float)(bounds.X + 0.5 * bounds.Width - bounds.Height),
-				(float)(bounds.Y + 0.5 * bounds.Height),
-				(float)bounds.Height,
-				(float)bounds.Height,
-				0,
-				-angle);
+      path.AddArc(
+        (float)(bounds.X + 0.5 * bounds.Width - bounds.Height),
+        (float)(bounds.Y + 0.5 * bounds.Height),
+        (float)bounds.Height,
+        (float)bounds.Height,
+        0,
+        -angle);
 
-			path.AddArc(
-				(float)bounds.X,
-				(float)(bounds.Y - 0.5f * bounds.Height),
-			 (float)bounds.Height,
-			 (float)bounds.Height,
-				180 - angle, angle);
+      path.AddArc(
+        (float)bounds.X,
+        (float)(bounds.Y - 0.5f * bounds.Height),
+       (float)bounds.Height,
+       (float)bounds.Height,
+        180 - angle, angle);
 
-			path.StartFigure();
+      path.StartFigure();
 
-			path.AddArc(
-		(float)(bounds.X + 0.5 * bounds.Width),
-		(float)(bounds.Y + 0.5f * bounds.Height),
-		(float)bounds.Height,
-		(float)bounds.Height,
-		180, angle);
+      path.AddArc(
+    (float)(bounds.X + 0.5 * bounds.Width),
+    (float)(bounds.Y + 0.5f * bounds.Height),
+    (float)bounds.Height,
+    (float)bounds.Height,
+    180, angle);
 
-			path.AddArc(
-				(float)(bounds.Right - bounds.Height),
-				(float)(bounds.Y - 0.5f * bounds.Height),
-			 (float)bounds.Height,
-			 (float)bounds.Height,
-			 angle, -angle);
-			return path;
-		}
+      path.AddArc(
+        (float)(bounds.Right - bounds.Height),
+        (float)(bounds.Y - 0.5f * bounds.Height),
+       (float)bounds.Height,
+       (float)bounds.Height,
+       angle, -angle);
+      return path;
+    }
 
-		private static void Exchange(ref double x, ref double y)
-		{
-			var h = x;
-			x = y;
-			y = h;
-		}
-	} // End Class
+    private static void Exchange(ref double x, ref double y)
+    {
+      var h = x;
+      x = y;
+      y = h;
+    }
+  } // End Class
 } // end Namespace

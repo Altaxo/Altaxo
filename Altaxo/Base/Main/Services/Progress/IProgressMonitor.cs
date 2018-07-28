@@ -27,23 +27,23 @@ using System.Threading;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Interface for the other site of a <see cref="IProgressReporter"/>, i.e. the site that reads the progress and bring it to display.
-	/// </summary>
-	public interface IProgressMonitor
-	{
-		/// <summary>
-		/// Indicates that new report text has arrived that was not displayed yet.
-		/// </summary>
-		bool HasReportText { get; }
+  /// <summary>
+  /// Interface for the other site of a <see cref="IProgressReporter"/>, i.e. the site that reads the progress and bring it to display.
+  /// </summary>
+  public interface IProgressMonitor
+  {
+    /// <summary>
+    /// Indicates that new report text has arrived that was not displayed yet.
+    /// </summary>
+    bool HasReportText { get; }
 
-		/// <summary>
-		/// Gets the report text. When called, the function has to reset the <see cref="HasReportText"/> flag.
-		/// </summary>
-		string GetReportText();
+    /// <summary>
+    /// Gets the report text. When called, the function has to reset the <see cref="HasReportText"/> flag.
+    /// </summary>
+    string GetReportText();
 
-		/// <summary>Gets the progress as fraction. If you are not able to calculate the progress, this function should return <see cref="System.Double.NaN"/>.</summary>
-		/// <returns>The progress as fraction value [0..1], or <see cref="System.Double.NaN"/>.</returns>
-		double GetProgressFraction();
-	}
+    /// <summary>Gets the progress as fraction. If you are not able to calculate the progress, this function should return <see cref="System.Double.NaN"/>.</summary>
+    /// <returns>The progress as fraction value [0..1], or <see cref="System.Double.NaN"/>.</returns>
+    double GetProgressFraction();
+  }
 }

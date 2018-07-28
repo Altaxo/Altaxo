@@ -20,45 +20,45 @@ using System;
 
 namespace Altaxo.AddInItems
 {
-	public class IconDescriptor
-	{
-		private Codon codon;
+  public class IconDescriptor
+  {
+    private Codon codon;
 
-		public string Id
-		{
-			get
-			{
-				return codon.Id;
-			}
-		}
+    public string Id
+    {
+      get
+      {
+        return codon.Id;
+      }
+    }
 
-		public string Language
-		{
-			get
-			{
-				return codon.Properties["language"];
-			}
-		}
+    public string Language
+    {
+      get
+      {
+        return codon.Properties["language"];
+      }
+    }
 
-		public string Resource
-		{
-			get
-			{
-				return codon.Properties["resource"];
-			}
-		}
+    public string Resource
+    {
+      get
+      {
+        return codon.Properties["resource"];
+      }
+    }
 
-		public string[] Extensions
-		{
-			get
-			{
-				return codon.Properties["extensions"].Split(';');
-			}
-		}
+    public string[] Extensions
+    {
+      get
+      {
+        return codon.Properties["extensions"].Split(';');
+      }
+    }
 
-		public IconDescriptor(Codon codon)
-		{
-			this.codon = codon;
-		}
-	}
+    public IconDescriptor(Codon codon)
+    {
+      this.codon = codon;
+    }
+  }
 }

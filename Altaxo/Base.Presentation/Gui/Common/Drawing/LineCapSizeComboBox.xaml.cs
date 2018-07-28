@@ -31,84 +31,84 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	using Altaxo.Units;
-	using AUL = Altaxo.Units.Length;
+  using Altaxo.Units;
+  using AUL = Altaxo.Units.Length;
 
-	/// <summary>
-	/// Interaction logic for LineCapSizeComboBox.xaml
-	/// </summary>
-	public partial class LineCapSizeComboBox : LengthImageComboBox
-	{
-		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+  /// <summary>
+  /// Interaction logic for LineCapSizeComboBox.xaml
+  /// </summary>
+  public partial class LineCapSizeComboBox : LengthImageComboBox
+  {
+    private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		private static readonly double[] _initialValues = new double[] { 4, 6, 8, 10, 12, 16, 20, 24, 28, 32 };
+    private static readonly double[] _initialValues = new double[] { 4, 6, 8, 10, 12, 16, 20, 24, 28, 32 };
 
-		public LineCapSizeComboBox()
-		{
-			UnitEnvironment = LineCapSizeEnvironment.Instance;
-			InitializeComponent();
+    public LineCapSizeComboBox()
+    {
+      UnitEnvironment = LineCapSizeEnvironment.Instance;
+      InitializeComponent();
 
-			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, AUL.Point.Instance)));
+      foreach (var e in _initialValues)
+        Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, AUL.Point.Instance)));
 
-			_img.Source = GetImage(SelectedQuantityAsValueInPoints);
-		}
+      _img.Source = GetImage(SelectedQuantityAsValueInPoints);
+    }
 
-		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			base.OnSelectedQuantityChanged(obj, args);
+    protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      base.OnSelectedQuantityChanged(obj, args);
 
-			if (null != _img)
-			{
-				var val = SelectedQuantityAsValueInPoints;
-				_img.Source = GetImage(val);
-			}
-		}
+      if (null != _img)
+      {
+        var val = SelectedQuantityAsValueInPoints;
+        _img.Source = GetImage(val);
+      }
+    }
 
-		public override ImageSource GetItemImage(object item)
-		{
-			double val = ((DimensionfulQuantity)item).AsValueIn(AUL.Point.Instance);
-			ImageSource result;
-			if (!_cachedImages.TryGetValue(val, out result))
-				_cachedImages.Add(val, result = GetImage(val));
-			return result;
-		}
+    public override ImageSource GetItemImage(object item)
+    {
+      double val = ((DimensionfulQuantity)item).AsValueIn(AUL.Point.Instance);
+      ImageSource result;
+      if (!_cachedImages.TryGetValue(val, out result))
+        _cachedImages.Add(val, result = GetImage(val));
+      return result;
+    }
 
-		public override string GetItemText(object item)
-		{
-			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
-		}
+    public override string GetItemText(object item)
+    {
+      return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
+    }
 
-		public static ImageSource GetImage(double val)
-		{
-			const double height = 1;
-			const double width = 2;
-			const double nominalHeight = 24; // normal height of a combobox item
+    public static ImageSource GetImage(double val)
+    {
+      const double height = 1;
+      const double width = 2;
+      const double nominalHeight = 24; // normal height of a combobox item
 
-			val *= height / nominalHeight;
+      val *= height / nominalHeight;
 
-			// draws a transparent outline to fix the borders
-			var drawingGroup = new DrawingGroup();
+      // draws a transparent outline to fix the borders
+      var drawingGroup = new DrawingGroup();
 
-			var geometryDrawing = new GeometryDrawing();
-			geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
-			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
-			drawingGroup.Children.Add(geometryDrawing);
+      var geometryDrawing = new GeometryDrawing();
+      geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
+      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      drawingGroup.Children.Add(geometryDrawing);
 
-			var pathFigure = new PathFigure();
-			pathFigure.StartPoint = new Point(width / 6, height / 2);
-			pathFigure.Segments.Add(new PolyLineSegment(new Point[] { new Point(width / 2, height / 2 + val / 2), new Point(width - width / 6, height / 2), new Point(width / 2, height / 2 - val / 2) }, false));
-			pathFigure.IsClosed = true;
-			pathFigure.IsFilled = true;
-			geometryDrawing = new GeometryDrawing() { Geometry = new PathGeometry(new PathFigure[] { pathFigure }) };
-			geometryDrawing.Brush = Brushes.Black;
-			drawingGroup.Children.Add(geometryDrawing);
+      var pathFigure = new PathFigure();
+      pathFigure.StartPoint = new Point(width / 6, height / 2);
+      pathFigure.Segments.Add(new PolyLineSegment(new Point[] { new Point(width / 2, height / 2 + val / 2), new Point(width - width / 6, height / 2), new Point(width / 2, height / 2 - val / 2) }, false));
+      pathFigure.IsClosed = true;
+      pathFigure.IsFilled = true;
+      geometryDrawing = new GeometryDrawing() { Geometry = new PathGeometry(new PathFigure[] { pathFigure }) };
+      geometryDrawing.Brush = Brushes.Black;
+      drawingGroup.Children.Add(geometryDrawing);
 
-			drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
+      drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
 
-			var geometryImage = new DrawingImage(drawingGroup);
-			geometryImage.Freeze();
-			return geometryImage;
-		}
-	}
+      var geometryImage = new DrawingImage(drawingGroup);
+      geometryImage.Freeze();
+      return geometryImage;
+    }
+  }
 }

@@ -32,99 +32,99 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-	using Altaxo.Drawing.D3D;
-	using Altaxo.Graph.Graph3D.Plot.Styles;
-	using Altaxo.Graph.Scales;
-	using Drawing.D3D;
-	using Gdi.Plot.ColorProvider;
-	using Graph;
-	using Scales;
+  using Altaxo.Drawing.D3D;
+  using Altaxo.Graph.Graph3D.Plot.Styles;
+  using Altaxo.Graph.Scales;
+  using Drawing.D3D;
+  using Gdi.Plot.ColorProvider;
+  using Graph;
+  using Scales;
 
-	#region Interfaces
+  #region Interfaces
 
-	public interface IDataMeshPlotStyleView
-	{
-		IDensityScaleView ColorScaleView { get; }
+  public interface IDataMeshPlotStyleView
+  {
+    IDensityScaleView ColorScaleView { get; }
 
-		bool IsCustomColorScaleUsed { get; set; }
+    bool IsCustomColorScaleUsed { get; set; }
 
-		IColorProviderView ColorProviderView { get; }
+    IColorProviderView ColorProviderView { get; }
 
-		/// <summary>
-		/// Initializes the content of the ClipToLayer checkbox
-		/// </summary>
-		bool ClipToLayer { get; set; }
+    /// <summary>
+    /// Initializes the content of the ClipToLayer checkbox
+    /// </summary>
+    bool ClipToLayer { get; set; }
 
-		object MaterialViewObject { get; }
-	}
+    object MaterialViewObject { get; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Controller for the density image plot style
-	/// </summary>
-	[UserControllerForObject(typeof(DataMeshPlotStyle))]
-	[ExpectedTypeOfView(typeof(IDataMeshPlotStyleView))]
-	public class DataMeshPlotStyleController : MVCANControllerEditOriginalDocBase<DataMeshPlotStyle, IDataMeshPlotStyleView>
-	{
-		private IMVCANController _scaleController;
-		private IMVCANController _colorProviderController;
-		private IMVCANController _materialController;
+  /// <summary>
+  /// Controller for the density image plot style
+  /// </summary>
+  [UserControllerForObject(typeof(DataMeshPlotStyle))]
+  [ExpectedTypeOfView(typeof(IDataMeshPlotStyleView))]
+  public class DataMeshPlotStyleController : MVCANControllerEditOriginalDocBase<DataMeshPlotStyle, IDataMeshPlotStyleView>
+  {
+    private IMVCANController _scaleController;
+    private IMVCANController _colorProviderController;
+    private IMVCANController _materialController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
-			yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
-			yield return new ControllerAndSetNullMethod(_materialController, () => _materialController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
+      yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
+      yield return new ControllerAndSetNullMethod(_materialController, () => _materialController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_scaleController = new DensityScaleController(newScale => _doc.ColorScale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
-				_scaleController.InitializeDocument(_doc.ColorScale ?? new LinearScale());
+      if (initData)
+      {
+        _scaleController = new DensityScaleController(newScale => _doc.ColorScale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
+        _scaleController.InitializeDocument(_doc.ColorScale ?? new LinearScale());
 
-				_colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
-				_colorProviderController.InitializeDocument(_doc.ColorProvider);
+        _colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
+        _colorProviderController.InitializeDocument(_doc.ColorProvider);
 
-				_materialController = new MaterialController() { UseDocumentCopy = UseDocument.Directly };
-				_materialController.InitializeDocument(_doc.Material);
-			}
+        _materialController = new MaterialController() { UseDocumentCopy = UseDocument.Directly };
+        _materialController.InitializeDocument(_doc.Material);
+      }
 
-			if (_view != null)
-			{
-				_scaleController.ViewObject = _view.ColorScaleView;
-				_view.IsCustomColorScaleUsed = null != _doc.ColorScale;
-				_colorProviderController.ViewObject = _view.ColorProviderView;
+      if (_view != null)
+      {
+        _scaleController.ViewObject = _view.ColorScaleView;
+        _view.IsCustomColorScaleUsed = null != _doc.ColorScale;
+        _colorProviderController.ViewObject = _view.ColorProviderView;
 
-				if (null == _materialController.ViewObject)
-					_materialController.ViewObject = _view.MaterialViewObject;
+        if (null == _materialController.ViewObject)
+          _materialController.ViewObject = _view.MaterialViewObject;
 
-				_view.ClipToLayer = _doc.ClipToLayer;
-			}
-		}
+        _view.ClipToLayer = _doc.ClipToLayer;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_scaleController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_scaleController.Apply(disposeController))
+        return false;
 
-			if (!_colorProviderController.Apply(disposeController))
-				return false;
+      if (!_colorProviderController.Apply(disposeController))
+        return false;
 
-			if (!_materialController.Apply(disposeController))
-				return false;
-			else
-				_doc.Material = (IMaterial)_materialController.ModelObject;
+      if (!_materialController.Apply(disposeController))
+        return false;
+      else
+        _doc.Material = (IMaterial)_materialController.ModelObject;
 
-			_doc.ClipToLayer = _view.ClipToLayer;
-			_doc.ColorScale = _view.IsCustomColorScaleUsed ? (NumericalScale)_scaleController.ModelObject : null;
-			_doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
+      _doc.ClipToLayer = _view.ClipToLayer;
+      _doc.ColorScale = _view.IsCustomColorScaleUsed ? (NumericalScale)_scaleController.ModelObject : null;
+      _doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

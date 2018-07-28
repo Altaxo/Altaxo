@@ -31,89 +31,89 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Drawing.D3D
 {
-	public class SweepPath3D : IPolylineD3D
-	{
-		private List<PointD3D> _points = new List<PointD3D>();
-		private List<bool> _isSharpTransition = new List<bool>();
+  public class SweepPath3D : IPolylineD3D
+  {
+    private List<PointD3D> _points = new List<PointD3D>();
+    private List<bool> _isSharpTransition = new List<bool>();
 
-		public SweepPath3D(PointD3D p1, PointD3D p2)
-		{
-			_points.Add(p1);
-			_points.Add(p2);
-		}
+    public SweepPath3D(PointD3D p1, PointD3D p2)
+    {
+      _points.Add(p1);
+      _points.Add(p2);
+    }
 
-		public void AddPoint(PointD3D point, bool isNextTransitionSharp)
-		{
-			var idx = _points.Count;
+    public void AddPoint(PointD3D point, bool isNextTransitionSharp)
+    {
+      var idx = _points.Count;
 
-			_points.Add(point);
+      _points.Add(point);
 
-			var count = _isSharpTransition.Count;
-			if (idx == count)
-			{
-				_isSharpTransition.Add(isNextTransitionSharp);
-			}
-			else if (idx < count)
-			{
-				_isSharpTransition[idx] = isNextTransitionSharp;
-			}
-			else
-			{
-				for (int i = count; i < idx; ++i)
-					_isSharpTransition.Add(false);
-				_isSharpTransition[idx] = isNextTransitionSharp;
-			}
-		}
+      var count = _isSharpTransition.Count;
+      if (idx == count)
+      {
+        _isSharpTransition.Add(isNextTransitionSharp);
+      }
+      else if (idx < count)
+      {
+        _isSharpTransition[idx] = isNextTransitionSharp;
+      }
+      else
+      {
+        for (int i = count; i < idx; ++i)
+          _isSharpTransition.Add(false);
+        _isSharpTransition[idx] = isNextTransitionSharp;
+      }
+    }
 
-		public PointD3D GetPoint(int idx)
-		{
-			return _points[idx];
-		}
+    public PointD3D GetPoint(int idx)
+    {
+      return _points[idx];
+    }
 
-		public IList<PointD3D> Points
-		{
-			get
-			{
-				return _points;
-			}
-		}
+    public IList<PointD3D> Points
+    {
+      get
+      {
+        return _points;
+      }
+    }
 
-		IList<PointD3D> IPolylineD3D.Points
-		{
-			get
-			{
-				return _points;
-			}
-		}
+    IList<PointD3D> IPolylineD3D.Points
+    {
+      get
+      {
+        return _points;
+      }
+    }
 
-		public int Count
-		{
-			get
-			{
-				return _points.Count;
-			}
-		}
+    public int Count
+    {
+      get
+      {
+        return _points.Count;
+      }
+    }
 
-		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
-		{
-			return idx < _isSharpTransition.Count ? _isSharpTransition[idx] : false;
-		}
+    public bool IsTransitionFromIdxToNextIdxSharp(int idx)
+    {
+      return idx < _isSharpTransition.Count ? _isSharpTransition[idx] : false;
+    }
 
-		public double TotalLineLength
-		{
-			get
-			{
-				double sum = 0;
-				for (int i = 1; i < _points.Count; ++i)
-					sum += (_points[i] - _points[i - 1]).Length;
+    public double TotalLineLength
+    {
+      get
+      {
+        double sum = 0;
+        for (int i = 1; i < _points.Count; ++i)
+          sum += (_points[i] - _points[i - 1]).Length;
 
-				return sum;
-			}
-		}
+        return sum;
+      }
+    }
 
-		public IPolylineD3D ShortenedBy(RADouble marginAtStart, RADouble marginAtEnd)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public IPolylineD3D ShortenedBy(RADouble marginAtStart, RADouble marginAtEnd)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

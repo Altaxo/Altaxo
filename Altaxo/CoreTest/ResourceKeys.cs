@@ -29,42 +29,42 @@ using System.Collections.Generic;
 
 namespace AltaxoTest
 {
-	[TestFixture]
-	internal class ResourceKeys
-	{
-		[Test]
-		public void TestAllKeysPresent()
-		{
-			var assemblyToTest = System.Reflection.Assembly.GetAssembly(typeof(Altaxo.Calc.Complex));
+  [TestFixture]
+  internal class ResourceKeys
+  {
+    [Test]
+    public void TestAllKeysPresent()
+    {
+      var assemblyToTest = System.Reflection.Assembly.GetAssembly(typeof(Altaxo.Calc.Complex));
 
-			foreach (System.Type typeInAssembly in assemblyToTest.GetTypes())
-			{
-				// we deliberately use BindingFlags.Instance here, because afterwards we want to check that no fields declared as instance variables exist
-				var members = typeInAssembly.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.DeclaredOnly);
+      foreach (System.Type typeInAssembly in assemblyToTest.GetTypes())
+      {
+        // we deliberately use BindingFlags.Instance here, because afterwards we want to check that no fields declared as instance variables exist
+        var members = typeInAssembly.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.DeclaredOnly);
 
-				foreach (var memberInfo in members)
-				{
-					if (memberInfo.FieldType == typeof(StringResourceKey))
-					{
-						if (!memberInfo.IsStatic)
-						{
-							throw new InvalidOperationException("The field with the StringResourceKeyAttribute must be declared as constant (const string). Field: " + memberInfo.ToString());
-						}
+        foreach (var memberInfo in members)
+        {
+          if (memberInfo.FieldType == typeof(StringResourceKey))
+          {
+            if (!memberInfo.IsStatic)
+            {
+              throw new InvalidOperationException("The field with the StringResourceKeyAttribute must be declared as constant (const string). Field: " + memberInfo.ToString());
+            }
 
-						var resourceKey = (StringResourceKey)typeInAssembly.InvokeMember(memberInfo.Name,
-							System.Reflection.BindingFlags.GetField |
-							System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public |
-							System.Reflection.BindingFlags.Static,
-							null,
-							null,
-							new object[] { });
+            var resourceKey = (StringResourceKey)typeInAssembly.InvokeMember(memberInfo.Name,
+              System.Reflection.BindingFlags.GetField |
+              System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public |
+              System.Reflection.BindingFlags.Static,
+              null,
+              null,
+              new object[] { });
 
-						string resourceString = StringResources.AltaxoCore.GetString(resourceKey, false);
+            string resourceString = StringResources.AltaxoCore.GetString(resourceKey, false);
 
-						Assert.That(!string.IsNullOrEmpty(resourceString), string.Format("The resource string for the resource key '{0}' is null or empty", resourceKey));
-					}
-				}
-			}
-		}
-	}
+            Assert.That(!string.IsNullOrEmpty(resourceString), string.Format("The resource string for the resource key '{0}' is null or empty", resourceKey));
+          }
+        }
+      }
+    }
+  }
 }

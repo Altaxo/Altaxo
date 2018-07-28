@@ -31,38 +31,38 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-	/// <summary>
-	/// Interaction logic for TickSpacingControl.xaml
-	/// </summary>
-	public partial class TickSpacingControl : UserControl, ITickSpacingView
-	{
-		public TickSpacingControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for TickSpacingControl.xaml
+  /// </summary>
+  public partial class TickSpacingControl : UserControl, ITickSpacingView
+  {
+    public TickSpacingControl()
+    {
+      InitializeComponent();
+    }
 
-		public event Action TickSpacingTypeChanged;
+    public event Action TickSpacingTypeChanged;
 
-		public void InitializeTickSpacingType(Collections.SelectableListNodeList names)
-		{
-			//ComboBox _cbTickSpacingType = (ComboBox)LogicalTreeHelper.FindLogicalNode((DependencyObject)_tickSpacingGroupBox.Header, "_cbTickSpacingType");
-			GuiHelper.Initialize(_cbTickSpacingType, names);
-		}
+    public void InitializeTickSpacingType(Collections.SelectableListNodeList names)
+    {
+      //ComboBox _cbTickSpacingType = (ComboBox)LogicalTreeHelper.FindLogicalNode((DependencyObject)_tickSpacingGroupBox.Header, "_cbTickSpacingType");
+      GuiHelper.Initialize(_cbTickSpacingType, names);
+    }
 
-		private void EhTickSpacingType_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
-		{
-			e.Handled = true;
-			if (null != TickSpacingTypeChanged)
-			{
-				ComboBox _cbTickSpacingType = (ComboBox)sender;
-				GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
-				TickSpacingTypeChanged();
-			}
-		}
+    private void EhTickSpacingType_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
+    {
+      e.Handled = true;
+      if (null != TickSpacingTypeChanged)
+      {
+        ComboBox _cbTickSpacingType = (ComboBox)sender;
+        GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
+        TickSpacingTypeChanged();
+      }
+    }
 
-		public void SetTickSpacingView(object guiobject)
-		{
-			_guiDetailsHost.Child = guiobject as UIElement;
-		}
-	}
+    public void SetTickSpacingView(object guiobject)
+    {
+      _guiDetailsHost.Child = guiobject as UIElement;
+    }
+  }
 }

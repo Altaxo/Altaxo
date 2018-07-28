@@ -31,64 +31,64 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
-	/// <summary>
-	/// Interaction logic for XYPlotGroupControl.xaml
-	/// </summary>
-	public partial class PlotGroupCollectionControlSimple : UserControl, IPlotGroupCollectionViewSimple, Altaxo.Gui.Graph.Graph3D.Plot.Groups.IPlotGroupCollectionViewSimple
-	{
-		public PlotGroupCollectionControlSimple()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for XYPlotGroupControl.xaml
+  /// </summary>
+  public partial class PlotGroupCollectionControlSimple : UserControl, IPlotGroupCollectionViewSimple, Altaxo.Gui.Graph.Graph3D.Plot.Groups.IPlotGroupCollectionViewSimple
+  {
+    public PlotGroupCollectionControlSimple()
+    {
+      InitializeComponent();
+    }
 
-		#region IXYPlotGroupView
+    #region IXYPlotGroupView
 
-		public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict)
-		{
-			this._rbtConcurrently.IsChecked = bConcurrently;
-			this._rbtSequential.IsChecked = !bConcurrently;
+    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict)
+    {
+      this._rbtConcurrently.IsChecked = bConcurrently;
+      this._rbtSequential.IsChecked = !bConcurrently;
 
-			this.m_chkPlotGroupColor.IsChecked = bColor;
-			this.m_chkPlotGroupLineType.IsChecked = bLineType;
-			this.m_chkPlotGroupSymbol.IsChecked = bSymbol;
+      this.m_chkPlotGroupColor.IsChecked = bColor;
+      this.m_chkPlotGroupLineType.IsChecked = bLineType;
+      this.m_chkPlotGroupSymbol.IsChecked = bSymbol;
 
-			this._cbStrict.ItemsSource = new object[] { "Normal", "Exact", "Strict" };
-			this._cbStrict.SelectedIndex = (int)bStrict;
-		}
+      this._cbStrict.ItemsSource = new object[] { "Normal", "Exact", "Strict" };
+      this._cbStrict.SelectedIndex = (int)bStrict;
+    }
 
-		public Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict
-		{
-			get
-			{
-				return (PlotGroupStrictness)(System.Enum.GetValues(typeof(PlotGroupStrictness))).GetValue(this._cbStrict.SelectedIndex);
-			}
-		}
+    public Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict
+    {
+      get
+      {
+        return (PlotGroupStrictness)(System.Enum.GetValues(typeof(PlotGroupStrictness))).GetValue(this._cbStrict.SelectedIndex);
+      }
+    }
 
-		public bool PlotGroupColor
-		{
-			get { return true == m_chkPlotGroupColor.IsChecked; }
-		}
+    public bool PlotGroupColor
+    {
+      get { return true == m_chkPlotGroupColor.IsChecked; }
+    }
 
-		public bool PlotGroupLineType
-		{
-			get { return true == m_chkPlotGroupLineType.IsChecked; }
-		}
+    public bool PlotGroupLineType
+    {
+      get { return true == m_chkPlotGroupLineType.IsChecked; }
+    }
 
-		public bool PlotGroupSymbol
-		{
-			get { return true == m_chkPlotGroupSymbol.IsChecked; }
-		}
+    public bool PlotGroupSymbol
+    {
+      get { return true == m_chkPlotGroupSymbol.IsChecked; }
+    }
 
-		public bool PlotGroupConcurrently
-		{
-			get { return true == _rbtConcurrently.IsChecked; }
-		}
+    public bool PlotGroupConcurrently
+    {
+      get { return true == _rbtConcurrently.IsChecked; }
+    }
 
-		public bool PlotGroupUpdate
-		{
-			get { return true; }
-		}
+    public bool PlotGroupUpdate
+    {
+      get { return true; }
+    }
 
-		#endregion IXYPlotGroupView
-	}
+    #endregion IXYPlotGroupView
+  }
 }

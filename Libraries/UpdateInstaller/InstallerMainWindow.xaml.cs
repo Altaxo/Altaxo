@@ -38,220 +38,220 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
-	/// <summary>
-	/// Interaction logic for the main window.
-	/// </summary>
-	public partial class InstallerMainWindow : Window
-	{
-		public UpdateInstaller _installer;
-		private System.Threading.Tasks.Task _installerTask;
+  /// <summary>
+  /// Interaction logic for the main window.
+  /// </summary>
+  public partial class InstallerMainWindow : Window
+  {
+    public UpdateInstaller _installer;
+    private System.Threading.Tasks.Task _installerTask;
 
-		public double _progress;
-		public string _message = string.Empty;
-		private System.Windows.Threading.DispatcherTimer _timer;
-		private Brush _normalBackground;
-		private bool _isCancellationRequested = false;
-		private bool _installerFinishedSuccessfully = false;
+    public double _progress;
+    public string _message = string.Empty;
+    private System.Windows.Threading.DispatcherTimer _timer;
+    private Brush _normalBackground;
+    private bool _isCancellationRequested = false;
+    private bool _installerFinishedSuccessfully = false;
 
-		private bool _showInstallationWindow;
-		private int _timeoutAfterSucessfullInstallation;
+    private bool _showInstallationWindow;
+    private int _timeoutAfterSucessfullInstallation;
 
-		private int _timeLeftBeforeClosing;
+    private int _timeLeftBeforeClosing;
 
-		/// <summary>Initializes a new instance of the <see cref="InstallerMainWindow"/> class.</summary>
-		public InstallerMainWindow(bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
-		{
-			_showInstallationWindow = showInstallationWindow;
-			_timeoutAfterSucessfullInstallation = timeoutAfterSuccessfullInstallation;
+    /// <summary>Initializes a new instance of the <see cref="InstallerMainWindow"/> class.</summary>
+    public InstallerMainWindow(bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
+    {
+      _showInstallationWindow = showInstallationWindow;
+      _timeoutAfterSucessfullInstallation = timeoutAfterSuccessfullInstallation;
 
-			if (_showInstallationWindow)
-				this.Visibility = System.Windows.Visibility.Visible;
-			else
-				this.Visibility = System.Windows.Visibility.Hidden;
+      if (_showInstallationWindow)
+        this.Visibility = System.Windows.Visibility.Visible;
+      else
+        this.Visibility = System.Windows.Visibility.Hidden;
 
-			InitializeComponent();
-			_normalBackground = _guiMessages.Background;
-			Loaded += new RoutedEventHandler(EhLoaded);
-		}
+      InitializeComponent();
+      _normalBackground = _guiMessages.Background;
+      Loaded += new RoutedEventHandler(EhLoaded);
+    }
 
-		/// <summary>Called when the window is loaded.</summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-		private void EhLoaded(object sender, RoutedEventArgs e)
-		{
-			if (null != _installer)
-			{
-				InstallerTaskSetupAndStart();
-			}
-		}
+    /// <summary>Called when the window is loaded.</summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    private void EhLoaded(object sender, RoutedEventArgs e)
+    {
+      if (null != _installer)
+      {
+        InstallerTaskSetupAndStart();
+      }
+    }
 
-		/// <summary>Sets up the timer and the installer task, then starts the installer.</summary>
-		private void InstallerTaskSetupAndStart()
-		{
-			_btOk.IsEnabled = false;
-			_btCancel.IsEnabled = true;
-			_btTryAgain.IsEnabled = false;
+    /// <summary>Sets up the timer and the installer task, then starts the installer.</summary>
+    private void InstallerTaskSetupAndStart()
+    {
+      _btOk.IsEnabled = false;
+      _btCancel.IsEnabled = true;
+      _btTryAgain.IsEnabled = false;
 
-			_isCancellationRequested = false;
-			_installerFinishedSuccessfully = false;
-			_guiMessages.Background = _normalBackground;
+      _isCancellationRequested = false;
+      _installerFinishedSuccessfully = false;
+      _guiMessages.Background = _normalBackground;
 
-			_timer = new System.Windows.Threading.DispatcherTimer();
-			_timer.Tick += new EventHandler(EhInstallationTimerTick);
-			_timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
-			_timer.Start();
+      _timer = new System.Windows.Threading.DispatcherTimer();
+      _timer.Tick += new EventHandler(EhInstallationTimerTick);
+      _timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
+      _timer.Start();
 
-			_installerTask = new System.Threading.Tasks.Task(RunInstaller);
-			_installerTask.Start();
-		}
+      _installerTask = new System.Threading.Tasks.Task(RunInstaller);
+      _installerTask.Start();
+    }
 
-		/// <summary>Cleans up the timer and the installer task after the task is finished.</summary>
-		/// <returns>If the task has thrown an exception, this exeption is returned. Otherwise, the return value is <c>null</c>.</returns>
-		private AggregateException InstallerTaskCleanup()
-		{
-			_timer.Tick -= EhInstallationTimerTick;
-			_timer.Stop();
-			_timer = null;
+    /// <summary>Cleans up the timer and the installer task after the task is finished.</summary>
+    /// <returns>If the task has thrown an exception, this exeption is returned. Otherwise, the return value is <c>null</c>.</returns>
+    private AggregateException InstallerTaskCleanup()
+    {
+      _timer.Tick -= EhInstallationTimerTick;
+      _timer.Stop();
+      _timer = null;
 
-			var exception = _installerTask.Exception;
-			_installerTask.Dispose();
-			_installerTask = null;
-			_isCancellationRequested = false;
+      var exception = _installerTask.Exception;
+      _installerTask.Dispose();
+      _installerTask = null;
+      _isCancellationRequested = false;
 
-			_installerFinishedSuccessfully = (null == exception);
-			_btOk.IsEnabled = true;
-			_btTryAgain.IsEnabled = !_installerFinishedSuccessfully;
-			_btCancel.IsEnabled = false;
+      _installerFinishedSuccessfully = (null == exception);
+      _btOk.IsEnabled = true;
+      _btTryAgain.IsEnabled = !_installerFinishedSuccessfully;
+      _btCancel.IsEnabled = false;
 
-			return exception;
-		}
+      return exception;
+    }
 
-		/// <summary>Sets a error message in the message window.</summary>
-		/// <param name="message">The error message.</param>
-		public void SetErrorMessage(string message)
-		{
-			_guiProgress.Value = 0;
-			_guiMessages.Text = message;
-			_guiMessages.Background = new SolidColorBrush(Colors.LightPink);
+    /// <summary>Sets a error message in the message window.</summary>
+    /// <param name="message">The error message.</param>
+    public void SetErrorMessage(string message)
+    {
+      _guiProgress.Value = 0;
+      _guiMessages.Text = message;
+      _guiMessages.Background = new SolidColorBrush(Colors.LightPink);
 
-			this.Visibility = System.Windows.Visibility.Visible;
-		}
+      this.Visibility = System.Windows.Visibility.Visible;
+    }
 
-		/// <summary>Called when the user requests to close the window.</summary>
-		/// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs"/> that contains the event data.</param>
-		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
-		{
-			if (_installerTask != null && !_installerTask.IsCompleted)
-			{
-				e.Cancel = true;
-			}
+    /// <summary>Called when the user requests to close the window.</summary>
+    /// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs"/> that contains the event data.</param>
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+      if (_installerTask != null && !_installerTask.IsCompleted)
+      {
+        e.Cancel = true;
+      }
 
-			base.OnClosing(e);
-		}
+      base.OnClosing(e);
+    }
 
-		/// <summary>Called when the timer event occured.</summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void EhInstallationTimerTick(object sender, EventArgs e)
-		{
-			_guiProgress.Value = _progress;
-			_guiProgressText.Content = string.Format("{0:F1}% completed", _progress);
-			_guiMessages.Text = _message.ToString();
+    /// <summary>Called when the timer event occured.</summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    private void EhInstallationTimerTick(object sender, EventArgs e)
+    {
+      _guiProgress.Value = _progress;
+      _guiProgressText.Content = string.Format("{0:F1}% completed", _progress);
+      _guiMessages.Text = _message.ToString();
 
-			if (_installerTask.IsCompleted)
-			{
-				var exception = InstallerTaskCleanup();
-				if (null != exception)
-				{
-					SetErrorMessage(UpdateInstallerMain.ErrorIntroduction + exception.ToString());
-				}
-				else
-				{
-					// Successfully finished the installation
-					if (false == _showInstallationWindow || _timeoutAfterSucessfullInstallation <= 0)
-					{
-						Close(); // Close if either the window is not visible or the timeout is 0 sec
-					}
-					else if (_timeoutAfterSucessfullInstallation >= int.MaxValue)
-					{
-						// Time too high for count down, simply leave window open
-					}
-					else
-					{
-						// Set up a new timer that now count's down
-						_timeLeftBeforeClosing = _timeoutAfterSucessfullInstallation;
-						_timer = new System.Windows.Threading.DispatcherTimer();
-						_timer.Tick += new EventHandler(EhCountDownTimerTick);
-						_timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
-						_timer.Start();
-					}
-				}
-			}
-		}
+      if (_installerTask.IsCompleted)
+      {
+        var exception = InstallerTaskCleanup();
+        if (null != exception)
+        {
+          SetErrorMessage(UpdateInstallerMain.ErrorIntroduction + exception.ToString());
+        }
+        else
+        {
+          // Successfully finished the installation
+          if (false == _showInstallationWindow || _timeoutAfterSucessfullInstallation <= 0)
+          {
+            Close(); // Close if either the window is not visible or the timeout is 0 sec
+          }
+          else if (_timeoutAfterSucessfullInstallation >= int.MaxValue)
+          {
+            // Time too high for count down, simply leave window open
+          }
+          else
+          {
+            // Set up a new timer that now count's down
+            _timeLeftBeforeClosing = _timeoutAfterSucessfullInstallation;
+            _timer = new System.Windows.Threading.DispatcherTimer();
+            _timer.Tick += new EventHandler(EhCountDownTimerTick);
+            _timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
+            _timer.Start();
+          }
+        }
+      }
+    }
 
-		/// <summary>Called when the timer event occured.</summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void EhCountDownTimerTick(object sender, EventArgs e)
-		{
-			--_timeLeftBeforeClosing;
+    /// <summary>Called when the timer event occured.</summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    private void EhCountDownTimerTick(object sender, EventArgs e)
+    {
+      --_timeLeftBeforeClosing;
 
-			if (_timeLeftBeforeClosing <= 0)
-			{
-				_timer.Tick -= EhCountDownTimerTick;
-				_timer.Stop();
-				_timer = null;
-				Close();
-			}
-			else
-			{
-				_guiProgress.Value = 100 * (1 - _timeLeftBeforeClosing / (double)_timeoutAfterSucessfullInstallation);
-				_guiProgressText.Content = string.Format("Time left before closing: {0} s", _timeLeftBeforeClosing);
-			}
-		}
+      if (_timeLeftBeforeClosing <= 0)
+      {
+        _timer.Tick -= EhCountDownTimerTick;
+        _timer.Stop();
+        _timer = null;
+        Close();
+      }
+      else
+      {
+        _guiProgress.Value = 100 * (1 - _timeLeftBeforeClosing / (double)_timeoutAfterSucessfullInstallation);
+        _guiProgressText.Content = string.Format("Time left before closing: {0} s", _timeLeftBeforeClosing);
+      }
+    }
 
-		/// <summary>Reports the progress of the installer.</summary>
-		/// <param name="progress">The progress in percent.</param>
-		/// <param name="message">The message text.</param>
-		/// <returns>True when the user has requested a cancellation.</returns>
-		private bool ReportProgressAsync(double progress, string message)
-		{
-			_progress = progress;
-			_message = message;
-			return _isCancellationRequested;
-		}
+    /// <summary>Reports the progress of the installer.</summary>
+    /// <param name="progress">The progress in percent.</param>
+    /// <param name="message">The message text.</param>
+    /// <returns>True when the user has requested a cancellation.</returns>
+    private bool ReportProgressAsync(double progress, string message)
+    {
+      _progress = progress;
+      _message = message;
+      return _isCancellationRequested;
+    }
 
-		/// <summary>Entry point for the task that runs the installer.</summary>
-		private void RunInstaller()
-		{
-			_installer.Run(ReportProgressAsync);
-		}
+    /// <summary>Entry point for the task that runs the installer.</summary>
+    private void RunInstaller()
+    {
+      _installer.Run(ReportProgressAsync);
+    }
 
-		/// <summary>Called when the OK button was pressed.</summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-		private void EhOk(object sender, RoutedEventArgs e)
-		{
-			this.Close();
-		}
+    /// <summary>Called when the OK button was pressed.</summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    private void EhOk(object sender, RoutedEventArgs e)
+    {
+      this.Close();
+    }
 
-		/// <summary>Called when the TryAgain button was pressed.</summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-		private void EhTryAgain(object sender, RoutedEventArgs e)
-		{
-			if (null == _installerTask && null == _timer)
-			{
-				InstallerTaskSetupAndStart();
-			}
-		}
+    /// <summary>Called when the TryAgain button was pressed.</summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    private void EhTryAgain(object sender, RoutedEventArgs e)
+    {
+      if (null == _installerTask && null == _timer)
+      {
+        InstallerTaskSetupAndStart();
+      }
+    }
 
-		/// <summary>Called when the Cancel button was pressed.</summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-		private void EhCancel(object sender, RoutedEventArgs e)
-		{
-			_isCancellationRequested = true;
-		}
-	}
+    /// <summary>Called when the Cancel button was pressed.</summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    private void EhCancel(object sender, RoutedEventArgs e)
+    {
+      _isCancellationRequested = true;
+    }
+  }
 }

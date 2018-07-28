@@ -30,37 +30,37 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Converts a boolean value of false to true and vice versa (a value of null is converted to null)
-	/// </summary>
-	[ValueConversion(typeof(bool), typeof(bool))]
-	[ValueConversion(typeof(bool?), typeof(bool?))]
-	public class InverseBooleanConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			if (value is bool)
-			{
-				return !((bool)value);
-			}
-			else if (value is Nullable<bool>)
-			{
-				var v = (Nullable<bool>)value;
-				if (v.HasValue)
-					return !v.Value;
-				else
-					return null;
-			}
+  /// <summary>
+  /// Converts a boolean value of false to true and vice versa (a value of null is converted to null)
+  /// </summary>
+  [ValueConversion(typeof(bool), typeof(bool))]
+  [ValueConversion(typeof(bool?), typeof(bool?))]
+  public class InverseBooleanConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      if (value is bool)
+      {
+        return !((bool)value);
+      }
+      else if (value is Nullable<bool>)
+      {
+        var v = (Nullable<bool>)value;
+        if (v.HasValue)
+          return !v.Value;
+        else
+          return null;
+      }
 
-			if (value == null)
-				return null;
-			else
-				return true;
-		}
+      if (value == null)
+        return null;
+      else
+        return true;
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			return Convert(value, targetType, parameter, culture);
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      return Convert(value, targetType, parameter, culture);
+    }
+  }
 }

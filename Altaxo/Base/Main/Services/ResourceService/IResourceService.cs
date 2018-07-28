@@ -23,130 +23,130 @@ using System.Resources;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Provides string and bitmap resources.
-	/// </summary>
-	[GlobalService("SD.ResourceService", FallbackImplementation = typeof(FallbackResourceService))]
-	public interface IResourceService
-	{
-		/// <summary>
-		/// Gets/Sets the current UI language.
-		/// </summary>
-		string Language { get; set; }
+  /// <summary>
+  /// Provides string and bitmap resources.
+  /// </summary>
+  [GlobalService("SD.ResourceService", FallbackImplementation = typeof(FallbackResourceService))]
+  public interface IResourceService
+  {
+    /// <summary>
+    /// Gets/Sets the current UI language.
+    /// </summary>
+    string Language { get; set; }
 
-		event EventHandler LanguageChanged;
+    event EventHandler LanguageChanged;
 
-		/// <summary>
-		/// Returns a string from the resource database, it handles localization
-		/// transparent for the user.
-		/// </summary>
-		/// <returns>
-		/// The string in the (localized) resource database.
-		/// </returns>
-		/// <param name="name">
-		/// The name of the requested resource.
-		/// </param>
-		/// <exception cref="ResourceNotFoundException">
-		/// Is thrown when the GlobalResource manager can't find a requested resource.
-		/// </exception>
-		string GetString(string name);
+    /// <summary>
+    /// Returns a string from the resource database, it handles localization
+    /// transparent for the user.
+    /// </summary>
+    /// <returns>
+    /// The string in the (localized) resource database.
+    /// </returns>
+    /// <param name="name">
+    /// The name of the requested resource.
+    /// </param>
+    /// <exception cref="ResourceNotFoundException">
+    /// Is thrown when the GlobalResource manager can't find a requested resource.
+    /// </exception>
+    string GetString(string name);
 
-		object GetImageResource(string name);
+    object GetImageResource(string name);
 
-		/// <summary>
-		/// Gets a resource as a stream. The retrieve resource stream is not cached.
-		/// </summary>
-		/// <param name="name">The name of the resource.</param>
-		/// <returns>The resource stream, or null if the resource don't exist.</returns>
-		System.IO.Stream GetResourceStream(string name);
+    /// <summary>
+    /// Gets a resource as a stream. The retrieve resource stream is not cached.
+    /// </summary>
+    /// <param name="name">The name of the resource.</param>
+    /// <returns>The resource stream, or null if the resource don't exist.</returns>
+    System.IO.Stream GetResourceStream(string name);
 
-		/// <summary>
-		/// Returns a bitmap from the resource database, it handles localization
-		/// transparent for the user.
-		/// </summary>
-		/// <returns>
-		/// The bitmap in the (localized) resource database.
-		/// </returns>
-		/// <param name="name">
-		/// The name of the requested bitmap.
-		/// </param>
-		/// <exception cref="ResourceNotFoundException">
-		/// Is thrown when the GlobalResource manager can't find a requested resource.
-		/// </exception>
-		System.Drawing.Bitmap GetBitmap(string name);
+    /// <summary>
+    /// Returns a bitmap from the resource database, it handles localization
+    /// transparent for the user.
+    /// </summary>
+    /// <returns>
+    /// The bitmap in the (localized) resource database.
+    /// </returns>
+    /// <param name="name">
+    /// The name of the requested bitmap.
+    /// </param>
+    /// <exception cref="ResourceNotFoundException">
+    /// Is thrown when the GlobalResource manager can't find a requested resource.
+    /// </exception>
+    System.Drawing.Bitmap GetBitmap(string name);
 
-		/// <summary>
-		/// Registers string resources in the resource service.
-		/// </summary>
-		/// <param name="baseResourceName">The base name of the resource file embedded in the assembly.</param>
-		/// <param name="assembly">The assembly which contains the resource file.</param>
-		/// <example><c>ResourceService.RegisterStrings("TestAddin.Resources.StringResources", GetType().Assembly);</c></example>
-		void RegisterStrings(string baseResourceName, Assembly assembly);
+    /// <summary>
+    /// Registers string resources in the resource service.
+    /// </summary>
+    /// <param name="baseResourceName">The base name of the resource file embedded in the assembly.</param>
+    /// <param name="assembly">The assembly which contains the resource file.</param>
+    /// <example><c>ResourceService.RegisterStrings("TestAddin.Resources.StringResources", GetType().Assembly);</c></example>
+    void RegisterStrings(string baseResourceName, Assembly assembly);
 
-		void RegisterNeutralStrings(ResourceManager stringManager);
+    void RegisterNeutralStrings(ResourceManager stringManager);
 
-		/// <summary>
-		/// Registers image resources in the resource service.
-		/// </summary>
-		/// <param name="baseResourceName">The base name of the resource file embedded in the assembly.</param>
-		/// <param name="assembly">The assembly which contains the resource file.</param>
-		/// <example><c>ResourceService.RegisterImages("TestAddin.Resources.BitmapResources", GetType().Assembly);</c></example>
-		void RegisterImages(string baseResourceName, Assembly assembly);
+    /// <summary>
+    /// Registers image resources in the resource service.
+    /// </summary>
+    /// <param name="baseResourceName">The base name of the resource file embedded in the assembly.</param>
+    /// <param name="assembly">The assembly which contains the resource file.</param>
+    /// <example><c>ResourceService.RegisterImages("TestAddin.Resources.BitmapResources", GetType().Assembly);</c></example>
+    void RegisterImages(string baseResourceName, Assembly assembly);
 
-		void RegisterNeutralImages(ResourceManager imageManager);
-	}
+    void RegisterNeutralImages(ResourceManager imageManager);
+  }
 
-	internal sealed class FallbackResourceService : IResourceService
-	{
-		event EventHandler IResourceService.LanguageChanged { add { } remove { } }
+  internal sealed class FallbackResourceService : IResourceService
+  {
+    event EventHandler IResourceService.LanguageChanged { add { } remove { } }
 
-		string IResourceService.Language
-		{
-			get { return "en"; }
-			set
-			{
-				throw new NotImplementedException();
-			}
-		}
+    string IResourceService.Language
+    {
+      get { return "en"; }
+      set
+      {
+        throw new NotImplementedException();
+      }
+    }
 
-		string IResourceService.GetString(string name)
-		{
-			return null;
-		}
+    string IResourceService.GetString(string name)
+    {
+      return null;
+    }
 
-		object IResourceService.GetImageResource(string name)
-		{
-			return null;
-		}
+    object IResourceService.GetImageResource(string name)
+    {
+      return null;
+    }
 
-		System.IO.Stream IResourceService.GetResourceStream(string name)
-		{
-			return null;
-		}
+    System.IO.Stream IResourceService.GetResourceStream(string name)
+    {
+      return null;
+    }
 
-		void IResourceService.RegisterStrings(string baseResourceName, Assembly assembly)
-		{
-			throw new NotImplementedException();
-		}
+    void IResourceService.RegisterStrings(string baseResourceName, Assembly assembly)
+    {
+      throw new NotImplementedException();
+    }
 
-		void IResourceService.RegisterNeutralStrings(ResourceManager stringManager)
-		{
-			throw new NotImplementedException();
-		}
+    void IResourceService.RegisterNeutralStrings(ResourceManager stringManager)
+    {
+      throw new NotImplementedException();
+    }
 
-		void IResourceService.RegisterImages(string baseResourceName, Assembly assembly)
-		{
-			throw new NotImplementedException();
-		}
+    void IResourceService.RegisterImages(string baseResourceName, Assembly assembly)
+    {
+      throw new NotImplementedException();
+    }
 
-		void IResourceService.RegisterNeutralImages(ResourceManager imageManager)
-		{
-			throw new NotImplementedException();
-		}
+    void IResourceService.RegisterNeutralImages(ResourceManager imageManager)
+    {
+      throw new NotImplementedException();
+    }
 
-		public Bitmap GetBitmap(string name)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public Bitmap GetBitmap(string name)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

@@ -30,28 +30,28 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionfulQuantity), 0)]
-	public class SerializationSurrogate0_DimensionfulQuantity : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			var s = (DimensionfulQuantity)obj;
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionfulQuantity), 0)]
+  public class SerializationSurrogate0_DimensionfulQuantity : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var s = (DimensionfulQuantity)obj;
 
-			info.AddValue("Value", s.Value);
-			info.AddValue("Prefix", s.Prefix);
-			info.AddValue("Unit", s.Unit);
-		}
+      info.AddValue("Value", s.Value);
+      info.AddValue("Prefix", s.Prefix);
+      info.AddValue("Unit", s.Unit);
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			var value = info.GetDouble("Value");
-			var prefix = (SIPrefix)info.GetValue("Prefix", parent);
-			var unit = (IUnit)info.GetValue("Unit", parent);
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      var value = info.GetDouble("Value");
+      var prefix = (SIPrefix)info.GetValue("Prefix", parent);
+      var unit = (IUnit)info.GetValue("Unit", parent);
 
-			if (null == unit)
-				return DimensionfulQuantity.Empty;
-			else
-				return new DimensionfulQuantity(value, prefix, unit);
-		}
-	}
+      if (null == unit)
+        return DimensionfulQuantity.Empty;
+      else
+        return new DimensionfulQuantity(value, prefix, unit);
+    }
+  }
 }

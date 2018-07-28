@@ -30,24 +30,24 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Text
 {
-	/// <summary>
-	/// Helper class to provide the pretext used to specify an image in markdown.
-	/// </summary>
-	public static class ImagePretext
-	{
-		/// <summary>After an image pretext, this specifies to use an absolute path instead of a relative path.</summary>
-		public const string AbsolutePathPretext = "//";
+  /// <summary>
+  /// Helper class to provide the pretext used to specify an image in markdown.
+  /// </summary>
+  public static class ImagePretext
+  {
+    /// <summary>After an image pretext, this specifies to use an absolute path instead of a relative path.</summary>
+    public const string AbsolutePathPretext = "//";
 
-		/// <summary>Pretext to specify an Altaxo graph by its absolute path name.</summary>
-		public const string GraphAbsolutePathPretext = "graph://";
+    /// <summary>Pretext to specify an Altaxo graph by its absolute path name.</summary>
+    public const string GraphAbsolutePathPretext = "graph://";
 
-		/// <summary>Pretext to specify an Altaxo graph by its relative path name.</summary>
-		public const string GraphRelativePathPretext = "graph:";
+    /// <summary>Pretext to specify an Altaxo graph by its relative path name.</summary>
+    public const string GraphRelativePathPretext = "graph:";
 
-		/// <summary>Pretext to specify a resource image by its resource name.</summary>
-		public const string ResourceImagePretext = "res:";
+    /// <summary>Pretext to specify a resource image by its resource name.</summary>
+    public const string ResourceImagePretext = "res:";
 
-		/// <summary>Pretext to specify a local image by its 16-digits hash sum.</summary>
-		public const string LocalImagePretext = "local:";
-	}
+    /// <summary>Pretext to specify a local image by its 16-digits hash sum.</summary>
+    public const string LocalImagePretext = "local:";
+  }
 }

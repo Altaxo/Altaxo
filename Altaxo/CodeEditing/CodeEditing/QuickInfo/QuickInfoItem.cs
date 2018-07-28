@@ -11,18 +11,18 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.QuickInfo
 {
-	public sealed class QuickInfoItem
-	{
-		private readonly Func<object> _contentFactory;
+  public sealed class QuickInfoItem
+  {
+    private readonly Func<object> _contentFactory;
 
-		public TextSpan TextSpan { get; }
+    public TextSpan TextSpan { get; }
 
-		public object Create() => _contentFactory();
+    public object Create() => _contentFactory();
 
-		internal QuickInfoItem(TextSpan textSpan, Func<object> contentFactory)
-		{
-			TextSpan = textSpan;
-			_contentFactory = contentFactory;
-		}
-	}
+    internal QuickInfoItem(TextSpan textSpan, Func<object> contentFactory)
+    {
+      TextSpan = textSpan;
+      _contentFactory = contentFactory;
+    }
+  }
 }

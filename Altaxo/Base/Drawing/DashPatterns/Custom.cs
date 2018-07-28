@@ -29,130 +29,130 @@ using System.Text;
 
 namespace Altaxo.Drawing.DashPatterns
 {
-	public class Custom : DashPatternBase
-	{
-		private double[] _customDashPattern;
-		private double _dashOffset;
+  public class Custom : DashPatternBase
+  {
+    private double[] _customDashPattern;
+    private double _dashOffset;
 
-		#region Serialization
+    #region Serialization
 
-		private Custom(double offset, double[] pattern)
-		{
-			_dashOffset = offset;
-			_customDashPattern = pattern;
-		}
+    private Custom(double offset, double[] pattern)
+    {
+      _dashOffset = offset;
+      _customDashPattern = pattern;
+    }
 
-		/// <summary>
-		/// 2016-04-22 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Drawing.D3D.DashPatterns.Custom", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Custom), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (Custom)obj;
-				info.AddValue("DashOffset", s._dashOffset);
-				info.CreateArray("Pattern", s._customDashPattern.Length);
-				foreach (var v in s._customDashPattern)
-					info.AddValue("e", v);
-				info.CommitArray();
+    /// <summary>
+    /// 2016-04-22 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Drawing.D3D.DashPatterns.Custom", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Custom), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (Custom)obj;
+        info.AddValue("DashOffset", s._dashOffset);
+        info.CreateArray("Pattern", s._customDashPattern.Length);
+        foreach (var v in s._customDashPattern)
+          info.AddValue("e", v);
+        info.CommitArray();
 
-				SerializeV0(s, info);
-			}
+        SerializeV0(s, info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				double offset = info.GetDouble("DashOffset");
-				int count = info.OpenArray("Pattern");
-				double[] pattern = new double[count];
-				for (int i = 0; i < pattern.Length; ++i)
-					pattern[i] = info.GetDouble("e");
-				info.CloseArray(count);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        double offset = info.GetDouble("DashOffset");
+        int count = info.OpenArray("Pattern");
+        double[] pattern = new double[count];
+        for (int i = 0; i < pattern.Length; ++i)
+          pattern[i] = info.GetDouble("e");
+        info.CloseArray(count);
 
-				return DeserializeV0(new Custom(offset, pattern), info, parent);
-			}
-		}
+        return DeserializeV0(new Custom(offset, pattern), info, parent);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public Custom(IEnumerable<double> dashPattern)
-		{
-			if (null == dashPattern)
-				throw new ArgumentNullException(nameof(dashPattern));
+    public Custom(IEnumerable<double> dashPattern)
+    {
+      if (null == dashPattern)
+        throw new ArgumentNullException(nameof(dashPattern));
 
-			_customDashPattern = dashPattern.ToArray();
+      _customDashPattern = dashPattern.ToArray();
 
-			if (_customDashPattern.Length == 0)
-				throw new ArgumentOutOfRangeException(nameof(dashPattern) + " is empty");
-		}
+      if (_customDashPattern.Length == 0)
+        throw new ArgumentOutOfRangeException(nameof(dashPattern) + " is empty");
+    }
 
-		public Custom(IEnumerable<double> dashPattern, double dashOffset)
-		{
-			if (null == dashPattern)
-				throw new ArgumentNullException(nameof(dashPattern));
+    public Custom(IEnumerable<double> dashPattern, double dashOffset)
+    {
+      if (null == dashPattern)
+        throw new ArgumentNullException(nameof(dashPattern));
 
-			_customDashPattern = dashPattern.ToArray();
+      _customDashPattern = dashPattern.ToArray();
 
-			if (_customDashPattern.Length == 0)
-				throw new ArgumentOutOfRangeException(nameof(dashPattern) + " is empty");
+      if (_customDashPattern.Length == 0)
+        throw new ArgumentOutOfRangeException(nameof(dashPattern) + " is empty");
 
-			if (double.IsNaN(dashOffset) || double.IsInfinity(dashOffset))
-				throw new ArgumentOutOfRangeException(nameof(dashOffset));
+      if (double.IsNaN(dashOffset) || double.IsInfinity(dashOffset))
+        throw new ArgumentOutOfRangeException(nameof(dashOffset));
 
-			_dashOffset = dashOffset;
-		}
+      _dashOffset = dashOffset;
+    }
 
-		public override double this[int index]
-		{
-			get
-			{
-				if (index < 0 || index >= _customDashPattern.Length)
-					throw new IndexOutOfRangeException(nameof(index));
+    public override double this[int index]
+    {
+      get
+      {
+        if (index < 0 || index >= _customDashPattern.Length)
+          throw new IndexOutOfRangeException(nameof(index));
 
-				return _customDashPattern[index];
-			}
-			set
-			{
-				throw new InvalidOperationException("Sorry, this class is read-only");
-			}
-		}
+        return _customDashPattern[index];
+      }
+      set
+      {
+        throw new InvalidOperationException("Sorry, this class is read-only");
+      }
+    }
 
-		public override int Count
-		{
-			get
-			{
-				return _customDashPattern.Length;
-			}
-		}
+    public override int Count
+    {
+      get
+      {
+        return _customDashPattern.Length;
+      }
+    }
 
-		public override double DashOffset
-		{
-			get
-			{
-				return _dashOffset;
-			}
-		}
+    public override double DashOffset
+    {
+      get
+      {
+        return _dashOffset;
+      }
+    }
 
-		public override bool Equals(object obj)
-		{
-			var from = obj as Custom;
-			if (null == from)
-				return false;
+    public override bool Equals(object obj)
+    {
+      var from = obj as Custom;
+      if (null == from)
+        return false;
 
-			if (this._customDashPattern.Length != from._customDashPattern.Length)
-				return false;
+      if (this._customDashPattern.Length != from._customDashPattern.Length)
+        return false;
 
-			for (int i = 0; i < _customDashPattern.Length; ++i)
-				if (this._customDashPattern[i] != from._customDashPattern[i])
-					return false;
+      for (int i = 0; i < _customDashPattern.Length; ++i)
+        if (this._customDashPattern[i] != from._customDashPattern[i])
+          return false;
 
-			return true;
-		}
+      return true;
+    }
 
-		public override int GetHashCode()
-		{
-			return GetType().GetHashCode() + _customDashPattern.Length * 17 + _customDashPattern[0].GetHashCode();
-		}
-	}
+    public override int GetHashCode()
+    {
+      return GetType().GetHashCode() + _customDashPattern.Length * 17 + _customDashPattern[0].GetHashCode();
+    }
+  }
 }

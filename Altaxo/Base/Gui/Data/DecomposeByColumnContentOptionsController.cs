@@ -29,61 +29,61 @@ using System.Text;
 
 namespace Altaxo.Gui.Data
 {
-	using Altaxo.Collections;
-	using Altaxo.Data;
+  using Altaxo.Collections;
+  using Altaxo.Data;
 
-	public interface IDecomposeByColumnContentOptionsView
-	{
-		void InitializeDestinationOutputFormat(SelectableListNodeList list);
+  public interface IDecomposeByColumnContentOptionsView
+  {
+    void InitializeDestinationOutputFormat(SelectableListNodeList list);
 
-		void InitializeDestinationColumnSorting(SelectableListNodeList list);
-	}
+    void InitializeDestinationColumnSorting(SelectableListNodeList list);
+  }
 
-	[UserControllerForObject(typeof(DecomposeByColumnContentOptions))]
-	[ExpectedTypeOfView(typeof(IDecomposeByColumnContentOptionsView))]
-	public class DecomposeByColumnContentOptionsController : MVCANControllerEditOriginalDocBase<DecomposeByColumnContentOptions, IDecomposeByColumnContentOptionsView>
-	{
-		private SelectableListNodeList _choicesDestinationOutputFormat;
-		private SelectableListNodeList _choicesDestinationColSort;
+  [UserControllerForObject(typeof(DecomposeByColumnContentOptions))]
+  [ExpectedTypeOfView(typeof(IDecomposeByColumnContentOptionsView))]
+  public class DecomposeByColumnContentOptionsController : MVCANControllerEditOriginalDocBase<DecomposeByColumnContentOptions, IDecomposeByColumnContentOptionsView>
+  {
+    private SelectableListNodeList _choicesDestinationOutputFormat;
+    private SelectableListNodeList _choicesDestinationColSort;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_choicesDestinationOutputFormat = null;
-			_choicesDestinationColSort = null;
+    public override void Dispose(bool isDisposing)
+    {
+      _choicesDestinationOutputFormat = null;
+      _choicesDestinationColSort = null;
 
-			base.Dispose(isDisposing);
-		}
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_choicesDestinationOutputFormat = new SelectableListNodeList();
-				_choicesDestinationOutputFormat.FillWithEnumeration(_doc.DestinationOutput);
+      if (initData)
+      {
+        _choicesDestinationOutputFormat = new SelectableListNodeList();
+        _choicesDestinationOutputFormat.FillWithEnumeration(_doc.DestinationOutput);
 
-				_choicesDestinationColSort = new SelectableListNodeList();
-				_choicesDestinationColSort.FillWithEnumeration(_doc.DestinationColumnSorting);
-			}
-			if (null != _view)
-			{
-				_view.InitializeDestinationOutputFormat(_choicesDestinationOutputFormat);
-				_view.InitializeDestinationColumnSorting(_choicesDestinationColSort);
-			}
-		}
+        _choicesDestinationColSort = new SelectableListNodeList();
+        _choicesDestinationColSort.FillWithEnumeration(_doc.DestinationColumnSorting);
+      }
+      if (null != _view)
+      {
+        _view.InitializeDestinationOutputFormat(_choicesDestinationOutputFormat);
+        _view.InitializeDestinationColumnSorting(_choicesDestinationColSort);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.DestinationOutput = (DecomposeByColumnContentOptions.OutputFormat)_choicesDestinationOutputFormat.FirstSelectedNode.Tag;
-			_doc.DestinationColumnSorting = (DecomposeByColumnContentOptions.OutputSorting)_choicesDestinationColSort.FirstSelectedNode.Tag;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.DestinationOutput = (DecomposeByColumnContentOptions.OutputFormat)_choicesDestinationOutputFormat.FirstSelectedNode.Tag;
+      _doc.DestinationColumnSorting = (DecomposeByColumnContentOptions.OutputSorting)_choicesDestinationColSort.FirstSelectedNode.Tag;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

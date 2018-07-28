@@ -29,42 +29,42 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class CircleBulletPointInset : InsetBase
-	{
-		#region Serialization
+  public class CircleBulletPointInset : InsetBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CircleBulletPointInset), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
-			}
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CircleBulletPointInset), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (CircleBulletPointInset)o ?? new CircleBulletPointInset();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (CircleBulletPointInset)o ?? new CircleBulletPointInset();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
-		{
-			var radius = relativeWidth * ClipperScalingDouble * 2; // we use two times the structure width because it looks better than with only one structure width
-			var list = new List<ClipperLib.IntPoint>(360);
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
+    {
+      var radius = relativeWidth * ClipperScalingDouble * 2; // we use two times the structure width because it looks better than with only one structure width
+      var list = new List<ClipperLib.IntPoint>(360);
 
-			for (int i = 0; i < 360; ++i)
-			{
-				var phi = Math.PI * i / 180.0;
-				list.Add(new ClipperLib.IntPoint((int)(radius * Math.Cos(phi)), (int)(radius * Math.Sin(phi))));
-			}
-			return new List<List<ClipperLib.IntPoint>>(1) { list };
-		}
-	}
+      for (int i = 0; i < 360; ++i)
+      {
+        var phi = Math.PI * i / 180.0;
+        list.Add(new ClipperLib.IntPoint((int)(radius * Math.Cos(phi)), (int)(radius * Math.Sin(phi))));
+      }
+      return new List<List<ClipperLib.IntPoint>>(1) { list };
+    }
+  }
 }

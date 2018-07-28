@@ -33,102 +33,103 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Text
 {
-	/// <summary>
-	/// Contains static methods useful to process markdown annotated text.
-	/// </summary>
-	public static class MarkdownUtilities
-	{
-		/// <summary>
-		/// Uses all extensions supported by <c>Markdig.Wpf</c>.
-		/// </summary>
-		/// <param name="pipeline">The pipeline.</param>
-		/// <returns>The modified pipeline</returns>
-		public static MarkdownPipelineBuilder UseSupportedExtensions(this MarkdownPipelineBuilder pipeline)
-		{
-			if (pipeline == null) throw new ArgumentNullException(nameof(pipeline));
-			return pipeline
-					.UseEmphasisExtras()
-					.UseGridTables()
-					.UsePipeTables()
-					.UseTaskLists()
-					.UseAutoLinks()
-					.UseMathematics()
-					.UseGenericAttributes();
-		}
+  /// <summary>
+  /// Contains static methods useful to process markdown annotated text.
+  /// </summary>
+  public static class MarkdownUtilities
+  {
+    /// <summary>
+    /// Uses all extensions supported by <c>Markdig.Wpf</c>.
+    /// </summary>
+    /// <param name="pipeline">The pipeline.</param>
+    /// <returns>The modified pipeline</returns>
+    public static MarkdownPipelineBuilder UseSupportedExtensions(this MarkdownPipelineBuilder pipeline)
+    {
+      if (pipeline == null)
+        throw new ArgumentNullException(nameof(pipeline));
+      return pipeline
+          .UseEmphasisExtras()
+          .UseGridTables()
+          .UsePipeTables()
+          .UseTaskLists()
+          .UseAutoLinks()
+          .UseMathematics()
+          .UseGenericAttributes();
+    }
 
-		/// <summary>
-		/// Enumerates all objects in a markdown parse tree recursively, starting with the given element.
-		/// </summary>
-		/// <param name="startElement">The start element.</param>
-		/// <returns>All text element (the given text element and all its childs).</returns>
-		public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(this Markdig.Syntax.MarkdownObject startElement)
-		{
-			yield return startElement;
-			var childList = GetChildList(startElement);
-			if (null != childList)
-			{
-				foreach (var child in GetChildList(startElement))
-				{
-					foreach (var childAndSub in EnumerateAllMarkdownObjectsRecursively(child))
-						yield return childAndSub;
-				}
-			}
-		}
+    /// <summary>
+    /// Enumerates all objects in a markdown parse tree recursively, starting with the given element.
+    /// </summary>
+    /// <param name="startElement">The start element.</param>
+    /// <returns>All text element (the given text element and all its childs).</returns>
+    public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(this Markdig.Syntax.MarkdownObject startElement)
+    {
+      yield return startElement;
+      var childList = GetChildList(startElement);
+      if (null != childList)
+      {
+        foreach (var child in GetChildList(startElement))
+        {
+          foreach (var childAndSub in EnumerateAllMarkdownObjectsRecursively(child))
+            yield return childAndSub;
+        }
+      }
+    }
 
-		/// <summary>
-		/// Gets the childs of a markdown object. Null is returned if no childs were to be found.
-		/// </summary>
-		/// <param name="parent">The markdown object from which to get the childs.</param>
-		/// <returns>The childs of the given markdown object, or null.</returns>
-		public static IEnumerable<Markdig.Syntax.MarkdownObject> GetChilds(this Markdig.Syntax.MarkdownObject parent)
-		{
-			if (parent is Markdig.Syntax.LeafBlock leafBlock)
-				return leafBlock.Inline;
-			else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
-				return containerInline;
-			else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
-				return containerBlock;
-			else
-				return null;
-		}
+    /// <summary>
+    /// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+    /// </summary>
+    /// <param name="parent">The markdown object from which to get the childs.</param>
+    /// <returns>The childs of the given markdown object, or null.</returns>
+    public static IEnumerable<Markdig.Syntax.MarkdownObject> GetChilds(this Markdig.Syntax.MarkdownObject parent)
+    {
+      if (parent is Markdig.Syntax.LeafBlock leafBlock)
+        return leafBlock.Inline;
+      else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
+        return containerInline;
+      else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
+        return containerBlock;
+      else
+        return null;
+    }
 
-		/// <summary>
-		/// Gets the childs of a markdown object. Null is returned if no childs were to be found.
-		/// </summary>
-		/// <param name="parent">The markdown object from which to get the childs.</param>
-		/// <returns>The childs of the given markdown object, or null.</returns>
-		public static IReadOnlyList<Markdig.Syntax.MarkdownObject> GetChildList(this Markdig.Syntax.MarkdownObject parent)
-		{
-			if (parent is Markdig.Syntax.LeafBlock leafBlock)
-				return leafBlock.Inline?.ToArray<Markdig.Syntax.MarkdownObject>();
-			else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
-				return containerInline.ToArray<Markdig.Syntax.MarkdownObject>();
-			else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
-				return containerBlock;
-			else
-				return null;
-		}
+    /// <summary>
+    /// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+    /// </summary>
+    /// <param name="parent">The markdown object from which to get the childs.</param>
+    /// <returns>The childs of the given markdown object, or null.</returns>
+    public static IReadOnlyList<Markdig.Syntax.MarkdownObject> GetChildList(this Markdig.Syntax.MarkdownObject parent)
+    {
+      if (parent is Markdig.Syntax.LeafBlock leafBlock)
+        return leafBlock.Inline?.ToArray<Markdig.Syntax.MarkdownObject>();
+      else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
+        return containerInline.ToArray<Markdig.Syntax.MarkdownObject>();
+      else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
+        return containerBlock;
+      else
+        return null;
+    }
 
-		/// <summary>
-		/// Gets a list of all referenced image Urls.
-		/// We use this only in the serialization code to serialize only those local images which are referenced in the markdown.
-		/// </summary>
-		/// <returns>A new list containing all image Urls together with the begin and and of the Url span.</returns>
-		public static List<(string Url, int urlSpanStart, int urlSpanEnd)> GetReferencedImageUrls(MarkdownDocument markdownDocument)
-		{
-			var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>();
+    /// <summary>
+    /// Gets a list of all referenced image Urls.
+    /// We use this only in the serialization code to serialize only those local images which are referenced in the markdown.
+    /// </summary>
+    /// <returns>A new list containing all image Urls together with the begin and and of the Url span.</returns>
+    public static List<(string Url, int urlSpanStart, int urlSpanEnd)> GetReferencedImageUrls(MarkdownDocument markdownDocument)
+    {
+      var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>();
 
-			foreach (var mdo in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(markdownDocument))
-			{
-				if (mdo is LinkInline link)
-				{
-					if (link.IsImage && link.UrlSpan.HasValue)
-					{
-						list.Add((link.Url, link.UrlSpan.Value.Start, link.UrlSpan.Value.End));
-					}
-				}
-			}
-			return list;
-		}
-	}
+      foreach (var mdo in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(markdownDocument))
+      {
+        if (mdo is LinkInline link)
+        {
+          if (link.IsImage && link.UrlSpan.HasValue)
+          {
+            list.Add((link.Url, link.UrlSpan.Value.Start, link.UrlSpan.Value.End));
+          }
+        }
+      }
+      return list;
+    }
+  }
 }

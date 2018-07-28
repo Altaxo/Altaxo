@@ -28,94 +28,94 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
-	/// <summary>
-	/// Formatting with the help of a .NET framework formatting string.
-	/// </summary>
-	public class FreeLabelFormatting : MultiLineLabelFormattingBase
-	{
-		private string _formatString = "{0}";
+  /// <summary>
+  /// Formatting with the help of a .NET framework formatting string.
+  /// </summary>
+  public class FreeLabelFormatting : MultiLineLabelFormattingBase
+  {
+    private string _formatString = "{0}";
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FreeLabelFormatting), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (FreeLabelFormatting)obj;
-				info.AddBaseValueEmbedded(s, typeof(FreeLabelFormatting).BaseType);
-				info.AddValue("FormatString", s._formatString);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FreeLabelFormatting), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (FreeLabelFormatting)obj;
+        info.AddBaseValueEmbedded(s, typeof(FreeLabelFormatting).BaseType);
+        info.AddValue("FormatString", s._formatString);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (FreeLabelFormatting)o ?? new FreeLabelFormatting();
-				info.GetBaseValueEmbedded(s, typeof(FreeLabelFormatting).BaseType, parent);
-				s._formatString = info.GetString("FormatString");
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (FreeLabelFormatting)o ?? new FreeLabelFormatting();
+        info.GetBaseValueEmbedded(s, typeof(FreeLabelFormatting).BaseType, parent);
+        s._formatString = info.GetString("FormatString");
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public FreeLabelFormatting()
-		{
-		}
+    public FreeLabelFormatting()
+    {
+    }
 
-		public FreeLabelFormatting(FreeLabelFormatting from)
-			: base(from) // everything is done here, since CopyFrom is virtual
-		{
-		}
+    public FreeLabelFormatting(FreeLabelFormatting from)
+      : base(from) // everything is done here, since CopyFrom is virtual
+    {
+    }
 
-		public override bool CopyFrom(object obj)
-		{
-			var isCopied = base.CopyFrom(obj);
-			if (isCopied && !object.ReferenceEquals(this, obj))
-			{
-				var from = obj as FreeLabelFormatting;
-				if (null != from)
-				{
-					_formatString = from._formatString;
-				}
-			}
-			return isCopied;
-		}
+    public override bool CopyFrom(object obj)
+    {
+      var isCopied = base.CopyFrom(obj);
+      if (isCopied && !object.ReferenceEquals(this, obj))
+      {
+        var from = obj as FreeLabelFormatting;
+        if (null != from)
+        {
+          _formatString = from._formatString;
+        }
+      }
+      return isCopied;
+    }
 
-		public override object Clone()
-		{
-			return new FreeLabelFormatting(this);
-		}
+    public override object Clone()
+    {
+      return new FreeLabelFormatting(this);
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			yield break;
-		}
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      yield break;
+    }
 
-		public string FormatString
-		{
-			get
-			{
-				return _formatString;
-			}
-			set
-			{
-				_formatString = value;
-			}
-		}
+    public string FormatString
+    {
+      get
+      {
+        return _formatString;
+      }
+      set
+      {
+        _formatString = value;
+      }
+    }
 
-		protected override string FormatItem(AltaxoVariant item)
-		{
-			if (!string.IsNullOrEmpty(_formatString))
-			{
-				try
-				{
-					return string.Format(_formatString, item.ToObject());
-				}
-				catch (Exception)
-				{
-				}
-			}
-			return item.ToString();
-		}
-	}
+    protected override string FormatItem(AltaxoVariant item)
+    {
+      if (!string.IsNullOrEmpty(_formatString))
+      {
+        try
+        {
+          return string.Format(_formatString, item.ToObject());
+        }
+        catch (Exception)
+        {
+        }
+      }
+      return item.ToString();
+    }
+  }
 }

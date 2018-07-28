@@ -28,178 +28,178 @@ using System;
 
 namespace Altaxo.Gui.Pads.Output
 {
-	public interface ITextOutputWindowView
-	{
-		string Text { get; set; }
+  public interface ITextOutputWindowView
+  {
+    string Text { get; set; }
 
-		void AppendText(string text);
-	}
+    void AppendText(string text);
+  }
 
-	/// <summary>
-	/// Controls the Output window pad which shows the Altaxo text output.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(ITextOutputWindowView))]
-	public class TextOutputWindowController :
-		AbstractPadContent, // is a workbench pad
-		ITextOutputService, // implements ITextOutPutService
-		IInfoWarningErrorTextMessageService // by the way also implements this service
-	{
-		private ITextOutputWindowView _view;
+  /// <summary>
+  /// Controls the Output window pad which shows the Altaxo text output.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(ITextOutputWindowView))]
+  public class TextOutputWindowController :
+    AbstractPadContent, // is a workbench pad
+    ITextOutputService, // implements ITextOutPutService
+    IInfoWarningErrorTextMessageService // by the way also implements this service
+  {
+    private ITextOutputWindowView _view;
 
-		private string _initialText;
+    private string _initialText;
 
-		public event Action<InfoWarningErrorTextMessageItem> MessageAdded;
+    public event Action<InfoWarningErrorTextMessageItem> MessageAdded;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TextOutputWindowController"/> class.
-		/// Since this constructor is usually called during creation of the pads, it is not registed as a service with the normal
-		/// service registration codons. Thus we register it as a service here is this constructor.
-		/// </summary>
-		public TextOutputWindowController()
-		{
-			// since this is usually called during creation of the pads, it is not registed as a service with the normal
-			// service registration codons
-			// thus we register it as a service here
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextOutputWindowController"/> class.
+    /// Since this constructor is usually called during creation of the pads, it is not registed as a service with the normal
+    /// service registration codons. Thus we register it as a service here is this constructor.
+    /// </summary>
+    public TextOutputWindowController()
+    {
+      // since this is usually called during creation of the pads, it is not registed as a service with the normal
+      // service registration codons
+      // thus we register it as a service here
 
-			var oldTextOutputService = Current.GetService<ITextOutputService>();
-			if (oldTextOutputService is TextOutputServiceTemporary tempTextOutputService)
-				_initialText = tempTextOutputService.Text;
-			if (null != oldTextOutputService)
-				Current.RemoveService<ITextOutputService>();
-			Current.AddService<ITextOutputService>(this);
+      var oldTextOutputService = Current.GetService<ITextOutputService>();
+      if (oldTextOutputService is TextOutputServiceTemporary tempTextOutputService)
+        _initialText = tempTextOutputService.Text;
+      if (null != oldTextOutputService)
+        Current.RemoveService<ITextOutputService>();
+      Current.AddService<ITextOutputService>(this);
 
-			// ----------- register also as IInfoWarningErrorTextMessageService if not already registered ----------
-			var oldMessageService = Current.GetService<IInfoWarningErrorTextMessageService>();
-			if (null == oldMessageService)
-			{
-				Current.AddService<IInfoWarningErrorTextMessageService>(this);
-			}
-		}
+      // ----------- register also as IInfoWarningErrorTextMessageService if not already registered ----------
+      var oldMessageService = Current.GetService<IInfoWarningErrorTextMessageService>();
+      if (null == oldMessageService)
+      {
+        Current.AddService<IInfoWarningErrorTextMessageService>(this);
+      }
+    }
 
-		#region IPadContent Members
+    #region IPadContent Members
 
-		private void Initialize(bool initData)
-		{
-		}
+    private void Initialize(bool initData)
+    {
+    }
 
-		private void AttachView()
-		{
-			_view.Text = _initialText;
-			_initialText = null;
-		}
+    private void AttachView()
+    {
+      _view.Text = _initialText;
+      _initialText = null;
+    }
 
-		private void DetachView()
-		{
-		}
+    private void DetachView()
+    {
+    }
 
-		public override object ViewObject
-		{
-			get
-			{
-				return this._view;
-			}
-			set
-			{
-				if (!object.ReferenceEquals(_view, value))
-				{
-					if (null != _view)
-						DetachView();
+    public override object ViewObject
+    {
+      get
+      {
+        return this._view;
+      }
+      set
+      {
+        if (!object.ReferenceEquals(_view, value))
+        {
+          if (null != _view)
+            DetachView();
 
-					_view = value as ITextOutputWindowView;
+          _view = value as ITextOutputWindowView;
 
-					if (null != _view)
-					{
-						Initialize(false);
-						AttachView();
-					}
-				}
-			}
-		}
+          if (null != _view)
+          {
+            Initialize(false);
+            AttachView();
+          }
+        }
+      }
+    }
 
-		public override object ModelObject
-		{
-			get
-			{
-				return null;
-			}
-		}
+    public override object ModelObject
+    {
+      get
+      {
+        return null;
+      }
+    }
 
-		#endregion IPadContent Members
+    #endregion IPadContent Members
 
-		#region IOutputService Members
+    #region IOutputService Members
 
-		private void Write_GuiThreadOnly(string text)
-		{
-			_view?.AppendText(text);
+    private void Write_GuiThreadOnly(string text)
+    {
+      _view?.AppendText(text);
 
-			if (!(IsSelected && IsVisible))
-			{
-				var ww = Current.Workbench.ActiveContent;
+      if (!(IsSelected && IsVisible))
+      {
+        var ww = Current.Workbench.ActiveContent;
 
-				// bring this pad to front
-				this.IsActive = true;
-				this.IsSelected = true;
-				this.IsVisible = true;
+        // bring this pad to front
+        this.IsActive = true;
+        this.IsSelected = true;
+        this.IsVisible = true;
 
-				// afterwards, bring originally view content to view
-				if (ww is IViewContent)
-				{
-					ww.IsActive = true;
-					ww.IsSelected = true;
-				}
-			}
-		}
+        // afterwards, bring originally view content to view
+        if (ww is IViewContent)
+        {
+          ww.IsActive = true;
+          ww.IsSelected = true;
+        }
+      }
+    }
 
-		public void Write(string text)
-		{
-			Current.Dispatcher.InvokeIfRequired(Write_GuiThreadOnly, text);
-		}
+    public void Write(string text)
+    {
+      Current.Dispatcher.InvokeIfRequired(Write_GuiThreadOnly, text);
+    }
 
-		public void WriteLine()
-		{
-			Write(System.Environment.NewLine);
-		}
+    public void WriteLine()
+    {
+      Write(System.Environment.NewLine);
+    }
 
-		public void WriteLine(string text)
-		{
-			Write(text + System.Environment.NewLine);
-		}
+    public void WriteLine(string text)
+    {
+      Write(text + System.Environment.NewLine);
+    }
 
-		public void WriteLine(string format, params object[] args)
-		{
-			Write(string.Format(format, args) + System.Environment.NewLine);
-		}
+    public void WriteLine(string format, params object[] args)
+    {
+      Write(string.Format(format, args) + System.Environment.NewLine);
+    }
 
-		public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
-		{
-			Write(string.Format(provider, format, args) + System.Environment.NewLine);
-		}
+    public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
+    {
+      Write(string.Format(provider, format, args) + System.Environment.NewLine);
+    }
 
-		public void Write(string format, params object[] args)
-		{
-			Write(string.Format(format, args));
-		}
+    public void Write(string format, params object[] args)
+    {
+      Write(string.Format(format, args));
+    }
 
-		public void Write(System.IFormatProvider provider, string format, params object[] args)
-		{
-			Write(string.Format(provider, format, args));
-		}
+    public void Write(System.IFormatProvider provider, string format, params object[] args)
+    {
+      Write(string.Format(provider, format, args));
+    }
 
-		public void WriteLine(MessageLevel messageLevel, string source, string message)
-		{
-			Write(string.Format("{0} (source: {1}) : {2}{3}", messageLevel, source, message, System.Environment.NewLine));
-		}
+    public void WriteLine(MessageLevel messageLevel, string source, string message)
+    {
+      Write(string.Format("{0} (source: {1}) : {2}{3}", messageLevel, source, message, System.Environment.NewLine));
+    }
 
-		public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
-		{
-			WriteLine(messageLevel, source, string.Format(format, args));
-		}
+    public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
+    {
+      WriteLine(messageLevel, source, string.Format(format, args));
+    }
 
-		public void WriteLine(MessageLevel messageLevel, string source, IFormatProvider provider, string format, params object[] args)
-		{
-			WriteLine(messageLevel, source, string.Format(provider, format, args));
-		}
+    public void WriteLine(MessageLevel messageLevel, string source, IFormatProvider provider, string format, params object[] args)
+    {
+      WriteLine(messageLevel, source, string.Format(provider, format, args));
+    }
 
-		#endregion IOutputService Members
-	}
+    #endregion IOutputService Members
+  }
 }

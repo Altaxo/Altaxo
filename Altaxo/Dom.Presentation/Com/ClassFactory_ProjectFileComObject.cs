@@ -29,32 +29,32 @@ using System.Text;
 
 namespace Altaxo.Com
 {
-	using UnmanagedApi.Ole32;
+  using UnmanagedApi.Ole32;
 
-	internal class ClassFactory_ProjectFileComObject : ClassFactoryBase
-	{
-		public ClassFactory_ProjectFileComObject(ComManager comManager)
-			: base(comManager)
-		{
-		}
+  internal class ClassFactory_ProjectFileComObject : ClassFactoryBase
+  {
+    public ClassFactory_ProjectFileComObject(ComManager comManager)
+      : base(comManager)
+    {
+    }
 
-		public override void InternalCreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
-		{
-			ComDebug.ReportInfo("{0}.CreateInstance(), requesting interface {1}", this.GetType().Name, riid);
+    public override void InternalCreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
+    {
+      ComDebug.ReportInfo("{0}.CreateInstance(), requesting interface {1}", this.GetType().Name, riid);
 
-			if (riid == Marshal.GenerateGuidForType(typeof(System.Runtime.InteropServices.ComTypes.IPersistFile)) ||
-					riid == Marshal.GenerateGuidForType(typeof(IOleItemContainer)) ||
-				riid == InterfaceGuid.IID_IDispatch ||
-				riid == InterfaceGuid.IID_IUnknown)
-			{
-				// notify the ComManager that we are about to enter linked object mode.
-				_comManager.EnterLinkedObjectMode();
-				ppvObject = Marshal.GetComInterfaceForObject(_comManager.FileComObject, typeof(System.Runtime.InteropServices.ComTypes.IPersistFile));
-			}
-			else
-			{
-				throw new COMException("No interface", unchecked((int)0x80004002));
-			}
-		}
-	}
+      if (riid == Marshal.GenerateGuidForType(typeof(System.Runtime.InteropServices.ComTypes.IPersistFile)) ||
+          riid == Marshal.GenerateGuidForType(typeof(IOleItemContainer)) ||
+        riid == InterfaceGuid.IID_IDispatch ||
+        riid == InterfaceGuid.IID_IUnknown)
+      {
+        // notify the ComManager that we are about to enter linked object mode.
+        _comManager.EnterLinkedObjectMode();
+        ppvObject = Marshal.GetComInterfaceForObject(_comManager.FileComObject, typeof(System.Runtime.InteropServices.ComTypes.IPersistFile));
+      }
+      else
+      {
+        throw new COMException("No interface", unchecked((int)0x80004002));
+      }
+    }
+  }
 }

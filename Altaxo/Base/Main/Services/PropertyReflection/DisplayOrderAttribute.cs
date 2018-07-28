@@ -29,19 +29,19 @@ using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
-	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	public sealed class DisplayOrderAttribute : Attribute
-	{
-		private int _orderIndex;
+  [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+  public sealed class DisplayOrderAttribute : Attribute
+  {
+    private int _orderIndex;
 
-		public DisplayOrderAttribute(int orderIndex)
-		{
-			_orderIndex = orderIndex;
-		}
+    public DisplayOrderAttribute(int orderIndex)
+    {
+      _orderIndex = orderIndex;
+    }
 
-		public int OrderIndex
-		{
-			get { return _orderIndex; }
-		}
-	}
+    public int OrderIndex
+    {
+      get { return _orderIndex; }
+    }
+  }
 }

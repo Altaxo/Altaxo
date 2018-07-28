@@ -34,93 +34,93 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 {
-	[TestFixture]
-	public class TestSquare
-	{
-		[Test]
-		public void TestGeneratedPolygons_WOFrame_WOInset()
-		{
-			List<List<ClipperLib.IntPoint>> framePolygon;
-			List<List<ClipperLib.IntPoint>> insetPolygon;
-			List<List<ClipperLib.IntPoint>> fillPolygon;
+  [TestFixture]
+  public class TestSquare
+  {
+    [Test]
+    public void TestGeneratedPolygons_WOFrame_WOInset()
+    {
+      List<List<ClipperLib.IntPoint>> framePolygon;
+      List<List<ClipperLib.IntPoint>> insetPolygon;
+      List<List<ClipperLib.IntPoint>> fillPolygon;
 
-			var square = new Square();
+      var square = new Square();
 
-			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
-			Assert.IsNull(framePolygon);
-			Assert.IsNull(insetPolygon);
-			Assert.IsNotNull(fillPolygon);
-		}
+      Assert.IsNull(framePolygon);
+      Assert.IsNull(insetPolygon);
+      Assert.IsNotNull(fillPolygon);
+    }
 
-		[Test]
-		public void TestGeneratedPolygons_WithFrame_WOInset()
-		{
-			List<List<ClipperLib.IntPoint>> framePolygon;
-			List<List<ClipperLib.IntPoint>> insetPolygon;
-			List<List<ClipperLib.IntPoint>> fillPolygon;
+    [Test]
+    public void TestGeneratedPolygons_WithFrame_WOInset()
+    {
+      List<List<ClipperLib.IntPoint>> framePolygon;
+      List<List<ClipperLib.IntPoint>> insetPolygon;
+      List<List<ClipperLib.IntPoint>> fillPolygon;
 
-			var square = new Square().WithFrame(new ConstantThicknessFrame()).WithRelativeStructureWidth(0.125);
+      var square = new Square().WithFrame(new ConstantThicknessFrame()).WithRelativeStructureWidth(0.125);
 
-			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
-			Assert.IsNotNull(framePolygon);
-			Assert.IsNull(insetPolygon);
-			Assert.IsNotNull(fillPolygon);
-		}
+      Assert.IsNotNull(framePolygon);
+      Assert.IsNull(insetPolygon);
+      Assert.IsNotNull(fillPolygon);
+    }
 
-		[Test]
-		public void TestGeneratedPolygons_WOFrame_WithInset()
-		{
-			List<List<ClipperLib.IntPoint>> framePolygon;
-			List<List<ClipperLib.IntPoint>> insetPolygon;
-			List<List<ClipperLib.IntPoint>> fillPolygon;
+    [Test]
+    public void TestGeneratedPolygons_WOFrame_WithInset()
+    {
+      List<List<ClipperLib.IntPoint>> framePolygon;
+      List<List<ClipperLib.IntPoint>> insetPolygon;
+      List<List<ClipperLib.IntPoint>> fillPolygon;
 
-			var square = new Square().WithInset(new VerticalBarInset()).WithRelativeStructureWidth(0.125);
+      var square = new Square().WithInset(new VerticalBarInset()).WithRelativeStructureWidth(0.125);
 
-			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
-			Assert.IsNull(framePolygon);
-			Assert.IsNotNull(insetPolygon);
-			Assert.IsNotNull(fillPolygon);
-		}
+      Assert.IsNull(framePolygon);
+      Assert.IsNotNull(insetPolygon);
+      Assert.IsNotNull(fillPolygon);
+    }
 
-		[Test]
-		public void TestGeneratedPolygons_WithFrame_WithInset()
-		{
-			List<List<ClipperLib.IntPoint>> framePolygon;
-			List<List<ClipperLib.IntPoint>> insetPolygon;
-			List<List<ClipperLib.IntPoint>> fillPolygon;
+    [Test]
+    public void TestGeneratedPolygons_WithFrame_WithInset()
+    {
+      List<List<ClipperLib.IntPoint>> framePolygon;
+      List<List<ClipperLib.IntPoint>> insetPolygon;
+      List<List<ClipperLib.IntPoint>> fillPolygon;
 
-			var square = new Square()
-										.WithFrame(new ConstantThicknessFrame())
-										.WithInset(new VerticalBarInset())
-										.WithRelativeStructureWidth(0.125);
+      var square = new Square()
+                    .WithFrame(new ConstantThicknessFrame())
+                    .WithInset(new VerticalBarInset())
+                    .WithRelativeStructureWidth(0.125);
 
-			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
-			Assert.IsNotNull(framePolygon);
-			Assert.IsNotNull(insetPolygon);
-			Assert.IsNotNull(fillPolygon);
-		}
+      Assert.IsNotNull(framePolygon);
+      Assert.IsNotNull(insetPolygon);
+      Assert.IsNotNull(fillPolygon);
+    }
 
-		[Test]
-		public void TestGeneratedPolygons_WithFrame_WithSquarePointInset()
-		{
-			List<List<ClipperLib.IntPoint>> framePolygon;
-			List<List<ClipperLib.IntPoint>> insetPolygon;
-			List<List<ClipperLib.IntPoint>> fillPolygon;
+    [Test]
+    public void TestGeneratedPolygons_WithFrame_WithSquarePointInset()
+    {
+      List<List<ClipperLib.IntPoint>> framePolygon;
+      List<List<ClipperLib.IntPoint>> insetPolygon;
+      List<List<ClipperLib.IntPoint>> fillPolygon;
 
-			var square = new Square()
-										.WithFrame(new ConstantThicknessFrame())
-										.WithInset(new SquarePointInset())
-										.WithRelativeStructureWidth(0.125);
+      var square = new Square()
+                    .WithFrame(new ConstantThicknessFrame())
+                    .WithInset(new SquarePointInset())
+                    .WithRelativeStructureWidth(0.125);
 
-			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
-			Assert.IsNotNull(framePolygon);
-			Assert.IsNotNull(insetPolygon);
-			Assert.IsNotNull(fillPolygon);
-		}
-	}
+      Assert.IsNotNull(framePolygon);
+      Assert.IsNotNull(insetPolygon);
+      Assert.IsNotNull(fillPolygon);
+    }
+  }
 }

@@ -34,76 +34,76 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.DataConnection
 {
-	/// <summary>
-	/// Interaction logic for EntireTableQueryControl.xaml
-	/// </summary>
-	public partial class EntireTableQueryControl : UserControl, IEntireTableQueryView
-	{
-		public event Action ViewResults;
+  /// <summary>
+  /// Interaction logic for EntireTableQueryControl.xaml
+  /// </summary>
+  public partial class EntireTableQueryControl : UserControl, IEntireTableQueryView
+  {
+    public event Action ViewResults;
 
-		/// <summary>
-		/// Occurs when the selected tree node of the schema tree changed.
-		/// </summary>
-		public event Action SelectedSchemaNodeChanged;
+    /// <summary>
+    /// Occurs when the selected tree node of the schema tree changed.
+    /// </summary>
+    public event Action SelectedSchemaNodeChanged;
 
-		public EntireTableQueryControl()
-		{
-			InitializeComponent();
-		}
+    public EntireTableQueryControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhViewResults_Click(object sender, RoutedEventArgs e)
-		{
-			var ev = ViewResults;
-			if (null != ev)
-			{
-				ev();
-			}
-		}
+    private void EhViewResults_Click(object sender, RoutedEventArgs e)
+    {
+      var ev = ViewResults;
+      if (null != ev)
+      {
+        ev();
+      }
+    }
 
-		private void _treeTables_DoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			var ev = ViewResults;
-			if (null != ev)
-				ev();
-		}
+    private void _treeTables_DoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      var ev = ViewResults;
+      if (null != ev)
+        ev();
+    }
 
-		private void EhTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-		{
-			var ev = SelectedSchemaNodeChanged;
-			if (null != ev)
-				ev();
-		}
+    private void EhTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+      var ev = SelectedSchemaNodeChanged;
+      if (null != ev)
+        ev();
+    }
 
-		private void EhTreeViewItem_PreviewRightButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			var twi = sender as TreeViewItem;
-			if (null != twi)
-				twi.IsSelected = true;
-		}
+    private void EhTreeViewItem_PreviewRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      var twi = sender as TreeViewItem;
+      if (null != twi)
+        twi.IsSelected = true;
+    }
 
-		private static IndexToImageConverter _treeImageConverter;
+    private static IndexToImageConverter _treeImageConverter;
 
-		public static IValueConverter TreeImageConverter
-		{
-			get
-			{
-				if (null == _treeImageConverter)
-				{
-					_treeImageConverter = new IndexToImageConverter(
-							new string[]{
-														"Icons.16x16.DataConnection.Table",
-														"Icons.16x16.DataConnection.View",
-														"Icons.16x16.DataConnection.Procedure",
-														"Icons.16x16.DataConnection.Column",
-													});
-				}
-				return _treeImageConverter;
-			}
-		}
+    public static IValueConverter TreeImageConverter
+    {
+      get
+      {
+        if (null == _treeImageConverter)
+        {
+          _treeImageConverter = new IndexToImageConverter(
+              new string[]{
+                            "Icons.16x16.DataConnection.Table",
+                            "Icons.16x16.DataConnection.View",
+                            "Icons.16x16.DataConnection.Procedure",
+                            "Icons.16x16.DataConnection.Column",
+                          });
+        }
+        return _treeImageConverter;
+      }
+    }
 
-		public void SetTreeSource(NGTreeNode rootNode)
-		{
-			_treeTables.ItemsSource = rootNode.Nodes;
-		}
-	}
+    public void SetTreeSource(NGTreeNode rootNode)
+    {
+      _treeTables.ItemsSource = rootNode.Nodes;
+    }
+  }
 }

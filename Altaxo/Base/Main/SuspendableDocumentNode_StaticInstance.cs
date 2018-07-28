@@ -29,117 +29,117 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Base class for a suspendable document node.
-	/// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
-	/// </summary>
-	/// <remarks>If you don't need support for child events, consider using <see cref="T:Altaxo.Main.SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
-	public abstract partial class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode
-	{
-		private class StaticInstanceClass : IDocumentNode
-		{
-			public IDocumentNode ParentObject
-			{
-				get
-				{
-					return null;
-				}
-				set
-				{
-					throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
-				}
-			}
+  /// <summary>
+  /// Base class for a suspendable document node.
+  /// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
+  /// </summary>
+  /// <remarks>If you don't need support for child events, consider using <see cref="T:Altaxo.Main.SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
+  public abstract partial class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode
+  {
+    private class StaticInstanceClass : IDocumentNode
+    {
+      public IDocumentNode ParentObject
+      {
+        get
+        {
+          return null;
+        }
+        set
+        {
+          throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
+        }
+      }
 
-			public string Name
-			{
-				get { return "DocumentNodeStaticInstance"; }
-			}
+      public string Name
+      {
+        get { return "DocumentNodeStaticInstance"; }
+      }
 
-			public event EventHandler Changed;
+      public event EventHandler Changed;
 
-			public ISuspendToken SuspendGetToken()
-			{
-				throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
-			}
+      public ISuspendToken SuspendGetToken()
+      {
+        throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
+      }
 
-			public bool IsSuspended
-			{
-				get
-				{
-					return false;
-				}
-			}
+      public bool IsSuspended
+      {
+        get
+        {
+          return false;
+        }
+      }
 
-			protected void OnChanged()
-			{
-				Changed?.Invoke(this, EventArgs.Empty);
-			}
+      protected void OnChanged()
+      {
+        Changed?.Invoke(this, EventArgs.Empty);
+      }
 
-			public void EhChildChanged(object child, EventArgs e)
-			{
-			}
+      public void EhChildChanged(object child, EventArgs e)
+      {
+      }
 
-			public void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
-			{
-			}
+      public void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
+      {
+      }
 
-			public IDocumentLeafNode GetChildObjectNamed(string name)
-			{
-				return null;
-			}
+      public IDocumentLeafNode GetChildObjectNamed(string name)
+      {
+        return null;
+      }
 
-			public string GetNameOfChildObject(IDocumentLeafNode o)
-			{
-				if (null != o)
-					return "Infrastructure object of type " + o.GetType().FullName;
-				else
-					return "<<null>>";
-			}
+      public string GetNameOfChildObject(IDocumentLeafNode o)
+      {
+        if (null != o)
+          return "Infrastructure object of type " + o.GetType().FullName;
+        else
+          return "<<null>>";
+      }
 
-			public IEnumerable<IDocumentLeafNode> ChildNodes
-			{
-				get { yield break; }
-			}
+      public IEnumerable<IDocumentLeafNode> ChildNodes
+      {
+        get { yield break; }
+      }
 
-			public IDocumentLeafNode ParentNode
-			{
-				get { return null; }
-			}
+      public IDocumentLeafNode ParentNode
+      {
+        get { return null; }
+      }
 
-			public void Dispose()
-			{
-			}
+      public void Dispose()
+      {
+      }
 
-			public event Action<object, object, TunnelingEventArgs> TunneledEvent;
+      public event Action<object, object, TunnelingEventArgs> TunneledEvent;
 
-			protected void OnTunneledEvent(object origin, TunnelingEventArgs e)
-			{
-				TunneledEvent?.Invoke(this, origin, e);
-			}
+      protected void OnTunneledEvent(object origin, TunnelingEventArgs e)
+      {
+        TunneledEvent?.Invoke(this, origin, e);
+      }
 
-			public bool IsDisposed
-			{
-				get { return false; }
-			}
+      public bool IsDisposed
+      {
+        get { return false; }
+      }
 
-			public bool IsDisposeInProgress
-			{
-				get { return false; }
-			}
+      public bool IsDisposeInProgress
+      {
+        get { return false; }
+      }
 
-			public void SetDisposeInProgress()
-			{
-			}
-		}
+      public void SetDisposeInProgress()
+      {
+      }
+    }
 
-		private static IDocumentNode _staticInstance = new StaticInstanceClass();
+    private static IDocumentNode _staticInstance = new StaticInstanceClass();
 
-		/// <summary>
-		/// Gets a single static instance that can be used to give some document nodes a parent, for instance those nodes that are defined as static (Brushes, Pens etc.).
-		/// </summary>
-		/// <value>
-		/// A static instance of <see cref="IDocumentNode"/>.
-		/// </value>
-		public static IDocumentNode StaticInstance { get { return _staticInstance; } }
-	}
+    /// <summary>
+    /// Gets a single static instance that can be used to give some document nodes a parent, for instance those nodes that are defined as static (Brushes, Pens etc.).
+    /// </summary>
+    /// <value>
+    /// A static instance of <see cref="IDocumentNode"/>.
+    /// </value>
+    public static IDocumentNode StaticInstance { get { return _staticInstance; } }
+  }
 }

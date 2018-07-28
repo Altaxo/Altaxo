@@ -31,45 +31,45 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for MultiChoiceControl.xaml
-	/// </summary>
-	public partial class MultiChoiceControl : UserControl, IMultiChoiceView
-	{
-		public MultiChoiceControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for MultiChoiceControl.xaml
+  /// </summary>
+  public partial class MultiChoiceControl : UserControl, IMultiChoiceView
+  {
+    public MultiChoiceControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeDescription(string value)
-		{
-			_edDescription.Text = value;
-		}
+    public void InitializeDescription(string value)
+    {
+      _edDescription.Text = value;
+    }
 
-		public void InitializeColumnNames(string[] colNames)
-		{
-			if (_lvItems.View == null)
-				_lvItems.View = new GridView();
+    public void InitializeColumnNames(string[] colNames)
+    {
+      if (_lvItems.View == null)
+        _lvItems.View = new GridView();
 
-			GridView gv = (GridView)_lvItems.View;
+      GridView gv = (GridView)_lvItems.View;
 
-			gv.Columns.Clear();
+      gv.Columns.Clear();
 
-			int colNo = -1;
-			foreach (var colName in colNames)
-			{
-				++colNo;
+      int colNo = -1;
+      foreach (var colName in colNames)
+      {
+        ++colNo;
 
-				var gvCol = new GridViewColumn() { Header = colName };
-				var binding = new Binding(colNo == 0 ? "Text " : "Text" + colNo.ToString());
-				gvCol.DisplayMemberBinding = binding;
-				gv.Columns.Add(gvCol);
-			}
-		}
+        var gvCol = new GridViewColumn() { Header = colName };
+        var binding = new Binding(colNo == 0 ? "Text " : "Text" + colNo.ToString());
+        gvCol.DisplayMemberBinding = binding;
+        gv.Columns.Add(gvCol);
+      }
+    }
 
-		public void InitializeList(Collections.SelectableListNodeList list)
-		{
-			_lvItems.ItemsSource = list;
-		}
-	}
+    public void InitializeList(Collections.SelectableListNodeList list)
+    {
+      _lvItems.ItemsSource = list;
+    }
+  }
 }

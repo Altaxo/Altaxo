@@ -29,50 +29,50 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Interface for a data object to put data on the clipboard.
-	/// </summary>
-	public interface IClipboardSetDataObject
-	{
-		void SetImage(System.Drawing.Image image);
+  /// <summary>
+  /// Interface for a data object to put data on the clipboard.
+  /// </summary>
+  public interface IClipboardSetDataObject
+  {
+    void SetImage(System.Drawing.Image image);
 
-		void SetFileDropList(System.Collections.Specialized.StringCollection filePaths);
+    void SetFileDropList(System.Collections.Specialized.StringCollection filePaths);
 
-		void SetData(string format, object data);
+    void SetData(string format, object data);
 
-		void SetData(Type format, object data);
+    void SetData(Type format, object data);
 
-		void SetCommaSeparatedValues(string text);
-	}
+    void SetCommaSeparatedValues(string text);
+  }
 
-	/// <summary>
-	/// Interface for a data object to get data from the clipboard.
-	/// </summary>
-	public interface IClipboardGetDataObject
-	{
-		string[] GetFormats();
+  /// <summary>
+  /// Interface for a data object to get data from the clipboard.
+  /// </summary>
+  public interface IClipboardGetDataObject
+  {
+    string[] GetFormats();
 
-		bool GetDataPresent(string format);
+    bool GetDataPresent(string format);
 
-		bool GetDataPresent(System.Type type);
+    bool GetDataPresent(System.Type type);
 
-		object GetData(string format);
+    object GetData(string format);
 
-		object GetData(System.Type type);
+    object GetData(System.Type type);
 
-		bool ContainsFileDropList();
+    bool ContainsFileDropList();
 
-		System.Collections.Specialized.StringCollection GetFileDropList();
+    System.Collections.Specialized.StringCollection GetFileDropList();
 
-		bool ContainsImage();
+    bool ContainsImage();
 
-		System.Drawing.Image GetImage();
+    System.Drawing.Image GetImage();
 
-		/// <summary>
-		/// Gets the bitmap image on the clipboard as optimized memory stream. Optimized means that it will be tested whether compression
-		/// with jpeg or with png is more efficient, and the stream that is smaller in size will be returned.
-		/// </summary>
-		/// <returns>If successfull, the stream and the file extension that describes the kind of stream. If unsuccessfull, the tuple (null, null) is returned.</returns>
-		(System.IO.Stream, string fileExtension) GetBitmapImageAsOptimizedMemoryStream();
-	}
+    /// <summary>
+    /// Gets the bitmap image on the clipboard as optimized memory stream. Optimized means that it will be tested whether compression
+    /// with jpeg or with png is more efficient, and the stream that is smaller in size will be returned.
+    /// </summary>
+    /// <returns>If successfull, the stream and the file extension that describes the kind of stream. If unsuccessfull, the tuple (null, null) is returned.</returns>
+    (System.IO.Stream, string fileExtension) GetBitmapImageAsOptimizedMemoryStream();
+  }
 }

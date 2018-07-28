@@ -31,94 +31,94 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Data
 {
-	using Altaxo.Collections;
+  using Altaxo.Collections;
 
-	/// <summary>
-	/// Interaction logic for ExpandCyclingVariableControl.xaml
-	/// </summary>
-	public partial class ExpandCyclingVariableDataControl : UserControl, IExpandCyclingVariableDataView
-	{
-		public event Action SelectedTableChanged;
+  /// <summary>
+  /// Interaction logic for ExpandCyclingVariableControl.xaml
+  /// </summary>
+  public partial class ExpandCyclingVariableDataControl : UserControl, IExpandCyclingVariableDataView
+  {
+    public event Action SelectedTableChanged;
 
-		public event Action SelectedGroupNumberChanged;
+    public event Action SelectedGroupNumberChanged;
 
-		public event Action UseSelectedAvailableColumnsAsParticipatingColumns;
+    public event Action UseSelectedAvailableColumnsAsParticipatingColumns;
 
-		public event Action DeleteSelectedParticipatingColumn;
+    public event Action DeleteSelectedParticipatingColumn;
 
-		public ExpandCyclingVariableDataControl()
-		{
-			InitializeComponent();
-		}
+    public ExpandCyclingVariableDataControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeCyclingVariableColumn(SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiColumnWithCyclingVariable, list);
-		}
+    public void InitializeCyclingVariableColumn(SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiColumnWithCyclingVariable, list);
+    }
 
-		private void EhCyclicVariableColumnChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiColumnWithCyclingVariable);
-		}
+    private void EhCyclicVariableColumnChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiColumnWithCyclingVariable);
+    }
 
-		public void InitializeColumnsToAverage(SelectableListNodeList list)
-		{
-			_guiColumnsToAverage.Initialize(list);
-		}
+    public void InitializeColumnsToAverage(SelectableListNodeList list)
+    {
+      _guiColumnsToAverage.Initialize(list);
+    }
 
-		private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(this._guiAvailableTables);
-			if (null != SelectedTableChanged)
-				SelectedTableChanged();
-		}
+    private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(this._guiAvailableTables);
+      if (null != SelectedTableChanged)
+        SelectedTableChanged();
+    }
 
-		private void EhUseSelectedAvailableColumnsAsParticipatingColumns(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-			if (null != UseSelectedAvailableColumnsAsParticipatingColumns)
-				UseSelectedAvailableColumnsAsParticipatingColumns();
-		}
+    private void EhUseSelectedAvailableColumnsAsParticipatingColumns(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
+      if (null != UseSelectedAvailableColumnsAsParticipatingColumns)
+        UseSelectedAvailableColumnsAsParticipatingColumns();
+    }
 
-		private void EhDeleteSelectedParticipatingColumn(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiColumnsParticipating);
-			if (null != DeleteSelectedParticipatingColumn)
-				DeleteSelectedParticipatingColumn();
-		}
+    private void EhDeleteSelectedParticipatingColumn(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiColumnsParticipating);
+      if (null != DeleteSelectedParticipatingColumn)
+        DeleteSelectedParticipatingColumn();
+    }
 
-		public void InitializeAvailableTables(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiAvailableTables, items);
-		}
+    public void InitializeAvailableTables(SelectableListNodeList items)
+    {
+      GuiHelper.Initialize(_guiAvailableTables, items);
+    }
 
-		private void EhGroupNumberChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
-		{
-			var ev = SelectedGroupNumberChanged;
-			if (null != ev)
-				ev();
-		}
+    private void EhGroupNumberChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
+    {
+      var ev = SelectedGroupNumberChanged;
+      if (null != ev)
+        ev();
+    }
 
-		public int GroupNumber
-		{
-			get
-			{
-				return _guiGroupNumber.Value;
-			}
-			set
-			{
-				_guiGroupNumber.Value = value;
-			}
-		}
+    public int GroupNumber
+    {
+      get
+      {
+        return _guiGroupNumber.Value;
+      }
+      set
+      {
+        _guiGroupNumber.Value = value;
+      }
+    }
 
-		public void InitializeAvailableColumns(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiAvailableColumnNames, items);
-		}
+    public void InitializeAvailableColumns(SelectableListNodeList items)
+    {
+      GuiHelper.Initialize(_guiAvailableColumnNames, items);
+    }
 
-		public void InitializeParticipatingColumns(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiColumnsParticipating, items);
-		}
-	}
+    public void InitializeParticipatingColumns(SelectableListNodeList items)
+    {
+      GuiHelper.Initialize(_guiColumnsParticipating, items);
+    }
+  }
 }

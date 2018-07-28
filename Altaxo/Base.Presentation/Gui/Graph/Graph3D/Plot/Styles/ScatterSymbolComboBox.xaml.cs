@@ -38,46 +38,46 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-	public abstract class ScatterSymbolComboBoxBase : Altaxo.Gui.Drawing.StyleListComboBoxBase<ScatterSymbolListManager, ScatterSymbolList, IScatterSymbol>
-	{
-		public ScatterSymbolComboBoxBase(ScatterSymbolListManager manager) : base(manager)
-		{
-		}
-	}
+  public abstract class ScatterSymbolComboBoxBase : Altaxo.Gui.Drawing.StyleListComboBoxBase<ScatterSymbolListManager, ScatterSymbolList, IScatterSymbol>
+  {
+    public ScatterSymbolComboBoxBase(ScatterSymbolListManager manager) : base(manager)
+    {
+    }
+  }
 
-	/// <summary>
-	/// Interaction logic for ColorComboBoxEx.xaml
-	/// </summary>
-	public partial class ScatterSymbolComboBox : ScatterSymbolComboBoxBase
-	{
-		private ScatterSymbolToItemNameConverter _itemToItemNameConverter = new ScatterSymbolToItemNameConverter();
+  /// <summary>
+  /// Interaction logic for ColorComboBoxEx.xaml
+  /// </summary>
+  public partial class ScatterSymbolComboBox : ScatterSymbolComboBoxBase
+  {
+    private ScatterSymbolToItemNameConverter _itemToItemNameConverter = new ScatterSymbolToItemNameConverter();
 
-		#region Constructors
+    #region Constructors
 
-		public ScatterSymbolComboBox()
-			: base(ScatterSymbolListManager.Instance)
-		{
-			UpdateTreeViewTreeNodes();
+    public ScatterSymbolComboBox()
+      : base(ScatterSymbolListManager.Instance)
+    {
+      UpdateTreeViewTreeNodes();
 
-			InitializeComponent();
+      InitializeComponent();
 
-			UpdateComboBoxSourceSelection(SelectedItem);
-			UpdateTreeViewSelection();
-		}
+      UpdateComboBoxSourceSelection(SelectedItem);
+      UpdateTreeViewSelection();
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Implementation of abstract base class members
+    #region Implementation of abstract base class members
 
-		protected override TreeView GuiTreeView { get { return _guiTreeView; } }
+    protected override TreeView GuiTreeView { get { return _guiTreeView; } }
 
-		protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
+    protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
 
-		public override string GetDisplayName(IScatterSymbol item)
-		{
-			return (string)_itemToItemNameConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture);
-		}
+    public override string GetDisplayName(IScatterSymbol item)
+    {
+      return (string)_itemToItemNameConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture);
+    }
 
-		#endregion Implementation of abstract base class members
-	}
+    #endregion Implementation of abstract base class members
+  }
 }

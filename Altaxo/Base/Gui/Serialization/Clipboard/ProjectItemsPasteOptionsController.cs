@@ -29,47 +29,47 @@ using System.Text;
 
 namespace Altaxo.Gui.Serialization.Clipboard
 {
-	using Altaxo.Serialization.Clipboard;
+  using Altaxo.Serialization.Clipboard;
 
-	public interface IProjectItemsPasteOptionsView
-	{
-		/// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
-		/// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
-		bool RelocateReferences { get; set; }
+  public interface IProjectItemsPasteOptionsView
+  {
+    /// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
+    /// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
+    bool RelocateReferences { get; set; }
 
-		/// <summary>
-		/// When true, at serialization the internal references are tried to keep internal, i.e. if for instance a table have to be renamed, the plot items in the deserialized graphs
-		/// will be relocated to the renamed table.
-		/// </summary>
-		bool TryToKeepInternalReferences { get; set; }
-	}
+    /// <summary>
+    /// When true, at serialization the internal references are tried to keep internal, i.e. if for instance a table have to be renamed, the plot items in the deserialized graphs
+    /// will be relocated to the renamed table.
+    /// </summary>
+    bool TryToKeepInternalReferences { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IProjectItemsPasteOptionsView))]
-	[UserControllerForObject(typeof(ProjectItemsPasteOptions))]
-	public class ProjectItemsPasteOptionsController : MVCANControllerEditOriginalDocBase<ProjectItemsPasteOptions, IProjectItemsPasteOptionsView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [ExpectedTypeOfView(typeof(IProjectItemsPasteOptionsView))]
+  [UserControllerForObject(typeof(ProjectItemsPasteOptions))]
+  public class ProjectItemsPasteOptionsController : MVCANControllerEditOriginalDocBase<ProjectItemsPasteOptions, IProjectItemsPasteOptionsView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.RelocateReferences = _doc.RelocateReferences.HasValue ? _doc.RelocateReferences.Value : true;
-				_view.TryToKeepInternalReferences = _doc.TryToKeepInternalReferences.HasValue ? _doc.TryToKeepInternalReferences.Value : true;
-			}
-		}
+      if (null != _view)
+      {
+        _view.RelocateReferences = _doc.RelocateReferences.HasValue ? _doc.RelocateReferences.Value : true;
+        _view.TryToKeepInternalReferences = _doc.TryToKeepInternalReferences.HasValue ? _doc.TryToKeepInternalReferences.Value : true;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.RelocateReferences = _view.RelocateReferences;
-			_doc.TryToKeepInternalReferences = _view.TryToKeepInternalReferences;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.RelocateReferences = _view.RelocateReferences;
+      _doc.TryToKeepInternalReferences = _view.TryToKeepInternalReferences;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

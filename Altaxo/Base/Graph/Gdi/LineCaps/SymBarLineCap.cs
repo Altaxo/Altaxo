@@ -30,55 +30,55 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
-	/// <summary>
-	/// Draws a cap that is a line perpendicular to the end of the line, and on the right side of the line.
-	/// </summary>
-	public class SymBarLineCap : LineCapExtension
-	{
-		public SymBarLineCap()
-		{
-		}
+  /// <summary>
+  /// Draws a cap that is a line perpendicular to the end of the line, and on the right side of the line.
+  /// </summary>
+  public class SymBarLineCap : LineCapExtension
+  {
+    public SymBarLineCap()
+    {
+    }
 
-		public SymBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-			: base(minimumAbsoluteSizePt, minimumRelativeSize)
-		{
-		}
+    public SymBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
+    {
+    }
 
-		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
-		{
-			return new SymBarLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-		}
+    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    {
+      return new SymBarLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+    }
 
-		public override string Name { get { return "BarSym"; } }
+    public override string Name { get { return "BarSym"; } }
 
-		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
-		public override double DefaultMinimumRelativeSize { get { return 4; } }
+    public override double DefaultMinimumRelativeSize { get { return 4; } }
 
-		private CustomLineCap GetClone(Pen pen, float size)
-		{
-			float endPoint;
+    private CustomLineCap GetClone(Pen pen, float size)
+    {
+      float endPoint;
 
-			endPoint = pen.Width == 0 ? 1 : size / pen.Width;
+      endPoint = pen.Width == 0 ? 1 : size / pen.Width;
 
-			GraphicsPath hPath = new GraphicsPath();
-			// Create the outline for our custom end cap.
-			hPath.AddLine(new PointF(-endPoint / 2, 0), new PointF(endPoint / 2, 0));
-			CustomLineCap clone = new CustomLineCap(null, hPath); // we set the stroke path only
-			clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
-			return clone;
-		}
+      GraphicsPath hPath = new GraphicsPath();
+      // Create the outline for our custom end cap.
+      hPath.AddLine(new PointF(-endPoint / 2, 0), new PointF(endPoint / 2, 0));
+      CustomLineCap clone = new CustomLineCap(null, hPath); // we set the stroke path only
+      clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
+      return clone;
+    }
 
-		public override void SetStartCap(Pen pen, float size)
-		{
-			pen.StartCap = LineCap.Custom;
-			pen.CustomStartCap = GetClone(pen, size);
-		}
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Custom;
+      pen.CustomStartCap = GetClone(pen, size);
+    }
 
-		public override void SetEndCap(Pen pen, float size)
-		{
-			pen.EndCap = LineCap.Custom;
-			pen.CustomEndCap = GetClone(pen, size);
-		}
-	}
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.EndCap = LineCap.Custom;
+      pen.CustomEndCap = GetClone(pen, size);
+    }
+  }
 }

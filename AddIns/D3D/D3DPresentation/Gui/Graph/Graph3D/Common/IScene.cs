@@ -19,61 +19,61 @@
 // THE SOFTWARE.
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
-	using Altaxo.Geometry;
-	using SharpDX.Direct3D10;
-	using System;
+  using Altaxo.Geometry;
+  using SharpDX.Direct3D10;
+  using System;
 
-	/// <summary>
-	/// Scene.
-	/// </summary>
-	public interface IScene
-	{
-		/// <summary>
-		/// Attaches the scene to the specified scene host.
-		/// </summary>
-		/// <param name="host">The scene host.</param>
-		void Attach(SharpDX.ComObject hostDevice, PointD2D hostSize);
+  /// <summary>
+  /// Scene.
+  /// </summary>
+  public interface IScene
+  {
+    /// <summary>
+    /// Attaches the scene to the specified scene host.
+    /// </summary>
+    /// <param name="host">The scene host.</param>
+    void Attach(SharpDX.ComObject hostDevice, PointD2D hostSize);
 
-		/// <summary>
-		/// Informes the scene that the host size has changed.
-		/// </summary>
-		/// <param name="hostSize">Size of the host.</param>
-		void SetHostSize(PointD2D hostSize);
+    /// <summary>
+    /// Informes the scene that the host size has changed.
+    /// </summary>
+    /// <param name="hostSize">Size of the host.</param>
+    void SetHostSize(PointD2D hostSize);
 
-		/// <summary>
-		/// Detaches this scene from the scene host.
-		/// </summary>
-		void Detach();
+    /// <summary>
+    /// Detaches this scene from the scene host.
+    /// </summary>
+    void Detach();
 
-		/// <summary>
-		/// Updates the scene, taking into account the specified time.
-		/// </summary>
-		/// <param name="timeSpan">The current scene time.</param>
-		void Update(TimeSpan timeSpan);
+    /// <summary>
+    /// Updates the scene, taking into account the specified time.
+    /// </summary>
+    /// <param name="timeSpan">The current scene time.</param>
+    void Update(TimeSpan timeSpan);
 
-		/// <summary>
-		/// Renders this scene to the scene host.
-		/// </summary>
-		void Render();
+    /// <summary>
+    /// Renders this scene to the scene host.
+    /// </summary>
+    void Render();
 
-		/// <summary>
-		/// Gets the color of the scene background. If null is returned, the render function is free to use its own color as scene background.
-		/// </summary>
-		/// <value>
-		/// The color of the scene background.
-		/// </value>
-		Altaxo.Drawing.AxoColor? SceneBackgroundColor { get; }
-	}
+    /// <summary>
+    /// Gets the color of the scene background. If null is returned, the render function is free to use its own color as scene background.
+    /// </summary>
+    /// <value>
+    /// The color of the scene background.
+    /// </value>
+    Altaxo.Drawing.AxoColor? SceneBackgroundColor { get; }
+  }
 
-	/// <summary>
-	/// Scene.
-	/// </summary>
-	public interface ID3D10Scene : IScene
-	{
-		/// <summary>
-		/// Attaches the scene to the specified scene host.
-		/// </summary>
-		/// <param name="host">The scene host.</param>
-		void Attach(SharpDX.Direct3D10.Device hostDevice, PointD2D hostSize);
-	}
+  /// <summary>
+  /// Scene.
+  /// </summary>
+  public interface ID3D10Scene : IScene
+  {
+    /// <summary>
+    /// Attaches the scene to the specified scene host.
+    /// </summary>
+    /// <param name="host">The scene host.</param>
+    void Attach(SharpDX.Direct3D10.Device hostDevice, PointD2D hostSize);
+  }
 }

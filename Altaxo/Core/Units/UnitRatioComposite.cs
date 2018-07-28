@@ -30,104 +30,104 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units
 {
-	/// <summary>
-	/// A composite unit as a ratio of two units. Example 'K' as nominator and 's' as denominator units results in temperature rate 'K/s'.
-	/// </summary>
-	/// <seealso cref="Altaxo.Units.IUnit" />
-	public class UnitRatioComposite : IUnit
-	{
-		private SIPrefix _nominatorPrefix;
-		private IUnit _nominatorUnit;
-		private SIPrefix _denominatorPrefix;
-		private IUnit _denominatorUnit;
+  /// <summary>
+  /// A composite unit as a ratio of two units. Example 'K' as nominator and 's' as denominator units results in temperature rate 'K/s'.
+  /// </summary>
+  /// <seealso cref="Altaxo.Units.IUnit" />
+  public class UnitRatioComposite : IUnit
+  {
+    private SIPrefix _nominatorPrefix;
+    private IUnit _nominatorUnit;
+    private SIPrefix _denominatorPrefix;
+    private IUnit _denominatorUnit;
 
-		public UnitRatioComposite(SIPrefix nominatorPrefix, IUnit nominatorUnit, SIPrefix denominatorPrefix, IUnit denominatorUnit)
-		{
-			_nominatorPrefix = nominatorPrefix ?? SIPrefix.None;
-			_nominatorUnit = nominatorUnit ?? throw new ArgumentException(nameof(nominatorUnit));
-			_denominatorPrefix = denominatorPrefix ?? SIPrefix.None;
-			_denominatorUnit = denominatorUnit ?? throw new ArgumentException(nameof(denominatorUnit));
-		}
+    public UnitRatioComposite(SIPrefix nominatorPrefix, IUnit nominatorUnit, SIPrefix denominatorPrefix, IUnit denominatorUnit)
+    {
+      _nominatorPrefix = nominatorPrefix ?? SIPrefix.None;
+      _nominatorUnit = nominatorUnit ?? throw new ArgumentException(nameof(nominatorUnit));
+      _denominatorPrefix = denominatorPrefix ?? SIPrefix.None;
+      _denominatorUnit = denominatorUnit ?? throw new ArgumentException(nameof(denominatorUnit));
+    }
 
-		public string Name
-		{
-			get
-			{
-				return _nominatorUnit.Name + "/" + _denominatorUnit.Name;
-			}
-		}
+    public string Name
+    {
+      get
+      {
+        return _nominatorUnit.Name + "/" + _denominatorUnit.Name;
+      }
+    }
 
-		public string ShortCut
-		{
-			get
-			{
-				return _nominatorPrefix.ShortCut + _nominatorUnit.ShortCut + "/" + _denominatorPrefix.ShortCut + _denominatorUnit.ShortCut;
-			}
-		}
+    public string ShortCut
+    {
+      get
+      {
+        return _nominatorPrefix.ShortCut + _nominatorUnit.ShortCut + "/" + _denominatorPrefix.ShortCut + _denominatorUnit.ShortCut;
+      }
+    }
 
-		public ISIPrefixList Prefixes
-		{
-			get
-			{
-				return _nominatorPrefix == SIPrefix.None ? _nominatorUnit.Prefixes : SIPrefix.ListWithNonePrefixOnly;
-			}
-		}
+    public ISIPrefixList Prefixes
+    {
+      get
+      {
+        return _nominatorPrefix == SIPrefix.None ? _nominatorUnit.Prefixes : SIPrefix.ListWithNonePrefixOnly;
+      }
+    }
 
-		public SIUnit SIUnit
-		{
-			get
-			{
-				return _nominatorUnit.SIUnit / _denominatorUnit.SIUnit;
-			}
-		}
+    public SIUnit SIUnit
+    {
+      get
+      {
+        return _nominatorUnit.SIUnit / _denominatorUnit.SIUnit;
+      }
+    }
 
-		public double FromSIUnit(double x)
-		{
-			var a = _nominatorUnit.FromSIUnit(1) / Altaxo.Calc.RMath.Pow(10, _nominatorPrefix?.Exponent ?? 0);
-			var b = _denominatorUnit.FromSIUnit(1) / Altaxo.Calc.RMath.Pow(10, _denominatorPrefix?.Exponent ?? 0);
+    public double FromSIUnit(double x)
+    {
+      var a = _nominatorUnit.FromSIUnit(1) / Altaxo.Calc.RMath.Pow(10, _nominatorPrefix?.Exponent ?? 0);
+      var b = _denominatorUnit.FromSIUnit(1) / Altaxo.Calc.RMath.Pow(10, _denominatorPrefix?.Exponent ?? 0);
 
-			return x * a / b;
-		}
+      return x * a / b;
+    }
 
-		public double ToSIUnit(double x)
-		{
-			// Attention: both nominator and denominator must be expressed as differences!
-			// Otherwise for instance °C/s-> K/s and the like would give wrong results!
-			double nom_diff = _nominatorUnit.ToSIUnit(_nominatorPrefix.ToSIUnit(1)) - _nominatorUnit.ToSIUnit(0);
-			double denom_diff = _denominatorUnit.ToSIUnit(_denominatorPrefix.ToSIUnit(1)) - _denominatorUnit.ToSIUnit(0);
-			return x * nom_diff / denom_diff;
-		}
+    public double ToSIUnit(double x)
+    {
+      // Attention: both nominator and denominator must be expressed as differences!
+      // Otherwise for instance °C/s-> K/s and the like would give wrong results!
+      double nom_diff = _nominatorUnit.ToSIUnit(_nominatorPrefix.ToSIUnit(1)) - _nominatorUnit.ToSIUnit(0);
+      double denom_diff = _denominatorUnit.ToSIUnit(_denominatorPrefix.ToSIUnit(1)) - _denominatorUnit.ToSIUnit(0);
+      return x * nom_diff / denom_diff;
+    }
 
-		public SIPrefix NominatorPrefix
-		{
-			get
-			{
-				return _nominatorPrefix;
-			}
-		}
+    public SIPrefix NominatorPrefix
+    {
+      get
+      {
+        return _nominatorPrefix;
+      }
+    }
 
-		public IUnit NominatorUnit
-		{
-			get
-			{
-				return _nominatorUnit;
-			}
-		}
+    public IUnit NominatorUnit
+    {
+      get
+      {
+        return _nominatorUnit;
+      }
+    }
 
-		public SIPrefix DenominatorPrefix
-		{
-			get
-			{
-				return _denominatorPrefix;
-			}
-		}
+    public SIPrefix DenominatorPrefix
+    {
+      get
+      {
+        return _denominatorPrefix;
+      }
+    }
 
-		public IUnit DenominatorUnit
-		{
-			get
-			{
-				return _denominatorUnit;
-			}
-		}
-	}
+    public IUnit DenominatorUnit
+    {
+      get
+      {
+        return _denominatorUnit;
+      }
+    }
+  }
 }

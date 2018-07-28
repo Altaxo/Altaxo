@@ -20,8 +20,8 @@ using System;
 
 namespace Altaxo.Main.Services
 {
-	public interface IStringTagProvider
-	{
-		string ProvideString(string tag, StringTagPair[] customTags);
-	}
+  public interface IStringTagProvider
+  {
+    string ProvideString(string tag, StringTagPair[] customTags);
+  }
 }

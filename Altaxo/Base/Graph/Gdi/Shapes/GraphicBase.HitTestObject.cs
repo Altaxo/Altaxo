@@ -29,119 +29,119 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	public abstract partial class GraphicBase
-	{
-		protected class GraphicBaseHitTestObject : HitTestObjectBase
-		{
-			/// <summary>
-			/// Creates a new HitTestObject.
-			/// </summary>
-			/// <param name="parent">The hitted object.</param>
-			public GraphicBaseHitTestObject(GraphicBase parent)
-				: base(parent)
-			{
-			}
+  public abstract partial class GraphicBase
+  {
+    protected class GraphicBaseHitTestObject : HitTestObjectBase
+    {
+      /// <summary>
+      /// Creates a new HitTestObject.
+      /// </summary>
+      /// <param name="parent">The hitted object.</param>
+      public GraphicBaseHitTestObject(GraphicBase parent)
+        : base(parent)
+      {
+      }
 
-			/// <summary>
-			/// Shifts the position of the object by x and y. Used to arrange objects.
-			/// </summary>
-			/// <param name="dx">Shift value of x in page coordinates.</param>
-			/// <param name="dy">Shift value of y in page coordinates.</param>
-			public override void ShiftPosition(double dx, double dy)
-			{
-				if (_hitobject is GraphicBase)
-				{
-					var deltaPos = _matrix.InverseTransformVector(new PointD2D(dx, dy)); // Transform to the object's parent coordinates
-					((GraphicBase)_hitobject).X += deltaPos.X;
-					((GraphicBase)_hitobject).Y += deltaPos.Y;
-				}
-			}
+      /// <summary>
+      /// Shifts the position of the object by x and y. Used to arrange objects.
+      /// </summary>
+      /// <param name="dx">Shift value of x in page coordinates.</param>
+      /// <param name="dy">Shift value of y in page coordinates.</param>
+      public override void ShiftPosition(double dx, double dy)
+      {
+        if (_hitobject is GraphicBase)
+        {
+          var deltaPos = _matrix.InverseTransformVector(new PointD2D(dx, dy)); // Transform to the object's parent coordinates
+          ((GraphicBase)_hitobject).X += deltaPos.X;
+          ((GraphicBase)_hitobject).Y += deltaPos.Y;
+        }
+      }
 
-			public override void ChangeSize(double? x, double? y)
-			{
-				var hit = _hitobject as GraphicBase;
+      public override void ChangeSize(double? x, double? y)
+      {
+        var hit = _hitobject as GraphicBase;
 
-				PointD2D currentSizeRootCoord = this.ObjectOutlineForArrangements.GetBounds().Size;
-				PointD2D destinationSizeRootCoord = currentSizeRootCoord;
-				if (x.HasValue)
-					destinationSizeRootCoord = destinationSizeRootCoord.WithX(x.Value);
-				if (y.HasValue)
-					destinationSizeRootCoord = destinationSizeRootCoord.WithY(y.Value);
+        PointD2D currentSizeRootCoord = this.ObjectOutlineForArrangements.GetBounds().Size;
+        PointD2D destinationSizeRootCoord = currentSizeRootCoord;
+        if (x.HasValue)
+          destinationSizeRootCoord = destinationSizeRootCoord.WithX(x.Value);
+        if (y.HasValue)
+          destinationSizeRootCoord = destinationSizeRootCoord.WithY(y.Value);
 
-				if (null != hit)
-				{
-					if (!hit.AutoSize)
-					{
-						var t = _matrix.Clone();
-						t.AppendTransform(hit._transformation);
-						var innerRect = RectangleD2DExtensions.GetIncludedTransformedRectangle(new RectangleD2D(PointD2D.Empty, destinationSizeRootCoord), t.SX, t.RX, t.RY, t.SY);
-						hit.Width = innerRect.Width;
-						hit.Height = innerRect.Height;
-					}
-				}
-			}
+        if (null != hit)
+        {
+          if (!hit.AutoSize)
+          {
+            var t = _matrix.Clone();
+            t.AppendTransform(hit._transformation);
+            var innerRect = RectangleD2DExtensions.GetIncludedTransformedRectangle(new RectangleD2D(PointD2D.Empty, destinationSizeRootCoord), t.SX, t.RX, t.RY, t.SY);
+            hit.Width = innerRect.Width;
+            hit.Height = innerRect.Height;
+          }
+        }
+      }
 
-			public override GraphicsPath ObjectOutlineForArrangements
-			{
-				get
-				{
-					var objPath = ((GraphicBase)_hitobject).GetObjectOutlineForArrangements();
-					objPath.Transform(((GraphicBase)_hitobject)._transformation);
-					objPath.Transform(this.Transformation);
-					return objPath;
-				}
-			}
+      public override GraphicsPath ObjectOutlineForArrangements
+      {
+        get
+        {
+          var objPath = ((GraphicBase)_hitobject).GetObjectOutlineForArrangements();
+          objPath.Transform(((GraphicBase)_hitobject)._transformation);
+          objPath.Transform(this.Transformation);
+          return objPath;
+        }
+      }
 
-			public override int GetNextGripLevel(int currentGripLevel)
-			{
-				int newLevel = 1 + currentGripLevel;
-				int maxLevel = ((GraphicBase)_hitobject).AutoSize ? 3 : 4;
-				if (newLevel > maxLevel)
-					newLevel = 1;
-				return newLevel;
-			}
+      public override int GetNextGripLevel(int currentGripLevel)
+      {
+        int newLevel = 1 + currentGripLevel;
+        int maxLevel = ((GraphicBase)_hitobject).AutoSize ? 3 : 4;
+        if (newLevel > maxLevel)
+          newLevel = 1;
+        return newLevel;
+      }
 
-			public override IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
-			{
-				if (((GraphicBase)_hitobject).AutoSize)
-				{
-					switch (gripLevel)
-					{
-						case 0:
-							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move);
+      public override IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
+      {
+        if (((GraphicBase)_hitobject).AutoSize)
+        {
+          switch (gripLevel)
+          {
+            case 0:
+              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move);
 
-						case 1:
-							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rotate);
+            case 1:
+              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rotate);
 
-						case 2:
-							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rescale);
+            case 2:
+              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rescale);
 
-						case 3:
-							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Shear);
-					}
-				}
-				else // a normal object
-				{
-					switch (gripLevel)
-					{
-						case 0:
-							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move);
+            case 3:
+              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Shear);
+          }
+        }
+        else // a normal object
+        {
+          switch (gripLevel)
+          {
+            case 0:
+              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move);
 
-						case 1:
-							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Resize);
+            case 1:
+              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Resize);
 
-						case 2:
-							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rotate);
+            case 2:
+              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rotate);
 
-						case 3:
-							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Shear);
+            case 3:
+              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Shear);
 
-						case 4:
-							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rescale);
-					}
-				}
-				return null;
-			}
-		}
-	}
+            case 4:
+              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rescale);
+          }
+        }
+        return null;
+      }
+    }
+  }
 }

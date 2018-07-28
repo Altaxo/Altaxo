@@ -31,51 +31,51 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-	/// <summary>
-	/// Interaction logic for GraphicItemsControl.xaml
-	/// </summary>
-	public partial class GraphicItemsControl : UserControl, IGraphicItemsView
-	{
-		public event Action SelectedItemsUp;
+  /// <summary>
+  /// Interaction logic for GraphicItemsControl.xaml
+  /// </summary>
+  public partial class GraphicItemsControl : UserControl, IGraphicItemsView
+  {
+    public event Action SelectedItemsUp;
 
-		public event Action SelectedItemsDown;
+    public event Action SelectedItemsDown;
 
-		public event Action SelectedItemsRemove;
+    public event Action SelectedItemsRemove;
 
-		public GraphicItemsControl()
-		{
-			InitializeComponent();
-		}
+    public GraphicItemsControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhItemsSelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiItemsList);
-		}
+    private void EhItemsSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiItemsList);
+    }
 
-		public Collections.SelectableListNodeList ItemsList
-		{
-			set
-			{
-				GuiHelper.Initialize(_guiItemsList, value);
-			}
-		}
+    public Collections.SelectableListNodeList ItemsList
+    {
+      set
+      {
+        GuiHelper.Initialize(_guiItemsList, value);
+      }
+    }
 
-		private void EhSelectedItemsUp_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != SelectedItemsUp)
-				SelectedItemsUp();
-		}
+    private void EhSelectedItemsUp_Click(object sender, RoutedEventArgs e)
+    {
+      if (null != SelectedItemsUp)
+        SelectedItemsUp();
+    }
 
-		private void EhSelectedItemsDown_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != SelectedItemsDown)
-				SelectedItemsDown();
-		}
+    private void EhSelectedItemsDown_Click(object sender, RoutedEventArgs e)
+    {
+      if (null != SelectedItemsDown)
+        SelectedItemsDown();
+    }
 
-		private void EhSelectedItemsRemove_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != SelectedItemsRemove)
-				SelectedItemsRemove();
-		}
-	}
+    private void EhSelectedItemsRemove_Click(object sender, RoutedEventArgs e)
+    {
+      if (null != SelectedItemsRemove)
+        SelectedItemsRemove();
+    }
+  }
 }

@@ -30,12 +30,12 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public interface IScatterSymbolInset
-	{
-		NamedColor Color { get; }
+  public interface IScatterSymbolInset
+  {
+    NamedColor Color { get; }
 
-		IScatterSymbolInset WithColor(NamedColor color);
+    IScatterSymbolInset WithColor(NamedColor color);
 
-		List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth);
-	}
+    List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth);
+  }
 }

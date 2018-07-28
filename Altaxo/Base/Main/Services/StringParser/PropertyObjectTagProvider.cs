@@ -21,32 +21,32 @@ using System.Reflection;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Provides properties by using Reflection on an object.
-	/// </summary>
-	public sealed class PropertyObjectTagProvider : IStringTagProvider
-	{
-		private readonly object obj;
+  /// <summary>
+  /// Provides properties by using Reflection on an object.
+  /// </summary>
+  public sealed class PropertyObjectTagProvider : IStringTagProvider
+  {
+    private readonly object obj;
 
-		public PropertyObjectTagProvider(object obj)
-		{
-			this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
-		}
+    public PropertyObjectTagProvider(object obj)
+    {
+      this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
+    }
 
-		public string ProvideString(string tag, StringTagPair[] customTags)
-		{
-			Type type = obj.GetType();
-			PropertyInfo prop = type.GetProperty(tag);
-			if (prop != null)
-			{
-				return prop.GetValue(obj, null).ToString();
-			}
-			FieldInfo field = type.GetField(tag);
-			if (field != null)
-			{
-				return field.GetValue(obj).ToString();
-			}
-			return null;
-		}
-	}
+    public string ProvideString(string tag, StringTagPair[] customTags)
+    {
+      Type type = obj.GetType();
+      PropertyInfo prop = type.GetProperty(tag);
+      if (prop != null)
+      {
+        return prop.GetValue(obj, null).ToString();
+      }
+      FieldInfo field = type.GetField(tag);
+      if (field != null)
+      {
+        return field.GetValue(obj).ToString();
+      }
+      return null;
+    }
+  }
 }

@@ -29,53 +29,53 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	/// <summary>
-	/// Interface that must be implemented by all data sources that can provide data for an Altaxo data table.
-	/// </summary>
-	public interface IAltaxoTableDataSource : Main.ICopyFrom, IDisposable, Main.ISuspendableByToken, Main.IDocumentLeafNode
-	{
-		/// <summary>
-		/// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
-		/// </summary>
-		/// <param name="destinationTable">The destination table.</param>
-		void FillData(Altaxo.Data.DataTable destinationTable);
+  /// <summary>
+  /// Interface that must be implemented by all data sources that can provide data for an Altaxo data table.
+  /// </summary>
+  public interface IAltaxoTableDataSource : Main.ICopyFrom, IDisposable, Main.ISuspendableByToken, Main.IDocumentLeafNode
+  {
+    /// <summary>
+    /// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
+    /// </summary>
+    /// <param name="destinationTable">The destination table.</param>
+    void FillData(Altaxo.Data.DataTable destinationTable);
 
-		IDataSourceImportOptions ImportOptions { get; set; }
+    IDataSourceImportOptions ImportOptions { get; set; }
 
-		/// <summary>
-		/// Called after deserization of a data source instance, when it is already associated with a data table.
-		/// </summary>
-		void OnAfterDeserialization();
+    /// <summary>
+    /// Called after deserization of a data source instance, when it is already associated with a data table.
+    /// </summary>
+    void OnAfterDeserialization();
 
-		void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies);
-	}
+    void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies);
+  }
 
-	/// <summary>
-	/// Designates the cause of a re-read of the data source.
-	/// </summary>
-	public enum ImportTriggerSource
-	{
-		/// <summary>
-		/// The user triggers a reread of the data source.
-		/// </summary>
-		Manual,
+  /// <summary>
+  /// Designates the cause of a re-read of the data source.
+  /// </summary>
+  public enum ImportTriggerSource
+  {
+    /// <summary>
+    /// The user triggers a reread of the data source.
+    /// </summary>
+    Manual,
 
-		/// <summary>
-		/// The data source is reread if the associated table is used for the first time.
-		/// </summary>
-		FirstUse,
+    /// <summary>
+    /// The data source is reread if the associated table is used for the first time.
+    /// </summary>
+    FirstUse,
 
-		/// <summary>
-		/// The data source is reread every time the data source has changed. This includes the first use of the associated table.
-		/// </summary>
-		DataSourceChanged
-	}
+    /// <summary>
+    /// The data source is reread every time the data source has changed. This includes the first use of the associated table.
+    /// </summary>
+    DataSourceChanged
+  }
 
-	/// <summary>
-	/// Designates the event that the table's data source has changed.
-	/// </summary>
-	public class TableDataSourceChangedEventArgs : EventArgs
-	{
-		public new static readonly TableDataSourceChangedEventArgs Empty = new TableDataSourceChangedEventArgs();
-	}
+  /// <summary>
+  /// Designates the event that the table's data source has changed.
+  /// </summary>
+  public class TableDataSourceChangedEventArgs : EventArgs
+  {
+    public new static readonly TableDataSourceChangedEventArgs Empty = new TableDataSourceChangedEventArgs();
+  }
 }

@@ -30,71 +30,74 @@ using System.Text;
 
 namespace Altaxo.Gui.Data
 {
-	[ExpectedTypeOfView(typeof(ICommonDataSourceView))]
-	[UserControllerForObject(typeof(DecomposeByColumnContentDataSource))]
-	public class DecomposeByColumnContentDataSourceController : MVCANControllerEditOriginalDocBase<DecomposeByColumnContentDataSource, ICommonDataSourceView>, IMVCSupportsApplyCallback
-	{
-		private IMVCANController _dataSourceOptionsController;
-		private IMVCANController _processOptionsController;
-		private IMVCANController _processDataController;
+  [ExpectedTypeOfView(typeof(ICommonDataSourceView))]
+  [UserControllerForObject(typeof(DecomposeByColumnContentDataSource))]
+  public class DecomposeByColumnContentDataSourceController : MVCANControllerEditOriginalDocBase<DecomposeByColumnContentDataSource, ICommonDataSourceView>, IMVCSupportsApplyCallback
+  {
+    private IMVCANController _dataSourceOptionsController;
+    private IMVCANController _processOptionsController;
+    private IMVCANController _processDataController;
 
-		public event Action SuccessfullyApplied;
+    public event Action SuccessfullyApplied;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_dataSourceOptionsController, () => _dataSourceOptionsController = null);
-			yield return new ControllerAndSetNullMethod(_processOptionsController, () => _processOptionsController = null);
-			yield return new ControllerAndSetNullMethod(_processDataController, () => _processDataController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_dataSourceOptionsController, () => _dataSourceOptionsController = null);
+      yield return new ControllerAndSetNullMethod(_processOptionsController, () => _processOptionsController = null);
+      yield return new ControllerAndSetNullMethod(_processDataController, () => _processDataController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-				_processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DecomposeByColumnContentOptions }, typeof(IMVCANController), UseDocument.Directly);
+      if (initData)
+      {
+        _dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
+        _processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DecomposeByColumnContentOptions }, typeof(IMVCANController), UseDocument.Directly);
 
-				_processDataController = new DecomposeByColumnContentDataController() { UseDocumentCopy = UseDocument.Directly };
-				_processDataController.InitializeDocument(_doc.InputData);
-				Current.Gui.FindAndAttachControlTo(_processDataController);
-			}
+        _processDataController = new DecomposeByColumnContentDataController() { UseDocumentCopy = UseDocument.Directly };
+        _processDataController.InitializeDocument(_doc.InputData);
+        Current.Gui.FindAndAttachControlTo(_processDataController);
+      }
 
-			if (null != _view)
-			{
-				_view.SetImportOptionsControl(_dataSourceOptionsController.ViewObject);
-				_view.SetProcessOptionsControl(_processOptionsController.ViewObject);
-				if (null != _processDataController)
-				{
-					_view.SetProcessDataControl(_processDataController.ViewObject);
-				}
-			}
-		}
+      if (null != _view)
+      {
+        _view.SetImportOptionsControl(_dataSourceOptionsController.ViewObject);
+        _view.SetProcessOptionsControl(_processOptionsController.ViewObject);
+        if (null != _processDataController)
+        {
+          _view.SetProcessDataControl(_processDataController.ViewObject);
+        }
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			bool result;
+    public override bool Apply(bool disposeController)
+    {
+      bool result;
 
-			result = _dataSourceOptionsController.Apply(disposeController);
-			if (!result) return result;
+      result = _dataSourceOptionsController.Apply(disposeController);
+      if (!result)
+        return result;
 
-			result = _processOptionsController.Apply(disposeController);
-			if (!result) return result;
+      result = _processOptionsController.Apply(disposeController);
+      if (!result)
+        return result;
 
-			if (null != _processDataController)
-			{
-				result = _processDataController.Apply(disposeController);
-				if (!result) return result;
-			}
+      if (null != _processDataController)
+      {
+        result = _processDataController.Apply(disposeController);
+        if (!result)
+          return result;
+      }
 
-			var ev = SuccessfullyApplied;
-			if (null != ev)
-			{
-				ev();
-			}
+      var ev = SuccessfullyApplied;
+      if (null != ev)
+      {
+        ev();
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

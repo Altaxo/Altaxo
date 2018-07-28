@@ -26,16 +26,16 @@ using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-	/// <summary>
-	/// Implemented by objects that hold z bounds, for instance XYPlotAssociations.
-	/// </summary>
-	public interface IZBoundsHolder
-	{
-		/// <summary>
-		/// This merges the z boundary of the object with the boundary pb. The boundary pb is updated so that
-		/// it now includes the z boundary range of the object.
-		/// </summary>
-		/// <param name="pb">The boundary object pb which is updated to include the z boundaries of the object.</param>
-		void MergeZBoundsInto(IPhysicalBoundaries pb);
-	}
+  /// <summary>
+  /// Implemented by objects that hold z bounds, for instance XYPlotAssociations.
+  /// </summary>
+  public interface IZBoundsHolder
+  {
+    /// <summary>
+    /// This merges the z boundary of the object with the boundary pb. The boundary pb is updated so that
+    /// it now includes the z boundary range of the object.
+    /// </summary>
+    /// <param name="pb">The boundary object pb which is updated to include the z boundaries of the object.</param>
+    void MergeZBoundsInto(IPhysicalBoundaries pb);
+  }
 }

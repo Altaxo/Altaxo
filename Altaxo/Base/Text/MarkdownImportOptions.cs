@@ -34,183 +34,184 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Text
 {
-	public class MarkdownImportOptions
-	{
-		public static void ImportShowDialog()
-		{
-			var options = new MarkdownImportOptions();
+  public class MarkdownImportOptions
+  {
+    public static void ImportShowDialog()
+    {
+      var options = new MarkdownImportOptions();
 
-			var dlg = new OpenFileOptions();
-			dlg.AddFilter("*.md", "Markdown files (*.md)");
-			dlg.AddFilter("*.txt", "Text files (*.txt)");
-			dlg.AddFilter("*.*", "All files (*.*)");
+      var dlg = new OpenFileOptions();
+      dlg.AddFilter("*.md", "Markdown files (*.md)");
+      dlg.AddFilter("*.txt", "Text files (*.txt)");
+      dlg.AddFilter("*.*", "All files (*.*)");
 
-			if (true == Current.Gui.ShowOpenFileDialog(dlg))
-			{
-				try
-				{
-					var errors = options.Import(dlg.FileName);
-					if (!string.IsNullOrEmpty(errors))
-						Current.Gui.ErrorMessageBox(errors, "Error(s) during import");
-				}
-				catch (Exception ex)
-				{
-					Current.Gui.ErrorMessageBox(string.Format("{0}\r\nDetails:\r\n{1}", ex.Message, ex), "Error during import");
-				}
-			}
-		}
+      if (true == Current.Gui.ShowOpenFileDialog(dlg))
+      {
+        try
+        {
+          var errors = options.Import(dlg.FileName);
+          if (!string.IsNullOrEmpty(errors))
+            Current.Gui.ErrorMessageBox(errors, "Error(s) during import");
+        }
+        catch (Exception ex)
+        {
+          Current.Gui.ErrorMessageBox(string.Format("{0}\r\nDetails:\r\n{1}", ex.Message, ex), "Error during import");
+        }
+      }
+    }
 
-		public string Import(string fileName)
-		{
-			var errors = new System.Text.StringBuilder();
+    public string Import(string fileName)
+    {
+      var errors = new System.Text.StringBuilder();
 
-			string markdownDirectory = System.IO.Path.GetDirectoryName(fileName);
-			string markdownText = null;
+      string markdownDirectory = System.IO.Path.GetDirectoryName(fileName);
+      string markdownText = null;
 
-			using (var stream = new StreamReader(fileName, Encoding.UTF8, true))
-			{
-				markdownText = stream.ReadToEnd();
-			}
+      using (var stream = new StreamReader(fileName, Encoding.UTF8, true))
+      {
+        markdownText = stream.ReadToEnd();
+      }
 
-			// Parse the markdown
+      // Parse the markdown
 
-			var pipeline = new MarkdownPipelineBuilder();
-			pipeline = UseSupportedExtensions(pipeline);
+      var pipeline = new MarkdownPipelineBuilder();
+      pipeline = UseSupportedExtensions(pipeline);
 
-			var markdownDocument = Markdig.Markdown.Parse(markdownText, pipeline.Build());
+      var markdownDocument = Markdig.Markdown.Parse(markdownText, pipeline.Build());
 
-			var textDocument = new TextDocument();
+      var textDocument = new TextDocument();
 
-			var images = new List<(Markdig.Syntax.Inlines.LinkInline link, MemoryStreamImageProxy proxy)>();
+      var images = new List<(Markdig.Syntax.Inlines.LinkInline link, MemoryStreamImageProxy proxy)>();
 
-			foreach (var mdo in EnumerateAllMarkdownObjectsRecursively(markdownDocument))
-			{
-				if (mdo is Markdig.Syntax.Inlines.LinkInline link && link.IsImage)
-				{
-					var url = link.Url;
+      foreach (var mdo in EnumerateAllMarkdownObjectsRecursively(markdownDocument))
+      {
+        if (mdo is Markdig.Syntax.Inlines.LinkInline link && link.IsImage)
+        {
+          var url = link.Url;
 
-					if (string.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
-						continue;
+          if (string.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+            continue;
 
-					var uri = new Uri(url, UriKind.RelativeOrAbsolute);
+          var uri = new Uri(url, UriKind.RelativeOrAbsolute);
 
-					string imgFileName = null;
+          string imgFileName = null;
 
-					if (uri.IsAbsoluteUri)
-					{
-						imgFileName = uri.AbsolutePath;
-					}
-					else
-					{
-						imgFileName = System.IO.Path.Combine(markdownDirectory, uri.OriginalString);
-					}
+          if (uri.IsAbsoluteUri)
+          {
+            imgFileName = uri.AbsolutePath;
+          }
+          else
+          {
+            imgFileName = System.IO.Path.Combine(markdownDirectory, uri.OriginalString);
+          }
 
-					try
-					{
-						var imgProxy = MemoryStreamImageProxy.FromFile(imgFileName);
-						textDocument.AddImage(imgProxy);
-						images.Add((link, imgProxy));
-					}
-					catch (Exception ex)
-					{
-						errors.AppendFormat("File {0} could not be imported, error: {1}\r\n", imgFileName, ex.Message);
-					}
-				}
-			}
+          try
+          {
+            var imgProxy = MemoryStreamImageProxy.FromFile(imgFileName);
+            textDocument.AddImage(imgProxy);
+            images.Add((link, imgProxy));
+          }
+          catch (Exception ex)
+          {
+            errors.AppendFormat("File {0} could not be imported, error: {1}\r\n", imgFileName, ex.Message);
+          }
+        }
+      }
 
-			// now we have to replace all urls
-			var text = new System.Text.StringBuilder(markdownText);
+      // now we have to replace all urls
+      var text = new System.Text.StringBuilder(markdownText);
 
-			for (int i = images.Count - 1; i >= 0; --i)
-			{
-				var (link, proxy) = images[i];
+      for (int i = images.Count - 1; i >= 0; --i)
+      {
+        var (link, proxy) = images[i];
 
-				text.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.End + 1 - link.UrlSpan.Value.Start);
-				text.Insert(link.UrlSpan.Value.Start, ImagePretext.LocalImagePretext + proxy.ContentHash);
-			}
+        text.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.End + 1 - link.UrlSpan.Value.Start);
+        text.Insert(link.UrlSpan.Value.Start, ImagePretext.LocalImagePretext + proxy.ContentHash);
+      }
 
-			textDocument.SourceText = text.ToString();
+      textDocument.SourceText = text.ToString();
 
-			Current.Project.TextDocumentCollection.Add(textDocument);
+      Current.Project.TextDocumentCollection.Add(textDocument);
 
-			Current.ProjectService.ShowDocumentView(textDocument);
+      Current.ProjectService.ShowDocumentView(textDocument);
 
-			return errors.Length == 0 ? null : errors.ToString();
-		}
+      return errors.Length == 0 ? null : errors.ToString();
+    }
 
-		/// <summary>
-		/// Uses all extensions supported by <c>Markdig.Wpf</c>.
-		/// </summary>
-		/// <param name="pipeline">The pipeline.</param>
-		/// <returns>The modified pipeline</returns>
-		public static MarkdownPipelineBuilder UseSupportedExtensions(MarkdownPipelineBuilder pipeline)
-		{
-			if (pipeline == null) throw new ArgumentNullException(nameof(pipeline));
-			return pipeline
-					.UseEmphasisExtras()
-					.UseGridTables()
-					.UsePipeTables()
-					.UseTaskLists()
-					.UseAutoLinks()
-					.UseMathematics()
-					.UseGenericAttributes();
-		}
+    /// <summary>
+    /// Uses all extensions supported by <c>Markdig.Wpf</c>.
+    /// </summary>
+    /// <param name="pipeline">The pipeline.</param>
+    /// <returns>The modified pipeline</returns>
+    public static MarkdownPipelineBuilder UseSupportedExtensions(MarkdownPipelineBuilder pipeline)
+    {
+      if (pipeline == null)
+        throw new ArgumentNullException(nameof(pipeline));
+      return pipeline
+          .UseEmphasisExtras()
+          .UseGridTables()
+          .UsePipeTables()
+          .UseTaskLists()
+          .UseAutoLinks()
+          .UseMathematics()
+          .UseGenericAttributes();
+    }
 
-		#region Helpers for Markdig
+    #region Helpers for Markdig
 
-		/// <summary>
-		/// Enumerates all objects in a markdown parse tree recursively, starting with the given element.
-		/// </summary>
-		/// <param name="startElement">The start element.</param>
-		/// <returns>All text element (the given text element and all its childs).</returns>
-		public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(Markdig.Syntax.MarkdownObject startElement)
-		{
-			yield return startElement;
-			var childList = GetChildList(startElement);
-			if (null != childList)
-			{
-				foreach (var child in GetChildList(startElement))
-				{
-					foreach (var childAndSub in EnumerateAllMarkdownObjectsRecursively(child))
-						yield return childAndSub;
-				}
-			}
-		}
+    /// <summary>
+    /// Enumerates all objects in a markdown parse tree recursively, starting with the given element.
+    /// </summary>
+    /// <param name="startElement">The start element.</param>
+    /// <returns>All text element (the given text element and all its childs).</returns>
+    public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(Markdig.Syntax.MarkdownObject startElement)
+    {
+      yield return startElement;
+      var childList = GetChildList(startElement);
+      if (null != childList)
+      {
+        foreach (var child in GetChildList(startElement))
+        {
+          foreach (var childAndSub in EnumerateAllMarkdownObjectsRecursively(child))
+            yield return childAndSub;
+        }
+      }
+    }
 
-		/// <summary>
-		/// Gets the childs of a markdown object. Null is returned if no childs were to be found.
-		/// </summary>
-		/// <param name="parent">The markdown object from which to get the childs.</param>
-		/// <returns>The childs of the given markdown object, or null.</returns>
-		public static IEnumerable<Markdig.Syntax.MarkdownObject> GetChilds(Markdig.Syntax.MarkdownObject parent)
-		{
-			if (parent is Markdig.Syntax.LeafBlock leafBlock)
-				return leafBlock.Inline;
-			else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
-				return containerInline;
-			else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
-				return containerBlock;
-			else
-				return null;
-		}
+    /// <summary>
+    /// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+    /// </summary>
+    /// <param name="parent">The markdown object from which to get the childs.</param>
+    /// <returns>The childs of the given markdown object, or null.</returns>
+    public static IEnumerable<Markdig.Syntax.MarkdownObject> GetChilds(Markdig.Syntax.MarkdownObject parent)
+    {
+      if (parent is Markdig.Syntax.LeafBlock leafBlock)
+        return leafBlock.Inline;
+      else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
+        return containerInline;
+      else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
+        return containerBlock;
+      else
+        return null;
+    }
 
-		/// <summary>
-		/// Gets the childs of a markdown object. Null is returned if no childs were to be found.
-		/// </summary>
-		/// <param name="parent">The markdown object from which to get the childs.</param>
-		/// <returns>The childs of the given markdown object, or null.</returns>
-		public static IReadOnlyList<Markdig.Syntax.MarkdownObject> GetChildList(Markdig.Syntax.MarkdownObject parent)
-		{
-			if (parent is Markdig.Syntax.LeafBlock leafBlock)
-				return leafBlock.Inline?.ToArray<Markdig.Syntax.MarkdownObject>();
-			else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
-				return containerInline.ToArray<Markdig.Syntax.MarkdownObject>();
-			else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
-				return containerBlock;
-			else
-				return null;
-		}
+    /// <summary>
+    /// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+    /// </summary>
+    /// <param name="parent">The markdown object from which to get the childs.</param>
+    /// <returns>The childs of the given markdown object, or null.</returns>
+    public static IReadOnlyList<Markdig.Syntax.MarkdownObject> GetChildList(Markdig.Syntax.MarkdownObject parent)
+    {
+      if (parent is Markdig.Syntax.LeafBlock leafBlock)
+        return leafBlock.Inline?.ToArray<Markdig.Syntax.MarkdownObject>();
+      else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
+        return containerInline.ToArray<Markdig.Syntax.MarkdownObject>();
+      else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
+        return containerBlock;
+      else
+        return null;
+    }
 
-		#endregion Helpers for Markdig
-	}
+    #endregion Helpers for Markdig
+  }
 }

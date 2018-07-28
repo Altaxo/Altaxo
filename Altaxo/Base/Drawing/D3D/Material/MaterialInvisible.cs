@@ -29,147 +29,147 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.Material
 {
-	public class MaterialInvisible : IMaterial
-	{
-		public static MaterialInvisible Instance { get; private set; } = new MaterialInvisible();
+  public class MaterialInvisible : IMaterial
+  {
+    public static MaterialInvisible Instance { get; private set; } = new MaterialInvisible();
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-03-29 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MaterialInvisible), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    /// <summary>
+    /// 2016-03-29 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MaterialInvisible), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return MaterialInvisible.Instance;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return MaterialInvisible.Instance;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		private MaterialInvisible()
-		{
-		}
+    private MaterialInvisible()
+    {
+    }
 
-		public NamedColor Color
-		{
-			get
-			{
-				return NamedColors.Transparent;
-			}
-		}
+    public NamedColor Color
+    {
+      get
+      {
+        return NamedColors.Transparent;
+      }
+    }
 
-		public bool HasColor
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public bool HasColor
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public bool HasTexture
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public bool HasTexture
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public bool IsVisible
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public bool IsVisible
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public double Smoothness
-		{
-			get
-			{
-				return 0;
-			}
-		}
+    public double Smoothness
+    {
+      get
+      {
+        return 0;
+      }
+    }
 
-		public double Metalness
-		{
-			get
-			{
-				return 0;
-			}
-		}
+    public double Metalness
+    {
+      get
+      {
+        return 0;
+      }
+    }
 
-		public double IndexOfRefraction
-		{
-			get
-			{
-				return 1;
-			}
-		}
+    public double IndexOfRefraction
+    {
+      get
+      {
+        return 1;
+      }
+    }
 
-		public double PhongModelSpecularIntensity
-		{
-			get
-			{
-				return 0;
-			}
-		}
+    public double PhongModelSpecularIntensity
+    {
+      get
+      {
+        return 0;
+      }
+    }
 
-		public double PhongModelDiffuseIntensity
-		{
-			get
-			{
-				return 0;
-			}
-		}
+    public double PhongModelDiffuseIntensity
+    {
+      get
+      {
+        return 0;
+      }
+    }
 
-		public double PhongModelSpecularExponent
-		{
-			get
-			{
-				return 1;
-			}
-		}
+    public double PhongModelSpecularExponent
+    {
+      get
+      {
+        return 1;
+      }
+    }
 
-		public bool Equals(IMaterial other)
-		{
-			return (other is MaterialInvisible);
-		}
+    public bool Equals(IMaterial other)
+    {
+      return (other is MaterialInvisible);
+    }
 
-		public IMaterial WithColor(NamedColor color)
-		{
-			return this;
-		}
+    public IMaterial WithColor(NamedColor color)
+    {
+      return this;
+    }
 
-		public override bool Equals(object obj)
-		{
-			return obj is MaterialInvisible;
-		}
+    public override bool Equals(object obj)
+    {
+      return obj is MaterialInvisible;
+    }
 
-		public override int GetHashCode()
-		{
-			return 483886 + base.GetHashCode();
-		}
+    public override int GetHashCode()
+    {
+      return 483886 + base.GetHashCode();
+    }
 
-		public IMaterial WithSpecularProperties(double smoothness, double metalness, double indexOfRefraction)
-		{
-			return this;
-		}
+    public IMaterial WithSpecularProperties(double smoothness, double metalness, double indexOfRefraction)
+    {
+      return this;
+    }
 
-		public IMaterial WithSpecularPropertiesAs(IMaterial templateMaterial)
-		{
-			return this;
-		}
+    public IMaterial WithSpecularPropertiesAs(IMaterial templateMaterial)
+    {
+      return this;
+    }
 
-		public bool HasSameSpecularPropertiesAs(IMaterial anotherMaterial)
-		{
-			return anotherMaterial is MaterialInvisible;
-		}
-	}
+    public bool HasSameSpecularPropertiesAs(IMaterial anotherMaterial)
+    {
+      return anotherMaterial is MaterialInvisible;
+    }
+  }
 }

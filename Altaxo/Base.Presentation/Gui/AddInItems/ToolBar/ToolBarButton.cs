@@ -27,78 +27,78 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.AddInItems
 {
-	/// <summary>
-	/// A tool bar button based on the AddIn-tree.
-	/// </summary>
-	internal sealed class ToolBarButton : Button, IStatusUpdate
-	{
-		private readonly Codon codon;
-		private readonly object caller;
-		private readonly string inputGestureText;
-		private readonly IEnumerable<ICondition> conditions;
+  /// <summary>
+  /// A tool bar button based on the AddIn-tree.
+  /// </summary>
+  internal sealed class ToolBarButton : Button, IStatusUpdate
+  {
+    private readonly Codon codon;
+    private readonly object caller;
+    private readonly string inputGestureText;
+    private readonly IEnumerable<ICondition> conditions;
 
-		public ToolBarButton(UIElement inputBindingOwner, Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
-		{
-			ToolTipService.SetShowOnDisabled(this, true);
+    public ToolBarButton(UIElement inputBindingOwner, Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
+    {
+      ToolTipService.SetShowOnDisabled(this, true);
 
-			this.codon = codon;
-			this.caller = caller;
-			this.Command = CommandWrapper.CreateLazyCommand(codon, conditions);
-			this.CommandParameter = caller;
-			this.Content = ToolBarService.CreateToolBarItemContent(codon);
-			this.conditions = conditions;
+      this.codon = codon;
+      this.caller = caller;
+      this.Command = CommandWrapper.CreateLazyCommand(codon, conditions);
+      this.CommandParameter = caller;
+      this.Content = ToolBarService.CreateToolBarItemContent(codon);
+      this.conditions = conditions;
 
-			if (codon.Properties.Contains("name"))
-			{
-				this.Name = codon.Properties["name"];
-			}
+      if (codon.Properties.Contains("name"))
+      {
+        this.Name = codon.Properties["name"];
+      }
 
-			if (!string.IsNullOrEmpty(codon.Properties["shortcut"]))
-			{
-				KeyGesture kg = MenuService.ParseShortcut(codon.Properties["shortcut"]);
-				MenuCommand.AddGestureToInputBindingOwner(inputBindingOwner, kg, this.Command, GetFeatureName());
-				this.inputGestureText = MenuService.GetDisplayStringForShortcut(kg);
-			}
-			UpdateText();
+      if (!string.IsNullOrEmpty(codon.Properties["shortcut"]))
+      {
+        KeyGesture kg = MenuService.ParseShortcut(codon.Properties["shortcut"]);
+        MenuCommand.AddGestureToInputBindingOwner(inputBindingOwner, kg, this.Command, GetFeatureName());
+        this.inputGestureText = MenuService.GetDisplayStringForShortcut(kg);
+      }
+      UpdateText();
 
-			SetResourceReference(FrameworkElement.StyleProperty, ToolBar.ButtonStyleKey);
-		}
+      SetResourceReference(FrameworkElement.StyleProperty, ToolBar.ButtonStyleKey);
+    }
 
-		private string GetFeatureName()
-		{
-			string commandName = codon.Properties["command"];
-			if (string.IsNullOrEmpty(commandName))
-			{
-				return codon.Properties["class"];
-			}
-			else
-			{
-				return commandName;
-			}
-		}
+    private string GetFeatureName()
+    {
+      string commandName = codon.Properties["command"];
+      if (string.IsNullOrEmpty(commandName))
+      {
+        return codon.Properties["class"];
+      }
+      else
+      {
+        return commandName;
+      }
+    }
 
-		public void UpdateText()
-		{
-			if (codon.Properties.Contains("tooltip"))
-			{
-				string toolTip = StringParser.Parse(codon.Properties["tooltip"]);
-				if (!string.IsNullOrEmpty(inputGestureText))
-					toolTip = toolTip + " (" + inputGestureText + ")";
-				this.ToolTip = toolTip;
-			}
-		}
+    public void UpdateText()
+    {
+      if (codon.Properties.Contains("tooltip"))
+      {
+        string toolTip = StringParser.Parse(codon.Properties["tooltip"]);
+        if (!string.IsNullOrEmpty(inputGestureText))
+          toolTip = toolTip + " (" + inputGestureText + ")";
+        this.ToolTip = toolTip;
+      }
+    }
 
-		/// <summary>
-		/// Updates the status of the toolbar button.
-		/// </summary>
-		/// <remarks>The workbench calls <see cref="IStatusUpdate.UpdateStatus"/> for all tool bars, usually when
-		/// <see cref="CommandManager.RequerySuggested"/> fires.</remarks>
-		public void UpdateStatus()
-		{
-			if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-				this.Visibility = Visibility.Collapsed;
-			else
-				this.Visibility = Visibility.Visible;
-		}
-	}
+    /// <summary>
+    /// Updates the status of the toolbar button.
+    /// </summary>
+    /// <remarks>The workbench calls <see cref="IStatusUpdate.UpdateStatus"/> for all tool bars, usually when
+    /// <see cref="CommandManager.RequerySuggested"/> fires.</remarks>
+    public void UpdateStatus()
+    {
+      if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
+        this.Visibility = Visibility.Collapsed;
+      else
+        this.Visibility = Visibility.Visible;
+    }
+  }
 }

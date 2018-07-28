@@ -29,23 +29,23 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
-	using Altaxo.Graph.Gdi;
-	using Altaxo.Gui.Graph;
-	using Graph.Gdi;
+  using Altaxo.Graph.Gdi;
+  using Altaxo.Gui.Graph;
+  using Graph.Gdi;
 
-	public class ClipboardGraphExportOptionPanel : OptionPanelBase<ClipboardRenderingOptionsController>
-	{
-		public override void Initialize(object optionPanelOwner)
-		{
-			var doc = Current.PropertyService.GetValue(ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new ClipboardRenderingOptions());
-			_controller = new ClipboardRenderingOptionsController();
-			_controller.InitializeDocument(doc);
-		}
+  public class ClipboardGraphExportOptionPanel : OptionPanelBase<ClipboardRenderingOptionsController>
+  {
+    public override void Initialize(object optionPanelOwner)
+    {
+      var doc = Current.PropertyService.GetValue(ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new ClipboardRenderingOptions());
+      _controller = new ClipboardRenderingOptionsController();
+      _controller.InitializeDocument(doc);
+    }
 
-		protected override void ProcessControllerResult()
-		{
-			var doc = (ClipboardRenderingOptions)_controller.ModelObject;
-			Current.PropertyService.UserSettings.SetValue(ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, doc);
-		}
-	}
+    protected override void ProcessControllerResult()
+    {
+      var doc = (ClipboardRenderingOptions)_controller.ModelObject;
+      Current.PropertyService.UserSettings.SetValue(ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, doc);
+    }
+  }
 }

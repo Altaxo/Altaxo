@@ -17,110 +17,110 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Main.Services
 {
-	/// <summary>
-	/// Interaction logic for MessageView.xaml
-	/// </summary>
-	public partial class InfoWarningErrorMessageView : UserControl, IInfoWarningErrorMessageView
-	{
-		#region Helper class
+  /// <summary>
+  /// Interaction logic for MessageView.xaml
+  /// </summary>
+  public partial class InfoWarningErrorMessageView : UserControl, IInfoWarningErrorMessageView
+  {
+    #region Helper class
 
-		private class ListReverser : System.Collections.IEnumerable
-		{
-			private System.Collections.IList _baseList;
+    private class ListReverser : System.Collections.IEnumerable
+    {
+      private System.Collections.IList _baseList;
 
-			public ListReverser(System.Collections.IList baseList)
-			{
-				_baseList = baseList;
-			}
+      public ListReverser(System.Collections.IList baseList)
+      {
+        _baseList = baseList;
+      }
 
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-			{
-				for (int i = _baseList.Count - 1; i >= 0; i--)
-					yield return _baseList[i];
-			}
-		}
+      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+      {
+        for (int i = _baseList.Count - 1; i >= 0; i--)
+          yield return _baseList[i];
+      }
+    }
 
-		#endregion Helper class
+    #endregion Helper class
 
-		public InfoWarningErrorMessageView()
-		{
-			InitializeComponent();
+    public InfoWarningErrorMessageView()
+    {
+      InitializeComponent();
 
-			// We apply for the DragCompletedEvent in order to get notified when a column was resized (please not the "true" as last argument - we get notified even if the event is already handled)
-			_listView.AddHandler(System.Windows.Controls.Primitives.Thumb.DragCompletedEvent, new RoutedEventHandler(EhListView_ColumnResized), true);
-		}
+      // We apply for the DragCompletedEvent in order to get notified when a column was resized (please not the "true" as last argument - we get notified even if the event is already handled)
+      _listView.AddHandler(System.Windows.Controls.Primitives.Thumb.DragCompletedEvent, new RoutedEventHandler(EhListView_ColumnResized), true);
+    }
 
-		#region IMessageView Members
+    #region IMessageView Members
 
-		public int[] ColumnWidths
-		{
-			get
-			{
-				return GuiHelper.GetColumnWidths(_listView);
-			}
-			set
-			{
-				GuiHelper.SetColumnWidths(_listView, value);
-			}
-		}
+    public int[] ColumnWidths
+    {
+      get
+      {
+        return GuiHelper.GetColumnWidths(_listView);
+      }
+      set
+      {
+        GuiHelper.SetColumnWidths(_listView, value);
+      }
+    }
 
-		#endregion IMessageView Members
+    #endregion IMessageView Members
 
-		private void ResizeLastColumnToFitExactly()
-		{
-			var remaining = _listView.ActualWidth - _col0.ActualWidth - _col1.ActualWidth - _col2.ActualWidth;
-			if (remaining > 20)
-				_col3.Width = remaining;
-		}
+    private void ResizeLastColumnToFitExactly()
+    {
+      var remaining = _listView.ActualWidth - _col0.ActualWidth - _col1.ActualWidth - _col2.ActualWidth;
+      if (remaining > 20)
+        _col3.Width = remaining;
+    }
 
-		private bool _isViewDirectionRecentIsFirst;
+    private bool _isViewDirectionRecentIsFirst;
 
-		private void EhContextMenuOpened(object sender, RoutedEventArgs e)
-		{
-			_menuItemRecentFirst.IsChecked = _isViewDirectionRecentIsFirst;
-			_menuItemRecentLast.IsChecked = !_isViewDirectionRecentIsFirst;
-		}
+    private void EhContextMenuOpened(object sender, RoutedEventArgs e)
+    {
+      _menuItemRecentFirst.IsChecked = _isViewDirectionRecentIsFirst;
+      _menuItemRecentLast.IsChecked = !_isViewDirectionRecentIsFirst;
+    }
 
-		private void EhListView_SizeChanged(object sender, SizeChangedEventArgs e)
-		{
-			ResizeLastColumnToFitExactly();
-		}
+    private void EhListView_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+      ResizeLastColumnToFitExactly();
+    }
 
-		private void EhListView_ColumnResized(object sender, RoutedEventArgs e)
-		{
-			ResizeLastColumnToFitExactly();
-		}
-	}
+    private void EhListView_ColumnResized(object sender, RoutedEventArgs e)
+    {
+      ResizeLastColumnToFitExactly();
+    }
+  }
 
-	[ValueConversion(typeof(MessageLevel), typeof(Brush))]
-	public class MessageLevelToBrushConverter : IValueConverter
-	{
-		private static Brush _infoBrush = new SolidColorBrush(Colors.LightGreen);
-		private static Brush _warningBrush = new SolidColorBrush(Colors.Yellow);
-		private static Brush _errorBrush = new SolidColorBrush(Colors.LightPink);
+  [ValueConversion(typeof(MessageLevel), typeof(Brush))]
+  public class MessageLevelToBrushConverter : IValueConverter
+  {
+    private static Brush _infoBrush = new SolidColorBrush(Colors.LightGreen);
+    private static Brush _warningBrush = new SolidColorBrush(Colors.Yellow);
+    private static Brush _errorBrush = new SolidColorBrush(Colors.LightPink);
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			var c1 = (MessageLevel)value;
-			switch (c1)
-			{
-				case MessageLevel.Info:
-					return _infoBrush;
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      var c1 = (MessageLevel)value;
+      switch (c1)
+      {
+        case MessageLevel.Info:
+          return _infoBrush;
 
-				case MessageLevel.Warning:
-					return _warningBrush;
+        case MessageLevel.Warning:
+          return _warningBrush;
 
-				case MessageLevel.Error:
-					return _errorBrush;
+        case MessageLevel.Error:
+          return _errorBrush;
 
-				default:
-					throw new NotImplementedException("Unknown MessageLevel");
-			}
-		}
+        default:
+          throw new NotImplementedException("Unknown MessageLevel");
+      }
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

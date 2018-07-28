@@ -27,12 +27,12 @@ using Markdig.Syntax;
 
 namespace Altaxo.Text.Renderers.Maml
 {
-	/// <summary>
-	/// A base class for MAML rendering.
-	/// </summary>
-	/// <typeparam name="TObject">The type of the markdown syntax object.</typeparam>
-	/// <seealso cref="IMarkdownObjectRenderer" />
-	public abstract class MamlObjectRenderer<TObject> : MarkdownObjectRenderer<MamlRenderer, TObject> where TObject : MarkdownObject
-	{
-	}
+  /// <summary>
+  /// A base class for MAML rendering.
+  /// </summary>
+  /// <typeparam name="TObject">The type of the markdown syntax object.</typeparam>
+  /// <seealso cref="IMarkdownObjectRenderer" />
+  public abstract class MamlObjectRenderer<TObject> : MarkdownObjectRenderer<MamlRenderer, TObject> where TObject : MarkdownObject
+  {
+  }
 }

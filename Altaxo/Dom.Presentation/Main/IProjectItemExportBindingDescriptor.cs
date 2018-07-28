@@ -26,9 +26,9 @@ using System;
 
 namespace Altaxo.Main
 {
-	public interface IProjectItemExportBindingDescriptor
-	{
-		Type ProjectItemType { get; }
-		Type GraphicalExporterType { get; }
-	}
+  public interface IProjectItemExportBindingDescriptor
+  {
+    Type ProjectItemType { get; }
+    Type GraphicalExporterType { get; }
+  }
 }

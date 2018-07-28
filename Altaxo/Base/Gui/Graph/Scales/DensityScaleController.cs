@@ -28,184 +28,184 @@ using System;
 
 namespace Altaxo.Gui.Graph.Scales
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IDensityScaleView
-	{
-		void InitializeAxisType(SelectableListNodeList names);
+  public interface IDensityScaleView
+  {
+    void InitializeAxisType(SelectableListNodeList names);
 
-		void SetRescalingView(object guiobject);
+    void SetRescalingView(object guiobject);
 
-		void SetScaleView(object guiobject);
+    void SetScaleView(object guiobject);
 
-		event Action AxisTypeChanged;
-	}
+    event Action AxisTypeChanged;
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Lets the user choose a numerical scale.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(IDensityScaleView))]
-	// [UserControllerForObject(typeof(NumericalScale),101)] // outcommented since this causes an infinite loop when searching for detailed scale controllers
-	public class DensityScaleController : MVCANDControllerEditOriginalDocInstanceCanChangeBase<Scale, IDensityScaleView>
-	{
-		protected IMVCAController _rescalingController;
+  /// <summary>
+  /// Lets the user choose a numerical scale.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(IDensityScaleView))]
+  // [UserControllerForObject(typeof(NumericalScale),101)] // outcommented since this causes an infinite loop when searching for detailed scale controllers
+  public class DensityScaleController : MVCANDControllerEditOriginalDocInstanceCanChangeBase<Scale, IDensityScaleView>
+  {
+    protected IMVCAController _rescalingController;
 
-		protected IMVCAController _scaleController;
+    protected IMVCAController _scaleController;
 
-		protected SelectableListNodeList _scaleTypes;
+    protected SelectableListNodeList _scaleTypes;
 
-		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_rescalingController, () => _rescalingController = null);
-			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
-		}
+    public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_rescalingController, () => _rescalingController = null);
+      yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_scaleTypes = null;
+    public override void Dispose(bool isDisposing)
+    {
+      _scaleTypes = null;
 
-			base.Dispose(isDisposing);
-		}
+      base.Dispose(isDisposing);
+    }
 
-		public DensityScaleController(Action<Scale> SetInstanceInParentNode)
-			: base(SetInstanceInParentNode)
-		{
-		}
+    public DensityScaleController(Action<Scale> SetInstanceInParentNode)
+      : base(SetInstanceInParentNode)
+    {
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			InitScaleTypes(initData);
-			InitScaleController(initData);
-			InitRescalingController(initData);
-		}
+      InitScaleTypes(initData);
+      InitScaleController(initData);
+      InitRescalingController(initData);
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (null != _scaleController)
-			{
-				if (false == _scaleController.Apply(disposeController))
-					return false;
-			}
+    public override bool Apply(bool disposeController)
+    {
+      if (null != _scaleController)
+      {
+        if (false == _scaleController.Apply(disposeController))
+          return false;
+      }
 
-			if (null != _rescalingController)
-			{
-				if (false == _rescalingController.Apply(disposeController))
-					return false;
-			}
+      if (null != _rescalingController)
+      {
+        if (false == _rescalingController.Apply(disposeController))
+          return false;
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.AxisTypeChanged += EhView_AxisTypeChanged;
-		}
+    protected override void AttachView()
+    {
+      base.AttachView();
+      _view.AxisTypeChanged += EhView_AxisTypeChanged;
+    }
 
-		protected override void DetachView()
-		{
-			_view.AxisTypeChanged -= EhView_AxisTypeChanged;
-			base.DetachView();
-		}
+    protected override void DetachView()
+    {
+      _view.AxisTypeChanged -= EhView_AxisTypeChanged;
+      base.DetachView();
+    }
 
-		public void InitScaleTypes(bool bInit)
-		{
-			if (bInit)
-			{
-				_scaleTypes = new SelectableListNodeList();
-				Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(NumericalScale));
-				for (int i = 0; i < classes.Length; i++)
-				{
-					if (classes[i] == typeof(LinkedScale))
-						continue;
-					SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
-					_scaleTypes.Add(node);
-				}
-			}
+    public void InitScaleTypes(bool bInit)
+    {
+      if (bInit)
+      {
+        _scaleTypes = new SelectableListNodeList();
+        Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(NumericalScale));
+        for (int i = 0; i < classes.Length; i++)
+        {
+          if (classes[i] == typeof(LinkedScale))
+            continue;
+          SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
+          _scaleTypes.Add(node);
+        }
+      }
 
-			if (null != _view)
-				_view.InitializeAxisType(_scaleTypes);
-		}
+      if (null != _view)
+        _view.InitializeAxisType(_scaleTypes);
+    }
 
-		public void InitScaleController(bool bInit)
-		{
-			if (bInit)
-			{
-				object scaleObject = _doc;
-				_scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController), UseDocument.Directly);
-			}
-			if (null != _view)
-			{
-				_view.SetScaleView(null == _scaleController ? null : _scaleController.ViewObject);
-			}
-		}
+    public void InitScaleController(bool bInit)
+    {
+      if (bInit)
+      {
+        object scaleObject = _doc;
+        _scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController), UseDocument.Directly);
+      }
+      if (null != _view)
+      {
+        _view.SetScaleView(null == _scaleController ? null : _scaleController.ViewObject);
+      }
+    }
 
-		public void InitRescalingController(bool bInit)
-		{
-			if (bInit)
-			{
-				object rescalingObject = _doc.RescalingObject;
-				if (rescalingObject != null)
-					_rescalingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
-				else
-					_rescalingController = null;
-			}
-			if (null != _view)
-			{
-				_view.SetRescalingView(null != _rescalingController ? _rescalingController.ViewObject : null);
-			}
-		}
+    public void InitRescalingController(bool bInit)
+    {
+      if (bInit)
+      {
+        object rescalingObject = _doc.RescalingObject;
+        if (rescalingObject != null)
+          _rescalingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
+        else
+          _rescalingController = null;
+      }
+      if (null != _view)
+      {
+        _view.SetRescalingView(null != _rescalingController ? _rescalingController.ViewObject : null);
+      }
+    }
 
-		#region View event handlers
+    #region View event handlers
 
-		public void EhView_AxisTypeChanged()
-		{
-			Type axistype = (Type)_scaleTypes.FirstSelectedNode.Tag;
+    public void EhView_AxisTypeChanged()
+    {
+      Type axistype = (Type)_scaleTypes.FirstSelectedNode.Tag;
 
-			try
-			{
-				if (axistype != _doc.GetType())
-				{
-					// replace the current axis by a new axis of the type axistype
-					Scale oldScale = _doc;
-					var newScale = (Scale)System.Activator.CreateInstance(axistype);
+      try
+      {
+        if (axistype != _doc.GetType())
+        {
+          // replace the current axis by a new axis of the type axistype
+          Scale oldScale = _doc;
+          var newScale = (Scale)System.Activator.CreateInstance(axistype);
 
-					// Try to set the same org and end as the axis before
-					// this will fail for instance if we switch from linear to logarithmic with negative bounds
-					try
-					{
-						if (newScale.RescalingObject is Altaxo.Main.ICopyFrom)
-							((Altaxo.Main.ICopyFrom)newScale.RescalingObject).CopyFrom(oldScale.RescalingObject);
-					}
-					catch (Exception)
-					{
-					}
+          // Try to set the same org and end as the axis before
+          // this will fail for instance if we switch from linear to logarithmic with negative bounds
+          try
+          {
+            if (newScale.RescalingObject is Altaxo.Main.ICopyFrom)
+              ((Altaxo.Main.ICopyFrom)newScale.RescalingObject).CopyFrom(oldScale.RescalingObject);
+          }
+          catch (Exception)
+          {
+          }
 
-					_doc = newScale;
+          _doc = newScale;
 
-					OnDocumentInstanceChanged(oldScale, newScale);
-					OnMadeDirty(); // chance for controllers up in hierarchy to catch new instance
+          OnDocumentInstanceChanged(oldScale, newScale);
+          OnMadeDirty(); // chance for controllers up in hierarchy to catch new instance
 
-					if (null != _suspendToken)
-					{
-						_suspendToken.Dispose();
-						_suspendToken = _doc.SuspendGetToken();
-					}
+          if (null != _suspendToken)
+          {
+            _suspendToken.Dispose();
+            _suspendToken = _doc.SuspendGetToken();
+          }
 
-					InitScaleController(true);
-					// now we have also to replace the controller and the control for the axis boundaries
-					InitRescalingController(true);
-				}
-			}
-			catch (Exception)
-			{
-			}
-		}
+          InitScaleController(true);
+          // now we have also to replace the controller and the control for the axis boundaries
+          InitRescalingController(true);
+        }
+      }
+      catch (Exception)
+      {
+      }
+    }
 
-		#endregion View event handlers
-	}
+    #endregion View event handlers
+  }
 }

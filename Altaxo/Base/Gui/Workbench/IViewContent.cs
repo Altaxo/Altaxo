@@ -25,49 +25,49 @@ using System.IO;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Interface for the viewmodel part of a document that is shown in the document area of the workbench.
-	/// </summary>
-	public interface IViewContent : IWorkbenchContent, ICanBeDirty
-	{
-		System.Windows.Input.ICommand CloseCommand { get; }
+  /// <summary>
+  /// Interface for the viewmodel part of a document that is shown in the document area of the workbench.
+  /// </summary>
+  public interface IViewContent : IWorkbenchContent, ICanBeDirty
+  {
+    System.Windows.Input.ICommand CloseCommand { get; }
 
-		/// <summary>
-		/// The tooltip that will be shown when you hover the mouse over the title
-		/// </summary>
-		string InfoTip
-		{
-			get;
-		}
+    /// <summary>
+    /// The tooltip that will be shown when you hover the mouse over the title
+    /// </summary>
+    string InfoTip
+    {
+      get;
+    }
 
-		/// <summary>
-		/// Builds an <see cref="INavigationPoint"/> for the current position.
-		/// </summary>
-		INavigationPoint BuildNavPoint();
+    /// <summary>
+    /// Builds an <see cref="INavigationPoint"/> for the current position.
+    /// </summary>
+    INavigationPoint BuildNavPoint();
 
-		/// <summary>
-		/// Announces that this view content is about to be disposed very soon. The view content should remain passiv (e.g. should not react to events any more),
-		/// but should not release its resources yet (this is done later in <see cref="IDisposable.Dispose"/>).
-		/// </summary>
-		void SetDisposeInProgress();
+    /// <summary>
+    /// Announces that this view content is about to be disposed very soon. The view content should remain passiv (e.g. should not react to events any more),
+    /// but should not release its resources yet (this is done later in <see cref="IDisposable.Dispose"/>).
+    /// </summary>
+    void SetDisposeInProgress();
 
-		bool IsDisposed { get; }
+    bool IsDisposed { get; }
 
-		event EventHandler Disposed;
+    event EventHandler Disposed;
 
-		/// <summary>
-		/// Gets if the view content is read-only (can be saved only when choosing another file name).
-		/// </summary>
-		bool IsReadOnly { get; }
+    /// <summary>
+    /// Gets if the view content is read-only (can be saved only when choosing another file name).
+    /// </summary>
+    bool IsReadOnly { get; }
 
-		/// <summary>
-		/// Gets if the view content is view-only (cannot be saved at all).
-		/// </summary>
-		bool IsViewOnly { get; }
+    /// <summary>
+    /// Gets if the view content is view-only (cannot be saved at all).
+    /// </summary>
+    bool IsViewOnly { get; }
 
-		/// <summary>
-		/// Gets whether this view content should be closed when the solution is closed.
-		/// </summary>
-		bool CloseWithSolution { get; }
-	}
+    /// <summary>
+    /// Gets whether this view content should be closed when the solution is closed.
+    /// </summary>
+    bool CloseWithSolution { get; }
+  }
 }

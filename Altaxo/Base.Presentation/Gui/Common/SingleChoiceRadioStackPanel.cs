@@ -32,45 +32,45 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	public class SingleChoiceRadioStackPanel : StackPanel
-	{
-		public event Action SelectionChanged;
+  public class SingleChoiceRadioStackPanel : StackPanel
+  {
+    public event Action SelectionChanged;
 
-		private SelectableListNodeList _choices;
+    private SelectableListNodeList _choices;
 
-		public void Initialize(SelectableListNodeList choices)
-		{
-			_choices = choices;
-			Children.Clear();
-			foreach (var choice in _choices)
-			{
-				var rb = new RadioButton();
-				rb.Content = choice.Text;
-				rb.Tag = choice;
-				rb.IsChecked = choice.IsSelected;
-				rb.Checked += EhRadioButtonChecked;
+    public void Initialize(SelectableListNodeList choices)
+    {
+      _choices = choices;
+      Children.Clear();
+      foreach (var choice in _choices)
+      {
+        var rb = new RadioButton();
+        rb.Content = choice.Text;
+        rb.Tag = choice;
+        rb.IsChecked = choice.IsSelected;
+        rb.Checked += EhRadioButtonChecked;
 
-				if (this.Orientation == System.Windows.Controls.Orientation.Horizontal)
-					rb.Margin = new Thickness(3, 0, 3, 0);
-				else
-					rb.Margin = new Thickness(0, 3, 0, 3);
+        if (this.Orientation == System.Windows.Controls.Orientation.Horizontal)
+          rb.Margin = new Thickness(3, 0, 3, 0);
+        else
+          rb.Margin = new Thickness(0, 3, 0, 3);
 
-				Children.Add(rb);
-			}
-		}
+        Children.Add(rb);
+      }
+    }
 
-		private void EhRadioButtonChecked(object sender, RoutedEventArgs e)
-		{
-			var rb = (RadioButton)sender;
-			var node = rb.Tag as SelectableListNode;
-			if (node != null)
-			{
-				_choices.ClearSelectionsAll();
-				node.IsSelected = true == rb.IsChecked;
-			}
+    private void EhRadioButtonChecked(object sender, RoutedEventArgs e)
+    {
+      var rb = (RadioButton)sender;
+      var node = rb.Tag as SelectableListNode;
+      if (node != null)
+      {
+        _choices.ClearSelectionsAll();
+        node.IsSelected = true == rb.IsChecked;
+      }
 
-			if (null != SelectionChanged)
-				SelectionChanged();
-		}
-	}
+      if (null != SelectionChanged)
+        SelectionChanged();
+    }
+  }
 }

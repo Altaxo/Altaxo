@@ -40,102 +40,102 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Geometry
 {
-	/// <summary>
-	/// Interaction logic for Direction3DSphericalControl.xaml
-	/// </summary>
-	public partial class Direction3DControl : UserControl
-	{
-		private VectorD3D _direction;
+  /// <summary>
+  /// Interaction logic for Direction3DSphericalControl.xaml
+  /// </summary>
+  public partial class Direction3DControl : UserControl
+  {
+    private VectorD3D _direction;
 
-		private GuiChangeLocker _lock;
+    private GuiChangeLocker _lock;
 
-		public event EventHandler SelectedValueChanged;
+    public event EventHandler SelectedValueChanged;
 
-		public Direction3DControl()
-		{
-			InitializeComponent();
-		}
+    public Direction3DControl()
+    {
+      InitializeComponent();
+    }
 
-		public VectorD3D SelectedValue
-		{
-			get
-			{
-				if (_guiCartesian.IsKeyboardFocusWithin)
-					return _guiCartesian.SelectedValue;
-				else if (_guiSpherical.IsKeyboardFocusWithin)
-					return _guiSpherical.SelectedValue;
-				else
-					return _direction;
-			}
-			set
-			{
-				_lock.ExecuteLocked(
-					() =>
-					{
-						var len = value.Length;
-						if (0 == len || double.IsNaN(len) || double.IsInfinity(len))
-							value = new VectorD3D(1, 0, 0);
-						else
-							value /= len;
+    public VectorD3D SelectedValue
+    {
+      get
+      {
+        if (_guiCartesian.IsKeyboardFocusWithin)
+          return _guiCartesian.SelectedValue;
+        else if (_guiSpherical.IsKeyboardFocusWithin)
+          return _guiSpherical.SelectedValue;
+        else
+          return _direction;
+      }
+      set
+      {
+        _lock.ExecuteLocked(
+          () =>
+          {
+            var len = value.Length;
+            if (0 == len || double.IsNaN(len) || double.IsInfinity(len))
+              value = new VectorD3D(1, 0, 0);
+            else
+              value /= len;
 
-						_direction = value;
-						_guiSpherical.SelectedValue = _direction;
-						_guiCartesian.SelectedValue = _direction;
-					});
-			}
-		}
+            _direction = value;
+            _guiSpherical.SelectedValue = _direction;
+            _guiCartesian.SelectedValue = _direction;
+          });
+      }
+    }
 
-		private void EhCartesianValueChanged(object sender, EventArgs e)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-				() =>
-				{
-					_direction = _guiCartesian.SelectedValue;
-					_guiSpherical.SelectedValue = _direction;
-				},
-				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
-				);
-		}
+    private void EhCartesianValueChanged(object sender, EventArgs e)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+        () =>
+        {
+          _direction = _guiCartesian.SelectedValue;
+          _guiSpherical.SelectedValue = _direction;
+        },
+        () => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+        );
+    }
 
-		private void EhSphericalValueChanged(object sender, EventArgs e)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-				() =>
-				{
-					_direction = _guiSpherical.SelectedValue;
-					_guiCartesian.SelectedValue = _direction;
-				},
-				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
-				);
-		}
+    private void EhSphericalValueChanged(object sender, EventArgs e)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+        () =>
+        {
+          _direction = _guiSpherical.SelectedValue;
+          _guiCartesian.SelectedValue = _direction;
+        },
+        () => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+        );
+    }
 
-		private void EhRadioButtonChanged(object sender, RoutedEventArgs e)
-		{
-			if (null == _guiCartesian || null == _guiSpherical)
-				return; // Design mode or just during control creation
+    private void EhRadioButtonChanged(object sender, RoutedEventArgs e)
+    {
+      if (null == _guiCartesian || null == _guiSpherical)
+        return; // Design mode or just during control creation
 
-			string tag = (string)((RadioButton)sender).Tag;
+      string tag = (string)((RadioButton)sender).Tag;
 
-			switch (tag)
-			{
-				case "Cartesian":
-					_guiSpherical.Visibility = Visibility.Collapsed;
-					_guiCartesian.Visibility = Visibility.Visible;
-					break;
+      switch (tag)
+      {
+        case "Cartesian":
+          _guiSpherical.Visibility = Visibility.Collapsed;
+          _guiCartesian.Visibility = Visibility.Visible;
+          break;
 
-				case "Spherical":
-					_guiCartesian.Visibility = Visibility.Collapsed;
-					_guiSpherical.Visibility = Visibility.Visible;
-					break;
+        case "Spherical":
+          _guiCartesian.Visibility = Visibility.Collapsed;
+          _guiSpherical.Visibility = Visibility.Visible;
+          break;
 
-				case "Both":
-					_guiCartesian.Visibility = Visibility.Visible;
-					_guiSpherical.Visibility = Visibility.Visible;
-					break;
+        case "Both":
+          _guiCartesian.Visibility = Visibility.Visible;
+          _guiSpherical.Visibility = Visibility.Visible;
+          break;
 
-				default:
-					throw new NotImplementedException("Tag");
-			}
-		}
-	}
+        default:
+          throw new NotImplementedException("Tag");
+      }
+    }
+  }
 }

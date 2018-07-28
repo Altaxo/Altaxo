@@ -29,74 +29,74 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IFunctionPlotDataView
-	{
-		event EventHandler EditText;
+  public interface IFunctionPlotDataView
+  {
+    event EventHandler EditText;
 
-		void InitializeFunctionText(string text, bool editable);
-	}
+    void InitializeFunctionText(string text, bool editable);
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[UserControllerForObject(typeof(XYFunctionPlotData))]
-	[ExpectedTypeOfView(typeof(IFunctionPlotDataView))]
-	internal class FunctionPlotDataController : MVCANControllerEditOriginalDocBase<XYFunctionPlotData, IFunctionPlotDataView>
-	{
-		private IMVCAController _functionController;
+  [UserControllerForObject(typeof(XYFunctionPlotData))]
+  [ExpectedTypeOfView(typeof(IFunctionPlotDataView))]
+  internal class FunctionPlotDataController : MVCANControllerEditOriginalDocBase<XYFunctionPlotData, IFunctionPlotDataView>
+  {
+    private IMVCAController _functionController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_functionController, () => _functionController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_functionController, () => _functionController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				// try to find a controller for the underlying function
-				_functionController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.Function }, typeof(IMVCAController), UseDocument.Directly);
-			}
-			if (_view != null)
-			{
-				bool editable = null != _functionController;
-				string text;
-				if (_doc.Function is Altaxo.Scripting.IScriptText)
-					text = ((Altaxo.Scripting.IScriptText)_doc.Function).ScriptText;
-				else
-					text = _doc.Function.ToString();
+      if (initData)
+      {
+        // try to find a controller for the underlying function
+        _functionController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.Function }, typeof(IMVCAController), UseDocument.Directly);
+      }
+      if (_view != null)
+      {
+        bool editable = null != _functionController;
+        string text;
+        if (_doc.Function is Altaxo.Scripting.IScriptText)
+          text = ((Altaxo.Scripting.IScriptText)_doc.Function).ScriptText;
+        else
+          text = _doc.Function.ToString();
 
-				_view.InitializeFunctionText(text, editable);
-			}
-		}
+        _view.InitializeFunctionText(text, editable);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			return ApplyEnd(true, disposeController);
-		}
+    public override bool Apply(bool disposeController)
+    {
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.EditText += this.EhView_EditText;
-		}
+    protected override void AttachView()
+    {
+      base.AttachView();
+      _view.EditText += this.EhView_EditText;
+    }
 
-		protected override void DetachView()
-		{
-			_view.EditText -= this.EhView_EditText;
-			base.DetachView();
-		}
+    protected override void DetachView()
+    {
+      _view.EditText -= this.EhView_EditText;
+      base.DetachView();
+    }
 
-		private void EhView_EditText(object sender, EventArgs e)
-		{
-			if (Current.Gui.ShowDialog(_functionController, "Edit script"))
-			{
-				_doc.Function = (Altaxo.Calc.IScalarFunctionDD)_functionController.ModelObject;
-				Initialize(false);
-			}
-		}
-	}
+    private void EhView_EditText(object sender, EventArgs e)
+    {
+      if (Current.Gui.ShowDialog(_functionController, "Edit script"))
+      {
+        _doc.Function = (Altaxo.Calc.IScalarFunctionDD)_functionController.ModelObject;
+        Initialize(false);
+      }
+    }
+  }
 }

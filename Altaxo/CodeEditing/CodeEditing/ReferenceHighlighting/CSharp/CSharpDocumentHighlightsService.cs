@@ -8,8 +8,8 @@ using System.Composition;
 
 namespace Altaxo.CodeEditing.ReferenceHighlighting.CSharp
 {
-	[ExportLanguageService(typeof(IDocumentHighlightsService), LanguageNames.CSharp), Shared]
-	public class CSharpDocumentHighlightsService : AbstractDocumentHighlightsService
-	{
-	}
+  [ExportLanguageService(typeof(IDocumentHighlightsService), LanguageNames.CSharp), Shared]
+  public class CSharpDocumentHighlightsService : AbstractDocumentHighlightsService
+  {
+  }
 }

@@ -10,8 +10,8 @@ using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.ReferenceHighlighting
 {
-	internal interface IReferenceHighlightingAdditionalReferenceProvider : ILanguageService
-	{
-		Task<IEnumerable<Location>> GetAdditionalReferencesAsync(Document document, ISymbol symbol, CancellationToken cancellationToken);
-	}
+  internal interface IReferenceHighlightingAdditionalReferenceProvider : ILanguageService
+  {
+    Task<IEnumerable<Location>> GetAdditionalReferencesAsync(Document document, ISymbol symbol, CancellationToken cancellationToken);
+  }
 }

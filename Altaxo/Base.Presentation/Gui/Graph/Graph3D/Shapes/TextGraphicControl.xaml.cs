@@ -35,276 +35,276 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
-	/// <summary>
-	/// Interaction logic for TextGraphicControl.xaml
-	/// </summary>
-	public partial class TextGraphicControl : UserControl, ITextGraphicView
-	{
-		private BackgroundControlsGlue _backgroundGlue;
-		private GdiToWpfBitmap _previewBitmap;
+  /// <summary>
+  /// Interaction logic for TextGraphicControl.xaml
+  /// </summary>
+  public partial class TextGraphicControl : UserControl, ITextGraphicView
+  {
+    private BackgroundControlsGlue _backgroundGlue;
+    private GdiToWpfBitmap _previewBitmap;
 
-		public TextGraphicControl()
-		{
-			InitializeComponent();
+    public TextGraphicControl()
+    {
+      InitializeComponent();
 
-			_backgroundGlue = new BackgroundControlsGlue();
-			_backgroundGlue.CbStyle = _cbBackgroundStyle;
-			_backgroundGlue.CbBrush = _cbBackgroundBrush;
-			_backgroundGlue.BackgroundStyleChanged += new EventHandler(EhBackgroundStyleChanged);
-			_backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
+      _backgroundGlue = new BackgroundControlsGlue();
+      _backgroundGlue.CbStyle = _cbBackgroundStyle;
+      _backgroundGlue.CbBrush = _cbBackgroundBrush;
+      _backgroundGlue.BackgroundStyleChanged += new EventHandler(EhBackgroundStyleChanged);
+      _backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
 
-			_previewBitmap = new GdiToWpfBitmap(16, 16);
-			m_pnPreview.Source = _previewBitmap.WpfBitmap;
-		}
+      _previewBitmap = new GdiToWpfBitmap(16, 16);
+      m_pnPreview.Source = _previewBitmap.WpfBitmap;
+    }
 
-		private void EhBackgroundStyleChanged(object sender, EventArgs e)
-		{
-			if (null != _controller)
-				_controller.EhView_BackgroundStyleChanged();
-		}
+    private void EhBackgroundStyleChanged(object sender, EventArgs e)
+    {
+      if (null != _controller)
+        _controller.EhView_BackgroundStyleChanged();
+    }
 
-		private void EhLineSpacingChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (null != _controller)
-				_controller.EhView_LineSpacingChanged();
-		}
+    private void EhLineSpacingChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (null != _controller)
+        _controller.EhView_LineSpacingChanged();
+    }
 
-		private void EhFontFamilyChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_FontFamilyChanged();
-		}
+    private void EhFontFamilyChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_FontFamilyChanged();
+    }
 
-		private void EhFontSize_Changed(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_FontSizeChanged();
-		}
+    private void EhFontSize_Changed(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_FontSizeChanged();
+    }
 
-		private void EhFontDepth_Changed(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_FontDepthChanged();
-		}
+    private void EhFontDepth_Changed(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_FontDepthChanged();
+    }
 
-		private void EhTextBrush_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_TextFillBrushChanged();
-		}
+    private void EhTextBrush_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_TextFillBrushChanged();
+    }
 
-		private void EhNormal_Click(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_NormalClick();
-		}
+    private void EhNormal_Click(object sender, RoutedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_NormalClick();
+    }
 
-		private void EhBold_Click(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_BoldClick();
-		}
+    private void EhBold_Click(object sender, RoutedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_BoldClick();
+    }
 
-		private void EhItalic_Click(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_ItalicClick();
-		}
+    private void EhItalic_Click(object sender, RoutedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_ItalicClick();
+    }
 
-		private void EhUnderline_Click(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_UnderlineClick();
-		}
+    private void EhUnderline_Click(object sender, RoutedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_UnderlineClick();
+    }
 
-		private void EhStrikeout_Click(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_StrikeoutClick();
-		}
+    private void EhStrikeout_Click(object sender, RoutedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_StrikeoutClick();
+    }
 
-		private void EhSupIndex_Click(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_SupIndexClick();
-		}
+    private void EhSupIndex_Click(object sender, RoutedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_SupIndexClick();
+    }
 
-		private void EhSubIndex_Click(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_SubIndexClick();
-		}
+    private void EhSubIndex_Click(object sender, RoutedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_SubIndexClick();
+    }
 
-		private void EhGreek_Click(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_GreekClick();
-		}
+    private void EhGreek_Click(object sender, RoutedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_GreekClick();
+    }
 
-		private void EhEditText_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_EditTextChanged();
-		}
+    private void EhEditText_TextChanged(object sender, TextChangedEventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_EditTextChanged();
+    }
 
-		private void EhPreview_SizeChanged(object sender, SizeChangedEventArgs e)
-		{
-			int w = (int)e.NewSize.Width;
-			int h = (int)e.NewSize.Height;
+    private void EhPreview_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+      int w = (int)e.NewSize.Width;
+      int h = (int)e.NewSize.Height;
 
-			if (w > 0 && h > 0 && (w != _previewBitmap.GdiBitmap.Width || h != _previewBitmap.GdiBitmap.Height))
-			{
-				_previewBitmap.Resize(w, h);
-				m_pnPreview.Source = _previewBitmap.WpfBitmap;
-				InvalidatePreviewPanel();
-			}
-		}
+      if (w > 0 && h > 0 && (w != _previewBitmap.GdiBitmap.Width || h != _previewBitmap.GdiBitmap.Height))
+      {
+        _previewBitmap.Resize(w, h);
+        m_pnPreview.Source = _previewBitmap.WpfBitmap;
+        InvalidatePreviewPanel();
+      }
+    }
 
-		#region ITextGraphicView
+    #region ITextGraphicView
 
-		public void BeginUpdate()
-		{
-		}
+    public void BeginUpdate()
+    {
+    }
 
-		public void EndUpdate()
-		{
-		}
+    public void EndUpdate()
+    {
+    }
 
-		private ITextGraphicViewEventSink _controller;
+    private ITextGraphicViewEventSink _controller;
 
-		public ITextGraphicViewEventSink Controller { set { _controller = value; } }
+    public ITextGraphicViewEventSink Controller { set { _controller = value; } }
 
-		public IBackgroundStyle SelectedBackground
-		{
-			get
-			{
-				return _backgroundGlue.BackgroundStyle;
-			}
-			set
-			{
-				_backgroundGlue.BackgroundStyle = value;
-			}
-		}
+    public IBackgroundStyle SelectedBackground
+    {
+      get
+      {
+        return _backgroundGlue.BackgroundStyle;
+      }
+      set
+      {
+        _backgroundGlue.BackgroundStyle = value;
+      }
+    }
 
-		public double SelectedLineSpacing
-		{
-			get { return _guiLineSpacing.SelectedQuantityAsValueInSIUnits; }
-			set { _guiLineSpacing.SelectedQuantityAsValueInSIUnits = value; }
-		}
+    public double SelectedLineSpacing
+    {
+      get { return _guiLineSpacing.SelectedQuantityAsValueInSIUnits; }
+      set { _guiLineSpacing.SelectedQuantityAsValueInSIUnits = value; }
+    }
 
-		public string EditText
-		{
-			get
-			{
-				return m_edText.Text;
-			}
-			set
-			{
-				m_edText.Text = value;
-			}
-		}
+    public string EditText
+    {
+      get
+      {
+        return m_edText.Text;
+      }
+      set
+      {
+        m_edText.Text = value;
+      }
+    }
 
-		public FontX3D SelectedFont
-		{
-			get
-			{
-				var fontFamily = m_cbFonts.SelectedFontFamilyName;
-				var size = m_cbFontSize.SelectedQuantityAsValueInPoints;
-				var depth = m_cbFontDepth.SelectedQuantityAsValueInPoints;
-				return FontManager3D.Instance.GetFont(fontFamily, size, depth, Altaxo.Drawing.FontXStyle.Regular);
-			}
-			set
-			{
-				m_cbFonts.SelectedFontFamilyName = Altaxo.Graph.Gdi.GdiFontManager.GetValidFontFamilyName(value.Font);
-				m_cbFontSize.SelectedQuantityAsValueInPoints = value.Size;
-				m_cbFontDepth.SelectedQuantityAsValueInPoints = value.Depth;
-			}
-		}
+    public FontX3D SelectedFont
+    {
+      get
+      {
+        var fontFamily = m_cbFonts.SelectedFontFamilyName;
+        var size = m_cbFontSize.SelectedQuantityAsValueInPoints;
+        var depth = m_cbFontDepth.SelectedQuantityAsValueInPoints;
+        return FontManager3D.Instance.GetFont(fontFamily, size, depth, Altaxo.Drawing.FontXStyle.Regular);
+      }
+      set
+      {
+        m_cbFonts.SelectedFontFamilyName = Altaxo.Graph.Gdi.GdiFontManager.GetValidFontFamilyName(value.Font);
+        m_cbFontSize.SelectedQuantityAsValueInPoints = value.Size;
+        m_cbFontDepth.SelectedQuantityAsValueInPoints = value.Depth;
+      }
+    }
 
-		public IMaterial SelectedFontBrush
-		{
-			get
-			{
-				return m_cbFontColor.SelectedMaterial;
-			}
-			set
-			{
-				m_cbFontColor.SelectedMaterial = value;
-			}
-		}
+    public IMaterial SelectedFontBrush
+    {
+      get
+      {
+        return m_cbFontColor.SelectedMaterial;
+      }
+      set
+      {
+        m_cbFontColor.SelectedMaterial = value;
+      }
+    }
 
-		public void InsertBeforeAndAfterSelectedText(string insbefore, string insafter)
-		{
-			if (0 != this.m_edText.SelectionLength)
-			{
-				// insert \b( at beginning of selection and ) at the end of the selection
-				int len = m_edText.Text.Length;
-				int start = m_edText.SelectionStart;
-				int end = m_edText.SelectionStart + m_edText.SelectionLength;
-				m_edText.Text = m_edText.Text.Substring(0, start) + insbefore + m_edText.Text.Substring(start, end - start) + insafter + m_edText.Text.Substring(end, len - end);
+    public void InsertBeforeAndAfterSelectedText(string insbefore, string insafter)
+    {
+      if (0 != this.m_edText.SelectionLength)
+      {
+        // insert \b( at beginning of selection and ) at the end of the selection
+        int len = m_edText.Text.Length;
+        int start = m_edText.SelectionStart;
+        int end = m_edText.SelectionStart + m_edText.SelectionLength;
+        m_edText.Text = m_edText.Text.Substring(0, start) + insbefore + m_edText.Text.Substring(start, end - start) + insafter + m_edText.Text.Substring(end, len - end);
 
-				// now select the text plus the text before and after
-				m_edText.Focus(); // necassary to show the selected area
-				m_edText.Select(start, end - start + insbefore.Length + insafter.Length);
-			}
-		}
+        // now select the text plus the text before and after
+        m_edText.Focus(); // necassary to show the selected area
+        m_edText.Select(start, end - start + insbefore.Length + insafter.Length);
+      }
+    }
 
-		public void RevertToNormal()
-		{
-			// remove a backslash x ( at the beginning and the closing brace at the end of the selection
-			if (this.m_edText.SelectionLength >= 4)
-			{
-				int len = m_edText.Text.Length;
-				int start = m_edText.SelectionStart;
-				int end = m_edText.SelectionStart + m_edText.SelectionLength;
+    public void RevertToNormal()
+    {
+      // remove a backslash x ( at the beginning and the closing brace at the end of the selection
+      if (this.m_edText.SelectionLength >= 4)
+      {
+        int len = m_edText.Text.Length;
+        int start = m_edText.SelectionStart;
+        int end = m_edText.SelectionStart + m_edText.SelectionLength;
 
-				if (m_edText.Text[start] == '\\' && m_edText.Text[start + 2] == '(' && m_edText.Text[end - 1] == ')')
-				{
-					m_edText.Text = m_edText.Text.Substring(0, start)
-						+ m_edText.Text.Substring(start + 3, end - start - 4)
-						+ m_edText.Text.Substring(end, len - end);
+        if (m_edText.Text[start] == '\\' && m_edText.Text[start + 2] == '(' && m_edText.Text[end - 1] == ')')
+        {
+          m_edText.Text = m_edText.Text.Substring(0, start)
+            + m_edText.Text.Substring(start + 3, end - start - 4)
+            + m_edText.Text.Substring(end, len - end);
 
-					// now select again the rest of the text
-					m_edText.Focus(); // neccessary to show the selected area
-					m_edText.Select(start, end - start - 4);
-				}
-			}
-		}
+          // now select again the rest of the text
+          m_edText.Focus(); // neccessary to show the selected area
+          m_edText.Select(start, end - start - 4);
+        }
+      }
+    }
 
-		public void InvalidatePreviewPanel()
-		{
-			if (_controller != null)
-			{
-				using (var grfx = _previewBitmap.BeginGdiPainting())
-				{
-					_controller.EhView_PreviewPanelPaint(grfx);
-					_previewBitmap.EndGdiPainting();
-				}
-			}
-		}
+    public void InvalidatePreviewPanel()
+    {
+      if (_controller != null)
+      {
+        using (var grfx = _previewBitmap.BeginGdiPainting())
+        {
+          _controller.EhView_PreviewPanelPaint(grfx);
+          _previewBitmap.EndGdiPainting();
+        }
+      }
+    }
 
-		#endregion ITextGraphicView
+    #endregion ITextGraphicView
 
-		private void EhLoaded(object sender, RoutedEventArgs e)
-		{
-			this.m_edText.Focus();
-		}
+    private void EhLoaded(object sender, RoutedEventArgs e)
+    {
+      this.m_edText.Focus();
+    }
 
-		private void EhMoreModifiersClicked(object sender, RoutedEventArgs e)
-		{
-			var menu = sender as MenuItem;
-			if (null != menu && menu.Tag is string)
-			{
-				m_edText.AppendText((string)menu.Tag);
-			}
-		}
+    private void EhMoreModifiersClicked(object sender, RoutedEventArgs e)
+    {
+      var menu = sender as MenuItem;
+      if (null != menu && menu.Tag is string)
+      {
+        m_edText.AppendText((string)menu.Tag);
+      }
+    }
 
-		public object LocationView
-		{
-			set
-			{
-				_guiPositionHost.Child = value as UIElement;
-			}
-		}
-	}
+    public object LocationView
+    {
+      set
+      {
+        _guiPositionHost.Child = value as UIElement;
+      }
+    }
+  }
 }

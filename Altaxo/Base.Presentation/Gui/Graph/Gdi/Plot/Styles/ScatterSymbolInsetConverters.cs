@@ -36,67 +36,67 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	/// <summary>
-	/// Converts a type, which must be the type of a non-abstract subclass which implements <see cref="IScatterSymbolInset"/>, to an image.
-	/// </summary>
-	/// <seealso cref="System.Windows.Data.IValueConverter" />
-	public class ScatterSymbolInsetTypeToImageSourceConverter : IValueConverter
-	{
-		private ScatterSymbolToImageSourceConverter _innerConverter = new ScatterSymbolToImageSourceConverter();
+  /// <summary>
+  /// Converts a type, which must be the type of a non-abstract subclass which implements <see cref="IScatterSymbolInset"/>, to an image.
+  /// </summary>
+  /// <seealso cref="System.Windows.Data.IValueConverter" />
+  public class ScatterSymbolInsetTypeToImageSourceConverter : IValueConverter
+  {
+    private ScatterSymbolToImageSourceConverter _innerConverter = new ScatterSymbolToImageSourceConverter();
 
-		public double SymbolSize
-		{
-			get { return _innerConverter.SymbolSize; }
-			set { _innerConverter.SymbolSize = value; }
-		}
+    public double SymbolSize
+    {
+      get { return _innerConverter.SymbolSize; }
+      set { _innerConverter.SymbolSize = value; }
+    }
 
-		private IScatterSymbol _referenceSymbol = new Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(PlotColorInfluence.FrameColorFull | PlotColorInfluence.InsetColorFull);
+    private IScatterSymbol _referenceSymbol = new Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(PlotColorInfluence.FrameColorFull | PlotColorInfluence.InsetColorFull);
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			var insetType = value as Type;
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      var insetType = value as Type;
 
-			if (null == insetType)
-				return null;
+      if (null == insetType)
+        return null;
 
-			var inset = (IScatterSymbolInset)Activator.CreateInstance(insetType);
+      var inset = (IScatterSymbolInset)Activator.CreateInstance(insetType);
 
-			var symbol = _referenceSymbol.WithInset(inset);
+      var symbol = _referenceSymbol.WithInset(inset);
 
-			return _innerConverter.Convert(symbol, targetType, parameter, culture);
-		}
+      return _innerConverter.Convert(symbol, targetType, parameter, culture);
+    }
 
-		private PathFigure GetPathFigure(List<ClipperLib.IntPoint> polygon, double symbolSize)
-		{
-			if (null == polygon || polygon.Count <= 2)
-				return null;
+    private PathFigure GetPathFigure(List<ClipperLib.IntPoint> polygon, double symbolSize)
+    {
+      if (null == polygon || polygon.Count <= 2)
+        return null;
 
-			return new PathFigure(
-				new System.Windows.Point(polygon[0].X * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1, -polygon[0].Y * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1),
-				polygon.Skip(1).Select(pp => new LineSegment(new System.Windows.Point(pp.X * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1, -pp.Y * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1), false)), true);
-		}
+      return new PathFigure(
+        new System.Windows.Point(polygon[0].X * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1, -polygon[0].Y * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1),
+        polygon.Skip(1).Select(pp => new LineSegment(new System.Windows.Point(pp.X * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1, -pp.Y * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1), false)), true);
+    }
 
-		private PathGeometry GetPathGeometry(List<List<ClipperLib.IntPoint>> polygon, double symbolSize)
-		{
-			return new PathGeometry(polygon.Where(p => p != null && p.Count > 2).Select(p => GetPathFigure(p, symbolSize)));
-		}
+    private PathGeometry GetPathGeometry(List<List<ClipperLib.IntPoint>> polygon, double symbolSize)
+    {
+      return new PathGeometry(polygon.Where(p => p != null && p.Count > 2).Select(p => GetPathFigure(p, symbolSize)));
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 
-	public class ScatterSymbolInsetToItemNameConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			return value?.GetType().Name;
-		}
+  public class ScatterSymbolInsetToItemNameConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      return value?.GetType().Name;
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

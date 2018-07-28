@@ -20,24 +20,24 @@ using System;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// The arguments for the <see cref="LineReceivedEventHandler"/> event.
-	/// </summary>
-	public class LineReceivedEventArgs : EventArgs
-	{
-		private string line = String.Empty;
+  /// <summary>
+  /// The arguments for the <see cref="LineReceivedEventHandler"/> event.
+  /// </summary>
+  public class LineReceivedEventArgs : EventArgs
+  {
+    private string line = String.Empty;
 
-		public LineReceivedEventArgs(string line)
-		{
-			this.line = line;
-		}
+    public LineReceivedEventArgs(string line)
+    {
+      this.line = line;
+    }
 
-		public string Line
-		{
-			get
-			{
-				return line;
-			}
-		}
-	}
+    public string Line
+    {
+      get
+      {
+        return line;
+      }
+    }
+  }
 }

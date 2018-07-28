@@ -32,51 +32,51 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Creates DefaultColorSetDescriptor objects that are used in option dialogs.
-	/// </summary>
-	/// <attribute name="class">
-	/// Name of the IColorSet class. Optional if the page has subpages.
-	/// </attribute>
-	/// <attribute name="label" use="required">
-	/// Caption of the dialog panel.
-	/// </attribute>
-	/// <children childTypes="ColorSet">
-	/// In the SharpDevelop options, option pages can have subpages by specifying them
-	/// as children in the AddInTree.
-	/// </children>
-	/// <usage>In /SharpDevelop/BackendBindings/ProjectOptions/ and /SharpDevelop/Dialogs/OptionsDialog</usage>
-	/// <returns>
-	/// A DefaultColorSetDescriptor object.
-	/// </returns>
-	public class ColorSetDoozer : IDoozer
-	{
-		/// <summary>
-		/// Gets if the doozer handles codon conditions on its own.
-		/// If this property return false, the item is excluded when the condition is not met.
-		/// </summary>
-		public bool HandleConditions
-		{
-			get
-			{
-				return false;
-			}
-		}
+  /// <summary>
+  /// Creates DefaultColorSetDescriptor objects that are used in option dialogs.
+  /// </summary>
+  /// <attribute name="class">
+  /// Name of the IColorSet class. Optional if the page has subpages.
+  /// </attribute>
+  /// <attribute name="label" use="required">
+  /// Caption of the dialog panel.
+  /// </attribute>
+  /// <children childTypes="ColorSet">
+  /// In the SharpDevelop options, option pages can have subpages by specifying them
+  /// as children in the AddInTree.
+  /// </children>
+  /// <usage>In /SharpDevelop/BackendBindings/ProjectOptions/ and /SharpDevelop/Dialogs/OptionsDialog</usage>
+  /// <returns>
+  /// A DefaultColorSetDescriptor object.
+  /// </returns>
+  public class ColorSetDoozer : IDoozer
+  {
+    /// <summary>
+    /// Gets if the doozer handles codon conditions on its own.
+    /// If this property return false, the item is excluded when the condition is not met.
+    /// </summary>
+    public bool HandleConditions
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		/// <summary>
-		/// Creates an item with the specified sub items. And the current
-		/// Condition status for this item.
-		/// </summary>
-		public object BuildItem(BuildItemArgs args)
-		{
-			string label = args.Codon["label"];
-			string id = args.Codon.Id;
-			bool isPlotColorSet = args.Codon.Properties.Get<bool>("IsPlotColorSet", false);
+    /// <summary>
+    /// Creates an item with the specified sub items. And the current
+    /// Condition status for this item.
+    /// </summary>
+    public object BuildItem(BuildItemArgs args)
+    {
+      string label = args.Codon["label"];
+      string id = args.Codon.Id;
+      bool isPlotColorSet = args.Codon.Properties.Get<bool>("IsPlotColorSet", false);
 
-			var subItems = args.BuildSubItems<NamedColor>();
-			var result = new ColorSet(label, subItems);
+      var subItems = args.BuildSubItems<NamedColor>();
+      var result = new ColorSet(label, subItems);
 
-			return new Tuple<IColorSet, bool>(result, isPlotColorSet);
-		}
-	}
+      return new Tuple<IColorSet, bool>(result, isPlotColorSet);
+    }
+  }
 }

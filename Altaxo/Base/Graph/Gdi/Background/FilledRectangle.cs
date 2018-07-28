@@ -30,117 +30,117 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Background
 {
-	/// <summary>
-	/// Backs the item with a color filled rectangle.
-	/// </summary>
-	[Serializable]
-	public class FilledRectangle
-		:
-		Main.SuspendableDocumentNodeWithEventArgs,
-		IBackgroundStyle
-	{
-		protected BrushX _brush;
+  /// <summary>
+  /// Backs the item with a color filled rectangle.
+  /// </summary>
+  [Serializable]
+  public class FilledRectangle
+    :
+    Main.SuspendableDocumentNodeWithEventArgs,
+    IBackgroundStyle
+  {
+    protected BrushX _brush;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BackgroundColorStyle", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FilledRectangle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				FilledRectangle s = (FilledRectangle)obj;
-				info.AddValue("Brush", s._brush);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BackgroundColorStyle", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FilledRectangle), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        FilledRectangle s = (FilledRectangle)obj;
+        info.AddValue("Brush", s._brush);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				FilledRectangle s = null != o ? (FilledRectangle)o : new FilledRectangle();
-				s._brush = (BrushX)info.GetValue("Brush", s);
-				s._brush.ParentObject = s;
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        FilledRectangle s = null != o ? (FilledRectangle)o : new FilledRectangle();
+        s._brush = (BrushX)info.GetValue("Brush", s);
+        s._brush.ParentObject = s;
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public FilledRectangle()
-		{
-		}
+    public FilledRectangle()
+    {
+    }
 
-		public FilledRectangle(NamedColor c)
-		{
-			_brush = new BrushX(c);
-			_brush.ParentObject = this;
-		}
+    public FilledRectangle(NamedColor c)
+    {
+      _brush = new BrushX(c);
+      _brush.ParentObject = this;
+    }
 
-		public FilledRectangle(BrushX brush)
-		{
-			_brush = (BrushX)brush.Clone();
-			_brush.ParentObject = this;
-		}
+    public FilledRectangle(BrushX brush)
+    {
+      _brush = (BrushX)brush.Clone();
+      _brush.ParentObject = this;
+    }
 
-		public FilledRectangle(FilledRectangle from)
-		{
-			CopyFrom(from);
-		}
+    public FilledRectangle(FilledRectangle from)
+    {
+      CopyFrom(from);
+    }
 
-		public void CopyFrom(FilledRectangle from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
+    public void CopyFrom(FilledRectangle from)
+    {
+      if (object.ReferenceEquals(this, from))
+        return;
 
-			this.Brush = from._brush;
-		}
+      this.Brush = from._brush;
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			if (null != _brush)
-				yield return new Main.DocumentNodeAndName(_brush, "Brush");
-		}
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      if (null != _brush)
+        yield return new Main.DocumentNodeAndName(_brush, "Brush");
+    }
 
-		public object Clone()
-		{
-			return new FilledRectangle(this);
-		}
+    public object Clone()
+    {
+      return new FilledRectangle(this);
+    }
 
-		#region IBackgroundStyle Members
+    #region IBackgroundStyle Members
 
-		public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
-		{
-			return innerArea;
-		}
+    public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
+    {
+      return innerArea;
+    }
 
-		public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
-		{
-			Draw(g, _brush, innerArea);
-		}
+    public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
+    {
+      Draw(g, _brush, innerArea);
+    }
 
-		public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD2D innerArea)
-		{
-			if (brush != null)
-			{
-				brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-				g.FillRectangle(brush, (RectangleF)innerArea);
-			}
-		}
+    public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD2D innerArea)
+    {
+      if (brush != null)
+      {
+        brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+        g.FillRectangle(brush, (RectangleF)innerArea);
+      }
+    }
 
-		public bool SupportsBrush { get { return true; } }
+    public bool SupportsBrush { get { return true; } }
 
-		public BrushX Brush
-		{
-			get
-			{
-				return _brush;
-			}
-			set
-			{
-				_brush = value == null ? null : value.Clone();
-				_brush.ParentObject = this;
-			}
-		}
+    public BrushX Brush
+    {
+      get
+      {
+        return _brush;
+      }
+      set
+      {
+        _brush = value == null ? null : value.Clone();
+        _brush.ParentObject = this;
+      }
+    }
 
-		#endregion IBackgroundStyle Members
-	}
+    #endregion IBackgroundStyle Members
+  }
 }

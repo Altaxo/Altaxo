@@ -36,140 +36,140 @@ using sdd = Altaxo.Drawing.D3D;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
-	/// <summary>
-	/// Interaction logic for LineJoinComboBox.xaml
-	/// </summary>
-	public partial class LineJoinComboBox : ImageComboBox
-	{
-		private class CC : IValueConverter
-		{
-			private LineJoinComboBox _cb;
+  /// <summary>
+  /// Interaction logic for LineJoinComboBox.xaml
+  /// </summary>
+  public partial class LineJoinComboBox : ImageComboBox
+  {
+    private class CC : IValueConverter
+    {
+      private LineJoinComboBox _cb;
 
-			public CC(LineJoinComboBox c)
-			{
-				_cb = c;
-			}
+      public CC(LineJoinComboBox c)
+      {
+        _cb = c;
+      }
 
-			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				var val = (sdd.PenLineJoin)value;
-				return _cb._cachedItems[val];
-			}
+      public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        var val = (sdd.PenLineJoin)value;
+        return _cb._cachedItems[val];
+      }
 
-			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				return ((ImageComboBoxItem)value).Value;
-			}
-		}
+      public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        return ((ImageComboBoxItem)value).Value;
+      }
+    }
 
-		private static Dictionary<sdd.PenLineJoin, ImageSource> _cachedImages = new Dictionary<sdd.PenLineJoin, ImageSource>();
+    private static Dictionary<sdd.PenLineJoin, ImageSource> _cachedImages = new Dictionary<sdd.PenLineJoin, ImageSource>();
 
-		private Dictionary<sdd.PenLineJoin, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.PenLineJoin, ImageComboBoxItem>();
+    private Dictionary<sdd.PenLineJoin, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.PenLineJoin, ImageComboBoxItem>();
 
-		public LineJoinComboBox()
-		{
-			InitializeComponent();
+    public LineJoinComboBox()
+    {
+      InitializeComponent();
 
-			_cachedItems.Add(sdd.PenLineJoin.Bevel, new ImageComboBoxItem(this, sdd.PenLineJoin.Bevel));
-			_cachedItems.Add(sdd.PenLineJoin.Miter, new ImageComboBoxItem(this, sdd.PenLineJoin.Miter));
+      _cachedItems.Add(sdd.PenLineJoin.Bevel, new ImageComboBoxItem(this, sdd.PenLineJoin.Bevel));
+      _cachedItems.Add(sdd.PenLineJoin.Miter, new ImageComboBoxItem(this, sdd.PenLineJoin.Miter));
 
-			Items.Add(_cachedItems[sdd.PenLineJoin.Bevel]);
-			Items.Add(_cachedItems[sdd.PenLineJoin.Miter]);
+      Items.Add(_cachedItems[sdd.PenLineJoin.Bevel]);
+      Items.Add(_cachedItems[sdd.PenLineJoin.Miter]);
 
-			var _valueBinding = new Binding();
-			_valueBinding.Source = this;
-			_valueBinding.Path = new PropertyPath(_nameOfValueProp);
-			_valueBinding.Converter = new CC(this);
-			this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
-		}
+      var _valueBinding = new Binding();
+      _valueBinding.Source = this;
+      _valueBinding.Path = new PropertyPath(_nameOfValueProp);
+      _valueBinding.Converter = new CC(this);
+      this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
+    }
 
-		#region Dependency property
+    #region Dependency property
 
-		private const string _nameOfValueProp = "SelectedLineJoin";
+    private const string _nameOfValueProp = "SelectedLineJoin";
 
-		public sdd.PenLineJoin SelectedLineJoin
-		{
-			get { var result = (sdd.PenLineJoin)GetValue(SelectedLineJoinProperty); return result; }
-			set { SetValue(SelectedLineJoinProperty, value); }
-		}
+    public sdd.PenLineJoin SelectedLineJoin
+    {
+      get { var result = (sdd.PenLineJoin)GetValue(SelectedLineJoinProperty); return result; }
+      set { SetValue(SelectedLineJoinProperty, value); }
+    }
 
-		public static readonly DependencyProperty SelectedLineJoinProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(sdd.PenLineJoin), typeof(LineJoinComboBox),
-				new FrameworkPropertyMetadata(OnSelectedLineJoinChanged));
+    public static readonly DependencyProperty SelectedLineJoinProperty =
+        DependencyProperty.Register(_nameOfValueProp, typeof(sdd.PenLineJoin), typeof(LineJoinComboBox),
+        new FrameworkPropertyMetadata(OnSelectedLineJoinChanged));
 
-		private static void OnSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((LineJoinComboBox)obj).EhSelectedLineJoinChanged(obj, args);
-		}
+    private static void OnSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((LineJoinComboBox)obj).EhSelectedLineJoinChanged(obj, args);
+    }
 
-		#endregion Dependency property
+    #endregion Dependency property
 
-		protected virtual void EhSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-		}
+    protected virtual void EhSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+    }
 
-		public override string GetItemText(object item)
-		{
-			var val = (sdd.PenLineJoin)item;
-			return val.ToString();
-		}
+    public override string GetItemText(object item)
+    {
+      var val = (sdd.PenLineJoin)item;
+      return val.ToString();
+    }
 
-		public override ImageSource GetItemImage(object item)
-		{
-			var val = (sdd.PenLineJoin)item;
-			ImageSource result;
-			if (!_cachedImages.TryGetValue(val, out result))
-				_cachedImages.Add(val, result = GetImage(val));
-			return result;
-		}
+    public override ImageSource GetItemImage(object item)
+    {
+      var val = (sdd.PenLineJoin)item;
+      ImageSource result;
+      if (!_cachedImages.TryGetValue(val, out result))
+        _cachedImages.Add(val, result = GetImage(val));
+      return result;
+    }
 
-		public static DrawingImage GetImage(sdd.PenLineJoin join)
-		{
-			const double height = 1;
-			const double width = 2;
-			const double lineWidth = 0.375 * height;
+    public static DrawingImage GetImage(sdd.PenLineJoin join)
+    {
+      const double height = 1;
+      const double width = 2;
+      const double lineWidth = 0.375 * height;
 
-			PenLineJoin plj;
-			switch (join)
-			{
-				case sdd.PenLineJoin.Bevel:
-					plj = PenLineJoin.Bevel;
-					break;
+      PenLineJoin plj;
+      switch (join)
+      {
+        case sdd.PenLineJoin.Bevel:
+          plj = PenLineJoin.Bevel;
+          break;
 
-				case sdd.PenLineJoin.Miter:
-					plj = PenLineJoin.Miter;
-					break;
+        case sdd.PenLineJoin.Miter:
+          plj = PenLineJoin.Miter;
+          break;
 
-				default:
-					plj = PenLineJoin.Bevel;
-					break;
-			}
+        default:
+          plj = PenLineJoin.Bevel;
+          break;
+      }
 
-			var drawingGroup = new DrawingGroup();
-			GeometryDrawing geometryDrawing;
+      var drawingGroup = new DrawingGroup();
+      GeometryDrawing geometryDrawing;
 
-			geometryDrawing = new GeometryDrawing();
-			geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
-			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
-			drawingGroup.Children.Add(geometryDrawing);
+      geometryDrawing = new GeometryDrawing();
+      geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
+      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      drawingGroup.Children.Add(geometryDrawing);
 
-			geometryDrawing = new GeometryDrawing();
-			var figure = new PathFigure();
-			figure.StartPoint = new Point(width, height * 0.875);
-			figure.Segments.Add(new PolyLineSegment(new Point[]
-			{
-				new Point(width / 2, height / 2),
-				new Point(width, height * 0.175) }, true));
-			geometryDrawing.Geometry = new PathGeometry(new PathFigure[] { figure });
-			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = plj };
-			drawingGroup.Children.Add(geometryDrawing);
+      geometryDrawing = new GeometryDrawing();
+      var figure = new PathFigure();
+      figure.StartPoint = new Point(width, height * 0.875);
+      figure.Segments.Add(new PolyLineSegment(new Point[]
+      {
+        new Point(width / 2, height / 2),
+        new Point(width, height * 0.175) }, true));
+      geometryDrawing.Geometry = new PathGeometry(new PathFigure[] { figure });
+      geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = plj };
+      drawingGroup.Children.Add(geometryDrawing);
 
-			drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
+      drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
 
-			DrawingImage geometryImage = new DrawingImage(drawingGroup);
+      DrawingImage geometryImage = new DrawingImage(drawingGroup);
 
-			geometryImage.Freeze();
-			return geometryImage;
-		}
-	}
+      geometryImage.Freeze();
+      return geometryImage;
+    }
+  }
 }

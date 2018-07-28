@@ -30,46 +30,46 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class HorizontalBarInset : InsetBase
-	{
-		#region Serialization
+  public class HorizontalBarInset : InsetBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HorizontalBarInset), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
-			}
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HorizontalBarInset), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (HorizontalBarInset)o ?? new HorizontalBarInset();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (HorizontalBarInset)o ?? new HorizontalBarInset();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double structureScale)
-		{
-			var h = ClipperScalingInt;
-			var w = (int)Math.Round(0.25 + structureScale * ClipperScalingInt);
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double structureScale)
+    {
+      var h = ClipperScalingInt;
+      var w = (int)Math.Round(0.25 + structureScale * ClipperScalingInt);
 
-			return new List<List<ClipperLib.IntPoint>>(1)
-			{
-				new List<ClipperLib.IntPoint>(4)
-				{
-				new ClipperLib.IntPoint( -h, -w),
-				new ClipperLib.IntPoint( h, -w),
-				new ClipperLib.IntPoint( h, w),
-				new ClipperLib.IntPoint( -h, w)
-			}
-			};
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1)
+      {
+        new List<ClipperLib.IntPoint>(4)
+        {
+        new ClipperLib.IntPoint( -h, -w),
+        new ClipperLib.IntPoint( h, -w),
+        new ClipperLib.IntPoint( h, w),
+        new ClipperLib.IntPoint( -h, w)
+      }
+      };
+    }
+  }
 }

@@ -27,31 +27,31 @@ using System;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// Summary description for RectangleDrawingMouseHandler.
-	/// </summary>
-	public class RegularPolygonDrawingMouseHandler : AbstractRectangularToolMouseHandler
-	{
-		public RegularPolygonDrawingMouseHandler(GraphController grac)
-			: base(grac)
-		{
-		}
+  /// <summary>
+  /// Summary description for RectangleDrawingMouseHandler.
+  /// </summary>
+  public class RegularPolygonDrawingMouseHandler : AbstractRectangularToolMouseHandler
+  {
+    public RegularPolygonDrawingMouseHandler(GraphController grac)
+      : base(grac)
+    {
+    }
 
-		public override GraphToolType GraphToolType
-		{
-			get { return GraphToolType.RegularPolygonDrawing; }
-		}
+    public override GraphToolType GraphToolType
+    {
+      get { return GraphToolType.RegularPolygonDrawing; }
+    }
 
-		protected override void FinishDrawing()
-		{
-			var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
-			var go = new RegularPolygon(_grac.Doc.GetPropertyContext());
-			go.SetParentSize(_grac.ActiveLayer.Size, false);
-			go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
+    protected override void FinishDrawing()
+    {
+      var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
+      var go = new RegularPolygon(_grac.Doc.GetPropertyContext());
+      go.SetParentSize(_grac.ActiveLayer.Size, false);
+      go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
 
-			// deselect the text tool
-			_grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-			_grac.ActiveLayer.GraphObjects.Add(go);
-		}
-	}
+      // deselect the text tool
+      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+      _grac.ActiveLayer.GraphObjects.Add(go);
+    }
+  }
 }

@@ -23,104 +23,104 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
-	public class SelectNextWindow : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+  public class SelectNextWindow : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
-			if (!(parameter is IViewContent thisWindow))
-				thisWindow = workbench.ActiveViewContent;
+      if (!(parameter is IViewContent thisWindow))
+        thisWindow = workbench.ActiveViewContent;
 
-			if (null != thisWindow)
-			{
-				int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
-				workbench.ViewContentCollection[(index + 1) % workbench.ViewContentCollection.Count].IsSelected = true;
-			}
-		}
-	}
+      if (null != thisWindow)
+      {
+        int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
+        workbench.ViewContentCollection[(index + 1) % workbench.ViewContentCollection.Count].IsSelected = true;
+      }
+    }
+  }
 
-	public class SelectPrevWindow : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-			if (!(parameter is IViewContent thisWindow))
-				thisWindow = workbench.ActiveViewContent;
+  public class SelectPrevWindow : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+      if (!(parameter is IViewContent thisWindow))
+        thisWindow = workbench.ActiveViewContent;
 
-			if (null != thisWindow)
-			{
-				int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
-				workbench.ViewContentCollection[(index + workbench.ViewContentCollection.Count - 1) % workbench.ViewContentCollection.Count].IsSelected = true;
-			}
-		}
-	}
+      if (null != thisWindow)
+      {
+        int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
+        workbench.ViewContentCollection[(index + workbench.ViewContentCollection.Count - 1) % workbench.ViewContentCollection.Count].IsSelected = true;
+      }
+    }
+  }
 
-	public class CloseAllWindows : SimpleCommand
-	{
-		public override void Execute(object _)
-		{
-			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-			workbench.CloseAllViews();
-		}
-	}
+  public class CloseAllWindows : SimpleCommand
+  {
+    public override void Execute(object _)
+    {
+      var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+      workbench.CloseAllViews();
+    }
+  }
 
-	public class CloseFileTab : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-			if (!(parameter is IViewContent thisWindow))
-				thisWindow = workbench.ActiveViewContent;
+  public class CloseFileTab : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+      if (!(parameter is IViewContent thisWindow))
+        thisWindow = workbench.ActiveViewContent;
 
-			if (thisWindow != null)
-			{
-				workbench.CloseContent(thisWindow);
-			}
-		}
-	}
+      if (thisWindow != null)
+      {
+        workbench.CloseContent(thisWindow);
+      }
+    }
+  }
 
-	public class CloseAllButThisFileTab : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+  public class CloseAllButThisFileTab : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
-			if (!(parameter is IViewContent thisWindow))
-				thisWindow = workbench.ActiveViewContent;
+      if (!(parameter is IViewContent thisWindow))
+        thisWindow = workbench.ActiveViewContent;
 
-			if (null != thisWindow)
-			{
-				for (int i = workbench.ViewContentCollection.Count - 1; i >= 0; --i)
-				{
-					var window = workbench.ViewContentCollection[i];
-					if (window != thisWindow)
-					{
-						workbench.CloseContent(window);
-					}
-				}
-			}
-		}
-	}
+      if (null != thisWindow)
+      {
+        for (int i = workbench.ViewContentCollection.Count - 1; i >= 0; --i)
+        {
+          var window = workbench.ViewContentCollection[i];
+          if (window != thisWindow)
+          {
+            workbench.CloseContent(window);
+          }
+        }
+      }
+    }
+  }
 
-	public class DeleteThisFileTab : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+  public class DeleteThisFileTab : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
-			if (!(parameter is IViewContent thisWindow))
-				thisWindow = workbench.ActiveViewContent;
+      if (!(parameter is IViewContent thisWindow))
+        thisWindow = workbench.ActiveViewContent;
 
-			if (null != thisWindow)
-			{
-				var currentProjectService = Current.GetRequiredService<IProjectService>();
+      if (null != thisWindow)
+      {
+        var currentProjectService = Current.GetRequiredService<IProjectService>();
 
-				if (thisWindow.ModelObject is Altaxo.Main.IProjectItem pi)
-					currentProjectService.DeleteDocument(pi, false);
-				else if (thisWindow.ModelObject is Altaxo.Main.IProjectItemPresentationModel pipm)
-					currentProjectService.DeleteDocument(pipm.Document, false);
-			}
-		}
-	}
+        if (thisWindow.ModelObject is Altaxo.Main.IProjectItem pi)
+          currentProjectService.DeleteDocument(pi, false);
+        else if (thisWindow.ModelObject is Altaxo.Main.IProjectItemPresentationModel pipm)
+          currentProjectService.DeleteDocument(pipm.Document, false);
+      }
+    }
+  }
 }

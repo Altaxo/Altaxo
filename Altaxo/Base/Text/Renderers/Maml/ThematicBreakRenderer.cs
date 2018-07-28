@@ -26,20 +26,20 @@ using Markdig.Syntax;
 
 namespace Altaxo.Text.Renderers.Maml
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="ThematicBreakBlock"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class ThematicBreakRenderer : MamlObjectRenderer<ThematicBreakBlock>
-	{
-		protected override void Write(MamlRenderer renderer, ThematicBreakBlock obj)
-		{
-			// since there is no direct equivalent to a thematic break in Maml,
-			// here we use a paragraph with 80 underlines
+  /// <summary>
+  /// Maml renderer for a <see cref="ThematicBreakBlock"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class ThematicBreakRenderer : MamlObjectRenderer<ThematicBreakBlock>
+  {
+    protected override void Write(MamlRenderer renderer, ThematicBreakBlock obj)
+    {
+      // since there is no direct equivalent to a thematic break in Maml,
+      // here we use a paragraph with 80 underlines
 
-			renderer.Push(MamlElements.markup);
-			renderer.Write("<hr/>");
-			renderer.PopTo(MamlElements.markup);
-		}
-	}
+      renderer.Push(MamlElements.markup);
+      renderer.Write("<hr/>");
+      renderer.PopTo(MamlElements.markup);
+    }
+  }
 }

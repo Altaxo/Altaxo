@@ -32,257 +32,257 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Gdi
 {
-	/// <summary>
-	/// Manages the concurrent rendering of <see cref="GraphDocument"/>s.
-	/// </summary>
-	/// <remarks>
-	/// The graph documents are rendered in separate, non-Gui threads. Since Altaxo is not thread safe,
-	/// exceptions during rendering may happen because either the graph document or the underlying plot data were changed at the same time.
-	///  This can not be avoided for now. Thats why, if an exception during rendering occurs, we try it again and again.
-	/// We give the rendering a maximum of 16 trials and 30 seconds time from the first unsuccessful trial to the last.
-	/// </remarks>
-	public class GraphDocumentRenderManager
-	{
-		#region Inner classes
+  /// <summary>
+  /// Manages the concurrent rendering of <see cref="GraphDocument"/>s.
+  /// </summary>
+  /// <remarks>
+  /// The graph documents are rendered in separate, non-Gui threads. Since Altaxo is not thread safe,
+  /// exceptions during rendering may happen because either the graph document or the underlying plot data were changed at the same time.
+  ///  This can not be avoided for now. Thats why, if an exception during rendering occurs, we try it again and again.
+  /// We give the rendering a maximum of 16 trials and 30 seconds time from the first unsuccessful trial to the last.
+  /// </remarks>
+  public class GraphDocumentRenderManager
+  {
+    #region Inner classes
 
-		/// <summary>
-		/// Render task item managed by the <see cref="GraphDocumentRenderManager"/>.
-		/// </summary>
-		private class GraphDocumentRenderTask
-		{
-			private GraphDocumentRenderManager _parent;
+    /// <summary>
+    /// Render task item managed by the <see cref="GraphDocumentRenderManager"/>.
+    /// </summary>
+    private class GraphDocumentRenderTask
+    {
+      private GraphDocumentRenderManager _parent;
 
-			internal object Owner { get; private set; }
+      internal object Owner { get; private set; }
 
-			internal GraphDocument Document { get; private set; }
+      internal GraphDocument Document { get; private set; }
 
-			private Action<GraphDocument, object> _rendering;
+      private Action<GraphDocument, object> _rendering;
 
-			/// <summary>
-			/// The trial count down. Integer that is counted down with every trial to render the document. When the trial count down has
-			/// reached zero, no more rendering trials are allowed.
-			/// </summary>
-			private int _trialCountDown = 16;
+      /// <summary>
+      /// The trial count down. Integer that is counted down with every trial to render the document. When the trial count down has
+      /// reached zero, no more rendering trials are allowed.
+      /// </summary>
+      private int _trialCountDown = 16;
 
-			/// <summary>
-			/// The time when the first rendering exception occured. (null if no such exception occured).
-			/// </summary>
-			private TimeSpan? _timeOfFirstRenderingException;
+      /// <summary>
+      /// The time when the first rendering exception occured. (null if no such exception occured).
+      /// </summary>
+      private TimeSpan? _timeOfFirstRenderingException;
 
-			/// <summary>
-			/// The maximum time span between now and the first rendering exception. If this time span exceeds the Time span designated here,
-			/// no further rendering trials are allowed.
-			/// </summary>
-			private static readonly TimeSpan _maximumTrialTimeAllowed = TimeSpan.FromSeconds(30);
+      /// <summary>
+      /// The maximum time span between now and the first rendering exception. If this time span exceeds the Time span designated here,
+      /// no further rendering trials are allowed.
+      /// </summary>
+      private static readonly TimeSpan _maximumTrialTimeAllowed = TimeSpan.FromSeconds(30);
 
-			/// <summary>
-			/// True if the last rendering was successful.
-			/// </summary>
-			private bool _wasSuccessful;
+      /// <summary>
+      /// True if the last rendering was successful.
+      /// </summary>
+      private bool _wasSuccessful;
 
-			public override bool Equals(object obj)
-			{
-				var from = obj as GraphDocumentRenderTask;
-				if (null != from)
-					return this.Owner.Equals(from.Owner);
-				else
-					return false;
-			}
+      public override bool Equals(object obj)
+      {
+        var from = obj as GraphDocumentRenderTask;
+        if (null != from)
+          return this.Owner.Equals(from.Owner);
+        else
+          return false;
+      }
 
-			public override int GetHashCode()
-			{
-				return Owner.GetHashCode();
-			}
+      public override int GetHashCode()
+      {
+        return Owner.GetHashCode();
+      }
 
-			public GraphDocumentRenderTask(
-				GraphDocumentRenderManager parent,
-				object token,
-				GraphDocument doc,
-				Action<GraphDocument, object> renderingAction
-				)
-			{
-				if (null == parent)
-					throw new ArgumentNullException(nameof(parent));
-				if (null == token)
-					throw new ArgumentNullException(nameof(token));
-				if (null == doc)
-					throw new ArgumentNullException(nameof(doc));
-				if (null == renderingAction)
-					throw new ArgumentNullException(nameof(renderingAction));
+      public GraphDocumentRenderTask(
+        GraphDocumentRenderManager parent,
+        object token,
+        GraphDocument doc,
+        Action<GraphDocument, object> renderingAction
+        )
+      {
+        if (null == parent)
+          throw new ArgumentNullException(nameof(parent));
+        if (null == token)
+          throw new ArgumentNullException(nameof(token));
+        if (null == doc)
+          throw new ArgumentNullException(nameof(doc));
+        if (null == renderingAction)
+          throw new ArgumentNullException(nameof(renderingAction));
 
-				_parent = parent;
-				Owner = token;
-				Document = doc;
-				_rendering = renderingAction;
-			}
+        _parent = parent;
+        Owner = token;
+        Document = doc;
+        _rendering = renderingAction;
+      }
 
-			/// <summary>
-			/// Gets a value indicating whether the rendering was successfull.
-			/// </summary>
-			/// <value>
-			///   <c>true</c> if the rendering was successful; otherwise, <c>false</c>.
-			/// </value>
-			public bool WasSuccessful { get { return _wasSuccessful; } }
+      /// <summary>
+      /// Gets a value indicating whether the rendering was successfull.
+      /// </summary>
+      /// <value>
+      ///   <c>true</c> if the rendering was successful; otherwise, <c>false</c>.
+      /// </value>
+      public bool WasSuccessful { get { return _wasSuccessful; } }
 
-			/// <summary>
-			/// Gets a value indicating whether more rendering trials are allowed.
-			/// </summary>
-			/// <value>
-			///   <c>true</c> if more rendering trials are allowed; otherwise, <c>false</c>. False is returned of either the rendering trial count down has reached zero
-			/// or the maximum allowed time for trials has been reached.
-			/// </value>
-			public bool MoreTrialsAllowed
-			{
-				get
-				{
-					if (_timeOfFirstRenderingException == null)
-						return true; // not even a rendering exception encountered
-					return _trialCountDown > 0 && ((Current.HighResolutionClock.CurrentTime - _timeOfFirstRenderingException.Value) <= _maximumTrialTimeAllowed);
-				}
-			}
+      /// <summary>
+      /// Gets a value indicating whether more rendering trials are allowed.
+      /// </summary>
+      /// <value>
+      ///   <c>true</c> if more rendering trials are allowed; otherwise, <c>false</c>. False is returned of either the rendering trial count down has reached zero
+      /// or the maximum allowed time for trials has been reached.
+      /// </value>
+      public bool MoreTrialsAllowed
+      {
+        get
+        {
+          if (_timeOfFirstRenderingException == null)
+            return true; // not even a rendering exception encountered
+          return _trialCountDown > 0 && ((Current.HighResolutionClock.CurrentTime - _timeOfFirstRenderingException.Value) <= _maximumTrialTimeAllowed);
+        }
+      }
 
-			/// <summary>
-			/// Renders the task. This function is used by the render manager.
-			/// </summary>
-			public void RenderTask()
-			{
-				try
-				{
-					--_trialCountDown;
+      /// <summary>
+      /// Renders the task. This function is used by the render manager.
+      /// </summary>
+      public void RenderTask()
+      {
+        try
+        {
+          --_trialCountDown;
 
-					_rendering(Document, Owner);
-					_wasSuccessful = true;
-				}
-				catch (Exception ex)
-				{
-					if (null == _timeOfFirstRenderingException)
-						_timeOfFirstRenderingException = Current.HighResolutionClock.CurrentTime;
+          _rendering(Document, Owner);
+          _wasSuccessful = true;
+        }
+        catch (Exception ex)
+        {
+          if (null == _timeOfFirstRenderingException)
+            _timeOfFirstRenderingException = Current.HighResolutionClock.CurrentTime;
 
-					if (!Document.IsDisposeInProgress && !MoreTrialsAllowed)
-					{
-						Current.Console.WriteLine(
-						"{0}: Error drawing graph {1} (file: {2})\r\n" +
-						"Details: {3}",
-						DateTime.Now,
-						Document.Name,
-						Current.Project.Name,
-						ex
-						);
-					}
-				}
-				finally
-				{
-					_parent.EhRenderTaskFinished(this);
-				}
-			}
-		}
+          if (!Document.IsDisposeInProgress && !MoreTrialsAllowed)
+          {
+            Current.Console.WriteLine(
+            "{0}: Error drawing graph {1} (file: {2})\r\n" +
+            "Details: {3}",
+            DateTime.Now,
+            Document.Name,
+            Current.Project.Name,
+            ex
+            );
+          }
+        }
+        finally
+        {
+          _parent.EhRenderTaskFinished(this);
+        }
+      }
+    }
 
-		#endregion Inner classes
+    #endregion Inner classes
 
-		private static GraphDocumentRenderManager _instance = new GraphDocumentRenderManager();
+    private static GraphDocumentRenderManager _instance = new GraphDocumentRenderManager();
 
-		public static GraphDocumentRenderManager Instance { get { return _instance; } }
+    public static GraphDocumentRenderManager Instance { get { return _instance; } }
 
-		/// <summary>The list of rendering tasks waiting to be started.</summary>
-		private ConcurrentTokenizedLinkedList<object, GraphDocumentRenderTask> _tasksWaiting;
+    /// <summary>The list of rendering tasks waiting to be started.</summary>
+    private ConcurrentTokenizedLinkedList<object, GraphDocumentRenderTask> _tasksWaiting;
 
-		/// <summary>The rendering tasks currently in progress.</summary>
-		private ConcurrentDictionary<GraphDocument, GraphDocumentRenderTask> _tasksRendering;
+    /// <summary>The rendering tasks currently in progress.</summary>
+    private ConcurrentDictionary<GraphDocument, GraphDocumentRenderTask> _tasksRendering;
 
-		/// <summary>The maximum number of tasks that should render concurrently.</summary>
-		private int _maxTasksConcurrentlyRendering = 1;
+    /// <summary>The maximum number of tasks that should render concurrently.</summary>
+    private int _maxTasksConcurrentlyRendering = 1;
 
-		private volatile bool _isEnabled;
+    private volatile bool _isEnabled;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="GraphDocumentRenderManager"/> class.
-		/// </summary>
-		public GraphDocumentRenderManager()
-		{
-			_maxTasksConcurrentlyRendering = Math.Max(1, System.Environment.ProcessorCount - 2); // leave 1 processor for the Gui thread, and another for calculations
-			_tasksWaiting = new ConcurrentTokenizedLinkedList<object, GraphDocumentRenderTask>();
-			_tasksRendering = new ConcurrentDictionary<GraphDocument, GraphDocumentRenderTask>();
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GraphDocumentRenderManager"/> class.
+    /// </summary>
+    public GraphDocumentRenderManager()
+    {
+      _maxTasksConcurrentlyRendering = Math.Max(1, System.Environment.ProcessorCount - 2); // leave 1 processor for the Gui thread, and another for calculations
+      _tasksWaiting = new ConcurrentTokenizedLinkedList<object, GraphDocumentRenderTask>();
+      _tasksRendering = new ConcurrentDictionary<GraphDocument, GraphDocumentRenderTask>();
 
-			var projService = Current.IProjectService;
-			projService.ProjectClosed += EhProjectClosed;
-			projService.ProjectOpened += EhProjectOpened;
-			_isEnabled = null != Current.Project;
-		}
+      var projService = Current.IProjectService;
+      projService.ProjectClosed += EhProjectClosed;
+      projService.ProjectOpened += EhProjectOpened;
+      _isEnabled = null != Current.Project;
+    }
 
-		private void EhProjectOpened(object sender, Main.ProjectEventArgs e)
-		{
-			_isEnabled = true;
-			TryStartWaitingTasks();
-		}
+    private void EhProjectOpened(object sender, Main.ProjectEventArgs e)
+    {
+      _isEnabled = true;
+      TryStartWaitingTasks();
+    }
 
-		private void EhProjectClosed(object sender, Main.ProjectEventArgs e)
-		{
-			_isEnabled = false;
-			_tasksWaiting.Clear();
-		}
+    private void EhProjectClosed(object sender, Main.ProjectEventArgs e)
+    {
+      _isEnabled = false;
+      _tasksWaiting.Clear();
+    }
 
-		/// <summary>
-		/// Adds a new render task.
-		/// </summary>
-		/// <param name="owner">The owner. This is any object that is able to uniquely identify the render task.</param>
-		/// <param name="doc">The graph document to render.</param>
-		/// <param name="renderingAction">The rendering action. This action is called when the provided graph document should be rendered.</param>
-		public void AddTask(object owner, GraphDocument doc, Action<GraphDocument, object> renderingAction)
-		{
-			var task = new GraphDocumentRenderTask(this, owner, doc, renderingAction);
-			_tasksWaiting.TryAddLast(owner, task);
-			TryStartWaitingTasks();
-		}
+    /// <summary>
+    /// Adds a new render task.
+    /// </summary>
+    /// <param name="owner">The owner. This is any object that is able to uniquely identify the render task.</param>
+    /// <param name="doc">The graph document to render.</param>
+    /// <param name="renderingAction">The rendering action. This action is called when the provided graph document should be rendered.</param>
+    public void AddTask(object owner, GraphDocument doc, Action<GraphDocument, object> renderingAction)
+    {
+      var task = new GraphDocumentRenderTask(this, owner, doc, renderingAction);
+      _tasksWaiting.TryAddLast(owner, task);
+      TryStartWaitingTasks();
+    }
 
-		/// <summary>
-		/// The render task calls back this function when it is finished.
-		/// It removes the render task from the list of currently rendering tasks. If the task was not successfully finished and
-		/// more trials are allowed, the render task is put back at the end of the list of waiting rendering tasks.
-		/// </summary>
-		/// <param name="rendering">The rendering task that was just finished.</param>
-		private void EhRenderTaskFinished(GraphDocumentRenderTask rendering)
-		{
-			GraphDocumentRenderTask renderTask;
-			_tasksRendering.TryRemove(rendering.Document, out renderTask);
+    /// <summary>
+    /// The render task calls back this function when it is finished.
+    /// It removes the render task from the list of currently rendering tasks. If the task was not successfully finished and
+    /// more trials are allowed, the render task is put back at the end of the list of waiting rendering tasks.
+    /// </summary>
+    /// <param name="rendering">The rendering task that was just finished.</param>
+    private void EhRenderTaskFinished(GraphDocumentRenderTask rendering)
+    {
+      GraphDocumentRenderTask renderTask;
+      _tasksRendering.TryRemove(rendering.Document, out renderTask);
 
-			if (!renderTask.WasSuccessful && renderTask.MoreTrialsAllowed)
-				_tasksWaiting.TryAddLast(renderTask.Owner, renderTask);
+      if (!renderTask.WasSuccessful && renderTask.MoreTrialsAllowed)
+        _tasksWaiting.TryAddLast(renderTask.Owner, renderTask);
 
-			TryStartWaitingTasks();
-		}
+      TryStartWaitingTasks();
+    }
 
-		/// <summary>
-		/// Starts as many waiting render tasks as possible.
-		/// </summary>
-		private void TryStartWaitingTasks()
-		{
-			if (!_isEnabled)
-				return;
+    /// <summary>
+    /// Starts as many waiting render tasks as possible.
+    /// </summary>
+    private void TryStartWaitingTasks()
+    {
+      if (!_isEnabled)
+        return;
 
-			GraphDocumentRenderTask rendering;
-			object token;
+      GraphDocumentRenderTask rendering;
+      object token;
 
-			for (int i = _tasksWaiting.Count - 1; i >= 0; --i)
-			{
-				if (_tasksRendering.Count >= _maxTasksConcurrentlyRendering)
-					break;
+      for (int i = _tasksWaiting.Count - 1; i >= 0; --i)
+      {
+        if (_tasksRendering.Count >= _maxTasksConcurrentlyRendering)
+          break;
 
-				// we try to start the first document in queue, but if this fails,
-				// we put it back at the end of the queue, and try to start the now-first document
-				// we will do this maximal  _documentsWaiting.Count times, in order to avoid infinite loops
-				if (_tasksWaiting.TryTakeFirst(out token, out rendering))
-				{
-					if (_tasksRendering.TryAdd(rendering.Document, rendering))
-					{
-						Task.Factory.StartNew(rendering.RenderTask);
-						break;
-					}
-					else // unfortunately, it seems that this GraphDocument is already rendering, thus we put it back in the queue
-					{
-						_tasksWaiting.TryAddLast(token, rendering);
-					}
-				}
-			}
-		}
-	}
+        // we try to start the first document in queue, but if this fails,
+        // we put it back at the end of the queue, and try to start the now-first document
+        // we will do this maximal  _documentsWaiting.Count times, in order to avoid infinite loops
+        if (_tasksWaiting.TryTakeFirst(out token, out rendering))
+        {
+          if (_tasksRendering.TryAdd(rendering.Document, rendering))
+          {
+            Task.Factory.StartNew(rendering.RenderTask);
+            break;
+          }
+          else // unfortunately, it seems that this GraphDocument is already rendering, thus we put it back in the queue
+          {
+            _tasksWaiting.TryAddLast(token, rendering);
+          }
+        }
+      }
+    }
+  }
 }

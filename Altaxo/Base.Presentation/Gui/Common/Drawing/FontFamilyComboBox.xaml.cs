@@ -35,231 +35,231 @@ using sd = System.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// Interaction logic for LineJoinComboBox.xaml
-	/// </summary>
-	public partial class FontFamilyComboBox : ImageComboBox
-	{
-		#region Converter
+  /// <summary>
+  /// Interaction logic for LineJoinComboBox.xaml
+  /// </summary>
+  public partial class FontFamilyComboBox : ImageComboBox
+  {
+    #region Converter
 
-		private class Converter : IValueConverter
-		{
-			private FontFamilyComboBox _cb;
+    private class Converter : IValueConverter
+    {
+      private FontFamilyComboBox _cb;
 
-			public Converter(FontFamilyComboBox c)
-			{
-				_cb = c;
-			}
+      public Converter(FontFamilyComboBox c)
+      {
+        _cb = c;
+      }
 
-			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				if (value == null)
-					return Binding.DoNothing;
-				if (value is string fontFamilyName)
-				{
-					return FontFamilyComboBox._cachedItems[fontFamilyName];
-				}
-				else
-				{
-					throw new ApplicationException("Unexpected type to convert: " + value.GetType());
-				}
-			}
+      public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        if (value == null)
+          return Binding.DoNothing;
+        if (value is string fontFamilyName)
+        {
+          return FontFamilyComboBox._cachedItems[fontFamilyName];
+        }
+        else
+        {
+          throw new ApplicationException("Unexpected type to convert: " + value.GetType());
+        }
+      }
 
-			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				return ((FontComboBoxItem)value).Value;
-			}
-		}
+      public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        return ((FontComboBoxItem)value).Value;
+      }
+    }
 
-		#endregion Converter
+    #endregion Converter
 
-		#region Item
+    #region Item
 
-		public class FontComboBoxItem : ImageComboBoxItem
-		{
-			private static char[] _defaultChars;
-			private ImageSource _imgSource;
+    public class FontComboBoxItem : ImageComboBoxItem
+    {
+      private static char[] _defaultChars;
+      private ImageSource _imgSource;
 
-			static FontComboBoxItem()
-			{
-				var chars = new List<char>();
-				for (int c = 0x41; c <= 0xFF; ++c)
-					chars.Add((char)c);
-				for (int c = 0x20; c < 0x41; ++c)
-					chars.Add((char)c);
-				_defaultChars = chars.ToArray();
-			}
+      static FontComboBoxItem()
+      {
+        var chars = new List<char>();
+        for (int c = 0x41; c <= 0xFF; ++c)
+          chars.Add((char)c);
+        for (int c = 0x20; c < 0x41; ++c)
+          chars.Add((char)c);
+        _defaultChars = chars.ToArray();
+      }
 
-			public FontComboBoxItem(string familyName)
-			{
-				Value = familyName;
-			}
+      public FontComboBoxItem(string familyName)
+      {
+        Value = familyName;
+      }
 
-			public override ImageSource Image
-			{
-				get
-				{
-					if (null == _imgSource)
-						_imgSource = GetImage((string)Value);
-					return _imgSource;
-				}
-			}
+      public override ImageSource Image
+      {
+        get
+        {
+          if (null == _imgSource)
+            _imgSource = GetImage((string)Value);
+          return _imgSource;
+        }
+      }
 
-			public override string Text
-			{
-				get
-				{
-					return (string)Value;
-				}
-			}
+      public override string Text
+      {
+        get
+        {
+          return (string)Value;
+        }
+      }
 
-			private static char[] GetDisplayText(GlyphTypeface glyphTypeFace)
-			{
-				string text = glyphTypeFace.SampleTexts[System.Globalization.CultureInfo.CurrentUICulture];
-				if (!string.IsNullOrEmpty(text))
-					return text.ToCharArray();
+      private static char[] GetDisplayText(GlyphTypeface glyphTypeFace)
+      {
+        string text = glyphTypeFace.SampleTexts[System.Globalization.CultureInfo.CurrentUICulture];
+        if (!string.IsNullOrEmpty(text))
+          return text.ToCharArray();
 
-				// else use the default characters, but test if they are present in the typeface
-				var chars = new List<char>();
-				for (int i = 0; i < _defaultChars.Length && chars.Count < 4; i++)
-				{
-					var c = _defaultChars[i];
-					if (glyphTypeFace.CharacterToGlyphMap.ContainsKey(c))
-						chars.Add(c);
-				}
-				return chars.ToArray();
-			}
+        // else use the default characters, but test if they are present in the typeface
+        var chars = new List<char>();
+        for (int i = 0; i < _defaultChars.Length && chars.Count < 4; i++)
+        {
+          var c = _defaultChars[i];
+          if (glyphTypeFace.CharacterToGlyphMap.ContainsKey(c))
+            chars.Add(c);
+        }
+        return chars.ToArray();
+      }
 
-			private static ImageSource GetImage(string fontFamilyName)
-			{
-				const double height = 1;
-				const double width = 2;
-				const double fontSize = 1;
+      private static ImageSource GetImage(string fontFamilyName)
+      {
+        const double height = 1;
+        const double width = 2;
+        const double fontSize = 1;
 
-				var drawingGroup = new DrawingGroup();
+        var drawingGroup = new DrawingGroup();
 
-				var outerGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
+        var outerGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
 
-				var geometryDrawing = new GeometryDrawing() { Geometry = outerGeometry };
-				geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
-				drawingGroup.Children.Add(geometryDrawing);
+        var geometryDrawing = new GeometryDrawing() { Geometry = outerGeometry };
+        geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+        drawingGroup.Children.Add(geometryDrawing);
 
-				var fontX = WpfFontManager.GetFontX(fontFamilyName, 12, Altaxo.Drawing.FontXStyle.Regular);
-				Typeface typeface = WpfFontManager.ToWpf(fontX);
-				if (!typeface.TryGetGlyphTypeface(out var glyphTypeFace))
-					glyphTypeFace = null;
+        var fontX = WpfFontManager.GetFontX(fontFamilyName, 12, Altaxo.Drawing.FontXStyle.Regular);
+        Typeface typeface = WpfFontManager.ToWpf(fontX);
+        if (!typeface.TryGetGlyphTypeface(out var glyphTypeFace))
+          glyphTypeFace = null;
 
-				if (null != glyphTypeFace)
-				{
-					var glyphRun = new GlyphRun();
-					((System.ComponentModel.ISupportInitialize)glyphRun).BeginInit();
-					glyphRun.GlyphTypeface = glyphTypeFace;
-					glyphRun.FontRenderingEmSize = fontSize;
-					var textChars = GetDisplayText(glyphTypeFace);
-					glyphRun.Characters = textChars;
+        if (null != glyphTypeFace)
+        {
+          var glyphRun = new GlyphRun();
+          ((System.ComponentModel.ISupportInitialize)glyphRun).BeginInit();
+          glyphRun.GlyphTypeface = glyphTypeFace;
+          glyphRun.FontRenderingEmSize = fontSize;
+          var textChars = GetDisplayText(glyphTypeFace);
+          glyphRun.Characters = textChars;
 
-					ushort[] glyphIndices = new ushort[textChars.Length];
-					double[] advanceWidths = new double[textChars.Length];
+          ushort[] glyphIndices = new ushort[textChars.Length];
+          double[] advanceWidths = new double[textChars.Length];
 
-					for (int i = 0; i < textChars.Length; ++i)
-					{
-						int codePoint = textChars[i];
-						ushort glyphIndex = glyphTypeFace.CharacterToGlyphMap[codePoint];
-						double glyphWidht = glyphTypeFace.AdvanceWidths[glyphIndex];
-						glyphIndices[i] = glyphIndex;
-						advanceWidths[i] = glyphWidht * fontSize;
-					}
+          for (int i = 0; i < textChars.Length; ++i)
+          {
+            int codePoint = textChars[i];
+            ushort glyphIndex = glyphTypeFace.CharacterToGlyphMap[codePoint];
+            double glyphWidht = glyphTypeFace.AdvanceWidths[glyphIndex];
+            glyphIndices[i] = glyphIndex;
+            advanceWidths[i] = glyphWidht * fontSize;
+          }
 
-					if (glyphIndices.Length > 0)
-					{
-						glyphRun.GlyphIndices = glyphIndices;
-						glyphRun.AdvanceWidths = advanceWidths;
-						glyphRun.BaselineOrigin = new Point(0, glyphTypeFace.Baseline * fontSize);
-						((System.ComponentModel.ISupportInitialize)glyphRun).EndInit();
+          if (glyphIndices.Length > 0)
+          {
+            glyphRun.GlyphIndices = glyphIndices;
+            glyphRun.AdvanceWidths = advanceWidths;
+            glyphRun.BaselineOrigin = new Point(0, glyphTypeFace.Baseline * fontSize);
+            ((System.ComponentModel.ISupportInitialize)glyphRun).EndInit();
 
-						var glyphRunDrawing = new GlyphRunDrawing(Brushes.Black, glyphRun);
-						drawingGroup.Children.Add(glyphRunDrawing);
-					}
-				}
+            var glyphRunDrawing = new GlyphRunDrawing(Brushes.Black, glyphRun);
+            drawingGroup.Children.Add(glyphRunDrawing);
+          }
+        }
 
-				drawingGroup.ClipGeometry = outerGeometry;
+        drawingGroup.ClipGeometry = outerGeometry;
 
-				DrawingImage geometryImage = new DrawingImage(drawingGroup);
+        DrawingImage geometryImage = new DrawingImage(drawingGroup);
 
-				// Freeze the DrawingImage for performance benefits.
-				geometryImage.Freeze();
-				return geometryImage;
-			}
-		}
+        // Freeze the DrawingImage for performance benefits.
+        geometryImage.Freeze();
+        return geometryImage;
+      }
+    }
 
-		#endregion Item
+    #endregion Item
 
-		private static List<FontComboBoxItem> _allItems = new List<FontComboBoxItem>();
-		private static Dictionary<string, FontComboBoxItem> _cachedItems = new Dictionary<string, FontComboBoxItem>();
+    private static List<FontComboBoxItem> _allItems = new List<FontComboBoxItem>();
+    private static Dictionary<string, FontComboBoxItem> _cachedItems = new Dictionary<string, FontComboBoxItem>();
 
-		public event DependencyPropertyChangedEventHandler SelectedFontFamilyNameChanged;
+    public event DependencyPropertyChangedEventHandler SelectedFontFamilyNameChanged;
 
-		static FontFamilyComboBox()
-		{
-			var list = new List<string>(Altaxo.Graph.Gdi.GdiFontManager.EnumerateAvailableGdiFontFamilyNames());
-			list.Sort();
+    static FontFamilyComboBox()
+    {
+      var list = new List<string>(Altaxo.Graph.Gdi.GdiFontManager.EnumerateAvailableGdiFontFamilyNames());
+      list.Sort();
 
-			// note: it seems always possible to get from a Gdi font family name and the Gdi font style a
-			// System.Windows.Media.Typeface using the constructor with one string argument
-			// the string argument must be the Gdi font family name, and appended to this "Bold" or "Italic" or "Bold Italic"
+      // note: it seems always possible to get from a Gdi font family name and the Gdi font style a
+      // System.Windows.Media.Typeface using the constructor with one string argument
+      // the string argument must be the Gdi font family name, and appended to this "Bold" or "Italic" or "Bold Italic"
 
-			foreach (var fontFamName in list)
-			{
-				var item = new FontComboBoxItem(fontFamName);
-				_allItems.Add(item);
-				_cachedItems.Add(fontFamName, item);
-			}
-		}
+      foreach (var fontFamName in list)
+      {
+        var item = new FontComboBoxItem(fontFamName);
+        _allItems.Add(item);
+        _cachedItems.Add(fontFamName, item);
+      }
+    }
 
-		public FontFamilyComboBox()
-		{
-			InitializeComponent();
+    public FontFamilyComboBox()
+    {
+      InitializeComponent();
 
-			this.ItemsSource = _allItems;
+      this.ItemsSource = _allItems;
 
-			var binding = new Binding();
-			binding.Source = this;
-			binding.Path = new PropertyPath(nameof(SelectedFontFamilyName));
-			binding.Converter = new Converter(this);
-			this.SetBinding(ComboBox.SelectedItemProperty, binding);
-		}
+      var binding = new Binding();
+      binding.Source = this;
+      binding.Path = new PropertyPath(nameof(SelectedFontFamilyName));
+      binding.Converter = new Converter(this);
+      this.SetBinding(ComboBox.SelectedItemProperty, binding);
+    }
 
-		#region Dependency property
+    #region Dependency property
 
-		public string SelectedFontFamilyName
-		{
-			get
-			{
-				return (string)GetValue(SelectedFontFamilyNameProperty);
-			}
-			set
-			{
-				SetValue(SelectedFontFamilyNameProperty, value);
-			}
-		}
+    public string SelectedFontFamilyName
+    {
+      get
+      {
+        return (string)GetValue(SelectedFontFamilyNameProperty);
+      }
+      set
+      {
+        SetValue(SelectedFontFamilyNameProperty, value);
+      }
+    }
 
-		public static readonly DependencyProperty SelectedFontFamilyNameProperty =
-				DependencyProperty.Register(nameof(SelectedFontFamilyName), typeof(string), typeof(FontFamilyComboBox),
-				new FrameworkPropertyMetadata(Altaxo.Graph.Gdi.GdiFontManager.GenericSansSerifFontFamilyName, EhSelectedFontFamilyNameChanged));
+    public static readonly DependencyProperty SelectedFontFamilyNameProperty =
+        DependencyProperty.Register(nameof(SelectedFontFamilyName), typeof(string), typeof(FontFamilyComboBox),
+        new FrameworkPropertyMetadata(Altaxo.Graph.Gdi.GdiFontManager.GenericSansSerifFontFamilyName, EhSelectedFontFamilyNameChanged));
 
-		private static void EhSelectedFontFamilyNameChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((FontFamilyComboBox)obj).OnSelectedFontFamilyNameChanged(obj, args);
-		}
+    private static void EhSelectedFontFamilyNameChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((FontFamilyComboBox)obj).OnSelectedFontFamilyNameChanged(obj, args);
+    }
 
-		protected virtual void OnSelectedFontFamilyNameChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			SelectedFontFamilyNameChanged?.Invoke(obj, args);
-		}
+    protected virtual void OnSelectedFontFamilyNameChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      SelectedFontFamilyNameChanged?.Invoke(obj, args);
+    }
 
-		#endregion Dependency property
+    #endregion Dependency property
 
-		/*
+    /*
 		public static ImageSource GetImage(sd.FontFamily join)
 		{
 			const int bmpHeight = 24;
@@ -288,5 +288,5 @@ namespace Altaxo.Gui.Common.Drawing
 			return img;
 		}
 		*/
-	}
+  }
 }

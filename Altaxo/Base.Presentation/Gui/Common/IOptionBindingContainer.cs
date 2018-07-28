@@ -20,11 +20,11 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Provides access to objects containing OptionBindings, such as OptionPanels.
-	/// </summary>
-	public interface IOptionBindingContainer
-	{
-		void AddBinding(OptionBinding binding);
-	}
+  /// <summary>
+  /// Provides access to objects containing OptionBindings, such as OptionPanels.
+  /// </summary>
+  public interface IOptionBindingContainer
+  {
+    void AddBinding(OptionBinding binding);
+  }
 }

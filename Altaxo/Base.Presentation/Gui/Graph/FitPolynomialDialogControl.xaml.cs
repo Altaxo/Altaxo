@@ -30,72 +30,74 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph
 {
-	/// <summary>
-	/// Interaction logic for FitPolynomialDialogControl.xaml
-	/// </summary>
-	public partial class FitPolynomialDialogControl : UserControl, IFitPolynomialDialogControl
-	{
-		public FitPolynomialDialogControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for FitPolynomialDialogControl.xaml
+  /// </summary>
+  public partial class FitPolynomialDialogControl : UserControl, IFitPolynomialDialogControl
+  {
+    public FitPolynomialDialogControl()
+    {
+      InitializeComponent();
+    }
 
-		#region IFitPolynomialDialogControl
+    #region IFitPolynomialDialogControl
 
-		public int Order
-		{
-			get
-			{
-				return _edOrder.Value;
-			}
-			set
-			{
-				_edOrder.Value = value;
-			}
-		}
+    public int Order
+    {
+      get
+      {
+        return _edOrder.Value;
+      }
+      set
+      {
+        _edOrder.Value = value;
+      }
+    }
 
-		public double FitCurveXmin
-		{
-			get
-			{
-				double result;
-				if (Altaxo.Serialization.NumberConversion.IsDouble(_edFitCurveXmin.Text, out result))
-					return result;
-				else return double.MinValue;
-			}
-			set
-			{
-				_edFitCurveXmin.Text = Altaxo.Serialization.NumberConversion.ToString(value);
-			}
-		}
+    public double FitCurveXmin
+    {
+      get
+      {
+        double result;
+        if (Altaxo.Serialization.NumberConversion.IsDouble(_edFitCurveXmin.Text, out result))
+          return result;
+        else
+          return double.MinValue;
+      }
+      set
+      {
+        _edFitCurveXmin.Text = Altaxo.Serialization.NumberConversion.ToString(value);
+      }
+    }
 
-		public double FitCurveXmax
-		{
-			get
-			{
-				double result;
-				if (Altaxo.Serialization.NumberConversion.IsDouble(_edFitCurveXmax.Text, out result))
-					return result;
-				else return double.MaxValue;
-			}
-			set
-			{
-				_edFitCurveXmax.Text = Altaxo.Serialization.NumberConversion.ToString(value);
-			}
-		}
+    public double FitCurveXmax
+    {
+      get
+      {
+        double result;
+        if (Altaxo.Serialization.NumberConversion.IsDouble(_edFitCurveXmax.Text, out result))
+          return result;
+        else
+          return double.MaxValue;
+      }
+      set
+      {
+        _edFitCurveXmax.Text = Altaxo.Serialization.NumberConversion.ToString(value);
+      }
+    }
 
-		public bool ShowFormulaOnGraph
-		{
-			get
-			{
-				return true == _chkShowFormulaOnGraph.IsChecked;
-			}
-			set
-			{
-				_chkShowFormulaOnGraph.IsChecked = value;
-			}
-		}
+    public bool ShowFormulaOnGraph
+    {
+      get
+      {
+        return true == _chkShowFormulaOnGraph.IsChecked;
+      }
+      set
+      {
+        _chkShowFormulaOnGraph.IsChecked = value;
+      }
+    }
 
-		#endregion IFitPolynomialDialogControl
-	}
+    #endregion IFitPolynomialDialogControl
+  }
 }

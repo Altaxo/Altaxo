@@ -31,19 +31,19 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-	/// <summary>
-	/// Interaction logic for XYPlotDataControl.xaml
-	/// </summary>
-	public partial class XYZMeshedColumnPlotDataControl : UserControl, IXYZMeshedColumnPlotDataView
-	{
-		public XYZMeshedColumnPlotDataControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for XYPlotDataControl.xaml
+  /// </summary>
+  public partial class XYZMeshedColumnPlotDataControl : UserControl, IXYZMeshedColumnPlotDataView
+  {
+    public XYZMeshedColumnPlotDataControl()
+    {
+      InitializeComponent();
+    }
 
-		public void SetDataView(object viewObject)
-		{
-			_guiDataHost.Child = viewObject as UIElement;
-		}
-	}
+    public void SetDataView(object viewObject)
+    {
+      _guiDataHost.Child = viewObject as UIElement;
+    }
+  }
 }

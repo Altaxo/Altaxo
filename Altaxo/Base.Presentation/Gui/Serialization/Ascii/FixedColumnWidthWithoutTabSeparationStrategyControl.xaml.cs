@@ -30,25 +30,25 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-	using Altaxo.Collections;
+  using Altaxo.Collections;
 
-	/// <summary>
-	/// Interaction logic for FixedColumnWidthWithoutTabSeparationStrategyControl.xaml
-	/// </summary>
-	public partial class FixedColumnWidthWithoutTabSeparationStrategyControl : UserControl, IFixedColumnWidthWithoutTabSeparationStrategyView
-	{
-		public FixedColumnWidthWithoutTabSeparationStrategyControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for FixedColumnWidthWithoutTabSeparationStrategyControl.xaml
+  /// </summary>
+  public partial class FixedColumnWidthWithoutTabSeparationStrategyControl : UserControl, IFixedColumnWidthWithoutTabSeparationStrategyView
+  {
+    public FixedColumnWidthWithoutTabSeparationStrategyControl()
+    {
+      InitializeComponent();
+    }
 
-		public System.Collections.ObjectModel.ObservableCollection<Boxed<int>> StartPositions
-		{
-			set
-			{
-				_guiStartPositions.ItemsSource = null;
-				_guiStartPositions.ItemsSource = value;
-			}
-		}
-	}
+    public System.Collections.ObjectModel.ObservableCollection<Boxed<int>> StartPositions
+    {
+      set
+      {
+        _guiStartPositions.ItemsSource = null;
+        _guiStartPositions.ItemsSource = value;
+      }
+    }
+  }
 }

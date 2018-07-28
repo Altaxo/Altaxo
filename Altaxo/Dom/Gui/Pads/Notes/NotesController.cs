@@ -29,152 +29,152 @@ using System.ComponentModel;
 
 namespace Altaxo.Gui.Pads.Notes
 {
-	public interface INotesView
-	{
-		string Text { get; set; }
+  public interface INotesView
+  {
+    string Text { get; set; }
 
-		void ClearBinding();
+    void ClearBinding();
 
-		void SetTextFromNotesAndSetBinding(Altaxo.Main.ITextBackedConsole con);
+    void SetTextFromNotesAndSetBinding(Altaxo.Main.ITextBackedConsole con);
 
-		bool IsEnabled { get; set; }
+    bool IsEnabled { get; set; }
 
-		event Action ShouldSaveText;
-	}
+    event Action ShouldSaveText;
+  }
 
-	/// <summary>
-	/// Responsible for showing the notes of worksheets and graph windows.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(INotesView))]
-	public class NotesController : AbstractPadContent
-	{
-		private INotesView _view;
+  /// <summary>
+  /// Responsible for showing the notes of worksheets and graph windows.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(INotesView))]
+  public class NotesController : AbstractPadContent
+  {
+    private INotesView _view;
 
-		/// <summary>The currently active view content to which the text belongs.</summary>
-		private WeakReference _currentActiveViewContent = new WeakReference(null);
+    /// <summary>The currently active view content to which the text belongs.</summary>
+    private WeakReference _currentActiveViewContent = new WeakReference(null);
 
-		public NotesController()
-		{
-			Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchViewContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler).EventSink;
-		}
+    public NotesController()
+    {
+      Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchViewContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler).EventSink;
+    }
 
-		private void EhWorkbenchViewContentChanged(object sender, EventArgs e)
-		{
-			SaveTextBoxTextToNotes(); // Saves the old text
+    private void EhWorkbenchViewContentChanged(object sender, EventArgs e)
+    {
+      SaveTextBoxTextToNotes(); // Saves the old text
 
-			if (null == _view)
-				return; // can happen during shutdown
+      if (null == _view)
+        return; // can happen during shutdown
 
-			// Clears the old binding
-			_view.ClearBinding();
+      // Clears the old binding
+      _view.ClearBinding();
 
-			_currentActiveViewContent = new WeakReference(Current.Workbench.ActiveViewContent);
+      _currentActiveViewContent = new WeakReference(Current.Workbench.ActiveViewContent);
 
-			bool enable = true;
+      bool enable = true;
 
-			if (_currentActiveViewContent.Target is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl1)
-			{
-				_view.SetTextFromNotesAndSetBinding(ctrl1.DataTable.Notes);
-			}
-			else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Gdi.Viewing.GraphController ctrl2)
-			{
-				_view.SetTextFromNotesAndSetBinding(ctrl2.Doc.Notes);
-			}
-			else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ctrl3)
-			{
-				_view.SetTextFromNotesAndSetBinding(ctrl3.Doc.Notes);
-			}
-			else
-			{
-				_view.Text = string.Empty;
-				enable = false;
-			}
+      if (_currentActiveViewContent.Target is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl1)
+      {
+        _view.SetTextFromNotesAndSetBinding(ctrl1.DataTable.Notes);
+      }
+      else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Gdi.Viewing.GraphController ctrl2)
+      {
+        _view.SetTextFromNotesAndSetBinding(ctrl2.Doc.Notes);
+      }
+      else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ctrl3)
+      {
+        _view.SetTextFromNotesAndSetBinding(ctrl3.Doc.Notes);
+      }
+      else
+      {
+        _view.Text = string.Empty;
+        enable = false;
+      }
 
-			_view.IsEnabled = enable;
+      _view.IsEnabled = enable;
 
-			if (enable && _view.Text.Length > 0)
-			{
-				var activeContent = Current.Workbench.ActiveContent;
+      if (enable && _view.Text.Length > 0)
+      {
+        var activeContent = Current.Workbench.ActiveContent;
 
-				this.IsActive = true;
-				this.IsSelected = true;
+        this.IsActive = true;
+        this.IsSelected = true;
 
-				// now focus back to the formerly active workbench window.
-				if (null != activeContent)
-				{
-					activeContent.IsActive = true;
-					activeContent.IsSelected = true;
-				}
-			}
-		}
+        // now focus back to the formerly active workbench window.
+        if (null != activeContent)
+        {
+          activeContent.IsActive = true;
+          activeContent.IsSelected = true;
+        }
+      }
+    }
 
-		/// <summary>
-		/// Stores the text in the text control back to the graph document or worksheet.
-		/// </summary>
-		private void SaveTextBoxTextToNotes()
-		{
-			if (null != _view)
-			{
-				ITextBackedConsole notes = null;
-				if (_currentActiveViewContent.Target is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl1)
-				{
-					notes = ctrl1.DataTable?.Notes;
-				}
-				else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Gdi.Viewing.GraphController ctrl2)
-				{
-					notes = ctrl2.Doc?.Notes;
-				}
-				else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ctrl3)
-				{
-					notes = ctrl3.Doc?.Notes;
-				}
-				if (notes != null)
-					notes.Text = _view.Text;
-			}
-		}
+    /// <summary>
+    /// Stores the text in the text control back to the graph document or worksheet.
+    /// </summary>
+    private void SaveTextBoxTextToNotes()
+    {
+      if (null != _view)
+      {
+        ITextBackedConsole notes = null;
+        if (_currentActiveViewContent.Target is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl1)
+        {
+          notes = ctrl1.DataTable?.Notes;
+        }
+        else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Gdi.Viewing.GraphController ctrl2)
+        {
+          notes = ctrl2.Doc?.Notes;
+        }
+        else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ctrl3)
+        {
+          notes = ctrl3.Doc?.Notes;
+        }
+        if (notes != null)
+          notes.Text = _view.Text;
+      }
+    }
 
-		#region IPadContent Members
+    #region IPadContent Members
 
-		private void Initialize(bool initData)
-		{
-		}
+    private void Initialize(bool initData)
+    {
+    }
 
-		private void AttachView()
-		{
-			_view.ShouldSaveText += SaveTextBoxTextToNotes;
-		}
+    private void AttachView()
+    {
+      _view.ShouldSaveText += SaveTextBoxTextToNotes;
+    }
 
-		private void DetachView()
-		{
-			_view.ShouldSaveText -= SaveTextBoxTextToNotes;
-		}
+    private void DetachView()
+    {
+      _view.ShouldSaveText -= SaveTextBoxTextToNotes;
+    }
 
-		public override object ViewObject
-		{
-			get
-			{
-				return this._view;
-			}
-			set
-			{
-				if (!object.ReferenceEquals(_view, value))
-				{
-					if (null != _view)
-						DetachView();
+    public override object ViewObject
+    {
+      get
+      {
+        return this._view;
+      }
+      set
+      {
+        if (!object.ReferenceEquals(_view, value))
+        {
+          if (null != _view)
+            DetachView();
 
-					_view = value as INotesView;
+          _view = value as INotesView;
 
-					if (null != _view)
-					{
-						Initialize(false);
-						AttachView();
-					}
-				}
-			}
-		}
+          if (null != _view)
+          {
+            Initialize(false);
+            AttachView();
+          }
+        }
+      }
+    }
 
-		public override object ModelObject => null;
+    public override object ModelObject => null;
 
-		#endregion IPadContent Members
-	}
+    #endregion IPadContent Members
+  }
 }

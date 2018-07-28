@@ -32,144 +32,144 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for BackgroundCancelControl.xaml
-	/// </summary>
-	public partial class BackgroundCancelControl : UserControl
-	{
-		private const int TimerTick_ms = 100;
-		private System.Exception _threadException;
-		private System.Threading.Thread _thread;
-		private IExternalDrivenBackgroundMonitor _monitor;
-		private bool _wasCancelledByUser;
-		private System.Windows.Threading.DispatcherTimer _timer;
-		private int _showUpDownConter;
+  /// <summary>
+  /// Interaction logic for BackgroundCancelControl.xaml
+  /// </summary>
+  public partial class BackgroundCancelControl : UserControl
+  {
+    private const int TimerTick_ms = 100;
+    private System.Exception _threadException;
+    private System.Threading.Thread _thread;
+    private IExternalDrivenBackgroundMonitor _monitor;
+    private bool _wasCancelledByUser;
+    private System.Windows.Threading.DispatcherTimer _timer;
+    private int _showUpDownConter;
 
-		public event Action<bool> ExecutionFinished;
+    public event Action<bool> ExecutionFinished;
 
-		public event Action StartDelayExpired;
+    public event Action StartDelayExpired;
 
-		public bool ExecutionInProgress
-		{
-			get
-			{
-				return _thread != null && _thread.IsAlive;
-			}
-		}
+    public bool ExecutionInProgress
+    {
+      get
+      {
+        return _thread != null && _thread.IsAlive;
+      }
+    }
 
-		public BackgroundCancelControl()
-		{
-			InitializeComponent();
-		}
+    public BackgroundCancelControl()
+    {
+      InitializeComponent();
+    }
 
-		public void StartExecution(Action<IProgressReporter> action, int milliSecondsUntilShowUp)
-		{
-			if (_thread != null && _thread.IsAlive)
-				throw new ApplicationException("Background thread is still executed");
+    public void StartExecution(Action<IProgressReporter> action, int milliSecondsUntilShowUp)
+    {
+      if (_thread != null && _thread.IsAlive)
+        throw new ApplicationException("Background thread is still executed");
 
-			if (null != _timer)
-				throw new ApplicationException("Timer is still active");
+      if (null != _timer)
+        throw new ApplicationException("Timer is still active");
 
-			_monitor = new ExternalDrivenBackgroundMonitor();
-			_thread = new System.Threading.Thread(() => action(_monitor));
+      _monitor = new ExternalDrivenBackgroundMonitor();
+      _thread = new System.Threading.Thread(() => action(_monitor));
 
-			_btCancel.Visibility = _monitor != null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-			_btInterrupt.Visibility = _monitor == null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-			_btAbort.Visibility = System.Windows.Visibility.Collapsed;
+      _btCancel.Visibility = _monitor != null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btInterrupt.Visibility = _monitor == null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      _btAbort.Visibility = System.Windows.Visibility.Collapsed;
 
-			_showUpDownConter = milliSecondsUntilShowUp / TimerTick_ms;
-			_thread.Start();
+      _showUpDownConter = milliSecondsUntilShowUp / TimerTick_ms;
+      _thread.Start();
 
-			_timer = new System.Windows.Threading.DispatcherTimer(new TimeSpan(0, 0, 0, 0, TimerTick_ms), System.Windows.Threading.DispatcherPriority.Normal, EhTimer, this.Dispatcher);
-		}
+      _timer = new System.Windows.Threading.DispatcherTimer(new TimeSpan(0, 0, 0, 0, TimerTick_ms), System.Windows.Threading.DispatcherPriority.Normal, EhTimer, this.Dispatcher);
+    }
 
-		public System.Threading.Thread Thread
-		{
-			get
-			{
-				return _thread;
-			}
-		}
+    public System.Threading.Thread Thread
+    {
+      get
+      {
+        return _thread;
+      }
+    }
 
-		public System.Exception ThreadException
-		{
-			get
-			{
-				return _threadException;
-			}
-		}
+    public System.Exception ThreadException
+    {
+      get
+      {
+        return _threadException;
+      }
+    }
 
-		private void EhTimer(object sender, EventArgs e)
-		{
-			if (_showUpDownConter == 0)
-			{
-				if (null != StartDelayExpired)
-					StartDelayExpired();
-			}
-			_showUpDownConter--;
+    private void EhTimer(object sender, EventArgs e)
+    {
+      if (_showUpDownConter == 0)
+      {
+        if (null != StartDelayExpired)
+          StartDelayExpired();
+      }
+      _showUpDownConter--;
 
-			if (_monitor != null)
-			{
-				if (_monitor.HasReportText)
-				{
-					this._guiProgressText.Text = _monitor.GetReportText();
-					double frac = _monitor.GetProgressFraction();
-					if (!double.IsNaN(frac))
-					{
-						_guiProgressFraction.Value = Math.Min(1, Math.Max(0, frac));
-					}
-				}
-				_monitor.SetShouldReportNow();
-			}
+      if (_monitor != null)
+      {
+        if (_monitor.HasReportText)
+        {
+          this._guiProgressText.Text = _monitor.GetReportText();
+          double frac = _monitor.GetProgressFraction();
+          if (!double.IsNaN(frac))
+          {
+            _guiProgressFraction.Value = Math.Min(1, Math.Max(0, frac));
+          }
+        }
+        _monitor.SetShouldReportNow();
+      }
 
-			if (!_thread.IsAlive)
-			{
-				var timer = (System.Windows.Threading.DispatcherTimer)sender;
-				timer.Tick -= EhTimer;
-				timer.Stop();
-				_timer = null;
-				_thread = null;
+      if (!_thread.IsAlive)
+      {
+        var timer = (System.Windows.Threading.DispatcherTimer)sender;
+        timer.Tick -= EhTimer;
+        timer.Stop();
+        _timer = null;
+        _thread = null;
 
-				if (ExecutionFinished != null)
-					ExecutionFinished(_wasCancelledByUser ? false : true);
-			}
-		}
+        if (ExecutionFinished != null)
+          ExecutionFinished(_wasCancelledByUser ? false : true);
+      }
+    }
 
-		private void EhInterruptClicked(object sender, RoutedEventArgs e)
-		{
-			if (_thread.IsAlive)
-			{
-				_wasCancelledByUser = true;
-				_thread.Interrupt();
-			}
-			_btInterrupt.Visibility = System.Windows.Visibility.Collapsed;
-			_btAbort.Visibility = System.Windows.Visibility.Visible;
-		}
+    private void EhInterruptClicked(object sender, RoutedEventArgs e)
+    {
+      if (_thread.IsAlive)
+      {
+        _wasCancelledByUser = true;
+        _thread.Interrupt();
+      }
+      _btInterrupt.Visibility = System.Windows.Visibility.Collapsed;
+      _btAbort.Visibility = System.Windows.Visibility.Visible;
+    }
 
-		private void EhCancelClicked(object sender, RoutedEventArgs e)
-		{
-			this._wasCancelledByUser = true;
-			if (_monitor != null)
-			{
-				_monitor.SetCancellationPending();
-				_btCancel.Visibility = System.Windows.Visibility.Collapsed;
-				_btInterrupt.Visibility = System.Windows.Visibility.Visible;
-			}
-			else
-			{
-				_btCancel.Visibility = System.Windows.Visibility.Collapsed;
-				_btInterrupt.Visibility = System.Windows.Visibility.Visible;
-				EhInterruptClicked(sender, e);
-			}
-		}
+    private void EhCancelClicked(object sender, RoutedEventArgs e)
+    {
+      this._wasCancelledByUser = true;
+      if (_monitor != null)
+      {
+        _monitor.SetCancellationPending();
+        _btCancel.Visibility = System.Windows.Visibility.Collapsed;
+        _btInterrupt.Visibility = System.Windows.Visibility.Visible;
+      }
+      else
+      {
+        _btCancel.Visibility = System.Windows.Visibility.Collapsed;
+        _btInterrupt.Visibility = System.Windows.Visibility.Visible;
+        EhInterruptClicked(sender, e);
+      }
+    }
 
-		private void EhAbortClicked(object sender, RoutedEventArgs e)
-		{
-			if (_thread.IsAlive)
-			{
-				_wasCancelledByUser = true;
-				_thread.Abort();
-			}
-		}
-	}
+    private void EhAbortClicked(object sender, RoutedEventArgs e)
+    {
+      if (_thread.IsAlive)
+      {
+        _wasCancelledByUser = true;
+        _thread.Abort();
+      }
+    }
+  }
 }

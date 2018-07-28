@@ -31,41 +31,41 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	public class RichTextBoxWithDefaultSize : RichTextBox
-	{
-		#region Dependency property
+  public class RichTextBoxWithDefaultSize : RichTextBox
+  {
+    #region Dependency property
 
-		public double DefaultWidth
-		{
-			get { return (double)GetValue(DefaultWidthProperty); }
-			set { SetValue(DefaultWidthProperty, value); }
-		}
+    public double DefaultWidth
+    {
+      get { return (double)GetValue(DefaultWidthProperty); }
+      set { SetValue(DefaultWidthProperty, value); }
+    }
 
-		public double DefaultHeigth
-		{
-			get { return (double)GetValue(DefaultHeightProperty); }
-			set { SetValue(DefaultHeightProperty, value); }
-		}
+    public double DefaultHeigth
+    {
+      get { return (double)GetValue(DefaultHeightProperty); }
+      set { SetValue(DefaultHeightProperty, value); }
+    }
 
-		public static readonly DependencyProperty DefaultWidthProperty =
-				DependencyProperty.Register("DefaultWidth", typeof(double), typeof(RichTextBoxWithDefaultSize),
-				new FrameworkPropertyMetadata(100.0d));
+    public static readonly DependencyProperty DefaultWidthProperty =
+        DependencyProperty.Register("DefaultWidth", typeof(double), typeof(RichTextBoxWithDefaultSize),
+        new FrameworkPropertyMetadata(100.0d));
 
-		public static readonly DependencyProperty DefaultHeightProperty =
-				DependencyProperty.Register("DefaultHeight", typeof(double), typeof(RichTextBoxWithDefaultSize),
-				new FrameworkPropertyMetadata(100.0d));
+    public static readonly DependencyProperty DefaultHeightProperty =
+        DependencyProperty.Register("DefaultHeight", typeof(double), typeof(RichTextBoxWithDefaultSize),
+        new FrameworkPropertyMetadata(100.0d));
 
-		#endregion Dependency property
+    #endregion Dependency property
 
-		protected override Size MeasureOverride(Size constraint)
-		{
-			double w = constraint.Width;
-			double h = constraint.Height;
+    protected override Size MeasureOverride(Size constraint)
+    {
+      double w = constraint.Width;
+      double h = constraint.Height;
 
-			if (!IsLoaded)
-				return new Size(DefaultWidth, DefaultHeigth);
-			else
-				return new Size(ActualWidth, ActualHeight);
-		}
-	}
+      if (!IsLoaded)
+        return new Size(DefaultWidth, DefaultHeigth);
+      else
+        return new Size(ActualWidth, ActualHeight);
+    }
+  }
 }

@@ -23,80 +23,80 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// This is the basic interface to the application's workbench.
-	/// </summary>
-	[GlobalService("Workbench")]
-	public interface IWorkbenchEx : IWorkbench
-	{
-		/// <summary>
-		/// A collection in which all opened primary view contents are saved.
-		/// </summary>
-		ICollection<IViewContent> PrimaryViewContents
-		{
-			get;
-		}
+  /// <summary>
+  /// This is the basic interface to the application's workbench.
+  /// </summary>
+  [GlobalService("Workbench")]
+  public interface IWorkbenchEx : IWorkbench
+  {
+    /// <summary>
+    /// A collection in which all opened primary view contents are saved.
+    /// </summary>
+    ICollection<IViewContent> PrimaryViewContents
+    {
+      get;
+    }
 
-		/// <summary>
-		/// Gets whether this application is the active application in Windows.
-		/// </summary>
-		bool IsActiveWindow
-		{
-			get;
-		}
+    /// <summary>
+    /// Gets whether this application is the active application in Windows.
+    /// </summary>
+    bool IsActiveWindow
+    {
+      get;
+    }
 
-		/// <summary>
-		/// Initializes the workbench.
-		/// </summary>
-		void Initialize();
+    /// <summary>
+    /// Initializes the workbench.
+    /// </summary>
+    void Initialize();
 
-		/// <summary>
-		/// Inserts a new <see cref="IViewContent"/> object in the workspace and switches to the new view.
-		/// </summary>
-		void ShowView(IViewContent content);
+    /// <summary>
+    /// Inserts a new <see cref="IViewContent"/> object in the workspace and switches to the new view.
+    /// </summary>
+    void ShowView(IViewContent content);
 
-		/// <summary>
-		/// Inserts a new <see cref="IViewContent"/> object in the workspace.
-		/// </summary>
-		void ShowView(IViewContent content, bool switchToOpenedView);
+    /// <summary>
+    /// Inserts a new <see cref="IViewContent"/> object in the workspace.
+    /// </summary>
+    void ShowView(IViewContent content, bool switchToOpenedView);
 
-		/// <summary>
-		/// Activates the specified pad.
-		/// </summary>
-		void ActivatePad(PadDescriptor content);
+    /// <summary>
+    /// Activates the specified pad.
+    /// </summary>
+    void ActivatePad(PadDescriptor content);
 
-		/// <summary>
-		/// Returns a pad from a specific type.
-		/// </summary>
-		PadDescriptor GetPad(Type type);
+    /// <summary>
+    /// Returns a pad from a specific type.
+    /// </summary>
+    PadDescriptor GetPad(Type type);
 
-		/// <summary>
-		/// 	Closes all views related to current solution.
-		/// </summary>
-		/// <returns>
-		/// 	True if all views were closed properly, false if closing was aborted.
-		/// </returns>
-		bool CloseAllSolutionViews(bool force);
+    /// <summary>
+    /// 	Closes all views related to current solution.
+    /// </summary>
+    /// <returns>
+    /// 	True if all views were closed properly, false if closing was aborted.
+    /// </returns>
+    bool CloseAllSolutionViews(bool force);
 
-		/// <summary>
-		/// Gets/Sets the name of the current layout configuration.
-		/// Setting this property causes the current layout to be saved, and the specified layout to be loaded.
-		/// </summary>
-		string CurrentLayoutConfiguration { get; set; }
+    /// <summary>
+    /// Gets/Sets the name of the current layout configuration.
+    /// Setting this property causes the current layout to be saved, and the specified layout to be loaded.
+    /// </summary>
+    string CurrentLayoutConfiguration { get; set; }
 
-		/// <summary>
-		/// Is called, when a workbench view was opened
-		/// </summary>
-		/// <example>
-		/// WorkbenchSingleton.WorkbenchCreated += delegate {
-		/// 	WorkbenchSingleton.Workbench.ViewOpened += ...;
-		/// };
-		/// </example>
-		event EventHandler<ViewContentEventArgs> ViewOpened;
+    /// <summary>
+    /// Is called, when a workbench view was opened
+    /// </summary>
+    /// <example>
+    /// WorkbenchSingleton.WorkbenchCreated += delegate {
+    /// 	WorkbenchSingleton.Workbench.ViewOpened += ...;
+    /// };
+    /// </example>
+    event EventHandler<ViewContentEventArgs> ViewOpened;
 
-		/// <summary>
-		/// Is called, when a workbench view was closed
-		/// </summary>
-		event EventHandler<ViewContentEventArgs> ViewClosed;
-	}
+    /// <summary>
+    /// Is called, when a workbench view was closed
+    /// </summary>
+    event EventHandler<ViewContentEventArgs> ViewClosed;
+  }
 }

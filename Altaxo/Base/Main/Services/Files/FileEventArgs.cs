@@ -20,66 +20,66 @@ using System;
 
 namespace Altaxo.Main.Services
 {
-	public class FileEventArgs : EventArgs
-	{
-		private string fileName = null;
-		private bool isDirectory;
+  public class FileEventArgs : EventArgs
+  {
+    private string fileName = null;
+    private bool isDirectory;
 
-		public string FileName
-		{
-			get
-			{
-				return fileName;
-			}
-		}
+    public string FileName
+    {
+      get
+      {
+        return fileName;
+      }
+    }
 
-		public bool IsDirectory
-		{
-			get
-			{
-				return isDirectory;
-			}
-		}
+    public bool IsDirectory
+    {
+      get
+      {
+        return isDirectory;
+      }
+    }
 
-		public FileEventArgs(string fileName, bool isDirectory)
-		{
-			this.fileName = fileName;
-			this.isDirectory = isDirectory;
-		}
-	}
+    public FileEventArgs(string fileName, bool isDirectory)
+    {
+      this.fileName = fileName;
+      this.isDirectory = isDirectory;
+    }
+  }
 
-	public class FileCancelEventArgs : FileEventArgs
-	{
-		private bool cancel;
+  public class FileCancelEventArgs : FileEventArgs
+  {
+    private bool cancel;
 
-		public bool Cancel
-		{
-			get
-			{
-				return cancel;
-			}
-			set
-			{
-				cancel = value;
-			}
-		}
+    public bool Cancel
+    {
+      get
+      {
+        return cancel;
+      }
+      set
+      {
+        cancel = value;
+      }
+    }
 
-		private bool operationAlreadyDone;
+    private bool operationAlreadyDone;
 
-		public bool OperationAlreadyDone
-		{
-			get
-			{
-				return operationAlreadyDone;
-			}
-			set
-			{
-				operationAlreadyDone = value;
-			}
-		}
+    public bool OperationAlreadyDone
+    {
+      get
+      {
+        return operationAlreadyDone;
+      }
+      set
+      {
+        operationAlreadyDone = value;
+      }
+    }
 
-		public FileCancelEventArgs(string fileName, bool isDirectory) : base(fileName, isDirectory)
-		{
-		}
-	}
+    public FileCancelEventArgs(string fileName, bool isDirectory) : base(fileName, isDirectory)
+    {
+    }
+  }
 }

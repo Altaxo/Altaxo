@@ -31,74 +31,74 @@ using System.Text;
 
 namespace Altaxo.Main.Commands
 {
-	public class AddTemporaryUserAssembly : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
-		}
-	}
+  public class AddTemporaryUserAssembly : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
+    }
+  }
 
-	public class TestProjectLoading : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			Altaxo.Main.Commands.TestAllProjectsInFolder.ShowDialogToVerifyOpeningOfDocumentsWithoutException();
-		}
-	}
+  public class TestProjectLoading : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      Altaxo.Main.Commands.TestAllProjectsInFolder.ShowDialogToVerifyOpeningOfDocumentsWithoutException();
+    }
+  }
 
-	public class ShowOptions : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			var ctrl = new Altaxo.Gui.Settings.SettingsController();
-			Current.Gui.ShowDialog(ctrl, "Altaxo settings", false);
-		}
-	}
+  public class ShowOptions : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var ctrl = new Altaxo.Gui.Settings.SettingsController();
+      Current.Gui.ShowDialog(ctrl, "Altaxo settings", false);
+    }
+  }
 
-	public class ShowUserSettings : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			var ph = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBagsStartingFromUserSettings());
-			Current.Gui.ShowDialog(new object[] { ph }, "Edit user settings", false);
-		}
-	}
+  public class ShowUserSettings : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var ph = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBagsStartingFromUserSettings());
+      Current.Gui.ShowDialog(new object[] { ph }, "Edit user settings", false);
+    }
+  }
 
-	public class RegisterApplicationForCom : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			Current.ComManager.RegisterApplicationForCom();
-		}
-	}
+  public class RegisterApplicationForCom : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      Current.ComManager.RegisterApplicationForCom();
+    }
+  }
 
-	public class UnregisterApplicationForCom : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			Current.ComManager.UnregisterApplicationForCom();
-		}
-	}
+  public class UnregisterApplicationForCom : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      Current.ComManager.UnregisterApplicationForCom();
+    }
+  }
 
-	public class CopyDocumentAsComObjectToClipboard : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			{
-				if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Graph.Gdi.Viewing.GraphController ctrl)
-				{
-					var doc = ctrl.Doc;
+  public class CopyDocumentAsComObjectToClipboard : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      {
+        if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Graph.Gdi.Viewing.GraphController ctrl)
+        {
+          var doc = ctrl.Doc;
 
-					var comManager = (Com.ComManager)Current.ComManager;
-					//var dataObject = comManager.GetDocumentsComObjectForDocument(doc);
+          var comManager = (Com.ComManager)Current.ComManager;
+          //var dataObject = comManager.GetDocumentsComObjectForDocument(doc);
 
-					var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
+          var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
 
-					if (null != dataObject)
-						System.Windows.Clipboard.SetDataObject(dataObject);
-				}
-			}
-		}
-	}
+          if (null != dataObject)
+            System.Windows.Clipboard.SetDataObject(dataObject);
+        }
+      }
+    }
+  }
 }

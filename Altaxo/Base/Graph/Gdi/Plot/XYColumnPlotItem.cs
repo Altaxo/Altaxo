@@ -33,313 +33,313 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
-	using Data;
-	using Graph.Plot.Data;
-	using Styles;
+  using Data;
+  using Graph.Plot.Data;
+  using Styles;
 
-	/// <summary>
-	/// Association of data and style specialized for x-y-plots of column data.
-	/// </summary>
+  /// <summary>
+  /// Association of data and style specialized for x-y-plots of column data.
+  /// </summary>
 
-	public class XYColumnPlotItem
-		:
-		G2DPlotItem,
-		IXBoundsHolder,
-		IYBoundsHolder
-	{
-		protected XYColumnPlotData _plotData;
+  public class XYColumnPlotItem
+    :
+    G2DPlotItem,
+    IXBoundsHolder,
+    IYBoundsHolder
+  {
+    protected XYColumnPlotData _plotData;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotItem", 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			private XYColumnPlotData _item;
-			private LabelPlotStyle _label;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotItem", 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      private XYColumnPlotData _item;
+      private LabelPlotStyle _label;
 
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				XYColumnPlotItem s = (XYColumnPlotItem)obj;
-				info.AddValue("Data", s._plotData);
-				info.AddValue("Style", s._plotStyles);
-			}
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYColumnPlotItem s = (XYColumnPlotItem)obj;
+        info.AddValue("Data", s._plotData);
+        info.AddValue("Style", s._plotStyles);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", null);
-				XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
-				if (lsps.XYPlotLineStyle != null)
-					lsps.XYPlotLineStyle.UseSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", null);
+        XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
+        if (lsps.XYPlotLineStyle != null)
+          lsps.XYPlotLineStyle.UseSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
 
-				G2DPlotStyleCollection ps = new G2DPlotStyleCollection(new IG2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
-				if (lsps.XYPlotLabelStyle != null)
-				{
-					XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-					surr._item = pa;
-					surr._label = lsps.XYPlotLabelStyle;
-					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
-				}
+        G2DPlotStyleCollection ps = new G2DPlotStyleCollection(new IG2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
+        if (lsps.XYPlotLabelStyle != null)
+        {
+          XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+          surr._item = pa;
+          surr._label = lsps.XYPlotLabelStyle;
+          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
+        }
 
-				if (null == o)
-				{
-					return new XYColumnPlotItem(pa, ps);
-				}
-				else
-				{
-					XYColumnPlotItem s = (XYColumnPlotItem)o;
-					s.Data = pa;
-					s.Style = ps;
-					return s;
-				}
-			}
+        if (null == o)
+        {
+          return new XYColumnPlotItem(pa, ps);
+        }
+        else
+        {
+          XYColumnPlotItem s = (XYColumnPlotItem)o;
+          s.Data = pa;
+          s.Style = ps;
+          return s;
+        }
+      }
 
-			private void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
-			{
-				if (_item.LabelColumn != null)
-				{
-					_label.LabelColumn = _item.LabelColumn;
-					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.info_DeserializationFinished);
-				}
-			}
-		}
+      private void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+      {
+        if (_item.LabelColumn != null)
+        {
+          _label.LabelColumn = _item.LabelColumn;
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.info_DeserializationFinished);
+        }
+      }
+    }
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotItem", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotItem), 2)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				XYColumnPlotItem s = (XYColumnPlotItem)obj;
-				info.AddValue("Data", s._plotData);
-				info.AddValue("Style", s._plotStyles);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotItem", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotItem), 2)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYColumnPlotItem s = (XYColumnPlotItem)obj;
+        info.AddValue("Data", s._plotData);
+        info.AddValue("Style", s._plotStyles);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", null);
-				G2DPlotStyleCollection ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", null);
+        G2DPlotStyleCollection ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
 
-				if (null == o)
-				{
-					return new XYColumnPlotItem(pa, ps);
-				}
-				else
-				{
-					XYColumnPlotItem s = (XYColumnPlotItem)o;
-					s.Data = pa;
-					s.Style = ps;
-					return s;
-				}
-			}
-		}
+        if (null == o)
+        {
+          return new XYColumnPlotItem(pa, ps);
+        }
+        else
+        {
+          XYColumnPlotItem s = (XYColumnPlotItem)o;
+          s.Data = pa;
+          s.Style = ps;
+          return s;
+        }
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		private System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
-		{
-			if (null != _plotData)
-				yield return new DocumentNodeAndName(_plotData, () => _plotData = null, "Data");
-		}
+    private System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
+    {
+      if (null != _plotData)
+        yield return new DocumentNodeAndName(_plotData, () => _plotData = null, "Data");
+    }
 
-		protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
-		}
+    protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
+    }
 
-		public XYColumnPlotItem(XYColumnPlotData pa, G2DPlotStyleCollection ps)
-		{
-			this.Data = pa;
-			this.Style = ps;
-		}
+    public XYColumnPlotItem(XYColumnPlotData pa, G2DPlotStyleCollection ps)
+    {
+      this.Data = pa;
+      this.Style = ps;
+    }
 
-		public XYColumnPlotItem(XYColumnPlotItem from)
-		{
-			CopyFrom(from);
-		}
+    public XYColumnPlotItem(XYColumnPlotItem from)
+    {
+      CopyFrom(from);
+    }
 
-		public void CopyFrom(XYColumnPlotItem from)
-		{
-			CopyFrom((PlotItem)from);
-		}
+    public void CopyFrom(XYColumnPlotItem from)
+    {
+      CopyFrom((PlotItem)from);
+    }
 
-		public override bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-			if (IsDisposed)
-				throw new ObjectDisposedException(this.GetType().FullName);
+    public override bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (IsDisposed)
+        throw new ObjectDisposedException(this.GetType().FullName);
 
-			var copied = base.CopyFrom(obj);
+      var copied = base.CopyFrom(obj);
 
-			if (copied)
-			{
-				var from = obj as XYColumnPlotItem;
-				if (null != from)
-				{
-					this.Data = (XYColumnPlotData)from.Data.Clone(); // also wires the event
-				}
-			}
-			return copied;
-		}
+      if (copied)
+      {
+        var from = obj as XYColumnPlotItem;
+        if (null != from)
+        {
+          this.Data = (XYColumnPlotData)from.Data.Clone(); // also wires the event
+        }
+      }
+      return copied;
+    }
 
-		public override object Clone()
-		{
-			return new XYColumnPlotItem(this);
-		}
+    public override object Clone()
+    {
+      return new XYColumnPlotItem(this);
+    }
 
-		public XYColumnPlotData XYColumnPlotData
-		{
-			get { return _plotData; }
-		}
+    public XYColumnPlotData XYColumnPlotData
+    {
+      get { return _plotData; }
+    }
 
-		public override Main.IDocumentLeafNode DataObject
-		{
-			get { return _plotData; }
-		}
+    public override Main.IDocumentLeafNode DataObject
+    {
+      get { return _plotData; }
+    }
 
-		public XYColumnPlotData Data
-		{
-			get
-			{
-				return _plotData;
-			}
-			set
-			{
-				if (null == value)
-					throw new System.ArgumentNullException();
+    public XYColumnPlotData Data
+    {
+      get
+      {
+        return _plotData;
+      }
+      set
+      {
+        if (null == value)
+          throw new System.ArgumentNullException();
 
-				if (ChildSetMember(ref _plotData, value))
-					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
-			}
-		}
+        if (ChildSetMember(ref _plotData, value))
+          EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+      }
+    }
 
-		public override string GetName(int level)
-		{
-			switch (level)
-			{
-				case 0:
-					return GetName(XYColumnPlotItemLabelTextStyle.YS);
+    public override string GetName(int level)
+    {
+      switch (level)
+      {
+        case 0:
+          return GetName(XYColumnPlotItemLabelTextStyle.YS);
 
-				case 1:
-					return GetName(XYColumnPlotItemLabelTextStyle.YM);
+        case 1:
+          return GetName(XYColumnPlotItemLabelTextStyle.YM);
 
-				case 2:
-					return GetName(XYColumnPlotItemLabelTextStyle.XSYM);
+        case 2:
+          return GetName(XYColumnPlotItemLabelTextStyle.XSYM);
 
-				default:
-					return GetName(XYColumnPlotItemLabelTextStyle.XMYM);
-			}
-		}
+        default:
+          return GetName(XYColumnPlotItemLabelTextStyle.XMYM);
+      }
+    }
 
-		public override string GetName(string style)
-		{
-			XYColumnPlotItemLabelTextStyle result = XYColumnPlotItemLabelTextStyle.YS;
-			try
-			{
-				result = (XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(XYColumnPlotItemLabelTextStyle), style, true);
-			}
-			catch (Exception)
-			{
-			}
-			return GetName(result);
-		}
+    public override string GetName(string style)
+    {
+      XYColumnPlotItemLabelTextStyle result = XYColumnPlotItemLabelTextStyle.YS;
+      try
+      {
+        result = (XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(XYColumnPlotItemLabelTextStyle), style, true);
+      }
+      catch (Exception)
+      {
+      }
+      return GetName(result);
+    }
 
-		public virtual string GetName(XYColumnPlotItemLabelTextStyle style)
-		{
-			int st = (int)style;
-			int sx = st & 0x0F;
-			int sy = (st & 0xF0) >> 4;
+    public virtual string GetName(XYColumnPlotItemLabelTextStyle style)
+    {
+      int st = (int)style;
+      int sx = st & 0x0F;
+      int sy = (st & 0xF0) >> 4;
 
-			System.Text.StringBuilder stb = new System.Text.StringBuilder();
-			if (sx > 0)
-			{
-				stb.Append(_plotData.GetXName(sx - 1));
-				if (sx > 0 && sy > 0)
-					stb.Append("(X)");
-				if (sy > 0)
-					stb.Append(",");
-			}
-			if (sy > 0)
-			{
-				stb.Append(_plotData.GetYName(sy - 1));
-				if (sx > 0 && sy > 0)
-					stb.Append("(Y)");
-			}
+      System.Text.StringBuilder stb = new System.Text.StringBuilder();
+      if (sx > 0)
+      {
+        stb.Append(_plotData.GetXName(sx - 1));
+        if (sx > 0 && sy > 0)
+          stb.Append("(X)");
+        if (sy > 0)
+          stb.Append(",");
+      }
+      if (sy > 0)
+      {
+        stb.Append(_plotData.GetYName(sy - 1));
+        if (sx > 0 && sy > 0)
+          stb.Append("(Y)");
+      }
 
-			return stb.ToString();
-		}
+      return stb.ToString();
+    }
 
-		private string GetName(Altaxo.Data.IReadableColumn col, int level)
-		{
-			if (col is Altaxo.Data.DataColumn)
-			{
-				Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
-				string tablename = table == null ? string.Empty : table.Name + "\\";
-				string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
-				if (level <= 0)
-					return ((DataColumn)col).Name;
-				else if (level == 1)
-					return tablename + ((DataColumn)col).Name;
-				else
-					return tablename + collectionname + ((DataColumn)col).Name;
-			}
-			else if (col != null)
-				return col.FullName;
-			else
-				return string.Empty;
-		}
+    private string GetName(Altaxo.Data.IReadableColumn col, int level)
+    {
+      if (col is Altaxo.Data.DataColumn)
+      {
+        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        string tablename = table == null ? string.Empty : table.Name + "\\";
+        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        if (level <= 0)
+          return ((DataColumn)col).Name;
+        else if (level == 1)
+          return tablename + ((DataColumn)col).Name;
+        else
+          return tablename + collectionname + ((DataColumn)col).Name;
+      }
+      else if (col != null)
+        return col.FullName;
+      else
+        return string.Empty;
+    }
 
-		public override string ToString()
-		{
-			return GetName(int.MaxValue);
-		}
+    public override string ToString()
+    {
+      return GetName(int.MaxValue);
+    }
 
-		public override Processed2DPlotData GetRangesAndPoints(IPlotArea layer)
-		{
-			return _plotData.GetRangesAndPoints(layer);
-		}
+    public override Processed2DPlotData GetRangesAndPoints(IPlotArea layer)
+    {
+      return _plotData.GetRangesAndPoints(layer);
+    }
 
-		/// <summary>
-		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-		/// to change a plot so that the plot items refer to another table.
-		/// </summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-		public override void VisitDocumentReferences(DocNodeProxyReporter Report)
-		{
-			_plotData.VisitDocumentReferences(Report);
-			base.VisitDocumentReferences(Report);
-		}
+    /// <summary>
+    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+    /// to change a plot so that the plot items refer to another table.
+    /// </summary>
+    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public override void VisitDocumentReferences(DocNodeProxyReporter Report)
+    {
+      _plotData.VisitDocumentReferences(Report);
+      base.VisitDocumentReferences(Report);
+    }
 
-		/// <summary>
-		/// This routine ensures that the plot item updates all its cached data and send the appropriate
-		/// events if something has changed. Called before the layer paint routine paints the axes because
-		/// it must be ensured that the axes are scaled correctly before the plots are painted.
-		/// </summary>
-		/// <param name="layer">The plot layer.</param>
-		public override void PrepareScales(IPlotArea layer)
-		{
-			if (null != this._plotData)
-				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
+    /// <summary>
+    /// This routine ensures that the plot item updates all its cached data and send the appropriate
+    /// events if something has changed. Called before the layer paint routine paints the axes because
+    /// it must be ensured that the axes are scaled correctly before the plots are painted.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    public override void PrepareScales(IPlotArea layer)
+    {
+      if (null != this._plotData)
+        _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
 
-			_plotStyles?.PrepareScales(layer);
-		}
+      _plotStyles?.PrepareScales(layer);
+    }
 
-		#region IXBoundsHolder Members
+    #region IXBoundsHolder Members
 
-		public void MergeXBoundsInto(IPhysicalBoundaries pb)
-		{
-			this._plotData.MergeXBoundsInto(pb);
-		}
+    public void MergeXBoundsInto(IPhysicalBoundaries pb)
+    {
+      this._plotData.MergeXBoundsInto(pb);
+    }
 
-		#endregion IXBoundsHolder Members
+    #endregion IXBoundsHolder Members
 
-		#region IYBoundsHolder Members
+    #region IYBoundsHolder Members
 
-		public void MergeYBoundsInto(IPhysicalBoundaries pb)
-		{
-			this._plotData.MergeYBoundsInto(pb);
-		}
+    public void MergeYBoundsInto(IPhysicalBoundaries pb)
+    {
+      this._plotData.MergeYBoundsInto(pb);
+    }
 
-		#endregion IYBoundsHolder Members
-	}
+    #endregion IYBoundsHolder Members
+  }
 }

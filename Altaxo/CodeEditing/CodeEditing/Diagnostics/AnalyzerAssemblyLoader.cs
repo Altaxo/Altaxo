@@ -12,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.Diagnostics
 {
-	public class AnalyzerAssemblyLoader : IAnalyzerAssemblyLoader
-	{
-		public Assembly LoadFromPath(string fullPath)
-		{
-			return Assembly.Load(AssemblyName.GetAssemblyName(fullPath));
-		}
+  public class AnalyzerAssemblyLoader : IAnalyzerAssemblyLoader
+  {
+    public Assembly LoadFromPath(string fullPath)
+    {
+      return Assembly.Load(AssemblyName.GetAssemblyName(fullPath));
+    }
 
-		public void AddDependencyLocation(string fullPath)
-		{
-		}
-	}
+    public void AddDependencyLocation(string fullPath)
+    {
+    }
+  }
 }

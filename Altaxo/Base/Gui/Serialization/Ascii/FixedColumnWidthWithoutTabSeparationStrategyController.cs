@@ -32,88 +32,88 @@ using System.Text;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-	public interface IFixedColumnWidthWithoutTabSeparationStrategyView
-	{
-		ObservableCollection<Boxed<int>> StartPositions { set; }
-	}
+  public interface IFixedColumnWidthWithoutTabSeparationStrategyView
+  {
+    ObservableCollection<Boxed<int>> StartPositions { set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IFixedColumnWidthWithoutTabSeparationStrategyView))]
-	[UserControllerForObject(typeof(FixedColumnWidthWithoutTabSeparationStrategy))]
-	public class FixedColumnWidthWithoutTabSeparationStrategyController : MVCANControllerEditOriginalDocBase<FixedColumnWidthWithoutTabSeparationStrategy, IFixedColumnWidthWithoutTabSeparationStrategyView>
-	{
-		private ObservableCollection<Boxed<int>> _positions;
+  [ExpectedTypeOfView(typeof(IFixedColumnWidthWithoutTabSeparationStrategyView))]
+  [UserControllerForObject(typeof(FixedColumnWidthWithoutTabSeparationStrategy))]
+  public class FixedColumnWidthWithoutTabSeparationStrategyController : MVCANControllerEditOriginalDocBase<FixedColumnWidthWithoutTabSeparationStrategy, IFixedColumnWidthWithoutTabSeparationStrategyView>
+  {
+    private ObservableCollection<Boxed<int>> _positions;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_positions = null;
+    public override void Dispose(bool isDisposing)
+    {
+      _positions = null;
 
-			base.Dispose(isDisposing);
-		}
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_positions = new ObservableCollection<Boxed<int>>(Boxed<int>.ToBoxedItems(_doc.StartPositions));
-			}
+      if (initData)
+      {
+        _positions = new ObservableCollection<Boxed<int>>(Boxed<int>.ToBoxedItems(_doc.StartPositions));
+      }
 
-			if (null != _view)
-			{
-				_view.StartPositions = _positions;
-			}
-		}
+      if (null != _view)
+      {
+        _view.StartPositions = _positions;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			var resList = new List<int>(Boxed<int>.ToUnboxedItems(_positions));
-			if (MakeColumnStartListCompliant(resList))
-			{
-				_positions.Clear();
-				Boxed<int>.AddRange(_positions, resList);
-				Current.Gui.InfoMessageBox("Start positions were adjusted. Please check the result.");
-				return false;
-			}
-			_doc.StartPositions = resList.ToArray();
+    public override bool Apply(bool disposeController)
+    {
+      var resList = new List<int>(Boxed<int>.ToUnboxedItems(_positions));
+      if (MakeColumnStartListCompliant(resList))
+      {
+        _positions.Clear();
+        Boxed<int>.AddRange(_positions, resList);
+        Current.Gui.InfoMessageBox("Start positions were adjusted. Please check the result.");
+        return false;
+      }
+      _doc.StartPositions = resList.ToArray();
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		/// <summary>
-		/// Makes the list of column start positions compliant.
-		/// </summary>
-		/// <param name="list">The list to check.</param>
-		/// <returns>True if anything has to be changed. If the list was already compliant, the return value is <c>false</c>.</returns>
-		public static bool MakeColumnStartListCompliant(List<int> list)
-		{
-			int originalCount = list.Count;
-			// 1. Sort the list
-			list.Sort();
+    /// <summary>
+    /// Makes the list of column start positions compliant.
+    /// </summary>
+    /// <param name="list">The list to check.</param>
+    /// <returns>True if anything has to be changed. If the list was already compliant, the return value is <c>false</c>.</returns>
+    public static bool MakeColumnStartListCompliant(List<int> list)
+    {
+      int originalCount = list.Count;
+      // 1. Sort the list
+      list.Sort();
 
-			// 2. Eliminate doublettes
-			int prev = int.MinValue;
-			for (int i = list.Count - 1; i >= 0; --i)
-			{
-				int curr = list[i];
-				if (curr == prev || curr < 0)
-					list.RemoveAt(i);
-				prev = curr;
-			}
+      // 2. Eliminate doublettes
+      int prev = int.MinValue;
+      for (int i = list.Count - 1; i >= 0; --i)
+      {
+        int curr = list[i];
+        if (curr == prev || curr < 0)
+          list.RemoveAt(i);
+        prev = curr;
+      }
 
-			// 3. Eliminate values that are immediate successors
-			for (int i = 1; i < list.Count; ++i)
-			{
-				if (list[i] == 1 + list[i - 1])
-					list.RemoveAt(i);
-			}
+      // 3. Eliminate values that are immediate successors
+      for (int i = 1; i < list.Count; ++i)
+      {
+        if (list[i] == 1 + list[i - 1])
+          list.RemoveAt(i);
+      }
 
-			return list.Count != originalCount;
-		}
-	}
+      return list.Count != originalCount;
+    }
+  }
 }

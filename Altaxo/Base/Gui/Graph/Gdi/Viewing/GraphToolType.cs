@@ -29,24 +29,24 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
-	public enum GraphToolType
-	{
-		None,
-		ObjectPointer,
-		ArrowLineDrawing,
-		SingleLineDrawing,
-		RectangleDrawing,
-		CurlyBraceDrawing,
-		EllipseDrawing,
-		TextDrawing,
-		ReadPlotItemData,
-		ReadXYCoordinates,
-		ZoomAxes,
-		RegularPolygonDrawing,
-		OpenCardinalSplineDrawing,
-		ClosedCardinalSplineDrawing,
+  public enum GraphToolType
+  {
+    None,
+    ObjectPointer,
+    ArrowLineDrawing,
+    SingleLineDrawing,
+    RectangleDrawing,
+    CurlyBraceDrawing,
+    EllipseDrawing,
+    TextDrawing,
+    ReadPlotItemData,
+    ReadXYCoordinates,
+    ZoomAxes,
+    RegularPolygonDrawing,
+    OpenCardinalSplineDrawing,
+    ClosedCardinalSplineDrawing,
 
-		/// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>
-		EditGrid
-	}
+    /// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>
+    EditGrid
+  }
 }

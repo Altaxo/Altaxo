@@ -4,18 +4,18 @@
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {
-	public struct SignatureHelpTriggerInfo
-	{
-		internal Microsoft.CodeAnalysis.SignatureHelp.SignatureHelpTriggerInfo Inner { get; }
+  public struct SignatureHelpTriggerInfo
+  {
+    internal Microsoft.CodeAnalysis.SignatureHelp.SignatureHelpTriggerInfo Inner { get; }
 
-		public SignatureHelpTriggerReason TriggerReason => (SignatureHelpTriggerReason)Inner.TriggerReason;
+    public SignatureHelpTriggerReason TriggerReason => (SignatureHelpTriggerReason)Inner.TriggerReason;
 
-		public char? TriggerCharacter => Inner.TriggerCharacter;
+    public char? TriggerCharacter => Inner.TriggerCharacter;
 
-		public SignatureHelpTriggerInfo(SignatureHelpTriggerReason triggerReason, char? triggerCharacter = null)
-		{
-			Inner = new Microsoft.CodeAnalysis.SignatureHelp.SignatureHelpTriggerInfo(
-					(Microsoft.CodeAnalysis.SignatureHelp.SignatureHelpTriggerReason)triggerReason, triggerCharacter);
-		}
-	}
+    public SignatureHelpTriggerInfo(SignatureHelpTriggerReason triggerReason, char? triggerCharacter = null)
+    {
+      Inner = new Microsoft.CodeAnalysis.SignatureHelp.SignatureHelpTriggerInfo(
+          (Microsoft.CodeAnalysis.SignatureHelp.SignatureHelpTriggerReason)triggerReason, triggerCharacter);
+    }
+  }
 }

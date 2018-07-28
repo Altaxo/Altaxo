@@ -33,102 +33,102 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public partial class ColorScaleComboBox : DimensionfulQuantityImageComboBox
-	{
-		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+  public partial class ColorScaleComboBox : DimensionfulQuantityImageComboBox
+  {
+    private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		private static readonly double[] _initialValues = new double[] { 0.0, 0.125, 0.25, 0.5, 0.625, 0.75, 0.875, 1.0 };
+    private static readonly double[] _initialValues = new double[] { 0.0, 0.125, 0.25, 0.5, 0.625, 0.75, 0.875, 1.0 };
 
-		static ColorScaleComboBox()
-		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(ColorScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Altaxo.Units.Dimensionless.Unity.Instance)));
-		}
+    static ColorScaleComboBox()
+    {
+      SelectedQuantityProperty.OverrideMetadata(typeof(ColorScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Altaxo.Units.Dimensionless.Unity.Instance)));
+    }
 
-		public ColorScaleComboBox()
-		{
-			UnitEnvironment = RelationEnvironment.Instance;
-			_converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
+    public ColorScaleComboBox()
+    {
+      UnitEnvironment = RelationEnvironment.Instance;
+      _converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
 
-			InitializeComponent();
+      InitializeComponent();
 
-			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
+      foreach (var e in _initialValues)
+        Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
 
-			_img.Source = GetImage(SelectedQuantityInSIUnits);
-		}
+      _img.Source = GetImage(SelectedQuantityInSIUnits);
+    }
 
-		protected override void ImplantImage(double width, double height)
-		{
-			base.ImplantImage(width, height);
-			var h = _img.Height;
-			const double hMargin = 6;
-			_img.Margin = new Thickness(_img.Margin.Left, _img.Margin.Top + hMargin, _img.Margin.Right, _img.Margin.Bottom + hMargin);
-			_img.Height = h - 2 * hMargin;
-		}
+    protected override void ImplantImage(double width, double height)
+    {
+      base.ImplantImage(width, height);
+      var h = _img.Height;
+      const double hMargin = 6;
+      _img.Margin = new Thickness(_img.Margin.Left, _img.Margin.Top + hMargin, _img.Margin.Right, _img.Margin.Bottom + hMargin);
+      _img.Height = h - 2 * hMargin;
+    }
 
-		private static ValidationResult EhValidateQuantity(DimensionfulQuantity quantity)
-		{
-			string error = null;
-			double val = quantity.AsValueInSIUnits;
-			if (double.IsInfinity(val))
-				error = "Value must not be infinity";
-			else if (double.IsNaN(val))
-				error = "Value must be a valid number";
-			else if (val < 0)
-				error = "Value must be a non-negative number";
-			else if (val > 1)
-				error = "Value must be less or equal than 1";
+    private static ValidationResult EhValidateQuantity(DimensionfulQuantity quantity)
+    {
+      string error = null;
+      double val = quantity.AsValueInSIUnits;
+      if (double.IsInfinity(val))
+        error = "Value must not be infinity";
+      else if (double.IsNaN(val))
+        error = "Value must be a valid number";
+      else if (val < 0)
+        error = "Value must be a non-negative number";
+      else if (val > 1)
+        error = "Value must be less or equal than 1";
 
-			return error == null ? ValidationResult.ValidResult : new ValidationResult(false, error);
-		}
+      return error == null ? ValidationResult.ValidResult : new ValidationResult(false, error);
+    }
 
-		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			base.OnSelectedQuantityChanged(obj, args);
+    protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      base.OnSelectedQuantityChanged(obj, args);
 
-			if (null != _img)
-			{
-				var val = SelectedQuantityInSIUnits;
-				_img.Source = GetImage(val);
-			}
-		}
+      if (null != _img)
+      {
+        var val = SelectedQuantityInSIUnits;
+        _img.Source = GetImage(val);
+      }
+    }
 
-		public override ImageSource GetItemImage(object item)
-		{
-			double val = ((DimensionfulQuantity)item).AsValueInSIUnits;
-			ImageSource result;
-			if (!_cachedImages.TryGetValue(val, out result))
-				_cachedImages.Add(val, result = GetImage(val));
-			return result;
-		}
+    public override ImageSource GetItemImage(object item)
+    {
+      double val = ((DimensionfulQuantity)item).AsValueInSIUnits;
+      ImageSource result;
+      if (!_cachedImages.TryGetValue(val, out result))
+        _cachedImages.Add(val, result = GetImage(val));
+      return result;
+    }
 
-		public override string GetItemText(object item)
-		{
-			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
-		}
+    public override string GetItemText(object item)
+    {
+      return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
+    }
 
-		public static ImageSource GetImage(double val)
-		{
-			const double height = 1;
-			const double width = 2;
-			const double lineWidth = 0;
+    public static ImageSource GetImage(double val)
+    {
+      const double height = 1;
+      const double width = 2;
+      const double lineWidth = 0;
 
-			// draws a transparent outline to fix the borders
-			var geometryDrawing = new GeometryDrawing();
-			geometryDrawing.Geometry = new RectangleGeometry(new Rect(-lineWidth, -lineWidth, width + lineWidth, height + lineWidth));
-			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      // draws a transparent outline to fix the borders
+      var geometryDrawing = new GeometryDrawing();
+      geometryDrawing.Geometry = new RectangleGeometry(new Rect(-lineWidth, -lineWidth, width + lineWidth, height + lineWidth));
+      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
 
-			var gradStops = new GradientStopCollection();
-			gradStops.Add(new GradientStop(Colors.Black, 0));
-			gradStops.Add(new GradientStop(Colors.White, val));
-			gradStops.Add(new GradientStop(Colors.Black, 1));
+      var gradStops = new GradientStopCollection();
+      gradStops.Add(new GradientStop(Colors.Black, 0));
+      gradStops.Add(new GradientStop(Colors.White, val));
+      gradStops.Add(new GradientStop(Colors.Black, 1));
 
-			geometryDrawing.Brush = new LinearGradientBrush(gradStops, 0);
-			var geometryImage = new DrawingImage(geometryDrawing);
+      geometryDrawing.Brush = new LinearGradientBrush(gradStops, 0);
+      var geometryImage = new DrawingImage(geometryDrawing);
 
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
-		}
-	}
+      // Freeze the DrawingImage for performance benefits.
+      geometryImage.Freeze();
+      return geometryImage;
+    }
+  }
 }

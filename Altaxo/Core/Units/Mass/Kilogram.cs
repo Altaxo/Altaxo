@@ -29,39 +29,39 @@ using System.Text;
 
 namespace Altaxo.Units.Mass
 {
-	[UnitDescription("Mass", 0, 1, 0, 0, 0, 0, 0)]
-	public class Kilogram : SIUnit, IPrefixedUnit
-	{
-		private static readonly Kilogram _instance = new Kilogram();
+  [UnitDescription("Mass", 0, 1, 0, 0, 0, 0, 0)]
+  public class Kilogram : SIUnit, IPrefixedUnit
+  {
+    private static readonly Kilogram _instance = new Kilogram();
 
-		public static Kilogram Instance { get { return _instance; } }
+    public static Kilogram Instance { get { return _instance; } }
 
-		private Kilogram()
-				: base(0, 1, 0, 0, 0, 0, 0)
-		{
-		}
+    private Kilogram()
+        : base(0, 1, 0, 0, 0, 0, 0)
+    {
+    }
 
-		public override string Name
-		{
-			get { return "Kilogram"; }
-		}
+    public override string Name
+    {
+      get { return "Kilogram"; }
+    }
 
-		public override string ShortCut
-		{
-			get { return "kg"; }
-		}
+    public override string ShortCut
+    {
+      get { return "kg"; }
+    }
 
-		public override ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithNonePrefixOnly; }
-		}
+    public override ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
 
-		#region IPrefixedUnit explicit implementation
+    #region IPrefixedUnit explicit implementation
 
-		SIPrefix IPrefixedUnit.Prefix => SIPrefix.Kilo;
+    SIPrefix IPrefixedUnit.Prefix => SIPrefix.Kilo;
 
-		IUnit IPrefixedUnit.Unit => Gram.Instance;
+    IUnit IPrefixedUnit.Unit => Gram.Instance;
 
-		#endregion IPrefixedUnit explicit implementation
-	}
+    #endregion IPrefixedUnit explicit implementation
+  }
 }

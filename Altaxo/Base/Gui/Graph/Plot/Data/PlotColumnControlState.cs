@@ -29,10 +29,10 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-	public enum PlotColumnControlState
-	{
-		Normal,
-		Warning,
-		Error
-	}
+  public enum PlotColumnControlState
+  {
+    Normal,
+    Warning,
+    Error
+  }
 }

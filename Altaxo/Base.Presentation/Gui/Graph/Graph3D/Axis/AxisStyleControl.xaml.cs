@@ -31,151 +31,151 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
-	/// <summary>
-	/// Interaction logic for TitleFormatLayerControl.xaml
-	/// </summary>
-	public partial class AxisStyleControl : UserControl, IAxisStyleView
-	{
-		public AxisStyleControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for TitleFormatLayerControl.xaml
+  /// </summary>
+  public partial class AxisStyleControl : UserControl, IAxisStyleView
+  {
+    public AxisStyleControl()
+    {
+      InitializeComponent();
+    }
 
-		#region ITitleFormatLayerView
+    #region ITitleFormatLayerView
 
-		public bool ShowAxisLine
-		{
-			get
-			{
-				return ((UIElement)_axisLineGroupBox.Content).IsEnabled == true;
-			}
-			set
-			{
-				((UIElement)_axisLineGroupBox.Content).IsEnabled = value;
-			}
-		}
+    public bool ShowAxisLine
+    {
+      get
+      {
+        return ((UIElement)_axisLineGroupBox.Content).IsEnabled == true;
+      }
+      set
+      {
+        ((UIElement)_axisLineGroupBox.Content).IsEnabled = value;
+      }
+    }
 
-		public bool ShowMajorLabels
-		{
-			get
-			{
-				return _chkShowMajorLabels.IsChecked == true;
-			}
-			set
-			{
-				_chkShowMajorLabels.IsChecked = value;
-			}
-		}
+    public bool ShowMajorLabels
+    {
+      get
+      {
+        return _chkShowMajorLabels.IsChecked == true;
+      }
+      set
+      {
+        _chkShowMajorLabels.IsChecked = value;
+      }
+    }
 
-		public bool ShowMinorLabels
-		{
-			get
-			{
-				return _chkShowMinorLabels.IsChecked == true;
-			}
-			set
-			{
-				_chkShowMinorLabels.IsChecked = value;
-			}
-		}
+    public bool ShowMinorLabels
+    {
+      get
+      {
+        return _chkShowMinorLabels.IsChecked == true;
+      }
+      set
+      {
+        _chkShowMinorLabels.IsChecked = value;
+      }
+    }
 
-		public bool ShowCustomTickSpacing
-		{
-			get
-			{
-				return ((UIElement)_guiCustomAxisTicksGroupBox.Content).IsEnabled == true;
-			}
-			set
-			{
-				((UIElement)_guiCustomAxisTicksGroupBox.Content).IsEnabled = value;
-			}
-		}
+    public bool ShowCustomTickSpacing
+    {
+      get
+      {
+        return ((UIElement)_guiCustomAxisTicksGroupBox.Content).IsEnabled == true;
+      }
+      set
+      {
+        ((UIElement)_guiCustomAxisTicksGroupBox.Content).IsEnabled = value;
+      }
+    }
 
-		public event Action ShowAxisLineChanged;
+    public event Action ShowAxisLineChanged;
 
-		public event Action ShowMajorLabelsChanged;
+    public event Action ShowMajorLabelsChanged;
 
-		public event Action ShowMinorLabelsChanged;
+    public event Action ShowMinorLabelsChanged;
 
-		public event Action ShowCustomTickSpacingChanged;
+    public event Action ShowCustomTickSpacingChanged;
 
-		public event Action EditTitle;
+    public event Action EditTitle;
 
-		public object LineStyleView
-		{
-			set
-			{
-				var oldControl = (UIElement)_axisLineGroupBox.Content;
-				bool wasEnabled = oldControl.IsEnabled == true;
+    public object LineStyleView
+    {
+      set
+      {
+        var oldControl = (UIElement)_axisLineGroupBox.Content;
+        bool wasEnabled = oldControl.IsEnabled == true;
 
-				var newControl = value as UIElement;
+        var newControl = value as UIElement;
 
-				if (newControl == null)
-					newControl = new Label();
+        if (newControl == null)
+          newControl = new Label();
 
-				newControl.IsEnabled = wasEnabled;
-				_axisLineGroupBox.Content = newControl;
-			}
-		}
+        newControl.IsEnabled = wasEnabled;
+        _axisLineGroupBox.Content = newControl;
+      }
+    }
 
-		public object TickSpacingView
-		{
-			set
-			{
-				var oldControl = (UIElement)_guiCustomAxisTicksGroupBox.Content;
-				bool wasEnabled = oldControl.IsEnabled == true;
+    public object TickSpacingView
+    {
+      set
+      {
+        var oldControl = (UIElement)_guiCustomAxisTicksGroupBox.Content;
+        bool wasEnabled = oldControl.IsEnabled == true;
 
-				var newControl = value as UIElement;
+        var newControl = value as UIElement;
 
-				if (newControl == null)
-					newControl = new Label();
+        if (newControl == null)
+          newControl = new Label();
 
-				newControl.IsEnabled = wasEnabled;
-				_guiCustomAxisTicksGroupBox.Content = newControl;
-			}
-		}
+        newControl.IsEnabled = wasEnabled;
+        _guiCustomAxisTicksGroupBox.Content = newControl;
+      }
+    }
 
-		public string AxisTitle
-		{
-			get
-			{
-				return m_Format_edTitle.Text;
-			}
-			set
-			{
-				m_Format_edTitle.Text = value;
-			}
-		}
+    public string AxisTitle
+    {
+      get
+      {
+        return m_Format_edTitle.Text;
+      }
+      set
+      {
+        m_Format_edTitle.Text = value;
+      }
+    }
 
-		#endregion ITitleFormatLayerView
+    #endregion ITitleFormatLayerView
 
-		private void EhShowAxisLineChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != ShowAxisLineChanged)
-				ShowAxisLineChanged();
-		}
+    private void EhShowAxisLineChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != ShowAxisLineChanged)
+        ShowAxisLineChanged();
+    }
 
-		private void EhShowMajorLabelsChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != ShowMajorLabelsChanged)
-				ShowMajorLabelsChanged();
-		}
+    private void EhShowMajorLabelsChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != ShowMajorLabelsChanged)
+        ShowMajorLabelsChanged();
+    }
 
-		private void EhShowMinorLabelsChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != ShowMinorLabelsChanged)
-				ShowMinorLabelsChanged();
-		}
+    private void EhShowMinorLabelsChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != ShowMinorLabelsChanged)
+        ShowMinorLabelsChanged();
+    }
 
-		private void EhCustomTickSpacingChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != ShowCustomTickSpacingChanged)
-				ShowCustomTickSpacingChanged();
-		}
+    private void EhCustomTickSpacingChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != ShowCustomTickSpacingChanged)
+        ShowCustomTickSpacingChanged();
+    }
 
-		private void EhEditTitle_Click(object sender, RoutedEventArgs e)
-		{
-			EditTitle?.Invoke();
-		}
-	}
+    private void EhEditTitle_Click(object sender, RoutedEventArgs e)
+    {
+      EditTitle?.Invoke();
+    }
+  }
 }

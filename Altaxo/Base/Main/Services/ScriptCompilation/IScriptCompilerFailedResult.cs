@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
-	public interface IScriptCompilerFailedResult : IScriptCompilerResult
-	{
-		IReadOnlyList<ICompilerDiagnostic> CompileErrors { get; }
-	}
+  public interface IScriptCompilerFailedResult : IScriptCompilerResult
+  {
+    IReadOnlyList<ICompilerDiagnostic> CompileErrors { get; }
+  }
 }

@@ -31,60 +31,60 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.CodeEditing
 {
-	public class DiagnosticWrapper
-	{
-		private Diagnostic _diagnostic;
+  public class DiagnosticWrapper
+  {
+    private Diagnostic _diagnostic;
 
-		public DiagnosticWrapper(Diagnostic d)
-		{
-			_diagnostic = d;
-		}
+    public DiagnosticWrapper(Diagnostic d)
+    {
+      _diagnostic = d;
+    }
 
-		public int Line
-		{
-			get
-			{
-				return _diagnostic.Location.GetLineSpan().StartLinePosition.Line;
-			}
-		}
+    public int Line
+    {
+      get
+      {
+        return _diagnostic.Location.GetLineSpan().StartLinePosition.Line;
+      }
+    }
 
-		public int Column
-		{
-			get
-			{
-				return _diagnostic.Location.GetLineSpan().StartLinePosition.Character;
-			}
-		}
+    public int Column
+    {
+      get
+      {
+        return _diagnostic.Location.GetLineSpan().StartLinePosition.Character;
+      }
+    }
 
-		public string Severity
-		{
-			get
-			{
-				switch (_diagnostic.Severity)
-				{
-					case DiagnosticSeverity.Hidden:
+    public string Severity
+    {
+      get
+      {
+        switch (_diagnostic.Severity)
+        {
+          case DiagnosticSeverity.Hidden:
 
-						return "Hidden";
+            return "Hidden";
 
-					case DiagnosticSeverity.Info:
-						return "Info";
+          case DiagnosticSeverity.Info:
+            return "Info";
 
-					case DiagnosticSeverity.Warning:
-						return "Warning";
+          case DiagnosticSeverity.Warning:
+            return "Warning";
 
-					case DiagnosticSeverity.Error:
-						return "Error";
-				}
-				return string.Empty;
-			}
-		}
+          case DiagnosticSeverity.Error:
+            return "Error";
+        }
+        return string.Empty;
+      }
+    }
 
-		public string Message
-		{
-			get
-			{
-				return _diagnostic.GetMessage();
-			}
-		}
-	}
+    public string Message
+    {
+      get
+      {
+        return _diagnostic.GetMessage();
+      }
+    }
+  }
 }

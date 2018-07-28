@@ -14,14 +14,14 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	/// <summary>
-	/// Interaction logic for RangeOfRowsControl.xaml
-	/// </summary>
-	public partial class AllRowsControl : UserControl, IAllRowsView
-	{
-		public AllRowsControl()
-		{
-			InitializeComponent();
-		}
-	}
+  /// <summary>
+  /// Interaction logic for RangeOfRowsControl.xaml
+  /// </summary>
+  public partial class AllRowsControl : UserControl, IAllRowsView
+  {
+    public AllRowsControl()
+    {
+      InitializeComponent();
+    }
+  }
 }

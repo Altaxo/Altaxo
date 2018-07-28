@@ -29,71 +29,71 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-	using Altaxo.Units;
+  using Altaxo.Units;
 
-	/// <summary>
-	/// Interface to show a length value. The use can input the value in any unit, but for the interface the value must be transfered in units of point (1/72 inch).
-	/// </summary>
-	public interface IDimensionfulQuantityView
-	{
-		DimensionfulQuantity SelectedQuantity { get; set; }
+  /// <summary>
+  /// Interface to show a length value. The use can input the value in any unit, but for the interface the value must be transfered in units of point (1/72 inch).
+  /// </summary>
+  public interface IDimensionfulQuantityView
+  {
+    DimensionfulQuantity SelectedQuantity { get; set; }
 
-		event Action SelectedQuantityChanged;
+    event Action SelectedQuantityChanged;
 
-		QuantityWithUnitGuiEnvironment UnitEnvironment { set; }
-	}
+    QuantityWithUnitGuiEnvironment UnitEnvironment { set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
-	public abstract class ValueInSomeUnitControllerBase : MVCANDControllerEditImmutableDocBase<double, IDimensionfulQuantityView>
-	{
-		protected abstract IUnit UnitOfValue { get; }
+  [ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
+  public abstract class ValueInSomeUnitControllerBase : MVCANDControllerEditImmutableDocBase<double, IDimensionfulQuantityView>
+  {
+    protected abstract IUnit UnitOfValue { get; }
 
-		protected abstract QuantityWithUnitGuiEnvironment UnitEnvironment { get; }
+    protected abstract QuantityWithUnitGuiEnvironment UnitEnvironment { get; }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.UnitEnvironment = this.UnitEnvironment;
-				_view.SelectedQuantity = new DimensionfulQuantity(_doc, UnitOfValue).AsQuantityIn(this.UnitEnvironment.DefaultUnit);
-			}
-		}
+      if (null != _view)
+      {
+        _view.UnitEnvironment = this.UnitEnvironment;
+        _view.SelectedQuantity = new DimensionfulQuantity(_doc, UnitOfValue).AsQuantityIn(this.UnitEnvironment.DefaultUnit);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			GetQuantityFromView();
-			return ApplyEnd(true, disposeController);
-		}
+    public override bool Apply(bool disposeController)
+    {
+      GetQuantityFromView();
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			_view.SelectedQuantityChanged += EhQuantityChanged;
-			base.AttachView();
-		}
+    protected override void AttachView()
+    {
+      _view.SelectedQuantityChanged += EhQuantityChanged;
+      base.AttachView();
+    }
 
-		protected override void DetachView()
-		{
-			_view.SelectedQuantityChanged -= EhQuantityChanged;
-			base.DetachView();
-		}
+    protected override void DetachView()
+    {
+      _view.SelectedQuantityChanged -= EhQuantityChanged;
+      base.DetachView();
+    }
 
-		private void GetQuantityFromView()
-		{
-			var q = _view.SelectedQuantity;
-			_doc = q.AsValueIn(UnitOfValue);
-		}
+    private void GetQuantityFromView()
+    {
+      var q = _view.SelectedQuantity;
+      _doc = q.AsValueIn(UnitOfValue);
+    }
 
-		private void EhQuantityChanged()
-		{
-			GetQuantityFromView();
-			OnMadeDirty();
-		}
-	}
+    private void EhQuantityChanged()
+    {
+      GetQuantityFromView();
+      OnMadeDirty();
+    }
+  }
 }

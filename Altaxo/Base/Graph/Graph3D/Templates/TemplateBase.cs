@@ -32,12 +32,12 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Templates
 {
-	public static class TemplateBase
-	{
-		public static void AddStandardPropertiesToGraph(GraphDocument graph, IReadOnlyPropertyBag propertyContext)
-		{
-			// Set default font property exclusively for the graph
-			graph.PropertyBagNotNull.SetValue<FontX3D>(GraphDocument.PropertyKeyDefaultFont, propertyContext.GetValue<FontX3D>(GraphDocument.PropertyKeyDefaultFont));
-		}
-	}
+  public static class TemplateBase
+  {
+    public static void AddStandardPropertiesToGraph(GraphDocument graph, IReadOnlyPropertyBag propertyContext)
+    {
+      // Set default font property exclusively for the graph
+      graph.PropertyBagNotNull.SetValue<FontX3D>(GraphDocument.PropertyKeyDefaultFont, propertyContext.GetValue<FontX3D>(GraphDocument.PropertyKeyDefaultFont));
+    }
+  }
 }

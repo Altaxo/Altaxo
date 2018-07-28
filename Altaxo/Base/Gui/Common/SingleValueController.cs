@@ -26,135 +26,135 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface ISingleValueView
-	{
-		string DescriptionText { set; }
+  public interface ISingleValueView
+  {
+    string DescriptionText { set; }
 
-		string ValueText { get; set; }
+    string ValueText { get; set; }
 
-		event Action<ValidationEventArgs<string>> ValueText_Validating;
-	}
+    event Action<ValidationEventArgs<string>> ValueText_Validating;
+  }
 
-	public interface ISingleValueController : IMVCAController
-	{
-		string DescriptionText { get; set; }
-	}
+  public interface ISingleValueController : IMVCAController
+  {
+    string DescriptionText { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
-	/// </summary>
-	[UserControllerForObject(typeof(string), 100)]
-	[ExpectedTypeOfView(typeof(ISingleValueView))]
-	public class SingleValueController : ISingleValueController
-	{
-		protected ISingleValueView _view;
-		protected string _value1String;
-		protected string _value1StringTemporary;
+  /// <summary>
+  /// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
+  /// </summary>
+  [UserControllerForObject(typeof(string), 100)]
+  [ExpectedTypeOfView(typeof(ISingleValueView))]
+  public class SingleValueController : ISingleValueController
+  {
+    protected ISingleValueView _view;
+    protected string _value1String;
+    protected string _value1StringTemporary;
 
-		protected string _descriptionText = "Enter value:";
+    protected string _descriptionText = "Enter value:";
 
-		public SingleValueController(string val)
-		{
-			_value1String = val;
-			_value1StringTemporary = val;
-		}
+    public SingleValueController(string val)
+    {
+      _value1String = val;
+      _value1StringTemporary = val;
+    }
 
-		protected virtual void Initialize()
-		{
-			if (null != _view)
-			{
-				_view.DescriptionText = _descriptionText;
-				_view.ValueText = _value1StringTemporary;
-			}
-		}
+    protected virtual void Initialize()
+    {
+      if (null != _view)
+      {
+        _view.DescriptionText = _descriptionText;
+        _view.ValueText = _value1StringTemporary;
+      }
+    }
 
-		public string DescriptionText
-		{
-			get
-			{
-				return _descriptionText;
-			}
-			set
-			{
-				_descriptionText = value;
-				if (null != _view)
-				{
-					_view.DescriptionText = _descriptionText;
-				}
-			}
-		}
+    public string DescriptionText
+    {
+      get
+      {
+        return _descriptionText;
+      }
+      set
+      {
+        _descriptionText = value;
+        if (null != _view)
+        {
+          _view.DescriptionText = _descriptionText;
+        }
+      }
+    }
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public virtual object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-					_view.ValueText_Validating -= this.EhView_ValidatingValue1;
+    public virtual object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        if (_view != null)
+          _view.ValueText_Validating -= this.EhView_ValidatingValue1;
 
-				_view = value as ISingleValueView;
+        _view = value as ISingleValueView;
 
-				if (_view != null)
-				{
-					Initialize();
-					_view.ValueText_Validating += this.EhView_ValidatingValue1;
-				}
-			}
-		}
+        if (_view != null)
+        {
+          Initialize();
+          _view.ValueText_Validating += this.EhView_ValidatingValue1;
+        }
+      }
+    }
 
-		public virtual object ModelObject
-		{
-			get
-			{
-				return _value1String;
-			}
-		}
+    public virtual object ModelObject
+    {
+      get
+      {
+        return _value1String;
+      }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		#endregion IMVCController Members
+    #endregion IMVCController Members
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public virtual bool Apply(bool disposeController)
-		{
-			this._value1String = this._value1StringTemporary;
-			return true;
-		}
+    public virtual bool Apply(bool disposeController)
+    {
+      this._value1String = this._value1StringTemporary;
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IApplyController Members
+    #endregion IApplyController Members
 
-		#region ISingleValueViewEventSink Members
+    #region ISingleValueViewEventSink Members
 
-		public virtual void EhView_ValidatingValue1(ValidationEventArgs<string> e)
-		{
-			_value1StringTemporary = e.ValueToValidate;
-			return;
-		}
+    public virtual void EhView_ValidatingValue1(ValidationEventArgs<string> e)
+    {
+      _value1StringTemporary = e.ValueToValidate;
+      return;
+    }
 
-		#endregion ISingleValueViewEventSink Members
-	}
+    #endregion ISingleValueViewEventSink Members
+  }
 }

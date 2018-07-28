@@ -33,95 +33,95 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot
 {
-	[UserControllerForObject(typeof(DataMeshPlotItem))]
-	[ExpectedTypeOfView(typeof(ITabbedElementView))]
-	internal class DataMeshPlotItemController : MVCANControllerEditOriginalDocBase<DataMeshPlotItem, ITabbedElementView>
-	{
-		private TabbedElementController _innerController;
+  [UserControllerForObject(typeof(DataMeshPlotItem))]
+  [ExpectedTypeOfView(typeof(ITabbedElementView))]
+  internal class DataMeshPlotItemController : MVCANControllerEditOriginalDocBase<DataMeshPlotItem, ITabbedElementView>
+  {
+    private TabbedElementController _innerController;
 
-		private IMVCANController _styleController;
+    private IMVCANController _styleController;
 
-		/// <summary>Controls the option view where users can copy the image to disc or save the image.</summary>
-		private IMVCANController _optionsController;
+    /// <summary>Controls the option view where users can copy the image to disc or save the image.</summary>
+    private IMVCANController _optionsController;
 
-		/// <summary>Controls the data view, in which the user can chose which columns to use in the plot item.</summary>
-		private IMVCANController _dataController;
+    /// <summary>Controls the data view, in which the user can chose which columns to use in the plot item.</summary>
+    private IMVCANController _dataController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_styleController, () => _styleController = null);
-			yield return new ControllerAndSetNullMethod(_optionsController, () => _optionsController = null);
-			yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
-			yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_styleController, () => _styleController = null);
+      yield return new ControllerAndSetNullMethod(_optionsController, () => _optionsController = null);
+      yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
+      yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_innerController = new TabbedElementController();
-				InitializeStyle();
-				InitializeDataView();
-				InitializeOptionView();
-				_innerController.BringTabToFront(0);
-			}
-		}
+      if (initData)
+      {
+        _innerController = new TabbedElementController();
+        InitializeStyle();
+        InitializeDataView();
+        InitializeOptionView();
+        _innerController.BringTabToFront(0);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			bool result = true;
+    public override bool Apply(bool disposeController)
+    {
+      bool result = true;
 
-			if (_styleController != null)
-			{
-				if (!_styleController.Apply(disposeController))
-					return false;
-			}
+      if (_styleController != null)
+      {
+        if (!_styleController.Apply(disposeController))
+          return false;
+      }
 
-			if (_dataController != null)
-			{
-				if (!_dataController.Apply(disposeController))
-					return false;
-			}
+      if (_dataController != null)
+      {
+        if (!_dataController.Apply(disposeController))
+          return false;
+      }
 
-			return ApplyEnd(result, disposeController);
-		}
+      return ApplyEnd(result, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
-			if (null != _innerController)
-				_innerController.ViewObject = _view;
-		}
+    protected override void AttachView()
+    {
+      base.AttachView();
+      if (null != _innerController)
+        _innerController.ViewObject = _view;
+    }
 
-		protected override void DetachView()
-		{
-			if (null != _innerController)
-				_innerController.ViewObject = null;
-			base.DetachView();
-		}
+    protected override void DetachView()
+    {
+      if (null != _innerController)
+        _innerController.ViewObject = null;
+      base.DetachView();
+    }
 
-		private void InitializeStyle()
-		{
-			_styleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IMVCANController), UseDocument.Directly);
-			_innerController.AddTab("Style", _styleController, _styleController.ViewObject);
-		}
+    private void InitializeStyle()
+    {
+      _styleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IMVCANController), UseDocument.Directly);
+      _innerController.AddTab("Style", _styleController, _styleController.ViewObject);
+    }
 
-		private void InitializeOptionView()
-		{
-			_optionsController = new Gdi.Plot.DensityImagePlotItemOptionController() { UseDocumentCopy = UseDocument.Directly };
-			_optionsController.InitializeDocument(_doc);
-			Current.Gui.FindAndAttachControlTo(_optionsController);
-			_innerController.AddTab("Options", _optionsController, _optionsController.ViewObject);
-		}
+    private void InitializeOptionView()
+    {
+      _optionsController = new Gdi.Plot.DensityImagePlotItemOptionController() { UseDocumentCopy = UseDocument.Directly };
+      _optionsController.InitializeDocument(_doc);
+      Current.Gui.FindAndAttachControlTo(_optionsController);
+      _innerController.AddTab("Options", _optionsController, _optionsController.ViewObject);
+    }
 
-		private void InitializeDataView()
-		{
-			_dataController = new XYZMeshedColumnPlotDataController { UseDocumentCopy = UseDocument.Directly };
-			_dataController.InitializeDocument(_doc.Data);
-			Current.Gui.FindAndAttachControlTo(_dataController);
-			_innerController.AddTab("Data", _dataController, _dataController.ViewObject);
-		}
-	}
+    private void InitializeDataView()
+    {
+      _dataController = new XYZMeshedColumnPlotDataController { UseDocumentCopy = UseDocument.Directly };
+      _dataController.InitializeDocument(_doc.Data);
+      Current.Gui.FindAndAttachControlTo(_dataController);
+      _innerController.AddTab("Data", _dataController, _dataController.ViewObject);
+    }
+  }
 }

@@ -22,74 +22,74 @@ using System.IO;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// IMessageService implementation that writes messages to a text writer.
-	/// User input is not implemented by this service.
-	/// </summary>
-	public class InfoWarningErrorTextMessageService : IInfoWarningErrorTextMessageService
-	{
-		private Action<InfoWarningErrorTextMessageItem> _messageAdded;
+  /// <summary>
+  /// IMessageService implementation that writes messages to a text writer.
+  /// User input is not implemented by this service.
+  /// </summary>
+  public class InfoWarningErrorTextMessageService : IInfoWarningErrorTextMessageService
+  {
+    private Action<InfoWarningErrorTextMessageItem> _messageAdded;
 
-		/// <summary>
-		/// Temporary cache for the items as long as nobody has subscribed to this service. If this member is null,
-		/// there was already a subscriber how has acquired the cached items.
-		/// </summary>
-		private List<InfoWarningErrorTextMessageItem> _startupListOfItems = new List<InfoWarningErrorTextMessageItem>();
+    /// <summary>
+    /// Temporary cache for the items as long as nobody has subscribed to this service. If this member is null,
+    /// there was already a subscriber how has acquired the cached items.
+    /// </summary>
+    private List<InfoWarningErrorTextMessageItem> _startupListOfItems = new List<InfoWarningErrorTextMessageItem>();
 
-		/// <summary>
-		/// Occurs when a message is available. The first subscriber how subscribe to this event will receive all messages
-		/// that were up-to-now stored in this call.
-		/// </summary>
-		public event Action<InfoWarningErrorTextMessageItem> MessageAdded
-		{
-			add
-			{
-				bool wasEmptyBefore = null == _messageAdded;
+    /// <summary>
+    /// Occurs when a message is available. The first subscriber how subscribe to this event will receive all messages
+    /// that were up-to-now stored in this call.
+    /// </summary>
+    public event Action<InfoWarningErrorTextMessageItem> MessageAdded
+    {
+      add
+      {
+        bool wasEmptyBefore = null == _messageAdded;
 
-				_messageAdded += value;
+        _messageAdded += value;
 
-				var list = _startupListOfItems;
-				if (wasEmptyBefore && null != _messageAdded && null != list)
-				{
-					_startupListOfItems = null;
-					foreach (var item in list)
-						_messageAdded(item);
-				}
-			}
-			remove
-			{
-				_messageAdded -= value;
-			}
-		}
+        var list = _startupListOfItems;
+        if (wasEmptyBefore && null != _messageAdded && null != list)
+        {
+          _startupListOfItems = null;
+          foreach (var item in list)
+            _messageAdded(item);
+        }
+      }
+      remove
+      {
+        _messageAdded -= value;
+      }
+    }
 
-		public void WriteLine(MessageLevel messageLevel, string source, string text)
-		{
-			var msg = new InfoWarningErrorTextMessageItem(level: messageLevel,
-					source: source,
-					message: text,
-					timeUtc: DateTime.UtcNow
-					);
+    public void WriteLine(MessageLevel messageLevel, string source, string text)
+    {
+      var msg = new InfoWarningErrorTextMessageItem(level: messageLevel,
+          source: source,
+          message: text,
+          timeUtc: DateTime.UtcNow
+          );
 
-			var act = _messageAdded;
+      var act = _messageAdded;
 
-			if (null != act)
-			{
-				_messageAdded?.Invoke(msg);
-			}
-			else if (_startupListOfItems != null)
-			{
-				_startupListOfItems.Add(msg);
-			}
-		}
+      if (null != act)
+      {
+        _messageAdded?.Invoke(msg);
+      }
+      else if (_startupListOfItems != null)
+      {
+        _startupListOfItems.Add(msg);
+      }
+    }
 
-		public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
-		{
-			WriteLine(messageLevel, source, string.Format(format, args));
-		}
+    public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
+    {
+      WriteLine(messageLevel, source, string.Format(format, args));
+    }
 
-		public void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args)
-		{
-			WriteLine(messageLevel, source, string.Format(provider, format, args));
-		}
-	}
+    public void WriteLine(MessageLevel messageLevel, string source, System.IFormatProvider provider, string format, params object[] args)
+    {
+      WriteLine(messageLevel, source, string.Format(provider, format, args));
+    }
+  }
 }

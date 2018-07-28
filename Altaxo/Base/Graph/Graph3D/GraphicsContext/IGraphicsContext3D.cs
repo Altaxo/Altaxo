@@ -34,69 +34,69 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	public interface ITransformationContext
-	{
-		Matrix4x3 Transformation { get; }
-		Matrix3x3 TransposedInverseTransformation { get; }
-	}
+  public interface ITransformationContext
+  {
+    Matrix4x3 Transformation { get; }
+    Matrix3x3 TransposedInverseTransformation { get; }
+  }
 
-	public interface IGraphicsContext3D : ITransformationContext
-	{
-		/// <summary>
-		/// Gets an indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
-		/// </summary>
-		/// <param name="material">The material to use.</param>
-		/// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
-		PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
+  public interface IGraphicsContext3D : ITransformationContext
+  {
+    /// <summary>
+    /// Gets an indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
+    /// </summary>
+    /// <param name="material">The material to use.</param>
+    /// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
+    PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
 
-		/// <summary>
-		/// Gets an indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
-		/// </summary>
-		/// <param name="material">The material to use.</param>
-		/// <param name="clipPlanes">The clip planes to use.</param>
-		/// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
-		PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] clipPlanes);
+    /// <summary>
+    /// Gets an indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
+    /// </summary>
+    /// <param name="material">The material to use.</param>
+    /// <param name="clipPlanes">The clip planes to use.</param>
+    /// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
+    PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] clipPlanes);
 
-		/// <summary>
-		/// Gets an indexed triangle buffer with a normal, i.e. either <see cref="IPositionNormalIndexedTriangleBuffer"/>, <see cref="IPositionNormalColorIndexedTriangleBuffer"/> or <see cref="IPositionNormalUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
-		/// </summary>
-		/// <param name="material">The material to use.</param>
-		/// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
-		PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
+    /// <summary>
+    /// Gets an indexed triangle buffer with a normal, i.e. either <see cref="IPositionNormalIndexedTriangleBuffer"/>, <see cref="IPositionNormalColorIndexedTriangleBuffer"/> or <see cref="IPositionNormalUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
+    /// </summary>
+    /// <param name="material">The material to use.</param>
+    /// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
+    PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
 
-		IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[] clipPlanes, Gdi.Plot.IColorProvider colorProvider);
+    IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[] clipPlanes, Gdi.Plot.IColorProvider colorProvider);
 
-		#region Primitives rendering
+    #region Primitives rendering
 
-		void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1);
+    void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1);
 
-		void DrawLine(PenX3D pen, IPolylineD3D path);
+    void DrawLine(PenX3D pen, IPolylineD3D path);
 
-		VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D);
+    VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D);
 
-		void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, Alignment alignmentX, Alignment alignmentY, Alignment alignmentZ);
+    void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, Alignment alignmentX, Alignment alignmentY, Alignment alignmentZ);
 
-		void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point);
+    void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point);
 
-		#endregion Primitives rendering
+    #endregion Primitives rendering
 
-		object SaveGraphicsState();
+    object SaveGraphicsState();
 
-		void RestoreGraphicsState(object graphicsState);
+    void RestoreGraphicsState(object graphicsState);
 
-		void PrependTransform(Matrix4x3 m);
+    void PrependTransform(Matrix4x3 m);
 
-		void TranslateTransform(double x, double y, double z);
+    void TranslateTransform(double x, double y, double z);
 
-		void TranslateTransform(VectorD3D diff);
+    void TranslateTransform(VectorD3D diff);
 
-		void RotateTransform(double degreeX, double degreeY, double degreeZ);
-	}
+    void RotateTransform(double degreeX, double degreeY, double degreeZ);
+  }
 
-	public interface IOverlayContext3D : ITransformationContext
-	{
-		IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffers { get; }
+  public interface IOverlayContext3D : ITransformationContext
+  {
+    IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffers { get; }
 
-		IPositionColorLineListBuffer PositionColorLineListBuffer { get; }
-	}
+    IPositionColorLineListBuffer PositionColorLineListBuffer { get; }
+  }
 }

@@ -29,39 +29,39 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Markdown
 {
-	/// <summary>
-	/// Interaction logic for MarkdownSimpleEditing.xaml
-	/// </summary>
-	public partial class MarkdownSimpleEditing : UserControl
-	{
-		private bool useExtensions = true;
+  /// <summary>
+  /// Interaction logic for MarkdownSimpleEditing.xaml
+  /// </summary>
+  public partial class MarkdownSimpleEditing : UserControl
+  {
+    private bool useExtensions = true;
 
-		public MarkdownSimpleEditing()
-		{
-			InitializeComponent();
-			Loaded += EhLoaded;
-		}
+    public MarkdownSimpleEditing()
+    {
+      InitializeComponent();
+      Loaded += EhLoaded;
+    }
 
-		private void EhLoaded(object sender, RoutedEventArgs e)
-		{
-			Viewer.Markdown = _guiRawText.Text;
-		}
+    private void EhLoaded(object sender, RoutedEventArgs e)
+    {
+      Viewer.Markdown = _guiRawText.Text;
+    }
 
-		private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
-		{
-			Process.Start(e.Parameter.ToString());
-		}
+    private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    {
+      Process.Start(e.Parameter.ToString());
+    }
 
-		private void ToggleExtensionsButton_OnClick(object sender, RoutedEventArgs e)
-		{
-			useExtensions = !useExtensions;
-			Viewer.Pipeline = useExtensions ? new MarkdownPipelineBuilder().UseSupportedExtensions().Build() : new MarkdownPipelineBuilder().Build();
-		}
+    private void ToggleExtensionsButton_OnClick(object sender, RoutedEventArgs e)
+    {
+      useExtensions = !useExtensions;
+      Viewer.Pipeline = useExtensions ? new MarkdownPipelineBuilder().UseSupportedExtensions().Build() : new MarkdownPipelineBuilder().Build();
+    }
 
-		private void EhTextChanged(object sender, TextChangedEventArgs e)
-		{
-			if (null != Viewer && null != _guiRawText)
-				Viewer.Markdown = _guiRawText.Text;
-		}
-	}
+    private void EhTextChanged(object sender, TextChangedEventArgs e)
+    {
+      if (null != Viewer && null != _guiRawText)
+        Viewer.Markdown = _guiRawText.Text;
+    }
+  }
 }

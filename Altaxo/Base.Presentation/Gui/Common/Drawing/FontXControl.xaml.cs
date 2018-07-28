@@ -30,38 +30,38 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// Interaction logic for FontXControl.xaml
-	/// </summary>
-	public partial class FontXControl : UserControl, IFontXView
-	{
-		public FontXControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for FontXControl.xaml
+  /// </summary>
+  public partial class FontXControl : UserControl, IFontXView
+  {
+    public FontXControl()
+    {
+      InitializeComponent();
+    }
 
-		public string SelectedFontFamilyName
-		{
-			get
-			{
-				return _guiFontFamily.SelectedFontFamilyName;
-			}
-			set
-			{
-				_guiFontFamily.SelectedFontFamilyName = value;
-			}
-		}
+    public string SelectedFontFamilyName
+    {
+      get
+      {
+        return _guiFontFamily.SelectedFontFamilyName;
+      }
+      set
+      {
+        _guiFontFamily.SelectedFontFamilyName = value;
+      }
+    }
 
-		public double SelectedFontSize
-		{
-			get
-			{
-				return _guiFontSize.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_guiFontSize.SelectedQuantityAsValueInPoints = value;
-			}
-		}
-	}
+    public double SelectedFontSize
+    {
+      get
+      {
+        return _guiFontSize.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _guiFontSize.SelectedQuantityAsValueInPoints = value;
+      }
+    }
+  }
 }

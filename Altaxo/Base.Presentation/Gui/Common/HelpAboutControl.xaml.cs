@@ -32,62 +32,62 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for HelpAboutControl.xaml
-	/// </summary>
-	public partial class HelpAboutControl : Window
-	{
-		public HelpAboutControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for HelpAboutControl.xaml
+  /// </summary>
+  public partial class HelpAboutControl : Window
+  {
+    public HelpAboutControl()
+    {
+      InitializeComponent();
+    }
 
-		public string VersionString
-		{
-			get
-			{
-				string result = "Version: ";
+    public string VersionString
+    {
+      get
+      {
+        string result = "Version: ";
 
-				var ass = System.Reflection.Assembly.GetEntryAssembly();
+        var ass = System.Reflection.Assembly.GetEntryAssembly();
 
-				result += ass.GetName().Version.ToString();
+        result += ass.GetName().Version.ToString();
 
-				if (System.Environment.Is64BitProcess)
-					result += " (in 64 bit mode)";
-				else
-					result += " (in 32 bit mode)";
+        if (System.Environment.Is64BitProcess)
+          result += " (in 64 bit mode)";
+        else
+          result += " (in 32 bit mode)";
 
-				return result;
-			}
-		}
+        return result;
+      }
+    }
 
-		public string RevisionString
-		{
-			get
-			{
-				const string DATEHEADER = "DATE:";
-				string result = "";
+    public string RevisionString
+    {
+      get
+      {
+        const string DATEHEADER = "DATE:";
+        string result = "";
 
-				var ass = System.Reflection.Assembly.GetEntryAssembly();
+        var ass = System.Reflection.Assembly.GetEntryAssembly();
 
-				var attribs = ass.GetCustomAttributes(typeof(System.Reflection.AssemblyConfigurationAttribute), false);
+        var attribs = ass.GetCustomAttributes(typeof(System.Reflection.AssemblyConfigurationAttribute), false);
 
-				if (attribs.Length == 1)
-				{
-					result = (attribs[0] as System.Reflection.AssemblyConfigurationAttribute).Configuration;
-					var idx = result.IndexOf(DATEHEADER);
-					if (idx > 0)
-						result = "Date:" + result.Substring(idx + DATEHEADER.Length);
-				}
+        if (attribs.Length == 1)
+        {
+          result = (attribs[0] as System.Reflection.AssemblyConfigurationAttribute).Configuration;
+          var idx = result.IndexOf(DATEHEADER);
+          if (idx > 0)
+            result = "Date:" + result.Substring(idx + DATEHEADER.Length);
+        }
 
-				return result;
-			}
-		}
+        return result;
+      }
+    }
 
-		private void EhOpenExplorer(object sender, MouseButtonEventArgs e)
-		{
-			var hyperlink = (Hyperlink)sender;
-			System.Diagnostics.Process.Start(hyperlink.NavigateUri.ToString());
-		}
-	}
+    private void EhOpenExplorer(object sender, MouseButtonEventArgs e)
+    {
+      var hyperlink = (Hyperlink)sender;
+      System.Diagnostics.Process.Start(hyperlink.NavigateUri.ToString());
+    }
+  }
 }

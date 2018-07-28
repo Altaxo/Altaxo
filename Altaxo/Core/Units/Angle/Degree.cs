@@ -29,47 +29,47 @@ using System.Text;
 
 namespace Altaxo.Units.Angle
 {
-	[UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
-	public class Degree : UnitBase, IUnit
-	{
-		private static readonly Degree _instance = new Degree();
+  [UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
+  public class Degree : UnitBase, IUnit
+  {
+    private static readonly Degree _instance = new Degree();
 
-		public static Degree Instance { get { return _instance; } }
+    public static Degree Instance { get { return _instance; } }
 
-		private const double DegreeToRad = Math.PI / 180;
+    private const double DegreeToRad = Math.PI / 180;
 
-		protected Degree()
-		{
-		}
+    protected Degree()
+    {
+    }
 
-		public string Name
-		{
-			get { return "Degree"; }
-		}
+    public string Name
+    {
+      get { return "Degree"; }
+    }
 
-		public string ShortCut
-		{
-			get { return "°"; }
-		}
+    public string ShortCut
+    {
+      get { return "°"; }
+    }
 
-		public double ToSIUnit(double x)
-		{
-			return x * DegreeToRad;
-		}
+    public double ToSIUnit(double x)
+    {
+      return x * DegreeToRad;
+    }
 
-		public double FromSIUnit(double x)
-		{
-			return x / DegreeToRad;
-		}
+    public double FromSIUnit(double x)
+    {
+      return x / DegreeToRad;
+    }
 
-		public ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithNonePrefixOnly; }
-		}
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
 
-		public SIUnit SIUnit
-		{
-			get { return Radian.Instance; }
-		}
-	}
+    public SIUnit SIUnit
+    {
+      get { return Radian.Instance; }
+    }
+  }
 }

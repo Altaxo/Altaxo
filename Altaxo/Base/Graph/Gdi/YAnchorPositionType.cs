@@ -28,26 +28,26 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
-	[Serializable]
-	public enum YAnchorPositionType { Top, Center, Bottom }
+  [Serializable]
+  public enum YAnchorPositionType { Top, Center, Bottom }
 
-	/// <summary>
-	/// 2015-11-14 Version 1 Moved to Altaxo.Graph.Gdi namespace.
-	/// </summary>
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics+YAnchorPositionType", 0)]
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.YAnchorPositionType", 0)]
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YAnchorPositionType), 1)]
-	public class YAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			info.SetNodeContent(obj.ToString());
-		}
+  /// <summary>
+  /// 2015-11-14 Version 1 Moved to Altaxo.Graph.Gdi namespace.
+  /// </summary>
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics+YAnchorPositionType", 0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.YAnchorPositionType", 0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YAnchorPositionType), 1)]
+  public class YAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      info.SetNodeContent(obj.ToString());
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			string val = info.GetNodeContent();
-			return System.Enum.Parse(typeof(YAnchorPositionType), val, true);
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      string val = info.GetNodeContent();
+      return System.Enum.Parse(typeof(YAnchorPositionType), val, true);
+    }
+  }
 }

@@ -31,116 +31,116 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	/// <summary>
-	/// Interface to a model that designates how to make variations of a base color.
-	/// </summary>
-	public interface IColorVariationModel
-	{
-		/// <summary>
-		/// Gets the color variations.
-		/// </summary>
-		/// <param name="baseColor">The base color used to get variations.</param>
-		/// <param name="variations">The variations array. On return, this array must be filled with the color variations. The item at index 0 is always the base color.</param>
-		void GetColorVariations(AxoColor baseColor, AxoColor[] variations);
-	}
+  /// <summary>
+  /// Interface to a model that designates how to make variations of a base color.
+  /// </summary>
+  public interface IColorVariationModel
+  {
+    /// <summary>
+    /// Gets the color variations.
+    /// </summary>
+    /// <param name="baseColor">The base color used to get variations.</param>
+    /// <param name="variations">The variations array. On return, this array must be filled with the color variations. The item at index 0 is always the base color.</param>
+    void GetColorVariations(AxoColor baseColor, AxoColor[] variations);
+  }
 
-	public class ColorVariationModelDesaturate : IColorVariationModel
-	{
-		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
-		{
-			var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
+  public class ColorVariationModelDesaturate : IColorVariationModel
+  {
+    public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
+    {
+      var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
 
-			// desaturate, but still the last item should have a rest of saturation left
+      // desaturate, but still the last item should have a rest of saturation left
 
-			int numberOfItems = variations.Length;
+      int numberOfItems = variations.Length;
 
-			variations[0] = baseColor;
-			for (int i = 1; i < numberOfItems; ++i)
-			{
-				var newSaturation = saturation * (1 - i / (float)numberOfItems);
-				variations[i] = AxoColor.FromAhsb(alpha, hue, newSaturation, brightness);
-			}
-		}
-	}
+      variations[0] = baseColor;
+      for (int i = 1; i < numberOfItems; ++i)
+      {
+        var newSaturation = saturation * (1 - i / (float)numberOfItems);
+        variations[i] = AxoColor.FromAhsb(alpha, hue, newSaturation, brightness);
+      }
+    }
+  }
 
-	public class ColorVariationModelDesaturateAndDarker : IColorVariationModel
-	{
-		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
-		{
-			var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
+  public class ColorVariationModelDesaturateAndDarker : IColorVariationModel
+  {
+    public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
+    {
+      var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
 
-			// desaturate, but still the last item should have a rest of saturation left
+      // desaturate, but still the last item should have a rest of saturation left
 
-			int numberOfItems = variations.Length;
+      int numberOfItems = variations.Length;
 
-			variations[0] = baseColor;
-			for (int i = 1; i < numberOfItems; ++i)
-			{
-				var newSaturation = saturation * (1 - i / (float)numberOfItems);
-				var newBrightness = brightness * (1 - i / (float)numberOfItems);
-				variations[i] = AxoColor.FromAhsb(alpha, hue, newSaturation, newBrightness);
-			}
-		}
-	}
+      variations[0] = baseColor;
+      for (int i = 1; i < numberOfItems; ++i)
+      {
+        var newSaturation = saturation * (1 - i / (float)numberOfItems);
+        var newBrightness = brightness * (1 - i / (float)numberOfItems);
+        variations[i] = AxoColor.FromAhsb(alpha, hue, newSaturation, newBrightness);
+      }
+    }
+  }
 
-	public class ColorVariationModelDarker : IColorVariationModel
-	{
-		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
-		{
-			var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
+  public class ColorVariationModelDarker : IColorVariationModel
+  {
+    public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
+    {
+      var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
 
-			// make darker, but still the last item should have a rest of color left (i.e. it should not be completely black)
+      // make darker, but still the last item should have a rest of color left (i.e. it should not be completely black)
 
-			int numberOfItems = variations.Length;
+      int numberOfItems = variations.Length;
 
-			variations[0] = baseColor;
-			for (int i = 1; i < numberOfItems; ++i)
-			{
-				var newBrightness = brightness * (1 - i / (float)numberOfItems);
-				variations[i] = AxoColor.FromAhsb(alpha, hue, saturation, newBrightness);
-			}
-		}
-	}
+      variations[0] = baseColor;
+      for (int i = 1; i < numberOfItems; ++i)
+      {
+        var newBrightness = brightness * (1 - i / (float)numberOfItems);
+        variations[i] = AxoColor.FromAhsb(alpha, hue, saturation, newBrightness);
+      }
+    }
+  }
 
-	public class ColorVariationModelWarmer : IColorVariationModel
-	{
-		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
-		{
-			var red = baseColor.ScR;
-			var blue = baseColor.ScB;
+  public class ColorVariationModelWarmer : IColorVariationModel
+  {
+    public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
+    {
+      var red = baseColor.ScR;
+      var blue = baseColor.ScB;
 
-			// make warmer = more red
+      // make warmer = more red
 
-			int numberOfItems = variations.Length;
+      int numberOfItems = variations.Length;
 
-			variations[0] = baseColor;
-			for (int i = 1; i < numberOfItems; ++i)
-			{
-				var newRed = (red + (1 - red) * (i / (float)numberOfItems));
-				var newBlue = (blue * (1 - i / (float)numberOfItems));
-				variations[i] = AxoColor.FromScRgb(baseColor.ScA, newRed, baseColor.ScG, newBlue);
-			}
-		}
-	}
+      variations[0] = baseColor;
+      for (int i = 1; i < numberOfItems; ++i)
+      {
+        var newRed = (red + (1 - red) * (i / (float)numberOfItems));
+        var newBlue = (blue * (1 - i / (float)numberOfItems));
+        variations[i] = AxoColor.FromScRgb(baseColor.ScA, newRed, baseColor.ScG, newBlue);
+      }
+    }
+  }
 
-	public class ColorVariationModelColder : IColorVariationModel
-	{
-		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
-		{
-			var blue = baseColor.ScB;
-			var red = baseColor.ScR;
+  public class ColorVariationModelColder : IColorVariationModel
+  {
+    public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
+    {
+      var blue = baseColor.ScB;
+      var red = baseColor.ScR;
 
-			// make warmer = more red
+      // make warmer = more red
 
-			int numberOfItems = variations.Length;
+      int numberOfItems = variations.Length;
 
-			variations[0] = baseColor;
-			for (int i = 1; i < numberOfItems; ++i)
-			{
-				var newBlue = (blue + (1 - blue) * (i / (float)numberOfItems));
-				var newRed = (red * (1 - i / (float)numberOfItems));
-				variations[i] = AxoColor.FromScRgb(baseColor.ScA, newRed, baseColor.ScG, newBlue);
-			}
-		}
-	}
+      variations[0] = baseColor;
+      for (int i = 1; i < numberOfItems; ++i)
+      {
+        var newBlue = (blue + (1 - blue) * (i / (float)numberOfItems));
+        var newRed = (red * (1 - i / (float)numberOfItems));
+        variations[i] = AxoColor.FromScRgb(baseColor.ScA, newRed, baseColor.ScG, newBlue);
+      }
+    }
+  }
 }

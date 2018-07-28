@@ -40,408 +40,408 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	/// <summary>
-	/// Interaction logic for XYPlotLabelStyleControl.xaml
-	/// </summary>
-	public partial class LabelPlotStyleControl : UserControl, ILabelPlotStyleView
-	{
-		private FontXControlsGlue _fontControlsGlue;
+  /// <summary>
+  /// Interaction logic for XYPlotLabelStyleControl.xaml
+  /// </summary>
+  public partial class LabelPlotStyleControl : UserControl, ILabelPlotStyleView
+  {
+    private FontXControlsGlue _fontControlsGlue;
 
-		private BackgroundControlsGlue _backgroundGlue;
+    private BackgroundControlsGlue _backgroundGlue;
 
-		public event Action LabelColumnSelected;
+    public event Action LabelColumnSelected;
 
-		public event Action LabelColorLinkageChanged;
+    public event Action LabelColorLinkageChanged;
 
-		public event Action BackgroundColorLinkageChanged;
+    public event Action BackgroundColorLinkageChanged;
 
-		public event Action LabelBrushChanged;
+    public event Action LabelBrushChanged;
 
-		public event Action BackgroundBrushChanged;
+    public event Action BackgroundBrushChanged;
 
-		public event Action UseBackgroundChanged;
+    public event Action UseBackgroundChanged;
 
-		public LabelPlotStyleControl()
-		{
-			InitializeComponent();
+    public LabelPlotStyleControl()
+    {
+      InitializeComponent();
 
-			DefaultSeverityColumnColors.NormalColor = _guiLabelColumn.Background;
+      DefaultSeverityColumnColors.NormalColor = _guiLabelColumn.Background;
 
-			_fontControlsGlue = new FontXControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle };
-			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
-			_backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
-			_backgroundGlue.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
-		}
+      _fontControlsGlue = new FontXControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle };
+      _backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
+      _backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
+      _backgroundGlue.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
+    }
 
-		private void EhSelectLabelColumn_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != LabelColumnSelected)
-				LabelColumnSelected();
-		}
+    private void EhSelectLabelColumn_Click(object sender, RoutedEventArgs e)
+    {
+      if (null != LabelColumnSelected)
+        LabelColumnSelected();
+    }
 
-		private void EhIndependentColor_CheckChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != LabelColorLinkageChanged)
-				LabelColorLinkageChanged();
-		}
+    private void EhIndependentColor_CheckChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != LabelColorLinkageChanged)
+        LabelColorLinkageChanged();
+    }
 
-		private void EhAttachToAxis_CheckedChanged(object sender, RoutedEventArgs e)
-		{
-			this._guiAttachedAxis.IsEnabled = true == _guiAttachToAxis.IsChecked;
-		}
+    private void EhAttachToAxis_CheckedChanged(object sender, RoutedEventArgs e)
+    {
+      this._guiAttachedAxis.IsEnabled = true == _guiAttachToAxis.IsChecked;
+    }
 
-		#region IXYPlotLabelStyleView
+    #region IXYPlotLabelStyleView
 
-		public void Init_LabelColumn(string boxText, string toolTip, int status)
-		{
-			this._guiLabelColumn.Text = boxText;
-			this._guiLabelColumn.ToolTip = toolTip;
-			this._guiLabelColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-		}
+    public void Init_LabelColumn(string boxText, string toolTip, int status)
+    {
+      this._guiLabelColumn.Text = boxText;
+      this._guiLabelColumn.ToolTip = toolTip;
+      this._guiLabelColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+    }
 
-		public void Init_Transformation(string boxText, string toolTip)
-		{
-			if (null == boxText)
-			{
-				this._guiLabelTransformation.Visibility = Visibility.Collapsed;
-			}
-			else
-			{
-				this._guiLabelTransformation.Text = boxText;
-				this._guiLabelTransformation.ToolTip = toolTip;
-				this._guiLabelTransformation.Visibility = Visibility.Visible;
-			}
-		}
+    public void Init_Transformation(string boxText, string toolTip)
+    {
+      if (null == boxText)
+      {
+        this._guiLabelTransformation.Visibility = Visibility.Collapsed;
+      }
+      else
+      {
+        this._guiLabelTransformation.Text = boxText;
+        this._guiLabelTransformation.ToolTip = toolTip;
+        this._guiLabelTransformation.Visibility = Visibility.Visible;
+      }
+    }
 
-		public string LabelFormatString
-		{
-			get
-			{
-				return _guiLabelFormat.Text;
-			}
-			set
-			{
-				_guiLabelFormat.Text = value;
-			}
-		}
+    public string LabelFormatString
+    {
+      get
+      {
+        return _guiLabelFormat.Text;
+      }
+      set
+      {
+        _guiLabelFormat.Text = value;
+      }
+    }
 
-		public bool IgnoreMissingDataPoints
-		{
-			get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
-			set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
-		}
+    public bool IgnoreMissingDataPoints
+    {
+      get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
+      set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+    }
 
-		public bool IndependentOnShiftingGroupStyles
-		{
-			get
-			{
-				return true == _guiIndependentOnShiftingGroupStyles.IsChecked;
-			}
-			set
-			{
-				_guiIndependentOnShiftingGroupStyles.IsChecked = value;
-			}
-		}
+    public bool IndependentOnShiftingGroupStyles
+    {
+      get
+      {
+        return true == _guiIndependentOnShiftingGroupStyles.IsChecked;
+      }
+      set
+      {
+        _guiIndependentOnShiftingGroupStyles.IsChecked = value;
+      }
+    }
 
-		public bool IndependentSkipFrequency
-		{
-			get
-			{
-				return _guiIndependentSkipFrequency.IsChecked == true;
-			}
+    public bool IndependentSkipFrequency
+    {
+      get
+      {
+        return _guiIndependentSkipFrequency.IsChecked == true;
+      }
 
-			set
-			{
-				_guiIndependentSkipFrequency.IsChecked = value;
-			}
-		}
+      set
+      {
+        _guiIndependentSkipFrequency.IsChecked = value;
+      }
+    }
 
-		public int SkipFrequency
-		{
-			get
-			{
-				return _guiSkipFrequency.Value;
-			}
-			set
-			{
-				_guiSkipFrequency.Value = value;
-			}
-		}
+    public int SkipFrequency
+    {
+      get
+      {
+        return _guiSkipFrequency.Value;
+      }
+      set
+      {
+        _guiSkipFrequency.Value = value;
+      }
+    }
 
-		public bool IndependentSymbolSize
-		{
-			get
-			{
-				return true == _guiIndependentSymbolSize.IsChecked;
-			}
+    public bool IndependentSymbolSize
+    {
+      get
+      {
+        return true == _guiIndependentSymbolSize.IsChecked;
+      }
 
-			set
-			{
-				_guiIndependentSymbolSize.IsChecked = value;
-			}
-		}
+      set
+      {
+        _guiIndependentSymbolSize.IsChecked = value;
+      }
+    }
 
-		public double SymbolSize
-		{
-			get
-			{
-				return _guiSymbolSize.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_guiSymbolSize.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double SymbolSize
+    {
+      get
+      {
+        return _guiSymbolSize.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _guiSymbolSize.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public new IBackgroundStyle Background
-		{
-			get
-			{
-				return _backgroundGlue.BackgroundStyle;
-			}
-			set
-			{
-				_backgroundGlue.BackgroundStyle = value;
-			}
-		}
+    public new IBackgroundStyle Background
+    {
+      get
+      {
+        return _backgroundGlue.BackgroundStyle;
+      }
+      set
+      {
+        _backgroundGlue.BackgroundStyle = value;
+      }
+    }
 
-		public double SelectedRotation
-		{
-			get
-			{
-				return this._guiRotation.SelectedQuantityAsValueInDegrees;
-			}
-			set
-			{
-				this._guiRotation.SelectedQuantityAsValueInDegrees = value;
-			}
-		}
+    public double SelectedRotation
+    {
+      get
+      {
+        return this._guiRotation.SelectedQuantityAsValueInDegrees;
+      }
+      set
+      {
+        this._guiRotation.SelectedQuantityAsValueInDegrees = value;
+      }
+    }
 
-		public double OffsetXPoints
-		{
-			get
-			{
-				return _guiOffsetXPoints.SelectedQuantityAsValueInPoints;
-			}
+    public double OffsetXPoints
+    {
+      get
+      {
+        return _guiOffsetXPoints.SelectedQuantityAsValueInPoints;
+      }
 
-			set
-			{
-				_guiOffsetXPoints.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+      set
+      {
+        _guiOffsetXPoints.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double OffsetXEmUnits
-		{
-			get
-			{
-				return _guiOffsetXEmUnits.SelectedQuantityAsValueInSIUnits;
-			}
+    public double OffsetXEmUnits
+    {
+      get
+      {
+        return _guiOffsetXEmUnits.SelectedQuantityAsValueInSIUnits;
+      }
 
-			set
-			{
-				_guiOffsetXEmUnits.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+      set
+      {
+        _guiOffsetXEmUnits.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double OffsetXSymbolSizeUnits
-		{
-			get
-			{
-				return _guiOffsetXSymbolSizeUnits.SelectedQuantityAsValueInSIUnits;
-			}
+    public double OffsetXSymbolSizeUnits
+    {
+      get
+      {
+        return _guiOffsetXSymbolSizeUnits.SelectedQuantityAsValueInSIUnits;
+      }
 
-			set
-			{
-				_guiOffsetXSymbolSizeUnits.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+      set
+      {
+        _guiOffsetXSymbolSizeUnits.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double OffsetYPoints
-		{
-			get
-			{
-				return _guiOffsetYPoints.SelectedQuantityAsValueInPoints;
-			}
+    public double OffsetYPoints
+    {
+      get
+      {
+        return _guiOffsetYPoints.SelectedQuantityAsValueInPoints;
+      }
 
-			set
-			{
-				_guiOffsetYPoints.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+      set
+      {
+        _guiOffsetYPoints.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double OffsetYEmUnits
-		{
-			get
-			{
-				return _guiOffsetYEmUnits.SelectedQuantityAsValueInSIUnits;
-			}
+    public double OffsetYEmUnits
+    {
+      get
+      {
+        return _guiOffsetYEmUnits.SelectedQuantityAsValueInSIUnits;
+      }
 
-			set
-			{
-				_guiOffsetYEmUnits.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+      set
+      {
+        _guiOffsetYEmUnits.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double OffsetYSymbolSizeUnits
-		{
-			get
-			{
-				return _guiOffsetYSymbolSizeUnits.SelectedQuantityAsValueInSIUnits;
-			}
+    public double OffsetYSymbolSizeUnits
+    {
+      get
+      {
+        return _guiOffsetYSymbolSizeUnits.SelectedQuantityAsValueInSIUnits;
+      }
 
-			set
-			{
-				_guiOffsetYSymbolSizeUnits.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+      set
+      {
+        _guiOffsetYSymbolSizeUnits.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double FontSizeOffset
-		{
-			get
-			{
-				return _guiFontSizeOffset.SelectedQuantityAsValueInPoints;
-			}
+    public double FontSizeOffset
+    {
+      get
+      {
+        return _guiFontSizeOffset.SelectedQuantityAsValueInPoints;
+      }
 
-			set
-			{
-				_guiFontSizeOffset.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+      set
+      {
+        _guiFontSizeOffset.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public double FontSizeFactor
-		{
-			get
-			{
-				return _guiFontSizeFactor.SelectedQuantityAsValueInSIUnits;
-			}
+    public double FontSizeFactor
+    {
+      get
+      {
+        return _guiFontSizeFactor.SelectedQuantityAsValueInSIUnits;
+      }
 
-			set
-			{
-				_guiFontSizeFactor.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+      set
+      {
+        _guiFontSizeFactor.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public FontX SelectedFont
-		{
-			get
-			{
-				return _fontControlsGlue.SelectedFont;
-			}
-			set
-			{
-				_fontControlsGlue.SelectedFont = value;
-			}
-		}
+    public FontX SelectedFont
+    {
+      get
+      {
+        return _fontControlsGlue.SelectedFont;
+      }
+      set
+      {
+        _fontControlsGlue.SelectedFont = value;
+      }
+    }
 
-		public BrushX LabelBrush
-		{
-			get
-			{
-				return _guiLabelBrush.SelectedBrush;
-			}
-			set
-			{
-				_guiLabelBrush.SelectedBrush = value;
-			}
-		}
+    public BrushX LabelBrush
+    {
+      get
+      {
+        return _guiLabelBrush.SelectedBrush;
+      }
+      set
+      {
+        _guiLabelBrush.SelectedBrush = value;
+      }
+    }
 
-		public void Init_AlignmentX(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiAlignmentX, list);
-		}
+    public void Init_AlignmentX(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiAlignmentX, list);
+    }
 
-		public void Init_AlignmentY(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiAlignmentY, list);
-		}
+    public void Init_AlignmentY(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiAlignmentY, list);
+    }
 
-		public bool AttachToAxis
-		{
-			get
-			{
-				return true == _guiAttachToAxis.IsChecked;
-			}
-			set
-			{
-				_guiAttachToAxis.IsChecked = value;
-				_guiAttachedAxis.IsEnabled = value;
-			}
-		}
+    public bool AttachToAxis
+    {
+      get
+      {
+        return true == _guiAttachToAxis.IsChecked;
+      }
+      set
+      {
+        _guiAttachToAxis.IsChecked = value;
+        _guiAttachedAxis.IsEnabled = value;
+      }
+    }
 
-		public void Init_AttachedAxis(Collections.SelectableListNodeList names)
-		{
-			GuiHelper.Initialize(_guiAttachedAxis, names);
-		}
+    public void Init_AttachedAxis(Collections.SelectableListNodeList names)
+    {
+      GuiHelper.Initialize(_guiAttachedAxis, names);
+    }
 
-		public bool IndependentColor
-		{
-			get
-			{
-				return true == _guiIndependentLabelColor.IsChecked;
-			}
-			set
-			{
-				_guiIndependentLabelColor.IsChecked = value;
-			}
-		}
+    public bool IndependentColor
+    {
+      get
+      {
+        return true == _guiIndependentLabelColor.IsChecked;
+      }
+      set
+      {
+        _guiIndependentLabelColor.IsChecked = value;
+      }
+    }
 
-		public bool ShowPlotColorsOnly
-		{
-			set
-			{
-				_guiLabelBrush.ShowPlotColorsOnly = value;
-			}
-		}
+    public bool ShowPlotColorsOnly
+    {
+      set
+      {
+        _guiLabelBrush.ShowPlotColorsOnly = value;
+      }
+    }
 
-		#endregion IXYPlotLabelStyleView
+    #endregion IXYPlotLabelStyleView
 
-		private void EhAlignmentXChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentX);
-		}
+    private void EhAlignmentXChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentX);
+    }
 
-		private void EhAlignmentYChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentY);
-		}
+    private void EhAlignmentYChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentY);
+    }
 
-		private void EhAttachedAxisChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiAttachedAxis);
-		}
+    private void EhAttachedAxisChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiAttachedAxis);
+    }
 
-		private void EhLabelBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (null != LabelBrushChanged)
-				LabelBrushChanged();
-		}
+    private void EhLabelBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (null != LabelBrushChanged)
+        LabelBrushChanged();
+    }
 
-		private void EhBackgroundBrushChanged(object sender, EventArgs e)
-		{
-			if (null != BackgroundBrushChanged)
-				BackgroundBrushChanged();
-		}
+    private void EhBackgroundBrushChanged(object sender, EventArgs e)
+    {
+      if (null != BackgroundBrushChanged)
+        BackgroundBrushChanged();
+    }
 
-		private void EhBackgroundColorLinkageChanged()
-		{
-			if (null != BackgroundColorLinkageChanged)
-				BackgroundColorLinkageChanged();
-		}
+    private void EhBackgroundColorLinkageChanged()
+    {
+      if (null != BackgroundColorLinkageChanged)
+        BackgroundColorLinkageChanged();
+    }
 
-		public void InitializeBackgroundColorLinkage(Collections.SelectableListNodeList list)
-		{
-			_guiBackgroundColorLinkage.Initialize(list);
-		}
+    public void InitializeBackgroundColorLinkage(Collections.SelectableListNodeList list)
+    {
+      _guiBackgroundColorLinkage.Initialize(list);
+    }
 
-		public bool ShowPlotColorsOnlyForBackgroundBrush
-		{
-			set { _backgroundGlue.ShowPlotColorsOnly = value; }
-		}
+    public bool ShowPlotColorsOnlyForBackgroundBrush
+    {
+      set { _backgroundGlue.ShowPlotColorsOnly = value; }
+    }
 
-		private void EhBackgroundStyleInstanceChanged(object sender, EventArgs e)
-		{
-			if (null != UseBackgroundChanged)
-				UseBackgroundChanged();
-		}
-	}
+    private void EhBackgroundStyleInstanceChanged(object sender, EventArgs e)
+    {
+      if (null != UseBackgroundChanged)
+        UseBackgroundChanged();
+    }
+  }
 }

@@ -27,120 +27,120 @@ using System.Threading;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Monitor, which gives the request to report the progress by calling <see cref="SetShouldReportNow"/>.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.Services.IExternalDrivenBackgroundMonitor" />
-	public class ExternalDrivenBackgroundMonitor : IExternalDrivenBackgroundMonitor
-	{
-		protected bool _shouldReport;
-		private string _reportText;
-		private bool _hasFreshReportText;
-		private double _progressFraction = double.NaN;
-		private OperationStatus _operationStatus;
-		private string _taskName;
+  /// <summary>
+  /// Monitor, which gives the request to report the progress by calling <see cref="SetShouldReportNow"/>.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.Services.IExternalDrivenBackgroundMonitor" />
+  public class ExternalDrivenBackgroundMonitor : IExternalDrivenBackgroundMonitor
+  {
+    protected bool _shouldReport;
+    private string _reportText;
+    private bool _hasFreshReportText;
+    private double _progressFraction = double.NaN;
+    private OperationStatus _operationStatus;
+    private string _taskName;
 
-		private bool _cancellationPending;
+    private bool _cancellationPending;
 
-		#region IBackgroundMonitor Members
+    #region IBackgroundMonitor Members
 
-		public virtual bool ShouldReportNow
-		{
-			get
-			{
-				return _shouldReport;
-			}
-		}
+    public virtual bool ShouldReportNow
+    {
+      get
+      {
+        return _shouldReport;
+      }
+    }
 
-		public virtual void SetShouldReportNow()
-		{
-			_shouldReport = true;
-		}
+    public virtual void SetShouldReportNow()
+    {
+      _shouldReport = true;
+    }
 
-		public void ReportProgress(string text)
-		{
-			_shouldReport = false;
-			_reportText = text;
-			_hasFreshReportText = true;
-		}
+    public void ReportProgress(string text)
+    {
+      _shouldReport = false;
+      _reportText = text;
+      _hasFreshReportText = true;
+    }
 
-		public void ReportProgress(string text, double progressFraction)
-		{
-			_shouldReport = false;
-			_reportText = text;
-			_hasFreshReportText = true;
-			_progressFraction = progressFraction;
-		}
+    public void ReportProgress(string text, double progressFraction)
+    {
+      _shouldReport = false;
+      _reportText = text;
+      _hasFreshReportText = true;
+      _progressFraction = progressFraction;
+    }
 
-		public bool HasReportText
-		{
-			get { return _hasFreshReportText; }
-		}
+    public bool HasReportText
+    {
+      get { return _hasFreshReportText; }
+    }
 
-		public string GetReportText()
-		{
-			_hasFreshReportText = false;
-			return _reportText;
-		}
+    public string GetReportText()
+    {
+      _hasFreshReportText = false;
+      return _reportText;
+    }
 
-		public double GetProgressFraction()
-		{
-			return _progressFraction;
-		}
+    public double GetProgressFraction()
+    {
+      return _progressFraction;
+    }
 
-		public bool CancellationPending
-		{
-			get
-			{
-				return _cancellationPending;
-			}
-		}
+    public bool CancellationPending
+    {
+      get
+      {
+        return _cancellationPending;
+      }
+    }
 
-		public double Progress
-		{
-			get { return _progressFraction; }
-			set { _progressFraction = value; }
-		}
+    public double Progress
+    {
+      get { return _progressFraction; }
+      set { _progressFraction = value; }
+    }
 
-		public OperationStatus Status
-		{
-			get { return _operationStatus; }
-			set { _operationStatus = value; }
-		}
+    public OperationStatus Status
+    {
+      get { return _operationStatus; }
+      set { _operationStatus = value; }
+    }
 
-		public string TaskName
-		{
-			get { return _taskName; }
-			set { _taskName = value; }
-		}
+    public string TaskName
+    {
+      get { return _taskName; }
+      set { _taskName = value; }
+    }
 
-		public CancellationToken CancellationToken => throw new NotImplementedException();
+    public CancellationToken CancellationToken => throw new NotImplementedException();
 
-		public void SetCancellationPending()
-		{
-			_cancellationPending = true;
-		}
+    public void SetCancellationPending()
+    {
+      _cancellationPending = true;
+    }
 
-		public IProgressReporter CreateSubTask(double workAmount)
-		{
-			throw new NotImplementedException();
-		}
+    public IProgressReporter CreateSubTask(double workAmount)
+    {
+      throw new NotImplementedException();
+    }
 
-		public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException();
-		}
+    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void Report(double value)
-		{
-			throw new NotImplementedException();
-		}
+    public void Report(double value)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void Dispose()
-		{
-			throw new NotImplementedException();
-		}
+    public void Dispose()
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion IBackgroundMonitor Members
-	}
+    #endregion IBackgroundMonitor Members
+  }
 }

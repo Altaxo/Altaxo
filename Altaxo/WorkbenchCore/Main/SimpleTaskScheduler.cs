@@ -24,81 +24,81 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// A simple scheduler that adds tasks to a queue.
-	/// This scheduler does not create any worker threads on its own,
-	/// but requires external code to call <see cref="RunNextTask"/>.
-	/// </summary>
-	public class SimpleTaskScheduler : TaskScheduler, IDisposable
-	{
-		[ThreadStatic]
-		private static SimpleTaskScheduler activeScheduler;
+  /// <summary>
+  /// A simple scheduler that adds tasks to a queue.
+  /// This scheduler does not create any worker threads on its own,
+  /// but requires external code to call <see cref="RunNextTask"/>.
+  /// </summary>
+  public class SimpleTaskScheduler : TaskScheduler, IDisposable
+  {
+    [ThreadStatic]
+    private static SimpleTaskScheduler activeScheduler;
 
-		private BlockingCollection<Task> queue = new BlockingCollection<Task>();
+    private BlockingCollection<Task> queue = new BlockingCollection<Task>();
 
-		protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
-		{
-			return activeScheduler == this && base.TryExecuteTask(task);
-		}
+    protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
+    {
+      return activeScheduler == this && base.TryExecuteTask(task);
+    }
 
-		protected override void QueueTask(Task task)
-		{
-			queue.Add(task);
-		}
+    protected override void QueueTask(Task task)
+    {
+      queue.Add(task);
+    }
 
-		protected override IEnumerable<Task> GetScheduledTasks()
-		{
-			return queue;
-		}
+    protected override IEnumerable<Task> GetScheduledTasks()
+    {
+      return queue;
+    }
 
-		protected int ScheduledTaskCount
-		{
-			get { return queue.Count; }
-		}
+    protected int ScheduledTaskCount
+    {
+      get { return queue.Count; }
+    }
 
-		/// <summary>
-		/// Runs the next task in the queue.
-		/// If no task is available, this method will block.
-		/// </summary>
-		/// <param name="cancellationToken">Cancellation token that can be used to cancel
-		/// waiting for a task to become available. It cannot be used to cancel task execution!</param>
-		public void RunNextTask(CancellationToken cancellationToken = default(CancellationToken))
-		{
-			Task task = queue.Take(cancellationToken);
-			RunTask(task);
-		}
+    /// <summary>
+    /// Runs the next task in the queue.
+    /// If no task is available, this method will block.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token that can be used to cancel
+    /// waiting for a task to become available. It cannot be used to cancel task execution!</param>
+    public void RunNextTask(CancellationToken cancellationToken = default(CancellationToken))
+    {
+      Task task = queue.Take(cancellationToken);
+      RunTask(task);
+    }
 
-		public bool TryRunNextTask()
-		{
-			Task task;
-			if (queue.TryTake(out task))
-			{
-				RunTask(task);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+    public bool TryRunNextTask()
+    {
+      Task task;
+      if (queue.TryTake(out task))
+      {
+        RunTask(task);
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
-		private void RunTask(Task task)
-		{
-			var oldActiveScheduler = activeScheduler;
-			activeScheduler = this;
-			try
-			{
-				base.TryExecuteTask(task);
-			}
-			finally
-			{
-				activeScheduler = oldActiveScheduler;
-			}
-		}
+    private void RunTask(Task task)
+    {
+      var oldActiveScheduler = activeScheduler;
+      activeScheduler = this;
+      try
+      {
+        base.TryExecuteTask(task);
+      }
+      finally
+      {
+        activeScheduler = oldActiveScheduler;
+      }
+    }
 
-		public virtual void Dispose()
-		{
-			queue.Dispose();
-		}
-	}
+    public virtual void Dispose()
+    {
+      queue.Dispose();
+    }
+  }
 }

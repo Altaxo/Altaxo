@@ -33,101 +33,101 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	public interface IShapeGroupView
-	{
-		object LocationView { set; }
+  public interface IShapeGroupView
+  {
+    object LocationView { set; }
 
-		void InitializeItemList(SelectableListNodeList list);
+    void InitializeItemList(SelectableListNodeList list);
 
-		event Action SelectedItemEditing;
-	}
+    event Action SelectedItemEditing;
+  }
 
-	[UserControllerForObject(typeof(ShapeGroup))]
-	[ExpectedTypeOfView(typeof(IShapeGroupView))]
-	public class ShapeGroupController : MVCANControllerEditOriginalDocBase<ShapeGroup, IShapeGroupView>
-	{
-		private SelectableListNodeList _itemList;
+  [UserControllerForObject(typeof(ShapeGroup))]
+  [ExpectedTypeOfView(typeof(IShapeGroupView))]
+  public class ShapeGroupController : MVCANControllerEditOriginalDocBase<ShapeGroup, IShapeGroupView>
+  {
+    private SelectableListNodeList _itemList;
 
-		private IMVCANController _locationController;
+    private IMVCANController _locationController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_itemList = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _itemList = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_itemList = new SelectableListNodeList();
+      if (initData)
+      {
+        _itemList = new SelectableListNodeList();
 
-				foreach (var d in _doc.GroupedObjects)
-				{
-					var node = new SelectableListNode(d.GetType().ToString(), d, false);
-					_itemList.Add(node);
-				}
+        foreach (var d in _doc.GroupedObjects)
+        {
+          var node = new SelectableListNode(d.GetType().ToString(), d, false);
+          _itemList.Add(node);
+        }
 
-				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-				Current.Gui.FindAndAttachControlTo(_locationController);
-			}
+        _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+        Current.Gui.FindAndAttachControlTo(_locationController);
+      }
 
-			if (_view != null)
-			{
-				_view.InitializeItemList(_itemList);
+      if (_view != null)
+      {
+        _view.InitializeItemList(_itemList);
 
-				_view.LocationView = _locationController.ViewObject;
-			}
-		}
+        _view.LocationView = _locationController.ViewObject;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_locationController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_locationController.Apply(disposeController))
+        return false;
 
-			if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
-				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+      if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
+        _doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			_view.SelectedItemEditing += EhEditSelectedItem;
-		}
+    protected override void AttachView()
+    {
+      _view.SelectedItemEditing += EhEditSelectedItem;
+    }
 
-		protected override void DetachView()
-		{
-			_view.SelectedItemEditing -= EhEditSelectedItem;
-		}
+    protected override void DetachView()
+    {
+      _view.SelectedItemEditing -= EhEditSelectedItem;
+    }
 
-		private void EhEditSelectedItem()
-		{
-			_locationController.Apply(false);
+    private void EhEditSelectedItem()
+    {
+      _locationController.Apply(false);
 
-			var node = _itemList.FirstSelectedNode;
-			if (node == null)
-				return;
-			var item = (GraphicBase)node.Tag;
-			if (Current.Gui.ShowDialog(ref item, "Edit shape group item " + node.Text, true))
-			{
-				_doc.AdjustPosition();
-				UpdateLocationView();
-			}
-		}
+      var node = _itemList.FirstSelectedNode;
+      if (node == null)
+        return;
+      var item = (GraphicBase)node.Tag;
+      if (Current.Gui.ShowDialog(ref item, "Edit shape group item " + node.Text, true))
+      {
+        _doc.AdjustPosition();
+        UpdateLocationView();
+      }
+    }
 
-		private void UpdateLocationView()
-		{
-			_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-			Current.Gui.FindAndAttachControlTo(_locationController);
-			_view.LocationView = _locationController.ViewObject;
-		}
-	}
+    private void UpdateLocationView()
+    {
+      _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+      Current.Gui.FindAndAttachControlTo(_locationController);
+      _view.LocationView = _locationController.ViewObject;
+    }
+  }
 }

@@ -32,79 +32,79 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	public class MaterialKey : Main.IImmutable
-	{
-		public IMaterial Material { get; private set; }
+  public class MaterialKey : Main.IImmutable
+  {
+    public IMaterial Material { get; private set; }
 
-		public MaterialKey(IMaterial material)
-		{
-			if (null == material)
-				throw new ArgumentNullException(nameof(material));
+    public MaterialKey(IMaterial material)
+    {
+      if (null == material)
+        throw new ArgumentNullException(nameof(material));
 
-			this.Material = material;
-		}
+      this.Material = material;
+    }
 
-		public override bool Equals(object obj)
-		{
-			var from = obj as MaterialKey;
-			return null == from ? false : Material.Equals(from.Material);
-		}
+    public override bool Equals(object obj)
+    {
+      var from = obj as MaterialKey;
+      return null == from ? false : Material.Equals(from.Material);
+    }
 
-		public override int GetHashCode()
-		{
-			return Material.GetHashCode();
-		}
-	}
+    public override int GetHashCode()
+    {
+      return Material.GetHashCode();
+    }
+  }
 
-	/// <summary>
-	/// Combines a material with one or more clip planes.
-	/// </summary>
-	public class MaterialPlusClippingKey : MaterialKey
-	{
-		public PlaneD3D[] ClipPlanes { get; private set; }
+  /// <summary>
+  /// Combines a material with one or more clip planes.
+  /// </summary>
+  public class MaterialPlusClippingKey : MaterialKey
+  {
+    public PlaneD3D[] ClipPlanes { get; private set; }
 
-		public MaterialPlusClippingKey(IMaterial material, PlaneD3D[] clipPlanes)
-			: base(material)
-		{
-			ClipPlanes = clipPlanes;
-		}
+    public MaterialPlusClippingKey(IMaterial material, PlaneD3D[] clipPlanes)
+      : base(material)
+    {
+      ClipPlanes = clipPlanes;
+    }
 
-		public override bool Equals(object obj)
-		{
-			var from = obj as MaterialPlusClippingKey;
-			if (null == from)
-				return false;
+    public override bool Equals(object obj)
+    {
+      var from = obj as MaterialPlusClippingKey;
+      if (null == from)
+        return false;
 
-			if (!(this.Material.Equals(from.Material)))
-				return false;
+      if (!(this.Material.Equals(from.Material)))
+        return false;
 
-			if (!(this.ClipPlanes != null && from.ClipPlanes != null))
-				return (this.ClipPlanes != null) ^ (from.ClipPlanes != null);
+      if (!(this.ClipPlanes != null && from.ClipPlanes != null))
+        return (this.ClipPlanes != null) ^ (from.ClipPlanes != null);
 
-			if (this.ClipPlanes.Length != from.ClipPlanes.Length)
-				return false;
+      if (this.ClipPlanes.Length != from.ClipPlanes.Length)
+        return false;
 
-			for (int i = 0; i < this.ClipPlanes.Length; ++i)
-			{
-				if (!this.ClipPlanes[i].Equals(from.ClipPlanes[i]))
-					return false;
-			}
+      for (int i = 0; i < this.ClipPlanes.Length; ++i)
+      {
+        if (!this.ClipPlanes[i].Equals(from.ClipPlanes[i]))
+          return false;
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		public override int GetHashCode()
-		{
-			var result = 17 * Material.GetHashCode();
-			if (null != ClipPlanes && ClipPlanes.Length > 0)
-				result = 31 * ClipPlanes[0].GetHashCode();
+    public override int GetHashCode()
+    {
+      var result = 17 * Material.GetHashCode();
+      if (null != ClipPlanes && ClipPlanes.Length > 0)
+        result = 31 * ClipPlanes[0].GetHashCode();
 
-			return result;
-		}
+      return result;
+    }
 
-		public int GetHashCode(MaterialPlusClippingKey obj)
-		{
-			return obj.GetHashCode();
-		}
-	}
+    public int GetHashCode(MaterialPlusClippingKey obj)
+    {
+      return obj.GetHashCode();
+    }
+  }
 }

@@ -30,76 +30,76 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
-	public interface IVisibleLightSpectrumView
-	{
-		IColorProviderBaseView BaseView { get; }
+  public interface IVisibleLightSpectrumView
+  {
+    IColorProviderBaseView BaseView { get; }
 
-		double Gamma { get; set; }
+    double Gamma { get; set; }
 
-		double Brightness { get; set; }
+    double Brightness { get; set; }
 
-		event Action ChoiceChanged;
-	}
+    event Action ChoiceChanged;
+  }
 
-	[ExpectedTypeOfView(typeof(IVisibleLightSpectrumView))]
-	[UserControllerForObject(typeof(VisibleLightSpectrum), 110)]
-	public class VisibleLightSpectrumController : MVCANDControllerEditImmutableDocBase<VisibleLightSpectrum, IVisibleLightSpectrumView>
-	{
-		private ColorProviderBaseController _baseController;
+  [ExpectedTypeOfView(typeof(IVisibleLightSpectrumView))]
+  [UserControllerForObject(typeof(VisibleLightSpectrum), 110)]
+  public class VisibleLightSpectrumController : MVCANDControllerEditImmutableDocBase<VisibleLightSpectrum, IVisibleLightSpectrumView>
+  {
+    private ColorProviderBaseController _baseController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_baseController = new ColorProviderBaseController() { UseDocumentCopy = UseDocument.Directly };
-				_baseController.InitializeDocument(_doc);
-				_baseController.MadeDirty += EhBaseControllerChanged;
-			}
-			if (null != _view)
-			{
-				_baseController.ViewObject = _view.BaseView;
+      if (initData)
+      {
+        _baseController = new ColorProviderBaseController() { UseDocumentCopy = UseDocument.Directly };
+        _baseController.InitializeDocument(_doc);
+        _baseController.MadeDirty += EhBaseControllerChanged;
+      }
+      if (null != _view)
+      {
+        _baseController.ViewObject = _view.BaseView;
 
-				_view.Gamma = _doc.Gamma;
-				_view.Brightness = _doc.Brightness;
-			}
-		}
+        _view.Gamma = _doc.Gamma;
+        _view.Brightness = _doc.Brightness;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_baseController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_baseController.Apply(disposeController))
+        return false;
 
-			_doc = (VisibleLightSpectrum)_baseController.ModelObject;
+      _doc = (VisibleLightSpectrum)_baseController.ModelObject;
 
-			_doc = _doc
-							.WithGamma(_view.Gamma)
-							.WithBrightness(_view.Brightness);
+      _doc = _doc
+              .WithGamma(_view.Gamma)
+              .WithBrightness(_view.Brightness);
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.ChoiceChanged += OnMadeDirty;
-		}
+    protected override void AttachView()
+    {
+      base.AttachView();
+      _view.ChoiceChanged += OnMadeDirty;
+    }
 
-		protected override void DetachView()
-		{
-			_view.ChoiceChanged -= OnMadeDirty;
-			base.DetachView();
-		}
+    protected override void DetachView()
+    {
+      _view.ChoiceChanged -= OnMadeDirty;
+      base.DetachView();
+    }
 
-		private void EhBaseControllerChanged(IMVCANDController ctrl)
-		{
-			OnMadeDirty();
-		}
-	}
+    private void EhBaseControllerChanged(IMVCANDController ctrl)
+    {
+      OnMadeDirty();
+    }
+  }
 }

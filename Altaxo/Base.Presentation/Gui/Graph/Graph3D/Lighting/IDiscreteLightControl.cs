@@ -30,10 +30,10 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Lighting
 {
-	public interface IDiscreteLightControl
-	{
-		IDiscreteLight SelectedValueAsIDiscreteLight { get; }
+  public interface IDiscreteLightControl
+  {
+    IDiscreteLight SelectedValueAsIDiscreteLight { get; }
 
-		event EventHandler SelectedValueChanged;
-	}
+    event EventHandler SelectedValueChanged;
+  }
 }

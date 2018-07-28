@@ -31,42 +31,42 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-	/// <summary>
-	/// Interaction logic for AsciiDocumentAnalysisOptionsControl.xaml
-	/// </summary>
-	public partial class AsciiDocumentAnalysisOptionsControl : UserControl, IAsciiDocumentAnalysisOptionsView
-	{
-		public AsciiDocumentAnalysisOptionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for AsciiDocumentAnalysisOptionsControl.xaml
+  /// </summary>
+  public partial class AsciiDocumentAnalysisOptionsControl : UserControl, IAsciiDocumentAnalysisOptionsView
+  {
+    public AsciiDocumentAnalysisOptionsControl()
+    {
+      InitializeComponent();
+    }
 
-		public int NumberOfLinesToAnalyze
-		{
-			get
-			{
-				return _guiNumberOfLinesToAnalyze.Value;
-			}
-			set
-			{
-				_guiNumberOfLinesToAnalyze.Value = value;
-			}
-		}
+    public int NumberOfLinesToAnalyze
+    {
+      get
+      {
+        return _guiNumberOfLinesToAnalyze.Value;
+      }
+      set
+      {
+        _guiNumberOfLinesToAnalyze.Value = value;
+      }
+    }
 
-		public void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems)
-		{
-			_guiNumberFormatsForAnalysisColumn.ItemsSource = null;
-			_guiNumberFormatsForAnalysis.ItemsSource = null;
-			_guiNumberFormatsForAnalysisColumn.ItemsSource = availableFormats;
-			_guiNumberFormatsForAnalysis.ItemsSource = currentlySelectedItems;
-		}
+    public void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems)
+    {
+      _guiNumberFormatsForAnalysisColumn.ItemsSource = null;
+      _guiNumberFormatsForAnalysis.ItemsSource = null;
+      _guiNumberFormatsForAnalysisColumn.ItemsSource = availableFormats;
+      _guiNumberFormatsForAnalysis.ItemsSource = currentlySelectedItems;
+    }
 
-		public void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems)
-		{
-			_guiDateTimeFormatsForAnalysis.ItemsSource = null;
-			_guiDateTimeFormatsForAnalysisColumn.ItemsSource = null;
-			_guiDateTimeFormatsForAnalysisColumn.ItemsSource = availableFormats;
-			_guiDateTimeFormatsForAnalysis.ItemsSource = currentlySelectedItems;
-		}
-	}
+    public void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems)
+    {
+      _guiDateTimeFormatsForAnalysis.ItemsSource = null;
+      _guiDateTimeFormatsForAnalysisColumn.ItemsSource = null;
+      _guiDateTimeFormatsForAnalysisColumn.ItemsSource = availableFormats;
+      _guiDateTimeFormatsForAnalysis.ItemsSource = currentlySelectedItems;
+    }
+  }
 }

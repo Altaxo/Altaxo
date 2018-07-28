@@ -30,56 +30,56 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-	/// <summary>
-	/// Used to store user color sets in the user's settings.
-	/// </summary>
-	public class StyleListBag<TList, TItem>
-		where TList : IStyleList<TItem>
-		where TItem : Altaxo.Main.IImmutable
-	{
-		/// <summary>
-		/// The color sets. One tupe consist of the color set and a bool indication whether this is a plot color set.
-		/// </summary>
-		protected TList[] _styleLists;
+  /// <summary>
+  /// Used to store user color sets in the user's settings.
+  /// </summary>
+  public class StyleListBag<TList, TItem>
+    where TList : IStyleList<TItem>
+    where TItem : Altaxo.Main.IImmutable
+  {
+    /// <summary>
+    /// The color sets. One tupe consist of the color set and a bool indication whether this is a plot color set.
+    /// </summary>
+    protected TList[] _styleLists;
 
-		public StyleListBag(IEnumerable<TList> styleLists)
-		{
-			_styleLists = styleLists.ToArray();
-		}
+    public StyleListBag(IEnumerable<TList> styleLists)
+    {
+      _styleLists = styleLists.ToArray();
+    }
 
-		public IEnumerable<TList> StyleLists
-		{
-			get
-			{
-				return _styleLists;
-			}
-		}
+    public IEnumerable<TList> StyleLists
+    {
+      get
+      {
+        return _styleLists;
+      }
+    }
 
-		#region Serialization Helper
+    #region Serialization Helper
 
-		public void Serialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			info.CreateArray("StyleLists", _styleLists.Length);
-			foreach (var list in _styleLists)
-			{
-				info.AddValue("e", list);
-			}
+    public void Serialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      info.CreateArray("StyleLists", _styleLists.Length);
+      foreach (var list in _styleLists)
+      {
+        info.AddValue("e", list);
+      }
 
-			info.CommitArray();
-		}
+      info.CommitArray();
+    }
 
-		protected StyleListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			int count = info.OpenArray("StyleLists");
-			var lists = new TList[count];
-			for (int i = 0; i < count; ++i)
-			{
-				lists[i] = (TList)info.GetValue("e", null);
-			}
-			info.CloseArray(count);
-			_styleLists = lists;
-		}
+    protected StyleListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      int count = info.OpenArray("StyleLists");
+      var lists = new TList[count];
+      for (int i = 0; i < count; ++i)
+      {
+        lists[i] = (TList)info.GetValue("e", null);
+      }
+      info.CloseArray(count);
+      _styleLists = lists;
+    }
 
-		#endregion Serialization Helper
-	}
+    #endregion Serialization Helper
+  }
 }

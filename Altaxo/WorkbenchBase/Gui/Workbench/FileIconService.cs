@@ -23,49 +23,49 @@ using System.Drawing;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// This Class handles bitmap resources
-	/// for the application which were loaded from the filesystem.
-	/// </summary>
-	public static class FileIconService
-	{
-		private static Dictionary<string, Bitmap> bitmapCache = new Dictionary<string, Bitmap>();
+  /// <summary>
+  /// This Class handles bitmap resources
+  /// for the application which were loaded from the filesystem.
+  /// </summary>
+  public static class FileIconService
+  {
+    private static Dictionary<string, Bitmap> bitmapCache = new Dictionary<string, Bitmap>();
 
-		/// <summary>
-		/// Returns a bitmap from the file system. Placeholders like ${SharpDevelopBinPath}
-		/// and AddinPath (e. g. ${AddInPath:ICSharpCode.FiletypeRegisterer}) are resolved
-		/// through the StringParser.
-		/// The bitmaps are reused, you must not dispose the Bitmap!
-		/// </summary>
-		/// <returns>
-		/// The bitmap loaded from the file system.
-		/// </returns>
-		/// <param name="name">
-		/// The name of the requested bitmap (prefix, path and filename).
-		/// </param>
-		/// <exception cref="FileNotFoundException">
-		/// Is thrown when the bitmap was not found in the file system.
-		/// </exception>
-		public static Bitmap GetBitmap(string name)
-		{
-			Bitmap bmp = null;
-			if (IsFileImage(name))
-			{
-				lock (bitmapCache)
-				{
-					if (bitmapCache.TryGetValue(name, out bmp))
-						return bmp;
-					string fileName = StringParser.Parse(name.Substring(5, name.Length - 5));
-					bmp = (Bitmap)Image.FromFile(fileName);
-					bitmapCache[name] = bmp;
-				}
-			}
-			return bmp;
-		}
+    /// <summary>
+    /// Returns a bitmap from the file system. Placeholders like ${SharpDevelopBinPath}
+    /// and AddinPath (e. g. ${AddInPath:ICSharpCode.FiletypeRegisterer}) are resolved
+    /// through the StringParser.
+    /// The bitmaps are reused, you must not dispose the Bitmap!
+    /// </summary>
+    /// <returns>
+    /// The bitmap loaded from the file system.
+    /// </returns>
+    /// <param name="name">
+    /// The name of the requested bitmap (prefix, path and filename).
+    /// </param>
+    /// <exception cref="FileNotFoundException">
+    /// Is thrown when the bitmap was not found in the file system.
+    /// </exception>
+    public static Bitmap GetBitmap(string name)
+    {
+      Bitmap bmp = null;
+      if (IsFileImage(name))
+      {
+        lock (bitmapCache)
+        {
+          if (bitmapCache.TryGetValue(name, out bmp))
+            return bmp;
+          string fileName = StringParser.Parse(name.Substring(5, name.Length - 5));
+          bmp = (Bitmap)Image.FromFile(fileName);
+          bitmapCache[name] = bmp;
+        }
+      }
+      return bmp;
+    }
 
-		public static bool IsFileImage(string name)
-		{
-			return name.StartsWith("file:", StringComparison.OrdinalIgnoreCase);
-		}
-	}
+    public static bool IsFileImage(string name)
+    {
+      return name.StartsWith("file:", StringComparison.OrdinalIgnoreCase);
+    }
+  }
 }

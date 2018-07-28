@@ -22,66 +22,67 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// A task scheduler that manages its own thread pool.
-	/// </summary>
-	public class CustomThreadPoolTaskScheduler : SimpleTaskScheduler
-	{
-		private int currentThreadCount;
-		private readonly int maxThreadCount;
+  /// <summary>
+  /// A task scheduler that manages its own thread pool.
+  /// </summary>
+  public class CustomThreadPoolTaskScheduler : SimpleTaskScheduler
+  {
+    private int currentThreadCount;
+    private readonly int maxThreadCount;
 
-		public CustomThreadPoolTaskScheduler(int maxThreadCount)
-		{
-			this.maxThreadCount = maxThreadCount;
-		}
+    public CustomThreadPoolTaskScheduler(int maxThreadCount)
+    {
+      this.maxThreadCount = maxThreadCount;
+    }
 
-		public override int MaximumConcurrencyLevel
-		{
-			get { return maxThreadCount; }
-		}
+    public override int MaximumConcurrencyLevel
+    {
+      get { return maxThreadCount; }
+    }
 
-		protected override void QueueTask(Task task)
-		{
-			base.QueueTask(task);
-			if (IncrementThreadCount())
-			{
-				// Successfully incremented the thread count, we may start a thread
-				StartThread(RunThread);
-				return;
-			}
-		}
+    protected override void QueueTask(Task task)
+    {
+      base.QueueTask(task);
+      if (IncrementThreadCount())
+      {
+        // Successfully incremented the thread count, we may start a thread
+        StartThread(RunThread);
+        return;
+      }
+    }
 
-		protected virtual void StartThread(ThreadStart start)
-		{
-			var t = new Thread(start);
-			t.IsBackground = true;
-			t.Start();
-		}
+    protected virtual void StartThread(ThreadStart start)
+    {
+      var t = new Thread(start);
+      t.IsBackground = true;
+      t.Start();
+    }
 
-		private bool IncrementThreadCount()
-		{
-			int c = Volatile.Read(ref currentThreadCount);
-			while (c < maxThreadCount)
-			{
-				if (Interlocked.CompareExchange(ref currentThreadCount, c + 1, c) == c)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
+    private bool IncrementThreadCount()
+    {
+      int c = Volatile.Read(ref currentThreadCount);
+      while (c < maxThreadCount)
+      {
+        if (Interlocked.CompareExchange(ref currentThreadCount, c + 1, c) == c)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 
-		private void RunThread()
-		{
-			do
-			{
-				// Run tasks while they are available:
-				while (TryRunNextTask()) ;
-				// Decrement the thread count:
-				Interlocked.Decrement(ref currentThreadCount);
-				// Tasks might have been added while we were decrementing the thread count,
-				// so if the queue isn't empty anymore, resume this thread
-			} while (ScheduledTaskCount > 0 && IncrementThreadCount());
-		}
-	}
+    private void RunThread()
+    {
+      do
+      {
+        // Run tasks while they are available:
+        while (TryRunNextTask())
+          ;
+        // Decrement the thread count:
+        Interlocked.Decrement(ref currentThreadCount);
+        // Tasks might have been added while we were decrementing the thread count,
+        // so if the queue isn't empty anymore, resume this thread
+      } while (ScheduledTaskCount > 0 && IncrementThreadCount());
+    }
+  }
 }

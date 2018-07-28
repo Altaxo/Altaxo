@@ -30,29 +30,29 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for PropertyControl.xaml
-	/// </summary>
-	public partial class PropertyControl : UserControl, IPropertyView
-	{
-		public PropertyControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for PropertyControl.xaml
+  /// </summary>
+  public partial class PropertyControl : UserControl, IPropertyView
+  {
+    public PropertyControl()
+    {
+      InitializeComponent();
+    }
 
-		public object[] SelectedObjectsToView
-		{
-			get
-			{
-				return new object[1] { _propertyGrid.Instance };
-			}
-			set
-			{
-				if (value != null && value.Length >= 1)
-					_propertyGrid.Instance = value[0];
-				else
-					_propertyGrid.Instance = null;
-			}
-		}
-	}
+    public object[] SelectedObjectsToView
+    {
+      get
+      {
+        return new object[1] { _propertyGrid.Instance };
+      }
+      set
+      {
+        if (value != null && value.Length >= 1)
+          _propertyGrid.Instance = value[0];
+        else
+          _propertyGrid.Instance = null;
+      }
+    }
+  }
 }

@@ -33,70 +33,70 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {
-	/// <summary>
-	/// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
-	/// </summary>
-	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
-	public abstract class ScatterSymbolShapeBase : IScatterSymbol
-	{
-		#region Serialization
+  /// <summary>
+  /// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
+  /// </summary>
+  /// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
+  public abstract class ScatterSymbolShapeBase : IScatterSymbol
+  {
+    #region Serialization
 
-		protected static void SerializeV0(IScatterSymbol obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			var parent = ScatterSymbolListManager.Instance.GetParentList(obj);
-			if (null != parent)
-			{
-				if (null == info.GetProperty(ScatterSymbolList.GetSerializationRegistrationKey(parent)))
-					info.AddValue("Set", parent);
-				else
-					info.AddValue("SetName", parent.Name);
-			}
-		}
+    protected static void SerializeV0(IScatterSymbol obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var parent = ScatterSymbolListManager.Instance.GetParentList(obj);
+      if (null != parent)
+      {
+        if (null == info.GetProperty(ScatterSymbolList.GetSerializationRegistrationKey(parent)))
+          info.AddValue("Set", parent);
+        else
+          info.AddValue("SetName", parent.Name);
+      }
+    }
 
-		protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent) where TItem : ScatterSymbolShapeBase
-		{
-			if (info.CurrentElementName == "Set")
-			{
-				var originalSet = (ScatterSymbolList)info.GetValue("Set", parent);
-				ScatterSymbolList registeredSet;
-				ScatterSymbolListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out registeredSet);
-				return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, originalSet.Name); // Note: here we use the name of the original set, not of the registered set. Because the original name is translated during registering into the registered name
-			}
-			else if (info.CurrentElementName == "SetName")
-			{
-				string setName = info.GetString("SetName");
-				return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, setName);
-			}
-			else // nothing of both, thus symbol belongs to nothing
-			{
-				return instanceTemplate;
-			}
-		}
+    protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent) where TItem : ScatterSymbolShapeBase
+    {
+      if (info.CurrentElementName == "Set")
+      {
+        var originalSet = (ScatterSymbolList)info.GetValue("Set", parent);
+        ScatterSymbolList registeredSet;
+        ScatterSymbolListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out registeredSet);
+        return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, originalSet.Name); // Note: here we use the name of the original set, not of the registered set. Because the original name is translated during registering into the registered name
+      }
+      else if (info.CurrentElementName == "SetName")
+      {
+        string setName = info.GetString("SetName");
+        return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, setName);
+      }
+      else // nothing of both, thus symbol belongs to nothing
+      {
+        return instanceTemplate;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>
-		/// Paints the symbol with the specified size at the origin of the coordinate system.
-		/// </summary>
-		/// <param name="g">The graphics context.</param>
-		/// <param name="material">The material used to draw the symbol.</param>
-		/// <param name="centerLocation">The location of the center of the symbol.</param>
-		/// <param name="symbolSize">Size of the symbol.</param>
-		public abstract void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
+    /// <summary>
+    /// Paints the symbol with the specified size at the origin of the coordinate system.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="material">The material used to draw the symbol.</param>
+    /// <param name="centerLocation">The location of the center of the symbol.</param>
+    /// <param name="symbolSize">Size of the symbol.</param>
+    public abstract void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
 
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode();
-		}
+    public override int GetHashCode()
+    {
+      return this.GetType().GetHashCode();
+    }
 
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType();
-		}
+    public override bool Equals(object obj)
+    {
+      return this.GetType() == obj?.GetType();
+    }
 
-		public object Clone()
-		{
-			return this.MemberwiseClone();
-		}
-	}
+    public object Clone()
+    {
+      return this.MemberwiseClone();
+    }
+  }
 }

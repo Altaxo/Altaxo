@@ -26,19 +26,19 @@ using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="AutolinkInline"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class AutolinkInlineRenderer : MamlObjectRenderer<AutolinkInline>
-	{
-		protected override void Write(MamlRenderer renderer, AutolinkInline obj)
-		{
-			renderer.Push(MamlElements.externalLink);
-			renderer.Push(MamlElements.linkUri);
-			renderer.Write(obj.Url);
-			renderer.PopTo(MamlElements.linkUri);
-			renderer.PopTo(MamlElements.externalLink);
-		}
-	}
+  /// <summary>
+  /// Maml renderer for a <see cref="AutolinkInline"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class AutolinkInlineRenderer : MamlObjectRenderer<AutolinkInline>
+  {
+    protected override void Write(MamlRenderer renderer, AutolinkInline obj)
+    {
+      renderer.Push(MamlElements.externalLink);
+      renderer.Push(MamlElements.linkUri);
+      renderer.Write(obj.Url);
+      renderer.PopTo(MamlElements.linkUri);
+      renderer.PopTo(MamlElements.externalLink);
+    }
+  }
 }

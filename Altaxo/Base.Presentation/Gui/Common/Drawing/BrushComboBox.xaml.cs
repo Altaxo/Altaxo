@@ -36,318 +36,318 @@ using System.Windows.Documents;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// Interaction logic for ColorComboBoxEx.xaml
-	/// </summary>
-	public partial class BrushComboBox : ColorComboBoxBase
-	{
-		public static readonly DependencyProperty SelectedBrushProperty;
+  /// <summary>
+  /// Interaction logic for ColorComboBoxEx.xaml
+  /// </summary>
+  public partial class BrushComboBox : ColorComboBoxBase
+  {
+    public static readonly DependencyProperty SelectedBrushProperty;
 
-		public event DependencyPropertyChangedEventHandler SelectedBrushChanged;
+    public event DependencyPropertyChangedEventHandler SelectedBrushChanged;
 
-		private List<BrushX> _lastLocalUsedItems = new List<BrushX>();
+    private List<BrushX> _lastLocalUsedItems = new List<BrushX>();
 
-		#region Constructors
+    #region Constructors
 
-		static BrushComboBox()
-		{
-			SelectedBrushProperty = DependencyProperty.Register("SelectedBrush", typeof(BrushX), typeof(BrushComboBox), new FrameworkPropertyMetadata(new BrushX(NamedColors.Black), EhSelectedBrushChanged, EhSelectedBrushCoerce));
-		}
+    static BrushComboBox()
+    {
+      SelectedBrushProperty = DependencyProperty.Register("SelectedBrush", typeof(BrushX), typeof(BrushComboBox), new FrameworkPropertyMetadata(new BrushX(NamedColors.Black), EhSelectedBrushChanged, EhSelectedBrushCoerce));
+    }
 
-		public BrushComboBox()
-		{
-			UpdateTreeViewTreeNodes();
+    public BrushComboBox()
+    {
+      UpdateTreeViewTreeNodes();
 
-			InitializeComponent();
+      InitializeComponent();
 
-			UpdateComboBoxSourceSelection(InternalSelectedBrush);
-			UpdateTreeViewSelection();
-		}
+      UpdateComboBoxSourceSelection(InternalSelectedBrush);
+      UpdateTreeViewSelection();
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Implementation of abstract base class members
+    #region Implementation of abstract base class members
 
-		protected override TreeView GuiTreeView { get { return _treeView; } }
+    protected override TreeView GuiTreeView { get { return _treeView; } }
 
-		protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
+    protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
 
-		protected override NamedColor InternalSelectedColor
-		{
-			get
-			{
-				return InternalSelectedBrush.Color;
-			}
-			set
-			{
-				var selBrush = InternalSelectedBrush;
-				if (null != selBrush)
-				{
-					selBrush = selBrush.Clone();
-					selBrush.Color = value;
-					InternalSelectedBrush = selBrush;
-				}
-			}
-		}
+    protected override NamedColor InternalSelectedColor
+    {
+      get
+      {
+        return InternalSelectedBrush.Color;
+      }
+      set
+      {
+        var selBrush = InternalSelectedBrush;
+        if (null != selBrush)
+        {
+          selBrush = selBrush.Clone();
+          selBrush.Color = value;
+          InternalSelectedBrush = selBrush;
+        }
+      }
+    }
 
-		#endregion Implementation of abstract base class members
+    #endregion Implementation of abstract base class members
 
-		#region Dependency property
+    #region Dependency property
 
-		/// <summary>
-		/// Gets/sets the selected brush. Since <see cref="BrushX"/> is not immutable, the Brush is cloned when setting the property, as well as when getting the property.
-		/// </summary>
-		/// <remarks>
-		/// <para>Reasons to clone the brush at setting/getting:</para>
-		/// <para>
-		/// Scenario 1: the SelectedBrush property is set without cloning, then an external function changes the brush color: the BrushComboBox will not show the new color, since it don't know anything about the changed color.
-		/// </para>
-		/// <para>
-		/// The user selects a brush in this BrushComboBox, the value is used by an external function, which changes the color. Here also, the new color is not shown in the BrushComboBox.
-		/// </para>
-		/// </remarks>
-		public BrushX SelectedBrush
-		{
-			get
-			{
-				return ((BrushX)GetValue(SelectedBrushProperty)).Clone(); // use only a copy - don't give the original selected brush away from this combobox, it might be changed externally
-			}
-			set
-			{
-				if (null != value)
-				{
-					value = value.Clone(); // BrushX is not immutable, so it must be ensured that SelectedBrush stored here can not be changed externally
-					value.ParentObject = Altaxo.Main.SuspendableDocumentNode.StaticInstance;
-				}
-				SetValue(SelectedBrushProperty, value);
-			}
-		}
+    /// <summary>
+    /// Gets/sets the selected brush. Since <see cref="BrushX"/> is not immutable, the Brush is cloned when setting the property, as well as when getting the property.
+    /// </summary>
+    /// <remarks>
+    /// <para>Reasons to clone the brush at setting/getting:</para>
+    /// <para>
+    /// Scenario 1: the SelectedBrush property is set without cloning, then an external function changes the brush color: the BrushComboBox will not show the new color, since it don't know anything about the changed color.
+    /// </para>
+    /// <para>
+    /// The user selects a brush in this BrushComboBox, the value is used by an external function, which changes the color. Here also, the new color is not shown in the BrushComboBox.
+    /// </para>
+    /// </remarks>
+    public BrushX SelectedBrush
+    {
+      get
+      {
+        return ((BrushX)GetValue(SelectedBrushProperty)).Clone(); // use only a copy - don't give the original selected brush away from this combobox, it might be changed externally
+      }
+      set
+      {
+        if (null != value)
+        {
+          value = value.Clone(); // BrushX is not immutable, so it must be ensured that SelectedBrush stored here can not be changed externally
+          value.ParentObject = Altaxo.Main.SuspendableDocumentNode.StaticInstance;
+        }
+        SetValue(SelectedBrushProperty, value);
+      }
+    }
 
-		/// <summary>
-		/// Gets or sets the selected brush. Here, the getting/setting is done without cloning the brush before. Thus, it must be absolutely ensured, that the brush's properties are not changed.
-		/// When some properties must be changed, it is absolutely neccessary to clone the brush <b>before</b>, then make the changes at the cloned brush, and then using the cloned brush for setting this property.
-		/// </summary>
-		/// <value>
-		/// The selected brush.
-		/// </value>
-		protected BrushX InternalSelectedBrush
-		{
-			get
-			{
-				return ((BrushX)GetValue(SelectedBrushProperty));
-			}
-			set
-			{
-				SetValue(SelectedBrushProperty, value);
-			}
-		}
+    /// <summary>
+    /// Gets or sets the selected brush. Here, the getting/setting is done without cloning the brush before. Thus, it must be absolutely ensured, that the brush's properties are not changed.
+    /// When some properties must be changed, it is absolutely neccessary to clone the brush <b>before</b>, then make the changes at the cloned brush, and then using the cloned brush for setting this property.
+    /// </summary>
+    /// <value>
+    /// The selected brush.
+    /// </value>
+    protected BrushX InternalSelectedBrush
+    {
+      get
+      {
+        return ((BrushX)GetValue(SelectedBrushProperty));
+      }
+      set
+      {
+        SetValue(SelectedBrushProperty, value);
+      }
+    }
 
-		private static object EhSelectedBrushCoerce(DependencyObject obj, object coerceValue)
-		{
-			var thiss = (BrushComboBox)obj;
-			return thiss.InternalSelectedBrushCoerce(obj, (BrushX)coerceValue);
-		}
+    private static object EhSelectedBrushCoerce(DependencyObject obj, object coerceValue)
+    {
+      var thiss = (BrushComboBox)obj;
+      return thiss.InternalSelectedBrushCoerce(obj, (BrushX)coerceValue);
+    }
 
-		protected virtual BrushX InternalSelectedBrushCoerce(DependencyObject obj, BrushX brush)
-		{
-			if (null == brush)
-				brush = new BrushX(NamedColors.Transparent);
+    protected virtual BrushX InternalSelectedBrushCoerce(DependencyObject obj, BrushX brush)
+    {
+      if (null == brush)
+        brush = new BrushX(NamedColors.Transparent);
 
-			var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
-			if (!brush.Color.Equals(coercedColor))
-			{
-				brush = brush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-				brush.Color = coercedColor;
-			}
+      var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
+      if (!brush.Color.Equals(coercedColor))
+      {
+        brush = brush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
+        brush.Color = coercedColor;
+      }
 
-			if (this.ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(brush.Color.ParentColorSet)))
-			{
-				brush = brush.Clone();
-				brush.Color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
-			}
-			return brush;
-		}
+      if (this.ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(brush.Color.ParentColorSet)))
+      {
+        brush = brush.Clone();
+        brush.Color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
+      }
+      return brush;
+    }
 
-		private static void EhSelectedBrushChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((BrushComboBox)obj).OnSelectedBrushChanged(obj, args);
-		}
+    private static void EhSelectedBrushChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((BrushComboBox)obj).OnSelectedBrushChanged(obj, args);
+    }
 
-		protected virtual void OnSelectedBrushChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			var oldBrush = (BrushX)args.OldValue;
-			var newBrush = (BrushX)args.NewValue;
+    protected virtual void OnSelectedBrushChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      var oldBrush = (BrushX)args.OldValue;
+      var newBrush = (BrushX)args.NewValue;
 
-			var oldColor = oldBrush.Color;
-			var newColor = newBrush.Color;
+      var oldColor = oldBrush.Color;
+      var newColor = newBrush.Color;
 
-			if (newBrush.BrushType != BrushType.SolidBrush || newBrush.Color.ParentColorSet == null)
-			{
-				StoreAsLastUsedItem(_lastLocalUsedItems, newBrush);
-			}
+      if (newBrush.BrushType != BrushType.SolidBrush || newBrush.Color.ParentColorSet == null)
+      {
+        StoreAsLastUsedItem(_lastLocalUsedItems, newBrush);
+      }
 
-			if (!newBrush.Equals(_guiComboBox.SelectedValue))
-				this.UpdateComboBoxSourceSelection(newBrush);
+      if (!newBrush.Equals(_guiComboBox.SelectedValue))
+        this.UpdateComboBoxSourceSelection(newBrush);
 
-			if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
-				this.UpdateTreeViewSelection();
+      if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
+        this.UpdateTreeViewSelection();
 
-			if (null != SelectedBrushChanged)
-				SelectedBrushChanged(obj, args);
-		}
+      if (null != SelectedBrushChanged)
+        SelectedBrushChanged(obj, args);
+    }
 
-		#endregion Dependency property
+    #endregion Dependency property
 
-		#region ComboBox
+    #region ComboBox
 
-		#region ComboBox data handling
+    #region ComboBox data handling
 
-		private void UpdateComboBoxSourceSelection(BrushX brush)
-		{
-			if (brush.Equals(_guiComboBox.SelectedValue))
-				return;
+    private void UpdateComboBoxSourceSelection(BrushX brush)
+    {
+      if (brush.Equals(_guiComboBox.SelectedValue))
+        return;
 
-			_filterString = string.Empty;
-			FillComboBoxWithFilteredItems(_filterString, false);
-			_guiComboBox.SelectedValue = brush;
-		}
+      _filterString = string.Empty;
+      FillComboBoxWithFilteredItems(_filterString, false);
+      _guiComboBox.SelectedValue = brush;
+    }
 
-		private List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used brushes" } };
-		private List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
+    private List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used brushes" } };
+    private List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
 
-		protected override bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
-		{
-			List<object> lastUsed;
+    protected override bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
+    {
+      List<object> lastUsed;
 
-			lastUsed = GetFilteredList(_lastLocalUsedItems, filterString, ShowPlotColorsOnly);
+      lastUsed = GetFilteredList(_lastLocalUsedItems, filterString, ShowPlotColorsOnly);
 
-			var colorSet = GetColorSetForComboBox();
-			var known = GetFilteredList(colorSet, filterString);
+      var colorSet = GetColorSetForComboBox();
+      var known = GetFilteredList(colorSet, filterString);
 
-			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
-			{
-				IEnumerable<object> source = null;
+      if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
+      {
+        IEnumerable<object> source = null;
 
-				if (lastUsed.Count > 0)
-				{
-					source = _comboBoxSeparator1.Concat(lastUsed);
-				}
-				if (known.Count > 0)
-				{
-					(_comboBoxSeparator2[0] as Separator).Tag = colorSet.Name;
-					if (source == null)
-						source = _comboBoxSeparator2.Concat(known);
-					else
-						source = source.Concat(_comboBoxSeparator2).Concat(known);
-				}
-				_guiComboBox.ItemsSource = source;
-				return true;
-			}
+        if (lastUsed.Count > 0)
+        {
+          source = _comboBoxSeparator1.Concat(lastUsed);
+        }
+        if (known.Count > 0)
+        {
+          (_comboBoxSeparator2[0] as Separator).Tag = colorSet.Name;
+          if (source == null)
+            source = _comboBoxSeparator2.Concat(known);
+          else
+            source = source.Concat(_comboBoxSeparator2).Concat(known);
+        }
+        _guiComboBox.ItemsSource = source;
+        return true;
+      }
 
-			return false;
-		}
+      return false;
+    }
 
-		protected static List<object> GetFilteredList(IReadOnlyList<NamedColor> originalList, string filterString)
-		{
-			var result = new List<object>();
-			filterString = filterString.ToLowerInvariant();
-			foreach (var item in originalList)
-			{
-				if (item.Name.ToLowerInvariant().StartsWith(filterString))
-					result.Add(new BrushX(item));
-			}
-			return result;
-		}
+    protected static List<object> GetFilteredList(IReadOnlyList<NamedColor> originalList, string filterString)
+    {
+      var result = new List<object>();
+      filterString = filterString.ToLowerInvariant();
+      foreach (var item in originalList)
+      {
+        if (item.Name.ToLowerInvariant().StartsWith(filterString))
+          result.Add(new BrushX(item));
+      }
+      return result;
+    }
 
-		protected static List<object> GetFilteredList(IList<BrushX> originalList, string filterString, bool showPlotColorsOnly)
-		{
-			var result = new List<object>();
-			filterString = filterString.ToLowerInvariant();
+    protected static List<object> GetFilteredList(IList<BrushX> originalList, string filterString, bool showPlotColorsOnly)
+    {
+      var result = new List<object>();
+      filterString = filterString.ToLowerInvariant();
 
-			foreach (var item in originalList)
-			{
-				if (showPlotColorsOnly && (item.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(item.Color.ParentColorSet)))
-					continue;
+      foreach (var item in originalList)
+      {
+        if (showPlotColorsOnly && (item.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(item.Color.ParentColorSet)))
+          continue;
 
-				if (item.Color.Name.ToLowerInvariant().StartsWith(filterString))
-					result.Add(item);
-			}
-			return result;
-		}
+        if (item.Color.Name.ToLowerInvariant().StartsWith(filterString))
+          result.Add(item);
+      }
+      return result;
+    }
 
-		#endregion ComboBox data handling
+    #endregion ComboBox data handling
 
-		#region ComboBox event handling
+    #region ComboBox event handling
 
-		private void EhPopupClosed(object sender, EventArgs e)
-		{
-		}
+    private void EhPopupClosed(object sender, EventArgs e)
+    {
+    }
 
-		private void EhComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-		}
+    private void EhComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+    }
 
-		protected void EhComboBox_DropDownClosed(object sender, EventArgs e)
-		{
-			if (_filterString.Length > 0)
-			{
-				var selItem = _guiComboBox.SelectedValue;
-				_filterString = string.Empty;
-				FillComboBoxWithFilteredItems(_filterString, false);
-				_guiComboBox.SelectedValue = selItem;
-			}
+    protected void EhComboBox_DropDownClosed(object sender, EventArgs e)
+    {
+      if (_filterString.Length > 0)
+      {
+        var selItem = _guiComboBox.SelectedValue;
+        _filterString = string.Empty;
+        FillComboBoxWithFilteredItems(_filterString, false);
+        _guiComboBox.SelectedValue = selItem;
+      }
 
-			if (_guiComboBox.SelectedValue == null)
-			{
-				_guiComboBox.SelectedValue = InternalSelectedBrush;
-			}
-			else
-			{
-				if (_guiComboBox.SelectedValue is BrushX)
-					this.InternalSelectedBrush = (BrushX)_guiComboBox.SelectedValue;
-				else
-					this.InternalSelectedBrush = new BrushX((NamedColor)_guiComboBox.SelectedValue);
-			}
-		}
+      if (_guiComboBox.SelectedValue == null)
+      {
+        _guiComboBox.SelectedValue = InternalSelectedBrush;
+      }
+      else
+      {
+        if (_guiComboBox.SelectedValue is BrushX)
+          this.InternalSelectedBrush = (BrushX)_guiComboBox.SelectedValue;
+        else
+          this.InternalSelectedBrush = new BrushX((NamedColor)_guiComboBox.SelectedValue);
+      }
+    }
 
-		#endregion ComboBox event handling
+    #endregion ComboBox event handling
 
-		#endregion ComboBox
+    #endregion ComboBox
 
-		#region Context menus
+    #region Context menus
 
-		private void EhShowCustomBrushDialog(object sender, RoutedEventArgs e)
-		{
-			var localBrush = this.InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-			var ctrl = new BrushControllerAdvanced();
-			ctrl.RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly;
-			ctrl.InitializeDocument(localBrush);
-			if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
-				this.InternalSelectedBrush = (BrushX)ctrl.ModelObject;
-		}
+    private void EhShowCustomBrushDialog(object sender, RoutedEventArgs e)
+    {
+      var localBrush = this.InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
+      var ctrl = new BrushControllerAdvanced();
+      ctrl.RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly;
+      ctrl.InitializeDocument(localBrush);
+      if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
+        this.InternalSelectedBrush = (BrushX)ctrl.ModelObject;
+    }
 
-		protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
-		{
-			NamedColor newColor;
-			if (base.InternalShowCustomColorDialog(sender, out newColor))
-			{
-				var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-				newBrush.Color = newColor;
-				InternalSelectedBrush = newBrush;
-			}
-		}
+    protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
+    {
+      NamedColor newColor;
+      if (base.InternalShowCustomColorDialog(sender, out newColor))
+      {
+        var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
+        newBrush.Color = newColor;
+        InternalSelectedBrush = newBrush;
+      }
+    }
 
-		protected void EhChooseOpacityFromContextMenu(object sender, RoutedEventArgs e)
-		{
-			NamedColor newColor;
-			if (base.InternalChooseOpacityFromContextMenu(sender, out newColor))
-			{
-				var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-				newBrush.Color = newColor;
-				InternalSelectedBrush = newBrush;
-			}
-		}
+    protected void EhChooseOpacityFromContextMenu(object sender, RoutedEventArgs e)
+    {
+      NamedColor newColor;
+      if (base.InternalChooseOpacityFromContextMenu(sender, out newColor))
+      {
+        var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
+        newBrush.Color = newColor;
+        InternalSelectedBrush = newBrush;
+      }
+    }
 
-		#endregion Context menus
-	}
+    #endregion Context menus
+  }
 }

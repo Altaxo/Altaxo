@@ -20,29 +20,29 @@ using System;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// EventArgs with a file name.
-	/// </summary>
-	public class FileNameEventArgs : System.EventArgs
-	{
-		private FileName fileName;
+  /// <summary>
+  /// EventArgs with a file name.
+  /// </summary>
+  public class FileNameEventArgs : System.EventArgs
+  {
+    private FileName fileName;
 
-		public FileName FileName
-		{
-			get
-			{
-				return fileName;
-			}
-		}
+    public FileName FileName
+    {
+      get
+      {
+        return fileName;
+      }
+    }
 
-		public FileNameEventArgs(FileName fileName)
-		{
-			this.fileName = fileName;
-		}
+    public FileNameEventArgs(FileName fileName)
+    {
+      this.fileName = fileName;
+    }
 
-		public FileNameEventArgs(string fileName)
-		{
-			this.fileName = FileName.Create(fileName);
-		}
-	}
+    public FileNameEventArgs(string fileName)
+    {
+      this.fileName = FileName.Create(fileName);
+    }
+  }
 }

@@ -31,31 +31,31 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
-	using Altaxo.Units.Angle;
+  using Altaxo.Units.Angle;
 
-	public static class GuiAngleUnits
-	{
-		private static ReadOnlyCollection<IUnit> _instance;
+  public static class GuiAngleUnits
+  {
+    private static ReadOnlyCollection<IUnit> _instance;
 
-		static GuiAngleUnits()
-		{
-			var instance = new List<IUnit>();
+    static GuiAngleUnits()
+    {
+      var instance = new List<IUnit>();
 
-			instance.Add(Radian.Instance);
-			instance.Add(Degree.Instance);
-			instance.Add(Pi.Instance);
-			_instance = instance.AsReadOnly();
-		}
+      instance.Add(Radian.Instance);
+      instance.Add(Degree.Instance);
+      instance.Add(Pi.Instance);
+      _instance = instance.AsReadOnly();
+    }
 
-		/// <summary>
-		/// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
-		/// </summary>
-		public static IList<IUnit> Collection
-		{
-			get
-			{
-				return _instance;
-			}
-		}
-	}
+    /// <summary>
+    /// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
+    /// </summary>
+    public static IList<IUnit> Collection
+    {
+      get
+      {
+        return _instance;
+      }
+    }
+  }
 }

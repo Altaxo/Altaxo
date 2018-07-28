@@ -40,108 +40,108 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Geometry
 {
-	/// <summary>
-	/// Interaction logic for Direction3DSphericalControl.xaml
-	/// </summary>
-	public partial class Direction3DSphericalControl : UserControl
-	{
-		private double _polarAngleDegrees;
-		private double _elevationAngleDegrees;
+  /// <summary>
+  /// Interaction logic for Direction3DSphericalControl.xaml
+  /// </summary>
+  public partial class Direction3DSphericalControl : UserControl
+  {
+    private double _polarAngleDegrees;
+    private double _elevationAngleDegrees;
 
-		public event EventHandler SelectedValueChanged;
+    public event EventHandler SelectedValueChanged;
 
-		private GuiChangeLocker _lock;
+    private GuiChangeLocker _lock;
 
-		public Direction3DSphericalControl()
-		{
-			InitializeComponent();
-		}
+    public Direction3DSphericalControl()
+    {
+      InitializeComponent();
+    }
 
-		/// <summary>
-		/// Gets or sets the direction. The direction value is normalized.
-		/// </summary>
-		/// <value>
-		/// The direction.
-		/// </value>
-		public VectorD3D SelectedValue
-		{
-			get
-			{
-				double polarAngleRadians = _polarAngleDegrees * Math.PI / 180;
-				double elevationAngleRadians = _elevationAngleDegrees * Math.PI / 180;
-				return new VectorD3D(
-					Math.Cos(polarAngleRadians) * Math.Cos(elevationAngleRadians),
-					Math.Sin(polarAngleRadians) * Math.Cos(elevationAngleRadians),
-					Math.Sin(elevationAngleRadians)
-					);
-			}
-			set
-			{
-				double len = value.Length;
-				if (0 == len || double.IsNaN(len) || double.IsInfinity(len))
-					value = new VectorD3D(1, 0, 0);
-				else
-					value /= len;
-				_elevationAngleDegrees = Math.Asin(value.Z) * 180 / Math.PI;
-				_polarAngleDegrees = Math.Atan2(value.Y, value.X) * 180 / Math.PI;
+    /// <summary>
+    /// Gets or sets the direction. The direction value is normalized.
+    /// </summary>
+    /// <value>
+    /// The direction.
+    /// </value>
+    public VectorD3D SelectedValue
+    {
+      get
+      {
+        double polarAngleRadians = _polarAngleDegrees * Math.PI / 180;
+        double elevationAngleRadians = _elevationAngleDegrees * Math.PI / 180;
+        return new VectorD3D(
+          Math.Cos(polarAngleRadians) * Math.Cos(elevationAngleRadians),
+          Math.Sin(polarAngleRadians) * Math.Cos(elevationAngleRadians),
+          Math.Sin(elevationAngleRadians)
+          );
+      }
+      set
+      {
+        double len = value.Length;
+        if (0 == len || double.IsNaN(len) || double.IsInfinity(len))
+          value = new VectorD3D(1, 0, 0);
+        else
+          value /= len;
+        _elevationAngleDegrees = Math.Asin(value.Z) * 180 / Math.PI;
+        _polarAngleDegrees = Math.Atan2(value.Y, value.X) * 180 / Math.PI;
 
-				_lock.ExecuteLocked(
-					() =>
-					{
-						_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
-						_guiPolarAngleSlider.Value = _polarAngleDegrees;
-						_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
-						_guiElevationAngleSlider.Value = _elevationAngleDegrees;
-					});
-			}
-		}
+        _lock.ExecuteLocked(
+          () =>
+          {
+            _guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
+            _guiPolarAngleSlider.Value = _polarAngleDegrees;
+            _guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
+            _guiElevationAngleSlider.Value = _elevationAngleDegrees;
+          });
+      }
+    }
 
-		private void EhPolarAngleBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-			() =>
-			{
-				_polarAngleDegrees = _guiPolarAngleBox.SelectedValue;
-				_guiPolarAngleSlider.Value = _polarAngleDegrees;
-			},
-			() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
-			);
-		}
+    private void EhPolarAngleBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+      () =>
+      {
+        _polarAngleDegrees = _guiPolarAngleBox.SelectedValue;
+        _guiPolarAngleSlider.Value = _polarAngleDegrees;
+      },
+      () => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+      );
+    }
 
-		private void EhPolarAngleSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-			() =>
-			{
-				_polarAngleDegrees = _guiPolarAngleSlider.Value;
-				_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
-			},
-			() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
-			);
-		}
+    private void EhPolarAngleSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+      () =>
+      {
+        _polarAngleDegrees = _guiPolarAngleSlider.Value;
+        _guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
+      },
+      () => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+      );
+    }
 
-		private void EhPolarAzimuthBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-			() =>
-			{
-				_elevationAngleDegrees = _guiElevationAngleBox.SelectedValue;
-				_guiElevationAngleSlider.Value = _elevationAngleDegrees;
-			},
-			() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
-			);
-		}
+    private void EhPolarAzimuthBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+      () =>
+      {
+        _elevationAngleDegrees = _guiElevationAngleBox.SelectedValue;
+        _guiElevationAngleSlider.Value = _elevationAngleDegrees;
+      },
+      () => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+      );
+    }
 
-		private void EhAzimuthAngleSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
-			() =>
-			{
-				_elevationAngleDegrees = _guiElevationAngleSlider.Value;
-				_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
-			},
-			() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
-			);
-		}
-	}
+    private void EhAzimuthAngleSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+      _lock.ExecuteLockedButOnlyIfNotLockedBefore(
+      () =>
+      {
+        _elevationAngleDegrees = _guiElevationAngleSlider.Value;
+        _guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
+      },
+      () => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+      );
+    }
+  }
 }

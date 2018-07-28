@@ -31,15 +31,15 @@ using System.Windows.Shell;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Extends <see cref="RecentOpenBase"/> by adding a project that is added to the recent project list to the windows shell jumplist, too.
-	/// </summary>
-	public class RecentOpen : RecentOpenBase
-	{
-		public override void AddRecentProject(FileName name)
-		{
-			base.AddRecentProject(name);
-			JumpList.AddToRecentCategory(name);
-		}
-	}
+  /// <summary>
+  /// Extends <see cref="RecentOpenBase"/> by adding a project that is added to the recent project list to the windows shell jumplist, too.
+  /// </summary>
+  public class RecentOpen : RecentOpenBase
+  {
+    public override void AddRecentProject(FileName name)
+    {
+      base.AddRecentProject(name);
+      JumpList.AddToRecentCategory(name);
+    }
+  }
 }

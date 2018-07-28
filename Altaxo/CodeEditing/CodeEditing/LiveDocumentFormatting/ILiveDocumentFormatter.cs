@@ -32,18 +32,18 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.LiveDocumentFormatting
 {
-	/// <summary>
-	/// Responsible for formatting the document live when entering certain characters, e.g. semicolon, or curly brace.
-	/// </summary>
-	public interface ILiveDocumentFormatter
-	{
-		/// <summary>
-		/// Formats the document after entering a trigger character. Trigger chars are e.g. closing curly brace (then format whole paragraph)
-		/// or semicolon (then format line).
-		/// </summary>
-		/// <param name="caretPosition">The caret position after (!) the trigger char.</param>
-		/// <param name="triggerChar">The trigger char.</param>
-		/// <returns></returns>
-		Task FormatDocumentAfterEnteringTriggerChar(Workspace workspace, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, char triggerChar);
-	}
+  /// <summary>
+  /// Responsible for formatting the document live when entering certain characters, e.g. semicolon, or curly brace.
+  /// </summary>
+  public interface ILiveDocumentFormatter
+  {
+    /// <summary>
+    /// Formats the document after entering a trigger character. Trigger chars are e.g. closing curly brace (then format whole paragraph)
+    /// or semicolon (then format line).
+    /// </summary>
+    /// <param name="caretPosition">The caret position after (!) the trigger char.</param>
+    /// <param name="triggerChar">The trigger char.</param>
+    /// <returns></returns>
+    Task FormatDocumentAfterEnteringTriggerChar(Workspace workspace, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, char triggerChar);
+  }
 }

@@ -28,61 +28,61 @@ using System;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Interface of a document node at the end of the hierarchie, i.e. a leaf node.
-	/// </summary>
-	public interface IDocumentLeafNode
-		:
-		INamedObject,
-		Main.IChangedEventSource,
-		ISuspendableByToken,
-		ITunnelingEventSource,
-		IDisposable,
-		// ICloneable,
-		ITreeNodeWithParent<IDocumentLeafNode>
-	//Altaxo.Collections.INodeWithParentNode<IDocumentNode>
-	{
-		/// <summary>
-		/// Retrieves the parent object.
-		/// </summary>
-		IDocumentNode ParentObject { get; set; }
+  /// <summary>
+  /// Interface of a document node at the end of the hierarchie, i.e. a leaf node.
+  /// </summary>
+  public interface IDocumentLeafNode
+    :
+    INamedObject,
+    Main.IChangedEventSource,
+    ISuspendableByToken,
+    ITunnelingEventSource,
+    IDisposable,
+    // ICloneable,
+    ITreeNodeWithParent<IDocumentLeafNode>
+  //Altaxo.Collections.INodeWithParentNode<IDocumentNode>
+  {
+    /// <summary>
+    /// Retrieves the parent object.
+    /// </summary>
+    IDocumentNode ParentObject { get; set; }
 
-		void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e);
+    void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e);
 
-		/// <summary>
-		/// Gets a value indicating whether this instance is disposed.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
-		/// </value>
-		bool IsDisposed { get; }
+    /// <summary>
+    /// Gets a value indicating whether this instance is disposed.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
+    /// </value>
+    bool IsDisposed { get; }
 
-		/// <summary>
-		/// Gets a value indicating whether this instance is dispose in progress, or the instance is already disposed.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if this instance is dispose in progress or already disposed; otherwise, <c>false</c>.
-		/// </value>
-		bool IsDisposeInProgress { get; }
+    /// <summary>
+    /// Gets a value indicating whether this instance is dispose in progress, or the instance is already disposed.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this instance is dispose in progress or already disposed; otherwise, <c>false</c>.
+    /// </value>
+    bool IsDisposeInProgress { get; }
 
-		/// <summary>
-		/// Sets the flag that dispose is in progress for this node and all child nodes recursively.
-		/// </summary>
-		void SetDisposeInProgress();
-	}
+    /// <summary>
+    /// Sets the flag that dispose is in progress for this node and all child nodes recursively.
+    /// </summary>
+    void SetDisposeInProgress();
+  }
 
-	/// <summary>
-	/// Provides the document hierarchy by getting the parent node. The document node is required to have a name, thus it also implements <see cref="INamedObject"/>.
-	/// </summary>
-	public interface IDocumentNode : IDocumentLeafNode, IChildChangedEventSink, INamedObjectCollection
-	{
-	}
+  /// <summary>
+  /// Provides the document hierarchy by getting the parent node. The document node is required to have a name, thus it also implements <see cref="INamedObject"/>.
+  /// </summary>
+  public interface IDocumentNode : IDocumentLeafNode, IChildChangedEventSink, INamedObjectCollection
+  {
+  }
 
-	[Flags]
-	public enum DisposeState
-	{
-		NotDisposed = 0,
-		DisposeInProgress = 1,
-		Disposed = 2
-	}
+  [Flags]
+  public enum DisposeState
+  {
+    NotDisposed = 0,
+    DisposeInProgress = 1,
+    Disposed = 2
+  }
 }

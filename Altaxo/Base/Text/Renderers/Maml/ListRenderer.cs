@@ -27,34 +27,34 @@ using System.Collections.Generic;
 
 namespace Altaxo.Text.Renderers.Maml
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="ListBlock"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class ListRenderer : MamlObjectRenderer<ListBlock>
-	{
-		protected override void Write(MamlRenderer renderer, ListBlock listBlock)
-		{
-			renderer.EnsureLine();
+  /// <summary>
+  /// Maml renderer for a <see cref="ListBlock"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class ListRenderer : MamlObjectRenderer<ListBlock>
+  {
+    protected override void Write(MamlRenderer renderer, ListBlock listBlock)
+    {
+      renderer.EnsureLine();
 
-			if (listBlock.IsOrdered)
-			{
-				renderer.Push(MamlElements.list, new Dictionary<string, string> { ["class"] = "ordered" });
-			}
-			else
-			{
-				renderer.Push(MamlElements.list, new Dictionary<string, string> { ["class"] = "bullet" });
-			}
-			foreach (var item in listBlock)
-			{
-				var listItem = (ListItemBlock)item;
+      if (listBlock.IsOrdered)
+      {
+        renderer.Push(MamlElements.list, new Dictionary<string, string> { ["class"] = "ordered" });
+      }
+      else
+      {
+        renderer.Push(MamlElements.list, new Dictionary<string, string> { ["class"] = "bullet" });
+      }
+      foreach (var item in listBlock)
+      {
+        var listItem = (ListItemBlock)item;
 
-				renderer.EnsureLine();
-				renderer.Push(MamlElements.listItem);
-				renderer.WriteChildren(listItem);
-				renderer.PopTo(MamlElements.listItem);
-			}
-			renderer.PopTo(MamlElements.list);
-		}
-	}
+        renderer.EnsureLine();
+        renderer.Push(MamlElements.listItem);
+        renderer.WriteChildren(listItem);
+        renderer.PopTo(MamlElements.listItem);
+      }
+      renderer.PopTo(MamlElements.list);
+    }
+  }
 }

@@ -34,66 +34,66 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class Square : ClosedSymbolBase
-	{
-		private const double Sqrt1By2 = 0.70710678118654752440084436210485;
+  public class Square : ClosedSymbolBase
+  {
+    private const double Sqrt1By2 = 0.70710678118654752440084436210485;
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Square), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Square), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 
-				SerializeSetV0((IScatterSymbol)obj, info);
-			}
+        SerializeSetV0((IScatterSymbol)obj, info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (Square)o ?? new Square();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (Square)o ?? new Square();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
-				return DeserializeSetV0(s, info, parent);
-			}
-		}
+        return DeserializeSetV0(s, info, parent);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public Square()
-		{
-		}
+    public Square()
+    {
+    }
 
-		public Square(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
-			: base(fillColor, isFillColorInfluencedByPlotColor)
-		{
-		}
+    public Square(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
+      : base(fillColor, isFillColorInfluencedByPlotColor)
+    {
+    }
 
-		public IEnumerable<PointD2D> GetPolygon()
-		{
-			yield return new PointD2D(-Sqrt1By2, -Sqrt1By2);
-			yield return new PointD2D(Sqrt1By2, -Sqrt1By2);
-			yield return new PointD2D(Sqrt1By2, Sqrt1By2);
-			yield return new PointD2D(-Sqrt1By2, Sqrt1By2);
-		}
+    public IEnumerable<PointD2D> GetPolygon()
+    {
+      yield return new PointD2D(-Sqrt1By2, -Sqrt1By2);
+      yield return new PointD2D(Sqrt1By2, -Sqrt1By2);
+      yield return new PointD2D(Sqrt1By2, Sqrt1By2);
+      yield return new PointD2D(-Sqrt1By2, Sqrt1By2);
+    }
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
-		{
-			int w = (int)(ClipperScalingInt * Sqrt1By2);
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
+    {
+      int w = (int)(ClipperScalingInt * Sqrt1By2);
 
-			return new List<List<ClipperLib.IntPoint>>(1)
-			{
-			new List<ClipperLib.IntPoint>(4)
-			{
-			new ClipperLib.IntPoint(-w, -w),
-			new ClipperLib.IntPoint(w, -w),
-			new ClipperLib.IntPoint(w, w),
-			new ClipperLib.IntPoint(-w, w)
-			}};
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1)
+      {
+      new List<ClipperLib.IntPoint>(4)
+      {
+      new ClipperLib.IntPoint(-w, -w),
+      new ClipperLib.IntPoint(w, -w),
+      new ClipperLib.IntPoint(w, w),
+      new ClipperLib.IntPoint(-w, w)
+      }};
+    }
+  }
 }

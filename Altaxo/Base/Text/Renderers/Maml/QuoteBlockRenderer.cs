@@ -26,19 +26,19 @@ using Markdig.Syntax;
 
 namespace Altaxo.Text.Renderers.Maml
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="QuoteBlock"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class QuoteBlockRenderer : MamlObjectRenderer<QuoteBlock>
-	{
-		protected override void Write(MamlRenderer renderer, QuoteBlock obj)
-		{
-			renderer.EnsureLine();
+  /// <summary>
+  /// Maml renderer for a <see cref="QuoteBlock"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class QuoteBlockRenderer : MamlObjectRenderer<QuoteBlock>
+  {
+    protected override void Write(MamlRenderer renderer, QuoteBlock obj)
+    {
+      renderer.EnsureLine();
 
-			renderer.Push(MamlElements.quote);
-			renderer.WriteChildren(obj);
-			renderer.PopTo(MamlElements.quote);
-		}
-	}
+      renderer.Push(MamlElements.quote);
+      renderer.WriteChildren(obj);
+      renderer.PopTo(MamlElements.quote);
+    }
+  }
 }

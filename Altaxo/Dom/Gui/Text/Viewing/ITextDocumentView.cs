@@ -32,88 +32,88 @@ using Altaxo.Text.GuiModels;
 
 namespace Altaxo.Gui.Text.Viewing
 {
-	public interface ITextDocumentView
-	{
-		ITextDocumentController Controller { set; }
+  public interface ITextDocumentView
+  {
+    ITextDocumentController Controller { set; }
 
-		/// <summary>
-		/// Flag that is set if the view is in initialization mode. If in initialization mode, it should not fire events etc, not render the document.
-		/// </summary>
-		bool IsInInitializationMode { set; }
+    /// <summary>
+    /// Flag that is set if the view is in initialization mode. If in initialization mode, it should not fire events etc, not render the document.
+    /// </summary>
+    bool IsInInitializationMode { set; }
 
-		/// <summary>
-		/// Sets the name of the document, and the local images. This function must be called every time the document name has changed.
-		/// </summary>
-		/// <param name="documentName">The full name of the document.</param>
-		/// <param name="localImages">The dictionary of local images.</param>
-		void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages);
+    /// <summary>
+    /// Sets the name of the document, and the local images. This function must be called every time the document name has changed.
+    /// </summary>
+    /// <param name="documentName">The full name of the document.</param>
+    /// <param name="localImages">The dictionary of local images.</param>
+    void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages);
 
-		string SourceText { get; set; }
+    string SourceText { get; set; }
 
-		event EventHandler SourceTextChanged;
+    event EventHandler SourceTextChanged;
 
-		string StyleName { set; }
-		bool IsViewerSelected { get; set; }
-		ViewerConfiguration WindowConfiguration { get; set; }
-		double FractionOfEditorWindow { get; set; }
+    string StyleName { set; }
+    bool IsViewerSelected { get; set; }
+    ViewerConfiguration WindowConfiguration { get; set; }
+    double FractionOfEditorWindow { get; set; }
 
-		bool IsLineNumberingEnabled { set; }
-		bool IsWordWrappingEnabled { set; }
-		bool IsSpellCheckingEnabled { set; }
-		bool IsHyphenationEnabled { set; }
-		bool IsFoldingEnabled { set; }
-		string HighlightingStyle { set; }
+    bool IsLineNumberingEnabled { set; }
+    bool IsWordWrappingEnabled { set; }
+    bool IsSpellCheckingEnabled { set; }
+    bool IsHyphenationEnabled { set; }
+    bool IsFoldingEnabled { set; }
+    string HighlightingStyle { set; }
 
-		/// <summary>
-		/// Sets the culture for this document. This is important for instance for spell checking.
-		/// </summary>
-		CultureInfo DocumentCulture { set; }
+    /// <summary>
+    /// Sets the culture for this document. This is important for instance for spell checking.
+    /// </summary>
+    CultureInfo DocumentCulture { set; }
 
-		void PrintShowDialog();
+    void PrintShowDialog();
 
-		/// <summary>
-		/// Inserts the provided markdown source text at the current caret position.
-		/// </summary>
-		/// <param name="text">The text to insert.</param>
-		void InsertSourceTextAtCaretPosition(string text);
-	}
+    /// <summary>
+    /// Inserts the provided markdown source text at the current caret position.
+    /// </summary>
+    /// <param name="text">The text to insert.</param>
+    void InsertSourceTextAtCaretPosition(string text);
+  }
 
-	public interface ITextDocumentController
-	{
-		string InsertImageInDocumentAndGetUrl(string fileName);
+  public interface ITextDocumentController
+  {
+    string InsertImageInDocumentAndGetUrl(string fileName);
 
-		string InsertImageInDocumentAndGetUrl(System.IO.Stream memoryStream, string fileExtension);
+    string InsertImageInDocumentAndGetUrl(System.IO.Stream memoryStream, string fileExtension);
 
-		/// <summary>
-		/// Tests if the provided file name could be accepted as an image.
-		/// </summary>
-		/// <param name="fileName">Name of the file.</param>
-		/// <returns>True if the name could be accepted; false otherwise.</returns>
-		bool CanAcceptImageFileName(string fileName);
+    /// <summary>
+    /// Tests if the provided file name could be accepted as an image.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    /// <returns>True if the name could be accepted; false otherwise.</returns>
+    bool CanAcceptImageFileName(string fileName);
 
-		void EhIsViewerSelectedChanged(bool isViewerSelected);
+    void EhIsViewerSelectedChanged(bool isViewerSelected);
 
-		void EhViewerConfigurationChanged(ViewerConfiguration windowConfiguration);
+    void EhViewerConfigurationChanged(ViewerConfiguration windowConfiguration);
 
-		void EhFractionOfEditorWindowChanged(double fractionOfEditor);
+    void EhFractionOfEditorWindowChanged(double fractionOfEditor);
 
-		void EhReferencedImageUrlsChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedLocalImages);
+    void EhReferencedImageUrlsChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedLocalImages);
 
-		void EhBeforeCompleteRendering();
+    void EhBeforeCompleteRendering();
 
-		/// <summary>
-		/// Determines whether this controller can accept the current data of the clipboard. If the return value is true,
-		/// the controller is used to paste the clipboard data (via <see cref="Paste"/>; otherwise, pasting is delegated further down to the source editor.
-		/// </summary>
-		/// <returns>
-		///   <c>true</c> if this instance can accept the current data of the clipboard; otherwise, <c>false</c>.
-		/// </returns>
-		bool CanPaste();
+    /// <summary>
+    /// Determines whether this controller can accept the current data of the clipboard. If the return value is true,
+    /// the controller is used to paste the clipboard data (via <see cref="Paste"/>; otherwise, pasting is delegated further down to the source editor.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if this instance can accept the current data of the clipboard; otherwise, <c>false</c>.
+    /// </returns>
+    bool CanPaste();
 
-		/// <summary>
-		/// Pastes data from the clipboard in the document managed by this controller.
-		/// </summary>
-		/// <returns>True if pasting clipboard data was successfull; otherwise, <c>false</c>.</returns>
-		bool Paste();
-	}
+    /// <summary>
+    /// Pastes data from the clipboard in the document managed by this controller.
+    /// </summary>
+    /// <returns>True if pasting clipboard data was successfull; otherwise, <c>false</c>.</returns>
+    bool Paste();
+  }
 }

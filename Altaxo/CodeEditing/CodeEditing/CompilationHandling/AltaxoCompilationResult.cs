@@ -32,37 +32,37 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.CompilationHandling
 {
-	/// <summary>
-	/// A class that bundles code with compiled assembly, without having any public functions depending on Roslyn.
-	/// </summary>
-	public class AltaxoCompilationResultWithAssembly
-	{
-		public Assembly CompiledAssembly { get; private set; }
+  /// <summary>
+  /// A class that bundles code with compiled assembly, without having any public functions depending on Roslyn.
+  /// </summary>
+  public class AltaxoCompilationResultWithAssembly
+  {
+    public Assembly CompiledAssembly { get; private set; }
 
-		public ImmutableArray<string> CodeText { get; private set; }
+    public ImmutableArray<string> CodeText { get; private set; }
 
-		public ImmutableArray<AltaxoDiagnostic> Diagnostics { get; private set; }
+    public ImmutableArray<AltaxoDiagnostic> Diagnostics { get; private set; }
 
-		public AltaxoCompilationResultWithAssembly(IEnumerable<string> code, Assembly compiledAssembly, DiagnosticBag diagnosticBag)
-		{
-			CodeText = code.ToImmutableArray();
-			CompiledAssembly = compiledAssembly;
-			Diagnostics = diagnosticBag.AsEnumerable().Select(diagnosticItem => new AltaxoDiagnostic(diagnosticItem)).ToImmutableArray();
-		}
-	}
+    public AltaxoCompilationResultWithAssembly(IEnumerable<string> code, Assembly compiledAssembly, DiagnosticBag diagnosticBag)
+    {
+      CodeText = code.ToImmutableArray();
+      CompiledAssembly = compiledAssembly;
+      Diagnostics = diagnosticBag.AsEnumerable().Select(diagnosticItem => new AltaxoDiagnostic(diagnosticItem)).ToImmutableArray();
+    }
+  }
 
-	/// <summary>
-	/// A class that bundles code with a compiled type. The type can be used to access the compiled assembly.
-	/// </summary>
-	public class AltaxoCompilationResultWithType
-	{
-		private string[] _codeText;
-		private Type _compiledType;
+  /// <summary>
+  /// A class that bundles code with a compiled type. The type can be used to access the compiled assembly.
+  /// </summary>
+  public class AltaxoCompilationResultWithType
+  {
+    private string[] _codeText;
+    private Type _compiledType;
 
-		public AltaxoCompilationResultWithType(IEnumerable<string> code, Type compiledType)
-		{
-			_codeText = code.ToArray();
-			_compiledType = compiledType;
-		}
-	}
+    public AltaxoCompilationResultWithType(IEnumerable<string> code, Type compiledType)
+    {
+      _codeText = code.ToArray();
+      _compiledType = compiledType;
+    }
+  }
 }

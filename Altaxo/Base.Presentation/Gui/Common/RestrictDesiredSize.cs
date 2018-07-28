@@ -22,58 +22,58 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Cancels the desired size of the child elements. Use this control around scrolling containers (e.g. ListBox) used
-	/// inside auto-scroll contexts.
-	/// </summary>
-	public class RestrictDesiredSize : Decorator
-	{
-		public static readonly DependencyProperty RestrictWidthProperty =
-			DependencyProperty.Register("RestrictWidth", typeof(bool), typeof(RestrictDesiredSize),
-																	new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
+  /// <summary>
+  /// Cancels the desired size of the child elements. Use this control around scrolling containers (e.g. ListBox) used
+  /// inside auto-scroll contexts.
+  /// </summary>
+  public class RestrictDesiredSize : Decorator
+  {
+    public static readonly DependencyProperty RestrictWidthProperty =
+      DependencyProperty.Register("RestrictWidth", typeof(bool), typeof(RestrictDesiredSize),
+                                  new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
 
-		public bool RestrictWidth
-		{
-			get { return (bool)GetValue(RestrictWidthProperty); }
-			set { SetValue(RestrictWidthProperty, value); }
-		}
+    public bool RestrictWidth
+    {
+      get { return (bool)GetValue(RestrictWidthProperty); }
+      set { SetValue(RestrictWidthProperty, value); }
+    }
 
-		public static readonly DependencyProperty RestrictHeightProperty =
-			DependencyProperty.Register("RestrictHeight", typeof(bool), typeof(RestrictDesiredSize),
-																	new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
+    public static readonly DependencyProperty RestrictHeightProperty =
+      DependencyProperty.Register("RestrictHeight", typeof(bool), typeof(RestrictDesiredSize),
+                                  new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
 
-		public bool RestrictHeight
-		{
-			get { return (bool)GetValue(RestrictHeightProperty); }
-			set { SetValue(RestrictHeightProperty, value); }
-		}
+    public bool RestrictHeight
+    {
+      get { return (bool)GetValue(RestrictHeightProperty); }
+      set { SetValue(RestrictHeightProperty, value); }
+    }
 
-		private Size lastArrangeSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
-		private Size lastMeasureSize = new Size(double.NaN, double.NaN);
+    private Size lastArrangeSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
+    private Size lastMeasureSize = new Size(double.NaN, double.NaN);
 
-		protected override Size MeasureOverride(Size constraint)
-		{
-			if (RestrictWidth && RestrictHeight)
-				return new Size(0, 0);
+    protected override Size MeasureOverride(Size constraint)
+    {
+      if (RestrictWidth && RestrictHeight)
+        return new Size(0, 0);
 
-			if (RestrictWidth && constraint.Width > lastArrangeSize.Width)
-				constraint.Width = lastArrangeSize.Width;
-			if (RestrictHeight && constraint.Height > lastArrangeSize.Height)
-				constraint.Height = lastArrangeSize.Height;
-			lastMeasureSize = constraint;
-			Size baseSize = base.MeasureOverride(constraint);
-			return new Size(RestrictWidth ? 0 : baseSize.Width, RestrictHeight ? 0 : baseSize.Height);
-		}
+      if (RestrictWidth && constraint.Width > lastArrangeSize.Width)
+        constraint.Width = lastArrangeSize.Width;
+      if (RestrictHeight && constraint.Height > lastArrangeSize.Height)
+        constraint.Height = lastArrangeSize.Height;
+      lastMeasureSize = constraint;
+      Size baseSize = base.MeasureOverride(constraint);
+      return new Size(RestrictWidth ? 0 : baseSize.Width, RestrictHeight ? 0 : baseSize.Height);
+    }
 
-		protected override Size ArrangeOverride(Size arrangeSize)
-		{
-			if (lastMeasureSize != arrangeSize)
-			{
-				lastMeasureSize = arrangeSize;
-				base.MeasureOverride(arrangeSize);
-			}
-			lastArrangeSize = arrangeSize;
-			return base.ArrangeOverride(arrangeSize);
-		}
-	}
+    protected override Size ArrangeOverride(Size arrangeSize)
+    {
+      if (lastMeasureSize != arrangeSize)
+      {
+        lastMeasureSize = arrangeSize;
+        base.MeasureOverride(arrangeSize);
+      }
+      lastArrangeSize = arrangeSize;
+      return base.ArrangeOverride(arrangeSize);
+    }
+  }
 }

@@ -31,76 +31,76 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
-	public class DateTimeConverter : ValidationRule, IValueConverter
-	{
-		private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
+  public class DateTimeConverter : ValidationRule, IValueConverter
+  {
+    private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 
-		private string _lastConvertedString;
-		private DateTime? _lastConvertedValue;
+    private string _lastConvertedString;
+    private DateTime? _lastConvertedValue;
 
-		public DateTimeConverter()
-		{
-		}
+    public DateTimeConverter()
+    {
+    }
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
-		{
-			var val = (DateTime)value;
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
+    {
+      var val = (DateTime)value;
 
-			if (null != _lastConvertedString && val == _lastConvertedValue)
-			{
-				return _lastConvertedString;
-			}
+      if (null != _lastConvertedString && val == _lastConvertedValue)
+      {
+        return _lastConvertedString;
+      }
 
-			_lastConvertedValue = val;
-			_lastConvertedString = val.ToString(_conversionCulture);
-			return _lastConvertedString;
-		}
+      _lastConvertedValue = val;
+      _lastConvertedString = val.ToString(_conversionCulture);
+      return _lastConvertedString;
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
-		{
-			DateTime result;
-			var validationResult = ConvertAndValidate(value, out result);
-			if (validationResult.IsValid)
-			{
-				_lastConvertedString = (string)value;
-				_lastConvertedValue = result;
-			}
-			return result;
-		}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
+    {
+      DateTime result;
+      var validationResult = ConvertAndValidate(value, out result);
+      if (validationResult.IsValid)
+      {
+        _lastConvertedString = (string)value;
+        _lastConvertedValue = result;
+      }
+      return result;
+    }
 
-		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
-		{
-			DateTime result;
-			var validationResult = ConvertAndValidate(value, out result);
-			if (validationResult.IsValid)
-			{
-				_lastConvertedString = (string)value;
-				_lastConvertedValue = result;
-			}
-			return validationResult;
-		}
+    public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
+    {
+      DateTime result;
+      var validationResult = ConvertAndValidate(value, out result);
+      if (validationResult.IsValid)
+      {
+        _lastConvertedString = (string)value;
+        _lastConvertedValue = result;
+      }
+      return validationResult;
+    }
 
-		private ValidationResult ConvertAndValidate(object value, out DateTime result)
-		{
-			var s = (string)value;
+    private ValidationResult ConvertAndValidate(object value, out DateTime result)
+    {
+      var s = (string)value;
 
-			if (null != _lastConvertedValue && s == _lastConvertedString)
-			{
-				result = (DateTime)_lastConvertedValue;
-				return ValidateSuccessfullyConvertedValue(result);
-			}
+      if (null != _lastConvertedValue && s == _lastConvertedString)
+      {
+        result = (DateTime)_lastConvertedValue;
+        return ValidateSuccessfullyConvertedValue(result);
+      }
 
-			if (DateTime.TryParse(s, _conversionCulture, System.Globalization.DateTimeStyles.AssumeLocal, out result))
-			{
-				return ValidateSuccessfullyConvertedValue(result);
-			}
+      if (DateTime.TryParse(s, _conversionCulture, System.Globalization.DateTimeStyles.AssumeLocal, out result))
+      {
+        return ValidateSuccessfullyConvertedValue(result);
+      }
 
-			return new ValidationResult(false, "String could not be converted to a DateTime");
-		}
+      return new ValidationResult(false, "String could not be converted to a DateTime");
+    }
 
-		private ValidationResult ValidateSuccessfullyConvertedValue(DateTime result)
-		{
-			return ValidationResult.ValidResult;
-		}
-	}
+    private ValidationResult ValidateSuccessfullyConvertedValue(DateTime result)
+    {
+      return ValidationResult.ValidResult;
+    }
+  }
 }

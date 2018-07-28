@@ -33,84 +33,84 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
-	public class ScatterSymbolListManager : StyleListManagerBaseForClasses<ScatterSymbolList, IScatterSymbol, StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>>
-	{
-		public static readonly Main.Properties.PropertyKey<ScatterSymbolListBag> PropertyKeyUserDefinedScatterSymbolLists;
+  public class ScatterSymbolListManager : StyleListManagerBaseForClasses<ScatterSymbolList, IScatterSymbol, StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>>
+  {
+    public static readonly Main.Properties.PropertyKey<ScatterSymbolListBag> PropertyKeyUserDefinedScatterSymbolLists;
 
-		private static ScatterSymbolListManager _instance;
+    private static ScatterSymbolListManager _instance;
 
-		static ScatterSymbolListManager()
-		{
-			PropertyKeyUserDefinedScatterSymbolLists =
-				new Main.Properties.PropertyKey<ScatterSymbolListBag>(
-				"28A88605-7595-4107-BA5A-E732C7D3819C",
-				"Graph3D\\UserDefinedScatterSymbolLists",
-				Main.Properties.PropertyLevel.Application,
-				() => new ScatterSymbolListBag(Enumerable.Empty<ScatterSymbolList>()));
+    static ScatterSymbolListManager()
+    {
+      PropertyKeyUserDefinedScatterSymbolLists =
+        new Main.Properties.PropertyKey<ScatterSymbolListBag>(
+        "28A88605-7595-4107-BA5A-E732C7D3819C",
+        "Graph3D\\UserDefinedScatterSymbolLists",
+        Main.Properties.PropertyLevel.Application,
+        () => new ScatterSymbolListBag(Enumerable.Empty<ScatterSymbolList>()));
 
-			Instance = new ScatterSymbolListManager();
-		}
+      Instance = new ScatterSymbolListManager();
+    }
 
-		protected ScatterSymbolListManager()
-			: base(
-					(list, level) => new StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>(list, level),
-					new ScatterSymbolList("BuiltinDefault", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Cube(),
-					new Styles.ScatterSymbols.Sphere(),
-					new Styles.ScatterSymbols.TetrahedronUp(),
-					new Styles.ScatterSymbols.TetrahedronDown()
-			})
-					)
+    protected ScatterSymbolListManager()
+      : base(
+          (list, level) => new StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>(list, level),
+          new ScatterSymbolList("BuiltinDefault", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Cube(),
+          new Styles.ScatterSymbols.Sphere(),
+          new Styles.ScatterSymbols.TetrahedronUp(),
+          new Styles.ScatterSymbols.TetrahedronDown()
+      })
+          )
 
-		{
-			ScatterSymbolListBag userStyleLists;
-			Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out userStyleLists);
-			if (null != userStyleLists)
-			{
-				ScatterSymbolList dummy;
-				foreach (var list in userStyleLists.StyleLists)
-				{
-					InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
-				}
-			}
+    {
+      ScatterSymbolListBag userStyleLists;
+      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out userStyleLists);
+      if (null != userStyleLists)
+      {
+        ScatterSymbolList dummy;
+        foreach (var list in userStyleLists.StyleLists)
+        {
+          InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
+        }
+      }
 
-			RebuildListEntryToListDictionary();
-		}
+      RebuildListEntryToListDictionary();
+    }
 
-		public static ScatterSymbolListManager Instance
-		{
-			get
-			{
-				return _instance;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
+    public static ScatterSymbolListManager Instance
+    {
+      get
+      {
+        return _instance;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException(nameof(value));
 
-				if (null != _instance)
-					Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
+        if (null != _instance)
+          Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
 
-				_instance = value;
+        _instance = value;
 
-				if (null != _instance)
-					Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
-			}
-		}
+        if (null != _instance)
+          Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
+      }
+    }
 
-		public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols)
-		{
-			return new ScatterSymbolList(name, symbols);
-		}
+    public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols)
+    {
+      return new ScatterSymbolList(name, symbols);
+    }
 
-		#region User defined lists
+    #region User defined lists
 
-		protected override void OnUserDefinedListAddedChangedRemoved(ScatterSymbolList list)
-		{
-			var listBag = new ScatterSymbolListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
-			Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedScatterSymbolLists, listBag);
-		}
+    protected override void OnUserDefinedListAddedChangedRemoved(ScatterSymbolList list)
+    {
+      var listBag = new ScatterSymbolListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
+      Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedScatterSymbolLists, listBag);
+    }
 
-		#endregion User defined lists
-	}
+    #endregion User defined lists
+  }
 }

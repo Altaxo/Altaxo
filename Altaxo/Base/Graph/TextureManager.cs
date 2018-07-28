@@ -28,95 +28,95 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-	/// <summary>
-	/// This class collects images (for use as textures) together with a unique name
-	/// </summary>
-	public class TextureManager : IEnumerable<KeyValuePair<string, ImageProxy>>
-	{
-		private static TextureManager _builtinTextures = new TextureManager();
-		private static TextureManager _userTextures = new TextureManager();
-		private Dictionary<string, ImageProxy> _texturesByHash = new Dictionary<string, ImageProxy>();
+  /// <summary>
+  /// This class collects images (for use as textures) together with a unique name
+  /// </summary>
+  public class TextureManager : IEnumerable<KeyValuePair<string, ImageProxy>>
+  {
+    private static TextureManager _builtinTextures = new TextureManager();
+    private static TextureManager _userTextures = new TextureManager();
+    private Dictionary<string, ImageProxy> _texturesByHash = new Dictionary<string, ImageProxy>();
 
-		/// <summary>
-		/// Returns a texture manager with the builtin textures. These textures are
-		/// common to all installations.
-		/// </summary>
-		public static TextureManager BuiltinTextures
-		{
-			get
-			{
-				return _builtinTextures;
-			}
-		}
+    /// <summary>
+    /// Returns a texture manager with the builtin textures. These textures are
+    /// common to all installations.
+    /// </summary>
+    public static TextureManager BuiltinTextures
+    {
+      get
+      {
+        return _builtinTextures;
+      }
+    }
 
-		/// <summary>
-		/// Returns a texture manager with the builtin textures. These textures are
-		/// common to all installations.
-		/// </summary>
-		public static TextureManager UserTextures
-		{
-			get
-			{
-				return _userTextures;
-			}
-		}
+    /// <summary>
+    /// Returns a texture manager with the builtin textures. These textures are
+    /// common to all installations.
+    /// </summary>
+    public static TextureManager UserTextures
+    {
+      get
+      {
+        return _userTextures;
+      }
+    }
 
-		private TextureManager()
-		{
-		}
+    private TextureManager()
+    {
+    }
 
-		public void Add(ImageProxy texture)
-		{
-			var hash = texture.ContentHash;
-			if (!_texturesByHash.ContainsKey(hash))
-				_texturesByHash.Add(hash, texture);
-		}
+    public void Add(ImageProxy texture)
+    {
+      var hash = texture.ContentHash;
+      if (!_texturesByHash.ContainsKey(hash))
+        _texturesByHash.Add(hash, texture);
+    }
 
-		public ImageProxy this[string hash]
-		{
-			get
-			{
-				return _texturesByHash[hash];
-			}
-		}
+    public ImageProxy this[string hash]
+    {
+      get
+      {
+        return _texturesByHash[hash];
+      }
+    }
 
-		public bool Contains(string hash)
-		{
-			return _texturesByHash.ContainsKey(hash);
-		}
+    public bool Contains(string hash)
+    {
+      return _texturesByHash.ContainsKey(hash);
+    }
 
-		#region IEnumerable<KeyValuePair<string,ImageProxy>> Members
+    #region IEnumerable<KeyValuePair<string,ImageProxy>> Members
 
-		public IEnumerator<KeyValuePair<string, ImageProxy>> GetEnumerator()
-		{
-			List<KeyValuePair<string, ImageProxy>> dict = new List<KeyValuePair<string, ImageProxy>>();
-			foreach (ImageProxy p in _texturesByHash.Values)
-				dict.Add(new KeyValuePair<string, ImageProxy>(p.Name, p));
-			dict.Sort(new KVComparer());
-			return dict.GetEnumerator();
-		}
+    public IEnumerator<KeyValuePair<string, ImageProxy>> GetEnumerator()
+    {
+      List<KeyValuePair<string, ImageProxy>> dict = new List<KeyValuePair<string, ImageProxy>>();
+      foreach (ImageProxy p in _texturesByHash.Values)
+        dict.Add(new KeyValuePair<string, ImageProxy>(p.Name, p));
+      dict.Sort(new KVComparer());
+      return dict.GetEnumerator();
+    }
 
-		private class KVComparer : IComparer<KeyValuePair<string, ImageProxy>>
-		{
-			#region IComparer<KeyValuePair<string,ImageProxy>> Members
+    private class KVComparer : IComparer<KeyValuePair<string, ImageProxy>>
+    {
+      #region IComparer<KeyValuePair<string,ImageProxy>> Members
 
-			public int Compare(KeyValuePair<string, ImageProxy> x, KeyValuePair<string, ImageProxy> y)
-			{
-				return string.Compare(x.Key, y.Key);
-			}
+      public int Compare(KeyValuePair<string, ImageProxy> x, KeyValuePair<string, ImageProxy> y)
+      {
+        return string.Compare(x.Key, y.Key);
+      }
 
-			#endregion IComparer<KeyValuePair<string,ImageProxy>> Members
-		}
+      #endregion IComparer<KeyValuePair<string,ImageProxy>> Members
+    }
 
-		#endregion IEnumerable<KeyValuePair<string,ImageProxy>> Members
+    #endregion IEnumerable<KeyValuePair<string,ImageProxy>> Members
 
-		#region IEnumerable Members
+    #region IEnumerable Members
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
 
-		#endregion IEnumerable Members
-	}
+    #endregion IEnumerable Members
+  }
 }

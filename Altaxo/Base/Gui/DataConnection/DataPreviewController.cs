@@ -29,75 +29,75 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
-	public interface IDataPreviewView
-	{
-		void SetTableSource(System.Data.DataTable table);
-	}
+  public interface IDataPreviewView
+  {
+    void SetTableSource(System.Data.DataTable table);
+  }
 
-	[ExpectedTypeOfView(typeof(IDataPreviewView))]
-	public class DataPreviewController : IMVCAController
-	{
-		private IDataPreviewView _view;
-		private System.Data.DataTable dt;
+  [ExpectedTypeOfView(typeof(IDataPreviewView))]
+  public class DataPreviewController : IMVCAController
+  {
+    private IDataPreviewView _view;
+    private System.Data.DataTable dt;
 
-		public DataPreviewController(System.Data.DataTable dt)
-		{
-			this.dt = dt;
-			Initialize(true);
-		}
+    public DataPreviewController(System.Data.DataTable dt)
+    {
+      this.dt = dt;
+      Initialize(true);
+    }
 
-		private void Initialize(bool initData)
-		{
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				_view.SetTableSource(dt);
-			}
-		}
+    private void Initialize(bool initData)
+    {
+      if (initData)
+      {
+      }
+      if (null != _view)
+      {
+        _view.SetTableSource(dt);
+      }
+    }
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IDataPreviewView;
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        _view = value as IDataPreviewView;
+        if (null != _view)
+        {
+          Initialize(false);
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return null; }
-		}
+    public object ModelObject
+    {
+      get { return null; }
+    }
 
-		public void Dispose()
-		{
-			ViewObject = null;
-		}
+    public void Dispose()
+    {
+      ViewObject = null;
+    }
 
-		public bool Apply(bool disposeController)
-		{
-			return true;
-		}
+    public bool Apply(bool disposeController)
+    {
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-	}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
+  }
 }

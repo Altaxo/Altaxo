@@ -35,78 +35,78 @@ using System.Xml;
 
 namespace Altaxo.Text.Renderers
 {
-	public partial class MamlRenderer : TextRendererBase<MamlRenderer>
-	{
-		public string ImageTopicFileGuid { get; } = "ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027"; // Guid of image topic file is fixed
+  public partial class MamlRenderer : TextRendererBase<MamlRenderer>
+  {
+    public string ImageTopicFileGuid { get; } = "ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027"; // Guid of image topic file is fixed
 
-		/// <summary>
-		/// Writes a file which contains all referenced images in native resolution
-		/// (without using width and height attributes).
-		/// Including this file helps to ensure that all referenced images will be included into the help file.
-		/// </summary>
-		/// <returns>The guid of this .aml file.</returns>
-		public (string fullFileName, string guid) WriteImageTopicFile()
-		{
-			var fileName = AmlBaseFileName + "_Images.aml";
-			var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
-			this.Writer = tw;
+    /// <summary>
+    /// Writes a file which contains all referenced images in native resolution
+    /// (without using width and height attributes).
+    /// Including this file helps to ensure that all referenced images will be included into the help file.
+    /// </summary>
+    /// <returns>The guid of this .aml file.</returns>
+    public (string fullFileName, string guid) WriteImageTopicFile()
+    {
+      var fileName = AmlBaseFileName + "_Images.aml";
+      var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
+      this.Writer = tw;
 
-			Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", ImageTopicFileGuid), new KeyValuePair<string, string>("revisionNumber", "1") });
-			Push(MamlElements.developerConceptualDocument, new[] { new KeyValuePair<string, string>("xmlns", "http://ddue.schemas.microsoft.com/authoring/2003/5"), new KeyValuePair<string, string>("xmlns:xlink", "http://www.w3.org/1999/xlink") });
-			Push(MamlElements.introduction);
-			Write("This page contains all images used in this help file in native resolution. The ordering of the images is arbitrary.");
-			PopTo(MamlElements.introduction);
-			Push(MamlElements.section);
-			Push(MamlElements.title);
-			Write("Appendix: All images in native resolution");
-			EnsureLine();
-			PopTo(MamlElements.title);
-			Push(MamlElements.content);
-			Push(MamlElements.sections);
+      Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", ImageTopicFileGuid), new KeyValuePair<string, string>("revisionNumber", "1") });
+      Push(MamlElements.developerConceptualDocument, new[] { new KeyValuePair<string, string>("xmlns", "http://ddue.schemas.microsoft.com/authoring/2003/5"), new KeyValuePair<string, string>("xmlns:xlink", "http://www.w3.org/1999/xlink") });
+      Push(MamlElements.introduction);
+      Write("This page contains all images used in this help file in native resolution. The ordering of the images is arbitrary.");
+      PopTo(MamlElements.introduction);
+      Push(MamlElements.section);
+      Push(MamlElements.title);
+      Write("Appendix: All images in native resolution");
+      EnsureLine();
+      PopTo(MamlElements.title);
+      Push(MamlElements.content);
+      Push(MamlElements.sections);
 
-			// all links to all images here
-			foreach (var entry in OldToNewImageUris)
-			{
-				var localUrl = System.IO.Path.GetFileNameWithoutExtension(entry.Value);
+      // all links to all images here
+      foreach (var entry in OldToNewImageUris)
+      {
+        var localUrl = System.IO.Path.GetFileNameWithoutExtension(entry.Value);
 
-				Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", localUrl) });
+        Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", localUrl) });
 
-				Push(MamlElements.content);
+        Push(MamlElements.content);
 
-				Push(MamlElements.para);
+        Push(MamlElements.para);
 
-				Push(MamlElements.mediaLinkInline);
+        Push(MamlElements.mediaLinkInline);
 
-				Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
+        Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
 
-				PopTo(MamlElements.section);
-			}
+        PopTo(MamlElements.section);
+      }
 
-			// the same again for the formulas
-			foreach (var entry in _imageFileNames)
-			{
-				var localUrl = System.IO.Path.GetFileNameWithoutExtension(entry);
+      // the same again for the formulas
+      foreach (var entry in _imageFileNames)
+      {
+        var localUrl = System.IO.Path.GetFileNameWithoutExtension(entry);
 
-				Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", localUrl) });
+        Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", localUrl) });
 
-				Push(MamlElements.content);
+        Push(MamlElements.content);
 
-				Push(MamlElements.para);
+        Push(MamlElements.para);
 
-				Push(MamlElements.mediaLinkInline);
+        Push(MamlElements.mediaLinkInline);
 
-				Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
+        Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
 
-				PopTo(MamlElements.section);
-			}
+        PopTo(MamlElements.section);
+      }
 
-			PopAll();
+      PopAll();
 
-			this.Writer.Close();
-			this.Writer.Dispose();
-			this.Writer = StreamWriter.Null;
+      this.Writer.Close();
+      this.Writer.Dispose();
+      this.Writer = StreamWriter.Null;
 
-			return (fileName, ImageTopicFileGuid);
-		}
-	}
+      return (fileName, ImageTopicFileGuid);
+    }
+  }
 }

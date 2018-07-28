@@ -38,81 +38,81 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
-	/// <summary>
-	/// Interaction logic for LinearScaleRescaleConditionsControl.xaml
-	/// </summary>
-	public partial class LogarithmicScaleRescaleConditionsControl : UserControl, ILogarithmicScaleRescaleConditionsView
-	{
-		public event Action OrgValueChanged;
+  /// <summary>
+  /// Interaction logic for LinearScaleRescaleConditionsControl.xaml
+  /// </summary>
+  public partial class LogarithmicScaleRescaleConditionsControl : UserControl, ILogarithmicScaleRescaleConditionsView
+  {
+    public event Action OrgValueChanged;
 
-		public event Action EndValueChanged;
+    public event Action EndValueChanged;
 
-		public LogarithmicScaleRescaleConditionsControl()
-		{
-			InitializeComponent();
-		}
+    public LogarithmicScaleRescaleConditionsControl()
+    {
+      InitializeComponent();
+    }
 
-		private void _guiOrgValue_SelectedValueChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var ev = OrgValueChanged;
-			if (null != ev)
-				ev();
-		}
+    private void _guiOrgValue_SelectedValueChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      var ev = OrgValueChanged;
+      if (null != ev)
+        ev();
+    }
 
-		private void _guiEndValue_SelectedValueChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var ev = EndValueChanged;
-			if (null != ev)
-				ev();
-		}
+    private void _guiEndValue_SelectedValueChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      var ev = EndValueChanged;
+      if (null != ev)
+        ev();
+    }
 
-		public Collections.SelectableListNodeList OrgRescaling
-		{
-			set { GuiHelper.Initialize(_guiOrgRescaling, value); }
-		}
+    public Collections.SelectableListNodeList OrgRescaling
+    {
+      set { GuiHelper.Initialize(_guiOrgRescaling, value); }
+    }
 
-		public Collections.SelectableListNodeList EndRescaling
-		{
-			set { GuiHelper.Initialize(_guiEndRescaling, value); }
-		}
+    public Collections.SelectableListNodeList EndRescaling
+    {
+      set { GuiHelper.Initialize(_guiEndRescaling, value); }
+    }
 
-		public Collections.SelectableListNodeList OrgRelativeTo
-		{
-			set { GuiHelper.Initialize(_guiOrgRelativeTo, value); }
-		}
+    public Collections.SelectableListNodeList OrgRelativeTo
+    {
+      set { GuiHelper.Initialize(_guiOrgRelativeTo, value); }
+    }
 
-		public Collections.SelectableListNodeList EndRelativeTo
-		{
-			set { GuiHelper.Initialize(_guiEndRelativeTo, value); }
-		}
+    public Collections.SelectableListNodeList EndRelativeTo
+    {
+      set { GuiHelper.Initialize(_guiEndRelativeTo, value); }
+    }
 
-		public double OrgValue
-		{
-			get
-			{
-				return _guiOrgValue.SelectedValue;
-			}
-			set
-			{
-				_guiOrgValue.SelectedValue = value;
-			}
-		}
+    public double OrgValue
+    {
+      get
+      {
+        return _guiOrgValue.SelectedValue;
+      }
+      set
+      {
+        _guiOrgValue.SelectedValue = value;
+      }
+    }
 
-		public double EndValue
-		{
-			get
-			{
-				return _guiEndValue.SelectedValue;
-			}
-			set
-			{
-				_guiEndValue.SelectedValue = value;
-			}
-		}
+    public double EndValue
+    {
+      get
+      {
+        return _guiEndValue.SelectedValue;
+      }
+      set
+      {
+        _guiEndValue.SelectedValue = value;
+      }
+    }
 
-		private void EhComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui((ComboBox)sender);
-		}
-	}
+    private void EhComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui((ComboBox)sender);
+    }
+  }
 }

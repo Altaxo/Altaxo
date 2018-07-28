@@ -37,224 +37,224 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-	/// <summary>
-	/// Interaction logic for FitFunctionSelectionControl.xaml
-	/// </summary>
-	public partial class FitFunctionSelectionControl : UserControl, IFitFunctionSelectionView
-	{
-		public event Action<IFitFunctionInformation> SelectionChanged;
+  /// <summary>
+  /// Interaction logic for FitFunctionSelectionControl.xaml
+  /// </summary>
+  public partial class FitFunctionSelectionControl : UserControl, IFitFunctionSelectionView
+  {
+    public event Action<IFitFunctionInformation> SelectionChanged;
 
-		public event Action<IFitFunctionInformation> ItemDoubleClicked;
+    public event Action<IFitFunctionInformation> ItemDoubleClicked;
 
-		public event Action<IFitFunctionInformation> EditItem;
+    public event Action<IFitFunctionInformation> EditItem;
 
-		public event Action<IFitFunctionInformation> EditCopyOfItem;
+    public event Action<IFitFunctionInformation> EditCopyOfItem;
 
-		public event Action<IFitFunctionInformation> RemoveItem;
+    public event Action<IFitFunctionInformation> RemoveItem;
 
-		#region Node classes
+    #region Node classes
 
-		private enum RootNodeType { RootNodeBuiltin, RootNodeDocument, RootNodeUser };
+    private enum RootNodeType { RootNodeBuiltin, RootNodeDocument, RootNodeUser };
 
-		private class MyNGTreeNode : NGTreeNode
-		{
-			public MyNGTreeNode(string text)
-				: base(text)
-			{
-			}
+    private class MyNGTreeNode : NGTreeNode
+    {
+      public MyNGTreeNode(string text)
+        : base(text)
+      {
+      }
 
-			public virtual bool IsMenuRemoveEnabled { get { return false; } }
+      public virtual bool IsMenuRemoveEnabled { get { return false; } }
 
-			public virtual bool IsMenuEditEnabled { get { return false; } }
+      public virtual bool IsMenuEditEnabled { get { return false; } }
 
-			public virtual bool IsMenuEditCopyEnabled { get { return false; } }
+      public virtual bool IsMenuEditCopyEnabled { get { return false; } }
 
-			public object MySelf { get { return this; } }
-		}
+      public object MySelf { get { return this; } }
+    }
 
-		private class RootNode : MyNGTreeNode
-		{
-			public RootNodeType RootNodeType;
+    private class RootNode : MyNGTreeNode
+    {
+      public RootNodeType RootNodeType;
 
-			public string NodeType { get { return RootNodeType.ToString(); } }
+      public string NodeType { get { return RootNodeType.ToString(); } }
 
-			public RootNode(string text, RootNodeType type)
-				:
-				base(text)
-			{
-				RootNodeType = type;
-				this.Tag = type;
-			}
-		}
+      public RootNode(string text, RootNodeType type)
+        :
+        base(text)
+      {
+        RootNodeType = type;
+        this.Tag = type;
+      }
+    }
 
-		private class CategoryNode : MyNGTreeNode
-		{
-			public CategoryNode(string text)
-				: base(text)
-			{
-			}
+    private class CategoryNode : MyNGTreeNode
+    {
+      public CategoryNode(string text)
+        : base(text)
+      {
+      }
 
-			public string NodeType { get { return "CategoryNode"; } }
-		}
+      public string NodeType { get { return "CategoryNode"; } }
+    }
 
-		private class LeafNode : MyNGTreeNode
-		{
-			public LeafNode(string text)
-				: base(text)
-			{
-			}
+    private class LeafNode : MyNGTreeNode
+    {
+      public LeafNode(string text)
+        : base(text)
+      {
+      }
 
-			public virtual string NodeType { get { return "LeafNode"; } }
+      public virtual string NodeType { get { return "LeafNode"; } }
 
-			private bool _canBeRemoved;
-			private bool _canBeEdited;
-			private bool _canBeACopyEdited;
+      private bool _canBeRemoved;
+      private bool _canBeEdited;
+      private bool _canBeACopyEdited;
 
-			public override bool IsMenuEditEnabled { get { return _canBeEdited; } }
+      public override bool IsMenuEditEnabled { get { return _canBeEdited; } }
 
-			public override bool IsMenuEditCopyEnabled { get { return _canBeACopyEdited; } }
+      public override bool IsMenuEditCopyEnabled { get { return _canBeACopyEdited; } }
 
-			public override bool IsMenuRemoveEnabled { get { return _canBeRemoved; } }
+      public override bool IsMenuRemoveEnabled { get { return _canBeRemoved; } }
 
-			public void SetMenuEnabled(bool canBeEdited, bool canBeACopyEdited, bool canBeRemoved)
-			{
-				_canBeEdited = canBeEdited;
-				_canBeACopyEdited = canBeACopyEdited;
-				_canBeRemoved = canBeRemoved;
-			}
-		}
+      public void SetMenuEnabled(bool canBeEdited, bool canBeACopyEdited, bool canBeRemoved)
+      {
+        _canBeEdited = canBeEdited;
+        _canBeACopyEdited = canBeACopyEdited;
+        _canBeRemoved = canBeRemoved;
+      }
+    }
 
-		private class BuiltinLeafNode : LeafNode
-		{
-			public object FunctionType;
+    private class BuiltinLeafNode : LeafNode
+    {
+      public object FunctionType;
 
-			public override string NodeType { get { return "BuiltinLeafNode"; } }
+      public override string NodeType { get { return "BuiltinLeafNode"; } }
 
-			public BuiltinLeafNode(string text, object functionType)
-				: base(text)
-			{
-				FunctionType = functionType;
-				this.Tag = functionType;
-			}
-		}
+      public BuiltinLeafNode(string text, object functionType)
+        : base(text)
+      {
+        FunctionType = functionType;
+        this.Tag = functionType;
+      }
+    }
 
-		private class DocumentLeafNode : LeafNode
-		{
-			public Altaxo.Main.Services.IFitFunctionInformation FunctionInstance;
+    private class DocumentLeafNode : LeafNode
+    {
+      public Altaxo.Main.Services.IFitFunctionInformation FunctionInstance;
 
-			public override string NodeType { get { return "DocumentLeafNode"; } }
+      public override string NodeType { get { return "DocumentLeafNode"; } }
 
-			public DocumentLeafNode(string text, Altaxo.Main.Services.IFitFunctionInformation func)
-				: base(text)
-			{
-				FunctionInstance = func;
-				this.Tag = func;
-			}
-		}
+      public DocumentLeafNode(string text, Altaxo.Main.Services.IFitFunctionInformation func)
+        : base(text)
+      {
+        FunctionInstance = func;
+        this.Tag = func;
+      }
+    }
 
-		private class UserFileLeafNode : LeafNode
-		{
-			public Altaxo.Main.Services.FileBasedFitFunctionInformation FunctionInfo;
+    private class UserFileLeafNode : LeafNode
+    {
+      public Altaxo.Main.Services.FileBasedFitFunctionInformation FunctionInfo;
 
-			public override string NodeType { get { return "UserFileLeafNode"; } }
+      public override string NodeType { get { return "UserFileLeafNode"; } }
 
-			public UserFileLeafNode(string text, Altaxo.Main.Services.FileBasedFitFunctionInformation func)
-				: base(text)
-			{
-				FunctionInfo = func;
-				this.Tag = func;
-			}
-		}
+      public UserFileLeafNode(string text, Altaxo.Main.Services.FileBasedFitFunctionInformation func)
+        : base(text)
+      {
+        FunctionInfo = func;
+        this.Tag = func;
+      }
+    }
 
-		#endregion Node classes
+    #endregion Node classes
 
-		public FitFunctionSelectionControl()
-		{
-			InitializeComponent();
-		}
+    public FitFunctionSelectionControl()
+    {
+      InitializeComponent();
+    }
 
-		private System.Drawing.Graphics _rtfGraphics;
+    private System.Drawing.Graphics _rtfGraphics;
 
-		private void EhFitFunctions_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
-		{
-			var node = e.NewValue as NGTreeNode;
-			if (node == null)
-				return;
-			var fitInfo = node.Tag as IFitFunctionInformation;
+    private void EhFitFunctions_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+      var node = e.NewValue as NGTreeNode;
+      if (node == null)
+        return;
+      var fitInfo = node.Tag as IFitFunctionInformation;
 
-			SelectionChanged?.Invoke(fitInfo);
+      SelectionChanged?.Invoke(fitInfo);
 
-			if (fitInfo != null)
-			{
-				if (_rtfGraphics == null)
-				{
-					var bmp = new System.Drawing.Bitmap(4, 4);
-					_rtfGraphics = System.Drawing.Graphics.FromImage(bmp);
-				}
-				string rtf = Altaxo.Main.Services.RtfComposerService.GetRtfText(fitInfo.Description, _rtfGraphics, GetRtfBackgroundColor(), 12);
-				var stream = new System.IO.MemoryStream(ASCIIEncoding.Default.GetBytes(rtf));
-				this._rtfDescription.SelectAll();
-				this._rtfDescription.Selection.Load(stream, DataFormats.Rtf);
-			}
-		}
+      if (fitInfo != null)
+      {
+        if (_rtfGraphics == null)
+        {
+          var bmp = new System.Drawing.Bitmap(4, 4);
+          _rtfGraphics = System.Drawing.Graphics.FromImage(bmp);
+        }
+        string rtf = Altaxo.Main.Services.RtfComposerService.GetRtfText(fitInfo.Description, _rtfGraphics, GetRtfBackgroundColor(), 12);
+        var stream = new System.IO.MemoryStream(ASCIIEncoding.Default.GetBytes(rtf));
+        this._rtfDescription.SelectAll();
+        this._rtfDescription.Selection.Load(stream, DataFormats.Rtf);
+      }
+    }
 
-		#region IFitFunctionSelectionView
+    #region IFitFunctionSelectionView
 
-		public void SetFitFunctions(NGTreeNodeCollection list)
-		{
-			this._guiFitFunctions.ItemsSource = list;
-		}
+    public void SetFitFunctions(NGTreeNodeCollection list)
+    {
+      this._guiFitFunctions.ItemsSource = list;
+    }
 
-		public void SetRtfDocumentation(string rtfString)
-		{
-			this._rtfDescription.AppendText(rtfString);
-		}
+    public void SetRtfDocumentation(string rtfString)
+    {
+      this._rtfDescription.AppendText(rtfString);
+    }
 
-		public NamedColor GetRtfBackgroundColor()
-		{
-			var brush = _rtfDescription.Background;
-			if (brush is SolidColorBrush)
-				return new NamedColor(GuiHelper.ToAxo(((SolidColorBrush)brush).Color));
-			else
-				return NamedColors.Transparent;
-		}
+    public NamedColor GetRtfBackgroundColor()
+    {
+      var brush = _rtfDescription.Background;
+      if (brush is SolidColorBrush)
+        return new NamedColor(GuiHelper.ToAxo(((SolidColorBrush)brush).Color));
+      else
+        return NamedColors.Transparent;
+    }
 
-		#endregion IFitFunctionSelectionView
+    #endregion IFitFunctionSelectionView
 
-		private void EhRemoveItem(object sender, RoutedEventArgs e)
-		{
-			var node = ((FrameworkElement)sender).Tag as NGTreeNode;
+    private void EhRemoveItem(object sender, RoutedEventArgs e)
+    {
+      var node = ((FrameworkElement)sender).Tag as NGTreeNode;
 
-			if (node != null)
-				RemoveItem?.Invoke(node.Tag as IFitFunctionInformation);
-		}
+      if (node != null)
+        RemoveItem?.Invoke(node.Tag as IFitFunctionInformation);
+    }
 
-		private void EhEditItem(object sender, RoutedEventArgs e)
-		{
-			var node = ((FrameworkElement)sender).Tag as NGTreeNode;
-			if (node != null)
-				EditItem?.Invoke(node.Tag as IFitFunctionInformation);
-		}
+    private void EhEditItem(object sender, RoutedEventArgs e)
+    {
+      var node = ((FrameworkElement)sender).Tag as NGTreeNode;
+      if (node != null)
+        EditItem?.Invoke(node.Tag as IFitFunctionInformation);
+    }
 
-		private void EhEditCopyOfThisItem(object sender, RoutedEventArgs e)
-		{
-			var node = ((FrameworkElement)sender).Tag as NGTreeNode;
-			if (node != null)
-				EditCopyOfItem?.Invoke(node.Tag as IFitFunctionInformation);
-		}
+    private void EhEditCopyOfThisItem(object sender, RoutedEventArgs e)
+    {
+      var node = ((FrameworkElement)sender).Tag as NGTreeNode;
+      if (node != null)
+        EditCopyOfItem?.Invoke(node.Tag as IFitFunctionInformation);
+    }
 
-		private void EhMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-			var source = e.OriginalSource as DependencyObject;
-			while (null != source && !(source is TreeView))
-			{
-				if (source is FrameworkElement fwe && fwe.Tag is NGTreeNode ngtn && ngtn.Tag is IFitFunctionInformation ffinfo)
-				{
-					ItemDoubleClicked?.Invoke(ffinfo);
-					break;
-				}
-				source = VisualTreeHelper.GetParent(source);
-			}
-		}
-	}
+    private void EhMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+      var source = e.OriginalSource as DependencyObject;
+      while (null != source && !(source is TreeView))
+      {
+        if (source is FrameworkElement fwe && fwe.Tag is NGTreeNode ngtn && ngtn.Tag is IFitFunctionInformation ffinfo)
+        {
+          ItemDoubleClicked?.Invoke(ffinfo);
+          break;
+        }
+        source = VisualTreeHelper.GetParent(source);
+      }
+    }
+  }
 }

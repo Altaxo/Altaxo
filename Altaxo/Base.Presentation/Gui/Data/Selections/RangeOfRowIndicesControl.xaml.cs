@@ -38,40 +38,40 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	/// <summary>
-	/// Interaction logic for RangeOfRowsControl.xaml
-	/// </summary>
-	public partial class RangeOfRowIndicesControl : UserControl, IRangeOfRowIndicesView
-	{
-		public RangeOfRowIndicesControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for RangeOfRowsControl.xaml
+  /// </summary>
+  public partial class RangeOfRowIndicesControl : UserControl, IRangeOfRowIndicesView
+  {
+    public RangeOfRowIndicesControl()
+    {
+      InitializeComponent();
+    }
 
-		public int RangeStart
-		{
-			get
-			{
-				return _guiPlotRangeFrom.Value;
-			}
+    public int RangeStart
+    {
+      get
+      {
+        return _guiPlotRangeFrom.Value;
+      }
 
-			set
-			{
-				_guiPlotRangeFrom.Value = value;
-			}
-		}
+      set
+      {
+        _guiPlotRangeFrom.Value = value;
+      }
+    }
 
-		public int RangeEndInclusive
-		{
-			get
-			{
-				return _guiPlotRangeTo.Value;
-			}
+    public int RangeEndInclusive
+    {
+      get
+      {
+        return _guiPlotRangeTo.Value;
+      }
 
-			set
-			{
-				_guiPlotRangeTo.Value = value;
-			}
-		}
-	}
+      set
+      {
+        _guiPlotRangeTo.Value = value;
+      }
+    }
+  }
 }

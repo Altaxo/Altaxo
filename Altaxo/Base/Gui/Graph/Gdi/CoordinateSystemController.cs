@@ -32,113 +32,113 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	[UserControllerForObject(typeof(G2DCoordinateSystem))]
-	[ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
-	public class CoordinateSystemController : MVCANDControllerEditOriginalDocBase<G2DCoordinateSystem, ITypeAndInstanceView>
-	{
-		private IMVCAController _instanceController;
+  [UserControllerForObject(typeof(G2DCoordinateSystem))]
+  [ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
+  public class CoordinateSystemController : MVCANDControllerEditOriginalDocBase<G2DCoordinateSystem, ITypeAndInstanceView>
+  {
+    private IMVCAController _instanceController;
 
-		private SelectableListNodeList _choiceList;
+    private SelectableListNodeList _choiceList;
 
-		/// <summary>Holds all instantiable subtypes of G2DCoordinateSystem</summary>
-		private Type[] _cosSubTypes;
+    /// <summary>Holds all instantiable subtypes of G2DCoordinateSystem</summary>
+    private Type[] _cosSubTypes;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_instanceController, () => _instanceController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_instanceController, () => _instanceController = null);
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_choiceList = null;
-			_cosSubTypes = null;
+    public override void Dispose(bool isDisposing)
+    {
+      _choiceList = null;
+      _cosSubTypes = null;
 
-			base.Dispose(isDisposing);
-		}
+      base.Dispose(isDisposing);
+    }
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				// look for coordinate system types
-				if (null == _cosSubTypes)
-					_cosSubTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
+      if (initData)
+      {
+        // look for coordinate system types
+        if (null == _cosSubTypes)
+          _cosSubTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
 
-				if (null == _choiceList)
-					_choiceList = new SelectableListNodeList();
-				_choiceList.Clear();
-				foreach (Type t in _cosSubTypes)
-					_choiceList.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
-			}
+        if (null == _choiceList)
+          _choiceList = new SelectableListNodeList();
+        _choiceList.Clear();
+        foreach (Type t in _cosSubTypes)
+          _choiceList.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
+      }
 
-			if (_view != null)
-			{
-				// look for a controller-control
-				_view.TypeLabel = "Type:";
-				_view.InitializeTypeNames(_choiceList);
+      if (_view != null)
+      {
+        // look for a controller-control
+        _view.TypeLabel = "Type:";
+        _view.InitializeTypeNames(_choiceList);
 
-				// To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
-				_instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
-				if (_instanceController != null && (_instanceController.GetType() != this.GetType()))
-				{
-					Current.Gui.FindAndAttachControlTo(_instanceController);
-					if (_instanceController.ViewObject != null)
-						_view.SetInstanceControl(_instanceController.ViewObject);
-				}
-				else
-				{
-					_instanceController = null;
-					_view.SetInstanceControl(null);
-				}
-			}
-		}
+        // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
+        _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
+        if (_instanceController != null && (_instanceController.GetType() != this.GetType()))
+        {
+          Current.Gui.FindAndAttachControlTo(_instanceController);
+          if (_instanceController.ViewObject != null)
+            _view.SetInstanceControl(_instanceController.ViewObject);
+        }
+        else
+        {
+          _instanceController = null;
+          _view.SetInstanceControl(null);
+        }
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			bool result = _instanceController == null || _instanceController.Apply(disposeController);
-			return ApplyEnd(result, disposeController);
-		}
+    public override bool Apply(bool disposeController)
+    {
+      bool result = _instanceController == null || _instanceController.Apply(disposeController);
+      return ApplyEnd(result, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.TypeChoiceChanged += EhTypeChoiceChanged;
-		}
+    protected override void AttachView()
+    {
+      base.AttachView();
+      _view.TypeChoiceChanged += EhTypeChoiceChanged;
+    }
 
-		protected override void DetachView()
-		{
-			_view.TypeChoiceChanged -= EhTypeChoiceChanged;
-			base.DetachView();
-		}
+    protected override void DetachView()
+    {
+      _view.TypeChoiceChanged -= EhTypeChoiceChanged;
+      base.DetachView();
+    }
 
-		private void EhTypeChoiceChanged(object sender, EventArgs e)
-		{
-			var sel = _choiceList.FirstSelectedNode;
+    private void EhTypeChoiceChanged(object sender, EventArgs e)
+    {
+      var sel = _choiceList.FirstSelectedNode;
 
-			if (sel != null)
-			{
-				System.Type t = (System.Type)sel.Tag;
-				if (_doc.GetType() != t)
-				{
-					_doc = (G2DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Tag);
+      if (sel != null)
+      {
+        System.Type t = (System.Type)sel.Tag;
+        if (_doc.GetType() != t)
+        {
+          _doc = (G2DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Tag);
 
-					OnMadeDirty(); // chance for controller up in hierarchy to catch new instance
+          OnMadeDirty(); // chance for controller up in hierarchy to catch new instance
 
-					if (null != _suspendToken)
-					{
-						_suspendToken.Dispose();
-						_suspendToken = _doc.SuspendGetToken();
-					}
+          if (null != _suspendToken)
+          {
+            _suspendToken.Dispose();
+            _suspendToken = _doc.SuspendGetToken();
+          }
 
-					Initialize(true);
-				}
-			}
-		}
+          Initialize(true);
+        }
+      }
+    }
 
-		#endregion IMVCController Members
-	}
+    #endregion IMVCController Members
+  }
 }

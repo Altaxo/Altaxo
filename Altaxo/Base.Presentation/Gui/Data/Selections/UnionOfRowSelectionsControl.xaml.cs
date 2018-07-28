@@ -38,20 +38,20 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	/// <summary>
-	/// Interaction logic for IntersectionOfRowSelectionsControl.xaml
-	/// </summary>
-	public partial class UnionOfRowSelectionsControl : UserControl, IUnionOfRowSelectionView
-	{
-		public UnionOfRowSelectionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for IntersectionOfRowSelectionsControl.xaml
+  /// </summary>
+  public partial class UnionOfRowSelectionsControl : UserControl, IUnionOfRowSelectionView
+  {
+    public UnionOfRowSelectionsControl()
+    {
+      InitializeComponent();
+    }
 
-		public bool MergeAdjoiningSegments
-		{
-			get => _guiMergeAdjoiningSegments.IsChecked == true;
-			set => _guiMergeAdjoiningSegments.IsChecked = value;
-		}
-	}
+    public bool MergeAdjoiningSegments
+    {
+      get => _guiMergeAdjoiningSegments.IsChecked == true;
+      set => _guiMergeAdjoiningSegments.IsChecked = value;
+    }
+  }
 }

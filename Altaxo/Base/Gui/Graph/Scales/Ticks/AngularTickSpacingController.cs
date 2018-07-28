@@ -30,113 +30,113 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IAngularTickSpacingView
-	{
-		bool UsePositiveNegativeValues { get; set; }
+  public interface IAngularTickSpacingView
+  {
+    bool UsePositiveNegativeValues { get; set; }
 
-		SelectableListNodeList MajorTicks { set; }
+    SelectableListNodeList MajorTicks { set; }
 
-		SelectableListNodeList MinorTicks { set; }
+    SelectableListNodeList MinorTicks { set; }
 
-		event EventHandler MajorTicksChanged;
-	}
+    event EventHandler MajorTicksChanged;
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[UserControllerForObject(typeof(AngularTickSpacing), 200)]
-	[ExpectedTypeOfView(typeof(IAngularTickSpacingView))]
-	public class AngularScaleController : MVCANControllerEditOriginalDocBase<AngularTickSpacing, IAngularTickSpacingView>
-	{
-		private SelectableListNodeList _majorTickList;
-		private SelectableListNodeList _minorTickList;
-		private int _tempMajorDivider;
+  [UserControllerForObject(typeof(AngularTickSpacing), 200)]
+  [ExpectedTypeOfView(typeof(IAngularTickSpacingView))]
+  public class AngularScaleController : MVCANControllerEditOriginalDocBase<AngularTickSpacing, IAngularTickSpacingView>
+  {
+    private SelectableListNodeList _majorTickList;
+    private SelectableListNodeList _minorTickList;
+    private int _tempMajorDivider;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_majorTickList = null;
-			_minorTickList = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _majorTickList = null;
+      _minorTickList = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_tempMajorDivider = _doc.MajorTickDivider;
-				BuildMajorTickList();
-				BuildMinorTickList();
-			}
+      if (initData)
+      {
+        _tempMajorDivider = _doc.MajorTickDivider;
+        BuildMajorTickList();
+        BuildMinorTickList();
+      }
 
-			if (_view != null)
-			{
-				_view.UsePositiveNegativeValues = _doc.UseSignedValues;
-				_view.MajorTicks = _majorTickList;
-				_view.MinorTicks = _minorTickList;
-			}
-		}
+      if (_view != null)
+      {
+        _view.UsePositiveNegativeValues = _doc.UseSignedValues;
+        _view.MajorTicks = _majorTickList;
+        _view.MinorTicks = _minorTickList;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.UseSignedValues = _view.UsePositiveNegativeValues;
-			_doc.MajorTickDivider = _tempMajorDivider;
-			_doc.MinorTickDivider = (int)_minorTickList.FirstSelectedNode.Tag;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.UseSignedValues = _view.UsePositiveNegativeValues;
+      _doc.MajorTickDivider = _tempMajorDivider;
+      _doc.MinorTickDivider = (int)_minorTickList.FirstSelectedNode.Tag;
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
+    protected override void AttachView()
+    {
+      base.AttachView();
 
-			_view.MajorTicksChanged += EhMajorTicksChanged;
-		}
+      _view.MajorTicksChanged += EhMajorTicksChanged;
+    }
 
-		protected override void DetachView()
-		{
-			_view.MajorTicksChanged -= EhMajorTicksChanged;
+    protected override void DetachView()
+    {
+      _view.MajorTicksChanged -= EhMajorTicksChanged;
 
-			base.DetachView();
-		}
+      base.DetachView();
+    }
 
-		private void BuildMajorTickList()
-		{
-			int[] possibleDividers = _doc.GetPossibleDividers();
-			int selected = _tempMajorDivider;
-			_majorTickList = new SelectableListNodeList();
-			foreach (int div in possibleDividers)
-			{
-				_majorTickList.Add(new SelectableListNode((360.0 / div).ToString() + "°", div, div == selected));
-			}
-		}
+    private void BuildMajorTickList()
+    {
+      int[] possibleDividers = _doc.GetPossibleDividers();
+      int selected = _tempMajorDivider;
+      _majorTickList = new SelectableListNodeList();
+      foreach (int div in possibleDividers)
+      {
+        _majorTickList.Add(new SelectableListNode((360.0 / div).ToString() + "°", div, div == selected));
+      }
+    }
 
-		private void BuildMinorTickList()
-		{
-			int[] possibleDividers = _doc.GetPossibleDividers();
-			int selected = _doc.MinorTickDivider;
-			if (selected < _tempMajorDivider)
-				selected = _tempMajorDivider;
-			_minorTickList = new SelectableListNodeList();
-			foreach (int div in possibleDividers)
-			{
-				if (div >= _tempMajorDivider && 0 == (div % _tempMajorDivider))
-					_minorTickList.Add(new SelectableListNode((360.0 / div).ToString() + "°", div, div == selected));
-			}
-		}
+    private void BuildMinorTickList()
+    {
+      int[] possibleDividers = _doc.GetPossibleDividers();
+      int selected = _doc.MinorTickDivider;
+      if (selected < _tempMajorDivider)
+        selected = _tempMajorDivider;
+      _minorTickList = new SelectableListNodeList();
+      foreach (int div in possibleDividers)
+      {
+        if (div >= _tempMajorDivider && 0 == (div % _tempMajorDivider))
+          _minorTickList.Add(new SelectableListNode((360.0 / div).ToString() + "°", div, div == selected));
+      }
+    }
 
-		private void EhMajorTicksChanged(object sender, EventArgs e)
-		{
-			_tempMajorDivider = (int)_majorTickList.FirstSelectedNode.Tag;
-			BuildMinorTickList();
-			_view.MinorTicks = _minorTickList;
-		}
-	}
+    private void EhMajorTicksChanged(object sender, EventArgs e)
+    {
+      _tempMajorDivider = (int)_majorTickList.FirstSelectedNode.Tag;
+      BuildMinorTickList();
+      _view.MinorTicks = _minorTickList;
+    }
+  }
 }

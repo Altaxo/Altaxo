@@ -31,233 +31,233 @@ using System;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-	#region interfaces
+  #region interfaces
 
-	public interface IFitElementView
-	{
-		void Initialize(FitElement fitElement);
+  public interface IFitElementView
+  {
+    void Initialize(FitElement fitElement);
 
-		void Refresh();
+    void Refresh();
 
-		bool FitFunctionSelected { set; }
+    bool FitFunctionSelected { set; }
 
-		event Action<int> ChooseErrorFunction;
+    event Action<int> ChooseErrorFunction;
 
-		event Action ChooseFitFunction;
+    event Action ChooseFitFunction;
 
-		event Action<int> ChooseExternalParameter;
+    event Action<int> ChooseExternalParameter;
 
-		event Action SetupVariablesAndRange;
+    event Action SetupVariablesAndRange;
 
-		event Action EditFitFunction;
+    event Action EditFitFunction;
 
-		event Action DeleteThisFitElement;
-	}
+    event Action DeleteThisFitElement;
+  }
 
-	public interface IFitElementController : IMVCAController
-	{
-		event EventHandler FitFunctionSelectionChange;
+  public interface IFitElementController : IMVCAController
+  {
+    event EventHandler FitFunctionSelectionChange;
 
-		/// <summary>
-		/// Occurs when the deletion of this fit element is requested by the user.
-		/// </summary>
-		event Action<FitElement> DeletionOfThisFitElementRequested;
+    /// <summary>
+    /// Occurs when the deletion of this fit element is requested by the user.
+    /// </summary>
+    event Action<FitElement> DeletionOfThisFitElementRequested;
 
-		bool FitFunctionSelected { set; }
-	}
+    bool FitFunctionSelected { set; }
+  }
 
-	#endregion interfaces
+  #endregion interfaces
 
-	/// <summary>
-	/// Summary description for FitElementController.
-	/// </summary>
-	[UserControllerForObject(typeof(FitElement))]
-	[ExpectedTypeOfView(typeof(IFitElementView))]
-	public class FitElementController : IFitElementController
-	{
-		private IFitElementView _view;
-		private FitElement _doc;
+  /// <summary>
+  /// Summary description for FitElementController.
+  /// </summary>
+  [UserControllerForObject(typeof(FitElement))]
+  [ExpectedTypeOfView(typeof(IFitElementView))]
+  public class FitElementController : IFitElementController
+  {
+    private IFitElementView _view;
+    private FitElement _doc;
 
-		public event EventHandler FitFunctionSelectionChange;
+    public event EventHandler FitFunctionSelectionChange;
 
-		public event Action<FitElement> DeletionOfThisFitElementRequested;
+    public event Action<FitElement> DeletionOfThisFitElementRequested;
 
-		public FitElementController(FitElement doc)
-		{
-			_doc = doc;
-		}
+    public FitElementController(FitElement doc)
+    {
+      _doc = doc;
+    }
 
-		public void Initialize(bool initData)
-		{
-			if (_view != null)
-			{
-				_view.Initialize(_doc);
-			}
-		}
+    public void Initialize(bool initData)
+    {
+      if (_view != null)
+      {
+        _view.Initialize(_doc);
+      }
+    }
 
-		private void AttachView()
-		{
-			_view.ChooseErrorFunction += EhView_ChooseErrorFunction;
+    private void AttachView()
+    {
+      _view.ChooseErrorFunction += EhView_ChooseErrorFunction;
 
-			_view.ChooseFitFunction += EhView_ChooseFitFunction;
+      _view.ChooseFitFunction += EhView_ChooseFitFunction;
 
-			_view.ChooseExternalParameter += EhView_ChooseExternalParameter;
+      _view.ChooseExternalParameter += EhView_ChooseExternalParameter;
 
-			_view.SetupVariablesAndRange += EhView_SetupVariablesAndRange;
+      _view.SetupVariablesAndRange += EhView_SetupVariablesAndRange;
 
-			_view.EditFitFunction += EhView_EditFitFunction;
+      _view.EditFitFunction += EhView_EditFitFunction;
 
-			_view.DeleteThisFitElement += EhView_DeleteThisFitElement;
-		}
+      _view.DeleteThisFitElement += EhView_DeleteThisFitElement;
+    }
 
-		private void DetachView()
-		{
-			_view.ChooseErrorFunction -= EhView_ChooseErrorFunction;
+    private void DetachView()
+    {
+      _view.ChooseErrorFunction -= EhView_ChooseErrorFunction;
 
-			_view.ChooseFitFunction -= EhView_ChooseFitFunction;
+      _view.ChooseFitFunction -= EhView_ChooseFitFunction;
 
-			_view.ChooseExternalParameter -= EhView_ChooseExternalParameter;
+      _view.ChooseExternalParameter -= EhView_ChooseExternalParameter;
 
-			_view.SetupVariablesAndRange -= EhView_SetupVariablesAndRange;
+      _view.SetupVariablesAndRange -= EhView_SetupVariablesAndRange;
 
-			_view.EditFitFunction -= EhView_EditFitFunction;
+      _view.EditFitFunction -= EhView_EditFitFunction;
 
-			_view.DeleteThisFitElement -= EhView_DeleteThisFitElement;
-		}
+      _view.DeleteThisFitElement -= EhView_DeleteThisFitElement;
+    }
 
-		public bool FitFunctionSelected
-		{
-			set
-			{
-				if (null != _view)
-					_view.FitFunctionSelected = value;
-			}
-		}
+    public bool FitFunctionSelected
+    {
+      set
+      {
+        if (null != _view)
+          _view.FitFunctionSelected = value;
+      }
+    }
 
-		#region IFitElementController
+    #region IFitElementController
 
-		public void EhView_SetupVariablesAndRange()
-		{
-			var controller = new FitElementDataController();
-			controller.InitializeDocument(_doc);
+    public void EhView_SetupVariablesAndRange()
+    {
+      var controller = new FitElementDataController();
+      controller.InitializeDocument(_doc);
 
-			Current.Gui.ShowDialog(controller, "Fit element variables", true);
+      Current.Gui.ShowDialog(controller, "Fit element variables", true);
 
-			_view.Refresh();
-		}
+      _view.Refresh();
+    }
 
-		public void EhView_ChooseExternalParameter(int idx)
-		{
-			string choice = _doc.ParameterName(idx);
-			object choiceAsObject = choice;
-			if (Current.Gui.ShowDialog(ref choiceAsObject, "Edit parameter name"))
-			{
-				choice = (string)choiceAsObject;
+    public void EhView_ChooseExternalParameter(int idx)
+    {
+      string choice = _doc.ParameterName(idx);
+      object choiceAsObject = choice;
+      if (Current.Gui.ShowDialog(ref choiceAsObject, "Edit parameter name"))
+      {
+        choice = (string)choiceAsObject;
 
-				if (choice.Length > 0)
-				{
-					_doc.SetParameterName(choice, idx);
-				}
-				else
-				{
-					Current.Gui.ErrorMessageBox("Choosen parameter name was empty!");
-				}
-			}
-			_view.Refresh();
-		}
+        if (choice.Length > 0)
+        {
+          _doc.SetParameterName(choice, idx);
+        }
+        else
+        {
+          Current.Gui.ErrorMessageBox("Choosen parameter name was empty!");
+        }
+      }
+      _view.Refresh();
+    }
 
-		public void EhView_ChooseErrorFunction(int idx)
-		{
-			SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling), _doc.GetErrorEvaluation(idx));
+    public void EhView_ChooseErrorFunction(int idx)
+    {
+      SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling), _doc.GetErrorEvaluation(idx));
 
-			object choiceAsObject = choice;
-			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))
-			{
-				choice = (SingleInstanceChoice)choiceAsObject;
-				_doc.SetErrorEvaluation(idx, (IVarianceScaling)choice.Instance);
-				_view.Refresh();
-			}
-		}
+      object choiceAsObject = choice;
+      if (Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))
+      {
+        choice = (SingleInstanceChoice)choiceAsObject;
+        _doc.SetErrorEvaluation(idx, (IVarianceScaling)choice.Instance);
+        _view.Refresh();
+      }
+    }
 
-		public void EhView_EditFitFunction()
-		{
-			object fitFunc = _doc.FitFunction;
-			if (Current.Gui.ShowDialog(ref fitFunc, "Edit fit function"))
-				_doc.FitFunction = (IFitFunction)fitFunc;
-		}
+    public void EhView_EditFitFunction()
+    {
+      object fitFunc = _doc.FitFunction;
+      if (Current.Gui.ShowDialog(ref fitFunc, "Edit fit function"))
+        _doc.FitFunction = (IFitFunction)fitFunc;
+    }
 
-		private void EhView_DeleteThisFitElement()
-		{
-			DeletionOfThisFitElementRequested?.Invoke(_doc);
-		}
+    private void EhView_DeleteThisFitElement()
+    {
+      DeletionOfThisFitElementRequested?.Invoke(_doc);
+    }
 
-		public void EhView_ChooseFitFunction()
-		{
-			FitFunctionSelectionChange?.Invoke(this, EventArgs.Empty);
+    public void EhView_ChooseFitFunction()
+    {
+      FitFunctionSelectionChange?.Invoke(this, EventArgs.Empty);
 
-			_view.Refresh();
-		}
+      _view.Refresh();
+    }
 
-		#endregion IFitElementController
+    #endregion IFitElementController
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-				{
-					DetachView();
-				}
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        if (_view != null)
+        {
+          DetachView();
+        }
 
-				_view = value as IFitElementView;
+        _view = value as IFitElementView;
 
-				if (null != _view)
-				{
-					Initialize(false);
-					AttachView();
-				}
-			}
-		}
+        if (null != _view)
+        {
+          Initialize(false);
+          AttachView();
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get
-			{
-				return _doc;
-			}
-		}
+    public object ModelObject
+    {
+      get
+      {
+        return _doc;
+      }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		#endregion IMVCController Members
+    #endregion IMVCController Members
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public bool Apply(bool disposeController)
-		{
-			return true;
-		}
+    public bool Apply(bool disposeController)
+    {
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IApplyController Members
-	}
+    #endregion IApplyController Members
+  }
 }

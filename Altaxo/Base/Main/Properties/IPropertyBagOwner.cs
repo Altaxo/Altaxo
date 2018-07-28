@@ -29,25 +29,25 @@ using System.Text;
 
 namespace Altaxo.Main.Properties
 {
-	/// <summary>
-	/// Interface that objects which own a property bag have to implement.
-	/// </summary>
-	public interface IPropertyBagOwner
-	{
-		/// <summary>
-		/// Gets the property bag. If the property bag is empty or not created, it is allowed to return null.
-		/// </summary>
-		/// <value>
-		/// The property bag, or <c>null</c> if there is no property bag.
-		/// </value>
-		PropertyBag PropertyBag { get; }
+  /// <summary>
+  /// Interface that objects which own a property bag have to implement.
+  /// </summary>
+  public interface IPropertyBagOwner
+  {
+    /// <summary>
+    /// Gets the property bag. If the property bag is empty or not created, it is allowed to return null.
+    /// </summary>
+    /// <value>
+    /// The property bag, or <c>null</c> if there is no property bag.
+    /// </value>
+    PropertyBag PropertyBag { get; }
 
-		/// <summary>
-		/// Gets the property bag. If there is no property bag, a new bag is created and then returned.
-		/// </summary>
-		/// <value>
-		/// The property bag.
-		/// </value>
-		PropertyBag PropertyBagNotNull { get; }
-	}
+    /// <summary>
+    /// Gets the property bag. If there is no property bag, a new bag is created and then returned.
+    /// </summary>
+    /// <value>
+    /// The property bag.
+    /// </value>
+    PropertyBag PropertyBagNotNull { get; }
+  }
 }

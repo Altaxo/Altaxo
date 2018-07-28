@@ -29,60 +29,60 @@ using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
-	internal class Program
-	{
-		/// <summary>
-		/// Main entry point of the Altaxo auto updater program.
-		/// </summary>
-		/// <param name="args">The arguments must contain:
-		/// <para>args[0] is either 'stable' or 'unstable'</para>
-		/// <para>args[1] is the version string of the currently installed Altaxo version (e.g.: 1.2.3.4).</para>
-		/// </param>
-		private static void Main(string[] args)
-		{
-			try
-			{
-				if (args.Length != 2)
-				{
-					PrintUsage();
-					throw new ArgumentOutOfRangeException("Programm called with less than or more than 2 arguments");
-				}
+  internal class Program
+  {
+    /// <summary>
+    /// Main entry point of the Altaxo auto updater program.
+    /// </summary>
+    /// <param name="args">The arguments must contain:
+    /// <para>args[0] is either 'stable' or 'unstable'</para>
+    /// <para>args[1] is the version string of the currently installed Altaxo version (e.g.: 1.2.3.4).</para>
+    /// </param>
+    private static void Main(string[] args)
+    {
+      try
+      {
+        if (args.Length != 2)
+        {
+          PrintUsage();
+          throw new ArgumentOutOfRangeException("Programm called with less than or more than 2 arguments");
+        }
 
-				Console.WriteLine("Altaxo auto update downloader (C) D.Lellinger 2012");
-				Console.WriteLine("Configured to look for {0} versions; current Altaxo version: {1}", args[0].ToLower(), args[1]);
-				Console.WriteLine();
+        Console.WriteLine("Altaxo auto update downloader (C) D.Lellinger 2012");
+        Console.WriteLine("Configured to look for {0} versions; current Altaxo version: {1}", args[0].ToLower(), args[1]);
+        Console.WriteLine();
 
-				bool loadUnstableVersion;
-				if (!PackageInfo.IsValidStableIdentifier(args[0], out loadUnstableVersion))
-					throw new ArgumentException("First argument is not a valid stable identifier (is neither 'stable' nor 'unstable')");
+        bool loadUnstableVersion;
+        if (!PackageInfo.IsValidStableIdentifier(args[0], out loadUnstableVersion))
+          throw new ArgumentException("First argument is not a valid stable identifier (is neither 'stable' nor 'unstable')");
 
-				var currentProgramVersion = new Version(args[1]);
+        var currentProgramVersion = new Version(args[1]);
 
-				var downLoader = new Downloader(loadUnstableVersion, currentProgramVersion);
-				downLoader.Run();
-			}
-			catch (Exception ex) // catch all Exceptions silently
-			{
-				System.Environment.ExitCode = 1;
-				Console.WriteLine(ex.ToString());
+        var downLoader = new Downloader(loadUnstableVersion, currentProgramVersion);
+        downLoader.Run();
+      }
+      catch (Exception ex) // catch all Exceptions silently
+      {
+        System.Environment.ExitCode = 1;
+        Console.WriteLine(ex.ToString());
 
-				Console.WriteLine();
-				for (int i = 60; i >= 0; --i)
-				{
-					System.Threading.Thread.Sleep(1000);
-					Console.Write("Program ends in {0} s\r", i);
-				}
-			}
-		}
+        Console.WriteLine();
+        for (int i = 60; i >= 0; --i)
+        {
+          System.Threading.Thread.Sleep(1000);
+          Console.Write("Program ends in {0} s\r", i);
+        }
+      }
+    }
 
-		/// <summary>Prints the usage information.</summary>
-		private static void PrintUsage()
-		{
-			Console.WriteLine(
-				"This program has to be called with 2 arguments:\r\n\r\n" +
-				"args[0]: either 'stable' or 'unstable', depending on whether to download only the stable versions or both stable and unstable versions\r\n" +
-				"args[1]: the version string of the currently installed Altaxo version\r\n\r\n"
-				);
-		}
-	}
+    /// <summary>Prints the usage information.</summary>
+    private static void PrintUsage()
+    {
+      Console.WriteLine(
+        "This program has to be called with 2 arguments:\r\n\r\n" +
+        "args[0]: either 'stable' or 'unstable', depending on whether to download only the stable versions or both stable and unstable versions\r\n" +
+        "args[1]: the version string of the currently installed Altaxo version\r\n\r\n"
+        );
+    }
+  }
 }

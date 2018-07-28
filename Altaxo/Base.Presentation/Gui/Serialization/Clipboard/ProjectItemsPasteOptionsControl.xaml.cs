@@ -30,38 +30,38 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Serialization.Clipboard
 {
-	/// <summary>
-	/// Interaction logic for ProjectItemsPasteOptionsControl.xaml
-	/// </summary>
-	public partial class ProjectItemsPasteOptionsControl : UserControl, IProjectItemsPasteOptionsView
-	{
-		public ProjectItemsPasteOptionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ProjectItemsPasteOptionsControl.xaml
+  /// </summary>
+  public partial class ProjectItemsPasteOptionsControl : UserControl, IProjectItemsPasteOptionsView
+  {
+    public ProjectItemsPasteOptionsControl()
+    {
+      InitializeComponent();
+    }
 
-		public bool RelocateReferences
-		{
-			get
-			{
-				return _guiRelocateReferences.IsChecked == true;
-			}
-			set
-			{
-				_guiRelocateReferences.IsChecked = value;
-			}
-		}
+    public bool RelocateReferences
+    {
+      get
+      {
+        return _guiRelocateReferences.IsChecked == true;
+      }
+      set
+      {
+        _guiRelocateReferences.IsChecked = value;
+      }
+    }
 
-		public bool TryToKeepInternalReferences
-		{
-			get
-			{
-				return _guiTryToKeepInternalReferences.IsChecked == true;
-			}
-			set
-			{
-				_guiTryToKeepInternalReferences.IsChecked = value;
-			}
-		}
-	}
+    public bool TryToKeepInternalReferences
+    {
+      get
+      {
+        return _guiTryToKeepInternalReferences.IsChecked == true;
+      }
+      set
+      {
+        _guiTryToKeepInternalReferences.IsChecked = value;
+      }
+    }
+  }
 }

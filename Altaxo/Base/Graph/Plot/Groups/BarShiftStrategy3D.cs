@@ -29,21 +29,21 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	/// <summary>
-	/// Designates how to shift the bars that belong to a group (i.e. have the same independent variables x and y).
-	/// </summary>
-	public enum BarShiftStrategy3D
-	{
-		/// <summary>Shift the bars first in x-direction from left to right. If the user defined maximum number of bars in x-direction is reached, the bars are shifted in y-direction from front to back.</summary>
-		ManualFirstXThenY = 0,
+  /// <summary>
+  /// Designates how to shift the bars that belong to a group (i.e. have the same independent variables x and y).
+  /// </summary>
+  public enum BarShiftStrategy3D
+  {
+    /// <summary>Shift the bars first in x-direction from left to right. If the user defined maximum number of bars in x-direction is reached, the bars are shifted in y-direction from front to back.</summary>
+    ManualFirstXThenY = 0,
 
-		/// <summary>Shift the bars first in y-direction from front to back. If the user defined maximum number of bars in y-direction is reached, the bars are shifted in x-direction from left to right.</summary>
-		ManualFirstYThenX = 1,
+    /// <summary>Shift the bars first in y-direction from front to back. If the user defined maximum number of bars in y-direction is reached, the bars are shifted in x-direction from left to right.</summary>
+    ManualFirstYThenX = 1,
 
-		/// <summary>Try to make the number of bars in x and y direction the same (square root of the total number). Shift the bars first in x-direction from left to right. If the destination number of bars in x-direction is reached, the bars are shifted in y-direction from front to back.</summary>
-		UniformFirstXThenY = 2,
+    /// <summary>Try to make the number of bars in x and y direction the same (square root of the total number). Shift the bars first in x-direction from left to right. If the destination number of bars in x-direction is reached, the bars are shifted in y-direction from front to back.</summary>
+    UniformFirstXThenY = 2,
 
-		/// <summary>Try to make the number of bars in x and y direction the same (square root of the total number). Shift the bars first in y-direction from front to back. If the destination number of bars in y-direction is reached, the bars are shifted in x-direction from left to right.</summary>
-		UniformFirstYThenX = 3
-	}
+    /// <summary>Try to make the number of bars in x and y direction the same (square root of the total number). Shift the bars first in y-direction from front to back. If the destination number of bars in y-direction is reached, the bars are shifted in x-direction from left to right.</summary>
+    UniformFirstYThenX = 3
+  }
 }

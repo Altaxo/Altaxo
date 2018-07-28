@@ -12,16 +12,16 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.LanguageService
 {
-	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class)]
-	internal class ExportLanguageServiceAttribute : ExportAttribute
-	{
-		public string Language { get; }
+  [MetadataAttribute]
+  [AttributeUsage(AttributeTargets.Class)]
+  internal class ExportLanguageServiceAttribute : ExportAttribute
+  {
+    public string Language { get; }
 
-		public ExportLanguageServiceAttribute(Type serviceType, string language)
-				: base(serviceType)
-		{
-			this.Language = language ?? throw new ArgumentNullException(nameof(language));
-		}
-	}
+    public ExportLanguageServiceAttribute(Type serviceType, string language)
+        : base(serviceType)
+    {
+      this.Language = language ?? throw new ArgumentNullException(nameof(language));
+    }
+  }
 }

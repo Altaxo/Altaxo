@@ -4,12 +4,12 @@
              xmlns:agc = "clr-namespace:Altaxo.Gui.Common;assembly=Base.Presentation"
              xmlns:avalondock = "clr-namespace:Xceed.Wpf.AvalonDock.Controls;assembly=Xceed.Wpf.AvalonDock">
 
-	<Application.Resources>
-		<!-- Style AvalonDock windows -->
-		<!--
+  <Application.Resources>
+    <!-- Style AvalonDock windows -->
+    <!--
 		<Style TargetType="{x:Type avalondock:LayoutDocumentFloatingWindowControl}" BasedOn="{x:Static agc:GlobalStyles.WindowStyle}" />
 		<Style TargetType="{x:Type avalondock:LayoutDocumentControl}" BasedOn="{x:Static agc:GlobalStyles.WindowStyle}" />
 		<Style TargetType="{x:Type avalondock:LayoutAnchorableControl}" BasedOn="{x:Static agc:GlobalStyles.WindowStyle}" />
         -->
-	</Application.Resources>
+  </Application.Resources>
 </Application>

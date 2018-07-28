@@ -31,245 +31,245 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	using Altaxo.Gui.Common.Drawing;
+  using Altaxo.Gui.Common.Drawing;
 
-	/// <summary>
-	/// Interaction logic for BarGraphPlotStyleControl.xaml
-	/// </summary>
-	public partial class BarGraphPlotStyleControl : UserControl, IBarGraphPlotStyleView
-	{
-		private PenControlsGlue _framePenGlue;
+  /// <summary>
+  /// Interaction logic for BarGraphPlotStyleControl.xaml
+  /// </summary>
+  public partial class BarGraphPlotStyleControl : UserControl, IBarGraphPlotStyleView
+  {
+    private PenControlsGlue _framePenGlue;
 
-		public event Action IndependentFillColorChanged;
+    public event Action IndependentFillColorChanged;
 
-		public event Action IndependentFrameColorChanged;
+    public event Action IndependentFrameColorChanged;
 
-		public event Action UseFillChanged;
+    public event Action UseFillChanged;
 
-		public event Action UseFrameChanged;
+    public event Action UseFrameChanged;
 
-		public event Action FillBrushChanged;
+    public event Action FillBrushChanged;
 
-		public event Action FramePenChanged;
+    public event Action FramePenChanged;
 
-		public BarGraphPlotStyleControl()
-		{
-			InitializeComponent();
-			_framePenGlue = new PenControlsGlue(false);
-			_framePenGlue.PenChanged += new EventHandler(EhFramePenChanged);
-			_framePenGlue.CbBrush = _guiFramePen;
-			_framePenGlue.CbLineThickness = _guiFramePenWidth;
-			_framePenGlue.CbDashPattern = _guiFrameDashStyle;
-		}
+    public BarGraphPlotStyleControl()
+    {
+      InitializeComponent();
+      _framePenGlue = new PenControlsGlue(false);
+      _framePenGlue.PenChanged += new EventHandler(EhFramePenChanged);
+      _framePenGlue.CbBrush = _guiFramePen;
+      _framePenGlue.CbLineThickness = _guiFramePenWidth;
+      _framePenGlue.CbDashPattern = _guiFrameDashStyle;
+    }
 
-		private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != IndependentFrameColorChanged)
-				IndependentFrameColorChanged();
-		}
+    private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != IndependentFrameColorChanged)
+        IndependentFrameColorChanged();
+    }
 
-		private void EhUsePreviousItem_CheckedChanged(object sender, RoutedEventArgs e)
-		{
-			bool usePrevItem = true == _chkUsePreviousItem.IsChecked;
-			_edYGap.IsEnabled = usePrevItem;
-		}
+    private void EhUsePreviousItem_CheckedChanged(object sender, RoutedEventArgs e)
+    {
+      bool usePrevItem = true == _chkUsePreviousItem.IsChecked;
+      _edYGap.IsEnabled = usePrevItem;
+    }
 
-		#region IBarGraphPlotStyleView
+    #region IBarGraphPlotStyleView
 
-		public bool UseFill
-		{
-			get
-			{
-				return true == _guiUseFill.IsChecked;
-			}
-			set
-			{
-				_guiUseFill.IsChecked = value;
-				_guiIndependentFillColor.IsEnabled = value;
-				_guiFillBrush.IsEnabled = value;
-			}
-		}
+    public bool UseFill
+    {
+      get
+      {
+        return true == _guiUseFill.IsChecked;
+      }
+      set
+      {
+        _guiUseFill.IsChecked = value;
+        _guiIndependentFillColor.IsEnabled = value;
+        _guiFillBrush.IsEnabled = value;
+      }
+    }
 
-		public bool IndependentFillColor
-		{
-			get
-			{
-				return true == _guiIndependentFillColor.IsChecked;
-			}
-			set
-			{
-				_guiIndependentFillColor.IsChecked = value;
-			}
-		}
+    public bool IndependentFillColor
+    {
+      get
+      {
+        return true == _guiIndependentFillColor.IsChecked;
+      }
+      set
+      {
+        _guiIndependentFillColor.IsChecked = value;
+      }
+    }
 
-		public Altaxo.Graph.Gdi.BrushX FillBrush
-		{
-			get
-			{
-				return this._guiFillBrush.SelectedBrush;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException("FillBrush");
-				_guiFillBrush.SelectedBrush = value;
-			}
-		}
+    public Altaxo.Graph.Gdi.BrushX FillBrush
+    {
+      get
+      {
+        return this._guiFillBrush.SelectedBrush;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException("FillBrush");
+        _guiFillBrush.SelectedBrush = value;
+      }
+    }
 
-		public bool UseFrame
-		{
-			get
-			{
-				return true == _guiUseFrame.IsChecked;
-			}
-			set
-			{
-				_guiUseFrame.IsChecked = value;
-				_guiIndependentFrameColor.IsEnabled = value;
-				_guiFramePen.IsEnabled = value;
-				_guiFramePenWidth.IsEnabled = value;
-				_guiFrameDashStyle.IsEnabled = value;
-			}
-		}
+    public bool UseFrame
+    {
+      get
+      {
+        return true == _guiUseFrame.IsChecked;
+      }
+      set
+      {
+        _guiUseFrame.IsChecked = value;
+        _guiIndependentFrameColor.IsEnabled = value;
+        _guiFramePen.IsEnabled = value;
+        _guiFramePenWidth.IsEnabled = value;
+        _guiFrameDashStyle.IsEnabled = value;
+      }
+    }
 
-		public bool IndependentFrameColor
-		{
-			get
-			{
-				return true == _guiIndependentFrameColor.IsChecked;
-			}
-			set
-			{
-				_guiIndependentFrameColor.IsChecked = value;
-			}
-		}
+    public bool IndependentFrameColor
+    {
+      get
+      {
+        return true == _guiIndependentFrameColor.IsChecked;
+      }
+      set
+      {
+        _guiIndependentFrameColor.IsChecked = value;
+      }
+    }
 
-		public Altaxo.Graph.Gdi.PenX FramePen
-		{
-			get
-			{
-				return _framePenGlue.Pen;
-			}
-			set
-			{
-				if (value == null)
-					throw new ArgumentNullException("FramePen");
-				_framePenGlue.Pen = value;
-			}
-		}
+    public Altaxo.Graph.Gdi.PenX FramePen
+    {
+      get
+      {
+        return _framePenGlue.Pen;
+      }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException("FramePen");
+        _framePenGlue.Pen = value;
+      }
+    }
 
-		public double InnerGap
-		{
-			get
-			{
-				return _edInnerGap.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_edInnerGap.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double InnerGap
+    {
+      get
+      {
+        return _edInnerGap.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _edInnerGap.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public double OuterGap
-		{
-			get
-			{
-				return _edOuterGap.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_edOuterGap.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double OuterGap
+    {
+      get
+      {
+        return _edOuterGap.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _edOuterGap.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public bool UsePhysicalBaseValue
-		{
-			get
-			{
-				return false;
-			}
-			set
-			{
-			}
-		}
+    public bool UsePhysicalBaseValue
+    {
+      get
+      {
+        return false;
+      }
+      set
+      {
+      }
+    }
 
-		public double BaseValue
-		{
-			get
-			{
-				return _edBaseValue.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_edBaseValue.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double BaseValue
+    {
+      get
+      {
+        return _edBaseValue.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _edBaseValue.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public bool StartAtPreviousItem
-		{
-			get
-			{
-				return true == _chkUsePreviousItem.IsChecked;
-			}
-			set
-			{
-				_chkUsePreviousItem.IsChecked = value;
-				_edYGap.IsEnabled = value;
-			}
-		}
+    public bool StartAtPreviousItem
+    {
+      get
+      {
+        return true == _chkUsePreviousItem.IsChecked;
+      }
+      set
+      {
+        _chkUsePreviousItem.IsChecked = value;
+        _edYGap.IsEnabled = value;
+      }
+    }
 
-		public double YGap
-		{
-			get
-			{
-				return _edYGap.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_edYGap.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double YGap
+    {
+      get
+      {
+        return _edYGap.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _edYGap.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		#endregion IBarGraphPlotStyleView
+    #endregion IBarGraphPlotStyleView
 
-		public bool ShowPlotColorsOnlyForFillBrush
-		{
-			set { _guiFillBrush.ShowPlotColorsOnly = value; }
-		}
+    public bool ShowPlotColorsOnlyForFillBrush
+    {
+      set { _guiFillBrush.ShowPlotColorsOnly = value; }
+    }
 
-		public bool ShowPlotColorsOnlyForFramePen
-		{
-			set { _framePenGlue.ShowPlotColorsOnly = value; }
-		}
+    public bool ShowPlotColorsOnlyForFramePen
+    {
+      set { _framePenGlue.ShowPlotColorsOnly = value; }
+    }
 
-		private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != IndependentFillColorChanged)
-				IndependentFillColorChanged();
-		}
+    private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != IndependentFillColorChanged)
+        IndependentFillColorChanged();
+    }
 
-		private void EhUseFillChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != UseFillChanged)
-				UseFillChanged();
-		}
+    private void EhUseFillChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != UseFillChanged)
+        UseFillChanged();
+    }
 
-		private void EhUseFrameChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != UseFrameChanged)
-				UseFrameChanged();
-		}
+    private void EhUseFrameChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != UseFrameChanged)
+        UseFrameChanged();
+    }
 
-		private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (null != FillBrushChanged)
-				FillBrushChanged();
-		}
+    private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (null != FillBrushChanged)
+        FillBrushChanged();
+    }
 
-		private void EhFramePenChanged(object sender, EventArgs e)
-		{
-			if (null != FramePenChanged)
-				FramePenChanged();
-		}
-	}
+    private void EhFramePenChanged(object sender, EventArgs e)
+    {
+      if (null != FramePenChanged)
+        FramePenChanged();
+    }
+  }
 }

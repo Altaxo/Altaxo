@@ -39,66 +39,66 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Drawing.D3D.Material
 {
-	/// <summary>
-	/// Interaction logic for MaterialWithUniformColorControl.xaml
-	/// </summary>
-	public partial class MaterialWithUniformColorControl : UserControl, IMaterialWithUniformColorView
-	{
-		public MaterialWithUniformColorControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for MaterialWithUniformColorControl.xaml
+  /// </summary>
+  public partial class MaterialWithUniformColorControl : UserControl, IMaterialWithUniformColorView
+  {
+    public MaterialWithUniformColorControl()
+    {
+      InitializeComponent();
+    }
 
-		public NamedColor Color
-		{
-			get
-			{
-				return _guiColor.SelectedColor;
-			}
+    public NamedColor Color
+    {
+      get
+      {
+        return _guiColor.SelectedColor;
+      }
 
-			set
-			{
-				_guiColor.SelectedColor = value;
-			}
-		}
+      set
+      {
+        _guiColor.SelectedColor = value;
+      }
+    }
 
-		public double Smoothness
-		{
-			get
-			{
-				return _guiBaseMaterial.Smoothness;
-			}
+    public double Smoothness
+    {
+      get
+      {
+        return _guiBaseMaterial.Smoothness;
+      }
 
-			set
-			{
-				_guiBaseMaterial.Smoothness = value;
-			}
-		}
+      set
+      {
+        _guiBaseMaterial.Smoothness = value;
+      }
+    }
 
-		public double IndexOfRefraction
-		{
-			get
-			{
-				return _guiBaseMaterial.IndexOfRefraction;
-			}
+    public double IndexOfRefraction
+    {
+      get
+      {
+        return _guiBaseMaterial.IndexOfRefraction;
+      }
 
-			set
-			{
-				_guiBaseMaterial.IndexOfRefraction = value;
-			}
-		}
+      set
+      {
+        _guiBaseMaterial.IndexOfRefraction = value;
+      }
+    }
 
-		public double Metalness
-		{
-			get
-			{
-				return _guiBaseMaterial.Metalness;
-			}
+    public double Metalness
+    {
+      get
+      {
+        return _guiBaseMaterial.Metalness;
+      }
 
-			set
-			{
-				_guiBaseMaterial.Metalness = value;
-			}
-		}
-	}
+      set
+      {
+        _guiBaseMaterial.Metalness = value;
+      }
+    }
+  }
 }

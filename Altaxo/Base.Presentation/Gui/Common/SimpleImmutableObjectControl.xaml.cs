@@ -38,70 +38,70 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Interaction logic for VariantToVariantTransformationControl.xaml
-	/// </summary>
-	public partial class SimpleImmutableObjectControl : UserControl, ISimpleImmutableObjectView
-	{
-		private List<Tuple<Type, FrameworkElement>> _elements = new List<Tuple<Type, FrameworkElement>>();
+  /// <summary>
+  /// Interaction logic for VariantToVariantTransformationControl.xaml
+  /// </summary>
+  public partial class SimpleImmutableObjectControl : UserControl, ISimpleImmutableObjectView
+  {
+    private List<Tuple<Type, FrameworkElement>> _elements = new List<Tuple<Type, FrameworkElement>>();
 
-		public SimpleImmutableObjectControl()
-		{
-			InitializeComponent();
-		}
+    public SimpleImmutableObjectControl()
+    {
+      InitializeComponent();
+    }
 
-		public void Values_Initialize(IEnumerable<Tuple<string, Type, object>> values)
-		{
-			_elements.Clear();
-			_guiGrid.Children.Clear();
+    public void Values_Initialize(IEnumerable<Tuple<string, Type, object>> values)
+    {
+      _elements.Clear();
+      _guiGrid.Children.Clear();
 
-			_guiGrid.RowDefinitions.Clear();
+      _guiGrid.RowDefinitions.Clear();
 
-			int idx = 0;
-			foreach (var tuple in values)
-			{
-				_guiGrid.RowDefinitions.Add(new RowDefinition());
-				_guiGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(4) });
+      int idx = 0;
+      foreach (var tuple in values)
+      {
+        _guiGrid.RowDefinitions.Add(new RowDefinition());
+        _guiGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(4) });
 
-				var label = new Label { Content = tuple.Item1 + ":" };
-				label.SetValue(Grid.RowProperty, idx * 2);
-				_guiGrid.Children.Add(label);
+        var label = new Label { Content = tuple.Item1 + ":" };
+        label.SetValue(Grid.RowProperty, idx * 2);
+        _guiGrid.Children.Add(label);
 
-				FrameworkElement fe;
-				if (tuple.Item2 == typeof(double))
-				{
-					var item = new Altaxo.Gui.Common.NumericDoubleTextBox();
-					fe = item;
-					if (tuple.Item3 is double)
-						item.SelectedValue = (double)tuple.Item3;
-				}
-				else
-				{
-					throw new NotImplementedException();
-				}
+        FrameworkElement fe;
+        if (tuple.Item2 == typeof(double))
+        {
+          var item = new Altaxo.Gui.Common.NumericDoubleTextBox();
+          fe = item;
+          if (tuple.Item3 is double)
+            item.SelectedValue = (double)tuple.Item3;
+        }
+        else
+        {
+          throw new NotImplementedException();
+        }
 
-				fe.SetValue(Grid.ColumnProperty, 2);
-				fe.SetValue(Grid.RowProperty, idx * 2);
-				_guiGrid.Children.Add(fe);
+        fe.SetValue(Grid.ColumnProperty, 2);
+        fe.SetValue(Grid.RowProperty, idx * 2);
+        _guiGrid.Children.Add(fe);
 
-				_elements.Add(new Tuple<Type, FrameworkElement>(tuple.Item2, fe));
-				++idx;
-			}
+        _elements.Add(new Tuple<Type, FrameworkElement>(tuple.Item2, fe));
+        ++idx;
+      }
 
-			// append another RowDefinition to ensure that the textboxes are not expanded vertically
-			_guiGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(4, GridUnitType.Star) });
-		}
+      // append another RowDefinition to ensure that the textboxes are not expanded vertically
+      _guiGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(4, GridUnitType.Star) });
+    }
 
-		public object Value_Get(int idx)
-		{
-			if (_elements[idx].Item2 is Altaxo.Gui.Common.NumericDoubleTextBox)
-			{
-				return (_elements[idx].Item2 as Altaxo.Gui.Common.NumericDoubleTextBox).SelectedValue;
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
-		}
-	}
+    public object Value_Get(int idx)
+    {
+      if (_elements[idx].Item2 is Altaxo.Gui.Common.NumericDoubleTextBox)
+      {
+        return (_elements[idx].Item2 as Altaxo.Gui.Common.NumericDoubleTextBox).SelectedValue;
+      }
+      else
+      {
+        throw new NotImplementedException();
+      }
+    }
+  }
 }

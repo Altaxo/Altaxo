@@ -33,137 +33,137 @@ using System.Text;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
-	public interface IWorksheetView
-	{
-		Altaxo.Gui.Worksheet.Viewing.IWorksheetController Controller { set; }
+  public interface IWorksheetView
+  {
+    Altaxo.Gui.Worksheet.Viewing.IWorksheetController Controller { set; }
 
-		void Cursor_SetToArrow();
+    void Cursor_SetToArrow();
 
-		void Cursor_SetToResizeWestEast();
+    void Cursor_SetToResizeWestEast();
 
-		void TableArea_TriggerRedrawing();
+    void TableArea_TriggerRedrawing();
 
-		bool TableArea_IsCaptured { set; }
+    bool TableArea_IsCaptured { set; }
 
-		PointD2D TableArea_Size { get; }
+    PointD2D TableArea_Size { get; }
 
-		/// <summary>
-		/// Returns the control that should be focused initially.
-		/// </summary>
-		object GuiInitiallyFocusedElement { get; }
+    /// <summary>
+    /// Returns the control that should be focused initially.
+    /// </summary>
+    object GuiInitiallyFocusedElement { get; }
 
-		double TableViewHorzViewPortSize { set; }
-		double TableViewVertViewPortSize { set; }
-		double TableViewHorzScrollValue { set; }
-		double TableViewVertScrollValue { set; }
-		double TableViewHorzScrollMaximum { set; }
-		double TableViewVertScrollMaximum { set; }
+    double TableViewHorzViewPortSize { set; }
+    double TableViewVertViewPortSize { set; }
+    double TableViewHorzScrollValue { set; }
+    double TableViewVertScrollValue { set; }
+    double TableViewHorzScrollMaximum { set; }
+    double TableViewVertScrollMaximum { set; }
 
-		#region Cell edit
+    #region Cell edit
 
-		event Action CellEdit_LostFocus;
+    event Action CellEdit_LostFocus;
 
-		event Action<AltaxoKeyboardKey, HandledEventArgs> CellEdit_PreviewKeyPressed;
+    event Action<AltaxoKeyboardKey, HandledEventArgs> CellEdit_PreviewKeyPressed;
 
-		event Action CellEdit_TextChanged;
+    event Action CellEdit_TextChanged;
 
-		int CellEdit_SelectionStart { get; set; }
-		int CellEdit_SelectionLength { get; set; }
-		string CellEdit_Text { get; set; }
+    int CellEdit_SelectionStart { get; set; }
+    int CellEdit_SelectionLength { get; set; }
+    string CellEdit_Text { get; set; }
 
-		void CellEdit_Cut();
+    void CellEdit_Cut();
 
-		void CellEdit_Copy();
+    void CellEdit_Copy();
 
-		void CellEdit_Paste();
+    void CellEdit_Paste();
 
-		void CellEdit_Clear();
+    void CellEdit_Clear();
 
-		void CellEdit_Hide();
+    void CellEdit_Hide();
 
-		void CellEdit_Show();
+    void CellEdit_Show();
 
-		void CellEdit_SetTextAlignmentAndSelectAll(bool textAlignmentRight);
+    void CellEdit_SetTextAlignmentAndSelectAll(bool textAlignmentRight);
 
-		RectangleD2D CellEdit_Location { set; }
+    RectangleD2D CellEdit_Location { set; }
 
-		#endregion Cell edit
-	}
+    #endregion Cell edit
+  }
 
-	public interface IWorksheetController : IMVCANController
-	{
-		/// <summary>
-		/// This returns the Table that is managed by this controller.
-		/// </summary>
-		Altaxo.Data.DataTable DataTable { get; }
+  public interface IWorksheetController : IMVCANController
+  {
+    /// <summary>
+    /// This returns the Table that is managed by this controller.
+    /// </summary>
+    Altaxo.Data.DataTable DataTable { get; }
 
-		/// <summary>
-		/// Forces redraw of the table.
-		/// </summary>
-		void TableAreaInvalidate();
+    /// <summary>
+    /// Forces redraw of the table.
+    /// </summary>
+    void TableAreaInvalidate();
 
-		WorksheetLayout WorksheetLayout { get; }
+    WorksheetLayout WorksheetLayout { get; }
 
-		/// <summary>
-		/// Returns the currently selected data columns
-		/// </summary>
-		IndexSelection SelectedDataColumns { get; }
+    /// <summary>
+    /// Returns the currently selected data columns
+    /// </summary>
+    IndexSelection SelectedDataColumns { get; }
 
-		/// <summary>
-		/// Returns the currently selected data rows.
-		/// </summary>
-		IndexSelection SelectedDataRows { get; }
+    /// <summary>
+    /// Returns the currently selected data rows.
+    /// </summary>
+    IndexSelection SelectedDataRows { get; }
 
-		/// <summary>
-		/// Returns the currently selected property columns.
-		/// </summary>
-		IndexSelection SelectedPropertyColumns { get; }
+    /// <summary>
+    /// Returns the currently selected property columns.
+    /// </summary>
+    IndexSelection SelectedPropertyColumns { get; }
 
-		/// <summary>
-		/// Returns the currently selected property rows if property cells are selected alone. If not selected alone, the SelectedColumn property is returned.
-		/// </summary>
-		/// <remarks>Normally, if you select one or more data column, the corresponding property rows are selected by this. So it would be not possible to selected property rows without selecting the
-		/// data column also. In order to fix this, you can first select property columns and then columns. In this case the selection is not stored into
-		/// SelectedColumns, but in SelectedPropertyRows, and SelectedColumns.Count returns 0.</remarks>
-		IndexSelection SelectedPropertyRows { get; }
+    /// <summary>
+    /// Returns the currently selected property rows if property cells are selected alone. If not selected alone, the SelectedColumn property is returned.
+    /// </summary>
+    /// <remarks>Normally, if you select one or more data column, the corresponding property rows are selected by this. So it would be not possible to selected property rows without selecting the
+    /// data column also. In order to fix this, you can first select property columns and then columns. In this case the selection is not stored into
+    /// SelectedColumns, but in SelectedPropertyRows, and SelectedColumns.Count returns 0.</remarks>
+    IndexSelection SelectedPropertyRows { get; }
 
-		/// <summary>
-		/// Returns true if one or more property columns or rows are selected.
-		/// </summary>
-		bool ArePropertyCellsSelected { get; }
+    /// <summary>
+    /// Returns true if one or more property columns or rows are selected.
+    /// </summary>
+    bool ArePropertyCellsSelected { get; }
 
-		/// <summary>
-		/// Returns true if one or more data columns or rows are selected.
-		/// </summary>
-		bool AreDataCellsSelected { get; }
+    /// <summary>
+    /// Returns true if one or more data columns or rows are selected.
+    /// </summary>
+    bool AreDataCellsSelected { get; }
 
-		/// <summary>
-		/// Returns true if one or more columns, rows or property columns or rows are selected.
-		/// </summary>
-		bool AreColumnsOrRowsSelected { get; }
+    /// <summary>
+    /// Returns true if one or more columns, rows or property columns or rows are selected.
+    /// </summary>
+    bool AreColumnsOrRowsSelected { get; }
 
-		void ClearAllSelections();
+    void ClearAllSelections();
 
-		bool EnableCut { get; }
+    bool EnableCut { get; }
 
-		bool EnableCopy { get; }
+    bool EnableCopy { get; }
 
-		bool EnablePaste { get; }
+    bool EnablePaste { get; }
 
-		bool EnableDelete { get; }
+    bool EnableDelete { get; }
 
-		bool EnableSelectAll { get; }
+    bool EnableSelectAll { get; }
 
-		void Cut();
+    void Cut();
 
-		void Copy();
+    void Copy();
 
-		void Paste();
+    void Paste();
 
-		void Delete();
+    void Delete();
 
-		void SelectAll();
+    void SelectAll();
 
-		//event EventHandler TitleNameChanged;
-	}
+    //event EventHandler TitleNameChanged;
+  }
 }

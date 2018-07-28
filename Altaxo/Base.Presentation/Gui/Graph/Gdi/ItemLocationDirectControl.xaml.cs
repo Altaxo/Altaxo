@@ -31,232 +31,232 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	using Altaxo.Geometry;
-	using Altaxo.Graph;
+  using Altaxo.Geometry;
+  using Altaxo.Graph;
 
-	/// <summary>
-	/// Interaction logic for LayerPositionControl.xaml
-	/// </summary>
-	public partial class ItemLocationDirectControl : UserControl, IItemLocationDirectView
-	{
-		public ItemLocationDirectControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for LayerPositionControl.xaml
+  /// </summary>
+  public partial class ItemLocationDirectControl : UserControl, IItemLocationDirectView
+  {
+    public ItemLocationDirectControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeXPosition(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
-		{
-			_guiPositionX.UnitEnvironment = env;
-			_guiPositionX.SelectedQuantity = x;
-		}
+    public void InitializeXPosition(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+    {
+      _guiPositionX.UnitEnvironment = env;
+      _guiPositionX.SelectedQuantity = x;
+    }
 
-		public void InitializeYPosition(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
-		{
-			_guiPositionY.UnitEnvironment = env;
-			_guiPositionY.SelectedQuantity = x;
-		}
+    public void InitializeYPosition(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+    {
+      _guiPositionY.UnitEnvironment = env;
+      _guiPositionY.SelectedQuantity = x;
+    }
 
-		public void ShowSizeElements(bool isVisible, bool isEnabled)
-		{
-			var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
-			_guiSizeX.Visibility = vis;
-			_guiSizeX.IsEnabled = isEnabled;
-			_guiSizeY.Visibility = vis;
-			_guiSizeY.IsEnabled = isEnabled;
-			_guiSizeLabelX.Visibility = vis;
-			_guiSizeLabelY.Visibility = vis;
-		}
+    public void ShowSizeElements(bool isVisible, bool isEnabled)
+    {
+      var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
+      _guiSizeX.Visibility = vis;
+      _guiSizeX.IsEnabled = isEnabled;
+      _guiSizeY.Visibility = vis;
+      _guiSizeY.IsEnabled = isEnabled;
+      _guiSizeLabelX.Visibility = vis;
+      _guiSizeLabelY.Visibility = vis;
+    }
 
-		public void ShowScaleElements(bool isVisible, bool isEnabled)
-		{
-			var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
+    public void ShowScaleElements(bool isVisible, bool isEnabled)
+    {
+      var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
 
-			_guiScaleX.Visibility = vis;
-			_guiScaleX.IsEnabled = isEnabled;
-			_guiScaleY.Visibility = vis;
-			_guiScaleY.IsEnabled = isEnabled;
-			_guiLabelScaleX.Visibility = vis;
-			_guiLabelScaleY.Visibility = vis;
-		}
+      _guiScaleX.Visibility = vis;
+      _guiScaleX.IsEnabled = isEnabled;
+      _guiScaleY.Visibility = vis;
+      _guiScaleY.IsEnabled = isEnabled;
+      _guiLabelScaleX.Visibility = vis;
+      _guiLabelScaleY.Visibility = vis;
+    }
 
-		public void ShowPositionElements(bool isVisible, bool isEnabled)
-		{
-			var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
+    public void ShowPositionElements(bool isVisible, bool isEnabled)
+    {
+      var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
 
-			_guiPositionX.Visibility = vis;
-			_guiPositionX.IsEnabled = isEnabled;
-			_guiPositionY.Visibility = vis;
-			_guiPositionY.IsEnabled = isEnabled;
-			_guiLabelPositionX.Visibility = vis;
-			_guiLabelPositionY.Visibility = vis;
-		}
+      _guiPositionX.Visibility = vis;
+      _guiPositionX.IsEnabled = isEnabled;
+      _guiPositionY.Visibility = vis;
+      _guiPositionY.IsEnabled = isEnabled;
+      _guiLabelPositionX.Visibility = vis;
+      _guiLabelPositionY.Visibility = vis;
+    }
 
-		public void ShowAnchorElements(bool isVisible, bool isEnabled)
-		{
-			var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
+    public void ShowAnchorElements(bool isVisible, bool isEnabled)
+    {
+      var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
 
-			_guiLocalAnchor.Visibility = vis;
-			_guiLocalAnchor.IsEnabled = isEnabled;
-			_guiParentAnchor.Visibility = vis;
-			_guiParentAnchor.IsEnabled = isEnabled;
-		}
+      _guiLocalAnchor.Visibility = vis;
+      _guiLocalAnchor.IsEnabled = isEnabled;
+      _guiParentAnchor.Visibility = vis;
+      _guiParentAnchor.IsEnabled = isEnabled;
+    }
 
-		public void InitializeYSize(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
-		{
-			_guiSizeY.UnitEnvironment = env;
-			_guiSizeY.SelectedQuantity = x;
-		}
+    public void InitializeYSize(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+    {
+      _guiSizeY.UnitEnvironment = env;
+      _guiSizeY.SelectedQuantity = x;
+    }
 
-		public void InitializeXSize(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
-		{
-			_guiSizeX.UnitEnvironment = env;
-			_guiSizeX.SelectedQuantity = x;
-		}
+    public void InitializeXSize(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+    {
+      _guiSizeX.UnitEnvironment = env;
+      _guiSizeX.SelectedQuantity = x;
+    }
 
-		public Altaxo.Units.DimensionfulQuantity XPosition
-		{
-			get { return _guiPositionX.SelectedQuantity; }
-		}
+    public Altaxo.Units.DimensionfulQuantity XPosition
+    {
+      get { return _guiPositionX.SelectedQuantity; }
+    }
 
-		public Altaxo.Units.DimensionfulQuantity YPosition
-		{
-			get { return _guiPositionY.SelectedQuantity; }
-		}
+    public Altaxo.Units.DimensionfulQuantity YPosition
+    {
+      get { return _guiPositionY.SelectedQuantity; }
+    }
 
-		public Altaxo.Units.DimensionfulQuantity XSize
-		{
-			get { return _guiSizeX.SelectedQuantity; }
-		}
+    public Altaxo.Units.DimensionfulQuantity XSize
+    {
+      get { return _guiSizeX.SelectedQuantity; }
+    }
 
-		public Altaxo.Units.DimensionfulQuantity YSize
-		{
-			get { return _guiSizeY.SelectedQuantity; }
-		}
+    public Altaxo.Units.DimensionfulQuantity YSize
+    {
+      get { return _guiSizeY.SelectedQuantity; }
+    }
 
-		public double Rotation
-		{
-			get
-			{
-				return _guiRotation.SelectedQuantityAsValueInDegrees;
-			}
-			set
-			{
-				_guiRotation.SelectedQuantityAsValueInDegrees = value;
-			}
-		}
+    public double Rotation
+    {
+      get
+      {
+        return _guiRotation.SelectedQuantityAsValueInDegrees;
+      }
+      set
+      {
+        _guiRotation.SelectedQuantityAsValueInDegrees = value;
+      }
+    }
 
-		public double Shear
-		{
-			get
-			{
-				return _guiShear.SelectedQuantityInSIUnits;
-			}
-			set
-			{
-				_guiShear.SelectedQuantityInSIUnits = value;
-			}
-		}
+    public double Shear
+    {
+      get
+      {
+        return _guiShear.SelectedQuantityInSIUnits;
+      }
+      set
+      {
+        _guiShear.SelectedQuantityInSIUnits = value;
+      }
+    }
 
-		public double ScaleX
-		{
-			get
-			{
-				return _guiScaleX.SelectedQuantityInSIUnits;
-			}
-			set
-			{
-				_guiScaleX.SelectedQuantityInSIUnits = value;
-			}
-		}
+    public double ScaleX
+    {
+      get
+      {
+        return _guiScaleX.SelectedQuantityInSIUnits;
+      }
+      set
+      {
+        _guiScaleX.SelectedQuantityInSIUnits = value;
+      }
+    }
 
-		public double ScaleY
-		{
-			get
-			{
-				return _guiScaleY.SelectedQuantityInSIUnits;
-			}
-			set
-			{
-				_guiScaleY.SelectedQuantityInSIUnits = value;
-			}
-		}
+    public double ScaleY
+    {
+      get
+      {
+        return _guiScaleY.SelectedQuantityInSIUnits;
+      }
+      set
+      {
+        _guiScaleY.SelectedQuantityInSIUnits = value;
+      }
+    }
 
-		public void InitializePivot(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
-		{
-			_guiLocalAnchor.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
-		}
+    public void InitializePivot(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
+    {
+      _guiLocalAnchor.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
+    }
 
-		public RADouble PivotX
-		{
-			get
-			{
-				return _guiLocalAnchor.SelectedPivotX;
-			}
-		}
+    public RADouble PivotX
+    {
+      get
+      {
+        return _guiLocalAnchor.SelectedPivotX;
+      }
+    }
 
-		public RADouble PivotY
-		{
-			get
-			{
-				return _guiLocalAnchor.SelectedPivotY;
-			}
-		}
+    public RADouble PivotY
+    {
+      get
+      {
+        return _guiLocalAnchor.SelectedPivotY;
+      }
+    }
 
-		public void InitializeReference(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
-		{
-			_guiParentAnchor.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
-		}
+    public void InitializeReference(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
+    {
+      _guiParentAnchor.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
+    }
 
-		public RADouble ReferenceX
-		{
-			get
-			{
-				return _guiParentAnchor.SelectedPivotX;
-			}
-		}
+    public RADouble ReferenceX
+    {
+      get
+      {
+        return _guiParentAnchor.SelectedPivotX;
+      }
+    }
 
-		public RADouble ReferenceY
-		{
-			get
-			{
-				return _guiParentAnchor.SelectedPivotY;
-			}
-		}
+    public RADouble ReferenceY
+    {
+      get
+      {
+        return _guiParentAnchor.SelectedPivotY;
+      }
+    }
 
-		public event Action SizeXChanged;
+    public event Action SizeXChanged;
 
-		private void EhSizeXChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var actn = SizeXChanged;
-			if (null != actn)
-				actn();
-		}
+    private void EhSizeXChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      var actn = SizeXChanged;
+      if (null != actn)
+        actn();
+    }
 
-		public event Action SizeYChanged;
+    public event Action SizeYChanged;
 
-		private void EhSizeYChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var actn = SizeYChanged;
-			if (null != actn)
-				actn();
-		}
+    private void EhSizeYChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      var actn = SizeYChanged;
+      if (null != actn)
+        actn();
+    }
 
-		public event Action ScaleXChanged;
+    public event Action ScaleXChanged;
 
-		private void EhScaleXChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var actn = ScaleXChanged;
-			if (null != actn)
-				actn();
-		}
+    private void EhScaleXChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      var actn = ScaleXChanged;
+      if (null != actn)
+        actn();
+    }
 
-		public event Action ScaleYChanged;
+    public event Action ScaleYChanged;
 
-		private void EhScaleYChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var actn = ScaleYChanged;
-			if (null != actn)
-				actn();
-		}
-	}
+    private void EhScaleYChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      var actn = ScaleYChanged;
+      if (null != actn)
+        actn();
+    }
+  }
 }

@@ -29,13 +29,13 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-	public interface ICoordinateSystem
-	{
-		/// <summary>
-		/// Enumerators all axis style information.
-		/// </summary>
-		IEnumerable<CSAxisInformation> AxisStyles { get; }
+  public interface ICoordinateSystem
+  {
+    /// <summary>
+    /// Enumerators all axis style information.
+    /// </summary>
+    IEnumerable<CSAxisInformation> AxisStyles { get; }
 
-		CSAxisInformation GetAxisStyleInformation(CSLineID styleID);
-	}
+    CSAxisInformation GetAxisStyleInformation(CSLineID styleID);
+  }
 }

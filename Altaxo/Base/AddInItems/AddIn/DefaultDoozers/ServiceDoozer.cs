@@ -21,74 +21,74 @@ using System.ComponentModel.Design;
 
 namespace Altaxo.AddInItems
 {
-	/// <summary>
-	/// Registers a service in a service container.
-	/// </summary>
-	/// <attribute name="id" use="required">
-	/// The service interface type.
-	/// </attribute>
-	/// <attribute name="class" use="required">
-	/// The implementing service class name.
-	/// </attribute>
-	/// <usage>Only in /SharpDevelop/Services</usage>
-	/// <returns>
-	/// <c>null</c>. The service is registered, but not returned.
-	/// </returns>
-	public class ServiceDoozer : IDoozer
-	{
-		public bool HandleConditions
-		{
-			get { return false; }
-		}
+  /// <summary>
+  /// Registers a service in a service container.
+  /// </summary>
+  /// <attribute name="id" use="required">
+  /// The service interface type.
+  /// </attribute>
+  /// <attribute name="class" use="required">
+  /// The implementing service class name.
+  /// </attribute>
+  /// <usage>Only in /SharpDevelop/Services</usage>
+  /// <returns>
+  /// <c>null</c>. The service is registered, but not returned.
+  /// </returns>
+  public class ServiceDoozer : IDoozer
+  {
+    public bool HandleConditions
+    {
+      get { return false; }
+    }
 
-		public object BuildItem(BuildItemArgs args)
-		{
-			var container = (IServiceContainer)args.Parameter;
-			if (container == null)
-				throw new InvalidOperationException("Expected the parameter to be a service container");
-			Type interfaceType = args.AddIn.FindType(args.Codon.Id);
-			if (interfaceType != null)
-			{
-				string className = args.Codon.Properties["class"];
-				bool serviceLoading = false;
-				// Use ServiceCreatorCallback to lazily create the service
-				container.AddService(
-					interfaceType, delegate
-					{
-						// This callback runs within the service container's lock
-						if (serviceLoading)
-							throw new InvalidOperationException("Found cyclic dependency when initializating " + className);
-						serviceLoading = true;
-						return args.AddIn.CreateObject(className);
-					});
-			}
+    public object BuildItem(BuildItemArgs args)
+    {
+      var container = (IServiceContainer)args.Parameter;
+      if (container == null)
+        throw new InvalidOperationException("Expected the parameter to be a service container");
+      Type interfaceType = args.AddIn.FindType(args.Codon.Id);
+      if (interfaceType != null)
+      {
+        string className = args.Codon.Properties["class"];
+        bool serviceLoading = false;
+        // Use ServiceCreatorCallback to lazily create the service
+        container.AddService(
+          interfaceType, delegate
+          {
+            // This callback runs within the service container's lock
+            if (serviceLoading)
+              throw new InvalidOperationException("Found cyclic dependency when initializating " + className);
+            serviceLoading = true;
+            return args.AddIn.CreateObject(className);
+          });
+      }
 
-			// look for more interface types as given as parameters interface1, interface2, ..., interface9
-			// note that when using the other interface types, the
-			// ServiceContainer try to load the original service type
-			for (int i = 1; i <= 9; ++i)
-			{
-				string otherInterface = args.Codon.Properties["interface" + i.ToString(System.Globalization.CultureInfo.InvariantCulture)];
-				if (string.IsNullOrEmpty(otherInterface))
-					break;
-				Type otherInterfaceType = args.AddIn.FindType(otherInterface);
-				if (null != otherInterfaceType)
-				{
-					bool service1Loading = false;
-					// Use ServiceCreatorCallback to lazily create the service
-					container.AddService(
-						otherInterfaceType, delegate
-						{
-							// This callback runs within the service container's lock
-							if (service1Loading)
-								throw new InvalidOperationException("Found cyclic dependency when initializating " + otherInterfaceType.ToString());
-							service1Loading = true;
-							return container.GetService(interfaceType); // we return the service registered with the interface given in the Id of the codon
-						});
-				}
-			}
+      // look for more interface types as given as parameters interface1, interface2, ..., interface9
+      // note that when using the other interface types, the
+      // ServiceContainer try to load the original service type
+      for (int i = 1; i <= 9; ++i)
+      {
+        string otherInterface = args.Codon.Properties["interface" + i.ToString(System.Globalization.CultureInfo.InvariantCulture)];
+        if (string.IsNullOrEmpty(otherInterface))
+          break;
+        Type otherInterfaceType = args.AddIn.FindType(otherInterface);
+        if (null != otherInterfaceType)
+        {
+          bool service1Loading = false;
+          // Use ServiceCreatorCallback to lazily create the service
+          container.AddService(
+            otherInterfaceType, delegate
+            {
+              // This callback runs within the service container's lock
+              if (service1Loading)
+                throw new InvalidOperationException("Found cyclic dependency when initializating " + otherInterfaceType.ToString());
+              service1Loading = true;
+              return container.GetService(interfaceType); // we return the service registered with the interface given in the Id of the codon
+            });
+        }
+      }
 
-			return null;
-		}
-	}
+      return null;
+    }
+  }
 }

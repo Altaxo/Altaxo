@@ -28,453 +28,453 @@ using System.ComponentModel;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
-	/// <summary>
-	/// Havriliak-Negami function to fit dielectric spectra.
-	/// </summary>
-	[FitFunctionClass]
-	public class HavriliakNegamiSusceptibility : IFitFunctionWithGradient
-	{
-		private bool _useFrequencyInsteadOmega;
-		private bool _useFlowTerm;
-		private bool _isDielectricData;
-		private int _numberOfTerms = 1;
-		private bool _invertViscosity = true;
-		private bool _invertResult;
-		private bool _logarithmizeResults;
+  /// <summary>
+  /// Havriliak-Negami function to fit dielectric spectra.
+  /// </summary>
+  [FitFunctionClass]
+  public class HavriliakNegamiSusceptibility : IFitFunctionWithGradient
+  {
+    private bool _useFrequencyInsteadOmega;
+    private bool _useFlowTerm;
+    private bool _isDielectricData;
+    private int _numberOfTerms = 1;
+    private bool _invertViscosity = true;
+    private bool _invertResult;
+    private bool _logarithmizeResults;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new NotImplementedException();
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotImplementedException();
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				HavriliakNegamiSusceptibility s = new HavriliakNegamiSusceptibility();
-				s._isDielectricData = true;
-				return s;
-			}
-		}
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        HavriliakNegamiSusceptibility s = new HavriliakNegamiSusceptibility();
+        s._isDielectricData = true;
+        return s;
+      }
+    }
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 1)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new NotImplementedException();
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotImplementedException();
+        /*
 				HavriliakNegamiComplex s = (HavriliakNegamiComplex)obj;
 				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
 				info.AddValue("NegImSign", s._negativeImaginarySign);
 				info.AddValue("ExcludeConductivity", s._excludeConductivity);
 				*/
-			}
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
-				s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
-				info.GetBoolean("NegImSign");
-				s._useFlowTerm = !info.GetBoolean("ExcludeConductivity");
-				s._isDielectricData = true;
-				return s;
-			}
-		}
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+        info.GetBoolean("NegImSign");
+        s._useFlowTerm = !info.GetBoolean("ExcludeConductivity");
+        s._isDielectricData = true;
+        return s;
+      }
+    }
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 2)]
-		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Trying to serialize old version");
-				/*
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 2)]
+    private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Trying to serialize old version");
+        /*
 				HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
 				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
 				info.AddValue("FlowTerm", s._useFlowTerm);
 				info.AddValue("IsDielectric", s._isDielectricData);
 				*/
-			}
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
-				s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
-				s._useFlowTerm = info.GetBoolean("FlowTerm");
-				s._isDielectricData = info.GetBoolean("IsDielectric");
-				return s;
-			}
-		}
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+        s._useFlowTerm = info.GetBoolean("FlowTerm");
+        s._isDielectricData = info.GetBoolean("IsDielectric");
+        return s;
+      }
+    }
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 3)]
-		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
-				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
-				info.AddValue("FlowTerm", s._useFlowTerm);
-				info.AddValue("IsDielectric", s._isDielectricData);
-				info.AddValue("NumberOfTerms", s._numberOfTerms);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 3)]
+    private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+        info.AddValue("FlowTerm", s._useFlowTerm);
+        info.AddValue("IsDielectric", s._isDielectricData);
+        info.AddValue("NumberOfTerms", s._numberOfTerms);
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
-				s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
-				s._useFlowTerm = info.GetBoolean("FlowTerm");
-				s._isDielectricData = info.GetBoolean("IsDielectric");
-				s.NumberOfRelaxations = info.GetInt32("NumberOfTerms");
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+        s._useFlowTerm = info.GetBoolean("FlowTerm");
+        s._isDielectricData = info.GetBoolean("IsDielectric");
+        s.NumberOfRelaxations = info.GetInt32("NumberOfTerms");
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		/// <summary>
-		/// Extended 2013-02-07 by InvertViscosity, InvertResult and LogarithmizeResults
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 4)]
-		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
-				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
-				info.AddValue("FlowTerm", s._useFlowTerm);
-				info.AddValue("IsDielectric", s._isDielectricData);
-				info.AddValue("InvertViscosity", s._invertViscosity);
-				info.AddValue("NumberOfRelaxations", s._numberOfTerms);
-				info.AddValue("InvertResult", s._invertResult);
-				info.AddValue("LogarithmizeResults", s._logarithmizeResults);
-			}
+    /// <summary>
+    /// Extended 2013-02-07 by InvertViscosity, InvertResult and LogarithmizeResults
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 4)]
+    private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+        info.AddValue("FlowTerm", s._useFlowTerm);
+        info.AddValue("IsDielectric", s._isDielectricData);
+        info.AddValue("InvertViscosity", s._invertViscosity);
+        info.AddValue("NumberOfRelaxations", s._numberOfTerms);
+        info.AddValue("InvertResult", s._invertResult);
+        info.AddValue("LogarithmizeResults", s._logarithmizeResults);
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
-				s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
-				s._useFlowTerm = info.GetBoolean("FlowTerm");
-				s._isDielectricData = info.GetBoolean("IsDielectric");
-				s._invertViscosity = info.GetBoolean("InvertViscosity");
-				s.NumberOfRelaxations = info.GetInt32("NumberOfRelaxations");
-				s._invertResult = info.GetBoolean("InvertResult");
-				s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+        s._useFlowTerm = info.GetBoolean("FlowTerm");
+        s._isDielectricData = info.GetBoolean("IsDielectric");
+        s._invertViscosity = info.GetBoolean("InvertViscosity");
+        s.NumberOfRelaxations = info.GetInt32("NumberOfRelaxations");
+        s._invertResult = info.GetBoolean("InvertResult");
+        s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public HavriliakNegamiSusceptibility()
-		{
-		}
+    public HavriliakNegamiSusceptibility()
+    {
+    }
 
-		public bool UseFrequencyInsteadOmega
-		{
-			get { return _useFrequencyInsteadOmega; }
-			set
-			{
-				var oldValue = _useFrequencyInsteadOmega;
-				_useFrequencyInsteadOmega = value;
-				if (oldValue != value)
-					OnChanged();
-			}
-		}
+    public bool UseFrequencyInsteadOmega
+    {
+      get { return _useFrequencyInsteadOmega; }
+      set
+      {
+        var oldValue = _useFrequencyInsteadOmega;
+        _useFrequencyInsteadOmega = value;
+        if (oldValue != value)
+          OnChanged();
+      }
+    }
 
-		public bool UseFlowTerm
-		{
-			get { return _useFlowTerm; }
-			set
-			{
-				var oldValue = _useFlowTerm;
-				_useFlowTerm = value;
-				if (oldValue != value)
-					OnChanged();
-			}
-		}
+    public bool UseFlowTerm
+    {
+      get { return _useFlowTerm; }
+      set
+      {
+        var oldValue = _useFlowTerm;
+        _useFlowTerm = value;
+        if (oldValue != value)
+          OnChanged();
+      }
+    }
 
-		public bool IsDielectricData
-		{
-			get { return _isDielectricData; }
-			set
-			{
-				var oldValue = _isDielectricData;
-				_isDielectricData = value;
-				if (oldValue != value)
-					OnChanged();
-			}
-		}
+    public bool IsDielectricData
+    {
+      get { return _isDielectricData; }
+      set
+      {
+        var oldValue = _isDielectricData;
+        _isDielectricData = value;
+        if (oldValue != value)
+          OnChanged();
+      }
+    }
 
-		public bool InvertViscosity
-		{
-			get { return _invertViscosity; }
-			set
-			{
-				var oldValue = _invertViscosity;
-				_invertViscosity = value;
-				if (oldValue != value)
-					OnChanged();
-			}
-		}
+    public bool InvertViscosity
+    {
+      get { return _invertViscosity; }
+      set
+      {
+        var oldValue = _invertViscosity;
+        _invertViscosity = value;
+        if (oldValue != value)
+          OnChanged();
+      }
+    }
 
-		public int NumberOfRelaxations
-		{
-			get
-			{
-				return _numberOfTerms;
-			}
-			set
-			{
-				var oldValue = _numberOfTerms;
-				value = Math.Max(value, 0);
-				_numberOfTerms = value;
+    public int NumberOfRelaxations
+    {
+      get
+      {
+        return _numberOfTerms;
+      }
+      set
+      {
+        var oldValue = _numberOfTerms;
+        value = Math.Max(value, 0);
+        _numberOfTerms = value;
 
-				if (oldValue != value)
-				{
-					OnChanged();
-				}
-			}
-		}
+        if (oldValue != value)
+        {
+          OnChanged();
+        }
+      }
+    }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the complex dependent variable (the output of the fit function) should be inverted.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if the result is inverted; otherwise, <c>false</c>.
-		/// </value>
-		public bool InvertResult
-		{
-			get
-			{
-				return _invertResult;
-			}
-			set
-			{
-				var oldValue = _invertResult;
-				_invertResult = value;
-				if (value != oldValue)
-					OnChanged();
-			}
-		}
+    /// <summary>
+    /// Gets or sets a value indicating whether the complex dependent variable (the output of the fit function) should be inverted.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if the result is inverted; otherwise, <c>false</c>.
+    /// </value>
+    public bool InvertResult
+    {
+      get
+      {
+        return _invertResult;
+      }
+      set
+      {
+        var oldValue = _invertResult;
+        _invertResult = value;
+        if (value != oldValue)
+          OnChanged();
+      }
+    }
 
-		/// <summary>
-		/// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
-		/// </summary>
-		/// <value>
-		///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
-		/// </value>
-		public bool LogarithmizeResults
-		{
-			get
-			{
-				return _logarithmizeResults;
-			}
-			set
-			{
-				var oldValue = _logarithmizeResults;
-				_logarithmizeResults = value;
-				if (value != oldValue)
-					OnChanged();
-			}
-		}
+    /// <summary>
+    /// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
+    /// </value>
+    public bool LogarithmizeResults
+    {
+      get
+      {
+        return _logarithmizeResults;
+      }
+      set
+      {
+        var oldValue = _logarithmizeResults;
+        _logarithmizeResults = value;
+        if (value != oldValue)
+          OnChanged();
+      }
+    }
 
-		public override string ToString()
-		{
-			return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
-		}
+    public override string ToString()
+    {
+      return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
+    }
 
-		[FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/Dielectrics", 1, 2, 5)]
-		[Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
-		public static IFitFunction CreateDielectricFunctionOfOmega()
-		{
-			HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
-			result._useFrequencyInsteadOmega = false;
-			result._isDielectricData = true;
-			result._useFlowTerm = true;
-			return result;
-		}
+    [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/Dielectrics", 1, 2, 5)]
+    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
+    public static IFitFunction CreateDielectricFunctionOfOmega()
+    {
+      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
+      result._useFrequencyInsteadOmega = false;
+      result._isDielectricData = true;
+      result._useFlowTerm = true;
+      return result;
+    }
 
-		[FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/Dielectrics", 1, 2, 5)]
-		[Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
-		public static IFitFunction CreateDielectricFunctionOfFrequency()
-		{
-			HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
-			result._useFrequencyInsteadOmega = true;
-			result._isDielectricData = true;
-			result._useFlowTerm = true;
-			return result;
-		}
+    [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/Dielectrics", 1, 2, 5)]
+    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
+    public static IFitFunction CreateDielectricFunctionOfFrequency()
+    {
+      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
+      result._useFrequencyInsteadOmega = true;
+      result._isDielectricData = true;
+      result._useFlowTerm = true;
+      return result;
+    }
 
-		[FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/General", 1, 2, 5)]
-		[Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
-		public static IFitFunction CreateGeneralFunctionOfOmega()
-		{
-			HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
-			result._useFrequencyInsteadOmega = false;
-			result._isDielectricData = false;
-			result._useFlowTerm = true;
-			return result;
-		}
+    [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/General", 1, 2, 5)]
+    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
+    public static IFitFunction CreateGeneralFunctionOfOmega()
+    {
+      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
+      result._useFrequencyInsteadOmega = false;
+      result._isDielectricData = false;
+      result._useFlowTerm = true;
+      return result;
+    }
 
-		[FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/General", 1, 2, 5)]
-		[Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
-		public static IFitFunction CreateGeneralFunctionOfFrequency()
-		{
-			HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
-			result._useFrequencyInsteadOmega = true;
-			result._isDielectricData = false;
-			result._useFlowTerm = true;
-			return result;
-		}
+    [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/General", 1, 2, 5)]
+    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
+    public static IFitFunction CreateGeneralFunctionOfFrequency()
+    {
+      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
+      result._useFrequencyInsteadOmega = true;
+      result._isDielectricData = false;
+      result._useFlowTerm = true;
+      return result;
+    }
 
-		#region IFitFunction Members
+    #region IFitFunction Members
 
-		#region independent variable definition
+    #region independent variable definition
 
-		public int NumberOfIndependentVariables
-		{
-			get
-			{
-				return 1;
-			}
-		}
+    public int NumberOfIndependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
 
-		public string IndependentVariableName(int i)
-		{
-			return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
-		}
+    public string IndependentVariableName(int i)
+    {
+      return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
+    }
 
-		#endregion independent variable definition
+    #endregion independent variable definition
 
-		#region dependent variable definition
+    #region dependent variable definition
 
-		private string[] _dependentVariableNameS = new string[] { "chi'", "chi''" };
-		private string[] _dependentVariableNameD = new string[] { "eps'", "eps''" };
+    private string[] _dependentVariableNameS = new string[] { "chi'", "chi''" };
+    private string[] _dependentVariableNameD = new string[] { "eps'", "eps''" };
 
-		public int NumberOfDependentVariables
-		{
-			get
-			{
-				return _dependentVariableNameS.Length;
-			}
-		}
+    public int NumberOfDependentVariables
+    {
+      get
+      {
+        return _dependentVariableNameS.Length;
+      }
+    }
 
-		public string DependentVariableName(int i)
-		{
-			return _isDielectricData ? _dependentVariableNameD[i] : _dependentVariableNameS[i];
-		}
+    public string DependentVariableName(int i)
+    {
+      return _isDielectricData ? _dependentVariableNameD[i] : _dependentVariableNameS[i];
+    }
 
-		#endregion dependent variable definition
+    #endregion dependent variable definition
 
-		#region parameter definition
+    #region parameter definition
 
-		private string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "alpha", "gamma", "conductivity" };
-		private string[] _parameterNameS = new string[] { "j_inf", "delta_j", "tau", "alpha", "gamma", "viscosity" };
+    private string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "alpha", "gamma", "conductivity" };
+    private string[] _parameterNameS = new string[] { "j_inf", "delta_j", "tau", "alpha", "gamma", "viscosity" };
 
-		public int NumberOfParameters
-		{
-			get
-			{
-				var result = 1 + 4 * _numberOfTerms;
-				if (_useFlowTerm)
-					result += 1;
-				return result;
-			}
-		}
+    public int NumberOfParameters
+    {
+      get
+      {
+        var result = 1 + 4 * _numberOfTerms;
+        if (_useFlowTerm)
+          result += 1;
+        return result;
+      }
+    }
 
-		public string ParameterName(int i)
-		{
-			var namearr = _isDielectricData ? _parameterNameD : _parameterNameS;
+    public string ParameterName(int i)
+    {
+      var namearr = _isDielectricData ? _parameterNameD : _parameterNameS;
 
-			if (0 == i)
-				return namearr[0]; // eps_inf
+      if (0 == i)
+        return namearr[0]; // eps_inf
 
-			--i;
+      --i;
 
-			var idx = i % 4;
-			var term = i / 4;
-			if (term < NumberOfRelaxations)
-				return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
-			else
-				return namearr[namearr.Length - 1];
-		}
+      var idx = i % 4;
+      var term = i / 4;
+      if (term < NumberOfRelaxations)
+        return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
+      else
+        return namearr[namearr.Length - 1];
+    }
 
-		public double DefaultParameterValue(int i)
-		{
-			if (i < (1 + 4 * _numberOfTerms))
-				return 1;
-			else
-				return 0;
-		}
+    public double DefaultParameterValue(int i)
+    {
+      if (i < (1 + 4 * _numberOfTerms))
+        return 1;
+      else
+        return 0;
+    }
 
-		public IVarianceScaling DefaultVarianceScaling(int i)
-		{
-			return null;
-		}
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
 
-		/// <summary>
-		/// Called when anything in this fit function has changed.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
+    /// <summary>
+    /// Called when anything in this fit function has changed.
+    /// </summary>
+    protected virtual void OnChanged()
+    {
+      if (null != Changed)
+        Changed(this, EventArgs.Empty);
+    }
 
-		/// <summary>
-		/// Fired when the fit function changed.
-		/// </summary>
-		public event EventHandler Changed;
+    /// <summary>
+    /// Fired when the fit function changed.
+    /// </summary>
+    public event EventHandler Changed;
 
-		#endregion parameter definition
+    #endregion parameter definition
 
-		public void Evaluate(double[] X, double[] P, double[] Y)
-		{
-			double x = X[0];
-			if (_useFrequencyInsteadOmega)
-				x *= (2 * Math.PI);
+    public void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      double x = X[0];
+      if (_useFrequencyInsteadOmega)
+        x *= (2 * Math.PI);
 
-			Complex result = P[0];
-			int i, j;
-			for (i = 0, j = 1; i < _numberOfTerms; ++i, j += 4)
-			{
-				result += P[j] / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[1 + j], P[2 + j]), P[3 + j]);
-			}
+      Complex result = P[0];
+      int i, j;
+      for (i = 0, j = 1; i < _numberOfTerms; ++i, j += 4)
+      {
+        result += P[j] / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[1 + j], P[2 + j]), P[3 + j]);
+      }
 
-			// note: because it is a susceptiblity, the imaginary part is still negative
+      // note: because it is a susceptiblity, the imaginary part is still negative
 
-			if (this._useFlowTerm)
-			{
-				if (this._isDielectricData)
-					result.Im -= P[j] / (x * 8.854187817e-12);
-				else if (this._invertViscosity)
-					result.Im -= P[j] / (x);
-				else
-					result.Im -= 1 / (P[j] * x);
-			}
+      if (this._useFlowTerm)
+      {
+        if (this._isDielectricData)
+          result.Im -= P[j] / (x * 8.854187817e-12);
+        else if (this._invertViscosity)
+          result.Im -= P[j] / (x);
+        else
+          result.Im -= 1 / (P[j] * x);
+      }
 
-			if (_invertResult)
-				result = 1 / result; // if we invert, i.e. we calculate the modulus, the imaginary part is now positive
-			else
-				result.Im = -result.Im; // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
+      if (_invertResult)
+        result = 1 / result; // if we invert, i.e. we calculate the modulus, the imaginary part is now positive
+      else
+        result.Im = -result.Im; // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
 
-			if (_logarithmizeResults)
-			{
-				result.Re = Math.Log10(result.Re);
-				result.Im = Math.Log10(result.Im);
-			}
+      if (_logarithmizeResults)
+      {
+        result.Re = Math.Log10(result.Re);
+        result.Im = Math.Log10(result.Im);
+      }
 
-			Y[0] = result.Re;
-			Y[1] = result.Im;
-		}
+      Y[0] = result.Re;
+      Y[1] = result.Im;
+    }
 
-		public void EvaluateGradient(double[] X, double[] P, double[][] DY)
-		{
-			throw new NotImplementedException();
-			/*
+    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    {
+      throw new NotImplementedException();
+      /*
 			double x = X[0];
 			if (_useFrequencyInsteadOmega)
 				x *= (2 * Math.PI);
@@ -503,8 +503,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				DY[1][5] = _isDielectricData ? 1 / (x * 8.854187817e-12) : 1 / x;
 			}
 			*/
-		}
+    }
 
-		#endregion IFitFunction Members
-	}
+    #endregion IFitFunction Members
+  }
 }

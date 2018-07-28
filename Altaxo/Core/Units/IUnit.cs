@@ -29,39 +29,39 @@ using System.Text;
 
 namespace Altaxo.Units
 {
-	/// <summary>
-	/// Represents an arbitrary unit (SI or any other unit).
-	/// </summary>
-	public interface IUnit
-	{
-		/// <summary>Full name of the unit.</summary>
-		string Name { get; }
+  /// <summary>
+  /// Represents an arbitrary unit (SI or any other unit).
+  /// </summary>
+  public interface IUnit
+  {
+    /// <summary>Full name of the unit.</summary>
+    string Name { get; }
 
-		/// <summary>Usual shortcut of the unit.</summary>
-		string ShortCut { get; }
+    /// <summary>Usual shortcut of the unit.</summary>
+    string ShortCut { get; }
 
-		/// <summary>
-		/// Converts <paramref name="x"/> to the corresponding SI unit.
-		/// </summary>
-		/// <param name="x">Value to convert.</param>
-		/// <returns>The corresponding value of <paramref name="x"/> in SI units.</returns>
-		double ToSIUnit(double x);
+    /// <summary>
+    /// Converts <paramref name="x"/> to the corresponding SI unit.
+    /// </summary>
+    /// <param name="x">Value to convert.</param>
+    /// <returns>The corresponding value of <paramref name="x"/> in SI units.</returns>
+    double ToSIUnit(double x);
 
-		/// <summary>
-		/// Converts <paramref name="x"/> (in SI units) to the corresponding value in this unit.
-		/// </summary>
-		/// <param name="x">Value in SI units.</param>
-		/// <returns>The corresponding value in this unit.</returns>
-		double FromSIUnit(double x);
+    /// <summary>
+    /// Converts <paramref name="x"/> (in SI units) to the corresponding value in this unit.
+    /// </summary>
+    /// <param name="x">Value in SI units.</param>
+    /// <returns>The corresponding value in this unit.</returns>
+    double FromSIUnit(double x);
 
-		/// <summary>
-		/// Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).
-		/// </summary>
-		ISIPrefixList Prefixes { get; }
+    /// <summary>
+    /// Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).
+    /// </summary>
+    ISIPrefixList Prefixes { get; }
 
-		/// <summary>
-		/// Returns the corresponding SI unit.
-		/// </summary>
-		SIUnit SIUnit { get; }
-	}
+    /// <summary>
+    /// Returns the corresponding SI unit.
+    /// </summary>
+    SIUnit SIUnit { get; }
+  }
 }

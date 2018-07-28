@@ -30,68 +30,68 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.Time
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Second), 0)]
-	public class SerializationSurrogate0_Second : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Second), 0)]
+  public class SerializationSurrogate0_Second : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Second.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Second.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Minute), 0)]
-	public class SerializationSurrogate0_Minute : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Minute), 0)]
+  public class SerializationSurrogate0_Minute : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Minute.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Minute.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Hour), 0)]
-	public class SerializationSurrogate0_Hour : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Hour), 0)]
+  public class SerializationSurrogate0_Hour : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Hour.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Hour.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Day), 0)]
-	public class SerializationSurrogate0_Day : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Day), 0)]
+  public class SerializationSurrogate0_Day : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Day.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Day.Instance;
+    }
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Week), 0)]
-	public class SerializationSurrogate0_Week : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Week), 0)]
+  public class SerializationSurrogate0_Week : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			return Week.Instance;
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      return Week.Instance;
+    }
+  }
 }

@@ -31,17 +31,17 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	public class PositionNormalColorIndexedTriangleBufferWithClipping : PositionNormalColorIndexedTriangleBuffer
-	{
-		public PlaneD3D[] ClipPlanes { get; private set; }
+  public class PositionNormalColorIndexedTriangleBufferWithClipping : PositionNormalColorIndexedTriangleBuffer
+  {
+    public PlaneD3D[] ClipPlanes { get; private set; }
 
-		public PositionNormalColorIndexedTriangleBufferWithClipping(D3D10GraphicsContext parent, PlaneD3D[] clipPlanes)
-				: base(parent)
-		{
-			if (null == clipPlanes)
-				throw new ArgumentNullException(nameof(clipPlanes));
+    public PositionNormalColorIndexedTriangleBufferWithClipping(D3D10GraphicsContext parent, PlaneD3D[] clipPlanes)
+        : base(parent)
+    {
+      if (null == clipPlanes)
+        throw new ArgumentNullException(nameof(clipPlanes));
 
-			ClipPlanes = clipPlanes;
-		}
-	}
+      ClipPlanes = clipPlanes;
+    }
+  }
 }

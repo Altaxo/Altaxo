@@ -31,64 +31,64 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
-	/// <summary>
-	/// Interaction logic for WaterfallTransformControl.xaml
-	/// </summary>
-	public partial class WaterfallTransformControl : UserControl, IWaterfallTransformView
-	{
-		public WaterfallTransformControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for WaterfallTransformControl.xaml
+  /// </summary>
+  public partial class WaterfallTransformControl : UserControl, IWaterfallTransformView
+  {
+    public WaterfallTransformControl()
+    {
+      InitializeComponent();
+    }
 
-		#region IWaterfallTransformView Members
+    #region IWaterfallTransformView Members
 
-		public void SetXScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment)
-		{
-			_edXScale.UnitEnvironment = environment;
-		}
+    public void SetXScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment)
+    {
+      _edXScale.UnitEnvironment = environment;
+    }
 
-		public DimensionfulQuantity XScale
-		{
-			get
-			{
-				return _edXScale.SelectedQuantity;
-			}
-			set
-			{
-				_edXScale.SelectedQuantity = value;
-			}
-		}
+    public DimensionfulQuantity XScale
+    {
+      get
+      {
+        return _edXScale.SelectedQuantity;
+      }
+      set
+      {
+        _edXScale.SelectedQuantity = value;
+      }
+    }
 
-		public void SetYScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment)
-		{
-			_edYScale.UnitEnvironment = environment;
-		}
+    public void SetYScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment)
+    {
+      _edYScale.UnitEnvironment = environment;
+    }
 
-		public DimensionfulQuantity YScale
-		{
-			get
-			{
-				return _edYScale.SelectedQuantity;
-			}
-			set
-			{
-				_edYScale.SelectedQuantity = value;
-			}
-		}
+    public DimensionfulQuantity YScale
+    {
+      get
+      {
+        return _edYScale.SelectedQuantity;
+      }
+      set
+      {
+        _edYScale.SelectedQuantity = value;
+      }
+    }
 
-		public bool UseClipping
-		{
-			get
-			{
-				return true == _chkClipValues.IsChecked;
-			}
-			set
-			{
-				_chkClipValues.IsChecked = value;
-			}
-		}
+    public bool UseClipping
+    {
+      get
+      {
+        return true == _chkClipValues.IsChecked;
+      }
+      set
+      {
+        _chkClipValues.IsChecked = value;
+      }
+    }
 
-		#endregion IWaterfallTransformView Members
-	}
+    #endregion IWaterfallTransformView Members
+  }
 }

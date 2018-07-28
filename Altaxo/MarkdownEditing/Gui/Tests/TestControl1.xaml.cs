@@ -26,14 +26,14 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Tests
 {
-	/// <summary>
-	/// Interaction logic for TestControl1.xaml
-	/// </summary>
-	public partial class TestControl1 : UserControl
-	{
-		public TestControl1()
-		{
-			InitializeComponent();
-		}
-	}
+  /// <summary>
+  /// Interaction logic for TestControl1.xaml
+  /// </summary>
+  public partial class TestControl1 : UserControl
+  {
+    public TestControl1()
+    {
+      InitializeComponent();
+    }
+  }
 }

@@ -29,60 +29,60 @@ using System.Text;
 
 namespace Altaxo.Data.Transformations
 {
-	public class DecadicExponentialTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
-	{
-		public static DecadicExponentialTransformation Instance { get; private set; } = new DecadicExponentialTransformation();
+  public class DecadicExponentialTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
+  {
+    public static DecadicExponentialTransformation Instance { get; private set; } = new DecadicExponentialTransformation();
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-06-24 Initial version.
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DecadicExponentialTransformation), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    /// <summary>
+    /// 2016-06-24 Initial version.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DecadicExponentialTransformation), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return DecadicExponentialTransformation.Instance;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return DecadicExponentialTransformation.Instance;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <inheritdoc/>
-		public Type InputValueType { get { return typeof(double); } }
+    /// <inheritdoc/>
+    public Type InputValueType { get { return typeof(double); } }
 
-		/// <inheritdoc/>
-		public Type OutputValueType { get { return typeof(double); } }
+    /// <inheritdoc/>
+    public Type OutputValueType { get { return typeof(double); } }
 
-		public AltaxoVariant Transform(AltaxoVariant value)
-		{
-			return Math.Pow(10, value);
-		}
+    public AltaxoVariant Transform(AltaxoVariant value)
+    {
+      return Math.Pow(10, value);
+    }
 
-		public string RepresentationAsFunction
-		{
-			get { return GetRepresentationAsFunction("x"); }
-		}
+    public string RepresentationAsFunction
+    {
+      get { return GetRepresentationAsFunction("x"); }
+    }
 
-		public string GetRepresentationAsFunction(string arg)
-		{
-			return string.Format("10^({0})", arg);
-		}
+    public string GetRepresentationAsFunction(string arg)
+    {
+      return string.Format("10^({0})", arg);
+    }
 
-		public string RepresentationAsOperator
-		{
-			get { return "10^"; }
-		}
+    public string RepresentationAsOperator
+    {
+      get { return "10^"; }
+    }
 
-		public IVariantToVariantTransformation BackTransformation
-		{
-			get { return DecadicLogarithmTransformation.Instance; }
-		}
-	}
+    public IVariantToVariantTransformation BackTransformation
+    {
+      get { return DecadicLogarithmTransformation.Instance; }
+    }
+  }
 }

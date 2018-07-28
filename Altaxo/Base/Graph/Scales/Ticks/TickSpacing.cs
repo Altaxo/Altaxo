@@ -30,94 +30,94 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
-	/// <summary>
-	/// Base class responsible for the spacing of ticks (major and minor) along a scale.
-	/// </summary>
-	public abstract class TickSpacing
-		:
-		Main.SuspendableDocumentNodeWithEventArgs, Main.ICopyFrom
-	{
-		protected static int _nextUpdateSequenceNumber;
+  /// <summary>
+  /// Base class responsible for the spacing of ticks (major and minor) along a scale.
+  /// </summary>
+  public abstract class TickSpacing
+    :
+    Main.SuspendableDocumentNodeWithEventArgs, Main.ICopyFrom
+  {
+    protected static int _nextUpdateSequenceNumber;
 
-		protected int _updateSequenceNumber;
+    protected int _updateSequenceNumber;
 
-		protected TickSpacing()
-		{
-		}
+    protected TickSpacing()
+    {
+    }
 
-		public TickSpacing(TickSpacing from)
-		{
-			CopyFrom(from);
-		}
+    public TickSpacing(TickSpacing from)
+    {
+      CopyFrom(from);
+    }
 
-		public abstract object Clone();
+    public abstract object Clone();
 
-		public abstract bool CopyFrom(object obj);
+    public abstract bool CopyFrom(object obj);
 
-		public int UpdateSequenceNumber { get { return _updateSequenceNumber; } }
+    public int UpdateSequenceNumber { get { return _updateSequenceNumber; } }
 
-		/// <summary>
-		/// Decides giving a raw org and end value, whether or not the scale boundaries should be extended to
-		/// have more 'nice' values. If the boundaries should be changed, the function return true, and the
-		/// org and end argument contain the proposed new scale boundaries.
-		/// </summary>
-		/// <param name="org">Raw scale org.</param>
-		/// <param name="end">Raw scale end.</param>
-		/// <param name="isOrgExtendable">True when the org is allowed to be extended.</param>
-		/// <param name="isEndExtendable">True when the scale end can be extended.</param>
-		/// <returns>True when org or end are changed. False otherwise.</returns>
-		public abstract bool PreProcessScaleBoundaries(ref AltaxoVariant org, ref AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable);
+    /// <summary>
+    /// Decides giving a raw org and end value, whether or not the scale boundaries should be extended to
+    /// have more 'nice' values. If the boundaries should be changed, the function return true, and the
+    /// org and end argument contain the proposed new scale boundaries.
+    /// </summary>
+    /// <param name="org">Raw scale org.</param>
+    /// <param name="end">Raw scale end.</param>
+    /// <param name="isOrgExtendable">True when the org is allowed to be extended.</param>
+    /// <param name="isEndExtendable">True when the scale end can be extended.</param>
+    /// <returns>True when org or end are changed. False otherwise.</returns>
+    public abstract bool PreProcessScaleBoundaries(ref AltaxoVariant org, ref AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable);
 
-		/// <summary>
-		/// Calculates the ticks based on the org and end of the scale. Org and End now are given and can not be changed anymore.
-		/// </summary>
-		/// <param name="org">Scale origin.</param>
-		/// <param name="end">Scale end.</param>
-		/// <param name="scale">The scale.</param>
-		public abstract void FinalProcessScaleBoundaries(AltaxoVariant org, AltaxoVariant end, Scale scale);
+    /// <summary>
+    /// Calculates the ticks based on the org and end of the scale. Org and End now are given and can not be changed anymore.
+    /// </summary>
+    /// <param name="org">Scale origin.</param>
+    /// <param name="end">Scale end.</param>
+    /// <param name="scale">The scale.</param>
+    public abstract void FinalProcessScaleBoundaries(AltaxoVariant org, AltaxoVariant end, Scale scale);
 
-		/// <summary>
-		/// This will return the the major ticks as <see cref="AltaxoVariant" />.
-		/// </summary>
-		/// <returns>The array with major tick values.</returns>
-		public abstract AltaxoVariant[] GetMajorTicksAsVariant();
+    /// <summary>
+    /// This will return the the major ticks as <see cref="AltaxoVariant" />.
+    /// </summary>
+    /// <returns>The array with major tick values.</returns>
+    public abstract AltaxoVariant[] GetMajorTicksAsVariant();
 
-		/// <summary>
-		/// This will return the minor ticks as array of <see cref="AltaxoVariant" />.
-		/// </summary>
-		/// <returns>The array with minor tick values.</returns>
-		public abstract AltaxoVariant[] GetMinorTicksAsVariant();
+    /// <summary>
+    /// This will return the minor ticks as array of <see cref="AltaxoVariant" />.
+    /// </summary>
+    /// <returns>The array with minor tick values.</returns>
+    public abstract AltaxoVariant[] GetMinorTicksAsVariant();
 
-		public virtual double[] GetMajorTicksNormal(Scale scale)
-		{
-			AltaxoVariant[] vars = GetMajorTicksAsVariant();
-			double[] result = new double[vars.Length];
-			for (int i = 0; i < vars.Length; i++)
-				result[i] = scale.PhysicalVariantToNormal(vars[i]);
+    public virtual double[] GetMajorTicksNormal(Scale scale)
+    {
+      AltaxoVariant[] vars = GetMajorTicksAsVariant();
+      double[] result = new double[vars.Length];
+      for (int i = 0; i < vars.Length; i++)
+        result[i] = scale.PhysicalVariantToNormal(vars[i]);
 
-			return result;
-		}
+      return result;
+    }
 
-		public virtual double[] GetMinorTicksNormal(Scale scale)
-		{
-			AltaxoVariant[] vars = GetMinorTicksAsVariant();
-			double[] result = new double[vars.Length];
-			for (int i = 0; i < vars.Length; i++)
-				result[i] = scale.PhysicalVariantToNormal(vars[i]);
+    public virtual double[] GetMinorTicksNormal(Scale scale)
+    {
+      AltaxoVariant[] vars = GetMinorTicksAsVariant();
+      double[] result = new double[vars.Length];
+      for (int i = 0; i < vars.Length; i++)
+        result[i] = scale.PhysicalVariantToNormal(vars[i]);
 
-			return result;
-		}
+      return result;
+    }
 
-		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
-		{
-			_updateSequenceNumber = _nextUpdateSequenceNumber++;
-			return base.HandleHighPriorityChildChangeCases(sender, ref e);
-		}
+    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    {
+      _updateSequenceNumber = _nextUpdateSequenceNumber++;
+      return base.HandleHighPriorityChildChangeCases(sender, ref e);
+    }
 
-		protected override void EhSelfChanged(EventArgs e)
-		{
-			_updateSequenceNumber = _nextUpdateSequenceNumber++;
-			base.EhSelfChanged(e);
-		}
-	}
+    protected override void EhSelfChanged(EventArgs e)
+    {
+      _updateSequenceNumber = _nextUpdateSequenceNumber++;
+      base.EhSelfChanged(e);
+    }
+  }
 }

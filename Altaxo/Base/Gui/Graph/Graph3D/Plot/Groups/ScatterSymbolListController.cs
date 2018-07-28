@@ -33,13 +33,13 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
-	[ExpectedTypeOfView(typeof(IStyleListView))]
-	[UserControllerForObject(typeof(ScatterSymbolList))]
-	public class ScatterSymbolListController : StyleListController<ScatterSymbolListManager, ScatterSymbolList, IScatterSymbol>
-	{
-		public ScatterSymbolListController()
-			: base(ScatterSymbolListManager.Instance)
-		{
-		}
-	}
+  [ExpectedTypeOfView(typeof(IStyleListView))]
+  [UserControllerForObject(typeof(ScatterSymbolList))]
+  public class ScatterSymbolListController : StyleListController<ScatterSymbolListManager, ScatterSymbolList, IScatterSymbol>
+  {
+    public ScatterSymbolListController()
+      : base(ScatterSymbolListManager.Instance)
+    {
+    }
+  }
 }

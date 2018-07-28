@@ -32,100 +32,100 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
-	public class TimeSpanTextBox : TextBox
-	{
-		public event DependencyPropertyChangedEventHandler SelectedValueChanged;
+  public class TimeSpanTextBox : TextBox
+  {
+    public event DependencyPropertyChangedEventHandler SelectedValueChanged;
 
-		private TimeSpanConverter _converter;
+    private TimeSpanConverter _converter;
 
-		/// <summary>
-		/// Static initialization.
-		/// </summary>
-		static TimeSpanTextBox()
-		{
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(TimeSpanTextBox), new FrameworkPropertyMetadata(typeof(TimeSpanTextBox)));
-		}
+    /// <summary>
+    /// Static initialization.
+    /// </summary>
+    static TimeSpanTextBox()
+    {
+      DefaultStyleKeyProperty.OverrideMetadata(typeof(TimeSpanTextBox), new FrameworkPropertyMetadata(typeof(TimeSpanTextBox)));
+    }
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public TimeSpanTextBox()
-		{
-			var binding = new Binding();
-			binding.Source = this;
-			binding.Path = new PropertyPath("SelectedValue");
-			binding.Mode = BindingMode.TwoWay;
-			binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-			_converter = new TimeSpanConverter();
-			binding.Converter = _converter;
-			binding.ValidationRules.Add(_converter);
-			this.SetBinding(TextBox.TextProperty, binding);
-		}
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public TimeSpanTextBox()
+    {
+      var binding = new Binding();
+      binding.Source = this;
+      binding.Path = new PropertyPath("SelectedValue");
+      binding.Mode = BindingMode.TwoWay;
+      binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+      _converter = new TimeSpanConverter();
+      binding.Converter = _converter;
+      binding.ValidationRules.Add(_converter);
+      this.SetBinding(TextBox.TextProperty, binding);
+    }
 
-		#region Change selection behaviour
+    #region Change selection behaviour
 
-		// The next three overrides change the selection behaviour of the text box as described in
-		// 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
-		// (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
+    // The next three overrides change the selection behaviour of the text box as described in
+    // 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
+    // (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
-		protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
-		{
-			SelectAll();
-			base.OnGotKeyboardFocus(e);
-		}
+    protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
+    {
+      SelectAll();
+      base.OnGotKeyboardFocus(e);
+    }
 
-		protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
-		{
-			SelectAll();
-			base.OnMouseDoubleClick(e);
-		}
+    protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
+    {
+      SelectAll();
+      base.OnMouseDoubleClick(e);
+    }
 
-		protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
-		{
-			if (!IsKeyboardFocusWithin)
-			{
-				e.Handled = true;
-				Focus();
-			}
-			else
-			{
-				base.OnPreviewMouseLeftButtonDown(e);
-			}
-		}
+    protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
+    {
+      if (!IsKeyboardFocusWithin)
+      {
+        e.Handled = true;
+        Focus();
+      }
+      else
+      {
+        base.OnPreviewMouseLeftButtonDown(e);
+      }
+    }
 
-		#endregion Change selection behaviour
+    #endregion Change selection behaviour
 
-		#region Dependency property
+    #region Dependency property
 
-		/// <summary>
-		/// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
-		/// </summary>
-		public TimeSpan SelectedValue
-		{
-			get { return (TimeSpan)GetValue(SelectedValueProperty); }
-			set { SetValue(SelectedValueProperty, value); }
-		}
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public TimeSpan SelectedValue
+    {
+      get { return (TimeSpan)GetValue(SelectedValueProperty); }
+      set { SetValue(SelectedValueProperty, value); }
+    }
 
-		public static readonly DependencyProperty SelectedValueProperty =
-				DependencyProperty.Register("SelectedValue", typeof(TimeSpan), typeof(TimeSpanTextBox),
-				new FrameworkPropertyMetadata(EhSelectedValueChanged));
+    public static readonly DependencyProperty SelectedValueProperty =
+        DependencyProperty.Register("SelectedValue", typeof(TimeSpan), typeof(TimeSpanTextBox),
+        new FrameworkPropertyMetadata(EhSelectedValueChanged));
 
-		private static void EhSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((TimeSpanTextBox)obj).OnSelectedValueChanged(obj, args);
-		}
+    private static void EhSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((TimeSpanTextBox)obj).OnSelectedValueChanged(obj, args);
+    }
 
-		/// <summary>
-		/// Triggers the <see cref="SelectedValueChanged"/> event.
-		/// </summary>
-		/// <param name="obj">Dependency object (here: the control).</param>
-		/// <param name="args">Property changed event arguments.</param>
-		protected void OnSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			if (null != SelectedValueChanged)
-				SelectedValueChanged(obj, args);
-		}
+    /// <summary>
+    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// </summary>
+    /// <param name="obj">Dependency object (here: the control).</param>
+    /// <param name="args">Property changed event arguments.</param>
+    protected void OnSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      if (null != SelectedValueChanged)
+        SelectedValueChanged(obj, args);
+    }
 
-		#endregion Dependency property
-	}
+    #endregion Dependency property
+  }
 }

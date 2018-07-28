@@ -38,112 +38,112 @@ using System.IO;
 
 namespace Altaxo.Graph.Graph3D.Commands
 {
-	/// <summary>
-	/// This class is intented to be used for commands into the graph tools toolbar. Commands derived
-	/// from it will update the toolbar whenever its state changed.
-	/// </summary>
-	public abstract class AbstractGraphToolsCommand : AbstractCheckableGraphControllerCommand
-	{
-		private Graph3DController myCurrentGraphController;
-		private Altaxo.Gui.Graph.Graph3D.Viewing.GraphToolType _graphToolType;
+  /// <summary>
+  /// This class is intented to be used for commands into the graph tools toolbar. Commands derived
+  /// from it will update the toolbar whenever its state changed.
+  /// </summary>
+  public abstract class AbstractGraphToolsCommand : AbstractCheckableGraphControllerCommand
+  {
+    private Graph3DController myCurrentGraphController;
+    private Altaxo.Gui.Graph.Graph3D.Viewing.GraphToolType _graphToolType;
 
-		protected AbstractGraphToolsCommand(Altaxo.Gui.Graph.Graph3D.Viewing.GraphToolType toolType)
-		{
-			_graphToolType = toolType;
-			if (null != Current.Workbench)
-			{
-				Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(this.EhWorkbenchContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
-				this.EhWorkbenchContentChanged(this, EventArgs.Empty);
-			}
-		}
+    protected AbstractGraphToolsCommand(Altaxo.Gui.Graph.Graph3D.Viewing.GraphToolType toolType)
+    {
+      _graphToolType = toolType;
+      if (null != Current.Workbench)
+      {
+        Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(this.EhWorkbenchContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
+        this.EhWorkbenchContentChanged(this, EventArgs.Empty);
+      }
+    }
 
-		protected void EhWorkbenchContentChanged(object o, System.EventArgs e)
-		{
-			if (!object.ReferenceEquals(Controller, myCurrentGraphController))
-			{
-				if (null != myCurrentGraphController)
-				{
-					lock (this)
-					{
-						this.myCurrentGraphController.CurrentGraphToolChanged -= new EventHandler(this.EhGraphToolChanged);
-						this.myCurrentGraphController = null;
-					}
-				}
-				if (Controller != null)
-				{
-					lock (this)
-					{
-						this.myCurrentGraphController = this.Controller;
-						this.myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(this.EhGraphToolChanged);
-					}
-				}
-				OnPropertyChanged("IsChecked");
-			}
-		}
+    protected void EhWorkbenchContentChanged(object o, System.EventArgs e)
+    {
+      if (!object.ReferenceEquals(Controller, myCurrentGraphController))
+      {
+        if (null != myCurrentGraphController)
+        {
+          lock (this)
+          {
+            this.myCurrentGraphController.CurrentGraphToolChanged -= new EventHandler(this.EhGraphToolChanged);
+            this.myCurrentGraphController = null;
+          }
+        }
+        if (Controller != null)
+        {
+          lock (this)
+          {
+            this.myCurrentGraphController = this.Controller;
+            this.myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(this.EhGraphToolChanged);
+          }
+        }
+        OnPropertyChanged("IsChecked");
+      }
+    }
 
-		protected void EhGraphToolChanged(object o, EventArgs e)
-		{
-			OnPropertyChanged("IsChecked");
-		}
+    protected void EhGraphToolChanged(object o, EventArgs e)
+    {
+      OnPropertyChanged("IsChecked");
+    }
 
-		public override bool IsChecked
-		{
-			get
-			{
-				return null == Controller ? false : _graphToolType == Controller.CurrentGraphTool;
-			}
-			set
-			{
-				if (value == true && Controller != null)
-				{
-					Controller.CurrentGraphTool = _graphToolType;
-				}
-				OnPropertyChanged("IsChecked");
-			}
-		}
-	}
+    public override bool IsChecked
+    {
+      get
+      {
+        return null == Controller ? false : _graphToolType == Controller.CurrentGraphTool;
+      }
+      set
+      {
+        if (value == true && Controller != null)
+        {
+          Controller.CurrentGraphTool = _graphToolType;
+        }
+        OnPropertyChanged("IsChecked");
+      }
+    }
+  }
 
-	/// <summary>
-	/// Test class for a selected item
-	/// </summary>
-	public class SelectPointerTool : AbstractGraphToolsCommand
-	{
-		public SelectPointerTool()
-			: base(GraphToolType.ObjectPointer)
-		{
-		}
-	}
+  /// <summary>
+  /// Test class for a selected item
+  /// </summary>
+  public class SelectPointerTool : AbstractGraphToolsCommand
+  {
+    public SelectPointerTool()
+      : base(GraphToolType.ObjectPointer)
+    {
+    }
+  }
 
-	/// <summary>
-	/// Test class for a selected item
-	/// </summary>
-	public class SelectTextTool : AbstractGraphToolsCommand
-	{
-		public SelectTextTool()
-			: base(GraphToolType.TextDrawing)
-		{
-		}
-	}
+  /// <summary>
+  /// Test class for a selected item
+  /// </summary>
+  public class SelectTextTool : AbstractGraphToolsCommand
+  {
+    public SelectTextTool()
+      : base(GraphToolType.TextDrawing)
+    {
+    }
+  }
 
-	/// <summary>
-	/// Drawing an ellipse on the graph.
-	/// </summary>
-	public class EllipseDrawingTool : AbstractGraphToolsCommand
-	{
-		public EllipseDrawingTool()
-			: base(GraphToolType.EllipseDrawing)
-		{
-		}
-	}
+  /// <summary>
+  /// Drawing an ellipse on the graph.
+  /// </summary>
+  public class EllipseDrawingTool : AbstractGraphToolsCommand
+  {
+    public EllipseDrawingTool()
+      : base(GraphToolType.EllipseDrawing)
+    {
+    }
+  }
 
-	/// <summary>
-	/// Drawing a single straight line on the graph.
-	/// </summary>
-	public class SingleLineDrawingTool : AbstractGraphToolsCommand
-	{
-		public SingleLineDrawingTool()
-			: base(GraphToolType.SingleLineDrawing)
-		{
-		}
-	}
+  /// <summary>
+  /// Drawing a single straight line on the graph.
+  /// </summary>
+  public class SingleLineDrawingTool : AbstractGraphToolsCommand
+  {
+    public SingleLineDrawingTool()
+      : base(GraphToolType.SingleLineDrawing)
+    {
+    }
+  }
 }

@@ -29,14 +29,14 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-	public interface I3DPhysicalVariantAccessor
-	{
-		AltaxoVariant GetXPhysical(int originalRowIndex);
+  public interface I3DPhysicalVariantAccessor
+  {
+    AltaxoVariant GetXPhysical(int originalRowIndex);
 
-		AltaxoVariant GetYPhysical(int originalRowIndex);
+    AltaxoVariant GetYPhysical(int originalRowIndex);
 
-		AltaxoVariant GetZPhysical(int originalRowIndex);
-	}
+    AltaxoVariant GetZPhysical(int originalRowIndex);
+  }
 
-	public delegate AltaxoVariant IndexedPhysicalValueAccessor(int i);
+  public delegate AltaxoVariant IndexedPhysicalValueAccessor(int i);
 }

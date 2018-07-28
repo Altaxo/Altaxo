@@ -35,230 +35,230 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 {
-	public class ObjectPointerMouseHandler : MouseStateHandler
-	{
-		#region Internal classes
+  public class ObjectPointerMouseHandler : MouseStateHandler
+  {
+    #region Internal classes
 
-		/// <summary>
-		/// Supergrip collects multiple active grips so that they can be moved simultaneously.
-		/// </summary>
-		protected class SuperGrip : IGripManipulationHandle
-		{
-			/// <summary>List of all collected grips.</summary>
-			private List<IGripManipulationHandle> GripList;
+    /// <summary>
+    /// Supergrip collects multiple active grips so that they can be moved simultaneously.
+    /// </summary>
+    protected class SuperGrip : IGripManipulationHandle
+    {
+      /// <summary>List of all collected grips.</summary>
+      private List<IGripManipulationHandle> GripList;
 
-			private List<IHitTestObject> HittedList;
+      private List<IHitTestObject> HittedList;
 
-			public SuperGrip()
-			{
-				GripList = new List<IGripManipulationHandle>();
-				HittedList = new List<IHitTestObject>();
-			}
+      public SuperGrip()
+      {
+        GripList = new List<IGripManipulationHandle>();
+        HittedList = new List<IHitTestObject>();
+      }
 
-			public void Add(IGripManipulationHandle gripHandle, IHitTestObject hitTestObject)
-			{
-				GripList.Add(gripHandle);
-				HittedList.Add(hitTestObject);
-			}
+      public void Add(IGripManipulationHandle gripHandle, IHitTestObject hitTestObject)
+      {
+        GripList.Add(gripHandle);
+        HittedList.Add(hitTestObject);
+      }
 
-			public void Remove(IGripManipulationHandle gripHandle)
-			{
-				for (int i = GripList.Count - 1; i >= 0; i--)
-				{
-					if (object.ReferenceEquals(gripHandle, GripList[i]))
-					{
-						GripList.RemoveAt(i);
-						HittedList.RemoveAt(i);
-						break;
-					}
-				}
-			}
+      public void Remove(IGripManipulationHandle gripHandle)
+      {
+        for (int i = GripList.Count - 1; i >= 0; i--)
+        {
+          if (object.ReferenceEquals(gripHandle, GripList[i]))
+          {
+            GripList.RemoveAt(i);
+            HittedList.RemoveAt(i);
+            break;
+          }
+        }
+      }
 
-			#region IGripManipulationHandle Members
+      #region IGripManipulationHandle Members
 
-			/// <summary>
-			/// Activates this grip, providing the initial position of the mouse.
-			/// </summary>
-			/// <param name="initialPosition">Initial position of the mouse.</param>
-			/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
-			/// thie activation is due to a regular mouse click in this grip.</param>
-			public void Activate(HitTestPointData initialPosition, bool isActivatedUponCreation)
-			{
-				foreach (var ele in GripList)
-					ele.Activate(initialPosition, isActivatedUponCreation);
-			}
+      /// <summary>
+      /// Activates this grip, providing the initial position of the mouse.
+      /// </summary>
+      /// <param name="initialPosition">Initial position of the mouse.</param>
+      /// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
+      /// thie activation is due to a regular mouse click in this grip.</param>
+      public void Activate(HitTestPointData initialPosition, bool isActivatedUponCreation)
+      {
+        foreach (var ele in GripList)
+          ele.Activate(initialPosition, isActivatedUponCreation);
+      }
 
-			public bool Deactivate()
-			{
-				foreach (var ele in GripList)
-					ele.Deactivate();
+      public bool Deactivate()
+      {
+        foreach (var ele in GripList)
+          ele.Deactivate();
 
-				return false;
-			}
+        return false;
+      }
 
-			public void MoveGrip(HitTestPointData newPosition)
-			{
-				foreach (var ele in GripList)
-					ele.MoveGrip(newPosition);
-			}
+      public void MoveGrip(HitTestPointData newPosition)
+      {
+        foreach (var ele in GripList)
+          ele.MoveGrip(newPosition);
+      }
 
-			/// <summary>Draws the grip in the graphics context.</summary>
-			/// <param name="g">Graphics context.</param>
-			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
-			public void Show(IOverlayContext3D g)
-			{
-				foreach (var ele in GripList)
-					ele.Show(g);
-			}
+      /// <summary>Draws the grip in the graphics context.</summary>
+      /// <param name="g">Graphics context.</param>
+      /// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
+      public void Show(IOverlayContext3D g)
+      {
+        foreach (var ele in GripList)
+          ele.Show(g);
+      }
 
-			public bool IsGripHit(HitTestPointData point)
-			{
-				foreach (var ele in GripList)
-					if (ele.IsGripHit(point))
-						return true;
-				return false;
-			}
+      public bool IsGripHit(HitTestPointData point)
+      {
+        foreach (var ele in GripList)
+          if (ele.IsGripHit(point))
+            return true;
+        return false;
+      }
 
-			public bool GetHittedElement(HitTestPointData point, out IGripManipulationHandle gripHandle, out IHitTestObject hitObject)
-			{
-				for (int i = GripList.Count - 1; i >= 0; i--)
-				{
-					if (GripList[i].IsGripHit(point))
-					{
-						gripHandle = GripList[i];
-						hitObject = HittedList[i];
-						return true;
-					}
-				}
+      public bool GetHittedElement(HitTestPointData point, out IGripManipulationHandle gripHandle, out IHitTestObject hitObject)
+      {
+        for (int i = GripList.Count - 1; i >= 0; i--)
+        {
+          if (GripList[i].IsGripHit(point))
+          {
+            gripHandle = GripList[i];
+            hitObject = HittedList[i];
+            return true;
+          }
+        }
 
-				gripHandle = null;
-				hitObject = null;
-				return false;
-			}
+        gripHandle = null;
+        hitObject = null;
+        return false;
+      }
 
-			#endregion IGripManipulationHandle Members
-		}
+      #endregion IGripManipulationHandle Members
+    }
 
-		#endregion Internal classes
+    #endregion Internal classes
 
-		/// <summary>The graph controller this mouse handler belongs to.</summary>
-		private Graph3DController _grac;
+    /// <summary>The graph controller this mouse handler belongs to.</summary>
+    private Graph3DController _grac;
 
-		/// <summary>List of selected HitTestObjects</summary>
-		protected List<IHitTestObject> _selectedObjects;
+    /// <summary>List of selected HitTestObjects</summary>
+    protected List<IHitTestObject> _selectedObjects;
 
-		/// <summary>If objects where really moved during the moving mode, this value become true</summary>
-		protected bool _wereObjectsMoved = false;
+    /// <summary>If objects where really moved during the moving mode, this value become true</summary>
+    protected bool _wereObjectsMoved = false;
 
-		/// <summary>
-		/// Current displayed grip level;
-		/// </summary>
-		protected int DisplayedGripLevel;
+    /// <summary>
+    /// Current displayed grip level;
+    /// </summary>
+    protected int DisplayedGripLevel;
 
-		/// <summary>Grips that are displayed on the screen.</summary>
-		protected IGripManipulationHandle[] DisplayedGrips;
+    /// <summary>Grips that are displayed on the screen.</summary>
+    protected IGripManipulationHandle[] DisplayedGrips;
 
-		/// <summary>Grip that is currently dragged.</summary>
-		protected IGripManipulationHandle ActiveGrip;
+    /// <summary>Grip that is currently dragged.</summary>
+    protected IGripManipulationHandle ActiveGrip;
 
-		/// <summary>Locker to suppress changed events during moving of objects.</summary>
-		private Altaxo.Main.ISuspendToken _graphDocumentChangedSuppressor;
+    /// <summary>Locker to suppress changed events during moving of objects.</summary>
+    private Altaxo.Main.ISuspendToken _graphDocumentChangedSuppressor;
 
-		public ObjectPointerMouseHandler(Graph3DController grac)
-		{
-			_grac = grac;
+    public ObjectPointerMouseHandler(Graph3DController grac)
+    {
+      _grac = grac;
 
-			_grac?.View?.SetPanelCursor(Cursors.Arrow);
+      _grac?.View?.SetPanelCursor(Cursors.Arrow);
 
-			_selectedObjects = new List<IHitTestObject>();
-		}
+      _selectedObjects = new List<IHitTestObject>();
+    }
 
-		public override GraphToolType GraphToolType
-		{
-			get
-			{
-				return GraphToolType.ObjectPointer;
-			}
-		}
+    public override GraphToolType GraphToolType
+    {
+      get
+      {
+        return GraphToolType.ObjectPointer;
+      }
+    }
 
-		public IList<IHitTestObject> SelectedObjects { get { return _selectedObjects; } }
+    public IList<IHitTestObject> SelectedObjects { get { return _selectedObjects; } }
 
-		/// <summary>
-		/// Returns the hit test object belonging to the selected object if and only if one single object is selected, else null is returned.
-		/// </summary>
-		public IHitTestObject SingleSelectedHitTestObject
-		{
-			get
-			{
-				if (_selectedObjects.Count != 1)
-					return null;
+    /// <summary>
+    /// Returns the hit test object belonging to the selected object if and only if one single object is selected, else null is returned.
+    /// </summary>
+    public IHitTestObject SingleSelectedHitTestObject
+    {
+      get
+      {
+        if (_selectedObjects.Count != 1)
+          return null;
 
-				foreach (IHitTestObject graphObject in _selectedObjects) // foreach is here only for one object!
-				{
-					return graphObject;
-				}
-				return null;
-			}
-		}
+        foreach (IHitTestObject graphObject in _selectedObjects) // foreach is here only for one object!
+        {
+          return graphObject;
+        }
+        return null;
+      }
+    }
 
-		public override void OnMouseDown(PointD3D position, MouseButtonEventArgs e)
-		{
-			base.OnMouseDown(position, e);
+    public override void OnMouseDown(PointD3D position, MouseButtonEventArgs e)
+    {
+      base.OnMouseDown(position, e);
 
-			if (e.ChangedButton == MouseButton.Left)
-			{
-				var hitData = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
+      if (e.ChangedButton == MouseButton.Left)
+      {
+        var hitData = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
 
-				// first, if we have a mousedown without shift key and the
-				// position has changed with respect to the last mousedown
-				// we have to deselect all objects
-				var keyboardModifiers = System.Windows.Input.Keyboard.Modifiers;
-				bool bControlKey = keyboardModifiers.HasFlag(ModifierKeys.Control);
-				bool bShiftKey = keyboardModifiers.HasFlag(ModifierKeys.Shift);
+        // first, if we have a mousedown without shift key and the
+        // position has changed with respect to the last mousedown
+        // we have to deselect all objects
+        var keyboardModifiers = System.Windows.Input.Keyboard.Modifiers;
+        bool bControlKey = keyboardModifiers.HasFlag(ModifierKeys.Control);
+        bool bShiftKey = keyboardModifiers.HasFlag(ModifierKeys.Shift);
 
-				ActiveGrip = GripHitTest(hitData);
-				if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
-				{
-					var superGrip = ActiveGrip as SuperGrip;
-					IHitTestObject hitTestObj;
-					IGripManipulationHandle gripHandle;
-					if (superGrip.GetHittedElement(hitData, out gripHandle, out hitTestObj))
-					{
-						_selectedObjects.Remove(hitTestObj);
-						superGrip.Remove(gripHandle);
-						return;
-					}
-				}
-				else if (ActiveGrip != null)
-				{
-					ActiveGrip.Activate(hitData, false);
-					return;
-				}
+        ActiveGrip = GripHitTest(hitData);
+        if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
+        {
+          var superGrip = ActiveGrip as SuperGrip;
+          IHitTestObject hitTestObj;
+          IGripManipulationHandle gripHandle;
+          if (superGrip.GetHittedElement(hitData, out gripHandle, out hitTestObj))
+          {
+            _selectedObjects.Remove(hitTestObj);
+            superGrip.Remove(gripHandle);
+            return;
+          }
+        }
+        else if (ActiveGrip != null)
+        {
+          ActiveGrip.Activate(hitData, false);
+          return;
+        }
 
-				// search for a object first
-				IHitTestObject clickedObject;
-				int[] clickedLayerNumber = null;
-				_grac.FindGraphObjectAtPixelPosition(hitData, false, out clickedObject, out clickedLayerNumber);
+        // search for a object first
+        IHitTestObject clickedObject;
+        int[] clickedLayerNumber = null;
+        _grac.FindGraphObjectAtPixelPosition(hitData, false, out clickedObject, out clickedLayerNumber);
 
-				if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
-					ClearSelections();
+        if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
+          ClearSelections();
 
-				if (null != clickedObject)
-					AddSelectedObject(hitData, clickedObject);
-			}
-		}
+        if (null != clickedObject)
+          AddSelectedObject(hitData, clickedObject);
+      }
+    }
 
-		/// <summary>
-		/// Handles the mouse up event.
-		/// </summary>
-		/// <param name="position">Mouse position.</param>
-		/// <param name="e">MouseEventArgs as provided by the view.</param>
-		/// <returns>The next mouse state handler that should handle mouse events.</returns>
-		public override void OnMouseUp(PointD3D position, MouseButtonEventArgs e)
-		{
-			base.OnMouseUp(position, e);
+    /// <summary>
+    /// Handles the mouse up event.
+    /// </summary>
+    /// <param name="position">Mouse position.</param>
+    /// <param name="e">MouseEventArgs as provided by the view.</param>
+    /// <returns>The next mouse state handler that should handle mouse events.</returns>
+    public override void OnMouseUp(PointD3D position, MouseButtonEventArgs e)
+    {
+      base.OnMouseUp(position, e);
 
-			/*
+      /*
 			if (e.LeftButton == MouseButtonState.Released && null != _rectangleSelectionArea_GraphCoordinates)
 			{
 				List<IHitTestObject> foundObjects;
@@ -271,47 +271,47 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 			}
 			*/
 
-			if (e.ChangedButton == MouseButton.Left)
-			{
-				if (ActiveGrip != null)
-				{
-					bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
-					bool bRepaint = false;
-					_wereObjectsMoved = false;
-					_grac.Doc.Resume(ref _graphDocumentChangedSuppressor);
+      if (e.ChangedButton == MouseButton.Left)
+      {
+        if (ActiveGrip != null)
+        {
+          bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
+          bool bRepaint = false;
+          _wereObjectsMoved = false;
+          _grac.Doc.Resume(ref _graphDocumentChangedSuppressor);
 
-					bool chooseNextLevel = ActiveGrip.Deactivate();
-					ActiveGrip = null;
+          bool chooseNextLevel = ActiveGrip.Deactivate();
+          ActiveGrip = null;
 
-					if (chooseNextLevel && null != SingleSelectedHitTestObject)
-					{
-						DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
-						bRepaint = true;
-					}
+          if (chooseNextLevel && null != SingleSelectedHitTestObject)
+          {
+            DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
+            bRepaint = true;
+          }
 
-					_grac?.View?.RenderOverlay();
-				}
-			}
-		}
+          _grac?.View?.RenderOverlay();
+        }
+      }
+    }
 
-		/// <summary>
-		/// Handles the mouse move event.
-		/// </summary>
-		/// <param name="position">Mouse position.</param>
-		/// <param name="e">MouseEventArgs as provided by the view.</param>
-		/// <returns>The next mouse state handler that should handle mouse events.</returns>
-		public override void OnMouseMove(PointD3D position, MouseEventArgs e)
-		{
-			base.OnMouseMove(position, e);
+    /// <summary>
+    /// Handles the mouse move event.
+    /// </summary>
+    /// <param name="position">Mouse position.</param>
+    /// <param name="e">MouseEventArgs as provided by the view.</param>
+    /// <returns>The next mouse state handler that should handle mouse events.</returns>
+    public override void OnMouseMove(PointD3D position, MouseEventArgs e)
+    {
+      base.OnMouseMove(position, e);
 
-			if (null != ActiveGrip)
-			{
-				var graphCoord = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
-				ActiveGrip.MoveGrip(graphCoord);
-				_wereObjectsMoved = true;
-				_grac?.View?.RenderOverlay();
-			}
-			/*
+      if (null != ActiveGrip)
+      {
+        var graphCoord = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
+        ActiveGrip.MoveGrip(graphCoord);
+        _wereObjectsMoved = true;
+        _grac?.View?.RenderOverlay();
+      }
+      /*
 			else if (e.LeftButton == MouseButtonState.Pressed)
 			{
 				var diffPos = position - _positionLastMouseDownInMouseCoordinates;
@@ -336,152 +336,152 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 					_grac.RenderOverlay();
 			}
 			*/
-		}
+    }
 
-		/// <summary>
-		/// Handles the mouse doubleclick event.
-		/// </summary>
-		/// <param name="position">Mouse position.</param>
-		/// <param name="e">EventArgs as provided by the view.</param>
-		/// <returns>The next mouse state handler that should handle mouse events.</returns>
-		public override void OnDoubleClick(PointD3D position, MouseButtonEventArgs e)
-		{
-			base.OnDoubleClick(position, e);
+    /// <summary>
+    /// Handles the mouse doubleclick event.
+    /// </summary>
+    /// <param name="position">Mouse position.</param>
+    /// <param name="e">EventArgs as provided by the view.</param>
+    /// <returns>The next mouse state handler that should handle mouse events.</returns>
+    public override void OnDoubleClick(PointD3D position, MouseButtonEventArgs e)
+    {
+      base.OnDoubleClick(position, e);
 
-			// if there is exactly one object selected, try to open the corresponding configuration dialog
-			if (_selectedObjects.Count == 1)
-			{
-				IHitTestObject graphObject = (IHitTestObject)SelectedObjects[0];
+      // if there is exactly one object selected, try to open the corresponding configuration dialog
+      if (_selectedObjects.Count == 1)
+      {
+        IHitTestObject graphObject = (IHitTestObject)SelectedObjects[0];
 
-				// Set the currently active layer to the layer the clicked object is belonging to.
-				if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))
-					_grac.EhView_CurrentLayerChoosen(graphObject.ParentLayer.IndexOf().ToArray(), false); // Sets the current active layer
+        // Set the currently active layer to the layer the clicked object is belonging to.
+        if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))
+          _grac.EhView_CurrentLayerChoosen(graphObject.ParentLayer.IndexOf().ToArray(), false); // Sets the current active layer
 
-				if (graphObject.DoubleClick != null)
-				{
-					//EndMovingObjects(); // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
-					ClearSelections();  // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
-					graphObject.OnDoubleClick();
-				}
-			}
-		}
+        if (graphObject.DoubleClick != null)
+        {
+          //EndMovingObjects(); // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
+          ClearSelections();  // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
+          graphObject.OnDoubleClick();
+        }
+      }
+    }
 
-		public override bool ProcessCmdKey(KeyEventArgs e)
-		{
-			// Note: a return value of true indicates that the key was processed, thus the key will not trigger further actions
-			var keyData = e.Key;
+    public override bool ProcessCmdKey(KeyEventArgs e)
+    {
+      // Note: a return value of true indicates that the key was processed, thus the key will not trigger further actions
+      var keyData = e.Key;
 
-			if (keyData == Key.Delete)
-			{
-				_grac.RemoveSelectedObjects();
-				_grac.View?.RenderOverlay();
-				return true;
-			}
+      if (keyData == Key.Delete)
+      {
+        _grac.RemoveSelectedObjects();
+        _grac.View?.RenderOverlay();
+        return true;
+      }
 
-			return base.ProcessCmdKey(e);
-		}
+      return base.ProcessCmdKey(e);
+    }
 
-		/// <summary>
-		/// Clears the selection list and repaints the graph if neccessary
-		/// </summary>
-		public void ClearSelections()
-		{
-			bool bRepaint = (_selectedObjects.Count > 0); // is a repaint neccessary
-			_selectedObjects.Clear();
-			DisplayedGrips = null;
-			ActiveGrip = null;
+    /// <summary>
+    /// Clears the selection list and repaints the graph if neccessary
+    /// </summary>
+    public void ClearSelections()
+    {
+      bool bRepaint = (_selectedObjects.Count > 0); // is a repaint neccessary
+      _selectedObjects.Clear();
+      DisplayedGrips = null;
+      ActiveGrip = null;
 
-			if (bRepaint)
-				_grac.View?.RenderOverlay();
-		}
+      if (bRepaint)
+        _grac.View?.RenderOverlay();
+    }
 
-		private void AddSelectedObject(HitTestPointData hitPoint, IHitTestObject clickedObject)
-		{
-			_selectedObjects.Add(clickedObject);
+    private void AddSelectedObject(HitTestPointData hitPoint, IHitTestObject clickedObject)
+    {
+      _selectedObjects.Add(clickedObject);
 
-			DisplayedGripLevel = 1;
-			DisplayedGrips = GetGripsFromSelectedObjects();
+      DisplayedGripLevel = 1;
+      DisplayedGrips = GetGripsFromSelectedObjects();
 
-			if (_selectedObjects.Count == 1) // single object selected
-			{
-				ActiveGrip = GripHitTest(hitPoint);
-				if (ActiveGrip != null)
-					ActiveGrip.Activate(hitPoint, true);
-			}
-			else // multiple objects selected
-			{
-				ActiveGrip = DisplayedGrips[0]; // this is our SuperGrip
-				DisplayedGrips[0].Activate(hitPoint, true);
-			}
+      if (_selectedObjects.Count == 1) // single object selected
+      {
+        ActiveGrip = GripHitTest(hitPoint);
+        if (ActiveGrip != null)
+          ActiveGrip.Activate(hitPoint, true);
+      }
+      else // multiple objects selected
+      {
+        ActiveGrip = DisplayedGrips[0]; // this is our SuperGrip
+        DisplayedGrips[0].Activate(hitPoint, true);
+      }
 
-			_grac.View?.RenderOverlay();
-		}
+      _grac.View?.RenderOverlay();
+    }
 
-		private IGripManipulationHandle[] GetGripsFromSelectedObjects()
-		{
-			if (_selectedObjects.Count == 1) // single object selected
-			{
-				return _selectedObjects[0].GetGrips(DisplayedGripLevel);
-			}
-			else // multiple objects selected
-			{
-				var superGrip = new SuperGrip();
-				// now we have multiple selected objects
-				// we get the grips of all objects and collect them in one supergrip
-				foreach (var sel in _selectedObjects)
-				{
-					var grips = sel.GetGrips(0);
-					if (grips.Length > 0)
-						superGrip.Add(grips[0], sel);
-				}
+    private IGripManipulationHandle[] GetGripsFromSelectedObjects()
+    {
+      if (_selectedObjects.Count == 1) // single object selected
+      {
+        return _selectedObjects[0].GetGrips(DisplayedGripLevel);
+      }
+      else // multiple objects selected
+      {
+        var superGrip = new SuperGrip();
+        // now we have multiple selected objects
+        // we get the grips of all objects and collect them in one supergrip
+        foreach (var sel in _selectedObjects)
+        {
+          var grips = sel.GetGrips(0);
+          if (grips.Length > 0)
+            superGrip.Add(grips[0], sel);
+        }
 
-				return new IGripManipulationHandle[] { superGrip };
-			}
-		}
+        return new IGripManipulationHandle[] { superGrip };
+      }
+    }
 
-		/// <summary>
-		/// Tests if a grip from the <see cref="DisplayedGrips"/>  is hitted.
-		/// </summary>
-		/// <param name="pt">Mouse location.</param>
-		/// <returns>The grip which was hitted, or null if no grip was hitted.</returns>
-		public IGripManipulationHandle GripHitTest(HitTestPointData pt)
-		{
-			if (null == DisplayedGrips || DisplayedGrips.Length == 0)
-				return null;
+    /// <summary>
+    /// Tests if a grip from the <see cref="DisplayedGrips"/>  is hitted.
+    /// </summary>
+    /// <param name="pt">Mouse location.</param>
+    /// <returns>The grip which was hitted, or null if no grip was hitted.</returns>
+    public IGripManipulationHandle GripHitTest(HitTestPointData pt)
+    {
+      if (null == DisplayedGrips || DisplayedGrips.Length == 0)
+        return null;
 
-			for (int i = 0; i < DisplayedGrips.Length; i++)
-			{
-				if (DisplayedGrips[i].IsGripHit(pt))
-					return DisplayedGrips[i];
-			}
-			return null;
-		}
+      for (int i = 0; i < DisplayedGrips.Length; i++)
+      {
+        if (DisplayedGrips[i].IsGripHit(pt))
+          return DisplayedGrips[i];
+      }
+      return null;
+    }
 
-		/// <summary>
-		/// Draws the <see cref="DisplayedGrips"/> on the graphics context.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		public void DisplayGrips(IOverlayContext3D g)
-		{
-			if (null == DisplayedGrips || DisplayedGrips.Length == 0)
-				return;
+    /// <summary>
+    /// Draws the <see cref="DisplayedGrips"/> on the graphics context.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    public void DisplayGrips(IOverlayContext3D g)
+    {
+      if (null == DisplayedGrips || DisplayedGrips.Length == 0)
+        return;
 
-			for (int i = 0; i < DisplayedGrips.Length; i++)
-				DisplayedGrips[i].Show(g);
-		}
+      for (int i = 0; i < DisplayedGrips.Length; i++)
+        DisplayedGrips[i].Show(g);
+    }
 
-		/// <summary>
-		/// This function is called just after the paint event. The graphic context is in graph coordinates.
-		/// </summary>
-		/// <param name="g"></param>
-		public override void AfterPaint(IOverlayContext3D g)
-		{
-			{
-				DisplayedGrips = GetGripsFromSelectedObjects(); // Update grip positions according to the move
-				DisplayGrips(g);
-			}
+    /// <summary>
+    /// This function is called just after the paint event. The graphic context is in graph coordinates.
+    /// </summary>
+    /// <param name="g"></param>
+    public override void AfterPaint(IOverlayContext3D g)
+    {
+      {
+        DisplayedGrips = GetGripsFromSelectedObjects(); // Update grip positions according to the move
+        DisplayGrips(g);
+      }
 
-			base.AfterPaint(g);
-		}
-	}
+      base.AfterPaint(g);
+    }
+  }
 }

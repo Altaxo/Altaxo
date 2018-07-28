@@ -31,59 +31,59 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	public class PositionColorLineListBuffer : IPositionColorLineListBuffer
-	{
-		private const int FloatsPerLine = 16;
-		private const int BytesPerLine = FloatsPerLine * 4;
-		protected ITransformationContext _parent;
-		protected float[] _vertexStream;
-		protected int _numberOfLines;
+  public class PositionColorLineListBuffer : IPositionColorLineListBuffer
+  {
+    private const int FloatsPerLine = 16;
+    private const int BytesPerLine = FloatsPerLine * 4;
+    protected ITransformationContext _parent;
+    protected float[] _vertexStream;
+    protected int _numberOfLines;
 
-		public PositionColorLineListBuffer(ITransformationContext parent)
-		{
-			_parent = parent;
-			_vertexStream = new float[8 + 32 * FloatsPerLine];
-		}
+    public PositionColorLineListBuffer(ITransformationContext parent)
+    {
+      _parent = parent;
+      _vertexStream = new float[8 + 32 * FloatsPerLine];
+    }
 
-		public int NumberOfLines { get { return _numberOfLines; } }
+    public int NumberOfLines { get { return _numberOfLines; } }
 
-		public int VertexStreamLength { get { return _numberOfLines * BytesPerLine; } }
+    public int VertexStreamLength { get { return _numberOfLines * BytesPerLine; } }
 
-		public int VertexCount { get { return _numberOfLines * 2; } }
+    public int VertexCount { get { return _numberOfLines * 2; } }
 
-		public float[] VertexStream
-		{
-			get { return _vertexStream; }
-		}
+    public float[] VertexStream
+    {
+      get { return _vertexStream; }
+    }
 
-		public void AddLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a)
-		{
-			var pt0 = _parent.Transformation.Transform(new PointD3D(x0, y0, z0));
-			var pt1 = _parent.Transformation.Transform(new PointD3D(x1, y1, z1));
+    public void AddLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a)
+    {
+      var pt0 = _parent.Transformation.Transform(new PointD3D(x0, y0, z0));
+      var pt1 = _parent.Transformation.Transform(new PointD3D(x1, y1, z1));
 
-			int offs = _numberOfLines * FloatsPerLine;
+      int offs = _numberOfLines * FloatsPerLine;
 
-			if (offs + 8 >= _vertexStream.Length)
-				Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
+      if (offs + 8 >= _vertexStream.Length)
+        Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
 
-			_vertexStream[offs + 0] = (float)pt0.X;
-			_vertexStream[offs + 1] = (float)pt0.Y;
-			_vertexStream[offs + 2] = (float)pt0.Z;
-			_vertexStream[offs + 3] = 1.0f;
-			_vertexStream[offs + 4] = r;
-			_vertexStream[offs + 5] = g;
-			_vertexStream[offs + 6] = b;
-			_vertexStream[offs + 7] = a;
+      _vertexStream[offs + 0] = (float)pt0.X;
+      _vertexStream[offs + 1] = (float)pt0.Y;
+      _vertexStream[offs + 2] = (float)pt0.Z;
+      _vertexStream[offs + 3] = 1.0f;
+      _vertexStream[offs + 4] = r;
+      _vertexStream[offs + 5] = g;
+      _vertexStream[offs + 6] = b;
+      _vertexStream[offs + 7] = a;
 
-			_vertexStream[offs + 8] = (float)pt1.X;
-			_vertexStream[offs + 9] = (float)pt1.Y;
-			_vertexStream[offs + 10] = (float)pt1.Z;
-			_vertexStream[offs + 11] = 1.0f;
-			_vertexStream[offs + 12] = r;
-			_vertexStream[offs + 13] = g;
-			_vertexStream[offs + 14] = b;
-			_vertexStream[offs + 15] = a;
-			++_numberOfLines;
-		}
-	}
+      _vertexStream[offs + 8] = (float)pt1.X;
+      _vertexStream[offs + 9] = (float)pt1.Y;
+      _vertexStream[offs + 10] = (float)pt1.Z;
+      _vertexStream[offs + 11] = 1.0f;
+      _vertexStream[offs + 12] = r;
+      _vertexStream[offs + 13] = g;
+      _vertexStream[offs + 14] = b;
+      _vertexStream[offs + 15] = a;
+      ++_numberOfLines;
+    }
+  }
 }

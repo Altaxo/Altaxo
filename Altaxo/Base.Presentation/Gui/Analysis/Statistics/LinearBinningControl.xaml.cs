@@ -14,67 +14,67 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Analysis.Statistics
 {
-	/// <summary>
-	/// Interaction logic for LinearBinningControl.xaml
-	/// </summary>
-	public partial class LinearBinningControl : UserControl, ILinearBinningView
-	{
-		public LinearBinningControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for LinearBinningControl.xaml
+  /// </summary>
+  public partial class LinearBinningControl : UserControl, ILinearBinningView
+  {
+    public LinearBinningControl()
+    {
+      InitializeComponent();
+    }
 
-		public bool IsUserDefinedBinOffset
-		{
-			get
-			{
-				return true == _guiIsUserDefinedBinOffset.IsChecked;
-			}
-			set
-			{
-				_guiIsUserDefinedBinOffset.IsChecked = value;
-			}
-		}
+    public bool IsUserDefinedBinOffset
+    {
+      get
+      {
+        return true == _guiIsUserDefinedBinOffset.IsChecked;
+      }
+      set
+      {
+        _guiIsUserDefinedBinOffset.IsChecked = value;
+      }
+    }
 
-		public double BinOffset
-		{
-			get
-			{
-				return _guiBinOffset.SelectedValue;
-			}
-			set
-			{
-				_guiBinOffset.SelectedValue = value;
-			}
-		}
+    public double BinOffset
+    {
+      get
+      {
+        return _guiBinOffset.SelectedValue;
+      }
+      set
+      {
+        _guiBinOffset.SelectedValue = value;
+      }
+    }
 
-		public bool IsUserDefinedBinWidth
-		{
-			get
-			{
-				return true == _guiIsUserDefinedBinWidth.IsChecked;
-			}
-			set
-			{
-				_guiIsUserDefinedBinWidth.IsChecked = value;
-			}
-		}
+    public bool IsUserDefinedBinWidth
+    {
+      get
+      {
+        return true == _guiIsUserDefinedBinWidth.IsChecked;
+      }
+      set
+      {
+        _guiIsUserDefinedBinWidth.IsChecked = value;
+      }
+    }
 
-		public double BinWidth
-		{
-			get
-			{
-				return _guiBinWidth.SelectedValue;
-			}
-			set
-			{
-				_guiBinWidth.SelectedValue = value;
-			}
-		}
+    public double BinWidth
+    {
+      get
+      {
+        return _guiBinWidth.SelectedValue;
+      }
+      set
+      {
+        _guiBinWidth.SelectedValue = value;
+      }
+    }
 
-		public double ResultingBinCount
-		{
-			set { _guiBinCount.SelectedValue = value; }
-		}
-	}
+    public double ResultingBinCount
+    {
+      set { _guiBinCount.SelectedValue = value; }
+    }
+  }
 }

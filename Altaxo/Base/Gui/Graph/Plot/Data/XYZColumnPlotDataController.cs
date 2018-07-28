@@ -36,14 +36,14 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 {
-	/// <summary>
-	/// Summary description for LineScatterPlotDataController.
-	/// </summary>
-	[UserControllerForObject(typeof(XYZColumnPlotData))]
-	[ExpectedTypeOfView(typeof(IColumnPlotDataView))]
-	public class XYZColumnPlotDataController
-		:
-		ColumnPlotDataControllerBase<XYZColumnPlotData>
-	{
-	}
+  /// <summary>
+  /// Summary description for LineScatterPlotDataController.
+  /// </summary>
+  [UserControllerForObject(typeof(XYZColumnPlotData))]
+  [ExpectedTypeOfView(typeof(IColumnPlotDataView))]
+  public class XYZColumnPlotDataController
+    :
+    ColumnPlotDataControllerBase<XYZColumnPlotData>
+  {
+  }
 }

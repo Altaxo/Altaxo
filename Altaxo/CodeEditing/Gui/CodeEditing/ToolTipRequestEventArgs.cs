@@ -28,26 +28,27 @@ using System.Windows;
 
 namespace Altaxo.Gui.CodeEditing
 {
-	public sealed class ToolTipRequestEventArgs : RoutedEventArgs
-	{
-		public ToolTipRequestEventArgs()
-		{
-			RoutedEvent = CodeEditorView.ToolTipRequestEvent;
-		}
+  public sealed class ToolTipRequestEventArgs : RoutedEventArgs
+  {
+    public ToolTipRequestEventArgs()
+    {
+      RoutedEvent = CodeEditorView.ToolTipRequestEvent;
+    }
 
-		public bool InDocument { get; set; }
+    public bool InDocument { get; set; }
 
-		public TextLocation LogicalPosition { get; set; }
+    public TextLocation LogicalPosition { get; set; }
 
-		public int Position { get; set; }
+    public int Position { get; set; }
 
-		public object ContentToShow { get; set; }
+    public object ContentToShow { get; set; }
 
-		public void SetToolTip(object content)
-		{
-			if (content == null) throw new ArgumentNullException(nameof(content));
-			Handled = true;
-			ContentToShow = content;
-		}
-	}
+    public void SetToolTip(object content)
+    {
+      if (content == null)
+        throw new ArgumentNullException(nameof(content));
+      Handled = true;
+      ContentToShow = content;
+    }
+  }
 }

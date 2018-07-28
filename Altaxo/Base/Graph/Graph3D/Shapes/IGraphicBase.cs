@@ -27,46 +27,46 @@ using System;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
-	using GraphicsContext;
+  using GraphicsContext;
 
-	public interface IGraphicBase
-		:
-		Main.IChangedEventSource,
-		Main.IDocumentLeafNode,
-		Main.ICopyFrom
-	{
-		/// <summary>
-		/// Announces the size of the parent layer in order to make own calculations for size and position.
-		/// </summary>
-		/// <param name="parentSize">Size of the parent layer.</param>
-		/// <param name="isTriggeringChangedEvent">If set to <c>true</c>, the Changed event is triggered if the size of the parent differs from the cached parent's size.</param>
-		void SetParentSize(VectorD3D parentSize, bool isTriggeringChangedEvent);
+  public interface IGraphicBase
+    :
+    Main.IChangedEventSource,
+    Main.IDocumentLeafNode,
+    Main.ICopyFrom
+  {
+    /// <summary>
+    /// Announces the size of the parent layer in order to make own calculations for size and position.
+    /// </summary>
+    /// <param name="parentSize">Size of the parent layer.</param>
+    /// <param name="isTriggeringChangedEvent">If set to <c>true</c>, the Changed event is triggered if the size of the parent differs from the cached parent's size.</param>
+    void SetParentSize(VectorD3D parentSize, bool isTriggeringChangedEvent);
 
-		IHitTestObject HitTest(HitTestPointData hitData);
+    IHitTestObject HitTest(HitTestPointData hitData);
 
-		//Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestRectangularData hitData);
+    //Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestRectangularData hitData);
 
-		/// <summary>
-		/// Fixups the internal data structures of the object. The object is allowed to send change notifications during this call.
-		/// </summary>
-		void FixupInternalDataStructures();
+    /// <summary>
+    /// Fixups the internal data structures of the object. The object is allowed to send change notifications during this call.
+    /// </summary>
+    void FixupInternalDataStructures();
 
-		/// <summary>
-		/// Is called before the object is paint. The object should not change during this call, and temporary objects that are needed for painting should be
-		/// stored in the paint <paramref name="context"/>.
-		/// </summary>
-		/// <param name="context">The paint context.</param>
-		void PaintPreprocessing(Altaxo.Graph.IPaintContext context);
+    /// <summary>
+    /// Is called before the object is paint. The object should not change during this call, and temporary objects that are needed for painting should be
+    /// stored in the paint <paramref name="context"/>.
+    /// </summary>
+    /// <param name="context">The paint context.</param>
+    void PaintPreprocessing(Altaxo.Graph.IPaintContext context);
 
-		void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context);
+    void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context);
 
-		/// <summary>
-		/// Determines whether this graphical object is compatible with the parent specified in the argument.
-		/// </summary>
-		/// <param name="parentObject">The parent object.</param>
-		/// <returns><c>True</c> if this object is compatible with the parent object; otherwise <c>false</c>.</returns>
-		bool IsCompatibleWithParent(object parentObject);
+    /// <summary>
+    /// Determines whether this graphical object is compatible with the parent specified in the argument.
+    /// </summary>
+    /// <param name="parentObject">The parent object.</param>
+    /// <returns><c>True</c> if this object is compatible with the parent object; otherwise <c>false</c>.</returns>
+    bool IsCompatibleWithParent(object parentObject);
 
-		PointD3D Position { get; set; }
-	}
+    PointD3D Position { get; set; }
+  }
 }

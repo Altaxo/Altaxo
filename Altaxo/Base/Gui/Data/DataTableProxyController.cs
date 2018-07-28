@@ -30,53 +30,53 @@ using System.Text;
 
 namespace Altaxo.Gui.Data
 {
-	public interface IDataTableProxyView
-	{
-		void InitializeTables(SelectableListNodeList tables);
-	}
+  public interface IDataTableProxyView
+  {
+    void InitializeTables(SelectableListNodeList tables);
+  }
 
-	[ExpectedTypeOfView(typeof(IDataTableProxyView))]
-	[UserControllerForObject(typeof(Altaxo.Data.DataTableProxy))]
-	public class DataTableProxyController : MVCANControllerEditOriginalDocBase<Altaxo.Data.DataTableProxy, IDataTableProxyView>
-	{
-		private SelectableListNodeList _availableTables;
+  [ExpectedTypeOfView(typeof(IDataTableProxyView))]
+  [UserControllerForObject(typeof(Altaxo.Data.DataTableProxy))]
+  public class DataTableProxyController : MVCANControllerEditOriginalDocBase<Altaxo.Data.DataTableProxy, IDataTableProxyView>
+  {
+    private SelectableListNodeList _availableTables;
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				if (null == _availableTables)
-					_availableTables = new SelectableListNodeList();
+      if (initData)
+      {
+        if (null == _availableTables)
+          _availableTables = new SelectableListNodeList();
 
-				foreach (var table in Current.Project.DataTableCollection)
-					_availableTables.Add(new SelectableListNode(table.Name, table, object.ReferenceEquals(table, _doc.Document)));
-			}
+        foreach (var table in Current.Project.DataTableCollection)
+          _availableTables.Add(new SelectableListNode(table.Name, table, object.ReferenceEquals(table, _doc.Document)));
+      }
 
-			if (null != _view)
-			{
-				_view.InitializeTables(_availableTables);
-			}
-		}
+      if (null != _view)
+      {
+        _view.InitializeTables(_availableTables);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			var selNode = _availableTables.FirstSelectedNode;
+    public override bool Apply(bool disposeController)
+    {
+      var selNode = _availableTables.FirstSelectedNode;
 
-			if (null == selNode)
-			{
-				return ApplyEnd(false, disposeController);
-			}
+      if (null == selNode)
+      {
+        return ApplyEnd(false, disposeController);
+      }
 
-			_doc.SetDocNode((Altaxo.Data.DataTable)selNode.Tag);
+      _doc.SetDocNode((Altaxo.Data.DataTable)selNode.Tag);
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
-	}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+  }
 }

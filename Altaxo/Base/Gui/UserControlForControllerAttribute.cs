@@ -29,44 +29,44 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Can be used for a control to denote which type of controller can control this.
-	/// </summary>
-	public class UserControlForControllerAttribute : System.Attribute, IComparable, IClassForClassAttribute
-	{
-		private System.Type _type;
-		private int _priority = 0;
+  /// <summary>
+  /// Can be used for a control to denote which type of controller can control this.
+  /// </summary>
+  public class UserControlForControllerAttribute : System.Attribute, IComparable, IClassForClassAttribute
+  {
+    private System.Type _type;
+    private int _priority = 0;
 
-		public UserControlForControllerAttribute(System.Type type)
-		{
-			_type = type;
-		}
+    public UserControlForControllerAttribute(System.Type type)
+    {
+      _type = type;
+    }
 
-		public UserControlForControllerAttribute(System.Type type, int priority)
-		{
-			_type = type;
-			_priority = priority;
-		}
+    public UserControlForControllerAttribute(System.Type type, int priority)
+    {
+      _type = type;
+      _priority = priority;
+    }
 
-		public System.Type TargetType
-		{
-			get { return _type; }
-		}
+    public System.Type TargetType
+    {
+      get { return _type; }
+    }
 
-		public int Priority
-		{
-			get { return _priority; }
-		}
+    public int Priority
+    {
+      get { return _priority; }
+    }
 
-		#region IComparable Members
+    #region IComparable Members
 
-		public int CompareTo(object obj)
-		{
-			// Attention - we sort the items so that the item with the highest priority value is the first (!) entry in a sorted list
-			UserControlForControllerAttribute to = (UserControlForControllerAttribute)obj;
-			return this._priority == to._priority ? 0 : (this._priority > to._priority ? -1 : 1);
-		}
+    public int CompareTo(object obj)
+    {
+      // Attention - we sort the items so that the item with the highest priority value is the first (!) entry in a sorted list
+      UserControlForControllerAttribute to = (UserControlForControllerAttribute)obj;
+      return this._priority == to._priority ? 0 : (this._priority > to._priority ? -1 : 1);
+    }
 
-		#endregion IComparable Members
-	}
+    #endregion IComparable Members
+  }
 }

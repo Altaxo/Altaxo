@@ -31,95 +31,96 @@ using System.Text;
 
 namespace Altaxo.Worksheet.Commands
 {
-	public static class DataSourceCommands
-	{
-		/// <summary>
-		/// Shows the data source editor dialog. After sucessful execution of the dialog, the modified data source is stored back in the <see cref="DataTable"/>, and the data source is requeried.
-		/// </summary>
-		/// <param name="ctrl">The controller that controls the data table.</param>
-		public static void ShowDataSourceEditor(WorksheetController ctrl)
-		{
-			var table = ctrl.DataTable;
-			if (null == table || null == table.DataSource)
-				return;
+  public static class DataSourceCommands
+  {
+    /// <summary>
+    /// Shows the data source editor dialog. After sucessful execution of the dialog, the modified data source is stored back in the <see cref="DataTable"/>, and the data source is requeried.
+    /// </summary>
+    /// <param name="ctrl">The controller that controls the data table.</param>
+    public static void ShowDataSourceEditor(WorksheetController ctrl)
+    {
+      var table = ctrl.DataTable;
+      if (null == table || null == table.DataSource)
+        return;
 
-			bool sourceIsChanged = false;
-			var originalDataSource = table.DataSource;
-			var dataSource = (Data.IAltaxoTableDataSource)table.DataSource.Clone();
+      bool sourceIsChanged = false;
+      var originalDataSource = table.DataSource;
+      var dataSource = (Data.IAltaxoTableDataSource)table.DataSource.Clone();
 
-			var dataSourceController = (Altaxo.Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(Altaxo.Gui.IMVCANController), Gui.UseDocument.Directly);
+      var dataSourceController = (Altaxo.Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(Altaxo.Gui.IMVCANController), Gui.UseDocument.Directly);
 
-			if (null == dataSourceController)
-			{
-				Current.Gui.ErrorMessageBox(string.Format("Sorry. There is no dialog available to edit the data source of type {0}", dataSource.GetType()), "No dialog available");
-				return;
-			}
+      if (null == dataSourceController)
+      {
+        Current.Gui.ErrorMessageBox(string.Format("Sorry. There is no dialog available to edit the data source of type {0}", dataSource.GetType()), "No dialog available");
+        return;
+      }
 
-			var controllerAsSupportApplyCallback = dataSourceController as Altaxo.Gui.IMVCSupportsApplyCallback;
+      var controllerAsSupportApplyCallback = dataSourceController as Altaxo.Gui.IMVCSupportsApplyCallback;
 
-			if (null != controllerAsSupportApplyCallback)
-			{
-				controllerAsSupportApplyCallback.SuccessfullyApplied += () => { sourceIsChanged = true; table.DataSource = dataSource; RequeryTableDataSource(ctrl); };
-			}
+      if (null != controllerAsSupportApplyCallback)
+      {
+        controllerAsSupportApplyCallback.SuccessfullyApplied += () => { sourceIsChanged = true; table.DataSource = dataSource; RequeryTableDataSource(ctrl); };
+      }
 
-			var result = Current.Gui.ShowDialog(dataSourceController, "Edit data source " + dataSource.GetType().ToString(), true);
+      var result = Current.Gui.ShowDialog(dataSourceController, "Edit data source " + dataSource.GetType().ToString(), true);
 
-			if (result == false) // user has cancelled the dialog
-			{
-				if (sourceIsChanged) // if source is changed, revert it
-				{
-					table.DataSource = originalDataSource;
-					RequeryTableDataSource(ctrl);
-				}
-				return;
-			}
+      if (result == false) // user has cancelled the dialog
+      {
+        if (sourceIsChanged) // if source is changed, revert it
+        {
+          table.DataSource = originalDataSource;
+          RequeryTableDataSource(ctrl);
+        }
+        return;
+      }
 
-			if (!sourceIsChanged) // controller might have forgotten to implement the SuccessfullyApplied event - thus we have to apply here
-			{
-				table.DataSource = dataSource;
-				RequeryTableDataSource(ctrl);
-			}
-		}
+      if (!sourceIsChanged) // controller might have forgotten to implement the SuccessfullyApplied event - thus we have to apply here
+      {
+        table.DataSource = dataSource;
+        RequeryTableDataSource(ctrl);
+      }
+    }
 
-		/// <summary>
-		/// Requeries the table data source.
-		/// </summary>
-		/// <param name="ctrl">The controller that controls the data table.</param>
-		public static void RequeryTableDataSource(WorksheetController ctrl)
-		{
-			var table = ctrl.DataTable;
-			if (null == table || null == table.DataSource)
-				return;
+    /// <summary>
+    /// Requeries the table data source.
+    /// </summary>
+    /// <param name="ctrl">The controller that controls the data table.</param>
+    public static void RequeryTableDataSource(WorksheetController ctrl)
+    {
+      var table = ctrl.DataTable;
+      if (null == table || null == table.DataSource)
+        return;
 
-			using (var suspendToken = table.SuspendGetToken())
-			{
-				try
-				{
-					table.DataSource.FillData(table);
-				}
-				catch (Exception ex)
-				{
-					table.Notes.WriteLine("Error during requerying the table data source: {0}", ex.Message);
-					table.Notes.WriteLine("Details of exception:");
-					table.Notes.WriteLine(ex.ToString());
-				}
+      using (var suspendToken = table.SuspendGetToken())
+      {
+        try
+        {
+          table.DataSource.FillData(table);
+        }
+        catch (Exception ex)
+        {
+          table.Notes.WriteLine("Error during requerying the table data source: {0}", ex.Message);
+          table.Notes.WriteLine("Details of exception:");
+          table.Notes.WriteLine(ex.ToString());
+        }
 
-				if (!(null != table.DataSource)) throw new InvalidProgramException("table.DataSource.FillData should never set the data source to zero!");
+        if (!(null != table.DataSource))
+          throw new InvalidProgramException("table.DataSource.FillData should never set the data source to zero!");
 
-				if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && null != table.TableScript)
-				{
-					try
-					{
-						table.TableScript.Execute(table, new Altaxo.Main.Services.DummyBackgroundMonitor(), false);
-					}
-					catch (Exception ex)
-					{
-						table.Notes.WriteLine("Error during execution of the table script (after requerying the table data source: {0}", ex.Message);
-					}
-				}
+        if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && null != table.TableScript)
+        {
+          try
+          {
+            table.TableScript.Execute(table, new Altaxo.Main.Services.DummyBackgroundMonitor(), false);
+          }
+          catch (Exception ex)
+          {
+            table.Notes.WriteLine("Error during execution of the table script (after requerying the table data source: {0}", ex.Message);
+          }
+        }
 
-				suspendToken.Resume();
-			}
-		}
-	}
+        suspendToken.Resume();
+      }
+    }
+  }
 }

@@ -29,90 +29,90 @@ using System.Text;
 
 namespace Altaxo.Geometry
 {
-	[Serializable]
-	public struct Margin2D : IEquatable<Margin2D>
-	{
-		public Margin2D(double left, double top, double right, double bottom)
-		{
-			Left = left;
-			Top = top;
-			Right = right;
-			Bottom = bottom;
-		}
+  [Serializable]
+  public struct Margin2D : IEquatable<Margin2D>
+  {
+    public Margin2D(double left, double top, double right, double bottom)
+    {
+      Left = left;
+      Top = top;
+      Right = right;
+      Bottom = bottom;
+    }
 
-		public double Left { get; set; }
+    public double Left { get; set; }
 
-		public double Top { get; set; }
+    public double Top { get; set; }
 
-		public double Right { get; set; }
+    public double Right { get; set; }
 
-		public double Bottom { get; set; }
+    public double Bottom { get; set; }
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2015-11-15 Move to Altaxo.Geometry namespace.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Margin2D", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Margin2D), 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (Margin2D)obj;
+    /// <summary>
+    /// 2015-11-15 Move to Altaxo.Geometry namespace.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Margin2D", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Margin2D), 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (Margin2D)obj;
 
-				info.AddValue("Left", s.Left);
-				info.AddValue("Top", s.Top);
-				info.AddValue("Right", s.Right);
-				info.AddValue("Bottom", s.Bottom);
-			}
+        info.AddValue("Left", s.Left);
+        info.AddValue("Top", s.Top);
+        info.AddValue("Right", s.Right);
+        info.AddValue("Bottom", s.Bottom);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = null != o ? (Margin2D)o : new Margin2D();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = null != o ? (Margin2D)o : new Margin2D();
 
-				s.Left = info.GetDouble("Left");
-				s.Top = info.GetDouble("Top");
-				s.Right = info.GetDouble("Right");
-				s.Bottom = info.GetDouble("Bottom");
+        s.Left = info.GetDouble("Left");
+        s.Top = info.GetDouble("Top");
+        s.Right = info.GetDouble("Right");
+        s.Bottom = info.GetDouble("Bottom");
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public bool Equals(Margin2D other)
-		{
-			return this.Left == other.Left && this.Top == other.Top && this.Right == other.Right && this.Bottom == other.Bottom;
-		}
+    public bool Equals(Margin2D other)
+    {
+      return this.Left == other.Left && this.Top == other.Top && this.Right == other.Right && this.Bottom == other.Bottom;
+    }
 
-		public static bool operator ==(Margin2D a, Margin2D b)
-		{
-			return a.Equals(b);
-		}
+    public static bool operator ==(Margin2D a, Margin2D b)
+    {
+      return a.Equals(b);
+    }
 
-		public static bool operator !=(Margin2D a, Margin2D b)
-		{
-			return !(a.Equals(b));
-		}
+    public static bool operator !=(Margin2D a, Margin2D b)
+    {
+      return !(a.Equals(b));
+    }
 
-		public override bool Equals(object obj)
-		{
-			if (obj is Margin2D)
-			{
-				var from = (Margin2D)obj;
-				return Equals(from);
-			}
-			else
-			{
-				return false;
-			}
-		}
+    public override bool Equals(object obj)
+    {
+      if (obj is Margin2D)
+      {
+        var from = (Margin2D)obj;
+        return Equals(from);
+      }
+      else
+      {
+        return false;
+      }
+    }
 
-		public override int GetHashCode()
-		{
-			return Left.GetHashCode() + 3 * Right.GetHashCode() + 7 * Top.GetHashCode() + 11 * Bottom.GetHashCode();
-		}
-	}
+    public override int GetHashCode()
+    {
+      return Left.GetHashCode() + 3 * Right.GetHashCode() + 7 * Top.GetHashCode() + 11 * Bottom.GetHashCode();
+    }
+  }
 }

@@ -27,86 +27,86 @@ using System.Threading;
 
 namespace Altaxo.Main.Services
 {
-	public class DummyBackgroundMonitor : IProgressReporter
-	{
-		#region IBackgroundMonitor Members
+  public class DummyBackgroundMonitor : IProgressReporter
+  {
+    #region IBackgroundMonitor Members
 
-		public bool ShouldReportNow
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public bool ShouldReportNow
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public void ReportProgress(string text)
-		{
-		}
+    public void ReportProgress(string text)
+    {
+    }
 
-		public void ReportProgress(string text, double progressFraction)
-		{
-		}
+    public void ReportProgress(string text, double progressFraction)
+    {
+    }
 
-		public IProgressReporter CreateSubTask(double workAmount)
-		{
-			return this;
-		}
+    public IProgressReporter CreateSubTask(double workAmount)
+    {
+      return this;
+    }
 
-		public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
-		{
-			return this;
-		}
+    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
+    {
+      return this;
+    }
 
-		public void Report(double value)
-		{
-		}
+    public void Report(double value)
+    {
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		public string ReportText
-		{
-			get
-			{
-				return string.Empty;
-			}
-		}
+    public string ReportText
+    {
+      get
+      {
+        return string.Empty;
+      }
+    }
 
-		public bool CancellationPending
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public bool CancellationPending
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public double Progress
-		{
-			get
-			{
-				return 0;
-			}
-			set
-			{
-			}
-		}
+    public double Progress
+    {
+      get
+      {
+        return 0;
+      }
+      set
+      {
+      }
+    }
 
-		public OperationStatus Status
-		{
-			get
-			{
-				return OperationStatus.Normal;
-			}
-			set
-			{
-			}
-		}
+    public OperationStatus Status
+    {
+      get
+      {
+        return OperationStatus.Normal;
+      }
+      set
+      {
+      }
+    }
 
-		public string TaskName { get; set; }
+    public string TaskName { get; set; }
 
-		public CancellationToken CancellationToken { get; set; }
+    public CancellationToken CancellationToken { get; set; }
 
-		#endregion IBackgroundMonitor Members
-	}
+    #endregion IBackgroundMonitor Members
+  }
 }

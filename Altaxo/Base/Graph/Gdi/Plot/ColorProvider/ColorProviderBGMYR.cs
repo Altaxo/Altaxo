@@ -31,56 +31,56 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
-	public class ColorProviderBGMYR : ColorProviderBase
-	{
-		#region Serialization
+  public class ColorProviderBGMYR : ColorProviderBase
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorProviderBGMYR), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				ColorProviderBGMYR s = (ColorProviderBGMYR)obj;
-				info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorProviderBGMYR), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ColorProviderBGMYR s = (ColorProviderBGMYR)obj;
+        info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ColorProviderBGMYR s = null != o ? (ColorProviderBGMYR)o : new ColorProviderBGMYR();
-				info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ColorProviderBGMYR s = null != o ? (ColorProviderBGMYR)o : new ColorProviderBGMYR();
+        info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public static ColorProviderBGMYR NewFromColorBelowAboveInvalidAndTransparency(NamedColor colorBelow, NamedColor colorAbove, NamedColor colorInvalid, double transparency)
-		{
-			var result = new ColorProviderBGMYR();
-			result._colorBelow = colorBelow;
-			result._cachedGdiColorBelow = colorBelow;
+    public static ColorProviderBGMYR NewFromColorBelowAboveInvalidAndTransparency(NamedColor colorBelow, NamedColor colorAbove, NamedColor colorInvalid, double transparency)
+    {
+      var result = new ColorProviderBGMYR();
+      result._colorBelow = colorBelow;
+      result._cachedGdiColorBelow = colorBelow;
 
-			result._colorAbove = colorAbove;
-			result._cachedGdiColorAbove = colorAbove;
+      result._colorAbove = colorAbove;
+      result._cachedGdiColorAbove = colorAbove;
 
-			result._colorInvalid = colorInvalid;
-			result._cachedGdiColorInvalid = colorInvalid;
+      result._colorInvalid = colorInvalid;
+      result._cachedGdiColorInvalid = colorInvalid;
 
-			result._alphaChannel = GetAlphaFromTransparency(transparency);
+      result._alphaChannel = GetAlphaFromTransparency(transparency);
 
-			return result;
-		}
+      return result;
+    }
 
-		/// <summary>
-		/// Calculates a color from the provided relative value, that is guaranteed to be between 0 and 1
-		/// </summary>
-		/// <param name="relVal">Value used for color calculation. Guaranteed to be between 0 and 1.</param>
-		/// <returns>A color associated with the relative value.</returns>
-		protected override Color GetColorFrom0To1Continuously(double relVal)
-		{
-			int val = (int)(relVal * 255);
-			return System.Drawing.Color.FromArgb(val, (val + val) % 255, (255 - val));
-		}
-	}
+    /// <summary>
+    /// Calculates a color from the provided relative value, that is guaranteed to be between 0 and 1
+    /// </summary>
+    /// <param name="relVal">Value used for color calculation. Guaranteed to be between 0 and 1.</param>
+    /// <returns>A color associated with the relative value.</returns>
+    protected override Color GetColorFrom0To1Continuously(double relVal)
+    {
+      int val = (int)(relVal * 255);
+      return System.Drawing.Color.FromArgb(val, (val + val) % 255, (255 - val));
+    }
+  }
 }

@@ -30,159 +30,160 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
-	using Plot.Data;
+  using Plot.Data;
 
-	public class RelativeStackTransform
-		:
-		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		ICoordinateTransformingGroupStyle
-	{
-		#region Serialization
+  public class RelativeStackTransform
+    :
+    Main.SuspendableDocumentLeafNodeWithEventArgs,
+    ICoordinateTransformingGroupStyle
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeStackTransform), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				RelativeStackTransform s = (RelativeStackTransform)obj;
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeStackTransform), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        RelativeStackTransform s = (RelativeStackTransform)obj;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				RelativeStackTransform s = null != o ? (RelativeStackTransform)o : new RelativeStackTransform();
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        RelativeStackTransform s = null != o ? (RelativeStackTransform)o : new RelativeStackTransform();
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public RelativeStackTransform()
-		{
-		}
+    public RelativeStackTransform()
+    {
+    }
 
-		public RelativeStackTransform(RelativeStackTransform from)
-		{
-		}
+    public RelativeStackTransform(RelativeStackTransform from)
+    {
+    }
 
-		#region ICoordinateTransformingGroupStyle Members
+    #region ICoordinateTransformingGroupStyle Members
 
-		public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
-		{
-			CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
-		}
+    public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
+    {
+      CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
+    }
 
-		public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
-		{
-			Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList;
-			IPhysicalBoundaries pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
-			CoordinateTransformingStyleBase.MergeYBoundsInto(pbclone, coll);
-			if (!CanUseStyle(layer, coll, out plotDataList))
-			{
-				pb.Add(pbclone);
-				return;
-			}
+    public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
+    {
+      Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList;
+      IPhysicalBoundaries pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
+      CoordinateTransformingStyleBase.MergeYBoundsInto(pbclone, coll);
+      if (!CanUseStyle(layer, coll, out plotDataList))
+      {
+        pb.Add(pbclone);
+        return;
+      }
 
-			pb.Add(0);
-			pb.Add(100);
-		}
+      pb.Add(0);
+      pb.Add(100);
+    }
 
-		private static bool CanUseStyle(IPlotArea layer, PlotItemCollection coll, out Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList)
-		{
-			return AbsoluteStackTransform.CanUseStyle(layer, coll, out plotDataList);
-		}
+    private static bool CanUseStyle(IPlotArea layer, PlotItemCollection coll, out Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList)
+    {
+      return AbsoluteStackTransform.CanUseStyle(layer, coll, out plotDataList);
+    }
 
-		public void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
-		{
-			Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict = null;
-			if (!CanUseStyle(layer, coll, out plotDataDict))
-			{
-				return;
-			}
-			else
-			{
-				paintContext.AddValue(this, plotDataDict);
-			}
+    public void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
+    {
+      Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict = null;
+      if (!CanUseStyle(layer, coll, out plotDataDict))
+      {
+        return;
+      }
+      else
+      {
+        paintContext.AddValue(this, plotDataDict);
+      }
 
-			AltaxoVariant[] ysumArray = null;
-			foreach (IGPlotItem pi in coll)
-			{
-				if (pi is G2DPlotItem)
-				{
-					G2DPlotItem gpi = pi as G2DPlotItem;
-					Processed2DPlotData pdata = plotDataDict[gpi];
-					ysumArray = AbsoluteStackTransform.AddUp(ysumArray, pdata);
-				}
-			}
+      AltaxoVariant[] ysumArray = null;
+      foreach (IGPlotItem pi in coll)
+      {
+        if (pi is G2DPlotItem)
+        {
+          G2DPlotItem gpi = pi as G2DPlotItem;
+          Processed2DPlotData pdata = plotDataDict[gpi];
+          ysumArray = AbsoluteStackTransform.AddUp(ysumArray, pdata);
+        }
+      }
 
-			// now plot the data - the summed up y is in yArray
-			AltaxoVariant[] yArray = null;
-			Processed2DPlotData previousItemData = null;
-			foreach (IGPlotItem pi in coll)
-			{
-				if (pi is G2DPlotItem)
-				{
-					G2DPlotItem gpi = pi as G2DPlotItem;
-					Processed2DPlotData pdata = plotDataDict[gpi];
-					yArray = AbsoluteStackTransform.AddUp(yArray, pdata);
-					AltaxoVariant[] localArray = new AltaxoVariant[yArray.Length];
+      // now plot the data - the summed up y is in yArray
+      AltaxoVariant[] yArray = null;
+      Processed2DPlotData previousItemData = null;
+      foreach (IGPlotItem pi in coll)
+      {
+        if (pi is G2DPlotItem)
+        {
+          G2DPlotItem gpi = pi as G2DPlotItem;
+          Processed2DPlotData pdata = plotDataDict[gpi];
+          yArray = AbsoluteStackTransform.AddUp(yArray, pdata);
+          AltaxoVariant[] localArray = new AltaxoVariant[yArray.Length];
 
-					int j = -1;
-					foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-					{
-						j++;
-						AltaxoVariant y = 100 * yArray[j] / ysumArray[j];
-						localArray[j] = y;
+          int j = -1;
+          foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+          {
+            j++;
+            AltaxoVariant y = 100 * yArray[j] / ysumArray[j];
+            localArray[j] = y;
 
-						Logical3D rel = new Logical3D(
-						layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
-						layer.YAxis.PhysicalVariantToNormal(y));
+            Logical3D rel = new Logical3D(
+            layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
+            layer.YAxis.PhysicalVariantToNormal(y));
 
-						double xabs, yabs;
-						layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
-						pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
-					}
-					// we have also to exchange the accessor for the physical y value and replace it by our own one
-					pdata.YPhysicalAccessor = new IndexedPhysicalValueAccessor(delegate (int i) { return localArray[i]; });
-					pdata.PreviousItemData = previousItemData;
-					previousItemData = pdata;
-				}
-			}
-		}
+            double xabs, yabs;
+            layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+            pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
+          }
+          // we have also to exchange the accessor for the physical y value and replace it by our own one
+          pdata.YPhysicalAccessor = new IndexedPhysicalValueAccessor(delegate (int i)
+          { return localArray[i]; });
+          pdata.PreviousItemData = previousItemData;
+          previousItemData = pdata;
+        }
+      }
+    }
 
-		public void PaintPostprocessing()
-		{
-		}
+    public void PaintPostprocessing()
+    {
+    }
 
-		public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
-		{
-			var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
-			if (null == plotDataDict) // if initializing this dict was not successfull, then make a normal plot
-			{
-				coll[indexOfChild].Paint(g, paintContext, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
-				return;
-			}
+    public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
+    {
+      var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
+      if (null == plotDataDict) // if initializing this dict was not successfull, then make a normal plot
+      {
+        coll[indexOfChild].Paint(g, paintContext, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
+        return;
+      }
 
-			Processed2DPlotData prevPlotData = null;
-			Processed2DPlotData nextPlotData = null;
+      Processed2DPlotData prevPlotData = null;
+      Processed2DPlotData nextPlotData = null;
 
-			if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G2DPlotItem))
-				prevPlotData = plotDataDict[coll[indexOfChild + 1] as G2DPlotItem];
+      if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G2DPlotItem))
+        prevPlotData = plotDataDict[coll[indexOfChild + 1] as G2DPlotItem];
 
-			if (indexOfChild > 0 && (coll[indexOfChild - 1] is G2DPlotItem))
-				nextPlotData = plotDataDict[coll[indexOfChild - 1] as G2DPlotItem];
+      if (indexOfChild > 0 && (coll[indexOfChild - 1] is G2DPlotItem))
+        nextPlotData = plotDataDict[coll[indexOfChild - 1] as G2DPlotItem];
 
-			if (coll[indexOfChild] is G2DPlotItem)
-			{
-				var gpi = coll[indexOfChild] as G2DPlotItem;
-				gpi.Paint(g, layer, plotDataDict[gpi], prevPlotData, nextPlotData);
-			}
-			else
-			{
-				coll[indexOfChild].Paint(g, paintContext, layer, null, null);
-			}
-		}
+      if (coll[indexOfChild] is G2DPlotItem)
+      {
+        var gpi = coll[indexOfChild] as G2DPlotItem;
+        gpi.Paint(g, layer, plotDataDict[gpi], prevPlotData, nextPlotData);
+      }
+      else
+      {
+        coll[indexOfChild].Paint(g, paintContext, layer, null, null);
+      }
+    }
 
-		/*
+    /*
 		public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
 		{
 			Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
@@ -265,15 +266,15 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		}
 		*/
 
-		#endregion ICoordinateTransformingGroupStyle Members
+    #endregion ICoordinateTransformingGroupStyle Members
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public object Clone()
-		{
-			return new RelativeStackTransform(this);
-		}
+    public object Clone()
+    {
+      return new RelativeStackTransform(this);
+    }
 
-		#endregion ICloneable Members
-	}
+    #endregion ICloneable Members
+  }
 }

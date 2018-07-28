@@ -35,64 +35,64 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
-	/// <summary>
-	/// Connects by drawing a horizontal line to the x coordinate of the next point, and then a vertical line. Instances of this class have to be immutable.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public class StepHorizontalCenteredConnection : StepConnectionBase
-	{
-		public static StepHorizontalCenteredConnection Instance { get; private set; } = new StepHorizontalCenteredConnection();
+  /// <summary>
+  /// Connects by drawing a horizontal line to the x coordinate of the next point, and then a vertical line. Instances of this class have to be immutable.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.IImmutable" />
+  public class StepHorizontalCenteredConnection : StepConnectionBase
+  {
+    public static StepHorizontalCenteredConnection Instance { get; private set; } = new StepHorizontalCenteredConnection();
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-05-09 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StepHorizontalCenteredConnection), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    /// <summary>
+    /// 2016-05-09 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StepHorizontalCenteredConnection), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return Instance;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return Instance;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		protected override PointF[] GetStepPolylinePoints(
-		PointF[] allLinePoints,
-		IPlotRange range,
-		IPlotArea layer,
-		bool connectCircular,
-		out int numberOfPointsPerOriginalPoint,
-		out int lastIndex)
-		{
-			numberOfPointsPerOriginalPoint = 3;
+    protected override PointF[] GetStepPolylinePoints(
+    PointF[] allLinePoints,
+    IPlotRange range,
+    IPlotArea layer,
+    bool connectCircular,
+    out int numberOfPointsPerOriginalPoint,
+    out int lastIndex)
+    {
+      numberOfPointsPerOriginalPoint = 3;
 
-			PointF[] subLinePoints = new PointF[numberOfPointsPerOriginalPoint * (range.Length - 1 + (connectCircular ? 1 : 0)) + 1];
-			int end = range.UpperBound - 1;
-			int i, j;
-			for (i = 0, j = range.LowerBound; j < end; i += numberOfPointsPerOriginalPoint, j++)
-			{
-				subLinePoints[i] = allLinePoints[j];
-				subLinePoints[i + 1] = new PointF((allLinePoints[j].X + allLinePoints[j + 1].X) / 2, allLinePoints[j].Y);
-				subLinePoints[i + 2] = new PointF((allLinePoints[j].X + allLinePoints[j + 1].X) / 2, allLinePoints[j + 1].Y);
-			}
-			subLinePoints[i] = allLinePoints[j];
-			lastIndex = i;
+      PointF[] subLinePoints = new PointF[numberOfPointsPerOriginalPoint * (range.Length - 1 + (connectCircular ? 1 : 0)) + 1];
+      int end = range.UpperBound - 1;
+      int i, j;
+      for (i = 0, j = range.LowerBound; j < end; i += numberOfPointsPerOriginalPoint, j++)
+      {
+        subLinePoints[i] = allLinePoints[j];
+        subLinePoints[i + 1] = new PointF((allLinePoints[j].X + allLinePoints[j + 1].X) / 2, allLinePoints[j].Y);
+        subLinePoints[i + 2] = new PointF((allLinePoints[j].X + allLinePoints[j + 1].X) / 2, allLinePoints[j + 1].Y);
+      }
+      subLinePoints[i] = allLinePoints[j];
+      lastIndex = i;
 
-			if (connectCircular)
-			{
-				subLinePoints[i + 1] = new PointF((allLinePoints[j].X + allLinePoints[range.LowerBound].X) / 2, allLinePoints[j].Y);
-				subLinePoints[i + 2] = new PointF((allLinePoints[j].X + allLinePoints[range.LowerBound].X) / 2, allLinePoints[range.LowerBound].Y);
-				subLinePoints[i + 3] = allLinePoints[range.LowerBound];
-				lastIndex = i + 3;
-			}
-			return subLinePoints;
-		}
-	}
+      if (connectCircular)
+      {
+        subLinePoints[i + 1] = new PointF((allLinePoints[j].X + allLinePoints[range.LowerBound].X) / 2, allLinePoints[j].Y);
+        subLinePoints[i + 2] = new PointF((allLinePoints[j].X + allLinePoints[range.LowerBound].X) / 2, allLinePoints[range.LowerBound].Y);
+        subLinePoints[i + 3] = allLinePoints[range.LowerBound];
+        lastIndex = i + 3;
+      }
+      return subLinePoints;
+    }
+  }
 }

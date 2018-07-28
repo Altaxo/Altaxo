@@ -18,71 +18,71 @@ using Microsoft.CodeAnalysis.Scripting;
 
 namespace Altaxo.CodeEditing.CompilationHandling
 {
-	public class DiagnosticBag
-	{
-		private ConcurrentQueue<Diagnostic> _lazyBag;
+  public class DiagnosticBag
+  {
+    private ConcurrentQueue<Diagnostic> _lazyBag;
 
-		public bool IsEmptyWithoutResolution
-		{
-			get
-			{
-				var bag = _lazyBag;
-				return bag == null || bag.IsEmpty;
-			}
-		}
+    public bool IsEmptyWithoutResolution
+    {
+      get
+      {
+        var bag = _lazyBag;
+        return bag == null || bag.IsEmpty;
+      }
+    }
 
-		private ConcurrentQueue<Diagnostic> Bag
-		{
-			get
-			{
-				var bag = _lazyBag;
-				if (bag != null)
-				{
-					return bag;
-				}
+    private ConcurrentQueue<Diagnostic> Bag
+    {
+      get
+      {
+        var bag = _lazyBag;
+        if (bag != null)
+        {
+          return bag;
+        }
 
-				var newBag = new ConcurrentQueue<Diagnostic>();
-				return Interlocked.CompareExchange(ref _lazyBag, newBag, null) ?? newBag;
-			}
-		}
+        var newBag = new ConcurrentQueue<Diagnostic>();
+        return Interlocked.CompareExchange(ref _lazyBag, newBag, null) ?? newBag;
+      }
+    }
 
-		public void AddRange<T>(ImmutableArray<T> diagnostics) where T : Diagnostic
-		{
-			if (!diagnostics.IsDefaultOrEmpty)
-			{
-				var bag = Bag;
-				foreach (var t in diagnostics)
-				{
-					bag.Enqueue(t);
-				}
-			}
-		}
+    public void AddRange<T>(ImmutableArray<T> diagnostics) where T : Diagnostic
+    {
+      if (!diagnostics.IsDefaultOrEmpty)
+      {
+        var bag = Bag;
+        foreach (var t in diagnostics)
+        {
+          bag.Enqueue(t);
+        }
+      }
+    }
 
-		public IEnumerable<Diagnostic> AsEnumerable()
-		{
-			var bag = Bag;
+    public IEnumerable<Diagnostic> AsEnumerable()
+    {
+      var bag = Bag;
 
-			var foundVoid = bag.Any(diagnostic => diagnostic.Severity == DiagnosticSeverityVoid);
+      var foundVoid = bag.Any(diagnostic => diagnostic.Severity == DiagnosticSeverityVoid);
 
-			return foundVoid
-					? AsEnumerableFiltered()
-					: bag;
-		}
+      return foundVoid
+          ? AsEnumerableFiltered()
+          : bag;
+    }
 
-		internal void Clear()
-		{
-			var bag = _lazyBag;
-			if (bag != null)
-			{
-				_lazyBag = null;
-			}
-		}
+    internal void Clear()
+    {
+      var bag = _lazyBag;
+      if (bag != null)
+      {
+        _lazyBag = null;
+      }
+    }
 
-		private static DiagnosticSeverity DiagnosticSeverityVoid => ~DiagnosticSeverity.Info;
+    private static DiagnosticSeverity DiagnosticSeverityVoid => ~DiagnosticSeverity.Info;
 
-		private IEnumerable<Diagnostic> AsEnumerableFiltered()
-		{
-			return Bag.Where(diagnostic => diagnostic.Severity != DiagnosticSeverityVoid);
-		}
-	}
+    private IEnumerable<Diagnostic> AsEnumerableFiltered()
+    {
+      return Bag.Where(diagnostic => diagnostic.Severity != DiagnosticSeverityVoid);
+    }
+  }
 }

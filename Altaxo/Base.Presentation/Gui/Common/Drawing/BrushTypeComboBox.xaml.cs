@@ -34,187 +34,187 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// ComboBox for <see cref="Altaxo.Graph.Gdi.BrushType"/>.
-	/// </summary>
-	public partial class BrushTypeComboBox : ImageComboBox
-	{
-		private class CC : IValueConverter
-		{
-			private BrushTypeComboBox _cb;
+  /// <summary>
+  /// ComboBox for <see cref="Altaxo.Graph.Gdi.BrushType"/>.
+  /// </summary>
+  public partial class BrushTypeComboBox : ImageComboBox
+  {
+    private class CC : IValueConverter
+    {
+      private BrushTypeComboBox _cb;
 
-			public CC(BrushTypeComboBox c)
-			{
-				_cb = c;
-			}
+      public CC(BrushTypeComboBox c)
+      {
+        _cb = c;
+      }
 
-			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				var val = (BrushType)value;
-				return _cb._cachedItems[val];
-			}
+      public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        var val = (BrushType)value;
+        return _cb._cachedItems[val];
+      }
 
-			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				return ((ImageComboBoxItem)value).Value;
-			}
-		}
+      public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        return ((ImageComboBoxItem)value).Value;
+      }
+    }
 
-		private static Dictionary<BrushType, ImageSource> _cachedImages = new Dictionary<BrushType, ImageSource>();
+    private static Dictionary<BrushType, ImageSource> _cachedImages = new Dictionary<BrushType, ImageSource>();
 
-		private Dictionary<BrushType, ImageComboBoxItem> _cachedItems = new Dictionary<BrushType, ImageComboBoxItem>();
+    private Dictionary<BrushType, ImageComboBoxItem> _cachedItems = new Dictionary<BrushType, ImageComboBoxItem>();
 
-		/// <summary>Occurs when the selected type of brush changed.</summary>
-		public event DependencyPropertyChangedEventHandler SelectedBrushTypeChanged;
+    /// <summary>Occurs when the selected type of brush changed.</summary>
+    public event DependencyPropertyChangedEventHandler SelectedBrushTypeChanged;
 
-		static BrushTypeComboBox()
-		{
-		}
+    static BrushTypeComboBox()
+    {
+    }
 
-		public BrushTypeComboBox()
-		{
-			InitializeComponent();
+    public BrushTypeComboBox()
+    {
+      InitializeComponent();
 
-			_cachedItems.Add(BrushType.SolidBrush, new ImageComboBoxItem(this, BrushType.SolidBrush));
-			_cachedItems.Add(BrushType.LinearGradientBrush, new ImageComboBoxItem(this, BrushType.LinearGradientBrush));
-			_cachedItems.Add(BrushType.TriangularShapeLinearGradientBrush, new ImageComboBoxItem(this, BrushType.TriangularShapeLinearGradientBrush));
-			_cachedItems.Add(BrushType.SigmaBellShapeLinearGradientBrush, new ImageComboBoxItem(this, BrushType.SigmaBellShapeLinearGradientBrush));
-			_cachedItems.Add(BrushType.PathGradientBrush, new ImageComboBoxItem(this, BrushType.PathGradientBrush));
-			_cachedItems.Add(BrushType.TriangularShapePathGradientBrush, new ImageComboBoxItem(this, BrushType.TriangularShapePathGradientBrush));
-			_cachedItems.Add(BrushType.SigmaBellShapePathGradientBrush, new ImageComboBoxItem(this, BrushType.SigmaBellShapePathGradientBrush));
-			_cachedItems.Add(BrushType.HatchBrush, new ImageComboBoxItem(this, BrushType.HatchBrush));
-			_cachedItems.Add(BrushType.SyntheticTextureBrush, new ImageComboBoxItem(this, BrushType.SyntheticTextureBrush));
-			_cachedItems.Add(BrushType.TextureBrush, new ImageComboBoxItem(this, BrushType.TextureBrush));
+      _cachedItems.Add(BrushType.SolidBrush, new ImageComboBoxItem(this, BrushType.SolidBrush));
+      _cachedItems.Add(BrushType.LinearGradientBrush, new ImageComboBoxItem(this, BrushType.LinearGradientBrush));
+      _cachedItems.Add(BrushType.TriangularShapeLinearGradientBrush, new ImageComboBoxItem(this, BrushType.TriangularShapeLinearGradientBrush));
+      _cachedItems.Add(BrushType.SigmaBellShapeLinearGradientBrush, new ImageComboBoxItem(this, BrushType.SigmaBellShapeLinearGradientBrush));
+      _cachedItems.Add(BrushType.PathGradientBrush, new ImageComboBoxItem(this, BrushType.PathGradientBrush));
+      _cachedItems.Add(BrushType.TriangularShapePathGradientBrush, new ImageComboBoxItem(this, BrushType.TriangularShapePathGradientBrush));
+      _cachedItems.Add(BrushType.SigmaBellShapePathGradientBrush, new ImageComboBoxItem(this, BrushType.SigmaBellShapePathGradientBrush));
+      _cachedItems.Add(BrushType.HatchBrush, new ImageComboBoxItem(this, BrushType.HatchBrush));
+      _cachedItems.Add(BrushType.SyntheticTextureBrush, new ImageComboBoxItem(this, BrushType.SyntheticTextureBrush));
+      _cachedItems.Add(BrushType.TextureBrush, new ImageComboBoxItem(this, BrushType.TextureBrush));
 
-			Items.Add(_cachedItems[BrushType.SolidBrush]);
-			Items.Add(_cachedItems[BrushType.LinearGradientBrush]);
-			Items.Add(_cachedItems[BrushType.TriangularShapeLinearGradientBrush]);
-			Items.Add(_cachedItems[BrushType.SigmaBellShapeLinearGradientBrush]);
-			Items.Add(_cachedItems[BrushType.PathGradientBrush]);
-			Items.Add(_cachedItems[BrushType.TriangularShapePathGradientBrush]);
-			Items.Add(_cachedItems[BrushType.SigmaBellShapePathGradientBrush]);
-			Items.Add(_cachedItems[BrushType.HatchBrush]);
-			Items.Add(_cachedItems[BrushType.SyntheticTextureBrush]);
-			Items.Add(_cachedItems[BrushType.TextureBrush]);
+      Items.Add(_cachedItems[BrushType.SolidBrush]);
+      Items.Add(_cachedItems[BrushType.LinearGradientBrush]);
+      Items.Add(_cachedItems[BrushType.TriangularShapeLinearGradientBrush]);
+      Items.Add(_cachedItems[BrushType.SigmaBellShapeLinearGradientBrush]);
+      Items.Add(_cachedItems[BrushType.PathGradientBrush]);
+      Items.Add(_cachedItems[BrushType.TriangularShapePathGradientBrush]);
+      Items.Add(_cachedItems[BrushType.SigmaBellShapePathGradientBrush]);
+      Items.Add(_cachedItems[BrushType.HatchBrush]);
+      Items.Add(_cachedItems[BrushType.SyntheticTextureBrush]);
+      Items.Add(_cachedItems[BrushType.TextureBrush]);
 
-			var _valueBinding = new Binding();
-			_valueBinding.Source = this;
-			_valueBinding.Path = new PropertyPath(_nameOfValueProp);
-			_valueBinding.Converter = new CC(this);
-			this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
-		}
+      var _valueBinding = new Binding();
+      _valueBinding.Source = this;
+      _valueBinding.Path = new PropertyPath(_nameOfValueProp);
+      _valueBinding.Converter = new CC(this);
+      this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
+    }
 
-		#region Dependency property
+    #region Dependency property
 
-		private const string _nameOfValueProp = "BrushType";
+    private const string _nameOfValueProp = "BrushType";
 
-		public BrushType BrushType
-		{
-			get { return (BrushType)GetValue(BrushTypeProperty); }
-			set { SetValue(BrushTypeProperty, value); }
-		}
+    public BrushType BrushType
+    {
+      get { return (BrushType)GetValue(BrushTypeProperty); }
+      set { SetValue(BrushTypeProperty, value); }
+    }
 
-		public static readonly DependencyProperty BrushTypeProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(BrushType), typeof(BrushTypeComboBox),
-				new FrameworkPropertyMetadata(OnBrushTypeChanged));
+    public static readonly DependencyProperty BrushTypeProperty =
+        DependencyProperty.Register(_nameOfValueProp, typeof(BrushType), typeof(BrushTypeComboBox),
+        new FrameworkPropertyMetadata(OnBrushTypeChanged));
 
-		private static void OnBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((BrushTypeComboBox)obj).EhBrushTypeChanged(obj, args);
-		}
+    private static void OnBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((BrushTypeComboBox)obj).EhBrushTypeChanged(obj, args);
+    }
 
-		#endregion Dependency property
+    #endregion Dependency property
 
-		protected virtual void EhBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((BrushTypeComboBox)obj).OnSelectedBrushTypeChanged(obj, args);
-		}
+    protected virtual void EhBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((BrushTypeComboBox)obj).OnSelectedBrushTypeChanged(obj, args);
+    }
 
-		protected virtual void OnSelectedBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			if (null != SelectedBrushTypeChanged)
-				SelectedBrushTypeChanged(obj, args);
-		}
+    protected virtual void OnSelectedBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      if (null != SelectedBrushTypeChanged)
+        SelectedBrushTypeChanged(obj, args);
+    }
 
-		public override string GetItemText(object item)
-		{
-			var val = (BrushType)item;
-			return val.ToString();
-		}
+    public override string GetItemText(object item)
+    {
+      var val = (BrushType)item;
+      return val.ToString();
+    }
 
-		public override ImageSource GetItemImage(object item)
-		{
-			var val = (BrushType)item;
-			ImageSource result;
-			if (!_cachedImages.TryGetValue(val, out result))
-				_cachedImages.Add(val, result = GetImage(val));
-			return result;
-		}
+    public override ImageSource GetItemImage(object item)
+    {
+      var val = (BrushType)item;
+      ImageSource result;
+      if (!_cachedImages.TryGetValue(val, out result))
+        _cachedImages.Add(val, result = GetImage(val));
+      return result;
+    }
 
-		public static DrawingImage GetImage(BrushType val)
-		{
-			double height = 1;
-			double width = 2;
+    public static DrawingImage GetImage(BrushType val)
+    {
+      double height = 1;
+      double width = 2;
 
-			//
-			// Create the Geometry to draw.
-			//
-			GeometryGroup geometryGroup = new GeometryGroup();
-			geometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, width, height)));
+      //
+      // Create the Geometry to draw.
+      //
+      GeometryGroup geometryGroup = new GeometryGroup();
+      geometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, width, height)));
 
-			var geometryDrawing = new GeometryDrawing() { Geometry = geometryGroup };
+      var geometryDrawing = new GeometryDrawing() { Geometry = geometryGroup };
 
-			switch (val)
-			{
-				case BrushType.SolidBrush:
-					geometryDrawing.Brush = new SolidColorBrush(Colors.Black);
-					break;
+      switch (val)
+      {
+        case BrushType.SolidBrush:
+          geometryDrawing.Brush = new SolidColorBrush(Colors.Black);
+          break;
 
-				case BrushType.LinearGradientBrush:
-					geometryDrawing.Brush = new LinearGradientBrush(Colors.Black, Colors.White, 0);
-					break;
+        case BrushType.LinearGradientBrush:
+          geometryDrawing.Brush = new LinearGradientBrush(Colors.Black, Colors.White, 0);
+          break;
 
-				case BrushType.TriangularShapeLinearGradientBrush:
-					{
-						var gStops = new GradientStopCollection();
-						gStops.Add(new GradientStop(Colors.Black, 0));
-						gStops.Add(new GradientStop(Colors.White, 0.5));
-						gStops.Add(new GradientStop(Colors.Black, 1));
-						geometryDrawing.Brush = new LinearGradientBrush(gStops, 0);
-					}
-					break;
+        case BrushType.TriangularShapeLinearGradientBrush:
+          {
+            var gStops = new GradientStopCollection();
+            gStops.Add(new GradientStop(Colors.Black, 0));
+            gStops.Add(new GradientStop(Colors.White, 0.5));
+            gStops.Add(new GradientStop(Colors.Black, 1));
+            geometryDrawing.Brush = new LinearGradientBrush(gStops, 0);
+          }
+          break;
 
-				case BrushType.SigmaBellShapeLinearGradientBrush:
-					{
-						var gStops = new GradientStopCollection();
-						gStops.Add(new GradientStop(Colors.Black, 0));
-						gStops.Add(new GradientStop(Colors.White, 0.5));
-						gStops.Add(new GradientStop(Colors.Black, 1));
-						geometryDrawing.Brush = new LinearGradientBrush(gStops, 0);
-					}
-					break;
+        case BrushType.SigmaBellShapeLinearGradientBrush:
+          {
+            var gStops = new GradientStopCollection();
+            gStops.Add(new GradientStop(Colors.Black, 0));
+            gStops.Add(new GradientStop(Colors.White, 0.5));
+            gStops.Add(new GradientStop(Colors.Black, 1));
+            geometryDrawing.Brush = new LinearGradientBrush(gStops, 0);
+          }
+          break;
 
-				case BrushType.PathGradientBrush:
-				case BrushType.TriangularShapePathGradientBrush:
-				case BrushType.SigmaBellShapePathGradientBrush:
-					geometryDrawing.Brush = new RadialGradientBrush(Colors.Black, Colors.White);
-					break;
+        case BrushType.PathGradientBrush:
+        case BrushType.TriangularShapePathGradientBrush:
+        case BrushType.SigmaBellShapePathGradientBrush:
+          geometryDrawing.Brush = new RadialGradientBrush(Colors.Black, Colors.White);
+          break;
 
-				case BrushType.HatchBrush:
-				case BrushType.SyntheticTextureBrush:
-				case BrushType.TextureBrush:
-					geometryDrawing.Brush = new SolidColorBrush(Colors.Black);
-					break;
+        case BrushType.HatchBrush:
+        case BrushType.SyntheticTextureBrush:
+        case BrushType.TextureBrush:
+          geometryDrawing.Brush = new SolidColorBrush(Colors.Black);
+          break;
 
-				default:
-					break;
-			}
+        default:
+          break;
+      }
 
-			DrawingImage geometryImage = new DrawingImage(geometryDrawing);
+      DrawingImage geometryImage = new DrawingImage(geometryDrawing);
 
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
-		}
-	}
+      // Freeze the DrawingImage for performance benefits.
+      geometryImage.Freeze();
+      return geometryImage;
+    }
+  }
 }

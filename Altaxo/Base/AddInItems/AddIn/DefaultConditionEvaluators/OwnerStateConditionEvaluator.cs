@@ -21,40 +21,40 @@ using System;
 
 namespace Altaxo.AddInItems
 {
-	public interface IOwnerState
-	{
-		System.Enum InternalState
-		{
-			get;
-		}
-	}
+  public interface IOwnerState
+  {
+    System.Enum InternalState
+    {
+      get;
+    }
+  }
 
-	/// <summary>
-	/// Condition evaluator that compares the state of the parameter with a specified value.
-	/// The parameter has to implement <see cref="IOwnerState"/>.
-	/// </summary>
-	public class OwnerStateConditionEvaluator : IConditionEvaluator
-	{
-		public bool IsValid(object parameter, Condition condition)
-		{
-			if (parameter is IOwnerState)
-			{
-				try
-				{
-					System.Enum state = ((IOwnerState)parameter).InternalState;
-					System.Enum conditionEnum = (System.Enum)Enum.Parse(state.GetType(), condition.Properties["ownerstate"]);
+  /// <summary>
+  /// Condition evaluator that compares the state of the parameter with a specified value.
+  /// The parameter has to implement <see cref="IOwnerState"/>.
+  /// </summary>
+  public class OwnerStateConditionEvaluator : IConditionEvaluator
+  {
+    public bool IsValid(object parameter, Condition condition)
+    {
+      if (parameter is IOwnerState)
+      {
+        try
+        {
+          System.Enum state = ((IOwnerState)parameter).InternalState;
+          System.Enum conditionEnum = (System.Enum)Enum.Parse(state.GetType(), condition.Properties["ownerstate"]);
 
-					int stateInt = Int32.Parse(state.ToString("D"));
-					int conditionInt = Int32.Parse(conditionEnum.ToString("D"));
+          int stateInt = Int32.Parse(state.ToString("D"));
+          int conditionInt = Int32.Parse(conditionEnum.ToString("D"));
 
-					return (stateInt & conditionInt) > 0;
-				}
-				catch (Exception ex)
-				{
-					throw new BaseException("can't parse '" + condition.Properties["state"] + "'. Not a valid value.", ex);
-				}
-			}
-			return false;
-		}
-	}
+          return (stateInt & conditionInt) > 0;
+        }
+        catch (Exception ex)
+        {
+          throw new BaseException("can't parse '" + condition.Properties["state"] + "'. Not a valid value.", ex);
+        }
+      }
+      return false;
+    }
+  }
 }

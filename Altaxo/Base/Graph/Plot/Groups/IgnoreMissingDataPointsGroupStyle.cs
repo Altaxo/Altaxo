@@ -29,225 +29,225 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	/// <summary>
-	/// This group style is intended to make sure that all substyles have the same line connection.
-	/// Thus it is only intended for local use (only amound substyles of a single plot item).
-	/// plot styles.
-	/// </summary>
-	public class IgnoreMissingDataPointsGroupStyle
-		:
-		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		IPlotGroupStyle
-	{
-		private bool _isInitialized;
-		private bool _ignoreMissingDataPoints;
-		private static readonly Type MyType = typeof(IgnoreMissingDataPointsGroupStyle);
+  /// <summary>
+  /// This group style is intended to make sure that all substyles have the same line connection.
+  /// Thus it is only intended for local use (only amound substyles of a single plot item).
+  /// plot styles.
+  /// </summary>
+  public class IgnoreMissingDataPointsGroupStyle
+    :
+    Main.SuspendableDocumentLeafNodeWithEventArgs,
+    IPlotGroupStyle
+  {
+    private bool _isInitialized;
+    private bool _ignoreMissingDataPoints;
+    private static readonly Type MyType = typeof(IgnoreMissingDataPointsGroupStyle);
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-11-17 Initial version
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IgnoreMissingDataPointsGroupStyle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				IgnoreMissingDataPointsGroupStyle s = (IgnoreMissingDataPointsGroupStyle)obj;
-			}
+    /// <summary>
+    /// 2016-11-17 Initial version
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IgnoreMissingDataPointsGroupStyle), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        IgnoreMissingDataPointsGroupStyle s = (IgnoreMissingDataPointsGroupStyle)obj;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				IgnoreMissingDataPointsGroupStyle s = null != o ? (IgnoreMissingDataPointsGroupStyle)o : new IgnoreMissingDataPointsGroupStyle();
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        IgnoreMissingDataPointsGroupStyle s = null != o ? (IgnoreMissingDataPointsGroupStyle)o : new IgnoreMissingDataPointsGroupStyle();
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		#region Constructors
+    #region Constructors
 
-		public IgnoreMissingDataPointsGroupStyle()
-		{
-		}
+    public IgnoreMissingDataPointsGroupStyle()
+    {
+    }
 
-		public IgnoreMissingDataPointsGroupStyle(IgnoreMissingDataPointsGroupStyle from)
-		{
-			this._isInitialized = from._isInitialized;
-			this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-		}
+    public IgnoreMissingDataPointsGroupStyle(IgnoreMissingDataPointsGroupStyle from)
+    {
+      this._isInitialized = from._isInitialized;
+      this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public IgnoreMissingDataPointsGroupStyle Clone()
-		{
-			return new IgnoreMissingDataPointsGroupStyle(this);
-		}
+    public IgnoreMissingDataPointsGroupStyle Clone()
+    {
+      return new IgnoreMissingDataPointsGroupStyle(this);
+    }
 
-		object ICloneable.Clone()
-		{
-			return new IgnoreMissingDataPointsGroupStyle(this);
-		}
+    object ICloneable.Clone()
+    {
+      return new IgnoreMissingDataPointsGroupStyle(this);
+    }
 
-		#endregion ICloneable Members
+    #endregion ICloneable Members
 
-		#region IGroupStyle Members
+    #region IGroupStyle Members
 
-		public void TransferFrom(IPlotGroupStyle fromb)
-		{
-			IgnoreMissingDataPointsGroupStyle from = (IgnoreMissingDataPointsGroupStyle)fromb;
-			this._isInitialized = from._isInitialized;
-			_ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-		}
+    public void TransferFrom(IPlotGroupStyle fromb)
+    {
+      IgnoreMissingDataPointsGroupStyle from = (IgnoreMissingDataPointsGroupStyle)fromb;
+      this._isInitialized = from._isInitialized;
+      _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+    }
 
-		public void BeginPrepare()
-		{
-			_isInitialized = false;
-		}
+    public void BeginPrepare()
+    {
+      _isInitialized = false;
+    }
 
-		public void PrepareStep()
-		{
-		}
+    public void PrepareStep()
+    {
+    }
 
-		public void EndPrepare()
-		{
-		}
+    public void EndPrepare()
+    {
+    }
 
-		public bool CanCarryOver
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public bool CanCarryOver
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public bool CanStep
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public bool CanStep
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public int Step(int step)
-		{
-			return 0;
-		}
+    public int Step(int step)
+    {
+      return 0;
+    }
 
-		/// <summary>
-		/// Get/sets whether or not stepping is allowed.
-		/// </summary>
-		public bool IsStepEnabled
-		{
-			get
-			{
-				return false;
-			}
-			set
-			{
-			}
-		}
+    /// <summary>
+    /// Get/sets whether or not stepping is allowed.
+    /// </summary>
+    public bool IsStepEnabled
+    {
+      get
+      {
+        return false;
+      }
+      set
+      {
+      }
+    }
 
-		#endregion IGroupStyle Members
+    #endregion IGroupStyle Members
 
-		#region Other members
+    #region Other members
 
-		public bool IsInitialized
-		{
-			get
-			{
-				return _isInitialized;
-			}
-		}
+    public bool IsInitialized
+    {
+      get
+      {
+        return _isInitialized;
+      }
+    }
 
-		public void Initialize(bool ignoreMissingDataPoints)
-		{
-			_isInitialized = true;
-			_ignoreMissingDataPoints = ignoreMissingDataPoints;
-		}
+    public void Initialize(bool ignoreMissingDataPoints)
+    {
+      _isInitialized = true;
+      _ignoreMissingDataPoints = ignoreMissingDataPoints;
+    }
 
-		public bool IgnoreMissingDataPoints
-		{
-			get
-			{
-				return _ignoreMissingDataPoints;
-			}
-		}
+    public bool IgnoreMissingDataPoints
+    {
+      get
+      {
+        return _ignoreMissingDataPoints;
+      }
+    }
 
-		#endregion Other members
+    #endregion Other members
 
-		#region Static helpers
+    #region Static helpers
 
-		public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
-		{
-			// this group style is local only, so no addition is made here
-		}
+    public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
+    {
+      // this group style is local only, so no addition is made here
+    }
 
-		public static void AddLocalGroupStyle(
-		 IPlotGroupStyleCollection externalGroups,
-		 IPlotGroupStyleCollection localGroups)
-		{
-			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(IgnoreMissingDataPointsGroupStyle)))
-				localGroups.Add(new IgnoreMissingDataPointsGroupStyle());
-		}
+    public static void AddLocalGroupStyle(
+     IPlotGroupStyleCollection externalGroups,
+     IPlotGroupStyleCollection localGroups)
+    {
+      if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(IgnoreMissingDataPointsGroupStyle)))
+        localGroups.Add(new IgnoreMissingDataPointsGroupStyle());
+    }
 
-		public static void PrepareStyle(
-			IPlotGroupStyleCollection externalGroups,
-			IPlotGroupStyleCollection localGroups,
-			Func<bool> getter)
-		{
-			if (!externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle))
-				&& null != localGroups
-				&& !localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
-			{
-				localGroups.Add(new IgnoreMissingDataPointsGroupStyle());
-			}
+    public static void PrepareStyle(
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
+      Func<bool> getter)
+    {
+      if (!externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle))
+        && null != localGroups
+        && !localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
+      {
+        localGroups.Add(new IgnoreMissingDataPointsGroupStyle());
+      }
 
-			IgnoreMissingDataPointsGroupStyle grpStyle = null;
-			if (externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
-				grpStyle = (IgnoreMissingDataPointsGroupStyle)externalGroups.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
-			else if (localGroups != null)
-				grpStyle = (IgnoreMissingDataPointsGroupStyle)localGroups.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
+      IgnoreMissingDataPointsGroupStyle grpStyle = null;
+      if (externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
+        grpStyle = (IgnoreMissingDataPointsGroupStyle)externalGroups.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
+      else if (localGroups != null)
+        grpStyle = (IgnoreMissingDataPointsGroupStyle)localGroups.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
 
-			if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
-				grpStyle.Initialize(getter());
-		}
+      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+        grpStyle.Initialize(getter());
+    }
 
-		/// <summary>
-		/// Try to apply the symbol size group style. Returns true if successfull applied.
-		/// </summary>
-		/// <param name="externalGroups"></param>
-		/// <param name="localGroups"></param>
-		/// <param name="setter"></param>
-		/// <returns></returns>
-		public static bool ApplyStyle(
-			IPlotGroupStyleCollection externalGroups,
-			IPlotGroupStyleCollection localGroups,
-			Action<bool> setter)
-		{
-			IgnoreMissingDataPointsGroupStyle grpStyle = null;
-			IPlotGroupStyleCollection grpColl = null;
-			if (externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
-				grpColl = externalGroups;
-			else if (localGroups != null && localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
-				grpColl = localGroups;
+    /// <summary>
+    /// Try to apply the symbol size group style. Returns true if successfull applied.
+    /// </summary>
+    /// <param name="externalGroups"></param>
+    /// <param name="localGroups"></param>
+    /// <param name="setter"></param>
+    /// <returns></returns>
+    public static bool ApplyStyle(
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
+      Action<bool> setter)
+    {
+      IgnoreMissingDataPointsGroupStyle grpStyle = null;
+      IPlotGroupStyleCollection grpColl = null;
+      if (externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
+        grpColl = externalGroups;
+      else if (localGroups != null && localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
+        grpColl = localGroups;
 
-			if (null != grpColl)
-			{
-				grpStyle = (IgnoreMissingDataPointsGroupStyle)grpColl.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
-				grpColl.OnBeforeApplication(typeof(IgnoreMissingDataPointsGroupStyle));
-				setter(grpStyle.IgnoreMissingDataPoints);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+      if (null != grpColl)
+      {
+        grpStyle = (IgnoreMissingDataPointsGroupStyle)grpColl.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
+        grpColl.OnBeforeApplication(typeof(IgnoreMissingDataPointsGroupStyle));
+        setter(grpStyle.IgnoreMissingDataPoints);
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
-		#endregion Static helpers
-	}
+    #endregion Static helpers
+  }
 }

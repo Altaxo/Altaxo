@@ -29,181 +29,181 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.Material
 {
-	/// <summary>
-	/// Represents a material which is uniformely colored.
-	/// </summary>
-	public class MaterialWithUniformColor : MaterialBase
-	{
-		/// <summary>
-		/// The diffuse color of the material.
-		/// </summary>
-		private NamedColor _color;
+  /// <summary>
+  /// Represents a material which is uniformely colored.
+  /// </summary>
+  public class MaterialWithUniformColor : MaterialBase
+  {
+    /// <summary>
+    /// The diffuse color of the material.
+    /// </summary>
+    private NamedColor _color;
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2015-11-18 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MaterialWithUniformColor), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (MaterialWithUniformColor)obj;
+    /// <summary>
+    /// 2015-11-18 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MaterialWithUniformColor), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (MaterialWithUniformColor)obj;
 
-				info.AddValue("Smoothness", s._smoothness);
-				info.AddValue("Metalness", s._metalness);
-				info.AddValue("IndexOfRefraction", s._indexOfRefraction);
-				info.AddValue("Color", s._color);
-			}
+        info.AddValue("Smoothness", s._smoothness);
+        info.AddValue("Metalness", s._metalness);
+        info.AddValue("IndexOfRefraction", s._indexOfRefraction);
+        info.AddValue("Color", s._color);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				double smoothness = info.GetDouble("Smoothness");
-				double metalness = info.GetDouble("Metalness");
-				double indexOfRefraction = info.GetDouble("IndexOfRefraction");
-				var color = (NamedColor)info.GetValue("Color", null);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        double smoothness = info.GetDouble("Smoothness");
+        double metalness = info.GetDouble("Metalness");
+        double indexOfRefraction = info.GetDouble("IndexOfRefraction");
+        var color = (NamedColor)info.GetValue("Color", null);
 
-				return new MaterialWithUniformColor(color, smoothness, metalness, indexOfRefraction);
-			}
-		}
+        return new MaterialWithUniformColor(color, smoothness, metalness, indexOfRefraction);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		#region Constructors
+    #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MaterialWithUniformColor" /> class with the provided color and with default specular properties.
-		/// </summary>
-		/// <param name="color">The material color.</param>
-		public MaterialWithUniformColor(NamedColor color)
-		{
-			_color = color;
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialWithUniformColor" /> class with the provided color and with default specular properties.
+    /// </summary>
+    /// <param name="color">The material color.</param>
+    public MaterialWithUniformColor(NamedColor color)
+    {
+      _color = color;
+    }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MaterialWithUniformColor" /> class with the provided color and specular properties.
-		/// </summary>
-		/// <param name="color">The material color.</param>
-		/// <param name="smoothness">The specular intensity.</param>
-		/// <param name="metalness">The specular exponent.</param>
-		public MaterialWithUniformColor(NamedColor color, double smoothness, double metalness)
-					: base(smoothness, metalness)
-		{
-			_color = color;
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialWithUniformColor" /> class with the provided color and specular properties.
+    /// </summary>
+    /// <param name="color">The material color.</param>
+    /// <param name="smoothness">The specular intensity.</param>
+    /// <param name="metalness">The specular exponent.</param>
+    public MaterialWithUniformColor(NamedColor color, double smoothness, double metalness)
+          : base(smoothness, metalness)
+    {
+      _color = color;
+    }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MaterialWithUniformColor" /> class with the provided color and specular properties.
-		/// </summary>
-		/// <param name="color">The material color.</param>
-		/// <param name="smoothness">The specular intensity.</param>
-		/// <param name="metalness">The specular exponent.</param>
-		/// <param name="indexOfRefraction">The index of refraction.</param>
-		public MaterialWithUniformColor(NamedColor color, double smoothness, double metalness, double indexOfRefraction)
-					: base(smoothness, metalness, indexOfRefraction)
-		{
-			_color = color;
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialWithUniformColor" /> class with the provided color and specular properties.
+    /// </summary>
+    /// <param name="color">The material color.</param>
+    /// <param name="smoothness">The specular intensity.</param>
+    /// <param name="metalness">The specular exponent.</param>
+    /// <param name="indexOfRefraction">The index of refraction.</param>
+    public MaterialWithUniformColor(NamedColor color, double smoothness, double metalness, double indexOfRefraction)
+          : base(smoothness, metalness, indexOfRefraction)
+    {
+      _color = color;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Color
+    #region Color
 
-		///<inheritdoc/>
-		public override NamedColor Color
-		{
-			get
-			{
-				return _color;
-			}
-		}
+    ///<inheritdoc/>
+    public override NamedColor Color
+    {
+      get
+      {
+        return _color;
+      }
+    }
 
-		///<inheritdoc/>
-		public override IMaterial WithColor(NamedColor color)
-		{
-			if (!(color == this._color))
-			{
-				var result = (MaterialWithUniformColor)this.MemberwiseClone();
-				result._color = color;
-				return result;
-			}
-			else
-			{
-				return this;
-			}
-		}
+    ///<inheritdoc/>
+    public override IMaterial WithColor(NamedColor color)
+    {
+      if (!(color == this._color))
+      {
+        var result = (MaterialWithUniformColor)this.MemberwiseClone();
+        result._color = color;
+        return result;
+      }
+      else
+      {
+        return this;
+      }
+    }
 
-		#endregion Color
+    #endregion Color
 
-		#region Infrastructure
+    #region Infrastructure
 
-		///<inheritdoc/>
-		public override bool HasColor
-		{
-			get
-			{
-				return true;
-			}
-		}
+    ///<inheritdoc/>
+    public override bool HasColor
+    {
+      get
+      {
+        return true;
+      }
+    }
 
-		///<inheritdoc/>
-		public override bool HasTexture
-		{
-			get
-			{
-				return false;
-			}
-		}
+    ///<inheritdoc/>
+    public override bool HasTexture
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public override bool IsVisible
-		{
-			get
-			{
-				return true;
-			}
-		}
+    public override bool IsVisible
+    {
+      get
+      {
+        return true;
+      }
+    }
 
-		///<inheritdoc/>
-		public override bool Equals(object obj)
-		{
-			// this material is considered to be equal to another material, if this material has exactly
-			var other = obj as MaterialWithUniformColor;
-			if (null != other)
-			{
-				return
-					this._color == other._color &&
-					this._smoothness == other._smoothness &&
-					this._metalness == other._metalness &&
-					this._indexOfRefraction == other._indexOfRefraction;
-			}
+    ///<inheritdoc/>
+    public override bool Equals(object obj)
+    {
+      // this material is considered to be equal to another material, if this material has exactly
+      var other = obj as MaterialWithUniformColor;
+      if (null != other)
+      {
+        return
+          this._color == other._color &&
+          this._smoothness == other._smoothness &&
+          this._metalness == other._metalness &&
+          this._indexOfRefraction == other._indexOfRefraction;
+      }
 
-			return false;
-		}
+      return false;
+    }
 
-		///<inheritdoc/>
-		public override bool Equals(IMaterial obj)
-		{
-			// this material is considered to be equal to another material, if this material has exactly
-			var other = obj as MaterialWithUniformColor;
-			if (null != other)
-			{
-				return
-					this._color == other._color &&
+    ///<inheritdoc/>
+    public override bool Equals(IMaterial obj)
+    {
+      // this material is considered to be equal to another material, if this material has exactly
+      var other = obj as MaterialWithUniformColor;
+      if (null != other)
+      {
+        return
+          this._color == other._color &&
 
-					this._smoothness == other._smoothness &&
-					this._metalness == other._metalness &&
-					this._indexOfRefraction == other._indexOfRefraction;
-			}
+          this._smoothness == other._smoothness &&
+          this._metalness == other._metalness &&
+          this._indexOfRefraction == other._indexOfRefraction;
+      }
 
-			return false;
-		}
+      return false;
+    }
 
-		public override int GetHashCode()
-		{
-			return this._color.GetHashCode() + 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();
-		}
+    public override int GetHashCode()
+    {
+      return this._color.GetHashCode() + 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();
+    }
 
-		#endregion Infrastructure
-	}
+    #endregion Infrastructure
+  }
 }

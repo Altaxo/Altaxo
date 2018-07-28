@@ -22,26 +22,26 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.AddInItems
 {
-	/// <summary>
-	/// Exception used when loading an AddIn fails.
-	/// </summary>
-	[Serializable]
-	public class AddInLoadException : BaseException
-	{
-		public AddInLoadException() : base()
-		{
-		}
+  /// <summary>
+  /// Exception used when loading an AddIn fails.
+  /// </summary>
+  [Serializable]
+  public class AddInLoadException : BaseException
+  {
+    public AddInLoadException() : base()
+    {
+    }
 
-		public AddInLoadException(string message) : base(message)
-		{
-		}
+    public AddInLoadException(string message) : base(message)
+    {
+    }
 
-		public AddInLoadException(string message, Exception innerException) : base(message, innerException)
-		{
-		}
+    public AddInLoadException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 
-		protected AddInLoadException(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-		}
-	}
+    protected AddInLoadException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
+  }
 }

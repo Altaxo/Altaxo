@@ -30,26 +30,26 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units
 {
-	/// <summary>
-	/// Designates a biased unit, i.e. a unit for wich 0 units of that unit is not the same as 0 units of the corresponding SI unit.
-	/// </summary>
-	public interface IBiasedUnit
-	{
-		/// <summary>
-		/// Converts a value of this unit to a value in the corresponding SI unit. The provided value is treated as difference.
-		/// Thus if e.g. the unit is DegreesCelsius, by providing 20 the result is 20 (K), because 20°C - 0°C = 20 K.
-		/// </summary>
-		/// <param name="differenceValue">The value treated as difference.</param>
-		/// <returns></returns>
-		double ToSIUnitIfTreatedAsDifference(double differenceValue);
+  /// <summary>
+  /// Designates a biased unit, i.e. a unit for wich 0 units of that unit is not the same as 0 units of the corresponding SI unit.
+  /// </summary>
+  public interface IBiasedUnit
+  {
+    /// <summary>
+    /// Converts a value of this unit to a value in the corresponding SI unit. The provided value is treated as difference.
+    /// Thus if e.g. the unit is DegreesCelsius, by providing 20 the result is 20 (K), because 20°C - 0°C = 20 K.
+    /// </summary>
+    /// <param name="differenceValue">The value treated as difference.</param>
+    /// <returns></returns>
+    double ToSIUnitIfTreatedAsDifference(double differenceValue);
 
-		/// <summary>
-		/// Adds the biased value of this unit and an SI value to get the biased value of this unit. For example
-		/// 20°C + 20 K results in 40°C or 20 °F + 20 K results in 52 °F
-		/// </summary>
-		/// <param name="biasedValueOfThisUnit">The biased value of this unit.</param>
-		/// <param name="siValue">The si value.</param>
-		/// <returns></returns>
-		double AddBiasedValueOfThisUnitAndSIValue(double biasedValueOfThisUnit, double siValue);
-	}
+    /// <summary>
+    /// Adds the biased value of this unit and an SI value to get the biased value of this unit. For example
+    /// 20°C + 20 K results in 40°C or 20 °F + 20 K results in 52 °F
+    /// </summary>
+    /// <param name="biasedValueOfThisUnit">The biased value of this unit.</param>
+    /// <param name="siValue">The si value.</param>
+    /// <returns></returns>
+    double AddBiasedValueOfThisUnitAndSIValue(double biasedValueOfThisUnit, double siValue);
+  }
 }

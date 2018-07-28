@@ -31,69 +31,69 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-	/// <summary>
-	/// Interaction logic for DateTimeLabelFormattingControl.xaml
-	/// </summary>
-	public partial class DateTimeLabelFormattingControl : UserControl, IDateTimeLabelFormattingView
-	{
-		public DateTimeLabelFormattingControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for DateTimeLabelFormattingControl.xaml
+  /// </summary>
+  public partial class DateTimeLabelFormattingControl : UserControl, IDateTimeLabelFormattingView
+  {
+    public DateTimeLabelFormattingControl()
+    {
+      InitializeComponent();
+    }
 
-		public IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get { return _guiMultiLineLabelFormattingControl; } }
+    public IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get { return _guiMultiLineLabelFormattingControl; } }
 
-		public void InitializeTimeConversion(SelectableListNodeList items)
-		{
-			GuiHelper.InitializeChoicePanel<RadioButton>(_guiTimeConversionPanel, items);
-		}
+    public void InitializeTimeConversion(SelectableListNodeList items)
+    {
+      GuiHelper.InitializeChoicePanel<RadioButton>(_guiTimeConversionPanel, items);
+    }
 
-		public string FormattingString
-		{
-			get
-			{
-				return _guiFormattingText.Text;
-			}
-			set
-			{
-				_guiFormattingText.Text = value;
-			}
-		}
+    public string FormattingString
+    {
+      get
+      {
+        return _guiFormattingText.Text;
+      }
+      set
+      {
+        _guiFormattingText.Text = value;
+      }
+    }
 
-		public string FormattingStringAlternate
-		{
-			get
-			{
-				return _guiAlternateFormattingText.Text;
-			}
-			set
-			{
-				_guiAlternateFormattingText.Text = value;
-			}
-		}
+    public string FormattingStringAlternate
+    {
+      get
+      {
+        return _guiAlternateFormattingText.Text;
+      }
+      set
+      {
+        _guiAlternateFormattingText.Text = value;
+      }
+    }
 
-		public bool ShowAlternateFormattingOnMidnight
-		{
-			get
-			{
-				return true == _guiShowAlternateFormattingOnMidnight.IsChecked;
-			}
-			set
-			{
-				_guiShowAlternateFormattingOnMidnight.IsChecked = value;
-			}
-		}
+    public bool ShowAlternateFormattingOnMidnight
+    {
+      get
+      {
+        return true == _guiShowAlternateFormattingOnMidnight.IsChecked;
+      }
+      set
+      {
+        _guiShowAlternateFormattingOnMidnight.IsChecked = value;
+      }
+    }
 
-		public bool ShowAlternateFormattingOnNoon
-		{
-			get
-			{
-				return true == _guiShowAlternateFormattingOnNoon.IsChecked;
-			}
-			set
-			{
-				_guiShowAlternateFormattingOnNoon.IsChecked = value;
-			}
-		}
-	}
+    public bool ShowAlternateFormattingOnNoon
+    {
+      get
+      {
+        return true == _guiShowAlternateFormattingOnNoon.IsChecked;
+      }
+      set
+      {
+        _guiShowAlternateFormattingOnNoon.IsChecked = value;
+      }
+    }
+  }
 }

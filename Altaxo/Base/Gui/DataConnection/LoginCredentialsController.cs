@@ -30,44 +30,44 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
-	public interface ILoginCredentialsView
-	{
-		string Username { get; set; }
+  public interface ILoginCredentialsView
+  {
+    string Username { get; set; }
 
-		string Password { get; set; }
-	}
+    string Password { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(ILoginCredentialsView))]
-	[UserControllerForObject(typeof(LoginCredentials))]
-	public class LoginCredentialsController : MVCANControllerEditOriginalDocBase<LoginCredentials, ILoginCredentialsView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [ExpectedTypeOfView(typeof(ILoginCredentialsView))]
+  [UserControllerForObject(typeof(LoginCredentials))]
+  public class LoginCredentialsController : MVCANControllerEditOriginalDocBase<LoginCredentials, ILoginCredentialsView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.Username = _doc.UserName;
-				_view.Password = _doc.Password;
-			}
-		}
+      if (null != _view)
+      {
+        _view.Username = _doc.UserName;
+        _view.Password = _doc.Password;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc = new LoginCredentials(_view.Username, _view.Password);
+    public override bool Apply(bool disposeController)
+    {
+      _doc = new LoginCredentials(_view.Username, _view.Password);
 
-			if (_doc.AreEmpty)
-			{
-				Current.Gui.ErrorMessageBox("You must provide at least a user name.");
-				return false;
-			}
+      if (_doc.AreEmpty)
+      {
+        Current.Gui.ErrorMessageBox("You must provide at least a user name.");
+        return false;
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

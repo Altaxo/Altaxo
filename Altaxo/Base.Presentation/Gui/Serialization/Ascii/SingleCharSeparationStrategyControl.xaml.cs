@@ -30,38 +30,38 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-	/// <summary>
-	/// Interaction logic for SingleCharSeparationStrategyControl.xaml
-	/// </summary>
-	public partial class SingleCharSeparationStrategyControl : UserControl, ISingleCharSeparationStrategyView
-	{
-		public SingleCharSeparationStrategyControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for SingleCharSeparationStrategyControl.xaml
+  /// </summary>
+  public partial class SingleCharSeparationStrategyControl : UserControl, ISingleCharSeparationStrategyView
+  {
+    public SingleCharSeparationStrategyControl()
+    {
+      InitializeComponent();
+    }
 
-		public char SeparatorChar
-		{
-			get
-			{
-				var txt = _guiSeparationChar.Text;
-				if (txt.Length == 0)
-					return ' ';
-				else if (txt.Length == 1)
-					return txt[0];
-				else
-				{
-					var txtTrim = txt.Trim();
-					if (txtTrim.Length == 1)
-						return txtTrim[0];
-					else
-						return txt[0];
-				}
-			}
-			set
-			{
-				_guiSeparationChar.Text = string.Empty + value;
-			}
-		}
-	}
+    public char SeparatorChar
+    {
+      get
+      {
+        var txt = _guiSeparationChar.Text;
+        if (txt.Length == 0)
+          return ' ';
+        else if (txt.Length == 1)
+          return txt[0];
+        else
+        {
+          var txtTrim = txt.Trim();
+          if (txtTrim.Length == 1)
+            return txtTrim[0];
+          else
+            return txt[0];
+        }
+      }
+      set
+      {
+        _guiSeparationChar.Text = string.Empty + value;
+      }
+    }
+  }
 }

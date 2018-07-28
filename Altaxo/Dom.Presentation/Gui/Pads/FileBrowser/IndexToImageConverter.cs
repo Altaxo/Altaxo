@@ -31,44 +31,44 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
-	public class IndexToImageConverter : IValueConverter
-	{
-		private static List<ImageSource> _imageList;
+  public class IndexToImageConverter : IValueConverter
+  {
+    private static List<ImageSource> _imageList;
 
-		private static void Initialize()
-		{
-			_imageList = new List<ImageSource>();
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.ClosedFolderBitmap"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.FLOPPY"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.DRIVE"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.CDROM"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.NETWORK"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Desktop"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PersonalFiles"));
-			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.MyComputer"));
-		}
+    private static void Initialize()
+    {
+      _imageList = new List<ImageSource>();
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.ClosedFolderBitmap"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.FLOPPY"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.DRIVE"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.CDROM"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.NETWORK"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Desktop"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PersonalFiles"));
+      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.MyComputer"));
+    }
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			if (null == _imageList)
-				Initialize(); // this late initialization is done here to avoid errors during xaml browsing
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      if (null == _imageList)
+        Initialize(); // this late initialization is done here to avoid errors during xaml browsing
 
-			if (value is int)
-			{
-				int i = (int)value;
-				if (i >= 0 && i < _imageList.Count)
-					return _imageList[i];
-				else
-					return null;
-			}
-			else
-				return null;
-		}
+      if (value is int)
+      {
+        int i = (int)value;
+        if (i >= 0 && i < _imageList.Count)
+          return _imageList[i];
+        else
+          return null;
+      }
+      else
+        return null;
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

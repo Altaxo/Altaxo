@@ -26,53 +26,53 @@ using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
 {
-	/// <summary>
-	/// Maml renderer for an <see cref="EmphasisInline"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class EmphasisInlineRenderer : MamlObjectRenderer<EmphasisInline>
-	{
-		private MamlElement mamlElement = null;
+  /// <summary>
+  /// Maml renderer for an <see cref="EmphasisInline"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class EmphasisInlineRenderer : MamlObjectRenderer<EmphasisInline>
+  {
+    private MamlElement mamlElement = null;
 
-		protected override void Write(MamlRenderer renderer, EmphasisInline obj)
-		{
-			switch (obj.DelimiterChar)
-			{
-				case '*':
-				case '_':
-					if (obj.IsDouble)
-						mamlElement = MamlElements.legacyBold;
-					else
-						mamlElement = MamlElements.legacyItalic;
-					break;
+    protected override void Write(MamlRenderer renderer, EmphasisInline obj)
+    {
+      switch (obj.DelimiterChar)
+      {
+        case '*':
+        case '_':
+          if (obj.IsDouble)
+            mamlElement = MamlElements.legacyBold;
+          else
+            mamlElement = MamlElements.legacyItalic;
+          break;
 
-				case '~':
-					if (obj.IsDouble)
-						mamlElement = MamlElements.legacyStrikethrough;
-					else
-						mamlElement = MamlElements.subscript;
+        case '~':
+          if (obj.IsDouble)
+            mamlElement = MamlElements.legacyStrikethrough;
+          else
+            mamlElement = MamlElements.subscript;
 
-					break;
+          break;
 
-				case '^':
-					mamlElement = MamlElements.superscript;
-					break;
+        case '^':
+          mamlElement = MamlElements.superscript;
+          break;
 
-				case '+':
-					// Inserted style
-					mamlElement = MamlElements.legacyUnderline;
-					break;
+        case '+':
+          // Inserted style
+          mamlElement = MamlElements.legacyUnderline;
+          break;
 
-				case '=':
-					// Marked style
-					break;
-			}
+        case '=':
+          // Marked style
+          break;
+      }
 
-			if (null != mamlElement)
-				renderer.Push(mamlElement);
-			renderer.WriteChildren(obj);
-			if (null != mamlElement)
-				renderer.PopTo(mamlElement);
-		}
-	}
+      if (null != mamlElement)
+        renderer.Push(mamlElement);
+      renderer.WriteChildren(obj);
+      if (null != mamlElement)
+        renderer.PopTo(mamlElement);
+    }
+  }
 }

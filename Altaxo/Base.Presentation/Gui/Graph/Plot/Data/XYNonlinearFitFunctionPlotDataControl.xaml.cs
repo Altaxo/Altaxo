@@ -31,32 +31,32 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-	/// <summary>
-	/// Interaction logic for FunctionPlotDataControl.xaml
-	/// </summary>
-	public partial class XYNonlinearFitFunctionPlotDataControl : UserControl, IXYNonlinearFitFunctionPlotDataView
-	{
-		public XYNonlinearFitFunctionPlotDataControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for FunctionPlotDataControl.xaml
+  /// </summary>
+  public partial class XYNonlinearFitFunctionPlotDataControl : UserControl, IXYNonlinearFitFunctionPlotDataView
+  {
+    public XYNonlinearFitFunctionPlotDataControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhEditText_Click(object sender, RoutedEventArgs e)
-		{
-			if (EditText != null)
-				EditText(this, e);
-		}
+    private void EhEditText_Click(object sender, RoutedEventArgs e)
+    {
+      if (EditText != null)
+        EditText(this, e);
+    }
 
-		#region IFunctionPlotDataView Members
+    #region IFunctionPlotDataView Members
 
-		public event EventHandler EditText;
+    public event EventHandler EditText;
 
-		public void InitializeFunctionText(string text, bool editable)
-		{
-			_edText.Text = text;
-			_btEditText.IsEnabled = editable;
-		}
+    public void InitializeFunctionText(string text, bool editable)
+    {
+      _edText.Text = text;
+      _btEditText.IsEnabled = editable;
+    }
 
-		#endregion IFunctionPlotDataView Members
-	}
+    #endregion IFunctionPlotDataView Members
+  }
 }

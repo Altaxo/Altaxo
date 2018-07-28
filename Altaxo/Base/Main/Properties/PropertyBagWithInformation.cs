@@ -29,15 +29,15 @@ using System.Text;
 
 namespace Altaxo.Main.Properties
 {
-	public struct PropertyBagWithInformation
-	{
-		public PropertyBagInformation BagInformation;
-		public IPropertyBag Bag;
+  public struct PropertyBagWithInformation
+  {
+    public PropertyBagInformation BagInformation;
+    public IPropertyBag Bag;
 
-		public PropertyBagWithInformation(PropertyBagInformation bagInformation, IPropertyBag bag)
-		{
-			BagInformation = bagInformation;
-			Bag = bag;
-		}
-	}
+    public PropertyBagWithInformation(PropertyBagInformation bagInformation, IPropertyBag bag)
+    {
+      BagInformation = bagInformation;
+      Bag = bag;
+    }
+  }
 }

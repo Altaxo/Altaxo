@@ -31,57 +31,57 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-	public interface IFreeLabelFormattingView
-	{
-		IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get; }
+  public interface IFreeLabelFormattingView
+  {
+    IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get; }
 
-		string FormatString { get; set; }
-	}
+    string FormatString { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IFreeLabelFormattingView))]
-	[UserControllerForObject(typeof(FreeLabelFormatting), 110)]
-	public class FreeLabelFormattingController : MVCANControllerEditOriginalDocBase<FreeLabelFormatting, IFreeLabelFormattingView>
-	{
-		private SelectableListNodeList _textBlockAlignmentChoices;
+  [ExpectedTypeOfView(typeof(IFreeLabelFormattingView))]
+  [UserControllerForObject(typeof(FreeLabelFormatting), 110)]
+  public class FreeLabelFormattingController : MVCANControllerEditOriginalDocBase<FreeLabelFormatting, IFreeLabelFormattingView>
+  {
+    private SelectableListNodeList _textBlockAlignmentChoices;
 
-		private MultiLineLabelFormattingBaseController _baseController;
+    private MultiLineLabelFormattingBaseController _baseController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_textBlockAlignmentChoices = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _textBlockAlignmentChoices = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_baseController = new MultiLineLabelFormattingBaseController() { UseDocumentCopy = UseDocument.Directly };
-				_baseController.InitializeDocument(_doc);
-				_textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
-			}
-			if (null != _view)
-			{
-				_baseController.ViewObject = _view.MultiLineLabelFormattingBaseView;
-				_view.FormatString = _doc.FormatString;
-			}
-		}
+      if (initData)
+      {
+        _baseController = new MultiLineLabelFormattingBaseController() { UseDocumentCopy = UseDocument.Directly };
+        _baseController.InitializeDocument(_doc);
+        _textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
+      }
+      if (null != _view)
+      {
+        _baseController.ViewObject = _view.MultiLineLabelFormattingBaseView;
+        _view.FormatString = _doc.FormatString;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_baseController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_baseController.Apply(disposeController))
+        return false;
 
-			_doc.FormatString = _view.FormatString;
+      _doc.FormatString = _view.FormatString;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

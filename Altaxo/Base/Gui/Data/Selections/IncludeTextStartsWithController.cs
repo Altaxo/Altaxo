@@ -33,111 +33,111 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	[UserControllerForObject(typeof(IncludeTextStartsWith), 100)]
-	[ExpectedTypeOfView(typeof(IIncludeSingleTextValueView))]
-	public class IncludeTextStartsWithController : MVCANControllerEditCopyOfDocBase<IncludeTextStartsWith, IIncludeSingleTextValueView>, IDataColumnController
-	{
-		/// <summary>
-		/// The data table that the column of the style should belong to.
-		/// </summary>
-		private DataTable _supposedParentDataTable;
+  [UserControllerForObject(typeof(IncludeTextStartsWith), 100)]
+  [ExpectedTypeOfView(typeof(IIncludeSingleTextValueView))]
+  public class IncludeTextStartsWithController : MVCANControllerEditCopyOfDocBase<IncludeTextStartsWith, IIncludeSingleTextValueView>, IDataColumnController
+  {
+    /// <summary>
+    /// The data table that the column of the style should belong to.
+    /// </summary>
+    private DataTable _supposedParentDataTable;
 
-		/// <summary>
-		/// The group number that the column of the style should belong to.
-		/// </summary>
-		private int _supposedGroupNumber;
+    /// <summary>
+    /// The group number that the column of the style should belong to.
+    /// </summary>
+    private int _supposedGroupNumber;
 
-		public override bool InitializeDocument(params object[] args)
-		{
-			if (args.Length >= 2 && (args[1] is DataTable))
-				_supposedParentDataTable = (DataTable)args[1];
+    public override bool InitializeDocument(params object[] args)
+    {
+      if (args.Length >= 2 && (args[1] is DataTable))
+        _supposedParentDataTable = (DataTable)args[1];
 
-			if (args.Length >= 3 && args[2] is int)
-				_supposedGroupNumber = (int)args[2];
+      if (args.Length >= 3 && args[2] is int)
+        _supposedGroupNumber = (int)args[2];
 
-			return base.InitializeDocument(args);
-		}
+      return base.InitializeDocument(args);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				_view.Value = _doc.Value;
-				_view.IgnoreCase = _doc.IgnoreCase;
-				View_InitializeColumn();
-				_view.ActionString = "that starts with text:";
-				_view.TextFieldToolTip = "Enter the text that should be the end of the data items.";
-			}
-		}
+      if (initData)
+      {
+      }
+      if (null != _view)
+      {
+        _view.Value = _doc.Value;
+        _view.IgnoreCase = _doc.IgnoreCase;
+        View_InitializeColumn();
+        _view.ActionString = "that starts with text:";
+        _view.TextFieldToolTip = "Enter the text that should be the end of the data items.";
+      }
+    }
 
-		private void View_InitializeColumn()
-		{
-			var info = new PlotColumnInformation(_doc.Column, _doc.ColumnName) { PlotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Error };
-			info.Update(_supposedParentDataTable, _supposedGroupNumber);
-			_view?.Init_Column(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-			_view?.Init_ColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
-		}
+    private void View_InitializeColumn()
+    {
+      var info = new PlotColumnInformation(_doc.Column, _doc.ColumnName) { PlotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Error };
+      info.Update(_supposedParentDataTable, _supposedGroupNumber);
+      _view?.Init_Column(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
+      _view?.Init_ColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			var column = _doc.Column;
+    public override bool Apply(bool disposeController)
+    {
+      var column = _doc.Column;
 
-			if (null == column)
-			{
-				Current.Gui.ErrorMessageBox(
-					"No column is set in the range of numerical values that is part of the plot range selection.\r\n" +
-					"Thus it is high likely that the plot range selection will yield no points.\r\n" +
-					"Please select a column for this range selection or remove this range selection."
-					);
+      if (null == column)
+      {
+        Current.Gui.ErrorMessageBox(
+          "No column is set in the range of numerical values that is part of the plot range selection.\r\n" +
+          "Thus it is high likely that the plot range selection will yield no points.\r\n" +
+          "Please select a column for this range selection or remove this range selection."
+          );
 
-				return ApplyEnd(false, disposeController);
-			}
+        return ApplyEnd(false, disposeController);
+      }
 
-			var value = _view.Value;
-			var ignoreCase = _view.IgnoreCase;
+      var value = _view.Value;
+      var ignoreCase = _view.IgnoreCase;
 
-			_doc = new IncludeTextStartsWith(value, ignoreCase, column);
+      _doc = new IncludeTextStartsWith(value, ignoreCase, column);
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		void IDataColumnController.SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable, int supposedGroupNumber)
-		{
-			_supposedParentDataTable = supposedParentDataTable;
-			_supposedGroupNumber = supposedGroupNumber;
-			_doc.Column = column;
-			View_InitializeColumn();
-		}
+    void IDataColumnController.SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable, int supposedGroupNumber)
+    {
+      _supposedParentDataTable = supposedParentDataTable;
+      _supposedGroupNumber = supposedGroupNumber;
+      _doc.Column = column;
+      View_InitializeColumn();
+    }
 
-		IReadableColumn IDataColumnController.Column
-		{
-			get
-			{
-				return _doc.Column;
-			}
-		}
+    IReadableColumn IDataColumnController.Column
+    {
+      get
+      {
+        return _doc.Column;
+      }
+    }
 
-		string IDataColumnController.ColumnName
-		{
-			get
-			{
-				return _doc.ColumnName;
-			}
-		}
+    string IDataColumnController.ColumnName
+    {
+      get
+      {
+        return _doc.ColumnName;
+      }
+    }
 
-		void IDataColumnController.SetIndex(int idx)
-		{
-			_view.Init_Index(idx);
-		}
-	}
+    void IDataColumnController.SetIndex(int idx)
+    {
+      _view.Init_Index(idx);
+    }
+  }
 }

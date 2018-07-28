@@ -27,147 +27,147 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IIntegerAndComboBoxView
-	{
-		void ComboBox_Initialize(SelectableListNodeList items, SelectableListNode defaultItem);
+  public interface IIntegerAndComboBoxView
+  {
+    void ComboBox_Initialize(SelectableListNodeList items, SelectableListNode defaultItem);
 
-		void ComboBoxLabel_Initialize(string text);
+    void ComboBoxLabel_Initialize(string text);
 
-		void IntegerEdit_Initialize(int min, int max, int val);
+    void IntegerEdit_Initialize(int min, int max, int val);
 
-		void IntegerLabel_Initialize(string text);
+    void IntegerLabel_Initialize(string text);
 
-		event Action<SelectableListNode> ComboBoxSelectionChanged;
+    event Action<SelectableListNode> ComboBoxSelectionChanged;
 
-		event Action<int> IntegerSelectionChanged;
-	}
+    event Action<int> IntegerSelectionChanged;
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Summary description for IntegerAndComboBoxController.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(IIntegerAndComboBoxView))]
-	public class IntegerAndComboBoxController : IMVCAController
-	{
-		protected IIntegerAndComboBoxView _view;
-		protected string _integerLabelText;
-		protected string _comboBoxLabelText;
-		protected int _integerMinimum;
-		protected int _integerMaximum;
-		protected int _integerValue;
-		protected SelectableListNodeList _comboBoxItems;
-		protected SelectableListNode _selectedItem;
+  /// <summary>
+  /// Summary description for IntegerAndComboBoxController.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(IIntegerAndComboBoxView))]
+  public class IntegerAndComboBoxController : IMVCAController
+  {
+    protected IIntegerAndComboBoxView _view;
+    protected string _integerLabelText;
+    protected string _comboBoxLabelText;
+    protected int _integerMinimum;
+    protected int _integerMaximum;
+    protected int _integerValue;
+    protected SelectableListNodeList _comboBoxItems;
+    protected SelectableListNode _selectedItem;
 
-		public IntegerAndComboBoxController(string integerLabel,
-			int intMin, int intMax,
-			int intVal,
-			string comboBoxLabel,
-			SelectableListNodeList items,
-			int defaultItem)
-		{
-			_integerLabelText = integerLabel;
-			_integerMinimum = intMin;
-			_integerMaximum = intMax;
-			_integerValue = intVal;
-			_comboBoxLabelText = comboBoxLabel;
-			_comboBoxItems = items;
-			_selectedItem = items[defaultItem];
+    public IntegerAndComboBoxController(string integerLabel,
+      int intMin, int intMax,
+      int intVal,
+      string comboBoxLabel,
+      SelectableListNodeList items,
+      int defaultItem)
+    {
+      _integerLabelText = integerLabel;
+      _integerMinimum = intMin;
+      _integerMaximum = intMax;
+      _integerValue = intVal;
+      _comboBoxLabelText = comboBoxLabel;
+      _comboBoxItems = items;
+      _selectedItem = items[defaultItem];
 
-			Initialize(true);
-		}
+      Initialize(true);
+    }
 
-		public void Initialize(bool initData)
-		{
-			if (initData)
-			{
-			}
+    public void Initialize(bool initData)
+    {
+      if (initData)
+      {
+      }
 
-			if (null != _view)
-			{
-				_view.ComboBoxLabel_Initialize(_comboBoxLabelText);
-				_view.ComboBox_Initialize(_comboBoxItems, _selectedItem);
-				_view.IntegerLabel_Initialize(_integerLabelText);
-				_view.IntegerEdit_Initialize(_integerMinimum, _integerMaximum, _integerValue);
-			}
-		}
+      if (null != _view)
+      {
+        _view.ComboBoxLabel_Initialize(_comboBoxLabelText);
+        _view.ComboBox_Initialize(_comboBoxItems, _selectedItem);
+        _view.IntegerLabel_Initialize(_integerLabelText);
+        _view.IntegerEdit_Initialize(_integerMinimum, _integerMaximum, _integerValue);
+      }
+    }
 
-		public bool Apply(bool disposeController)
-		{
-			return true; // all is done on the fly, we don't need actions here
-		}
+    public bool Apply(bool disposeController)
+    {
+      return true; // all is done on the fly, we don't need actions here
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		public SelectableListNode SelectedItem
-		{
-			get { return _selectedItem; }
-		}
+    public SelectableListNode SelectedItem
+    {
+      get { return _selectedItem; }
+    }
 
-		public int IntegerValue
-		{
-			get { return this._integerValue; }
-		}
+    public int IntegerValue
+    {
+      get { return this._integerValue; }
+    }
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public object ViewObject
-		{
-			get { return _view; }
-			set
-			{
-				if (null != _view)
-				{
-					_view.IntegerSelectionChanged -= EhView_IntegerChanged;
-					_view.ComboBoxSelectionChanged -= EhView_ComboBoxSelectionChanged;
-				}
+    public object ViewObject
+    {
+      get { return _view; }
+      set
+      {
+        if (null != _view)
+        {
+          _view.IntegerSelectionChanged -= EhView_IntegerChanged;
+          _view.ComboBoxSelectionChanged -= EhView_ComboBoxSelectionChanged;
+        }
 
-				_view = value as IIntegerAndComboBoxView;
+        _view = value as IIntegerAndComboBoxView;
 
-				if (null != _view)
-				{
-					Initialize(false);
-					_view.IntegerSelectionChanged += EhView_IntegerChanged;
-					_view.ComboBoxSelectionChanged += EhView_ComboBoxSelectionChanged;
-				}
-			}
-		}
+        if (null != _view)
+        {
+          Initialize(false);
+          _view.IntegerSelectionChanged += EhView_IntegerChanged;
+          _view.ComboBoxSelectionChanged += EhView_ComboBoxSelectionChanged;
+        }
+      }
+    }
 
-		public object ModelObject
-		{
-			get { return this._integerValue; }
-		}
+    public object ModelObject
+    {
+      get { return this._integerValue; }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		#endregion IMVCController Members
+    #endregion IMVCController Members
 
-		#region IIntegerAndComboBoxController Members
+    #region IIntegerAndComboBoxController Members
 
-		public void EhView_IntegerChanged(int val)
-		{
-			_integerValue = val;
-		}
+    public void EhView_IntegerChanged(int val)
+    {
+      _integerValue = val;
+    }
 
-		public void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem)
-		{
-			_selectedItem = selectedItem;
-		}
+    public void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem)
+    {
+      _selectedItem = selectedItem;
+    }
 
-		#endregion IIntegerAndComboBoxController Members
-	}
+    #endregion IIntegerAndComboBoxController Members
+  }
 }

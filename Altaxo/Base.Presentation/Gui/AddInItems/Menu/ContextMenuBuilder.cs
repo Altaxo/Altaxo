@@ -27,20 +27,20 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.AddInItems
 {
-	public class ContextMenuBuilder : IMultiValueConverter
-	{
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (values.Length == 2 && values[0] is string)
-			{
-				return MenuService.CreateContextMenu(values[1], (string)values[0]);
-			}
-			throw new NotSupportedException();
-		}
+  public class ContextMenuBuilder : IMultiValueConverter
+  {
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+      if (values.Length == 2 && values[0] is string)
+      {
+        return MenuService.CreateContextMenu(values[1], (string)values[0]);
+      }
+      throw new NotSupportedException();
+    }
 
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-		{
-			throw new NotSupportedException();
-		}
-	}
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+    {
+      throw new NotSupportedException();
+    }
+  }
 }

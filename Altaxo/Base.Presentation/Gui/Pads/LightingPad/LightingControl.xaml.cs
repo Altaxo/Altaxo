@@ -30,71 +30,71 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Pads.LightingPad
 {
-	/// <summary>
-	/// Interaction logic for LightingControl.xaml
-	/// </summary>
-	public partial class LightingControl : UserControl, ILightingView
-	{
-		public event EventHandler LightingChanged;
+  /// <summary>
+  /// Interaction logic for LightingControl.xaml
+  /// </summary>
+  public partial class LightingControl : UserControl, ILightingView
+  {
+    public event EventHandler LightingChanged;
 
-		private Altaxo.Graph.Graph3D.LightSettings _lighting = new Altaxo.Graph.Graph3D.LightSettings();
+    private Altaxo.Graph.Graph3D.LightSettings _lighting = new Altaxo.Graph.Graph3D.LightSettings();
 
-		public Altaxo.Graph.Graph3D.LightSettings Lighting
-		{
-			get
-			{
-				return _lighting;
-			}
-			set
-			{
-				if (null != value)
-				{
-					_lighting = value;
-					_guiAmbientControl.SelectedValue = _lighting.AmbientLight;
+    public Altaxo.Graph.Graph3D.LightSettings Lighting
+    {
+      get
+      {
+        return _lighting;
+      }
+      set
+      {
+        if (null != value)
+        {
+          _lighting = value;
+          _guiAmbientControl.SelectedValue = _lighting.AmbientLight;
 
-					_guiDiscreteLight0.SelectedValue = _lighting.GetDiscreteLight(0);
-					_guiDiscreteLight1.SelectedValue = _lighting.GetDiscreteLight(1);
-					_guiDiscreteLight2.SelectedValue = _lighting.GetDiscreteLight(2);
-					_guiDiscreteLight3.SelectedValue = _lighting.GetDiscreteLight(3);
-				}
-			}
-		}
+          _guiDiscreteLight0.SelectedValue = _lighting.GetDiscreteLight(0);
+          _guiDiscreteLight1.SelectedValue = _lighting.GetDiscreteLight(1);
+          _guiDiscreteLight2.SelectedValue = _lighting.GetDiscreteLight(2);
+          _guiDiscreteLight3.SelectedValue = _lighting.GetDiscreteLight(3);
+        }
+      }
+    }
 
-		public LightingControl()
-		{
-			InitializeComponent();
-		}
+    public LightingControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhValueChanged(object sender, EventArgs e)
-		{
-			if (object.ReferenceEquals(sender, _guiAmbientControl))
-				_lighting = _lighting.WithAmbientLight(_guiAmbientControl.SelectedValue);
+    private void EhValueChanged(object sender, EventArgs e)
+    {
+      if (object.ReferenceEquals(sender, _guiAmbientControl))
+        _lighting = _lighting.WithAmbientLight(_guiAmbientControl.SelectedValue);
 
-			LightingChanged?.Invoke(this, e);
-		}
+      LightingChanged?.Invoke(this, e);
+    }
 
-		private void EhDiscreteLightChanged(object sender, EventArgs e)
-		{
-			if (object.ReferenceEquals(sender, _guiDiscreteLight0))
-			{
-				_lighting = _lighting.WithDiscreteLight(0, _guiDiscreteLight0.SelectedValue);
-				LightingChanged?.Invoke(this, e);
-			}
-			else if (object.ReferenceEquals(sender, _guiDiscreteLight1))
-			{
-				_lighting = _lighting.WithDiscreteLight(1, _guiDiscreteLight1.SelectedValue);
-				LightingChanged?.Invoke(this, e);
-			}
-			else if (object.ReferenceEquals(sender, _guiDiscreteLight2))
-			{
-				_lighting = _lighting.WithDiscreteLight(2, _guiDiscreteLight2.SelectedValue);
-				LightingChanged?.Invoke(this, e);
-			}
-			else if (object.ReferenceEquals(sender, _guiDiscreteLight3))
-			{
-				_lighting = _lighting.WithDiscreteLight(3, _guiDiscreteLight3.SelectedValue);
-				LightingChanged?.Invoke(this, e);
-			}
-		}
-	}
+    private void EhDiscreteLightChanged(object sender, EventArgs e)
+    {
+      if (object.ReferenceEquals(sender, _guiDiscreteLight0))
+      {
+        _lighting = _lighting.WithDiscreteLight(0, _guiDiscreteLight0.SelectedValue);
+        LightingChanged?.Invoke(this, e);
+      }
+      else if (object.ReferenceEquals(sender, _guiDiscreteLight1))
+      {
+        _lighting = _lighting.WithDiscreteLight(1, _guiDiscreteLight1.SelectedValue);
+        LightingChanged?.Invoke(this, e);
+      }
+      else if (object.ReferenceEquals(sender, _guiDiscreteLight2))
+      {
+        _lighting = _lighting.WithDiscreteLight(2, _guiDiscreteLight2.SelectedValue);
+        LightingChanged?.Invoke(this, e);
+      }
+      else if (object.ReferenceEquals(sender, _guiDiscreteLight3))
+      {
+        _lighting = _lighting.WithDiscreteLight(3, _guiDiscreteLight3.SelectedValue);
+        LightingChanged?.Invoke(this, e);
+      }
+    }
+  }
 }

@@ -30,50 +30,50 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-	/// <summary>
-	/// Interaction logic for GridPartitioningControl.xaml
-	/// </summary>
-	public partial class GridPartitioningControl : UserControl, IGridPartitioningView
-	{
-		public GridPartitioningControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for GridPartitioningControl.xaml
+  /// </summary>
+  public partial class GridPartitioningControl : UserControl, IGridPartitioningView
+  {
+    public GridPartitioningControl()
+    {
+      InitializeComponent();
+    }
 
-		public QuantityWithUnitGuiEnvironment XPartitionEnvironment { set { _guiXDefinitions.Environment = value; } }
+    public QuantityWithUnitGuiEnvironment XPartitionEnvironment { set { _guiXDefinitions.Environment = value; } }
 
-		public QuantityWithUnitGuiEnvironment YPartitionEnvironment { set { _guiYDefinitions.Environment = value; } }
+    public QuantityWithUnitGuiEnvironment YPartitionEnvironment { set { _guiYDefinitions.Environment = value; } }
 
-		public QuantityWithUnitGuiEnvironment ZPartitionEnvironment { set { _guiZDefinitions.Environment = value; } }
+    public QuantityWithUnitGuiEnvironment ZPartitionEnvironment { set { _guiZDefinitions.Environment = value; } }
 
-		public Altaxo.Units.DimensionfulQuantity DefaultXQuantity { set { _guiXDefinitions.DefaultQuantity = value; } }
+    public Altaxo.Units.DimensionfulQuantity DefaultXQuantity { set { _guiXDefinitions.DefaultQuantity = value; } }
 
-		public Altaxo.Units.DimensionfulQuantity DefaultYQuantity { set { _guiYDefinitions.DefaultQuantity = value; } }
+    public Altaxo.Units.DimensionfulQuantity DefaultYQuantity { set { _guiYDefinitions.DefaultQuantity = value; } }
 
-		public Altaxo.Units.DimensionfulQuantity DefaultZQuantity { set { _guiZDefinitions.DefaultQuantity = value; } }
+    public Altaxo.Units.DimensionfulQuantity DefaultZQuantity { set { _guiZDefinitions.DefaultQuantity = value; } }
 
-		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> XPartitionValues
-		{
-			set
-			{
-				_guiXDefinitions.ItemsSource = value;
-			}
-		}
+    public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> XPartitionValues
+    {
+      set
+      {
+        _guiXDefinitions.ItemsSource = value;
+      }
+    }
 
-		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> YPartitionValues
-		{
-			set
-			{
-				_guiYDefinitions.ItemsSource = value;
-			}
-		}
+    public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> YPartitionValues
+    {
+      set
+      {
+        _guiYDefinitions.ItemsSource = value;
+      }
+    }
 
-		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> ZPartitionValues
-		{
-			set
-			{
-				_guiYDefinitions.ItemsSource = value;
-			}
-		}
-	}
+    public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> ZPartitionValues
+    {
+      set
+      {
+        _guiYDefinitions.ItemsSource = value;
+      }
+    }
+  }
 }

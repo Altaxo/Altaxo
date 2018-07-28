@@ -31,91 +31,91 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	using Altaxo.Units;
-	using Altaxo.Units.Dimensionless;
+  using Altaxo.Units;
+  using Altaxo.Units.Dimensionless;
 
-	/// <summary>
-	/// Interaction logic for MiterLimitComboBox.xaml
-	/// </summary>
-	public partial class MiterLimitComboBox : DimensionfulQuantityImageComboBox
-	{
-		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+  /// <summary>
+  /// Interaction logic for MiterLimitComboBox.xaml
+  /// </summary>
+  public partial class MiterLimitComboBox : DimensionfulQuantityImageComboBox
+  {
+    private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		private static readonly double[] _initialValues = new double[] { 1, 2, 4, 6, 8, 10, 12 };
+    private static readonly double[] _initialValues = new double[] { 1, 2, 4, 6, 8, 10, 12 };
 
-		static MiterLimitComboBox()
-		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(MiterLimitComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(10, Unity.Instance)));
-		}
+    static MiterLimitComboBox()
+    {
+      SelectedQuantityProperty.OverrideMetadata(typeof(MiterLimitComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(10, Unity.Instance)));
+    }
 
-		public MiterLimitComboBox()
-		{
-			UnitEnvironment = RelationEnvironment.Instance;
+    public MiterLimitComboBox()
+    {
+      UnitEnvironment = RelationEnvironment.Instance;
 
-			InitializeComponent();
+      InitializeComponent();
 
-			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Unity.Instance)));
+      foreach (var e in _initialValues)
+        Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Unity.Instance)));
 
-			_img.Source = GetImage(SelectedQuantityInSIUnits);
-		}
+      _img.Source = GetImage(SelectedQuantityInSIUnits);
+    }
 
-		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			base.OnSelectedQuantityChanged(obj, args);
+    protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      base.OnSelectedQuantityChanged(obj, args);
 
-			if (null != _img)
-			{
-				var val = SelectedQuantityInSIUnits;
-				_img.Source = GetImage(val);
-			}
-		}
+      if (null != _img)
+      {
+        var val = SelectedQuantityInSIUnits;
+        _img.Source = GetImage(val);
+      }
+    }
 
-		public override ImageSource GetItemImage(object item)
-		{
-			double val = ((DimensionfulQuantity)item).AsValueIn(Unity.Instance);
-			ImageSource result;
-			if (!_cachedImages.TryGetValue(val, out result))
-				_cachedImages.Add(val, result = GetImage(val));
-			return result;
-		}
+    public override ImageSource GetItemImage(object item)
+    {
+      double val = ((DimensionfulQuantity)item).AsValueIn(Unity.Instance);
+      ImageSource result;
+      if (!_cachedImages.TryGetValue(val, out result))
+        _cachedImages.Add(val, result = GetImage(val));
+      return result;
+    }
 
-		public override string GetItemText(object item)
-		{
-			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
-		}
+    public override string GetItemText(object item)
+    {
+      return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
+    }
 
-		public static DrawingImage GetImage(double miterLimit)
-		{
-			const double height = 1;
-			const double width = 2;
-			const double lineWidth = 0.375 * height;
+    public static DrawingImage GetImage(double miterLimit)
+    {
+      const double height = 1;
+      const double width = 2;
+      const double lineWidth = 0.375 * height;
 
-			var drawingGroup = new DrawingGroup();
-			GeometryDrawing geometryDrawing;
+      var drawingGroup = new DrawingGroup();
+      GeometryDrawing geometryDrawing;
 
-			geometryDrawing = new GeometryDrawing();
-			geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
-			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
-			drawingGroup.Children.Add(geometryDrawing);
+      geometryDrawing = new GeometryDrawing();
+      geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
+      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      drawingGroup.Children.Add(geometryDrawing);
 
-			geometryDrawing = new GeometryDrawing();
-			var figure = new PathFigure();
-			figure.StartPoint = new Point(width, height * 0.875);
-			figure.Segments.Add(new PolyLineSegment(new Point[]
-			{
-				new Point(width / 2, height / 2),
-				new Point(width, height * 0.175) }, true));
-			geometryDrawing.Geometry = new PathGeometry(new PathFigure[] { figure });
-			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = PenLineJoin.Miter, MiterLimit = miterLimit };
-			drawingGroup.Children.Add(geometryDrawing);
+      geometryDrawing = new GeometryDrawing();
+      var figure = new PathFigure();
+      figure.StartPoint = new Point(width, height * 0.875);
+      figure.Segments.Add(new PolyLineSegment(new Point[]
+      {
+        new Point(width / 2, height / 2),
+        new Point(width, height * 0.175) }, true));
+      geometryDrawing.Geometry = new PathGeometry(new PathFigure[] { figure });
+      geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = PenLineJoin.Miter, MiterLimit = miterLimit };
+      drawingGroup.Children.Add(geometryDrawing);
 
-			drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
+      drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
 
-			DrawingImage geometryImage = new DrawingImage(drawingGroup);
+      DrawingImage geometryImage = new DrawingImage(drawingGroup);
 
-			geometryImage.Freeze();
-			return geometryImage;
-		}
-	}
+      geometryImage.Freeze();
+      return geometryImage;
+    }
+  }
 }

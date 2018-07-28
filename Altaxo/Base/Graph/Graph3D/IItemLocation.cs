@@ -29,25 +29,25 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D
 {
-	public interface IItemLocation
-	:
-	Altaxo.Main.IDocumentLeafNode,
-	Altaxo.Main.ICopyFrom
-	{
-		double RotationX { get; set; }
-		double RotationY { get; set; }
-		double RotationZ { get; set; }
+  public interface IItemLocation
+  :
+  Altaxo.Main.IDocumentLeafNode,
+  Altaxo.Main.ICopyFrom
+  {
+    double RotationX { get; set; }
+    double RotationY { get; set; }
+    double RotationZ { get; set; }
 
-		double ShearX { get; set; }
+    double ShearX { get; set; }
 
-		double ShearY { get; set; }
+    double ShearY { get; set; }
 
-		double ShearZ { get; set; }
+    double ShearZ { get; set; }
 
-		double ScaleX { get; set; }
+    double ScaleX { get; set; }
 
-		double ScaleY { get; set; }
+    double ScaleY { get; set; }
 
-		double ScaleZ { get; set; }
-	}
+    double ScaleZ { get; set; }
+  }
 }

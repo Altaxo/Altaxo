@@ -31,35 +31,35 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Groups
 {
-	public class ScatterSymbolListBag : StyleListBag<ScatterSymbolList, IScatterSymbol>
-	{
-		public ScatterSymbolListBag(IEnumerable<ScatterSymbolList> lists)
-			: base(lists)
-		{
-		}
+  public class ScatterSymbolListBag : StyleListBag<ScatterSymbolList, IScatterSymbol>
+  {
+    public ScatterSymbolListBag(IEnumerable<ScatterSymbolList> lists)
+      : base(lists)
+    {
+    }
 
-		protected ScatterSymbolListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-			: base(info)
-		{
-		}
+    protected ScatterSymbolListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+      : base(info)
+    {
+    }
 
-		/// <summary>
-		/// 2016-08-22 Initial version
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolListBag), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (ScatterSymbolListBag)obj;
-				s.Serialize(info);
-			}
+    /// <summary>
+    /// 2016-08-22 Initial version
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolListBag), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ScatterSymbolListBag)obj;
+        s.Serialize(info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return new ScatterSymbolListBag(info);
-			}
-		}
-	}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return new ScatterSymbolListBag(info);
+      }
+    }
+  }
 }

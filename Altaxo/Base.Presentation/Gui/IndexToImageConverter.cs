@@ -29,40 +29,40 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui
 {
-	public class IndexToImageConverter : IValueConverter
-	{
-		private List<ImageSource> _imageList;
+  public class IndexToImageConverter : IValueConverter
+  {
+    private List<ImageSource> _imageList;
 
-		public IndexToImageConverter(IEnumerable<string> imageResourceNames)
-		{
-			_imageList = new List<ImageSource>();
+    public IndexToImageConverter(IEnumerable<string> imageResourceNames)
+    {
+      _imageList = new List<ImageSource>();
 
-			foreach (var name in imageResourceNames)
-			{
-				if (PresentationResourceService.InstanceAvailable)
-					_imageList.Add(PresentationResourceService.GetBitmapSource(name));
-				else
-					_imageList.Add(null);
-			}
-		}
+      foreach (var name in imageResourceNames)
+      {
+        if (PresentationResourceService.InstanceAvailable)
+          _imageList.Add(PresentationResourceService.GetBitmapSource(name));
+        else
+          _imageList.Add(null);
+      }
+    }
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			if (value is int)
-			{
-				int i = (int)value;
-				if (i >= 0 && i < _imageList.Count)
-					return _imageList[i];
-				else
-					return null;
-			}
-			else
-				return null;
-		}
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      if (value is int)
+      {
+        int i = (int)value;
+        if (i >= 0 && i < _imageList.Count)
+          return _imageList[i];
+        else
+          return null;
+      }
+      else
+        return null;
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

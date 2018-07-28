@@ -32,45 +32,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-	/// <summary>
-	/// Tests and test data for <see cref="Fluid_2_2_2_trifluoroethyl_difluoromethyl_ether"/>.
-	/// </summary>
-	/// <remarks>
-	/// <para>Reference:</para>
+  /// <summary>
+  /// Tests and test data for <see cref="Fluid_2_2_2_trifluoroethyl_difluoromethyl_ether"/>.
+  /// </summary>
+  /// <remarks>
+  /// <para>Reference:</para>
   /// <para>The test data was created automatically using calls into the TREND.DLL of the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-	/// </remarks>
+  /// </remarks>
   [TestFixture]
   public class Test_Fluid_2_2_2_trifluoroethyl_difluoromethyl_ether : FluidTestBase
-    {
+  {
 
     public Test_Fluid_2_2_2_trifluoroethyl_difluoromethyl_ether()
-      {
+    {
       _fluid = Fluid_2_2_2_trifluoroethyl_difluoromethyl_ether.Instance;
 
-    _testDataMolecularWeight = 0.150047336;
+      _testDataMolecularWeight = 0.150047336;
 
-    _testDataTriplePointTemperature = 250;
+      _testDataTriplePointTemperature = 250;
 
-    _testDataTriplePointPressure = 8272;
+      _testDataTriplePointPressure = 8272;
 
-    _testDataTriplePointLiquidMoleDensity = 10018.8726358276;
+      _testDataTriplePointLiquidMoleDensity = 10018.8726358276;
 
-    _testDataTriplePointVaporMoleDensity = 4.00485259055915;
+      _testDataTriplePointVaporMoleDensity = 4.00485259055915;
 
-    _testDataCriticalPointTemperature = 444.88;
+      _testDataCriticalPointTemperature = 444.88;
 
-    _testDataCriticalPointPressure = 3432999.85292636;
+      _testDataCriticalPointPressure = 3432999.85292636;
 
-    _testDataCriticalPointMoleDensity = 3432.258;
+      _testDataCriticalPointMoleDensity = 3432.258;
 
-    _testDataNormalBoilingPointTemperature = 302.396436117064;
+      _testDataNormalBoilingPointTemperature = 302.396436117064;
 
-    _testDataNormalSublimationPointTemperature = null;
+      _testDataNormalSublimationPointTemperature = null;
 
-    _testDataIsMeltingCurveImplemented = false;
+      _testDataIsMeltingCurveImplemented = false;
 
-    _testDataIsSublimationCurveImplemented = false;
+      _testDataIsSublimationCurveImplemented = false;
 
       // TestData contains:
       // 0. Temperature (Kelvin)
@@ -82,7 +82,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 6. Isochoric heat capacity (J/(mol K))
       // 7. Isobaric heat capacity (J/(mol K))
       // 8. Speed of sound (m/s)
-      _testDataEquationOfState = new (double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
+      _testDataEquationOfState = new(double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
       {
       ( 250, 0.481454572887854, 1000.00000000009, 54685.5151377717, 56762.5542943465, 275.368133514579, 114.48868302216, 122.832908972383, 121.82015448399 ),
       ( 250, 0.481454572887854, 1000.00000000009, 54685.5151377717, 56762.5542943465, 275.368133514579, 114.48868302216, 122.832908972383, 121.82015448399 ),
@@ -213,7 +213,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 1. Pressure (Pa)
       // 2. Saturated liquid density (mol/m³
       // 3. Saturated vapor density (mol/m³)
-      _testDataSaturatedProperties = new (double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
+      _testDataSaturatedProperties = new(double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
       {
       ( 274.36, 30698.5855117725, 9631.74260796867, 13.6945338270265 ),
       ( 298.72, 87990.2187325629, 9222.74558272262, 36.8183728990027 ),

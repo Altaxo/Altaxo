@@ -23,80 +23,80 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// The 'Output' pad.
-	/// Allows showing a text log to the user.
-	/// </summary>
-	/// <remarks>This service is thread-safe.</remarks>
-	[GlobalService("SD.OutputPad")]
-	public interface IOutputPad
-	{
-		/// <summary>
-		/// Opens the pad.
-		/// </summary>
-		void BringToFront();
+  /// <summary>
+  /// The 'Output' pad.
+  /// Allows showing a text log to the user.
+  /// </summary>
+  /// <remarks>This service is thread-safe.</remarks>
+  [GlobalService("SD.OutputPad")]
+  public interface IOutputPad
+  {
+    /// <summary>
+    /// Opens the pad.
+    /// </summary>
+    void BringToFront();
 
-		/// <summary>
-		/// Creates a new output category.
-		/// </summary>
-		/// <param name="displayName">The title of the category. This is parsed using StringParser and shown to the user.</param>
-		IOutputCategory CreateCategory(string displayName);
+    /// <summary>
+    /// Creates a new output category.
+    /// </summary>
+    /// <param name="displayName">The title of the category. This is parsed using StringParser and shown to the user.</param>
+    IOutputCategory CreateCategory(string displayName);
 
-		/// <summary>
-		/// Gets an output category, or creates a new output category if no category with the given
-		/// title already exists.
-		/// </summary>
-		/// <param name="displayName">The title of the category. This is parsed using StringParser and shown to the user.</param>
-		IOutputCategory GetOrCreateCategory(string displayName);
+    /// <summary>
+    /// Gets an output category, or creates a new output category if no category with the given
+    /// title already exists.
+    /// </summary>
+    /// <param name="displayName">The title of the category. This is parsed using StringParser and shown to the user.</param>
+    IOutputCategory GetOrCreateCategory(string displayName);
 
-		/// <summary>
-		/// Removes an existing output category.
-		/// </summary>
-		void RemoveCategory(IOutputCategory category);
+    /// <summary>
+    /// Removes an existing output category.
+    /// </summary>
+    void RemoveCategory(IOutputCategory category);
 
-		/// <summary>
-		/// Gets/Sets the current category.
-		/// This property is thread-safe.
-		/// </summary>
-		IOutputCategory CurrentCategory { get; set; }
+    /// <summary>
+    /// Gets/Sets the current category.
+    /// This property is thread-safe.
+    /// </summary>
+    IOutputCategory CurrentCategory { get; set; }
 
-		/// <summary>
-		/// The "Build" category.
-		/// </summary>
-		IOutputCategory BuildCategory { get; }
-	}
+    /// <summary>
+    /// The "Build" category.
+    /// </summary>
+    IOutputCategory BuildCategory { get; }
+  }
 
-	/// <summary>
-	/// Represents a category in the <see cref="IOutputPad"/>.
-	/// </summary>
-	/// <remarks>This interface is thread-safe.</remarks>
-	public interface IOutputCategory
-	{
-		/// <summary>
-		/// Gets the display name of this category.
-		/// May contain StringParser-tags ($res) for localization; these will be replaced
-		/// by the UI showing the display name.
-		/// </summary>
-		string DisplayName { get; }
+  /// <summary>
+  /// Represents a category in the <see cref="IOutputPad"/>.
+  /// </summary>
+  /// <remarks>This interface is thread-safe.</remarks>
+  public interface IOutputCategory
+  {
+    /// <summary>
+    /// Gets the display name of this category.
+    /// May contain StringParser-tags ($res) for localization; these will be replaced
+    /// by the UI showing the display name.
+    /// </summary>
+    string DisplayName { get; }
 
-		/// <summary>
-		/// Activates this output category in the UI.
-		/// </summary>
-		void Activate(bool bringPadToFront = false);
+    /// <summary>
+    /// Activates this output category in the UI.
+    /// </summary>
+    void Activate(bool bringPadToFront = false);
 
-		/// <summary>
-		/// Clears all text in the category.
-		/// </summary>
-		void Clear();
+    /// <summary>
+    /// Clears all text in the category.
+    /// </summary>
+    void Clear();
 
-		/// <summary>
-		/// Appends text to this category.
-		/// </summary>
-		void AppendText(string text);
+    /// <summary>
+    /// Appends text to this category.
+    /// </summary>
+    void AppendText(string text);
 
-		/// <summary>
-		/// Appends text to this category, followed by a newline.
-		/// </summary>
-		void AppendLine(string text);
-	}
+    /// <summary>
+    /// Appends text to this category, followed by a newline.
+    /// </summary>
+    void AppendLine(string text);
+  }
 }

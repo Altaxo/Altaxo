@@ -34,67 +34,67 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class Star : OpenSymbolBase
-	{
-		#region Serialization
+  public class Star : OpenSymbolBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Star), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Star), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 
-				SerializeSetV0((IScatterSymbol)obj, info);
-			}
+        SerializeSetV0((IScatterSymbol)obj, info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (Star)o ?? new Star();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (Star)o ?? new Star();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
-				return DeserializeSetV0(s, info, parent);
-			}
-		}
+        return DeserializeSetV0(s, info, parent);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public Star()
-		{
-		}
+    public Star()
+    {
+    }
 
-		public Star(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
-			: base(fillColor, isFillColorInfluencedByPlotColor)
-		{
-		}
+    public Star(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
+      : base(fillColor, isFillColorInfluencedByPlotColor)
+    {
+    }
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth)
-		{
-			var innerRadiusRel = relativeStructureWidth / (2 * Math.Sin(Math.PI / 8));
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth)
+    {
+      var innerRadiusRel = relativeStructureWidth / (2 * Math.Sin(Math.PI / 8));
 
-			var outerStartAngle = Math.Asin(relativeStructureWidth / 2);
-			var innerStartAngle = Math.Asin(relativeStructureWidth / (2 * innerRadiusRel));
+      var outerStartAngle = Math.Asin(relativeStructureWidth / 2);
+      var innerStartAngle = Math.Asin(relativeStructureWidth / (2 * innerRadiusRel));
 
-			var innerRadius = ClipperScalingDouble * innerRadiusRel;
-			var outerRadius = ClipperScalingDouble;
+      var innerRadius = ClipperScalingDouble * innerRadiusRel;
+      var outerRadius = ClipperScalingDouble;
 
-			double phi;
+      double phi;
 
-			var list = new List<ClipperLib.IntPoint>(24);
-			for (int i = 0; i < 8; ++i)
-			{
-				phi = -innerStartAngle + Math.PI * (i / 4.0);
-				list.Add(new IntPoint((int)(innerRadius * Math.Cos(phi)), (int)(innerRadius * Math.Sin(phi))));
-				phi = -outerStartAngle + Math.PI * (i / 4.0);
-				list.Add(new IntPoint((int)(outerRadius * Math.Cos(phi)), (int)(outerRadius * Math.Sin(phi))));
-				phi = outerStartAngle + Math.PI * (i / 4.0);
-				list.Add(new IntPoint((int)(outerRadius * Math.Cos(phi)), (int)(outerRadius * Math.Sin(phi))));
-			}
+      var list = new List<ClipperLib.IntPoint>(24);
+      for (int i = 0; i < 8; ++i)
+      {
+        phi = -innerStartAngle + Math.PI * (i / 4.0);
+        list.Add(new IntPoint((int)(innerRadius * Math.Cos(phi)), (int)(innerRadius * Math.Sin(phi))));
+        phi = -outerStartAngle + Math.PI * (i / 4.0);
+        list.Add(new IntPoint((int)(outerRadius * Math.Cos(phi)), (int)(outerRadius * Math.Sin(phi))));
+        phi = outerStartAngle + Math.PI * (i / 4.0);
+        list.Add(new IntPoint((int)(outerRadius * Math.Cos(phi)), (int)(outerRadius * Math.Sin(phi))));
+      }
 
-			return new List<List<ClipperLib.IntPoint>>(1) { list };
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1) { list };
+    }
+  }
 }

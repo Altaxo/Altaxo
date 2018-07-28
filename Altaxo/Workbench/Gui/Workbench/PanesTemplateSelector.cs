@@ -8,55 +8,55 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Selects a data template for either a tool window or a document window.
-	/// </summary>
-	/// <seealso cref="System.Windows.Controls.DataTemplateSelector" />
-	public class PanesTemplateSelector : DataTemplateSelector
-	{
-		/// <summary>
-		/// Gets or sets the data template for a tool window.
-		/// </summary>
-		/// <value>
-		/// The data template for the tool window.
-		/// </value>
-		public DataTemplate ToolTemplate
-		{
-			get;
-			set;
-		}
+  /// <summary>
+  /// Selects a data template for either a tool window or a document window.
+  /// </summary>
+  /// <seealso cref="System.Windows.Controls.DataTemplateSelector" />
+  public class PanesTemplateSelector : DataTemplateSelector
+  {
+    /// <summary>
+    /// Gets or sets the data template for a tool window.
+    /// </summary>
+    /// <value>
+    /// The data template for the tool window.
+    /// </value>
+    public DataTemplate ToolTemplate
+    {
+      get;
+      set;
+    }
 
-		/// <summary>
-		/// Gets or sets the data template for a document window.
-		/// </summary>
-		/// <value>
-		/// The document template.
-		/// </value>
-		public DataTemplate DocumentTemplate
-		{
-			get;
-			set;
-		}
+    /// <summary>
+    /// Gets or sets the data template for a document window.
+    /// </summary>
+    /// <value>
+    /// The document template.
+    /// </value>
+    public DataTemplate DocumentTemplate
+    {
+      get;
+      set;
+    }
 
-		/// <summary>
-		/// Selects the data template based on the type of the (modelview) <paramref name="item"/>.
-		/// If the provided item is a <see cref="PadDescriptor"/>, the <see cref="ToolTemplate"/> is selected.
-		/// If the provided item is a <see cref="IViewContent"/>, the <see cref="DocumentTemplate"/> is selected.
-		/// Otherwise the default template selection is called.
-		/// </summary>
-		/// <param name="item">The data object for which to select the template.</param>
-		/// <param name="container">The data-bound object.</param>
-		/// <returns>
-		/// Returns a <see cref="T:System.Windows.DataTemplate" /> or null. The default value is null.
-		/// </returns>
-		public override System.Windows.DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container)
-		{
-			if (item is IPadContent) // Pad has precedence over IViewContent
-				return ToolTemplate;
-			else if (item is IViewContent)
-				return DocumentTemplate;
-			else
-				return base.SelectTemplate(item, container);
-		}
-	}
+    /// <summary>
+    /// Selects the data template based on the type of the (modelview) <paramref name="item"/>.
+    /// If the provided item is a <see cref="PadDescriptor"/>, the <see cref="ToolTemplate"/> is selected.
+    /// If the provided item is a <see cref="IViewContent"/>, the <see cref="DocumentTemplate"/> is selected.
+    /// Otherwise the default template selection is called.
+    /// </summary>
+    /// <param name="item">The data object for which to select the template.</param>
+    /// <param name="container">The data-bound object.</param>
+    /// <returns>
+    /// Returns a <see cref="T:System.Windows.DataTemplate" /> or null. The default value is null.
+    /// </returns>
+    public override System.Windows.DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container)
+    {
+      if (item is IPadContent) // Pad has precedence over IViewContent
+        return ToolTemplate;
+      else if (item is IViewContent)
+        return DocumentTemplate;
+      else
+        return base.SelectTemplate(item, container);
+    }
+  }
 }

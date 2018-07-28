@@ -30,38 +30,38 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph
 {
-	/// <summary>
-	/// Interaction logic for GridPartitioningControl.xaml
-	/// </summary>
-	public partial class GridPartitioningControl : UserControl, IGridPartitioningView
-	{
-		public GridPartitioningControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for GridPartitioningControl.xaml
+  /// </summary>
+  public partial class GridPartitioningControl : UserControl, IGridPartitioningView
+  {
+    public GridPartitioningControl()
+    {
+      InitializeComponent();
+    }
 
-		public QuantityWithUnitGuiEnvironment XPartitionEnvironment { set { _guiColumnDefinitions.Environment = value; } }
+    public QuantityWithUnitGuiEnvironment XPartitionEnvironment { set { _guiColumnDefinitions.Environment = value; } }
 
-		public QuantityWithUnitGuiEnvironment YPartitionEnvironment { set { _guiRowDefinitions.Environment = value; } }
+    public QuantityWithUnitGuiEnvironment YPartitionEnvironment { set { _guiRowDefinitions.Environment = value; } }
 
-		public Altaxo.Units.DimensionfulQuantity DefaultXQuantity { set { _guiColumnDefinitions.DefaultQuantity = value; } }
+    public Altaxo.Units.DimensionfulQuantity DefaultXQuantity { set { _guiColumnDefinitions.DefaultQuantity = value; } }
 
-		public Altaxo.Units.DimensionfulQuantity DefaultYQuantity { set { _guiRowDefinitions.DefaultQuantity = value; } }
+    public Altaxo.Units.DimensionfulQuantity DefaultYQuantity { set { _guiRowDefinitions.DefaultQuantity = value; } }
 
-		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> ColumnCollection
-		{
-			set
-			{
-				_guiColumnDefinitions.ItemsSource = value;
-			}
-		}
+    public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> ColumnCollection
+    {
+      set
+      {
+        _guiColumnDefinitions.ItemsSource = value;
+      }
+    }
 
-		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> RowCollection
-		{
-			set
-			{
-				_guiRowDefinitions.ItemsSource = value;
-			}
-		}
-	}
+    public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> RowCollection
+    {
+      set
+      {
+        _guiRowDefinitions.ItemsSource = value;
+      }
+    }
+  }
 }

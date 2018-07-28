@@ -31,39 +31,39 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	/// <summary>
-	/// Interaction logic for DefaultLineScatterGraphDocumentControl.xaml
-	/// </summary>
-	public partial class DefaultLineScatterGraphDocumentControl : UserControl, IDefaultLineScatterGraphDocumentView, Altaxo.Gui.Graph.Graph3D.Templates.IDefaultCartesicPlotTemplateView
-	{
-		public event Action GraphFromProjectSelected;
+  /// <summary>
+  /// Interaction logic for DefaultLineScatterGraphDocumentControl.xaml
+  /// </summary>
+  public partial class DefaultLineScatterGraphDocumentControl : UserControl, IDefaultLineScatterGraphDocumentView, Altaxo.Gui.Graph.Graph3D.Templates.IDefaultCartesicPlotTemplateView
+  {
+    public event Action GraphFromProjectSelected;
 
-		public DefaultLineScatterGraphDocumentControl()
-		{
-			InitializeComponent();
-		}
+    public DefaultLineScatterGraphDocumentControl()
+    {
+      InitializeComponent();
+    }
 
-		public Collections.SelectableListNodeList GraphsInProject
-		{
-			set { GuiHelper.Initialize(_guiGraphsInProject, value); }
-		}
+    public Collections.SelectableListNodeList GraphsInProject
+    {
+      set { GuiHelper.Initialize(_guiGraphsInProject, value); }
+    }
 
-		private void EhGraphFromProjectSelected(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiGraphsInProject);
-			var ev = GraphFromProjectSelected;
-			if (null != ev)
-				ev();
-		}
+    private void EhGraphFromProjectSelected(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiGraphsInProject);
+      var ev = GraphFromProjectSelected;
+      if (null != ev)
+        ev();
+    }
 
-		public void SetPreviewBitmap(string title, System.Drawing.Bitmap bmp)
-		{
-			_guiPreviewTitle.Content = title;
+    public void SetPreviewBitmap(string title, System.Drawing.Bitmap bmp)
+    {
+      _guiPreviewTitle.Content = title;
 
-			if (null != bmp)
-				_guiPreview.Source = GuiHelper.ToWpf(bmp);
-			else
-				_guiPreview.Source = null;
-		}
-	}
+      if (null != bmp)
+        _guiPreview.Source = GuiHelper.ToWpf(bmp);
+      else
+        _guiPreview.Source = null;
+    }
+  }
 }

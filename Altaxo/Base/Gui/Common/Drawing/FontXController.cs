@@ -33,66 +33,66 @@ using System.Text;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public interface IFontXView
-	{
-		string SelectedFontFamilyName { get; set; }
+  public interface IFontXView
+  {
+    string SelectedFontFamilyName { get; set; }
 
-		double SelectedFontSize { get; set; }
-	}
+    double SelectedFontSize { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IFontXView))]
-	public class FontXController : MVCANControllerEditImmutableDocBase<FontX, IFontXView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [ExpectedTypeOfView(typeof(IFontXView))]
+  public class FontXController : MVCANControllerEditImmutableDocBase<FontX, IFontXView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				// fill the font name combobox with all fonts
-				_view.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(_doc);
-				_view.SelectedFontSize = _doc.Size;
-			}
-		}
+      if (initData)
+      {
+      }
+      if (null != _view)
+      {
+        // fill the font name combobox with all fonts
+        _view.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(_doc);
+        _view.SelectedFontSize = _doc.Size;
+      }
+    }
 
-		private void ApplyFontFamily()
-		{
-			var ff = _view.SelectedFontFamilyName;
+    private void ApplyFontFamily()
+    {
+      var ff = _view.SelectedFontFamilyName;
 
-			// make sure that regular style is available
-			if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
-				this._doc = GdiFontManager.GetFontX(ff, this._doc.Size, FontXStyle.Regular);
-			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
-				this._doc = GdiFontManager.GetFontX(ff, this._doc.Size, FontXStyle.Bold);
-			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
-				this._doc = GdiFontManager.GetFontX(ff, this._doc.Size, FontXStyle.Italic);
-			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
-				this._doc = GdiFontManager.GetFontX(ff, this._doc.Size, FontXStyle.Bold | FontXStyle.Italic);
-		}
+      // make sure that regular style is available
+      if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
+        this._doc = GdiFontManager.GetFontX(ff, this._doc.Size, FontXStyle.Regular);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
+        this._doc = GdiFontManager.GetFontX(ff, this._doc.Size, FontXStyle.Bold);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
+        this._doc = GdiFontManager.GetFontX(ff, this._doc.Size, FontXStyle.Italic);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
+        this._doc = GdiFontManager.GetFontX(ff, this._doc.Size, FontXStyle.Bold | FontXStyle.Italic);
+    }
 
-		private void ApplyFontSize()
-		{
-			var newSize = _view.SelectedFontSize;
-			FontX oldFont = this._doc;
-			this._doc = oldFont.WithSize(newSize);
-		}
+    private void ApplyFontSize()
+    {
+      var newSize = _view.SelectedFontSize;
+      FontX oldFont = this._doc;
+      this._doc = oldFont.WithSize(newSize);
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			ApplyFontFamily();
-			ApplyFontSize();
+    public override bool Apply(bool disposeController)
+    {
+      ApplyFontFamily();
+      ApplyFontSize();
 
-			_originalDoc = _doc; // this is safe because FontX is an immutable class
+      _originalDoc = _doc; // this is safe because FontX is an immutable class
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

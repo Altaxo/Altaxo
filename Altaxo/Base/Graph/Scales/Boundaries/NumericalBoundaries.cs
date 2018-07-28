@@ -26,183 +26,183 @@ using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-	/// <summary>
-	/// Provides a abstract class for tracking the numerical
-	/// boundaries of a plot association. Every plot association has two of these objects
-	/// that help tracking the boundaries of X and Y axis
-	/// </summary>
-	[Serializable]
-	public abstract class NumericalBoundaries : AbstractPhysicalBoundaries
-	{
-		protected double _minValue = double.MaxValue;
-		protected double _maxValue = double.MinValue;
+  /// <summary>
+  /// Provides a abstract class for tracking the numerical
+  /// boundaries of a plot association. Every plot association has two of these objects
+  /// that help tracking the boundaries of X and Y axis
+  /// </summary>
+  [Serializable]
+  public abstract class NumericalBoundaries : AbstractPhysicalBoundaries
+  {
+    protected double _minValue = double.MaxValue;
+    protected double _maxValue = double.MinValue;
 
-		[NonSerialized]
-		private double _cachedMinValue, _cachedMaxValue; // stores the minValue and MaxValue in the moment if the events where disabled
+    [NonSerialized]
+    private double _cachedMinValue, _cachedMaxValue; // stores the minValue and MaxValue in the moment if the events where disabled
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PhysicalBoundaries", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Boundaries.NumericalBoundaries", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericalBoundaries), 2)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				NumericalBoundaries s = (NumericalBoundaries)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PhysicalBoundaries", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Boundaries.NumericalBoundaries", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericalBoundaries), 2)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        NumericalBoundaries s = (NumericalBoundaries)obj;
 
-				if ((s._minValue == double.MaxValue || s._maxValue == double.MinValue) && s._numberOfItems != 0)
-					throw new InvalidOperationException(string.Format("Type {0} has NumberOfItems={1}, but MinValue is {2} and MaxValue is {3}", s.GetType(), s._numberOfItems, s._minValue, s._maxValue));
+        if ((s._minValue == double.MaxValue || s._maxValue == double.MinValue) && s._numberOfItems != 0)
+          throw new InvalidOperationException(string.Format("Type {0} has NumberOfItems={1}, but MinValue is {2} and MaxValue is {3}", s.GetType(), s._numberOfItems, s._minValue, s._maxValue));
 
-				info.AddValue("NumberOfItems", s._numberOfItems);
-				info.AddValue("MinValue", s._minValue);
-				info.AddValue("MaxValue", s._maxValue);
-			}
+        info.AddValue("NumberOfItems", s._numberOfItems);
+        info.AddValue("MinValue", s._minValue);
+        info.AddValue("MaxValue", s._maxValue);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				NumericalBoundaries s = (NumericalBoundaries)o;
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        NumericalBoundaries s = (NumericalBoundaries)o;
 
-				s._numberOfItems = info.GetInt32("NumberOfItems");
-				s._minValue = info.GetDouble("MinValue");
-				s._maxValue = info.GetDouble("MaxValue");
+        s._numberOfItems = info.GetInt32("NumberOfItems");
+        s._minValue = info.GetDouble("MinValue");
+        s._maxValue = info.GetDouble("MaxValue");
 
-				// correct wrong serialization
-				if ((s._minValue == double.MaxValue || s._maxValue == double.MinValue) && s._numberOfItems != 0)
-					s._numberOfItems = 0;
+        // correct wrong serialization
+        if ((s._minValue == double.MaxValue || s._maxValue == double.MinValue) && s._numberOfItems != 0)
+          s._numberOfItems = 0;
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public NumericalBoundaries()
-		{
-			_minValue = double.MaxValue;
-			_maxValue = double.MinValue;
-		}
+    public NumericalBoundaries()
+    {
+      _minValue = double.MaxValue;
+      _maxValue = double.MinValue;
+    }
 
-		public NumericalBoundaries(NumericalBoundaries x)
-			: base(x)
-		{
-			_minValue = x._minValue;
-			_maxValue = x._maxValue;
-		}
+    public NumericalBoundaries(NumericalBoundaries x)
+      : base(x)
+    {
+      _minValue = x._minValue;
+      _maxValue = x._maxValue;
+    }
 
-		/// <summary>
-		/// Reset the internal data to the initialized state
-		/// </summary>
-		public override void Reset()
-		{
-			base.Reset();
-			_minValue = Double.MaxValue;
-			_maxValue = Double.MinValue;
-		}
+    /// <summary>
+    /// Reset the internal data to the initialized state
+    /// </summary>
+    public override void Reset()
+    {
+      base.Reset();
+      _minValue = Double.MaxValue;
+      _maxValue = Double.MinValue;
+    }
 
-		public virtual double LowerBound { get { return _minValue; } }
+    public virtual double LowerBound { get { return _minValue; } }
 
-		public virtual double UpperBound { get { return _maxValue; } }
+    public virtual double UpperBound { get { return _maxValue; } }
 
-		/// <summary>
-		/// merged boundaries of another object into this object
-		/// </summary>
-		/// <param name="b">another physical boundary object of the same type as this</param>
-		public virtual void Add(NumericalBoundaries b)
-		{
-			if (this.GetType() == b.GetType())
-			{
-				if (b._numberOfItems > 0)
-				{
-					BoundariesChangedData data = BoundariesChangedData.NumberOfItemsChanged;
+    /// <summary>
+    /// merged boundaries of another object into this object
+    /// </summary>
+    /// <param name="b">another physical boundary object of the same type as this</param>
+    public virtual void Add(NumericalBoundaries b)
+    {
+      if (this.GetType() == b.GetType())
+      {
+        if (b._numberOfItems > 0)
+        {
+          BoundariesChangedData data = BoundariesChangedData.NumberOfItemsChanged;
 
-					_numberOfItems += b._numberOfItems;
-					if (b._minValue < _minValue)
-					{
-						_minValue = b._minValue;
-						data |= BoundariesChangedData.LowerBoundChanged;
-					}
-					if (b._maxValue > _maxValue)
-					{
-						_maxValue = b._maxValue;
-						data |= BoundariesChangedData.UpperBoundChanged;
-					}
+          _numberOfItems += b._numberOfItems;
+          if (b._minValue < _minValue)
+          {
+            _minValue = b._minValue;
+            data |= BoundariesChangedData.LowerBoundChanged;
+          }
+          if (b._maxValue > _maxValue)
+          {
+            _maxValue = b._maxValue;
+            data |= BoundariesChangedData.UpperBoundChanged;
+          }
 
-					if (!IsSuspended) // performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
-						EhSelfChanged(new BoundariesChangedEventArgs(data));
-				}
-			}
-			else
-			{
-				throw new ArgumentException("Argument has not the same type as this, argument type: " + b.GetType().ToString() + ", this type: " + this.GetType().ToString());
-			}
-		}
+          if (!IsSuspended) // performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
+            EhSelfChanged(new BoundariesChangedEventArgs(data));
+        }
+      }
+      else
+      {
+        throw new ArgumentException("Argument has not the same type as this, argument type: " + b.GetType().ToString() + ", this type: " + this.GetType().ToString());
+      }
+    }
 
-		/// <summary>
-		/// Manipulates the boundaries by shifting them by a certain amount.
-		/// Don't use this function unless you are absoluteley sure what you do.
-		/// This function is intended for coordinate transforming styles only.
-		/// </summary>
-		/// <param name="amount">The amount by which to shift the boundaries.</param>
-		public void Shift(double amount)
-		{
-			_minValue += amount;
-			_maxValue += amount;
-		}
+    /// <summary>
+    /// Manipulates the boundaries by shifting them by a certain amount.
+    /// Don't use this function unless you are absoluteley sure what you do.
+    /// This function is intended for coordinate transforming styles only.
+    /// </summary>
+    /// <param name="amount">The amount by which to shift the boundaries.</param>
+    public void Shift(double amount)
+    {
+      _minValue += amount;
+      _maxValue += amount;
+    }
 
-		#region IPhysicalBoundaries Members
+    #region IPhysicalBoundaries Members
 
-		public override void Add(IPhysicalBoundaries b)
-		{
-			Add((NumericalBoundaries)b);
-		}
+    public override void Add(IPhysicalBoundaries b)
+    {
+      Add((NumericalBoundaries)b);
+    }
 
-		#endregion IPhysicalBoundaries Members
+    #endregion IPhysicalBoundaries Members
 
-		#region Changed event handling
+    #region Changed event handling
 
-		/// <summary>
-		/// For performance reasons, we save the current state of this instance here if the item is suspended. When the item is resumed, we compare the saved state
-		/// with the current state and set our accumulated data accordingly.
-		/// </summary>
-		protected override void OnSuspended()
-		{
-			this._savedNumberOfItems = this._numberOfItems;
-			this._cachedMinValue = this._minValue;
-			this._cachedMaxValue = this._maxValue;
+    /// <summary>
+    /// For performance reasons, we save the current state of this instance here if the item is suspended. When the item is resumed, we compare the saved state
+    /// with the current state and set our accumulated data accordingly.
+    /// </summary>
+    protected override void OnSuspended()
+    {
+      this._savedNumberOfItems = this._numberOfItems;
+      this._cachedMinValue = this._minValue;
+      this._cachedMaxValue = this._maxValue;
 
-			base.OnSuspended();
-		}
+      base.OnSuspended();
+    }
 
-		/// <summary>
-		/// For performance reasons, we don't call EhSelfChanged during the suspended state. Instead, when we resume here, we compare the saved state of this instance with the current state of the instance
-		/// and and set our accumulated data accordingly.
-		/// </summary>
-		protected override void OnResume()
-		{
-			BoundariesChangedData data = 0;
+    /// <summary>
+    /// For performance reasons, we don't call EhSelfChanged during the suspended state. Instead, when we resume here, we compare the saved state of this instance with the current state of the instance
+    /// and and set our accumulated data accordingly.
+    /// </summary>
+    protected override void OnResume()
+    {
+      BoundariesChangedData data = 0;
 
-			// if anything changed in the meantime, fire the event
-			if (this._savedNumberOfItems != this._numberOfItems)
-				data |= BoundariesChangedData.NumberOfItemsChanged;
+      // if anything changed in the meantime, fire the event
+      if (this._savedNumberOfItems != this._numberOfItems)
+        data |= BoundariesChangedData.NumberOfItemsChanged;
 
-			if (this._cachedMinValue != this._minValue)
-				data |= BoundariesChangedData.LowerBoundChanged;
+      if (this._cachedMinValue != this._minValue)
+        data |= BoundariesChangedData.LowerBoundChanged;
 
-			if (this._cachedMaxValue != this._maxValue)
-				data |= BoundariesChangedData.UpperBoundChanged;
+      if (this._cachedMaxValue != this._maxValue)
+        data |= BoundariesChangedData.UpperBoundChanged;
 
-			if (0 != data)
-			{
-				if (null == _accumulatedEventData)
-					_accumulatedEventData = new BoundariesChangedEventArgs(data);
-				else
-					_accumulatedEventData.Add(new BoundariesChangedEventArgs(data));
-			}
+      if (0 != data)
+      {
+        if (null == _accumulatedEventData)
+          _accumulatedEventData = new BoundariesChangedEventArgs(data);
+        else
+          _accumulatedEventData.Add(new BoundariesChangedEventArgs(data));
+      }
 
-			base.OnResume();
-		}
+      base.OnResume();
+    }
 
-		#endregion Changed event handling
-	}
+    #endregion Changed event handling
+  }
 }

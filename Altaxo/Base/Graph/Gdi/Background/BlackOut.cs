@@ -28,86 +28,86 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Background
 {
-	/// <summary>
-	/// Backs the item with a color filled rectangle.
-	/// </summary>
-	[Serializable]
-	public class BlackOut
-		:
-		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		IBackgroundStyle
-	{
-		#region Serialization
+  /// <summary>
+  /// Backs the item with a color filled rectangle.
+  /// </summary>
+  [Serializable]
+  public class BlackOut
+    :
+    Main.SuspendableDocumentLeafNodeWithEventArgs,
+    IBackgroundStyle
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BlackOut", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BlackOut), 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				BlackOut s = (BlackOut)obj;
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BlackOut", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BlackOut), 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        BlackOut s = (BlackOut)obj;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				BlackOut s = null != o ? (BlackOut)o : new BlackOut();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        BlackOut s = null != o ? (BlackOut)o : new BlackOut();
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public BlackOut()
-		{
-		}
+    public BlackOut()
+    {
+    }
 
-		public BlackOut(BlackOut from)
-		{
-			CopyFrom(from);
-		}
+    public BlackOut(BlackOut from)
+    {
+      CopyFrom(from);
+    }
 
-		public void CopyFrom(BlackOut from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-		}
+    public void CopyFrom(BlackOut from)
+    {
+      if (object.ReferenceEquals(this, from))
+        return;
+    }
 
-		public object Clone()
-		{
-			return new BlackOut(this);
-		}
+    public object Clone()
+    {
+      return new BlackOut(this);
+    }
 
-		#region IBackgroundStyle Members
+    #region IBackgroundStyle Members
 
-		public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
-		{
-			return innerArea;
-		}
+    public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
+    {
+      return innerArea;
+    }
 
-		public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
-		{
-			g.FillRectangle(Brushes.Black, (float)innerArea.Left, (float)innerArea.Top, (float)innerArea.Width, (float)innerArea.Height);
-		}
+    public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
+    {
+      g.FillRectangle(Brushes.Black, (float)innerArea.Left, (float)innerArea.Top, (float)innerArea.Width, (float)innerArea.Height);
+    }
 
-		public void Draw(Graphics g, BrushX brush, RectangleD2D innerArea)
-		{
-			throw new NotImplementedException();
-		}
+    public void Draw(Graphics g, BrushX brush, RectangleD2D innerArea)
+    {
+      throw new NotImplementedException();
+    }
 
-		public bool SupportsBrush { get { return false; } }
+    public bool SupportsBrush { get { return false; } }
 
-		public BrushX Brush
-		{
-			get
-			{
-				return null;
-			}
-			set
-			{
-			}
-		}
+    public BrushX Brush
+    {
+      get
+      {
+        return null;
+      }
+      set
+      {
+      }
+    }
 
-		#endregion IBackgroundStyle Members
-	}
+    #endregion IBackgroundStyle Members
+  }
 }

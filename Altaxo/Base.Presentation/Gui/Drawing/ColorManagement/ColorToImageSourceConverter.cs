@@ -33,45 +33,45 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	/// <summary>
-	/// Converts an instance of <see cref="AxoColor"/> or <see cref="NamedColor"/> into an rectangular image of that color.
-	/// </summary>
-	/// <seealso cref="System.Windows.Data.IValueConverter" />
-	public class ColorToImageSourceConverter : IValueConverter
-	{
-		public double SymbolSize { get; set; } = 16;
+  /// <summary>
+  /// Converts an instance of <see cref="AxoColor"/> or <see cref="NamedColor"/> into an rectangular image of that color.
+  /// </summary>
+  /// <seealso cref="System.Windows.Data.IValueConverter" />
+  public class ColorToImageSourceConverter : IValueConverter
+  {
+    public double SymbolSize { get; set; } = 16;
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			AxoColor color;
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      AxoColor color;
 
-			if (value is AxoColor)
-				color = (AxoColor)value;
-			else if (value is NamedColor)
-				color = ((NamedColor)value).Color;
-			else
-				return null;
+      if (value is AxoColor)
+        color = (AxoColor)value;
+      else if (value is NamedColor)
+        color = ((NamedColor)value).Color;
+      else
+        return null;
 
-			// draws a transparent outline to fix the borders
-			var drawingGroup = new DrawingGroup();
+      // draws a transparent outline to fix the borders
+      var drawingGroup = new DrawingGroup();
 
-			var fill = new RectangleGeometry(new System.Windows.Rect(0, 0, SymbolSize, SymbolSize));
+      var fill = new RectangleGeometry(new System.Windows.Rect(0, 0, SymbolSize, SymbolSize));
 
-			var geometryDrawing = new GeometryDrawing();
-			geometryDrawing.Geometry = fill;
-			geometryDrawing.Brush = new SolidColorBrush(GuiHelper.ToWpf(color));
-			drawingGroup.Children.Add(geometryDrawing);
+      var geometryDrawing = new GeometryDrawing();
+      geometryDrawing.Geometry = fill;
+      geometryDrawing.Brush = new SolidColorBrush(GuiHelper.ToWpf(color));
+      drawingGroup.Children.Add(geometryDrawing);
 
-			var geometryImage = new DrawingImage(drawingGroup);
+      var geometryImage = new DrawingImage(drawingGroup);
 
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
-		}
+      // Freeze the DrawingImage for performance benefits.
+      geometryImage.Freeze();
+      return geometryImage;
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

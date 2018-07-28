@@ -29,22 +29,22 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.GuiModels
 {
-	/// <summary>
-	/// Designates the visibility of root layer markers.
-	/// </summary>
-	[Flags]
-	public enum RootLayerMarkersVisibility
-	{
-		/// <summary>Definitely not show root layer markers.</summary>
-		None = 0,
+  /// <summary>
+  /// Designates the visibility of root layer markers.
+  /// </summary>
+  [Flags]
+  public enum RootLayerMarkersVisibility
+  {
+    /// <summary>Definitely not show root layer markers.</summary>
+    None = 0,
 
-		/// <summary>Definitely not show root layer markers.</summary>
-		Arrows = 1,
+    /// <summary>Definitely not show root layer markers.</summary>
+    Arrows = 1,
 
-		/// <summary>Show root layer markers as lines.</summary>
-		Lines = 2,
+    /// <summary>Show root layer markers as lines.</summary>
+    Lines = 2,
 
-		/// <summary>Show root layer markers as lines with arrows.</summary>
-		LinesWithArrows = 3
-	}
+    /// <summary>Show root layer markers as lines with arrows.</summary>
+    LinesWithArrows = 3
+  }
 }

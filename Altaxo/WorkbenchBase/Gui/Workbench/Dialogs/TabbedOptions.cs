@@ -28,114 +28,114 @@ using Altaxo.Gui.Settings;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// TabControl for option panels.
-	/// </summary>
-	public class TabbedOptions : TabControl, ICanBeDirty
-	{
-		public void AddOptionPanels(IEnumerable<IOptionPanelDescriptor> dialogPanelDescriptors)
-		{
-			if (dialogPanelDescriptors == null)
-				throw new ArgumentNullException("dialogPanelDescriptors");
-			foreach (IOptionPanelDescriptor descriptor in dialogPanelDescriptors)
-			{
-				if (descriptor != null)
-				{
-					if (descriptor.HasOptionPanel)
-					{
-						this.Items.Add(new OptionTabPage(this, descriptor));
-					}
-					AddOptionPanels(descriptor.ChildOptionPanelDescriptors);
-				}
-			}
-			OnIsDirtyChanged(null, null);
-		}
+  /// <summary>
+  /// TabControl for option panels.
+  /// </summary>
+  public class TabbedOptions : TabControl, ICanBeDirty
+  {
+    public void AddOptionPanels(IEnumerable<IOptionPanelDescriptor> dialogPanelDescriptors)
+    {
+      if (dialogPanelDescriptors == null)
+        throw new ArgumentNullException("dialogPanelDescriptors");
+      foreach (IOptionPanelDescriptor descriptor in dialogPanelDescriptors)
+      {
+        if (descriptor != null)
+        {
+          if (descriptor.HasOptionPanel)
+          {
+            this.Items.Add(new OptionTabPage(this, descriptor));
+          }
+          AddOptionPanels(descriptor.ChildOptionPanelDescriptors);
+        }
+      }
+      OnIsDirtyChanged(null, null);
+    }
 
-		private bool oldIsDirty;
+    private bool oldIsDirty;
 
-		public bool IsDirty
-		{
-			get
-			{
-				return oldIsDirty;
-			}
-		}
+    public bool IsDirty
+    {
+      get
+      {
+        return oldIsDirty;
+      }
+    }
 
-		public event EventHandler IsDirtyChanged;
+    public event EventHandler IsDirtyChanged;
 
-		private void OnIsDirtyChanged(object sender, EventArgs e)
-		{
-			bool isDirty = false;
-			foreach (IOptionPanel op in OptionPanels)
-			{
-				ICanBeDirty dirty = op as ICanBeDirty;
-				if (dirty != null && dirty.IsDirty)
-				{
-					isDirty = true;
-					break;
-				}
-			}
-			if (isDirty != oldIsDirty)
-			{
-				oldIsDirty = isDirty;
-				if (IsDirtyChanged != null)
-					IsDirtyChanged(this, EventArgs.Empty);
-			}
-		}
+    private void OnIsDirtyChanged(object sender, EventArgs e)
+    {
+      bool isDirty = false;
+      foreach (IOptionPanel op in OptionPanels)
+      {
+        ICanBeDirty dirty = op as ICanBeDirty;
+        if (dirty != null && dirty.IsDirty)
+        {
+          isDirty = true;
+          break;
+        }
+      }
+      if (isDirty != oldIsDirty)
+      {
+        oldIsDirty = isDirty;
+        if (IsDirtyChanged != null)
+          IsDirtyChanged(this, EventArgs.Empty);
+      }
+    }
 
-		public IEnumerable<IOptionPanel> OptionPanels
-		{
-			get
-			{
-				return
-					from tp in Items.OfType<OptionTabPage>()
-					where tp.optionPanel != null
-					select tp.optionPanel;
-			}
-		}
+    public IEnumerable<IOptionPanel> OptionPanels
+    {
+      get
+      {
+        return
+          from tp in Items.OfType<OptionTabPage>()
+          where tp.optionPanel != null
+          select tp.optionPanel;
+      }
+    }
 
-		private sealed class OptionTabPage : TabItem
-		{
-			private IOptionPanelDescriptor descriptor;
-			private TextBlock placeholder;
-			internal IOptionPanel optionPanel;
-			private TabbedOptions options;
+    private sealed class OptionTabPage : TabItem
+    {
+      private IOptionPanelDescriptor descriptor;
+      private TextBlock placeholder;
+      internal IOptionPanel optionPanel;
+      private TabbedOptions options;
 
-			public OptionTabPage(TabbedOptions options, IOptionPanelDescriptor descriptor)
-			{
-				this.options = options;
-				this.descriptor = descriptor;
-				string title = StringParser.Parse(descriptor.Label);
-				this.Header = title;
-				placeholder = new TextBlock { Text = title };
-				placeholder.IsVisibleChanged += placeholder_IsVisibleChanged;
-				this.Content = placeholder;
-			}
+      public OptionTabPage(TabbedOptions options, IOptionPanelDescriptor descriptor)
+      {
+        this.options = options;
+        this.descriptor = descriptor;
+        string title = StringParser.Parse(descriptor.Label);
+        this.Header = title;
+        placeholder = new TextBlock { Text = title };
+        placeholder.IsVisibleChanged += placeholder_IsVisibleChanged;
+        this.Content = placeholder;
+      }
 
-			private void placeholder_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-			{
-				Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(LoadPadContentIfRequired));
-			}
+      private void placeholder_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+      {
+        Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(LoadPadContentIfRequired));
+      }
 
-			private void LoadPadContentIfRequired()
-			{
-				if (placeholder != null && placeholder.IsVisible)
-				{
-					placeholder = null;
-					optionPanel = descriptor.OptionPanel;
-					if (optionPanel != null)
-					{
-						// some panels initialize themselves on the first LoadOptions call,
-						// so we need to load the options before attaching event handlers
-						//optionPanel.LoadOptions(); // TODO LelliD 2017-11-20 reimplement this
+      private void LoadPadContentIfRequired()
+      {
+        if (placeholder != null && placeholder.IsVisible)
+        {
+          placeholder = null;
+          optionPanel = descriptor.OptionPanel;
+          if (optionPanel != null)
+          {
+            // some panels initialize themselves on the first LoadOptions call,
+            // so we need to load the options before attaching event handlers
+            //optionPanel.LoadOptions(); // TODO LelliD 2017-11-20 reimplement this
 
-						ICanBeDirty dirty = optionPanel as ICanBeDirty;
-						if (dirty != null)
-							dirty.IsDirtyChanged += options.OnIsDirtyChanged;
-						Altaxo.Current.GetRequiredService<IWinFormsService>().SetContent(this, optionPanel.ViewObject);
-					}
-				}
-			}
-		}
-	}
+            ICanBeDirty dirty = optionPanel as ICanBeDirty;
+            if (dirty != null)
+              dirty.IsDirtyChanged += options.OnIsDirtyChanged;
+            Altaxo.Current.GetRequiredService<IWinFormsService>().SetContent(this, optionPanel.ViewObject);
+          }
+        }
+      }
+    }
+  }
 }

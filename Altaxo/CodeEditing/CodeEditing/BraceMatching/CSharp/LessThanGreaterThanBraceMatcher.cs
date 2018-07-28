@@ -7,12 +7,12 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Altaxo.CodeEditing.BraceMatching.CSharp
 {
-	[ExportBraceMatcher(LanguageNames.CSharp)]
-	internal class LessThanGreaterThanBraceMatcher : AbstractCSharpBraceMatcher
-	{
-		public LessThanGreaterThanBraceMatcher()
-				: base(SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken)
-		{
-		}
-	}
+  [ExportBraceMatcher(LanguageNames.CSharp)]
+  internal class LessThanGreaterThanBraceMatcher : AbstractCSharpBraceMatcher
+  {
+    public LessThanGreaterThanBraceMatcher()
+        : base(SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken)
+    {
+    }
+  }
 }

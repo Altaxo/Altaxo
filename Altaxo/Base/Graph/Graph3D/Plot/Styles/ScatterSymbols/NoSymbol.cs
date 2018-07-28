@@ -32,41 +32,41 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {
-	/// <summary>
-	/// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
-	/// </summary>
-	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
-	public sealed class NoSymbol : ScatterSymbolShapeBase
-	{
-		public static NoSymbol Instance { get; private set; } = new NoSymbol();
+  /// <summary>
+  /// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
+  /// </summary>
+  /// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
+  public sealed class NoSymbol : ScatterSymbolShapeBase
+  {
+    public static NoSymbol Instance { get; private set; } = new NoSymbol();
 
-		private NoSymbol()
-		{
-		}
+    private NoSymbol()
+    {
+    }
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-05-09 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoSymbol), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				SerializeV0((IScatterSymbol)obj, info);
-			}
+    /// <summary>
+    /// 2016-05-09 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoSymbol), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        SerializeV0((IScatterSymbol)obj, info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return DeserializeV0(Instance, info, parent);
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return DeserializeV0(Instance, info, parent);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
-		{
-		}
-	}
+    public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
+    {
+    }
+  }
 }

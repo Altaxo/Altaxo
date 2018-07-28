@@ -26,136 +26,136 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IBooleanValueView
-	{
-		void InitializeDescription(string value);
+  public interface IBooleanValueView
+  {
+    void InitializeDescription(string value);
 
-		void InitializeBool1(bool value);
+    void InitializeBool1(bool value);
 
-		event Action<bool> Bool1Changed;
-	}
+    event Action<bool> Bool1Changed;
+  }
 
-	public interface IBooleanValueController : IMVCAController
-	{
-		string DescriptionText { get; set; }
-	}
+  public interface IBooleanValueController : IMVCAController
+  {
+    string DescriptionText { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Controller for a boolean value.
-	/// </summary>
-	[UserControllerForObject(typeof(bool), 100)]
-	[ExpectedTypeOfView(typeof(IBooleanValueView))]
-	public class BooleanValueController : IBooleanValueController
-	{
-		protected IBooleanValueView _view;
-		protected bool _value1Bool;
-		protected bool _value1BoolTemporary;
+  /// <summary>
+  /// Controller for a boolean value.
+  /// </summary>
+  [UserControllerForObject(typeof(bool), 100)]
+  [ExpectedTypeOfView(typeof(IBooleanValueView))]
+  public class BooleanValueController : IBooleanValueController
+  {
+    protected IBooleanValueView _view;
+    protected bool _value1Bool;
+    protected bool _value1BoolTemporary;
 
-		protected string _descriptionText = "Enter value:";
+    protected string _descriptionText = "Enter value:";
 
-		public BooleanValueController(bool val)
-		{
-			_value1Bool = val;
-			_value1BoolTemporary = val;
-		}
+    public BooleanValueController(bool val)
+    {
+      _value1Bool = val;
+      _value1BoolTemporary = val;
+    }
 
-		protected virtual void Initialize()
-		{
-			if (null != _view)
-			{
-				_view.InitializeDescription(_descriptionText);
-				_view.InitializeBool1(_value1BoolTemporary);
-			}
-		}
+    protected virtual void Initialize()
+    {
+      if (null != _view)
+      {
+        _view.InitializeDescription(_descriptionText);
+        _view.InitializeBool1(_value1BoolTemporary);
+      }
+    }
 
-		public string DescriptionText
-		{
-			get
-			{
-				return _descriptionText;
-			}
-			set
-			{
-				_descriptionText = value;
-				if (null != _view)
-				{
-					_view.InitializeDescription(_descriptionText);
-				}
-			}
-		}
+    public string DescriptionText
+    {
+      get
+      {
+        return _descriptionText;
+      }
+      set
+      {
+        _descriptionText = value;
+        if (null != _view)
+        {
+          _view.InitializeDescription(_descriptionText);
+        }
+      }
+    }
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		public virtual object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-				{
-					_view.Bool1Changed -= EhValidatingBool1;
-				}
+    public virtual object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        if (_view != null)
+        {
+          _view.Bool1Changed -= EhValidatingBool1;
+        }
 
-				_view = value as IBooleanValueView;
+        _view = value as IBooleanValueView;
 
-				if (_view != null)
-				{
-					_view.Bool1Changed += EhValidatingBool1;
-					Initialize();
-				}
-			}
-		}
+        if (_view != null)
+        {
+          _view.Bool1Changed += EhValidatingBool1;
+          Initialize();
+        }
+      }
+    }
 
-		public virtual object ModelObject
-		{
-			get
-			{
-				return _value1Bool;
-			}
-		}
+    public virtual object ModelObject
+    {
+      get
+      {
+        return _value1Bool;
+      }
+    }
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		#endregion IMVCController Members
+    #endregion IMVCController Members
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public virtual bool Apply(bool disposeController)
-		{
-			this._value1Bool = this._value1BoolTemporary;
-			return true;
-		}
+    public virtual bool Apply(bool disposeController)
+    {
+      this._value1Bool = this._value1BoolTemporary;
+      return true;
+    }
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// </summary>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <returns>
+    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    /// </returns>
+    public bool Revert(bool disposeController)
+    {
+      return false;
+    }
 
-		#endregion IApplyController Members
+    #endregion IApplyController Members
 
-		#region ISingleValueViewEventSink Members
+    #region ISingleValueViewEventSink Members
 
-		public virtual void EhValidatingBool1(bool val)
-		{
-			_value1BoolTemporary = val;
-		}
+    public virtual void EhValidatingBool1(bool val)
+    {
+      _value1BoolTemporary = val;
+    }
 
-		#endregion ISingleValueViewEventSink Members
-	}
+    #endregion ISingleValueViewEventSink Members
+  }
 }

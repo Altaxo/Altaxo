@@ -31,24 +31,24 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.DataConnection
 {
-	/// <summary>
-	/// Interaction logic for AltaxoOleDbDataSourceControl.xaml
-	/// </summary>
-	public partial class AltaxoOleDbDataSourceControl : UserControl, IAltaxoOleDbDataSourceView
-	{
-		public AltaxoOleDbDataSourceControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for AltaxoOleDbDataSourceControl.xaml
+  /// </summary>
+  public partial class AltaxoOleDbDataSourceControl : UserControl, IAltaxoOleDbDataSourceView
+  {
+    public AltaxoOleDbDataSourceControl()
+    {
+      InitializeComponent();
+    }
 
-		public void SetQueryView(object viewObject)
-		{
-			_guiDataQueryHost.Child = viewObject as UIElement;
-		}
+    public void SetQueryView(object viewObject)
+    {
+      _guiDataQueryHost.Child = viewObject as UIElement;
+    }
 
-		public void SetImportOptionsView(object viewObject)
-		{
-			_guiImportOptionsHost.Child = viewObject as UIElement;
-		}
-	}
+    public void SetImportOptionsView(object viewObject)
+    {
+      _guiImportOptionsHost.Child = viewObject as UIElement;
+    }
+  }
 }

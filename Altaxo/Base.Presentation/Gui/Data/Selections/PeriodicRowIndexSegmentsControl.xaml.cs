@@ -38,53 +38,53 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	/// <summary>
-	/// Interaction logic for RangeOfRowsControl.xaml
-	/// </summary>
-	public partial class PeriodicRowIndexSegmentsControl : UserControl, IPeriodicRowIndexSegmentsView
-	{
-		public PeriodicRowIndexSegmentsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for RangeOfRowsControl.xaml
+  /// </summary>
+  public partial class PeriodicRowIndexSegmentsControl : UserControl, IPeriodicRowIndexSegmentsView
+  {
+    public PeriodicRowIndexSegmentsControl()
+    {
+      InitializeComponent();
+    }
 
-		public int StartIndex
-		{
-			get
-			{
-				return _guiPlotRangeFrom.Value;
-			}
+    public int StartIndex
+    {
+      get
+      {
+        return _guiPlotRangeFrom.Value;
+      }
 
-			set
-			{
-				_guiPlotRangeFrom.Value = value;
-			}
-		}
+      set
+      {
+        _guiPlotRangeFrom.Value = value;
+      }
+    }
 
-		public int LengthOfPeriod
-		{
-			get
-			{
-				return _guiLengthOfPeriod.Value;
-			}
+    public int LengthOfPeriod
+    {
+      get
+      {
+        return _guiLengthOfPeriod.Value;
+      }
 
-			set
-			{
-				_guiLengthOfPeriod.Value = value;
-			}
-		}
+      set
+      {
+        _guiLengthOfPeriod.Value = value;
+      }
+    }
 
-		public int NumberOfItemsPerPeriod
-		{
-			get
-			{
-				return _guiNumberOfItemsPerPeriod.Value;
-			}
+    public int NumberOfItemsPerPeriod
+    {
+      get
+      {
+        return _guiNumberOfItemsPerPeriod.Value;
+      }
 
-			set
-			{
-				_guiNumberOfItemsPerPeriod.Value = value;
-			}
-		}
-	}
+      set
+      {
+        _guiNumberOfItemsPerPeriod.Value = value;
+      }
+    }
+  }
 }

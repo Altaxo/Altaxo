@@ -26,328 +26,328 @@ using System;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
-	/// <summary>
-	/// Summary description for LogarithmicAxisRescaleConditions.
-	/// </summary>
-	[Serializable]
-	public class InverseScaleRescaleConditions : NumericScaleRescaleConditions
-	{
-		#region Serialization
+  /// <summary>
+  /// Summary description for LogarithmicAxisRescaleConditions.
+  /// </summary>
+  [Serializable]
+  public class InverseScaleRescaleConditions : NumericScaleRescaleConditions
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.Rescaling.InverseAxisRescaleConditions", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseScaleRescaleConditions), 1)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (InverseScaleRescaleConditions)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.Rescaling.InverseAxisRescaleConditions", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseScaleRescaleConditions), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (InverseScaleRescaleConditions)obj;
 
-				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
-			}
+        info.AddBaseValueEmbedded(s, s.GetType().BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = null != o ? (InverseScaleRescaleConditions)o : new InverseScaleRescaleConditions();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = null != o ? (InverseScaleRescaleConditions)o : new InverseScaleRescaleConditions();
 
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public InverseScaleRescaleConditions()
-		{
-		}
+    public InverseScaleRescaleConditions()
+    {
+    }
 
-		public InverseScaleRescaleConditions(InverseScaleRescaleConditions from)
-			: base(from) // all is done here, since CopyFrom is virtual!
-		{
-		}
+    public InverseScaleRescaleConditions(InverseScaleRescaleConditions from)
+      : base(from) // all is done here, since CopyFrom is virtual!
+    {
+    }
 
-		public override object Clone()
-		{
-			return new InverseScaleRescaleConditions(this);
-		}
+    public override object Clone()
+    {
+      return new InverseScaleRescaleConditions(this);
+    }
 
-		public override double ResultingOrg
-		{
-			get
-			{
-				return 1 / _resultingOrg;
-			}
-		}
+    public override double ResultingOrg
+    {
+      get
+      {
+        return 1 / _resultingOrg;
+      }
+    }
 
-		public double ResultingInverseOrg
-		{
-			get
-			{
-				return _resultingOrg;
-			}
-		}
+    public double ResultingInverseOrg
+    {
+      get
+      {
+        return _resultingOrg;
+      }
+    }
 
-		public override double ResultingEnd
-		{
-			get
-			{
-				return 1 / _resultingEnd;
-			}
-		}
+    public override double ResultingEnd
+    {
+      get
+      {
+        return 1 / _resultingEnd;
+      }
+    }
 
-		public double ResultingInverseEnd
-		{
-			get
-			{
-				return _resultingEnd;
-			}
-		}
+    public double ResultingInverseEnd
+    {
+      get
+      {
+        return _resultingEnd;
+      }
+    }
 
-		public override double UserProvidedOrgValue
-		{
-			get
-			{
-				return 1 / _userProvidedOrgValue;
-			}
-		}
+    public override double UserProvidedOrgValue
+    {
+      get
+      {
+        return 1 / _userProvidedOrgValue;
+      }
+    }
 
-		public override double UserProvidedEndValue
-		{
-			get
-			{
-				return 1 / _userProvidedEndValue;
-			}
-		}
+    public override double UserProvidedEndValue
+    {
+      get
+      {
+        return 1 / _userProvidedEndValue;
+      }
+    }
 
-		public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
-		{
-			orgValue = 1 / orgValue;
-			endValue = 1 / endValue;
+    public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
+    {
+      orgValue = 1 / orgValue;
+      endValue = 1 / endValue;
 
-			bool isChange =
+      bool isChange =
 
-			_orgRescaling != orgRescaling ||
-			_userProvidedOrgRelativeTo != orgRelativeTo ||
-			_userProvidedOrgValue != orgValue ||
-			_endRescaling != endRescaling ||
-			_userProvidedEndRelativeTo != endRelativeTo ||
-			_userProvidedEndValue != endValue;
+      _orgRescaling != orgRescaling ||
+      _userProvidedOrgRelativeTo != orgRelativeTo ||
+      _userProvidedOrgValue != orgValue ||
+      _endRescaling != endRescaling ||
+      _userProvidedEndRelativeTo != endRelativeTo ||
+      _userProvidedEndValue != endValue;
 
-			_orgRescaling = orgRescaling;
-			_userProvidedOrgRelativeTo = orgRelativeTo;
-			_userProvidedOrgValue = orgValue;
+      _orgRescaling = orgRescaling;
+      _userProvidedOrgRelativeTo = orgRelativeTo;
+      _userProvidedOrgValue = orgValue;
 
-			_endRescaling = endRescaling;
-			_userProvidedEndRelativeTo = endRelativeTo;
-			_userProvidedEndValue = endValue;
+      _endRescaling = endRescaling;
+      _userProvidedEndRelativeTo = endRelativeTo;
+      _userProvidedEndValue = endValue;
 
-			if (isChange)
-			{
-				ProcessOrg_UserParametersChanged();
-				ProcessEnd_UserParametersChanged();
-				EhSelfChanged();
-			}
-		}
+      if (isChange)
+      {
+        ProcessOrg_UserParametersChanged();
+        ProcessEnd_UserParametersChanged();
+        EhSelfChanged();
+      }
+    }
 
-		/// <summary>
-		/// Fixes the data bounds org and end. Here we modify the bounds if org and end are equal.
-		/// </summary>
-		/// <param name="dataBoundsOrg">The data bounds org.</param>
-		/// <param name="dataBoundsEnd">The data bounds end.</param>
-		protected override void FixValuesForDataBoundsOrgAndEnd(ref double dataBoundsOrg, ref double dataBoundsEnd)
-		{
-			if (0 == dataBoundsOrg || 0 == dataBoundsEnd)
-				throw new ArgumentOutOfRangeException("Either dataBoundsOrg or dataBoundsEnd is null. This should not happend when InverseNumericalBoundaries were used.");
+    /// <summary>
+    /// Fixes the data bounds org and end. Here we modify the bounds if org and end are equal.
+    /// </summary>
+    /// <param name="dataBoundsOrg">The data bounds org.</param>
+    /// <param name="dataBoundsEnd">The data bounds end.</param>
+    protected override void FixValuesForDataBoundsOrgAndEnd(ref double dataBoundsOrg, ref double dataBoundsEnd)
+    {
+      if (0 == dataBoundsOrg || 0 == dataBoundsEnd)
+        throw new ArgumentOutOfRangeException("Either dataBoundsOrg or dataBoundsEnd is null. This should not happend when InverseNumericalBoundaries were used.");
 
-			dataBoundsOrg = 1 / dataBoundsOrg; // invert the boundaries
-			dataBoundsEnd = 1 / dataBoundsEnd;
+      dataBoundsOrg = 1 / dataBoundsOrg; // invert the boundaries
+      dataBoundsEnd = 1 / dataBoundsEnd;
 
-			// ensure that data bounds always have some distance
-			if (dataBoundsOrg == dataBoundsEnd)
-			{
-				if (0 == dataBoundsOrg)
-				{
-					dataBoundsOrg = -1;
-					dataBoundsEnd = 1;
-				}
-				else
-				{
-					var offs = 0.5 * Math.Abs(dataBoundsOrg);
-					dataBoundsOrg = dataBoundsOrg - offs;
-					dataBoundsEnd = dataBoundsEnd + offs;
-				}
-			}
-		}
+      // ensure that data bounds always have some distance
+      if (dataBoundsOrg == dataBoundsEnd)
+      {
+        if (0 == dataBoundsOrg)
+        {
+          dataBoundsOrg = -1;
+          dataBoundsEnd = 1;
+        }
+        else
+        {
+          var offs = 0.5 * Math.Abs(dataBoundsOrg);
+          dataBoundsOrg = dataBoundsOrg - offs;
+          dataBoundsEnd = dataBoundsEnd + offs;
+        }
+      }
+    }
 
-		protected override void FixValuesForUserZoomed(ref double zoomOrg, ref double zoomEnd)
-		{
-			zoomOrg = 1 / zoomOrg;
-			zoomEnd = 1 / zoomEnd;
+    protected override void FixValuesForUserZoomed(ref double zoomOrg, ref double zoomEnd)
+    {
+      zoomOrg = 1 / zoomOrg;
+      zoomEnd = 1 / zoomEnd;
 
-			if (zoomOrg == zoomEnd)
-			{
-				zoomOrg = -1;
-				zoomEnd = 1;
-			}
-			else if (zoomOrg > zoomEnd)
-			{
-				var h = zoomOrg;
-				zoomOrg = zoomEnd;
-				zoomEnd = h;
-			}
-		}
+      if (zoomOrg == zoomEnd)
+      {
+        zoomOrg = -1;
+        zoomEnd = 1;
+      }
+      else if (zoomOrg > zoomEnd)
+      {
+        var h = zoomOrg;
+        zoomOrg = zoomEnd;
+        zoomEnd = h;
+      }
+    }
 
-		protected override double GetDataBoundsScaleMean()
-		{
-			return 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
-		}
+    protected override double GetDataBoundsScaleMean()
+    {
+      return 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
+    }
 
-		#region Resulting Org/End to/fron User Org/End
+    #region Resulting Org/End to/fron User Org/End
 
-		protected override double GetResultingOrgFromUserProvidedOrg()
-		{
-			switch (_userProvidedOrgRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return _userProvidedOrgValue;
+    protected override double GetResultingOrgFromUserProvidedOrg()
+    {
+      switch (_userProvidedOrgRelativeTo)
+      {
+        case BoundariesRelativeTo.Absolute:
+          return _userProvidedOrgValue;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return _userProvidedOrgValue + _dataBoundsOrg;
+        case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+          return _userProvidedOrgValue + _dataBoundsOrg;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return _userProvidedOrgValue + _dataBoundsEnd;
+        case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+          return _userProvidedOrgValue + _dataBoundsEnd;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return _userProvidedOrgValue + GetDataBoundsScaleMean();
+        case BoundariesRelativeTo.RelativeToDataBoundsMean:
+          return _userProvidedOrgValue + GetDataBoundsScaleMean();
 
-				default:
-					throw new NotImplementedException();
-			}
-		}
+        default:
+          throw new NotImplementedException();
+      }
+    }
 
-		protected override double GetUserProvidedOrgFromResultingOrg(double resultingOrg)
-		{
-			switch (_userProvidedOrgRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return resultingOrg;
+    protected override double GetUserProvidedOrgFromResultingOrg(double resultingOrg)
+    {
+      switch (_userProvidedOrgRelativeTo)
+      {
+        case BoundariesRelativeTo.Absolute:
+          return resultingOrg;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return resultingOrg - _dataBoundsOrg;
+        case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+          return resultingOrg - _dataBoundsOrg;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return resultingOrg - _dataBoundsEnd;
+        case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+          return resultingOrg - _dataBoundsEnd;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return resultingOrg - GetDataBoundsScaleMean();
+        case BoundariesRelativeTo.RelativeToDataBoundsMean:
+          return resultingOrg - GetDataBoundsScaleMean();
 
-				default:
-					throw new NotImplementedException();
-			}
-		}
+        default:
+          throw new NotImplementedException();
+      }
+    }
 
-		protected override double GetResultingEndFromUserProvidedEnd()
-		{
-			switch (_userProvidedEndRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return _userProvidedEndValue;
+    protected override double GetResultingEndFromUserProvidedEnd()
+    {
+      switch (_userProvidedEndRelativeTo)
+      {
+        case BoundariesRelativeTo.Absolute:
+          return _userProvidedEndValue;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return _userProvidedEndValue + _dataBoundsOrg;
+        case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+          return _userProvidedEndValue + _dataBoundsOrg;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return _userProvidedEndValue + _dataBoundsEnd;
+        case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+          return _userProvidedEndValue + _dataBoundsEnd;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return _userProvidedEndValue + GetDataBoundsScaleMean();
+        case BoundariesRelativeTo.RelativeToDataBoundsMean:
+          return _userProvidedEndValue + GetDataBoundsScaleMean();
 
-				default:
-					throw new NotImplementedException();
-			}
-		}
+        default:
+          throw new NotImplementedException();
+      }
+    }
 
-		protected override double GetUserProvidedEndFromResultingEnd(double resultingEnd)
-		{
-			switch (_userProvidedEndRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return resultingEnd;
+    protected override double GetUserProvidedEndFromResultingEnd(double resultingEnd)
+    {
+      switch (_userProvidedEndRelativeTo)
+      {
+        case BoundariesRelativeTo.Absolute:
+          return resultingEnd;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return resultingEnd - _dataBoundsOrg;
+        case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+          return resultingEnd - _dataBoundsOrg;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return resultingEnd - _dataBoundsEnd;
+        case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+          return resultingEnd - _dataBoundsEnd;
 
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return resultingEnd - GetDataBoundsScaleMean();
+        case BoundariesRelativeTo.RelativeToDataBoundsMean:
+          return resultingEnd - GetDataBoundsScaleMean();
 
-				default:
-					throw new NotImplementedException();
-			}
-		}
+        default:
+          throw new NotImplementedException();
+      }
+    }
 
-		#endregion Resulting Org/End to/fron User Org/End
+    #endregion Resulting Org/End to/fron User Org/End
 
-		#region Helper functions for dialog
+    #region Helper functions for dialog
 
-		public double GetOrgValueToShowInDialog(double currentResultingInverseOrg)
-		{
-			if (this._orgRescaling == BoundaryRescaling.Auto)
-			{
-				switch (this._userProvidedOrgRelativeTo)
-				{
-					case BoundariesRelativeTo.Absolute:
-						return currentResultingInverseOrg;
+    public double GetOrgValueToShowInDialog(double currentResultingInverseOrg)
+    {
+      if (this._orgRescaling == BoundaryRescaling.Auto)
+      {
+        switch (this._userProvidedOrgRelativeTo)
+        {
+          case BoundariesRelativeTo.Absolute:
+            return currentResultingInverseOrg;
 
-					case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-						return currentResultingInverseOrg - _dataBoundsOrg;
+          case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+            return currentResultingInverseOrg - _dataBoundsOrg;
 
-					case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-						return currentResultingInverseOrg - _dataBoundsEnd;
+          case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+            return currentResultingInverseOrg - _dataBoundsEnd;
 
-					case BoundariesRelativeTo.RelativeToDataBoundsMean:
-						return currentResultingInverseOrg - 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
+          case BoundariesRelativeTo.RelativeToDataBoundsMean:
+            return currentResultingInverseOrg - 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
 
-					default:
-						throw new NotImplementedException();
-				}
-			}
-			else
-			{
-				return this._userProvidedOrgValue;
-			}
-		}
+          default:
+            throw new NotImplementedException();
+        }
+      }
+      else
+      {
+        return this._userProvidedOrgValue;
+      }
+    }
 
-		public double GetEndValueToShowInDialog(double currentResultingInverseEnd)
-		{
-			if (this._endRescaling == BoundaryRescaling.Auto)
-			{
-				switch (this._userProvidedEndRelativeTo)
-				{
-					case BoundariesRelativeTo.Absolute:
-						return currentResultingInverseEnd;
+    public double GetEndValueToShowInDialog(double currentResultingInverseEnd)
+    {
+      if (this._endRescaling == BoundaryRescaling.Auto)
+      {
+        switch (this._userProvidedEndRelativeTo)
+        {
+          case BoundariesRelativeTo.Absolute:
+            return currentResultingInverseEnd;
 
-					case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-						return currentResultingInverseEnd - _dataBoundsOrg;
+          case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+            return currentResultingInverseEnd - _dataBoundsOrg;
 
-					case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-						return currentResultingInverseEnd - _dataBoundsEnd;
+          case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+            return currentResultingInverseEnd - _dataBoundsEnd;
 
-					case BoundariesRelativeTo.RelativeToDataBoundsMean:
-						return currentResultingInverseEnd - 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
+          case BoundariesRelativeTo.RelativeToDataBoundsMean:
+            return currentResultingInverseEnd - 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
 
-					default:
-						throw new NotImplementedException();
-				}
-			}
-			else
-			{
-				return this._userProvidedEndValue;
-			}
-		}
+          default:
+            throw new NotImplementedException();
+        }
+      }
+      else
+      {
+        return this._userProvidedEndValue;
+      }
+    }
 
-		#endregion Helper functions for dialog
-	}
+    #endregion Helper functions for dialog
+  }
 }

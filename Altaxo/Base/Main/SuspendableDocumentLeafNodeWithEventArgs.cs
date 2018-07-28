@@ -29,25 +29,25 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Implements a <see cref="T:Altaxo.Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData{System.EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
-	/// </summary>
-	public class SuspendableDocumentLeafNodeWithEventArgs : SuspendableDocumentLeafNodeWithSingleAccumulatedData<EventArgs>
-	{
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			if (null != e)
-				_accumulatedEventData = e;
-			else
-				_accumulatedEventData = EventArgs.Empty;
-		}
+  /// <summary>
+  /// Implements a <see cref="T:Altaxo.Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData{System.EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
+  /// </summary>
+  public class SuspendableDocumentLeafNodeWithEventArgs : SuspendableDocumentLeafNodeWithSingleAccumulatedData<EventArgs>
+  {
+    protected override void AccumulateChangeData(object sender, EventArgs e)
+    {
+      if (null != e)
+        _accumulatedEventData = e;
+      else
+        _accumulatedEventData = EventArgs.Empty;
+    }
 
-		/// <summary>
-		/// Calls EhSelfChanged with EventArgs.Empty
-		/// </summary>
-		public virtual void EhSelfChanged()
-		{
-			EhSelfChanged(EventArgs.Empty);
-		}
-	}
+    /// <summary>
+    /// Calls EhSelfChanged with EventArgs.Empty
+    /// </summary>
+    public virtual void EhSelfChanged()
+    {
+      EhSelfChanged(EventArgs.Empty);
+    }
+  }
 }

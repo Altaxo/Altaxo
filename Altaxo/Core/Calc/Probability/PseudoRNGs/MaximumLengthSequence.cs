@@ -29,22 +29,22 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
-	/// <summary>
-	/// Represents a maximum length sequence (MLS). Those sequences have a repeat length of 2^k-1, with k being an integer value (k=2..64).
-	/// This class allows the generation of sequences with a length of 2^2-1 up to 2^64-1.
-	/// </summary>
-	public class MaximumLengthSequence
-	{
-		#region Tap values
+  /// <summary>
+  /// Represents a maximum length sequence (MLS). Those sequences have a repeat length of 2^k-1, with k being an integer value (k=2..64).
+  /// This class allows the generation of sequences with a length of 2^2-1 up to 2^64-1.
+  /// </summary>
+  public class MaximumLengthSequence
+  {
+    #region Tap values
 
-		/// <summary>
-		/// Tap values for sequence lengths of 2^2-1 ... 2^64-1. The value at index k represents the tap value to generate a sequence of length 2^k-1. The values at index 0 and  1 are unused and set to zero.
-		/// </summary>
-		public static readonly ulong[] TapValues = new ulong[]
-		{
-			0,
-			0,
-			0x0002 | 0x0001, // 2^2-1
+    /// <summary>
+    /// Tap values for sequence lengths of 2^2-1 ... 2^64-1. The value at index k represents the tap value to generate a sequence of length 2^k-1. The values at index 0 and  1 are unused and set to zero.
+    /// </summary>
+    public static readonly ulong[] TapValues = new ulong[]
+    {
+      0,
+      0,
+      0x0002 | 0x0001, // 2^2-1
 			0x0004 | 0x0002, // 2^3-1
 			0x0008 | 0x0004, // 2^4-1
 			0x0010 | 0x0004, // 2^5-1
@@ -109,348 +109,348 @@ namespace Altaxo.Calc.Probability
 			0x8000000000000000 | 0x4000000000000000 | 0x1000000000000000 | 0x0800000000000000, // 2^64-1
 		};
 
-		#endregion Tap values
+    #endregion Tap values
 
-		private const int MinimumSequenceLength = 3;
-		private const int MinimumNumberOfStages = 2;
+    private const int MinimumSequenceLength = 3;
+    private const int MinimumNumberOfStages = 2;
 
-		private int _numberOfStages;
-		private ulong _sequenceLength;
-		private ulong _tap;
+    private int _numberOfStages;
+    private ulong _sequenceLength;
+    private ulong _tap;
 
-		private MaximumLengthSequence()
-		{
-		}
+    private MaximumLengthSequence()
+    {
+    }
 
-		/// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class froms the number of stages (bits, flip-flops).</summary>
-		/// <param name="numberOfStages">The number of stages (2..64). The length of the resulting sequence is 2^numberOfStages-1.</param>
-		/// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given number of stages.</returns>
-		public static MaximumLengthSequence FromNumberOfStages(int numberOfStages)
-		{
-			if (!(numberOfStages >= 2))
-				throw new ArgumentOutOfRangeException("numberOfStages must be >= 2");
-			if (!(numberOfStages <= 64))
-				throw new ArgumentOutOfRangeException("numberOfStages must be <= 64");
+    /// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class froms the number of stages (bits, flip-flops).</summary>
+    /// <param name="numberOfStages">The number of stages (2..64). The length of the resulting sequence is 2^numberOfStages-1.</param>
+    /// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given number of stages.</returns>
+    public static MaximumLengthSequence FromNumberOfStages(int numberOfStages)
+    {
+      if (!(numberOfStages >= 2))
+        throw new ArgumentOutOfRangeException("numberOfStages must be >= 2");
+      if (!(numberOfStages <= 64))
+        throw new ArgumentOutOfRangeException("numberOfStages must be <= 64");
 
-			var result = new MaximumLengthSequence();
-			result._numberOfStages = numberOfStages;
-			result._sequenceLength = GetSequenceLengthFromNumberOfStages(numberOfStages);
-			result._tap = TapValues[numberOfStages];
+      var result = new MaximumLengthSequence();
+      result._numberOfStages = numberOfStages;
+      result._sequenceLength = GetSequenceLengthFromNumberOfStages(numberOfStages);
+      result._tap = TapValues[numberOfStages];
 
-			return result;
-		}
+      return result;
+    }
 
-		/// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class with a minimum length given by the argument.</summary>
-		/// <param name="sequenceLength">The minimum length of the binary sequency. If the provided value is not a number (2^k-1), the value will be rounded up to the next possible sequence length.</param>
-		/// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given minimum sequence length.</returns>
-		public static MaximumLengthSequence FromMinimumSequenceLength(int sequenceLength)
-		{
-			if (!(sequenceLength >= MinimumSequenceLength))
-				return FromMinimumSequenceLength(MinimumSequenceLength);
-			else
-				return FromMinimumSequenceLength((ulong)sequenceLength);
-		}
+    /// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class with a minimum length given by the argument.</summary>
+    /// <param name="sequenceLength">The minimum length of the binary sequency. If the provided value is not a number (2^k-1), the value will be rounded up to the next possible sequence length.</param>
+    /// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given minimum sequence length.</returns>
+    public static MaximumLengthSequence FromMinimumSequenceLength(int sequenceLength)
+    {
+      if (!(sequenceLength >= MinimumSequenceLength))
+        return FromMinimumSequenceLength(MinimumSequenceLength);
+      else
+        return FromMinimumSequenceLength((ulong)sequenceLength);
+    }
 
-		/// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class with a minimum length given by the argument.</summary>
-		/// <param name="sequenceLength">The minimum length of the binary sequency. If the provided value is not a number (2^k-1), the value will be rounded up to the next possible sequence length.</param>
-		/// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given minimum sequence length.</returns>
-		public static MaximumLengthSequence FromMinimumSequenceLength(ulong sequenceLength)
-		{
-			if (sequenceLength < MinimumSequenceLength)
-				sequenceLength = MinimumSequenceLength;
-			int stages = 1 + BinaryMath.Ld(sequenceLength);
-			return FromNumberOfStages(stages);
-		}
+    /// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class with a minimum length given by the argument.</summary>
+    /// <param name="sequenceLength">The minimum length of the binary sequency. If the provided value is not a number (2^k-1), the value will be rounded up to the next possible sequence length.</param>
+    /// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given minimum sequence length.</returns>
+    public static MaximumLengthSequence FromMinimumSequenceLength(ulong sequenceLength)
+    {
+      if (sequenceLength < MinimumSequenceLength)
+        sequenceLength = MinimumSequenceLength;
+      int stages = 1 + BinaryMath.Ld(sequenceLength);
+      return FromNumberOfStages(stages);
+    }
 
-		/// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class from a tap value given by the argument.</summary>
-		/// <param name="tapValue">The tap value. A basic test of the validity of the tap value will be made, although it can not be guaranteed that the given tap value is able to generate a maximum length sequence. The highest set bit
-		/// of the tap value determines the length of the maximum length sequence.</param>
-		/// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given tap value.</returns>
-		public static MaximumLengthSequence FromTapValue(ulong tapValue)
-		{
-			var result = new MaximumLengthSequence();
-			result.TapValue = tapValue;
-			return result;
-		}
+    /// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class from a tap value given by the argument.</summary>
+    /// <param name="tapValue">The tap value. A basic test of the validity of the tap value will be made, although it can not be guaranteed that the given tap value is able to generate a maximum length sequence. The highest set bit
+    /// of the tap value determines the length of the maximum length sequence.</param>
+    /// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given tap value.</returns>
+    public static MaximumLengthSequence FromTapValue(ulong tapValue)
+    {
+      var result = new MaximumLengthSequence();
+      result.TapValue = tapValue;
+      return result;
+    }
 
-		/// <summary>Gets or sets the tap value. When setting the tap value, only basic tests will be made to ensure its validity.
-		/// Thus, it can not be fully ensured that the provided tap value will generate a maximum length sequence.</summary>
-		/// <value>The tap value. The highest bit that is set in the tap value determines the length of the maximum length sequence.</value>
-		public ulong TapValue
-		{
-			get
-			{
-				return _tap;
-			}
-			set
-			{
-				if (!(value >= 3))
-					throw new ArgumentException("Invalid tap value: tap value has to be >= 3");
+    /// <summary>Gets or sets the tap value. When setting the tap value, only basic tests will be made to ensure its validity.
+    /// Thus, it can not be fully ensured that the provided tap value will generate a maximum length sequence.</summary>
+    /// <value>The tap value. The highest bit that is set in the tap value determines the length of the maximum length sequence.</value>
+    public ulong TapValue
+    {
+      get
+      {
+        return _tap;
+      }
+      set
+      {
+        if (!(value >= 3))
+          throw new ArgumentException("Invalid tap value: tap value has to be >= 3");
 
-				int numberOfStages = 1 + BinaryMath.Ld(value);
-				ulong seqLen = GetSequenceLengthFromNumberOfStages(numberOfStages);
-				ulong highestBit = seqLen ^ (seqLen >> 1);
+        int numberOfStages = 1 + BinaryMath.Ld(value);
+        ulong seqLen = GetSequenceLengthFromNumberOfStages(numberOfStages);
+        ulong highestBit = seqLen ^ (seqLen >> 1);
 
-				// when masking the highest bit of the tap value, the rest should have an odd parity
-				if (!BinaryMath.IsParityOdd(value ^ highestBit))
-					throw new ArgumentException("Invalid tap value: tap value should have odd parity after masking out the highest set bit");
+        // when masking the highest bit of the tap value, the rest should have an odd parity
+        if (!BinaryMath.IsParityOdd(value ^ highestBit))
+          throw new ArgumentException("Invalid tap value: tap value should have odd parity after masking out the highest set bit");
 
-				_numberOfStages = numberOfStages;
-				_sequenceLength = seqLen;
-				_tap = value;
-			}
-		}
+        _numberOfStages = numberOfStages;
+        _sequenceLength = seqLen;
+        _tap = value;
+      }
+    }
 
-		/// <summary>Gets the length of the sequence. This is the repeat period of the sequence.</summary>
-		/// <value>The length of the sequence.</value>
-		public ulong LongLength
-		{
-			get
-			{
-				return _sequenceLength;
-			}
-		}
+    /// <summary>Gets the length of the sequence. This is the repeat period of the sequence.</summary>
+    /// <value>The length of the sequence.</value>
+    public ulong LongLength
+    {
+      get
+      {
+        return _sequenceLength;
+      }
+    }
 
-		/// <summary>Gets the length of the sequence as an <see cref="System.Int32"/> value. If the sequence length is greater than int.MaxValue, an <see cref="System.InvalidCastException"/> will be thrown.</summary>
-		/// <value>The length of the sequence.</value>
-		public int Length
-		{
-			get
-			{
-				if (_sequenceLength > int.MaxValue)
-					throw new InvalidCastException("Length can not be represented by an Int32 value because it is too large. Please use the property LongLength instead.");
-				return (int)_sequenceLength;
-			}
-		}
+    /// <summary>Gets the length of the sequence as an <see cref="System.Int32"/> value. If the sequence length is greater than int.MaxValue, an <see cref="System.InvalidCastException"/> will be thrown.</summary>
+    /// <value>The length of the sequence.</value>
+    public int Length
+    {
+      get
+      {
+        if (_sequenceLength > int.MaxValue)
+          throw new InvalidCastException("Length can not be represented by an Int32 value because it is too large. Please use the property LongLength instead.");
+        return (int)_sequenceLength;
+      }
+    }
 
-		/// <summary>Gets the number of stages. This is the number of flip-flops that is needed to generate a maximum length sequence with discrete hardware. The sequence length is 2^numberOfStages-1.</summary>
-		public int NumberOfStages
-		{
-			get
-			{
-				return _numberOfStages;
-			}
-		}
+    /// <summary>Gets the number of stages. This is the number of flip-flops that is needed to generate a maximum length sequence with discrete hardware. The sequence length is 2^numberOfStages-1.</summary>
+    public int NumberOfStages
+    {
+      get
+      {
+        return _numberOfStages;
+      }
+    }
 
-		/// <summary>Gets the next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</summary>
-		/// <param name="sequenceLength">The minimum length of the binary sequency. </param>
-		/// <returns>Next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</returns>
-		public static int GetSequenceLengthFromMinimumSequenceLength(int sequenceLength)
-		{
-			var result = sequenceLength;
-			if (!(sequenceLength >= MinimumSequenceLength))
-				result = MinimumSequenceLength;
+    /// <summary>Gets the next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</summary>
+    /// <param name="sequenceLength">The minimum length of the binary sequency. </param>
+    /// <returns>Next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</returns>
+    public static int GetSequenceLengthFromMinimumSequenceLength(int sequenceLength)
+    {
+      var result = sequenceLength;
+      if (!(sequenceLength >= MinimumSequenceLength))
+        result = MinimumSequenceLength;
 
-			int stages = 1 + BinaryMath.Ld(sequenceLength);
-			return (int)GetSequenceLengthFromNumberOfStages(stages);
-		}
+      int stages = 1 + BinaryMath.Ld(sequenceLength);
+      return (int)GetSequenceLengthFromNumberOfStages(stages);
+    }
 
-		/// <summary>Gets the next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</summary>
-		/// <param name="sequenceLength">The minimum length of the binary sequency. </param>
-		/// <returns>Next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</returns>
-		public static ulong GetSequenceLengthFromMinimumSequenceLength(ulong sequenceLength)
-		{
-			var result = sequenceLength;
-			if (!(sequenceLength >= MinimumSequenceLength))
-				result = MinimumSequenceLength;
+    /// <summary>Gets the next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</summary>
+    /// <param name="sequenceLength">The minimum length of the binary sequency. </param>
+    /// <returns>Next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</returns>
+    public static ulong GetSequenceLengthFromMinimumSequenceLength(ulong sequenceLength)
+    {
+      var result = sequenceLength;
+      if (!(sequenceLength >= MinimumSequenceLength))
+        result = MinimumSequenceLength;
 
-			int stages = 1 + BinaryMath.Ld(sequenceLength);
-			return GetSequenceLengthFromNumberOfStages(stages);
-		}
+      int stages = 1 + BinaryMath.Ld(sequenceLength);
+      return GetSequenceLengthFromNumberOfStages(stages);
+    }
 
-		private static ulong GetSequenceLengthFromNumberOfStages(int numberOfStages)
-		{
-			ulong result = 1UL << (numberOfStages - 1);
-			result += (result - 1);
-			return result;
-		}
+    private static ulong GetSequenceLengthFromNumberOfStages(int numberOfStages)
+    {
+      ulong result = 1UL << (numberOfStages - 1);
+      result += (result - 1);
+      return result;
+    }
 
-		#region Instance sequence getters
+    #region Instance sequence getters
 
-		/// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
-		/// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-		/// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
-		/// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-		/// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
-		public IEnumerable<T> GetSequence<T>(T logicalZero, T logicalOne)
-		{
-			if (_sequenceLength <= UInt32.MaxValue)
-				return GetSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)_sequenceLength, logicalZero, logicalOne);
-			else
-				return GetSequence64<T>(_sequenceLength, _tap, _sequenceLength, logicalZero, logicalOne);
-		}
+    /// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
+    /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
+    /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
+    /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
+    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    public IEnumerable<T> GetSequence<T>(T logicalZero, T logicalOne)
+    {
+      if (_sequenceLength <= UInt32.MaxValue)
+        return GetSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)_sequenceLength, logicalZero, logicalOne);
+      else
+        return GetSequence64<T>(_sequenceLength, _tap, _sequenceLength, logicalZero, logicalOne);
+    }
 
-		/// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
-		/// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-		/// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
-		/// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-		/// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
-		/// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
-		public IEnumerable<T> GetSequence<T>(T logicalZero, T logicalOne, ulong startValue)
-		{
-			if (_sequenceLength <= UInt32.MaxValue)
-				return GetSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)startValue, logicalZero, logicalOne);
-			else
-				return GetSequence64<T>(_sequenceLength, _tap, startValue, logicalZero, logicalOne);
-		}
+    /// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
+    /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
+    /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
+    /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
+    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    public IEnumerable<T> GetSequence<T>(T logicalZero, T logicalOne, ulong startValue)
+    {
+      if (_sequenceLength <= UInt32.MaxValue)
+        return GetSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)startValue, logicalZero, logicalOne);
+      else
+        return GetSequence64<T>(_sequenceLength, _tap, startValue, logicalZero, logicalOne);
+    }
 
-		/// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
-		/// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-		/// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
-		/// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-		/// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
-		public IEnumerable<T> GetInfiniteSequence<T>(T logicalZero, T logicalOne)
-		{
-			if (_sequenceLength <= UInt32.MaxValue)
-				return GetInfiniteSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)_sequenceLength, logicalZero, logicalOne);
-			else
-				return GetInfiniteSequence64<T>(_sequenceLength, _tap, _sequenceLength, logicalZero, logicalOne);
-		}
+    /// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
+    /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
+    /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
+    /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
+    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    public IEnumerable<T> GetInfiniteSequence<T>(T logicalZero, T logicalOne)
+    {
+      if (_sequenceLength <= UInt32.MaxValue)
+        return GetInfiniteSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)_sequenceLength, logicalZero, logicalOne);
+      else
+        return GetInfiniteSequence64<T>(_sequenceLength, _tap, _sequenceLength, logicalZero, logicalOne);
+    }
 
-		/// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
-		/// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-		/// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
-		/// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-		/// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
-		/// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
-		public IEnumerable<T> GetInfiniteSequence<T>(T logicalZero, T logicalOne, ulong startValue)
-		{
-			if (_sequenceLength <= UInt32.MaxValue)
-				return GetInfiniteSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)startValue, logicalZero, logicalOne);
-			else
-				return GetInfiniteSequence64<T>(_sequenceLength, _tap, startValue, logicalZero, logicalOne);
-		}
+    /// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
+    /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
+    /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
+    /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
+    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    public IEnumerable<T> GetInfiniteSequence<T>(T logicalZero, T logicalOne, ulong startValue)
+    {
+      if (_sequenceLength <= UInt32.MaxValue)
+        return GetInfiniteSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)startValue, logicalZero, logicalOne);
+      else
+        return GetInfiniteSequence64<T>(_sequenceLength, _tap, startValue, logicalZero, logicalOne);
+    }
 
-		#endregion Instance sequence getters
+    #endregion Instance sequence getters
 
-		#region static 32 bit methods
+    #region static 32 bit methods
 
-		/// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
-		/// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-		/// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..32).</param>
-		/// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
-		/// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
-		/// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
-		/// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-		/// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
-		public static IEnumerable<T> GetSequence32<T>(uint sequenceLength, uint tap, uint startValue, T logicalZero, T logicalOne)
-		{
-			uint upperbit = sequenceLength ^ (sequenceLength >> 1);
-			uint seq = startValue & sequenceLength;
-			if (0 == seq)
-				throw new ArgumentOutOfRangeException("The provided start value is zero when and-ing it with the sequence length");
+    /// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
+    /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
+    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..32).</param>
+    /// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
+    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
+    /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
+    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    public static IEnumerable<T> GetSequence32<T>(uint sequenceLength, uint tap, uint startValue, T logicalZero, T logicalOne)
+    {
+      uint upperbit = sequenceLength ^ (sequenceLength >> 1);
+      uint seq = startValue & sequenceLength;
+      if (0 == seq)
+        throw new ArgumentOutOfRangeException("The provided start value is zero when and-ing it with the sequence length");
 
-			for (var i = sequenceLength; i != 0; --i)
-			{
-				yield return 0 == (seq & upperbit) ? logicalZero : logicalOne;
+      for (var i = sequenceLength; i != 0; --i)
+      {
+        yield return 0 == (seq & upperbit) ? logicalZero : logicalOne;
 
-				// determine the parity of seq & _tap => if parity is odd, at the end the least bit in x is set to 1  (see BinaryMath.IsParityOdd)
-				uint x = seq & tap;
-				x ^= x >> 16;
-				x ^= x >> 8;
-				x ^= x >> 4;
-				x ^= x >> 2;
-				x ^= x >> 1;
-				seq = (seq << 1) | (x & 1u);
-			}
-		}
+        // determine the parity of seq & _tap => if parity is odd, at the end the least bit in x is set to 1  (see BinaryMath.IsParityOdd)
+        uint x = seq & tap;
+        x ^= x >> 16;
+        x ^= x >> 8;
+        x ^= x >> 4;
+        x ^= x >> 2;
+        x ^= x >> 1;
+        seq = (seq << 1) | (x & 1u);
+      }
+    }
 
-		/// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
-		/// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-		/// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..32).</param>
-		/// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
-		/// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
-		/// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
-		/// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-		/// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
-		public static IEnumerable<T> GetInfiniteSequence32<T>(uint sequenceLength, uint tap, uint startValue, T logicalZero, T logicalOne)
-		{
-			uint upperbit = sequenceLength ^ (sequenceLength >> 1);
-			uint seq = startValue & sequenceLength;
-			if (0 == seq)
-				throw new ArgumentOutOfRangeException("The provided start value is zero when and-ing it with the sequence length");
+    /// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
+    /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
+    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..32).</param>
+    /// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
+    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
+    /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
+    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    public static IEnumerable<T> GetInfiniteSequence32<T>(uint sequenceLength, uint tap, uint startValue, T logicalZero, T logicalOne)
+    {
+      uint upperbit = sequenceLength ^ (sequenceLength >> 1);
+      uint seq = startValue & sequenceLength;
+      if (0 == seq)
+        throw new ArgumentOutOfRangeException("The provided start value is zero when and-ing it with the sequence length");
 
-			for (; ; )
-			{
-				yield return 0 == (seq & upperbit) ? logicalZero : logicalOne;
+      for (; ; )
+      {
+        yield return 0 == (seq & upperbit) ? logicalZero : logicalOne;
 
-				// determine the parity of seq & _tap => if parity is odd, at the end the least bit in x is set to 1  (see BinaryMath.IsParityOdd)
-				uint x = seq & tap;
-				x ^= x >> 16;
-				x ^= x >> 8;
-				x ^= x >> 4;
-				x ^= x >> 2;
-				x ^= x >> 1;
-				seq = (seq << 1) | (x & 1u);
-			}
-		}
+        // determine the parity of seq & _tap => if parity is odd, at the end the least bit in x is set to 1  (see BinaryMath.IsParityOdd)
+        uint x = seq & tap;
+        x ^= x >> 16;
+        x ^= x >> 8;
+        x ^= x >> 4;
+        x ^= x >> 2;
+        x ^= x >> 1;
+        seq = (seq << 1) | (x & 1u);
+      }
+    }
 
-		#endregion static 32 bit methods
+    #endregion static 32 bit methods
 
-		#region static 64 bit methods
+    #region static 64 bit methods
 
-		/// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
-		/// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-		/// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..64).</param>
-		/// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
-		/// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
-		/// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
-		/// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-		/// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
-		public static IEnumerable<T> GetSequence64<T>(ulong sequenceLength, ulong tap, ulong startValue, T logicalZero, T logicalOne)
-		{
-			ulong upperbit = sequenceLength ^ (sequenceLength >> 1);
-			ulong seq = startValue & sequenceLength;
-			if (0 == seq)
-				throw new ArgumentOutOfRangeException("The provided start value is zero when and-ing it with the sequence length");
+    /// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
+    /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
+    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..64).</param>
+    /// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
+    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
+    /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
+    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    public static IEnumerable<T> GetSequence64<T>(ulong sequenceLength, ulong tap, ulong startValue, T logicalZero, T logicalOne)
+    {
+      ulong upperbit = sequenceLength ^ (sequenceLength >> 1);
+      ulong seq = startValue & sequenceLength;
+      if (0 == seq)
+        throw new ArgumentOutOfRangeException("The provided start value is zero when and-ing it with the sequence length");
 
-			for (var i = sequenceLength; i != 0; --i)
-			{
-				yield return 0 == (seq & upperbit) ? logicalZero : logicalOne;
+      for (var i = sequenceLength; i != 0; --i)
+      {
+        yield return 0 == (seq & upperbit) ? logicalZero : logicalOne;
 
-				// determine the parity of seq & _tap => if parity is odd, at the end the least bit in x is set to 1  (see BinaryMath.IsParityOdd)
-				ulong xx = seq & tap;
-				uint x = ((uint)xx) ^ ((uint)(xx >> 32));
-				x ^= x >> 16;
-				x ^= x >> 8;
-				x ^= x >> 4;
-				x ^= x >> 2;
-				x ^= x >> 1;
-				seq = (seq << 1) | (x & 1);
-			}
-		}
+        // determine the parity of seq & _tap => if parity is odd, at the end the least bit in x is set to 1  (see BinaryMath.IsParityOdd)
+        ulong xx = seq & tap;
+        uint x = ((uint)xx) ^ ((uint)(xx >> 32));
+        x ^= x >> 16;
+        x ^= x >> 8;
+        x ^= x >> 4;
+        x ^= x >> 2;
+        x ^= x >> 1;
+        seq = (seq << 1) | (x & 1);
+      }
+    }
 
-		/// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
-		/// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-		/// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..64).</param>
-		/// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
-		/// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
-		/// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
-		/// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-		/// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
-		public static IEnumerable<T> GetInfiniteSequence64<T>(ulong sequenceLength, ulong tap, ulong startValue, T logicalZero, T logicalOne)
-		{
-			ulong upperbit = sequenceLength ^ (sequenceLength >> 1);
-			ulong seq = startValue & sequenceLength;
-			if (0 == seq)
-				throw new ArgumentOutOfRangeException("The provided start value is zero when and-ing it with the sequence length");
+    /// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
+    /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
+    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..64).</param>
+    /// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
+    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
+    /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
+    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    public static IEnumerable<T> GetInfiniteSequence64<T>(ulong sequenceLength, ulong tap, ulong startValue, T logicalZero, T logicalOne)
+    {
+      ulong upperbit = sequenceLength ^ (sequenceLength >> 1);
+      ulong seq = startValue & sequenceLength;
+      if (0 == seq)
+        throw new ArgumentOutOfRangeException("The provided start value is zero when and-ing it with the sequence length");
 
-			for (; ; )
-			{
-				yield return 0 == (seq & upperbit) ? logicalZero : logicalOne;
+      for (; ; )
+      {
+        yield return 0 == (seq & upperbit) ? logicalZero : logicalOne;
 
-				// determine the parity of seq & _tap => if parity is odd, at the end the least bit in x is set to 1  (see BinaryMath.IsParityOdd)
-				ulong xx = seq & tap;
-				uint x = ((uint)xx) ^ ((uint)(xx >> 32));
-				x ^= x >> 16;
-				x ^= x >> 8;
-				x ^= x >> 4;
-				x ^= x >> 2;
-				x ^= x >> 1;
-				seq = (seq << 1) | (x & 1);
-			}
-		}
+        // determine the parity of seq & _tap => if parity is odd, at the end the least bit in x is set to 1  (see BinaryMath.IsParityOdd)
+        ulong xx = seq & tap;
+        uint x = ((uint)xx) ^ ((uint)(xx >> 32));
+        x ^= x >> 16;
+        x ^= x >> 8;
+        x ^= x >> 4;
+        x ^= x >> 2;
+        x ^= x >> 1;
+        seq = (seq << 1) | (x & 1);
+      }
+    }
 
-		#endregion static 64 bit methods
-	}
+    #endregion static 64 bit methods
+  }
 }

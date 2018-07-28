@@ -31,84 +31,84 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	/// <summary>
-	/// Interaction logic for GraphExportOptionsControl.xaml
-	/// </summary>
-	public partial class GraphExportOptionsControl : UserControl, IGraphExportOptionsView
-	{
-		public GraphExportOptionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for GraphExportOptionsControl.xaml
+  /// </summary>
+  public partial class GraphExportOptionsControl : UserControl, IGraphExportOptionsView
+  {
+    public GraphExportOptionsControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhImageFormatSelected(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_cbImageFormat);
-		}
+    private void EhImageFormatSelected(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_cbImageFormat);
+    }
 
-		private void EhPixelFormatSelected(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
-		}
+    private void EhPixelFormatSelected(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
+    }
 
-		#region IGraphExportView Members
+    #region IGraphExportView Members
 
-		public void SetImageFormat(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbImageFormat, list);
-		}
+    public void SetImageFormat(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_cbImageFormat, list);
+    }
 
-		public void SetPixelFormat(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbPixelFormat, list);
-		}
+    public void SetPixelFormat(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_cbPixelFormat, list);
+    }
 
-		public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbSourceResolution, list);
-		}
+    public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_cbSourceResolution, list);
+    }
 
-		public void SetDestinationDpi(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbDestinationResolution, list);
-		}
+    public void SetDestinationDpi(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_cbDestinationResolution, list);
+    }
 
-		public bool EnableClipboardFormat
-		{
-			set
-			{
-				_guiClipboardFormatHost.IsEnabled = value;
-				_lblClipboardFormat.IsEnabled = value;
-			}
-		}
+    public bool EnableClipboardFormat
+    {
+      set
+      {
+        _guiClipboardFormatHost.IsEnabled = value;
+        _lblClipboardFormat.IsEnabled = value;
+      }
+    }
 
-		public void SetClipboardFormatView(object viewObject)
-		{
-			_guiClipboardFormatHost.Child = viewObject as UIElement;
-		}
+    public void SetClipboardFormatView(object viewObject)
+    {
+      _guiClipboardFormatHost.Child = viewObject as UIElement;
+    }
 
-		public string SourceDpiResolution
-		{
-			get { return _cbSourceResolution.Text; }
-		}
+    public string SourceDpiResolution
+    {
+      get { return _cbSourceResolution.Text; }
+    }
 
-		public string DestinationDpiResolution
-		{
-			get { return _cbDestinationResolution.Text; }
-		}
+    public string DestinationDpiResolution
+    {
+      get { return _cbDestinationResolution.Text; }
+    }
 
-		public Altaxo.Graph.Gdi.BrushX BackgroundBrush
-		{
-			get
-			{
-				return _cbBackgroundBrush.SelectedBrush;
-			}
-			set
-			{
-				_cbBackgroundBrush.SelectedBrush = value;
-			}
-		}
+    public Altaxo.Graph.Gdi.BrushX BackgroundBrush
+    {
+      get
+      {
+        return _cbBackgroundBrush.SelectedBrush;
+      }
+      set
+      {
+        _cbBackgroundBrush.SelectedBrush = value;
+      }
+    }
 
-		#endregion IGraphExportView Members
-	}
+    #endregion IGraphExportView Members
+  }
 }

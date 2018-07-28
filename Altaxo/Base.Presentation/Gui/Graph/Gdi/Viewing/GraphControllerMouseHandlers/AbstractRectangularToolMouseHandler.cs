@@ -31,185 +31,185 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// Handles the drawing of a rectangle.
-	/// </summary>
-	public abstract class AbstractRectangularToolMouseHandler : MouseStateHandler
-	{
-		#region Member variables
+  /// <summary>
+  /// Handles the drawing of a rectangle.
+  /// </summary>
+  public abstract class AbstractRectangularToolMouseHandler : MouseStateHandler
+  {
+    #region Member variables
 
-		protected GraphController _grac;
+    protected GraphController _grac;
 
-		protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
+    protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
-		protected POINT[] _Points = new POINT[2];
-		protected int _currentPoint;
+    protected POINT[] _Points = new POINT[2];
+    protected int _currentPoint;
 
-		#endregion Member variables
+    #endregion Member variables
 
-		public AbstractRectangularToolMouseHandler(GraphController ctrl)
-		{
-			_grac = ctrl;
+    public AbstractRectangularToolMouseHandler(GraphController ctrl)
+    {
+      _grac = ctrl;
 
-			if (_grac != null)
-				_grac.SetPanelCursor(Cursors.Pen);
-		}
+      if (_grac != null)
+        _grac.SetPanelCursor(Cursors.Pen);
+    }
 
-		public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
-		{
-			base.OnMouseDown(position, e);
+    public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
+    {
+      base.OnMouseDown(position, e);
 
-			if (e.ChangedButton == MouseButton.Left)
-			{
-				_cachedActiveLayer = _grac.ActiveLayer;
-				_cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-				_cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+      if (e.ChangedButton == MouseButton.Left)
+      {
+        _cachedActiveLayer = _grac.ActiveLayer;
+        _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+        _cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
 
-				_currentPoint = 0;
-				// get the page coordinates (in Point (1/72") units)
-				PointD2D rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
-				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointD2D layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
+        _currentPoint = 0;
+        // get the page coordinates (in Point (1/72") units)
+        PointD2D rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
+        // with knowledge of the current active layer, calculate the layer coordinates from them
+        PointD2D layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
-				_Points[_currentPoint].LayerCoordinates = layerCoord;
-				_Points[_currentPoint].RootLayerCoordinates = rootLayerCoord;
-				_currentPoint++;
-			}
-		}
+        _Points[_currentPoint].LayerCoordinates = layerCoord;
+        _Points[_currentPoint].RootLayerCoordinates = rootLayerCoord;
+        _currentPoint++;
+      }
+    }
 
-		public override void OnMouseMove(PointD2D position, MouseEventArgs e)
-		{
-			base.OnMouseMove(position, e);
+    public override void OnMouseMove(PointD2D position, MouseEventArgs e)
+    {
+      base.OnMouseMove(position, e);
 
-			_positionCurrentMouseInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
+      _positionCurrentMouseInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
 
-			if (e.LeftButton == MouseButtonState.Pressed)
-			{
-				ModifyCurrentMousePrintAreaCoordinate();
-				_grac.RenderOverlay();
-			}
-			else if (_currentPoint != 0)
-			{
-				_currentPoint = 0;
-				_grac.RenderOverlay();
-			}
-		}
+      if (e.LeftButton == MouseButtonState.Pressed)
+      {
+        ModifyCurrentMousePrintAreaCoordinate();
+        _grac.RenderOverlay();
+      }
+      else if (_currentPoint != 0)
+      {
+        _currentPoint = 0;
+        _grac.RenderOverlay();
+      }
+    }
 
-		public override void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
-		{
-			base.OnMouseUp(position, e);
+    public override void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
+    {
+      base.OnMouseUp(position, e);
 
-			if (e.ChangedButton == MouseButton.Left)
-			{
-				// get the page coordinates (in Point (1/72") units)
-				PointD2D rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
-				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointD2D layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
+      if (e.ChangedButton == MouseButton.Left)
+      {
+        // get the page coordinates (in Point (1/72") units)
+        PointD2D rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
+        // with knowledge of the current active layer, calculate the layer coordinates from them
+        PointD2D layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
-				_Points[_currentPoint].LayerCoordinates = layerCoord;
-				_Points[_currentPoint].RootLayerCoordinates = rootLayerCoord;
-				_currentPoint++;
+        _Points[_currentPoint].LayerCoordinates = layerCoord;
+        _Points[_currentPoint].RootLayerCoordinates = rootLayerCoord;
+        _currentPoint++;
 
-				if (2 == _currentPoint)
-				{
-					FinishDrawing();
-					_currentPoint = 0;
-					_grac.SetGraphToolFromInternal(NextMouseHandlerType);
-				}
-			}
-		}
+        if (2 == _currentPoint)
+        {
+          FinishDrawing();
+          _currentPoint = 0;
+          _grac.SetGraphToolFromInternal(NextMouseHandlerType);
+        }
+      }
+    }
 
-		protected virtual void ModifyCurrentMousePrintAreaCoordinate()
-		{
-			if (_currentPoint > 0)
-			{
-				bool bControlKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Control); // Control pressed
-				bool bShiftKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
-				// draw a temporary lines of all points to the current mouse position
+    protected virtual void ModifyCurrentMousePrintAreaCoordinate()
+    {
+      if (_currentPoint > 0)
+      {
+        bool bControlKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Control); // Control pressed
+        bool bShiftKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+        // draw a temporary lines of all points to the current mouse position
 
-				if (bShiftKey && _currentPoint > 0)
-				{
-					if (_grac.ActiveLayer != null) // with an active layer, we transform to layer coordinates
-					{
-						var currMouseLayerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(_positionCurrentMouseInRootLayerCoordinates);
-						double x = currMouseLayerCoord.X - _Points[_currentPoint - 1].LayerCoordinates.X;
-						double y = currMouseLayerCoord.Y - _Points[_currentPoint - 1].LayerCoordinates.Y;
+        if (bShiftKey && _currentPoint > 0)
+        {
+          if (_grac.ActiveLayer != null) // with an active layer, we transform to layer coordinates
+          {
+            var currMouseLayerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(_positionCurrentMouseInRootLayerCoordinates);
+            double x = currMouseLayerCoord.X - _Points[_currentPoint - 1].LayerCoordinates.X;
+            double y = currMouseLayerCoord.Y - _Points[_currentPoint - 1].LayerCoordinates.Y;
 
-						double r = Math.Sqrt(x * x + y * y);
+            double r = Math.Sqrt(x * x + y * y);
 
-						x = r * Math.Sign(x);
-						y = r * Math.Sign(y);
+            x = r * Math.Sign(x);
+            y = r * Math.Sign(y);
 
-						currMouseLayerCoord = new PointD2D(
-							 (x + _Points[_currentPoint - 1].LayerCoordinates.X),
-							 (y + _Points[_currentPoint - 1].LayerCoordinates.Y)
-							 );
-						_positionCurrentMouseInRootLayerCoordinates = _grac.ActiveLayer.TransformCoordinatesFromHereToParent(currMouseLayerCoord);
-					}
-					else // without an active layer we use document coordinates
-					{
-						double x = _positionCurrentMouseInRootLayerCoordinates.X - _Points[_currentPoint - 1].RootLayerCoordinates.X;
-						double y = _positionCurrentMouseInRootLayerCoordinates.Y - _Points[_currentPoint - 1].RootLayerCoordinates.Y;
+            currMouseLayerCoord = new PointD2D(
+               (x + _Points[_currentPoint - 1].LayerCoordinates.X),
+               (y + _Points[_currentPoint - 1].LayerCoordinates.Y)
+               );
+            _positionCurrentMouseInRootLayerCoordinates = _grac.ActiveLayer.TransformCoordinatesFromHereToParent(currMouseLayerCoord);
+          }
+          else // without an active layer we use document coordinates
+          {
+            double x = _positionCurrentMouseInRootLayerCoordinates.X - _Points[_currentPoint - 1].RootLayerCoordinates.X;
+            double y = _positionCurrentMouseInRootLayerCoordinates.Y - _Points[_currentPoint - 1].RootLayerCoordinates.Y;
 
-						double r = Math.Sqrt(x * x + y * y);
+            double r = Math.Sqrt(x * x + y * y);
 
-						x = r * Math.Sign(x);
-						y = r * Math.Sign(y);
+            x = r * Math.Sign(x);
+            y = r * Math.Sign(y);
 
-						_positionCurrentMouseInRootLayerCoordinates = new PointD2D(
-								(x + _Points[_currentPoint - 1].RootLayerCoordinates.X),
-								(y + _Points[_currentPoint - 1].RootLayerCoordinates.Y)
-						);
-					}
-				}
-			}
-		}
+            _positionCurrentMouseInRootLayerCoordinates = new PointD2D(
+                (x + _Points[_currentPoint - 1].RootLayerCoordinates.X),
+                (y + _Points[_currentPoint - 1].RootLayerCoordinates.Y)
+            );
+          }
+        }
+      }
+    }
 
-		/// <summary>
-		/// Draws the temporary line(s) from the first point to the mouse.
-		/// </summary>
-		/// <param name="g"></param>
-		public override void AfterPaint(Graphics g)
-		{
-			if (_currentPoint >= 1)
-			{
-				if (null != _grac.ActiveLayer)
-				{
-					g.MultiplyTransform(_cachedActiveLayerTransformationGdi);
-					//					g.TranslateTransform((float)_grac.ActiveLayer.Position.X, (float)_grac.ActiveLayer.Position.Y);
-					//				g.RotateTransform((float)-_grac.ActiveLayer.Rotation);
-					var currLayerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(_positionCurrentMouseInRootLayerCoordinates);
-					DrawRectangleFromLTRB(g, _Points[0].LayerCoordinates, currLayerCoord);
-				}
-				else
-				{
-					DrawRectangleFromLTRB(g, _Points[0].RootLayerCoordinates, _positionCurrentMouseInRootLayerCoordinates);
-				}
-			}
-		}
+    /// <summary>
+    /// Draws the temporary line(s) from the first point to the mouse.
+    /// </summary>
+    /// <param name="g"></param>
+    public override void AfterPaint(Graphics g)
+    {
+      if (_currentPoint >= 1)
+      {
+        if (null != _grac.ActiveLayer)
+        {
+          g.MultiplyTransform(_cachedActiveLayerTransformationGdi);
+          //					g.TranslateTransform((float)_grac.ActiveLayer.Position.X, (float)_grac.ActiveLayer.Position.Y);
+          //				g.RotateTransform((float)-_grac.ActiveLayer.Rotation);
+          var currLayerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(_positionCurrentMouseInRootLayerCoordinates);
+          DrawRectangleFromLTRB(g, _Points[0].LayerCoordinates, currLayerCoord);
+        }
+        else
+        {
+          DrawRectangleFromLTRB(g, _Points[0].RootLayerCoordinates, _positionCurrentMouseInRootLayerCoordinates);
+        }
+      }
+    }
 
-		public RectangleD2D GetNormalRectangle(PointD2D a, PointD2D b)
-		{
-			var x = Math.Min(a.X, b.X);
-			var y = Math.Min(a.Y, b.Y);
+    public RectangleD2D GetNormalRectangle(PointD2D a, PointD2D b)
+    {
+      var x = Math.Min(a.X, b.X);
+      var y = Math.Min(a.Y, b.Y);
 
-			var w = Math.Abs(a.X - b.X);
-			var h = Math.Abs(a.Y - b.Y);
+      var w = Math.Abs(a.X - b.X);
+      var h = Math.Abs(a.Y - b.Y);
 
-			return new RectangleD2D(x, y, w, h);
-		}
+      return new RectangleD2D(x, y, w, h);
+    }
 
-		private void DrawRectangleFromLTRB(Graphics g, PointD2D a, PointD2D b)
-		{
-			var rect = RectangleD2D.FromLTRB(a.X, a.Y, b.X, b.Y);
-			Pen pen = Pens.Blue;
-			g.DrawLine(pen, (float)a.X, (float)a.Y, (float)b.X, (float)a.Y);
-			g.DrawLine(pen, (float)b.X, (float)a.Y, (float)b.X, (float)b.Y);
-			g.DrawLine(pen, (float)b.X, (float)b.Y, (float)a.X, (float)b.Y);
-			g.DrawLine(pen, (float)a.X, (float)b.Y, (float)a.X, (float)a.Y);
-			//      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);
-		}
+    private void DrawRectangleFromLTRB(Graphics g, PointD2D a, PointD2D b)
+    {
+      var rect = RectangleD2D.FromLTRB(a.X, a.Y, b.X, b.Y);
+      Pen pen = Pens.Blue;
+      g.DrawLine(pen, (float)a.X, (float)a.Y, (float)b.X, (float)a.Y);
+      g.DrawLine(pen, (float)b.X, (float)a.Y, (float)b.X, (float)b.Y);
+      g.DrawLine(pen, (float)b.X, (float)b.Y, (float)a.X, (float)b.Y);
+      g.DrawLine(pen, (float)a.X, (float)b.Y, (float)a.X, (float)a.Y);
+      //      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);
+    }
 
-		protected abstract void FinishDrawing();
-	}
+    protected abstract void FinishDrawing();
+  }
 }

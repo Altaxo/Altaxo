@@ -30,14 +30,14 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-	/// <summary>
-	/// Interaction logic for AngularTickSpacingControl.xaml
-	/// </summary>
-	public partial class NoTickSpacingControl : UserControl, INoTickSpacingView
-	{
-		public NoTickSpacingControl()
-		{
-			InitializeComponent();
-		}
-	}
+  /// <summary>
+  /// Interaction logic for AngularTickSpacingControl.xaml
+  /// </summary>
+  public partial class NoTickSpacingControl : UserControl, INoTickSpacingView
+  {
+    public NoTickSpacingControl()
+    {
+      InitializeComponent();
+    }
+  }
 }

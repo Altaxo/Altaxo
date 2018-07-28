@@ -30,39 +30,39 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-	/// <summary>
-	/// Interaction logic for MultiLineLabelFormattingBaseControl.xaml
-	/// </summary>
-	public partial class MultiLineLabelFormattingBaseControl : UserControl, IMultiLineLabelFormattingBaseView
-	{
-		public MultiLineLabelFormattingBaseControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for MultiLineLabelFormattingBaseControl.xaml
+  /// </summary>
+  public partial class MultiLineLabelFormattingBaseControl : UserControl, IMultiLineLabelFormattingBaseView
+  {
+    public MultiLineLabelFormattingBaseControl()
+    {
+      InitializeComponent();
+    }
 
-		public double LineSpacing
-		{
-			get
-			{
-				return _guiLineSpacing.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_guiLineSpacing.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double LineSpacing
+    {
+      get
+      {
+        return _guiLineSpacing.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _guiLineSpacing.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public Collections.SelectableListNodeList TextBlockAlignement
-		{
-			set
-			{
-				GuiHelper.Initialize(_guiTextBlockAligment, value);
-			}
-		}
+    public Collections.SelectableListNodeList TextBlockAlignement
+    {
+      set
+      {
+        GuiHelper.Initialize(_guiTextBlockAligment, value);
+      }
+    }
 
-		private void EhTextBlockAligmentChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiTextBlockAligment);
-		}
-	}
+    private void EhTextBlockAligmentChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiTextBlockAligment);
+    }
+  }
 }

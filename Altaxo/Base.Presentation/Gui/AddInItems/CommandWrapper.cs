@@ -27,211 +27,211 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.AddInItems
 {
-	public sealed class CommandWrapper : ICommand
-	{
-		private bool _commandCreated;
-		private ICommand _addInCommand;
-		private readonly IReadOnlyCollection<ICondition> _conditions;
-		private readonly Codon _codon;
+  public sealed class CommandWrapper : ICommand
+  {
+    private bool _commandCreated;
+    private ICommand _addInCommand;
+    private readonly IReadOnlyCollection<ICondition> _conditions;
+    private readonly Codon _codon;
 
-		/// <summary>
-		/// Maintains a weak collection of CanExecute handlers as long as there is no command created. When creating the command
-		/// the CanExecute handler of this collection are bound to the command, and this collection is set to null.
-		/// </summary>
-		private WeakCollection<EventHandler> _canExecuteChangedHandlersToRegisterOnCommand;
+    /// <summary>
+    /// Maintains a weak collection of CanExecute handlers as long as there is no command created. When creating the command
+    /// the CanExecute handler of this collection are bound to the command, and this collection is set to null.
+    /// </summary>
+    private WeakCollection<EventHandler> _canExecuteChangedHandlersToRegisterOnCommand;
 
-		/// <summary>
-		/// A delegate that is set by the host application, and gets executed to create link commands.
-		/// </summary>
-		public static Func<string, ICommand> LinkCommandCreator { get; set; }
+    /// <summary>
+    /// A delegate that is set by the host application, and gets executed to create link commands.
+    /// </summary>
+    public static Func<string, ICommand> LinkCommandCreator { get; set; }
 
-		/// <summary>
-		/// A delegate that is set by the host application, and gets executed to create well-known commands.
-		/// </summary>
-		public static Func<string, ICommand> WellKnownCommandCreator { get; set; }
+    /// <summary>
+    /// A delegate that is set by the host application, and gets executed to create well-known commands.
+    /// </summary>
+    public static Func<string, ICommand> WellKnownCommandCreator { get; set; }
 
-		public static Action<EventHandler> RegisterConditionRequerySuggestedHandler { get; set; }
-		public static Action<EventHandler> UnregisterConditionRequerySuggestedHandler { get; set; }
+    public static Action<EventHandler> RegisterConditionRequerySuggestedHandler { get; set; }
+    public static Action<EventHandler> UnregisterConditionRequerySuggestedHandler { get; set; }
 
-		/// <summary>
-		/// Creates a lazy command.
-		/// </summary>
-		public static ICommand CreateLazyCommand(Codon codon, IReadOnlyCollection<ICondition> conditions)
-		{
-			if (codon.Properties["loadclasslazy"] == "false")
-			{
-				// if lazy loading was explicitly disabled, create the actual command now
-				return CreateCommand(codon, conditions);
-			}
-			if (codon.Properties.Contains("command") && !codon.Properties.Contains("loadclasslazy"))
-			{
-				// If we're using the 'command=' syntax, this is most likely a built-in command
-				// where lazy loading isn't useful (and hurts if CanExecute is used).
-				// Don't use lazy loading unless loadclasslazy is set explicitly.
-				return CreateCommand(codon, conditions);
-			}
-			// Create the wrapper that lazily loads the actual command.
-			return new CommandWrapper(codon, conditions);
-		}
+    /// <summary>
+    /// Creates a lazy command.
+    /// </summary>
+    public static ICommand CreateLazyCommand(Codon codon, IReadOnlyCollection<ICondition> conditions)
+    {
+      if (codon.Properties["loadclasslazy"] == "false")
+      {
+        // if lazy loading was explicitly disabled, create the actual command now
+        return CreateCommand(codon, conditions);
+      }
+      if (codon.Properties.Contains("command") && !codon.Properties.Contains("loadclasslazy"))
+      {
+        // If we're using the 'command=' syntax, this is most likely a built-in command
+        // where lazy loading isn't useful (and hurts if CanExecute is used).
+        // Don't use lazy loading unless loadclasslazy is set explicitly.
+        return CreateCommand(codon, conditions);
+      }
+      // Create the wrapper that lazily loads the actual command.
+      return new CommandWrapper(codon, conditions);
+    }
 
-		/// <summary>
-		/// Creates a non-lazy command.
-		/// </summary>
-		public static ICommand CreateCommand(Codon codon, IReadOnlyCollection<ICondition> conditions)
-		{
-			ICommand command = CreateCommand(codon);
-			if (command != null && conditions.Count == 0)
-				return command;
-			else
-				return new CommandWrapper(command, conditions);
-		}
+    /// <summary>
+    /// Creates a non-lazy command.
+    /// </summary>
+    public static ICommand CreateCommand(Codon codon, IReadOnlyCollection<ICondition> conditions)
+    {
+      ICommand command = CreateCommand(codon);
+      if (command != null && conditions.Count == 0)
+        return command;
+      else
+        return new CommandWrapper(command, conditions);
+    }
 
-		public static ICommand Unwrap(ICommand command)
-		{
-			if (command is CommandWrapper w)
-			{
-				w.EnsureCommandCreated();
-				return w._addInCommand;
-			}
-			else
-			{
-				return command;
-			}
-		}
+    public static ICommand Unwrap(ICommand command)
+    {
+      if (command is CommandWrapper w)
+      {
+        w.EnsureCommandCreated();
+        return w._addInCommand;
+      }
+      else
+      {
+        return command;
+      }
+    }
 
-		private static ICommand CreateCommand(Codon codon)
-		{
-			ICommand command = null;
-			if (codon.Properties.Contains("command"))
-			{
-				string commandName = codon.Properties["command"];
-				if (WellKnownCommandCreator != null)
-				{
-					command = WellKnownCommandCreator(commandName);
-				}
-				if (command == null)
-				{
-					command = GetCommandFromStaticProperty(codon.AddIn, commandName);
-				}
-				if (command == null)
-				{
-					Current.MessageService.ShowError("Could not find command '" + commandName + "'.");
-				}
-			}
-			else if (codon.Properties.Contains("link"))
-			{
-				if (LinkCommandCreator == null)
-					throw new NotSupportedException("MenuCommand.LinkCommandCreator is not set, cannot create LinkCommands.");
-				command = LinkCommandCreator(codon.Properties["link"]);
-			}
-			else
-			{
-				command = (ICommand)codon.AddIn.CreateObject(codon.Properties["class"]);
-			}
-			return command;
-		}
+    private static ICommand CreateCommand(Codon codon)
+    {
+      ICommand command = null;
+      if (codon.Properties.Contains("command"))
+      {
+        string commandName = codon.Properties["command"];
+        if (WellKnownCommandCreator != null)
+        {
+          command = WellKnownCommandCreator(commandName);
+        }
+        if (command == null)
+        {
+          command = GetCommandFromStaticProperty(codon.AddIn, commandName);
+        }
+        if (command == null)
+        {
+          Current.MessageService.ShowError("Could not find command '" + commandName + "'.");
+        }
+      }
+      else if (codon.Properties.Contains("link"))
+      {
+        if (LinkCommandCreator == null)
+          throw new NotSupportedException("MenuCommand.LinkCommandCreator is not set, cannot create LinkCommands.");
+        command = LinkCommandCreator(codon.Properties["link"]);
+      }
+      else
+      {
+        command = (ICommand)codon.AddIn.CreateObject(codon.Properties["class"]);
+      }
+      return command;
+    }
 
-		private static ICommand GetCommandFromStaticProperty(AddIn addIn, string commandName)
-		{
-			int pos = commandName.LastIndexOf('.');
-			if (pos > 0)
-			{
-				string className = commandName.Substring(0, pos);
-				string propertyName = commandName.Substring(pos + 1);
-				Type classType = addIn.FindType(className);
-				if (classType != null)
-				{
-					PropertyInfo p = classType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static);
-					if (p != null)
-						return (ICommand)p.GetValue(null, null);
-					FieldInfo f = classType.GetField(propertyName, BindingFlags.Public | BindingFlags.Static);
-					if (f != null)
-						return (ICommand)f.GetValue(null);
-				}
-			}
-			return null;
-		}
+    private static ICommand GetCommandFromStaticProperty(AddIn addIn, string commandName)
+    {
+      int pos = commandName.LastIndexOf('.');
+      if (pos > 0)
+      {
+        string className = commandName.Substring(0, pos);
+        string propertyName = commandName.Substring(pos + 1);
+        Type classType = addIn.FindType(className);
+        if (classType != null)
+        {
+          PropertyInfo p = classType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static);
+          if (p != null)
+            return (ICommand)p.GetValue(null, null);
+          FieldInfo f = classType.GetField(propertyName, BindingFlags.Public | BindingFlags.Static);
+          if (f != null)
+            return (ICommand)f.GetValue(null);
+        }
+      }
+      return null;
+    }
 
-		private CommandWrapper(Codon codon, IReadOnlyCollection<ICondition> conditions)
-		{
-			this._codon = codon;
-			this._conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
-			this._canExecuteChangedHandlersToRegisterOnCommand = new WeakCollection<EventHandler>();
-		}
+    private CommandWrapper(Codon codon, IReadOnlyCollection<ICondition> conditions)
+    {
+      this._codon = codon;
+      this._conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
+      this._canExecuteChangedHandlersToRegisterOnCommand = new WeakCollection<EventHandler>();
+    }
 
-		private CommandWrapper(ICommand command, IReadOnlyCollection<ICondition> conditions)
-		{
-			this._addInCommand = command;
-			this._conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
-			this._commandCreated = true;
-		}
+    private CommandWrapper(ICommand command, IReadOnlyCollection<ICondition> conditions)
+    {
+      this._addInCommand = command;
+      this._conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
+      this._commandCreated = true;
+    }
 
-		private void EnsureCommandCreated()
-		{
-			if (!_commandCreated)
-			{
-				_commandCreated = true;
-				_addInCommand = CreateCommand(_codon);
-				if (_canExecuteChangedHandlersToRegisterOnCommand != null)
-				{
-					var handlers = _canExecuteChangedHandlersToRegisterOnCommand.ToArray();
-					_canExecuteChangedHandlersToRegisterOnCommand = null;
+    private void EnsureCommandCreated()
+    {
+      if (!_commandCreated)
+      {
+        _commandCreated = true;
+        _addInCommand = CreateCommand(_codon);
+        if (_canExecuteChangedHandlersToRegisterOnCommand != null)
+        {
+          var handlers = _canExecuteChangedHandlersToRegisterOnCommand.ToArray();
+          _canExecuteChangedHandlersToRegisterOnCommand = null;
 
-					foreach (var handler in handlers)
-					{
-						if (_addInCommand != null)
-							_addInCommand.CanExecuteChanged += handler;
-						// Creating the command potentially changes the CanExecute state, so we should raise the event handlers once:
-						handler(this, EventArgs.Empty);
-					}
-				}
-			}
-		}
+          foreach (var handler in handlers)
+          {
+            if (_addInCommand != null)
+              _addInCommand.CanExecuteChanged += handler;
+            // Creating the command potentially changes the CanExecute state, so we should raise the event handlers once:
+            handler(this, EventArgs.Empty);
+          }
+        }
+      }
+    }
 
-		public event EventHandler CanExecuteChanged
-		{
-			add
-			{
-				if (value == null)
-					return;
-				if (_conditions.Count > 0 && RegisterConditionRequerySuggestedHandler != null)
-					RegisterConditionRequerySuggestedHandler(value);
+    public event EventHandler CanExecuteChanged
+    {
+      add
+      {
+        if (value == null)
+          return;
+        if (_conditions.Count > 0 && RegisterConditionRequerySuggestedHandler != null)
+          RegisterConditionRequerySuggestedHandler(value);
 
-				if (_addInCommand != null)
-					_addInCommand.CanExecuteChanged += value;
-				else if (_canExecuteChangedHandlersToRegisterOnCommand != null)
-					_canExecuteChangedHandlersToRegisterOnCommand.Add(value);
-			}
-			remove
-			{
-				if (value == null)
-					return;
-				if (_conditions.Count > 0 && UnregisterConditionRequerySuggestedHandler != null)
-					UnregisterConditionRequerySuggestedHandler(value);
+        if (_addInCommand != null)
+          _addInCommand.CanExecuteChanged += value;
+        else if (_canExecuteChangedHandlersToRegisterOnCommand != null)
+          _canExecuteChangedHandlersToRegisterOnCommand.Add(value);
+      }
+      remove
+      {
+        if (value == null)
+          return;
+        if (_conditions.Count > 0 && UnregisterConditionRequerySuggestedHandler != null)
+          UnregisterConditionRequerySuggestedHandler(value);
 
-				if (_addInCommand != null)
-					_addInCommand.CanExecuteChanged -= value;
-				else if (_canExecuteChangedHandlersToRegisterOnCommand != null)
-					_canExecuteChangedHandlersToRegisterOnCommand.Remove(value);
-			}
-		}
+        if (_addInCommand != null)
+          _addInCommand.CanExecuteChanged -= value;
+        else if (_canExecuteChangedHandlersToRegisterOnCommand != null)
+          _canExecuteChangedHandlersToRegisterOnCommand.Remove(value);
+      }
+    }
 
-		public void Execute(object parameter)
-		{
-			EnsureCommandCreated();
-			if (CanExecute(parameter))
-			{
-				_addInCommand.Execute(parameter);
-			}
-		}
+    public void Execute(object parameter)
+    {
+      EnsureCommandCreated();
+      if (CanExecute(parameter))
+      {
+        _addInCommand.Execute(parameter);
+      }
+    }
 
-		public bool CanExecute(object parameter)
-		{
-			if (Condition.GetFailedAction(_conditions, parameter) != ConditionFailedAction.Nothing)
-				return false;
-			if (!_commandCreated)
-				return true;
-			return _addInCommand != null && _addInCommand.CanExecute(parameter);
-		}
-	}
+    public bool CanExecute(object parameter)
+    {
+      if (Condition.GetFailedAction(_conditions, parameter) != ConditionFailedAction.Nothing)
+        return false;
+      if (!_commandCreated)
+        return true;
+      return _addInCommand != null && _addInCommand.CanExecute(parameter);
+    }
+  }
 }

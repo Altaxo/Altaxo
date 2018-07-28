@@ -30,27 +30,27 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-	[UserControllerForObject(typeof(DateTimeTickSpacing), 200)]
-	[ExpectedTypeOfView(typeof(INoTickSpacingView))]
-	public class DateTimeTickSpacingController : MVCANControllerEditOriginalDocBase<DateTimeTickSpacing, INoTickSpacingView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(DateTimeTickSpacing), 200)]
+  [ExpectedTypeOfView(typeof(INoTickSpacingView))]
+  public class DateTimeTickSpacingController : MVCANControllerEditOriginalDocBase<DateTimeTickSpacing, INoTickSpacingView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-			}
-		}
+      if (null != _view)
+      {
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			return ApplyEnd(true, disposeController);
-		}
-	}
+    public override bool Apply(bool disposeController)
+    {
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

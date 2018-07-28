@@ -27,333 +27,333 @@ using System.Collections.Generic;
 
 namespace Altaxo.Collections
 {
-	/// <summary>
-	/// Stores a number of arbitrary integer values in ascending order.
-	/// </summary>
-	public class AscendingIntegerCollection : IAscendingIntegerCollection, System.ICloneable
-	{
-		protected System.Collections.Generic.SortedList<int, object> _list = new System.Collections.Generic.SortedList<int, object>();
+  /// <summary>
+  /// Stores a number of arbitrary integer values in ascending order.
+  /// </summary>
+  public class AscendingIntegerCollection : IAscendingIntegerCollection, System.ICloneable
+  {
+    protected System.Collections.Generic.SortedList<int, object> _list = new System.Collections.Generic.SortedList<int, object>();
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AscendingIntegerCollection), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				AscendingIntegerCollection s = (AscendingIntegerCollection)obj;
-				int count = s.GetRangeCount();
-				info.CreateArray("Ranges", count);
-				int currentpos = 0;
-				ContiguousIntegerRange range;
-				while (s.GetNextRangeAscending(ref currentpos, out range))
-				{
-					info.CreateElement("e");
-					info.AddValue("Start", range.Start);
-					info.AddValue("Count", range.Count);
-					info.CommitElement();
-				}
-				info.CommitArray();
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AscendingIntegerCollection), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        AscendingIntegerCollection s = (AscendingIntegerCollection)obj;
+        int count = s.GetRangeCount();
+        info.CreateArray("Ranges", count);
+        int currentpos = 0;
+        ContiguousIntegerRange range;
+        while (s.GetNextRangeAscending(ref currentpos, out range))
+        {
+          info.CreateElement("e");
+          info.AddValue("Start", range.Start);
+          info.AddValue("Count", range.Count);
+          info.CommitElement();
+        }
+        info.CommitArray();
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				AscendingIntegerCollection s = null != o ? (AscendingIntegerCollection)o : new AscendingIntegerCollection();
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AscendingIntegerCollection s = null != o ? (AscendingIntegerCollection)o : new AscendingIntegerCollection();
 
-				int count = info.OpenArray();
+        int count = info.OpenArray();
 
-				for (int i = 0; i < count; i++)
-				{
-					info.OpenElement();
-					int rangestart = info.GetInt32("Start");
-					int rangecount = info.GetInt32("Count");
-					info.CloseElement();
-					s.AddRange(rangestart, rangecount);
-				}
-				info.CloseArray(count);
-				return s;
-			}
-		}
+        for (int i = 0; i < count; i++)
+        {
+          info.OpenElement();
+          int rangestart = info.GetInt32("Start");
+          int rangecount = info.GetInt32("Count");
+          info.CloseElement();
+          s.AddRange(rangestart, rangecount);
+        }
+        info.CloseArray(count);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>
-		/// Creates an empty collection.
-		/// </summary>
-		public AscendingIntegerCollection()
-		{
-		}
+    /// <summary>
+    /// Creates an empty collection.
+    /// </summary>
+    public AscendingIntegerCollection()
+    {
+    }
 
-		/// <summary>
-		/// Creates a collection cloned from another <see cref="AscendingIntegerCollection" />.
-		/// </summary>
-		/// <param name="from"></param>
-		public AscendingIntegerCollection(AscendingIntegerCollection from)
-		{
-			_list = new System.Collections.Generic.SortedList<int, object>(from._list);
-		}
+    /// <summary>
+    /// Creates a collection cloned from another <see cref="AscendingIntegerCollection" />.
+    /// </summary>
+    /// <param name="from"></param>
+    public AscendingIntegerCollection(AscendingIntegerCollection from)
+    {
+      _list = new System.Collections.Generic.SortedList<int, object>(from._list);
+    }
 
-		/// <summary>
-		/// Creates the collection copied from another <see cref="IAscendingIntegerCollection" />.
-		/// </summary>
-		/// <param name="from"></param>
-		public AscendingIntegerCollection(IAscendingIntegerCollection from)
-		{
-			for (int i = 0; i < from.Count; i++)
-				this.Add(from[i]);
-		}
+    /// <summary>
+    /// Creates the collection copied from another <see cref="IAscendingIntegerCollection" />.
+    /// </summary>
+    /// <param name="from"></param>
+    public AscendingIntegerCollection(IAscendingIntegerCollection from)
+    {
+      for (int i = 0; i < from.Count; i++)
+        this.Add(from[i]);
+    }
 
-		/// <summary>
-		/// Number of integer values stored in this collection
-		/// </summary>
-		public int Count
-		{
-			get
-			{
-				return _list.Count;
-			}
-		}
+    /// <summary>
+    /// Number of integer values stored in this collection
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        return _list.Count;
+      }
+    }
 
-		/// <summary>
-		/// Returns the number of integer ranges this collection represents.
-		/// </summary>
-		/// <returns>The number of contiguous integer ranges.</returns>
-		public int GetRangeCount()
-		{
-			int result = 0;
-			int currentpos = 0;
-			ContiguousIntegerRange range;
-			while (GetNextRangeAscending(ref currentpos, out range))
-				result++;
+    /// <summary>
+    /// Returns the number of integer ranges this collection represents.
+    /// </summary>
+    /// <returns>The number of contiguous integer ranges.</returns>
+    public int GetRangeCount()
+    {
+      int result = 0;
+      int currentpos = 0;
+      ContiguousIntegerRange range;
+      while (GetNextRangeAscending(ref currentpos, out range))
+        result++;
 
-			return result;
-		}
+      return result;
+    }
 
-		/// <summary>
-		/// Returns the integer stored at position <code>i</code>.
-		/// </summary>
-		public int this[int i]
-		{
-			get { return _list.Keys[i]; }
-		}
+    /// <summary>
+    /// Returns the integer stored at position <code>i</code>.
+    /// </summary>
+    public int this[int i]
+    {
+      get { return _list.Keys[i]; }
+    }
 
-		/// <summary>
-		/// Get the next range (i.e. a contiguous range of integers) in ascending order.
-		/// </summary>
-		/// <param name="currentposition">The current position into this collection. Use 0 for the first time. On return, this is the next position.</param>
-		/// <param name="result">Returns the next contiguous range if the return value is <c>true</c>.</param>
-		/// <returns>True if the returned data are valid, false if there is no more data.</returns>
-		/// <remarks>You can use this function in a while loop:
-		/// <code>
-		/// int rangestart, rangecount;
-		/// int currentPosition=0;
-		/// while(GetNextRangeAscending(ref currentPosition, out rangestart, out rangecount))
-		///   {
-		///   // do your things here
-		///   }
-		/// </code></remarks>
-		public bool GetNextRangeAscending(ref int currentposition, out ContiguousIntegerRange result)
-		{
-			int rangestart;
-			int rangecount;
+    /// <summary>
+    /// Get the next range (i.e. a contiguous range of integers) in ascending order.
+    /// </summary>
+    /// <param name="currentposition">The current position into this collection. Use 0 for the first time. On return, this is the next position.</param>
+    /// <param name="result">Returns the next contiguous range if the return value is <c>true</c>.</param>
+    /// <returns>True if the returned data are valid, false if there is no more data.</returns>
+    /// <remarks>You can use this function in a while loop:
+    /// <code>
+    /// int rangestart, rangecount;
+    /// int currentPosition=0;
+    /// while(GetNextRangeAscending(ref currentPosition, out rangestart, out rangecount))
+    ///   {
+    ///   // do your things here
+    ///   }
+    /// </code></remarks>
+    public bool GetNextRangeAscending(ref int currentposition, out ContiguousIntegerRange result)
+    {
+      int rangestart;
+      int rangecount;
 
-			if (currentposition < 0 || currentposition >= Count)
-			{
-				result = ContiguousIntegerRange.Empty;
-				return false;
-			}
-			else
-			{
-				rangestart = this[currentposition];
-				int previous = rangestart;
-				rangecount = 1;
-				for (currentposition = currentposition + 1; currentposition < Count; currentposition++)
-				{
-					if (this[currentposition] == (previous + 1))
-					{
-						previous++;
-						rangecount++;
-					}
-					else
-					{
-						break;
-					}
-				}
+      if (currentposition < 0 || currentposition >= Count)
+      {
+        result = ContiguousIntegerRange.Empty;
+        return false;
+      }
+      else
+      {
+        rangestart = this[currentposition];
+        int previous = rangestart;
+        rangecount = 1;
+        for (currentposition = currentposition + 1; currentposition < Count; currentposition++)
+        {
+          if (this[currentposition] == (previous + 1))
+          {
+            previous++;
+            rangecount++;
+          }
+          else
+          {
+            break;
+          }
+        }
 
-				result = ContiguousIntegerRange.FromStartAndCount(rangestart, rangecount);
-				return true;
-			}
-		}
+        result = ContiguousIntegerRange.FromStartAndCount(rangestart, rangecount);
+        return true;
+      }
+    }
 
-		/// <summary>
-		/// Get the next range (i.e. a contiguous range of integers) in descending order.
-		/// </summary>
-		/// <param name="currentposition">The current position into this collection. Use Count-1 for the first time. On return, this is the next position.</param>
-		/// <param name="result">Returns the next contiguous interger range if the return value is <c>true</c>.</param>
-		/// <returns>True if the range data are valid, false if there is no more data. Used as end-of-loop indicator.</returns>
-		/// <remarks>You can use this function in a while loop:
-		/// <code>
-		/// int rangestart, rangecount;
-		/// int currentPosition=selection.Count-1;
-		/// while(selection.GetNextRangeAscending(currentPosition,out rangestart, out rangecount))
-		///   {
-		///   // do your things here
-		///   }
-		/// </code></remarks>
-		public bool GetNextRangeDescending(ref int currentposition, out ContiguousIntegerRange result)
-		{
-			int rangestart, rangecount;
-			if (currentposition < 0 || currentposition >= Count)
-			{
-				result = ContiguousIntegerRange.Empty;
-				return false;
-			}
-			else
-			{
-				rangestart = this[currentposition];
-				rangecount = 1;
-				for (currentposition = currentposition - 1; currentposition >= 0; currentposition--)
-				{
-					if (this[currentposition] == (rangestart - 1))
-					{
-						rangestart--;
-						rangecount++;
-					}
-					else
-					{
-						break;
-					}
-				}
+    /// <summary>
+    /// Get the next range (i.e. a contiguous range of integers) in descending order.
+    /// </summary>
+    /// <param name="currentposition">The current position into this collection. Use Count-1 for the first time. On return, this is the next position.</param>
+    /// <param name="result">Returns the next contiguous interger range if the return value is <c>true</c>.</param>
+    /// <returns>True if the range data are valid, false if there is no more data. Used as end-of-loop indicator.</returns>
+    /// <remarks>You can use this function in a while loop:
+    /// <code>
+    /// int rangestart, rangecount;
+    /// int currentPosition=selection.Count-1;
+    /// while(selection.GetNextRangeAscending(currentPosition,out rangestart, out rangecount))
+    ///   {
+    ///   // do your things here
+    ///   }
+    /// </code></remarks>
+    public bool GetNextRangeDescending(ref int currentposition, out ContiguousIntegerRange result)
+    {
+      int rangestart, rangecount;
+      if (currentposition < 0 || currentposition >= Count)
+      {
+        result = ContiguousIntegerRange.Empty;
+        return false;
+      }
+      else
+      {
+        rangestart = this[currentposition];
+        rangecount = 1;
+        for (currentposition = currentposition - 1; currentposition >= 0; currentposition--)
+        {
+          if (this[currentposition] == (rangestart - 1))
+          {
+            rangestart--;
+            rangecount++;
+          }
+          else
+          {
+            break;
+          }
+        }
 
-				result = ContiguousIntegerRange.FromStartAndCount(rangestart, rangecount);
-				return true;
-			}
-		}
+        result = ContiguousIntegerRange.FromStartAndCount(rangestart, rangecount);
+        return true;
+      }
+    }
 
-		public IEnumerable<ContiguousIntegerRange> RangesAscending
-		{
-			get
-			{
-				int start = 0;
-				ContiguousIntegerRange result;
-				while (GetNextRangeAscending(ref start, out result))
-					yield return result;
-			}
-		}
+    public IEnumerable<ContiguousIntegerRange> RangesAscending
+    {
+      get
+      {
+        int start = 0;
+        ContiguousIntegerRange result;
+        while (GetNextRangeAscending(ref start, out result))
+          yield return result;
+      }
+    }
 
-		public IEnumerable<ContiguousIntegerRange> RangesDescending
-		{
-			get
-			{
-				int start = Count - 1;
-				ContiguousIntegerRange result;
-				while (GetNextRangeDescending(ref start, out result))
-					yield return result;
-			}
-		}
+    public IEnumerable<ContiguousIntegerRange> RangesDescending
+    {
+      get
+      {
+        int start = Count - 1;
+        ContiguousIntegerRange result;
+        while (GetNextRangeDescending(ref start, out result))
+          yield return result;
+      }
+    }
 
-		/// <summary>
-		/// Returns true, if the integer <code>nValue</code> is contained in this collection.
-		/// </summary>
-		/// <param name="nValue">The integer value to test for membership.</param>
-		/// <returns>True if the integer value is member of the collection.</returns>
-		public bool Contains(int nValue)
-		{
-			return _list.ContainsKey(nValue);
-		}
+    /// <summary>
+    /// Returns true, if the integer <code>nValue</code> is contained in this collection.
+    /// </summary>
+    /// <param name="nValue">The integer value to test for membership.</param>
+    /// <returns>True if the integer value is member of the collection.</returns>
+    public bool Contains(int nValue)
+    {
+      return _list.ContainsKey(nValue);
+    }
 
-		/// <summary>
-		/// Adds an integer value to the collection.
-		/// </summary>
-		/// <param name="nValue">The integer value to add.</param>
-		public void Add(int nValue)
-		{
-			_list.Add(nValue, null);
-		}
+    /// <summary>
+    /// Adds an integer value to the collection.
+    /// </summary>
+    /// <param name="nValue">The integer value to add.</param>
+    public void Add(int nValue)
+    {
+      _list.Add(nValue, null);
+    }
 
-		/// <summary>
-		/// Adds all values from another <see cref="IAscendingIntegerCollection" />.
-		/// </summary>
-		/// <param name="from">The source collection.</param>
-		public void Add(IAscendingIntegerCollection from)
-		{
-			int end = from.Count;
-			for (int i = 0; i < end; i++)
-				Add(from[i]);
-		}
+    /// <summary>
+    /// Adds all values from another <see cref="IAscendingIntegerCollection" />.
+    /// </summary>
+    /// <param name="from">The source collection.</param>
+    public void Add(IAscendingIntegerCollection from)
+    {
+      int end = from.Count;
+      for (int i = 0; i < end; i++)
+        Add(from[i]);
+    }
 
-		/// <summary>
-		/// Adds an integer range given by start and count to the collection.
-		/// </summary>
-		/// <param name="rangestart">First number of the integer range.</param>
-		/// <param name="rangecount">Length of the integer range.</param>
-		public void AddRange(int rangestart, int rangecount)
-		{
-			for (int i = 0; i < rangecount; i++)
-				Add(rangestart + i);
-		}
+    /// <summary>
+    /// Adds an integer range given by start and count to the collection.
+    /// </summary>
+    /// <param name="rangestart">First number of the integer range.</param>
+    /// <param name="rangecount">Length of the integer range.</param>
+    public void AddRange(int rangestart, int rangecount)
+    {
+      for (int i = 0; i < rangecount; i++)
+        Add(rangestart + i);
+    }
 
-		/// <summary>
-		/// Removes an integer value from the collection.
-		/// </summary>
-		/// <param name="nValue">The integer value to remove.</param>
-		public void Remove(int nValue)
-		{
-			_list.Remove(nValue);
-		}
+    /// <summary>
+    /// Removes an integer value from the collection.
+    /// </summary>
+    /// <param name="nValue">The integer value to remove.</param>
+    public void Remove(int nValue)
+    {
+      _list.Remove(nValue);
+    }
 
-		/// <summary>
-		/// Removes an integer at a given position from the collection (e.g. in general not the integer you provide as argument is removed (!)).
-		/// </summary>
-		/// <param name="position"></param>
-		public void RemoveAt(int position)
-		{
-			_list.RemoveAt(position);
-		}
+    /// <summary>
+    /// Removes an integer at a given position from the collection (e.g. in general not the integer you provide as argument is removed (!)).
+    /// </summary>
+    /// <param name="position"></param>
+    public void RemoveAt(int position)
+    {
+      _list.RemoveAt(position);
+    }
 
-		public void RemoveAllAbove(int maxValue)
-		{
-			var keys = _list.Keys;
-			for (int i = keys.Count - 1; i >= 0; --i)
-			{
-				if (keys[i] > maxValue)
-					_list.RemoveAt(i);
-			}
-		}
+    public void RemoveAllAbove(int maxValue)
+    {
+      var keys = _list.Keys;
+      for (int i = keys.Count - 1; i >= 0; --i)
+      {
+        if (keys[i] > maxValue)
+          _list.RemoveAt(i);
+      }
+    }
 
-		/// <summary>
-		/// Clears the collection, i.e. removes all entries.
-		/// </summary>
-		public void Clear()
-		{
-			_list.Clear();
-		}
+    /// <summary>
+    /// Clears the collection, i.e. removes all entries.
+    /// </summary>
+    public void Clear()
+    {
+      _list.Clear();
+    }
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public object Clone()
-		{
-			return new AscendingIntegerCollection(this);
-		}
+    public object Clone()
+    {
+      return new AscendingIntegerCollection(this);
+    }
 
-		#endregion ICloneable Members
+    #endregion ICloneable Members
 
-		#region IEnumerable<int> Members
+    #region IEnumerable<int> Members
 
-		public System.Collections.Generic.IEnumerator<int> GetEnumerator()
-		{
-			return _list.Keys.GetEnumerator();
-		}
+    public System.Collections.Generic.IEnumerator<int> GetEnumerator()
+    {
+      return _list.Keys.GetEnumerator();
+    }
 
-		#endregion IEnumerable<int> Members
+    #endregion IEnumerable<int> Members
 
-		#region IEnumerable Members
+    #region IEnumerable Members
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			return _list.Keys.GetEnumerator();
-		}
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return _list.Keys.GetEnumerator();
+    }
 
-		#endregion IEnumerable Members
-	}
+    #endregion IEnumerable Members
+  }
 }

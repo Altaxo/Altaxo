@@ -31,55 +31,55 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	public interface IClosedPathShapeView
-	{
-		PenX DocPen { get; set; }
+  public interface IClosedPathShapeView
+  {
+    PenX DocPen { get; set; }
 
-		BrushX DocBrush { get; set; }
+    BrushX DocBrush { get; set; }
 
-		object LocationView { set; }
-	}
+    object LocationView { set; }
+  }
 
-	[UserControllerForObject(typeof(ClosedPathShapeBase))]
-	[ExpectedTypeOfView(typeof(IClosedPathShapeView))]
-	public class ClosedPathShapeController : MVCANControllerEditOriginalDocBase<ClosedPathShapeBase, IClosedPathShapeView>
-	{
-		private IMVCANController _locationController;
+  [UserControllerForObject(typeof(ClosedPathShapeBase))]
+  [ExpectedTypeOfView(typeof(IClosedPathShapeView))]
+  public class ClosedPathShapeController : MVCANControllerEditOriginalDocBase<ClosedPathShapeBase, IClosedPathShapeView>
+  {
+    private IMVCANController _locationController;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-				Current.Gui.FindAndAttachControlTo(_locationController);
-			}
-			if (_view != null)
-			{
-				_view.DocPen = _doc.Pen;
-				_view.DocBrush = _doc.Brush;
-				_view.LocationView = _locationController.ViewObject;
-			}
-		}
+      if (initData)
+      {
+        _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+        Current.Gui.FindAndAttachControlTo(_locationController);
+      }
+      if (_view != null)
+      {
+        _view.DocPen = _doc.Pen;
+        _view.DocBrush = _doc.Brush;
+        _view.LocationView = _locationController.ViewObject;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_locationController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_locationController.Apply(disposeController))
+        return false;
 
-			_doc.Pen = _view.DocPen;
-			_doc.Brush = _view.DocBrush;
+      _doc.Pen = _view.DocPen;
+      _doc.Brush = _view.DocBrush;
 
-			if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
-				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+      if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
+        _doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

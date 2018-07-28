@@ -29,275 +29,275 @@ using System.Text;
 
 namespace Altaxo.Data.Transformations
 {
-	public class CompoundTransformation : IVariantToVariantTransformation
-	{
-		/// <summary>
-		/// The transformations. The innermost (i.e. first transformation to carry out, the rightmost transformation) is located at index 0.
-		/// </summary>
-		private List<IVariantToVariantTransformation> _transformations = new List<IVariantToVariantTransformation>();
+  public class CompoundTransformation : IVariantToVariantTransformation
+  {
+    /// <summary>
+    /// The transformations. The innermost (i.e. first transformation to carry out, the rightmost transformation) is located at index 0.
+    /// </summary>
+    private List<IVariantToVariantTransformation> _transformations = new List<IVariantToVariantTransformation>();
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-06-25 Initial version.
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CompoundTransformation), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (CompoundTransformation)obj;
-				info.CreateArray("Transformations", s._transformations.Count);
-				foreach (var t in s._transformations)
-					info.AddValue("e", t);
-				info.CommitArray();
-			}
+    /// <summary>
+    /// 2016-06-25 Initial version.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CompoundTransformation), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (CompoundTransformation)obj;
+        info.CreateArray("Transformations", s._transformations.Count);
+        foreach (var t in s._transformations)
+          info.AddValue("e", t);
+        info.CommitArray();
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				int count = info.OpenArray("Transformations");
-				List<IVariantToVariantTransformation> arr = new List<IVariantToVariantTransformation>(count);
-				for (int i = 0; i < count; ++i)
-				{
-					arr.Add((IVariantToVariantTransformation)info.GetValue("e", null));
-				}
-				info.CloseArray(count);
-				return new CompoundTransformation() { _transformations = arr };
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        int count = info.OpenArray("Transformations");
+        List<IVariantToVariantTransformation> arr = new List<IVariantToVariantTransformation>(count);
+        for (int i = 0; i < count; ++i)
+        {
+          arr.Add((IVariantToVariantTransformation)info.GetValue("e", null));
+        }
+        info.CloseArray(count);
+        return new CompoundTransformation() { _transformations = arr };
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <inheritdoc/>
-		public Type InputValueType { get { return _transformations[0].InputValueType; } }
+    /// <inheritdoc/>
+    public Type InputValueType { get { return _transformations[0].InputValueType; } }
 
-		/// <inheritdoc/>
-		public Type OutputValueType { get { return _transformations[_transformations.Count - 1].OutputValueType; } }
+    /// <inheritdoc/>
+    public Type OutputValueType { get { return _transformations[_transformations.Count - 1].OutputValueType; } }
 
-		private CompoundTransformation()
-		{
-		}
+    private CompoundTransformation()
+    {
+    }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CompoundTransformation"/> class.
-		/// </summary>
-		/// <param name="transformations">The transformations.</param>
-		/// <exception cref="System.ArgumentException">
-		/// Enumeration contains no items
-		/// or
-		/// Enumeration contains only one item. Please use this item directly.
-		/// </exception>
-		public CompoundTransformation(IEnumerable<IVariantToVariantTransformation> transformations)
-		{
-			_transformations = new List<IVariantToVariantTransformation>(transformations);
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CompoundTransformation"/> class.
+    /// </summary>
+    /// <param name="transformations">The transformations.</param>
+    /// <exception cref="System.ArgumentException">
+    /// Enumeration contains no items
+    /// or
+    /// Enumeration contains only one item. Please use this item directly.
+    /// </exception>
+    public CompoundTransformation(IEnumerable<IVariantToVariantTransformation> transformations)
+    {
+      _transformations = new List<IVariantToVariantTransformation>(transformations);
 
-			if (_transformations.Count == 0)
-				throw new ArgumentException("Enumeration contains no items", nameof(transformations));
-			if (_transformations.Count == 1)
-				throw new ArgumentException("Enumeration contains only one item. Please use this item directly.", nameof(transformations));
-		}
+      if (_transformations.Count == 0)
+        throw new ArgumentException("Enumeration contains no items", nameof(transformations));
+      if (_transformations.Count == 1)
+        throw new ArgumentException("Enumeration contains only one item. Please use this item directly.", nameof(transformations));
+    }
 
-		/// <summary>
-		/// Try to get a compound transformation. Use this function when in doubt how many transformations the enumeration yields.
-		/// The behavior is as follows: if the enumeration is null or empty, the return value is null. If the enumeration contains only one
-		/// element, the return value is that element. If the enumeration contains multiple elements, the return value is a compound transformation
-		/// with all elements.
-		/// </summary>
-		/// <param name="transformations">Enumeration of transformations.</param>
-		/// <returns>If the enumeration is null or empty, the return value is null. If the enumeration contains only one
-		/// element, the return value is that element. If the enumeration contains multiple elements, the return value is a compound transformation
-		/// with all elements.</returns>
-		public static IVariantToVariantTransformation TryGetCompoundTransformation(IEnumerable<IVariantToVariantTransformation> transformations)
-		{
-			if (null == transformations)
-				return null;
+    /// <summary>
+    /// Try to get a compound transformation. Use this function when in doubt how many transformations the enumeration yields.
+    /// The behavior is as follows: if the enumeration is null or empty, the return value is null. If the enumeration contains only one
+    /// element, the return value is that element. If the enumeration contains multiple elements, the return value is a compound transformation
+    /// with all elements.
+    /// </summary>
+    /// <param name="transformations">Enumeration of transformations.</param>
+    /// <returns>If the enumeration is null or empty, the return value is null. If the enumeration contains only one
+    /// element, the return value is that element. If the enumeration contains multiple elements, the return value is a compound transformation
+    /// with all elements.</returns>
+    public static IVariantToVariantTransformation TryGetCompoundTransformation(IEnumerable<IVariantToVariantTransformation> transformations)
+    {
+      if (null == transformations)
+        return null;
 
-			var transformationList = new List<IVariantToVariantTransformation>(transformations);
+      var transformationList = new List<IVariantToVariantTransformation>(transformations);
 
-			if (transformationList.Count == 0)
-				return null;
-			else if (transformationList.Count == 1)
-				return transformationList[0];
-			else
-				return new CompoundTransformation(transformationList);
-		}
+      if (transformationList.Count == 0)
+        return null;
+      else if (transformationList.Count == 1)
+        return transformationList[0];
+      else
+        return new CompoundTransformation(transformationList);
+    }
 
-		public static IVariantToVariantTransformation TryGetCompoundTransformationWithSimplification(IEnumerable<IVariantToVariantTransformation> transformations)
-		{
-			if (null == transformations)
-				return null;
+    public static IVariantToVariantTransformation TryGetCompoundTransformationWithSimplification(IEnumerable<IVariantToVariantTransformation> transformations)
+    {
+      if (null == transformations)
+        return null;
 
-			var transformationList = new List<IVariantToVariantTransformation>();
-			foreach (var transfo in transformations)
-				AddTransformationToFlattenedList(transfo, transformationList);
+      var transformationList = new List<IVariantToVariantTransformation>();
+      foreach (var transfo in transformations)
+        AddTransformationToFlattenedList(transfo, transformationList);
 
-			if (transformationList.Count == 0)
-			{
-				return null;
-			}
-			else if (transformationList.Count == 1)
-			{
-				return transformationList[0];
-			}
-			else
-			{
-				SimplifyTransformationList(transformationList);
+      if (transformationList.Count == 0)
+      {
+        return null;
+      }
+      else if (transformationList.Count == 1)
+      {
+        return transformationList[0];
+      }
+      else
+      {
+        SimplifyTransformationList(transformationList);
 
-				if (transformationList.Count == 0)
-					return null;
-				else
-					return new CompoundTransformation(transformationList);
-			}
-		}
+        if (transformationList.Count == 0)
+          return null;
+        else
+          return new CompoundTransformation(transformationList);
+      }
+    }
 
-		/// <summary>
-		/// Adds a transformation to a flattened list. If the provided transformation is a <see cref="CompoundTransformation"/>, the transformation is unpacked before added to the list.
-		/// </summary>
-		/// <param name="transformation">The transformation.</param>
-		/// <param name="list">The list.</param>
-		private static void AddTransformationToFlattenedList(IVariantToVariantTransformation transformation, List<IVariantToVariantTransformation> list)
-		{
-			if (transformation is CompoundTransformation ct)
-			{
-				foreach (var trans in ct._transformations)
-					AddTransformationToFlattenedList(trans, list);
-			}
-			else if (transformation != null)
-			{
-				list.Add(transformation);
-			}
-		}
+    /// <summary>
+    /// Adds a transformation to a flattened list. If the provided transformation is a <see cref="CompoundTransformation"/>, the transformation is unpacked before added to the list.
+    /// </summary>
+    /// <param name="transformation">The transformation.</param>
+    /// <param name="list">The list.</param>
+    private static void AddTransformationToFlattenedList(IVariantToVariantTransformation transformation, List<IVariantToVariantTransformation> list)
+    {
+      if (transformation is CompoundTransformation ct)
+      {
+        foreach (var trans in ct._transformations)
+          AddTransformationToFlattenedList(trans, list);
+      }
+      else if (transformation != null)
+      {
+        list.Add(transformation);
+      }
+    }
 
-		/// <summary>
-		/// Simplifies the transformation list by cancelling transformation / backtransformation pairs.
-		/// </summary>
-		/// <param name="list">The list to simplify.</param>
-		private static void SimplifyTransformationList(List<IVariantToVariantTransformation> list)
-		{
-			for (int i = list.Count - 2; i >= 0; --i)
-			{
-				if (list[i].BackTransformation.Equals(list[i + 1]))
-				{
-					list.RemoveAt(i + 1);
-					list.RemoveAt(i);
-				}
-			}
-		}
+    /// <summary>
+    /// Simplifies the transformation list by cancelling transformation / backtransformation pairs.
+    /// </summary>
+    /// <param name="list">The list to simplify.</param>
+    private static void SimplifyTransformationList(List<IVariantToVariantTransformation> list)
+    {
+      for (int i = list.Count - 2; i >= 0; --i)
+      {
+        if (list[i].BackTransformation.Equals(list[i + 1]))
+        {
+          list.RemoveAt(i + 1);
+          list.RemoveAt(i);
+        }
+      }
+    }
 
-		public AltaxoVariant Transform(AltaxoVariant value)
-		{
-			foreach (var item in _transformations)
-				value = item.Transform(value);
-			return value;
-		}
+    public AltaxoVariant Transform(AltaxoVariant value)
+    {
+      foreach (var item in _transformations)
+        value = item.Transform(value);
+      return value;
+    }
 
-		public string RepresentationAsFunction
-		{
-			get { return GetRepresentationAsFunction("x"); }
-		}
+    public string RepresentationAsFunction
+    {
+      get { return GetRepresentationAsFunction("x"); }
+    }
 
-		public string GetRepresentationAsFunction(string arg)
-		{
-			var x = arg;
-			foreach (var item in _transformations)
-				x = item.GetRepresentationAsFunction(x);
-			return x;
-		}
+    public string GetRepresentationAsFunction(string arg)
+    {
+      var x = arg;
+      foreach (var item in _transformations)
+        x = item.GetRepresentationAsFunction(x);
+      return x;
+    }
 
-		public string RepresentationAsOperator
-		{
-			get
-			{
-				var stb = new System.Text.StringBuilder();
-				for (int i = _transformations.Count - 1; i >= 0; --i)
-				{
-					stb.Append(_transformations[i].RepresentationAsOperator);
-					if (i != 0)
-						stb.Append(" ");
-				}
-				return stb.ToString();
-			}
-		}
+    public string RepresentationAsOperator
+    {
+      get
+      {
+        var stb = new System.Text.StringBuilder();
+        for (int i = _transformations.Count - 1; i >= 0; --i)
+        {
+          stb.Append(_transformations[i].RepresentationAsOperator);
+          if (i != 0)
+            stb.Append(" ");
+        }
+        return stb.ToString();
+      }
+    }
 
-		public IVariantToVariantTransformation BackTransformation
-		{
-			get
-			{
-				return new CompoundTransformation(GetTransformationsInReverseOrder().Select(transfo => transfo.BackTransformation));
-			}
-		}
+    public IVariantToVariantTransformation BackTransformation
+    {
+      get
+      {
+        return new CompoundTransformation(GetTransformationsInReverseOrder().Select(transfo => transfo.BackTransformation));
+      }
+    }
 
-		public CompoundTransformation WithPrependedTransformation(IVariantToVariantTransformation transformation)
-		{
-			if (null == transformation)
-				throw new ArgumentNullException(nameof(transformation));
+    public CompoundTransformation WithPrependedTransformation(IVariantToVariantTransformation transformation)
+    {
+      if (null == transformation)
+        throw new ArgumentNullException(nameof(transformation));
 
-			var result = new CompoundTransformation();
-			result._transformations = new List<IVariantToVariantTransformation>(this._transformations);
-			if (transformation is CompoundTransformation)
-			{
-				result._transformations.AddRange(((CompoundTransformation)transformation)._transformations);
-			}
-			else
-			{
-				result._transformations.Add(transformation);
-			}
-			return result;
-		}
+      var result = new CompoundTransformation();
+      result._transformations = new List<IVariantToVariantTransformation>(this._transformations);
+      if (transformation is CompoundTransformation)
+      {
+        result._transformations.AddRange(((CompoundTransformation)transformation)._transformations);
+      }
+      else
+      {
+        result._transformations.Add(transformation);
+      }
+      return result;
+    }
 
-		public CompoundTransformation WithAppendedTransformation(IVariantToVariantTransformation transformation)
-		{
-			if (null == transformation)
-				throw new ArgumentNullException(nameof(transformation));
+    public CompoundTransformation WithAppendedTransformation(IVariantToVariantTransformation transformation)
+    {
+      if (null == transformation)
+        throw new ArgumentNullException(nameof(transformation));
 
-			var result = new CompoundTransformation();
-			result._transformations = new List<IVariantToVariantTransformation>();
-			if (transformation is CompoundTransformation)
-			{
-				result._transformations.AddRange(((CompoundTransformation)transformation)._transformations);
-			}
-			else
-			{
-				result._transformations.Add(transformation);
-			}
+      var result = new CompoundTransformation();
+      result._transformations = new List<IVariantToVariantTransformation>();
+      if (transformation is CompoundTransformation)
+      {
+        result._transformations.AddRange(((CompoundTransformation)transformation)._transformations);
+      }
+      else
+      {
+        result._transformations.Add(transformation);
+      }
 
-			result._transformations.AddRange(this._transformations);
-			return result;
-		}
+      result._transformations.AddRange(this._transformations);
+      return result;
+    }
 
-		private IEnumerable<IVariantToVariantTransformation> GetTransformationsInReverseOrder()
-		{
-			for (int i = _transformations.Count - 1; i >= 0; --i)
-				yield return _transformations[i];
-		}
+    private IEnumerable<IVariantToVariantTransformation> GetTransformationsInReverseOrder()
+    {
+      for (int i = _transformations.Count - 1; i >= 0; --i)
+        yield return _transformations[i];
+    }
 
-		public override bool Equals(object obj)
-		{
-			var from = obj as CompoundTransformation;
-			if (null == from)
-				return false;
+    public override bool Equals(object obj)
+    {
+      var from = obj as CompoundTransformation;
+      if (null == from)
+        return false;
 
-			if (this._transformations.Count != from._transformations.Count)
-				return false;
+      if (this._transformations.Count != from._transformations.Count)
+        return false;
 
-			for (int i = 0; i < _transformations.Count; ++i)
-				if (!_transformations[i].Equals(from._transformations[i]))
-					return false;
+      for (int i = 0; i < _transformations.Count; ++i)
+        if (!_transformations[i].Equals(from._transformations[i]))
+          return false;
 
-			return true;
-		}
+      return true;
+    }
 
-		public override int GetHashCode()
-		{
-			int len = Math.Min(3, _transformations.Count);
-			int result = this.GetType().GetHashCode();
-			for (int i = 0; i < len; ++i)
-				result += _transformations[i].GetHashCode();
+    public override int GetHashCode()
+    {
+      int len = Math.Min(3, _transformations.Count);
+      int result = this.GetType().GetHashCode();
+      for (int i = 0; i < len; ++i)
+        result += _transformations[i].GetHashCode();
 
-			return result;
-		}
+      return result;
+    }
 
-		public bool IsEditable { get { return true; } }
-	}
+    public bool IsEditable { get { return true; } }
+  }
 }

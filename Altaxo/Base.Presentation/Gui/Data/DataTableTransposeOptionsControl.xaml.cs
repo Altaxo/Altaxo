@@ -30,77 +30,77 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Data
 {
-	/// <summary>
-	/// Interaction logic for TransposeWorksheetControl.xaml
-	/// </summary>
-	public partial class DataTableTransposeOptionsControl : UserControl, IDataTableTransposeOptionsView
-	{
-		public DataTableTransposeOptionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for TransposeWorksheetControl.xaml
+  /// </summary>
+  public partial class DataTableTransposeOptionsControl : UserControl, IDataTableTransposeOptionsView
+  {
+    public DataTableTransposeOptionsControl()
+    {
+      InitializeComponent();
+    }
 
-		public string ColumnNamingPreString
-		{
-			get
-			{
-				return _guiPreStringForColumnName.Text;
-			}
+    public string ColumnNamingPreString
+    {
+      get
+      {
+        return _guiPreStringForColumnName.Text;
+      }
 
-			set
-			{
-				_guiPreStringForColumnName.Text = value;
-			}
-		}
+      set
+      {
+        _guiPreStringForColumnName.Text = value;
+      }
+    }
 
-		/// <summary>
-		/// Get/sets the number of data columns that are moved to the property columns before transposing the data columns.
-		/// </summary>
-		public int DataColumnsMoveToPropertyColumns
-		{
-			get { return _ctrlNumMovedDataCols.Value; }
-			set
-			{
-				_ctrlNumMovedDataCols.Value = value;
-			}
-		}
+    /// <summary>
+    /// Get/sets the number of data columns that are moved to the property columns before transposing the data columns.
+    /// </summary>
+    public int DataColumnsMoveToPropertyColumns
+    {
+      get { return _ctrlNumMovedDataCols.Value; }
+      set
+      {
+        _ctrlNumMovedDataCols.Value = value;
+      }
+    }
 
-		/// <summary>
-		/// Get/sets the number of property columns that are moved after transposing the data columns to the data columns collection.
-		/// </summary>
-		public int PropertyColumnsMoveToDataColumns
-		{
-			get { return _ctrlNumMovedPropCols.Value; }
-			set
-			{
-				_ctrlNumMovedPropCols.Value = value;
-			}
-		}
+    /// <summary>
+    /// Get/sets the number of property columns that are moved after transposing the data columns to the data columns collection.
+    /// </summary>
+    public int PropertyColumnsMoveToDataColumns
+    {
+      get { return _ctrlNumMovedPropCols.Value; }
+      set
+      {
+        _ctrlNumMovedPropCols.Value = value;
+      }
+    }
 
-		public bool StoreDataColumnNamesInFirstDataColumn
-		{
-			get
-			{
-				return _guiStoreSourceDataColumnNames.IsChecked == true;
-			}
+    public bool StoreDataColumnNamesInFirstDataColumn
+    {
+      get
+      {
+        return _guiStoreSourceDataColumnNames.IsChecked == true;
+      }
 
-			set
-			{
-				_guiStoreSourceDataColumnNames.IsChecked = value;
-			}
-		}
+      set
+      {
+        _guiStoreSourceDataColumnNames.IsChecked = value;
+      }
+    }
 
-		public bool UseFirstDataColumnForColumnNaming
-		{
-			get
-			{
-				return _guiUseFirstColForColumnNames.IsChecked == true;
-			}
+    public bool UseFirstDataColumnForColumnNaming
+    {
+      get
+      {
+        return _guiUseFirstColForColumnNames.IsChecked == true;
+      }
 
-			set
-			{
-				_guiUseFirstColForColumnNames.IsChecked = value;
-			}
-		}
-	}
+      set
+      {
+        _guiUseFirstColForColumnNames.IsChecked = value;
+      }
+    }
+  }
 }

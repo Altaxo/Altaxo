@@ -11,8 +11,8 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.QuickInfo
 {
-	public interface IQuickInfoProvider
-	{
-		Task<QuickInfoItem> GetItemAsync(Document document, int position, CancellationToken cancellationToken);
-	}
+  public interface IQuickInfoProvider
+  {
+    Task<QuickInfoItem> GetItemAsync(Document document, int position, CancellationToken cancellationToken);
+  }
 }

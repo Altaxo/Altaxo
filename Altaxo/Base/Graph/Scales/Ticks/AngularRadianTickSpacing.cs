@@ -29,62 +29,62 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
-	public class AngularRadianTickSpacing : AngularTickSpacing
-	{
-		#region Serialization
+  public class AngularRadianTickSpacing : AngularTickSpacing
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRadianTickSpacing), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, typeof(AngularTickSpacing));
-				AngularRadianTickSpacing s = (AngularRadianTickSpacing)obj;
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRadianTickSpacing), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, typeof(AngularTickSpacing));
+        AngularRadianTickSpacing s = (AngularRadianTickSpacing)obj;
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				AngularRadianTickSpacing s = SDeserialize(o, info, parent);
-				OnAfterDeserialization(s);
-				return s;
-			}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AngularRadianTickSpacing s = SDeserialize(o, info, parent);
+        OnAfterDeserialization(s);
+        return s;
+      }
 
-			protected virtual void OnAfterDeserialization(AngularRadianTickSpacing s)
-			{
-			}
+      protected virtual void OnAfterDeserialization(AngularRadianTickSpacing s)
+      {
+      }
 
-			protected virtual AngularRadianTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				AngularRadianTickSpacing s = null != o ? (AngularRadianTickSpacing)o : new AngularRadianTickSpacing();
-				info.GetBaseValueEmbedded(s, typeof(AngularTickSpacing), s);
-				return s;
-			}
-		}
+      protected virtual AngularRadianTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AngularRadianTickSpacing s = null != o ? (AngularRadianTickSpacing)o : new AngularRadianTickSpacing();
+        info.GetBaseValueEmbedded(s, typeof(AngularTickSpacing), s);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public AngularRadianTickSpacing()
-		{
-		}
+    public AngularRadianTickSpacing()
+    {
+    }
 
-		public AngularRadianTickSpacing(AngularRadianTickSpacing from)
-			: base(from) // everything is done here, since CopyFrom is virtual!
-		{
-		}
+    public AngularRadianTickSpacing(AngularRadianTickSpacing from)
+      : base(from) // everything is done here, since CopyFrom is virtual!
+    {
+    }
 
-		public override object Clone()
-		{
-			return new AngularRadianTickSpacing(this);
-		}
+    public override object Clone()
+    {
+      return new AngularRadianTickSpacing(this);
+    }
 
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			yield break;
-		}
+    protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      yield break;
+    }
 
-		public override bool UseDegree
-		{
-			get { return false; }
-		}
-	}
+    public override bool UseDegree
+    {
+      get { return false; }
+    }
+  }
 }

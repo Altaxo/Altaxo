@@ -30,36 +30,36 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Data
 {
-	using Altaxo.Collections;
+  using Altaxo.Collections;
 
-	/// <summary>
-	/// Interaction logic for ExpandCyclingVariableControl.xaml
-	/// </summary>
-	public partial class ExpandCyclingVariableOptionsControl : UserControl, IExpandCyclingVariableOptionsView
-	{
-		public ExpandCyclingVariableOptionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ExpandCyclingVariableControl.xaml
+  /// </summary>
+  public partial class ExpandCyclingVariableOptionsControl : UserControl, IExpandCyclingVariableOptionsView
+  {
+    public ExpandCyclingVariableOptionsControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeDestinationOutputFormat(SelectableListNodeList list)
-		{
-			_chDestinationOutput.Initialize(list);
-		}
+    public void InitializeDestinationOutputFormat(SelectableListNodeList list)
+    {
+      _chDestinationOutput.Initialize(list);
+    }
 
-		public void InitializeDestinationX(SelectableListNodeList list)
-		{
-			_chDestinationX.Initialize(list);
-		}
+    public void InitializeDestinationX(SelectableListNodeList list)
+    {
+      _chDestinationX.Initialize(list);
+    }
 
-		public void InitializeDestinationColumnSorting(SelectableListNodeList list)
-		{
-			_chDestinationColSort.Initialize(list);
-		}
+    public void InitializeDestinationColumnSorting(SelectableListNodeList list)
+    {
+      _chDestinationColSort.Initialize(list);
+    }
 
-		public void InitializeDestinationRowSorting(SelectableListNodeList list)
-		{
-			_chDestinationRowSort.Initialize(list);
-		}
-	}
+    public void InitializeDestinationRowSorting(SelectableListNodeList list)
+    {
+      _chDestinationRowSort.Initialize(list);
+    }
+  }
 }

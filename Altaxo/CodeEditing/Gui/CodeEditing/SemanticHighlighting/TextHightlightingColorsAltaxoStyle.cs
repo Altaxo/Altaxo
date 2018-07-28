@@ -30,54 +30,54 @@ using Microsoft.CodeAnalysis.Classification;
 
 namespace Altaxo.Gui.CodeEditing.SemanticHighlighting
 {
-	public class TextHighlightingColorsAltaxoStyle : ISemanticHighlightingColors
-	{
-		public static TextHighlightingColorsAltaxoStyle Instance { get; } = new TextHighlightingColorsAltaxoStyle();
+  public class TextHighlightingColorsAltaxoStyle : ISemanticHighlightingColors
+  {
+    public static TextHighlightingColorsAltaxoStyle Instance { get; } = new TextHighlightingColorsAltaxoStyle();
 
-		public HighlightingColor DefaultColor { get { return DefaultTextColor; } }
+    public HighlightingColor DefaultColor { get { return DefaultTextColor; } }
 
-		private static readonly HighlightingColor DefaultTextColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Black) }.AsFrozen();
-		private static readonly HighlightingColor ValueTypeColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Teal), FontWeight = System.Windows.FontWeights.Bold }.AsFrozen();
-		private static readonly HighlightingColor ReferenceTypeColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Teal) }.AsFrozen();
-		private static readonly HighlightingColor CommentColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Green) }.AsFrozen();
-		private static readonly HighlightingColor XmlCommentColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Gray) }.AsFrozen();
-		private static readonly HighlightingColor KeywordColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Blue), FontWeight = System.Windows.FontWeights.Bold }.AsFrozen();
-		private static readonly HighlightingColor PreprocessorKeywordColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Green) }.AsFrozen();
-		private static readonly HighlightingColor StringColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.DarkViolet) }.AsFrozen();
+    private static readonly HighlightingColor DefaultTextColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Black) }.AsFrozen();
+    private static readonly HighlightingColor ValueTypeColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Teal), FontWeight = System.Windows.FontWeights.Bold }.AsFrozen();
+    private static readonly HighlightingColor ReferenceTypeColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Teal) }.AsFrozen();
+    private static readonly HighlightingColor CommentColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Green) }.AsFrozen();
+    private static readonly HighlightingColor XmlCommentColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Gray) }.AsFrozen();
+    private static readonly HighlightingColor KeywordColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Blue), FontWeight = System.Windows.FontWeights.Bold }.AsFrozen();
+    private static readonly HighlightingColor PreprocessorKeywordColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Green) }.AsFrozen();
+    private static readonly HighlightingColor StringColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.DarkViolet) }.AsFrozen();
 
-		private static readonly ImmutableDictionary<string, HighlightingColor> _map = new Dictionary<string, HighlightingColor>
-		{
-			[ClassificationTypeNames.Identifier] = DefaultTextColor,
-			[ClassificationTypeNames.NumericLiteral] = DefaultTextColor,
-			[ClassificationTypeNames.Operator] = DefaultTextColor,
-			[ClassificationTypeNames.Keyword] = KeywordColor,
-			[ClassificationTypeNames.ClassName] = ReferenceTypeColor,
-			[ClassificationTypeNames.StructName] = ValueTypeColor,
-			[ClassificationTypeNames.InterfaceName] = ReferenceTypeColor,
-			[ClassificationTypeNames.DelegateName] = ReferenceTypeColor,
-			[ClassificationTypeNames.EnumName] = ValueTypeColor,
-			[ClassificationTypeNames.ModuleName] = ReferenceTypeColor,
-			[ClassificationTypeNames.TypeParameterName] = ReferenceTypeColor,
-			[ClassificationTypeNames.Comment] = CommentColor,
-			[ClassificationTypeNames.XmlDocCommentAttributeName] = XmlCommentColor,
-			[ClassificationTypeNames.XmlDocCommentAttributeQuotes] = XmlCommentColor,
-			[ClassificationTypeNames.XmlDocCommentAttributeValue] = XmlCommentColor,
-			[ClassificationTypeNames.XmlDocCommentCDataSection] = XmlCommentColor,
-			[ClassificationTypeNames.XmlDocCommentComment] = XmlCommentColor,
-			[ClassificationTypeNames.XmlDocCommentDelimiter] = XmlCommentColor,
-			[ClassificationTypeNames.XmlDocCommentEntityReference] = XmlCommentColor,
-			[ClassificationTypeNames.XmlDocCommentName] = XmlCommentColor,
-			[ClassificationTypeNames.XmlDocCommentProcessingInstruction] = XmlCommentColor,
-			[ClassificationTypeNames.XmlDocCommentText] = CommentColor,
-			[ClassificationTypeNames.PreprocessorKeyword] = PreprocessorKeywordColor,
-			[ClassificationTypeNames.StringLiteral] = StringColor,
-			[ClassificationTypeNames.VerbatimStringLiteral] = StringColor
-		}.ToImmutableDictionary();
+    private static readonly ImmutableDictionary<string, HighlightingColor> _map = new Dictionary<string, HighlightingColor>
+    {
+      [ClassificationTypeNames.Identifier] = DefaultTextColor,
+      [ClassificationTypeNames.NumericLiteral] = DefaultTextColor,
+      [ClassificationTypeNames.Operator] = DefaultTextColor,
+      [ClassificationTypeNames.Keyword] = KeywordColor,
+      [ClassificationTypeNames.ClassName] = ReferenceTypeColor,
+      [ClassificationTypeNames.StructName] = ValueTypeColor,
+      [ClassificationTypeNames.InterfaceName] = ReferenceTypeColor,
+      [ClassificationTypeNames.DelegateName] = ReferenceTypeColor,
+      [ClassificationTypeNames.EnumName] = ValueTypeColor,
+      [ClassificationTypeNames.ModuleName] = ReferenceTypeColor,
+      [ClassificationTypeNames.TypeParameterName] = ReferenceTypeColor,
+      [ClassificationTypeNames.Comment] = CommentColor,
+      [ClassificationTypeNames.XmlDocCommentAttributeName] = XmlCommentColor,
+      [ClassificationTypeNames.XmlDocCommentAttributeQuotes] = XmlCommentColor,
+      [ClassificationTypeNames.XmlDocCommentAttributeValue] = XmlCommentColor,
+      [ClassificationTypeNames.XmlDocCommentCDataSection] = XmlCommentColor,
+      [ClassificationTypeNames.XmlDocCommentComment] = XmlCommentColor,
+      [ClassificationTypeNames.XmlDocCommentDelimiter] = XmlCommentColor,
+      [ClassificationTypeNames.XmlDocCommentEntityReference] = XmlCommentColor,
+      [ClassificationTypeNames.XmlDocCommentName] = XmlCommentColor,
+      [ClassificationTypeNames.XmlDocCommentProcessingInstruction] = XmlCommentColor,
+      [ClassificationTypeNames.XmlDocCommentText] = CommentColor,
+      [ClassificationTypeNames.PreprocessorKeyword] = PreprocessorKeywordColor,
+      [ClassificationTypeNames.StringLiteral] = StringColor,
+      [ClassificationTypeNames.VerbatimStringLiteral] = StringColor
+    }.ToImmutableDictionary();
 
-		public HighlightingColor GetColor(string classificationTypeName)
-		{
-			_map.TryGetValue(classificationTypeName, out HighlightingColor color);
-			return color ?? DefaultColor;
-		}
-	}
+    public HighlightingColor GetColor(string classificationTypeName)
+    {
+      _map.TryGetValue(classificationTypeName, out HighlightingColor color);
+      return color ?? DefaultColor;
+    }
+  }
 }

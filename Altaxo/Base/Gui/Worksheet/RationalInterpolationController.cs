@@ -28,40 +28,40 @@ using System;
 
 namespace Altaxo.Gui.Worksheet
 {
-	/// <summary>
-	/// Controls the Smoothing parameter of a rational cubic spline.
-	/// </summary>
-	[UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalInterpolation), 100)]
-	public class RationalInterpolationController : NumericDoubleValueController
-	{
-		private RationalInterpolation _spline;
+  /// <summary>
+  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// </summary>
+  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalInterpolation), 100)]
+  public class RationalInterpolationController : NumericDoubleValueController
+  {
+    private RationalInterpolation _spline;
 
-		public RationalInterpolationController(RationalInterpolation spline)
-			: base(spline.NumeratorDegree)
-		{
-			base._minimumValue = 0;
-			base._isMinimumValueIncluded = false;
-			_descriptionText = "Numerator degree N (N>(n-1)/2, where n is the original number of points for this interpolation) :";
-			_spline = spline;
-		}
+    public RationalInterpolationController(RationalInterpolation spline)
+      : base(spline.NumeratorDegree)
+    {
+      base._minimumValue = 0;
+      base._isMinimumValueIncluded = false;
+      _descriptionText = "Numerator degree N (N>(n-1)/2, where n is the original number of points for this interpolation) :";
+      _spline = spline;
+    }
 
-		public override object ModelObject
-		{
-			get
-			{
-				return _spline;
-			}
-		}
+    public override object ModelObject
+    {
+      get
+      {
+        return _spline;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (base.Apply(disposeController))
-			{
-				this._spline.NumeratorDegree = (int)base._value1Double;
-				return true;
-			}
-			else
-				return false;
-		}
-	}
+    public override bool Apply(bool disposeController)
+    {
+      if (base.Apply(disposeController))
+      {
+        this._spline.NumeratorDegree = (int)base._value1Double;
+        return true;
+      }
+      else
+        return false;
+    }
+  }
 }

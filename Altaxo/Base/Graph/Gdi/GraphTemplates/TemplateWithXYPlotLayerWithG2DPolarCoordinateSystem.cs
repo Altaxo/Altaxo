@@ -31,114 +31,114 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.GraphTemplates
 {
-	public static class TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem
-	{
-		public static readonly Main.Properties.PropertyKey<GraphDocument> PropertyKeyDefaultTemplate =
-		new Main.Properties.PropertyKey<GraphDocument>(
-		"F3BF6A1C-7929-4120-A1A7-2E8A5745E7C4",
-		"Graph\\Templates\\PolarPlot",
-		Main.Properties.PropertyLevel.AllUpToFolder,
-		typeof(object),
-		() => CreateBuiltinGraph(null)
+  public static class TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem
+  {
+    public static readonly Main.Properties.PropertyKey<GraphDocument> PropertyKeyDefaultTemplate =
+    new Main.Properties.PropertyKey<GraphDocument>(
+    "F3BF6A1C-7929-4120-A1A7-2E8A5745E7C4",
+    "Graph\\Templates\\PolarPlot",
+    Main.Properties.PropertyLevel.AllUpToFolder,
+    typeof(object),
+    () => CreateBuiltinGraph(null)
 
-		)
-		{
-			EditingControllerCreation = (doc) =>
-			{
-				var ctrl = new DefaultLineScatterGraphDocumentController { UseDocumentCopy = Gui.UseDocument.Copy };
-				ctrl.InitializeDocument(doc);
-				return ctrl;
-			}
-		};
+    )
+    {
+      EditingControllerCreation = (doc) =>
+      {
+        var ctrl = new DefaultLineScatterGraphDocumentController { UseDocumentCopy = Gui.UseDocument.Copy };
+        ctrl.InitializeDocument(doc);
+        return ctrl;
+      }
+    };
 
-		/// <summary>
-		/// Creates a brand new graph which has an x-y plot layer. The graph is not named, nor is it already part of the project.
-		/// </summary>
-		/// <param name="propertyContext">The property context. Can be retrieved for instance from the table the plot is initiated or the folder.</param>
-		/// <returns>The created graph.</returns>
-		private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag propertyContext)
-		{
-			if (null == propertyContext)
-				propertyContext = PropertyExtensions.GetPropertyContextOfProject();
+    /// <summary>
+    /// Creates a brand new graph which has an x-y plot layer. The graph is not named, nor is it already part of the project.
+    /// </summary>
+    /// <param name="propertyContext">The property context. Can be retrieved for instance from the table the plot is initiated or the folder.</param>
+    /// <returns>The created graph.</returns>
+    private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag propertyContext)
+    {
+      if (null == propertyContext)
+        propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
-			Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
-			TemplateBase.AddStandardPropertiesToGraph(graph, propertyContext);
-			graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));  // apply the default location from the property in the path
+      Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
+      TemplateBase.AddStandardPropertiesToGraph(graph, propertyContext);
+      graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));  // apply the default location from the property in the path
 
-			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
-			layer.Scales[0] = new Scales.AngularDegreeScale() { TickSpacing = new Scales.Ticks.AngularDegreeTickSpacing() };
+      Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
+      layer.Scales[0] = new Scales.AngularDegreeScale() { TickSpacing = new Scales.Ticks.AngularDegreeTickSpacing() };
 
-			layer.CreateDefaultAxes(propertyContext);
+      layer.CreateDefaultAxes(propertyContext);
 
-			layer.AxisStyles[CSLineID.X1].AxisLineStyle.FirstDownMajorTicks = false;
-			layer.AxisStyles[CSLineID.X1].AxisLineStyle.FirstDownMinorTicks = false;
-			layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMajorTicks = false;
-			layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMinorTicks = false;
+      layer.AxisStyles[CSLineID.X1].AxisLineStyle.FirstDownMajorTicks = false;
+      layer.AxisStyles[CSLineID.X1].AxisLineStyle.FirstDownMinorTicks = false;
+      layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMajorTicks = false;
+      layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMinorTicks = false;
 
-			graph.RootLayer.Layers.Add(layer);
+      graph.RootLayer.Layers.Add(layer);
 
-			return graph;
-		}
+      return graph;
+    }
 
-		/// <summary>
-		/// Creates a new graph, which has an x-y plot layer with an polar coordinate system. The name of the graph will be prepared, so that it is ready to be included in the project. However, it is not already included in the project.
-		/// </summary>
-		/// <param name="propertyContext">The property context. Can be retrieved for instance from the table the plot is initiated from or the folder.</param>
-		/// <param name="preferredGraphName">The name that is preferred for the new graph.</param>
-		/// <param name="anyNameInSameFolder">Any name of an item in the same folder. This name is used to determine the destination folder of the graph.</param>
-		/// <param name="includeInProject">If <c>true</c>, the graph is also included into the current project.</param>
-		/// <returns>The created graph. The graph is already part of the project. (But no view is created for the graph).</returns>
-		public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string preferredGraphName, string anyNameInSameFolder, bool includeInProject)
-		{
-			if (null == propertyContext)
-				propertyContext = PropertyExtensions.GetPropertyContextOfProject();
+    /// <summary>
+    /// Creates a new graph, which has an x-y plot layer with an polar coordinate system. The name of the graph will be prepared, so that it is ready to be included in the project. However, it is not already included in the project.
+    /// </summary>
+    /// <param name="propertyContext">The property context. Can be retrieved for instance from the table the plot is initiated from or the folder.</param>
+    /// <param name="preferredGraphName">The name that is preferred for the new graph.</param>
+    /// <param name="anyNameInSameFolder">Any name of an item in the same folder. This name is used to determine the destination folder of the graph.</param>
+    /// <param name="includeInProject">If <c>true</c>, the graph is also included into the current project.</param>
+    /// <returns>The created graph. The graph is already part of the project. (But no view is created for the graph).</returns>
+    public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string preferredGraphName, string anyNameInSameFolder, bool includeInProject)
+    {
+      if (null == propertyContext)
+        propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
-			GraphDocument graph;
-			var graphTemplate = propertyContext.GetValue<GraphDocument>(PropertyKeyDefaultTemplate);
-			bool isBuiltinPolarPlotTemplate = object.ReferenceEquals(graphTemplate, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(PropertyKeyDefaultTemplate));
+      GraphDocument graph;
+      var graphTemplate = propertyContext.GetValue<GraphDocument>(PropertyKeyDefaultTemplate);
+      bool isBuiltinPolarPlotTemplate = object.ReferenceEquals(graphTemplate, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(PropertyKeyDefaultTemplate));
 
-			GraphDocument graphTemplateCartesic = null;
-			bool isLineScatterTemplateBuiltin = false;
+      GraphDocument graphTemplateCartesic = null;
+      bool isLineScatterTemplateBuiltin = false;
 
-			if (isBuiltinPolarPlotTemplate)
-			{
-				graphTemplateCartesic = propertyContext.GetValue<GraphDocument>(TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.PropertyKeyDefaultTemplate);
-				isLineScatterTemplateBuiltin = object.ReferenceEquals(graphTemplateCartesic, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.PropertyKeyDefaultTemplate));
-			}
+      if (isBuiltinPolarPlotTemplate)
+      {
+        graphTemplateCartesic = propertyContext.GetValue<GraphDocument>(TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.PropertyKeyDefaultTemplate);
+        isLineScatterTemplateBuiltin = object.ReferenceEquals(graphTemplateCartesic, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.PropertyKeyDefaultTemplate));
+      }
 
-			if (!isLineScatterTemplateBuiltin && isBuiltinPolarPlotTemplate)
-			{
-				graph = (GraphDocument)graphTemplateCartesic.Clone();
-				// because we use the template with cartesic coordinate system here, we have to replace it by a polar coordinate systen
-				var layer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
+      if (!isLineScatterTemplateBuiltin && isBuiltinPolarPlotTemplate)
+      {
+        graph = (GraphDocument)graphTemplateCartesic.Clone();
+        // because we use the template with cartesic coordinate system here, we have to replace it by a polar coordinate systen
+        var layer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
 
-				layer.CoordinateSystem = new CS.G2DPolarCoordinateSystem();
-				layer.AxisStyles.Clear();
-				layer.CreateDefaultAxes(graph.GetPropertyContext());
-			}
-			else if (!isBuiltinPolarPlotTemplate)
-			{
-				graph = (GraphDocument)graphTemplate.Clone();
-			}
-			else
-			{
-				graph = CreateBuiltinGraph(null);
-			}
+        layer.CoordinateSystem = new CS.G2DPolarCoordinateSystem();
+        layer.AxisStyles.Clear();
+        layer.CreateDefaultAxes(graph.GetPropertyContext());
+      }
+      else if (!isBuiltinPolarPlotTemplate)
+      {
+        graph = (GraphDocument)graphTemplate.Clone();
+      }
+      else
+      {
+        graph = CreateBuiltinGraph(null);
+      }
 
-			if (string.IsNullOrEmpty(preferredGraphName))
-			{
-				string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(anyNameInSameFolder, "GRAPH");
-				graph.Name = Current.Project.GraphDocumentCollection.FindNewItemName(newnamebase);
-			}
-			else
-			{
-				graph.Name = preferredGraphName;
-			}
+      if (string.IsNullOrEmpty(preferredGraphName))
+      {
+        string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(anyNameInSameFolder, "GRAPH");
+        graph.Name = Current.Project.GraphDocumentCollection.FindNewItemName(newnamebase);
+      }
+      else
+      {
+        graph.Name = preferredGraphName;
+      }
 
-			if (includeInProject)
-				Current.Project.GraphDocumentCollection.Add(graph);
+      if (includeInProject)
+        Current.Project.GraphDocumentCollection.Add(graph);
 
-			return graph;
-		}
-	}
+      return graph;
+    }
+  }
 }

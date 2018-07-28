@@ -31,63 +31,63 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// This class handles the mouse events in case the text tool is selected.
-	/// </summary>
-	public class TextToolMouseHandler : MouseStateHandler
-	{
-		private GraphController _grac;
+  /// <summary>
+  /// This class handles the mouse events in case the text tool is selected.
+  /// </summary>
+  public class TextToolMouseHandler : MouseStateHandler
+  {
+    private GraphController _grac;
 
-		public TextToolMouseHandler(GraphController grac)
-		{
-			_grac = grac;
-			if (_grac != null)
-				_grac.SetPanelCursor(Cursors.IBeam);
-		}
+    public TextToolMouseHandler(GraphController grac)
+    {
+      _grac = grac;
+      if (_grac != null)
+        _grac.SetPanelCursor(Cursors.IBeam);
+    }
 
-		public override GraphToolType GraphToolType
-		{
-			get { return GraphToolType.TextDrawing; }
-		}
+    public override GraphToolType GraphToolType
+    {
+      get { return GraphToolType.TextDrawing; }
+    }
 
-		/// <summary>
-		/// Handles the click event by opening the text tool dialog.
-		/// </summary>
-		/// <param name="e">EventArgs.</param>
-		/// <param name="position">Mouse position.</param>
-		/// <returns>The mouse state handler for handling the next mouse events.</returns>
-		public override void OnClick(PointD2D position, MouseButtonEventArgs e)
-		{
-			base.OnClick(position, e);
+    /// <summary>
+    /// Handles the click event by opening the text tool dialog.
+    /// </summary>
+    /// <param name="e">EventArgs.</param>
+    /// <param name="position">Mouse position.</param>
+    /// <returns>The mouse state handler for handling the next mouse events.</returns>
+    public override void OnClick(PointD2D position, MouseButtonEventArgs e)
+    {
+      base.OnClick(position, e);
 
-			_cachedActiveLayer = _grac.ActiveLayer;
-			_cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-			_cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+      _cachedActiveLayer = _grac.ActiveLayer;
+      _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+      _cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
 
-			// get the page coordinates (in Point (1/72") units)
-			var rootLayerCoord = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
-			// with knowledge of the current active layer, calculate the layer coordinates from them
-			var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
+      // get the page coordinates (in Point (1/72") units)
+      var rootLayerCoord = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
+      // with knowledge of the current active layer, calculate the layer coordinates from them
+      var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
-			TextGraphic tgo = new TextGraphic(_grac.Doc.GetPropertyContext());
-			tgo.SetParentSize(_grac.ActiveLayer.Size, false);
-			tgo.Position = layerCoord;
-			tgo.ParentObject = _grac.ActiveLayer;
+      TextGraphic tgo = new TextGraphic(_grac.Doc.GetPropertyContext());
+      tgo.SetParentSize(_grac.ActiveLayer.Size, false);
+      tgo.Position = layerCoord;
+      tgo.ParentObject = _grac.ActiveLayer;
 
-			// deselect the text tool
-			_grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+      // deselect the text tool
+      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
 
-			object tgoo = tgo;
-			if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
-			{
-				tgo = (TextGraphic)tgoo;
-				if (tgo != null && !tgo.Empty)
-				{
-					_grac.ActiveLayer.GraphObjects.Add(tgo);
-				}
-			}
+      object tgoo = tgo;
+      if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
+      {
+        tgo = (TextGraphic)tgoo;
+        if (tgo != null && !tgo.Empty)
+        {
+          _grac.ActiveLayer.GraphObjects.Add(tgo);
+        }
+      }
 
-			/*
+      /*
 			TextControlDialog dlg = new TextControlDialog(_grac.Layers[_grac.CurrentLayerNumber],tgo);
 			if(DialogResult.OK==dlg.ShowDialog(_grac.View.Window))
 			{
@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 				}
 			}
 			*/
-			_grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-		}
-	}
+      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+    }
+  }
 }

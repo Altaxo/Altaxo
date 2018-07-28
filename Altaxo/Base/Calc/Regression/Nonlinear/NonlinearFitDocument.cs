@@ -27,168 +27,168 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-	/// <summary>
-	/// Bundles a <see cref="FitEnsemble"/>, i.e. a set of fit functions, together with the current parameters.
-	/// </summary>
-	public class NonlinearFitDocument
-		:
-		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		ICloneable
-	{
-		private FitEnsemble _fitEnsemble;
-		private ParameterSet _currentParameters;
+  /// <summary>
+  /// Bundles a <see cref="FitEnsemble"/>, i.e. a set of fit functions, together with the current parameters.
+  /// </summary>
+  public class NonlinearFitDocument
+    :
+    Main.SuspendableDocumentNodeWithSetOfEventArgs,
+    ICloneable
+  {
+    private FitEnsemble _fitEnsemble;
+    private ParameterSet _currentParameters;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NonlinearFitDocument), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				NonlinearFitDocument s = (NonlinearFitDocument)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NonlinearFitDocument), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        NonlinearFitDocument s = (NonlinearFitDocument)obj;
 
-				info.AddValue("FitEnsemble", s._fitEnsemble);
-				info.AddValue("Parameters", s._currentParameters);
-			}
+        info.AddValue("FitEnsemble", s._fitEnsemble);
+        info.AddValue("Parameters", s._currentParameters);
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				NonlinearFitDocument s = o != null ? (NonlinearFitDocument)o : new NonlinearFitDocument();
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        NonlinearFitDocument s = o != null ? (NonlinearFitDocument)o : new NonlinearFitDocument();
 
-				s._fitEnsemble = (FitEnsemble)info.GetValue("FitEnsemble", s);
-				s._fitEnsemble.ParentObject = s;
-				s._currentParameters = (ParameterSet)info.GetValue("Parameters", s);
+        s._fitEnsemble = (FitEnsemble)info.GetValue("FitEnsemble", s);
+        s._fitEnsemble.ParentObject = s;
+        s._currentParameters = (ParameterSet)info.GetValue("Parameters", s);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public NonlinearFitDocument()
-		{
-			_fitEnsemble = new FitEnsemble() { ParentObject = this };
-			_currentParameters = new ParameterSet();
-		}
+    public NonlinearFitDocument()
+    {
+      _fitEnsemble = new FitEnsemble() { ParentObject = this };
+      _currentParameters = new ParameterSet();
+    }
 
-		public NonlinearFitDocument(NonlinearFitDocument from)
-		{
-			_fitEnsemble = null == from._fitEnsemble ? null : (FitEnsemble)from._fitEnsemble.Clone();
-			_fitEnsemble.ParentObject = this;
+    public NonlinearFitDocument(NonlinearFitDocument from)
+    {
+      _fitEnsemble = null == from._fitEnsemble ? null : (FitEnsemble)from._fitEnsemble.Clone();
+      _fitEnsemble.ParentObject = this;
 
-			_currentParameters = null == from._currentParameters ? null : (ParameterSet)from._currentParameters.Clone();
-			// Note that the fit context is not cloned here.
-		}
+      _currentParameters = null == from._currentParameters ? null : (ParameterSet)from._currentParameters.Clone();
+      // Note that the fit context is not cloned here.
+    }
 
-		public FitEnsemble FitEnsemble
-		{
-			get
-			{
-				return _fitEnsemble;
-			}
-		}
+    public FitEnsemble FitEnsemble
+    {
+      get
+      {
+        return _fitEnsemble;
+      }
+    }
 
-		public ParameterSet CurrentParameters
-		{
-			get
-			{
-				return _currentParameters;
-			}
-		}
+    public ParameterSet CurrentParameters
+    {
+      get
+      {
+        return _currentParameters;
+      }
+    }
 
-		public double[] GetParametersForFitElement(int idx)
-		{
-			FitElement fitele = _fitEnsemble[idx];
+    public double[] GetParametersForFitElement(int idx)
+    {
+      FitElement fitele = _fitEnsemble[idx];
 
-			var byName = new Dictionary<string, double>();
-			for (int i = 0; i < _currentParameters.Count; i++)
-				byName.Add(_currentParameters[i].Name, _currentParameters[i].Parameter);
+      var byName = new Dictionary<string, double>();
+      for (int i = 0; i < _currentParameters.Count; i++)
+        byName.Add(_currentParameters[i].Name, _currentParameters[i].Parameter);
 
-			double[] result = new double[fitele.NumberOfParameters];
-			for (int i = 0; i < result.Length; ++i)
-			{
-				result[i] = byName[fitele.ParameterName(i)];
-			}
+      double[] result = new double[fitele.NumberOfParameters];
+      for (int i = 0; i < result.Length; ++i)
+      {
+        result[i] = byName[fitele.ParameterName(i)];
+      }
 
-			return result;
-		}
+      return result;
+    }
 
-		/// <summary>
-		/// This will set all parameters in the ensembly with the same name than that of the parameter names
-		/// of fit function at index <c>idx</c> to their default values (those are provided by the fit function).
-		/// </summary>
-		/// <param name="idx">Index of the fit element.</param>
-		public void SetDefaultParametersForFitElement(int idx)
-		{
-			FitElement fitele = _fitEnsemble[idx];
-			if (fitele.FitFunction == null)
-				return;
+    /// <summary>
+    /// This will set all parameters in the ensembly with the same name than that of the parameter names
+    /// of fit function at index <c>idx</c> to their default values (those are provided by the fit function).
+    /// </summary>
+    /// <param name="idx">Index of the fit element.</param>
+    public void SetDefaultParametersForFitElement(int idx)
+    {
+      FitElement fitele = _fitEnsemble[idx];
+      if (fitele.FitFunction == null)
+        return;
 
-			System.Collections.Hashtable byName = new System.Collections.Hashtable();
-			for (int i = 0; i < _currentParameters.Count; i++)
-				byName.Add(_currentParameters[i].Name, i);
+      System.Collections.Hashtable byName = new System.Collections.Hashtable();
+      for (int i = 0; i < _currentParameters.Count; i++)
+        byName.Add(_currentParameters[i].Name, i);
 
-			for (int i = 0; i < fitele.NumberOfParameters; ++i)
-			{
-				int k = (int)byName[fitele.ParameterName(i)];
-				_currentParameters[k].Parameter = fitele.FitFunction.DefaultParameterValue(i);
-			}
+      for (int i = 0; i < fitele.NumberOfParameters; ++i)
+      {
+        int k = (int)byName[fitele.ParameterName(i)];
+        _currentParameters[k].Parameter = fitele.FitFunction.DefaultParameterValue(i);
+      }
 
-			_currentParameters.OnInitializationFinished();
-		}
+      _currentParameters.OnInitializationFinished();
+    }
 
-		private void RecalculateParameterSet()
-		{
-			// save old values
-			System.Collections.Hashtable byName = new System.Collections.Hashtable();
-			for (int i = 0; i < _currentParameters.Count; i++)
-				byName.Add(_currentParameters[i].Name, _currentParameters[i]);
+    private void RecalculateParameterSet()
+    {
+      // save old values
+      System.Collections.Hashtable byName = new System.Collections.Hashtable();
+      for (int i = 0; i < _currentParameters.Count; i++)
+        byName.Add(_currentParameters[i].Name, _currentParameters[i]);
 
-			// now restore the values
-			_currentParameters.Clear();
+      // now restore the values
+      _currentParameters.Clear();
 
-			for (int i = 0; i < _fitEnsemble.NumberOfParameters; i++)
-			{
-				string name = _fitEnsemble.ParameterName(i);
-				if (byName.ContainsKey(name))
-					_currentParameters.Add((ParameterSetElement)byName[name]);
-				else
-					_currentParameters.Add(new ParameterSetElement(name));
-			}
+      for (int i = 0; i < _fitEnsemble.NumberOfParameters; i++)
+      {
+        string name = _fitEnsemble.ParameterName(i);
+        if (byName.ContainsKey(name))
+          _currentParameters.Add((ParameterSetElement)byName[name]);
+        else
+          _currentParameters.Add(new ParameterSetElement(name));
+      }
 
-			_currentParameters.OnInitializationFinished();
-		}
+      _currentParameters.OnInitializationFinished();
+    }
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public object Clone()
-		{
-			return new NonlinearFitDocument(this);
-		}
+    public object Clone()
+    {
+      return new NonlinearFitDocument(this);
+    }
 
-		#endregion ICloneable Members
+    #endregion ICloneable Members
 
-		#region Changed event handling
+    #region Changed event handling
 
-		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
-		{
-			RecalculateParameterSet();
+    protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+    {
+      RecalculateParameterSet();
 
-			return base.HandleHighPriorityChildChangeCases(sender, ref e);
-		}
+      return base.HandleHighPriorityChildChangeCases(sender, ref e);
+    }
 
-		#endregion Changed event handling
+    #endregion Changed event handling
 
-		#region Document node functions
+    #region Document node functions
 
-		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			if (null != _fitEnsemble)
-			{
-				yield return new Main.DocumentNodeAndName(_fitEnsemble, "FitEnsemble");
-			}
-		}
+    protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      if (null != _fitEnsemble)
+      {
+        yield return new Main.DocumentNodeAndName(_fitEnsemble, "FitEnsemble");
+      }
+    }
 
-		#endregion Document node functions
-	}
+    #endregion Document node functions
+  }
 }

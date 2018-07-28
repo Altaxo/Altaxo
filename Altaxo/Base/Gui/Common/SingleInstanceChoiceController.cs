@@ -26,104 +26,104 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
-	public class SingleInstanceChoice
-	{
-		private System.Type _instanceType;
-		private object _instance;
+  public class SingleInstanceChoice
+  {
+    private System.Type _instanceType;
+    private object _instance;
 
-		public System.Type InstanceType
-		{
-			get
-			{
-				return _instanceType;
-			}
-		}
+    public System.Type InstanceType
+    {
+      get
+      {
+        return _instanceType;
+      }
+    }
 
-		public object Instance
-		{
-			get
-			{
-				return _instance;
-			}
+    public object Instance
+    {
+      get
+      {
+        return _instance;
+      }
 
-			set
-			{
-				if (null != value && !Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(value.GetType(), _instanceType))
-					throw new ArgumentException("The provided instance object is not a subclass (or implements) type instanceType");
-				_instance = value;
-			}
-		}
+      set
+      {
+        if (null != value && !Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(value.GetType(), _instanceType))
+          throw new ArgumentException("The provided instance object is not a subclass (or implements) type instanceType");
+        _instance = value;
+      }
+    }
 
-		public SingleInstanceChoice(System.Type instanceType, object instance)
-		{
-			Initialize(instanceType, instance);
-		}
+    public SingleInstanceChoice(System.Type instanceType, object instance)
+    {
+      Initialize(instanceType, instance);
+    }
 
-		public void Initialize(System.Type instanceType, object instance)
-		{
-			if (instanceType == null)
-				throw new ArgumentException("instanceType must not be null");
-			if (null != instance && !Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(instance.GetType(), instanceType))
-				throw new ArgumentException("The provided instance object is not a subclass (or implements) type instanceType");
+    public void Initialize(System.Type instanceType, object instance)
+    {
+      if (instanceType == null)
+        throw new ArgumentException("instanceType must not be null");
+      if (null != instance && !Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(instance.GetType(), instanceType))
+        throw new ArgumentException("The provided instance object is not a subclass (or implements) type instanceType");
 
-			_instanceType = instanceType;
-			_instance = instance;
-		}
-	}
+      _instanceType = instanceType;
+      _instance = instance;
+    }
+  }
 
-	/// <summary>
-	/// Summary description for SingleInstanceChoiceController.
-	/// </summary>
-	[UserControllerForObject(typeof(SingleInstanceChoice))]
-	public class SingleInstanceChoiceController : SingleChoiceController
-	{
-		private SingleInstanceChoice _doc;
-		private System.Type[] _types;
+  /// <summary>
+  /// Summary description for SingleInstanceChoiceController.
+  /// </summary>
+  [UserControllerForObject(typeof(SingleInstanceChoice))]
+  public class SingleInstanceChoiceController : SingleChoiceController
+  {
+    private SingleInstanceChoice _doc;
+    private System.Type[] _types;
 
-		public SingleInstanceChoiceController(SingleInstanceChoice doc)
-		{
-			_doc = doc;
-			_types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(_doc.InstanceType);
+    public SingleInstanceChoiceController(SingleInstanceChoice doc)
+    {
+      _doc = doc;
+      _types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(_doc.InstanceType);
 
-			int selectedIndex = -1;
-			string[] choices = new string[_types.Length];
-			for (int i = 0; i < _types.Length; i++)
-			{
-				choices[i] = Current.Gui.GetUserFriendlyClassName(_types[i]);
-				if (_doc.Instance != null && _doc.Instance.GetType() == _types[i])
-					selectedIndex = i;
-			}
+      int selectedIndex = -1;
+      string[] choices = new string[_types.Length];
+      for (int i = 0; i < _types.Length; i++)
+      {
+        choices[i] = Current.Gui.GetUserFriendlyClassName(_types[i]);
+        if (_doc.Instance != null && _doc.Instance.GetType() == _types[i])
+          selectedIndex = i;
+      }
 
-			base.Initialize(choices, selectedIndex);
-		}
+      base.Initialize(choices, selectedIndex);
+    }
 
-		public override object ModelObject
-		{
-			get
-			{
-				return _doc;
-			}
-		}
+    public override object ModelObject
+    {
+      get
+      {
+        return _doc;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!base.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!base.Apply(disposeController))
+        return false;
 
-			int selected = base._choice;
-			if (_doc.Instance != null && _doc.Instance.GetType() == _types[selected])
-				return true;
-			else
-			{
-				object current = System.Activator.CreateInstance(_types[selected]);
-				if (current != null)
-				{
-					_doc.Instance = current;
-					return true;
-				}
-			}
+      int selected = base._choice;
+      if (_doc.Instance != null && _doc.Instance.GetType() == _types[selected])
+        return true;
+      else
+      {
+        object current = System.Activator.CreateInstance(_types[selected]);
+        if (current != null)
+        {
+          _doc.Instance = current;
+          return true;
+        }
+      }
 
-			return false;
-		}
-	}
+      return false;
+    }
+  }
 }

@@ -31,35 +31,35 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	public class PositionNormalIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionNormalIndexedTriangleBuffer
-	{
-		public PositionNormalIndexedTriangleBuffer(ITransformationContext parent)
-			: base(parent)
-		{
-		}
+  public class PositionNormalIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionNormalIndexedTriangleBuffer
+  {
+    public PositionNormalIndexedTriangleBuffer(ITransformationContext parent)
+      : base(parent)
+    {
+    }
 
-		protected override int BytesPerVertex { get { return 8 * 4; } }
+    protected override int BytesPerVertex { get { return 8 * 4; } }
 
-		public void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz)
-		{
-			var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));
-			var no = _parent.TransposedInverseTransformation.Transform(new VectorD3D(nx, ny, nz));
+    public void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz)
+    {
+      var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));
+      var no = _parent.TransposedInverseTransformation.Transform(new VectorD3D(nx, ny, nz));
 
-			int offs = _numberOfVertices << 3;
+      int offs = _numberOfVertices << 3;
 
-			if (offs + 8 >= _vertexStream.Length)
-				Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
+      if (offs + 8 >= _vertexStream.Length)
+        Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
 
-			_vertexStream[offs + 0] = (float)pt.X;
-			_vertexStream[offs + 1] = (float)pt.Y;
-			_vertexStream[offs + 2] = (float)pt.Z;
-			_vertexStream[offs + 3] = 1;
-			_vertexStream[offs + 4] = (float)no.X;
-			_vertexStream[offs + 5] = (float)no.Y;
-			_vertexStream[offs + 6] = (float)no.Z;
-			_vertexStream[offs + 7] = 1;
+      _vertexStream[offs + 0] = (float)pt.X;
+      _vertexStream[offs + 1] = (float)pt.Y;
+      _vertexStream[offs + 2] = (float)pt.Z;
+      _vertexStream[offs + 3] = 1;
+      _vertexStream[offs + 4] = (float)no.X;
+      _vertexStream[offs + 5] = (float)no.Y;
+      _vertexStream[offs + 6] = (float)no.Z;
+      _vertexStream[offs + 7] = 1;
 
-			++_numberOfVertices;
-		}
-	}
+      ++_numberOfVertices;
+    }
+  }
 }

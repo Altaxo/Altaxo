@@ -30,52 +30,52 @@ using System.Text;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public interface INamedColorView
-	{
-		Altaxo.Drawing.NamedColor SelectedColor { get; set; }
+  public interface INamedColorView
+  {
+    Altaxo.Drawing.NamedColor SelectedColor { get; set; }
 
-		event Action SelectedItemChanged;
-	}
+    event Action SelectedItemChanged;
+  }
 
-	[ExpectedTypeOfView(typeof(INamedColorView))]
-	[UserControllerForObject(typeof(NamedColor))]
-	public class NamedColorController : MVCANDControllerEditImmutableDocBase<NamedColor, INamedColorView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [ExpectedTypeOfView(typeof(INamedColorView))]
+  [UserControllerForObject(typeof(NamedColor))]
+  public class NamedColorController : MVCANDControllerEditImmutableDocBase<NamedColor, INamedColorView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.SelectedColor = _doc;
-			}
-		}
+      if (null != _view)
+      {
+        _view.SelectedColor = _doc;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc = _view.SelectedColor;
-			return ApplyEnd(true, disposeController);
-		}
+    public override bool Apply(bool disposeController)
+    {
+      _doc = _view.SelectedColor;
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			_view.SelectedItemChanged += EhSelectedColorChanged;
-		}
+    protected override void AttachView()
+    {
+      _view.SelectedItemChanged += EhSelectedColorChanged;
+    }
 
-		protected override void DetachView()
-		{
-			_view.SelectedItemChanged -= EhSelectedColorChanged;
-		}
+    protected override void DetachView()
+    {
+      _view.SelectedItemChanged -= EhSelectedColorChanged;
+    }
 
-		private void EhSelectedColorChanged()
-		{
-			_doc = _view.SelectedColor;
-			OnMadeDirty();
-		}
-	}
+    private void EhSelectedColorChanged()
+    {
+      _doc = _view.SelectedColor;
+      OnMadeDirty();
+    }
+  }
 }

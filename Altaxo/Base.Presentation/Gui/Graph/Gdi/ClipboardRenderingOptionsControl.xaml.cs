@@ -31,75 +31,75 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	/// <summary>
-	/// Interaction logic for GraphExportOptionsControl.xaml
-	/// </summary>
-	public partial class ClipboardRenderingOptionsControl : UserControl, IClipboardRenderingOptionsView
-	{
-		public ClipboardRenderingOptionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for GraphExportOptionsControl.xaml
+  /// </summary>
+  public partial class ClipboardRenderingOptionsControl : UserControl, IClipboardRenderingOptionsView
+  {
+    public ClipboardRenderingOptionsControl()
+    {
+      InitializeComponent();
+    }
 
-		public bool RenderDropfile
-		{
-			get
-			{
-				return _guiRenderDropfile.IsChecked == true;
-			}
-			set
-			{
-				_guiRenderDropfile.IsChecked = value;
-			}
-		}
+    public bool RenderDropfile
+    {
+      get
+      {
+        return _guiRenderDropfile.IsChecked == true;
+      }
+      set
+      {
+        _guiRenderDropfile.IsChecked = value;
+      }
+    }
 
-		public void SetDropFileImageFormat(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbImageFormat, list);
-		}
+    public void SetDropFileImageFormat(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_cbImageFormat, list);
+    }
 
-		public void SetDropFilePixelFormat(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbPixelFormat, list);
-		}
+    public void SetDropFilePixelFormat(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_cbPixelFormat, list);
+    }
 
-		public bool RenderEmbeddedObject
-		{
-			get
-			{
-				return _guiRenderEmbeddedObject.IsChecked == true;
-			}
-			set
-			{
-				_guiRenderEmbeddedObject.IsChecked = value;
-			}
-		}
+    public bool RenderEmbeddedObject
+    {
+      get
+      {
+        return _guiRenderEmbeddedObject.IsChecked == true;
+      }
+      set
+      {
+        _guiRenderEmbeddedObject.IsChecked = value;
+      }
+    }
 
-		public bool RenderLinkedObject
-		{
-			get
-			{
-				return _guiRenderLinkedObject.IsChecked == true;
-			}
-			set
-			{
-				_guiRenderLinkedObject.IsChecked = value;
-			}
-		}
+    public bool RenderLinkedObject
+    {
+      get
+      {
+        return _guiRenderLinkedObject.IsChecked == true;
+      }
+      set
+      {
+        _guiRenderLinkedObject.IsChecked = value;
+      }
+    }
 
-		private void EhImageFormatSelected(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_cbImageFormat);
-		}
+    private void EhImageFormatSelected(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_cbImageFormat);
+    }
 
-		private void EhPixelFormatSelected(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
-		}
+    private void EhPixelFormatSelected(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
+    }
 
-		public object EmbeddedRenderingOptionsView
-		{
-			set { _guiEmbeddedOptionsViewHost.Child = value as UIElement; }
-		}
-	}
+    public object EmbeddedRenderingOptionsView
+    {
+      set { _guiEmbeddedOptionsViewHost.Child = value as UIElement; }
+    }
+  }
 }

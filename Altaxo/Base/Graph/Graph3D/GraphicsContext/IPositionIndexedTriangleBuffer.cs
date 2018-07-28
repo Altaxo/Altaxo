@@ -30,17 +30,17 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	/// <summary>
-	/// Interface to a buffer that stores indexed triangle data consisting of position.
-	/// </summary>
-	public interface IPositionIndexedTriangleBuffer : IIndexedTriangleBuffer
-	{
-		/// <summary>
-		/// Adds the specified vertex.
-		/// </summary>
-		/// <param name="x">The x position.</param>
-		/// <param name="y">The y position.</param>
-		/// <param name="z">The z position.</param>
-		void AddTriangleVertex(double x, double y, double z);
-	}
+  /// <summary>
+  /// Interface to a buffer that stores indexed triangle data consisting of position.
+  /// </summary>
+  public interface IPositionIndexedTriangleBuffer : IIndexedTriangleBuffer
+  {
+    /// <summary>
+    /// Adds the specified vertex.
+    /// </summary>
+    /// <param name="x">The x position.</param>
+    /// <param name="y">The y position.</param>
+    /// <param name="z">The z position.</param>
+    void AddTriangleVertex(double x, double y, double z);
+  }
 }

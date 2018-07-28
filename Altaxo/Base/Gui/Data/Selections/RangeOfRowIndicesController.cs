@@ -29,44 +29,44 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	using Altaxo.Data.Selections;
+  using Altaxo.Data.Selections;
 
-	public interface IRangeOfRowIndicesView
-	{
-		int RangeStart { get; set; }
-		int RangeEndInclusive { get; set; }
-	}
+  public interface IRangeOfRowIndicesView
+  {
+    int RangeStart { get; set; }
+    int RangeEndInclusive { get; set; }
+  }
 
-	[UserControllerForObject(typeof(RangeOfRowIndices), 100)]
-	[ExpectedTypeOfView(typeof(IRangeOfRowIndicesView))]
-	public class RangeOfRowIndicesController : MVCANControllerEditImmutableDocBase<RangeOfRowIndices, IRangeOfRowIndicesView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(RangeOfRowIndices), 100)]
+  [ExpectedTypeOfView(typeof(IRangeOfRowIndicesView))]
+  public class RangeOfRowIndicesController : MVCANControllerEditImmutableDocBase<RangeOfRowIndices, IRangeOfRowIndicesView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				_view.RangeStart = _doc.Start;
-				_view.RangeEndInclusive = _doc.LastInclusive;
-			}
-		}
+      if (initData)
+      {
+      }
+      if (null != _view)
+      {
+        _view.RangeStart = _doc.Start;
+        _view.RangeEndInclusive = _doc.LastInclusive;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			int start = _view.RangeStart;
-			int endIncl = _view.RangeEndInclusive;
-			_doc = RangeOfRowIndices.FromStartAndEndInclusive(start, endIncl);
+    public override bool Apply(bool disposeController)
+    {
+      int start = _view.RangeStart;
+      int endIncl = _view.RangeEndInclusive;
+      _doc = RangeOfRowIndices.FromStartAndEndInclusive(start, endIncl);
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

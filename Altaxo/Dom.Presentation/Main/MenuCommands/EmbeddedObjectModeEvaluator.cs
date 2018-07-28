@@ -27,33 +27,33 @@ using System;
 
 namespace Altaxo.Main.Commands
 {
-	/// <summary>
-	/// Evaluates to <c>true</c> if we are in embedded object mode, i.e. Altaxo was started with
-	/// -embedding object args and has loaded an embedded document.
-	/// </summary>
-	public class EmbeddedObjectModeEvaluator : IConditionEvaluator
-	{
-		public bool IsValid(object caller, Condition condition)
-		{
-			string expectedValueS = condition.Properties["value"].ToLowerInvariant();
-			bool expectedValue;
-			switch (expectedValueS)
-			{
-				case "false":
-					expectedValue = false;
-					break;
+  /// <summary>
+  /// Evaluates to <c>true</c> if we are in embedded object mode, i.e. Altaxo was started with
+  /// -embedding object args and has loaded an embedded document.
+  /// </summary>
+  public class EmbeddedObjectModeEvaluator : IConditionEvaluator
+  {
+    public bool IsValid(object caller, Condition condition)
+    {
+      string expectedValueS = condition.Properties["value"].ToLowerInvariant();
+      bool expectedValue;
+      switch (expectedValueS)
+      {
+        case "false":
+          expectedValue = false;
+          break;
 
-				case "true":
-					expectedValue = true;
-					break;
+        case "true":
+          expectedValue = true;
+          break;
 
-				default:
-					throw new ArgumentException(string.Format("In {0}: property 'value' should be either 'false' or 'true', but is here: '{1}'", this.GetType().Name, expectedValueS));
-			}
+        default:
+          throw new ArgumentException(string.Format("In {0}: property 'value' should be either 'false' or 'true', but is here: '{1}'", this.GetType().Name, expectedValueS));
+      }
 
-			bool currentValue = Current.ComManager != null && Current.ComManager.IsInEmbeddedMode;
+      bool currentValue = Current.ComManager != null && Current.ComManager.IsInEmbeddedMode;
 
-			return currentValue == expectedValue;
-		}
-	}
+      return currentValue == expectedValue;
+    }
+  }
 }

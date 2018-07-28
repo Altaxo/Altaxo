@@ -39,359 +39,359 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	/// <summary>
-	/// Interaction logic for XYPlotScatterStyleControl.xaml
-	/// </summary>
-	public partial class ScatterPlotStyleControl : UserControl, IScatterPlotStyleView
-	{
-		public event Action IndependentColorChanged;
+  /// <summary>
+  /// Interaction logic for XYPlotScatterStyleControl.xaml
+  /// </summary>
+  public partial class ScatterPlotStyleControl : UserControl, IScatterPlotStyleView
+  {
+    public event Action IndependentColorChanged;
 
-		public event Action ScatterSymbolChanged;
+    public event Action ScatterSymbolChanged;
 
-		public event Action CreateNewSymbolSetFromOverrides;
+    public event Action CreateNewSymbolSetFromOverrides;
 
-		public event Action SimilarSymbolSetChosen;
+    public event Action SimilarSymbolSetChosen;
 
-		public ScatterPlotStyleControl()
-		{
-			InitializeComponent();
+    public ScatterPlotStyleControl()
+    {
+      InitializeComponent();
 
-			var shapeMenuItem = new MenuItem() { Header = "Create new symbol set from overrides", ToolTip = "This will create a new symbol set from the current symbol set and the settings in Overrides" };
-			shapeMenuItem.Click += EhCreateNewScatterSymbolSet;
-			_cbSymbolShape.ContextMenu.Items.Add(shapeMenuItem);
-		}
+      var shapeMenuItem = new MenuItem() { Header = "Create new symbol set from overrides", ToolTip = "This will create a new symbol set from the current symbol set and the settings in Overrides" };
+      shapeMenuItem.Click += EhCreateNewScatterSymbolSet;
+      _cbSymbolShape.ContextMenu.Items.Add(shapeMenuItem);
+    }
 
-		private void EhCreateNewScatterSymbolSet(object sender, RoutedEventArgs e)
-		{
-			CreateNewSymbolSetFromOverrides?.Invoke();
-		}
+    private void EhCreateNewScatterSymbolSet(object sender, RoutedEventArgs e)
+    {
+      CreateNewSymbolSetFromOverrides?.Invoke();
+    }
 
-		public void EnableDisableMain(bool bEnable)
-		{
-			this._chkIndependentColor.IsEnabled = bEnable;
-			this._chkIndependentSize.IsEnabled = bEnable;
+    public void EnableDisableMain(bool bEnable)
+    {
+      this._chkIndependentColor.IsEnabled = bEnable;
+      this._chkIndependentSize.IsEnabled = bEnable;
 
-			this._cbColor.IsEnabled = bEnable;
-			this._cbSymbolSize.IsEnabled = bEnable;
-			this._edSymbolSkipFrequency.IsEnabled = bEnable;
-		}
+      this._cbColor.IsEnabled = bEnable;
+      this._cbSymbolSize.IsEnabled = bEnable;
+      this._edSymbolSkipFrequency.IsEnabled = bEnable;
+    }
 
-		#region IXYPlotScatterStyleView
+    #region IXYPlotScatterStyleView
 
-		public void InitializeSymbolStyle(SelectableListNodeList list)
-		{
-		}
+    public void InitializeSymbolStyle(SelectableListNodeList list)
+    {
+    }
 
-		public void InitializeSymbolShape(SelectableListNodeList list)
-		{
-			_cbSymbolShape.SelectedItem = list.FirstSelectedNode?.Tag as IScatterSymbol;
-		}
+    public void InitializeSymbolShape(SelectableListNodeList list)
+    {
+      _cbSymbolShape.SelectedItem = list.FirstSelectedNode?.Tag as IScatterSymbol;
+    }
 
-		public SelectableListNodeList SimilarSymbols
-		{
-			set
-			{
-				GuiHelper.Initialize(_guiSimilarSymbolSets, value);
-			}
-		}
+    public SelectableListNodeList SimilarSymbols
+    {
+      set
+      {
+        GuiHelper.Initialize(_guiSimilarSymbolSets, value);
+      }
+    }
 
-		private void EhSimilarSymbolChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiSimilarSymbolSets);
-			SimilarSymbolSetChosen?.Invoke();
-		}
+    private void EhSimilarSymbolChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiSimilarSymbolSets);
+      SimilarSymbolSetChosen?.Invoke();
+    }
 
-		public bool IndependentColor
-		{
-			get
-			{
-				return true == _chkIndependentColor.IsChecked;
-			}
-			set
-			{
-				this._chkIndependentColor.IsChecked = value;
-			}
-		}
+    public bool IndependentColor
+    {
+      get
+      {
+        return true == _chkIndependentColor.IsChecked;
+      }
+      set
+      {
+        this._chkIndependentColor.IsChecked = value;
+      }
+    }
 
-		public NamedColor Color
-		{
-			get { return _cbColor.SelectedColor; }
-			set { _cbColor.SelectedColor = value; }
-		}
+    public NamedColor Color
+    {
+      get { return _cbColor.SelectedColor; }
+      set { _cbColor.SelectedColor = value; }
+    }
 
-		public bool IndependentScatterSymbol
-		{
-			get
-			{
-				return true == _guiIndependentScatterSymbol.IsChecked;
-			}
-			set
-			{
-				_guiIndependentScatterSymbol.IsChecked = value;
-			}
-		}
+    public bool IndependentScatterSymbol
+    {
+      get
+      {
+        return true == _guiIndependentScatterSymbol.IsChecked;
+      }
+      set
+      {
+        _guiIndependentScatterSymbol.IsChecked = value;
+      }
+    }
 
-		public IScatterSymbol ScatterSymbol
-		{
-			get { return _cbSymbolShape.SelectedItem; }
-			set { _cbSymbolShape.SelectedItem = value; }
-		}
+    public IScatterSymbol ScatterSymbol
+    {
+      get { return _cbSymbolShape.SelectedItem; }
+      set { _cbSymbolShape.SelectedItem = value; }
+    }
 
-		private void EhScatterSymbolChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			ScatterSymbolChanged?.Invoke();
-		}
+    private void EhScatterSymbolChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      ScatterSymbolChanged?.Invoke();
+    }
 
-		public SelectableListNodeList Inset
-		{
-			set
-			{
-				GuiHelper.Initialize(_guiInset, value);
-			}
-		}
+    public SelectableListNodeList Inset
+    {
+      set
+      {
+        GuiHelper.Initialize(_guiInset, value);
+      }
+    }
 
-		private void EhInsetChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiInset);
-		}
+    private void EhInsetChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiInset);
+    }
 
-		public SelectableListNodeList Frame
-		{
-			set
-			{
-				GuiHelper.Initialize(_guiFrame, value);
-			}
-		}
+    public SelectableListNodeList Frame
+    {
+      set
+      {
+        GuiHelper.Initialize(_guiFrame, value);
+      }
+    }
 
-		private void EhFrameChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiFrame);
-		}
+    private void EhFrameChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiFrame);
+    }
 
-		public bool IndependentSymbolSize
-		{
-			get { return true == _chkIndependentSize.IsChecked; }
-			set { this._chkIndependentSize.IsChecked = value; }
-		}
+    public bool IndependentSymbolSize
+    {
+      get { return true == _chkIndependentSize.IsChecked; }
+      set { this._chkIndependentSize.IsChecked = value; }
+    }
 
-		public double SymbolSize
-		{
-			get { return _cbSymbolSize.SelectedQuantityAsValueInPoints; }
-			set { _cbSymbolSize.SelectedQuantityAsValueInPoints = value; }
-		}
+    public double SymbolSize
+    {
+      get { return _cbSymbolSize.SelectedQuantityAsValueInPoints; }
+      set { _cbSymbolSize.SelectedQuantityAsValueInPoints = value; }
+    }
 
-		public int SkipFrequency
-		{
-			get
-			{
-				return _edSymbolSkipFrequency.Value;
-			}
-			set
-			{
-				this._edSymbolSkipFrequency.Value = value;
-			}
-		}
+    public int SkipFrequency
+    {
+      get
+      {
+        return _edSymbolSkipFrequency.Value;
+      }
+      set
+      {
+        this._edSymbolSkipFrequency.Value = value;
+      }
+    }
 
-		public bool IndependentSkipFrequency
-		{
-			get { return true == _chkIndependentSkipFreq.IsChecked; }
-			set { this._chkIndependentSkipFreq.IsChecked = value; }
-		}
+    public bool IndependentSkipFrequency
+    {
+      get { return true == _chkIndependentSkipFreq.IsChecked; }
+      set { this._chkIndependentSkipFreq.IsChecked = value; }
+    }
 
-		public bool IgnoreMissingDataPoints
-		{
-			get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
-			set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
-		}
+    public bool IgnoreMissingDataPoints
+    {
+      get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
+      set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+    }
 
-		public bool IndependentOnShiftingGroupStyles
-		{
-			get { return true == _guiIndependentOnShiftingGroupStyles.IsChecked; }
-			set { this._guiIndependentOnShiftingGroupStyles.IsChecked = value; }
-		}
+    public bool IndependentOnShiftingGroupStyles
+    {
+      get { return true == _guiIndependentOnShiftingGroupStyles.IsChecked; }
+      set { this._guiIndependentOnShiftingGroupStyles.IsChecked = value; }
+    }
 
-		#endregion IXYPlotScatterStyleView
+    #endregion IXYPlotScatterStyleView
 
-		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != IndependentColorChanged)
-				IndependentColorChanged();
-		}
+    private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != IndependentColorChanged)
+        IndependentColorChanged();
+    }
 
-		public bool ShowPlotColorsOnly
-		{
-			set
-			{
-				_cbColor.ShowPlotColorsOnly = value;
-			}
-		}
+    public bool ShowPlotColorsOnly
+    {
+      set
+      {
+        _cbColor.ShowPlotColorsOnly = value;
+      }
+    }
 
-		public bool OverrideInset
-		{
-			get
-			{
-				return _guiOverrideInset.IsChecked == true;
-			}
-			set
-			{
-				_guiOverrideInset.IsChecked = value;
-			}
-		}
+    public bool OverrideInset
+    {
+      get
+      {
+        return _guiOverrideInset.IsChecked == true;
+      }
+      set
+      {
+        _guiOverrideInset.IsChecked = value;
+      }
+    }
 
-		public bool OverrideFrame
-		{
-			get
-			{
-				return _guiOverrideFrame.IsChecked == true;
-			}
-			set
-			{
-				_guiOverrideFrame.IsChecked = value;
-			}
-		}
+    public bool OverrideFrame
+    {
+      get
+      {
+        return _guiOverrideFrame.IsChecked == true;
+      }
+      set
+      {
+        _guiOverrideFrame.IsChecked = value;
+      }
+    }
 
-		public bool OverrideAbsoluteStructureWidth
-		{
-			get
-			{
-				return _guiOverrideAbsoluteStructureWidth.IsChecked == true;
-			}
-			set
-			{
-				_guiOverrideAbsoluteStructureWidth.IsChecked = value;
-			}
-		}
+    public bool OverrideAbsoluteStructureWidth
+    {
+      get
+      {
+        return _guiOverrideAbsoluteStructureWidth.IsChecked == true;
+      }
+      set
+      {
+        _guiOverrideAbsoluteStructureWidth.IsChecked = value;
+      }
+    }
 
-		public double OverriddenAbsoluteStructureWidth
-		{
-			get
-			{
-				return _guiOverriddenAbsoluteStructureWidth.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_guiOverriddenAbsoluteStructureWidth.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double OverriddenAbsoluteStructureWidth
+    {
+      get
+      {
+        return _guiOverriddenAbsoluteStructureWidth.SelectedQuantityAsValueInPoints;
+      }
+      set
+      {
+        _guiOverriddenAbsoluteStructureWidth.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public bool OverrideRelativeStructureWidth
-		{
-			get
-			{
-				return _guiOverrideRelativeStructureWidth.IsChecked == true;
-			}
-			set
-			{
-				_guiOverrideRelativeStructureWidth.IsChecked = value;
-			}
-		}
+    public bool OverrideRelativeStructureWidth
+    {
+      get
+      {
+        return _guiOverrideRelativeStructureWidth.IsChecked == true;
+      }
+      set
+      {
+        _guiOverrideRelativeStructureWidth.IsChecked = value;
+      }
+    }
 
-		public double OverriddenRelativeStructureWidth
-		{
-			get
-			{
-				return _guiOverriddenRelativeStructureWidth.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_guiOverriddenRelativeStructureWidth.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
+    public double OverriddenRelativeStructureWidth
+    {
+      get
+      {
+        return _guiOverriddenRelativeStructureWidth.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _guiOverriddenRelativeStructureWidth.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
 
-		public bool OverridePlotColorInfluence
-		{
-			get
-			{
-				return _guiOverridePlotColorInfluence.IsChecked == true;
-			}
-			set
-			{
-				_guiOverridePlotColorInfluence.IsChecked = value;
-			}
-		}
+    public bool OverridePlotColorInfluence
+    {
+      get
+      {
+        return _guiOverridePlotColorInfluence.IsChecked == true;
+      }
+      set
+      {
+        _guiOverridePlotColorInfluence.IsChecked = value;
+      }
+    }
 
-		public PlotColorInfluence OverriddenPlotColorInfluence
-		{
-			get
-			{
-				return (PlotColorInfluence)_guiOverriddenPlotColorInfluence.SelectedValue;
-			}
-			set
-			{
-				_guiOverriddenPlotColorInfluence.SelectedValue = value;
-			}
-		}
+    public PlotColorInfluence OverriddenPlotColorInfluence
+    {
+      get
+      {
+        return (PlotColorInfluence)_guiOverriddenPlotColorInfluence.SelectedValue;
+      }
+      set
+      {
+        _guiOverriddenPlotColorInfluence.SelectedValue = value;
+      }
+    }
 
-		public bool OverrideFillColor
-		{
-			get
-			{
-				return _guiOverrideFillColor.IsChecked == true;
-			}
-			set
-			{
-				_guiOverrideFillColor.IsChecked = value;
-			}
-		}
+    public bool OverrideFillColor
+    {
+      get
+      {
+        return _guiOverrideFillColor.IsChecked == true;
+      }
+      set
+      {
+        _guiOverrideFillColor.IsChecked = value;
+      }
+    }
 
-		public NamedColor OverriddenFillColor
-		{
-			get
-			{
-				return _guiOverriddenFillColor.SelectedColor;
-			}
-			set
-			{
-				_guiOverriddenFillColor.SelectedColor = value;
-			}
-		}
+    public NamedColor OverriddenFillColor
+    {
+      get
+      {
+        return _guiOverriddenFillColor.SelectedColor;
+      }
+      set
+      {
+        _guiOverriddenFillColor.SelectedColor = value;
+      }
+    }
 
-		public bool OverrideFrameColor
-		{
-			get
-			{
-				return _guiOverrideFrameColor.IsChecked == true;
-			}
-			set
-			{
-				_guiOverrideFrameColor.IsChecked = value;
-			}
-		}
+    public bool OverrideFrameColor
+    {
+      get
+      {
+        return _guiOverrideFrameColor.IsChecked == true;
+      }
+      set
+      {
+        _guiOverrideFrameColor.IsChecked = value;
+      }
+    }
 
-		public NamedColor OverriddenFrameColor
-		{
-			get
-			{
-				return _guiOverriddenFrameColor.SelectedColor;
-			}
-			set
-			{
-				_guiOverriddenFrameColor.SelectedColor = value;
-			}
-		}
+    public NamedColor OverriddenFrameColor
+    {
+      get
+      {
+        return _guiOverriddenFrameColor.SelectedColor;
+      }
+      set
+      {
+        _guiOverriddenFrameColor.SelectedColor = value;
+      }
+    }
 
-		public bool OverrideInsetColor
-		{
-			get
-			{
-				return _guiOverrideInsetColor.IsChecked == true;
-			}
-			set
-			{
-				_guiOverrideInsetColor.IsChecked = value;
-			}
-		}
+    public bool OverrideInsetColor
+    {
+      get
+      {
+        return _guiOverrideInsetColor.IsChecked == true;
+      }
+      set
+      {
+        _guiOverrideInsetColor.IsChecked = value;
+      }
+    }
 
-		public NamedColor OverriddenInsetColor
-		{
-			get
-			{
-				return _guiOverriddenInsetColor.SelectedColor;
-			}
-			set
-			{
-				_guiOverriddenInsetColor.SelectedColor = value;
-			}
-		}
-	}
+    public NamedColor OverriddenInsetColor
+    {
+      get
+      {
+        return _guiOverriddenInsetColor.SelectedColor;
+      }
+      set
+      {
+        _guiOverriddenInsetColor.SelectedColor = value;
+      }
+    }
+  }
 }

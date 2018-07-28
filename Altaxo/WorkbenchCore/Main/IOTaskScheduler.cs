@@ -22,24 +22,24 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Scheduler for IO-intensive tasks.
-	/// </summary>
-	public class IOTaskScheduler
-	{
-		private static readonly CustomThreadPoolTaskScheduler scheduler = new CustomThreadPoolTaskScheduler(
-			Math.Min(Environment.ProcessorCount, 2));
+  /// <summary>
+  /// Scheduler for IO-intensive tasks.
+  /// </summary>
+  public class IOTaskScheduler
+  {
+    private static readonly CustomThreadPoolTaskScheduler scheduler = new CustomThreadPoolTaskScheduler(
+      Math.Min(Environment.ProcessorCount, 2));
 
-		private static readonly TaskFactory factory = new TaskFactory(scheduler);
+    private static readonly TaskFactory factory = new TaskFactory(scheduler);
 
-		public static TaskScheduler Scheduler
-		{
-			get { return scheduler; }
-		}
+    public static TaskScheduler Scheduler
+    {
+      get { return scheduler; }
+    }
 
-		public static TaskFactory Factory
-		{
-			get { return factory; }
-		}
-	}
+    public static TaskFactory Factory
+    {
+      get { return factory; }
+    }
+  }
 }

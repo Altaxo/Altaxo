@@ -34,56 +34,56 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class Diamond : ClosedSymbolBase
-	{
-		#region Serialization
+  public class Diamond : ClosedSymbolBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2016-10-27 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Diamond), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+    /// <summary>
+    /// 2016-10-27 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Diamond), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 
-				SerializeSetV0((IScatterSymbol)obj, info);
-			}
+        SerializeSetV0((IScatterSymbol)obj, info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (Diamond)o ?? new Diamond();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (Diamond)o ?? new Diamond();
+        info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
-				return DeserializeSetV0(s, info, parent);
-			}
-		}
+        return DeserializeSetV0(s, info, parent);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public Diamond()
-		{
-		}
+    public Diamond()
+    {
+    }
 
-		public Diamond(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
-			: base(fillColor, isFillColorInfluencedByPlotColor)
-		{
-		}
+    public Diamond(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
+      : base(fillColor, isFillColorInfluencedByPlotColor)
+    {
+    }
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
-		{
-			int h = ClipperScalingInt;
+    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
+    {
+      int h = ClipperScalingInt;
 
-			return new List<List<ClipperLib.IntPoint>>(1)
-			{
-			new List<ClipperLib.IntPoint>(4)
-			{
-			new ClipperLib.IntPoint(0, -h),
-			new ClipperLib.IntPoint(h, 0),
-			new ClipperLib.IntPoint(0, h),
-			new ClipperLib.IntPoint(-h, 0)
-			}};
-		}
-	}
+      return new List<List<ClipperLib.IntPoint>>(1)
+      {
+      new List<ClipperLib.IntPoint>(4)
+      {
+      new ClipperLib.IntPoint(0, -h),
+      new ClipperLib.IntPoint(h, 0),
+      new ClipperLib.IntPoint(0, h),
+      new ClipperLib.IntPoint(-h, 0)
+      }};
+    }
+  }
 }

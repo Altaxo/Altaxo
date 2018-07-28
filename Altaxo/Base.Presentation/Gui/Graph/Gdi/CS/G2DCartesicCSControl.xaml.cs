@@ -30,50 +30,50 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.CS
 {
-	/// <summary>
-	/// Interaction logic for G2DCartesicCSControl.xaml
-	/// </summary>
-	public partial class G2DCartesicCSControl : UserControl, IG2DCartesicCSView
-	{
-		public G2DCartesicCSControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for G2DCartesicCSControl.xaml
+  /// </summary>
+  public partial class G2DCartesicCSControl : UserControl, IG2DCartesicCSView
+  {
+    public G2DCartesicCSControl()
+    {
+      InitializeComponent();
+    }
 
-		public bool ExchangeXY
-		{
-			get
-			{
-				return _chkExchangeXY.IsChecked == true;
-			}
-			set
-			{
-				_chkExchangeXY.IsChecked = value;
-			}
-		}
+    public bool ExchangeXY
+    {
+      get
+      {
+        return _chkExchangeXY.IsChecked == true;
+      }
+      set
+      {
+        _chkExchangeXY.IsChecked = value;
+      }
+    }
 
-		public bool ReverseX
-		{
-			get
-			{
-				return _chkXReverse.IsChecked == true;
-			}
-			set
-			{
-				_chkXReverse.IsChecked = value;
-			}
-		}
+    public bool ReverseX
+    {
+      get
+      {
+        return _chkXReverse.IsChecked == true;
+      }
+      set
+      {
+        _chkXReverse.IsChecked = value;
+      }
+    }
 
-		public bool ReverseY
-		{
-			get
-			{
-				return _chkYReverse.IsChecked == true;
-			}
-			set
-			{
-				_chkYReverse.IsChecked = value;
-			}
-		}
-	}
+    public bool ReverseY
+    {
+      get
+      {
+        return _chkYReverse.IsChecked == true;
+      }
+      set
+      {
+        _chkYReverse.IsChecked = value;
+      }
+    }
+  }
 }

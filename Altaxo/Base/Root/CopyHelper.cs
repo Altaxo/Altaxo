@@ -29,122 +29,122 @@ using System.Text;
 
 namespace Altaxo
 {
-	/// <summary>
-	/// Helps to copy instances, preferably by using <see cref="Altaxo.Main.ICopyFrom"/>, or by using <see cref="ICloneable"/> interface.
-	/// </summary>
-	public static class CopyHelper
-	{
-		/// <summary>Copies an instance of an immutable class. This can be done simply by assigning <paramref name="from"/> to <paramref name="to"/>.</summary>
-		/// <typeparam name="T">The type of the instance to copy.</typeparam>
-		/// <param name="to">The variable to copy to.</param>
-		/// <param name="from">The instance that was copied.</param>
-		public static void CopyImmutable<T>(ref T to, T from) where T : Main.IImmutable
-		{
-			to = from;
-		}
+  /// <summary>
+  /// Helps to copy instances, preferably by using <see cref="Altaxo.Main.ICopyFrom"/>, or by using <see cref="ICloneable"/> interface.
+  /// </summary>
+  public static class CopyHelper
+  {
+    /// <summary>Copies an instance of an immutable class. This can be done simply by assigning <paramref name="from"/> to <paramref name="to"/>.</summary>
+    /// <typeparam name="T">The type of the instance to copy.</typeparam>
+    /// <param name="to">The variable to copy to.</param>
+    /// <param name="from">The instance that was copied.</param>
+    public static void CopyImmutable<T>(ref T to, T from) where T : Main.IImmutable
+    {
+      to = from;
+    }
 
-		/// <summary>
-		/// Try to copy one object to another object.
-		/// </summary>
-		/// <typeparam name="T">The type of the object to copy.</typeparam>
-		/// <param name="to">Reference where to copy to.</param>
-		/// <param name="from">Object to copy from.</param>
-		/// <returns></returns>
-		public static bool TryCopy<T>(ref T to, T from)
-		{
-			ICloneable fromC = from as ICloneable;
+    /// <summary>
+    /// Try to copy one object to another object.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to copy.</typeparam>
+    /// <param name="to">Reference where to copy to.</param>
+    /// <param name="from">Object to copy from.</param>
+    /// <returns></returns>
+    public static bool TryCopy<T>(ref T to, T from)
+    {
+      ICloneable fromC = from as ICloneable;
 
-			if (object.ReferenceEquals(to, from))
-			{
-				return true;
-			}
-			else if (from is Main.IImmutable)
-			{
-				to = from;
-				return true;
-			}
-			else if (from == null)
-			{
-				to = default(T);
-				return true;
-			}
-			else if (to == null && fromC != null)
-			{
-				to = (T)fromC.Clone();
-				return true;
-			}
-			else if (to is Main.ICopyFrom toc && to.GetType() == from.GetType())
-			{
-				toc.CopyFrom(from);
-				return true;
-			}
-			else if (fromC != null)
-			{
-				to = (T)fromC.Clone();
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+      if (object.ReferenceEquals(to, from))
+      {
+        return true;
+      }
+      else if (from is Main.IImmutable)
+      {
+        to = from;
+        return true;
+      }
+      else if (from == null)
+      {
+        to = default(T);
+        return true;
+      }
+      else if (to == null && fromC != null)
+      {
+        to = (T)fromC.Clone();
+        return true;
+      }
+      else if (to is Main.ICopyFrom toc && to.GetType() == from.GetType())
+      {
+        toc.CopyFrom(from);
+        return true;
+      }
+      else if (fromC != null)
+      {
+        to = (T)fromC.Clone();
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
-		/// <summary>Copies an instance.</summary>
-		/// <typeparam name="T">The type of the instance to copy.</typeparam>
-		/// <param name="to">The variable to copy to.</param>
-		/// <param name="from">The instance that was copied.</param>
-		public static void Copy<T>(ref T to, T from) where T : ICloneable
-		{
-			Main.ICopyFrom toc;
+    /// <summary>Copies an instance.</summary>
+    /// <typeparam name="T">The type of the instance to copy.</typeparam>
+    /// <param name="to">The variable to copy to.</param>
+    /// <param name="from">The instance that was copied.</param>
+    public static void Copy<T>(ref T to, T from) where T : ICloneable
+    {
+      Main.ICopyFrom toc;
 
-			if (object.ReferenceEquals(to, from))
-			{
-			}
-			else if (from == null)
-			{
-				to = default(T);
-			}
-			else if (to == null)
-			{
-				to = (T)from.Clone();
-			}
-			else if (null != (toc = (to as Main.ICopyFrom)) && to.GetType() == from.GetType())
-			{
-				toc.CopyFrom(from);
-			}
-			else
-			{
-				to = (T)from.Clone();
-			}
-		}
+      if (object.ReferenceEquals(to, from))
+      {
+      }
+      else if (from == null)
+      {
+        to = default(T);
+      }
+      else if (to == null)
+      {
+        to = (T)from.Clone();
+      }
+      else if (null != (toc = (to as Main.ICopyFrom)) && to.GetType() == from.GetType())
+      {
+        toc.CopyFrom(from);
+      }
+      else
+      {
+        to = (T)from.Clone();
+      }
+    }
 
-		/// <summary>Gets a copy of an instance, either by using <see cref="Altaxo.Main.ICopyFrom"/> or <see cref="ICloneable"/> interface.</summary>
-		/// <typeparam name="T">The type of the instance to copy.</typeparam>
-		/// <param name="to">The value of the variable to copy to.</param>
-		/// <param name="from">The instance to copy from.</param>
-		/// <returns>The copied instance. It might be the same instance as provided in <paramref name="to"/>, if the interface <see cref="Altaxo.Main.ICopyFrom"/> was used for copying.
-		/// If the <see cref="ICloneable"/> interface was used for copying, the returned instance is different from <paramref name="to"/>.</returns>
-		public static T GetCopy<T>(T to, T from) where T : ICloneable
-		{
-			Copy(ref to, from);
-			return to;
-		}
+    /// <summary>Gets a copy of an instance, either by using <see cref="Altaxo.Main.ICopyFrom"/> or <see cref="ICloneable"/> interface.</summary>
+    /// <typeparam name="T">The type of the instance to copy.</typeparam>
+    /// <param name="to">The value of the variable to copy to.</param>
+    /// <param name="from">The instance to copy from.</param>
+    /// <returns>The copied instance. It might be the same instance as provided in <paramref name="to"/>, if the interface <see cref="Altaxo.Main.ICopyFrom"/> was used for copying.
+    /// If the <see cref="ICloneable"/> interface was used for copying, the returned instance is different from <paramref name="to"/>.</returns>
+    public static T GetCopy<T>(T to, T from) where T : ICloneable
+    {
+      Copy(ref to, from);
+      return to;
+    }
 
-		/// <summary>
-		/// Gets the members of the input enumeration cloned as output enumeration.
-		/// </summary>
-		/// <typeparam name="T">Type of the enumeration members.</typeparam>
-		/// <param name="toClone">Input enumeration.</param>
-		/// <returns>Output enumeration with cloned members of the input enumeration.</returns>
-		public static IEnumerable<T> GetEnumerationMembersCloned<T>(IEnumerable<T> toClone) where T : ICloneable
-		{
-			foreach (var e in toClone)
-			{
-				if (null == e)
-					yield return default(T);
-				else
-					yield return (T)e.Clone();
-			}
-		}
-	}
+    /// <summary>
+    /// Gets the members of the input enumeration cloned as output enumeration.
+    /// </summary>
+    /// <typeparam name="T">Type of the enumeration members.</typeparam>
+    /// <param name="toClone">Input enumeration.</param>
+    /// <returns>Output enumeration with cloned members of the input enumeration.</returns>
+    public static IEnumerable<T> GetEnumerationMembersCloned<T>(IEnumerable<T> toClone) where T : ICloneable
+    {
+      foreach (var e in toClone)
+      {
+        if (null == e)
+          yield return default(T);
+        else
+          yield return (T)e.Clone();
+      }
+    }
+  }
 }

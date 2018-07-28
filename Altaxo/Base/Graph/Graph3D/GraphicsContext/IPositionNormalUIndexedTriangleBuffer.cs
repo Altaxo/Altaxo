@@ -30,22 +30,22 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	/// <summary>
-	/// Interface to a buffer that stores indexed triangle data consisting of position, normal and texture coordinates.
-	/// </summary>
-	public interface IPositionNormalUIndexedTriangleBuffer : IIndexedTriangleBuffer
-	{
-		/// <summary>
-		/// Adds the specified vertex.
-		/// </summary>
-		/// <param name="x">The x position.</param>
-		/// <param name="y">The y position.</param>
-		/// <param name="z">The z position.</param>
-		/// <param name="nx">The x component of the normal.</param>
-		/// <param name="ny">The y component of the normal.</param>
-		/// <param name="nz">The z component of the normal.</param>
-		/// <param name="u">The u texture coordinate. This is a relative value 0..1. Values below 0 are treated as belonging to the color below, values above 1 are treated as
-		/// belonging to color above. Is is possible to provide double.NaN here, this value is treated as belonging to ColorInvalid.</param>
-		void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz, double u);
-	}
+  /// <summary>
+  /// Interface to a buffer that stores indexed triangle data consisting of position, normal and texture coordinates.
+  /// </summary>
+  public interface IPositionNormalUIndexedTriangleBuffer : IIndexedTriangleBuffer
+  {
+    /// <summary>
+    /// Adds the specified vertex.
+    /// </summary>
+    /// <param name="x">The x position.</param>
+    /// <param name="y">The y position.</param>
+    /// <param name="z">The z position.</param>
+    /// <param name="nx">The x component of the normal.</param>
+    /// <param name="ny">The y component of the normal.</param>
+    /// <param name="nz">The z component of the normal.</param>
+    /// <param name="u">The u texture coordinate. This is a relative value 0..1. Values below 0 are treated as belonging to the color below, values above 1 are treated as
+    /// belonging to color above. Is is possible to provide double.NaN here, this value is treated as belonging to ColorInvalid.</param>
+    void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz, double u);
+  }
 }

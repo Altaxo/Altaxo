@@ -32,98 +32,98 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-	public interface IGraphicItemsView
-	{
-		SelectableListNodeList ItemsList { set; }
+  public interface IGraphicItemsView
+  {
+    SelectableListNodeList ItemsList { set; }
 
-		event Action SelectedItemsUp;
+    event Action SelectedItemsUp;
 
-		event Action SelectedItemsDown;
+    event Action SelectedItemsDown;
 
-		event Action SelectedItemsRemove;
-	}
+    event Action SelectedItemsRemove;
+  }
 
-	[UserControllerForObject(typeof(GraphicCollection))]
-	[ExpectedTypeOfView(typeof(IGraphicItemsView))]
-	public class GraphicItemsController : MVCANControllerEditCopyOfDocBase<GraphicCollection, IGraphicItemsView>
-	{
-		private SelectableListNodeList _itemsList;
+  [UserControllerForObject(typeof(GraphicCollection))]
+  [ExpectedTypeOfView(typeof(IGraphicItemsView))]
+  public class GraphicItemsController : MVCANControllerEditCopyOfDocBase<GraphicCollection, IGraphicItemsView>
+  {
+    private SelectableListNodeList _itemsList;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_itemsList = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _itemsList = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_itemsList = new SelectableListNodeList();
+      if (initData)
+      {
+        _itemsList = new SelectableListNodeList();
 
-				foreach (var item in _doc)
-				{
-					var node = new SelectableListNode(item.ToString(), item, false);
-					_itemsList.Add(node);
-				}
-			}
-			if (null != _view)
-			{
-				_view.ItemsList = _itemsList;
-			}
-		}
+        foreach (var item in _doc)
+        {
+          var node = new SelectableListNode(item.ToString(), item, false);
+          _itemsList.Add(node);
+        }
+      }
+      if (null != _view)
+      {
+        _view.ItemsList = _itemsList;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			using (var token = _doc.GetEventDisableToken())
-			{
-				_doc.Clear();
-				foreach (var node in _itemsList)
-				{
-					_doc.Add((IGraphicBase)node.Tag);
-				}
-			}
-			return ApplyEnd(true, disposeController);
-		}
+    public override bool Apply(bool disposeController)
+    {
+      using (var token = _doc.GetEventDisableToken())
+      {
+        _doc.Clear();
+        foreach (var node in _itemsList)
+        {
+          _doc.Add((IGraphicBase)node.Tag);
+        }
+      }
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
+    protected override void AttachView()
+    {
+      base.AttachView();
 
-			_view.SelectedItemsUp += EhSelectedItemsUp;
-			_view.SelectedItemsDown += EhSelectedItemsDown;
-			_view.SelectedItemsRemove += EhSelectedItemsRemove;
-		}
+      _view.SelectedItemsUp += EhSelectedItemsUp;
+      _view.SelectedItemsDown += EhSelectedItemsDown;
+      _view.SelectedItemsRemove += EhSelectedItemsRemove;
+    }
 
-		protected override void DetachView()
-		{
-			_view.SelectedItemsUp -= EhSelectedItemsUp;
-			_view.SelectedItemsDown -= EhSelectedItemsDown;
-			_view.SelectedItemsRemove -= EhSelectedItemsRemove;
+    protected override void DetachView()
+    {
+      _view.SelectedItemsUp -= EhSelectedItemsUp;
+      _view.SelectedItemsDown -= EhSelectedItemsDown;
+      _view.SelectedItemsRemove -= EhSelectedItemsRemove;
 
-			base.DetachView();
-		}
+      base.DetachView();
+    }
 
-		private void EhSelectedItemsRemove()
-		{
-			_itemsList.RemoveSelectedItems();
-		}
+    private void EhSelectedItemsRemove()
+    {
+      _itemsList.RemoveSelectedItems();
+    }
 
-		private void EhSelectedItemsDown()
-		{
-			_itemsList.MoveSelectedItemsDown();
-		}
+    private void EhSelectedItemsDown()
+    {
+      _itemsList.MoveSelectedItemsDown();
+    }
 
-		private void EhSelectedItemsUp()
-		{
-			_itemsList.MoveSelectedItemsUp();
-		}
-	}
+    private void EhSelectedItemsUp()
+    {
+      _itemsList.MoveSelectedItemsUp();
+    }
+  }
 }

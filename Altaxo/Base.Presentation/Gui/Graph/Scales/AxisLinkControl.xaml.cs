@@ -31,83 +31,83 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Scales
 {
-	/// <summary>
-	/// Interaction logic for AxisLinkControl.xaml
-	/// </summary>
-	public partial class AxisLinkControl : UserControl, IAxisLinkView
-	{
-		public AxisLinkControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for AxisLinkControl.xaml
+  /// </summary>
+  public partial class AxisLinkControl : UserControl, IAxisLinkView
+  {
+    public AxisLinkControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EnableCustom(bool bEnab)
-		{
-			this._guiLinkAxisOrgA.IsEnabled = bEnab;
-			this._guiLinkAxisOrgB.IsEnabled = bEnab;
-			this._guiLinkAxisEndA.IsEnabled = bEnab;
-			this._guiLinkAxisEndB.IsEnabled = bEnab;
-		}
+    private void EnableCustom(bool bEnab)
+    {
+      this._guiLinkAxisOrgA.IsEnabled = bEnab;
+      this._guiLinkAxisOrgB.IsEnabled = bEnab;
+      this._guiLinkAxisEndA.IsEnabled = bEnab;
+      this._guiLinkAxisEndB.IsEnabled = bEnab;
+    }
 
-		private void EhLinkStraight_CheckedChanged(object sender, RoutedEventArgs e)
-		{
-			if (this._guiLinkAxisStraight.IsChecked == true)
-				EnableCustom(false);
-		}
+    private void EhLinkStraight_CheckedChanged(object sender, RoutedEventArgs e)
+    {
+      if (this._guiLinkAxisStraight.IsChecked == true)
+        EnableCustom(false);
+    }
 
-		private void EhLinkCustom_CheckedChanged(object sender, RoutedEventArgs e)
-		{
-			if (this._guiLinkAxisCustom.IsChecked == true)
-				EnableCustom(true);
-		}
+    private void EhLinkCustom_CheckedChanged(object sender, RoutedEventArgs e)
+    {
+      if (this._guiLinkAxisCustom.IsChecked == true)
+        EnableCustom(true);
+    }
 
-		#region IAxisLinkView
+    #region IAxisLinkView
 
-		public bool IsStraightLink
-		{
-			get
-			{
-				return _guiLinkAxisStraight.IsChecked == true;
-			}
-			set
-			{
-				if (value)
-				{
-					this._guiLinkAxisStraight.IsChecked = true;
-					EnableCustom(false);
-				}
-				else
-				{
-					this._guiLinkAxisCustom.IsChecked = true;
-					EnableCustom(true);
-				}
-			}
-		}
+    public bool IsStraightLink
+    {
+      get
+      {
+        return _guiLinkAxisStraight.IsChecked == true;
+      }
+      set
+      {
+        if (value)
+        {
+          this._guiLinkAxisStraight.IsChecked = true;
+          EnableCustom(false);
+        }
+        else
+        {
+          this._guiLinkAxisCustom.IsChecked = true;
+          EnableCustom(true);
+        }
+      }
+    }
 
-		public double OrgA
-		{
-			get { return _guiLinkAxisOrgA.SelectedValue; }
-			set { _guiLinkAxisOrgA.SelectedValue = value; }
-		}
+    public double OrgA
+    {
+      get { return _guiLinkAxisOrgA.SelectedValue; }
+      set { _guiLinkAxisOrgA.SelectedValue = value; }
+    }
 
-		public double OrgB
-		{
-			get { return _guiLinkAxisOrgB.SelectedValue; }
-			set { _guiLinkAxisOrgB.SelectedValue = value; }
-		}
+    public double OrgB
+    {
+      get { return _guiLinkAxisOrgB.SelectedValue; }
+      set { _guiLinkAxisOrgB.SelectedValue = value; }
+    }
 
-		public double EndA
-		{
-			get { return _guiLinkAxisEndA.SelectedValue; }
-			set { _guiLinkAxisEndA.SelectedValue = value; }
-		}
+    public double EndA
+    {
+      get { return _guiLinkAxisEndA.SelectedValue; }
+      set { _guiLinkAxisEndA.SelectedValue = value; }
+    }
 
-		public double EndB
-		{
-			get { return _guiLinkAxisEndB.SelectedValue; }
-			set { _guiLinkAxisEndB.SelectedValue = value; }
-		}
+    public double EndB
+    {
+      get { return _guiLinkAxisEndB.SelectedValue; }
+      set { _guiLinkAxisEndB.SelectedValue = value; }
+    }
 
-		#endregion IAxisLinkView
-	}
+    #endregion IAxisLinkView
+  }
 }

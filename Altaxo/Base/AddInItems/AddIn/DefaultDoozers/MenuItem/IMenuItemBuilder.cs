@@ -21,16 +21,16 @@ using System.Collections.Generic;
 
 namespace Altaxo.AddInItems
 {
-	/// <summary>
-	/// Used to include a dynamically built list of menu items.
-	/// </summary>
-	public interface IMenuItemBuilder
-	{
-		IEnumerable<object> BuildItems(Codon codon, object parameter);
-	}
+  /// <summary>
+  /// Used to include a dynamically built list of menu items.
+  /// </summary>
+  public interface IMenuItemBuilder
+  {
+    IEnumerable<object> BuildItems(Codon codon, object parameter);
+  }
 
-	[Obsolete("Use IMenuItemBuilder instead")]
-	public interface ISubmenuBuilder : IMenuItemBuilder
-	{
-	}
+  [Obsolete("Use IMenuItemBuilder instead")]
+  public interface ISubmenuBuilder : IMenuItemBuilder
+  {
+  }
 }

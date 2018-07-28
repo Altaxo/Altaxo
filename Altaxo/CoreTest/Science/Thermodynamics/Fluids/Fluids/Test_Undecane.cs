@@ -32,45 +32,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-	/// <summary>
-	/// Tests and test data for <see cref="Undecane"/>.
-	/// </summary>
-	/// <remarks>
-	/// <para>Reference:</para>
+  /// <summary>
+  /// Tests and test data for <see cref="Undecane"/>.
+  /// </summary>
+  /// <remarks>
+  /// <para>Reference:</para>
   /// <para>The test data was created automatically using calls into the TREND.DLL of the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-	/// </remarks>
+  /// </remarks>
   [TestFixture]
   public class Test_Undecane : FluidTestBase
-    {
+  {
 
     public Test_Undecane()
-      {
+    {
       _fluid = Undecane.Instance;
 
-    _testDataMolecularWeight = 0.15630826;
+      _testDataMolecularWeight = 0.15630826;
 
-    _testDataTriplePointTemperature = 247.541;
+      _testDataTriplePointTemperature = 247.541;
 
-    _testDataTriplePointPressure = 0.4461;
+      _testDataTriplePointPressure = 0.4461;
 
-    _testDataTriplePointLiquidMoleDensity = 4962.01119130482;
+      _testDataTriplePointLiquidMoleDensity = 4962.01119130482;
 
-    _testDataTriplePointVaporMoleDensity = 0.000216723702312125;
+      _testDataTriplePointVaporMoleDensity = 0.000216723702312125;
 
-    _testDataCriticalPointTemperature = 638.8;
+      _testDataCriticalPointTemperature = 638.8;
 
-    _testDataCriticalPointPressure = 1990429.58351835;
+      _testDataCriticalPointPressure = 1990429.58351835;
 
-    _testDataCriticalPointMoleDensity = 1514.9;
+      _testDataCriticalPointMoleDensity = 1514.9;
 
-    _testDataNormalBoilingPointTemperature = 468.934174523138;
+      _testDataNormalBoilingPointTemperature = 468.934174523138;
 
-    _testDataNormalSublimationPointTemperature = null;
+      _testDataNormalSublimationPointTemperature = null;
 
-    _testDataIsMeltingCurveImplemented = false;
+      _testDataIsMeltingCurveImplemented = false;
 
-    _testDataIsSublimationCurveImplemented = false;
+      _testDataIsSublimationCurveImplemented = false;
 
       // TestData contains:
       // 0. Temperature (Kelvin)
@@ -82,7 +82,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 6. Isochoric heat capacity (J/(mol K))
       // 7. Isobaric heat capacity (J/(mol K))
       // 8. Speed of sound (m/s)
-      _testDataEquationOfState = new (double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
+      _testDataEquationOfState = new(double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
       {
       ( 247.541, 4962.01119211504, 0.669150276041565, -84633.0890160365, -84633.0888811818, -239.851224984545, 253.404869370874, 324.537089758628, 1502.02775439882 ),
       ( 275, 0.00029265708654501, 0.669150088563736, -19291.4004509524, -17004.9357817949, 28.6343569299241, 231.850922153466, 240.165969732621, 123.095213938074 ),
@@ -249,7 +249,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 1. Pressure (Pa)
       // 2. Saturated liquid density (mol/m³
       // 3. Saturated vapor density (mol/m³)
-      _testDataSaturatedProperties = new (double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
+      _testDataSaturatedProperties = new(double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
       {
       ( 296.448375, 50.6227759023085, 4719.50724211977, 0.0205447037158884 ),
       ( 345.35575, 1165.48915890596, 4481.04569684679, 0.407150110338073 ),

@@ -31,8 +31,8 @@
 
 namespace Poly2Tri
 {
-	public enum TriangulationMode
-	{
-		Unconstrained, Constrained, Polygon
-	}
+  public enum TriangulationMode
+  {
+    Unconstrained, Constrained, Polygon
+  }
 }

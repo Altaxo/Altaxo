@@ -29,40 +29,40 @@ using System.Linq;
 
 namespace Altaxo.Graph.Gdi
 {
-	public class GraphDocumentCollection :
-		ProjectItemCollectionBase<GraphDocument, IProjectItem>,
-		IEnumerable<GraphDocument>
-	{
-		public GraphDocumentCollection(AltaxoDocument parent, SortedDictionary<string, IProjectItem> commonDictionaryForGraphs)
-			: base(parent)
-		{
-			this._itemsByName = commonDictionaryForGraphs ?? throw new ArgumentNullException(nameof(commonDictionaryForGraphs));
-		}
+  public class GraphDocumentCollection :
+    ProjectItemCollectionBase<GraphDocument, IProjectItem>,
+    IEnumerable<GraphDocument>
+  {
+    public GraphDocumentCollection(AltaxoDocument parent, SortedDictionary<string, IProjectItem> commonDictionaryForGraphs)
+      : base(parent)
+    {
+      this._itemsByName = commonDictionaryForGraphs ?? throw new ArgumentNullException(nameof(commonDictionaryForGraphs));
+    }
 
-		public override Main.IDocumentNode ParentObject
-		{
-			get
-			{
-				return _parent;
-			}
-			set
-			{
-				if (null != value)
-					throw new InvalidOperationException("ParentObject of GraphDocumentCollection is fixed and cannot be set");
-				base.ParentObject = value; // allow setting to null
-			}
-		}
+    public override Main.IDocumentNode ParentObject
+    {
+      get
+      {
+        return _parent;
+      }
+      set
+      {
+        if (null != value)
+          throw new InvalidOperationException("ParentObject of GraphDocumentCollection is fixed and cannot be set");
+        base.ParentObject = value; // allow setting to null
+      }
+    }
 
-		public override string ItemBaseName { get { return "GRAPH"; } }
+    public override string ItemBaseName { get { return "GRAPH"; } }
 
-		/// <summary>
-		/// Gets the parent GraphDocumentCollection of a child graph.
-		/// </summary>
-		/// <param name="child">A graph for which the parent collection is searched.</param>
-		/// <returns>The parent GraphDocumentCollection, if it exists, or null otherwise.</returns>
-		public static GraphDocumentCollection GetParentGraphDocumentCollectionOf(Main.IDocumentLeafNode child)
-		{
-			return (GraphDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
-		}
-	}
+    /// <summary>
+    /// Gets the parent GraphDocumentCollection of a child graph.
+    /// </summary>
+    /// <param name="child">A graph for which the parent collection is searched.</param>
+    /// <returns>The parent GraphDocumentCollection, if it exists, or null otherwise.</returns>
+    public static GraphDocumentCollection GetParentGraphDocumentCollectionOf(Main.IDocumentLeafNode child)
+    {
+      return (GraphDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
+    }
+  }
 }

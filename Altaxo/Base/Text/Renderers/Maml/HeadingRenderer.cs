@@ -31,54 +31,54 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Text.Renderers.Maml
 {
-	public class HeadingRenderer : MamlObjectRenderer<HeadingBlock>
-	{
-		protected override void Write(MamlRenderer renderer, HeadingBlock obj)
-		{
-			bool newFileWasStarted = renderer.TryStartNewMamlFile(obj);
+  public class HeadingRenderer : MamlObjectRenderer<HeadingBlock>
+  {
+    protected override void Write(MamlRenderer renderer, HeadingBlock obj)
+    {
+      bool newFileWasStarted = renderer.TryStartNewMamlFile(obj);
 
-			if (newFileWasStarted)
-			{
-			}
-			else
-			{
-				// Ensure we have the sections element somewhere down the line ...
-				// we need (obj.Level - renderer.SplitLevel) section elements down the stack
-				int numberOfSectionsElementsRequired = obj.Level - renderer.SplitLevel - 1;
-				int numberOfSectionsElementsOnStack = renderer.NumberOfElementsOnStack(MamlElements.sections);
+      if (newFileWasStarted)
+      {
+      }
+      else
+      {
+        // Ensure we have the sections element somewhere down the line ...
+        // we need (obj.Level - renderer.SplitLevel) section elements down the stack
+        int numberOfSectionsElementsRequired = obj.Level - renderer.SplitLevel - 1;
+        int numberOfSectionsElementsOnStack = renderer.NumberOfElementsOnStack(MamlElements.sections);
 
-				// Push sections element if required
-				for (int i = 0; i < numberOfSectionsElementsRequired - numberOfSectionsElementsOnStack; ++i)
-					renderer.Push(MamlElements.sections);
+        // Push sections element if required
+        for (int i = 0; i < numberOfSectionsElementsRequired - numberOfSectionsElementsOnStack; ++i)
+          renderer.Push(MamlElements.sections);
 
-				if (numberOfSectionsElementsOnStack > 0 && numberOfSectionsElementsRequired > 0)
-				{
-					// Or pop sections elements if required
-					for (int i = 0; i < numberOfSectionsElementsOnStack - numberOfSectionsElementsRequired; ++i)
-						renderer.PopToBefore(MamlElements.sections);
-				}
+        if (numberOfSectionsElementsOnStack > 0 && numberOfSectionsElementsRequired > 0)
+        {
+          // Or pop sections elements if required
+          for (int i = 0; i < numberOfSectionsElementsOnStack - numberOfSectionsElementsRequired; ++i)
+            renderer.PopToBefore(MamlElements.sections);
+        }
 
-				if (numberOfSectionsElementsRequired == 0)
-				{
-					renderer.PopToBefore(MamlElements.developerConceptualDocument);
-				}
+        if (numberOfSectionsElementsRequired == 0)
+        {
+          renderer.PopToBefore(MamlElements.developerConceptualDocument);
+        }
 
-				// Find a unique address in order for AutoOutline to work
-				var attr = (Markdig.Renderers.Html.HtmlAttributes)obj.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-				string uniqueAddress = attr?.Id; // this header has a user defined address
-				if (string.IsNullOrEmpty(uniqueAddress))
-					renderer.HeaderGuids.TryGetValue(obj.Span.Start, out uniqueAddress); // use the guid generated from the hierarchy of titles
-				if (string.IsNullOrEmpty(uniqueAddress))
-					uniqueAddress = Guid.NewGuid().ToString(); // fallback (should not happen): Create Guid
+        // Find a unique address in order for AutoOutline to work
+        var attr = (Markdig.Renderers.Html.HtmlAttributes)obj.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
+        string uniqueAddress = attr?.Id; // this header has a user defined address
+        if (string.IsNullOrEmpty(uniqueAddress))
+          renderer.HeaderGuids.TryGetValue(obj.Span.Start, out uniqueAddress); // use the guid generated from the hierarchy of titles
+        if (string.IsNullOrEmpty(uniqueAddress))
+          uniqueAddress = Guid.NewGuid().ToString(); // fallback (should not happen): Create Guid
 
-				renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", uniqueAddress) });
+        renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", uniqueAddress) });
 
-				renderer.Push(MamlElements.title);
-				renderer.WriteLeafInline(obj);
-				renderer.EnsureLine();
-				renderer.PopTo(MamlElements.title);
-				renderer.Push(MamlElements.content);
-			}
-		}
-	}
+        renderer.Push(MamlElements.title);
+        renderer.WriteLeafInline(obj);
+        renderer.EnsureLine();
+        renderer.PopTo(MamlElements.title);
+        renderer.Push(MamlElements.content);
+      }
+    }
+  }
 }

@@ -28,44 +28,44 @@ using System.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// Summary description for RectangleDrawingMouseHandler.
-	/// </summary>
-	public class EllipseDrawingMouseHandler : AbstractRectangularToolMouseHandler
-	{
-		public EllipseDrawingMouseHandler(GraphController grac)
-			: base(grac)
-		{
-		}
+  /// <summary>
+  /// Summary description for RectangleDrawingMouseHandler.
+  /// </summary>
+  public class EllipseDrawingMouseHandler : AbstractRectangularToolMouseHandler
+  {
+    public EllipseDrawingMouseHandler(GraphController grac)
+      : base(grac)
+    {
+    }
 
-		public override GraphToolType GraphToolType
-		{
-			get { return GraphToolType.EllipseDrawing; }
-		}
+    public override GraphToolType GraphToolType
+    {
+      get { return GraphToolType.EllipseDrawing; }
+    }
 
-		protected override void FinishDrawing()
-		{
-			var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
-			EllipseShape go = new EllipseShape(_grac.Doc.GetPropertyContext());
-			go.SetParentSize(_grac.ActiveLayer.Size, false);
-			go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
+    protected override void FinishDrawing()
+    {
+      var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
+      EllipseShape go = new EllipseShape(_grac.Doc.GetPropertyContext());
+      go.SetParentSize(_grac.ActiveLayer.Size, false);
+      go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
 
-			// deselect the text tool
-			_grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
-			_grac.ActiveLayer.GraphObjects.Add(go);
-		}
+      // deselect the text tool
+      _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+      _grac.ActiveLayer.GraphObjects.Add(go);
+    }
 
-		/// <summary>
-		/// Draws the ellipse
-		/// </summary>
-		/// <param name="g"></param>
-		public override void AfterPaint(Graphics g)
-		{
-			if (_currentPoint >= 1)
-			{
-				var rect = GetNormalRectangle(_Points[0].RootLayerCoordinates, _positionCurrentMouseInRootLayerCoordinates);
-				g.DrawEllipse(Pens.Blue, (RectangleF)rect);
-			}
-		}
-	}
+    /// <summary>
+    /// Draws the ellipse
+    /// </summary>
+    /// <param name="g"></param>
+    public override void AfterPaint(Graphics g)
+    {
+      if (_currentPoint >= 1)
+      {
+        var rect = GetNormalRectangle(_Points[0].RootLayerCoordinates, _positionCurrentMouseInRootLayerCoordinates);
+        g.DrawEllipse(Pens.Blue, (RectangleF)rect);
+      }
+    }
+  }
 }

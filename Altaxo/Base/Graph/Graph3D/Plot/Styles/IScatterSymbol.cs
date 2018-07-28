@@ -33,20 +33,20 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
-	/// <summary>
-	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable. They still need to be cloneable,
-	/// because in a list of scatter symbols we need unique instances.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public interface IScatterSymbol : Main.IImmutable, ICloneable
-	{
-		/// <summary>
-		/// Paints the symbol with the specified size at the origin of the coordinate system.
-		/// </summary>
-		/// <param name="g">The graphics context.</param>
-		/// <param name="material">The material used to draw the symbol.</param>
-		/// <param name="centerLocation">The location of the center of the symbol.</param>
-		/// <param name="symbolSize">Size of the symbol.</param>
-		void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
-	}
+  /// <summary>
+  /// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable. They still need to be cloneable,
+  /// because in a list of scatter symbols we need unique instances.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.IImmutable" />
+  public interface IScatterSymbol : Main.IImmutable, ICloneable
+  {
+    /// <summary>
+    /// Paints the symbol with the specified size at the origin of the coordinate system.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="material">The material used to draw the symbol.</param>
+    /// <param name="centerLocation">The location of the center of the symbol.</param>
+    /// <param name="symbolSize">Size of the symbol.</param>
+    void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
+  }
 }

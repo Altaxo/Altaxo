@@ -31,51 +31,51 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-	public interface IMultiLineLabelFormattingBaseView
-	{
-		double LineSpacing { get; set; }
+  public interface IMultiLineLabelFormattingBaseView
+  {
+    double LineSpacing { get; set; }
 
-		SelectableListNodeList TextBlockAlignement { set; }
-	}
+    SelectableListNodeList TextBlockAlignement { set; }
+  }
 
-	[UserControllerForObject(typeof(MultiLineLabelFormattingBase))]
-	[ExpectedTypeOfView(typeof(IMultiLineLabelFormattingBaseView))]
-	public class MultiLineLabelFormattingBaseController : MVCANControllerEditOriginalDocBase<MultiLineLabelFormattingBase, IMultiLineLabelFormattingBaseView>
-	{
-		private SelectableListNodeList _textBlockAlignmentChoices;
+  [UserControllerForObject(typeof(MultiLineLabelFormattingBase))]
+  [ExpectedTypeOfView(typeof(IMultiLineLabelFormattingBaseView))]
+  public class MultiLineLabelFormattingBaseController : MVCANControllerEditOriginalDocBase<MultiLineLabelFormattingBase, IMultiLineLabelFormattingBaseView>
+  {
+    private SelectableListNodeList _textBlockAlignmentChoices;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_textBlockAlignmentChoices = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _textBlockAlignmentChoices = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
-			}
-			if (null != _view)
-			{
-				_view.LineSpacing = _doc.LineSpacing;
-				_view.TextBlockAlignement = _textBlockAlignmentChoices;
-			}
-		}
+      if (initData)
+      {
+        _textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
+      }
+      if (null != _view)
+      {
+        _view.LineSpacing = _doc.LineSpacing;
+        _view.TextBlockAlignement = _textBlockAlignmentChoices;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.LineSpacing = _view.LineSpacing;
-			_doc.TextBlockAlignment = (System.Drawing.StringAlignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.LineSpacing = _view.LineSpacing;
+      _doc.TextBlockAlignment = (System.Drawing.StringAlignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

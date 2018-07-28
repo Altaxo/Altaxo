@@ -26,23 +26,23 @@ using Markdig.Syntax;
 
 namespace Altaxo.Text.Renderers.Maml
 {
-	/// <summary>
-	/// Maml renderer for a <see cref="ParagraphBlock"/>.
-	/// </summary>
-	/// <seealso cref="MamlObjectRenderer{T}" />
-	public class ParagraphRenderer : MamlObjectRenderer<ParagraphBlock>
-	{
-		protected override void Write(MamlRenderer renderer, ParagraphBlock obj)
-		{
-			if (!renderer.IsFirstInContainer)
-			{
-				renderer.EnsureLine();
-			}
+  /// <summary>
+  /// Maml renderer for a <see cref="ParagraphBlock"/>.
+  /// </summary>
+  /// <seealso cref="MamlObjectRenderer{T}" />
+  public class ParagraphRenderer : MamlObjectRenderer<ParagraphBlock>
+  {
+    protected override void Write(MamlRenderer renderer, ParagraphBlock obj)
+    {
+      if (!renderer.IsFirstInContainer)
+      {
+        renderer.EnsureLine();
+      }
 
-			renderer.Push(MamlElements.para);
-			renderer.WriteLeafInline(obj);
-			renderer.EnsureLine();
-			renderer.PopTo(MamlElements.para);
-		}
-	}
+      renderer.Push(MamlElements.para);
+      renderer.WriteLeafInline(obj);
+      renderer.EnsureLine();
+      renderer.PopTo(MamlElements.para);
+    }
+  }
 }

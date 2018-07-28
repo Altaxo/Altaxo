@@ -30,15 +30,15 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
-	public class RectangleTransformedD3D
-	{
-		private RectangleD3D _rectangle;
-		private Matrix4x3 _transformation;
+  public class RectangleTransformedD3D
+  {
+    private RectangleD3D _rectangle;
+    private Matrix4x3 _transformation;
 
-		public RectangleTransformedD3D(RectangleD3D rectangle, Matrix4x3 transformation)
-		{
-			_rectangle = rectangle;
-			_transformation = transformation;
-		}
-	}
+    public RectangleTransformedD3D(RectangleD3D rectangle, Matrix4x3 transformation)
+    {
+      _rectangle = rectangle;
+      _transformation = transformation;
+    }
+  }
 }

@@ -23,62 +23,62 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Tests if the current workbench window is a specified type or implements an interface.
-	/// </summary>
-	/// <attribute name="activeWindow">
-	/// The fully qualified name of the type the active window should be or the
-	/// interface name it should implement.
-	/// "*" to test if any window is active.
-	/// </attribute>
-	/// <example title="Test if the current window is an text editor">
-	/// &lt;Condition name="WindowActive" activeWindow="Altaxo.Gui.ITextEditor"&gt;
-	/// </example>
-	/// <example title="Test if any window is active">
-	/// &lt;Condition name="WindowActive" activeWindow="*"&gt;
-	/// </example>
-	public class WindowActiveConditionEvaluator : IConditionEvaluator
-	{
-		public bool IsValid(object caller, Condition condition)
-		{
-			var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
-			if (!(caller is IViewContent activeViewContent)) // active view content is coming from the data context of the menu
-				activeViewContent = workbench.ActiveViewContent; // else active view content is retrieved from the workbench
+  /// <summary>
+  /// Tests if the current workbench window is a specified type or implements an interface.
+  /// </summary>
+  /// <attribute name="activeWindow">
+  /// The fully qualified name of the type the active window should be or the
+  /// interface name it should implement.
+  /// "*" to test if any window is active.
+  /// </attribute>
+  /// <example title="Test if the current window is an text editor">
+  /// &lt;Condition name="WindowActive" activeWindow="Altaxo.Gui.ITextEditor"&gt;
+  /// </example>
+  /// <example title="Test if any window is active">
+  /// &lt;Condition name="WindowActive" activeWindow="*"&gt;
+  /// </example>
+  public class WindowActiveConditionEvaluator : IConditionEvaluator
+  {
+    public bool IsValid(object caller, Condition condition)
+    {
+      var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
+      if (!(caller is IViewContent activeViewContent)) // active view content is coming from the data context of the menu
+        activeViewContent = workbench.ActiveViewContent; // else active view content is retrieved from the workbench
 
-			string activeWindow = condition.Properties["activewindow"];
-			if (activeWindow == "*")
-			{
-				return activeViewContent != null;
-			}
+      string activeWindow = condition.Properties["activewindow"];
+      if (activeWindow == "*")
+      {
+        return activeViewContent != null;
+      }
 
-			Type activeWindowType = condition.AddIn.FindType(activeWindow);
-			if (activeWindowType == null)
-			{
-				Current.Log.WarnFormatted("WindowActiveCondition: cannot find Type {0}", activeWindow);
-				return false;
-			}
+      Type activeWindowType = condition.AddIn.FindType(activeWindow);
+      if (activeWindowType == null)
+      {
+        Current.Log.WarnFormatted("WindowActiveCondition: cannot find Type {0}", activeWindow);
+        return false;
+      }
 
-			// ask the active view content, if it has a sub-content of the given window type
-			if (null != activeViewContent?.GetService(activeWindowType))
-				return true;
+      // ask the active view content, if it has a sub-content of the given window type
+      if (null != activeViewContent?.GetService(activeWindowType))
+        return true;
 
-			if (activeViewContent == null)
-				return false;
+      if (activeViewContent == null)
+        return false;
 
-			Type currentType = activeViewContent.GetType();
-			if (currentType.FullName == activeWindow)
-				return true;
-			foreach (Type interf in currentType.GetInterfaces())
-			{
-				if (interf.FullName == activeWindow)
-					return true;
-			}
-			while ((currentType = currentType.BaseType) != null)
-			{
-				if (currentType.FullName == activeWindow)
-					return true;
-			}
-			return false;
-		}
-	}
+      Type currentType = activeViewContent.GetType();
+      if (currentType.FullName == activeWindow)
+        return true;
+      foreach (Type interf in currentType.GetInterfaces())
+      {
+        if (interf.FullName == activeWindow)
+          return true;
+      }
+      while ((currentType = currentType.BaseType) != null)
+      {
+        if (currentType.FullName == activeWindow)
+          return true;
+      }
+      return false;
+    }
+  }
 }

@@ -30,15 +30,15 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Com
 {
-	/// <summary>
-	/// ComMananger for the Altaxo application.
-	/// </summary>
-	/// <seealso cref="Altaxo.Com.ComManager" />
-	public class AltaxoComManager : ComManager
-	{
-		public AltaxoComManager()
-			: base(new Altaxo.Com.AltaxoComApplicationAdapter())
-		{
-		}
-	}
+  /// <summary>
+  /// ComMananger for the Altaxo application.
+  /// </summary>
+  /// <seealso cref="Altaxo.Com.ComManager" />
+  public class AltaxoComManager : ComManager
+  {
+    public AltaxoComManager()
+      : base(new Altaxo.Com.AltaxoComApplicationAdapter())
+    {
+    }
+  }
 }

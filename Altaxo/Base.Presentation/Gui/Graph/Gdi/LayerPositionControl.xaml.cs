@@ -31,68 +31,68 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	/// <summary>
-	/// Interaction logic for LayerPositionControl.xaml
-	/// </summary>
-	public partial class LayerPositionControl : UserControl, ILayerPositionView
-	{
-		public LayerPositionControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for LayerPositionControl.xaml
+  /// </summary>
+  public partial class LayerPositionControl : UserControl, ILayerPositionView
+  {
+    public LayerPositionControl()
+    {
+      InitializeComponent();
+    }
 
-		public event Action PositioningTypeChanged;
+    public event Action PositioningTypeChanged;
 
-		private bool _useDirectPositioning;
+    private bool _useDirectPositioning;
 
-		public bool UseDirectPositioning
-		{
-			get
-			{
-				return _useDirectPositioning;
-			}
-			set
-			{
-				_useDirectPositioning = value;
+    public bool UseDirectPositioning
+    {
+      get
+      {
+        return _useDirectPositioning;
+      }
+      set
+      {
+        _useDirectPositioning = value;
 
-				if (_useDirectPositioning)
-					_guiDirectPositioning.IsChecked = true;
-				else
-					_guiGridPositioning.IsChecked = true;
-			}
-		}
+        if (_useDirectPositioning)
+          _guiDirectPositioning.IsChecked = true;
+        else
+          _guiGridPositioning.IsChecked = true;
+      }
+    }
 
-		public object SubPositionView
-		{
-			set { _guiSubPositioningHost.Child = (System.Windows.UIElement)value; }
-		}
+    public object SubPositionView
+    {
+      set { _guiSubPositioningHost.Child = (System.Windows.UIElement)value; }
+    }
 
-		private void EhPositioningTypeChangedToDirect(object sender, RoutedEventArgs e)
-		{
-			var oldValue = _useDirectPositioning;
-			_useDirectPositioning = true;
+    private void EhPositioningTypeChangedToDirect(object sender, RoutedEventArgs e)
+    {
+      var oldValue = _useDirectPositioning;
+      _useDirectPositioning = true;
 
-			if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
-				PositioningTypeChanged();
-		}
+      if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
+        PositioningTypeChanged();
+    }
 
-		private void EhPositioningTypeChangedToGrid(object sender, RoutedEventArgs e)
-		{
-			var oldValue = _useDirectPositioning;
-			_useDirectPositioning = false;
+    private void EhPositioningTypeChangedToGrid(object sender, RoutedEventArgs e)
+    {
+      var oldValue = _useDirectPositioning;
+      _useDirectPositioning = false;
 
-			if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
-				PositioningTypeChanged();
-		}
+      if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
+        PositioningTypeChanged();
+    }
 
-		public bool IsPositioningTypeChoiceVisible
-		{
-			set
-			{
-				var visibility = value ? Visibility.Visible : System.Windows.Visibility.Collapsed;
-				_guiDirectPositioning.Visibility = visibility;
-				_guiGridPositioning.Visibility = visibility;
-			}
-		}
-	}
+    public bool IsPositioningTypeChoiceVisible
+    {
+      set
+      {
+        var visibility = value ? Visibility.Visible : System.Windows.Visibility.Collapsed;
+        _guiDirectPositioning.Visibility = visibility;
+        _guiGridPositioning.Visibility = visibility;
+      }
+    }
+  }
 }

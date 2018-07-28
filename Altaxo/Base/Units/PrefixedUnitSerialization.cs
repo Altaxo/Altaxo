@@ -30,23 +30,23 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrefixedUnit), 0)]
-	public class SerializationSurrogate0_PrefixUnit : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			var s = (PrefixedUnit)obj;
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrefixedUnit), 0)]
+  public class SerializationSurrogate0_PrefixUnit : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var s = (PrefixedUnit)obj;
 
-			info.AddValue("Prefix", s.Prefix);
-			info.AddValue("Unit", s.Unit);
-		}
+      info.AddValue("Prefix", s.Prefix);
+      info.AddValue("Unit", s.Unit);
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			var prefix = (SIPrefix)info.GetValue("Prefix", parent);
-			var unit = (IUnit)info.GetValue("Unit", parent);
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      var prefix = (SIPrefix)info.GetValue("Prefix", parent);
+      var unit = (IUnit)info.GetValue("Unit", parent);
 
-			return new PrefixedUnit(prefix, unit);
-		}
-	}
+      return new PrefixedUnit(prefix, unit);
+    }
+  }
 }

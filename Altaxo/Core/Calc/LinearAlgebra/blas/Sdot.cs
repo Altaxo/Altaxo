@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
@@ -34,111 +34,111 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
-	///<summary>Computes a vector-vector dot product with extended precision</summary>
-	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
-	internal sealed class Sdot
-	{
-		private Sdot()
-		{
-		}
+  ///<summary>Computes a vector-vector dot product with extended precision</summary>
+  [System.Security.SuppressUnmanagedCodeSecurityAttribute]
+  internal sealed class Sdot
+  {
+    private Sdot()
+    {
+    }
 
-		internal static float Compute(int n, float alpha, float[] X, int incx, float[] Y, int incy)
-		{
-			if (n < 0)
-			{
-				throw new ArgumentException("n must be zero or greater", "n");
-			}
-			if (X == null)
-			{
-				throw new ArgumentNullException("X", "X cannot be null.");
-			}
-			if (Y == null)
-			{
-				throw new ArgumentNullException("Y", "Y cannot be null.");
-			}
-			if (incx == 0)
-			{
-				throw new ArgumentException("incx cannot be zero.", "incx");
-			}
-			if (incy == 0)
-			{
-				throw new ArgumentException("incy cannot be zero.", "incy");
-			}
-			incx = System.Math.Abs(incx);
-			incy = System.Math.Abs(incy);
-			if (X.Length < (1 + (n - 1) * incx))
-			{
-				throw new ArgumentException("The dimension of X must be a least 1 + (n-1) * incx.");
-			}
-			if (Y.Length < (1 + (n - 1) * incy))
-			{
-				throw new ArgumentException("The dimension of Y must be a least 1 + (n-1) * incy.");
-			}
+    internal static float Compute(int n, float alpha, float[] X, int incx, float[] Y, int incy)
+    {
+      if (n < 0)
+      {
+        throw new ArgumentException("n must be zero or greater", "n");
+      }
+      if (X == null)
+      {
+        throw new ArgumentNullException("X", "X cannot be null.");
+      }
+      if (Y == null)
+      {
+        throw new ArgumentNullException("Y", "Y cannot be null.");
+      }
+      if (incx == 0)
+      {
+        throw new ArgumentException("incx cannot be zero.", "incx");
+      }
+      if (incy == 0)
+      {
+        throw new ArgumentException("incy cannot be zero.", "incy");
+      }
+      incx = System.Math.Abs(incx);
+      incy = System.Math.Abs(incy);
+      if (X.Length < (1 + (n - 1) * incx))
+      {
+        throw new ArgumentException("The dimension of X must be a least 1 + (n-1) * incx.");
+      }
+      if (Y.Length < (1 + (n - 1) * incy))
+      {
+        throw new ArgumentException("The dimension of Y must be a least 1 + (n-1) * incy.");
+      }
 
-			double ret = alpha;
+      double ret = alpha;
 #if MANAGED
-			int ix = 0;
-			int iy = 0;
-			for (int i = 0; i < n; ++i)
-			{
-				ret += ((double)X[ix] * (double)Y[iy]);
-				ix += incx;
-				iy += incy;
-			}
+      int ix = 0;
+      int iy = 0;
+      for (int i = 0; i < n; ++i)
+      {
+        ret += ((double)X[ix] * (double)Y[iy]);
+        ix += incx;
+        iy += incy;
+      }
 #else
       ret = dna_blas_sdsdot(n, alpha, X, incx, Y, incy);
 #endif
-			return (float)ret;
-		}
+      return (float)ret;
+    }
 
-		internal static double Compute(int n, float[] X, int incx, float[] Y, int incy)
-		{
-			if (n < 0)
-			{
-				throw new ArgumentException("n must be zero or greater", "n");
-			}
-			if (X == null)
-			{
-				throw new ArgumentNullException("X cannot be null.", "X");
-			}
-			if (Y == null)
-			{
-				throw new ArgumentNullException("Y cannot be null.", "Y");
-			}
-			if (incx == 0)
-			{
-				throw new ArgumentException("incx cannot be zero.", "incx");
-			}
-			if (incy == 0)
-			{
-				throw new ArgumentException("incy cannot be zero.", "incy");
-			}
-			incx = System.Math.Abs(incx);
-			incy = System.Math.Abs(incy);
-			if (X.Length < (1 + (n - 1) * incx))
-			{
-				throw new ArgumentException("The dimension of X must be a least 1 + (n-1) * incx.");
-			}
-			if (Y.Length < (1 + (n - 1) * incy))
-			{
-				throw new ArgumentException("The dimension of Y must be a least 1 + (n-1) * incy.");
-			}
+    internal static double Compute(int n, float[] X, int incx, float[] Y, int incy)
+    {
+      if (n < 0)
+      {
+        throw new ArgumentException("n must be zero or greater", "n");
+      }
+      if (X == null)
+      {
+        throw new ArgumentNullException("X cannot be null.", "X");
+      }
+      if (Y == null)
+      {
+        throw new ArgumentNullException("Y cannot be null.", "Y");
+      }
+      if (incx == 0)
+      {
+        throw new ArgumentException("incx cannot be zero.", "incx");
+      }
+      if (incy == 0)
+      {
+        throw new ArgumentException("incy cannot be zero.", "incy");
+      }
+      incx = System.Math.Abs(incx);
+      incy = System.Math.Abs(incy);
+      if (X.Length < (1 + (n - 1) * incx))
+      {
+        throw new ArgumentException("The dimension of X must be a least 1 + (n-1) * incx.");
+      }
+      if (Y.Length < (1 + (n - 1) * incy))
+      {
+        throw new ArgumentException("The dimension of Y must be a least 1 + (n-1) * incy.");
+      }
 
-			double ret = 0;
+      double ret = 0;
 #if MANAGED
-			int ix = 0;
-			int iy = 0;
-			for (int i = 0; i < n; ++i)
-			{
-				ret += ((double)X[ix] * (double)Y[iy]);
-				ix += incx;
-				iy += incy;
-			}
+      int ix = 0;
+      int iy = 0;
+      for (int i = 0; i < n; ++i)
+      {
+        ret += ((double)X[ix] * (double)Y[iy]);
+        ix += incx;
+        iy += incy;
+      }
 #else
       ret = dna_blas_dsdot(n, X, incx, Y, incy);
 #endif
-			return ret;
-		}
+      return ret;
+    }
 
 #if !MANAGED
     ///<summary>P/Invoke to wrapper with native code</summary>
@@ -148,5 +148,5 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern double dna_blas_dsdot( int N, [In]float[] X, int incX, [In]float[] Y, int incY );
 #endif
-	}
+  }
 }

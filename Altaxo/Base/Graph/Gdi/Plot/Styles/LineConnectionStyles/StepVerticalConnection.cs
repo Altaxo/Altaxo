@@ -35,63 +35,63 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
-	/// <summary>
-	/// Connects by drawing a horizontal line to the x coordinate of the next point, and then a vertical line. Instances of this class have to be immutable.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public class StepVerticalConnection : StepConnectionBase
-	{
-		public static StepVerticalConnection Instance { get; private set; } = new StepVerticalConnection();
+  /// <summary>
+  /// Connects by drawing a horizontal line to the x coordinate of the next point, and then a vertical line. Instances of this class have to be immutable.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.IImmutable" />
+  public class StepVerticalConnection : StepConnectionBase
+  {
+    public static StepVerticalConnection Instance { get; private set; } = new StepVerticalConnection();
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-05-09 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StepVerticalConnection), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    /// <summary>
+    /// 2016-05-09 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StepVerticalConnection), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return Instance;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return Instance;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		protected override PointF[] GetStepPolylinePoints(
-		PointF[] allLinePoints,
-		IPlotRange range,
-		IPlotArea layer,
-		bool connectCircular,
-		out int numberOfPointsPerOriginalPoint,
-		out int lastIndex)
-		{
-			numberOfPointsPerOriginalPoint = 2;
+    protected override PointF[] GetStepPolylinePoints(
+    PointF[] allLinePoints,
+    IPlotRange range,
+    IPlotArea layer,
+    bool connectCircular,
+    out int numberOfPointsPerOriginalPoint,
+    out int lastIndex)
+    {
+      numberOfPointsPerOriginalPoint = 2;
 
-			PointF[] subLinePoints = new PointF[range.Length * 2 - 1 + (connectCircular ? 2 : 0)];
-			int end = range.UpperBound - 1;
-			int i, j;
-			for (i = 0, j = range.LowerBound; j < end; i += 2, j++)
-			{
-				subLinePoints[i] = allLinePoints[j];
-				subLinePoints[i + 1].X = allLinePoints[j].X;
-				subLinePoints[i + 1].Y = allLinePoints[j + 1].Y;
-			}
-			subLinePoints[i] = allLinePoints[j];
-			lastIndex = i;
+      PointF[] subLinePoints = new PointF[range.Length * 2 - 1 + (connectCircular ? 2 : 0)];
+      int end = range.UpperBound - 1;
+      int i, j;
+      for (i = 0, j = range.LowerBound; j < end; i += 2, j++)
+      {
+        subLinePoints[i] = allLinePoints[j];
+        subLinePoints[i + 1].X = allLinePoints[j].X;
+        subLinePoints[i + 1].Y = allLinePoints[j + 1].Y;
+      }
+      subLinePoints[i] = allLinePoints[j];
+      lastIndex = i;
 
-			if (connectCircular)
-			{
-				subLinePoints[i + 1] = new PointF(allLinePoints[j].X, allLinePoints[range.LowerBound].Y);
-				subLinePoints[i + 2] = allLinePoints[range.LowerBound];
-				lastIndex = i + 2;
-			}
-			return subLinePoints;
-		}
-	}
+      if (connectCircular)
+      {
+        subLinePoints[i + 1] = new PointF(allLinePoints[j].X, allLinePoints[range.LowerBound].Y);
+        subLinePoints[i + 2] = allLinePoints[range.LowerBound];
+        lastIndex = i + 2;
+      }
+      return subLinePoints;
+    }
+  }
 }

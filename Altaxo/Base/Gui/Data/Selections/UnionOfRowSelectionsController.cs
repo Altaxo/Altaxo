@@ -29,44 +29,44 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	using Altaxo.Data.Selections;
+  using Altaxo.Data.Selections;
 
-	public interface IUnionOfRowSelectionView
-	{
-		bool MergeAdjoiningSegments { get; set; }
-	}
+  public interface IUnionOfRowSelectionView
+  {
+    bool MergeAdjoiningSegments { get; set; }
+  }
 
-	[UserControllerForObject(typeof(UnionOfRowSelections), 100)]
-	[ExpectedTypeOfView(typeof(IUnionOfRowSelectionView))]
-	public class UnionOfRowSelectionsController : MVCANControllerEditImmutableDocBase<UnionOfRowSelections, IUnionOfRowSelectionView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(UnionOfRowSelections), 100)]
+  [ExpectedTypeOfView(typeof(IUnionOfRowSelectionView))]
+  public class UnionOfRowSelectionsController : MVCANControllerEditImmutableDocBase<UnionOfRowSelections, IUnionOfRowSelectionView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
+      if (initData)
+      {
+      }
 
-			if (null != _view)
-			{
-				_view.MergeAdjoiningSegments = _doc.MergeAdjoinigSegments;
-			}
-		}
+      if (null != _view)
+      {
+        _view.MergeAdjoiningSegments = _doc.MergeAdjoinigSegments;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			var mergeAdjoiningSegments = _view.MergeAdjoiningSegments;
+    public override bool Apply(bool disposeController)
+    {
+      var mergeAdjoiningSegments = _view.MergeAdjoiningSegments;
 
-			_doc = _doc.WithMergeAdjoiningSegments(mergeAdjoiningSegments);
-			_originalDoc = _doc;
+      _doc = _doc.WithMergeAdjoiningSegments(mergeAdjoiningSegments);
+      _originalDoc = _doc;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

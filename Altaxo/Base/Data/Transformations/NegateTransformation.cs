@@ -29,60 +29,60 @@ using System.Text;
 
 namespace Altaxo.Data.Transformations
 {
-	public class NegateTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
-	{
-		public static NegateTransformation Instance { get; private set; } = new NegateTransformation();
+  public class NegateTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
+  {
+    public static NegateTransformation Instance { get; private set; } = new NegateTransformation();
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-06-24 Initial version.
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NegateTransformation), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    /// <summary>
+    /// 2016-06-24 Initial version.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NegateTransformation), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return NegateTransformation.Instance;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return NegateTransformation.Instance;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <inheritdoc/>
-		public Type InputValueType { get { return typeof(double); } }
+    /// <inheritdoc/>
+    public Type InputValueType { get { return typeof(double); } }
 
-		/// <inheritdoc/>
-		public Type OutputValueType { get { return typeof(double); } }
+    /// <inheritdoc/>
+    public Type OutputValueType { get { return typeof(double); } }
 
-		public AltaxoVariant Transform(AltaxoVariant value)
-		{
-			return -value;
-		}
+    public AltaxoVariant Transform(AltaxoVariant value)
+    {
+      return -value;
+    }
 
-		public string RepresentationAsFunction
-		{
-			get { return GetRepresentationAsFunction("x"); }
-		}
+    public string RepresentationAsFunction
+    {
+      get { return GetRepresentationAsFunction("x"); }
+    }
 
-		public string GetRepresentationAsFunction(string arg)
-		{
-			return arg.Length == 1 ? string.Format("-{0}", arg) : string.Format("-({0})", arg);
-		}
+    public string GetRepresentationAsFunction(string arg)
+    {
+      return arg.Length == 1 ? string.Format("-{0}", arg) : string.Format("-({0})", arg);
+    }
 
-		public string RepresentationAsOperator
-		{
-			get { return "-"; }
-		}
+    public string RepresentationAsOperator
+    {
+      get { return "-"; }
+    }
 
-		public IVariantToVariantTransformation BackTransformation
-		{
-			get { return this; }
-		}
-	}
+    public IVariantToVariantTransformation BackTransformation
+    {
+      get { return this; }
+    }
+  }
 }

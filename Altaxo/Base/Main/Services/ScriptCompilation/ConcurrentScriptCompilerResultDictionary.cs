@@ -7,99 +7,99 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
-	/// <summary>
-	/// Stores results of the script compilation process. Both successfull and unsuccessful results are stored, in
-	/// order to avoid unneccessary compilation attempts.
-	/// </summary>
-	public class ConcurrentScriptCompilerResultDictionary
-	{
-		private Dictionary<string, IScriptCompilerResult> _compilerResultsByTextHash = new Dictionary<string, IScriptCompilerResult>();
-		private Dictionary<Assembly, ScriptCompilerSuccessfulResult> _compilerResultsByAssembly = new Dictionary<Assembly, ScriptCompilerSuccessfulResult>();
-		private System.Threading.ReaderWriterLockSlim _lock = new System.Threading.ReaderWriterLockSlim();
+  /// <summary>
+  /// Stores results of the script compilation process. Both successfull and unsuccessful results are stored, in
+  /// order to avoid unneccessary compilation attempts.
+  /// </summary>
+  public class ConcurrentScriptCompilerResultDictionary
+  {
+    private Dictionary<string, IScriptCompilerResult> _compilerResultsByTextHash = new Dictionary<string, IScriptCompilerResult>();
+    private Dictionary<Assembly, ScriptCompilerSuccessfulResult> _compilerResultsByAssembly = new Dictionary<Assembly, ScriptCompilerSuccessfulResult>();
+    private System.Threading.ReaderWriterLockSlim _lock = new System.Threading.ReaderWriterLockSlim();
 
-		/// <summary>
-		/// Tries to add a compilation result.
-		/// </summary>
-		/// <param name="result">The compilation result.</param>
-		/// <returns>True if successful; otherwise false (if it is already present).</returns>
-		public bool TryAdd(IScriptCompilerResult result)
-		{
-			if (null == result)
-				throw new ArgumentNullException(nameof(result));
+    /// <summary>
+    /// Tries to add a compilation result.
+    /// </summary>
+    /// <param name="result">The compilation result.</param>
+    /// <returns>True if successful; otherwise false (if it is already present).</returns>
+    public bool TryAdd(IScriptCompilerResult result)
+    {
+      if (null == result)
+        throw new ArgumentNullException(nameof(result));
 
-			_lock.EnterUpgradeableReadLock();
-			try
-			{
-				if (_compilerResultsByTextHash.ContainsKey(result.ScriptTextHash))
-				{
-					return false;
-				}
-				else
-				{
-					_lock.EnterWriteLock();
-					try
-					{
-						_compilerResultsByTextHash.Add(result.ScriptTextHash, result);
-						if (result is ScriptCompilerSuccessfulResult successfulResult)
-						{
-							_compilerResultsByAssembly.Add(successfulResult.ScriptAssembly, successfulResult);
-						}
-						return true;
-					}
-					finally
-					{
-						_lock.ExitWriteLock();
-					}
-				}
-			}
-			finally
-			{
-				_lock.ExitUpgradeableReadLock();
-			}
-		}
+      _lock.EnterUpgradeableReadLock();
+      try
+      {
+        if (_compilerResultsByTextHash.ContainsKey(result.ScriptTextHash))
+        {
+          return false;
+        }
+        else
+        {
+          _lock.EnterWriteLock();
+          try
+          {
+            _compilerResultsByTextHash.Add(result.ScriptTextHash, result);
+            if (result is ScriptCompilerSuccessfulResult successfulResult)
+            {
+              _compilerResultsByAssembly.Add(successfulResult.ScriptAssembly, successfulResult);
+            }
+            return true;
+          }
+          finally
+          {
+            _lock.ExitWriteLock();
+          }
+        }
+      }
+      finally
+      {
+        _lock.ExitUpgradeableReadLock();
+      }
+    }
 
-		/// <summary>
-		/// Tries to get a compilation result, by providing the hash of the script texts.
-		/// </summary>
-		/// <param name="scriptTextHash">The script text hash.</param>
-		/// <param name="result">Returns the compilation result. This can be either a successful result or an unsuccessful result.</param>
-		/// <returns>True if the compilation result corresponding to the script text hash could be found; otherwise, false.</returns>
-		public bool TryGetValue(string scriptTextHash, out IScriptCompilerResult result)
-		{
-			if (string.IsNullOrEmpty(scriptTextHash))
-				throw new ArgumentNullException(nameof(scriptTextHash));
+    /// <summary>
+    /// Tries to get a compilation result, by providing the hash of the script texts.
+    /// </summary>
+    /// <param name="scriptTextHash">The script text hash.</param>
+    /// <param name="result">Returns the compilation result. This can be either a successful result or an unsuccessful result.</param>
+    /// <returns>True if the compilation result corresponding to the script text hash could be found; otherwise, false.</returns>
+    public bool TryGetValue(string scriptTextHash, out IScriptCompilerResult result)
+    {
+      if (string.IsNullOrEmpty(scriptTextHash))
+        throw new ArgumentNullException(nameof(scriptTextHash));
 
-			_lock.EnterReadLock();
-			try
-			{
-				return _compilerResultsByTextHash.TryGetValue(scriptTextHash, out result);
-			}
-			finally
-			{
-				_lock.ExitReadLock();
-			}
-		}
+      _lock.EnterReadLock();
+      try
+      {
+        return _compilerResultsByTextHash.TryGetValue(scriptTextHash, out result);
+      }
+      finally
+      {
+        _lock.ExitReadLock();
+      }
+    }
 
-		/// <summary>
-		/// Tries to get a compilation result from an existing assembly.
-		/// </summary>
-		/// <param name="assembly">The compiled assembly.</param>
-		/// <param name="result">Returns the compilation result corresponding to the assembly (always a successful compilation result).</param>
-		/// <returns>True if the compulation result corresponding to this assembly could be found, otherwise, false.</returns>
-		public bool TryGetValue(Assembly assembly, out ScriptCompilerSuccessfulResult result)
-		{
-			if (null == assembly)
-				throw new ArgumentNullException(nameof(assembly));
+    /// <summary>
+    /// Tries to get a compilation result from an existing assembly.
+    /// </summary>
+    /// <param name="assembly">The compiled assembly.</param>
+    /// <param name="result">Returns the compilation result corresponding to the assembly (always a successful compilation result).</param>
+    /// <returns>True if the compulation result corresponding to this assembly could be found, otherwise, false.</returns>
+    public bool TryGetValue(Assembly assembly, out ScriptCompilerSuccessfulResult result)
+    {
+      if (null == assembly)
+        throw new ArgumentNullException(nameof(assembly));
 
-			_lock.EnterReadLock();
-			try
-			{
-				return _compilerResultsByAssembly.TryGetValue(assembly, out result);
-			}
-			finally
-			{
-				_lock.ExitReadLock();
-			}
-		}
-	}
+      _lock.EnterReadLock();
+      try
+      {
+        return _compilerResultsByAssembly.TryGetValue(assembly, out result);
+      }
+      finally
+      {
+        _lock.ExitReadLock();
+      }
+    }
+  }
 }

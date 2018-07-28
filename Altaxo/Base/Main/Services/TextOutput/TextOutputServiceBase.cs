@@ -29,53 +29,53 @@ using System.Text;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Base class implementing <see cref="Altaxo.Main.Services.ITextOutputService"/>. You only need to overwrite <see cref="InternalWrite(string)"/>
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.Services.ITextOutputService" />
-	public abstract class TextOutputServiceBase : ITextOutputService
-	{
-		private object _locker = new object();
+  /// <summary>
+  /// Base class implementing <see cref="Altaxo.Main.Services.ITextOutputService"/>. You only need to overwrite <see cref="InternalWrite(string)"/>
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.Services.ITextOutputService" />
+  public abstract class TextOutputServiceBase : ITextOutputService
+  {
+    private object _locker = new object();
 
-		#region IOutputService Members
+    #region IOutputService Members
 
-		protected abstract void InternalWrite(string text);
+    protected abstract void InternalWrite(string text);
 
-		public void Write(string text)
-		{
-			InternalWrite(text);
-		}
+    public void Write(string text)
+    {
+      InternalWrite(text);
+    }
 
-		public void WriteLine()
-		{
-			InternalWrite(System.Environment.NewLine);
-		}
+    public void WriteLine()
+    {
+      InternalWrite(System.Environment.NewLine);
+    }
 
-		public void WriteLine(string text)
-		{
-			InternalWrite(text + System.Environment.NewLine);
-		}
+    public void WriteLine(string text)
+    {
+      InternalWrite(text + System.Environment.NewLine);
+    }
 
-		public void WriteLine(string format, params object[] args)
-		{
-			InternalWrite(string.Format(format, args) + System.Environment.NewLine);
-		}
+    public void WriteLine(string format, params object[] args)
+    {
+      InternalWrite(string.Format(format, args) + System.Environment.NewLine);
+    }
 
-		public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
-		{
-			InternalWrite(string.Format(provider, format, args) + System.Environment.NewLine);
-		}
+    public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
+    {
+      InternalWrite(string.Format(provider, format, args) + System.Environment.NewLine);
+    }
 
-		public void Write(string format, params object[] args)
-		{
-			InternalWrite(string.Format(format, args));
-		}
+    public void Write(string format, params object[] args)
+    {
+      InternalWrite(string.Format(format, args));
+    }
 
-		public void Write(System.IFormatProvider provider, string format, params object[] args)
-		{
-			InternalWrite(string.Format(provider, format, args));
-		}
+    public void Write(System.IFormatProvider provider, string format, params object[] args)
+    {
+      InternalWrite(string.Format(provider, format, args));
+    }
 
-		#endregion IOutputService Members
-	}
+    #endregion IOutputService Members
+  }
 }

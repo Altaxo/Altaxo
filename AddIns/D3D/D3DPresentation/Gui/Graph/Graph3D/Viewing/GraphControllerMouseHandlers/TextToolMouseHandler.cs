@@ -30,64 +30,64 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// This class handles the mouse events in case the text tool is selected.
-	/// </summary>
-	public class TextToolMouseHandler : MouseStateHandler
-	{
-		/// <summary>The graph controller this mouse handler belongs to.</summary>
-		private Graph3DController _grac;
+  /// <summary>
+  /// This class handles the mouse events in case the text tool is selected.
+  /// </summary>
+  public class TextToolMouseHandler : MouseStateHandler
+  {
+    /// <summary>The graph controller this mouse handler belongs to.</summary>
+    private Graph3DController _grac;
 
-		public TextToolMouseHandler(Graph3DController grac)
-		{
-			_grac = grac;
-			_grac?.View?.SetPanelCursor(Cursors.IBeam);
-		}
+    public TextToolMouseHandler(Graph3DController grac)
+    {
+      _grac = grac;
+      _grac?.View?.SetPanelCursor(Cursors.IBeam);
+    }
 
-		public override GraphToolType GraphToolType
-		{
-			get { return GraphToolType.TextDrawing; }
-		}
+    public override GraphToolType GraphToolType
+    {
+      get { return GraphToolType.TextDrawing; }
+    }
 
-		/// <summary>
-		/// Handles the click event by opening the text tool dialog.
-		/// </summary>
-		/// <param name="e">EventArgs.</param>
-		/// <param name="position">Mouse position.</param>
-		/// <returns>The mouse state handler for handling the next mouse events.</returns>
-		public override void OnClick(PointD3D position, MouseButtonEventArgs e)
-		{
-			base.OnClick(position, e);
+    /// <summary>
+    /// Handles the click event by opening the text tool dialog.
+    /// </summary>
+    /// <param name="e">EventArgs.</param>
+    /// <param name="position">Mouse position.</param>
+    /// <returns>The mouse state handler for handling the next mouse events.</returns>
+    public override void OnClick(PointD3D position, MouseButtonEventArgs e)
+    {
+      base.OnClick(position, e);
 
-			_cachedActiveLayer = _grac.ActiveLayer;
-			_cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+      _cachedActiveLayer = _grac.ActiveLayer;
+      _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
 
-			PointD3D hitPointOnLayerPlaneInLayerCoordinates;
-			VectorD3D rotationsRadian;
-			GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
+      PointD3D hitPointOnLayerPlaneInLayerCoordinates;
+      VectorD3D rotationsRadian;
+      GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
 
-			TextGraphic tgo = new TextGraphic(_grac.Doc.GetPropertyContext());
-			tgo.SetParentSize(_cachedActiveLayer.Size, false);
-			tgo.Position = hitPointOnLayerPlaneInLayerCoordinates;
+      TextGraphic tgo = new TextGraphic(_grac.Doc.GetPropertyContext());
+      tgo.SetParentSize(_cachedActiveLayer.Size, false);
+      tgo.Position = hitPointOnLayerPlaneInLayerCoordinates;
 
-			tgo.RotationX = (rotationsRadian.X / Math.PI) * 180;
-			tgo.RotationY = (rotationsRadian.Y / Math.PI) * 180;
-			tgo.RotationZ = (rotationsRadian.Z / Math.PI) * 180;
+      tgo.RotationX = (rotationsRadian.X / Math.PI) * 180;
+      tgo.RotationY = (rotationsRadian.Y / Math.PI) * 180;
+      tgo.RotationZ = (rotationsRadian.Z / Math.PI) * 180;
 
-			tgo.ParentObject = _grac.ActiveLayer;
+      tgo.ParentObject = _grac.ActiveLayer;
 
-			// deselect the text tool
-			_grac.CurrentGraphTool = GraphToolType.ObjectPointer;
+      // deselect the text tool
+      _grac.CurrentGraphTool = GraphToolType.ObjectPointer;
 
-			object tgoo = tgo;
-			if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
-			{
-				tgo = (TextGraphic)tgoo;
-				if (tgo != null && !tgo.Empty)
-				{
-					_grac.ActiveLayer.GraphObjects.Add(tgo);
-				}
-			}
-		}
-	}
+      object tgoo = tgo;
+      if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
+      {
+        tgo = (TextGraphic)tgoo;
+        if (tgo != null && !tgo.Empty)
+        {
+          _grac.ActiveLayer.GraphObjects.Add(tgo);
+        }
+      }
+    }
+  }
 }

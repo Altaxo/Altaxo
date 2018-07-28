@@ -22,14 +22,14 @@ using System.Runtime.CompilerServices;
 
 internal static class RevisionClass
 {
-	public const string Major = "$MAJORVERSION$";
-	public const string Minor = "$MINORVERSION$";
-	public const string Build = "$REVNUM$";
-	public const string Revision = "$DIRTY$";
+  public const string Major = "$MAJORVERSION$";
+  public const string Minor = "$MINORVERSION$";
+  public const string Build = "$REVNUM$";
+  public const string Revision = "$DIRTY$";
 
-	public const string MainVersion = Major + "." + Minor;
-	public const string FullVersion = Major + "." + Minor + "." + Build + "." + Revision;
+  public const string MainVersion = Major + "." + Minor;
+  public const string FullVersion = Major + "." + Minor + "." + Build + "." + Revision;
 
-	public const string BranchName = "$BRANCH$";
-	public const string RevisionID = "$REVID$";
+  public const string BranchName = "$BRANCH$";
+  public const string RevisionID = "$REVID$";
 }

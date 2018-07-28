@@ -32,36 +32,36 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	/// <summary>
-	/// Interaction logic for ShapeGroupControl.xaml
-	/// </summary>
-	public partial class ShapeGroupControl : UserControl, IShapeGroupView
-	{
-		public ShapeGroupControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ShapeGroupControl.xaml
+  /// </summary>
+  public partial class ShapeGroupControl : UserControl, IShapeGroupView
+  {
+    public ShapeGroupControl()
+    {
+      InitializeComponent();
+    }
 
-		public object LocationView
-		{
-			set
-			{
-				_guiLocationHost.Child = (UIElement)value;
-			}
-		}
+    public object LocationView
+    {
+      set
+      {
+        _guiLocationHost.Child = (UIElement)value;
+      }
+    }
 
-		public void InitializeItemList(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiShapeGroupItems, list);
-		}
+    public void InitializeItemList(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiShapeGroupItems, list);
+    }
 
-		public event Action SelectedItemEditing;
+    public event Action SelectedItemEditing;
 
-		private void EhItemListDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiShapeGroupItems);
-			if (null != SelectedItemEditing)
-				SelectedItemEditing();
-		}
-	}
+    private void EhItemListDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiShapeGroupItems);
+      if (null != SelectedItemEditing)
+        SelectedItemEditing();
+    }
+  }
 }

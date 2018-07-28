@@ -28,47 +28,47 @@ using System.Text;
 
 namespace Altaxo.Serialization
 {
-	public class FileIOHelper
-	{
-		private static Dictionary<char, char> _invalidChars;
+  public class FileIOHelper
+  {
+    private static Dictionary<char, char> _invalidChars;
 
-		static FileIOHelper()
-		{
-			_invalidChars = new Dictionary<char, char>();
+    static FileIOHelper()
+    {
+      _invalidChars = new Dictionary<char, char>();
 
-			char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
-			int boxchar = 0;
-			for (int i = 0; i < invalidChars.Length; ++i)
-			{
-				char c = invalidChars[i];
-				char repl;
+      char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
+      int boxchar = 0;
+      for (int i = 0; i < invalidChars.Length; ++i)
+      {
+        char c = invalidChars[i];
+        char repl;
 
-				if (c < 32)
-					repl = (char)(0xF001 + c); // from a private range
-				else
-					repl = (char)(0x2550 + boxchar++); // from the box char range
+        if (c < 32)
+          repl = (char)(0xF001 + c); // from a private range
+        else
+          repl = (char)(0x2550 + boxchar++); // from the box char range
 
-				_invalidChars.Add(c, repl);
-			}
-		}
+        _invalidChars.Add(c, repl);
+      }
+    }
 
-		/// <summary>
-		/// Get a valid file name out of a raw file name that can contain invalid characters. Those characters are
-		/// replaced by unicode box characters (range from 0x2550 upwards).
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public static string GetValidFileName(string name)
-		{
-			StringBuilder stb = new StringBuilder(name);
-			for (int i = 0; i < name.Length; ++i)
-			{
-				char c = stb[i];
-				if (_invalidChars.ContainsKey(c))
-					stb[i] = _invalidChars[c]; // we replace this character with a box character
-			}
+    /// <summary>
+    /// Get a valid file name out of a raw file name that can contain invalid characters. Those characters are
+    /// replaced by unicode box characters (range from 0x2550 upwards).
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static string GetValidFileName(string name)
+    {
+      StringBuilder stb = new StringBuilder(name);
+      for (int i = 0; i < name.Length; ++i)
+      {
+        char c = stb[i];
+        if (_invalidChars.ContainsKey(c))
+          stb[i] = _invalidChars[c]; // we replace this character with a box character
+      }
 
-			return stb.ToString();
-		}
-	}
+      return stb.ToString();
+    }
+  }
 }

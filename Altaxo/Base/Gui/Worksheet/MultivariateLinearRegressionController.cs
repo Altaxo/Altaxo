@@ -30,97 +30,97 @@ using System.Linq;
 
 namespace Altaxo.Gui.Worksheet
 {
-	[ExpectedTypeOfView(typeof(IMultiChildView))]
-	[UserControllerForObject(typeof(MultivariateLinearFitParameters), 100)]
-	public class MultivariateLinearRegressionController : MVCANControllerEditCopyOfDocBase<MultivariateLinearFitParameters, IMultiChildView>
-	{
-		private MultiChildController _innerController;
+  [ExpectedTypeOfView(typeof(IMultiChildView))]
+  [UserControllerForObject(typeof(MultivariateLinearFitParameters), 100)]
+  public class MultivariateLinearRegressionController : MVCANControllerEditCopyOfDocBase<MultivariateLinearFitParameters, IMultiChildView>
+  {
+    private MultiChildController _innerController;
 
-		private ControlViewElement[] _elements = new ControlViewElement[4];
-		private SingleChoiceController _ctrl0;
-		private BooleanValueController _ctrl1, _ctrl2, _ctrl3;
+    private ControlViewElement[] _elements = new ControlViewElement[4];
+    private SingleChoiceController _ctrl0;
+    private BooleanValueController _ctrl1, _ctrl2, _ctrl3;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_ctrl0, () => _ctrl0 = null);
-			yield return new ControllerAndSetNullMethod(_ctrl1, () => _ctrl1 = null);
-			yield return new ControllerAndSetNullMethod(_ctrl2, () => _ctrl2 = null);
-			yield return new ControllerAndSetNullMethod(_ctrl3, () => _ctrl3 = null);
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_ctrl0, () => _ctrl0 = null);
+      yield return new ControllerAndSetNullMethod(_ctrl1, () => _ctrl1 = null);
+      yield return new ControllerAndSetNullMethod(_ctrl2, () => _ctrl2 = null);
+      yield return new ControllerAndSetNullMethod(_ctrl3, () => _ctrl3 = null);
 
-			yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
-		}
+      yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				string[] names = new string[_doc.SelectedDataColumns.Count];
-				for (int i = 0; i < names.Length; i++)
-					names[i] = _doc.Table[_doc.SelectedDataColumns[i]].Name;
+      if (initData)
+      {
+        string[] names = new string[_doc.SelectedDataColumns.Count];
+        for (int i = 0; i < names.Length; i++)
+          names[i] = _doc.Table[_doc.SelectedDataColumns[i]].Name;
 
-				_ctrl0 = new SingleChoiceController(names, 0);
-				_ctrl1 = new BooleanValueController(_doc.IncludeIntercept);
-				_ctrl2 = new BooleanValueController(_doc.GenerateRegressionValues);
-				_ctrl3 = new BooleanValueController(_doc.GenerateRegressionValues);
+        _ctrl0 = new SingleChoiceController(names, 0);
+        _ctrl1 = new BooleanValueController(_doc.IncludeIntercept);
+        _ctrl2 = new BooleanValueController(_doc.GenerateRegressionValues);
+        _ctrl3 = new BooleanValueController(_doc.GenerateRegressionValues);
 
-				_ctrl0.DescriptionText = "Choose the dependent variable:";
-				_ctrl1.DescriptionText = "Include intercept";
-				_ctrl2.DescriptionText = "Generate prediction values";
-				_ctrl3.DescriptionText = "Generate residual values";
+        _ctrl0.DescriptionText = "Choose the dependent variable:";
+        _ctrl1.DescriptionText = "Include intercept";
+        _ctrl2.DescriptionText = "Generate prediction values";
+        _ctrl3.DescriptionText = "Generate residual values";
 
-				_elements[0] = new ControlViewElement(null, _ctrl0);
-				_elements[1] = new ControlViewElement(null, _ctrl1);
-				_elements[2] = new ControlViewElement(null, _ctrl2);
-				_elements[3] = new ControlViewElement(null, _ctrl3);
+        _elements[0] = new ControlViewElement(null, _ctrl0);
+        _elements[1] = new ControlViewElement(null, _ctrl1);
+        _elements[2] = new ControlViewElement(null, _ctrl2);
+        _elements[3] = new ControlViewElement(null, _ctrl3);
 
-				for (int i = 0; i < _elements.Length; i++)
-				{
-					Current.Gui.FindAndAttachControlTo((IMVCController)_elements[i].Controller);
-					_elements[i].View = ((IMVCController)_elements[i].Controller).ViewObject;
-				}
+        for (int i = 0; i < _elements.Length; i++)
+        {
+          Current.Gui.FindAndAttachControlTo((IMVCController)_elements[i].Controller);
+          _elements[i].View = ((IMVCController)_elements[i].Controller).ViewObject;
+        }
 
-				_innerController = new MultiChildController(_elements, false);
-			}
-		}
+        _innerController = new MultiChildController(_elements, false);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			bool applyResult;
+    public override bool Apply(bool disposeController)
+    {
+      bool applyResult;
 
-			if (_innerController.Apply(disposeController))
-			{
-				_doc.DependentColumnIndexIntoSelection = (int)_ctrl0.ModelObject;
-				_doc.IncludeIntercept = (bool)_ctrl1.ModelObject;
-				_doc.GenerateRegressionValues = (bool)_ctrl2.ModelObject;
-				_doc.GenerateResidualValues = (bool)_ctrl3.ModelObject;
-				applyResult = true;
-			}
-			else
-			{
-				applyResult = false;
-			}
+      if (_innerController.Apply(disposeController))
+      {
+        _doc.DependentColumnIndexIntoSelection = (int)_ctrl0.ModelObject;
+        _doc.IncludeIntercept = (bool)_ctrl1.ModelObject;
+        _doc.GenerateRegressionValues = (bool)_ctrl2.ModelObject;
+        _doc.GenerateResidualValues = (bool)_ctrl3.ModelObject;
+        applyResult = true;
+      }
+      else
+      {
+        applyResult = false;
+      }
 
-			return ApplyEnd(applyResult, disposeController);
-		}
+      return ApplyEnd(applyResult, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
-			if (null != _innerController)
-			{
-				_innerController.ViewObject = _view;
-			}
-		}
+    protected override void AttachView()
+    {
+      base.AttachView();
+      if (null != _innerController)
+      {
+        _innerController.ViewObject = _view;
+      }
+    }
 
-		protected override void DetachView()
-		{
-			if (null != _innerController)
-			{
-				_innerController.ViewObject = null;
-			}
-			base.DetachView();
-		}
-	}
+    protected override void DetachView()
+    {
+      if (null != _innerController)
+      {
+        _innerController.ViewObject = null;
+      }
+      base.DetachView();
+    }
+  }
 }

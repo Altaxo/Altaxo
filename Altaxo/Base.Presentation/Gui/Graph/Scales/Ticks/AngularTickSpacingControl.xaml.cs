@@ -30,56 +30,56 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-	/// <summary>
-	/// Interaction logic for AngularTickSpacingControl.xaml
-	/// </summary>
-	public partial class AngularTickSpacingControl : UserControl, IAngularTickSpacingView
-	{
-		public AngularTickSpacingControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for AngularTickSpacingControl.xaml
+  /// </summary>
+  public partial class AngularTickSpacingControl : UserControl, IAngularTickSpacingView
+  {
+    public AngularTickSpacingControl()
+    {
+      InitializeComponent();
+    }
 
-		private void _cbMajorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
-		{
-			e.Handled = true;
-			GuiHelper.SynchronizeSelectionFromGui(_cbMajorTicks);
-			if (null != MajorTicksChanged)
-				MajorTicksChanged(sender, e);
-		}
+    private void _cbMajorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
+    {
+      e.Handled = true;
+      GuiHelper.SynchronizeSelectionFromGui(_cbMajorTicks);
+      if (null != MajorTicksChanged)
+        MajorTicksChanged(sender, e);
+    }
 
-		private void _cbMinorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
-		{
-			e.Handled = true;
-			GuiHelper.SynchronizeSelectionFromGui(_cbMinorTicks);
-		}
+    private void _cbMinorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
+    {
+      e.Handled = true;
+      GuiHelper.SynchronizeSelectionFromGui(_cbMinorTicks);
+    }
 
-		#region IAngularTickSpacingView
+    #region IAngularTickSpacingView
 
-		public bool UsePositiveNegativeValues
-		{
-			get
-			{
-				return true == _chkPosNegValues.IsChecked;
-			}
-			set
-			{
-				_chkPosNegValues.IsChecked = value;
-			}
-		}
+    public bool UsePositiveNegativeValues
+    {
+      get
+      {
+        return true == _chkPosNegValues.IsChecked;
+      }
+      set
+      {
+        _chkPosNegValues.IsChecked = value;
+      }
+    }
 
-		public Collections.SelectableListNodeList MajorTicks
-		{
-			set { GuiHelper.Initialize(_cbMajorTicks, value); }
-		}
+    public Collections.SelectableListNodeList MajorTicks
+    {
+      set { GuiHelper.Initialize(_cbMajorTicks, value); }
+    }
 
-		public Collections.SelectableListNodeList MinorTicks
-		{
-			set { GuiHelper.Initialize(_cbMinorTicks, value); }
-		}
+    public Collections.SelectableListNodeList MinorTicks
+    {
+      set { GuiHelper.Initialize(_cbMinorTicks, value); }
+    }
 
-		public event EventHandler MajorTicksChanged;
-	}
+    public event EventHandler MajorTicksChanged;
+  }
 
-	#endregion IAngularTickSpacingView
+  #endregion IAngularTickSpacingView
 }

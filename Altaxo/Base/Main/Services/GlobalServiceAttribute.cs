@@ -21,77 +21,77 @@ using System.Collections.Generic;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Specifies that the interface is a service that is accessible via <c>Altaxo.Current</c>.
-	/// </summary>
-	/// <remarks>
-	/// This attribute is mostly intended as documentation, so that it is easily possible to see
-	/// if a given service is globally available.
-	/// </remarks>
-	[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class, Inherited = false)]
-	public class GlobalServiceAttribute : Attribute
-	{
-		/// <summary>
-		/// Creates a new SDServiceAttribute instance.
-		/// </summary>
-		public GlobalServiceAttribute()
-		{
-		}
+  /// <summary>
+  /// Specifies that the interface is a service that is accessible via <c>Altaxo.Current</c>.
+  /// </summary>
+  /// <remarks>
+  /// This attribute is mostly intended as documentation, so that it is easily possible to see
+  /// if a given service is globally available.
+  /// </remarks>
+  [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class, Inherited = false)]
+  public class GlobalServiceAttribute : Attribute
+  {
+    /// <summary>
+    /// Creates a new SDServiceAttribute instance.
+    /// </summary>
+    public GlobalServiceAttribute()
+    {
+    }
 
-		/// <summary>
-		/// Creates a new SDServiceAttribute instance.
-		/// </summary>
-		/// <param name="staticPropertyPath">Documents the suggested way to access this service using a static property.
-		/// Example: <c>SD.WinForms.ResourceService</c>
-		/// </param>
-		public GlobalServiceAttribute(string staticPropertyPath)
-		{
-			this.StaticPropertyPath = staticPropertyPath;
-		}
+    /// <summary>
+    /// Creates a new SDServiceAttribute instance.
+    /// </summary>
+    /// <param name="staticPropertyPath">Documents the suggested way to access this service using a static property.
+    /// Example: <c>SD.WinForms.ResourceService</c>
+    /// </param>
+    public GlobalServiceAttribute(string staticPropertyPath)
+    {
+      this.StaticPropertyPath = staticPropertyPath;
+    }
 
-		/// <summary>
-		/// A string that documents the suggested way to access this service using a static property.
-		/// Example: <c>SD.WinForms.ResourceService</c>
-		/// </summary>
-		public string StaticPropertyPath { get; set; }
+    /// <summary>
+    /// A string that documents the suggested way to access this service using a static property.
+    /// Example: <c>SD.WinForms.ResourceService</c>
+    /// </summary>
+    public string StaticPropertyPath { get; set; }
 
-		/// <summary>
-		/// The class that implements the interface and serves as a fallback service
-		/// in case no real implementation is registered.
-		/// </summary>
-		/// <remarks>
-		/// This property is also useful for unit tests, as there usually is no real service instance when testing.
-		/// Fallback services must not maintain any state, as that would be preserved between runs
-		/// even if <c>SD.TearDownForUnitTests()</c> or <c>SD.InitializeForUnitTests()</c> is called.
-		/// </remarks>
-		public Type FallbackImplementation { get; set; }
-	}
+    /// <summary>
+    /// The class that implements the interface and serves as a fallback service
+    /// in case no real implementation is registered.
+    /// </summary>
+    /// <remarks>
+    /// This property is also useful for unit tests, as there usually is no real service instance when testing.
+    /// Fallback services must not maintain any state, as that would be preserved between runs
+    /// even if <c>SD.TearDownForUnitTests()</c> or <c>SD.InitializeForUnitTests()</c> is called.
+    /// </remarks>
+    public Type FallbackImplementation { get; set; }
+  }
 
-	public class FallbackServiceProvider : IServiceProvider
-	{
-		private Dictionary<Type, object> fallbackServiceDict = new Dictionary<Type, object>();
+  public class FallbackServiceProvider : IServiceProvider
+  {
+    private Dictionary<Type, object> fallbackServiceDict = new Dictionary<Type, object>();
 
-		public object GetService(Type serviceType)
-		{
-			object instance;
-			lock (fallbackServiceDict)
-			{
-				if (!fallbackServiceDict.TryGetValue(serviceType, out instance))
-				{
-					var attrs = serviceType.GetCustomAttributes(typeof(GlobalServiceAttribute), false);
-					if (attrs.Length == 1)
-					{
-						var attr = (GlobalServiceAttribute)attrs[0];
-						if (attr.FallbackImplementation != null)
-						{
-							instance = Activator.CreateInstance(attr.FallbackImplementation);
-						}
-					}
-					// store null if no fallback implementation exists
-					fallbackServiceDict.Add(serviceType, instance);
-				}
-			}
-			return instance;
-		}
-	}
+    public object GetService(Type serviceType)
+    {
+      object instance;
+      lock (fallbackServiceDict)
+      {
+        if (!fallbackServiceDict.TryGetValue(serviceType, out instance))
+        {
+          var attrs = serviceType.GetCustomAttributes(typeof(GlobalServiceAttribute), false);
+          if (attrs.Length == 1)
+          {
+            var attr = (GlobalServiceAttribute)attrs[0];
+            if (attr.FallbackImplementation != null)
+            {
+              instance = Activator.CreateInstance(attr.FallbackImplementation);
+            }
+          }
+          // store null if no fallback implementation exists
+          fallbackServiceDict.Add(serviceType, instance);
+        }
+      }
+      return instance;
+    }
+  }
 }

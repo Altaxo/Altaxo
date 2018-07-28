@@ -8,22 +8,22 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Workbench
 {
-	public interface IFileViewContent : IViewContent
-	{
-		FileName PrimaryFileName { get; }
+  public interface IFileViewContent : IViewContent
+  {
+    FileName PrimaryFileName { get; }
 
-		OpenedFile PrimaryFile { get; }
+    OpenedFile PrimaryFile { get; }
 
-		void Load(OpenedFile openedFile, Stream sourceStream);
+    void Load(OpenedFile openedFile, Stream sourceStream);
 
-		void Save(OpenedFile openedFile, Stream stream);
+    void Save(OpenedFile openedFile, Stream stream);
 
-		bool SupportsSwitchToThisWithoutSaveLoad(OpenedFile openedFile, IFileViewContent currentView);
+    bool SupportsSwitchToThisWithoutSaveLoad(OpenedFile openedFile, IFileViewContent currentView);
 
-		bool SupportsSwitchFromThisWithoutSaveLoad(OpenedFile openedFile, IFileViewContent newView);
+    bool SupportsSwitchFromThisWithoutSaveLoad(OpenedFile openedFile, IFileViewContent newView);
 
-		void SwitchFromThisWithoutSaveLoad(OpenedFile openedFile, IFileViewContent newView);
+    void SwitchFromThisWithoutSaveLoad(OpenedFile openedFile, IFileViewContent newView);
 
-		void SwitchToThisWithoutSaveLoad(OpenedFile openedFile, IFileViewContent currentView);
-	}
+    void SwitchToThisWithoutSaveLoad(OpenedFile openedFile, IFileViewContent currentView);
+  }
 }

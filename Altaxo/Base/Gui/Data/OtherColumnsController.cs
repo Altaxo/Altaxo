@@ -29,13 +29,13 @@ using System.Text;
 
 namespace Altaxo.Gui.Data
 {
-	[UserControllerForObject(typeof(Altaxo.Data.EquallySpacedColumn))]
-	public class EquallySpacedColumnController : Altaxo.Gui.Common.SimpleImmutableObjectController<Altaxo.Data.EquallySpacedColumn>
-	{
-	}
+  [UserControllerForObject(typeof(Altaxo.Data.EquallySpacedColumn))]
+  public class EquallySpacedColumnController : Altaxo.Gui.Common.SimpleImmutableObjectController<Altaxo.Data.EquallySpacedColumn>
+  {
+  }
 
-	[UserControllerForObject(typeof(Altaxo.Data.ConstantDoubleColumn))]
-	public class ConstantDoubleColumnController : Altaxo.Gui.Common.SimpleImmutableObjectController<Altaxo.Data.ConstantDoubleColumn>
-	{
-	}
+  [UserControllerForObject(typeof(Altaxo.Data.ConstantDoubleColumn))]
+  public class ConstantDoubleColumnController : Altaxo.Gui.Common.SimpleImmutableObjectController<Altaxo.Data.ConstantDoubleColumn>
+  {
+  }
 }

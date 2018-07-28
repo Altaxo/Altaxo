@@ -31,11 +31,11 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
 {
-	public class ImageWithNoSizeRequest : Image
-	{
-		protected override Size MeasureOverride(Size constraint)
-		{
-			return new Size(0, 0);
-		}
-	}
+  public class ImageWithNoSizeRequest : Image
+  {
+    protected override Size MeasureOverride(Size constraint)
+    {
+      return new Size(0, 0);
+    }
+  }
 }

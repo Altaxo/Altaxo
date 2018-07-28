@@ -32,48 +32,48 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph
 {
-	/// <summary>
-	/// Interaction logic for SingleColumnChoiceControl.xaml
-	/// </summary>
-	[UserControlForController(typeof(ISingleColumnChoiceViewEventSink))]
-	public partial class SingleColumnChoiceControl : UserControl, ISingleColumnChoiceView
-	{
-		private ISingleColumnChoiceViewEventSink _controller;
+  /// <summary>
+  /// Interaction logic for SingleColumnChoiceControl.xaml
+  /// </summary>
+  [UserControlForController(typeof(ISingleColumnChoiceViewEventSink))]
+  public partial class SingleColumnChoiceControl : UserControl, ISingleColumnChoiceView
+  {
+    private ISingleColumnChoiceViewEventSink _controller;
 
-		public SingleColumnChoiceControl()
-		{
-			InitializeComponent();
-		}
+    public SingleColumnChoiceControl()
+    {
+      InitializeComponent();
+    }
 
-		private void _tvColumns_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
-		{
-			if (_controller != null)
-			{
-				var selitem = _tvColumns.SelectedItem as NGTreeNode;
-				if (null != selitem)
-					_controller.EhView_AfterSelectNode(selitem);
-			}
-		}
+    private void _tvColumns_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+      if (_controller != null)
+      {
+        var selitem = _tvColumns.SelectedItem as NGTreeNode;
+        if (null != selitem)
+          _controller.EhView_AfterSelectNode(selitem);
+      }
+    }
 
-		#region ISingleColumnChoiceView
+    #region ISingleColumnChoiceView
 
-		public ISingleColumnChoiceViewEventSink Controller
-		{
-			get
-			{
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
-		}
+    public ISingleColumnChoiceViewEventSink Controller
+    {
+      get
+      {
+        return _controller;
+      }
+      set
+      {
+        _controller = value;
+      }
+    }
 
-		public void Initialize(Collections.NGTreeNodeCollection nodes)
-		{
-			_tvColumns.ItemsSource = nodes;
-		}
+    public void Initialize(Collections.NGTreeNodeCollection nodes)
+    {
+      _tvColumns.ItemsSource = nodes;
+    }
 
-		#endregion ISingleColumnChoiceView
-	}
+    #endregion ISingleColumnChoiceView
+  }
 }

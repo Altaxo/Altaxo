@@ -27,113 +27,113 @@ using System;
 
 namespace Altaxo.Worksheet.Commands
 {
-	/// <summary>
-	/// This helps in conditions where the number of selected data columns cares.
-	/// Valid values are all (all columns must be selected, none (no column must be selected),
-	/// one (exactly one column must be selected), any (one or more columns must be selected),
-	/// or the number of columns.
-	/// </summary>
-	public class SelectedDataConditionEvaluator : IConditionEvaluator
-	{
-		public bool IsValid(object caller, Condition condition)
-		{
-			string selectedData = condition.Properties["selected"].ToLower();
+  /// <summary>
+  /// This helps in conditions where the number of selected data columns cares.
+  /// Valid values are all (all columns must be selected, none (no column must be selected),
+  /// one (exactly one column must be selected), any (one or more columns must be selected),
+  /// or the number of columns.
+  /// </summary>
+  public class SelectedDataConditionEvaluator : IConditionEvaluator
+  {
+    public bool IsValid(object caller, Condition condition)
+    {
+      string selectedData = condition.Properties["selected"].ToLower();
 
-			if (Current.Workbench.ActiveViewContent == null)
-				return false;
-			if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl))
-				return false;
+      if (Current.Workbench.ActiveViewContent == null)
+        return false;
+      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl))
+        return false;
 
-			int val = ctrl.SelectedDataColumns.Count;
+      int val = ctrl.SelectedDataColumns.Count;
 
-			switch (selectedData)
-			{
-				case "none":
-					return val == 0;
+      switch (selectedData)
+      {
+        case "none":
+          return val == 0;
 
-				case "one":
-					return val == 1;
+        case "one":
+          return val == 1;
 
-				case "two":
-					return val == 2;
+        case "two":
+          return val == 2;
 
-				case "all":
-					return val == ctrl.DataTable.DataColumnCount;
+        case "all":
+          return val == ctrl.DataTable.DataColumnCount;
 
-				case "any":
-					return val > 0;
+        case "any":
+          return val > 0;
 
-				case "*":
-					return val > 0;
+        case "*":
+          return val > 0;
 
-				default:
-					{
-						try
-						{
-							int num = int.Parse(selectedData);
-							return val == num;
-						}
-						catch (Exception)
-						{
-							return false;
-						}
-					}
-			}
-		}
-	}
+        default:
+          {
+            try
+            {
+              int num = int.Parse(selectedData);
+              return val == num;
+            }
+            catch (Exception)
+            {
+              return false;
+            }
+          }
+      }
+    }
+  }
 
-	/// <summary>
-	/// This helps in conditions where the number of selected property columns cares.
-	/// Valid values are all (all columns must be selected, none (no column must be selected),
-	/// one (exactly one column must be selected), any (one or more columns must be selected),
-	/// or the number of columns.
-	/// </summary>
-	public class SelectedPropertyConditionEvaluator : IConditionEvaluator
-	{
-		public bool IsValid(object caller, Condition condition)
-		{
-			string selectedData = condition.Properties["selected"].ToLower();
+  /// <summary>
+  /// This helps in conditions where the number of selected property columns cares.
+  /// Valid values are all (all columns must be selected, none (no column must be selected),
+  /// one (exactly one column must be selected), any (one or more columns must be selected),
+  /// or the number of columns.
+  /// </summary>
+  public class SelectedPropertyConditionEvaluator : IConditionEvaluator
+  {
+    public bool IsValid(object caller, Condition condition)
+    {
+      string selectedData = condition.Properties["selected"].ToLower();
 
-			if (Current.Workbench.ActiveViewContent == null)
-				return false;
-			if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
-				return false;
+      if (Current.Workbench.ActiveViewContent == null)
+        return false;
+      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
+        return false;
 
-			int val = ctrl.SelectedPropertyColumns.Count;
+      int val = ctrl.SelectedPropertyColumns.Count;
 
-			switch (selectedData)
-			{
-				case "none":
-					return val == 0;
+      switch (selectedData)
+      {
+        case "none":
+          return val == 0;
 
-				case "one":
-					return val == 1;
+        case "one":
+          return val == 1;
 
-				case "two":
-					return val == 2;
+        case "two":
+          return val == 2;
 
-				case "all":
-					return val == ctrl.DataTable.PropertyColumnCount;
+        case "all":
+          return val == ctrl.DataTable.PropertyColumnCount;
 
-				case "any":
-					return val > 0;
+        case "any":
+          return val > 0;
 
-				case "*":
-					return val > 0;
+        case "*":
+          return val > 0;
 
-				default:
-					{
-						try
-						{
-							int num = int.Parse(selectedData);
-							return val == num;
-						}
-						catch (Exception)
-						{
-							return false;
-						}
-					}
-			}
-		}
-	}
+        default:
+          {
+            try
+            {
+              int num = int.Parse(selectedData);
+              return val == num;
+            }
+            catch (Exception)
+            {
+              return false;
+            }
+          }
+      }
+    }
+  }
 }

@@ -31,12 +31,12 @@ using System.Threading.Tasks;
 
 namespace Science.Thermodynamics.Fluids
 {
-	public static class AssertHelper
-	{
-		public static void AreEqual(double expected, double actual, double absError, double relError)
-		{
-			double delta = Math.Abs(absError) + Math.Abs(relError * expected);
-			Assert.AreEqual(expected, actual, delta);
-		}
-	}
+  public static class AssertHelper
+  {
+    public static void AreEqual(double expected, double actual, double absError, double relError)
+    {
+      double delta = Math.Abs(absError) + Math.Abs(relError * expected);
+      Assert.AreEqual(expected, actual, delta);
+    }
+  }
 }

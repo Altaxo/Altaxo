@@ -30,28 +30,28 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units
 {
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefix), 0)]
-	public class SerializationSurrogate0_SIPrefix : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			var s = (SIPrefix)obj;
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefix), 0)]
+  public class SerializationSurrogate0_SIPrefix : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      var s = (SIPrefix)obj;
 
-			info.AddValue("Exponent", s.Exponent);
-			info.AddValue("Name", s.Name);
-			info.AddValue("Shortcut", s.ShortCut);
-		}
+      info.AddValue("Exponent", s.Exponent);
+      info.AddValue("Name", s.Name);
+      info.AddValue("Shortcut", s.ShortCut);
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			var exponent = info.GetInt32("Exponent");
-			var name = info.GetString("Name");
-			var shortcut = info.GetString("Shortcut");
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      var exponent = info.GetInt32("Exponent");
+      var name = info.GetString("Name");
+      var shortcut = info.GetString("Shortcut");
 
-			if (SIPrefix.TryGetPrefixFromExponent(exponent, out var prefix))
-				return prefix;
-			else
-				return new SIPrefix(name, shortcut, exponent);
-		}
-	}
+      if (SIPrefix.TryGetPrefixFromExponent(exponent, out var prefix))
+        return prefix;
+      else
+        return new SIPrefix(name, shortcut, exponent);
+    }
+  }
 }

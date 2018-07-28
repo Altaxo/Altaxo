@@ -30,189 +30,189 @@ using System.Text;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-	public class CmdViewOnSelectOff : ProjectBrowseControllerCommand, ICheckableMenuCommand
-	{
-		public event EventHandler IsCheckedChanged;
+  public class CmdViewOnSelectOff : ProjectBrowseControllerCommand, ICheckableMenuCommand
+  {
+    public event EventHandler IsCheckedChanged;
 
-		private ViewOnSelect _lastKnownValue;
+    private ViewOnSelect _lastKnownValue;
 
-		protected override void Run(ProjectBrowseController ctrl)
-		{
-			_lastKnownValue = ViewOnSelect.Off;
-			Ctrl.ViewOnSelectTreeNode = _lastKnownValue;
-			if (null != IsCheckedChanged)
-				IsCheckedChanged(this, EventArgs.Empty);
-		}
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      _lastKnownValue = ViewOnSelect.Off;
+      Ctrl.ViewOnSelectTreeNode = _lastKnownValue;
+      if (null != IsCheckedChanged)
+        IsCheckedChanged(this, EventArgs.Empty);
+    }
 
-		#region ICheckableMenuCommand Members
+    #region ICheckableMenuCommand Members
 
-		public bool IsChecked(object parameter)
-		{
-			return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.Off;
-		}
+    public bool IsChecked(object parameter)
+    {
+      return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.Off;
+    }
 
-		#endregion ICheckableMenuCommand Members
+    #endregion ICheckableMenuCommand Members
 
-		#region IMenuCommand Members
+    #region IMenuCommand Members
 
-		public bool IsEnabled
-		{
-			get
-			{
-				if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
-				{
-					IsCheckedChanged(this, EventArgs.Empty);
-					_lastKnownValue = Ctrl.ViewOnSelectTreeNode;
-				}
+    public bool IsEnabled
+    {
+      get
+      {
+        if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
+        {
+          IsCheckedChanged(this, EventArgs.Empty);
+          _lastKnownValue = Ctrl.ViewOnSelectTreeNode;
+        }
 
-				return true;
-			}
-			set
-			{
-			}
-		}
+        return true;
+      }
+      set
+      {
+      }
+    }
 
-		#endregion IMenuCommand Members
-	}
+    #endregion IMenuCommand Members
+  }
 
-	public class CmdViewOnSelectFolderItems : ProjectBrowseControllerCommand, ICheckableMenuCommand
-	{
-		public event EventHandler IsCheckedChanged;
+  public class CmdViewOnSelectFolderItems : ProjectBrowseControllerCommand, ICheckableMenuCommand
+  {
+    public event EventHandler IsCheckedChanged;
 
-		private ViewOnSelect _lastKnownValue;
+    private ViewOnSelect _lastKnownValue;
 
-		protected override void Run(ProjectBrowseController ctrl)
-		{
-			_lastKnownValue = ViewOnSelect.ItemsInFolder;
-			ctrl.ViewOnSelectTreeNode = _lastKnownValue;
-			IsCheckedChanged?.Invoke(this, EventArgs.Empty);
-		}
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      _lastKnownValue = ViewOnSelect.ItemsInFolder;
+      ctrl.ViewOnSelectTreeNode = _lastKnownValue;
+      IsCheckedChanged?.Invoke(this, EventArgs.Empty);
+    }
 
-		#region ICheckableMenuCommand Members
+    #region ICheckableMenuCommand Members
 
-		public bool IsChecked(object parameter)
-		{
-			return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolder;
-		}
+    public bool IsChecked(object parameter)
+    {
+      return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolder;
+    }
 
-		#endregion ICheckableMenuCommand Members
+    #endregion ICheckableMenuCommand Members
 
-		#region IMenuCommand Members
+    #region IMenuCommand Members
 
-		public bool IsEnabled
-		{
-			get
-			{
-				if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
-				{
-					IsCheckedChanged(this, EventArgs.Empty);
-					_lastKnownValue = Ctrl.ViewOnSelectTreeNode;
-				}
+    public bool IsEnabled
+    {
+      get
+      {
+        if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
+        {
+          IsCheckedChanged(this, EventArgs.Empty);
+          _lastKnownValue = Ctrl.ViewOnSelectTreeNode;
+        }
 
-				return true;
-			}
-			set
-			{
-			}
-		}
+        return true;
+      }
+      set
+      {
+      }
+    }
 
-		#endregion IMenuCommand Members
-	}
+    #endregion IMenuCommand Members
+  }
 
-	public class CmdViewOnSelectFolderAndSubfolderItems : ProjectBrowseControllerCommand, ICheckableMenuCommand
-	{
-		public event EventHandler IsCheckedChanged;
+  public class CmdViewOnSelectFolderAndSubfolderItems : ProjectBrowseControllerCommand, ICheckableMenuCommand
+  {
+    public event EventHandler IsCheckedChanged;
 
-		private ViewOnSelect _lastKnownValue;
+    private ViewOnSelect _lastKnownValue;
 
-		protected override void Run(ProjectBrowseController ctrl)
-		{
-			_lastKnownValue = ViewOnSelect.ItemsInFolderAndSubfolders;
-			ctrl.ViewOnSelectTreeNode = _lastKnownValue;
-			IsCheckedChanged?.Invoke(this, EventArgs.Empty);
-		}
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      _lastKnownValue = ViewOnSelect.ItemsInFolderAndSubfolders;
+      ctrl.ViewOnSelectTreeNode = _lastKnownValue;
+      IsCheckedChanged?.Invoke(this, EventArgs.Empty);
+    }
 
-		#region ICheckableMenuCommand Members
+    #region ICheckableMenuCommand Members
 
-		public bool IsChecked(object parameter)
-		{
-			return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolderAndSubfolders;
-		}
+    public bool IsChecked(object parameter)
+    {
+      return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolderAndSubfolders;
+    }
 
-		#endregion ICheckableMenuCommand Members
+    #endregion ICheckableMenuCommand Members
 
-		#region IMenuCommand Members
+    #region IMenuCommand Members
 
-		public bool IsEnabled
-		{
-			get
-			{
-				if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
-				{
-					IsCheckedChanged(this, EventArgs.Empty);
-					_lastKnownValue = Ctrl.ViewOnSelectTreeNode;
-				}
+    public bool IsEnabled
+    {
+      get
+      {
+        if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
+        {
+          IsCheckedChanged(this, EventArgs.Empty);
+          _lastKnownValue = Ctrl.ViewOnSelectTreeNode;
+        }
 
-				return true;
-			}
-			set
-			{
-			}
-		}
+        return true;
+      }
+      set
+      {
+      }
+    }
 
-		#endregion IMenuCommand Members
-	}
+    #endregion IMenuCommand Members
+  }
 
-	public class CmdTreeNodeFolderDelete : ProjectBrowseControllerCommand
-	{
-		protected override void Run(ProjectBrowseController ctrl)
-		{
-			var items = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems());
-			Altaxo.Main.ProjectFolders.DeleteDocuments(items);
-		}
-	}
+  public class CmdTreeNodeFolderDelete : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      var items = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems());
+      Altaxo.Main.ProjectFolders.DeleteDocuments(items);
+    }
+  }
 
-	public class CmdTreeNodeFolderRename : ProjectBrowseControllerCommand
-	{
-		protected override void Run(ProjectBrowseController ctrl)
-		{
-			ctrl.RenameTreeNode();
-		}
-	}
+  public class CmdTreeNodeFolderRename : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      ctrl.RenameTreeNode();
+    }
+  }
 
-	public class CmdTreeNodeShowWindows : ProjectBrowseControllerCommand
-	{
-		protected override void Run(ProjectBrowseController ctrl)
-		{
-			ProjectBrowserExtensions.ShowDocumentsExclusively(ctrl.GetAllListItems());
-		}
-	}
+  public class CmdTreeNodeShowWindows : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      ProjectBrowserExtensions.ShowDocumentsExclusively(ctrl.GetAllListItems());
+    }
+  }
 
-	public class CmdTreeNodeShowWindowsRecursively : ProjectBrowseControllerCommand
-	{
-		protected override void Run(ProjectBrowseController ctrl)
-		{
-			ProjectBrowserExtensions.ShowDocumentsExclusively(Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems()));
-		}
-	}
+  public class CmdTreeNodeShowWindowsRecursively : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      ProjectBrowserExtensions.ShowDocumentsExclusively(Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems()));
+    }
+  }
 
-	public class CmdTreeNodeHideWindows : ProjectBrowseControllerCommand
-	{
-		protected override void Run(ProjectBrowseController ctrl)
-		{
-			var list = ctrl.GetAllListItems();
-			foreach (var item in list)
-				Current.IProjectService.CloseDocumentViews(item);
-		}
-	}
+  public class CmdTreeNodeHideWindows : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      var list = ctrl.GetAllListItems();
+      foreach (var item in list)
+        Current.IProjectService.CloseDocumentViews(item);
+    }
+  }
 
-	public class CmdTreeNodeHideWindowsRecursively : ProjectBrowseControllerCommand
-	{
-		protected override void Run(ProjectBrowseController ctrl)
-		{
-			var list = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems());
-			foreach (var item in list)
-				Current.IProjectService.CloseDocumentViews(item);
-		}
-	}
+  public class CmdTreeNodeHideWindowsRecursively : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      var list = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems());
+      foreach (var item in list)
+        Current.IProjectService.CloseDocumentViews(item);
+    }
+  }
 }

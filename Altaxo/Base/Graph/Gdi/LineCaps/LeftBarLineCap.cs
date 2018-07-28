@@ -30,37 +30,37 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
-	/// <summary>
-	/// Draws a cap that is a line perpendicular to the end of the line, and on the left side of the line.
-	/// </summary>
-	public class LeftBarLineCap : RightBarLineCap
-	{
-		public LeftBarLineCap()
-		{
-		}
+  /// <summary>
+  /// Draws a cap that is a line perpendicular to the end of the line, and on the left side of the line.
+  /// </summary>
+  public class LeftBarLineCap : RightBarLineCap
+  {
+    public LeftBarLineCap()
+    {
+    }
 
-		public LeftBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-			: base(minimumAbsoluteSizePt, minimumRelativeSize)
-		{
-		}
+    public LeftBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
+    {
+    }
 
-		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
-		{
-			return new LeftBarLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-		}
+    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    {
+      return new LeftBarLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+    }
 
-		public override string Name { get { return "BarLeft"; } }
+    public override string Name { get { return "BarLeft"; } }
 
-		public override void SetStartCap(Pen pen, float size)
-		{
-			pen.StartCap = LineCap.Custom;
-			pen.CustomStartCap = GetClone(pen, size, true);
-		}
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Custom;
+      pen.CustomStartCap = GetClone(pen, size, true);
+    }
 
-		public override void SetEndCap(Pen pen, float size)
-		{
-			pen.EndCap = LineCap.Custom;
-			pen.CustomEndCap = GetClone(pen, size, false);
-		}
-	}
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.EndCap = LineCap.Custom;
+      pen.CustomEndCap = GetClone(pen, size, false);
+    }
+  }
 }

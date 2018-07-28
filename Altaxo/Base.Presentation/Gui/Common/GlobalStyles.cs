@@ -21,97 +21,97 @@ using System.Windows;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Contains global WPF styles.
-	/// </summary>
-	public static class GlobalStyles
-	{
-		private static Style FindResource(ResourceKey key)
-		{
-			// don't crash if controls using GlobalStyles are instanciated in unit test mode
-			if (Application.Current == null)
-				return null;
-			else
-				return (Style)Application.Current.FindResource(key);
-		}
+  /// <summary>
+  /// Contains global WPF styles.
+  /// </summary>
+  public static class GlobalStyles
+  {
+    private static Style FindResource(ResourceKey key)
+    {
+      // don't crash if controls using GlobalStyles are instanciated in unit test mode
+      if (Application.Current == null)
+        return null;
+      else
+        return (Style)Application.Current.FindResource(key);
+    }
 
-		public static Style WindowStyle
-		{
-			get { return FindResource(windowStyleKey); }
-		}
+    public static Style WindowStyle
+    {
+      get { return FindResource(windowStyleKey); }
+    }
 
-		private static readonly ResourceKey windowStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "WindowStyle");
+    private static readonly ResourceKey windowStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "WindowStyle");
 
-		public static ResourceKey WindowStyleKey
-		{
-			get { return windowStyleKey; }
-		}
+    public static ResourceKey WindowStyleKey
+    {
+      get { return windowStyleKey; }
+    }
 
-		public static Style DialogWindowStyle
-		{
-			get { return FindResource(dialogWindowStyleKey); }
-		}
+    public static Style DialogWindowStyle
+    {
+      get { return FindResource(dialogWindowStyleKey); }
+    }
 
-		private static readonly ResourceKey dialogWindowStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "DialogWindowStyle");
+    private static readonly ResourceKey dialogWindowStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "DialogWindowStyle");
 
-		public static ResourceKey DialogWindowStyleKey
-		{
-			get { return dialogWindowStyleKey; }
-		}
+    public static ResourceKey DialogWindowStyleKey
+    {
+      get { return dialogWindowStyleKey; }
+    }
 
-		public static Style ButtonStyle
-		{
-			get { return FindResource(buttonStyleKey); }
-		}
+    public static Style ButtonStyle
+    {
+      get { return FindResource(buttonStyleKey); }
+    }
 
-		private static readonly ResourceKey buttonStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "ButtonStyle");
+    private static readonly ResourceKey buttonStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "ButtonStyle");
 
-		public static ResourceKey ButtonStyleKey
-		{
-			get { return buttonStyleKey; }
-		}
+    public static ResourceKey ButtonStyleKey
+    {
+      get { return buttonStyleKey; }
+    }
 
-		public static Style WordWrapCheckBoxStyle
-		{
-			get { return FindResource(wordWrapCheckBoxStyleKey); }
-		}
+    public static Style WordWrapCheckBoxStyle
+    {
+      get { return FindResource(wordWrapCheckBoxStyleKey); }
+    }
 
-		private static readonly ResourceKey wordWrapCheckBoxStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "WordWrapCheckBoxStyle");
+    private static readonly ResourceKey wordWrapCheckBoxStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "WordWrapCheckBoxStyle");
 
-		public static ResourceKey WordWrapCheckBoxStyleKey
-		{
-			get { return wordWrapCheckBoxStyleKey; }
-		}
+    public static ResourceKey WordWrapCheckBoxStyleKey
+    {
+      get { return wordWrapCheckBoxStyleKey; }
+    }
 
-		private static readonly ResourceKey flowDirectionKey = new ComponentResourceKey(typeof(GlobalStyles), "FlowDirectionKey");
+    private static readonly ResourceKey flowDirectionKey = new ComponentResourceKey(typeof(GlobalStyles), "FlowDirectionKey");
 
-		public static ResourceKey FlowDirectionKey
-		{
-			get { return flowDirectionKey; }
-		}
+    public static ResourceKey FlowDirectionKey
+    {
+      get { return flowDirectionKey; }
+    }
 
-		private static readonly ResourceKey listViewItemFocusHighlightStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "ListViewItemFocusHighlightStyle");
+    private static readonly ResourceKey listViewItemFocusHighlightStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "ListViewItemFocusHighlightStyle");
 
-		public static ResourceKey ListViewItemFocusHighlightStyleKey
-		{
-			get { return listViewItemFocusHighlightStyleKey; }
-		}
+    public static ResourceKey ListViewItemFocusHighlightStyleKey
+    {
+      get { return listViewItemFocusHighlightStyleKey; }
+    }
 
-		public static Style ListViewItemFocusHighlightStyle
-		{
-			get { return FindResource(listViewItemFocusHighlightStyleKey); }
-		}
+    public static Style ListViewItemFocusHighlightStyle
+    {
+      get { return FindResource(listViewItemFocusHighlightStyleKey); }
+    }
 
-		private static readonly ResourceKey listBoxItemFocusHighlightStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "ListBoxItemFocusHighlightStyle");
+    private static readonly ResourceKey listBoxItemFocusHighlightStyleKey = new ComponentResourceKey(typeof(GlobalStyles), "ListBoxItemFocusHighlightStyle");
 
-		public static ResourceKey ListBoxItemFocusHighlightStyleKey
-		{
-			get { return listBoxItemFocusHighlightStyleKey; }
-		}
+    public static ResourceKey ListBoxItemFocusHighlightStyleKey
+    {
+      get { return listBoxItemFocusHighlightStyleKey; }
+    }
 
-		public static Style ListBoxItemFocusHighlightStyle
-		{
-			get { return FindResource(listBoxItemFocusHighlightStyleKey); }
-		}
-	}
+    public static Style ListBoxItemFocusHighlightStyle
+    {
+      get { return FindResource(listBoxItemFocusHighlightStyleKey); }
+    }
+  }
 }

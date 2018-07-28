@@ -30,44 +30,44 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Worksheet
 {
-	/// <summary>
-	/// Interaction logic for PLSPredictValueControl.xaml
-	/// </summary>
-	public partial class PLSPredictValueControl : UserControl, IPLSPredictValueView
-	{
-		public PLSPredictValueControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for PLSPredictValueControl.xaml
+  /// </summary>
+  public partial class PLSPredictValueControl : UserControl, IPLSPredictValueView
+  {
+    public PLSPredictValueControl()
+    {
+      InitializeComponent();
+    }
 
-		#region IPLSPredictValueView
+    #region IPLSPredictValueView
 
-		public void InitializeCalibrationModelTables(string[] tables)
-		{
-			cbCalibrationModelTable.Items.Clear();
-			cbCalibrationModelTable.ItemsSource = tables;
-			if (tables.Length > 0)
-				this.cbCalibrationModelTable.SelectedIndex = 0;
-		}
+    public void InitializeCalibrationModelTables(string[] tables)
+    {
+      cbCalibrationModelTable.Items.Clear();
+      cbCalibrationModelTable.ItemsSource = tables;
+      if (tables.Length > 0)
+        this.cbCalibrationModelTable.SelectedIndex = 0;
+    }
 
-		public void InitializeDestinationTables(string[] tables)
-		{
-			this.cbDestinationTable.Items.Clear();
-			this.cbDestinationTable.ItemsSource = tables;
-			if (tables.Length > 0)
-				this.cbDestinationTable.SelectedIndex = 0;
-		}
+    public void InitializeDestinationTables(string[] tables)
+    {
+      this.cbDestinationTable.Items.Clear();
+      this.cbDestinationTable.ItemsSource = tables;
+      if (tables.Length > 0)
+        this.cbDestinationTable.SelectedIndex = 0;
+    }
 
-		public int GetCalibrationTableChoice()
-		{
-			return this.cbCalibrationModelTable.SelectedIndex;
-		}
+    public int GetCalibrationTableChoice()
+    {
+      return this.cbCalibrationModelTable.SelectedIndex;
+    }
 
-		public int GetDestinationTableChoice()
-		{
-			return this.cbDestinationTable.SelectedIndex;
-		}
+    public int GetDestinationTableChoice()
+    {
+      return this.cbDestinationTable.SelectedIndex;
+    }
 
-		#endregion IPLSPredictValueView
-	}
+    #endregion IPLSPredictValueView
+  }
 }

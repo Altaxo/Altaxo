@@ -27,61 +27,61 @@ using System.Collections.Generic;
 
 namespace Altaxo.Main.Properties
 {
-	public class ProjectFolderPropertyDocumentCollection :
-		ProjectItemCollectionBase<ProjectFolderPropertyDocument>
-	{
-		public ProjectFolderPropertyDocumentCollection(AltaxoDocument parent)
-			: base(parent)
-		{
-		}
+  public class ProjectFolderPropertyDocumentCollection :
+    ProjectItemCollectionBase<ProjectFolderPropertyDocument>
+  {
+    public ProjectFolderPropertyDocumentCollection(AltaxoDocument parent)
+      : base(parent)
+    {
+    }
 
-		public override Main.IDocumentNode ParentObject
-		{
-			get { return this._parent; }
-			set
-			{
-				if (null != value)
-					throw new InvalidOperationException("ParentObject of ProjectFolderPropertyDocumentCollection is fixed and cannot be set");
+    public override Main.IDocumentNode ParentObject
+    {
+      get { return this._parent; }
+      set
+      {
+        if (null != value)
+          throw new InvalidOperationException("ParentObject of ProjectFolderPropertyDocumentCollection is fixed and cannot be set");
 
-				base.ParentObject = value; // allow setting Parent to null (required for dispose)
-			}
-		}
+        base.ParentObject = value; // allow setting Parent to null (required for dispose)
+      }
+    }
 
-		public override string ItemBaseName { get { return ""; } }
+    public override string ItemBaseName { get { return ""; } }
 
-		/// <summary>
-		/// Ensures the existence of a certain <see cref="ProjectFolderPropertyDocument"/>. If the document already exists,
-		/// the existing <see cref="ProjectFolderPropertyDocument"/> is returned; otherwise a new <see cref="ProjectFolderPropertyDocument"/> is
-		/// created, added to the collection, and returned.
-		/// </summary>
-		/// <param name="itemName">Name of the <see cref="ProjectFolderPropertyDocument"/>.
-		/// An exception is thrown if the name is not a folder name (it has to end with a backslash).
-		/// </param>
-		/// <returns>If the document with the given name already exists,
-		/// the existing <see cref="ProjectFolderPropertyDocument"/> is returned; otherwise a new <see cref="ProjectFolderPropertyDocument"/> is
-		/// created, added to the collection, and returned.</returns>
-		public ProjectFolderPropertyDocument EnsureExistence(string itemName)
-		{
-			if (_itemsByName.TryGetValue(itemName, out var doc))
-			{
-				return doc;
-			}
-			else
-			{
-				doc = new ProjectFolderPropertyDocument(itemName);
-				Add(doc);
-				return doc;
-			}
-		}
+    /// <summary>
+    /// Ensures the existence of a certain <see cref="ProjectFolderPropertyDocument"/>. If the document already exists,
+    /// the existing <see cref="ProjectFolderPropertyDocument"/> is returned; otherwise a new <see cref="ProjectFolderPropertyDocument"/> is
+    /// created, added to the collection, and returned.
+    /// </summary>
+    /// <param name="itemName">Name of the <see cref="ProjectFolderPropertyDocument"/>.
+    /// An exception is thrown if the name is not a folder name (it has to end with a backslash).
+    /// </param>
+    /// <returns>If the document with the given name already exists,
+    /// the existing <see cref="ProjectFolderPropertyDocument"/> is returned; otherwise a new <see cref="ProjectFolderPropertyDocument"/> is
+    /// created, added to the collection, and returned.</returns>
+    public ProjectFolderPropertyDocument EnsureExistence(string itemName)
+    {
+      if (_itemsByName.TryGetValue(itemName, out var doc))
+      {
+        return doc;
+      }
+      else
+      {
+        doc = new ProjectFolderPropertyDocument(itemName);
+        Add(doc);
+        return doc;
+      }
+    }
 
-		/// <summary>
-		/// Gets the parent ProjectFolderPropertyBagCollection of a child graph.
-		/// </summary>
-		/// <param name="child">A graph for which the parent collection is searched.</param>
-		/// <returns>The parent ProjectFolderPropertyBagCollection, if it exists, or null otherwise.</returns>
-		public static ProjectFolderPropertyDocumentCollection GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentLeafNode child)
-		{
-			return (ProjectFolderPropertyDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyDocumentCollection));
-		}
-	}
+    /// <summary>
+    /// Gets the parent ProjectFolderPropertyBagCollection of a child graph.
+    /// </summary>
+    /// <param name="child">A graph for which the parent collection is searched.</param>
+    /// <returns>The parent ProjectFolderPropertyBagCollection, if it exists, or null otherwise.</returns>
+    public static ProjectFolderPropertyDocumentCollection GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentLeafNode child)
+    {
+      return (ProjectFolderPropertyDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyDocumentCollection));
+    }
+  }
 }

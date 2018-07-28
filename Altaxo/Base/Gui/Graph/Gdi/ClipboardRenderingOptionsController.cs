@@ -32,145 +32,145 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	public interface IClipboardRenderingOptionsView
-	{
-		object EmbeddedRenderingOptionsView { set; }
+  public interface IClipboardRenderingOptionsView
+  {
+    object EmbeddedRenderingOptionsView { set; }
 
-		bool RenderDropfile { get; set; }
+    bool RenderDropfile { get; set; }
 
-		void SetDropFileImageFormat(SelectableListNodeList list);
+    void SetDropFileImageFormat(SelectableListNodeList list);
 
-		void SetDropFilePixelFormat(SelectableListNodeList list);
+    void SetDropFilePixelFormat(SelectableListNodeList list);
 
-		bool RenderEmbeddedObject { get; set; }
+    bool RenderEmbeddedObject { get; set; }
 
-		bool RenderLinkedObject { get; set; }
-	}
+    bool RenderLinkedObject { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IClipboardRenderingOptionsView))]
-	[UserControllerForObject(typeof(ClipboardRenderingOptions), 101)]
-	public class ClipboardRenderingOptionsController : MVCANControllerEditOriginalDocBase<ClipboardRenderingOptions, IClipboardRenderingOptionsView>
-	{
-		private EmbeddedObjectRenderingOptionsController _embeddedController;
-		private SelectableListNodeList _imageFormat;
-		private SelectableListNodeList _pixelFormat;
+  [ExpectedTypeOfView(typeof(IClipboardRenderingOptionsView))]
+  [UserControllerForObject(typeof(ClipboardRenderingOptions), 101)]
+  public class ClipboardRenderingOptionsController : MVCANControllerEditOriginalDocBase<ClipboardRenderingOptions, IClipboardRenderingOptionsView>
+  {
+    private EmbeddedObjectRenderingOptionsController _embeddedController;
+    private SelectableListNodeList _imageFormat;
+    private SelectableListNodeList _pixelFormat;
 
-		private static readonly ImageFormat[] ImageFormats = new ImageFormat[]
-		{
-			ImageFormat.Bmp,
-			ImageFormat.Emf,
-			ImageFormat.Exif,
-			ImageFormat.Gif,
+    private static readonly ImageFormat[] ImageFormats = new ImageFormat[]
+    {
+      ImageFormat.Bmp,
+      ImageFormat.Emf,
+      ImageFormat.Exif,
+      ImageFormat.Gif,
 			//ImageFormat.Icon,
 			ImageFormat.Jpeg,
 			//ImageFormat.MemoryBmp,
 			ImageFormat.Png,
-			ImageFormat.Tiff,
-			ImageFormat.Wmf
-		};
+      ImageFormat.Tiff,
+      ImageFormat.Wmf
+    };
 
-		private static readonly PixelFormat[] PixelFormats = new PixelFormat[]
-		{
+    private static readonly PixelFormat[] PixelFormats = new PixelFormat[]
+    {
 			// The next three formats are the most used, so we have them on top
 			PixelFormat.Format24bppRgb,
-			PixelFormat.Format32bppRgb,
-			PixelFormat.Format32bppArgb,
+      PixelFormat.Format32bppRgb,
+      PixelFormat.Format32bppArgb,
 
-			PixelFormat.Format1bppIndexed,
-			PixelFormat.Format4bppIndexed,
-			PixelFormat.Format8bppIndexed,
+      PixelFormat.Format1bppIndexed,
+      PixelFormat.Format4bppIndexed,
+      PixelFormat.Format8bppIndexed,
 
-			PixelFormat.Format16bppArgb1555,
-			PixelFormat.Format16bppGrayScale,
-			PixelFormat.Format16bppRgb555,
-			PixelFormat.Format16bppRgb565,
+      PixelFormat.Format16bppArgb1555,
+      PixelFormat.Format16bppGrayScale,
+      PixelFormat.Format16bppRgb555,
+      PixelFormat.Format16bppRgb565,
 
-			PixelFormat.Format24bppRgb,
+      PixelFormat.Format24bppRgb,
 
-			PixelFormat.Format32bppRgb,
-			PixelFormat.Format32bppArgb,
-			PixelFormat.Format32bppPArgb,
+      PixelFormat.Format32bppRgb,
+      PixelFormat.Format32bppArgb,
+      PixelFormat.Format32bppPArgb,
 
-			PixelFormat.Format48bppRgb,
+      PixelFormat.Format48bppRgb,
 
-			PixelFormat.Format64bppArgb,
-			PixelFormat.Format64bppPArgb,
+      PixelFormat.Format64bppArgb,
+      PixelFormat.Format64bppPArgb,
 
-			PixelFormat.Alpha,
-			PixelFormat.PAlpha
-		};
+      PixelFormat.Alpha,
+      PixelFormat.PAlpha
+    };
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_embeddedController, () => _embeddedController = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_embeddedController, () => _embeddedController = null);
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_imageFormat = null;
-			_pixelFormat = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _imageFormat = null;
+      _pixelFormat = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_embeddedController = new EmbeddedObjectRenderingOptionsController() { UseDocumentCopy = UseDocument.Directly };
-				_embeddedController.InitializeDocument(_doc);
-				Current.Gui.FindAndAttachControlTo(_embeddedController);
+      if (initData)
+      {
+        _embeddedController = new EmbeddedObjectRenderingOptionsController() { UseDocumentCopy = UseDocument.Directly };
+        _embeddedController.InitializeDocument(_doc);
+        Current.Gui.FindAndAttachControlTo(_embeddedController);
 
-				_imageFormat = new SelectableListNodeList();
-				foreach (ImageFormat item in ImageFormats)
-					_imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.DropFileImageFormat == item));
+        _imageFormat = new SelectableListNodeList();
+        foreach (ImageFormat item in ImageFormats)
+          _imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.DropFileImageFormat == item));
 
-				_pixelFormat = new SelectableListNodeList();
-				var hasMatched = false; // special prog to account for doubling of items in PixelFormats
-				foreach (PixelFormat item in PixelFormats)
-				{
-					var select = _doc.DropFileBitmapPixelFormat == item;
-					_pixelFormat.Add(new SelectableListNode(item.ToString(), item, !hasMatched && select));
-					hasMatched |= select;
-				}
-			}
+        _pixelFormat = new SelectableListNodeList();
+        var hasMatched = false; // special prog to account for doubling of items in PixelFormats
+        foreach (PixelFormat item in PixelFormats)
+        {
+          var select = _doc.DropFileBitmapPixelFormat == item;
+          _pixelFormat.Add(new SelectableListNode(item.ToString(), item, !hasMatched && select));
+          hasMatched |= select;
+        }
+      }
 
-			if (null != _view)
-			{
-				_view.EmbeddedRenderingOptionsView = _embeddedController.ViewObject;
+      if (null != _view)
+      {
+        _view.EmbeddedRenderingOptionsView = _embeddedController.ViewObject;
 
-				_view.RenderDropfile = _doc.RenderDropFile;
-				_view.RenderEmbeddedObject = _doc.RenderEmbeddedObject;
-				_view.RenderLinkedObject = _doc.RenderLinkedObject;
+        _view.RenderDropfile = _doc.RenderDropFile;
+        _view.RenderEmbeddedObject = _doc.RenderEmbeddedObject;
+        _view.RenderLinkedObject = _doc.RenderLinkedObject;
 
-				_view.SetDropFileImageFormat(_imageFormat);
-				_view.SetDropFilePixelFormat(_pixelFormat);
-			}
-		}
+        _view.SetDropFileImageFormat(_imageFormat);
+        _view.SetDropFilePixelFormat(_pixelFormat);
+      }
+    }
 
-		#region IApplyController Members
+    #region IApplyController Members
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_embeddedController.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_embeddedController.Apply(disposeController))
+        return false;
 
-			_doc.RenderDropFile = _view.RenderDropfile;
-			var imgfmt = (ImageFormat)_imageFormat.FirstSelectedNode.Tag;
-			var pixfmt = (PixelFormat)_pixelFormat.FirstSelectedNode.Tag;
+      _doc.RenderDropFile = _view.RenderDropfile;
+      var imgfmt = (ImageFormat)_imageFormat.FirstSelectedNode.Tag;
+      var pixfmt = (PixelFormat)_pixelFormat.FirstSelectedNode.Tag;
 
-			if (!_doc.TrySetImageAndPixelFormat(imgfmt, pixfmt))
-			{
-				Current.Gui.ErrorMessageBox("This combination of image and pixel format is not working!");
-				return false;
-			}
-			_doc.RenderEmbeddedObject = _view.RenderEmbeddedObject;
-			_doc.RenderLinkedObject = _view.RenderLinkedObject;
+      if (!_doc.TrySetImageAndPixelFormat(imgfmt, pixfmt))
+      {
+        Current.Gui.ErrorMessageBox("This combination of image and pixel format is not working!");
+        return false;
+      }
+      _doc.RenderEmbeddedObject = _view.RenderEmbeddedObject;
+      _doc.RenderLinkedObject = _view.RenderLinkedObject;
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		#endregion IApplyController Members
-	}
+    #endregion IApplyController Members
+  }
 }

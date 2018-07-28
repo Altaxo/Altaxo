@@ -31,196 +31,196 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	using Altaxo.Gui.Common.Drawing;
+  using Altaxo.Gui.Common.Drawing;
 
-	/// <summary>
-	/// Interaction logic for FillToCurvePlotStyleControl.xaml
-	/// </summary>
-	public partial class FillToCurvePlotStyleControl : UserControl, IFillToCurvePlotStyleView
-	{
-		private PenControlsGlue _framePenGlue;
+  /// <summary>
+  /// Interaction logic for FillToCurvePlotStyleControl.xaml
+  /// </summary>
+  public partial class FillToCurvePlotStyleControl : UserControl, IFillToCurvePlotStyleView
+  {
+    private PenControlsGlue _framePenGlue;
 
-		public event Action IndependentFillColorChanged;
+    public event Action IndependentFillColorChanged;
 
-		public event Action IndependentFrameColorChanged;
+    public event Action IndependentFrameColorChanged;
 
-		public event Action UseFillChanged;
+    public event Action UseFillChanged;
 
-		public event Action UseFrameChanged;
+    public event Action UseFrameChanged;
 
-		public event Action FillBrushChanged;
+    public event Action FillBrushChanged;
 
-		public event Action FramePenChanged;
+    public event Action FramePenChanged;
 
-		public FillToCurvePlotStyleControl()
-		{
-			InitializeComponent();
+    public FillToCurvePlotStyleControl()
+    {
+      InitializeComponent();
 
-			_framePenGlue = new PenControlsGlue(false);
-			_framePenGlue.PenChanged += new EventHandler(EhFramePenChanged);
-			_framePenGlue.CbBrush = _guiFramePen;
-			_framePenGlue.CbLineThickness = _guiFramePenWidth;
-			_framePenGlue.CbDashPattern = _guiFrameDashStyle;
-		}
+      _framePenGlue = new PenControlsGlue(false);
+      _framePenGlue.PenChanged += new EventHandler(EhFramePenChanged);
+      _framePenGlue.CbBrush = _guiFramePen;
+      _framePenGlue.CbLineThickness = _guiFramePenWidth;
+      _framePenGlue.CbDashPattern = _guiFrameDashStyle;
+    }
 
-		#region Event handlers
+    #region Event handlers
 
-		private void EhUseFillChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != UseFillChanged)
-				UseFillChanged();
-		}
+    private void EhUseFillChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != UseFillChanged)
+        UseFillChanged();
+    }
 
-		private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != IndependentFillColorChanged)
-				IndependentFillColorChanged();
-		}
+    private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != IndependentFillColorChanged)
+        IndependentFillColorChanged();
+    }
 
-		private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (null != FillBrushChanged)
-				FillBrushChanged();
-		}
+    private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (null != FillBrushChanged)
+        FillBrushChanged();
+    }
 
-		private void EhUseFrameChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != UseFrameChanged)
-				UseFrameChanged();
-		}
+    private void EhUseFrameChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != UseFrameChanged)
+        UseFrameChanged();
+    }
 
-		private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != IndependentFrameColorChanged)
-				IndependentFrameColorChanged();
-		}
+    private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != IndependentFrameColorChanged)
+        IndependentFrameColorChanged();
+    }
 
-		private void EhFramePenChanged(object sender, EventArgs e)
-		{
-			if (null != FramePenChanged)
-				FramePenChanged();
-		}
+    private void EhFramePenChanged(object sender, EventArgs e)
+    {
+      if (null != FramePenChanged)
+        FramePenChanged();
+    }
 
-		#endregion Event handlers
+    #endregion Event handlers
 
-		#region IFillToCurvePlotStyleView Members
+    #region IFillToCurvePlotStyleView Members
 
-		public bool UseFill
-		{
-			get
-			{
-				return true == _guiUseFill.IsChecked;
-			}
-			set
-			{
-				_guiUseFill.IsChecked = value;
-				_guiIndependentFillColor.IsEnabled = value;
-				_guiFillBrush.IsEnabled = value;
-			}
-		}
+    public bool UseFill
+    {
+      get
+      {
+        return true == _guiUseFill.IsChecked;
+      }
+      set
+      {
+        _guiUseFill.IsChecked = value;
+        _guiIndependentFillColor.IsEnabled = value;
+        _guiFillBrush.IsEnabled = value;
+      }
+    }
 
-		public bool IndependentFillColor
-		{
-			get
-			{
-				return true == _guiIndependentFillColor.IsChecked;
-			}
-			set
-			{
-				_guiIndependentFillColor.IsChecked = value;
-			}
-		}
+    public bool IndependentFillColor
+    {
+      get
+      {
+        return true == _guiIndependentFillColor.IsChecked;
+      }
+      set
+      {
+        _guiIndependentFillColor.IsChecked = value;
+      }
+    }
 
-		public bool ShowPlotColorsOnlyForFillBrush
-		{
-			set { _guiFillBrush.ShowPlotColorsOnly = value; }
-		}
+    public bool ShowPlotColorsOnlyForFillBrush
+    {
+      set { _guiFillBrush.ShowPlotColorsOnly = value; }
+    }
 
-		public Altaxo.Graph.Gdi.BrushX FillBrush
-		{
-			get
-			{
-				return this._guiFillBrush.SelectedBrush;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException("FillBrush");
-				_guiFillBrush.SelectedBrush = value;
-			}
-		}
+    public Altaxo.Graph.Gdi.BrushX FillBrush
+    {
+      get
+      {
+        return this._guiFillBrush.SelectedBrush;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException("FillBrush");
+        _guiFillBrush.SelectedBrush = value;
+      }
+    }
 
-		public bool UseFrame
-		{
-			get
-			{
-				return true == _guiUseFrame.IsChecked;
-			}
-			set
-			{
-				_guiUseFrame.IsChecked = value;
-				_guiIndependentFrameColor.IsEnabled = value;
-				_guiFramePen.IsEnabled = value;
-				_guiFramePenWidth.IsEnabled = value;
-				_guiFrameDashStyle.IsEnabled = value;
-			}
-		}
+    public bool UseFrame
+    {
+      get
+      {
+        return true == _guiUseFrame.IsChecked;
+      }
+      set
+      {
+        _guiUseFrame.IsChecked = value;
+        _guiIndependentFrameColor.IsEnabled = value;
+        _guiFramePen.IsEnabled = value;
+        _guiFramePenWidth.IsEnabled = value;
+        _guiFrameDashStyle.IsEnabled = value;
+      }
+    }
 
-		public bool IndependentFrameColor
-		{
-			get
-			{
-				return true == _guiIndependentFrameColor.IsChecked;
-			}
-			set
-			{
-				_guiIndependentFrameColor.IsChecked = value;
-			}
-		}
+    public bool IndependentFrameColor
+    {
+      get
+      {
+        return true == _guiIndependentFrameColor.IsChecked;
+      }
+      set
+      {
+        _guiIndependentFrameColor.IsChecked = value;
+      }
+    }
 
-		public bool ShowPlotColorsOnlyForFramePen
-		{
-			set { _framePenGlue.ShowPlotColorsOnly = value; }
-		}
+    public bool ShowPlotColorsOnlyForFramePen
+    {
+      set { _framePenGlue.ShowPlotColorsOnly = value; }
+    }
 
-		public Altaxo.Graph.Gdi.PenX FramePen
-		{
-			get
-			{
-				return _framePenGlue.Pen;
-			}
-			set
-			{
-				if (value == null)
-					throw new ArgumentNullException("FramePen");
-				_framePenGlue.Pen = value;
-			}
-		}
+    public Altaxo.Graph.Gdi.PenX FramePen
+    {
+      get
+      {
+        return _framePenGlue.Pen;
+      }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException("FramePen");
+        _framePenGlue.Pen = value;
+      }
+    }
 
-		public bool FillToPreviousItem
-		{
-			get
-			{
-				return true == _chkFillPrevious.IsChecked;
-			}
-			set
-			{
-				_chkFillPrevious.IsChecked = value;
-			}
-		}
+    public bool FillToPreviousItem
+    {
+      get
+      {
+        return true == _chkFillPrevious.IsChecked;
+      }
+      set
+      {
+        _chkFillPrevious.IsChecked = value;
+      }
+    }
 
-		public bool FillToNextItem
-		{
-			get
-			{
-				return true == _chkFillNext.IsChecked;
-			}
-			set
-			{
-				_chkFillNext.IsChecked = value;
-			}
-		}
+    public bool FillToNextItem
+    {
+      get
+      {
+        return true == _chkFillNext.IsChecked;
+      }
+      set
+      {
+        _chkFillNext.IsChecked = value;
+      }
+    }
 
-		#endregion IFillToCurvePlotStyleView Members
-	}
+    #endregion IFillToCurvePlotStyleView Members
+  }
 }

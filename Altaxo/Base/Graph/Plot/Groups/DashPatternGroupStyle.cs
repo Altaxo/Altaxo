@@ -28,330 +28,330 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	using Collections;
-	using Drawing;
-	using Drawing.DashPatternManagement;
+  using Collections;
+  using Drawing;
+  using Drawing.DashPatternManagement;
 
-	public class DashPatternGroupStyle
-		:
-		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		IPlotGroupStyle
-	{
-		private bool _isInitialized;
-		private IDashPattern _value;
+  public class DashPatternGroupStyle
+    :
+    Main.SuspendableDocumentLeafNodeWithEventArgs,
+    IPlotGroupStyle
+  {
+    private bool _isInitialized;
+    private IDashPattern _value;
 
-		/// <summary>True if step enabled (only if used as external group style with symbol grouping).</summary>
-		private bool _isStepEnabled;
+    /// <summary>True if step enabled (only if used as external group style with symbol grouping).</summary>
+    private bool _isStepEnabled;
 
-		/// <summary>The list of dash pattern to switch through.</summary>
-		private IStyleList<IDashPattern> _listOfValues;
+    /// <summary>The list of dash pattern to switch through.</summary>
+    private IStyleList<IDashPattern> _listOfValues;
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// Deserializes the old Altaxo.Graph.Gdi.Plot.Groups.LineStyleGroupStyle (Version 0).
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Groups.LineStyleGroupStyle", 0)]
-		private class XmlSerializationSurrogateForLineStyleGroupStyleVersion0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old version");
-				/*
+    /// <summary>
+    /// Deserializes the old Altaxo.Graph.Gdi.Plot.Groups.LineStyleGroupStyle (Version 0).
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Groups.LineStyleGroupStyle", 0)]
+    private class XmlSerializationSurrogateForLineStyleGroupStyleVersion0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
 				LineStyleGroupStyle s = (LineStyleGroupStyle)obj;
 				info.AddValue("StepEnabled", s._isStepEnabled);
 				*/
-			}
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				DashPatternGroupStyle s = null != o ? (DashPatternGroupStyle)o : new DashPatternGroupStyle();
-				s._isStepEnabled = info.GetBoolean("StepEnabled");
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        DashPatternGroupStyle s = null != o ? (DashPatternGroupStyle)o : new DashPatternGroupStyle();
+        s._isStepEnabled = info.GetBoolean("StepEnabled");
 
-				s._listOfValues = DashPatternListManager.Instance.BuiltinDefault;
-				s.SetValueCoercedToGroup(DashPatternListManager.Instance.BuiltinDefault[0]);
+        s._listOfValues = DashPatternListManager.Instance.BuiltinDefault;
+        s.SetValueCoercedToGroup(DashPatternListManager.Instance.BuiltinDefault[0]);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		/// <summary>
-		/// 2016-08-24 Initial version.
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternGroupStyle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				DashPatternGroupStyle s = (DashPatternGroupStyle)obj;
-				info.AddValue("StepEnabled", s._isStepEnabled);
+    /// <summary>
+    /// 2016-08-24 Initial version.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternGroupStyle), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        DashPatternGroupStyle s = (DashPatternGroupStyle)obj;
+        info.AddValue("StepEnabled", s._isStepEnabled);
 
-				info.AddValue("Value", s._value);
+        info.AddValue("Value", s._value);
 
-				info.AddValue("ListOfValues", s._listOfValues);
-			}
+        info.AddValue("ListOfValues", s._listOfValues);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				DashPatternGroupStyle s = null != o ? (DashPatternGroupStyle)o : new DashPatternGroupStyle();
-				s._isStepEnabled = info.GetBoolean("StepEnabled");
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        DashPatternGroupStyle s = null != o ? (DashPatternGroupStyle)o : new DashPatternGroupStyle();
+        s._isStepEnabled = info.GetBoolean("StepEnabled");
 
-				var value = (IDashPattern)info.GetValue("Value", s);
+        var value = (IDashPattern)info.GetValue("Value", s);
 
-				var listOfValues = (DashPatternList)info.GetValue("ListOfValues", s);
-				DashPatternList registeredList;
-				DashPatternListManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out registeredList);
-				s._listOfValues = registeredList;
-				s.SetValueCoercedToGroup(value);
+        var listOfValues = (DashPatternList)info.GetValue("ListOfValues", s);
+        DashPatternList registeredList;
+        DashPatternListManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out registeredList);
+        s._listOfValues = registeredList;
+        s.SetValueCoercedToGroup(value);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		#region Constructors
+    #region Constructors
 
-		public DashPatternGroupStyle()
-		{
-			_listOfValues = DashPatternListManager.Instance.BuiltinDefault;
-			_value = _listOfValues[0];
-		}
+    public DashPatternGroupStyle()
+    {
+      _listOfValues = DashPatternListManager.Instance.BuiltinDefault;
+      _value = _listOfValues[0];
+    }
 
-		public DashPatternGroupStyle(DashPatternGroupStyle from)
-		{
-			this._isStepEnabled = from._isStepEnabled;
-			this._value = from._value;
-			this._listOfValues = from._listOfValues;
-		}
+    public DashPatternGroupStyle(DashPatternGroupStyle from)
+    {
+      this._isStepEnabled = from._isStepEnabled;
+      this._value = from._value;
+      this._listOfValues = from._listOfValues;
+    }
 
-		public void TransferFrom(IPlotGroupStyle fromb)
-		{
-			DashPatternGroupStyle from = (DashPatternGroupStyle)fromb;
-			this._value = from._value;
-			this._listOfValues = from._listOfValues;
-		}
+    public void TransferFrom(IPlotGroupStyle fromb)
+    {
+      DashPatternGroupStyle from = (DashPatternGroupStyle)fromb;
+      this._value = from._value;
+      this._listOfValues = from._listOfValues;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public DashPatternGroupStyle Clone()
-		{
-			return new DashPatternGroupStyle(this);
-		}
+    public DashPatternGroupStyle Clone()
+    {
+      return new DashPatternGroupStyle(this);
+    }
 
-		object ICloneable.Clone()
-		{
-			return new DashPatternGroupStyle(this);
-		}
+    object ICloneable.Clone()
+    {
+      return new DashPatternGroupStyle(this);
+    }
 
-		#endregion ICloneable Members
+    #endregion ICloneable Members
 
-		#region IGroupStyle Members
+    #region IGroupStyle Members
 
-		public void BeginPrepare()
-		{
-			_isInitialized = false;
-		}
+    public void BeginPrepare()
+    {
+      _isInitialized = false;
+    }
 
-		public void PrepareStep()
-		{
-		}
+    public void PrepareStep()
+    {
+    }
 
-		public void EndPrepare()
-		{
-		}
+    public void EndPrepare()
+    {
+    }
 
-		public bool CanCarryOver
-		{
-			get
-			{
-				return true;
-			}
-		}
+    public bool CanCarryOver
+    {
+      get
+      {
+        return true;
+      }
+    }
 
-		public bool CanStep
-		{
-			get
-			{
-				return true;
-			}
-		}
+    public bool CanStep
+    {
+      get
+      {
+        return true;
+      }
+    }
 
-		public int Step(int step)
-		{
-			if (0 == step)
-				return 0; // nothing changed
+    public int Step(int step)
+    {
+      if (0 == step)
+        return 0; // nothing changed
 
-			var list = _listOfValues;
-			var listcount = list.Count;
+      var list = _listOfValues;
+      var listcount = list.Count;
 
-			if (listcount == 0)
-			{
-				return 0;
-			}
+      if (listcount == 0)
+      {
+        return 0;
+      }
 
-			int currentIdx = Math.Max(0, _listOfValues.IndexOf(_value));
+      int currentIdx = Math.Max(0, _listOfValues.IndexOf(_value));
 
-			var valueIndex = Calc.BasicFunctions.PMod(currentIdx + step, _listOfValues.Count);
-			int wraps = Calc.BasicFunctions.NumberOfWraps(_listOfValues.Count, currentIdx, step);
-			_value = _listOfValues[valueIndex];
-			return wraps;
-		}
+      var valueIndex = Calc.BasicFunctions.PMod(currentIdx + step, _listOfValues.Count);
+      int wraps = Calc.BasicFunctions.NumberOfWraps(_listOfValues.Count, currentIdx, step);
+      _value = _listOfValues[valueIndex];
+      return wraps;
+    }
 
-		/// <summary>
-		/// Get/sets whether or not stepping is allowed.
-		/// </summary>
-		public bool IsStepEnabled
-		{
-			get
-			{
-				return _isStepEnabled;
-			}
-			set
-			{
-				var oldValue = _isStepEnabled;
-				_isStepEnabled = value;
+    /// <summary>
+    /// Get/sets whether or not stepping is allowed.
+    /// </summary>
+    public bool IsStepEnabled
+    {
+      get
+      {
+        return _isStepEnabled;
+      }
+      set
+      {
+        var oldValue = _isStepEnabled;
+        _isStepEnabled = value;
 
-				if (value != oldValue)
-					SetValueCoercedToGroup(_value);
-			}
-		}
+        if (value != oldValue)
+          SetValueCoercedToGroup(_value);
+      }
+    }
 
-		/// <summary>
-		/// The list of values to switch through
-		/// </summary>
-		public IStyleList<IDashPattern> ListOfValues
-		{
-			get
-			{
-				return _listOfValues;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
+    /// <summary>
+    /// The list of values to switch through
+    /// </summary>
+    public IStyleList<IDashPattern> ListOfValues
+    {
+      get
+      {
+        return _listOfValues;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException(nameof(value));
 
-				if (!object.ReferenceEquals(_listOfValues, value))
-				{
-					_listOfValues = value;
-					SetValueCoercedToGroup(_value);
+        if (!object.ReferenceEquals(_listOfValues, value))
+        {
+          _listOfValues = value;
+          SetValueCoercedToGroup(_value);
 
-					EhSelfChanged();
-				}
-			}
-		}
+          EhSelfChanged();
+        }
+      }
+    }
 
-		private void SetValueCoercedToGroup(IDashPattern value)
-		{
-			if (_isStepEnabled)
-			{
-				var idx = Math.Max(0, _listOfValues.IndexOf(value));
-				_value = _listOfValues[idx];
-			}
-			else
-			{
-				_value = value;
-			}
-		}
+    private void SetValueCoercedToGroup(IDashPattern value)
+    {
+      if (_isStepEnabled)
+      {
+        var idx = Math.Max(0, _listOfValues.IndexOf(value));
+        _value = _listOfValues[idx];
+      }
+      else
+      {
+        _value = value;
+      }
+    }
 
-		#endregion IGroupStyle Members
+    #endregion IGroupStyle Members
 
-		#region Other members
+    #region Other members
 
-		public bool IsInitialized
-		{
-			get
-			{
-				return _isInitialized;
-			}
-		}
+    public bool IsInitialized
+    {
+      get
+      {
+        return _isInitialized;
+      }
+    }
 
-		public void Initialize(IDashPattern value)
-		{
-			if (null == value)
-				throw new ArgumentNullException(nameof(value));
+    public void Initialize(IDashPattern value)
+    {
+      if (null == value)
+        throw new ArgumentNullException(nameof(value));
 
-			_isInitialized = true;
+      _isInitialized = true;
 
-			var parentList = DashPatternListManager.Instance.GetParentList(value);
-			if (null != parentList)
-			{
-				_listOfValues = parentList;
-			}
+      var parentList = DashPatternListManager.Instance.GetParentList(value);
+      if (null != parentList)
+      {
+        _listOfValues = parentList;
+      }
 
-			SetValueCoercedToGroup(value);
-		}
+      SetValueCoercedToGroup(value);
+    }
 
-		public IDashPattern DashStyle
-		{
-			get
-			{
-				return _value;
-			}
-		}
+    public IDashPattern DashStyle
+    {
+      get
+      {
+        return _value;
+      }
+    }
 
-		#endregion Other members
+    #endregion Other members
 
-		#region Static helpers
+    #region Static helpers
 
-		public static void AddLocalGroupStyle(
-	 IPlotGroupStyleCollection externalGroups,
-	 IPlotGroupStyleCollection localGroups)
-		{
-			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(DashPatternGroupStyle)))
-				localGroups.Add(new DashPatternGroupStyle());
-		}
+    public static void AddLocalGroupStyle(
+   IPlotGroupStyleCollection externalGroups,
+   IPlotGroupStyleCollection localGroups)
+    {
+      if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(DashPatternGroupStyle)))
+        localGroups.Add(new DashPatternGroupStyle());
+    }
 
-		public delegate IDashPattern Getter();
+    public delegate IDashPattern Getter();
 
-		public static void PrepareStyle(
-			IPlotGroupStyleCollection externalGroups,
-			IPlotGroupStyleCollection localGroups,
-			Getter getter)
-		{
-			if (!externalGroups.ContainsType(typeof(DashPatternGroupStyle))
-				&& null != localGroups
-				&& !localGroups.ContainsType(typeof(DashPatternGroupStyle)))
-			{
-				localGroups.Add(new DashPatternGroupStyle());
-			}
+    public static void PrepareStyle(
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
+      Getter getter)
+    {
+      if (!externalGroups.ContainsType(typeof(DashPatternGroupStyle))
+        && null != localGroups
+        && !localGroups.ContainsType(typeof(DashPatternGroupStyle)))
+      {
+        localGroups.Add(new DashPatternGroupStyle());
+      }
 
-			DashPatternGroupStyle grpStyle = null;
-			if (externalGroups.ContainsType(typeof(DashPatternGroupStyle)))
-				grpStyle = (DashPatternGroupStyle)externalGroups.GetPlotGroupStyle(typeof(DashPatternGroupStyle));
-			else if (localGroups != null)
-				grpStyle = (DashPatternGroupStyle)localGroups.GetPlotGroupStyle(typeof(DashPatternGroupStyle));
+      DashPatternGroupStyle grpStyle = null;
+      if (externalGroups.ContainsType(typeof(DashPatternGroupStyle)))
+        grpStyle = (DashPatternGroupStyle)externalGroups.GetPlotGroupStyle(typeof(DashPatternGroupStyle));
+      else if (localGroups != null)
+        grpStyle = (DashPatternGroupStyle)localGroups.GetPlotGroupStyle(typeof(DashPatternGroupStyle));
 
-			if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
-				grpStyle.Initialize(getter());
-		}
+      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+        grpStyle.Initialize(getter());
+    }
 
-		public delegate void Setter(IDashPattern c);
+    public delegate void Setter(IDashPattern c);
 
-		public static void ApplyStyle(
-			IPlotGroupStyleCollection externalGroups,
-			IPlotGroupStyleCollection localGroups,
-			Setter setter)
-		{
-			DashPatternGroupStyle grpStyle = null;
-			IPlotGroupStyleCollection grpColl = null;
-			if (externalGroups.ContainsType(typeof(DashPatternGroupStyle)))
-				grpColl = externalGroups;
-			else if (localGroups != null && localGroups.ContainsType(typeof(DashPatternGroupStyle)))
-				grpColl = localGroups;
+    public static void ApplyStyle(
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
+      Setter setter)
+    {
+      DashPatternGroupStyle grpStyle = null;
+      IPlotGroupStyleCollection grpColl = null;
+      if (externalGroups.ContainsType(typeof(DashPatternGroupStyle)))
+        grpColl = externalGroups;
+      else if (localGroups != null && localGroups.ContainsType(typeof(DashPatternGroupStyle)))
+        grpColl = localGroups;
 
-			if (null != grpColl)
-			{
-				grpStyle = (DashPatternGroupStyle)grpColl.GetPlotGroupStyle(typeof(DashPatternGroupStyle));
-				grpColl.OnBeforeApplication(typeof(DashPatternGroupStyle));
-				setter(grpStyle.DashStyle);
-			}
-		}
+      if (null != grpColl)
+      {
+        grpStyle = (DashPatternGroupStyle)grpColl.GetPlotGroupStyle(typeof(DashPatternGroupStyle));
+        grpColl.OnBeforeApplication(typeof(DashPatternGroupStyle));
+        setter(grpStyle.DashStyle);
+      }
+    }
 
-		#endregion Static helpers
-	}
+    #endregion Static helpers
+  }
 }

@@ -31,108 +31,108 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
-	using Geometry;
+  using Geometry;
 
-	/// <summary>
-	///
-	/// </summary>
-	public abstract class SolidBodyShapeBase : GraphicBase
-	{
-		protected IMaterial _material = Materials.GetSolidMaterial(Drawing.NamedColors.LightGray);
+  /// <summary>
+  ///
+  /// </summary>
+  public abstract class SolidBodyShapeBase : GraphicBase
+  {
+    protected IMaterial _material = Materials.GetSolidMaterial(Drawing.NamedColors.LightGray);
 
-		#region Serialization
+    #region Serialization
 
-		protected SolidBodyShapeBase(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		: base(info)
-		{
-		}
+    protected SolidBodyShapeBase(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    : base(info)
+    {
+    }
 
-		/// <summary>
-		/// 2016-03-01: Initial version
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SolidBodyShapeBase), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (SolidBodyShapeBase)obj;
-				info.AddBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType);
-				info.AddValue("Material", s._material);
-			}
+    /// <summary>
+    /// 2016-03-01: Initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SolidBodyShapeBase), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SolidBodyShapeBase)obj;
+        info.AddBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType);
+        info.AddValue("Material", s._material);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (SolidBodyShapeBase)o;
-				info.GetBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType, parent);
-				s._material = (IMaterial)info.GetValue("Material", s);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (SolidBodyShapeBase)o;
+        info.GetBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType, parent);
+        s._material = (IMaterial)info.GetValue("Material", s);
 
-				return s;
-			}
-		}
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public SolidBodyShapeBase()
-			: base(new ItemLocationDirect())
-		{
-		}
+    public SolidBodyShapeBase()
+      : base(new ItemLocationDirect())
+    {
+    }
 
-		public SolidBodyShapeBase(SolidBodyShapeBase from)
-			: base(from)
-		{
-		}
+    public SolidBodyShapeBase(SolidBodyShapeBase from)
+      : base(from)
+    {
+    }
 
-		public override bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-			if (!base.CopyFrom(obj))
-				return false;
+    public override bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      if (!base.CopyFrom(obj))
+        return false;
 
-			var from = obj as SolidBodyShapeBase;
-			if (null != from)
-			{
-				_material = from._material;
+      var from = obj as SolidBodyShapeBase;
+      if (null != from)
+      {
+        _material = from._material;
 
-				EhSelfChanged(EventArgs.Empty);
-				return true;
-			}
+        EhSelfChanged(EventArgs.Empty);
+        return true;
+      }
 
-			return false;
-		}
+      return false;
+    }
 
-		public IMaterial Material
-		{
-			get
-			{
-				return _material;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
-				var oldValue = _material;
-				_material = value;
-				if (!object.ReferenceEquals(oldValue, value))
-					EhSelfChanged(EventArgs.Empty);
-			}
-		}
+    public IMaterial Material
+    {
+      get
+      {
+        return _material;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException(nameof(value));
+        var oldValue = _material;
+        _material = value;
+        if (!object.ReferenceEquals(oldValue, value))
+          EhSelfChanged(EventArgs.Empty);
+      }
+    }
 
-		public override IHitTestObject HitTest(HitTestPointData parentHitData)
-		{
-			var result = base.HitTest(parentHitData);
-			if (null != result)
-			{
-				result.DoubleClick = EhHitDoubleClick;
-			}
-			return result;
-		}
+    public override IHitTestObject HitTest(HitTestPointData parentHitData)
+    {
+      var result = base.HitTest(parentHitData);
+      if (null != result)
+      {
+        result.DoubleClick = EhHitDoubleClick;
+      }
+      return result;
+    }
 
-		protected static bool EhHitDoubleClick(IHitTestObject o)
-		{
-			object hitted = o.HittedObject;
-			Current.Gui.ShowDialog(ref hitted, "Shape properties", true);
-			return true;
-		}
-	}
+    protected static bool EhHitDoubleClick(IHitTestObject o)
+    {
+      object hitted = o.HittedObject;
+      Current.Gui.ShowDialog(ref hitted, "Shape properties", true);
+      return true;
+    }
+  }
 }

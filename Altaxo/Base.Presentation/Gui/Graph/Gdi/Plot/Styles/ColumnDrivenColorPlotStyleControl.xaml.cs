@@ -34,49 +34,49 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-	/// <summary>
-	/// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
-	/// </summary>
-	public partial class ColumnDrivenColorPlotStyleControl : UserControl, IColumnDrivenColorPlotStyleView
-	{
-		public ColumnDrivenColorPlotStyleControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
+  /// </summary>
+  public partial class ColumnDrivenColorPlotStyleControl : UserControl, IColumnDrivenColorPlotStyleView
+  {
+    public ColumnDrivenColorPlotStyleControl()
+    {
+      InitializeComponent();
+    }
 
-		public void Init_DataColumn(string boxText, string toolTip, int status)
-		{
-			this._guiDataColumn.Text = boxText;
-			this._guiDataColumn.ToolTip = toolTip;
-			this._guiDataColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-		}
+    public void Init_DataColumn(string boxText, string toolTip, int status)
+    {
+      this._guiDataColumn.Text = boxText;
+      this._guiDataColumn.ToolTip = toolTip;
+      this._guiDataColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+    }
 
-		public void Init_DataColumnTransformation(string boxText, string toolTip)
-		{
-			if (null == boxText)
-			{
-				this._guiDataColumnTransformation.Visibility = Visibility.Collapsed;
-			}
-			else
-			{
-				this._guiDataColumnTransformation.Text = boxText;
-				this._guiDataColumnTransformation.ToolTip = toolTip;
-				this._guiDataColumnTransformation.Visibility = Visibility.Visible;
-			}
-		}
+    public void Init_DataColumnTransformation(string boxText, string toolTip)
+    {
+      if (null == boxText)
+      {
+        this._guiDataColumnTransformation.Visibility = Visibility.Collapsed;
+      }
+      else
+      {
+        this._guiDataColumnTransformation.Text = boxText;
+        this._guiDataColumnTransformation.ToolTip = toolTip;
+        this._guiDataColumnTransformation.Visibility = Visibility.Visible;
+      }
+    }
 
-		#region IColumnDrivenColorPlotStyleView
+    #region IColumnDrivenColorPlotStyleView
 
-		public IDensityScaleView ScaleView
-		{
-			get { return _ctrlScale; }
-		}
+    public IDensityScaleView ScaleView
+    {
+      get { return _ctrlScale; }
+    }
 
-		public IColorProviderView ColorProviderView
-		{
-			get { return _colorProviderControl; }
-		}
+    public IColorProviderView ColorProviderView
+    {
+      get { return _colorProviderControl; }
+    }
 
-		#endregion IColumnDrivenColorPlotStyleView
-	}
+    #endregion IColumnDrivenColorPlotStyleView
+  }
 }

@@ -12,12 +12,12 @@ using System.Threading;
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {
-	public interface ISignatureHelpProvider
-	{
-		bool IsTriggerCharacter(char ch);
+  public interface ISignatureHelpProvider
+  {
+    bool IsTriggerCharacter(char ch);
 
-		bool IsRetriggerCharacter(char ch);
+    bool IsRetriggerCharacter(char ch);
 
-		Task<SignatureHelpItems> GetItemsAsync(Document document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken = default(CancellationToken));
-	}
+    Task<SignatureHelpItems> GetItemsAsync(Document document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken = default(CancellationToken));
+  }
 }

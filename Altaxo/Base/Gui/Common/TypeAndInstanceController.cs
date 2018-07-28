@@ -29,20 +29,20 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-	using Altaxo.Collections;
+  using Altaxo.Collections;
 
-	#region Interfaces
+  #region Interfaces
 
-	public interface ITypeAndInstanceView
-	{
-		string TypeLabel { set; }
+  public interface ITypeAndInstanceView
+  {
+    string TypeLabel { set; }
 
-		void InitializeTypeNames(SelectableListNodeList list);
+    void InitializeTypeNames(SelectableListNodeList list);
 
-		void SetInstanceControl(object instanceControl);
+    void SetInstanceControl(object instanceControl);
 
-		event EventHandler TypeChoiceChanged;
-	}
+    event EventHandler TypeChoiceChanged;
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 }

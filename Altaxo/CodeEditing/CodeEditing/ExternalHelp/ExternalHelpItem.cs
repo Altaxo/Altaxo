@@ -32,64 +32,64 @@ using System.Threading.Tasks;
 
 namespace Altaxo.CodeEditing.ExternalHelp
 {
-	public class ExternalHelpItem
-	{
-		/// <summary>
-		/// The identity of the assembly where the type/method/etc. is contained.
-		/// </summary>
-		public AssemblyIdentity AssemblyIdentity { get; private set; }
+  public class ExternalHelpItem
+  {
+    /// <summary>
+    /// The identity of the assembly where the type/method/etc. is contained.
+    /// </summary>
+    public AssemblyIdentity AssemblyIdentity { get; private set; }
 
-		/// <summary>
-		/// Gets the symbol type character. (E: event, F: field, M: method or constructor, P: property, T: type)
-		/// </summary>
-		/// <value>
-		/// The symbol type character used for documentations.
-		/// </value>
-		public char SymbolTypeCharacter { get; private set; }
+    /// <summary>
+    /// Gets the symbol type character. (E: event, F: field, M: method or constructor, P: property, T: type)
+    /// </summary>
+    /// <value>
+    /// The symbol type character used for documentations.
+    /// </value>
+    public char SymbolTypeCharacter { get; private set; }
 
-		public bool IsConstructor { get; private set; }
+    public bool IsConstructor { get; private set; }
 
-		/// <summary>
-		/// The name parts of the name of the type/method/etc.
-		/// </summary>
-		public IReadOnlyList<string> NameParts { get; private set; }
+    /// <summary>
+    /// The name parts of the name of the type/method/etc.
+    /// </summary>
+    public IReadOnlyList<string> NameParts { get; private set; }
 
-		public ExternalHelpItem(AssemblyIdentity assemblyIdentity, IEnumerable<string> nameParts, char symbolTypeChar, bool isConstructor)
-		{
-			AssemblyIdentity = assemblyIdentity;
-			NameParts = nameParts.ToImmutableArray();
-			SymbolTypeCharacter = symbolTypeChar;
-			IsConstructor = isConstructor;
-		}
+    public ExternalHelpItem(AssemblyIdentity assemblyIdentity, IEnumerable<string> nameParts, char symbolTypeChar, bool isConstructor)
+    {
+      AssemblyIdentity = assemblyIdentity;
+      NameParts = nameParts.ToImmutableArray();
+      SymbolTypeCharacter = symbolTypeChar;
+      IsConstructor = isConstructor;
+    }
 
-		/// <summary>
-		/// Determines whether this help item is about a type that is contained in one of the provided assemblies.
-		/// </summary>
-		/// <param name="assemblies">The assemblies to test.</param>
-		/// <returns>If the help item concerns an issue that is in one of the provided assemblies, then this assembly is returned; otherwise, the return value is null.</returns>
-		public System.Reflection.Assembly GetOneOfTheseAssembliesOrNull(IEnumerable<System.Reflection.Assembly> assemblies)
-		{
-			foreach (var ass in assemblies)
-			{
-				if (AssemblyIdentity == AssemblyIdentity.FromAssemblyDefinition(ass))
-					return ass;
-			}
-			return null;
-		}
+    /// <summary>
+    /// Determines whether this help item is about a type that is contained in one of the provided assemblies.
+    /// </summary>
+    /// <param name="assemblies">The assemblies to test.</param>
+    /// <returns>If the help item concerns an issue that is in one of the provided assemblies, then this assembly is returned; otherwise, the return value is null.</returns>
+    public System.Reflection.Assembly GetOneOfTheseAssembliesOrNull(IEnumerable<System.Reflection.Assembly> assemblies)
+    {
+      foreach (var ass in assemblies)
+      {
+        if (AssemblyIdentity == AssemblyIdentity.FromAssemblyDefinition(ass))
+          return ass;
+      }
+      return null;
+    }
 
-		/// <summary>
-		/// Gets the documentation reference identifier. This is the name (without extension) of the HTLM file inside a help file
-		/// that is created with Sandcastle help file builder.
-		/// </summary>
-		/// <value>
-		/// The documentation reference identifier.
-		/// </value>
-		public string DocumentationReferenceIdentifier
-		{
-			get
-			{
-				return SymbolTypeCharacter + "_" + string.Join("_", NameParts);
-			}
-		}
-	}
+    /// <summary>
+    /// Gets the documentation reference identifier. This is the name (without extension) of the HTLM file inside a help file
+    /// that is created with Sandcastle help file builder.
+    /// </summary>
+    /// <value>
+    /// The documentation reference identifier.
+    /// </value>
+    public string DocumentationReferenceIdentifier
+    {
+      get
+      {
+        return SymbolTypeCharacter + "_" + string.Join("_", NameParts);
+      }
+    }
+  }
 }

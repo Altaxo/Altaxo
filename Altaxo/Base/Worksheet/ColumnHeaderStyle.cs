@@ -31,124 +31,124 @@ using System.Drawing;
 
 namespace Altaxo.Worksheet
 {
-	public class ColumnHeaderStyle : ColumnStyle
-	{
-		[NonSerialized]
-		private StringFormat _leftUpperTextFormat = new StringFormat();
+  public class ColumnHeaderStyle : ColumnStyle
+  {
+    [NonSerialized]
+    private StringFormat _leftUpperTextFormat = new StringFormat();
 
-		[NonSerialized]
-		private StringFormat _rightUpperTextFormat = new StringFormat();
+    [NonSerialized]
+    private StringFormat _rightUpperTextFormat = new StringFormat();
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnHeaderStyle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				ColumnHeaderStyle s = (ColumnHeaderStyle)obj;
-				info.AddBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnHeaderStyle), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ColumnHeaderStyle s = (ColumnHeaderStyle)obj;
+        info.AddBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ColumnHeaderStyle s = null != o ? (ColumnHeaderStyle)o : new ColumnHeaderStyle();
-				info.GetBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ColumnHeaderStyle s = null != o ? (ColumnHeaderStyle)o : new ColumnHeaderStyle();
+        info.GetBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public int Height
-		{
-			get
-			{
-				return _columnSize;
-			}
-			set
-			{
-				_columnSize = value;
-			}
-		}
+    public int Height
+    {
+      get
+      {
+        return _columnSize;
+      }
+      set
+      {
+        _columnSize = value;
+      }
+    }
 
-		public ColumnHeaderStyle()
-			: base(ColumnStyleType.ColumnHeader)
-		{
-			_columnSize = 40;
+    public ColumnHeaderStyle()
+      : base(ColumnStyleType.ColumnHeader)
+    {
+      _columnSize = 40;
 
-			_textFormat.Alignment = StringAlignment.Center;
-			_textFormat.FormatFlags = StringFormatFlags.LineLimit;
-			_textFormat.LineAlignment = StringAlignment.Near;
+      _textFormat.Alignment = StringAlignment.Center;
+      _textFormat.FormatFlags = StringFormatFlags.LineLimit;
+      _textFormat.LineAlignment = StringAlignment.Near;
 
-			_leftUpperTextFormat.Alignment = StringAlignment.Near;
-			_leftUpperTextFormat.LineAlignment = StringAlignment.Far;
+      _leftUpperTextFormat.Alignment = StringAlignment.Near;
+      _leftUpperTextFormat.LineAlignment = StringAlignment.Far;
 
-			_rightUpperTextFormat.Alignment = StringAlignment.Far;
-			_rightUpperTextFormat.LineAlignment = StringAlignment.Far;
-		}
+      _rightUpperTextFormat.Alignment = StringAlignment.Far;
+      _rightUpperTextFormat.LineAlignment = StringAlignment.Far;
+    }
 
-		public ColumnHeaderStyle(ColumnHeaderStyle chs)
-			: base(chs)
-		{
-			_leftUpperTextFormat = (StringFormat)chs._leftUpperTextFormat.Clone();
-			_rightUpperTextFormat = (StringFormat)chs._rightUpperTextFormat.Clone();
-		}
+    public ColumnHeaderStyle(ColumnHeaderStyle chs)
+      : base(chs)
+    {
+      _leftUpperTextFormat = (StringFormat)chs._leftUpperTextFormat.Clone();
+      _rightUpperTextFormat = (StringFormat)chs._rightUpperTextFormat.Clone();
+    }
 
-		public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
-		{
-			PaintBackground(dc, cellRectangle, bSelected);
+    public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+    {
+      PaintBackground(dc, cellRectangle, bSelected);
 
-			Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
-			string columnnumber = dataColCol.GetColumnNumber(data).ToString();
-			string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(), dataColCol.GetColumnGroup(data));
+      Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
+      string columnnumber = dataColCol.GetColumnNumber(data).ToString();
+      string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(), dataColCol.GetColumnGroup(data));
 
-			var gdiTextFont = GdiFontManager.ToGdi(_textFont);
+      var gdiTextFont = GdiFontManager.ToGdi(_textFont);
 
-			var fontheight = gdiTextFont.GetHeight(dc);
-			Rectangle nameRectangle = cellRectangle;
-			nameRectangle.Height = (int)Math.Max(fontheight, cellRectangle.Height - fontheight);
-			Rectangle numRectangle = cellRectangle;
-			numRectangle.Height = (int)fontheight;
-			numRectangle.Y = (int)Math.Max(cellRectangle.Y + cellRectangle.Height - fontheight, cellRectangle.Y);
+      var fontheight = gdiTextFont.GetHeight(dc);
+      Rectangle nameRectangle = cellRectangle;
+      nameRectangle.Height = (int)Math.Max(fontheight, cellRectangle.Height - fontheight);
+      Rectangle numRectangle = cellRectangle;
+      numRectangle.Height = (int)fontheight;
+      numRectangle.Y = (int)Math.Max(cellRectangle.Y + cellRectangle.Height - fontheight, cellRectangle.Y);
 
-			if (bSelected)
-			{
-				dc.DrawString(columnnumber, gdiTextFont, _defaultSelectedTextBrush, numRectangle, _leftUpperTextFormat);
-				dc.DrawString(kindandgroup, gdiTextFont, _defaultSelectedTextBrush, numRectangle, _rightUpperTextFormat);
-				dc.DrawString(data.Name, gdiTextFont, _defaultSelectedTextBrush, nameRectangle, _textFormat);
-			}
-			else
-			{
-				dc.DrawString(columnnumber, gdiTextFont, TextBrush, numRectangle, _leftUpperTextFormat);
-				dc.DrawString(kindandgroup, gdiTextFont, TextBrush, numRectangle, _rightUpperTextFormat);
-				dc.DrawString(data.Name, gdiTextFont, TextBrush, nameRectangle, _textFormat);
-			}
-		}
+      if (bSelected)
+      {
+        dc.DrawString(columnnumber, gdiTextFont, _defaultSelectedTextBrush, numRectangle, _leftUpperTextFormat);
+        dc.DrawString(kindandgroup, gdiTextFont, _defaultSelectedTextBrush, numRectangle, _rightUpperTextFormat);
+        dc.DrawString(data.Name, gdiTextFont, _defaultSelectedTextBrush, nameRectangle, _textFormat);
+      }
+      else
+      {
+        dc.DrawString(columnnumber, gdiTextFont, TextBrush, numRectangle, _leftUpperTextFormat);
+        dc.DrawString(kindandgroup, gdiTextFont, TextBrush, numRectangle, _rightUpperTextFormat);
+        dc.DrawString(data.Name, gdiTextFont, TextBrush, nameRectangle, _textFormat);
+      }
+    }
 
-		public static Dictionary<System.Type, Action<ColumnHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<ColumnHeaderStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
+    public static Dictionary<System.Type, Action<ColumnHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<ColumnHeaderStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
 
-		public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
-		{
-			Action<ColumnHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool> action;
-			if (RegisteredPaintMethods.TryGetValue(dctype, out action))
-				action(this, dc, cellRectangle, nRow, data, bSelected);
-			else
-				throw new NotImplementedException("Paint method is not implemented for context type " + dctype.ToString());
-		}
+    public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+    {
+      Action<ColumnHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool> action;
+      if (RegisteredPaintMethods.TryGetValue(dctype, out action))
+        action(this, dc, cellRectangle, nRow, data, bSelected);
+      else
+        throw new NotImplementedException("Paint method is not implemented for context type " + dctype.ToString());
+    }
 
-		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn datac)
-		{
-			return datac.Name;
-		}
+    public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn datac)
+    {
+      return datac.Name;
+    }
 
-		public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
-		{
-		}
+    public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
+    {
+    }
 
-		public override object Clone()
-		{
-			return new ColumnHeaderStyle(this);
-		}
-	}
+    public override object Clone()
+    {
+      return new ColumnHeaderStyle(this);
+    }
+  }
 }

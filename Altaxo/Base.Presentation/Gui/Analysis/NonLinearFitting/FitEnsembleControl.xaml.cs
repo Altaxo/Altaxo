@@ -31,26 +31,26 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-	/// <summary>
-	/// Interaction logic for FitEnsembleControl.xaml
-	/// </summary>
-	public partial class FitEnsembleControl : UserControl, IFitEnsembleView
-	{
-		public FitEnsembleControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for FitEnsembleControl.xaml
+  /// </summary>
+  public partial class FitEnsembleControl : UserControl, IFitEnsembleView
+  {
+    public FitEnsembleControl()
+    {
+      InitializeComponent();
+    }
 
-		#region IFitEnsembleView
+    #region IFitEnsembleView
 
-		public void Initialize(Calc.Regression.Nonlinear.FitEnsemble ensemble, IEnumerable<object> fitEleControls)
-		{
-			_itemsHost.Children.Clear();
+    public void Initialize(Calc.Regression.Nonlinear.FitEnsemble ensemble, IEnumerable<object> fitEleControls)
+    {
+      _itemsHost.Children.Clear();
 
-			foreach (UIElement ele in fitEleControls)
-				_itemsHost.Children.Add(ele);
-		}
+      foreach (UIElement ele in fitEleControls)
+        _itemsHost.Children.Add(ele);
+    }
 
-		#endregion IFitEnsembleView
-	}
+    #endregion IFitEnsembleView
+  }
 }

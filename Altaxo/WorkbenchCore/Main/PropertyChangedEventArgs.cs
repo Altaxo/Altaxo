@@ -20,33 +20,33 @@ using System;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// PropertyChangedEventHandler with the old and new value.
-	/// </summary>
-	public delegate void PropertyChangedEventHandler<T>(object sender, PropertyChangedEventArgs<T> e);
+  /// <summary>
+  /// PropertyChangedEventHandler with the old and new value.
+  /// </summary>
+  public delegate void PropertyChangedEventHandler<T>(object sender, PropertyChangedEventArgs<T> e);
 
-	/// <summary>
-	/// PropertyChangedEventArgs that contains the old and new value.
-	/// </summary>
-	public class PropertyChangedEventArgs<T> : EventArgs
-	{
-		private readonly T oldValue;
-		private readonly T newValue;
+  /// <summary>
+  /// PropertyChangedEventArgs that contains the old and new value.
+  /// </summary>
+  public class PropertyChangedEventArgs<T> : EventArgs
+  {
+    private readonly T oldValue;
+    private readonly T newValue;
 
-		public PropertyChangedEventArgs(T oldValue, T newValue)
-		{
-			this.oldValue = oldValue;
-			this.newValue = newValue;
-		}
+    public PropertyChangedEventArgs(T oldValue, T newValue)
+    {
+      this.oldValue = oldValue;
+      this.newValue = newValue;
+    }
 
-		public T OldValue
-		{
-			get { return oldValue; }
-		}
+    public T OldValue
+    {
+      get { return oldValue; }
+    }
 
-		public T NewValue
-		{
-			get { return newValue; }
-		}
-	}
+    public T NewValue
+    {
+      get { return newValue; }
+    }
+  }
 }

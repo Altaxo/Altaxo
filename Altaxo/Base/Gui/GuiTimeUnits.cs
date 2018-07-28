@@ -32,32 +32,32 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
-	public static class GuiTimeUnits
-	{
-		private static ReadOnlyCollection<IUnit> _instance;
+  public static class GuiTimeUnits
+  {
+    private static ReadOnlyCollection<IUnit> _instance;
 
-		static GuiTimeUnits()
-		{
-			var instance = new List<IUnit>();
+    static GuiTimeUnits()
+    {
+      var instance = new List<IUnit>();
 
-			instance.Add(new UnitWithLimitedPrefixes(Second.Instance, new SIPrefix[] { SIPrefix.Femto, SIPrefix.Pico, SIPrefix.Nano, SIPrefix.Micro, SIPrefix.Milli }));
-			instance.Add(Minute.Instance);
-			instance.Add(Hour.Instance);
-			instance.Add(Day.Instance);
-			instance.Add(Week.Instance);
+      instance.Add(new UnitWithLimitedPrefixes(Second.Instance, new SIPrefix[] { SIPrefix.Femto, SIPrefix.Pico, SIPrefix.Nano, SIPrefix.Micro, SIPrefix.Milli }));
+      instance.Add(Minute.Instance);
+      instance.Add(Hour.Instance);
+      instance.Add(Day.Instance);
+      instance.Add(Week.Instance);
 
-			_instance = instance.AsReadOnly();
-		}
+      _instance = instance.AsReadOnly();
+    }
 
-		/// <summary>
-		/// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
-		/// </summary>
-		public static IList<IUnit> Collection
-		{
-			get
-			{
-				return _instance;
-			}
-		}
-	}
+    /// <summary>
+    /// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
+    /// </summary>
+    public static IList<IUnit> Collection
+    {
+      get
+      {
+        return _instance;
+      }
+    }
+  }
 }

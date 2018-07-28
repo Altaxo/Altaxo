@@ -4,9 +4,9 @@
 
 namespace Altaxo.CodeEditing.Diagnostics
 {
-	public enum DiagnosticsUpdatedKind
-	{
-		DiagnosticsRemoved,
-		DiagnosticsCreated
-	}
+  public enum DiagnosticsUpdatedKind
+  {
+    DiagnosticsRemoved,
+    DiagnosticsCreated
+  }
 }

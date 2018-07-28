@@ -26,65 +26,65 @@ using System.Windows.Markup;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Markup extension that retrieves localized resource strings.
-	/// </summary>
-	/// <example>
-	/// Set the title of the main window using the string resource 'MainWindow.DialogName':
-	/// <code>
-	/// Title = "{axog:Localize MainWindow.DialogName}"
-	/// </code>
-	/// If the string used accessors to enable easy access by keyboard, use the following syntax:
-	/// </example>
-	///  <code>
-	/// Header = "{axog:Localize Menu.FileMenu.File UsesAccessors=True}"
-	/// </code>
-	[MarkupExtensionReturnType(typeof(string))]
-	public sealed class LocalizeExtension : LanguageDependentExtension
-	{
-		public LocalizeExtension(string key)
-		{
-			this.key = key;
-			this.UsesAccessors = true;
-			this.UpdateOnLanguageChange = true;
-		}
+  /// <summary>
+  /// Markup extension that retrieves localized resource strings.
+  /// </summary>
+  /// <example>
+  /// Set the title of the main window using the string resource 'MainWindow.DialogName':
+  /// <code>
+  /// Title = "{axog:Localize MainWindow.DialogName}"
+  /// </code>
+  /// If the string used accessors to enable easy access by keyboard, use the following syntax:
+  /// </example>
+  ///  <code>
+  /// Header = "{axog:Localize Menu.FileMenu.File UsesAccessors=True}"
+  /// </code>
+  [MarkupExtensionReturnType(typeof(string))]
+  public sealed class LocalizeExtension : LanguageDependentExtension
+  {
+    public LocalizeExtension(string key)
+    {
+      this.key = key;
+      this.UsesAccessors = true;
+      this.UpdateOnLanguageChange = true;
+    }
 
-		public LocalizeExtension()
-		{
-			this.UsesAccessors = true;
-			this.UpdateOnLanguageChange = true;
-		}
+    public LocalizeExtension()
+    {
+      this.UsesAccessors = true;
+      this.UpdateOnLanguageChange = true;
+    }
 
-		private string key;
+    private string key;
 
-		public string Key
-		{
-			get { return key; }
-			set { key = value; }
-		}
+    public string Key
+    {
+      get { return key; }
+      set { key = value; }
+    }
 
-		/// <summary>
-		/// Set whether the text uses accessors.
-		/// If set to true (default), accessors will be converted to WPF syntax.
-		/// </summary>
-		public bool UsesAccessors { get; set; }
+    /// <summary>
+    /// Set whether the text uses accessors.
+    /// If set to true (default), accessors will be converted to WPF syntax.
+    /// </summary>
+    public bool UsesAccessors { get; set; }
 
-		public override string Value
-		{
-			get
-			{
-				try
-				{
-					string result = Altaxo.Current.ResourceService.GetString(key);
-					if (UsesAccessors)
-						result = MenuService.ConvertLabel(result);
-					return result;
-				}
-				catch (ResourceNotFoundException)
-				{
-					return "{Localize:" + key + "}";
-				}
-			}
-		}
-	}
+    public override string Value
+    {
+      get
+      {
+        try
+        {
+          string result = Altaxo.Current.ResourceService.GetString(key);
+          if (UsesAccessors)
+            result = MenuService.ConvertLabel(result);
+          return result;
+        }
+        catch (ResourceNotFoundException)
+        {
+          return "{Localize:" + key + "}";
+        }
+      }
+    }
+  }
 }

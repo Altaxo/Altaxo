@@ -22,10 +22,10 @@ namespace Altaxo.Gui.Markdown
   /// </summary>
   public enum LastActivatedWindow
   {
-	/// <summary>The user has at last used the source editor window. </summary>
-	Editor,
+    /// <summary>The user has at last used the source editor window. </summary>
+    Editor,
 
-	/// <summary>The user has at last used the preview window.</summary>
-	Viewer,
+    /// <summary>The user has at last used the preview window.</summary>
+    Viewer,
   };
 }

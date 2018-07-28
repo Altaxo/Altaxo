@@ -30,149 +30,153 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	public class MatrixToDataTableConverter
-	{
-		private const string DefaultColumnBaseName = "C";
-		private DataTable _destinationTable;
-		private IROMatrix<double> _sourceMatrix;
-		private string _columnNameBase;
+  public class MatrixToDataTableConverter
+  {
+    private const string DefaultColumnBaseName = "C";
+    private DataTable _destinationTable;
+    private IROMatrix<double> _sourceMatrix;
+    private string _columnNameBase;
 
-		private List<Tuple<IReadOnlyList<double>, string>> _rowHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
-		private List<Tuple<IReadOnlyList<double>, string>> _columnHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
+    private List<Tuple<IReadOnlyList<double>, string>> _rowHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
+    private List<Tuple<IReadOnlyList<double>, string>> _columnHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
 
-		public MatrixToDataTableConverter(IROMatrix<double> sourceMatrix, DataTable destinationTable)
-		{
-			if (null == sourceMatrix)
-				throw new ArgumentNullException("sourceMatrix");
-			if (null == destinationTable)
-				throw new ArgumentNullException("destinationTable");
+    public MatrixToDataTableConverter(IROMatrix<double> sourceMatrix, DataTable destinationTable)
+    {
+      if (null == sourceMatrix)
+        throw new ArgumentNullException("sourceMatrix");
+      if (null == destinationTable)
+        throw new ArgumentNullException("destinationTable");
 
-			_sourceMatrix = sourceMatrix;
-			_destinationTable = destinationTable;
-		}
+      _sourceMatrix = sourceMatrix;
+      _destinationTable = destinationTable;
+    }
 
-		#region Static Executors
+    #region Static Executors
 
-		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix)
-		{
-			var c = new MatrixToDataTableConverter(matrix, destinationTable);
-			c.Execute();
-		}
+    public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix)
+    {
+      var c = new MatrixToDataTableConverter(matrix, destinationTable);
+      c.Execute();
+    }
 
-		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix, string columnBaseName)
-		{
-			var c = new MatrixToDataTableConverter(matrix, destinationTable);
-			c.ColumnBaseName = columnBaseName;
-			c.Execute();
-		}
+    public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix, string columnBaseName)
+    {
+      var c = new MatrixToDataTableConverter(matrix, destinationTable);
+      c.ColumnBaseName = columnBaseName;
+      c.Execute();
+    }
 
-		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix, string columnBaseName, IReadOnlyList<double> rowHeaderColumn, string rowHeaderColumnName, IReadOnlyList<double> colHeaderColumn, string colHeaderColumnName)
-		{
-			var c = new MatrixToDataTableConverter(matrix, destinationTable);
-			c.ColumnBaseName = columnBaseName;
-			c.AddMatrixColumnHeaderData(rowHeaderColumn, rowHeaderColumnName);
-			c.AddMatrixColumnHeaderData(colHeaderColumn, colHeaderColumnName);
-			c.Execute();
-		}
+    public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix, string columnBaseName, IReadOnlyList<double> rowHeaderColumn, string rowHeaderColumnName, IReadOnlyList<double> colHeaderColumn, string colHeaderColumnName)
+    {
+      var c = new MatrixToDataTableConverter(matrix, destinationTable);
+      c.ColumnBaseName = columnBaseName;
+      c.AddMatrixColumnHeaderData(rowHeaderColumn, rowHeaderColumnName);
+      c.AddMatrixColumnHeaderData(colHeaderColumn, colHeaderColumnName);
+      c.Execute();
+    }
 
-		#endregion Static Executors
+    #endregion Static Executors
 
-		#region Input properties
+    #region Input properties
 
-		public string ColumnBaseName
-		{
-			set
-			{
-				_columnNameBase = value;
-			}
-		}
+    public string ColumnBaseName
+    {
+      set
+      {
+        _columnNameBase = value;
+      }
+    }
 
-		public event Func<int, string> ColumnNameGenerator;
+    public event Func<int, string> ColumnNameGenerator;
 
-		public void AddMatrixRowHeaderData(IReadOnlyList<double> vector, string name)
-		{
-			if (null == vector)
-				throw new ArgumentNullException("vector");
-			if (string.IsNullOrEmpty(name))
-				throw new ArgumentNullException("name");
-			if (vector.Count != _sourceMatrix.RowCount)
-				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of rows of the matrix.");
+    public void AddMatrixRowHeaderData(IReadOnlyList<double> vector, string name)
+    {
+      if (null == vector)
+        throw new ArgumentNullException("vector");
+      if (string.IsNullOrEmpty(name))
+        throw new ArgumentNullException("name");
+      if (vector.Count != _sourceMatrix.RowCount)
+        throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of rows of the matrix.");
 
-			_rowHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
-		}
+      _rowHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
+    }
 
-		public void AddMatrixColumnHeaderData(IReadOnlyList<double> vector, string name)
-		{
-			if (null == vector)
-				throw new ArgumentNullException("vector");
-			if (string.IsNullOrEmpty(name))
-				throw new ArgumentNullException("name");
-			if (vector.Count != _sourceMatrix.ColumnCount)
-				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of columns of the matrix.");
+    public void AddMatrixColumnHeaderData(IReadOnlyList<double> vector, string name)
+    {
+      if (null == vector)
+        throw new ArgumentNullException("vector");
+      if (string.IsNullOrEmpty(name))
+        throw new ArgumentNullException("name");
+      if (vector.Count != _sourceMatrix.ColumnCount)
+        throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of columns of the matrix.");
 
-			_columnHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
-		}
+      _columnHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
+    }
 
-		#endregion Input properties
+    #endregion Input properties
 
-		private ColumnKind GetIndependendVariableColumnKind(int i)
-		{
-			switch (i)
-			{
-				case 0: return ColumnKind.X;
-				case 1: return ColumnKind.Y;
-				case 2: return ColumnKind.Z;
-				default: return ColumnKind.Label;
-			}
-		}
+    private ColumnKind GetIndependendVariableColumnKind(int i)
+    {
+      switch (i)
+      {
+        case 0:
+          return ColumnKind.X;
+        case 1:
+          return ColumnKind.Y;
+        case 2:
+          return ColumnKind.Z;
+        default:
+          return ColumnKind.Label;
+      }
+    }
 
-		public void Execute()
-		{
-			using (var suspendToken = _destinationTable.SuspendGetToken())
-			{
-				var numRows = _sourceMatrix.RowCount;
-				var numCols = _sourceMatrix.ColumnCount;
+    public void Execute()
+    {
+      using (var suspendToken = _destinationTable.SuspendGetToken())
+      {
+        var numRows = _sourceMatrix.RowCount;
+        var numCols = _sourceMatrix.ColumnCount;
 
-				int columnNumber = 0;
+        int columnNumber = 0;
 
-				var dataCols = _destinationTable.DataColumns;
+        var dataCols = _destinationTable.DataColumns;
 
-				foreach (var tuple in _rowHeaderColumns)
-				{
-					var col = dataCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(columnNumber, tuple.Item2, GetIndependendVariableColumnKind(columnNumber), 0);
-					col.AssignVector = tuple.Item1;
-					col.CutToMaximumLength(numRows);
-					++columnNumber;
-				}
+        foreach (var tuple in _rowHeaderColumns)
+        {
+          var col = dataCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(columnNumber, tuple.Item2, GetIndependendVariableColumnKind(columnNumber), 0);
+          col.AssignVector = tuple.Item1;
+          col.CutToMaximumLength(numRows);
+          ++columnNumber;
+        }
 
-				for (int i = 0; i < _sourceMatrix.ColumnCount; ++i)
-				{
-					string columnName;
-					if (null != ColumnNameGenerator)
-						columnName = ColumnNameGenerator(i);
-					else
-						columnName = string.Format("{0}{1}", string.IsNullOrEmpty(_columnNameBase) ? DefaultColumnBaseName : _columnNameBase, i);
+        for (int i = 0; i < _sourceMatrix.ColumnCount; ++i)
+        {
+          string columnName;
+          if (null != ColumnNameGenerator)
+            columnName = ColumnNameGenerator(i);
+          else
+            columnName = string.Format("{0}{1}", string.IsNullOrEmpty(_columnNameBase) ? DefaultColumnBaseName : _columnNameBase, i);
 
-					var col = dataCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(columnNumber, columnName, ColumnKind.V, 0);
-					col.AssignVector = MatrixMath.ColumnToROVector(_sourceMatrix, i);
-					col.CutToMaximumLength(numRows);
-					++columnNumber;
-				}
+          var col = dataCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(columnNumber, columnName, ColumnKind.V, 0);
+          col.AssignVector = MatrixMath.ColumnToROVector(_sourceMatrix, i);
+          col.CutToMaximumLength(numRows);
+          ++columnNumber;
+        }
 
-				// property columns
-				var numXDataCols = _rowHeaderColumns.Count;
-				int propColumnNumber = 0;
-				var propCols = _destinationTable.PropertyColumns;
-				foreach (var tuple in _columnHeaderColumns)
-				{
-					var col = propCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(propColumnNumber, tuple.Item2, GetIndependendVariableColumnKind(propColumnNumber), 0);
-					VectorMath.Copy(tuple.Item1, col.ToVector(numXDataCols, _sourceMatrix.ColumnCount));
-					col.CutToMaximumLength(numXDataCols + _sourceMatrix.ColumnCount);
-					++propColumnNumber;
-				}
+        // property columns
+        var numXDataCols = _rowHeaderColumns.Count;
+        int propColumnNumber = 0;
+        var propCols = _destinationTable.PropertyColumns;
+        foreach (var tuple in _columnHeaderColumns)
+        {
+          var col = propCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(propColumnNumber, tuple.Item2, GetIndependendVariableColumnKind(propColumnNumber), 0);
+          VectorMath.Copy(tuple.Item1, col.ToVector(numXDataCols, _sourceMatrix.ColumnCount));
+          col.CutToMaximumLength(numXDataCols + _sourceMatrix.ColumnCount);
+          ++propColumnNumber;
+        }
 
-				suspendToken.Dispose();
-			}
-		}
-	}
+        suspendToken.Dispose();
+      }
+    }
+  }
 }

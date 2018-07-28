@@ -31,184 +31,184 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
-	using Data;
-	using Graph.Plot.Data;
-	using Styles;
+  using Data;
+  using Graph.Plot.Data;
+  using Styles;
 
-	/// <summary>
-	/// Association of data and style specialized for x-y-plots of column data.
-	/// </summary>
-	public class XYFunctionPlotItem : G2DPlotItem
-	{
-		protected IXYFunctionPlotData _plotData;
+  /// <summary>
+  /// Association of data and style specialized for x-y-plots of column data.
+  /// </summary>
+  public class XYFunctionPlotItem : G2DPlotItem
+  {
+    protected IXYFunctionPlotData _plotData;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotItem", 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
-				info.AddValue("Data", s._plotData);
-				info.AddValue("Style", s._plotStyles);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotItem", 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
+        info.AddValue("Data", s._plotData);
+        info.AddValue("Style", s._plotStyles);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				XYFunctionPlotData pa = (XYFunctionPlotData)info.GetValue("Data", null);
-				XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYFunctionPlotData pa = (XYFunctionPlotData)info.GetValue("Data", null);
+        XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
 
-				G2DPlotStyleCollection ps = new G2DPlotStyleCollection();
-				if (null != lsps.ScatterStyle)
-					ps.Add(new ScatterPlotStyle(lsps.ScatterStyle));
-				if (null != lsps.XYPlotLineStyle)
-					ps.Add(new LinePlotStyle(lsps.XYPlotLineStyle));
+        G2DPlotStyleCollection ps = new G2DPlotStyleCollection();
+        if (null != lsps.ScatterStyle)
+          ps.Add(new ScatterPlotStyle(lsps.ScatterStyle));
+        if (null != lsps.XYPlotLineStyle)
+          ps.Add(new LinePlotStyle(lsps.XYPlotLineStyle));
 
-				if (null == o)
-				{
-					return new XYFunctionPlotItem(pa, ps);
-				}
-				else
-				{
-					XYFunctionPlotItem s = (XYFunctionPlotItem)o;
-					s.Data = pa;
-					s.Style = ps;
-					return s;
-				}
-			}
-		}
+        if (null == o)
+        {
+          return new XYFunctionPlotItem(pa, ps);
+        }
+        else
+        {
+          XYFunctionPlotItem s = (XYFunctionPlotItem)o;
+          s.Data = pa;
+          s.Style = ps;
+          return s;
+        }
+      }
+    }
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotItem", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotItem), 2)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
-				info.AddValue("Data", s._plotData);
-				info.AddValue("Style", s._plotStyles);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotItem", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotItem), 2)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
+        info.AddValue("Data", s._plotData);
+        info.AddValue("Style", s._plotStyles);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var pa = (IXYFunctionPlotData)info.GetValue("Data", null);
-				var ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var pa = (IXYFunctionPlotData)info.GetValue("Data", null);
+        var ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
 
-				if (null == o)
-				{
-					return new XYFunctionPlotItem(pa, ps);
-				}
-				else
-				{
-					XYFunctionPlotItem s = (XYFunctionPlotItem)o;
-					s.Data = pa;
-					s.Style = ps;
-					return s;
-				}
-			}
-		}
+        if (null == o)
+        {
+          return new XYFunctionPlotItem(pa, ps);
+        }
+        else
+        {
+          XYFunctionPlotItem s = (XYFunctionPlotItem)o;
+          s.Data = pa;
+          s.Style = ps;
+          return s;
+        }
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		private System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
-		{
-			if (null != _plotData)
-				yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null, "Data");
-		}
+    private System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
+    {
+      if (null != _plotData)
+        yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null, "Data");
+    }
 
-		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
-		}
+    protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+    {
+      return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
+    }
 
-		public XYFunctionPlotItem(IXYFunctionPlotData pa, G2DPlotStyleCollection ps)
-		{
-			this.Data = pa;
-			this.Style = ps;
-		}
+    public XYFunctionPlotItem(IXYFunctionPlotData pa, G2DPlotStyleCollection ps)
+    {
+      this.Data = pa;
+      this.Style = ps;
+    }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XYFunctionPlotItem"/> class. Intended for use in derived classes.
-		/// </summary>
-		protected XYFunctionPlotItem()
-		{
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XYFunctionPlotItem"/> class. Intended for use in derived classes.
+    /// </summary>
+    protected XYFunctionPlotItem()
+    {
+    }
 
-		public XYFunctionPlotItem(XYFunctionPlotItem from)
-		{
-			CopyFrom((PlotItem)from);
-		}
+    public XYFunctionPlotItem(XYFunctionPlotItem from)
+    {
+      CopyFrom((PlotItem)from);
+    }
 
-		public override bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
+    public override bool CopyFrom(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
 
-			var copied = base.CopyFrom(obj);
-			if (copied && obj is XYFunctionPlotItem from)
-			{
-				ChildCopyToMember(ref _plotData, from._plotData);
-			}
-			return copied;
-		}
+      var copied = base.CopyFrom(obj);
+      if (copied && obj is XYFunctionPlotItem from)
+      {
+        ChildCopyToMember(ref _plotData, from._plotData);
+      }
+      return copied;
+    }
 
-		public override object Clone()
-		{
-			return new XYFunctionPlotItem(this);
-		}
+    public override object Clone()
+    {
+      return new XYFunctionPlotItem(this);
+    }
 
-		public override Main.IDocumentLeafNode DataObject
-		{
-			get { return _plotData; }
-		}
+    public override Main.IDocumentLeafNode DataObject
+    {
+      get { return _plotData; }
+    }
 
-		public virtual IXYFunctionPlotData Data
-		{
-			get { return _plotData; }
-			set
-			{
-				if (null == value)
-					throw new System.ArgumentNullException(nameof(value));
+    public virtual IXYFunctionPlotData Data
+    {
+      get { return _plotData; }
+      set
+      {
+        if (null == value)
+          throw new System.ArgumentNullException(nameof(value));
 
-				if (!object.ReferenceEquals(_plotData, value))
-				{
-					_plotData = value;
-					_plotData.ParentObject = this;
-					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
-				}
-			}
-		}
+        if (!object.ReferenceEquals(_plotData, value))
+        {
+          _plotData = value;
+          _plotData.ParentObject = this;
+          EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+        }
+      }
+    }
 
-		public override string GetName(int level)
-		{
-			return _plotData.ToString();
-		}
+    public override string GetName(int level)
+    {
+      return _plotData.ToString();
+    }
 
-		public override string GetName(string style)
-		{
-			return GetName(0);
-		}
+    public override string GetName(string style)
+    {
+      return GetName(0);
+    }
 
-		public override string ToString()
-		{
-			return GetName(int.MaxValue);
-		}
+    public override string ToString()
+    {
+      return GetName(int.MaxValue);
+    }
 
-		public override Processed2DPlotData GetRangesAndPoints(IPlotArea layer)
-		{
-			return _plotData.GetRangesAndPoints(layer);
-		}
+    public override Processed2DPlotData GetRangesAndPoints(IPlotArea layer)
+    {
+      return _plotData.GetRangesAndPoints(layer);
+    }
 
-		/// <summary>
-		/// This routine ensures that the plot item updates all its cached data and send the appropriate
-		/// events if something has changed. Called before the layer paint routine paints the axes because
-		/// it must be ensured that the axes are scaled correctly before the plots are painted.
-		/// </summary>
-		/// <param name="layer">The plot layer.</param>
-		public override void PrepareScales(IPlotArea layer)
-		{
-			// nothing really to do here
-		}
-	}
+    /// <summary>
+    /// This routine ensures that the plot item updates all its cached data and send the appropriate
+    /// events if something has changed. Called before the layer paint routine paints the axes because
+    /// it must be ensured that the axes are scaled correctly before the plots are painted.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    public override void PrepareScales(IPlotArea layer)
+    {
+      // nothing really to do here
+    }
+  }
 }

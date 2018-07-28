@@ -30,54 +30,54 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Settings
 {
-	/// <summary>
-	/// Interaction logic for CultureSettingsControl.xaml
-	/// </summary>
-	public partial class CultureSettingsControl : UserControl, ICultureSettingsView
-	{
-		public event Action CultureChanged;
+  /// <summary>
+  /// Interaction logic for CultureSettingsControl.xaml
+  /// </summary>
+  public partial class CultureSettingsControl : UserControl, ICultureSettingsView
+  {
+    public event Action CultureChanged;
 
-		public CultureSettingsControl()
-		{
-			InitializeComponent();
-		}
+    public CultureSettingsControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeCultureFormatList(Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiCultures, list);
-		}
+    public void InitializeCultureFormatList(Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiCultures, list);
+    }
 
-		public string NumberDecimalSeparator
-		{
-			get
-			{
-				return _guiNumberDecimalSeparator.Text;
-			}
-			set
-			{
-				_guiNumberDecimalSeparator.Text = value;
-			}
-		}
+    public string NumberDecimalSeparator
+    {
+      get
+      {
+        return _guiNumberDecimalSeparator.Text;
+      }
+      set
+      {
+        _guiNumberDecimalSeparator.Text = value;
+      }
+    }
 
-		public string NumberGroupSeparator
-		{
-			get
-			{
-				return _guiNumberGroupSeparator.Text;
-			}
-			set
-			{
-				_guiNumberGroupSeparator.Text = value;
-			}
-		}
+    public string NumberGroupSeparator
+    {
+      get
+      {
+        return _guiNumberGroupSeparator.Text;
+      }
+      set
+      {
+        _guiNumberGroupSeparator.Text = value;
+      }
+    }
 
-		private void EhCultureChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiCultures);
-			if (null != CultureChanged)
-			{
-				CultureChanged();
-			}
-		}
-	}
+    private void EhCultureChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiCultures);
+      if (null != CultureChanged)
+      {
+        CultureChanged();
+      }
+    }
+  }
 }

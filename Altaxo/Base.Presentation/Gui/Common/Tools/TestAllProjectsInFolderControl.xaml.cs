@@ -30,50 +30,50 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Tools
 {
-	/// <summary>
-	/// Interaction logic for TestAllProjectsInFolderControl.xaml
-	/// </summary>
-	public partial class TestAllProjectsInFolderControl : UserControl, ITestAllProjectsInFolderView
-	{
-		public TestAllProjectsInFolderControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for TestAllProjectsInFolderControl.xaml
+  /// </summary>
+  public partial class TestAllProjectsInFolderControl : UserControl, ITestAllProjectsInFolderView
+  {
+    public TestAllProjectsInFolderControl()
+    {
+      InitializeComponent();
+    }
 
-		public string FolderPaths
-		{
-			get
-			{
-				return _guiPathsToTest.Text;
-			}
-			set
-			{
-				_guiPathsToTest.Text = value;
-			}
-		}
+    public string FolderPaths
+    {
+      get
+      {
+        return _guiPathsToTest.Text;
+      }
+      set
+      {
+        _guiPathsToTest.Text = value;
+      }
+    }
 
-		public string ProtocolFileName
-		{
-			get
-			{
-				return _guiProtocolFileName.Text;
-			}
-			set
-			{
-				_guiProtocolFileName.Text = value;
-			}
-		}
+    public string ProtocolFileName
+    {
+      get
+      {
+        return _guiProtocolFileName.Text;
+      }
+      set
+      {
+        _guiProtocolFileName.Text = value;
+      }
+    }
 
-		public bool TestSavingAndReopening
-		{
-			get
-			{
-				return _guiStoreLoadTest.IsChecked == true;
-			}
-			set
-			{
-				_guiStoreLoadTest.IsChecked = value;
-			}
-		}
-	}
+    public bool TestSavingAndReopening
+    {
+      get
+      {
+        return _guiStoreLoadTest.IsChecked == true;
+      }
+      set
+      {
+        _guiStoreLoadTest.IsChecked = value;
+      }
+    }
+  }
 }

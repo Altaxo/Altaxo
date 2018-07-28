@@ -29,147 +29,147 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Data
 {
-	/// <summary>
-	/// Compound of plot ranges that can be treated as a single plot range, because it implements <see cref="IPlotRange"/>.
-	/// </summary>
-	/// <seealso cref="Altaxo.Graph.Plot.Data.IPlotRange" />
-	public class PlotRangeCompound : IPlotRange
-	{
-		private IPlotRange[] _ranges;
+  /// <summary>
+  /// Compound of plot ranges that can be treated as a single plot range, because it implements <see cref="IPlotRange"/>.
+  /// </summary>
+  /// <seealso cref="Altaxo.Graph.Plot.Data.IPlotRange" />
+  public class PlotRangeCompound : IPlotRange
+  {
+    private IPlotRange[] _ranges;
 
-		public PlotRangeCompound(IEnumerable<IPlotRange> ranges)
-		{
-			if (null == ranges)
-				throw new ArgumentNullException(nameof(ranges));
+    public PlotRangeCompound(IEnumerable<IPlotRange> ranges)
+    {
+      if (null == ranges)
+        throw new ArgumentNullException(nameof(ranges));
 
-			_ranges = ranges.ToArray();
+      _ranges = ranges.ToArray();
 
-			if (_ranges.Length == 0)
-				throw new ArgumentOutOfRangeException(nameof(ranges), "must not be empty");
-		}
+      if (_ranges.Length == 0)
+        throw new ArgumentOutOfRangeException(nameof(ranges), "must not be empty");
+    }
 
-		/// <inheritdoc/>
-		public int Length
-		{
-			get
-			{
-				return _ranges[_ranges.Length - 1].UpperBound - _ranges[0].LowerBound;
-			}
-		}
+    /// <inheritdoc/>
+    public int Length
+    {
+      get
+      {
+        return _ranges[_ranges.Length - 1].UpperBound - _ranges[0].LowerBound;
+      }
+    }
 
-		/// <inheritdoc/>
-		public int LowerBound
-		{
-			get
-			{
-				return _ranges[0].LowerBound;
-			}
-		}
+    /// <inheritdoc/>
+    public int LowerBound
+    {
+      get
+      {
+        return _ranges[0].LowerBound;
+      }
+    }
 
-		private int _lastPlotPointIndex;
-		private int _lastRangeIndex;
+    private int _lastPlotPointIndex;
+    private int _lastRangeIndex;
 
-		public int GetOriginalRowIndexFromPlotPointIndex(int plotPointIndex)
-		{
-			if (plotPointIndex >= _lastPlotPointIndex)
-			{
-				if (plotPointIndex < _ranges[_lastRangeIndex].UpperBound)
-				{
-					return _ranges[_lastRangeIndex].GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
-				}
+    public int GetOriginalRowIndexFromPlotPointIndex(int plotPointIndex)
+    {
+      if (plotPointIndex >= _lastPlotPointIndex)
+      {
+        if (plotPointIndex < _ranges[_lastRangeIndex].UpperBound)
+        {
+          return _ranges[_lastRangeIndex].GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
+        }
 
-				for (int i = _lastRangeIndex + 1; i < _ranges.Length; ++i)
-				{
-					if (plotPointIndex < _ranges[i].UpperBound)
-					{
-						_lastRangeIndex = i;
-						_lastPlotPointIndex = plotPointIndex;
-						return _ranges[i].GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
-					}
-				}
-			}
-			else
-			{
-				for (int i = 0; i < _ranges.Length; ++i)
-				{
-					if (plotPointIndex < _ranges[i].UpperBound)
-					{
-						_lastRangeIndex = i;
-						_lastPlotPointIndex = plotPointIndex;
-						return _ranges[i].GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
-					}
-				}
-			}
+        for (int i = _lastRangeIndex + 1; i < _ranges.Length; ++i)
+        {
+          if (plotPointIndex < _ranges[i].UpperBound)
+          {
+            _lastRangeIndex = i;
+            _lastPlotPointIndex = plotPointIndex;
+            return _ranges[i].GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
+          }
+        }
+      }
+      else
+      {
+        for (int i = 0; i < _ranges.Length; ++i)
+        {
+          if (plotPointIndex < _ranges[i].UpperBound)
+          {
+            _lastRangeIndex = i;
+            _lastPlotPointIndex = plotPointIndex;
+            return _ranges[i].GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
+          }
+        }
+      }
 
-			throw new ArgumentOutOfRangeException(nameof(plotPointIndex), "is above the range range");
-		}
+      throw new ArgumentOutOfRangeException(nameof(plotPointIndex), "is above the range range");
+    }
 
-		/// <inheritdoc/>
-		public int OriginalFirstPoint
-		{
-			get
-			{
-				return _ranges[0].OriginalFirstPoint;
-			}
-		}
+    /// <inheritdoc/>
+    public int OriginalFirstPoint
+    {
+      get
+      {
+        return _ranges[0].OriginalFirstPoint;
+      }
+    }
 
-		public int OriginalLastPoint
-		{
-			get
-			{
-				return _ranges[_ranges.Length - 1].OriginalLastPoint;
-			}
-		}
+    public int OriginalLastPoint
+    {
+      get
+      {
+        return _ranges[_ranges.Length - 1].OriginalLastPoint;
+      }
+    }
 
-		/// <inheritdoc/>
-		public int UpperBound
-		{
-			get
-			{
-				return _ranges[_ranges.Length - 1].UpperBound;
-			}
-		}
+    /// <inheritdoc/>
+    public int UpperBound
+    {
+      get
+      {
+        return _ranges[_ranges.Length - 1].UpperBound;
+      }
+    }
 
-		/// <inheritdoc/>
-		public IPlotRange WithUpperBoundShortenedBy(int count)
-		{
-			if (!(count >= 0))
-				throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
+    /// <inheritdoc/>
+    public IPlotRange WithUpperBoundShortenedBy(int count)
+    {
+      if (!(count >= 0))
+        throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
 
-			if (0 == count)
-				return this;
+      if (0 == count)
+        return this;
 
-			int remaining = count;
+      int remaining = count;
 
-			int i = _ranges.Length;
+      int i = _ranges.Length;
 
-			while (remaining > 0 && i > 0)
-			{
-				--i;
-				if (_ranges[i].Length <= remaining)
-					remaining -= _ranges[i].Length;
-				else
-					break;
-			}
+      while (remaining > 0 && i > 0)
+      {
+        --i;
+        if (_ranges[i].Length <= remaining)
+          remaining -= _ranges[i].Length;
+        else
+          break;
+      }
 
-			if (i == 0)
-				return _ranges[0].WithUpperBoundShortenedBy(remaining);
-			else
-			{
-				return new PlotRangeCompound(_ranges.Take(i).Concat(new[] { _ranges[i].WithUpperBoundShortenedBy(remaining) }));
-			}
-		}
+      if (i == 0)
+        return _ranges[0].WithUpperBoundShortenedBy(remaining);
+      else
+      {
+        return new PlotRangeCompound(_ranges.Take(i).Concat(new[] { _ranges[i].WithUpperBoundShortenedBy(remaining) }));
+      }
+    }
 
-		/// <inheritdoc/>
-		public IPlotRange WithUpperBoundExtendedBy(int count)
-		{
-			if (!(count >= 0))
-				throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
+    /// <inheritdoc/>
+    public IPlotRange WithUpperBoundExtendedBy(int count)
+    {
+      if (!(count >= 0))
+        throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
 
-			if (0 == count)
-				return this;
+      if (0 == count)
+        return this;
 
-			return new PlotRangeCompound(_ranges.Take(_ranges.Length - 1).Concat(new[] { _ranges[_ranges.Length - 1].WithUpperBoundExtendedBy(count) }));
-		}
-	}
+      return new PlotRangeCompound(_ranges.Take(_ranges.Length - 1).Concat(new[] { _ranges[_ranges.Length - 1].WithUpperBoundExtendedBy(count) }));
+    }
+  }
 }

@@ -28,151 +28,151 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
-	/// <summary>
-	/// Class which holds unique items in the order in wich they are added (like a List, but with the difference that only unique items could be contained).
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public class SetList<T> : ICollection<T>, IReadOnlyList<T>
-	{
-		private List<T> _itemList = new List<T>();
-		private Dictionary<T, int> _itemHash = new Dictionary<T, int>();
+  /// <summary>
+  /// Class which holds unique items in the order in wich they are added (like a List, but with the difference that only unique items could be contained).
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  public class SetList<T> : ICollection<T>, IReadOnlyList<T>
+  {
+    private List<T> _itemList = new List<T>();
+    private Dictionary<T, int> _itemHash = new Dictionary<T, int>();
 
-		#region ICollection<T> Members
+    #region ICollection<T> Members
 
-		public void Add(T item)
-		{
-			if (_itemHash == null)
-				EnsureHashNotNull();
+    public void Add(T item)
+    {
+      if (_itemHash == null)
+        EnsureHashNotNull();
 
-			if (_itemHash.ContainsKey(item))
-				throw new ArgumentException("The item is already contained in the collection");
+      if (_itemHash.ContainsKey(item))
+        throw new ArgumentException("The item is already contained in the collection");
 
-			_itemHash.Add(item, _itemList.Count);
-			_itemList.Add(item);
-		}
+      _itemHash.Add(item, _itemList.Count);
+      _itemList.Add(item);
+    }
 
-		public bool Contains(T item)
-		{
-			if (_itemHash == null)
-				EnsureHashNotNull();
-			return _itemHash.ContainsKey(item);
-		}
+    public bool Contains(T item)
+    {
+      if (_itemHash == null)
+        EnsureHashNotNull();
+      return _itemHash.ContainsKey(item);
+    }
 
-		public void Clear()
-		{
-			_itemList.Clear();
-			InvalidateHash();
-		}
+    public void Clear()
+    {
+      _itemList.Clear();
+      InvalidateHash();
+    }
 
-		public void CopyTo(T[] array, int arrayIndex)
-		{
-			_itemList.CopyTo(array, arrayIndex);
-		}
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+      _itemList.CopyTo(array, arrayIndex);
+    }
 
-		public int Count
-		{
-			get { return _itemList.Count; }
-		}
+    public int Count
+    {
+      get { return _itemList.Count; }
+    }
 
-		public bool IsReadOnly
-		{
-			get { return false; }
-		}
+    public bool IsReadOnly
+    {
+      get { return false; }
+    }
 
-		public bool Remove(T item)
-		{
-			if (_itemHash != null)
-			{
-				if (_itemHash.ContainsKey(item))
-				{
-					_itemList.RemoveAt(_itemHash[item]);
-					InvalidateHash();
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-			else // item hash is null
-			{
-				for (int i = Count - 1; i >= 0; i--)
-				{
-					if (_itemList[i].Equals(item))
-					{
-						_itemList.RemoveAt(i);
+    public bool Remove(T item)
+    {
+      if (_itemHash != null)
+      {
+        if (_itemHash.ContainsKey(item))
+        {
+          _itemList.RemoveAt(_itemHash[item]);
+          InvalidateHash();
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      }
+      else // item hash is null
+      {
+        for (int i = Count - 1; i >= 0; i--)
+        {
+          if (_itemList[i].Equals(item))
+          {
+            _itemList.RemoveAt(i);
 
-						return true;
-					}
-				}
-				return false;
-			}
-		}
+            return true;
+          }
+        }
+        return false;
+      }
+    }
 
-		#endregion ICollection<T> Members
+    #endregion ICollection<T> Members
 
-		#region IEnumerable<T> Members
+    #region IEnumerable<T> Members
 
-		public IEnumerator<T> GetEnumerator()
-		{
-			return _itemList.GetEnumerator();
-		}
+    public IEnumerator<T> GetEnumerator()
+    {
+      return _itemList.GetEnumerator();
+    }
 
-		#endregion IEnumerable<T> Members
+    #endregion IEnumerable<T> Members
 
-		#region IEnumerable Members
+    #region IEnumerable Members
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			return _itemList.GetEnumerator();
-		}
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return _itemList.GetEnumerator();
+    }
 
-		#endregion IEnumerable Members
+    #endregion IEnumerable Members
 
-		#region other members
+    #region other members
 
-		private void InvalidateHash()
-		{
-			_itemHash = null;
-		}
+    private void InvalidateHash()
+    {
+      _itemHash = null;
+    }
 
-		/// <summary>
-		/// Rehashes the hash list if structural changes occur.
-		/// </summary>
-		private void EnsureHashNotNull()
-		{
-			if (null != _itemHash)
-				return;
+    /// <summary>
+    /// Rehashes the hash list if structural changes occur.
+    /// </summary>
+    private void EnsureHashNotNull()
+    {
+      if (null != _itemHash)
+        return;
 
-			_itemHash = new Dictionary<T, int>();
-			for (int i = 0; i < _itemList.Count; i++)
-			{
-				_itemHash.Add(_itemList[i], i);
-			}
-		}
+      _itemHash = new Dictionary<T, int>();
+      for (int i = 0; i < _itemList.Count; i++)
+      {
+        _itemHash.Add(_itemList[i], i);
+      }
+    }
 
-		public int IndexOf(T item)
-		{
-			if (_itemHash == null)
-				EnsureHashNotNull();
+    public int IndexOf(T item)
+    {
+      if (_itemHash == null)
+        EnsureHashNotNull();
 
-			int result;
-			return _itemHash.TryGetValue(item, out result) ? result : -1;
-		}
+      int result;
+      return _itemHash.TryGetValue(item, out result) ? result : -1;
+    }
 
-		public T this[int i]
-		{
-			get
-			{
-				return _itemList[i];
-			}
-		}
+    public T this[int i]
+    {
+      get
+      {
+        return _itemList[i];
+      }
+    }
 
-		public T[] ToArray()
-		{
-			return _itemList.ToArray();
-		}
+    public T[] ToArray()
+    {
+      return _itemList.ToArray();
+    }
 
-		#endregion other members
-	}
+    #endregion other members
+  }
 }

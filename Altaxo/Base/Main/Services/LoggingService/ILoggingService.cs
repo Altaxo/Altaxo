@@ -23,49 +23,49 @@ using System;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Interface to a logging service which typically logs some events to a log file.
-	/// </summary>
-	[GlobalService("Log", FallbackImplementation = typeof(FallbackLoggingService))]
-	public interface ILoggingService
-	{
-		void Debug(object message);
+  /// <summary>
+  /// Interface to a logging service which typically logs some events to a log file.
+  /// </summary>
+  [GlobalService("Log", FallbackImplementation = typeof(FallbackLoggingService))]
+  public interface ILoggingService
+  {
+    void Debug(object message);
 
-		void DebugFormatted(string format, params object[] args);
+    void DebugFormatted(string format, params object[] args);
 
-		void Info(object message);
+    void Info(object message);
 
-		void InfoFormatted(string format, params object[] args);
+    void InfoFormatted(string format, params object[] args);
 
-		void Warn(object message);
+    void Warn(object message);
 
-		void Warn(object message, Exception exception);
+    void Warn(object message, Exception exception);
 
-		void WarnFormatted(string format, params object[] args);
+    void WarnFormatted(string format, params object[] args);
 
-		void Error(object message);
+    void Error(object message);
 
-		void Error(object message, Exception exception);
+    void Error(object message, Exception exception);
 
-		void ErrorFormatted(string format, params object[] args);
+    void ErrorFormatted(string format, params object[] args);
 
-		void Fatal(object message);
+    void Fatal(object message);
 
-		void Fatal(object message, Exception exception);
+    void Fatal(object message, Exception exception);
 
-		void FatalFormatted(string format, params object[] args);
+    void FatalFormatted(string format, params object[] args);
 
-		bool IsDebugEnabled { get; }
-		bool IsInfoEnabled { get; }
-		bool IsWarnEnabled { get; }
-		bool IsErrorEnabled { get; }
-		bool IsFatalEnabled { get; }
-	}
+    bool IsDebugEnabled { get; }
+    bool IsInfoEnabled { get; }
+    bool IsWarnEnabled { get; }
+    bool IsErrorEnabled { get; }
+    bool IsFatalEnabled { get; }
+  }
 
-	internal sealed class FallbackLoggingService : TextWriterLoggingService
-	{
-		public FallbackLoggingService() : base(new TraceTextWriter())
-		{
-		}
-	}
+  internal sealed class FallbackLoggingService : TextWriterLoggingService
+  {
+    public FallbackLoggingService() : base(new TraceTextWriter())
+    {
+    }
+  }
 }

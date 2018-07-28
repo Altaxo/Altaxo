@@ -31,33 +31,33 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	public class PositionColorIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionColorIndexedTriangleBuffer
-	{
-		public PositionColorIndexedTriangleBuffer(ITransformationContext parent)
-			: base(parent)
-		{
-		}
+  public class PositionColorIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionColorIndexedTriangleBuffer
+  {
+    public PositionColorIndexedTriangleBuffer(ITransformationContext parent)
+      : base(parent)
+    {
+    }
 
-		protected override int BytesPerVertex { get { return 8 * 4; } }
+    protected override int BytesPerVertex { get { return 8 * 4; } }
 
-		public void AddTriangleVertex(double x, double y, double z, float r, float g, float b, float a)
-		{
-			var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));
+    public void AddTriangleVertex(double x, double y, double z, float r, float g, float b, float a)
+    {
+      var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));
 
-			int offs = _numberOfVertices << 3;
+      int offs = _numberOfVertices << 3;
 
-			if (offs + 8 >= _vertexStream.Length)
-				Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
+      if (offs + 8 >= _vertexStream.Length)
+        Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
 
-			_vertexStream[offs + 0] = (float)pt.X;
-			_vertexStream[offs + 1] = (float)pt.Y;
-			_vertexStream[offs + 2] = (float)pt.Z;
-			_vertexStream[offs + 3] = 1;
-			_vertexStream[offs + 4] = r;
-			_vertexStream[offs + 5] = g;
-			_vertexStream[offs + 6] = b;
-			_vertexStream[offs + 7] = a;
-			++_numberOfVertices;
-		}
-	}
+      _vertexStream[offs + 0] = (float)pt.X;
+      _vertexStream[offs + 1] = (float)pt.Y;
+      _vertexStream[offs + 2] = (float)pt.Z;
+      _vertexStream[offs + 3] = 1;
+      _vertexStream[offs + 4] = r;
+      _vertexStream[offs + 5] = g;
+      _vertexStream[offs + 6] = b;
+      _vertexStream[offs + 7] = a;
+      ++_numberOfVertices;
+    }
+  }
 }

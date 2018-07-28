@@ -27,92 +27,92 @@ using System;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
-	using Altaxo.Drawing;
-	using Altaxo.Graph;
+  using Altaxo.Drawing;
+  using Altaxo.Graph;
 
-	#region Interfaces
+  #region Interfaces
 
-	/// <summary>
-	/// Interface for Gui elements that show the properties of the <see cref="ColorProviderBase"/> class.
-	/// </summary>
-	public interface IColorProviderBaseView
-	{
-		/// <summary>
-		/// Get/set the content of the ColorBelow combo box.
-		/// </summary>
-		NamedColor ColorBelow { get; set; }
+  /// <summary>
+  /// Interface for Gui elements that show the properties of the <see cref="ColorProviderBase"/> class.
+  /// </summary>
+  public interface IColorProviderBaseView
+  {
+    /// <summary>
+    /// Get/set the content of the ColorBelow combo box.
+    /// </summary>
+    NamedColor ColorBelow { get; set; }
 
-		/// <summary>
-		/// IGet/set the content of the ColorAbove combo box.
-		/// </summary>
-		NamedColor ColorAbove { get; set; }
+    /// <summary>
+    /// IGet/set the content of the ColorAbove combo box.
+    /// </summary>
+    NamedColor ColorAbove { get; set; }
 
-		/// <summary>
-		/// Get/set the content of the ColorInvalid combo box.
-		/// </summary>
-		NamedColor ColorInvalid { get; set; }
+    /// <summary>
+    /// Get/set the content of the ColorInvalid combo box.
+    /// </summary>
+    NamedColor ColorInvalid { get; set; }
 
-		/// <summary>
-		/// Get/set the transparency value (0 .. 1).
-		/// </summary>
-		double Transparency { get; set; }
+    /// <summary>
+    /// Get/set the transparency value (0 .. 1).
+    /// </summary>
+    double Transparency { get; set; }
 
-		/// <summary>
-		/// Get/set the ColorSteps value (0..).
-		/// </summary>
-		int ColorSteps { get; set; }
+    /// <summary>
+    /// Get/set the ColorSteps value (0..).
+    /// </summary>
+    int ColorSteps { get; set; }
 
-		/// <summary>Is called when any of the user choices of this control changed. Intended for updating the preview when something changed.</summary>
-		event Action ChoiceChanged;
-	}
+    /// <summary>Is called when any of the user choices of this control changed. Intended for updating the preview when something changed.</summary>
+    event Action ChoiceChanged;
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[ExpectedTypeOfView(typeof(IColorProviderBaseView))]
-	[UserControllerForObject(typeof(ColorProviderBase))]
-	public class ColorProviderBaseController : MVCANDControllerEditImmutableDocBase<ColorProviderBase, IColorProviderBaseView>
-	{
-		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [ExpectedTypeOfView(typeof(IColorProviderBaseView))]
+  [UserControllerForObject(typeof(ColorProviderBase))]
+  public class ColorProviderBaseController : MVCANDControllerEditImmutableDocBase<ColorProviderBase, IColorProviderBaseView>
+  {
+    public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (null != _view)
-			{
-				_view.ColorBelow = _doc.ColorBelow;
-				_view.ColorAbove = _doc.ColorAbove;
-				_view.ColorInvalid = _doc.ColorInvalid;
-				_view.Transparency = _doc.Transparency;
-				_view.ColorSteps = _doc.ColorSteps;
-			}
-		}
+      if (null != _view)
+      {
+        _view.ColorBelow = _doc.ColorBelow;
+        _view.ColorAbove = _doc.ColorAbove;
+        _view.ColorInvalid = _doc.ColorInvalid;
+        _view.Transparency = _doc.Transparency;
+        _view.ColorSteps = _doc.ColorSteps;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc = _doc
-						.WithColorBelow(_view.ColorBelow)
-						.WithColorAbove(_view.ColorAbove)
-						.WithColorInvalid(_view.ColorInvalid)
-						.WithTransparency(_view.Transparency)
-						.WithColorSteps(_view.ColorSteps);
+    public override bool Apply(bool disposeController)
+    {
+      _doc = _doc
+            .WithColorBelow(_view.ColorBelow)
+            .WithColorAbove(_view.ColorAbove)
+            .WithColorInvalid(_view.ColorInvalid)
+            .WithTransparency(_view.Transparency)
+            .WithColorSteps(_view.ColorSteps);
 
-			return ApplyEnd(true, disposeController);
-		}
+      return ApplyEnd(true, disposeController);
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.ChoiceChanged += OnMadeDirty;
-		}
+    protected override void AttachView()
+    {
+      base.AttachView();
+      _view.ChoiceChanged += OnMadeDirty;
+    }
 
-		protected override void DetachView()
-		{
-			_view.ChoiceChanged -= OnMadeDirty;
-			base.DetachView();
-		}
-	}
+    protected override void DetachView()
+    {
+      _view.ChoiceChanged -= OnMadeDirty;
+      base.DetachView();
+    }
+  }
 }

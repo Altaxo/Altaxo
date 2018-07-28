@@ -28,85 +28,85 @@ using System.Collections;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// <see cref="GraphExportBindingDoozer"/> generates a class with interface <see cref="Altaxo.Main.IProjectItemImageExporter"/>, which can be used
-	/// to export a project item derived from type <see cref="Altaxo.Graph.GraphDocumentBase"/> as an image to a stream.
-	///
-	/// </summary>
-	public class GraphExportBindingDoozer : IDoozer
-	{
-		/// <summary>
-		/// Gets if the doozer handles codon conditions on its own.
-		/// If this property return false, the item is excluded when the condition is not met.
-		/// </summary>
-		public bool HandleConditions
-		{
-			get
-			{
-				return false;
-			}
-		}
+  /// <summary>
+  /// <see cref="GraphExportBindingDoozer"/> generates a class with interface <see cref="Altaxo.Main.IProjectItemImageExporter"/>, which can be used
+  /// to export a project item derived from type <see cref="Altaxo.Graph.GraphDocumentBase"/> as an image to a stream.
+  ///
+  /// </summary>
+  public class GraphExportBindingDoozer : IDoozer
+  {
+    /// <summary>
+    /// Gets if the doozer handles codon conditions on its own.
+    /// If this property return false, the item is excluded when the condition is not met.
+    /// </summary>
+    public bool HandleConditions
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		/// <summary>
-		/// Creates an item with the specified sub items. And the current
-		/// Condition status for this item.
-		/// </summary>
-		public object BuildItem(BuildItemArgs args)
-		{
-			string docTypeString = args.Codon.Properties["ProjectItemClass"];
-			string exporterTypeString = args.Codon.Properties["ExporterClass"];
+    /// <summary>
+    /// Creates an item with the specified sub items. And the current
+    /// Condition status for this item.
+    /// </summary>
+    public object BuildItem(BuildItemArgs args)
+    {
+      string docTypeString = args.Codon.Properties["ProjectItemClass"];
+      string exporterTypeString = args.Codon.Properties["ExporterClass"];
 
-			var docType = Type.GetType(docTypeString, false, false);
-			var exporterType = Type.GetType(exporterTypeString, false, false);
+      var docType = Type.GetType(docTypeString, false, false);
+      var exporterType = Type.GetType(exporterTypeString, false, false);
 
-			if (null == docType || null == exporterType)
-				return null;
+      if (null == docType || null == exporterType)
+        return null;
 
-			if (!(typeof(IProjectItem).IsAssignableFrom(docType)))
-				return null;
-			if (!(typeof(Altaxo.Main.IProjectItemImageExporter).IsAssignableFrom(exporterType)))
-				return null;
+      if (!(typeof(IProjectItem).IsAssignableFrom(docType)))
+        return null;
+      if (!(typeof(Altaxo.Main.IProjectItemImageExporter).IsAssignableFrom(exporterType)))
+        return null;
 
-			return new Graph3DExportBindingDescriptor(args.Codon, docType, exporterType);
-		}
+      return new Graph3DExportBindingDescriptor(args.Codon, docType, exporterType);
+    }
 
-		private class Graph3DExportBindingDescriptor : IProjectItemExportBindingDescriptor
-		{
-			private Type _projectItemType;
-			private Type _graphicalExporterType;
-			public Type ProjectItemType { get { return _projectItemType; } }
-			public Type GraphicalExporterType { get { return _graphicalExporterType; } }
+    private class Graph3DExportBindingDescriptor : IProjectItemExportBindingDescriptor
+    {
+      private Type _projectItemType;
+      private Type _graphicalExporterType;
+      public Type ProjectItemType { get { return _projectItemType; } }
+      public Type GraphicalExporterType { get { return _graphicalExporterType; } }
 
-			private Codon _codon;
+      private Codon _codon;
 
-			public string Id { get; set; }
-			public string Title { get; set; }
+      public string Id { get; set; }
+      public string Title { get; set; }
 
-			public Graph3DExportBindingDescriptor(Codon codon, Type projectItemType, Type graphicalExporterType)
-			{
-				if (codon == null)
-					throw new ArgumentNullException(nameof(codon));
+      public Graph3DExportBindingDescriptor(Codon codon, Type projectItemType, Type graphicalExporterType)
+      {
+        if (codon == null)
+          throw new ArgumentNullException(nameof(codon));
 
-				if (!Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(graphicalExporterType, typeof(Altaxo.Main.IProjectItemImageExporter)))
-					throw new Exception(string.Format("Error in codon {0}: the provided type in argument {1} is not of type {2}", codon, nameof(graphicalExporterType), typeof(Altaxo.Main.IProjectItemImageExporter)));
+        if (!Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(graphicalExporterType, typeof(Altaxo.Main.IProjectItemImageExporter)))
+          throw new Exception(string.Format("Error in codon {0}: the provided type in argument {1} is not of type {2}", codon, nameof(graphicalExporterType), typeof(Altaxo.Main.IProjectItemImageExporter)));
 
-				this._codon = codon;
-				this.Id = codon.Id;
+        this._codon = codon;
+        this.Id = codon.Id;
 
-				string title = codon.Properties["title"];
-				if (string.IsNullOrEmpty(title))
-					this.Title = codon.Id;
-				else
-					this.Title = title;
+        string title = codon.Properties["title"];
+        if (string.IsNullOrEmpty(title))
+          this.Title = codon.Id;
+        else
+          this.Title = title;
 
-				_projectItemType = projectItemType;
-				_graphicalExporterType = graphicalExporterType;
-			}
+        _projectItemType = projectItemType;
+        _graphicalExporterType = graphicalExporterType;
+      }
 
-			public override string ToString()
-			{
-				return string.Format("[GraphExportBindingDescriptor ProjectItemClass={0} ExporterClass={1}]", _projectItemType, _graphicalExporterType);
-			}
-		}
-	}
+      public override string ToString()
+      {
+        return string.Format("[GraphExportBindingDescriptor ProjectItemClass={0} ExporterClass={1}]", _projectItemType, _graphicalExporterType);
+      }
+    }
+  }
 }

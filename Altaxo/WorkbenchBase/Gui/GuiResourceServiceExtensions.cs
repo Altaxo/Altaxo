@@ -28,46 +28,46 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui
 {
-	public static class GuiResourceServiceExtensions
-	{
-		#region Resource Service Extensions
+  public static class GuiResourceServiceExtensions
+  {
+    #region Resource Service Extensions
 
-		/// <summary>
-		/// Gets an <see cref="IImage"/> from a resource.
-		/// </summary>
-		/// <exception cref="ResourceNotFoundException">The resource with the specified name does not exist</exception>
-		public static IImage GetImage(this IResourceService resourceService, string resourceName)
-		{
-			if (resourceService == null)
-				throw new ArgumentNullException("resourceService");
-			if (resourceName == null)
-				throw new ArgumentNullException("resourceName");
-			return new ResourceServiceImage(resourceService, resourceName);
-		}
+    /// <summary>
+    /// Gets an <see cref="IImage"/> from a resource.
+    /// </summary>
+    /// <exception cref="ResourceNotFoundException">The resource with the specified name does not exist</exception>
+    public static IImage GetImage(this IResourceService resourceService, string resourceName)
+    {
+      if (resourceService == null)
+        throw new ArgumentNullException("resourceService");
+      if (resourceName == null)
+        throw new ArgumentNullException("resourceName");
+      return new ResourceServiceImage(resourceService, resourceName);
+    }
 
-		/// <summary>
-		/// Gets an image source from a resource.
-		/// </summary>
-		/// <exception cref="ResourceNotFoundException">The resource with the specified name does not exist</exception>
-		public static ImageSource GetImageSource(this IResourceService resourceService, string resourceName)
-		{
-			if (resourceService == null)
-				throw new ArgumentNullException("resourceService");
-			if (resourceName == null)
-				throw new ArgumentNullException("resourceName");
-			return PresentationResourceService.GetBitmapSource(resourceName);
-		}
+    /// <summary>
+    /// Gets an image source from a resource.
+    /// </summary>
+    /// <exception cref="ResourceNotFoundException">The resource with the specified name does not exist</exception>
+    public static ImageSource GetImageSource(this IResourceService resourceService, string resourceName)
+    {
+      if (resourceService == null)
+        throw new ArgumentNullException("resourceService");
+      if (resourceName == null)
+        throw new ArgumentNullException("resourceName");
+      return PresentationResourceService.GetBitmapSource(resourceName);
+    }
 
-		/// <summary>
-		/// Creates a new image for the image source.
-		/// </summary>
-		public static Image CreateImage(this IImage image)
-		{
-			if (image == null)
-				throw new ArgumentNullException("image");
-			return new Image { Source = image.ImageSource };
-		}
+    /// <summary>
+    /// Creates a new image for the image source.
+    /// </summary>
+    public static Image CreateImage(this IImage image)
+    {
+      if (image == null)
+        throw new ArgumentNullException("image");
+      return new Image { Source = image.ImageSource };
+    }
 
-		#endregion Resource Service Extensions
-	}
+    #endregion Resource Service Extensions
+  }
 }

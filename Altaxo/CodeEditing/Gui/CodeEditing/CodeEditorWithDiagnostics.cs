@@ -34,91 +34,91 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.CodeEditing
 {
-	/// <summary>
-	/// CodeEditor with a diagnostics message window in the lower part.
-	/// </summary>
-	/// <seealso cref="Altaxo.Gui.CodeEditing.CodeEditor" />
-	public class CodeEditorWithDiagnostics : CodeEditor
-	{
-		private DiagnosticMessageControl _messageControl;
-		private const int MinHeightDiagnosticWindow = 40;
+  /// <summary>
+  /// CodeEditor with a diagnostics message window in the lower part.
+  /// </summary>
+  /// <seealso cref="Altaxo.Gui.CodeEditing.CodeEditor" />
+  public class CodeEditorWithDiagnostics : CodeEditor
+  {
+    private DiagnosticMessageControl _messageControl;
+    private const int MinHeightDiagnosticWindow = 40;
 
-		public CodeEditorWithDiagnostics() : base()
-		{
-			if (this.RowDefinitions.Count < 3)
-				this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0, GridUnitType.Star) });
-			if (this.RowDefinitions.Count < 4)
-				this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0.33, GridUnitType.Star), MinHeight = MinHeightDiagnosticWindow });
+    public CodeEditorWithDiagnostics() : base()
+    {
+      if (this.RowDefinitions.Count < 3)
+        this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0, GridUnitType.Star) });
+      if (this.RowDefinitions.Count < 4)
+        this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0.33, GridUnitType.Star), MinHeight = MinHeightDiagnosticWindow });
 
-			var gridSplitter = new GridSplitter
-			{
-				Height = 4,
-				HorizontalAlignment = HorizontalAlignment.Stretch,
-				VerticalAlignment = VerticalAlignment.Top
-			};
-			SetRow(gridSplitter, 3);
-			this.Children.Add(gridSplitter);
+      var gridSplitter = new GridSplitter
+      {
+        Height = 4,
+        HorizontalAlignment = HorizontalAlignment.Stretch,
+        VerticalAlignment = VerticalAlignment.Top
+      };
+      SetRow(gridSplitter, 3);
+      this.Children.Add(gridSplitter);
 
-			_messageControl = new DiagnosticMessageControl();
-			_messageControl.Margin = new Thickness(0, 4, 0, 0);
-			_messageControl.SetValue(Grid.RowProperty, 3);
-			_messageControl.DiagnosticClicked += EhDiagnosticClicked;
-			this.Children.Add(_messageControl);
-		}
+      _messageControl = new DiagnosticMessageControl();
+      _messageControl.Margin = new Thickness(0, 4, 0, 0);
+      _messageControl.SetValue(Grid.RowProperty, 3);
+      _messageControl.DiagnosticClicked += EhDiagnosticClicked;
+      this.Children.Add(_messageControl);
+    }
 
-		protected override void OnUnloaded()
-		{
-			_messageControl.DiagnosticClicked -= EhDiagnosticClicked;
-			_messageControl = null;
+    protected override void OnUnloaded()
+    {
+      _messageControl.DiagnosticClicked -= EhDiagnosticClicked;
+      _messageControl = null;
 
-			base.OnUnloaded();
-		}
+      base.OnUnloaded();
+    }
 
-		private void EhDiagnosticClicked(AltaxoDiagnostic diag)
-		{
-			if (diag.Line.HasValue)
-			{
-				this.ActiveTextEditor.JumpTo(diag.Line.Value, diag.Column ?? 1);
-			}
-		}
+    private void EhDiagnosticClicked(AltaxoDiagnostic diag)
+    {
+      if (diag.Line.HasValue)
+      {
+        this.ActiveTextEditor.JumpTo(diag.Line.Value, diag.Column ?? 1);
+      }
+    }
 
-		public AltaxoCompilationResultWithAssembly Compile(Func<IEnumerable<string>, string> GetAssemblyNameFromCodeText, IEnumerable<System.Reflection.Assembly> references)
-		{
-			var scriptTexts = new string[] { this.Document.Text };
-			var assemblyName = GetAssemblyNameFromCodeText(scriptTexts);
-			var result = Altaxo.CodeEditing.CompilationHandling.CompilationServiceStatic.GetCompilation(scriptTexts, assemblyName, references);
+    public AltaxoCompilationResultWithAssembly Compile(Func<IEnumerable<string>, string> GetAssemblyNameFromCodeText, IEnumerable<System.Reflection.Assembly> references)
+    {
+      var scriptTexts = new string[] { this.Document.Text };
+      var assemblyName = GetAssemblyNameFromCodeText(scriptTexts);
+      var result = Altaxo.CodeEditing.CompilationHandling.CompilationServiceStatic.GetCompilation(scriptTexts, assemblyName, references);
 
-			if (result.CompiledAssembly != null) // Success
-			{
-				var diagsFiltered = result.Diagnostics.Where(diag => diag.Severity > 0).ToImmutableArray();
+      if (result.CompiledAssembly != null) // Success
+      {
+        var diagsFiltered = result.Diagnostics.Where(diag => diag.Severity > 0).ToImmutableArray();
 
-				if (diagsFiltered.Length == 0)
-				{
-					_messageControl.SetMessages(ImmutableArray.Create(AltaxoDiagnostic.CreateInfoMessage("Compilation successful")));
-				}
-				else
-				{
-					var arr = ImmutableArray.Create(AltaxoDiagnostic.CreateInfoMessage(string.Format("Compilation successful ({0} warnings)", diagsFiltered.Length)));
-					arr = arr.AddRange(diagsFiltered);
-					_messageControl.SetMessages(arr);
-				}
-			}
-			else
-			{
-				_messageControl.SetMessages(result.Diagnostics);
-			}
+        if (diagsFiltered.Length == 0)
+        {
+          _messageControl.SetMessages(ImmutableArray.Create(AltaxoDiagnostic.CreateInfoMessage("Compilation successful")));
+        }
+        else
+        {
+          var arr = ImmutableArray.Create(AltaxoDiagnostic.CreateInfoMessage(string.Format("Compilation successful ({0} warnings)", diagsFiltered.Length)));
+          arr = arr.AddRange(diagsFiltered);
+          _messageControl.SetMessages(arr);
+        }
+      }
+      else
+      {
+        _messageControl.SetMessages(result.Diagnostics);
+      }
 
-			return result;
-		}
+      return result;
+    }
 
-		/// <summary>
-		/// Sets diagnostic messages that are then showed in the diagnostic window from an external source.
-		/// All old messages in the diagnostic window will be overwritten.
-		/// </summary>
-		/// <param name="diagnosticMessages">The diagnostic messages.</param>
-		public void SetDiagnosticMessages(IReadOnlyList<AltaxoDiagnostic> diagnosticMessages)
-		{
-			_messageControl.SetMessages(diagnosticMessages);
-		}
-	}
+    /// <summary>
+    /// Sets diagnostic messages that are then showed in the diagnostic window from an external source.
+    /// All old messages in the diagnostic window will be overwritten.
+    /// </summary>
+    /// <param name="diagnosticMessages">The diagnostic messages.</param>
+    public void SetDiagnosticMessages(IReadOnlyList<AltaxoDiagnostic> diagnosticMessages)
+    {
+      _messageControl.SetMessages(diagnosticMessages);
+    }
+  }
 }

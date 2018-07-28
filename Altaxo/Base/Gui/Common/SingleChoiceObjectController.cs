@@ -26,37 +26,37 @@ using System;
 
 namespace Altaxo.Gui.Common
 {
-	/// <summary>
-	/// Summary description for SingleChoiceObjectController.
-	/// </summary>
-	[UserControllerForObject(typeof(ISingleChoiceObject), 100)]
-	public class SingleChoiceObjectController : SingleChoiceController
-	{
-		protected ISingleChoiceObject _choiceObject;
+  /// <summary>
+  /// Summary description for SingleChoiceObjectController.
+  /// </summary>
+  [UserControllerForObject(typeof(ISingleChoiceObject), 100)]
+  public class SingleChoiceObjectController : SingleChoiceController
+  {
+    protected ISingleChoiceObject _choiceObject;
 
-		public SingleChoiceObjectController(ISingleChoiceObject o)
-			:
-			base(o.Choices, o.Selection)
-		{
-			_choiceObject = o;
-		}
+    public SingleChoiceObjectController(ISingleChoiceObject o)
+      :
+      base(o.Choices, o.Selection)
+    {
+      _choiceObject = o;
+    }
 
-		public override object ModelObject
-		{
-			get
-			{
-				return _choiceObject;
-			}
-		}
+    public override object ModelObject
+    {
+      get
+      {
+        return _choiceObject;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!base.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!base.Apply(disposeController))
+        return false;
 
-			_choiceObject.Selection = base._choice;
+      _choiceObject.Selection = base._choice;
 
-			return true;
-		}
-	}
+      return true;
+    }
+  }
 }

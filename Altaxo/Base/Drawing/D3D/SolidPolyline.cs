@@ -31,189 +31,189 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D
 {
-	/// <summary>
-	/// Represents the solid geometry of a polyline in 3D space.
-	/// </summary>
-	public struct SolidPolyline
-	{
-		private static readonly VectorD3D _xVector = new VectorD3D(1, 0, 0);
-		private static readonly VectorD3D _yVector = new VectorD3D(0, 1, 0);
-		private static readonly VectorD3D _zVector = new VectorD3D(0, 0, 1);
+  /// <summary>
+  /// Represents the solid geometry of a polyline in 3D space.
+  /// </summary>
+  public struct SolidPolyline
+  {
+    private static readonly VectorD3D _xVector = new VectorD3D(1, 0, 0);
+    private static readonly VectorD3D _yVector = new VectorD3D(0, 1, 0);
+    private static readonly VectorD3D _zVector = new VectorD3D(0, 0, 1);
 
-		private SolidPolylineDashSegment _dashSegment;
+    private SolidPolylineDashSegment _dashSegment;
 
-		public void AddWithNormals(
-		Action<PointD3D, VectorD3D> AddPositionAndNormal,
-		Action<int, int, int, bool> AddIndices,
-		ref int vertexIndexOffset,
-		PenX3D pen,
-		IList<PointD3D> polylinePoints
-		)
-		{
-			if (pen.DashPattern is DashPatterns.Solid)
-			{
-				// draw without a dash pattern - we consider the whole line as one dash segment, but instead of dash caps, with line caps
-				_dashSegment.Initialize(pen.CrossSection, pen.Thickness1, pen.Thickness2, pen.LineJoin, pen.MiterLimit, pen.LineStartCap, pen.LineEndCap);
-				var westNorth = PolylineMath3D.GetWestNorthVectorAtStart(polylinePoints);
-				_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, polylinePoints, westNorth.WestVector, westNorth.NorthVector, westNorth.ForwardVector, null, null);
-			}
-			else
-			{
-				// draw with a dash pattern
-				_dashSegment.Initialize(pen);
+    public void AddWithNormals(
+    Action<PointD3D, VectorD3D> AddPositionAndNormal,
+    Action<int, int, int, bool> AddIndices,
+    ref int vertexIndexOffset,
+    PenX3D pen,
+    IList<PointD3D> polylinePoints
+    )
+    {
+      if (pen.DashPattern is DashPatterns.Solid)
+      {
+        // draw without a dash pattern - we consider the whole line as one dash segment, but instead of dash caps, with line caps
+        _dashSegment.Initialize(pen.CrossSection, pen.Thickness1, pen.Thickness2, pen.LineJoin, pen.MiterLimit, pen.LineStartCap, pen.LineEndCap);
+        var westNorth = PolylineMath3D.GetWestNorthVectorAtStart(polylinePoints);
+        _dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, polylinePoints, westNorth.WestVector, westNorth.NorthVector, westNorth.ForwardVector, null, null);
+      }
+      else
+      {
+        // draw with a dash pattern
+        _dashSegment.Initialize(pen);
 
-				double dashOffset = 0;
+        double dashOffset = 0;
 
-				bool startCapForwardAndPositionProvided = false;
-				bool startCapNeedsJoinSegment = false;
-				PolylinePointD3DAsClass startCapCOS = new PolylinePointD3DAsClass();
-				bool endCapForwardAndPositionProvided = false;
-				bool endCapNeedsJoinSegment = false;
-				PolylinePointD3DAsClass endCapCOS = new PolylinePointD3DAsClass();
+        bool startCapForwardAndPositionProvided = false;
+        bool startCapNeedsJoinSegment = false;
+        PolylinePointD3DAsClass startCapCOS = new PolylinePointD3DAsClass();
+        bool endCapForwardAndPositionProvided = false;
+        bool endCapNeedsJoinSegment = false;
+        PolylinePointD3DAsClass endCapCOS = new PolylinePointD3DAsClass();
 
-				double startIndex = 0;
-				double endIndex = polylinePoints.Count - 1;
+        double startIndex = 0;
+        double endIndex = polylinePoints.Count - 1;
 
-				// calculate the real start and end of the line, taking the line start and end cap length into account
-				if (null != pen.LineStartCap)
-				{
-					var v = pen.LineStartCap.GetAbsoluteBaseInset(pen.Thickness1, pen.Thickness2);
+        // calculate the real start and end of the line, taking the line start and end cap length into account
+        if (null != pen.LineStartCap)
+        {
+          var v = pen.LineStartCap.GetAbsoluteBaseInset(pen.Thickness1, pen.Thickness2);
 
-					if (v < 0)
-					{
-						dashOffset = -v;
+          if (v < 0)
+          {
+            dashOffset = -v;
 
-						startIndex = PolylineMath3D.GetFractionalStartIndexOfPolylineWithCapInsetAbsolute(
-							polylinePoints,
-							-v,
-							out startCapForwardAndPositionProvided,
-							out startCapNeedsJoinSegment,
-							startCapCOS);
-					}
-				}
+            startIndex = PolylineMath3D.GetFractionalStartIndexOfPolylineWithCapInsetAbsolute(
+              polylinePoints,
+              -v,
+              out startCapForwardAndPositionProvided,
+              out startCapNeedsJoinSegment,
+              startCapCOS);
+          }
+        }
 
-				if (null != pen.LineEndCap)
-				{
-					var v = pen.LineEndCap.GetAbsoluteBaseInset(pen.Thickness1, pen.Thickness2);
-					if (v < 0)
-					{
-						endIndex = PolylineMath3D.GetFractionalEndIndexOfPolylineWithCapInsetAbsolute(
-							polylinePoints,
-							-v,
-							out endCapForwardAndPositionProvided,
-							out endCapNeedsJoinSegment,
-							endCapCOS);
-					}
-				}
+        if (null != pen.LineEndCap)
+        {
+          var v = pen.LineEndCap.GetAbsoluteBaseInset(pen.Thickness1, pen.Thickness2);
+          if (v < 0)
+          {
+            endIndex = PolylineMath3D.GetFractionalEndIndexOfPolylineWithCapInsetAbsolute(
+              polylinePoints,
+              -v,
+              out endCapForwardAndPositionProvided,
+              out endCapNeedsJoinSegment,
+              endCapCOS);
+          }
+        }
 
-				// now draw the individual dash segments
+        // now draw the individual dash segments
 
-				bool wasLineStartCapDrawn = false;
-				bool wasLineEndCapDrawn = false;
+        bool wasLineStartCapDrawn = false;
+        bool wasLineEndCapDrawn = false;
 
-				var en = PolylineMath3D.DissectPolylineWithDashPattern(
-							polylinePoints,
-							startIndex, endIndex,
-							pen.DashPattern,
-							pen.DashPattern.DashOffset,
-							Math.Max(pen.Thickness1, pen.Thickness2),
-							dashOffset,
-							startCapForwardAndPositionProvided,
-							startCapNeedsJoinSegment,
-							startCapCOS,
-							endCapForwardAndPositionProvided,
-							endCapNeedsJoinSegment,
-							endCapCOS
-							).GetEnumerator();
+        var en = PolylineMath3D.DissectPolylineWithDashPattern(
+              polylinePoints,
+              startIndex, endIndex,
+              pen.DashPattern,
+              pen.DashPattern.DashOffset,
+              Math.Max(pen.Thickness1, pen.Thickness2),
+              dashOffset,
+              startCapForwardAndPositionProvided,
+              startCapNeedsJoinSegment,
+              startCapCOS,
+              endCapForwardAndPositionProvided,
+              endCapNeedsJoinSegment,
+              endCapCOS
+              ).GetEnumerator();
 
-				if (!en.MoveNext())
-				{
-					// there is no segment at all in the list, but maybe we can draw the start and end line caps
-				}
-				else
-				{
-					var previousPointList = en.Current;
-					var currentPointList = en.Current;
+        if (!en.MoveNext())
+        {
+          // there is no segment at all in the list, but maybe we can draw the start and end line caps
+        }
+        else
+        {
+          var previousPointList = en.Current;
+          var currentPointList = en.Current;
 
-					if (en.MoveNext())
-						currentPointList = en.Current;
-					else
-						currentPointList = null;
+          if (en.MoveNext())
+            currentPointList = en.Current;
+          else
+            currentPointList = null;
 
-					// if current point list is null, then there is only one segment, namely previousPointList, we have to draw it with start line cap and end line cap.
-					if (currentPointList == null)
-					{
-						// note start line cap and end line cap will be overridden for this segment, but only then if the seamless merge with the dash segment
-						bool overrideLineStartCap = startCapForwardAndPositionProvided && previousPointList[0].Position == startCapCOS.Position;
-						bool overrideLineEndCap = endCapForwardAndPositionProvided && previousPointList[previousPointList.Count - 1].Position == endCapCOS.Position;
-						_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, overrideLineStartCap ? pen.LineStartCap : null, overrideLineEndCap ? pen.LineEndCap : null);
-						wasLineStartCapDrawn = overrideLineStartCap;
-						wasLineEndCapDrawn = overrideLineEndCap;
-					}
-					else // there are at least two segments
-					{
-						// this is the start of the line, thus we must use the lineStartCap instead of the dashStartCap
+          // if current point list is null, then there is only one segment, namely previousPointList, we have to draw it with start line cap and end line cap.
+          if (currentPointList == null)
+          {
+            // note start line cap and end line cap will be overridden for this segment, but only then if the seamless merge with the dash segment
+            bool overrideLineStartCap = startCapForwardAndPositionProvided && previousPointList[0].Position == startCapCOS.Position;
+            bool overrideLineEndCap = endCapForwardAndPositionProvided && previousPointList[previousPointList.Count - 1].Position == endCapCOS.Position;
+            _dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, overrideLineStartCap ? pen.LineStartCap : null, overrideLineEndCap ? pen.LineEndCap : null);
+            wasLineStartCapDrawn = overrideLineStartCap;
+            wasLineEndCapDrawn = overrideLineEndCap;
+          }
+          else // there are at least two segments
+          {
+            // this is the start of the line, thus we must use the lineStartCap instead of the dashStartCap
 
-						// note start line cap will be overridden for this first segment, but only then if it seamlessly merge with the start of the dash segment
-						bool overrideLineStartCap = startCapForwardAndPositionProvided && previousPointList[0].Position == startCapCOS.Position;
-						_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, overrideLineStartCap ? pen.LineStartCap : null, null);
-						wasLineStartCapDrawn = overrideLineStartCap;
+            // note start line cap will be overridden for this first segment, but only then if it seamlessly merge with the start of the dash segment
+            bool overrideLineStartCap = startCapForwardAndPositionProvided && previousPointList[0].Position == startCapCOS.Position;
+            _dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, overrideLineStartCap ? pen.LineStartCap : null, null);
+            wasLineStartCapDrawn = overrideLineStartCap;
 
-						previousPointList = currentPointList;
-						while (en.MoveNext())
-						{
-							var currentList = en.Current;
+            previousPointList = currentPointList;
+            while (en.MoveNext())
+            {
+              var currentList = en.Current;
 
-							// draw the previous list as a normal dashSegment, thus we can use dashStartCap and dashEndCap
-							_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, null, null);
-							previousPointList = currentList;
-						}
+              // draw the previous list as a normal dashSegment, thus we can use dashStartCap and dashEndCap
+              _dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, null, null);
+              previousPointList = currentList;
+            }
 
-						// now currentList is the last list, we can draw an endcap to this
-						bool overrideLineEndCap = endCapForwardAndPositionProvided && previousPointList[previousPointList.Count - 1].Position == endCapCOS.Position;
-						_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, null, overrideLineEndCap ? pen.LineEndCap : null);
-						wasLineEndCapDrawn = overrideLineEndCap;
-					}
+            // now currentList is the last list, we can draw an endcap to this
+            bool overrideLineEndCap = endCapForwardAndPositionProvided && previousPointList[previousPointList.Count - 1].Position == endCapCOS.Position;
+            _dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, null, overrideLineEndCap ? pen.LineEndCap : null);
+            wasLineEndCapDrawn = overrideLineEndCap;
+          }
 
-					object temporaryStorageSpace = null;
+          object temporaryStorageSpace = null;
 
-					// if the start cap was not drawn before, it must be drawn now
-					if (!wasLineStartCapDrawn && null != pen.LineStartCap)
-					{
-						pen.LineStartCap.AddGeometry(
-							AddPositionAndNormal,
-							AddIndices,
-							ref vertexIndexOffset,
-							true,
-							startCapCOS.Position,
-							startCapCOS.WestVector,
-							startCapCOS.NorthVector,
-							startCapCOS.ForwardVector,
-							pen.CrossSection,
-							null,
-							null,
-							ref temporaryStorageSpace);
-					}
+          // if the start cap was not drawn before, it must be drawn now
+          if (!wasLineStartCapDrawn && null != pen.LineStartCap)
+          {
+            pen.LineStartCap.AddGeometry(
+              AddPositionAndNormal,
+              AddIndices,
+              ref vertexIndexOffset,
+              true,
+              startCapCOS.Position,
+              startCapCOS.WestVector,
+              startCapCOS.NorthVector,
+              startCapCOS.ForwardVector,
+              pen.CrossSection,
+              null,
+              null,
+              ref temporaryStorageSpace);
+          }
 
-					// if the end cap was not drawn before, it must be drawn now
-					if (!wasLineEndCapDrawn && null != pen.LineEndCap)
-					{
-						pen.LineEndCap.AddGeometry(
-							AddPositionAndNormal,
-							AddIndices,
-							ref vertexIndexOffset,
-							false,
-							endCapCOS.Position,
-							endCapCOS.WestVector,
-							endCapCOS.NorthVector,
-							endCapCOS.ForwardVector,
-							pen.CrossSection,
-							null,
-							null,
-							ref temporaryStorageSpace);
-					}
-				}
-			}
-		}
-	}
+          // if the end cap was not drawn before, it must be drawn now
+          if (!wasLineEndCapDrawn && null != pen.LineEndCap)
+          {
+            pen.LineEndCap.AddGeometry(
+              AddPositionAndNormal,
+              AddIndices,
+              ref vertexIndexOffset,
+              false,
+              endCapCOS.Position,
+              endCapCOS.WestVector,
+              endCapCOS.NorthVector,
+              endCapCOS.ForwardVector,
+              pen.CrossSection,
+              null,
+              null,
+              ref temporaryStorageSpace);
+          }
+        }
+      }
+    }
+  }
 }

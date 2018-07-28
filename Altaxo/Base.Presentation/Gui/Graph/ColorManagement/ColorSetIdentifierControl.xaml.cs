@@ -34,81 +34,81 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
-	/// <summary>
-	/// Interaction logic for ColorSetIdentifierControl.xaml
-	/// </summary>
-	public partial class ColorSetIdentifierControl : UserControl, IColorSetsView
-	{
-		#region Inner classes
+  /// <summary>
+  /// Interaction logic for ColorSetIdentifierControl.xaml
+  /// </summary>
+  public partial class ColorSetIdentifierControl : UserControl, IColorSetsView
+  {
+    #region Inner classes
 
-		/// <summary>
-		/// Selects the data template for the TreeView: either for a <see cref="T:Altaxo.Graph.NamedColor"/>, for a <see cref="IColorSet"/> or for another node.
-		/// </summary>
-		public class TreeViewDataTemplateSelector : DataTemplateSelector
-		{
-			private FrameworkElement _parent;
-			private DataTemplate _namedColorTemplate;
-			private DataTemplate _colorSetTemplate;
-			private DataTemplate _treeOtherTemplate;
+    /// <summary>
+    /// Selects the data template for the TreeView: either for a <see cref="T:Altaxo.Graph.NamedColor"/>, for a <see cref="IColorSet"/> or for another node.
+    /// </summary>
+    public class TreeViewDataTemplateSelector : DataTemplateSelector
+    {
+      private FrameworkElement _parent;
+      private DataTemplate _namedColorTemplate;
+      private DataTemplate _colorSetTemplate;
+      private DataTemplate _treeOtherTemplate;
 
-			public TreeViewDataTemplateSelector(FrameworkElement ele)
-			{
-				_parent = ele;
-			}
+      public TreeViewDataTemplateSelector(FrameworkElement ele)
+      {
+        _parent = ele;
+      }
 
-			public override DataTemplate SelectTemplate(object item, DependencyObject container)
-			{
-				NGTreeNode node = item as NGTreeNode;
-				if (node != null)
-				{
-					if (node.Tag is NamedColor)
-					{
-						if (null == _namedColorTemplate)
-							_namedColorTemplate = (DataTemplate)_parent.TryFindResource("NamedColorTemplate");
-						if (null != _namedColorTemplate)
-							return _namedColorTemplate;
-					}
-					else if (node.Tag is IColorSet)
-					{
-						if (null == _colorSetTemplate)
-							_colorSetTemplate = (DataTemplate)_parent.TryFindResource("ColorSetTemplate");
-						if (null != _colorSetTemplate)
-							return _colorSetTemplate;
-					}
-					else
-					{
-						if (null == _treeOtherTemplate)
-							_treeOtherTemplate = (DataTemplate)_parent.TryFindResource("TreeOtherTemplate");
-						if (null != _treeOtherTemplate)
-							return _treeOtherTemplate;
-					}
-				}
+      public override DataTemplate SelectTemplate(object item, DependencyObject container)
+      {
+        NGTreeNode node = item as NGTreeNode;
+        if (node != null)
+        {
+          if (node.Tag is NamedColor)
+          {
+            if (null == _namedColorTemplate)
+              _namedColorTemplate = (DataTemplate)_parent.TryFindResource("NamedColorTemplate");
+            if (null != _namedColorTemplate)
+              return _namedColorTemplate;
+          }
+          else if (node.Tag is IColorSet)
+          {
+            if (null == _colorSetTemplate)
+              _colorSetTemplate = (DataTemplate)_parent.TryFindResource("ColorSetTemplate");
+            if (null != _colorSetTemplate)
+              return _colorSetTemplate;
+          }
+          else
+          {
+            if (null == _treeOtherTemplate)
+              _treeOtherTemplate = (DataTemplate)_parent.TryFindResource("TreeOtherTemplate");
+            if (null != _treeOtherTemplate)
+              return _treeOtherTemplate;
+          }
+        }
 
-				return base.SelectTemplate(item, container);
-			}
-		}
+        return base.SelectTemplate(item, container);
+      }
+    }
 
-		#endregion Inner classes
+    #endregion Inner classes
 
-		public ColorSetIdentifierControl()
-		{
-			InitializeComponent();
-		}
+    public ColorSetIdentifierControl()
+    {
+      InitializeComponent();
+    }
 
-		/// <summary>
-		/// Provides public access to the <see cref="DataTemplateSelector"/> that selected the data template for different nodes of the TreeView.
-		/// </summary>
-		public DataTemplateSelector TreeViewItemTemplateSelector
-		{
-			get
-			{
-				return new TreeViewDataTemplateSelector(this);
-			}
-		}
+    /// <summary>
+    /// Provides public access to the <see cref="DataTemplateSelector"/> that selected the data template for different nodes of the TreeView.
+    /// </summary>
+    public DataTemplateSelector TreeViewItemTemplateSelector
+    {
+      get
+      {
+        return new TreeViewDataTemplateSelector(this);
+      }
+    }
 
-		public NGTreeNode ColorSetTree
-		{
-			set { _treeView.ItemsSource = value.Nodes; }
-		}
-	}
+    public NGTreeNode ColorSetTree
+    {
+      set { _treeView.ItemsSource = value.Nodes; }
+    }
+  }
 }

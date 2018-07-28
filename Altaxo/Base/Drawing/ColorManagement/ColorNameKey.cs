@@ -29,54 +29,54 @@ using System.Text;
 
 namespace Altaxo.Drawing.ColorManagement
 {
-	/// <summary>
-	/// Stores an <see cref="AxoColor"/> and a name to be used in as key for dictionaries in the color set classes.
-	/// </summary>
-	public struct ColorNameKey : IEquatable<ColorNameKey>
-	{
-		private string _name;
-		private AxoColor _color;
+  /// <summary>
+  /// Stores an <see cref="AxoColor"/> and a name to be used in as key for dictionaries in the color set classes.
+  /// </summary>
+  public struct ColorNameKey : IEquatable<ColorNameKey>
+  {
+    private string _name;
+    private AxoColor _color;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ColorNameKey" /> struct.
-		/// </summary>
-		/// <param name="color">The color value.</param>
-		/// <param name="name">The color name.</param>
-		public ColorNameKey(AxoColor color, string name)
-		{
-			_name = name;
-			_color = color;
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColorNameKey" /> struct.
+    /// </summary>
+    /// <param name="color">The color value.</param>
+    /// <param name="name">The color name.</param>
+    public ColorNameKey(AxoColor color, string name)
+    {
+      _name = name;
+      _color = color;
+    }
 
-		/// <summary>
-		/// Compares this key to another key.
-		/// </summary>
-		/// <param name="other">The other key.</param>
-		/// <returns><c>True</c> if this key matches with name and color value to the other key. Otherwise, <c>false</c>.</returns>
-		public bool Equals(ColorNameKey other)
-		{
-			return 0 == string.Compare(this._name, other._name) && this._color.Equals(other._color);
-		}
+    /// <summary>
+    /// Compares this key to another key.
+    /// </summary>
+    /// <param name="other">The other key.</param>
+    /// <returns><c>True</c> if this key matches with name and color value to the other key. Otherwise, <c>false</c>.</returns>
+    public bool Equals(ColorNameKey other)
+    {
+      return 0 == string.Compare(this._name, other._name) && this._color.Equals(other._color);
+    }
 
-		/// <summary>
-		/// Compares this key to another object.
-		/// </summary>
-		/// <param name="obj">The other object.</param>
-		/// <returns><c>True</c> if the other object is an instance of <see cref="ColorNameKey"/>, and this key matches with name and color value to the other key. Otherwise, <c>false</c>.</returns>
-		public override bool Equals(object obj)
-		{
-			return (obj is ColorNameKey) ? Equals((ColorNameKey)obj) : false;
-		}
+    /// <summary>
+    /// Compares this key to another object.
+    /// </summary>
+    /// <param name="obj">The other object.</param>
+    /// <returns><c>True</c> if the other object is an instance of <see cref="ColorNameKey"/>, and this key matches with name and color value to the other key. Otherwise, <c>false</c>.</returns>
+    public override bool Equals(object obj)
+    {
+      return (obj is ColorNameKey) ? Equals((ColorNameKey)obj) : false;
+    }
 
-		/// <summary>
-		/// Returns a hash code for this instance.
-		/// </summary>
-		/// <returns>
-		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
-		/// </returns>
-		public override int GetHashCode()
-		{
-			return _color.GetHashCode() + _name.GetHashCode();
-		}
-	}
+    /// <summary>
+    /// Returns a hash code for this instance.
+    /// </summary>
+    /// <returns>
+    /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
+    /// </returns>
+    public override int GetHashCode()
+    {
+      return _color.GetHashCode() + _name.GetHashCode();
+    }
+  }
 }

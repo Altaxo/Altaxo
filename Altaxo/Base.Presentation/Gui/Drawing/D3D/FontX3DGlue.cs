@@ -34,63 +34,63 @@ using sd = System.Drawing;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
-	using Altaxo.Drawing.D3D;
-	using Altaxo.Graph.Graph3D;
+  using Altaxo.Drawing.D3D;
+  using Altaxo.Graph.Graph3D;
 
-	public class FontX3DGlue : Altaxo.Gui.Graph.GdiFontGlue
-	{
-		private double _fontDepth = 1;
+  public class FontX3DGlue : Altaxo.Gui.Graph.GdiFontGlue
+  {
+    private double _fontDepth = 1;
 
-		public double FontDepth
-		{
-			get { return _fontDepth; }
-			set
-			{
-				var oldValue = _fontDepth;
-				_fontDepth = value;
-				if (_guiFontDepth != null && oldValue != value)
-					_guiFontDepth.SelectedQuantityAsValueInPoints = value;
-			}
-		}
+    public double FontDepth
+    {
+      get { return _fontDepth; }
+      set
+      {
+        var oldValue = _fontDepth;
+        _fontDepth = value;
+        if (_guiFontDepth != null && oldValue != value)
+          _guiFontDepth.SelectedQuantityAsValueInPoints = value;
+      }
+    }
 
-		public new FontX3D SelectedFont
-		{
-			get
-			{
-				return new FontX3D(base.SelectedFont, _fontDepth);
-			}
-			set
-			{
-				base.SelectedFont = value.Font;
-				FontDepth = value.Depth;
-			}
-		}
+    public new FontX3D SelectedFont
+    {
+      get
+      {
+        return new FontX3D(base.SelectedFont, _fontDepth);
+      }
+      set
+      {
+        base.SelectedFont = value.Font;
+        FontDepth = value.Depth;
+      }
+    }
 
-		private FontSizeComboBox _guiFontDepth;
+    private FontSizeComboBox _guiFontDepth;
 
-		public FontSizeComboBox GuiFontDepth
-		{
-			get { return _guiFontDepth; }
-			set
-			{
-				if (null != _guiFontDepth)
-					_guiFontDepth.SelectedQuantityChanged -= EhSelectedFontDepthChanged;
+    public FontSizeComboBox GuiFontDepth
+    {
+      get { return _guiFontDepth; }
+      set
+      {
+        if (null != _guiFontDepth)
+          _guiFontDepth.SelectedQuantityChanged -= EhSelectedFontDepthChanged;
 
-				_guiFontDepth = value;
-				_guiFontDepth.SelectedQuantityAsValueInPoints = _fontDepth;
+        _guiFontDepth = value;
+        _guiFontDepth.SelectedQuantityAsValueInPoints = _fontDepth;
 
-				if (null != _guiFontDepth)
-					_guiFontDepth.SelectedQuantityChanged += EhSelectedFontDepthChanged;
-			}
-		}
+        if (null != _guiFontDepth)
+          _guiFontDepth.SelectedQuantityChanged += EhSelectedFontDepthChanged;
+      }
+    }
 
-		private void EhSelectedFontDepthChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var oldFontSize = _fontDepth;
-			_fontDepth = _guiFontDepth.SelectedQuantityAsValueInPoints;
+    private void EhSelectedFontDepthChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      var oldFontSize = _fontDepth;
+      _fontDepth = _guiFontDepth.SelectedQuantityAsValueInPoints;
 
-			if (oldFontSize != _fontDepth)
-				OnFontChanged();
-		}
-	}
+      if (oldFontSize != _fontDepth)
+        OnFontChanged();
+    }
+  }
 }

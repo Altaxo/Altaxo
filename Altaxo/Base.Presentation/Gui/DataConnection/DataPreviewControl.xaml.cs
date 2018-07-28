@@ -30,19 +30,19 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.DataConnection
 {
-	/// <summary>
-	/// Interaction logic for DataPreviewControl.xaml
-	/// </summary>
-	public partial class DataPreviewControl : UserControl, IDataPreviewView
-	{
-		public DataPreviewControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for DataPreviewControl.xaml
+  /// </summary>
+  public partial class DataPreviewControl : UserControl, IDataPreviewView
+  {
+    public DataPreviewControl()
+    {
+      InitializeComponent();
+    }
 
-		public void SetTableSource(System.Data.DataTable table)
-		{
-			_grid.ItemsSource = System.Data.DataTableExtensions.AsDataView(table);
-		}
-	}
+    public void SetTableSource(System.Data.DataTable table)
+    {
+      _grid.ItemsSource = System.Data.DataTableExtensions.AsDataView(table);
+    }
+  }
 }

@@ -30,95 +30,95 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
-	public class Triangle : ContourShapedLineCapBase
-	{
-		private class TriangleContour : ILineCapContour
-		{
-			private readonly static VectorD2D _vectorSqrt1_2 = new VectorD2D(Math.Sqrt(0.5), Math.Sqrt(0.5));
+  public class Triangle : ContourShapedLineCapBase
+  {
+    private class TriangleContour : ILineCapContour
+    {
+      private readonly static VectorD2D _vectorSqrt1_2 = new VectorD2D(Math.Sqrt(0.5), Math.Sqrt(0.5));
 
-			public int NumberOfNormals
-			{
-				get
-				{
-					return 2;
-				}
-			}
+      public int NumberOfNormals
+      {
+        get
+        {
+          return 2;
+        }
+      }
 
-			public int NumberOfVertices
-			{
-				get
-				{
-					return 2;
-				}
-			}
+      public int NumberOfVertices
+      {
+        get
+        {
+          return 2;
+        }
+      }
 
-			public bool IsVertexSharp(int idx)
-			{
-				return true;
-			}
+      public bool IsVertexSharp(int idx)
+      {
+        return true;
+      }
 
-			public VectorD2D Normals(int idx)
-			{
-				return _vectorSqrt1_2;
-			}
+      public VectorD2D Normals(int idx)
+      {
+        return _vectorSqrt1_2;
+      }
 
-			public PointD2D Vertices(int idx)
-			{
-				switch (idx)
-				{
-					case 0:
-						return new PointD2D(0, 1);
+      public PointD2D Vertices(int idx)
+      {
+        switch (idx)
+        {
+          case 0:
+            return new PointD2D(0, 1);
 
-					case 1:
-						return new PointD2D(1, 0);
+          case 1:
+            return new PointD2D(1, 0);
 
-					default:
-						throw new IndexOutOfRangeException();
-				}
-			}
-		}
+          default:
+            throw new IndexOutOfRangeException();
+        }
+      }
+    }
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-05-02 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Triangle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    /// <summary>
+    /// 2016-05-02 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Triangle), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return new Triangle();
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return new Triangle();
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override double GetAbsoluteBaseInset(double thickness1, double thickness2)
-		{
-			return -0.5 * Math.Max(thickness1, thickness2);
-		}
+    public override double GetAbsoluteBaseInset(double thickness1, double thickness2)
+    {
+      return -0.5 * Math.Max(thickness1, thickness2);
+    }
 
-		public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[] baseCrossSectionPositions, VectorD3D[] baseCrossSectionNormals, ref object temporaryStorageSpace)
-		{
-			Add(
-				AddPositionAndNormal,
-				AddIndices,
-				ref vertexIndexOffset,
-				isStartCap,
-				basePoint,
-				eastVector,
-				northVector,
-				forwardVectorNormalized,
-				lineCrossSection,
-				baseCrossSectionPositions,
-				baseCrossSectionNormals,
-				ref temporaryStorageSpace,
-				new TriangleContour());
-		}
-	}
+    public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[] baseCrossSectionPositions, VectorD3D[] baseCrossSectionNormals, ref object temporaryStorageSpace)
+    {
+      Add(
+        AddPositionAndNormal,
+        AddIndices,
+        ref vertexIndexOffset,
+        isStartCap,
+        basePoint,
+        eastVector,
+        northVector,
+        forwardVectorNormalized,
+        lineCrossSection,
+        baseCrossSectionPositions,
+        baseCrossSectionNormals,
+        ref temporaryStorageSpace,
+        new TriangleContour());
+    }
+  }
 }

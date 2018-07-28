@@ -30,17 +30,17 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Common
 {
-	[ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
-	public class LengthValueInPointController : ValueInSomeUnitControllerBase
-	{
-		protected override IUnit UnitOfValue
-		{
-			get { return Altaxo.Units.Length.Point.Instance; }
-		}
+  [ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
+  public class LengthValueInPointController : ValueInSomeUnitControllerBase
+  {
+    protected override IUnit UnitOfValue
+    {
+      get { return Altaxo.Units.Length.Point.Instance; }
+    }
 
-		protected override QuantityWithUnitGuiEnvironment UnitEnvironment
-		{
-			get { return SizeEnvironment.Instance; }
-		}
-	}
+    protected override QuantityWithUnitGuiEnvironment UnitEnvironment
+    {
+      get { return SizeEnvironment.Instance; }
+    }
+  }
 }

@@ -27,153 +27,153 @@ using System.Threading;
 
 namespace Altaxo.Main.Services
 {
-	public class TimedBackgroundMonitor : IProgressReporter
-	{
-		private System.Timers.Timer _timer = new System.Timers.Timer(200);
-		private bool _shouldReport;
-		private CancellationToken _cancellationToken;
-		private string _reportText;
-		private double _progressFraction = double.NaN;
-		private OperationStatus _operationStatus;
-		private string _taskName;
+  public class TimedBackgroundMonitor : IProgressReporter
+  {
+    private System.Timers.Timer _timer = new System.Timers.Timer(200);
+    private bool _shouldReport;
+    private CancellationToken _cancellationToken;
+    private string _reportText;
+    private double _progressFraction = double.NaN;
+    private OperationStatus _operationStatus;
+    private string _taskName;
 
-		public event System.Timers.ElapsedEventHandler Elapsed;
+    public event System.Timers.ElapsedEventHandler Elapsed;
 
-		public TimedBackgroundMonitor()
-		{
-			_timer.Elapsed += new System.Timers.ElapsedEventHandler(EhTimerElapsed);
-		}
+    public TimedBackgroundMonitor()
+    {
+      _timer.Elapsed += new System.Timers.ElapsedEventHandler(EhTimerElapsed);
+    }
 
-		public void Start()
-		{
-			_timer.Start();
-		}
+    public void Start()
+    {
+      _timer.Start();
+    }
 
-		public void Stop()
-		{
-			_timer.Stop();
-		}
+    public void Stop()
+    {
+      _timer.Stop();
+    }
 
-		public System.ComponentModel.ISynchronizeInvoke SynchronizingObject
-		{
-			get { return _timer.SynchronizingObject; }
-			set { _timer.SynchronizingObject = value; }
-		}
+    public System.ComponentModel.ISynchronizeInvoke SynchronizingObject
+    {
+      get { return _timer.SynchronizingObject; }
+      set { _timer.SynchronizingObject = value; }
+    }
 
-		#region IBackgroundMonitor Members
+    #region IBackgroundMonitor Members
 
-		public bool ShouldReportNow
-		{
-			get
-			{
-				return _shouldReport;
-			}
-		}
+    public bool ShouldReportNow
+    {
+      get
+      {
+        return _shouldReport;
+      }
+    }
 
-		public void ReportProgress(string text)
-		{
-			_shouldReport = false;
-			_reportText = text;
-		}
+    public void ReportProgress(string text)
+    {
+      _shouldReport = false;
+      _reportText = text;
+    }
 
-		public void ReportProgress(string text, double progressFraction)
-		{
-			_shouldReport = false;
-			_reportText = text;
-			_progressFraction = progressFraction;
-		}
+    public void ReportProgress(string text, double progressFraction)
+    {
+      _shouldReport = false;
+      _reportText = text;
+      _progressFraction = progressFraction;
+    }
 
-		public string ReportText
-		{
-			set { _reportText = value; }
-			get { return _reportText; }
-		}
+    public string ReportText
+    {
+      set { _reportText = value; }
+      get { return _reportText; }
+    }
 
-		public double ProgressFraction
-		{
-			get { return _progressFraction; }
-			set { _progressFraction = value; }
-		}
+    public double ProgressFraction
+    {
+      get { return _progressFraction; }
+      set { _progressFraction = value; }
+    }
 
-		public bool CancellationPending
-		{
-			get
-			{
-				return _cancellationToken.IsCancellationRequested;
-			}
-		}
+    public bool CancellationPending
+    {
+      get
+      {
+        return _cancellationToken.IsCancellationRequested;
+      }
+    }
 
-		public double Progress
-		{
-			get
-			{
-				return _progressFraction;
-			}
-			set
-			{
-				_progressFraction = value;
-			}
-		}
+    public double Progress
+    {
+      get
+      {
+        return _progressFraction;
+      }
+      set
+      {
+        _progressFraction = value;
+      }
+    }
 
-		public OperationStatus Status
-		{
-			get
-			{
-				return _operationStatus;
-			}
-			set
-			{
-				_operationStatus = value;
-			}
-		}
+    public OperationStatus Status
+    {
+      get
+      {
+        return _operationStatus;
+      }
+      set
+      {
+        _operationStatus = value;
+      }
+    }
 
-		public string TaskName
-		{
-			get
-			{
-				return _taskName;
-			}
-			set
-			{
-				_taskName = value;
-			}
-		}
+    public string TaskName
+    {
+      get
+      {
+        return _taskName;
+      }
+      set
+      {
+        _taskName = value;
+      }
+    }
 
-		public CancellationToken CancellationToken
-		{
-			get
-			{
-				return _cancellationToken;
-			}
-		}
+    public CancellationToken CancellationToken
+    {
+      get
+      {
+        return _cancellationToken;
+      }
+    }
 
-		#endregion IBackgroundMonitor Members
+    #endregion IBackgroundMonitor Members
 
-		private void EhTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			_shouldReport = true;
-			this.Elapsed?.Invoke(sender, e);
-		}
+    private void EhTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      _shouldReport = true;
+      this.Elapsed?.Invoke(sender, e);
+    }
 
-		public IProgressReporter CreateSubTask(double workAmount)
-		{
-			throw new NotImplementedException();
-		}
+    public IProgressReporter CreateSubTask(double workAmount)
+    {
+      throw new NotImplementedException();
+    }
 
-		public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException();
-		}
+    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void Report(double value)
-		{
-			Progress = value;
-		}
+    public void Report(double value)
+    {
+      Progress = value;
+    }
 
-		public void Dispose()
-		{
-			_timer?.Dispose();
-			_timer = null;
-		}
-	}
+    public void Dispose()
+    {
+      _timer?.Dispose();
+      _timer = null;
+    }
+  }
 }

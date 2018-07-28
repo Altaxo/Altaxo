@@ -35,109 +35,109 @@ using System.Text;
 
 namespace Altaxo.Drawing.DashPatternManagement
 {
-	public class DashPatternListManager : StyleListManagerBaseForClasses<DashPatternList, IDashPattern, StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>>
-	{
-		public static readonly Main.Properties.PropertyKey<DashPatternListBag> PropertyKeyUserDefinedDashPatternLists;
+  public class DashPatternListManager : StyleListManagerBaseForClasses<DashPatternList, IDashPattern, StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>>
+  {
+    public static readonly Main.Properties.PropertyKey<DashPatternListBag> PropertyKeyUserDefinedDashPatternLists;
 
-		private static DashPatternListManager _instance;
+    private static DashPatternListManager _instance;
 
-		static DashPatternListManager()
-		{
-			PropertyKeyUserDefinedDashPatternLists =
-				new Main.Properties.PropertyKey<DashPatternListBag>(
-				"6C8F87E2-F80A-458E-A5C5-DFF92EBDBA90",
-				"Graph3D\\UserDefinedDashPatternLists",
-				Main.Properties.PropertyLevel.Application,
-				() => new DashPatternListBag(Enumerable.Empty<DashPatternList>()));
+    static DashPatternListManager()
+    {
+      PropertyKeyUserDefinedDashPatternLists =
+        new Main.Properties.PropertyKey<DashPatternListBag>(
+        "6C8F87E2-F80A-458E-A5C5-DFF92EBDBA90",
+        "Graph3D\\UserDefinedDashPatternLists",
+        Main.Properties.PropertyLevel.Application,
+        () => new DashPatternListBag(Enumerable.Empty<DashPatternList>()));
 
-			Instance = new DashPatternListManager();
-		}
+      Instance = new DashPatternListManager();
+    }
 
-		protected DashPatternListManager()
-			: base(
-					(list, level) => new StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>(list, level),
-					new DashPatternList("BuiltinDefault", new IDashPattern[] {
-					new Drawing.DashPatterns.Solid(),
-					new Drawing.DashPatterns.Dash(),
-					new Drawing.DashPatterns.Dot(),
-					new Drawing.DashPatterns.DashDot(),
-					new Drawing.DashPatterns.DashDotDot(),
-			})
-					)
+    protected DashPatternListManager()
+      : base(
+          (list, level) => new StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>(list, level),
+          new DashPatternList("BuiltinDefault", new IDashPattern[] {
+          new Drawing.DashPatterns.Solid(),
+          new Drawing.DashPatterns.Dash(),
+          new Drawing.DashPatterns.Dot(),
+          new Drawing.DashPatterns.DashDot(),
+          new Drawing.DashPatterns.DashDotDot(),
+      })
+          )
 
-		{
-			DashPatternListBag userStyleLists;
-			Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedDashPatternLists, out userStyleLists);
-			if (null != userStyleLists)
-			{
-				DashPatternList dummy;
-				foreach (var list in userStyleLists.StyleLists)
-				{
-					InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
-				}
-			}
+    {
+      DashPatternListBag userStyleLists;
+      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedDashPatternLists, out userStyleLists);
+      if (null != userStyleLists)
+      {
+        DashPatternList dummy;
+        foreach (var list in userStyleLists.StyleLists)
+        {
+          InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
+        }
+      }
 
-			RebuildListEntryToListDictionary();
-		}
+      RebuildListEntryToListDictionary();
+    }
 
-		/// <summary>
-		/// Gets the buildin default solid dash pattern belonging to the BuildinDefault list.
-		/// </summary>
-		/// <value>
-		/// The buildin default solid dash pattern belonging to the BuildinDefault list.
-		/// </value>
-		public IDashPattern BuiltinDefaultSolid { get { return this.BuiltinDefault[0]; } }
+    /// <summary>
+    /// Gets the buildin default solid dash pattern belonging to the BuildinDefault list.
+    /// </summary>
+    /// <value>
+    /// The buildin default solid dash pattern belonging to the BuildinDefault list.
+    /// </value>
+    public IDashPattern BuiltinDefaultSolid { get { return this.BuiltinDefault[0]; } }
 
-		/// <summary>
-		/// Gets the built-in default dash pattern belonging to the BuildinDefault list.
-		/// </summary>
-		public IDashPattern BuiltinDefaultDash { get { return this.BuiltinDefault[1]; } }
+    /// <summary>
+    /// Gets the built-in default dash pattern belonging to the BuildinDefault list.
+    /// </summary>
+    public IDashPattern BuiltinDefaultDash { get { return this.BuiltinDefault[1]; } }
 
-		/// <summary>
-		/// Gets the built-in default dot dash pattern belonging to the BuildinDefault list.
-		/// </summary>
-		public IDashPattern BuiltinDefaultDot { get { return this.BuiltinDefault[2]; } }
+    /// <summary>
+    /// Gets the built-in default dot dash pattern belonging to the BuildinDefault list.
+    /// </summary>
+    public IDashPattern BuiltinDefaultDot { get { return this.BuiltinDefault[2]; } }
 
-		/// <summary>
-		/// Gets the built-in default dash-dot pattern belonging to the BuildinDefault list.
-		/// </summary>
-		public IDashPattern BuiltinDefaultDashDot { get { return this.BuiltinDefault[3]; } }
+    /// <summary>
+    /// Gets the built-in default dash-dot pattern belonging to the BuildinDefault list.
+    /// </summary>
+    public IDashPattern BuiltinDefaultDashDot { get { return this.BuiltinDefault[3]; } }
 
-		/// <summary>
-		/// Gets the built-in default dash-dot-dot pattern belonging to the BuildinDefault list.
-		/// </summary>
-		public IDashPattern BuiltinDefaultDashDotDot { get { return this.BuiltinDefault[4]; } }
+    /// <summary>
+    /// Gets the built-in default dash-dot-dot pattern belonging to the BuildinDefault list.
+    /// </summary>
+    public IDashPattern BuiltinDefaultDashDotDot { get { return this.BuiltinDefault[4]; } }
 
-		public static DashPatternListManager Instance
-		{
-			get
-			{
-				return _instance;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
+    public static DashPatternListManager Instance
+    {
+      get
+      {
+        return _instance;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException(nameof(value));
 
-				if (null != _instance)
-					Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
+        if (null != _instance)
+          Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
 
-				_instance = value;
+        _instance = value;
 
-				if (null != _instance)
-					Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
-			}
-		}
+        if (null != _instance)
+          Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
+      }
+    }
 
-		public override DashPatternList CreateNewList(string name, IEnumerable<IDashPattern> symbols)
-		{
-			return new DashPatternList(name, symbols);
-		}
+    public override DashPatternList CreateNewList(string name, IEnumerable<IDashPattern> symbols)
+    {
+      return new DashPatternList(name, symbols);
+    }
 
-		protected override void OnUserDefinedListAddedChangedRemoved(DashPatternList list)
-		{
-			var listBag = new DashPatternListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
-			Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedDashPatternLists, listBag);
-		}
-	}
+    protected override void OnUserDefinedListAddedChangedRemoved(DashPatternList list)
+    {
+      var listBag = new DashPatternListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
+      Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedDashPatternLists, listBag);
+    }
+  }
 }

@@ -25,63 +25,63 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.AddInItems
 {
-	/// <summary>
-	/// A menu item representing an AddIn-Tree element.
-	/// </summary>
-	internal class CoreMenuItem : MenuItem, IStatusUpdate
-	{
-		protected readonly Codon _codon;
-		protected readonly object _caller;
-		protected readonly IReadOnlyCollection<ICondition> _conditions;
+  /// <summary>
+  /// A menu item representing an AddIn-Tree element.
+  /// </summary>
+  internal class CoreMenuItem : MenuItem, IStatusUpdate
+  {
+    protected readonly Codon _codon;
+    protected readonly object _caller;
+    protected readonly IReadOnlyCollection<ICondition> _conditions;
 
-		/// <summary>Cached value of _codon's property 'usedatacontext'. If true, the data context of this menu item is used as the parameter of <see cref="UpdateStatus(object)"/> instead of <see cref="_caller"/>.</summary>
-		internal bool _useDataContext;
+    /// <summary>Cached value of _codon's property 'usedatacontext'. If true, the data context of this menu item is used as the parameter of <see cref="UpdateStatus(object)"/> instead of <see cref="_caller"/>.</summary>
+    internal bool _useDataContext;
 
-		/// <summary>
-		/// If true, UpdateStatus() sets the enabled flag.
-		/// Used for type=Menu, but not for type=MenuItem - for menu items, Enabled is controlled by the WPF ICommand.
-		/// </summary>
-		internal bool _setEnabled;
+    /// <summary>
+    /// If true, UpdateStatus() sets the enabled flag.
+    /// Used for type=Menu, but not for type=MenuItem - for menu items, Enabled is controlled by the WPF ICommand.
+    /// </summary>
+    internal bool _setEnabled;
 
-		public CoreMenuItem(Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
-		{
-			this._codon = codon;
-			this._caller = caller;
-			this._conditions = conditions;
+    public CoreMenuItem(Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
+    {
+      this._codon = codon;
+      this._caller = caller;
+      this._conditions = conditions;
 
-			if (codon.Properties.Contains("icon"))
-			{
-				try
-				{
-					var image = new Image
-					{
-						Source = PresentationResourceService.GetBitmapSource(codon.Properties["icon"]),
-						Height = 16
-					};
-					this.Icon = image;
-				}
-				catch (ResourceNotFoundException) { }
-			}
-			UpdateText();
-		}
+      if (codon.Properties.Contains("icon"))
+      {
+        try
+        {
+          var image = new Image
+          {
+            Source = PresentationResourceService.GetBitmapSource(codon.Properties["icon"]),
+            Height = 16
+          };
+          this.Icon = image;
+        }
+        catch (ResourceNotFoundException) { }
+      }
+      UpdateText();
+    }
 
-		public void UpdateText()
-		{
-			if (_codon != null)
-			{
-				Header = MenuService.ConvertLabel(StringParser.Parse(_codon.Properties["label"]));
-			}
-		}
+    public void UpdateText()
+    {
+      if (_codon != null)
+      {
+        Header = MenuService.ConvertLabel(StringParser.Parse(_codon.Properties["label"]));
+      }
+    }
 
-		public virtual void UpdateStatus()
-		{
-			ConditionFailedAction result = Altaxo.AddInItems.Condition.GetFailedAction(_conditions, _useDataContext ? (this.DataContext ?? _caller) : _caller);
-			if (result == ConditionFailedAction.Exclude)
-				this.Visibility = Visibility.Collapsed;
-			else
-				this.Visibility = Visibility.Visible;
-			if (_setEnabled)
-				this.IsEnabled = result == ConditionFailedAction.Nothing;
-		}
-	}
+    public virtual void UpdateStatus()
+    {
+      ConditionFailedAction result = Altaxo.AddInItems.Condition.GetFailedAction(_conditions, _useDataContext ? (this.DataContext ?? _caller) : _caller);
+      if (result == ConditionFailedAction.Exclude)
+        this.Visibility = Visibility.Collapsed;
+      else
+        this.Visibility = Visibility.Visible;
+      if (_setEnabled)
+        this.IsEnabled = result == ConditionFailedAction.Nothing;
+    }
+  }
 }

@@ -30,121 +30,121 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
-	/// <summary>
-	/// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
-	/// </summary>
-	public class DiamondOLineCap : LineCapExtension
-	{
-		public DiamondOLineCap()
-		{
-		}
+  /// <summary>
+  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// </summary>
+  public class DiamondOLineCap : LineCapExtension
+  {
+    public DiamondOLineCap()
+    {
+    }
 
-		public DiamondOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-			: base(minimumAbsoluteSizePt, minimumRelativeSize)
-		{
-		}
+    public DiamondOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
+    {
+    }
 
-		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
-		{
-			return new DiamondOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-		}
+    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    {
+      return new DiamondOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+    }
 
-		public override string Name { get { return "DiamondO"; } }
+    public override string Name { get { return "DiamondO"; } }
 
-		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
-		public override double DefaultMinimumRelativeSize { get { return 4; } }
+    public override double DefaultMinimumRelativeSize { get { return 4; } }
 
-		private CustomLineCap GetClone(Pen pen, float size)
-		{
-			float endPoint;
+    private CustomLineCap GetClone(Pen pen, float size)
+    {
+      float endPoint;
 
-			endPoint = pen.Width == 0 ? 1 : size / (pen.Width * 2) - 0.70710678118654752440084436210485f;
+      endPoint = pen.Width == 0 ? 1 : size / (pen.Width * 2) - 0.70710678118654752440084436210485f;
 
-			if (endPoint < 0)
-				endPoint = 1e-3f * pen.Width;
+      if (endPoint < 0)
+        endPoint = 1e-3f * pen.Width;
 
-			GraphicsPath hPath = new GraphicsPath();
-			// Create the outline for our custom end cap.
-			hPath.AddPolygon(new PointF[]{
-				new PointF(0,-endPoint),
-				new PointF(endPoint,0),
-				new PointF(0, endPoint),
-				new PointF(-endPoint,0),
-			});
-			CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint); // we set the stroke path only
-			clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
-			return clone;
-		}
+      GraphicsPath hPath = new GraphicsPath();
+      // Create the outline for our custom end cap.
+      hPath.AddPolygon(new PointF[]{
+        new PointF(0,-endPoint),
+        new PointF(endPoint,0),
+        new PointF(0, endPoint),
+        new PointF(-endPoint,0),
+      });
+      CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint); // we set the stroke path only
+      clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
+      return clone;
+    }
 
-		public override void SetStartCap(Pen pen, float size)
-		{
-			pen.StartCap = LineCap.Custom;
-			pen.CustomStartCap = GetClone(pen, size);
-		}
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Custom;
+      pen.CustomStartCap = GetClone(pen, size);
+    }
 
-		public override void SetEndCap(Pen pen, float size)
-		{
-			pen.EndCap = LineCap.Custom;
-			pen.CustomEndCap = GetClone(pen, size);
-		}
-	}
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.EndCap = LineCap.Custom;
+      pen.CustomEndCap = GetClone(pen, size);
+    }
+  }
 
-	/// <summary>
-	/// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
-	/// </summary>
-	public class DiamondFLineCap : LineCapExtension
-	{
-		public DiamondFLineCap()
-		{
-		}
+  /// <summary>
+  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// </summary>
+  public class DiamondFLineCap : LineCapExtension
+  {
+    public DiamondFLineCap()
+    {
+    }
 
-		public DiamondFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-			: base(minimumAbsoluteSizePt, minimumRelativeSize)
-		{
-		}
+    public DiamondFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
+    {
+    }
 
-		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
-		{
-			return new DiamondFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-		}
+    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    {
+      return new DiamondFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+    }
 
-		public override string Name { get { return "DiamondF"; } }
+    public override string Name { get { return "DiamondF"; } }
 
-		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
-		public override double DefaultMinimumRelativeSize { get { return 4; } }
+    public override double DefaultMinimumRelativeSize { get { return 4; } }
 
-		private CustomLineCap GetClone(Pen pen, float size)
-		{
-			float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
-			if (scale <= 0)
-				scale = 1e-3f;
+    private CustomLineCap GetClone(Pen pen, float size)
+    {
+      float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
+      if (scale <= 0)
+        scale = 1e-3f;
 
-			GraphicsPath hPath = new GraphicsPath();
-			// Create the outline for our custom end cap.
-			// Create the outline for our custom end cap.
-			hPath.AddPolygon(new PointF[]{
-				 new PointF(0,-1),
-					new PointF(1,0),
-					new PointF(0, 1),
-				new PointF(-1,0)
-			});
-			CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 0); // we set the stroke path only
-			clone.WidthScale = scale;
-			return clone;
-		}
+      GraphicsPath hPath = new GraphicsPath();
+      // Create the outline for our custom end cap.
+      // Create the outline for our custom end cap.
+      hPath.AddPolygon(new PointF[]{
+         new PointF(0,-1),
+          new PointF(1,0),
+          new PointF(0, 1),
+        new PointF(-1,0)
+      });
+      CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 0); // we set the stroke path only
+      clone.WidthScale = scale;
+      return clone;
+    }
 
-		public override void SetStartCap(Pen pen, float size)
-		{
-			pen.StartCap = LineCap.Custom;
-			pen.CustomStartCap = GetClone(pen, size);
-		}
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Custom;
+      pen.CustomStartCap = GetClone(pen, size);
+    }
 
-		public override void SetEndCap(Pen pen, float size)
-		{
-			pen.EndCap = LineCap.Custom;
-			pen.CustomEndCap = GetClone(pen, size);
-		}
-	}
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.EndCap = LineCap.Custom;
+      pen.CustomEndCap = GetClone(pen, size);
+    }
+  }
 }

@@ -29,123 +29,123 @@ using System.Text;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-	/// <summary>
-	/// Holds the properties of one fit parameter, as <see cref="Name"/>, the value of the parameter <see cref="Parameter"/>, the <see cref="Variance"/>
-	/// and whether this parameter is fixed or can be varied.
-	/// </summary>
-	/// <seealso cref="System.ICloneable" />
-	public class ParameterSetElement : ICloneable
-	{
-		/// <summary>
-		/// Gets or sets the parameter's name.
-		/// </summary>
-		/// <value>
-		/// The parameter's name.
-		/// </value>
-		public string Name { get; set; }
+  /// <summary>
+  /// Holds the properties of one fit parameter, as <see cref="Name"/>, the value of the parameter <see cref="Parameter"/>, the <see cref="Variance"/>
+  /// and whether this parameter is fixed or can be varied.
+  /// </summary>
+  /// <seealso cref="System.ICloneable" />
+  public class ParameterSetElement : ICloneable
+  {
+    /// <summary>
+    /// Gets or sets the parameter's name.
+    /// </summary>
+    /// <value>
+    /// The parameter's name.
+    /// </value>
+    public string Name { get; set; }
 
-		/// <summary>
-		/// Gets or sets the parameter's value.
-		/// </summary>
-		/// <value>
-		/// The parameter's value.
-		/// </value>
-		public double Parameter { get; set; }
+    /// <summary>
+    /// Gets or sets the parameter's value.
+    /// </summary>
+    /// <value>
+    /// The parameter's value.
+    /// </value>
+    public double Parameter { get; set; }
 
-		/// <summary>
-		/// Gets or sets the variance of the parameter.
-		/// </summary>
-		/// <value>
-		/// The variance of the parameter.
-		/// </value>
-		public double Variance { get; set; }
+    /// <summary>
+    /// Gets or sets the variance of the parameter.
+    /// </summary>
+    /// <value>
+    /// The variance of the parameter.
+    /// </value>
+    public double Variance { get; set; }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="ParameterSetElement"/> can vary during the fitting calculation.
-		/// </summary>
-		/// <value>
-		///   <c>true</c> if the parameter can vary; otherwise, <c>false</c>.
-		/// </value>
-		public bool Vary { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="ParameterSetElement"/> can vary during the fitting calculation.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the parameter can vary; otherwise, <c>false</c>.
+    /// </value>
+    public bool Vary { get; set; }
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSetElement), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				ParameterSetElement s = (ParameterSetElement)obj;
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSetElement), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ParameterSetElement s = (ParameterSetElement)obj;
 
-				info.AddValue("Name", s.Name);
-				info.AddValue("Value", s.Parameter);
-				info.AddValue("Variance", s.Variance);
-				info.AddValue("Vary", s.Vary);
-			}
+        info.AddValue("Name", s.Name);
+        info.AddValue("Value", s.Parameter);
+        info.AddValue("Variance", s.Variance);
+        info.AddValue("Vary", s.Vary);
+      }
 
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var name = info.GetString("Name");
-				var parameter = info.GetDouble("Value");
-				var variance = info.GetDouble("Variance");
-				var vary = info.GetBoolean("Vary");
-				return new ParameterSetElement(name, parameter, variance, vary);
-			}
-		}
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var name = info.GetString("Name");
+        var parameter = info.GetDouble("Value");
+        var variance = info.GetDouble("Variance");
+        var vary = info.GetBoolean("Vary");
+        return new ParameterSetElement(name, parameter, variance, vary);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		/// <summary>
-		/// For deserialization purposes only.
-		/// </summary>
-		protected ParameterSetElement()
-		{
-		}
+    /// <summary>
+    /// For deserialization purposes only.
+    /// </summary>
+    protected ParameterSetElement()
+    {
+    }
 
-		public ParameterSetElement(string name)
-		{
-			this.Name = name;
-			this.Vary = true;
-		}
+    public ParameterSetElement(string name)
+    {
+      this.Name = name;
+      this.Vary = true;
+    }
 
-		public ParameterSetElement(string name, double value)
-		{
-			this.Name = name;
-			this.Parameter = value;
-			this.Vary = true;
-		}
+    public ParameterSetElement(string name, double value)
+    {
+      this.Name = name;
+      this.Parameter = value;
+      this.Vary = true;
+    }
 
-		public ParameterSetElement(string name, double value, double variance, bool vary)
-		{
-			this.Name = name;
-			this.Parameter = value;
-			this.Variance = variance;
-			this.Vary = vary;
-		}
+    public ParameterSetElement(string name, double value, double variance, bool vary)
+    {
+      this.Name = name;
+      this.Parameter = value;
+      this.Variance = variance;
+      this.Vary = vary;
+    }
 
-		public ParameterSetElement(ParameterSetElement from)
-		{
-			CopyFrom(from);
-		}
+    public ParameterSetElement(ParameterSetElement from)
+    {
+      CopyFrom(from);
+    }
 
-		public void CopyFrom(ParameterSetElement from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
+    public void CopyFrom(ParameterSetElement from)
+    {
+      if (object.ReferenceEquals(this, from))
+        return;
 
-			this.Name = from.Name;
-			this.Parameter = from.Parameter;
-			this.Variance = from.Variance;
-			this.Vary = from.Vary;
-		}
+      this.Name = from.Name;
+      this.Parameter = from.Parameter;
+      this.Variance = from.Variance;
+      this.Vary = from.Vary;
+    }
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public object Clone()
-		{
-			return new ParameterSetElement(this);
-		}
+    public object Clone()
+    {
+      return new ParameterSetElement(this);
+    }
 
-		#endregion ICloneable Members
-	}
+    #endregion ICloneable Members
+  }
 }

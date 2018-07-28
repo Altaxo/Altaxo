@@ -33,80 +33,80 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-	/// <summary>
-	/// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
-	/// </summary>
-	public partial class DataMeshPlotStyleControl : UserControl, IDataMeshPlotStyleView
-	{
-		public DataMeshPlotStyleControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
+  /// </summary>
+  public partial class DataMeshPlotStyleControl : UserControl, IDataMeshPlotStyleView
+  {
+    public DataMeshPlotStyleControl()
+    {
+      InitializeComponent();
+    }
 
-		#region IDataMeshPlotStyleView
+    #region IDataMeshPlotStyleView
 
-		public IDensityScaleView ColorScaleView
-		{
-			get { return _guiColorScale; }
-		}
+    public IDensityScaleView ColorScaleView
+    {
+      get { return _guiColorScale; }
+    }
 
-		public bool IsCustomColorScaleUsed
-		{
-			get
-			{
-				return _guiUseCustomColorScale.IsChecked == true;
-			}
-			set
-			{
-				_guiUseCustomColorScale.IsChecked = value;
-				UpdateVisibilityOfColorScale();
-			}
-		}
+    public bool IsCustomColorScaleUsed
+    {
+      get
+      {
+        return _guiUseCustomColorScale.IsChecked == true;
+      }
+      set
+      {
+        _guiUseCustomColorScale.IsChecked = value;
+        UpdateVisibilityOfColorScale();
+      }
+    }
 
-		public IColorProviderView ColorProviderView
-		{
-			get { return _colorProviderControl; }
-		}
+    public IColorProviderView ColorProviderView
+    {
+      get { return _colorProviderControl; }
+    }
 
-		public bool ClipToLayer
-		{
-			get
-			{
-				return true == _chkClipToLayer.IsChecked;
-			}
-			set
-			{
-				_chkClipToLayer.IsChecked = value;
-			}
-		}
+    public bool ClipToLayer
+    {
+      get
+      {
+        return true == _chkClipToLayer.IsChecked;
+      }
+      set
+      {
+        _chkClipToLayer.IsChecked = value;
+      }
+    }
 
-		public object MaterialViewObject
-		{
-			get
-			{
-				return _guiMaterial;
-			}
-		}
+    public object MaterialViewObject
+    {
+      get
+      {
+        return _guiMaterial;
+      }
+    }
 
-		#endregion IDataMeshPlotStyleView
+    #endregion IDataMeshPlotStyleView
 
-		private void EhUseCustomColorScaleChanged(object sender, System.Windows.RoutedEventArgs e)
-		{
-			UpdateVisibilityOfColorScale();
-		}
+    private void EhUseCustomColorScaleChanged(object sender, System.Windows.RoutedEventArgs e)
+    {
+      UpdateVisibilityOfColorScale();
+    }
 
-		private void UpdateVisibilityOfColorScale()
-		{
-			if (_guiUseCustomColorScale.IsChecked == true)
-			{
-				if (null != _guiColorScale)
-					_guiColorScale.Visibility = System.Windows.Visibility.Visible;
-			}
-			else
-			{
-				if (null != _guiColorScale)
-					_guiColorScale.Visibility = System.Windows.Visibility.Collapsed;
-			}
-		}
-	}
+    private void UpdateVisibilityOfColorScale()
+    {
+      if (_guiUseCustomColorScale.IsChecked == true)
+      {
+        if (null != _guiColorScale)
+          _guiColorScale.Visibility = System.Windows.Visibility.Visible;
+      }
+      else
+      {
+        if (null != _guiColorScale)
+          _guiColorScale.Visibility = System.Windows.Visibility.Collapsed;
+      }
+    }
+  }
 }

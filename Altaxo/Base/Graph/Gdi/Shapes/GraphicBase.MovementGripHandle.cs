@@ -30,90 +30,90 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	public abstract partial class GraphicBase
-	{
-		protected class MovementGripHandle : IGripManipulationHandle
-		{
-			private IHitTestObject _parent;
+  public abstract partial class GraphicBase
+  {
+    protected class MovementGripHandle : IGripManipulationHandle
+    {
+      private IHitTestObject _parent;
 
-			/// <summary>Path active for selection of this grip.</summary>
-			private GraphicsPath _gripPath;
+      /// <summary>Path active for selection of this grip.</summary>
+      private GraphicsPath _gripPath;
 
-			/// <summary>Path that is shown on the display.</summary>
-			private GraphicsPath _displayedPath;
+      /// <summary>Path that is shown on the display.</summary>
+      private GraphicsPath _displayedPath;
 
-			private bool _hasMoved;
-			private bool _wasActivatedUponCreation;
-			private PointD2D _initialMousePosition;
-			private PointD2D _initialObjectPosition;
+      private bool _hasMoved;
+      private bool _wasActivatedUponCreation;
+      private PointD2D _initialMousePosition;
+      private PointD2D _initialObjectPosition;
 
-			public MovementGripHandle(IHitTestObject parent, GraphicsPath gripPath, GraphicsPath objectPath)
-			{
-				_parent = parent;
-				_gripPath = gripPath;
-				_displayedPath = objectPath;
-			}
+      public MovementGripHandle(IHitTestObject parent, GraphicsPath gripPath, GraphicsPath objectPath)
+      {
+        _parent = parent;
+        _gripPath = gripPath;
+        _displayedPath = objectPath;
+      }
 
-			#region IGripManipulationHandle Members
+      #region IGripManipulationHandle Members
 
-			/// <summary>
-			/// Activates this grip, providing the initial position of the mouse.
-			/// </summary>
-			/// <param name="initialPosition">Initial position of the mouse.</param>
-			/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
-			/// thie activation is due to a regular mouse click in this grip.</param>
-			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
-			{
-				_wasActivatedUponCreation = isActivatedUponCreation;
-				_initialMousePosition = initialPosition;
-				_initialObjectPosition = ((GraphicBase)_parent.HittedObject).Position;
-				_hasMoved = false;
-			}
+      /// <summary>
+      /// Activates this grip, providing the initial position of the mouse.
+      /// </summary>
+      /// <param name="initialPosition">Initial position of the mouse.</param>
+      /// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
+      /// thie activation is due to a regular mouse click in this grip.</param>
+      public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
+      {
+        _wasActivatedUponCreation = isActivatedUponCreation;
+        _initialMousePosition = initialPosition;
+        _initialObjectPosition = ((GraphicBase)_parent.HittedObject).Position;
+        _hasMoved = false;
+      }
 
-			/// <summary>
-			/// Announces the deactivation of this grip.
-			/// </summary>
-			/// <returns>The grip level, that should be displayed next, or -1 when the level should not change.</returns>
-			public bool Deactivate()
-			{
-				if (_hasMoved)
-					((GraphicBase)_parent.HittedObject).EhSelfChanged(EventArgs.Empty);
+      /// <summary>
+      /// Announces the deactivation of this grip.
+      /// </summary>
+      /// <returns>The grip level, that should be displayed next, or -1 when the level should not change.</returns>
+      public bool Deactivate()
+      {
+        if (_hasMoved)
+          ((GraphicBase)_parent.HittedObject).EhSelfChanged(EventArgs.Empty);
 
-				var ht = _parent as GraphicBaseHitTestObject;
-				if (null != ht && !_hasMoved && !_wasActivatedUponCreation)
-					return true;
-				else
-					return false;
-			}
+        var ht = _parent as GraphicBaseHitTestObject;
+        if (null != ht && !_hasMoved && !_wasActivatedUponCreation)
+          return true;
+        else
+          return false;
+      }
 
-			public void MoveGrip(PointD2D newPosition)
-			{
-				var diff = newPosition - _initialMousePosition;
+      public void MoveGrip(PointD2D newPosition)
+      {
+        var diff = newPosition - _initialMousePosition;
 
-				if (!diff.IsEmpty)
-					_hasMoved = true;
+        if (!diff.IsEmpty)
+          _hasMoved = true;
 
-				diff = _parent.Transformation.InverseTransformVector(diff);
-				((GraphicBase)_parent.HittedObject).SilentSetPosition(_initialObjectPosition + diff);
-			}
+        diff = _parent.Transformation.InverseTransformVector(diff);
+        ((GraphicBase)_parent.HittedObject).SilentSetPosition(_initialObjectPosition + diff);
+      }
 
-			/// <summary>Draws the grip in the graphics context.</summary>
-			/// <param name="g">Graphics context.</param>
-			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
-			public void Show(Graphics g, double pageScale)
-			{
-				using (var pen = new Pen(Color.Blue, (float)(1 / pageScale)))
-				{
-					g.DrawPath(pen, _displayedPath ?? _gripPath);
-				}
-			}
+      /// <summary>Draws the grip in the graphics context.</summary>
+      /// <param name="g">Graphics context.</param>
+      /// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
+      public void Show(Graphics g, double pageScale)
+      {
+        using (var pen = new Pen(Color.Blue, (float)(1 / pageScale)))
+        {
+          g.DrawPath(pen, _displayedPath ?? _gripPath);
+        }
+      }
 
-			public bool IsGripHitted(PointD2D point)
-			{
-				return _gripPath.IsVisible((PointF)point);
-			}
+      public bool IsGripHitted(PointD2D point)
+      {
+        return _gripPath.IsVisible((PointF)point);
+      }
 
-			#endregion IGripManipulationHandle Members
-		}
-	}
+      #endregion IGripManipulationHandle Members
+    }
+  }
 }

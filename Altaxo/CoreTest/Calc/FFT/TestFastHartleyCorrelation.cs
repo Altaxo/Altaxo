@@ -28,230 +28,230 @@ using System;
 
 namespace AltaxoTest.Calc.Fourier
 {
-	[TestFixture]
-	public class TestFastHartleyCorrelationComplexSplittedDestructive
-	{
-		private const int nLowerLimit = 5;
-		private const int nUpperLimit = 100;
-		private const double maxTolerableEpsPerN = 1E-15;
+  [TestFixture]
+  public class TestFastHartleyCorrelationComplexSplittedDestructive
+  {
+    private const int nLowerLimit = 5;
+    private const int nUpperLimit = 100;
+    private const double maxTolerableEpsPerN = 1E-15;
 
-		private int[] _testLengths = { 4, 8, 16, 32, 64, 128 };
+    private int[] _testLengths = { 4, 8, 16, 32, 64, 128 };
 
-		private SplittedComplexCorrelationTests _test;
+    private SplittedComplexCorrelationTests _test;
 
-		public TestFastHartleyCorrelationComplexSplittedDestructive()
-		{
-			_test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(MyCorrelationRoutine));
-		}
+    public TestFastHartleyCorrelationComplexSplittedDestructive()
+    {
+      _test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(MyCorrelationRoutine));
+    }
 
-		private void MyCorrelationRoutine(double[] src1real, double[] src1imag, double[] src2real, double[] src2imag, double[] resultreal, double[] resultimag, int n)
-		{
-			double[] inp1re = new double[n];
-			double[] inp2re = new double[n];
-			double[] inp1im = new double[n];
-			double[] inp2im = new double[n];
-			Array.Copy(src1real, inp1re, n);
-			Array.Copy(src1imag, inp1im, n);
-			Array.Copy(src2real, inp2re, n);
-			Array.Copy(src2imag, inp2im, n);
-			FastHartleyTransform.CyclicCorrelationDestructive(inp1re, inp1im, inp2re, inp2im, resultreal, resultimag, n);
-		}
+    private void MyCorrelationRoutine(double[] src1real, double[] src1imag, double[] src2real, double[] src2imag, double[] resultreal, double[] resultimag, int n)
+    {
+      double[] inp1re = new double[n];
+      double[] inp2re = new double[n];
+      double[] inp1im = new double[n];
+      double[] inp2im = new double[n];
+      Array.Copy(src1real, inp1re, n);
+      Array.Copy(src1imag, inp1im, n);
+      Array.Copy(src2real, inp2re, n);
+      Array.Copy(src2imag, inp2im, n);
+      FastHartleyTransform.CyclicCorrelationDestructive(inp1re, inp1im, inp2re, inp2im, resultreal, resultimag, n);
+    }
 
-		[Test]
-		public void Test01BothZero()
-		{
-			foreach (int i in _testLengths)
-				_test.TestBothZero(i);
-		}
+    [Test]
+    public void Test01BothZero()
+    {
+      foreach (int i in _testLengths)
+        _test.TestBothZero(i);
+    }
 
-		[Test]
-		public void Test02OneZero()
-		{
-			foreach (int i in _testLengths)
-				_test.TestOneZero(i);
-		}
+    [Test]
+    public void Test02OneZero()
+    {
+      foreach (int i in _testLengths)
+        _test.TestOneZero(i);
+    }
 
-		[Test]
-		public void Test03ReOne_ZeroPos()
-		{
-			foreach (int i in _testLengths)
-				_test.TestReOne_ZeroPos(i);
-		}
+    [Test]
+    public void Test03ReOne_ZeroPos()
+    {
+      foreach (int i in _testLengths)
+        _test.TestReOne_ZeroPos(i);
+    }
 
-		[Test]
-		public void Test04OneReOne_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestOneReOne_OtherRandom(i);
-		}
+    [Test]
+    public void Test04OneReOne_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestOneReOne_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test05OneImOne_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestOneImOne_OtherRandom(i);
-		}
+    [Test]
+    public void Test05OneImOne_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestOneImOne_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test06ReOne_OnePos_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestReOne_OnePos_OtherRandom(i);
-		}
+    [Test]
+    public void Test06ReOne_OnePos_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestReOne_OnePos_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test07ImOne_OnePos_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestImOne_OnePos_OtherRandom(i);
-		}
+    [Test]
+    public void Test07ImOne_OnePos_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestImOne_OnePos_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test08BothRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestBothRandom(i);
-		}
-	}
+    [Test]
+    public void Test08BothRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestBothRandom(i);
+    }
+  }
 
-	[TestFixture]
-	public class TestFastHartleyCorrelationSplittedComplex
-	{
-		private const int nLowerLimit = 5;
-		private const int nUpperLimit = 100;
-		private const double maxTolerableEpsPerN = 1E-15;
+  [TestFixture]
+  public class TestFastHartleyCorrelationSplittedComplex
+  {
+    private const int nLowerLimit = 5;
+    private const int nUpperLimit = 100;
+    private const double maxTolerableEpsPerN = 1E-15;
 
-		private int[] _testLengths = { 4, 8, 16, 32, 64, 128 };
+    private int[] _testLengths = { 4, 8, 16, 32, 64, 128 };
 
-		private SplittedComplexCorrelationTests _test;
+    private SplittedComplexCorrelationTests _test;
 
-		public TestFastHartleyCorrelationSplittedComplex()
-		{
-			_test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(FastHartleyTransform.CyclicCorrelation));
-		}
+    public TestFastHartleyCorrelationSplittedComplex()
+    {
+      _test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(FastHartleyTransform.CyclicCorrelation));
+    }
 
-		[Test]
-		public void Test01BothZero()
-		{
-			foreach (int i in _testLengths)
-				_test.TestBothZero(i);
-		}
+    [Test]
+    public void Test01BothZero()
+    {
+      foreach (int i in _testLengths)
+        _test.TestBothZero(i);
+    }
 
-		[Test]
-		public void Test02OneZero()
-		{
-			foreach (int i in _testLengths)
-				_test.TestOneZero(i);
-		}
+    [Test]
+    public void Test02OneZero()
+    {
+      foreach (int i in _testLengths)
+        _test.TestOneZero(i);
+    }
 
-		[Test]
-		public void Test03ReOne_ZeroPos()
-		{
-			foreach (int i in _testLengths)
-				_test.TestReOne_ZeroPos(i);
-		}
+    [Test]
+    public void Test03ReOne_ZeroPos()
+    {
+      foreach (int i in _testLengths)
+        _test.TestReOne_ZeroPos(i);
+    }
 
-		[Test]
-		public void Test04OneReOne_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestOneReOne_OtherRandom(i);
-		}
+    [Test]
+    public void Test04OneReOne_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestOneReOne_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test05OneImOne_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestOneImOne_OtherRandom(i);
-		}
+    [Test]
+    public void Test05OneImOne_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestOneImOne_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test06ReOne_OnePos_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestReOne_OnePos_OtherRandom(i);
-		}
+    [Test]
+    public void Test06ReOne_OnePos_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestReOne_OnePos_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test07ImOne_OnePos_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestImOne_OnePos_OtherRandom(i);
-		}
+    [Test]
+    public void Test07ImOne_OnePos_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestImOne_OnePos_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test08BothRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestBothRandom(i);
-		}
-	}
+    [Test]
+    public void Test08BothRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestBothRandom(i);
+    }
+  }
 
-	[TestFixture]
-	public class TestFastHartleyCorrelationRealDestructive
-	{
-		private const int nLowerLimit = 5;
-		private const int nUpperLimit = 100;
-		private const double maxTolerableEpsPerN = 1E-15;
+  [TestFixture]
+  public class TestFastHartleyCorrelationRealDestructive
+  {
+    private const int nLowerLimit = 5;
+    private const int nUpperLimit = 100;
+    private const double maxTolerableEpsPerN = 1E-15;
 
-		private int[] _testLengths = { 4, 8, 16, 32, 64, 128 };
+    private int[] _testLengths = { 4, 8, 16, 32, 64, 128 };
 
-		private RealCorrelationTests _test;
+    private RealCorrelationTests _test;
 
-		public TestFastHartleyCorrelationRealDestructive()
-		{
-			_test = new RealCorrelationTests(new RealCorrelationTests.CorrelationRoutine(MyCorrelationRoutine));
-		}
+    public TestFastHartleyCorrelationRealDestructive()
+    {
+      _test = new RealCorrelationTests(new RealCorrelationTests.CorrelationRoutine(MyCorrelationRoutine));
+    }
 
-		private void MyCorrelationRoutine(double[] src1real, double[] src2real, double[] resultreal, int n)
-		{
-			double[] inp1re = new double[n];
-			double[] inp2re = new double[n];
-			Array.Copy(src1real, inp1re, n);
-			Array.Copy(src2real, inp2re, n);
-			FastHartleyTransform.CyclicCorrelationDestructive(inp1re, inp2re, resultreal, n);
-		}
+    private void MyCorrelationRoutine(double[] src1real, double[] src2real, double[] resultreal, int n)
+    {
+      double[] inp1re = new double[n];
+      double[] inp2re = new double[n];
+      Array.Copy(src1real, inp1re, n);
+      Array.Copy(src2real, inp2re, n);
+      FastHartleyTransform.CyclicCorrelationDestructive(inp1re, inp2re, resultreal, n);
+    }
 
-		[Test]
-		public void Test01BothZero()
-		{
-			foreach (int i in _testLengths)
-				_test.TestBothZero(i);
-		}
+    [Test]
+    public void Test01BothZero()
+    {
+      foreach (int i in _testLengths)
+        _test.TestBothZero(i);
+    }
 
-		[Test]
-		public void Test02OneZero()
-		{
-			foreach (int i in _testLengths)
-				_test.TestOneZero(i);
-		}
+    [Test]
+    public void Test02OneZero()
+    {
+      foreach (int i in _testLengths)
+        _test.TestOneZero(i);
+    }
 
-		[Test]
-		public void Test03ReOne_ZeroPos()
-		{
-			foreach (int i in _testLengths)
-				_test.TestReOne_ZeroPos(i);
-		}
+    [Test]
+    public void Test03ReOne_ZeroPos()
+    {
+      foreach (int i in _testLengths)
+        _test.TestReOne_ZeroPos(i);
+    }
 
-		[Test]
-		public void Test04OneReOne_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestOneReOne_OtherRandom(i);
-		}
+    [Test]
+    public void Test04OneReOne_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestOneReOne_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test05ReOne_OnePos_OtherRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestReOne_OnePos_OtherRandom(i);
-		}
+    [Test]
+    public void Test05ReOne_OnePos_OtherRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestReOne_OnePos_OtherRandom(i);
+    }
 
-		[Test]
-		public void Test06BothRandom()
-		{
-			foreach (int i in _testLengths)
-				_test.TestBothRandom(i);
-		}
-	}
+    [Test]
+    public void Test06BothRandom()
+    {
+      foreach (int i in _testLengths)
+        _test.TestBothRandom(i);
+    }
+  }
 }

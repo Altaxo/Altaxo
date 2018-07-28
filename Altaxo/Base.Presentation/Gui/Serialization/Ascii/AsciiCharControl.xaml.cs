@@ -31,70 +31,70 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-	/// <summary>
-	/// Interaction logic for AsciiCharControl.xaml
-	/// </summary>
-	public partial class AsciiCharControl : UserControl
-	{
-		public AsciiCharControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for AsciiCharControl.xaml
+  /// </summary>
+  public partial class AsciiCharControl : UserControl
+  {
+    public AsciiCharControl()
+    {
+      InitializeComponent();
+    }
 
-		public string Text
-		{
-			get
-			{
-				return _guiEditBox.Text;
-			}
-			set
-			{
-				_guiEditBox.Text = value;
-			}
-		}
+    public string Text
+    {
+      get
+      {
+        return _guiEditBox.Text;
+      }
+      set
+      {
+        _guiEditBox.Text = value;
+      }
+    }
 
-		private void EhTextChanged(object sender, TextChangedEventArgs e)
-		{
-			var tb = sender as TextBox;
-			if (null == tb)
-				return;
+    private void EhTextChanged(object sender, TextChangedEventArgs e)
+    {
+      var tb = sender as TextBox;
+      if (null == tb)
+        return;
 
-			string asciiValue;
-			if (string.IsNullOrEmpty(tb.Text))
-			{
-				asciiValue = "[No value]";
-			}
-			else
-			{
-				char c = tb.Text[0];
+      string asciiValue;
+      if (string.IsNullOrEmpty(tb.Text))
+      {
+        asciiValue = "[No value]";
+      }
+      else
+      {
+        char c = tb.Text[0];
 
-				switch (c)
-				{
-					case ' ':
-						asciiValue = "[Space]";
-						break;
+        switch (c)
+        {
+          case ' ':
+            asciiValue = "[Space]";
+            break;
 
-					case '\t':
-						asciiValue = "[Tabulator]";
-						break;
+          case '\t':
+            asciiValue = "[Tabulator]";
+            break;
 
-					default:
-						asciiValue = string.Format("[0x{0:X}]", (int)c);
-						break;
-				}
-			}
-			_guiAsciiValue.Content = asciiValue;
+          default:
+            asciiValue = string.Format("[0x{0:X}]", (int)c);
+            break;
+        }
+      }
+      _guiAsciiValue.Content = asciiValue;
 
-			if (string.IsNullOrEmpty(tb.Text))
-			{
-				_guiAsciiValue.Foreground = Brushes.Red;
-				_guiEmptyIndicator.Visibility = System.Windows.Visibility.Visible;
-			}
-			else
-			{
-				_guiAsciiValue.Foreground = _guiEditBox.Foreground;
-				_guiEmptyIndicator.Visibility = System.Windows.Visibility.Hidden;
-			}
-		}
-	}
+      if (string.IsNullOrEmpty(tb.Text))
+      {
+        _guiAsciiValue.Foreground = Brushes.Red;
+        _guiEmptyIndicator.Visibility = System.Windows.Visibility.Visible;
+      }
+      else
+      {
+        _guiAsciiValue.Foreground = _guiEditBox.Foreground;
+        _guiEmptyIndicator.Visibility = System.Windows.Visibility.Hidden;
+      }
+    }
+  }
 }

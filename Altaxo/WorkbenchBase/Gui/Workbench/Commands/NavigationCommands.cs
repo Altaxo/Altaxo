@@ -22,41 +22,41 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
-	public class NavigateBack : ICommand
-	{
-		public event EventHandler CanExecuteChanged
-		{
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
+  public class NavigateBack : ICommand
+  {
+    public event EventHandler CanExecuteChanged
+    {
+      add { CommandManager.RequerySuggested += value; }
+      remove { CommandManager.RequerySuggested -= value; }
+    }
 
-		public bool CanExecute(object parameter)
-		{
-			return NavigationService.CanNavigateBack;
-		}
+    public bool CanExecute(object parameter)
+    {
+      return NavigationService.CanNavigateBack;
+    }
 
-		public void Execute(object parameter)
-		{
-			NavigationService.Go(-1);
-		}
-	}
+    public void Execute(object parameter)
+    {
+      NavigationService.Go(-1);
+    }
+  }
 
-	public class NavigateForward : ICommand
-	{
-		public event EventHandler CanExecuteChanged
-		{
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
+  public class NavigateForward : ICommand
+  {
+    public event EventHandler CanExecuteChanged
+    {
+      add { CommandManager.RequerySuggested += value; }
+      remove { CommandManager.RequerySuggested -= value; }
+    }
 
-		public bool CanExecute(object parameter)
-		{
-			return NavigationService.CanNavigateForwards;
-		}
+    public bool CanExecute(object parameter)
+    {
+      return NavigationService.CanNavigateForwards;
+    }
 
-		public void Execute(object parameter)
-		{
-			NavigationService.Go(+1);
-		}
-	}
+    public void Execute(object parameter)
+    {
+      NavigationService.Go(+1);
+    }
+  }
 }

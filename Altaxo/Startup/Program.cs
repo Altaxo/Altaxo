@@ -26,18 +26,18 @@ using System;
 
 namespace Altaxo
 {
-	/// <summary>
-	/// This Class is the Core main class, it starts the program.
-	/// </summary>
-	internal class StartupMain
-	{
-		/// <summary>
-		/// Starts Altaxo
-		/// </summary>
-		[STAThread()]
-		public static void Main(string[] args)
-		{
-			Altaxo.Gui.Startup.StartupMain.Main(args);
-		}
-	}
+  /// <summary>
+  /// This Class is the Core main class, it starts the program.
+  /// </summary>
+  internal class StartupMain
+  {
+    /// <summary>
+    /// Starts Altaxo
+    /// </summary>
+    [STAThread()]
+    public static void Main(string[] args)
+    {
+      Altaxo.Gui.Startup.StartupMain.Main(args);
+    }
+  }
 }

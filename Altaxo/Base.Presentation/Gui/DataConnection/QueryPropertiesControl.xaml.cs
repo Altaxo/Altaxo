@@ -31,43 +31,43 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.DataConnection
 {
-	/// <summary>
-	/// Interaction logic for QueryPropertiesControl.xaml
-	/// </summary>
-	public partial class QueryPropertiesControl : UserControl, IQueryPropertiesView
-	{
-		public QueryPropertiesControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for QueryPropertiesControl.xaml
+  /// </summary>
+  public partial class QueryPropertiesControl : UserControl, IQueryPropertiesView
+  {
+    public QueryPropertiesControl()
+    {
+      InitializeComponent();
+    }
 
-		// copy QueryBuilder values to form
-		public void UpdateDialogValues(bool isDistinct, int topN, SelectableListNodeList groupBy)
-		{
-			_chkDistinct.IsChecked = isDistinct;
-			_numTopN.Value = topN;
+    // copy QueryBuilder values to form
+    public void UpdateDialogValues(bool isDistinct, int topN, SelectableListNodeList groupBy)
+    {
+      _chkDistinct.IsChecked = isDistinct;
+      _numTopN.Value = topN;
 
-			if (null != groupBy.FirstSelectedNode)
-			{
-				_cmbGroupBy.IsEnabled = true;
-				GuiHelper.Initialize(_cmbGroupBy, groupBy);
-			}
-			else
-			{
-				_cmbGroupBy.IsEnabled = false;
-				_cmbGroupBy.ItemsSource = null;
-			}
-		}
+      if (null != groupBy.FirstSelectedNode)
+      {
+        _cmbGroupBy.IsEnabled = true;
+        GuiHelper.Initialize(_cmbGroupBy, groupBy);
+      }
+      else
+      {
+        _cmbGroupBy.IsEnabled = false;
+        _cmbGroupBy.ItemsSource = null;
+      }
+    }
 
-		// copy form values to QueryBuilder
-		public int GetTopN()
-		{
-			return _numTopN.Value;
-		}
+    // copy form values to QueryBuilder
+    public int GetTopN()
+    {
+      return _numTopN.Value;
+    }
 
-		public bool GetDistinct()
-		{
-			return true == _chkDistinct.IsChecked;
-		}
-	}
+    public bool GetDistinct()
+    {
+      return true == _chkDistinct.IsChecked;
+    }
+  }
 }

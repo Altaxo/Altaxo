@@ -32,52 +32,52 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-	public class ScatterSymbolToImageSourceConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			return null;
-		}
+  public class ScatterSymbolToImageSourceConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      return null;
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 
-	public class ScatterSymbolToItemNameConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			return value?.ToString();
-		}
+  public class ScatterSymbolToItemNameConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      return value?.ToString();
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 
-	public class ScatterSymbolToListNameConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			var listName = ScatterSymbolListManager.Instance.GetParentList(value as IScatterSymbol)?.Name;
-			if (null != listName)
-			{
-				var entry = ScatterSymbolListManager.Instance.GetEntryValue(listName);
-				string levelName = Enum.GetName(typeof(Altaxo.Main.ItemDefinitionLevel), entry.Level);
-				return levelName + "/" + listName;
-			}
-			else
-			{
-				return "<<no parent list>>";
-			}
-		}
+  public class ScatterSymbolToListNameConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      var listName = ScatterSymbolListManager.Instance.GetParentList(value as IScatterSymbol)?.Name;
+      if (null != listName)
+      {
+        var entry = ScatterSymbolListManager.Instance.GetEntryValue(listName);
+        string levelName = Enum.GetName(typeof(Altaxo.Main.ItemDefinitionLevel), entry.Level);
+        return levelName + "/" + listName;
+      }
+      else
+      {
+        return "<<no parent list>>";
+      }
+    }
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }

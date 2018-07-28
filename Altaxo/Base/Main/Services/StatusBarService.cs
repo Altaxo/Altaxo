@@ -26,174 +26,174 @@ using System.Windows;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Implements a standard <see cref="IStatusBarService"/>. This can be used also as a controller for the Gui component of the status bar.
-	/// </summary>
-	/// <seealso cref="Altaxo.Gui.Workbench.IStatusBarService" />
-	/// <seealso cref="Altaxo.Gui.IMVCController" />
-	[ExpectedTypeOfView(typeof(IStatusBarView))]
-	public class StatusBarService : IStatusBarService, IMVCController
-	{
-		protected IStatusBarView _statusBarView;
-		protected bool _isStatusBarVisible = true;
+  /// <summary>
+  /// Implements a standard <see cref="IStatusBarService"/>. This can be used also as a controller for the Gui component of the status bar.
+  /// </summary>
+  /// <seealso cref="Altaxo.Gui.Workbench.IStatusBarService" />
+  /// <seealso cref="Altaxo.Gui.IMVCController" />
+  [ExpectedTypeOfView(typeof(IStatusBarView))]
+  public class StatusBarService : IStatusBarService, IMVCController
+  {
+    protected IStatusBarView _statusBarView;
+    protected bool _isStatusBarVisible = true;
 
-		public StatusBarService()
-		{
-		}
+    public StatusBarService()
+    {
+    }
 
-		public StatusBarService(IStatusBarView statusBar)
-		{
-			this._statusBarView = statusBar ?? throw new ArgumentNullException(nameof(statusBar));
-		}
+    public StatusBarService(IStatusBarView statusBar)
+    {
+      this._statusBarView = statusBar ?? throw new ArgumentNullException(nameof(statusBar));
+    }
 
-		public bool IsVisible
-		{
-			get
-			{
-				return _isStatusBarVisible;
-			}
-			set
-			{
-				_statusBarView.IsStatusBarVisible = value;
-				_isStatusBarVisible = value;
-			}
-		}
+    public bool IsVisible
+    {
+      get
+      {
+        return _isStatusBarVisible;
+      }
+      set
+      {
+        _statusBarView.IsStatusBarVisible = value;
+        _isStatusBarVisible = value;
+      }
+    }
 
-		public virtual void SetRightCornerText(string text)
-		{
-			_statusBarView.ModeStatusBarPanelContent = text;
-		}
+    public virtual void SetRightCornerText(string text)
+    {
+      _statusBarView.ModeStatusBarPanelContent = text;
+    }
 
-		public virtual void SetCaretPosition(int x, int y, int charOffset)
-		{
-			_statusBarView.CursorStatusBarPanelContent = StringParser.Parse(
-					"${res:StatusBarService.CursorStatusBarPanelText}",
-					new StringTagPair("Line", String.Format("{0,-10}", y)),
-					new StringTagPair("Column", String.Format("{0,-5}", x)),
-					new StringTagPair("Character", String.Format("{0,-5}", charOffset))
-			);
-		}
+    public virtual void SetCaretPosition(int x, int y, int charOffset)
+    {
+      _statusBarView.CursorStatusBarPanelContent = StringParser.Parse(
+          "${res:StatusBarService.CursorStatusBarPanelText}",
+          new StringTagPair("Line", String.Format("{0,-10}", y)),
+          new StringTagPair("Column", String.Format("{0,-5}", x)),
+          new StringTagPair("Character", String.Format("{0,-5}", charOffset))
+      );
+    }
 
-		public void SetSelectionSingle(int length)
-		{
-			if (length > 0)
-			{
-				_statusBarView.SelectionStatusBarPanelContent = StringParser.Parse(
-						"${res:StatusBarService.SelectionStatusBarPanelTextSingle}",
-						new StringTagPair("Length", String.Format("{0,-10}", length)));
-			}
-			else
-			{
-				_statusBarView.SelectionStatusBarPanelContent = null;
-			}
-		}
+    public void SetSelectionSingle(int length)
+    {
+      if (length > 0)
+      {
+        _statusBarView.SelectionStatusBarPanelContent = StringParser.Parse(
+            "${res:StatusBarService.SelectionStatusBarPanelTextSingle}",
+            new StringTagPair("Length", String.Format("{0,-10}", length)));
+      }
+      else
+      {
+        _statusBarView.SelectionStatusBarPanelContent = null;
+      }
+    }
 
-		public void SetSelectionMulti(int rows, int cols)
-		{
-			if (rows > 0 && cols > 0)
-			{
-				_statusBarView.SelectionStatusBarPanelContent = StringParser.Parse(
-						"${res:StatusBarService.SelectionStatusBarPanelTextMulti}",
-						new StringTagPair("Rows", String.Format("{0}", rows)),
-						new StringTagPair("Cols", String.Format("{0}", cols)),
-						new StringTagPair("Total", String.Format("{0}", rows * cols)));
-			}
-			else
-			{
-				_statusBarView.SelectionStatusBarPanelContent = null;
-			}
-		}
+    public void SetSelectionMulti(int rows, int cols)
+    {
+      if (rows > 0 && cols > 0)
+      {
+        _statusBarView.SelectionStatusBarPanelContent = StringParser.Parse(
+            "${res:StatusBarService.SelectionStatusBarPanelTextMulti}",
+            new StringTagPair("Rows", String.Format("{0}", rows)),
+            new StringTagPair("Cols", String.Format("{0}", cols)),
+            new StringTagPair("Total", String.Format("{0}", rows * cols)));
+      }
+      else
+      {
+        _statusBarView.SelectionStatusBarPanelContent = null;
+      }
+    }
 
-		public void SetInsertMode(bool insertMode)
-		{
-			_statusBarView.ModeStatusBarPanelContent = insertMode ? StringParser.Parse("${res:StatusBarService.CaretModes.Insert}") : StringParser.Parse("${res:StatusBarService.CaretModes.Overwrite}");
-		}
+    public void SetInsertMode(bool insertMode)
+    {
+      _statusBarView.ModeStatusBarPanelContent = insertMode ? StringParser.Parse("${res:StatusBarService.CaretModes.Insert}") : StringParser.Parse("${res:StatusBarService.CaretModes.Overwrite}");
+    }
 
-		public void SetMessage(string message, bool highlighted, object icon)
-		{
-			_statusBarView.SetMessage(StringParser.Parse(message), highlighted, icon);
-		}
+    public void SetMessage(string message, bool highlighted, object icon)
+    {
+      _statusBarView.SetMessage(StringParser.Parse(message), highlighted, icon);
+    }
 
-		#region Progress Monitor
+    #region Progress Monitor
 
-		private Stack<ProgressCollector> waitingProgresses = new Stack<ProgressCollector>();
-		private ProgressCollector currentProgress;
+    private Stack<ProgressCollector> waitingProgresses = new Stack<ProgressCollector>();
+    private ProgressCollector currentProgress;
 
-		public IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken))
-		{
-			ProgressCollector progress = new ProgressCollector(Current.Dispatcher.SynchronizingObject, cancellationToken);
-			AddProgress(progress);
-			return progress.ProgressReporter;
-		}
+    public IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken))
+    {
+      ProgressCollector progress = new ProgressCollector(Current.Dispatcher.SynchronizingObject, cancellationToken);
+      AddProgress(progress);
+      return progress.ProgressReporter;
+    }
 
-		public void AddProgress(ProgressCollector progress)
-		{
-			if (progress == null)
-				throw new ArgumentNullException(nameof(progress));
-			Current.Dispatcher.VerifyAccess();
-			if (currentProgress != null)
-			{
-				currentProgress.ProgressMonitorDisposed -= progress_ProgressMonitorDisposed;
-				currentProgress.PropertyChanged -= progress_PropertyChanged;
-			}
-			waitingProgresses.Push(currentProgress); // push even if currentProgress==null
-			SetActiveProgress(progress);
-		}
+    public void AddProgress(ProgressCollector progress)
+    {
+      if (progress == null)
+        throw new ArgumentNullException(nameof(progress));
+      Current.Dispatcher.VerifyAccess();
+      if (currentProgress != null)
+      {
+        currentProgress.ProgressMonitorDisposed -= progress_ProgressMonitorDisposed;
+        currentProgress.PropertyChanged -= progress_PropertyChanged;
+      }
+      waitingProgresses.Push(currentProgress); // push even if currentProgress==null
+      SetActiveProgress(progress);
+    }
 
-		private void SetActiveProgress(ProgressCollector progress)
-		{
-			Current.Dispatcher.VerifyAccess();
-			currentProgress = progress;
-			if (progress == null)
-			{
-				_statusBarView.HideProgress();
-				return;
-			}
+    private void SetActiveProgress(ProgressCollector progress)
+    {
+      Current.Dispatcher.VerifyAccess();
+      currentProgress = progress;
+      if (progress == null)
+      {
+        _statusBarView.HideProgress();
+        return;
+      }
 
-			progress.ProgressMonitorDisposed += progress_ProgressMonitorDisposed;
-			if (progress.ProgressMonitorIsDisposed)
-			{
-				progress_ProgressMonitorDisposed(progress, null);
-				return;
-			}
-			progress.PropertyChanged += progress_PropertyChanged;
-		}
+      progress.ProgressMonitorDisposed += progress_ProgressMonitorDisposed;
+      if (progress.ProgressMonitorIsDisposed)
+      {
+        progress_ProgressMonitorDisposed(progress, null);
+        return;
+      }
+      progress.PropertyChanged += progress_PropertyChanged;
+    }
 
-		private void progress_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			Debug.Assert(sender == currentProgress);
-			_statusBarView.DisplayProgress(currentProgress.TaskName, currentProgress.Progress, currentProgress.Status);
-		}
+    private void progress_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      Debug.Assert(sender == currentProgress);
+      _statusBarView.DisplayProgress(currentProgress.TaskName, currentProgress.Progress, currentProgress.Status);
+    }
 
-		private void progress_ProgressMonitorDisposed(object sender, EventArgs e)
-		{
-			Debug.Assert(sender == currentProgress);
-			SetActiveProgress(waitingProgresses.Pop()); // stack is never empty: we push null as first element
-		}
+    private void progress_ProgressMonitorDisposed(object sender, EventArgs e)
+    {
+      Debug.Assert(sender == currentProgress);
+      SetActiveProgress(waitingProgresses.Pop()); // stack is never empty: we push null as first element
+    }
 
-		#endregion Progress Monitor
+    #endregion Progress Monitor
 
-		#region IMVCController
+    #region IMVCController
 
-		public object ViewObject
-		{
-			get
-			{
-				return _statusBarView;
-			}
-			set
-			{
-				_statusBarView = value as IStatusBarView;
-			}
-		}
+    public object ViewObject
+    {
+      get
+      {
+        return _statusBarView;
+      }
+      set
+      {
+        _statusBarView = value as IStatusBarView;
+      }
+    }
 
-		public object ModelObject { get { return null; } }
+    public object ModelObject { get { return null; } }
 
-		public virtual void Dispose()
-		{
-			_statusBarView = null;
-		}
+    public virtual void Dispose()
+    {
+      _statusBarView = null;
+    }
 
-		#endregion IMVCController
-	}
+    #endregion IMVCController
+  }
 }

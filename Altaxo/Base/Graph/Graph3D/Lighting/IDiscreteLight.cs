@@ -30,31 +30,31 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Lighting
 {
-	/// <summary>
-	/// Interface to discrete lights. All classes that implement this interface should be immutable.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public interface IDiscreteLight : Main.IImmutable
-	{
-		/// <summary>
-		/// Gets a value indicating whether this light source is affixed to the camera coordinate system or to the world coordinate system.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if this instance is affixed to the camera coordinate system; <c>false</c> if this instance is affixed to the world coordinate system.
-		/// </value>
-		bool IsAffixedToCamera { get; }
+  /// <summary>
+  /// Interface to discrete lights. All classes that implement this interface should be immutable.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.IImmutable" />
+  public interface IDiscreteLight : Main.IImmutable
+  {
+    /// <summary>
+    /// Gets a value indicating whether this light source is affixed to the camera coordinate system or to the world coordinate system.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this instance is affixed to the camera coordinate system; <c>false</c> if this instance is affixed to the world coordinate system.
+    /// </value>
+    bool IsAffixedToCamera { get; }
 
-		/// <summary>
-		/// Gets the light amplitude. The default value is 1. This value is multiplied with the light <see cref="Color"/> to get the effective light's color.
-		/// </summary>
-		/// <value>
-		/// The light amplitude.
-		/// </value>
-		double LightAmplitude { get; }
+    /// <summary>
+    /// Gets the light amplitude. The default value is 1. This value is multiplied with the light <see cref="Color"/> to get the effective light's color.
+    /// </summary>
+    /// <value>
+    /// The light amplitude.
+    /// </value>
+    double LightAmplitude { get; }
 
-		/// <summary>
-		/// Gets the color of the light.
-		/// </summary>
-		NamedColor Color { get; }
-	}
+    /// <summary>
+    /// Gets the color of the light.
+    /// </summary>
+    NamedColor Color { get; }
+  }
 }

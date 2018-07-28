@@ -27,145 +27,145 @@ using System;
 
 namespace Altaxo.Com
 {
-	internal class ClassFactoryBase : IClassFactory
-	{
-		protected ComManager _comManager;
+  internal class ClassFactoryBase : IClassFactory
+  {
+    protected ComManager _comManager;
 
-		protected UInt32 _locked = 0;
-		protected uint _classContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
-		protected Guid _classId;
-		protected uint _flags;
-		protected uint _cookie;
+    protected UInt32 _locked = 0;
+    protected uint _classContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
+    protected Guid _classId;
+    protected uint _flags;
+    protected uint _cookie;
 
-		public ClassFactoryBase(ComManager comManager)
-		{
-			_comManager = comManager;
-		}
+    public ClassFactoryBase(ComManager comManager)
+    {
+      _comManager = comManager;
+    }
 
-		public virtual void InternalCreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
-		{
-			IntPtr nullPtr = new IntPtr(0);
-			ppvObject = nullPtr;
-		}
+    public virtual void InternalCreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
+    {
+      IntPtr nullPtr = new IntPtr(0);
+      ppvObject = nullPtr;
+    }
 
-		public uint ClassContext
-		{
-			get
-			{
-				return _classContext;
-			}
-			set
-			{
-				_classContext = value;
-			}
-		}
+    public uint ClassContext
+    {
+      get
+      {
+        return _classContext;
+      }
+      set
+      {
+        _classContext = value;
+      }
+    }
 
-		public Guid ClassId
-		{
-			get
-			{
-				return _classId;
-			}
-			set
-			{
-				_classId = value;
-			}
-		}
+    public Guid ClassId
+    {
+      get
+      {
+        return _classId;
+      }
+      set
+      {
+        _classId = value;
+      }
+    }
 
-		public uint Flags
-		{
-			get
-			{
-				return _flags;
-			}
-			set
-			{
-				_flags = value;
-			}
-		}
+    public uint Flags
+    {
+      get
+      {
+        return _flags;
+      }
+      set
+      {
+        _flags = value;
+      }
+    }
 
-		/// <summary>
-		/// Registers the class factory.
-		/// </summary>
-		/// <returns></returns>
-		public bool RegisterClassObject()
-		{
-			// Register the class factory
-			int i = Ole32Func.CoRegisterClassObject
-				(
-				ref _classId,
-				this,
-				ClassContext,
-				Flags,
-				out _cookie
-				);
+    /// <summary>
+    /// Registers the class factory.
+    /// </summary>
+    /// <returns></returns>
+    public bool RegisterClassObject()
+    {
+      // Register the class factory
+      int i = Ole32Func.CoRegisterClassObject
+        (
+        ref _classId,
+        this,
+        ClassContext,
+        Flags,
+        out _cookie
+        );
 
-			ComDebug.ReportInfo("{0}.RegisterClassObject, i={1}, _cookie={2}", this.GetType().Name, i, _cookie);
+      ComDebug.ReportInfo("{0}.RegisterClassObject, i={1}, _cookie={2}", this.GetType().Name, i, _cookie);
 
-			if (i == 0)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+      if (i == 0)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
-		/// <summary>
-		/// Unregisters the class factory.
-		/// </summary>
-		/// <returns></returns>
-		public bool RevokeClassObject()
-		{
-			int i = Ole32Func.CoRevokeClassObject(_cookie);
+    /// <summary>
+    /// Unregisters the class factory.
+    /// </summary>
+    /// <returns></returns>
+    public bool RevokeClassObject()
+    {
+      int i = Ole32Func.CoRevokeClassObject(_cookie);
 
-			if (i == 0)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+      if (i == 0)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
-		public static bool ResumeClassObjects()
-		{
-			int i = Ole32Func.CoResumeClassObjects();
+    public static bool ResumeClassObjects()
+    {
+      int i = Ole32Func.CoResumeClassObjects();
 
-			if (i == 0)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+      if (i == 0)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
-		#region IClassFactory Implementations
+    #region IClassFactory Implementations
 
-		public void CreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
-		{
-			InternalCreateInstance(pUnkOuter, ref riid, out ppvObject);
-		}
+    public void CreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
+    {
+      InternalCreateInstance(pUnkOuter, ref riid, out ppvObject);
+    }
 
-		public void LockServer(bool bLock)
-		{
-			if (bLock)
-			{
-				_comManager.InterlockedIncrementServerLockCount();
-			}
-			else
-			{
-				_comManager.InterlockedDecrementServerLockCount();
-			}
+    public void LockServer(bool bLock)
+    {
+      if (bLock)
+      {
+        _comManager.InterlockedIncrementServerLockCount();
+      }
+      else
+      {
+        _comManager.InterlockedDecrementServerLockCount();
+      }
 
-			// Always attempt to see if we need to shutdown this server application.
-			_comManager.AttemptToTerminateServer();
-		}
+      // Always attempt to see if we need to shutdown this server application.
+      _comManager.AttemptToTerminateServer();
+    }
 
-		#endregion IClassFactory Implementations
-	}
+    #endregion IClassFactory Implementations
+  }
 }

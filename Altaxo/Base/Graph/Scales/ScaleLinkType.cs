@@ -26,42 +26,42 @@ using System;
 
 namespace Altaxo.Graph.Scales
 {
-	/// <summary>
-	/// Provides how the axis is linked to the corresponding axis on the linked layer.
-	/// </summary>
-	[Serializable]
-	public enum ScaleLinkType
-	{
-		/// <summary>
-		/// The axis is not linked, i.e. independent.
-		/// </summary>
-		None,
+  /// <summary>
+  /// Provides how the axis is linked to the corresponding axis on the linked layer.
+  /// </summary>
+  [Serializable]
+  public enum ScaleLinkType
+  {
+    /// <summary>
+    /// The axis is not linked, i.e. independent.
+    /// </summary>
+    None,
 
-		/// <summary>
-		/// The axis is linked straight, i.e. it has the same origin and end value as the corresponding axis of the linked layer.
-		/// </summary>
-		Straight,
+    /// <summary>
+    /// The axis is linked straight, i.e. it has the same origin and end value as the corresponding axis of the linked layer.
+    /// </summary>
+    Straight,
 
-		/// <summary>
-		/// The axis is linked custom, i.e. origin and end of axis are translated linearly using formulas org'=a1+b1*org, end'=a2+b2*end.
-		/// </summary>
-		Custom
-	}
+    /// <summary>
+    /// The axis is linked custom, i.e. origin and end of axis are translated linearly using formulas org'=a1+b1*org, end'=a2+b2*end.
+    /// </summary>
+    Custom
+  }
 
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer+AxisLinkType", 0)]
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.AxisLinkType", 1)]
-	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleLinkType), 2)]
-	public class AxisLinkTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-	{
-		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			info.SetNodeContent(obj.ToString());
-		}
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer+AxisLinkType", 0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.AxisLinkType", 1)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleLinkType), 2)]
+  public class AxisLinkTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      info.SetNodeContent(obj.ToString());
+    }
 
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-		{
-			string val = info.GetNodeContent();
-			return System.Enum.Parse(typeof(ScaleLinkType), val, true);
-		}
-	}
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    {
+      string val = info.GetNodeContent();
+      return System.Enum.Parse(typeof(ScaleLinkType), val, true);
+    }
+  }
 }

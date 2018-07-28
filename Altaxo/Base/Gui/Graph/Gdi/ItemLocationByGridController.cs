@@ -28,116 +28,116 @@ using System;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IItemLocationByGridView
-	{
-		double GridColumn { get; set; }
+  public interface IItemLocationByGridView
+  {
+    double GridColumn { get; set; }
 
-		double GridRow { get; set; }
+    double GridRow { get; set; }
 
-		double GridColumnSpan { get; set; }
+    double GridColumnSpan { get; set; }
 
-		double GridRowSpan { get; set; }
+    double GridRowSpan { get; set; }
 
-		double Rotation { get; set; }
+    double Rotation { get; set; }
 
-		double ShearX { get; set; }
+    double ShearX { get; set; }
 
-		double ScaleX { get; set; }
+    double ScaleX { get; set; }
 
-		double ScaleY { get; set; }
+    double ScaleY { get; set; }
 
-		bool ForceFitIntoCell { get; set; }
-	}
+    bool ForceFitIntoCell { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	/// <summary>
-	/// Summary description for LayerPositionController.
-	/// </summary>
-	[ExpectedTypeOfView(typeof(IItemLocationByGridView))]
-	[UserControllerForObject(typeof(ItemLocationByGrid))]
-	public class ItemLocationByGridController : MVCANControllerEditOriginalDocBase<ItemLocationByGrid, IItemLocationByGridView>
-	{
-		private GridPartitioning _parentLayerGrid;
+  /// <summary>
+  /// Summary description for LayerPositionController.
+  /// </summary>
+  [ExpectedTypeOfView(typeof(IItemLocationByGridView))]
+  [UserControllerForObject(typeof(ItemLocationByGrid))]
+  public class ItemLocationByGridController : MVCANControllerEditOriginalDocBase<ItemLocationByGrid, IItemLocationByGridView>
+  {
+    private GridPartitioning _parentLayerGrid;
 
-		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override bool InitializeDocument(params object[] args)
-		{
-			if (args.Length < 2)
-				return false;
-			if (!(args[1] is GridPartitioning))
-				return false;
-			_parentLayerGrid = (GridPartitioning)args[1];
+    public override bool InitializeDocument(params object[] args)
+    {
+      if (args.Length < 2)
+        return false;
+      if (!(args[1] is GridPartitioning))
+        return false;
+      _parentLayerGrid = (GridPartitioning)args[1];
 
-			return base.InitializeDocument(args);
-		}
+      return base.InitializeDocument(args);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				_view.GridColumn = DocToUserPosition(_doc.GridColumn);
-				_view.GridRow = DocToUserPosition(_doc.GridRow);
-				_view.GridColumnSpan = DocToUserSize(_doc.GridColumnSpan);
-				_view.GridRowSpan = DocToUserSize(_doc.GridRowSpan);
-				_view.Rotation = _doc.Rotation;
-				_view.ShearX = _doc.ShearX;
-				_view.ScaleX = _doc.ScaleX;
-				_view.ScaleY = _doc.ScaleY;
-				_view.ForceFitIntoCell = _doc.ForceFitIntoCell;
-			}
-		}
+      if (initData)
+      {
+      }
+      if (null != _view)
+      {
+        _view.GridColumn = DocToUserPosition(_doc.GridColumn);
+        _view.GridRow = DocToUserPosition(_doc.GridRow);
+        _view.GridColumnSpan = DocToUserSize(_doc.GridColumnSpan);
+        _view.GridRowSpan = DocToUserSize(_doc.GridRowSpan);
+        _view.Rotation = _doc.Rotation;
+        _view.ShearX = _doc.ShearX;
+        _view.ScaleX = _doc.ScaleX;
+        _view.ScaleY = _doc.ScaleY;
+        _view.ForceFitIntoCell = _doc.ForceFitIntoCell;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			try
-			{
-				_doc.GridColumn = UserToDocPosition(_view.GridColumn);
-				_doc.GridRow = UserToDocPosition(_view.GridRow);
-				_doc.GridColumnSpan = UserToDocSize(_view.GridColumnSpan);
-				_doc.GridRowSpan = UserToDocSize(_view.GridRowSpan);
-				_doc.Rotation = _view.Rotation;
-				_doc.ShearX = _view.ShearX;
-				_doc.ScaleX = _view.ScaleX;
-				_doc.ScaleY = _view.ScaleY;
-				_doc.ForceFitIntoCell = _view.ForceFitIntoCell;
-			}
-			catch (Exception)
-			{
-				return false; // indicate that something failed
-			}
-			return ApplyEnd(true, disposeController);
-		}
+    public override bool Apply(bool disposeController)
+    {
+      try
+      {
+        _doc.GridColumn = UserToDocPosition(_view.GridColumn);
+        _doc.GridRow = UserToDocPosition(_view.GridRow);
+        _doc.GridColumnSpan = UserToDocSize(_view.GridColumnSpan);
+        _doc.GridRowSpan = UserToDocSize(_view.GridRowSpan);
+        _doc.Rotation = _view.Rotation;
+        _doc.ShearX = _view.ShearX;
+        _doc.ScaleX = _view.ScaleX;
+        _doc.ScaleY = _view.ScaleY;
+        _doc.ForceFitIntoCell = _view.ForceFitIntoCell;
+      }
+      catch (Exception)
+      {
+        return false; // indicate that something failed
+      }
+      return ApplyEnd(true, disposeController);
+    }
 
-		private static double DocToUserPosition(double x)
-		{
-			return 1 + (x - 1) / 2;
-		} // 1->1, 3->2, 5->3 usw.
+    private static double DocToUserPosition(double x)
+    {
+      return 1 + (x - 1) / 2;
+    } // 1->1, 3->2, 5->3 usw.
 
-		private static double DocToUserSize(double x)
-		{
-			return 1 + (x - 1) / 2;
-		}
+    private static double DocToUserSize(double x)
+    {
+      return 1 + (x - 1) / 2;
+    }
 
-		private static double UserToDocPosition(double x)
-		{
-			return 1 + 2 * (x - 1);
-		} // 1 -> 1, 2->3, 3->5 usw.
+    private static double UserToDocPosition(double x)
+    {
+      return 1 + 2 * (x - 1);
+    } // 1 -> 1, 2->3, 3->5 usw.
 
-		private static double UserToDocSize(double x)
-		{
-			return 1 + 2 * (x - 1);
-		} // 1 -> 1, 2->3, 3->5 usw.
-	}
+    private static double UserToDocSize(double x)
+    {
+      return 1 + 2 * (x - 1);
+    } // 1 -> 1, 2->3, 3->5 usw.
+  }
 }

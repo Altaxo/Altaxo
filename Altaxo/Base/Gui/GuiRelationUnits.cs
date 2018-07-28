@@ -31,31 +31,31 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
-	using Altaxo.Units.Dimensionless;
+  using Altaxo.Units.Dimensionless;
 
-	public static class GuiRelationUnits
-	{
-		private static ReadOnlyCollection<IUnit> _instance;
+  public static class GuiRelationUnits
+  {
+    private static ReadOnlyCollection<IUnit> _instance;
 
-		static GuiRelationUnits()
-		{
-			var instance = new List<IUnit>();
+    static GuiRelationUnits()
+    {
+      var instance = new List<IUnit>();
 
-			instance.Add(Unity.Instance);
-			instance.Add(Percent.Instance);
-			instance.Add(Permille.Instance);
-			_instance = instance.AsReadOnly();
-		}
+      instance.Add(Unity.Instance);
+      instance.Add(Percent.Instance);
+      instance.Add(Permille.Instance);
+      _instance = instance.AsReadOnly();
+    }
 
-		/// <summary>
-		/// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
-		/// </summary>
-		public static IList<IUnit> Collection
-		{
-			get
-			{
-				return _instance;
-			}
-		}
-	}
+    /// <summary>
+    /// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
+    /// </summary>
+    public static IList<IUnit> Collection
+    {
+      get
+      {
+        return _instance;
+      }
+    }
+  }
 }

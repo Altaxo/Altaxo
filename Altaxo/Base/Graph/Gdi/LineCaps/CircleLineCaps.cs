@@ -30,111 +30,111 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
-	/// <summary>
-	/// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
-	/// </summary>
-	public class CircleOLineCap : LineCapExtension
-	{
-		public CircleOLineCap()
-		{
-		}
+  /// <summary>
+  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// </summary>
+  public class CircleOLineCap : LineCapExtension
+  {
+    public CircleOLineCap()
+    {
+    }
 
-		public CircleOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-			: base(minimumAbsoluteSizePt, minimumRelativeSize)
-		{
-		}
+    public CircleOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
+    {
+    }
 
-		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
-		{
-			return new CircleOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-		}
+    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    {
+      return new CircleOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+    }
 
-		public override string Name { get { return "CircleO"; } }
+    public override string Name { get { return "CircleO"; } }
 
-		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
-		public override double DefaultMinimumRelativeSize { get { return 4; } }
+    public override double DefaultMinimumRelativeSize { get { return 4; } }
 
-		private CustomLineCap GetClone(Pen pen, float size)
-		{
-			float endPoint;
-			endPoint = pen.Width == 0 ? 1 : size / (pen.Width * 2) - 0.5f;
-			if (endPoint <= 0)
-				endPoint = 1e-3f;
+    private CustomLineCap GetClone(Pen pen, float size)
+    {
+      float endPoint;
+      endPoint = pen.Width == 0 ? 1 : size / (pen.Width * 2) - 0.5f;
+      if (endPoint <= 0)
+        endPoint = 1e-3f;
 
-			GraphicsPath hPath = new GraphicsPath();
-			// Create the outline for our custom end cap.
-			hPath.AddEllipse(-endPoint, -endPoint, 2 * endPoint, 2 * endPoint);
-			CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint); // we set the stroke path only
-			clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
-			return clone;
-		}
+      GraphicsPath hPath = new GraphicsPath();
+      // Create the outline for our custom end cap.
+      hPath.AddEllipse(-endPoint, -endPoint, 2 * endPoint, 2 * endPoint);
+      CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint); // we set the stroke path only
+      clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
+      return clone;
+    }
 
-		public override void SetStartCap(Pen pen, float size)
-		{
-			pen.StartCap = LineCap.Custom;
-			pen.CustomStartCap = GetClone(pen, size);
-		}
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Custom;
+      pen.CustomStartCap = GetClone(pen, size);
+    }
 
-		public override void SetEndCap(Pen pen, float size)
-		{
-			pen.EndCap = LineCap.Custom;
-			pen.CustomEndCap = GetClone(pen, size);
-		}
-	}
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.EndCap = LineCap.Custom;
+      pen.CustomEndCap = GetClone(pen, size);
+    }
+  }
 
-	/// <summary>
-	/// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
-	/// </summary>
-	public class CircleFLineCap : LineCapExtension
-	{
-		public CircleFLineCap()
-		{
-		}
+  /// <summary>
+  /// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
+  /// </summary>
+  public class CircleFLineCap : LineCapExtension
+  {
+    public CircleFLineCap()
+    {
+    }
 
-		public CircleFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-			: base(minimumAbsoluteSizePt, minimumRelativeSize)
-		{
-		}
+    public CircleFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+      : base(minimumAbsoluteSizePt, minimumRelativeSize)
+    {
+    }
 
-		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
-		{
-			return new CircleFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
-		}
+    public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+    {
+      return new CircleFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+    }
 
-		public override string Name { get { return "CircleF"; } }
+    public override string Name { get { return "CircleF"; } }
 
-		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+    public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 
-		public override double DefaultMinimumRelativeSize
-		{
-			get { return 4; }
-		}
+    public override double DefaultMinimumRelativeSize
+    {
+      get { return 4; }
+    }
 
-		private CustomLineCap GetClone(Pen pen, float size)
-		{
-			float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
-			if (scale <= 0)
-				scale = 1e-3f;
+    private CustomLineCap GetClone(Pen pen, float size)
+    {
+      float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
+      if (scale <= 0)
+        scale = 1e-3f;
 
-			GraphicsPath hPath = new GraphicsPath();
-			hPath.AddEllipse(-1, -1, 2, 2);
-			CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 0); // we set the stroke path only
-			clone.WidthScale = scale;
+      GraphicsPath hPath = new GraphicsPath();
+      hPath.AddEllipse(-1, -1, 2, 2);
+      CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 0); // we set the stroke path only
+      clone.WidthScale = scale;
 
-			return clone;
-		}
+      return clone;
+    }
 
-		public override void SetStartCap(Pen pen, float size)
-		{
-			pen.StartCap = LineCap.Custom;
-			pen.CustomStartCap = GetClone(pen, size);
-		}
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Custom;
+      pen.CustomStartCap = GetClone(pen, size);
+    }
 
-		public override void SetEndCap(Pen pen, float size)
-		{
-			pen.EndCap = LineCap.Custom;
-			pen.CustomEndCap = GetClone(pen, size);
-		}
-	}
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.EndCap = LineCap.Custom;
+      pen.CustomEndCap = GetClone(pen, size);
+    }
+  }
 }

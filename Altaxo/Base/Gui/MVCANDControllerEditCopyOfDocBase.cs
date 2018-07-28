@@ -30,93 +30,93 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui
 {
-	/// <summary>
-	/// Base class of controllers that edit a copy of the document. This means that the document is not connected to the document tree when edited.
-	/// This class indicates changes made to the document by firing the <see cref="MadeDirty"/> event.
-	/// </summary>
-	/// <typeparam name="TModel">The type of the document to edit.</typeparam>
-	/// <typeparam name="TView">The type of the view.</typeparam>
-	public abstract class MVCANDControllerEditCopyOfDocBase<TModel, TView> : MVCANControllerEditCopyOfDocBase<TModel, TView>, IMVCANDController
-		where TModel : class // for structs or immutables use the MVCANDControllerEditImmutableDocBase
-		where TView : class
-	{
-		/// <summary>
-		/// Used to suppress the <see cref="MadeDirty"/> event of this controller.
-		/// </summary>
-		protected Altaxo.Main.SuspendableObject _suppressDirtyEvent = new Altaxo.Main.SuspendableObject();
+  /// <summary>
+  /// Base class of controllers that edit a copy of the document. This means that the document is not connected to the document tree when edited.
+  /// This class indicates changes made to the document by firing the <see cref="MadeDirty"/> event.
+  /// </summary>
+  /// <typeparam name="TModel">The type of the document to edit.</typeparam>
+  /// <typeparam name="TView">The type of the view.</typeparam>
+  public abstract class MVCANDControllerEditCopyOfDocBase<TModel, TView> : MVCANControllerEditCopyOfDocBase<TModel, TView>, IMVCANDController
+    where TModel : class // for structs or immutables use the MVCANDControllerEditImmutableDocBase
+    where TView : class
+  {
+    /// <summary>
+    /// Used to suppress the <see cref="MadeDirty"/> event of this controller.
+    /// </summary>
+    protected Altaxo.Main.SuspendableObject _suppressDirtyEvent = new Altaxo.Main.SuspendableObject();
 
-		/// <summary>
-		/// Event fired when the user changed some data that will change the model.
-		/// </summary>
-		public event Action<IMVCANDController> MadeDirty;
+    /// <summary>
+    /// Event fired when the user changed some data that will change the model.
+    /// </summary>
+    public event Action<IMVCANDController> MadeDirty;
 
-		/// <summary>
-		/// Initialize the controller with the document. If successfull, the function has to return true.
-		/// </summary>
-		/// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
-		/// <returns>
-		/// Returns <see langword="true" /> if successfull; otherwise <see langword="false" />.
-		/// </returns>
-		public override bool InitializeDocument(params object[] args)
-		{
-			if (null == args || 0 == args.Length || !(args[0] is TModel))
-				return false;
+    /// <summary>
+    /// Initialize the controller with the document. If successfull, the function has to return true.
+    /// </summary>
+    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
+    /// <returns>
+    /// Returns <see langword="true" /> if successfull; otherwise <see langword="false" />.
+    /// </returns>
+    public override bool InitializeDocument(params object[] args)
+    {
+      if (null == args || 0 == args.Length || !(args[0] is TModel))
+        return false;
 
-			_doc = _originalDoc = (TModel)args[0];
-			if (_useDocumentCopy && _originalDoc is ICloneable)
-				_doc = (TModel)((ICloneable)_originalDoc).Clone();
+      _doc = _originalDoc = (TModel)args[0];
+      if (_useDocumentCopy && _originalDoc is ICloneable)
+        _doc = (TModel)((ICloneable)_originalDoc).Clone();
 
-			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
-			{
-				Initialize(true);
-			}
-			return true;
-		}
+      using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
+      {
+        Initialize(true);
+      }
+      return true;
+    }
 
-		/// <summary>
-		/// Returns the Gui element that shows the model to the user.
-		/// </summary>
-		public override object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					DetachView();
-				}
+    /// <summary>
+    /// Returns the Gui element that shows the model to the user.
+    /// </summary>
+    public override object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        if (null != _view)
+        {
+          DetachView();
+        }
 
-				_view = value as TView;
+        _view = value as TView;
 
-				if (null != _view)
-				{
-					using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
-					{
-						Initialize(false);
-						AttachView();
-					}
-				}
-			}
-		}
+        if (null != _view)
+        {
+          using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
+          {
+            Initialize(false);
+            AttachView();
+          }
+        }
+      }
+    }
 
-		/// <summary>
-		/// Fires the <see cref="MadeDirty"/> event (if it is not suppressed).
-		/// </summary>
-		protected virtual void OnMadeDirty()
-		{
-			if (!_suppressDirtyEvent.IsSuspended && null != MadeDirty)
-				MadeDirty(this);
-		}
+    /// <summary>
+    /// Fires the <see cref="MadeDirty"/> event (if it is not suppressed).
+    /// </summary>
+    protected virtual void OnMadeDirty()
+    {
+      if (!_suppressDirtyEvent.IsSuspended && null != MadeDirty)
+        MadeDirty(this);
+    }
 
-		/// <summary>
-		/// Gets the provisional model object. This is the model object that is based on the current user input.
-		/// </summary>
-		public object ProvisionalModelObject
-		{
-			get { return _doc; }
-		}
-	}
+    /// <summary>
+    /// Gets the provisional model object. This is the model object that is based on the current user input.
+    /// </summary>
+    public object ProvisionalModelObject
+    {
+      get { return _doc; }
+    }
+  }
 }

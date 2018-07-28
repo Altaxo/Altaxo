@@ -27,89 +27,93 @@ using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-	/// <summary>
-	/// PositiveFinitePhysicalBoundaries is intended to use for logarithmic axis
-	/// it keeps track of the smallest positive and biggest positive value
-	/// </summary>
-	[Serializable]
-	public class PositiveFiniteNumericalBoundaries : NumericalBoundaries
-	{
-		#region Serialization
+  /// <summary>
+  /// PositiveFinitePhysicalBoundaries is intended to use for logarithmic axis
+  /// it keeps track of the smallest positive and biggest positive value
+  /// </summary>
+  [Serializable]
+  public class PositiveFiniteNumericalBoundaries : NumericalBoundaries
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PositiveFinitePhysicalBoundaries", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Boundaries.PositiveFiniteNumericalBoundaries", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PositiveFiniteNumericalBoundaries), 2)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				PositiveFiniteNumericalBoundaries s = (PositiveFiniteNumericalBoundaries)obj;
-				info.AddBaseValueEmbedded(s, typeof(PositiveFiniteNumericalBoundaries).BaseType);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PositiveFinitePhysicalBoundaries", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Boundaries.PositiveFiniteNumericalBoundaries", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PositiveFiniteNumericalBoundaries), 2)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        PositiveFiniteNumericalBoundaries s = (PositiveFiniteNumericalBoundaries)obj;
+        info.AddBaseValueEmbedded(s, typeof(PositiveFiniteNumericalBoundaries).BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				PositiveFiniteNumericalBoundaries s = null != o ? (PositiveFiniteNumericalBoundaries)o : new PositiveFiniteNumericalBoundaries();
-				info.GetBaseValueEmbedded(s, typeof(PositiveFiniteNumericalBoundaries).BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        PositiveFiniteNumericalBoundaries s = null != o ? (PositiveFiniteNumericalBoundaries)o : new PositiveFiniteNumericalBoundaries();
+        info.GetBaseValueEmbedded(s, typeof(PositiveFiniteNumericalBoundaries).BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public PositiveFiniteNumericalBoundaries()
-			: base()
-		{
-		}
+    public PositiveFiniteNumericalBoundaries()
+      : base()
+    {
+    }
 
-		public PositiveFiniteNumericalBoundaries(PositiveFiniteNumericalBoundaries c)
-			: base(c)
-		{
-		}
+    public PositiveFiniteNumericalBoundaries(PositiveFiniteNumericalBoundaries c)
+      : base(c)
+    {
+    }
 
-		public override object Clone()
-		{
-			return new PositiveFiniteNumericalBoundaries(this);
-		}
+    public override object Clone()
+    {
+      return new PositiveFiniteNumericalBoundaries(this);
+    }
 
-		public override bool Add(IReadableColumn col, int idx)
-		{
-			return Add((col is INumericColumn) ? ((INumericColumn)col)[idx] : idx);
-		}
+    public override bool Add(IReadableColumn col, int idx)
+    {
+      return Add((col is INumericColumn) ? ((INumericColumn)col)[idx] : idx);
+    }
 
-		public override bool Add(Altaxo.Data.AltaxoVariant val)
-		{
-			return Add(val.ToDouble());
-		}
+    public override bool Add(Altaxo.Data.AltaxoVariant val)
+    {
+      return Add(val.ToDouble());
+    }
 
-		public bool Add(double d)
-		{
-			if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
-			{
-				if (d > 0 && !double.IsInfinity(d))
-				{
-					if (d < _minValue) _minValue = d;
-					if (d > _maxValue) _maxValue = d;
-					_numberOfItems++;
-					return true;
-				}
-			}
-			else  // not suspended: normal behaviour with change notification
-			{
-				if (d > 0 && !double.IsInfinity(d))
-				{
-					BoundariesChangedData data = BoundariesChangedData.NumberOfItemsChanged;
-					if (d < _minValue) { _minValue = d; data |= BoundariesChangedData.LowerBoundChanged; }
-					if (d > _maxValue) { _maxValue = d; data |= BoundariesChangedData.UpperBoundChanged; }
-					_numberOfItems++;
+    public bool Add(double d)
+    {
+      if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
+      {
+        if (d > 0 && !double.IsInfinity(d))
+        {
+          if (d < _minValue)
+            _minValue = d;
+          if (d > _maxValue)
+            _maxValue = d;
+          _numberOfItems++;
+          return true;
+        }
+      }
+      else  // not suspended: normal behaviour with change notification
+      {
+        if (d > 0 && !double.IsInfinity(d))
+        {
+          BoundariesChangedData data = BoundariesChangedData.NumberOfItemsChanged;
+          if (d < _minValue)
+          { _minValue = d; data |= BoundariesChangedData.LowerBoundChanged; }
+          if (d > _maxValue)
+          { _maxValue = d; data |= BoundariesChangedData.UpperBoundChanged; }
+          _numberOfItems++;
 
-					EhSelfChanged(new BoundariesChangedEventArgs(data));
+          EhSelfChanged(new BoundariesChangedEventArgs(data));
 
-					return true;
-				}
-			}
+          return true;
+        }
+      }
 
-			return false;
-		}
-	}
+      return false;
+    }
+  }
 }

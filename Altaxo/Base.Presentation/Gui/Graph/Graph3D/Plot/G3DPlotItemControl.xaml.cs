@@ -31,69 +31,69 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot
 {
-	/// <summary>
-	/// Interaction logic for G2DPlotItemControl.xaml
-	/// </summary>
-	public partial class G3DPlotItemControl : UserControl, IG3DPlotItemView
-	{
-		public G3DPlotItemControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for G2DPlotItemControl.xaml
+  /// </summary>
+  public partial class G3DPlotItemControl : UserControl, IG3DPlotItemView
+  {
+    public G3DPlotItemControl()
+    {
+      InitializeComponent();
+    }
 
-		private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (e.OriginalSource == _tabControl)
-			{
-				TabItem newItem = null;
-				TabItem oldItem = null;
+    private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      if (e.OriginalSource == _tabControl)
+      {
+        TabItem newItem = null;
+        TabItem oldItem = null;
 
-				if (e.AddedItems.Count > 0)
-					newItem = (TabItem)e.AddedItems[0];
-				if (e.RemovedItems.Count > 0)
-					oldItem = (TabItem)e.RemovedItems[0];
+        if (e.AddedItems.Count > 0)
+          newItem = (TabItem)e.AddedItems[0];
+        if (e.RemovedItems.Count > 0)
+          oldItem = (TabItem)e.RemovedItems[0];
 
-				object newContent = null == newItem ? null : newItem.Content;
-				object oldContent = null == oldItem ? null : oldItem.Content;
+        object newContent = null == newItem ? null : newItem.Content;
+        object oldContent = null == oldItem ? null : oldItem.Content;
 
-				if (null != SelectedPage_Changed)
-					SelectedPage_Changed(this, new Altaxo.Main.InstanceChangedEventArgs(oldContent, newContent));
-			}
-		}
+        if (null != SelectedPage_Changed)
+          SelectedPage_Changed(this, new Altaxo.Main.InstanceChangedEventArgs(oldContent, newContent));
+      }
+    }
 
-		#region IG3DPlotItemView
+    #region IG3DPlotItemView
 
-		public void ClearTabs()
-		{
-			// decouple controls from the tabitems
-			foreach (TabItem tabItem in _tabControl.Items)
-				tabItem.Content = null;
-			_tabControl.Items.Clear();
-		}
+    public void ClearTabs()
+    {
+      // decouple controls from the tabitems
+      foreach (TabItem tabItem in _tabControl.Items)
+        tabItem.Content = null;
+      _tabControl.Items.Clear();
+    }
 
-		public void AddTab(string title, object view)
-		{
-			var tabItem = new TabItem() { Header = title, Content = view };
-			_tabControl.Items.Add(tabItem);
-		}
+    public void AddTab(string title, object view)
+    {
+      var tabItem = new TabItem() { Header = title, Content = view };
+      _tabControl.Items.Add(tabItem);
+    }
 
-		public void BringTabToFront(int index)
-		{
-			_tabControl.SelectedIndex = index;
-		}
+    public void BringTabToFront(int index)
+    {
+      _tabControl.SelectedIndex = index;
+    }
 
-		public event EventHandler<Altaxo.Main.InstanceChangedEventArgs> SelectedPage_Changed;
+    public event EventHandler<Altaxo.Main.InstanceChangedEventArgs> SelectedPage_Changed;
 
-		public void SetPlotStyleView(object view)
-		{
-			_plotStyleCollectionControlHost.Content = (UIElement)view;
-		}
+    public void SetPlotStyleView(object view)
+    {
+      _plotStyleCollectionControlHost.Content = (UIElement)view;
+    }
 
-		public void SetPlotGroupCollectionView(object view)
-		{
-			_plotGroupCollectionControlHost.Content = (UIElement)view;
-		}
+    public void SetPlotGroupCollectionView(object view)
+    {
+      _plotGroupCollectionControlHost.Content = (UIElement)view;
+    }
 
-		#endregion IG3DPlotItemView
-	}
+    #endregion IG3DPlotItemView
+  }
 }

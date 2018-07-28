@@ -30,91 +30,91 @@ using System.Text;
 
 namespace Altaxo.Units
 {
-	public interface ISIPrefixList : IEnumerable<SIPrefix>
-	{
-		int Count { get; }
+  public interface ISIPrefixList : IEnumerable<SIPrefix>
+  {
+    int Count { get; }
 
-		SIPrefix TryGetPrefixFromShortCut(string shortCut);
+    SIPrefix TryGetPrefixFromShortCut(string shortCut);
 
-		bool ContainsNonePrefixOnly { get; }
-	}
+    bool ContainsNonePrefixOnly { get; }
+  }
 
-	public class SIPrefixList : ISIPrefixList
-	{
-		private Dictionary<string, SIPrefix> _shortCutDictionary;
-		private Dictionary<int, SIPrefix> _exponentDictionary;
-		private int[] _allExponentsSorted;
+  public class SIPrefixList : ISIPrefixList
+  {
+    private Dictionary<string, SIPrefix> _shortCutDictionary;
+    private Dictionary<int, SIPrefix> _exponentDictionary;
+    private int[] _allExponentsSorted;
 
-		public SIPrefixList(IEnumerable<SIPrefix> from)
-		{
-			var prefixes = from.ToArray();
-			Array.Sort(prefixes, (a, b) => Comparer<int>.Default.Compare(a.Exponent, b.Exponent));
+    public SIPrefixList(IEnumerable<SIPrefix> from)
+    {
+      var prefixes = from.ToArray();
+      Array.Sort(prefixes, (a, b) => Comparer<int>.Default.Compare(a.Exponent, b.Exponent));
 
-			_allExponentsSorted = prefixes.Select(p => p.Exponent).ToArray();
-			_shortCutDictionary = new Dictionary<string, SIPrefix>();
-			_exponentDictionary = new Dictionary<int, SIPrefix>();
-			foreach (var e in prefixes)
-			{
-				_shortCutDictionary.Add(e.ShortCut, e);
-				_exponentDictionary.Add(e.Exponent, e);
-			}
-		}
+      _allExponentsSorted = prefixes.Select(p => p.Exponent).ToArray();
+      _shortCutDictionary = new Dictionary<string, SIPrefix>();
+      _exponentDictionary = new Dictionary<int, SIPrefix>();
+      foreach (var e in prefixes)
+      {
+        _shortCutDictionary.Add(e.ShortCut, e);
+        _exponentDictionary.Add(e.Exponent, e);
+      }
+    }
 
-		public int Count
-		{
-			get { return _shortCutDictionary.Count; }
-		}
+    public int Count
+    {
+      get { return _shortCutDictionary.Count; }
+    }
 
-		/// <summary>
-		/// Return true if the collection contains exactly one element, which is the prefix <see cref="SIPrefix.None"/>.
-		/// </summary>
-		public bool ContainsNonePrefixOnly
-		{
-			get
-			{
-				return _shortCutDictionary.Count == 1 && _shortCutDictionary.ContainsKey("");
-			}
-		}
+    /// <summary>
+    /// Return true if the collection contains exactly one element, which is the prefix <see cref="SIPrefix.None"/>.
+    /// </summary>
+    public bool ContainsNonePrefixOnly
+    {
+      get
+      {
+        return _shortCutDictionary.Count == 1 && _shortCutDictionary.ContainsKey("");
+      }
+    }
 
-		public SIPrefix TryGetPrefixFromShortCut(string shortCut)
-		{
-			SIPrefix result;
-			if (_shortCutDictionary.TryGetValue(shortCut, out result))
-				return result;
-			else
-				return null;
-		}
+    public SIPrefix TryGetPrefixFromShortCut(string shortCut)
+    {
+      SIPrefix result;
+      if (_shortCutDictionary.TryGetValue(shortCut, out result))
+        return result;
+      else
+        return null;
+    }
 
-		public (SIPrefix prefix, double remainingFactor) GetPrefixFromExponent(int exponent)
-		{
-			if (_exponentDictionary.TryGetValue(exponent, out SIPrefix result))
-			{
-				return (result, 1);
-			}
+    public (SIPrefix prefix, double remainingFactor) GetPrefixFromExponent(int exponent)
+    {
+      if (_exponentDictionary.TryGetValue(exponent, out SIPrefix result))
+      {
+        return (result, 1);
+      }
 
-			// if it is not in the dictionary, then it also not is in the array, thus the bitwise complement must always be positive
-			int idx = ~Array.BinarySearch(_allExponentsSorted, exponent);
+      // if it is not in the dictionary, then it also not is in the array, thus the bitwise complement must always be positive
+      int idx = ~Array.BinarySearch(_allExponentsSorted, exponent);
 
-			if (idx >= _allExponentsSorted.Length)
-			{
-				result = _exponentDictionary[_allExponentsSorted[_allExponentsSorted.Length - 1]];
-			}
-			else
-			{
-				result = _exponentDictionary[_allExponentsSorted[idx]];
-			}
+      if (idx >= _allExponentsSorted.Length)
+      {
+        result = _exponentDictionary[_allExponentsSorted[_allExponentsSorted.Length - 1]];
+      }
+      else
+      {
+        result = _exponentDictionary[_allExponentsSorted[idx]];
+      }
 
-			return (result, RMath.Pow(10, exponent - result.Exponent));
-		}
+      return (result, RMath.Pow(10, exponent - result.Exponent));
+    }
 
-		public IEnumerator<SIPrefix> GetEnumerator()
-		{
-			return _shortCutDictionary.Values.GetEnumerator();
-		}
+    public IEnumerator<SIPrefix> GetEnumerator()
+    {
+      return _shortCutDictionary.Values.GetEnumerator();
+    }
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			return _shortCutDictionary.Values.GetEnumerator();
-		}
-	}
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return _shortCutDictionary.Values.GetEnumerator();
+    }
+  }
 }

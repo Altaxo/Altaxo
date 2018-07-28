@@ -29,75 +29,75 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	/// <summary>
-	/// Stores the accumulated change data of a column.
-	/// </summary>
-	public class DataColumnChangedEventArgs : Main.SelfAccumulateableEventArgs
-	{
-		/// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
-		protected int _minRowChanged;
+  /// <summary>
+  /// Stores the accumulated change data of a column.
+  /// </summary>
+  public class DataColumnChangedEventArgs : Main.SelfAccumulateableEventArgs
+  {
+    /// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
+    protected int _minRowChanged;
 
-		/// <summary>Upper bound (plus one) of the area of rows, which changed during the data change event off period. This in in the (plus one) convention,
-		/// i.e. the value of this member is the maximum row number that changed plus one.</summary>
-		protected int _maxRowChanged;
+    /// <summary>Upper bound (plus one) of the area of rows, which changed during the data change event off period. This in in the (plus one) convention,
+    /// i.e. the value of this member is the maximum row number that changed plus one.</summary>
+    protected int _maxRowChanged;
 
-		/// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
-		/// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
-		protected bool _hasRowCountDecreased; // true if during event switch of period, the row m_Count  of this column decreases
+    /// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
+    /// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
+    protected bool _hasRowCountDecreased; // true if during event switch of period, the row m_Count  of this column decreases
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="minRow">Lower bound of the area of rows, which changed-</param>
-		/// <param name="maxRow">Upper bound (plus one) of the area of rows, which changed.</param>
-		/// <param name="rowCountDecreased">Indicates, if the row count decreased during the data change.</param>
-		public DataColumnChangedEventArgs(int minRow, int maxRow, bool rowCountDecreased)
-		{
-			_minRowChanged = minRow;
-			_maxRowChanged = maxRow;
-			_hasRowCountDecreased = rowCountDecreased;
-		}
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="minRow">Lower bound of the area of rows, which changed-</param>
+    /// <param name="maxRow">Upper bound (plus one) of the area of rows, which changed.</param>
+    /// <param name="rowCountDecreased">Indicates, if the row count decreased during the data change.</param>
+    public DataColumnChangedEventArgs(int minRow, int maxRow, bool rowCountDecreased)
+    {
+      _minRowChanged = minRow;
+      _maxRowChanged = maxRow;
+      _hasRowCountDecreased = rowCountDecreased;
+    }
 
-		/// <summary>
-		/// Accumulates further data changes of a column into a already created object.
-		/// </summary>
-		/// <param name="minRow">Lower bound of the area of rows, which changed-</param>
-		/// <param name="maxRow">Upper bound (plus one) of the area of rows, which changed.</param>
-		/// <param name="rowCountDecreased">Indicates, if the row count decreased during the data change.</param>
-		public void Accumulate(int minRow, int maxRow, bool rowCountDecreased)
-		{
-			if (minRow < _minRowChanged)
-				_minRowChanged = minRow;
-			if (maxRow > _maxRowChanged)
-				_maxRowChanged = maxRow;
+    /// <summary>
+    /// Accumulates further data changes of a column into a already created object.
+    /// </summary>
+    /// <param name="minRow">Lower bound of the area of rows, which changed-</param>
+    /// <param name="maxRow">Upper bound (plus one) of the area of rows, which changed.</param>
+    /// <param name="rowCountDecreased">Indicates, if the row count decreased during the data change.</param>
+    public void Accumulate(int minRow, int maxRow, bool rowCountDecreased)
+    {
+      if (minRow < _minRowChanged)
+        _minRowChanged = minRow;
+      if (maxRow > _maxRowChanged)
+        _maxRowChanged = maxRow;
 
-			_hasRowCountDecreased |= rowCountDecreased;
-		}
+      _hasRowCountDecreased |= rowCountDecreased;
+    }
 
-		/// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
-		public int MinRowChanged
-		{
-			get { return _minRowChanged; }
-		}
+    /// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
+    public int MinRowChanged
+    {
+      get { return _minRowChanged; }
+    }
 
-		/// <summary>Upper bound (plus one) of the area of rows, which changed during the data change event off period. This in in the (plus one) convention,
-		/// i.e. the value of this member is the maximum row number that changed plus one.</summary>
-		public int MaxRowChanged
-		{
-			get { return _maxRowChanged; }
-		}
+    /// <summary>Upper bound (plus one) of the area of rows, which changed during the data change event off period. This in in the (plus one) convention,
+    /// i.e. the value of this member is the maximum row number that changed plus one.</summary>
+    public int MaxRowChanged
+    {
+      get { return _maxRowChanged; }
+    }
 
-		/// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
-		/// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
-		public bool HasRowCountDecreased
-		{
-			get { return _hasRowCountDecreased; }
-		}
+    /// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
+    /// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
+    public bool HasRowCountDecreased
+    {
+      get { return _hasRowCountDecreased; }
+    }
 
-		public override void Add(Main.SelfAccumulateableEventArgs e)
-		{
-			var other = (DataColumnChangedEventArgs)e;
-			Accumulate(other._minRowChanged, other._maxRowChanged, other._hasRowCountDecreased);
-		}
-	}
+    public override void Add(Main.SelfAccumulateableEventArgs e)
+    {
+      var other = (DataColumnChangedEventArgs)e;
+      Accumulate(other._minRowChanged, other._maxRowChanged, other._hasRowCountDecreased);
+    }
+  }
 }

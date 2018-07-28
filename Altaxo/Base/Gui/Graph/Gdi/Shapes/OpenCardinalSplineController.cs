@@ -31,69 +31,69 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-	public interface IOpenCardinalSplineView
-	{
-		IOpenPathShapeView LineGraphicView { get; }
+  public interface IOpenCardinalSplineView
+  {
+    IOpenPathShapeView LineGraphicView { get; }
 
-		ICardinalSplinePointsView SplinePointsView { get; }
-	}
+    ICardinalSplinePointsView SplinePointsView { get; }
+  }
 
-	[UserControllerForObject(typeof(OpenCardinalSpline), 110)]
-	[ExpectedTypeOfView(typeof(IOpenCardinalSplineView))]
-	public class OpenCardinalSplineController : MVCANControllerEditOriginalDocBase<OpenCardinalSpline, IOpenCardinalSplineView>
-	{
-		private OpenPathShapeController _lineCtrl;
-		private CardinalSplinePointsController _splinePointsCtrl;
+  [UserControllerForObject(typeof(OpenCardinalSpline), 110)]
+  [ExpectedTypeOfView(typeof(IOpenCardinalSplineView))]
+  public class OpenCardinalSplineController : MVCANControllerEditOriginalDocBase<OpenCardinalSpline, IOpenCardinalSplineView>
+  {
+    private OpenPathShapeController _lineCtrl;
+    private CardinalSplinePointsController _splinePointsCtrl;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield return new ControllerAndSetNullMethod(_lineCtrl, () => _lineCtrl = null);
-			//yield return new ControllerAndSetNullMethod(_splinePointsCtrl, () => _splinePointsCtrl = null);
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_lineCtrl, () => _lineCtrl = null);
+      //yield return new ControllerAndSetNullMethod(_splinePointsCtrl, () => _splinePointsCtrl = null);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_lineCtrl = new OpenPathShapeController() { UseDocumentCopy = UseDocument.Directly };
-				_lineCtrl.InitializeDocument(_doc);
-			}
-			if (null != _view)
-			{
-				if (null == _lineCtrl.ViewObject)
-					_lineCtrl.ViewObject = _view.LineGraphicView;
+      if (initData)
+      {
+        _lineCtrl = new OpenPathShapeController() { UseDocumentCopy = UseDocument.Directly };
+        _lineCtrl.InitializeDocument(_doc);
+      }
+      if (null != _view)
+      {
+        if (null == _lineCtrl.ViewObject)
+          _lineCtrl.ViewObject = _view.LineGraphicView;
 
-				_splinePointsCtrl = new CardinalSplinePointsController(_view.SplinePointsView, _doc.CurvePoints, _doc.Tension, _doc);
-			}
-		}
+        _splinePointsCtrl = new CardinalSplinePointsController(_view.SplinePointsView, _doc.CurvePoints, _doc.Tension, _doc);
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (!_lineCtrl.Apply(disposeController))
-				return false;
+    public override bool Apply(bool disposeController)
+    {
+      if (!_lineCtrl.Apply(disposeController))
+        return false;
 
-			List<PointD2D> list;
-			double tension;
+      List<PointD2D> list;
+      double tension;
 
-			if (_splinePointsCtrl.Apply(out list, out tension))
-			{
-				if (!(list.Count >= 2))
-				{
-					Current.Gui.ErrorMessageBox("At least two points are required for the open cardinal spline. Please enter more points!");
-					return false;
-				}
+      if (_splinePointsCtrl.Apply(out list, out tension))
+      {
+        if (!(list.Count >= 2))
+        {
+          Current.Gui.ErrorMessageBox("At least two points are required for the open cardinal spline. Please enter more points!");
+          return false;
+        }
 
-				_doc.CurvePoints = list;
-				_doc.Tension = tension;
-			}
-			else
-			{
-				return false;
-			}
+        _doc.CurvePoints = list;
+        _doc.Tension = tension;
+      }
+      else
+      {
+        return false;
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

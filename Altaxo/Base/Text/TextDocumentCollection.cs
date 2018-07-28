@@ -29,44 +29,44 @@ using System.Linq;
 
 namespace Altaxo.Text
 {
-	/// <summary>
-	/// Stores the <see cref="TextDocument"/>s of the project.
-	/// </summary>
-	public class TextDocumentCollection :
-		ProjectItemCollectionBase<TextDocument>,
-		IEnumerable<TextDocument>
-	{
-		public TextDocumentCollection(AltaxoDocument parent)
-			: base(parent)
-		{
-		}
+  /// <summary>
+  /// Stores the <see cref="TextDocument"/>s of the project.
+  /// </summary>
+  public class TextDocumentCollection :
+    ProjectItemCollectionBase<TextDocument>,
+    IEnumerable<TextDocument>
+  {
+    public TextDocumentCollection(AltaxoDocument parent)
+      : base(parent)
+    {
+    }
 
-		/// <inheritdoc/>
-		public override Main.IDocumentNode ParentObject
-		{
-			get
-			{
-				return _parent;
-			}
-			set
-			{
-				if (null != value)
-					throw new InvalidOperationException("ParentObject of TextDocumentCollection is fixed and cannot be set");
-				base.ParentObject = value; // allow setting to null
-			}
-		}
+    /// <inheritdoc/>
+    public override Main.IDocumentNode ParentObject
+    {
+      get
+      {
+        return _parent;
+      }
+      set
+      {
+        if (null != value)
+          throw new InvalidOperationException("ParentObject of TextDocumentCollection is fixed and cannot be set");
+        base.ParentObject = value; // allow setting to null
+      }
+    }
 
-		/// <inheritdoc/>
-		public override string ItemBaseName { get { return "Text"; } }
+    /// <inheritdoc/>
+    public override string ItemBaseName { get { return "Text"; } }
 
-		/// <summary>
-		/// Gets the parent NotesDocumentCollection of a child NotesDocument.
-		/// </summary>
-		/// <param name="child">A NotesDocument for which the parent collection is searched.</param>
-		/// <returns>The parent NotesDocumentCollection, if it exists, or null otherwise.</returns>
-		public static TextDocumentCollection GetParentTextDocumentCollectionOf(Main.IDocumentLeafNode child)
-		{
-			return (TextDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(TextDocumentCollection));
-		}
-	}
+    /// <summary>
+    /// Gets the parent NotesDocumentCollection of a child NotesDocument.
+    /// </summary>
+    /// <param name="child">A NotesDocument for which the parent collection is searched.</param>
+    /// <returns>The parent NotesDocumentCollection, if it exists, or null otherwise.</returns>
+    public static TextDocumentCollection GetParentTextDocumentCollectionOf(Main.IDocumentLeafNode child)
+    {
+      return (TextDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(TextDocumentCollection));
+    }
+  }
 }

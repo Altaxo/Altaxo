@@ -31,62 +31,62 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
-	public class BrickHatchBrush : HatchBrushBase
-	{
-		#region Serialization
+  public class BrickHatchBrush : HatchBrushBase
+  {
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrickHatchBrush), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (BrickHatchBrush)obj;
-				info.AddBaseValueEmbedded(s, typeof(BrickHatchBrush).BaseType);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrickHatchBrush), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (BrickHatchBrush)obj;
+        info.AddBaseValueEmbedded(s, typeof(BrickHatchBrush).BaseType);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = null != o ? (BrickHatchBrush)o : new BrickHatchBrush();
-				info.GetBaseValueEmbedded(s, typeof(BrickHatchBrush).BaseType, parent);
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = null != o ? (BrickHatchBrush)o : new BrickHatchBrush();
+        info.GetBaseValueEmbedded(s, typeof(BrickHatchBrush).BaseType, parent);
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
-		{
-			int pixelDim = GetPixelDimensions(maxEffectiveResolutionDpi);
-			Bitmap bmp = new Bitmap(pixelDim, pixelDim, PixelFormat.Format32bppArgb);
-			using (Graphics g = Graphics.FromImage(bmp))
-			{
-				using (var brush = new SolidBrush(backColor))
-				{
-					g.FillRectangle(brush, new Rectangle(Point.Empty, bmp.Size));
-				}
+    public override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
+    {
+      int pixelDim = GetPixelDimensions(maxEffectiveResolutionDpi);
+      Bitmap bmp = new Bitmap(pixelDim, pixelDim, PixelFormat.Format32bppArgb);
+      using (Graphics g = Graphics.FromImage(bmp))
+      {
+        using (var brush = new SolidBrush(backColor))
+        {
+          g.FillRectangle(brush, new Rectangle(Point.Empty, bmp.Size));
+        }
 
-				g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy; // we want the foreground color to be not influenced by the background color if we have a transparent foreground color
+        g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy; // we want the foreground color to be not influenced by the background color if we have a transparent foreground color
 
-				using (Pen pen = new Pen(foreColor, (float)(pixelDim * _structureFactor)))
-				{
-					pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Center;
-					g.DrawLine(pen, -0.5f * bmp.Width, bmp.Height * 0.25f, 1.5f * bmp.Width, bmp.Height * 0.25f);
-					g.DrawLine(pen, -0.5f * bmp.Width, bmp.Height * 0.75f, 1.5f * bmp.Width, bmp.Height * 0.75f);
+        using (Pen pen = new Pen(foreColor, (float)(pixelDim * _structureFactor)))
+        {
+          pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Center;
+          g.DrawLine(pen, -0.5f * bmp.Width, bmp.Height * 0.25f, 1.5f * bmp.Width, bmp.Height * 0.25f);
+          g.DrawLine(pen, -0.5f * bmp.Width, bmp.Height * 0.75f, 1.5f * bmp.Width, bmp.Height * 0.75f);
 
-					g.DrawLine(pen, bmp.Width * 0.25f, -0.5f * bmp.Height, bmp.Width * 0.25f, bmp.Height * 0.25f);
-					g.DrawLine(pen, bmp.Width * 0.25f, bmp.Height * 0.75f, bmp.Width * 0.25f, bmp.Height * 1.5f);
-					g.DrawLine(pen, bmp.Width * 0.75f, bmp.Height * 0.25f, bmp.Width * 0.75f, bmp.Height * 0.75f);
-				}
-			}
+          g.DrawLine(pen, bmp.Width * 0.25f, -0.5f * bmp.Height, bmp.Width * 0.25f, bmp.Height * 0.25f);
+          g.DrawLine(pen, bmp.Width * 0.25f, bmp.Height * 0.75f, bmp.Width * 0.25f, bmp.Height * 1.5f);
+          g.DrawLine(pen, bmp.Width * 0.75f, bmp.Height * 0.25f, bmp.Width * 0.75f, bmp.Height * 0.75f);
+        }
+      }
 
-			return bmp;
-		}
+      return bmp;
+    }
 
-		public override object Clone()
-		{
-			var result = new BrickHatchBrush();
-			result.CopyFrom(this);
-			return result;
-		}
-	}
+    public override object Clone()
+    {
+      var result = new BrickHatchBrush();
+      result.CopyFrom(this);
+      return result;
+    }
+  }
 }

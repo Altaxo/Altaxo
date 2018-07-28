@@ -31,89 +31,89 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Data
 {
-	using Altaxo.Collections;
+  using Altaxo.Collections;
 
-	/// <summary>
-	/// Interaction logic for DecomposeByColumnContentControl.xaml
-	/// </summary>
-	public partial class DecomposeByColumnContentDataControl : UserControl, IDecomposeByColumnContentDataView
-	{
-		public event Action SelectedTableChanged;
+  /// <summary>
+  /// Interaction logic for DecomposeByColumnContentControl.xaml
+  /// </summary>
+  public partial class DecomposeByColumnContentDataControl : UserControl, IDecomposeByColumnContentDataView
+  {
+    public event Action SelectedTableChanged;
 
-		public event Action SelectedGroupNumberChanged;
+    public event Action SelectedGroupNumberChanged;
 
-		public event Action UseSelectedAvailableColumnsAsParticipatingColumns;
+    public event Action UseSelectedAvailableColumnsAsParticipatingColumns;
 
-		public event Action DeleteSelectedParticipatingColumn;
+    public event Action DeleteSelectedParticipatingColumn;
 
-		public DecomposeByColumnContentDataControl()
-		{
-			InitializeComponent();
-		}
+    public DecomposeByColumnContentDataControl()
+    {
+      InitializeComponent();
+    }
 
-		public void InitializeCyclingVariableColumn(SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiColumnWithCyclingVariable, list);
-		}
+    public void InitializeCyclingVariableColumn(SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_guiColumnWithCyclingVariable, list);
+    }
 
-		private void EhCyclicVariableColumnChanged(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiColumnWithCyclingVariable);
-		}
+    private void EhCyclicVariableColumnChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiColumnWithCyclingVariable);
+    }
 
-		private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(this._guiAvailableTables);
-			if (null != SelectedTableChanged)
-				SelectedTableChanged();
-		}
+    private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(this._guiAvailableTables);
+      if (null != SelectedTableChanged)
+        SelectedTableChanged();
+    }
 
-		private void EhUseSelectedAvailableColumnsAsParticipatingColumns(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-			if (null != UseSelectedAvailableColumnsAsParticipatingColumns)
-				UseSelectedAvailableColumnsAsParticipatingColumns();
-		}
+    private void EhUseSelectedAvailableColumnsAsParticipatingColumns(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
+      if (null != UseSelectedAvailableColumnsAsParticipatingColumns)
+        UseSelectedAvailableColumnsAsParticipatingColumns();
+    }
 
-		private void EhDeleteSelectedParticipatingColumn(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiColumnsParticipating);
-			if (null != DeleteSelectedParticipatingColumn)
-				DeleteSelectedParticipatingColumn();
-		}
+    private void EhDeleteSelectedParticipatingColumn(object sender, RoutedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiColumnsParticipating);
+      if (null != DeleteSelectedParticipatingColumn)
+        DeleteSelectedParticipatingColumn();
+    }
 
-		public void InitializeAvailableTables(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiAvailableTables, items);
-		}
+    public void InitializeAvailableTables(SelectableListNodeList items)
+    {
+      GuiHelper.Initialize(_guiAvailableTables, items);
+    }
 
-		private void EhGroupNumberChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
-		{
-			var ev = SelectedGroupNumberChanged;
-			if (null != ev)
-				ev();
-		}
+    private void EhGroupNumberChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
+    {
+      var ev = SelectedGroupNumberChanged;
+      if (null != ev)
+        ev();
+    }
 
-		public int GroupNumber
-		{
-			get
-			{
-				return _guiGroupNumber.Value;
-			}
-			set
-			{
-				_guiGroupNumber.Value = value;
-			}
-		}
+    public int GroupNumber
+    {
+      get
+      {
+        return _guiGroupNumber.Value;
+      }
+      set
+      {
+        _guiGroupNumber.Value = value;
+      }
+    }
 
-		public void InitializeAvailableColumns(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiAvailableColumnNames, items);
-		}
+    public void InitializeAvailableColumns(SelectableListNodeList items)
+    {
+      GuiHelper.Initialize(_guiAvailableColumnNames, items);
+    }
 
-		public void InitializeParticipatingColumns(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiColumnsParticipating, items);
-		}
-	}
+    public void InitializeParticipatingColumns(SelectableListNodeList items)
+    {
+      GuiHelper.Initialize(_guiColumnsParticipating, items);
+    }
+  }
 }

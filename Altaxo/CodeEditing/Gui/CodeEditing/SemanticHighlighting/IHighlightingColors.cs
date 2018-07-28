@@ -31,22 +31,22 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.CodeEditing.SemanticHighlighting
 {
-	public interface ISemanticHighlightingColors
-	{
-		/// <summary>
-		/// Gets the default text foreground color.
-		/// </summary>
-		/// <value>
-		/// The default color.
-		/// </value>
-		HighlightingColor DefaultColor { get; }
+  public interface ISemanticHighlightingColors
+  {
+    /// <summary>
+    /// Gets the default text foreground color.
+    /// </summary>
+    /// <value>
+    /// The default color.
+    /// </value>
+    HighlightingColor DefaultColor { get; }
 
-		/// <summary>
-		/// Gets the color of the classification type. See <see cref="Microsoft.CodeAnalysis.Classification.ClassificationTypeNames"/> for a list of valid
-		/// classification type names.
-		/// </summary>
-		/// <param name="classificationTypeName">Name of the classification type.</param>
-		/// <returns></returns>
-		HighlightingColor GetColor(string classificationTypeName);
-	}
+    /// <summary>
+    /// Gets the color of the classification type. See <see cref="Microsoft.CodeAnalysis.Classification.ClassificationTypeNames"/> for a list of valid
+    /// classification type names.
+    /// </summary>
+    /// <param name="classificationTypeName">Name of the classification type.</param>
+    /// <returns></returns>
+    HighlightingColor GetColor(string classificationTypeName);
+  }
 }

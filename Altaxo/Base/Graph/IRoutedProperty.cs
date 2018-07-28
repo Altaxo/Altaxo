@@ -29,90 +29,90 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-	public interface IRoutedPropertyReceiver
-	{
-		/// <summary>
-		/// Gets the routed properties of this object, along with an action to set this property.
-		/// </summary>
-		/// <param name="propertyName">Name of the property.</param>
-		/// <returns>Enumeration of all properties (with the provided name) of this object.</returns>
-		IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName);
-	}
+  public interface IRoutedPropertyReceiver
+  {
+    /// <summary>
+    /// Gets the routed properties of this object, along with an action to set this property.
+    /// </summary>
+    /// <param name="propertyName">Name of the property.</param>
+    /// <returns>Enumeration of all properties (with the provided name) of this object.</returns>
+    IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName);
+  }
 
-	public interface IRoutedSetterProperty
-	{
-		string Name { get; }
+  public interface IRoutedSetterProperty
+  {
+    string Name { get; }
 
-		bool InheritToChilds { get; }
+    bool InheritToChilds { get; }
 
-		System.Type TypeOfValue { get; }
+    System.Type TypeOfValue { get; }
 
-		object ValueAsObject { get; }
-	}
+    object ValueAsObject { get; }
+  }
 
-	public interface IRoutedGetterProperty
-	{
-		string Name { get; }
+  public interface IRoutedGetterProperty
+  {
+    string Name { get; }
 
-		System.Type TypeOfValue { get; }
-	}
+    System.Type TypeOfValue { get; }
+  }
 
-	public class RoutedSetterProperty<T> : IRoutedSetterProperty
-	{
-		private T _value;
-		private string _name;
-		private bool _inheritToChilds;
+  public class RoutedSetterProperty<T> : IRoutedSetterProperty
+  {
+    private T _value;
+    private string _name;
+    private bool _inheritToChilds;
 
-		public RoutedSetterProperty(string name, T value)
-		{
-			_name = name;
-			_value = value;
-		}
+    public RoutedSetterProperty(string name, T value)
+    {
+      _name = name;
+      _value = value;
+    }
 
-		public virtual string Name { get { return _name; } }
+    public virtual string Name { get { return _name; } }
 
-		public T Value { get { return _value; } }
+    public T Value { get { return _value; } }
 
-		public System.Type TypeOfValue { get { return typeof(T); } }
+    public System.Type TypeOfValue { get { return typeof(T); } }
 
-		public bool InheritToChilds { get { return _inheritToChilds; } set { _inheritToChilds = value; } }
+    public bool InheritToChilds { get { return _inheritToChilds; } set { _inheritToChilds = value; } }
 
-		public object ValueAsObject
-		{
-			get
-			{
-				return _value;
-			}
-		}
-	}
+    public object ValueAsObject
+    {
+      get
+      {
+        return _value;
+      }
+    }
+  }
 
-	public class RoutedGetterProperty<T> : IRoutedGetterProperty
-	{
-		public string Name { get; private set; }
+  public class RoutedGetterProperty<T> : IRoutedGetterProperty
+  {
+    public string Name { get; private set; }
 
-		public RoutedGetterProperty(string name)
-		{
-			Name = name;
-		}
+    public RoutedGetterProperty(string name)
+    {
+      Name = name;
+    }
 
-		public System.Type TypeOfValue { get { return typeof(T); } }
+    public System.Type TypeOfValue { get { return typeof(T); } }
 
-		public T Value { get; private set; }
-		public bool WasSet { get; private set; }
-		public bool DoNotMatch { get; private set; }
+    public T Value { get; private set; }
+    public bool WasSet { get; private set; }
+    public bool DoNotMatch { get; private set; }
 
-		public void Merge(T t)
-		{
-			if (!WasSet)
-			{
-				Value = t;
-				WasSet = true;
-			}
-			else
-			{
-				if (!DoNotMatch && !object.Equals(t, Value))
-					DoNotMatch = true;
-			}
-		}
-	}
+    public void Merge(T t)
+    {
+      if (!WasSet)
+      {
+        Value = t;
+        WasSet = true;
+      }
+      else
+      {
+        if (!DoNotMatch && !object.Equals(t, Value))
+          DoNotMatch = true;
+      }
+    }
+  }
 }

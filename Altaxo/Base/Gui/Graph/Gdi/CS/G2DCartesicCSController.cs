@@ -29,59 +29,59 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.CS
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IG2DCartesicCSView
-	{
-		bool ExchangeXY { get; set; }
+  public interface IG2DCartesicCSView
+  {
+    bool ExchangeXY { get; set; }
 
-		bool ReverseX { get; set; }
+    bool ReverseX { get; set; }
 
-		bool ReverseY { get; set; }
-	}
+    bool ReverseY { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[UserControllerForObject(typeof(G2DCartesicCoordinateSystem), 101)]
-	[ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
-	public class G2DCartesicCSController : MVCANControllerEditOriginalDocBase<G2DCartesicCoordinateSystem, IG2DCartesicCSView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(G2DCartesicCoordinateSystem), 101)]
+  [ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
+  public class G2DCartesicCSController : MVCANControllerEditOriginalDocBase<G2DCartesicCoordinateSystem, IG2DCartesicCSView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public G2DCartesicCSController()
-		{
-		}
+    public G2DCartesicCSController()
+    {
+    }
 
-		public G2DCartesicCSController(G2DCartesicCoordinateSystem doc)
-		{
-			InitializeDocument(doc);
-		}
+    public G2DCartesicCSController(G2DCartesicCoordinateSystem doc)
+    {
+      InitializeDocument(doc);
+    }
 
-		#region IMVCController Members
+    #region IMVCController Members
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (_view != null)
-			{
-				_view.ExchangeXY = _doc.IsXYInterchanged;
-				_view.ReverseX = _doc.IsXReverse;
-				_view.ReverseY = _doc.IsYReverse;
-			}
-		}
+      if (_view != null)
+      {
+        _view.ExchangeXY = _doc.IsXYInterchanged;
+        _view.ReverseX = _doc.IsXReverse;
+        _view.ReverseY = _doc.IsYReverse;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.IsXYInterchanged = _view.ExchangeXY;
-			_doc.IsXReverse = _view.ReverseX;
-			_doc.IsYReverse = _view.ReverseY;
-			return ApplyEnd(true, disposeController);
-		}
+    public override bool Apply(bool disposeController)
+    {
+      _doc.IsXYInterchanged = _view.ExchangeXY;
+      _doc.IsXReverse = _view.ReverseX;
+      _doc.IsYReverse = _view.ReverseY;
+      return ApplyEnd(true, disposeController);
+    }
 
-		#endregion IMVCController Members
-	}
+    #endregion IMVCController Members
+  }
 }

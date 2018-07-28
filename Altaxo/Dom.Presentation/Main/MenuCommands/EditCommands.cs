@@ -30,136 +30,136 @@ using System.IO;
 
 namespace Altaxo.Worksheet.Commands
 {
-	/// <summary>
-	/// Menu point to provoke an exception.
-	/// </summary>
-	public class AltaxoProvokeException : SimpleCommand
-	{
-		private bool _disable;
+  /// <summary>
+  /// Menu point to provoke an exception.
+  /// </summary>
+  public class AltaxoProvokeException : SimpleCommand
+  {
+    private bool _disable;
 
-		internal bool Disable { set { _disable = value; } }
+    internal bool Disable { set { _disable = value; } }
 
-		public override void Execute(object parameter)
-		{
-			if (!_disable)
-				throw new ApplicationException("This is a menu point to provoke an exception");
-			System.Diagnostics.Debug.WriteLine("Exception thrown");
-		}
-	}
+    public override void Execute(object parameter)
+    {
+      if (!_disable)
+        throw new ApplicationException("This is a menu point to provoke an exception");
+      System.Diagnostics.Debug.WriteLine("Exception thrown");
+    }
+  }
 }
 
 namespace Altaxo.Main.Commands.ScriptEditorCommands
 {
-	public class Cut : SimpleCommand
-	{
-		public override bool CanExecute(object parameter)
-		{
-			if (!(parameter is IWorkbenchContent activeContent))
-				activeContent = Current.Workbench.ActiveContent;
+  public class Cut : SimpleCommand
+  {
+    public override bool CanExecute(object parameter)
+    {
+      if (!(parameter is IWorkbenchContent activeContent))
+        activeContent = Current.Workbench.ActiveContent;
 
-			if (activeContent is IClipboardHandler editable)
-			{
-				return editable.EnableCut;
-			}
-			return false;
-		}
+      if (activeContent is IClipboardHandler editable)
+      {
+        return editable.EnableCut;
+      }
+      return false;
+    }
 
-		public override void Execute(object parameter)
-		{
-			if (CanExecute(parameter))
-			{
-				if (!(parameter is IWorkbenchContent activeContent))
-					activeContent = Current.Workbench.ActiveContent;
+    public override void Execute(object parameter)
+    {
+      if (CanExecute(parameter))
+      {
+        if (!(parameter is IWorkbenchContent activeContent))
+          activeContent = Current.Workbench.ActiveContent;
 
-				if (activeContent is IClipboardHandler editable)
-				{
-					editable.Cut();
-				}
-			}
-		}
-	}
+        if (activeContent is IClipboardHandler editable)
+        {
+          editable.Cut();
+        }
+      }
+    }
+  }
 
-	public class Copy : SimpleCommand
-	{
-		public override bool CanExecute(object parameter)
-		{
-			if (!(parameter is IWorkbenchContent activeContent))
-				activeContent = Current.Workbench.ActiveContent;
+  public class Copy : SimpleCommand
+  {
+    public override bool CanExecute(object parameter)
+    {
+      if (!(parameter is IWorkbenchContent activeContent))
+        activeContent = Current.Workbench.ActiveContent;
 
-			if (activeContent is IClipboardHandler editable)
-			{
-				return editable.EnableCopy;
-			}
-			return false;
-		}
+      if (activeContent is IClipboardHandler editable)
+      {
+        return editable.EnableCopy;
+      }
+      return false;
+    }
 
-		public override void Execute(object parameter)
-		{
-			if (CanExecute(parameter))
-			{
-				if (!(parameter is IWorkbenchContent activeContent))
-					activeContent = Current.Workbench.ActiveContent;
+    public override void Execute(object parameter)
+    {
+      if (CanExecute(parameter))
+      {
+        if (!(parameter is IWorkbenchContent activeContent))
+          activeContent = Current.Workbench.ActiveContent;
 
-				if (activeContent is IClipboardHandler editable)
-				{
-					editable.Copy();
-				}
-			}
-		}
-	}
+        if (activeContent is IClipboardHandler editable)
+        {
+          editable.Copy();
+        }
+      }
+    }
+  }
 
-	public class Paste : SimpleCommand
-	{
-		public override bool CanExecute(object parameter)
-		{
-			if (!(parameter is IWorkbenchContent activeContent))
-				activeContent = Current.Workbench.ActiveContent;
+  public class Paste : SimpleCommand
+  {
+    public override bool CanExecute(object parameter)
+    {
+      if (!(parameter is IWorkbenchContent activeContent))
+        activeContent = Current.Workbench.ActiveContent;
 
-			if (activeContent is IClipboardHandler editable)
-			{
-				return editable.EnablePaste;
-			}
-			return false;
-		}
+      if (activeContent is IClipboardHandler editable)
+      {
+        return editable.EnablePaste;
+      }
+      return false;
+    }
 
-		public override void Execute(object parameter)
-		{
-			if (CanExecute(parameter))
-			{
-				if (!(parameter is IWorkbenchContent activeContent))
-					activeContent = Current.Workbench.ActiveContent;
+    public override void Execute(object parameter)
+    {
+      if (CanExecute(parameter))
+      {
+        if (!(parameter is IWorkbenchContent activeContent))
+          activeContent = Current.Workbench.ActiveContent;
 
-				if (activeContent is IClipboardHandler editable)
-				{
-					editable.Paste();
-				}
-			}
-		}
-	}
+        if (activeContent is IClipboardHandler editable)
+        {
+          editable.Paste();
+        }
+      }
+    }
+  }
 
-	public class Delete : SimpleCommand
-	{
-		public override bool CanExecute(object parameter)
-		{
-			if (!(parameter is IWorkbenchContent activeContent))
-				activeContent = Current.Workbench.ActiveContent;
+  public class Delete : SimpleCommand
+  {
+    public override bool CanExecute(object parameter)
+    {
+      if (!(parameter is IWorkbenchContent activeContent))
+        activeContent = Current.Workbench.ActiveContent;
 
-			if (activeContent is IClipboardHandler editable)
-			{
-				return editable.EnableDelete;
-			}
-			return false;
-		}
+      if (activeContent is IClipboardHandler editable)
+      {
+        return editable.EnableDelete;
+      }
+      return false;
+    }
 
-		public override void Execute(object parameter)
-		{
-			if (!(parameter is IWorkbenchContent activeContent))
-				activeContent = Current.Workbench.ActiveContent;
+    public override void Execute(object parameter)
+    {
+      if (!(parameter is IWorkbenchContent activeContent))
+        activeContent = Current.Workbench.ActiveContent;
 
-			if (activeContent is IClipboardHandler editable)
-			{
-				editable.Delete();
-			}
-		}
-	}
+      if (activeContent is IClipboardHandler editable)
+      {
+        editable.Delete();
+      }
+    }
+  }
 }

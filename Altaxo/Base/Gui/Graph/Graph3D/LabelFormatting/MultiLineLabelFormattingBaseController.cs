@@ -32,44 +32,44 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 {
-	[UserControllerForObject(typeof(MultiLineLabelFormattingBase))]
-	[ExpectedTypeOfView(typeof(Graph.Gdi.LabelFormatting.IMultiLineLabelFormattingBaseView))]
-	public class MultiLineLabelFormattingBaseController : MVCANControllerEditOriginalDocBase<MultiLineLabelFormattingBase, Graph.Gdi.LabelFormatting.IMultiLineLabelFormattingBaseView>
-	{
-		private SelectableListNodeList _textBlockAlignmentChoices;
+  [UserControllerForObject(typeof(MultiLineLabelFormattingBase))]
+  [ExpectedTypeOfView(typeof(Graph.Gdi.LabelFormatting.IMultiLineLabelFormattingBaseView))]
+  public class MultiLineLabelFormattingBaseController : MVCANControllerEditOriginalDocBase<MultiLineLabelFormattingBase, Graph.Gdi.LabelFormatting.IMultiLineLabelFormattingBaseView>
+  {
+    private SelectableListNodeList _textBlockAlignmentChoices;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_textBlockAlignmentChoices = null;
-			base.Dispose(isDisposing);
-		}
+    public override void Dispose(bool isDisposing)
+    {
+      _textBlockAlignmentChoices = null;
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
-			}
-			if (null != _view)
-			{
-				_view.LineSpacing = _doc.LineSpacing;
-				_view.TextBlockAlignement = _textBlockAlignmentChoices;
-			}
-		}
+      if (initData)
+      {
+        _textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
+      }
+      if (null != _view)
+      {
+        _view.LineSpacing = _doc.LineSpacing;
+        _view.TextBlockAlignement = _textBlockAlignmentChoices;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.LineSpacing = _view.LineSpacing;
-			_doc.TextBlockAlignment = (Alignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.LineSpacing = _view.LineSpacing;
+      _doc.TextBlockAlignment = (Alignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

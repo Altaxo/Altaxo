@@ -30,29 +30,29 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-	public static class DefaultSeverityColumnColors
-	{
-		public static Brush NormalColor { get; set; } = Brushes.White;
+  public static class DefaultSeverityColumnColors
+  {
+    public static Brush NormalColor { get; set; } = Brushes.White;
 
-		public static Brush WarningColor { get; set; } = Brushes.Yellow;
+    public static Brush WarningColor { get; set; } = Brushes.Yellow;
 
-		public static Brush ErrorColor { get; set; } = Brushes.LightPink;
+    public static Brush ErrorColor { get; set; } = Brushes.LightPink;
 
-		public static Brush GetSeverityColor(int severity)
-		{
-			switch (severity)
-			{
-				case 0:
-					return NormalColor;
+    public static Brush GetSeverityColor(int severity)
+    {
+      switch (severity)
+      {
+        case 0:
+          return NormalColor;
 
-				case 1:
-					return WarningColor;
+        case 1:
+          return WarningColor;
 
-				case 2:
-					return ErrorColor;
-			}
+        case 2:
+          return ErrorColor;
+      }
 
-			return NormalColor;
-		}
-	}
+      return NormalColor;
+    }
+  }
 }

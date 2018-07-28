@@ -31,24 +31,24 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Data
 {
-	/// <summary>
-	/// Interaction logic for ExpandCyclingVariableControl.xaml
-	/// </summary>
-	public partial class ExpandCyclingVariableControl : UserControl, IExpandCyclingVariableView, IDecomposeByColumnContentView
-	{
-		public ExpandCyclingVariableControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for ExpandCyclingVariableControl.xaml
+  /// </summary>
+  public partial class ExpandCyclingVariableControl : UserControl, IExpandCyclingVariableView, IDecomposeByColumnContentView
+  {
+    public ExpandCyclingVariableControl()
+    {
+      InitializeComponent();
+    }
 
-		public void SetDataControl(object control)
-		{
-			_guiDataControlHost.Child = control as FrameworkElement;
-		}
+    public void SetDataControl(object control)
+    {
+      _guiDataControlHost.Child = control as FrameworkElement;
+    }
 
-		public void SetOptionsControl(object control)
-		{
-			_guiOptionsControlHost.Child = control as FrameworkElement;
-		}
-	}
+    public void SetOptionsControl(object control)
+    {
+      _guiOptionsControlHost.Child = control as FrameworkElement;
+    }
+  }
 }

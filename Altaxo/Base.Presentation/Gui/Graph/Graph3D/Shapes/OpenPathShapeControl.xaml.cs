@@ -32,38 +32,38 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
-	/// <summary>
-	/// Interaction logic for LineGraphicControl.xaml
-	/// </summary>
-	public partial class OpenPathShapeControl : UserControl, IOpenPathShapeView
-	{
-		public OpenPathShapeControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for LineGraphicControl.xaml
+  /// </summary>
+  public partial class OpenPathShapeControl : UserControl, IOpenPathShapeView
+  {
+    public OpenPathShapeControl()
+    {
+      InitializeComponent();
+    }
 
-		#region ILineGraphicView
+    #region ILineGraphicView
 
-		public PenX3D DocPen
-		{
-			get
-			{
-				return _penControl.Pen;
-			}
-			set
-			{
-				_penControl.Pen = value;
-			}
-		}
+    public PenX3D DocPen
+    {
+      get
+      {
+        return _penControl.Pen;
+      }
+      set
+      {
+        _penControl.Pen = value;
+      }
+    }
 
-		public object LocationView
-		{
-			set
-			{
-				_guiLocationHost.Child = (UIElement)value;
-			}
-		}
+    public object LocationView
+    {
+      set
+      {
+        _guiLocationHost.Child = (UIElement)value;
+      }
+    }
 
-		#endregion ILineGraphicView
-	}
+    #endregion ILineGraphicView
+  }
 }

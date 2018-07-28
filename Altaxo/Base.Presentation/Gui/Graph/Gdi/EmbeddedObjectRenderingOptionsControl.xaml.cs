@@ -31,102 +31,102 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-	/// <summary>
-	/// Interaction logic for GraphExportOptionsControl.xaml
-	/// </summary>
-	public partial class EmbeddedObjectRenderingOptionsControl : UserControl, IEmbeddedObjectRenderingOptionsView
-	{
-		public EmbeddedObjectRenderingOptionsControl()
-		{
-			InitializeComponent();
-		}
+  /// <summary>
+  /// Interaction logic for GraphExportOptionsControl.xaml
+  /// </summary>
+  public partial class EmbeddedObjectRenderingOptionsControl : UserControl, IEmbeddedObjectRenderingOptionsView
+  {
+    public EmbeddedObjectRenderingOptionsControl()
+    {
+      InitializeComponent();
+    }
 
-		public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbSourceResolution, list);
-		}
+    public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GuiHelper.Initialize(_cbSourceResolution, list);
+    }
 
-		public string SourceDpiResolution
-		{
-			get { return _cbSourceResolution.Text; }
-		}
+    public string SourceDpiResolution
+    {
+      get { return _cbSourceResolution.Text; }
+    }
 
-		public double OutputScaling
-		{
-			get { return _guiOutputScale.SelectedQuantityInSIUnits; }
-			set { _guiOutputScale.SelectedQuantityInSIUnits = value; }
-		}
+    public double OutputScaling
+    {
+      get { return _guiOutputScale.SelectedQuantityInSIUnits; }
+      set { _guiOutputScale.SelectedQuantityInSIUnits = value; }
+    }
 
-		public bool RenderEnhancedMetafile
-		{
-			get
-			{
-				return _guiRenderEnhancedMetafile.IsChecked == true;
-			}
-			set
-			{
-				_guiRenderEnhancedMetafile.IsChecked = value;
-			}
-		}
+    public bool RenderEnhancedMetafile
+    {
+      get
+      {
+        return _guiRenderEnhancedMetafile.IsChecked == true;
+      }
+      set
+      {
+        _guiRenderEnhancedMetafile.IsChecked = value;
+      }
+    }
 
-		public bool RenderEnhancedMetafileAsVectorFormat
-		{
-			get
-			{
-				return _guiRenderEnhancedMetafileAsVectorFormat.IsChecked == true;
-			}
-			set
-			{
-				_guiRenderEnhancedMetafileAsVectorFormat.IsChecked = value;
-			}
-		}
+    public bool RenderEnhancedMetafileAsVectorFormat
+    {
+      get
+      {
+        return _guiRenderEnhancedMetafileAsVectorFormat.IsChecked == true;
+      }
+      set
+      {
+        _guiRenderEnhancedMetafileAsVectorFormat.IsChecked = value;
+      }
+    }
 
-		public bool RenderWindowsMetafile
-		{
-			get
-			{
-				return _guiRenderWindowsMetafile.IsChecked == true;
-			}
-			set
-			{
-				_guiRenderWindowsMetafile.IsChecked = value;
-			}
-		}
+    public bool RenderWindowsMetafile
+    {
+      get
+      {
+        return _guiRenderWindowsMetafile.IsChecked == true;
+      }
+      set
+      {
+        _guiRenderWindowsMetafile.IsChecked = value;
+      }
+    }
 
-		public bool RenderBitmap
-		{
-			get
-			{
-				return _guiRenderBitmap.IsChecked == true;
-			}
-			set
-			{
-				_guiRenderBitmap.IsChecked = value;
-			}
-		}
+    public bool RenderBitmap
+    {
+      get
+      {
+        return _guiRenderBitmap.IsChecked == true;
+      }
+      set
+      {
+        _guiRenderBitmap.IsChecked = value;
+      }
+    }
 
-		public NamedColor BackgroundColor
-		{
-			get
-			{
-				return _cbBackgroundColor.SelectedColor;
-			}
-			set
-			{
-				_cbBackgroundColor.SelectedColor = value;
-			}
-		}
+    public NamedColor BackgroundColor
+    {
+      get
+      {
+        return _cbBackgroundColor.SelectedColor;
+      }
+      set
+      {
+        _cbBackgroundColor.SelectedColor = value;
+      }
+    }
 
-		public Altaxo.Graph.Gdi.BrushX BackgroundBrush
-		{
-			get
-			{
-				return _cbBackgroundBrush.SelectedBrush;
-			}
-			set
-			{
-				_cbBackgroundBrush.SelectedBrush = value;
-			}
-		}
-	}
+    public Altaxo.Graph.Gdi.BrushX BackgroundBrush
+    {
+      get
+      {
+        return _cbBackgroundBrush.SelectedBrush;
+      }
+      set
+      {
+        _cbBackgroundBrush.SelectedBrush = value;
+      }
+    }
+  }
 }

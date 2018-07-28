@@ -35,306 +35,307 @@ using System.Text;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	public interface IColorListView : IStyleListView
-	{
-		void SetCustomColorView(object guiCustomColorViewObject);
+  public interface IColorListView : IStyleListView
+  {
+    void SetCustomColorView(object guiCustomColorViewObject);
 
-		event Action UserRequest_AddCustomColorToList;
+    event Action UserRequest_AddCustomColorToList;
 
-		event Action<double> UserRequest_ForAllSelectedItemsSetOpacity;
+    event Action<double> UserRequest_ForAllSelectedItemsSetOpacity;
 
-		event Action<double> UserRequest_ForAllSelectedItemsShiftHue;
+    event Action<double> UserRequest_ForAllSelectedItemsShiftHue;
 
-		event Action<double> UserRequest_ForAllSelectedItemsSetSaturation;
+    event Action<double> UserRequest_ForAllSelectedItemsSetSaturation;
 
-		event Action<double> UserRequest_ForAllSelectedItemsSetBrightness;
+    event Action<double> UserRequest_ForAllSelectedItemsSetBrightness;
 
-		event Action<string> UserRequest_ForAllSelectedItemsSetColorName;
-	}
+    event Action<string> UserRequest_ForAllSelectedItemsSetColorName;
+  }
 
-	[ExpectedTypeOfView(typeof(IColorListView))]
-	[UserControllerForObject(typeof(IColorSet))]
-	public class ColorSetController : StyleListController<ColorSetManager, IColorSet, NamedColor>
-	{
-		private NamedColorController _customColorController;
+  [ExpectedTypeOfView(typeof(IColorListView))]
+  [UserControllerForObject(typeof(IColorSet))]
+  public class ColorSetController : StyleListController<ColorSetManager, IColorSet, NamedColor>
+  {
+    private NamedColorController _customColorController;
 
-		public ColorSetController()
-			: base(ColorSetManager.Instance)
-		{
-			_customColorController = new NamedColorController();
-			Current.Gui.FindAndAttachControlTo(_customColorController);
-		}
+    public ColorSetController()
+      : base(ColorSetManager.Instance)
+    {
+      _customColorController = new NamedColorController();
+      Current.Gui.FindAndAttachControlTo(_customColorController);
+    }
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			IEnumerable<ControllerAndSetNullMethod> GetMySubControllers()
-			{
-				yield return new ControllerAndSetNullMethod(_customColorController, () => _customColorController = null);
-			}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      IEnumerable<ControllerAndSetNullMethod> GetMySubControllers()
+      {
+        yield return new ControllerAndSetNullMethod(_customColorController, () => _customColorController = null);
+      }
 
-			return base.GetSubControllers().Concat(GetMySubControllers());
-		}
+      return base.GetSubControllers().Concat(GetMySubControllers());
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_customColorController = new NamedColorController();
-				_customColorController.InitializeDocument(NamedColors.White);
-			}
+      if (initData)
+      {
+        _customColorController = new NamedColorController();
+        _customColorController.InitializeDocument(NamedColors.White);
+      }
 
-			if (null != _view)
-			{
-				if (null == _customColorController.ViewObject)
-					Current.Gui.FindAndAttachControlTo(_customColorController);
-				((IColorListView)_view).SetCustomColorView(_customColorController.ViewObject);
-			}
-		}
+      if (null != _view)
+      {
+        if (null == _customColorController.ViewObject)
+          Current.Gui.FindAndAttachControlTo(_customColorController);
+        ((IColorListView)_view).SetCustomColorView(_customColorController.ViewObject);
+      }
+    }
 
-		protected override void AttachView()
-		{
-			base.AttachView();
-			((IColorListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomColorToList;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetOpacity += EhUserRequest_ForAllSelectedItemSetOpacity;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsShiftHue += EhUserRequest_ForAllSelectedItemShiftHue;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetSaturation += EhUserRequest_ForAllSelectedItemSetSaturation;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetBrightness += EhUserRequest_ForAllSelectedItemSetBrightness;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetColorName += EhUserRequest_ForAllSelectedItemSetColorName;
-		}
+    protected override void AttachView()
+    {
+      base.AttachView();
+      ((IColorListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomColorToList;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetOpacity += EhUserRequest_ForAllSelectedItemSetOpacity;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsShiftHue += EhUserRequest_ForAllSelectedItemShiftHue;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetSaturation += EhUserRequest_ForAllSelectedItemSetSaturation;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetBrightness += EhUserRequest_ForAllSelectedItemSetBrightness;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetColorName += EhUserRequest_ForAllSelectedItemSetColorName;
+    }
 
-		protected override void DetachView()
-		{
-			((IColorListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomColorToList;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetOpacity -= EhUserRequest_ForAllSelectedItemSetOpacity;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsShiftHue -= EhUserRequest_ForAllSelectedItemShiftHue;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetSaturation -= EhUserRequest_ForAllSelectedItemSetSaturation;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetBrightness -= EhUserRequest_ForAllSelectedItemSetBrightness;
-			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetColorName -= EhUserRequest_ForAllSelectedItemSetColorName;
+    protected override void DetachView()
+    {
+      ((IColorListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomColorToList;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetOpacity -= EhUserRequest_ForAllSelectedItemSetOpacity;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsShiftHue -= EhUserRequest_ForAllSelectedItemShiftHue;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetSaturation -= EhUserRequest_ForAllSelectedItemSetSaturation;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetBrightness -= EhUserRequest_ForAllSelectedItemSetBrightness;
+      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetColorName -= EhUserRequest_ForAllSelectedItemSetColorName;
 
-			base.DetachView();
-		}
+      base.DetachView();
+    }
 
-		private void EhUserRequest_AddCustomColorToList()
-		{
-			if (_customColorController.Apply(false))
-			{
-				var namedColor = (NamedColor)_customColorController.ModelObject;
-				_currentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
-				SetListDirty();
-			}
-		}
+    private void EhUserRequest_AddCustomColorToList()
+    {
+      if (_customColorController.Apply(false))
+      {
+        var namedColor = (NamedColor)_customColorController.ModelObject;
+        _currentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
+        SetListDirty();
+      }
+    }
 
-		private void EhUserRequest_ForAllSelectedItemSetOpacity(double opacity)
-		{
-			var alphaValue = AxoColor.NormFloatToByte((float)opacity);
+    private void EhUserRequest_ForAllSelectedItemSetOpacity(double opacity)
+    {
+      var alphaValue = AxoColor.NormFloatToByte((float)opacity);
 
-			bool anyChange = false;
-			foreach (var item in _currentItems.Where(node => node.IsSelected))
-			{
-				var color = ((NamedColor)item.Tag).Color;
-				if (color.A != alphaValue)
-				{
-					color.A = alphaValue;
-					var ncolor = new NamedColor(color);
-					item.Tag = ncolor;
-					item.Text = ToDisplayName(ncolor);
+      bool anyChange = false;
+      foreach (var item in _currentItems.Where(node => node.IsSelected))
+      {
+        var color = ((NamedColor)item.Tag).Color;
+        if (color.A != alphaValue)
+        {
+          color.A = alphaValue;
+          var ncolor = new NamedColor(color);
+          item.Tag = ncolor;
+          item.Text = ToDisplayName(ncolor);
 
-					anyChange = true;
-				}
-			}
+          anyChange = true;
+        }
+      }
 
-			if (anyChange)
-				SetListDirty();
-		}
+      if (anyChange)
+        SetListDirty();
+    }
 
-		private void EhUserRequest_ForAllSelectedItemShiftHue(double hueShift)
-		{
-			if (0 == hueShift || -1 == hueShift || 1 == hueShift)
-				return;
+    private void EhUserRequest_ForAllSelectedItemShiftHue(double hueShift)
+    {
+      if (0 == hueShift || -1 == hueShift || 1 == hueShift)
+        return;
 
-			bool anyChange = false;
-			foreach (var item in _currentItems.Where(node => node.IsSelected))
-			{
-				var color = ((NamedColor)item.Tag).Color;
-				var (a, h, s, b) = color.ToAhsb();
-				h += (float)hueShift;
-				h -= (float)Math.Floor(h); // Normalize hue to 0..1
+      bool anyChange = false;
+      foreach (var item in _currentItems.Where(node => node.IsSelected))
+      {
+        var color = ((NamedColor)item.Tag).Color;
+        var (a, h, s, b) = color.ToAhsb();
+        h += (float)hueShift;
+        h -= (float)Math.Floor(h); // Normalize hue to 0..1
 
-				color = AxoColor.FromAhsb(a, h, s, b);
+        color = AxoColor.FromAhsb(a, h, s, b);
 
-				var ncolor = new NamedColor(color);
-				item.Tag = ncolor;
-				item.Text = ToDisplayName(ncolor);
+        var ncolor = new NamedColor(color);
+        item.Tag = ncolor;
+        item.Text = ToDisplayName(ncolor);
 
-				anyChange = true;
-			}
+        anyChange = true;
+      }
 
-			if (anyChange)
-				SetListDirty();
-		}
+      if (anyChange)
+        SetListDirty();
+    }
 
-		private void EhUserRequest_ForAllSelectedItemSetSaturation(double saturation)
-		{
-			bool anyChange = false;
-			foreach (var item in _currentItems.Where(node => node.IsSelected))
-			{
-				var color = ((NamedColor)item.Tag).Color;
-				var (a, h, s, b) = color.ToAhsb();
+    private void EhUserRequest_ForAllSelectedItemSetSaturation(double saturation)
+    {
+      bool anyChange = false;
+      foreach (var item in _currentItems.Where(node => node.IsSelected))
+      {
+        var color = ((NamedColor)item.Tag).Color;
+        var (a, h, s, b) = color.ToAhsb();
 
-				if (s != saturation)
-				{
-					s = (float)saturation;
-					color = AxoColor.FromAhsb(a, h, s, b);
+        if (s != saturation)
+        {
+          s = (float)saturation;
+          color = AxoColor.FromAhsb(a, h, s, b);
 
-					var ncolor = new NamedColor(color);
-					item.Tag = ncolor;
-					item.Text = ToDisplayName(ncolor);
+          var ncolor = new NamedColor(color);
+          item.Tag = ncolor;
+          item.Text = ToDisplayName(ncolor);
 
-					anyChange = true;
-				}
-			}
+          anyChange = true;
+        }
+      }
 
-			if (anyChange)
-				SetListDirty();
-		}
+      if (anyChange)
+        SetListDirty();
+    }
 
-		private void EhUserRequest_ForAllSelectedItemSetBrightness(double brightness)
-		{
-			bool anyChange = false;
-			foreach (var item in _currentItems.Where(node => node.IsSelected))
-			{
-				var color = ((NamedColor)item.Tag).Color;
-				var (a, h, s, b) = color.ToAhsb();
+    private void EhUserRequest_ForAllSelectedItemSetBrightness(double brightness)
+    {
+      bool anyChange = false;
+      foreach (var item in _currentItems.Where(node => node.IsSelected))
+      {
+        var color = ((NamedColor)item.Tag).Color;
+        var (a, h, s, b) = color.ToAhsb();
 
-				if (b != brightness)
-				{
-					b = (float)brightness;
-					color = AxoColor.FromAhsb(a, h, s, b);
+        if (b != brightness)
+        {
+          b = (float)brightness;
+          color = AxoColor.FromAhsb(a, h, s, b);
 
-					var ncolor = new NamedColor(color);
-					item.Tag = ncolor;
-					item.Text = ToDisplayName(ncolor);
+          var ncolor = new NamedColor(color);
+          item.Tag = ncolor;
+          item.Text = ToDisplayName(ncolor);
 
-					anyChange = true;
-				}
-			}
+          anyChange = true;
+        }
+      }
 
-			if (anyChange)
-				SetListDirty();
-		}
+      if (anyChange)
+        SetListDirty();
+    }
 
-		private void EhUserRequest_ForAllSelectedItemSetColorName(string baseName)
-		{
-			bool anyChange = false;
+    private void EhUserRequest_ForAllSelectedItemSetColorName(string baseName)
+    {
+      bool anyChange = false;
 
-			var items = _currentItems.Where(node => node.IsSelected).ToArray();
+      var items = _currentItems.Where(node => node.IsSelected).ToArray();
 
-			if (items.Length == 0)
-			{
-				return;
-			}
-			else if (items.Length == 1)
-			{
-				var ncolor = (NamedColor)items[0].Tag;
-				var newName = baseName;
-				if (ncolor.Name != newName)
-				{
-					items[0].Tag = new NamedColor(ncolor.Color, newName);
-					items[0].Text = newName;
-					anyChange = true;
-				}
-			}
-			else
-			{
-				string formatString = string.Format(System.Globalization.CultureInfo.InvariantCulture, "D0{0}", 1 + (int)Math.Floor(Math.Log10(items.Length)));
+      if (items.Length == 0)
+      {
+        return;
+      }
+      else if (items.Length == 1)
+      {
+        var ncolor = (NamedColor)items[0].Tag;
+        var newName = baseName;
+        if (ncolor.Name != newName)
+        {
+          items[0].Tag = new NamedColor(ncolor.Color, newName);
+          items[0].Text = newName;
+          anyChange = true;
+        }
+      }
+      else
+      {
+        string formatString = string.Format(System.Globalization.CultureInfo.InvariantCulture, "D0{0}", 1 + (int)Math.Floor(Math.Log10(items.Length)));
 
-				for (int i = 0; i < items.Length; ++i)
-				{
-					var ncolor = (NamedColor)items[i].Tag;
-					var newName = baseName + i.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture);
-					if (ncolor.Name != newName)
-					{
-						items[i].Tag = new NamedColor(ncolor.Color, newName);
-						items[i].Text = newName;
-						anyChange = true;
-					}
-				}
-			}
+        for (int i = 0; i < items.Length; ++i)
+        {
+          var ncolor = (NamedColor)items[i].Tag;
+          var newName = baseName + i.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture);
+          if (ncolor.Name != newName)
+          {
+            items[i].Tag = new NamedColor(ncolor.Color, newName);
+            items[i].Text = newName;
+            anyChange = true;
+          }
+        }
+      }
 
-			if (anyChange)
-				SetListDirty();
-		}
+      if (anyChange)
+        SetListDirty();
+    }
 
-		protected override string ToDisplayName(NamedColor item)
-		{
-			return item.ToString();
-		}
+    protected override string ToDisplayName(NamedColor item)
+    {
+      return item.ToString();
+    }
 
-		protected override void Controller_AvailableItems_Initialize()
-		{
-			if (null == _availableItemsRootNode)
-				_availableItemsRootNode = new NGTreeNode();
-			else
-				_availableItemsRootNode.Nodes.Clear();
+    protected override void Controller_AvailableItems_Initialize()
+    {
+      if (null == _availableItemsRootNode)
+        _availableItemsRootNode = new NGTreeNode();
+      else
+        _availableItemsRootNode.Nodes.Clear();
 
-			var levelDict = new Dictionary<ItemDefinitionLevel, NGTreeNode>();
-			var allLists = ColorSetManager.Instance.GetEntryValues().ToArray(); ;
-			Array.Sort(allLists, (x, y) =>
-			{
-				int result = Comparer<ItemDefinitionLevel>.Default.Compare(x.Level, y.Level);
-				return 0 != result ? result : string.Compare(x.List.Name, y.List.Name);
-			}
-			);
+      var levelDict = new Dictionary<ItemDefinitionLevel, NGTreeNode>();
+      var allLists = ColorSetManager.Instance.GetEntryValues().ToArray();
+      ;
+      Array.Sort(allLists, (x, y) =>
+      {
+        int result = Comparer<ItemDefinitionLevel>.Default.Compare(x.Level, y.Level);
+        return 0 != result ? result : string.Compare(x.List.Name, y.List.Name);
+      }
+      );
 
-			foreach (var list in allLists)
-			{
-				NGTreeNode levelNode;
-				if (!levelDict.TryGetValue(list.Level, out levelNode))
-				{
-					levelNode = new NGTreeNode(Enum.GetName(typeof(ItemDefinitionLevel), list.Level));
-					levelDict.Add(list.Level, levelNode);
-					_availableItemsRootNode.Nodes.Add(levelNode);
-				}
+      foreach (var list in allLists)
+      {
+        NGTreeNode levelNode;
+        if (!levelDict.TryGetValue(list.Level, out levelNode))
+        {
+          levelNode = new NGTreeNode(Enum.GetName(typeof(ItemDefinitionLevel), list.Level));
+          levelDict.Add(list.Level, levelNode);
+          _availableItemsRootNode.Nodes.Add(levelNode);
+        }
 
-				var listNode = new NGTreeNode(list.List.Name);
-				foreach (var color in list.List)
-					listNode.Nodes.Add(new NGTreeNode(ToDisplayName(color)) { Tag = color });
-				levelNode.Nodes.Add(listNode);
-			}
-		}
+        var listNode = new NGTreeNode(list.List.Name);
+        foreach (var color in list.List)
+          listNode.Nodes.Add(new NGTreeNode(ToDisplayName(color)) { Tag = color });
+        levelNode.Nodes.Add(listNode);
+      }
+    }
 
-		protected override void Controller_CurrentItems_Initialize()
-		{
-			if (null == _currentItems)
-				_currentItems = new SelectableListNodeList();
-			else
-				_currentItems.Clear();
+    protected override void Controller_CurrentItems_Initialize()
+    {
+      if (null == _currentItems)
+        _currentItems = new SelectableListNodeList();
+      else
+        _currentItems.Clear();
 
-			foreach (var color in _doc)
-			{
-				_currentItems.Add(new SelectableListNode(ToDisplayName(color), color, false));
-			}
-		}
+      foreach (var color in _doc)
+      {
+        _currentItems.Add(new SelectableListNode(ToDisplayName(color), color, false));
+      }
+    }
 
-		protected override void EhAvailableItem_AddToCurrent()
-		{
-			var avNodes = _availableItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected && node.Tag is NamedColor).Select(node => (NamedColor)node.Tag).ToArray();
-			if (avNodes.Length == 0)
-				return;
+    protected override void EhAvailableItem_AddToCurrent()
+    {
+      var avNodes = _availableItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected && node.Tag is NamedColor).Select(node => (NamedColor)node.Tag).ToArray();
+      if (avNodes.Length == 0)
+        return;
 
-			foreach (var namedColor in avNodes)
-				_currentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
-			SetListDirty();
-		}
+      foreach (var namedColor in avNodes)
+        _currentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
+      SetListDirty();
+    }
 
-		protected override bool IsItemEditable(Altaxo.Main.IImmutable item)
-		{
-			if (null == item)
-				return false;
+    protected override bool IsItemEditable(Altaxo.Main.IImmutable item)
+    {
+      if (null == item)
+        return false;
 
-			return true;
-		}
-	}
+      return true;
+    }
+  }
 }

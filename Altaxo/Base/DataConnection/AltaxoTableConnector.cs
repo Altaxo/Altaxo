@@ -29,92 +29,92 @@ using System.Text;
 
 namespace Altaxo.DataConnection
 {
-	public class AltaxoTableConnector
-	{
-		private Altaxo.Data.DataTable _table;
+  public class AltaxoTableConnector
+  {
+    private Altaxo.Data.DataTable _table;
 
-		public AltaxoTableConnector(Altaxo.Data.DataTable table)
-		{
-			_table = table;
-		}
+    public AltaxoTableConnector(Altaxo.Data.DataTable table)
+    {
+      _table = table;
+    }
 
-		public void ReadAction(System.Data.Common.DbDataReader reader)
-		{
-			var columnMapping = new List<AltaxoColumnMapping>();
-			CreateColumns(reader, columnMapping);
-			FillAltaxoTable(reader, columnMapping);
-		}
+    public void ReadAction(System.Data.Common.DbDataReader reader)
+    {
+      var columnMapping = new List<AltaxoColumnMapping>();
+      CreateColumns(reader, columnMapping);
+      FillAltaxoTable(reader, columnMapping);
+    }
 
-		private void FillAltaxoTable(System.Data.Common.DbDataReader reader, List<AltaxoColumnMapping> columnMapping)
-		{
-			int j = -1;
-			while (reader.Read())
-			{
-				++j;
+    private void FillAltaxoTable(System.Data.Common.DbDataReader reader, List<AltaxoColumnMapping> columnMapping)
+    {
+      int j = -1;
+      while (reader.Read())
+      {
+        ++j;
 
-				for (int i = 0; i < reader.FieldCount; ++i)
-				{
-					var mapping = columnMapping[i];
-					var axoColumn = mapping.AltaxoColumn;
-					mapping.AltaxoColumnItemSetter(axoColumn, j, reader[i]);
-				}
-			}
-		}
+        for (int i = 0; i < reader.FieldCount; ++i)
+        {
+          var mapping = columnMapping[i];
+          var axoColumn = mapping.AltaxoColumn;
+          mapping.AltaxoColumnItemSetter(axoColumn, j, reader[i]);
+        }
+      }
+    }
 
-		private struct AltaxoColumnMapping
-		{
-			public Altaxo.Data.DataColumn AltaxoColumn;
+    private struct AltaxoColumnMapping
+    {
+      public Altaxo.Data.DataColumn AltaxoColumn;
 
-			/// <summary>Sets an item in an Altaxo column. 1st arg is the Altaxo data column, 2nd arg is the index in this column, and 3rd arg is the object to set.
-			/// The action should set the item at index to the object.</summary>
-			public Action<Altaxo.Data.DataColumn, int, object> AltaxoColumnItemSetter;
-		}
+      /// <summary>Sets an item in an Altaxo column. 1st arg is the Altaxo data column, 2nd arg is the index in this column, and 3rd arg is the object to set.
+      /// The action should set the item at index to the object.</summary>
+      public Action<Altaxo.Data.DataColumn, int, object> AltaxoColumnItemSetter;
+    }
 
-		private void CreateColumns(System.Data.Common.DbDataReader reader, List<AltaxoColumnMapping> mapping)
-		{
-			mapping.Clear();
+    private void CreateColumns(System.Data.Common.DbDataReader reader, List<AltaxoColumnMapping> mapping)
+    {
+      mapping.Clear();
 
-			var schemaTable = reader.GetSchemaTable();
-			int currentPosition = -1;
+      var schemaTable = reader.GetSchemaTable();
+      int currentPosition = -1;
 
-			foreach (System.Data.DataRow row in schemaTable.Rows)
-			{
-				++currentPosition;
+      foreach (System.Data.DataRow row in schemaTable.Rows)
+      {
+        ++currentPosition;
 
-				var ct = (Type)row["DataType"];
+        var ct = (Type)row["DataType"];
 
-				var axoColType = GetAltaxoColumnType(ct);
-				var axoColName = (string)row["ColumnName"];
+        var axoColType = GetAltaxoColumnType(ct);
+        var axoColName = (string)row["ColumnName"];
 
-				var axoColumn = _table.DataColumns.EnsureExistence(axoColName, axoColType, Data.ColumnKind.V, 0);
+        var axoColumn = _table.DataColumns.EnsureExistence(axoColName, axoColType, Data.ColumnKind.V, 0);
 
-				mapping.Add(new AltaxoColumnMapping() { AltaxoColumn = axoColumn, AltaxoColumnItemSetter = GetColumnItemSetter(ct) });
-			}
+        mapping.Add(new AltaxoColumnMapping() { AltaxoColumn = axoColumn, AltaxoColumnItemSetter = GetColumnItemSetter(ct) });
+      }
 
-			// clear all mapped columns
-			foreach (var item in mapping)
-				item.AltaxoColumn.Clear();
-		}
+      // clear all mapped columns
+      foreach (var item in mapping)
+        item.AltaxoColumn.Clear();
+    }
 
-		public static Type GetAltaxoColumnType(Type oledbType)
-		{
-			if (OleDbSchema.IsNumeric(oledbType))
-				return typeof(Altaxo.Data.DoubleColumn);
-			else if (OleDbSchema.IsDateTime(oledbType))
-				return typeof(Altaxo.Data.DateTimeColumn);
-			else
-				return typeof(Altaxo.Data.TextColumn);
-		}
+    public static Type GetAltaxoColumnType(Type oledbType)
+    {
+      if (OleDbSchema.IsNumeric(oledbType))
+        return typeof(Altaxo.Data.DoubleColumn);
+      else if (OleDbSchema.IsDateTime(oledbType))
+        return typeof(Altaxo.Data.DateTimeColumn);
+      else
+        return typeof(Altaxo.Data.TextColumn);
+    }
 
-		public static Action<Altaxo.Data.DataColumn, int, object> GetColumnItemSetter(Type oledbType)
-		{
-			return (col, idx, obj) =>
-				{
-					if (null == obj || obj == System.DBNull.Value)
-						col.SetElementEmpty(idx);
-					else
-						col[idx] = new Data.AltaxoVariant(obj);
-				};
-		}
-	}
+    public static Action<Altaxo.Data.DataColumn, int, object> GetColumnItemSetter(Type oledbType)
+    {
+      return (col, idx, obj) =>
+        {
+          if (null == obj || obj == System.DBNull.Value)
+            col.SetElementEmpty(idx);
+          else
+            col[idx] = new Data.AltaxoVariant(obj);
+        };
+    }
+  }
 }

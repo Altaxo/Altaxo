@@ -35,233 +35,233 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Groups
 {
-	public class ScatterSymbolListManager : StyleListManagerBaseForClasses<ScatterSymbolList, IScatterSymbol, StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>>
-	{
-		public static readonly Main.Properties.PropertyKey<ScatterSymbolListBag> PropertyKeyUserDefinedScatterSymbolLists;
+  public class ScatterSymbolListManager : StyleListManagerBaseForClasses<ScatterSymbolList, IScatterSymbol, StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>>
+  {
+    public static readonly Main.Properties.PropertyKey<ScatterSymbolListBag> PropertyKeyUserDefinedScatterSymbolLists;
 
-		private static ScatterSymbolListManager _instance;
+    private static ScatterSymbolListManager _instance;
 
-		public ScatterSymbolList BuiltinSolid { get; private set; }
-		public ScatterSymbolList BuiltinOpen { get; private set; }
-		public ScatterSymbolList BuiltinDotCenter { get; private set; }
-		public ScatterSymbolList BuiltinHollow { get; private set; }
+    public ScatterSymbolList BuiltinSolid { get; private set; }
+    public ScatterSymbolList BuiltinOpen { get; private set; }
+    public ScatterSymbolList BuiltinDotCenter { get; private set; }
+    public ScatterSymbolList BuiltinHollow { get; private set; }
 
-		public ScatterSymbolList OldSolid { get; private set; }
-		public ScatterSymbolList OldOpen { get; private set; }
-		public ScatterSymbolList OldDotCenter { get; private set; }
-		public ScatterSymbolList OldHollow { get; private set; }
-		public ScatterSymbolList OldPlus { get; private set; }
-		public ScatterSymbolList OldTimes { get; private set; }
-		public ScatterSymbolList OldBarHorz { get; private set; }
-		public ScatterSymbolList OldBarVert { get; private set; }
+    public ScatterSymbolList OldSolid { get; private set; }
+    public ScatterSymbolList OldOpen { get; private set; }
+    public ScatterSymbolList OldDotCenter { get; private set; }
+    public ScatterSymbolList OldHollow { get; private set; }
+    public ScatterSymbolList OldPlus { get; private set; }
+    public ScatterSymbolList OldTimes { get; private set; }
+    public ScatterSymbolList OldBarHorz { get; private set; }
+    public ScatterSymbolList OldBarVert { get; private set; }
 
-		static ScatterSymbolListManager()
-		{
-			PropertyKeyUserDefinedScatterSymbolLists =
-				new Main.Properties.PropertyKey<ScatterSymbolListBag>(
-				"304FF675-2250-417A-A0BD-081DAC4947B6",
-				"Graph\\UserDefinedScatterSymbolLists",
-				Main.Properties.PropertyLevel.Application,
-				() => new ScatterSymbolListBag(Enumerable.Empty<ScatterSymbolList>()));
+    static ScatterSymbolListManager()
+    {
+      PropertyKeyUserDefinedScatterSymbolLists =
+        new Main.Properties.PropertyKey<ScatterSymbolListBag>(
+        "304FF675-2250-417A-A0BD-081DAC4947B6",
+        "Graph\\UserDefinedScatterSymbolLists",
+        Main.Properties.PropertyLevel.Application,
+        () => new ScatterSymbolListBag(Enumerable.Empty<ScatterSymbolList>()));
 
-			Instance = new ScatterSymbolListManager();
-		}
+      Instance = new ScatterSymbolListManager();
+    }
 
-		protected ScatterSymbolListManager()
-			: base(
-					(list, level) => new StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>(list, level),
-					new ScatterSymbolList("BuiltinSolid", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(),
-					new Styles.ScatterSymbols.Circle(),
-					new Styles.ScatterSymbols.UpTriangle(),
-					new Styles.ScatterSymbols.Diamond(),
-					new Styles.ScatterSymbols.DownTriangle(),
-					new Styles.ScatterSymbols.Pentagon(),
-					new Styles.ScatterSymbols.LeftTriangle(),
-					new Styles.ScatterSymbols.Hexagon(),
-					new Styles.ScatterSymbols.RightTriangle(),
-			})
-					)
+    protected ScatterSymbolListManager()
+      : base(
+          (list, level) => new StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>(list, level),
+          new ScatterSymbolList("BuiltinSolid", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Square(),
+          new Styles.ScatterSymbols.Circle(),
+          new Styles.ScatterSymbols.UpTriangle(),
+          new Styles.ScatterSymbols.Diamond(),
+          new Styles.ScatterSymbols.DownTriangle(),
+          new Styles.ScatterSymbols.Pentagon(),
+          new Styles.ScatterSymbols.LeftTriangle(),
+          new Styles.ScatterSymbols.Hexagon(),
+          new Styles.ScatterSymbols.RightTriangle(),
+      })
+          )
 
-		{
-			BuiltinSolid = BuiltinDefault;
+    {
+      BuiltinSolid = BuiltinDefault;
 
-			ScatterSymbolList dummy;
+      ScatterSymbolList dummy;
 
-			BuiltinOpen = new ScatterSymbolList("BuiltinOpen", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.White).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull)));
-			InternalTryRegisterList(BuiltinOpen, ItemDefinitionLevel.Builtin, out dummy, false);
+      BuiltinOpen = new ScatterSymbolList("BuiltinOpen", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.White).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull)));
+      InternalTryRegisterList(BuiltinOpen, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			BuiltinHollow = new ScatterSymbolList("BuiltinHollow", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.Transparent).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull)));
-			InternalTryRegisterList(BuiltinHollow, ItemDefinitionLevel.Builtin, out dummy, false);
+      BuiltinHollow = new ScatterSymbolList("BuiltinHollow", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.Transparent).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull)));
+      InternalTryRegisterList(BuiltinHollow, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			BuiltinDotCenter = new ScatterSymbolList("BuiltinDotCenter", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.White).WithFrame(new ConstantThicknessFrame()).WithInset(new CircleBulletPointInset()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull | Styles.ScatterSymbols.PlotColorInfluence.InsetColorFull)));
-			InternalTryRegisterList(BuiltinDotCenter, ItemDefinitionLevel.Builtin, out dummy, false);
+      BuiltinDotCenter = new ScatterSymbolList("BuiltinDotCenter", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.White).WithFrame(new ConstantThicknessFrame()).WithInset(new CircleBulletPointInset()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull | Styles.ScatterSymbols.PlotColorInfluence.InsetColorFull)));
+      InternalTryRegisterList(BuiltinDotCenter, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			// filled symbols
-			OldSolid = new ScatterSymbolList("OldSolid", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(),
-					new Styles.ScatterSymbols.Circle(),
-					new Styles.ScatterSymbols.UpTriangle(),
-					new Styles.ScatterSymbols.DownTriangle(),
-					new Styles.ScatterSymbols.Diamond(),
-					new Styles.ScatterSymbols.CrossPlus(),
-					new Styles.ScatterSymbols.CrossTimes(),
-					new Styles.ScatterSymbols.Star(),
-					new Styles.ScatterSymbols.HorizontalBar(),
-					new Styles.ScatterSymbols.VerticalBar(),
-			});
-			InternalTryRegisterList(OldSolid, ItemDefinitionLevel.Builtin, out dummy, false);
+      // filled symbols
+      OldSolid = new ScatterSymbolList("OldSolid", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Square(),
+          new Styles.ScatterSymbols.Circle(),
+          new Styles.ScatterSymbols.UpTriangle(),
+          new Styles.ScatterSymbols.DownTriangle(),
+          new Styles.ScatterSymbols.Diamond(),
+          new Styles.ScatterSymbols.CrossPlus(),
+          new Styles.ScatterSymbols.CrossTimes(),
+          new Styles.ScatterSymbols.Star(),
+          new Styles.ScatterSymbols.HorizontalBar(),
+          new Styles.ScatterSymbols.VerticalBar(),
+      });
+      InternalTryRegisterList(OldSolid, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			// open symbols
-			OldOpen = new ScatterSymbolList("OldOpen", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.Circle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.UpTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.DownTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.Diamond(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
-					new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
-					new Styles.ScatterSymbols.Star(NamedColors.Black, true),
-					new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
-					new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
-			});
-			InternalTryRegisterList(OldOpen, ItemDefinitionLevel.Builtin, out dummy, false);
+      // open symbols
+      OldOpen = new ScatterSymbolList("OldOpen", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Square(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.Circle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.UpTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.DownTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.Diamond(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
+          new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
+          new Styles.ScatterSymbols.Star(NamedColors.Black, true),
+          new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
+          new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
+      });
+      InternalTryRegisterList(OldOpen, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			// hollow symbols
-			OldHollow = new ScatterSymbolList("OldHollow", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
-					new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
-					new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
-					new Styles.ScatterSymbols.Star(NamedColors.Black, true),
-					new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
-					new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
-			});
-			InternalTryRegisterList(OldHollow, ItemDefinitionLevel.Builtin, out dummy, false);
+      // hollow symbols
+      OldHollow = new ScatterSymbolList("OldHollow", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true),
+          new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
+          new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
+          new Styles.ScatterSymbols.Star(NamedColors.Black, true),
+          new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
+          new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
+      });
+      InternalTryRegisterList(OldHollow, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			// old dotcenter symbols
-			OldDotCenter = new ScatterSymbolList("OldDotCenter", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
-					new Styles.ScatterSymbols.Circle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
-					new Styles.ScatterSymbols.UpTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
-					new Styles.ScatterSymbols.DownTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
-					new Styles.ScatterSymbols.Diamond(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
-					new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
-					new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
-					new Styles.ScatterSymbols.Star(NamedColors.Black, true),
-					new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
-					new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
-			});
-			InternalTryRegisterList(OldDotCenter, ItemDefinitionLevel.Builtin, out dummy, false);
+      // old dotcenter symbols
+      OldDotCenter = new ScatterSymbolList("OldDotCenter", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Square(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
+          new Styles.ScatterSymbols.Circle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
+          new Styles.ScatterSymbols.UpTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
+          new Styles.ScatterSymbols.DownTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
+          new Styles.ScatterSymbols.Diamond(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
+          new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
+          new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
+          new Styles.ScatterSymbols.Star(NamedColors.Black, true),
+          new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
+          new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
+      });
+      InternalTryRegisterList(OldDotCenter, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			// old plus symbols
-			OldPlus = new ScatterSymbolList("OldCrossPlus", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
-					new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
-					new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
-					new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
-					new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
-					new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
-					new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
-					new Styles.ScatterSymbols.Star(NamedColors.Black, true),
-					new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
-					new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
-	});
-			InternalTryRegisterList(OldPlus, ItemDefinitionLevel.Builtin, out dummy, false);
+      // old plus symbols
+      OldPlus = new ScatterSymbolList("OldCrossPlus", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
+          new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
+          new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
+          new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
+          new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossPlusInset(), true),
+          new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
+          new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
+          new Styles.ScatterSymbols.Star(NamedColors.Black, true),
+          new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
+          new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
+  });
+      InternalTryRegisterList(OldPlus, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			// old times symbols
-			OldTimes = new ScatterSymbolList("OldCrossTimes", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
-					new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
-					new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
-					new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
-					new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
-					new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
-					new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
-					new Styles.ScatterSymbols.Star(NamedColors.Black, true),
-					new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
-					new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
-	});
-			InternalTryRegisterList(OldTimes, ItemDefinitionLevel.Builtin, out dummy, false);
+      // old times symbols
+      OldTimes = new ScatterSymbolList("OldCrossTimes", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
+          new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
+          new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
+          new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
+          new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CrossTimesInset(), true),
+          new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
+          new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
+          new Styles.ScatterSymbols.Star(NamedColors.Black, true),
+          new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
+          new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
+  });
+      InternalTryRegisterList(OldTimes, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			OldBarHorz = new ScatterSymbolList("OldBarHorzizontal", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
-					new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
-					new Styles.ScatterSymbols.Star(NamedColors.Black, true),
-					new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
-					new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
-	});
-			InternalTryRegisterList(OldBarHorz, ItemDefinitionLevel.Builtin, out dummy, false);
+      OldBarHorz = new ScatterSymbolList("OldBarHorzizontal", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
+          new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
+          new Styles.ScatterSymbols.Star(NamedColors.Black, true),
+          new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
+          new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
+  });
+      InternalTryRegisterList(OldBarHorz, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			OldBarVert = new ScatterSymbolList("OldBarVertical", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
-					new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
-					new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
-					new Styles.ScatterSymbols.Star(NamedColors.Black, true),
-					new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
-					new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
-	});
-			InternalTryRegisterList(OldBarVert, ItemDefinitionLevel.Builtin, out dummy, false);
+      OldBarVert = new ScatterSymbolList("OldBarVertical", new IScatterSymbol[] {
+          new Styles.ScatterSymbols.Square(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.Circle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.UpTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.DownTriangle(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.Diamond(NamedColors.Transparent, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new HorizontalBarInset(), true),
+          new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
+          new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
+          new Styles.ScatterSymbols.Star(NamedColors.Black, true),
+          new Styles.ScatterSymbols.HorizontalBar(NamedColors.Black, true),
+          new Styles.ScatterSymbols.VerticalBar(NamedColors.Black, true),
+  });
+      InternalTryRegisterList(OldBarVert, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			ScatterSymbolListBag userStyleLists;
-			Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out userStyleLists);
-			if (null != userStyleLists)
-			{
-				foreach (var listVar in userStyleLists.StyleLists)
-				{
-					InternalTryRegisterList(listVar, ItemDefinitionLevel.UserDefined, out dummy, false);
-				}
-			}
+      ScatterSymbolListBag userStyleLists;
+      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out userStyleLists);
+      if (null != userStyleLists)
+      {
+        foreach (var listVar in userStyleLists.StyleLists)
+        {
+          InternalTryRegisterList(listVar, ItemDefinitionLevel.UserDefined, out dummy, false);
+        }
+      }
 
-			RebuildListEntryToListDictionary();
-		}
+      RebuildListEntryToListDictionary();
+    }
 
-		public static ScatterSymbolListManager Instance
-		{
-			get
-			{
-				return _instance;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
+    public static ScatterSymbolListManager Instance
+    {
+      get
+      {
+        return _instance;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException(nameof(value));
 
-				if (null != _instance)
-					Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
+        if (null != _instance)
+          Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
 
-				_instance = value;
+        _instance = value;
 
-				if (null != _instance)
-					Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
-			}
-		}
+        if (null != _instance)
+          Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
+      }
+    }
 
-		public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols)
-		{
-			return new ScatterSymbolList(name, symbols);
-		}
+    public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols)
+    {
+      return new ScatterSymbolList(name, symbols);
+    }
 
-		#region User defined lists
+    #region User defined lists
 
-		protected override void OnUserDefinedListAddedChangedRemoved(ScatterSymbolList list)
-		{
-			var listBag = new ScatterSymbolListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
-			Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedScatterSymbolLists, listBag);
-		}
+    protected override void OnUserDefinedListAddedChangedRemoved(ScatterSymbolList list)
+    {
+      var listBag = new ScatterSymbolListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
+      Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedScatterSymbolLists, listBag);
+    }
 
-		#endregion User defined lists
-	}
+    #endregion User defined lists
+  }
 }

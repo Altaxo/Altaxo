@@ -21,46 +21,46 @@ using System;
 
 namespace Altaxo.AddInItems
 {
-	/// <summary>
-	/// Condition evaluator that lazy-loads another condition evaluator and executes it.
-	/// </summary>
-	internal sealed class LazyConditionEvaluator : IConditionEvaluator
-	{
-		private AddIn addIn;
-		private string name;
-		private string className;
+  /// <summary>
+  /// Condition evaluator that lazy-loads another condition evaluator and executes it.
+  /// </summary>
+  internal sealed class LazyConditionEvaluator : IConditionEvaluator
+  {
+    private AddIn addIn;
+    private string name;
+    private string className;
 
-		public string Name
-		{
-			get
-			{
-				return name;
-			}
-		}
+    public string Name
+    {
+      get
+      {
+        return name;
+      }
+    }
 
-		public LazyConditionEvaluator(AddIn addIn, Properties properties)
-		{
-			if (addIn == null)
-				throw new ArgumentNullException("addIn");
-			this.addIn = addIn;
-			this.name = properties["name"];
-			this.className = properties["class"];
-		}
+    public LazyConditionEvaluator(AddIn addIn, Properties properties)
+    {
+      if (addIn == null)
+        throw new ArgumentNullException("addIn");
+      this.addIn = addIn;
+      this.name = properties["name"];
+      this.className = properties["class"];
+    }
 
-		public bool IsValid(object parameter, Condition condition)
-		{
-			IConditionEvaluator evaluator = (IConditionEvaluator)addIn.CreateObject(className);
-			if (evaluator == null)
-				return false;
-			addIn.AddInTree.ConditionEvaluators[name] = evaluator;
-			return evaluator.IsValid(parameter, condition);
-		}
+    public bool IsValid(object parameter, Condition condition)
+    {
+      IConditionEvaluator evaluator = (IConditionEvaluator)addIn.CreateObject(className);
+      if (evaluator == null)
+        return false;
+      addIn.AddInTree.ConditionEvaluators[name] = evaluator;
+      return evaluator.IsValid(parameter, condition);
+    }
 
-		public override string ToString()
-		{
-			return String.Format("[LazyLoadConditionEvaluator: className = {0}, name = {1}]",
-													 className,
-													 name);
-		}
-	}
+    public override string ToString()
+    {
+      return String.Format("[LazyLoadConditionEvaluator: className = {0}, name = {1}]",
+                           className,
+                           name);
+    }
+  }
 }

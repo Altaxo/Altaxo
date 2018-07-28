@@ -30,39 +30,39 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Creates a new named color from the id and the value
-	/// </summary>
-	/// <attribute name="Value" use="required">
-	/// The value of the color as string in standard format.
-	/// </attribute>
-	/// <usage>Only in /Altaxo/ApplicationColorSets, embedded in a ColorSetDoozer</usage>
-	/// <returns>
-	/// An NamedColor object that represents the item.</returns>
-	public class NamedColorDoozer : IDoozer
-	{
-		/// <summary>
-		/// Gets if the doozer handles codon conditions on its own.
-		/// If this property return false, the item is excluded when the condition is not met.
-		/// </summary>
-		public bool HandleConditions
-		{
-			get
-			{
-				return false;
-			}
-		}
+  /// <summary>
+  /// Creates a new named color from the id and the value
+  /// </summary>
+  /// <attribute name="Value" use="required">
+  /// The value of the color as string in standard format.
+  /// </attribute>
+  /// <usage>Only in /Altaxo/ApplicationColorSets, embedded in a ColorSetDoozer</usage>
+  /// <returns>
+  /// An NamedColor object that represents the item.</returns>
+  public class NamedColorDoozer : IDoozer
+  {
+    /// <summary>
+    /// Gets if the doozer handles codon conditions on its own.
+    /// If this property return false, the item is excluded when the condition is not met.
+    /// </summary>
+    public bool HandleConditions
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public object BuildItem(BuildItemArgs args)
-		{
-			string id = args.Codon.Id;
-			string value = args.Codon.Properties["Value"];
-			if (!string.IsNullOrEmpty(value))
-			{
-				AxoColor c = AxoColor.FromInvariantString(value);
-				return new NamedColor(c, id);
-			}
-			return null;
-		}
-	}
+    public object BuildItem(BuildItemArgs args)
+    {
+      string id = args.Codon.Id;
+      string value = args.Codon.Properties["Value"];
+      if (!string.IsNullOrEmpty(value))
+      {
+        AxoColor c = AxoColor.FromInvariantString(value);
+        return new NamedColor(c, id);
+      }
+      return null;
+    }
+  }
 }

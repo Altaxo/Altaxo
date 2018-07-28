@@ -30,61 +30,61 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
-	#region Interfaces
+  #region Interfaces
 
-	public interface IWaterfallTransformView
-	{
-		void SetXScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment);
+  public interface IWaterfallTransformView
+  {
+    void SetXScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment);
 
-		DimensionfulQuantity XScale { get; set; }
+    DimensionfulQuantity XScale { get; set; }
 
-		void SetYScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment);
+    void SetYScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment);
 
-		DimensionfulQuantity YScale { get; set; }
+    DimensionfulQuantity YScale { get; set; }
 
-		bool UseClipping { get; set; }
-	}
+    bool UseClipping { get; set; }
+  }
 
-	#endregion Interfaces
+  #endregion Interfaces
 
-	[UserControllerForObject(typeof(WaterfallTransform))]
-	[ExpectedTypeOfView(typeof(IWaterfallTransformView))]
-	public class WaterfallTransformController : MVCANControllerEditOriginalDocBase<WaterfallTransform, IWaterfallTransformView>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+  [UserControllerForObject(typeof(WaterfallTransform))]
+  [ExpectedTypeOfView(typeof(IWaterfallTransformView))]
+  public class WaterfallTransformController : MVCANControllerEditOriginalDocBase<WaterfallTransform, IWaterfallTransformView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (_view != null)
-			{
-				_view.SetXScaleUnitEnvironment(RelationEnvironment.Instance);
-				_view.XScale = new DimensionfulQuantity(_doc.XScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
-				_view.SetYScaleUnitEnvironment(RelationEnvironment.Instance);
-				_view.YScale = new DimensionfulQuantity(_doc.YScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
-				_view.UseClipping = _doc.UseClipping;
-			}
-		}
+      if (_view != null)
+      {
+        _view.SetXScaleUnitEnvironment(RelationEnvironment.Instance);
+        _view.XScale = new DimensionfulQuantity(_doc.XScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
+        _view.SetYScaleUnitEnvironment(RelationEnvironment.Instance);
+        _view.YScale = new DimensionfulQuantity(_doc.YScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
+        _view.UseClipping = _doc.UseClipping;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			try
-			{
-				_doc.UseClipping = _view.UseClipping;
-				_doc.XScale = _view.XScale.AsValueInSIUnits;
-				_doc.YScale = _view.YScale.AsValueInSIUnits;
-			}
-			catch (Exception ex)
-			{
-				Current.Gui.ErrorMessageBox(ex.Message, "Error while applying..");
-				return ApplyEnd(false, disposeController);
-			}
+    public override bool Apply(bool disposeController)
+    {
+      try
+      {
+        _doc.UseClipping = _view.UseClipping;
+        _doc.XScale = _view.XScale.AsValueInSIUnits;
+        _doc.YScale = _view.YScale.AsValueInSIUnits;
+      }
+      catch (Exception ex)
+      {
+        Current.Gui.ErrorMessageBox(ex.Message, "Error while applying..");
+        return ApplyEnd(false, disposeController);
+      }
 
-			return ApplyEnd(true, disposeController);
-		}
-	}
+      return ApplyEnd(true, disposeController);
+    }
+  }
 }

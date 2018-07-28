@@ -31,35 +31,35 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Data
 {
-	/// <summary>
-	/// Common interface to column plot data as <see cref="XYColumnPlotData"/> or <see cref="XYZColumnPlotData"/>.
-	/// </summary>
-	/// <seealso cref="System.ICloneable" />
-	public interface IColumnPlotData : ICloneable
-	{
-		/// <summary>Gets the underlying data table. If this property is null (happens with old deserialization), the underlying table must be determined from the data columns.</summary>
-		DataTable DataTable { get; set; }
+  /// <summary>
+  /// Common interface to column plot data as <see cref="XYColumnPlotData"/> or <see cref="XYZColumnPlotData"/>.
+  /// </summary>
+  /// <seealso cref="System.ICloneable" />
+  public interface IColumnPlotData : ICloneable
+  {
+    /// <summary>Gets the underlying data table. If this property is null (happens with old deserialization), the underlying table must be determined from the data columns.</summary>
+    DataTable DataTable { get; set; }
 
-		/// <summary>The group number of the data columns. All data columns should have this group number. Data columns having other group numbers will be marked.</summary>
-		int GroupNumber { get; set; }
+    /// <summary>The group number of the data columns. All data columns should have this group number. Data columns having other group numbers will be marked.</summary>
+    int GroupNumber { get; set; }
 
-		/// <summary>
-		/// The selection of data rows to be plotted.
-		/// </summary>
-		IRowSelection DataRowSelection { get; set; }
+    /// <summary>
+    /// The selection of data rows to be plotted.
+    /// </summary>
+    IRowSelection DataRowSelection { get; set; }
 
-		/// <summary>
-		/// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.
-		/// </summary>
-		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
-		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-		IEnumerable<(string NameOfColumnGroup, // Name of the column group, e.g. "X-Y-Data"
-									IEnumerable<(
-										string ColumnLabel, // Column label
-										IReadableColumn Column, // the column as it was at the time of this call
-										string ColumnName, // the name of the column (last part of the column proxies document path)
-										Action<IReadableColumn, DataTable, int> SetColumnAction // action to set the column during Apply of the controller (Arguments are column, table and group number)
-										)> columnInfos
-								)> GetAdditionallyUsedColumns();
-	}
+    /// <summary>
+    /// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.
+    /// </summary>
+    /// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
+    /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
+    IEnumerable<(string NameOfColumnGroup, // Name of the column group, e.g. "X-Y-Data"
+                  IEnumerable<(
+                    string ColumnLabel, // Column label
+                    IReadableColumn Column, // the column as it was at the time of this call
+                    string ColumnName, // the name of the column (last part of the column proxies document path)
+                    Action<IReadableColumn, DataTable, int> SetColumnAction // action to set the column during Apply of the controller (Arguments are column, table and group number)
+                    )> columnInfos
+                )> GetAdditionallyUsedColumns();
+  }
 }

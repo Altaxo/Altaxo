@@ -30,103 +30,103 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
-	public class Round : ContourShapedLineCapBase
-	{
-		private class RoundContour : ILineCapContour
-		{
-			private const int NumberOfPoints = 8;
+  public class Round : ContourShapedLineCapBase
+  {
+    private class RoundContour : ILineCapContour
+    {
+      private const int NumberOfPoints = 8;
 
-			public int NumberOfNormals
-			{
-				get
-				{
-					return NumberOfPoints;
-				}
-			}
+      public int NumberOfNormals
+      {
+        get
+        {
+          return NumberOfPoints;
+        }
+      }
 
-			public int NumberOfVertices
-			{
-				get
-				{
-					return NumberOfPoints;
-				}
-			}
+      public int NumberOfVertices
+      {
+        get
+        {
+          return NumberOfPoints;
+        }
+      }
 
-			public bool IsVertexSharp(int idx)
-			{
-				return false;
-			}
+      public bool IsVertexSharp(int idx)
+      {
+        return false;
+      }
 
-			public VectorD2D Normals(int idx)
-			{
-				if (idx == 0)
-					return new VectorD2D(0, 1);
-				else if (idx == (NumberOfPoints - 1))
-					return new VectorD2D(1, 0);
-				else
-				{
-					double phi = (0.5 * Math.PI * idx) / (NumberOfPoints - 1);
-					return new VectorD2D(Math.Sin(phi), Math.Cos(phi));
-				}
-			}
+      public VectorD2D Normals(int idx)
+      {
+        if (idx == 0)
+          return new VectorD2D(0, 1);
+        else if (idx == (NumberOfPoints - 1))
+          return new VectorD2D(1, 0);
+        else
+        {
+          double phi = (0.5 * Math.PI * idx) / (NumberOfPoints - 1);
+          return new VectorD2D(Math.Sin(phi), Math.Cos(phi));
+        }
+      }
 
-			public PointD2D Vertices(int idx)
-			{
-				if (idx == 0)
-					return new PointD2D(0, 1);
-				else if (idx == (NumberOfPoints - 1))
-					return new PointD2D(1, 0);
-				else
-				{
-					double phi = (0.5 * Math.PI * idx) / (NumberOfPoints - 1);
-					return new PointD2D(Math.Sin(phi), Math.Cos(phi));
-				}
-			}
-		}
+      public PointD2D Vertices(int idx)
+      {
+        if (idx == 0)
+          return new PointD2D(0, 1);
+        else if (idx == (NumberOfPoints - 1))
+          return new PointD2D(1, 0);
+        else
+        {
+          double phi = (0.5 * Math.PI * idx) / (NumberOfPoints - 1);
+          return new PointD2D(Math.Sin(phi), Math.Cos(phi));
+        }
+      }
+    }
 
-		private static RoundContour _contour = new RoundContour();
+    private static RoundContour _contour = new RoundContour();
 
-		#region Serialization
+    #region Serialization
 
-		/// <summary>
-		/// 2016-05-02 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Round), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+    /// <summary>
+    /// 2016-05-02 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Round), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return new Round();
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return new Round();
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		public override double GetAbsoluteBaseInset(double thickness1, double thickness2)
-		{
-			return -0.5 * Math.Max(thickness1, thickness2);
-		}
+    public override double GetAbsoluteBaseInset(double thickness1, double thickness2)
+    {
+      return -0.5 * Math.Max(thickness1, thickness2);
+    }
 
-		public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[] baseCrossSectionPositions, VectorD3D[] baseCrossSectionNormals, ref object temporaryStorageSpace)
-		{
-			Add(
-				AddPositionAndNormal,
-				AddIndices,
-				ref vertexIndexOffset,
-				isStartCap,
-				basePoint,
-				eastVector,
-				northVector,
-				forwardVectorNormalized,
-				lineCrossSection,
-				baseCrossSectionPositions,
-				baseCrossSectionNormals,
-				ref temporaryStorageSpace,
-				_contour);
-		}
-	}
+    public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[] baseCrossSectionPositions, VectorD3D[] baseCrossSectionNormals, ref object temporaryStorageSpace)
+    {
+      Add(
+        AddPositionAndNormal,
+        AddIndices,
+        ref vertexIndexOffset,
+        isStartCap,
+        basePoint,
+        eastVector,
+        northVector,
+        forwardVectorNormalized,
+        lineCrossSection,
+        baseCrossSectionPositions,
+        baseCrossSectionNormals,
+        ref temporaryStorageSpace,
+        _contour);
+    }
+  }
 }

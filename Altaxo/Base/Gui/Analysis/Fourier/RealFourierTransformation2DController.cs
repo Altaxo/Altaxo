@@ -31,170 +31,170 @@ using System.Text;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
-	public interface IRealFourierTransformation2DView
-	{
-		bool IsUserDefinedXIncrement { get; set; }
+  public interface IRealFourierTransformation2DView
+  {
+    bool IsUserDefinedXIncrement { get; set; }
 
-		double XIncrement { get; set; }
+    double XIncrement { get; set; }
 
-		void SetXIncrementWarning(string warning);
+    void SetXIncrementWarning(string warning);
 
-		bool IsUserDefinedYIncrement { get; set; }
+    bool IsUserDefinedYIncrement { get; set; }
 
-		double YIncrement { get; set; }
+    double YIncrement { get; set; }
 
-		void SetYIncrementWarning(string warning);
+    void SetYIncrementWarning(string warning);
 
-		void SetOutputQuantities(SelectableListNodeList list);
+    void SetOutputQuantities(SelectableListNodeList list);
 
-		bool CenterFrequencies { get; set; }
+    bool CenterFrequencies { get; set; }
 
-		double ResultingFractionOfRowsUsed { get; set; }
+    double ResultingFractionOfRowsUsed { get; set; }
 
-		double ResultingFractionOfColumnsUsed { get; set; }
+    double ResultingFractionOfColumnsUsed { get; set; }
 
-		int? DataPretreatmentOrder { get; set; }
+    int? DataPretreatmentOrder { get; set; }
 
-		double? ReplacementValueForNaNMatrixElements { get; set; }
+    double? ReplacementValueForNaNMatrixElements { get; set; }
 
-		double? ReplacementValueForInfiniteMatrixElements { get; set; }
+    double? ReplacementValueForInfiniteMatrixElements { get; set; }
 
-		SelectableListNodeList FourierWindowChoice { set; }
+    SelectableListNodeList FourierWindowChoice { set; }
 
-		bool OutputFrequencyHeaderColumns { get; set; }
+    bool OutputFrequencyHeaderColumns { get; set; }
 
-		string FrequencyRowHeaderColumnName { get; set; }
+    string FrequencyRowHeaderColumnName { get; set; }
 
-		string FrequencyColumnHeaderColumnName { get; set; }
+    string FrequencyColumnHeaderColumnName { get; set; }
 
-		bool OutputPeriodHeaderColumns { get; set; }
+    bool OutputPeriodHeaderColumns { get; set; }
 
-		string PeriodRowHeaderColumnName { get; set; }
+    string PeriodRowHeaderColumnName { get; set; }
 
-		string PeriodColumnHeaderColumnName { get; set; }
-	}
+    string PeriodColumnHeaderColumnName { get; set; }
+  }
 
-	[ExpectedTypeOfView(typeof(IRealFourierTransformation2DView))]
-	[UserControllerForObject(typeof(RealFourierTransformation2DOptions))]
-	public class RealFourierTransformation2DController : MVCANControllerEditOriginalDocBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
-	{
-		private SelectableListNodeList _outputQuantities;
-		private SelectableListNodeList _fourierWindowChoice;
+  [ExpectedTypeOfView(typeof(IRealFourierTransformation2DView))]
+  [UserControllerForObject(typeof(RealFourierTransformation2DOptions))]
+  public class RealFourierTransformation2DController : MVCANControllerEditOriginalDocBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
+  {
+    private SelectableListNodeList _outputQuantities;
+    private SelectableListNodeList _fourierWindowChoice;
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
-		public override void Dispose(bool isDisposing)
-		{
-			_outputQuantities = null;
-			_fourierWindowChoice = null;
+    public override void Dispose(bool isDisposing)
+    {
+      _outputQuantities = null;
+      _fourierWindowChoice = null;
 
-			base.Dispose(isDisposing);
-		}
+      base.Dispose(isDisposing);
+    }
 
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
 
-			if (initData)
-			{
-				_outputQuantities = new SelectableListNodeList();
-				_fourierWindowChoice = GetFourierWindowChoice(_doc.FourierWindow);
-			}
+      if (initData)
+      {
+        _outputQuantities = new SelectableListNodeList();
+        _fourierWindowChoice = GetFourierWindowChoice(_doc.FourierWindow);
+      }
 
-			if (_view != null)
-			{
-				_view.IsUserDefinedXIncrement = _doc.IsUserDefinedRowIncrementValue;
-				_view.XIncrement = _doc.RowIncrementValue;
+      if (_view != null)
+      {
+        _view.IsUserDefinedXIncrement = _doc.IsUserDefinedRowIncrementValue;
+        _view.XIncrement = _doc.RowIncrementValue;
 
-				_view.IsUserDefinedYIncrement = _doc.IsUserDefinedColumnIncrementValue;
-				_view.YIncrement = _doc.ColumnIncrementValue;
+        _view.IsUserDefinedYIncrement = _doc.IsUserDefinedColumnIncrementValue;
+        _view.YIncrement = _doc.ColumnIncrementValue;
 
-				_view.SetXIncrementWarning(_doc.RowIncrementMessage);
+        _view.SetXIncrementWarning(_doc.RowIncrementMessage);
 
-				_view.SetYIncrementWarning(_doc.ColumnIncrementMessage);
+        _view.SetYIncrementWarning(_doc.ColumnIncrementMessage);
 
-				_outputQuantities.FillWithEnumeration(_doc.OutputKind);
-				_view.SetOutputQuantities(_outputQuantities);
+        _outputQuantities.FillWithEnumeration(_doc.OutputKind);
+        _view.SetOutputQuantities(_outputQuantities);
 
-				_view.FourierWindowChoice = _fourierWindowChoice;
+        _view.FourierWindowChoice = _fourierWindowChoice;
 
-				_view.DataPretreatmentOrder = _doc.DataPretreatmentCorrectionOrder;
+        _view.DataPretreatmentOrder = _doc.DataPretreatmentCorrectionOrder;
 
-				_view.CenterFrequencies = _doc.CenterResult;
+        _view.CenterFrequencies = _doc.CenterResult;
 
-				_view.ReplacementValueForNaNMatrixElements = _doc.ReplacementValueForNaNMatrixElements;
-				_view.ReplacementValueForInfiniteMatrixElements = _doc.ReplacementValueForInfiniteMatrixElements;
+        _view.ReplacementValueForNaNMatrixElements = _doc.ReplacementValueForNaNMatrixElements;
+        _view.ReplacementValueForInfiniteMatrixElements = _doc.ReplacementValueForInfiniteMatrixElements;
 
-				_view.ResultingFractionOfRowsUsed = _doc.ResultingFractionOfRowsUsed;
-				_view.ResultingFractionOfColumnsUsed = _doc.ResultingFractionOfColumnsUsed;
+        _view.ResultingFractionOfRowsUsed = _doc.ResultingFractionOfRowsUsed;
+        _view.ResultingFractionOfColumnsUsed = _doc.ResultingFractionOfColumnsUsed;
 
-				_view.OutputFrequencyHeaderColumns = _doc.OutputFrequencyHeaderColumns;
-				_view.FrequencyRowHeaderColumnName = _doc.FrequencyRowHeaderColumnName;
-				_view.FrequencyColumnHeaderColumnName = _doc.FrequencyColumnHeaderColumnName;
+        _view.OutputFrequencyHeaderColumns = _doc.OutputFrequencyHeaderColumns;
+        _view.FrequencyRowHeaderColumnName = _doc.FrequencyRowHeaderColumnName;
+        _view.FrequencyColumnHeaderColumnName = _doc.FrequencyColumnHeaderColumnName;
 
-				_view.OutputPeriodHeaderColumns = _doc.OutputPeriodHeaderColumns;
-				_view.PeriodRowHeaderColumnName = _doc.PeriodRowHeaderColumnName;
-				_view.PeriodColumnHeaderColumnName = _doc.PeriodColumnHeaderColumnName;
-			}
-		}
+        _view.OutputPeriodHeaderColumns = _doc.OutputPeriodHeaderColumns;
+        _view.PeriodRowHeaderColumnName = _doc.PeriodRowHeaderColumnName;
+        _view.PeriodColumnHeaderColumnName = _doc.PeriodColumnHeaderColumnName;
+      }
+    }
 
-		private SelectableListNodeList GetFourierWindowChoice(Altaxo.Calc.Fourier.Windows.IWindows2D currentWindowChoice)
-		{
-			var result = new SelectableListNodeList();
+    private SelectableListNodeList GetFourierWindowChoice(Altaxo.Calc.Fourier.Windows.IWindows2D currentWindowChoice)
+    {
+      var result = new SelectableListNodeList();
 
-			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.Fourier.Windows.IWindows2D));
+      var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.Fourier.Windows.IWindows2D));
 
-			result.Add(new SelectableListNode("None", null, currentWindowChoice == null));
+      result.Add(new SelectableListNode("None", null, currentWindowChoice == null));
 
-			var currentType = null != currentWindowChoice ? currentWindowChoice.GetType() : null;
+      var currentType = null != currentWindowChoice ? currentWindowChoice.GetType() : null;
 
-			foreach (var type in types)
-			{
-				try
-				{
-					var o = Activator.CreateInstance(type);
-					result.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(type), o, type == currentType));
-				}
-				catch (Exception)
-				{
-				}
-			}
-			return result;
-		}
+      foreach (var type in types)
+      {
+        try
+        {
+          var o = Activator.CreateInstance(type);
+          result.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(type), o, type == currentType));
+        }
+        catch (Exception)
+        {
+        }
+      }
+      return result;
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			_doc.IsUserDefinedRowIncrementValue = _view.IsUserDefinedXIncrement;
-			_doc.RowIncrementValue = _view.XIncrement;
+    public override bool Apply(bool disposeController)
+    {
+      _doc.IsUserDefinedRowIncrementValue = _view.IsUserDefinedXIncrement;
+      _doc.RowIncrementValue = _view.XIncrement;
 
-			_doc.IsUserDefinedColumnIncrementValue = _view.IsUserDefinedYIncrement;
-			_doc.ColumnIncrementValue = _view.YIncrement;
+      _doc.IsUserDefinedColumnIncrementValue = _view.IsUserDefinedYIncrement;
+      _doc.ColumnIncrementValue = _view.YIncrement;
 
-			_doc.OutputKind = (Altaxo.Calc.Fourier.RealFourierTransformationOutputKind)_outputQuantities.FirstSelectedNode.Tag;
+      _doc.OutputKind = (Altaxo.Calc.Fourier.RealFourierTransformationOutputKind)_outputQuantities.FirstSelectedNode.Tag;
 
-			_doc.DataPretreatmentCorrectionOrder = _view.DataPretreatmentOrder;
-			_doc.CenterResult = _view.CenterFrequencies;
+      _doc.DataPretreatmentCorrectionOrder = _view.DataPretreatmentOrder;
+      _doc.CenterResult = _view.CenterFrequencies;
 
-			_doc.ReplacementValueForNaNMatrixElements = _view.ReplacementValueForNaNMatrixElements;
-			_doc.ReplacementValueForInfiniteMatrixElements = _view.ReplacementValueForInfiniteMatrixElements;
+      _doc.ReplacementValueForNaNMatrixElements = _view.ReplacementValueForNaNMatrixElements;
+      _doc.ReplacementValueForInfiniteMatrixElements = _view.ReplacementValueForInfiniteMatrixElements;
 
-			_doc.ResultingFractionOfRowsUsed = _view.ResultingFractionOfRowsUsed;
-			_doc.ResultingFractionOfColumnsUsed = _view.ResultingFractionOfColumnsUsed;
+      _doc.ResultingFractionOfRowsUsed = _view.ResultingFractionOfRowsUsed;
+      _doc.ResultingFractionOfColumnsUsed = _view.ResultingFractionOfColumnsUsed;
 
-			_doc.FourierWindow = _fourierWindowChoice.FirstSelectedNode.Tag as Altaxo.Calc.Fourier.Windows.IWindows2D;
+      _doc.FourierWindow = _fourierWindowChoice.FirstSelectedNode.Tag as Altaxo.Calc.Fourier.Windows.IWindows2D;
 
-			_doc.OutputFrequencyHeaderColumns = _view.OutputFrequencyHeaderColumns;
-			_doc.FrequencyRowHeaderColumnName = _view.FrequencyRowHeaderColumnName;
-			_doc.FrequencyColumnHeaderColumnName = _view.FrequencyColumnHeaderColumnName;
+      _doc.OutputFrequencyHeaderColumns = _view.OutputFrequencyHeaderColumns;
+      _doc.FrequencyRowHeaderColumnName = _view.FrequencyRowHeaderColumnName;
+      _doc.FrequencyColumnHeaderColumnName = _view.FrequencyColumnHeaderColumnName;
 
-			_doc.OutputPeriodHeaderColumns = _view.OutputPeriodHeaderColumns;
-			_doc.PeriodRowHeaderColumnName = _view.PeriodRowHeaderColumnName;
-			_doc.PeriodColumnHeaderColumnName = _view.PeriodColumnHeaderColumnName;
+      _doc.OutputPeriodHeaderColumns = _view.OutputPeriodHeaderColumns;
+      _doc.PeriodRowHeaderColumnName = _view.PeriodRowHeaderColumnName;
+      _doc.PeriodColumnHeaderColumnName = _view.PeriodColumnHeaderColumnName;
 
-			return base.ApplyEnd(true, disposeController);
-		}
-	}
+      return base.ApplyEnd(true, disposeController);
+    }
+  }
 }

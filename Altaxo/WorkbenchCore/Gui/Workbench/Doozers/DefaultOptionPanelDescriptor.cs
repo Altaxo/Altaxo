@@ -24,81 +24,81 @@ using System.Collections.Generic;
 
 namespace Altaxo.Gui.Workbench
 {
-	public class DefaultOptionPanelDescriptor : IOptionPanelDescriptor
-	{
-		private string id = String.Empty;
-		private List<IOptionPanelDescriptor> optionPanelDescriptors = null;
-		private IOptionPanel optionPanel = null;
+  public class DefaultOptionPanelDescriptor : IOptionPanelDescriptor
+  {
+    private string id = String.Empty;
+    private List<IOptionPanelDescriptor> optionPanelDescriptors = null;
+    private IOptionPanel optionPanel = null;
 
-		public string ID
-		{
-			get
-			{
-				return id;
-			}
-		}
+    public string ID
+    {
+      get
+      {
+        return id;
+      }
+    }
 
-		public string Label { get; set; }
+    public string Label { get; set; }
 
-		public IEnumerable<IOptionPanelDescriptor> ChildOptionPanelDescriptors
-		{
-			get
-			{
-				return optionPanelDescriptors;
-			}
-		}
+    public IEnumerable<IOptionPanelDescriptor> ChildOptionPanelDescriptors
+    {
+      get
+      {
+        return optionPanelDescriptors;
+      }
+    }
 
-		private AddIn addin;
-		private object owner;
-		private string optionPanelPath;
+    private AddIn addin;
+    private object owner;
+    private string optionPanelPath;
 
-		public IOptionPanel OptionPanel
-		{
-			get
-			{
-				if (optionPanelPath != null)
-				{
-					if (optionPanel == null)
-					{
-						optionPanel = (IOptionPanel)addin.CreateObject(optionPanelPath);
-						if (optionPanel != null)
-						{
-							optionPanel.Initialize(owner);
-						}
-					}
-					optionPanelPath = null;
-					addin = null;
-				}
-				return optionPanel;
-			}
-		}
+    public IOptionPanel OptionPanel
+    {
+      get
+      {
+        if (optionPanelPath != null)
+        {
+          if (optionPanel == null)
+          {
+            optionPanel = (IOptionPanel)addin.CreateObject(optionPanelPath);
+            if (optionPanel != null)
+            {
+              optionPanel.Initialize(owner);
+            }
+          }
+          optionPanelPath = null;
+          addin = null;
+        }
+        return optionPanel;
+      }
+    }
 
-		public bool HasOptionPanel
-		{
-			get
-			{
-				return optionPanelPath != null;
-			}
-		}
+    public bool HasOptionPanel
+    {
+      get
+      {
+        return optionPanelPath != null;
+      }
+    }
 
-		public DefaultOptionPanelDescriptor(string id, string label)
-		{
-			this.id = id;
-			this.Label = label;
-		}
+    public DefaultOptionPanelDescriptor(string id, string label)
+    {
+      this.id = id;
+      this.Label = label;
+    }
 
-		public DefaultOptionPanelDescriptor(string id, string label, List<IOptionPanelDescriptor> dialogPanelDescriptors)
-			: this(id, label)
-		{
-			this.optionPanelDescriptors = dialogPanelDescriptors;
-		}
+    public DefaultOptionPanelDescriptor(string id, string label, List<IOptionPanelDescriptor> dialogPanelDescriptors)
+      : this(id, label)
+    {
+      this.optionPanelDescriptors = dialogPanelDescriptors;
+    }
 
-		public DefaultOptionPanelDescriptor(string id, string label, AddIn addin, object owner, string optionPanelPath)
-			: this(id, label)
-		{
-			this.addin = addin;
-			this.owner = owner;
-			this.optionPanelPath = optionPanelPath;
-		}
-	}
+    public DefaultOptionPanelDescriptor(string id, string label, AddIn addin, object owner, string optionPanelPath)
+      : this(id, label)
+    {
+      this.addin = addin;
+      this.owner = owner;
+      this.optionPanelPath = optionPanelPath;
+    }
+  }
 }

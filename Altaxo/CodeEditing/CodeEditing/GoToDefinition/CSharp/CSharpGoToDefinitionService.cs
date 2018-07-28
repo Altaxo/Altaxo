@@ -10,10 +10,10 @@ using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.GoToDefinition.CSharp
 {
-	[ExportLanguageService(typeof(IGoToDefinitionService), LanguageNames.CSharp), Shared]
-	internal class CSharpGoToDefinitionService : AbstractGoToDefinitionService
-	{
-		/*
+  [ExportLanguageService(typeof(IGoToDefinitionService), LanguageNames.CSharp), Shared]
+  internal class CSharpGoToDefinitionService : AbstractGoToDefinitionService
+  {
+    /*
 		[ImportingConstructor]
 		public CSharpGoToDefinitionService(
 				[ImportMany]IEnumerable<Lazy<IStreamingFindUsagesPresenter>> streamingPresenters)
@@ -22,9 +22,9 @@ namespace Altaxo.CodeEditing.GoToDefinition.CSharp
 		}
 		*/
 
-		protected override ISymbol FindRelatedExplicitlyDeclaredSymbol(ISymbol symbol, Compilation compilation)
-		{
-			return symbol;
-		}
-	}
+    protected override ISymbol FindRelatedExplicitlyDeclaredSymbol(ISymbol symbol, Compilation compilation)
+    {
+      return symbol;
+    }
+  }
 }

@@ -26,58 +26,58 @@ using System;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
-	/// <summary>
-	/// Base class that can be used to derive a numeric abel formatting class
-	/// </summary>
-	public abstract class NumericLabelFormattingBase : LabelFormattingBase
-	{
-		protected int _decimalPlaces;
+  /// <summary>
+  /// Base class that can be used to derive a numeric abel formatting class
+  /// </summary>
+  public abstract class NumericLabelFormattingBase : LabelFormattingBase
+  {
+    protected int _decimalPlaces;
 
-		#region Serialization
+    #region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.AbstractNumericLabelFormatting", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingBase), 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				NumericLabelFormattingBase s = (NumericLabelFormattingBase)obj;
-				info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
-				info.AddValue("DecimalPlaces", s._decimalPlaces);
-			}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.AbstractNumericLabelFormatting", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingBase), 1)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        NumericLabelFormattingBase s = (NumericLabelFormattingBase)obj;
+        info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
+        info.AddValue("DecimalPlaces", s._decimalPlaces);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				NumericLabelFormattingBase s = (NumericLabelFormattingBase)o;
-				info.GetBaseValueEmbedded(s, typeof(LabelFormattingBase), parent);
-				s._decimalPlaces = info.GetInt32("DecimalPlaces");
-				return s;
-			}
-		}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        NumericLabelFormattingBase s = (NumericLabelFormattingBase)o;
+        info.GetBaseValueEmbedded(s, typeof(LabelFormattingBase), parent);
+        s._decimalPlaces = info.GetInt32("DecimalPlaces");
+        return s;
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		protected NumericLabelFormattingBase()
-		{
-		}
+    protected NumericLabelFormattingBase()
+    {
+    }
 
-		protected NumericLabelFormattingBase(NumericLabelFormattingBase from)
-			: base(from) // everything is done here, since CopyFrom is virtual
-		{
-		}
+    protected NumericLabelFormattingBase(NumericLabelFormattingBase from)
+      : base(from) // everything is done here, since CopyFrom is virtual
+    {
+    }
 
-		public override bool CopyFrom(object obj)
-		{
-			var isCopied = base.CopyFrom(obj);
-			if (isCopied && !object.ReferenceEquals(this, obj))
-			{
-				var from = obj as NumericLabelFormattingBase;
-				if (null != from)
-				{
-					this._decimalPlaces = from._decimalPlaces;
-				}
-			}
-			return isCopied;
-		}
-	}
+    public override bool CopyFrom(object obj)
+    {
+      var isCopied = base.CopyFrom(obj);
+      if (isCopied && !object.ReferenceEquals(this, obj))
+      {
+        var from = obj as NumericLabelFormattingBase;
+        if (null != from)
+        {
+          this._decimalPlaces = from._decimalPlaces;
+        }
+      }
+      return isCopied;
+    }
+  }
 }

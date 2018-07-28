@@ -28,40 +28,40 @@ using System;
 
 namespace Altaxo.Gui.Worksheet
 {
-	/// <summary>
-	/// Controls the Smoothing parameter of a rational cubic spline.
-	/// </summary>
-	[UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalCubicSpline), 100)]
-	public class RationalCubicSplineController : NumericDoubleValueController
-	{
-		private RationalCubicSpline _spline;
+  /// <summary>
+  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// </summary>
+  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalCubicSpline), 100)]
+  public class RationalCubicSplineController : NumericDoubleValueController
+  {
+    private RationalCubicSpline _spline;
 
-		public RationalCubicSplineController(RationalCubicSpline spline)
-			: base(spline.Smoothing)
-		{
-			base._minimumValue = -0.5;
-			base._isMinimumValueIncluded = false;
-			_descriptionText = "Smoothing parameter p (-0.5<p<0: overshooting; p=0: cubic spline; p=infinity: linear interpolation):";
-			_spline = spline;
-		}
+    public RationalCubicSplineController(RationalCubicSpline spline)
+      : base(spline.Smoothing)
+    {
+      base._minimumValue = -0.5;
+      base._isMinimumValueIncluded = false;
+      _descriptionText = "Smoothing parameter p (-0.5<p<0: overshooting; p=0: cubic spline; p=infinity: linear interpolation):";
+      _spline = spline;
+    }
 
-		public override object ModelObject
-		{
-			get
-			{
-				return _spline;
-			}
-		}
+    public override object ModelObject
+    {
+      get
+      {
+        return _spline;
+      }
+    }
 
-		public override bool Apply(bool disposeController)
-		{
-			if (base.Apply(disposeController))
-			{
-				this._spline.Smoothing = base._value1Double;
-				return true;
-			}
-			else
-				return false;
-		}
-	}
+    public override bool Apply(bool disposeController)
+    {
+      if (base.Apply(disposeController))
+      {
+        this._spline.Smoothing = base._value1Double;
+        return true;
+      }
+      else
+        return false;
+    }
+  }
 }

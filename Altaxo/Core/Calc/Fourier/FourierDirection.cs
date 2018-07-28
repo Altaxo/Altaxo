@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -26,27 +26,27 @@ using System;
 
 namespace Altaxo.Calc.Fourier
 {
-	/// <summary>
-	/// The direction of the fourier transform.
-	/// </summary>
-	public enum FourierDirection
-	{
-		/// <summary>
-		/// Forward direction.  Usually in reference to moving from temporal
-		/// representation to frequency representation.
-		/// </summary>
-		Forward = 1,
+  /// <summary>
+  /// The direction of the fourier transform.
+  /// </summary>
+  public enum FourierDirection
+  {
+    /// <summary>
+    /// Forward direction.  Usually in reference to moving from temporal
+    /// representation to frequency representation.
+    /// </summary>
+    Forward = 1,
 
-		/// <summary>
-		/// Backward direction. Usually in reference to moving from frequency
-		/// representation to temporal representation.
-		/// </summary>
-		Inverse = -1,
+    /// <summary>
+    /// Backward direction. Usually in reference to moving from frequency
+    /// representation to temporal representation.
+    /// </summary>
+    Inverse = -1,
 
-		/// <summary>
-		/// Backward direction. Usually in reference to moving from frequency
-		/// representation to temporal representation.
-		/// </summary>
-		Backward = -1
-	}
+    /// <summary>
+    /// Backward direction. Usually in reference to moving from frequency
+    /// representation to temporal representation.
+    /// </summary>
+    Backward = -1
+  }
 }

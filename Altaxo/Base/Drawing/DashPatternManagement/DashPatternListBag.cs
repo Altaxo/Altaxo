@@ -32,35 +32,35 @@ using System.Text;
 
 namespace Altaxo.Drawing.DashPatternManagement
 {
-	public class DashPatternListBag : StyleListBag<DashPatternList, IDashPattern>
-	{
-		public DashPatternListBag(IEnumerable<DashPatternList> lists)
-			: base(lists)
-		{
-		}
+  public class DashPatternListBag : StyleListBag<DashPatternList, IDashPattern>
+  {
+    public DashPatternListBag(IEnumerable<DashPatternList> lists)
+      : base(lists)
+    {
+    }
 
-		protected DashPatternListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-			: base(info)
-		{
-		}
+    protected DashPatternListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+      : base(info)
+    {
+    }
 
-		/// <summary>
-		/// 2016-08-23 Initial version
-		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternListBag), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (DashPatternListBag)obj;
-				s.Serialize(info);
-			}
+    /// <summary>
+    /// 2016-08-23 Initial version
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternListBag), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DashPatternListBag)obj;
+        s.Serialize(info);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return new DashPatternListBag(info);
-			}
-		}
-	}
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return new DashPatternListBag(info);
+      }
+    }
+  }
 }

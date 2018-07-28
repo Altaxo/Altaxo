@@ -31,44 +31,44 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Plot
 {
-	/// <summary>
-	/// Common interface of both 2D (<see cref="Altaxo.Graph.Gdi.Plot.IGPlotItem"/>) and 3D plot (<see cref="Altaxo.Graph.Graph3D.Plot.IGPlotItem"/>) items.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.ICopyFrom" />
-	/// <seealso cref="Altaxo.Main.IChangedEventSource" />
-	/// <seealso cref="Altaxo.Main.IDocumentLeafNode" />
-	public interface IGPlotItem : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentLeafNode
-	{
-		/// <summary>
-		/// The name of the plot. It can be of different length. An argument of zero or less
-		/// returns the shortest possible name, higher values return more verbose names.
-		/// </summary>
-		/// <param name="level">The naming level, 0 returns the shortest possible name, 1 or more returns more
-		/// verbose names.</param>
-		/// <returns>The name of the plot.</returns>
-		string GetName(int level);
+  /// <summary>
+  /// Common interface of both 2D (<see cref="Altaxo.Graph.Gdi.Plot.IGPlotItem"/>) and 3D plot (<see cref="Altaxo.Graph.Graph3D.Plot.IGPlotItem"/>) items.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.ICopyFrom" />
+  /// <seealso cref="Altaxo.Main.IChangedEventSource" />
+  /// <seealso cref="Altaxo.Main.IDocumentLeafNode" />
+  public interface IGPlotItem : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentLeafNode
+  {
+    /// <summary>
+    /// The name of the plot. It can be of different length. An argument of zero or less
+    /// returns the shortest possible name, higher values return more verbose names.
+    /// </summary>
+    /// <param name="level">The naming level, 0 returns the shortest possible name, 1 or more returns more
+    /// verbose names.</param>
+    /// <returns>The name of the plot.</returns>
+    string GetName(int level);
 
-		/// <summary>
-		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-		/// to change a plot so that the plot items refer to another table.
-		/// </summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-		void VisitDocumentReferences(DocNodeProxyReporter Report);
+    /// <summary>
+    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+    /// to change a plot so that the plot items refer to another table.
+    /// </summary>
+    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    void VisitDocumentReferences(DocNodeProxyReporter Report);
 
-		/// <summary>
-		/// Gets an object that holds the data used for plotting. If not applicable for this kind of plot item, null is returned.
-		/// </summary>
-		/// <value>
-		/// The object that holds the data used for plotting.
-		/// </value>
-		IDocumentLeafNode DataObject { get; }
+    /// <summary>
+    /// Gets an object that holds the data used for plotting. If not applicable for this kind of plot item, null is returned.
+    /// </summary>
+    /// <value>
+    /// The object that holds the data used for plotting.
+    /// </value>
+    IDocumentLeafNode DataObject { get; }
 
-		/// <summary>
-		/// Gets an object that holds the style(s) used for plotting. If not applicable for this kind of plot item, null is returned.
-		/// </summary>
-		/// <value>
-		/// The object that holds the style(s) used for plotting.
-		/// </value>
-		IDocumentLeafNode StyleObject { get; }
-	}
+    /// <summary>
+    /// Gets an object that holds the style(s) used for plotting. If not applicable for this kind of plot item, null is returned.
+    /// </summary>
+    /// <value>
+    /// The object that holds the style(s) used for plotting.
+    /// </value>
+    IDocumentLeafNode StyleObject { get; }
+  }
 }

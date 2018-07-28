@@ -29,129 +29,129 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.Material
 {
-	public class MaterialWithoutColorOrTexture : MaterialBase
-	{
-		#region Serialization
+  public class MaterialWithoutColorOrTexture : MaterialBase
+  {
+    #region Serialization
 
-		/// <summary>
-		/// 2015-11-18 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MaterialWithoutColorOrTexture), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (MaterialWithoutColorOrTexture)obj;
+    /// <summary>
+    /// 2015-11-18 initial version.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MaterialWithoutColorOrTexture), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (MaterialWithoutColorOrTexture)obj;
 
-				info.AddValue("Smoothness", s._smoothness);
-				info.AddValue("Metalness", s._metalness);
-				info.AddValue("IndexOfRefraction", s._indexOfRefraction);
-			}
+        info.AddValue("Smoothness", s._smoothness);
+        info.AddValue("Metalness", s._metalness);
+        info.AddValue("IndexOfRefraction", s._indexOfRefraction);
+      }
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				double smoothness = info.GetDouble("Smoothness");
-				double metalness = info.GetDouble("Metalness");
-				double indexOfRefraction = info.GetDouble("IndexOfRefraction");
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        double smoothness = info.GetDouble("Smoothness");
+        double metalness = info.GetDouble("Metalness");
+        double indexOfRefraction = info.GetDouble("IndexOfRefraction");
 
-				return new MaterialWithoutColorOrTexture(smoothness, metalness, indexOfRefraction);
-			}
-		}
+        return new MaterialWithoutColorOrTexture(smoothness, metalness, indexOfRefraction);
+      }
+    }
 
-		#endregion Serialization
+    #endregion Serialization
 
-		#region Constructors
+    #region Constructors
 
-		public MaterialWithoutColorOrTexture()
-		{
-		}
+    public MaterialWithoutColorOrTexture()
+    {
+    }
 
-		public MaterialWithoutColorOrTexture(double smoothness, double metalness, double indexOfRefraction)
-			: base(smoothness, metalness, indexOfRefraction)
-		{
-		}
+    public MaterialWithoutColorOrTexture(double smoothness, double metalness, double indexOfRefraction)
+      : base(smoothness, metalness, indexOfRefraction)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Color
+    #region Color
 
-		public override NamedColor Color
-		{
-			get
-			{
-				return NamedColors.Black;
-			}
-		}
+    public override NamedColor Color
+    {
+      get
+      {
+        return NamedColors.Black;
+      }
+    }
 
-		public override IMaterial WithColor(NamedColor color)
-		{
-			return this;
-		}
+    public override IMaterial WithColor(NamedColor color)
+    {
+      return this;
+    }
 
-		#endregion Color
+    #endregion Color
 
-		#region Infrastructure
+    #region Infrastructure
 
-		public override bool HasColor
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public override bool HasColor
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public override bool HasTexture
-		{
-			get
-			{
-				return false;
-			}
-		}
+    public override bool HasTexture
+    {
+      get
+      {
+        return false;
+      }
+    }
 
-		public override bool IsVisible
-		{
-			get
-			{
-				return true;
-			}
-		}
+    public override bool IsVisible
+    {
+      get
+      {
+        return true;
+      }
+    }
 
-		public override bool Equals(object obj)
-		{
-			// this material is considered to be equal to another material, if this material has exactly
-			var other = obj as MaterialWithoutColorOrTexture;
-			if (null != other)
-			{
-				return
+    public override bool Equals(object obj)
+    {
+      // this material is considered to be equal to another material, if this material has exactly
+      var other = obj as MaterialWithoutColorOrTexture;
+      if (null != other)
+      {
+        return
 
-					this._smoothness == other._smoothness &&
-					this._metalness == other._metalness &&
-					this._indexOfRefraction == other._indexOfRefraction;
-			}
+          this._smoothness == other._smoothness &&
+          this._metalness == other._metalness &&
+          this._indexOfRefraction == other._indexOfRefraction;
+      }
 
-			return false;
-		}
+      return false;
+    }
 
-		public override bool Equals(IMaterial obj)
-		{
-			// this material is considered to be equal to another material, if this material has exactly
-			var other = obj as MaterialWithoutColorOrTexture;
-			if (null != other)
-			{
-				return
-					this._smoothness == other._smoothness &&
-					this._metalness == other._metalness &&
-					this._indexOfRefraction == other._indexOfRefraction;
-			}
+    public override bool Equals(IMaterial obj)
+    {
+      // this material is considered to be equal to another material, if this material has exactly
+      var other = obj as MaterialWithoutColorOrTexture;
+      if (null != other)
+      {
+        return
+          this._smoothness == other._smoothness &&
+          this._metalness == other._metalness &&
+          this._indexOfRefraction == other._indexOfRefraction;
+      }
 
-			return false;
-		}
+      return false;
+    }
 
-		public override int GetHashCode()
-		{
-			return 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();
-		}
+    public override int GetHashCode()
+    {
+      return 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();
+    }
 
-		#endregion Infrastructure
-	}
+    #endregion Infrastructure
+  }
 }

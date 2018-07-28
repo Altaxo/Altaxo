@@ -27,50 +27,50 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.AddInItems
 {
-	/// <summary>
-	/// A tool bar button based on the AddIn-tree.
-	/// </summary>
-	internal sealed class ToolBarSplitButton : SplitButton, IStatusUpdate
-	{
-		private object caller;
-		private Codon codon;
-		private IReadOnlyCollection<ICondition> conditions;
+  /// <summary>
+  /// A tool bar button based on the AddIn-tree.
+  /// </summary>
+  internal sealed class ToolBarSplitButton : SplitButton, IStatusUpdate
+  {
+    private object caller;
+    private Codon codon;
+    private IReadOnlyCollection<ICondition> conditions;
 
-		public ToolBarSplitButton(Codon codon, object caller, IList submenu, IReadOnlyCollection<ICondition> conditions)
-		{
-			ToolTipService.SetShowOnDisabled(this, true);
+    public ToolBarSplitButton(Codon codon, object caller, IList submenu, IReadOnlyCollection<ICondition> conditions)
+    {
+      ToolTipService.SetShowOnDisabled(this, true);
 
-			this.codon = codon;
-			this.caller = caller;
-			this.conditions = conditions;
+      this.codon = codon;
+      this.caller = caller;
+      this.conditions = conditions;
 
-			this.Content = ToolBarService.CreateToolBarItemContent(codon);
-			if (codon.Properties.Contains("name"))
-			{
-				this.Name = codon.Properties["name"];
-			}
+      this.Content = ToolBarService.CreateToolBarItemContent(codon);
+      if (codon.Properties.Contains("name"))
+      {
+        this.Name = codon.Properties["name"];
+      }
 
-			this.Command = CommandWrapper.CreateLazyCommand(codon, conditions);
-			this.CommandParameter = caller;
-			this.DropDownMenu = MenuService.CreateContextMenu(submenu);
+      this.Command = CommandWrapper.CreateLazyCommand(codon, conditions);
+      this.CommandParameter = caller;
+      this.DropDownMenu = MenuService.CreateContextMenu(submenu);
 
-			UpdateText();
-		}
+      UpdateText();
+    }
 
-		public void UpdateText()
-		{
-			if (codon.Properties.Contains("tooltip"))
-			{
-				this.ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
-			}
-		}
+    public void UpdateText()
+    {
+      if (codon.Properties.Contains("tooltip"))
+      {
+        this.ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
+      }
+    }
 
-		public void UpdateStatus()
-		{
-			if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-				this.Visibility = Visibility.Collapsed;
-			else
-				this.Visibility = Visibility.Visible;
-		}
-	}
+    public void UpdateStatus()
+    {
+      if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
+        this.Visibility = Visibility.Collapsed;
+      else
+        this.Visibility = Visibility.Visible;
+    }
+  }
 }

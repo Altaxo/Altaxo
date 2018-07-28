@@ -39,14 +39,14 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Text
 {
-	/// <summary>
-	/// Interaction logic for MamlExportOptionsView.xaml
-	/// </summary>
-	public partial class MamlExportOptionsControl : UserControl, IMamlExportOptionsView
-	{
-		public MamlExportOptionsControl()
-		{
-			InitializeComponent();
-		}
-	}
+  /// <summary>
+  /// Interaction logic for MamlExportOptionsView.xaml
+  /// </summary>
+  public partial class MamlExportOptionsControl : UserControl, IMamlExportOptionsView
+  {
+    public MamlExportOptionsControl()
+    {
+      InitializeComponent();
+    }
+  }
 }

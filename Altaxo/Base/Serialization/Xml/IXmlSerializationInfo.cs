@@ -26,92 +26,92 @@ using System;
 
 namespace Altaxo.Serialization.Xml
 {
-	/// <summary>
-	/// Summary description for IXmlSerializationInfo.
-	/// </summary>
-	public interface IXmlSerializationInfo
-	{
-		void SetProperty(string propertyname, string propertyvalue);
+  /// <summary>
+  /// Summary description for IXmlSerializationInfo.
+  /// </summary>
+  public interface IXmlSerializationInfo
+  {
+    void SetProperty(string propertyname, string propertyvalue);
 
-		string GetProperty(string propertyname);
+    string GetProperty(string propertyname);
 
-		/// <summary>
-		/// Clears the property dictionary. Useful if the serialization info should be used to serialize multiple values.
-		/// If you clear the properties before the serialization of each value, the serialization behaves as if each value is
-		/// serialized independent of each other.
-		/// </summary>
-		void ClearProperties();
+    /// <summary>
+    /// Clears the property dictionary. Useful if the serialization info should be used to serialize multiple values.
+    /// If you clear the properties before the serialization of each value, the serialization behaves as if each value is
+    /// serialized independent of each other.
+    /// </summary>
+    void ClearProperties();
 
-		void AddAttributeValue(string name, int val);
+    void AddAttributeValue(string name, int val);
 
-		void AddAttributeValue(string name, string val);
+    void AddAttributeValue(string name, string val);
 
-		void AddValue(string name, bool val);
+    void AddValue(string name, bool val);
 
-		void AddValue(string name, bool? val);
+    void AddValue(string name, bool? val);
 
-		void AddValue(string name, char val);
+    void AddValue(string name, char val);
 
-		void AddValue(string name, int val);
+    void AddValue(string name, int val);
 
-		void AddValue(string name, int? val);
+    void AddValue(string name, int? val);
 
-		void AddValue(string name, long val);
+    void AddValue(string name, long val);
 
-		void AddValue(string name, float val);
+    void AddValue(string name, float val);
 
-		void AddValue(string name, double val);
+    void AddValue(string name, double val);
 
-		void AddValue(string name, double? val);
+    void AddValue(string name, double? val);
 
-		void AddValue(string name, string val);
+    void AddValue(string name, string val);
 
-		void AddValue(string name, DateTime val);
+    void AddValue(string name, DateTime val);
 
-		void AddValue(string name, TimeSpan val);
+    void AddValue(string name, TimeSpan val);
 
-		void AddValue(string name, System.IO.MemoryStream val);
+    void AddValue(string name, System.IO.MemoryStream val);
 
-		void AddEnum(string name, System.Enum val); // special name since otherwise _all_ enums would be serialized by that
+    void AddEnum(string name, System.Enum val); // special name since otherwise _all_ enums would be serialized by that
 
-		void AddNullableEnum<T>(string name, T? val) where T : struct;
+    void AddNullableEnum<T>(string name, T? val) where T : struct;
 
-		void SetNodeContent(string nodeContent); // sets Node content directly
+    void SetNodeContent(string nodeContent); // sets Node content directly
 
-		void CreateArray(string name, int count);
+    void CreateArray(string name, int count);
 
-		void CommitArray();
+    void CommitArray();
 
-		void AddArray(string name, int[] val, int count);
+    void AddArray(string name, int[] val, int count);
 
-		void AddArray(string name, float[] val, int count);
+    void AddArray(string name, float[] val, int count);
 
-		void AddArray(string name, double[] val, int count);
+    void AddArray(string name, double[] val, int count);
 
-		void AddArray(string name, DateTime[] val, int count);
+    void AddArray(string name, DateTime[] val, int count);
 
-		void AddArray(string name, string[] val, int count);
+    void AddArray(string name, string[] val, int count);
 
-		void AddArray(string name, object[] val, int count);
+    void AddArray(string name, object[] val, int count);
 
-		void CreateElement(string name);
+    void CreateElement(string name);
 
-		void CommitElement();
+    void CommitElement();
 
-		void AddValue(string name, object o);
+    void AddValue(string name, object o);
 
-		bool IsSerializable(object o);
+    bool IsSerializable(object o);
 
-		void AddBaseValueEmbedded(object o, System.Type basetype);
+    void AddBaseValueEmbedded(object o, System.Type basetype);
 
-		void AddBaseValueStandalone(string name, object o, System.Type basetype);
+    void AddBaseValueStandalone(string name, object o, System.Type basetype);
 
-		XmlArrayEncoding DefaultArrayEncoding { get; set; }
+    XmlArrayEncoding DefaultArrayEncoding { get; set; }
 
-		/// <summary>
-		/// Writes a raw Xml string. This can be used for instance if the string to write was lazy loaded from another Xml document.
-		/// </summary>
-		/// <param name="rawXmlString">The raw XML string.</param>
-		void WriteRaw(string rawXmlString);
-	}
+    /// <summary>
+    /// Writes a raw Xml string. This can be used for instance if the string to write was lazy loaded from another Xml document.
+    /// </summary>
+    /// <param name="rawXmlString">The raw XML string.</param>
+    void WriteRaw(string rawXmlString);
+  }
 }

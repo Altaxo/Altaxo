@@ -25,63 +25,63 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
-	/// <summary>
-	/// Tests if a window of a specified type or implementing an interface is open.
-	/// The window does not need to be the active window.
-	/// </summary>
-	/// <attribute name="openwindow">
-	/// The fully qualified name of the type the window should be or the
-	/// interface name it should implement.
-	/// "*" to test if any window is open.
-	/// </attribute>
-	/// <example title="Test if a text editor is opened">
-	/// &lt;Condition name="WindowOpen" openwindow="Altaxo.Gui.ITextEditor"&gt;
-	/// </example>
-	/// <example title="Test if any window is open">
-	/// &lt;Condition name="WindowOpen" openwindow="*"&gt;
-	/// </example>
-	public class WindowOpenConditionEvaluator : IConditionEvaluator
-	{
-		public bool IsValid(object caller, Condition condition)
-		{
-			var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
-			if (!(caller is IViewContent activeViewContent)) // active view content is coming from the data context of the menu
-				activeViewContent = workbench.ActiveViewContent; // else active view content is retrieved from the workbench
+  /// <summary>
+  /// Tests if a window of a specified type or implementing an interface is open.
+  /// The window does not need to be the active window.
+  /// </summary>
+  /// <attribute name="openwindow">
+  /// The fully qualified name of the type the window should be or the
+  /// interface name it should implement.
+  /// "*" to test if any window is open.
+  /// </attribute>
+  /// <example title="Test if a text editor is opened">
+  /// &lt;Condition name="WindowOpen" openwindow="Altaxo.Gui.ITextEditor"&gt;
+  /// </example>
+  /// <example title="Test if any window is open">
+  /// &lt;Condition name="WindowOpen" openwindow="*"&gt;
+  /// </example>
+  public class WindowOpenConditionEvaluator : IConditionEvaluator
+  {
+    public bool IsValid(object caller, Condition condition)
+    {
+      var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
+      if (!(caller is IViewContent activeViewContent)) // active view content is coming from the data context of the menu
+        activeViewContent = workbench.ActiveViewContent; // else active view content is retrieved from the workbench
 
-			string openWindow = condition.Properties["openwindow"];
+      string openWindow = condition.Properties["openwindow"];
 
-			Type openWindowType = condition.AddIn.FindType(openWindow);
-			if (openWindowType == null)
-			{
-				Current.Log.WarnFormatted("WindowOpenCondition: cannot find Type {0}", openWindow);
-				return false;
-			}
+      Type openWindowType = condition.AddIn.FindType(openWindow);
+      if (openWindowType == null)
+      {
+        Current.Log.WarnFormatted("WindowOpenCondition: cannot find Type {0}", openWindow);
+        return false;
+      }
 
-			// ask the active view content, if it has a sub-content of the given window type
-			if (null != activeViewContent?.GetService(openWindowType))
-				return true;
+      // ask the active view content, if it has a sub-content of the given window type
+      if (null != activeViewContent?.GetService(openWindowType))
+        return true;
 
-			if (openWindow == "*")
-			{
-				return activeViewContent != null;
-			}
+      if (openWindow == "*")
+      {
+        return activeViewContent != null;
+      }
 
-			foreach (IViewContent view in workbench.ViewContentCollection)
-			{
-				Type currentType = view.GetType();
-				if (currentType.ToString() == openWindow)
-				{
-					return true;
-				}
-				foreach (Type i in currentType.GetInterfaces())
-				{
-					if (i.ToString() == openWindow)
-					{
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-	}
+      foreach (IViewContent view in workbench.ViewContentCollection)
+      {
+        Type currentType = view.GetType();
+        if (currentType.ToString() == openWindow)
+        {
+          return true;
+        }
+        foreach (Type i in currentType.GetInterfaces())
+        {
+          if (i.ToString() == openWindow)
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+  }
 }
