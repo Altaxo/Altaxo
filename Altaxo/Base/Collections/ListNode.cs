@@ -380,6 +380,35 @@ namespace Altaxo.Collections
         node.IsSelected = predicate(node);
     }
 
+    private static readonly System.ComponentModel.PropertyChangedEventArgs _uniqueSelectedItemEventArgs = new System.ComponentModel.PropertyChangedEventArgs(nameof(UniqueSelectedItem));
+
+    /// <summary>
+    /// Gets/sets exactly one item that is selected.
+    /// Intended for operation with comboboxes etc., were the list has none or exactly one item that is selected.
+    /// Note that use of this property is limited to short lists, because the selected item is searched by iteration through the list.
+    /// </summary>
+    /// <value>
+    /// The unique selected item.
+    /// </value>
+    public SelectableListNode UniqueSelectedItem
+    {
+      get
+      {
+        return FirstSelectedNode;
+      }
+      set
+      {
+        var oldSelection = FirstSelectedNode;
+        if (!object.ReferenceEquals(oldSelection, value))
+        {
+          foreach (var node in this)
+            node.IsSelected = object.ReferenceEquals(node, value);
+
+          OnPropertyChanged(_uniqueSelectedItemEventArgs);
+        }
+      }
+    }
+
     /// <summary>
     /// Exchange the item at index i with the item at index j.
     /// </summary>
