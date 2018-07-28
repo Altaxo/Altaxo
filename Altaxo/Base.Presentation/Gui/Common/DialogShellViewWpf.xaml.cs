@@ -75,6 +75,14 @@ namespace Altaxo.Gui.Common
     {
       _workArea = Current.Gui.GetScreenInformation(this.Left, this.Top);
 
+      var thisWindowPresentationSource = PresentationSource.FromVisual(this);
+      var m = thisWindowPresentationSource.CompositionTarget.TransformToDevice;
+      var thisDpiWidthFactor = m.M11;
+      var thisDpiHeightFactor = m.M22;
+
+      // TODO is this working for arrangments of monitors with different dpi settings, too?
+      _workArea = new RectangleD2D(_workArea.X / thisDpiWidthFactor, _workArea.Y / thisDpiHeightFactor, _workArea.Width / thisDpiWidthFactor, _workArea.Height / thisDpiHeightFactor);
+
       if (!this.IsLoaded) // when the dialog is initially loaded
       {
         // adjust the size of the dialog box so that is is maximum the size of the working area
