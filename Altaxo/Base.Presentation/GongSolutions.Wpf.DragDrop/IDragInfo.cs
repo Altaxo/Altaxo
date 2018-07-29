@@ -1,4 +1,18 @@
-﻿using System.Collections;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// BSD 3-Clause License
+//
+// Copyright(c) 2015-16, Jan Karger(Steven Kirk)
+//
+// All rights reserved.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System.Collections;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;

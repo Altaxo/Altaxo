@@ -1,5 +1,5 @@
-#region Translated by Jose Antonio De Santiago-Castillo.
-
+﻿#region Translated by Jose Antonio De Santiago-Castillo.
+// Copyright(c) 2004, Ernst Hairer
 //Translated by Jose Antonio De Santiago-Castillo.
 //E-mail:JAntonioDeSantiago@gmail.com
 //Website: www.DotNumerics.com

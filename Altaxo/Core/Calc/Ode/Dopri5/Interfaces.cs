@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright(c) 2004, Ernst Hairer
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 

@@ -1,4 +1,18 @@
-﻿using GongSolutions.Wpf.DragDrop.Utilities;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// BSD 3-Clause License
+//
+// Copyright(c) 2015-16, Jan Karger(Steven Kirk)
+//
+// All rights reserved.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using GongSolutions.Wpf.DragDrop.Utilities;
 using System.Linq;
 using System.Windows;
 

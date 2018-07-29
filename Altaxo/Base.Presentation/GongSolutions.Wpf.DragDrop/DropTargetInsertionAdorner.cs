@@ -1,4 +1,18 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// BSD 3-Clause License
+//
+// Copyright(c) 2015-16, Jan Karger(Steven Kirk)
+//
+// All rights reserved.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;

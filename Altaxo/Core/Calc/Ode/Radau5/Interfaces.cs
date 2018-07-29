@@ -1,4 +1,18 @@
-﻿using System;
+﻿#region Translated by Jose Antonio De Santiago-Castillo.
+// Copyright
+//Translated by Jose Antonio De Santiago-Castillo.
+//E-mail:JAntonioDeSantiago@gmail.com
+//Website: www.DotNumerics.com
+//
+//Fortran to C# Translation.
+//Translated by:
+//F2CSharp Version 0.72 (Dicember 7, 2009)
+//Code Optimizations: , assignment operator, for-loop: array indexes
+//
+
+#endregion Translated by Jose Antonio De Santiago-Castillo.
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
