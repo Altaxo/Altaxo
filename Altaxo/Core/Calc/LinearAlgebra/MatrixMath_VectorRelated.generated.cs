@@ -36,55 +36,55 @@ namespace Altaxo.Calc.LinearAlgebra
   public static partial class MatrixMath
   {
 
-    // ******************************************* Unary functions not returning a vector, valid for all non-null vector types  ********************
+// ******************************************* Unary functions not returning a vector, valid for all non-null vector types  ********************
 
-    // ******************************************** Definitions for Double *******************************************
+// ******************************************** Definitions for Double *******************************************
 
-    /// <summary>
-    /// Gets the column of a matrix copied into a vector.
-    /// </summary>
-    /// <param name="sourceMatrix">Matrix to copy from</param>
-    /// <param name="columnNumber">Number of column of the matrix to be copied.</param>
-    /// <param name="destinationVector">Vector to copy the column data to.</param>
-    public static void CopyColumn(this IROMatrix<double> sourceMatrix, int columnNumber, double[] destinationVector)
-    {
-      if (columnNumber < 0 || columnNumber >= sourceMatrix.ColumnCount)
-        throw new ArgumentOutOfRangeException(nameof(columnNumber), "column must be greater than or equal to zero and less than ColumnLength.");
-      if (null == destinationVector)
-        throw new ArgumentNullException(nameof(destinationVector));
-      if (destinationVector.Length != sourceMatrix.RowCount)
-        throw new RankException("Length of destinationVector does not match number of rows of source matrix");
+		/// <summary>
+		/// Gets the column of a matrix copied into a vector.
+		/// </summary>
+		/// <param name="sourceMatrix">Matrix to copy from</param>
+		/// <param name="columnNumber">Number of column of the matrix to be copied.</param>
+		/// <param name="destinationVector">Vector to copy the column data to.</param>
+		public static void CopyColumn(this IROMatrix<double> sourceMatrix, int columnNumber, double[] destinationVector)
+		{
+			if (columnNumber < 0 || columnNumber >= sourceMatrix.ColumnCount)
+				throw new ArgumentOutOfRangeException(nameof(columnNumber), "column must be greater than or equal to zero and less than ColumnLength.");
+			if (null == destinationVector)
+				throw new ArgumentNullException(nameof(destinationVector));
+			if (destinationVector.Length != sourceMatrix.RowCount)
+				throw new RankException("Length of destinationVector does not match number of rows of source matrix");
 
-      var rows = sourceMatrix.RowCount;
-      for (int i = 0; i < rows; ++i)
-      {
-        destinationVector[i] = sourceMatrix[i, columnNumber];
-      }
-    }
+			var rows = sourceMatrix.RowCount;
+			for (int i = 0; i < rows; ++i)
+			{
+				destinationVector[i] = sourceMatrix[i, columnNumber];
+			}
+		}
 
-    // ******************************************** Definitions for Double *******************************************
+// ******************************************** Definitions for Double *******************************************
 
-    /// <summary>
-    /// Gets the column of a matrix copied into a vector.
-    /// </summary>
-    /// <param name="sourceMatrix">Matrix to copy from</param>
-    /// <param name="columnNumber">Number of column of the matrix to be copied.</param>
-    /// <param name="destinationVector">Vector to copy the column data to.</param>
-    public static void CopyColumn(this IROMatrix<double> sourceMatrix, int columnNumber, IVector<double> destinationVector)
-    {
-      if (columnNumber < 0 || columnNumber >= sourceMatrix.ColumnCount)
-        throw new ArgumentOutOfRangeException(nameof(columnNumber), "column must be greater than or equal to zero and less than ColumnLength.");
-      if (null == destinationVector)
-        throw new ArgumentNullException(nameof(destinationVector));
-      if (destinationVector.Count != sourceMatrix.RowCount)
-        throw new RankException("Length of destinationVector does not match number of rows of source matrix");
+		/// <summary>
+		/// Gets the column of a matrix copied into a vector.
+		/// </summary>
+		/// <param name="sourceMatrix">Matrix to copy from</param>
+		/// <param name="columnNumber">Number of column of the matrix to be copied.</param>
+		/// <param name="destinationVector">Vector to copy the column data to.</param>
+		public static void CopyColumn(this IROMatrix<double> sourceMatrix, int columnNumber, IVector<double> destinationVector)
+		{
+			if (columnNumber < 0 || columnNumber >= sourceMatrix.ColumnCount)
+				throw new ArgumentOutOfRangeException(nameof(columnNumber), "column must be greater than or equal to zero and less than ColumnLength.");
+			if (null == destinationVector)
+				throw new ArgumentNullException(nameof(destinationVector));
+			if (destinationVector.Count != sourceMatrix.RowCount)
+				throw new RankException("Length of destinationVector does not match number of rows of source matrix");
 
-      var rows = sourceMatrix.RowCount;
-      for (int i = 0; i < rows; ++i)
-      {
-        destinationVector[i] = sourceMatrix[i, columnNumber];
-      }
-    }
+			var rows = sourceMatrix.RowCount;
+			for (int i = 0; i < rows; ++i)
+			{
+				destinationVector[i] = sourceMatrix[i, columnNumber];
+			}
+		}
 
-  } // class
+	} // class
 } // namespace
