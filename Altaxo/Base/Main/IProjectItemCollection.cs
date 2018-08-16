@@ -78,6 +78,14 @@ namespace Altaxo.Main
     IProjectItem this[string projectItemName] { get; }
 
     /// <summary>
+    /// Try to get a project item by name
+    /// </summary>
+    /// <param name="projectItemName">Name of the project item.</param>
+    /// <param name="projectItem">The project item.</param>
+    /// <returns>True if the project item was found; false otherwise.</returns>
+    bool TryGetValue(string projectItemName, out IProjectItem projectItem);
+
+    /// <summary>
     /// Adds the specified project item to the collection.
     /// </summary>
     /// <param name="projectItem">The project item.</param>

@@ -189,6 +189,13 @@ namespace Altaxo.Main
       }
     }
 
+    bool IProjectItemCollection.TryGetValue(string projectItemName, out IProjectItem projectItem)
+    {
+      var result = _itemsByName.TryGetValue(projectItemName, out var item);
+      projectItem = item;
+      return result;
+    }
+
     public bool TryGetValue(string name, out TItem item)
     {
       return _itemsByName.TryGetValue(name, out item);

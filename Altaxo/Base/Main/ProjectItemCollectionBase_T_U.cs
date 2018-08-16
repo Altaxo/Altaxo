@@ -109,6 +109,13 @@ namespace Altaxo.Main
         return false;
     }
 
+    bool IProjectItemCollection.TryGetValue(string projectItemName, out IProjectItem projectItem)
+    {
+      var result = _itemsByName.TryGetValue(projectItemName, out var item);
+      projectItem = item;
+      return result;
+    }
+
     public void CopyTo(TItem[] array, int arrayIndex)
     {
       foreach (var item in _itemsByName.Values.OfType<TItem>())
