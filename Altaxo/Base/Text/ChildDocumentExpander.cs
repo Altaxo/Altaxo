@@ -187,6 +187,14 @@ namespace Altaxo.Text
       return resultDocument;
     }
 
+    /// <summary>
+    /// Converts the graph`s Url to reflect the new location of the expanded document.
+    /// </summary>
+    /// <param name="url">The URL of the graph.</param>
+    /// <param name="originalTextDocumentPath">The project folder of the orginal text document which contained this link.</param>
+    /// <param name="newTextDocumentPath">The project folder which will contain the expanded (i.e. the target) text document.</param>
+    /// <returns>The converted Url. Urls that can not be resolved will be left untouched.</returns>
+    /// <exception cref="InvalidProgramException">We expect here a link to a graph, but what we have is: " + url</exception>
     private static string ConvertGraphUrl(string url, string originalTextDocumentPath, string newTextDocumentPath)
     {
       if (url.ToLowerInvariant().StartsWith(ImagePretext.GraphAbsolutePathPretext))
@@ -200,10 +208,14 @@ namespace Altaxo.Text
         var graph = ImageStreamProvider.FindGraphWithUrl(url, originalTextDocumentPath);
         if (null == graph)
         {
-          // can't resolve the graph - then we update the relative path name appropriately
+          // can't resolve the graph
+          /* Commented out because it makes no sense to try to convert Urls that can not be resolved, and the repeated conversion would give nonsense results
           var newRelativePath = ProjectFolder.GetRelativePathFromTo(newTextDocumentPath, originalTextDocumentPath);
           newRelativePath += url.Substring(ImagePretext.GraphRelativePathPretext.Length);
           return ImagePretext.GraphRelativePathPretext + newRelativePath;
+          */
+
+          return url;
 
         }
         else
@@ -211,6 +223,7 @@ namespace Altaxo.Text
           // the graph could be resolved, thus we can calculate the relative path name directly
           var newRelativePath = ProjectFolder.GetRelativePathFromTo(newTextDocumentPath, graph.Name);
           newRelativePath += ProjectFolder.GetNamePart(graph.Name);
+          newRelativePath = newRelativePath.Replace(" ", "%20").Replace("/", "%2F");
           return ImagePretext.GraphRelativePathPretext + newRelativePath;
         }
 
