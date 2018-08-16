@@ -476,6 +476,48 @@ namespace Altaxo.Main
       return firstNamesFolder;
     }
 
+    /// <summary>
+    /// Gets the relative path from one folder to another folder.
+    /// </summary>
+    /// <param name="startPathOrFullName">Name of the starting folder or full name of the item.</param>
+    /// <param name="endPathOrFullName">Name of the ending folder or full name of the item.</param>
+    /// <returns>The relative path between the starting folder and the ending folder.</returns>
+    public static string GetRelativePathFromTo(string startPathOrFullName, string endPathOrFullName)
+    {
+      var startPath = GetFolderPart(startPathOrFullName);
+      var endPath = GetFolderPart(endPathOrFullName);
+      var startPathParts = startPath.Split(DirectorySeparatorChar);
+      var endPathParts = endPath.Split(DirectorySeparatorChar);
+
+      int rootIndex = -1;
+      var len = Math.Min(startPathParts.Length, endPathParts.Length);
+      for(int i=0;i<len;++i)
+      {
+        if(startPathParts[i]==endPathParts[i])
+        {
+          rootIndex = i;
+        }
+        else
+        {
+          break;
+        }
+      }
+
+      var stb = new StringBuilder();
+
+      for(var i= startPathParts.Length-1;i>rootIndex;--i)
+      {
+        stb.Append("..");
+        stb.Append(DirectorySeparatorString);
+      }
+      for(var i=rootIndex+1;i<endPathParts.Length;++i)
+      {
+        stb.Append(endPathParts[i]);
+        stb.Append(DirectorySeparatorString);
+      }
+      return stb.ToString();
+    }
+
     #endregion other helpers
 
     #endregion Static Name functions

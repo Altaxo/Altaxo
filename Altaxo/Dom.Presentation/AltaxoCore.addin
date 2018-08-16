@@ -661,6 +661,10 @@
 										description="${res:XML.MainMenu.TextMenu.TabbedEditorAndViewer.Description}"
 										class="Altaxo.Main.MenuCommands.Text.SwitchToConfigurationTabbedEditorAndViewer" />
 				</MenuItem>
+        <MenuItem id="ExpandText"
+										label="${res:XML.MainMenu.TextMenu.ExpandText}"
+										description="${res:XML.MainMenu.TextMenu.ExpandText.Description}"
+										class="Altaxo.Main.MenuCommands.Text.ExpandTextDocumentIntoNewDocument" />
 			</MenuItem>
 		</Condition>
 		<!-- Tools menu -->

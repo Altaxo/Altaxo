@@ -363,6 +363,15 @@ namespace Altaxo.Gui.Text.Viewing
       Current.Gui.SetClipboardDataObject(dao);
     }
 
+    /// <summary>
+    /// Expands the current text document and stores it into a new text document in the same project folder.
+    /// </summary>
+    public void ExpandTextDocumentIntoNewDocument()
+    {
+      var newTextDocument = ChildDocumentExpander.ExpandDocumentToNewDocument(TextDocument, TextDocument.Folder);
+      Current.ProjectService.OpenOrCreateViewContentForDocument(newTextDocument);
+    }
+
     public override object ViewObject
     {
       get

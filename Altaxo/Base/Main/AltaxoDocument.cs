@@ -689,10 +689,10 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Adds the provided project item to the Altaxo project, for instance a table or a graph, to the project. For <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>s,
-    /// if a document with the same name is already present, the properties are merged.
+    /// Tests if the project item given in the argument is already contained in this document.
     /// </summary>
-    /// <param name="item">The item to add.</param>
+    /// <param name="item">The item to test.</param>
+    /// <returns>True if the item is already contained in the document, otherwise false.</returns>
     /// <exception cref="System.ArgumentNullException">item</exception>
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public bool ContainsItem(IProjectItem item)
@@ -702,7 +702,7 @@ namespace Altaxo
 
       var coll = GetCollectionForProjectItemType(item.GetType());
 
-      return coll.Contains(item.Name);
+      return coll.TryGetValue(item.Name, out var foundItem) && object.ReferenceEquals(foundItem, item);
     }
 
     /// <summary>

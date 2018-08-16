@@ -134,7 +134,7 @@ namespace Altaxo.Text
     /// <param name="url">The original URL.</param>
     /// <param name="AltaxoFolderLocation">The Altaxo folder where the document which includes this Graph in located in.</param>
     /// <returns>Either the found graph (2D or 3D), or null if no graph was found.</returns>
-    public Altaxo.Graph.GraphDocumentBase FindGraphWithUrl(string url, string AltaxoFolderLocation)
+    public static Altaxo.Graph.GraphDocumentBase FindGraphWithUrl(string url, string AltaxoFolderLocation)
     {
       bool isAbsolutePath = url.StartsWith(ImagePretext.AbsolutePathPretext);
       foreach (var modifiedUrl in ModifiedUrls(url))
@@ -150,7 +150,7 @@ namespace Altaxo.Text
       return null;
     }
 
-    private IEnumerable<string> ModifiedUrls(string originalUrl)
+    private static IEnumerable<string> ModifiedUrls(string originalUrl)
     {
       yield return originalUrl;
       string backslashed = originalUrl.Replace('/', '\\');

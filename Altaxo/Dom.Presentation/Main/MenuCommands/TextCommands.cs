@@ -180,6 +180,18 @@ namespace Altaxo.Main.MenuCommands.Text
     }
   }
 
+  /// <summary>
+  /// Command to expand the current active text document into a new text document.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.MenuCommands.Text.AbstractTextControllerCommand" />
+  public class ExpandTextDocumentIntoNewDocument : AbstractTextControllerCommand
+  {
+    public override void Run(TextDocumentController ctrl)
+    {
+      ctrl.ExpandTextDocumentIntoNewDocument();
+    }
+  }
+
   #region Inline Text commands
 
   public class Bold : AbstractTextControllerCommand

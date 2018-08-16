@@ -307,6 +307,30 @@ namespace Altaxo.Text
       }
     }
 
+    /// <summary>
+    /// Gets the directory part of the document name with trailing <see cref="Main.ProjectFolder.DirectorySeparatorChar"/>.
+    /// If the document is located in the root folder, the <see cref="Main.ProjectFolder.RootFolderName"/>  (an empty string) is returned.
+    /// </summary>
+    public string Folder
+    {
+      get
+      {
+        return Main.ProjectFolder.GetFolderPart(Name);
+      }
+    }
+
+    /// <summary>
+    /// Gets the short name (i.e. without the folder name) of this document.
+    /// </summary>
+    public string ShortName
+    {
+      get
+      {
+        return Main.ProjectFolder.GetNamePart(Name);
+      }
+    }
+
+
     #region IPropertyBagOwner
 
     /// <inheritdoc/>
