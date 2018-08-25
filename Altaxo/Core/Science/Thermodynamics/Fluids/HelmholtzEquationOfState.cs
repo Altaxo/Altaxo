@@ -269,7 +269,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <param name="massDensity">The mass density.</param>
     /// <param name="temperature">The temperature.</param>
     /// <returns>Derivative of pressure w.r.t. the mass density at isothermal conditions.</returns>
-    public double IsothermalDerivativePressureByMassDensity_FromMassDensityAndTemperature(double massDensity, double temperature)
+    public double IsothermalDerivativePressureWrtMassDensity_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
     }
@@ -330,20 +330,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <param name="pressure">The pressure in Pa.</param>
     /// <param name="temperature">The temperature in K.</param>
     /// <returns>A tuple, consisting of the estimate of the mole density. If there is a second guess, it always has a lower value. In this case the second value of the tuple contains this second guess.</returns>
-    protected virtual (double, double?) MoleDensityEstimates_FromPressureAndTemperature(double pressure, double temperature)
+    public virtual IEnumerable<double> MoleDensityEstimates_FromPressureAndTemperature(double pressure, double temperature)
     {
       // Since we don't have all the information here, we use the ideal gas equation for an estimate
       // in derived classes, we override this function to get more precise guesses
-      return (pressure / (UniversalGasConstant * temperature), null);
+      yield return pressure / (UniversalGasConstant * temperature);
     }
 
     /// <summary>
-    /// Get the densities from a given pressure and temperature.
+    /// Get the mole density for a given pressure and temperature.
     /// </summary>
     /// <param name="pressure">The pressure in Pa.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
     /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
-    /// <returns>The density in mol/m³</returns>
+    /// <returns>The mole density in mol/m³</returns>
     /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
     /// Therefore we need the target accuracy.
     /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
@@ -358,43 +358,78 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       if (!(relativeAccuracy > 0))
         throw new ArgumentOutOfRangeException(nameof(relativeAccuracy), "Must be >0");
 
-      var (moleDensityGuess, moleDensityGuessAlt) = MoleDensityEstimates_FromPressureAndTemperature(pressure, temperature);
+      var moleDensityGuesses = MoleDensityEstimates_FromPressureAndTemperature(pressure, temperature);
 
-      double moleDensity1 = MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy, moleDensityGuess);
+      bool needFirstValidMoleDensity = true;
+      bool needFirstValidMoleDensityGibbsValue = true;
 
-      double moleDensity2 = double.NaN;
-      if (moleDensityGuessAlt.HasValue)
+      double minimumGibbsValue = double.PositiveInfinity;
+      double moleDensityForMinimumGibbsValue = double.NaN;
+
+      foreach (var moleDensityGuess in moleDensityGuesses)
       {
-        moleDensity2 = MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy, moleDensityGuessAlt.Value);
+        double moleDensity = MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy, moleDensityGuess);
+        if (!(moleDensity > 0))
+          continue;
+
+        if (needFirstValidMoleDensity) // this is true if this is the first valid mole density value
+        {
+          needFirstValidMoleDensity = false;
+          moleDensityForMinimumGibbsValue = moleDensity;
+        }
+        else // there are at least two valid mole density values, thus we need to compare Gibbs values. 
+        {
+          if (needFirstValidMoleDensityGibbsValue) // true if the Gibbs value for the first valid mole density needs to be calculated
+          {
+            needFirstValidMoleDensityGibbsValue = false;
+            minimumGibbsValue = MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensityForMinimumGibbsValue, temperature);
+          }
+
+          // calculate Gibbs value for current valid mole density
+          var gibbsValue = MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensity, temperature);
+
+          if (gibbsValue < minimumGibbsValue)
+          {
+            minimumGibbsValue = gibbsValue;
+            moleDensityForMinimumGibbsValue = moleDensity;
+          }
+        }
       }
 
-      if (!double.IsNaN(moleDensity1) && !double.IsNaN(moleDensity2) && moleDensity1 != moleDensity2)
-      {
-        var gibbs1 = MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensity1, temperature);
-        var gibbs2 = MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensity2, temperature);
-
-        return gibbs1 < gibbs2 ? moleDensity1 : moleDensity2;
-      }
-      else
-      {
-        return double.IsNaN(moleDensity1) ? moleDensity2 : moleDensity1;
-      }
+      return moleDensityForMinimumGibbsValue;
     }
 
     /// <summary>
-    /// Get the densities from a given pressure and temperature.
+    /// Gets the mass density for a given pressure and temperature.
     /// </summary>
     /// <param name="pressure">The pressure in Pa.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
     /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
-    /// <param name="moleDensityStartValue">The start value for the density to search for.</param>
-    /// <returns>The density in kg/m³</returns>
+    /// <returns>The mass density in kg/m³</returns>
     /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
     /// Therefore we need the target accuracy.
     /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
     /// is within the relative accuracy.
     /// </remarks>
-    public double MoleDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy, double moleDensityStartValue)
+    public virtual double MassDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy = 1E-6)
+    {
+      return MolecularWeight*MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy);
+    }
+
+      /// <summary>
+      /// Gets the mole density from a given pressure and temperature.
+      /// </summary>
+      /// <param name="pressure">The pressure in Pa.</param>
+      /// <param name="temperature">The temperature in Kelvin.</param>
+      /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
+      /// <param name="moleDensityStartValue">The start value for the density to search for.</param>
+      /// <returns>The density in mol/m³</returns>
+      /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
+      /// Therefore we need the target accuracy.
+      /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
+      /// is within the relative accuracy.
+      /// </remarks>
+      public double MoleDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy, double moleDensityStartValue)
     {
       if (!(pressure > 0))
         throw new ArgumentOutOfRangeException(nameof(pressure), "Must be >0");
@@ -402,101 +437,83 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         throw new ArgumentOutOfRangeException(nameof(temperature), "Must be >0");
       if (!(relativeAccuracy > 0))
         throw new ArgumentOutOfRangeException(nameof(relativeAccuracy), "Must be >0");
+      if (!(moleDensityStartValue > 0))
+        throw new ArgumentOutOfRangeException(nameof(moleDensityStartValue), "Must be >0");
 
       double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 
       double RTRhoC = WorkingUniversalGasConstant * temperature * ReducingMoleDensity;
 
-      double delta;
-      if (moleDensityStartValue > 0)
-        delta = moleDensityStartValue / ReducingMoleDensity;
-      else
-        delta = 1.5;
+      double delta = moleDensityStartValue / ReducingMoleDensity;
 
-      for (int i = 0; i < 100000; ++i)
+      int newtonIterations = 0;
+      double previousDelta = double.NaN, previousError = double.MaxValue;
+
+      for (int i = 0; i < 20; ++i)
       {
         double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
         double phir_deltadelta = PhiR_deltadelta_OfReducedVariables(delta, tau);
-
         double press = RTRhoC * (delta + delta * delta * phir_delta);
-        double press_delta = RTRhoC * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
 
+        double currentError = Math.Abs((press - pressure) / pressure);
+
+        if (currentError < relativeAccuracy)
+          return delta * ReducingMoleDensity;
+        if (currentError > previousError && newtonIterations > 10)
+          return previousDelta*ReducingMoleDensity;
+
+        previousDelta = delta;
+        previousError = currentError;
+
+        double press_delta = RTRhoC * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
         double delta_new = delta - (press - pressure) / press_delta;
 
-        if (delta_new > 0 && press_delta > 0)    // if density remains positive and volume stability
-          delta = delta_new;  // then use that new value
-        else                  // otherwise, if it goes into the negative region
-          delta = delta / 2;  // then make it simply smaller
+        if (!(press_delta > 0)) // if no volume stability then we have improper starting conditions
+          return double.NaN; // we don't try to fix it, but return double.NaN instead
 
-        if (Math.Abs((press - pressure) / pressure) < relativeAccuracy)
-          break;
+        if (delta_new > 0)
+        {
+          delta = delta_new;  // then use that new value
+          ++newtonIterations;
+        }
+        else                  // otherwise, if it goes into the negative region
+        {
+          delta = delta / 2;  // then make it simply smaller
+          newtonIterations = 0;
+        }
+  
       }
 
-      return delta * ReducingMoleDensity;
+      return double.NaN;
     }
 
+
     /// <summary>
-    /// Get the densities from a given pressure and temperature.
+    /// Gets the mole density from a given pressure and temperature.
     /// </summary>
     /// <param name="pressure">The pressure in Pa.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
     /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
-    /// <param name="densityStartValue">The start value for the density to search for.</param>
-    /// <returns>The density in kg/m³</returns>
+    /// <param name="massDensityStartValue">The start value for the density to search for (kg/m³).</param>
+    /// <returns>The density in mol/m³</returns>
     /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
     /// Therefore we need the target accuracy.
     /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
     /// is within the relative accuracy.
     /// </remarks>
-    public double MassDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy = 1E-4, double densityStartValue = double.NaN)
+    public double MassDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy, double massDensityStartValue)
     {
-      if (!(pressure > 0))
-        throw new ArgumentOutOfRangeException(nameof(pressure), "Must be >0");
-      if (!(temperature > 0))
-        throw new ArgumentOutOfRangeException(nameof(temperature), "Must be >0");
-      if (!(relativeAccuracy > 0))
-        throw new ArgumentOutOfRangeException(nameof(relativeAccuracy), "Must be >0");
-
-      double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
-
-      double RTRhoC = WorkingSpecificGasConstant * temperature * ReducingMassDensity;
-
-      double delta;
-      if (densityStartValue > 0)
-        delta = densityStartValue / ReducingMassDensity;
-      else
-        delta = 1.5;
-
-      for (int i = 0; i < 100000; ++i)
-      {
-        double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
-        double phir_deltadelta = PhiR_deltadelta_OfReducedVariables(delta, tau);
-
-        double press = RTRhoC * (delta + delta * delta * phir_delta);
-        double press_delta = RTRhoC * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
-
-        double delta_new = delta - (press - pressure) / press_delta;
-
-        if (delta_new > 0 && press_delta > 0)    // if density remains positive and volume stability
-          delta = delta_new;  // then use that new value
-        else                  // otherwise, if it goes into the negative region
-          delta = delta / 2;  // then make it simply smaller
-
-        if (Math.Abs((press - pressure) / pressure) < relativeAccuracy)
-          break;
-      }
-
-      return delta * ReducingMassDensity;
+      return MolecularWeight * MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy, massDensityStartValue / MolecularWeight);
     }
 
-    /// <summary>
-    /// Get the Helmholtz energy from a given mole density and temperature.
-    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
-    /// </summary>
-    /// <param name="moleDensity">The density in mol/m³.</param>
-    /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The Helmholtz energy in J/(mol K).</returns>
-    public double MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+      /// <summary>
+      /// Get the Helmholtz energy from a given mole density and temperature.
+      /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+      /// </summary>
+      /// <param name="moleDensity">The density in mol/m³.</param>
+      /// <param name="temperature">The temperature in Kelvin.</param>
+      /// <returns>The Helmholtz energy in J/(mol K).</returns>
+      public double MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
       double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
@@ -915,6 +932,33 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
       return SpeedOfSound_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
     }
+
+    /// <summary>
+    /// Gets the isentropic (adiabatic) derivative of the mass specific volume w.r.t. pressure from mole density and temperature.
+    /// </summary>
+    /// <param name="moleDensity">The mole density.</param>
+    /// <param name="temperature">The temperature.</param>
+    /// <returns>The isentropic (adiabatic) derivative of the mass specific volume w.r.t. pressure (m³/(kg Pa)).</returns>
+    public double IsentropicDerivativeOfMassSpecificVolumeWrtPressure_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+    {
+      var c = SpeedOfSound_FromMoleDensityAndTemperature(moleDensity, temperature);
+      var massDensity = moleDensity * MolecularWeight;
+      return -1 / (c * c * massDensity * massDensity);
+    }
+
+    /// <summary>
+    /// Gets the isentropic (adiabatic) derivative of the mole specific volume w.r.t. pressure from mole density and temperature.
+    /// </summary>
+    /// <param name="moleDensity">The mole density.</param>
+    /// <param name="temperature">The temperature.</param>
+    /// <returns>The isentropic (adiabatic) derivative of the mole specific volume w.r.t. pressure (m³/(mol Pa)).</returns>
+    public double IsentropicDerivativeOfMoleSpecificVolumeWrtPressure_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+    {
+      var c = SpeedOfSound_FromMoleDensityAndTemperature(moleDensity, temperature);
+      
+      return -1 / (c * c * moleDensity * moleDensity * MolecularWeight);
+    }
+
 
     #endregion Thermodynamic properties derived from dimensionless Helmholtz energy
 

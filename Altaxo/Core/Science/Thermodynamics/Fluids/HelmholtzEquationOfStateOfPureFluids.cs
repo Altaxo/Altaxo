@@ -116,7 +116,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     #region Functions
 
     /// <inheritdoc/>
-    protected override (double, double?) MoleDensityEstimates_FromPressureAndTemperature(double pressure, double temperature)
+    public override IEnumerable<double> MoleDensityEstimates_FromPressureAndTemperature(double pressure, double temperature)
     {
       // find good start values
       double moleDensityEstimate;
@@ -124,7 +124,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       if (temperature >= CriticalPointTemperature || pressure >= CriticalPointPressure)
       {
         // we can treat this as a gas
-        moleDensityEstimate = CriticalPointMoleDensity * (pressure / CriticalPointPressure) * (CriticalPointTemperature / temperature);
+        yield return CriticalPointMoleDensity * (pressure / CriticalPointPressure) * (CriticalPointTemperature / temperature);
       }
       else if (temperature >= TriplePointTemperature)
       {
@@ -133,27 +133,28 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         if (temperature > temperatureBoundary + 1)
         {
           // then it is a gas
-          moleDensityEstimate = vaporDens * (temperatureBoundary / temperature);
+          yield return moleDensityEstimate = vaporDens * (temperatureBoundary / temperature);
         }
         else if (temperature < temperatureBoundary - 1)
         {
           // then it is a liquid or a solid
-          moleDensityEstimate = liquidDens;
+
+
+          yield return moleDensityEstimate = SaturatedLiquidMoleDensityEstimate_FromTemperature(temperature);
         }
         else
         {
           // then it could be both vapor or liquid - we have to test both cases!
-          moleDensityEstimate = liquidDens;
-          moleDensityEstimateAlt = vaporDens;
+          yield return liquidDens;
+          yield return vaporDens;
         }
       }
       else // below to triple point temperature
       {
-        moleDensityEstimate = TriplePointSaturatedLiquidMoleDensity;
-        moleDensityEstimateAlt = TriplePointSaturatedVaporMoleDensity;
+        yield return TriplePointSaturatedLiquidMoleDensity;
+        yield return TriplePointSaturatedVaporMoleDensity;
       }
 
-      return (moleDensityEstimate, moleDensityEstimateAlt);
     }
 
     /// <inheritdoc/>

@@ -77,6 +77,42 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return new MixtureOfFluids(list);
     }
 
+    public static MixtureOfFluids FromCASRegistryNumbersAndMassFractions(IEnumerable<(string casNumber, double massFraction)> casNumbersAndMassFractions)
+    {
+      var list = new List<(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid, double moleFraction)>();
+
+      // in order to calculate mole fractions, we need the molecular weight of the fluids
+
+      foreach (var (casNumber, massFraction) in casNumbersAndMassFractions)
+      {
+        if (_fluidDefinitions.TryGetValue(casNumber, out var fluidType))
+        {
+          var pd = fluidType.GetProperty("Instance").GetGetMethod();
+          var definition = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)pd.Invoke(null, null);
+          list.Add((definition, massFraction));
+        }
+        else
+        {
+          throw new ArgumentException(string.Format("A fluid with CAS registry number {0} could not be found!", casNumber));
+        }
+      }
+
+      // now that we have all fluids, we can calculate mole fractions
+      double sum = 0;
+      foreach(var (fluid, massFraction) in list)
+      {
+        sum += massFraction / fluid.MolecularWeight;
+      }
+
+      for(int i=0;i<list.Count;++i)
+      {
+        var (fluid, massFraction) = list[i];
+        list[i] = (fluid, (massFraction / fluid.MolecularWeight) / sum);
+      }
+
+      return new MixtureOfFluids(list);
+    }
+
     public MixtureOfFluids(
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
@@ -195,6 +231,33 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
       return WithMoleFractions(moleFractions, true);
     }
+
+    /// <summary>
+    /// Returns the same mixture of fluids, but with other mass fractions.
+    /// </summary>
+    /// <param name="massFractions">The mass fractions of the components.</param>
+    /// <returns>A mixture with the same components, but different mass fractions. The sum of mass fractions has to be equal to 1.</returns>
+    public MixtureOfFluids WithMassFractions(params double[] massFractions)
+    {
+      double sum = 0;
+      double checksum = 0;
+
+      for (int i = 0; i < _fluidsAndMoleFractions.Length; ++i)
+      {
+        sum += massFractions[i] / _fluidsAndMoleFractions[i].pureFluid.MolecularWeight;
+        checksum += massFractions[i];
+      }
+
+      if ( Math.Abs(checksum - 1) > 1E-7)
+        throw new ArgumentOutOfRangeException(string.Format("The provided mass fractions do not sum up to 1, but to a value of {0}.", checksum));
+
+
+      var moleFractions =  massFractions.Select( (massFraction, i) => (massFraction/_fluidsAndMoleFractions[i].pureFluid.MolecularWeight)/sum);
+
+      return WithMoleFractions(moleFractions, true);
+    }
+
+
 
     /// <summary>
     /// Returns the same mixture of fluids, but with other mole fractions.
@@ -569,6 +632,99 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     #endregion Helmholtz equation of state
+
+    #region Derived quantities
+
+    public override IEnumerable<double> MoleDensityEstimates_FromPressureAndTemperature(double pressure, double temperature)
+    {
+      foreach(var fluidAndMF in _fluidsAndMoleFractions)
+      {
+        foreach (var moleDensityGuess in fluidAndMF.pureFluid.MoleDensityEstimates_FromPressureAndTemperature(pressure, temperature))
+          yield return moleDensityGuess;
+        
+      }
+    }
+
+
+
+    #endregion
+
+    #region Mixture definitions and fluid definitions going public
+
+    /// <summary>
+    /// Gets the known fluids.
+    /// </summary>
+    /// <value>
+    /// The known fluids as enumeration of tuples, containing the CASRegistryNumber of the fluid, its type, and a function to get an instance of the fluid.
+    /// </value>
+    public static IEnumerable<(string casNumber, Type type, Func<HelmholtzEquationOfStateOfPureFluidsBySpanEtAl> instanceGetter)> KnownFluids
+    {
+      get
+      {
+        foreach (var entry in _fluidDefinitions)
+        {
+          yield return (
+                      entry.Key,
+                      entry.Value,
+                      () =>
+                      {
+                        var pd = entry.Value.GetProperty("Instance").GetGetMethod();
+                        var definition = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)pd.Invoke(null, null);
+                        return definition;
+                      }
+          );
+        }
+      }
+    }
+
+    /// <summary>
+    /// Tries  to the get fluid from its CAS registry number.
+    /// </summary>
+    /// <param name="casRegistryNumber">The CAS registry number of the fluid.</param>
+    /// <param name="fluid">If the return value is true, an instance of the fluid; otherwise null.</param>
+    /// <returns>True if an instance of a fluid with the given CAS registry number could be found; otherwise false.</returns>
+    public static bool TryGetFluidFromCasRegistryNumber(string casRegistryNumber, out HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid)
+    {
+      if (_fluidDefinitions.TryGetValue(casRegistryNumber, out var type))
+      {
+        var pd = type.GetProperty("Instance").GetGetMethod();
+        fluid = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)pd.Invoke(null, null);
+        return true;
+      }
+
+      fluid = null;
+      return false;
+    }
+
+    /// <summary>
+    /// Gets the known binary mixture definitions.
+    /// </summary>
+    /// <value>
+    /// The known mixtures as enumeration of tuples, containing the CASRegistryNumber of the fluid1 and fluid2, the type of the mixture definition, and a function to get an instance of the binary mixture.
+    /// </value>
+    public static IEnumerable<(string casNumber1, string casNumber2, Type type, Func<BinaryMixtureDefinitionBase> instanceGetter)> KnownBinaryMixtures
+    {
+      get
+      {
+        foreach (var entry in _binaryMixtureDefinitions)
+        {
+          yield return (
+                      entry.Key.cas1,
+                      entry.Key.cas2,
+                      entry.Value,
+                      () =>
+                      {
+                        var pd = entry.Value.GetProperty("Instance").GetGetMethod();
+                        var definition =  (BinaryMixtureDefinitionBase)pd.Invoke(null, null);
+                        return definition;
+                      }
+          );
+        }
+      }
+    }
+
+
+    #endregion
 
     protected static double Pow3(double x) => x * x * x;
   }
