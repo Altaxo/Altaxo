@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Gui;
-using Altaxo.Gui.Text.Viewing;
-using Altaxo.Gui.Workbench;
-using Altaxo.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Gui;
+using Altaxo.Gui.Text.Viewing;
+using Altaxo.Gui.Workbench;
+using Altaxo.Text;
 
 namespace Altaxo.Main.MenuCommands.Text
 {
@@ -100,6 +100,14 @@ namespace Altaxo.Main.MenuCommands.Text
     public override void Run(TextDocumentController ctrl)
     {
       Altaxo.Text.MamlExportOptions.ExportShowDialog(ctrl.TextDocument);
+    }
+  }
+
+  public class ExportHtml : AbstractTextControllerCommand
+  {
+    public override void Run(TextDocumentController ctrl)
+    {
+      Altaxo.Text.HtmlExportOptions.ExportShowDialog(ctrl.TextDocument);
     }
   }
 

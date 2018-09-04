@@ -1103,6 +1103,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Text\HtmlExportOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Text\MamlExportOptionsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2145,6 +2149,9 @@
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\StringParseExtension.cs" />
+    <Compile Include="Gui\Text\HtmlExportOptionsControl.xaml.cs">
+      <DependentUpon>HtmlExportOptionsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Text\MamlExportOptionsControl.xaml.cs">
       <DependentUpon>MamlExportOptionsControl.xaml</DependentUpon>
     </Compile>

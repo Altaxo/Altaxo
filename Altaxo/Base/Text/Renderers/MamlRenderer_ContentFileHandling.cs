@@ -87,146 +87,25 @@ namespace Altaxo.Text.Renderers
       for (int i = headerTitles.Count - 1; i >= headingBlock.Level - 1; --i)
         headerTitles.RemoveAt(i);
       headerTitles.Add(title);
-      var guid = CreateGuidFromHeaderTitles(headerTitles);
+      var guid = RendererExtensions.CreateGuidFromHeaderTitles(headerTitles);
 
       _headerGuids.Add(headingBlock.Span.Start, guid);
 
       if (headingBlock.Level <= SplitLevel || forceAddMamlFile)
       {
-        var fileShortName = CreateFileNameFromHeaderTitlesAndGuid(headerTitles, guid);
+        var fileShortName = RendererExtensions.CreateFileNameFromHeaderTitlesAndGuid(headerTitles, guid, FirstHeadingBlockIsParentOfAll);
 
         var fileName = string.Format("{0}{1}.aml", AmlBaseFileName, fileShortName);
         _amlFileList.Add((fileName, guid, title, headingBlock.Level, headingBlock.Span.Start));
       }
     }
 
-    private string CreateGuidFromHeaderTitles(List<string> headerTitles)
-    {
-      var stb = new System.Text.StringBuilder();
+    
 
-      for (int i = 0; i < headerTitles.Count; ++i)
-      {
-        if (i != 0)
-          stb.Append(" - ");
-        stb.Append(headerTitles[i]);
-      }
+   
 
-      byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(stb.ToString());
+  
 
-      byte[] hash = _md5Hasher.ComputeHash(inputBytes);
-
-      // step 2, convert byte array to hex string
-
-      stb.Length = 0;
-
-      for (int i = 0; i < hash.Length; i++)
-      {
-        stb.Append(hash[i].ToString("X2"));
-      }
-
-      return stb.ToString();
-    }
-
-    /// <summary>
-    /// Creates the file name from header titles and a unique identifier.
-    /// </summary>
-    /// <param name="headerTitles">The header titles.</param>
-    /// <param name="guid">The unique identifier.</param>
-    /// <returns>A file name (without path, without extension) that should be unique and easily identifyable.</returns>
-    /// <remarks>
-    /// <para>Background:</para>
-    /// <para>To bring the files in a version control system, it is not appropriate to simply numerate the files - then with every new section the numbers and thus the file names would change.</para>
-    /// <para>We cound have used the guid created by the titles, but this would make the file names hard to identify.</para>
-    /// <para>Thus we compromise: use the three first letters of the titles of max three levels, and then append some part of the guid.</para>
-    /// </remarks>
-    private string CreateFileNameFromHeaderTitlesAndGuid(List<string> headerTitles, string guid)
-    {
-      if (headerTitles.Count == 0)
-      {
-        return guid;
-      }
-      else if (headerTitles.Count == 1)
-      {
-        return FirstThreeCharsFromHeaderTitle(headerTitles[0]) + "-" + guid.Substring(0, guid.Length - 4);
-      }
-      else
-      {
-        var stb = new StringBuilder();
-        int offset = FirstHeadingBlockIsParentOfAll ? 1 : 0; // if we have only one first level heading block, we do not use it for the name
-        for (int i = offset; i < Math.Min(headerTitles.Count, 3 + offset); ++i)
-        {
-          stb.Append(FirstThreeCharsFromHeaderTitle(headerTitles[i]));
-          stb.Append("-");
-        }
-        stb.Append(guid.Substring(0, guid.Length - stb.Length));
-        return stb.ToString();
-      }
-    }
-
-    private static readonly char[] _headerTitleSplitChars =
-      {
-      ' ',
-      '\t',
-      '!',
-      '"',
-      '§',
-      '$',
-      '%',
-      '%',
-      '&',
-      '/',
-      '{',
-      '(',
-      '[',
-      ')',
-      ']',
-      '=',
-      '}',
-      '?',
-      '\\',
-      '´',
-      '`',
-      '*',
-      '+',
-      '~',
-      '\'',
-      '#',
-      ';',
-      ',',
-      ':',
-      '.',
-      '_',
-      '-',
-      '^',
-      '°',
-      '@',
-      '<',
-      '>',
-      '|',
-    };
-
-    private readonly HashSet<string> _notUsedWordsFromHeaderTitle = new HashSet<string>(new string[]
-    { "A", "AN", "THE" /* "AND", "OR", "BY", "A", "THE", "ON", "OF", "IN", "FROM", "WITH",  */});
-
-    private string FirstThreeCharsFromHeaderTitle(string title)
-    {
-      var words = title.ToUpperInvariant().Split(_headerTitleSplitChars, StringSplitOptions.RemoveEmptyEntries);
-      var stb = new StringBuilder(3);
-
-      for (int i = 0; i < words.Length; ++i)
-      {
-        var word = words[i];
-        if (_notUsedWordsFromHeaderTitle.Contains(word))
-          continue;
-
-        if (char.IsLetterOrDigit(word[0]))
-          stb.Append(word[0]);
-        if (stb.Length == 3)
-          break;
-      }
-
-      return stb.ToString();
-    }
 
     /// <summary>
     /// Try to start a new maml file.
