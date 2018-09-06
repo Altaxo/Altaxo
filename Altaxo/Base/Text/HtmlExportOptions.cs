@@ -277,8 +277,7 @@ namespace Altaxo.Text
     public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog()
     {
       var dlg = new SaveFileOptions();
-      dlg.AddFilter("*.shfbproj", "Sandcastle help file builder project (*.shfbproj)");
-      dlg.AddFilter("*.content", "Content files (*.content)");
+      dlg.AddFilter("*.html", "Html files (*.html)");
       dlg.AddFilter("*.*", "All files (*.*)");
       dlg.AddExtension = true;
 
@@ -307,6 +306,12 @@ namespace Altaxo.Text
         document.PropertyBagNotNull.SetValue(PropertyKeyHtmlExportOptions, (HtmlExportOptions)exportOptions.Clone());
         Current.PropertyService.ApplicationSettings.SetValue(PropertyKeyHtmlExportOptions, (HtmlExportOptions)exportOptions.Clone());
         exportOptions.Export(document, exportOptions.OutputFileName);
+
+        // Start Html viewer
+        if (exportOptions.OpenHtmlViewer && System.IO.Path.GetExtension(exportOptions.OutputFileName).ToLowerInvariant() == ".html")
+        {
+          System.Diagnostics.Process.Start(exportOptions.OutputFileName);
+        }
       }
     }
 

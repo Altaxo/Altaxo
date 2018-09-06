@@ -62,17 +62,18 @@
     <axogc:Int32UpDown Grid.Row="0" Grid.Column="2" Minimum="0" Maximum="7"
 											 Value="{Binding SplitLevel, Mode=TwoWay}"
 											 ToolTip="A value of 0 ensures that the entire document is exported into a single Html file. A value of 1 splits the document at each first level header, resulting in a Html file per every first level section. A value of 2 splits the document at each first level and second level header, and so on..."/>
-    <Label Grid.Row="2" Grid.Column="0" Content="Folder name for content: "/>
-    <TextBox Grid.Row="2" Grid.Column="2"
+    <Label Grid.Row="2" Grid.Column="0" Content="Folder name for content: " Visibility="Collapsed"/>
+    <TextBox Grid.Row="2" Grid.Column="2" Visibility="Hidden"
 						 Text="{Binding ContentFolderName, Mode=TwoWay}"
 						 ToolTip="Folder name relative to the base directory (see below), in which the exported .aml files with the help contents are stored."/>
 
-    <CheckBox  Grid.Row="4" Grid.Column="2" Content="Remove all old contents of content folder"
+    <CheckBox  Grid.Row="4" Grid.Column="2" Content="Remove all old contents of output folder"
 							 Margin="4,0,0,0"
-							 IsChecked="{Binding EnableRemoveOldContentsOfContentFolder, Mode=TwoWay}"
+							 IsChecked="{Binding EnableRemoveOldContentsOfOutputFolder, Mode=TwoWay}"
 							 ToolTip="By checking this, all .html files in the content folder will be deleted prior to export. Use this option with care!"/>
-    <Label Grid.Row="6" Grid.Column="0" Content="Base file name of content files: "/>
-    <TextBox Grid.Row="6" Grid.Column="2"
+    <Label Grid.Row="6" Grid.Column="0" Visibility="Hidden"
+           Content="Base file name of content files: "/>
+    <TextBox Grid.Row="6" Grid.Column="2" Visibility="Hidden"
 						 Text="{Binding ContentFileNameBase, Mode=TwoWay}"
 						 ToolTip="A text string that is set as start for every content (.html) file name. Can be left empty, because the exporter will generate meaningful file names for the content files."/>
 
@@ -84,7 +85,8 @@
 							 Margin="4,0,0,0"
 							 IsChecked="{Binding EnableRemoveOldContentsOfImageFolder, Mode=TwoWay}"
 							 ToolTip="By checking this, all .png, .jpg, .jpeg, .tif files in the image folder will be deleted prior to export. Use this option with care!"/>
-    <CheckBox  Grid.Row="12" Grid.ColumnSpan="3" Content="Enable auto outline" Margin="4,0,0,0"
+    <CheckBox  Grid.Row="12" Grid.ColumnSpan="3" Visibility="Hidden"
+               Content="Enable auto outline" Margin="4,0,0,0"
 							 IsChecked="{Binding EnableAutoOutline, Mode=TwoWay}"
 							 ToolTip="By enabling this option, an auto outline (small table of contents) is included at the beginning of each Maml file."/>
     <CheckBox  Grid.Row="14" Grid.ColumnSpan="3" Content="Enable Html escape" Margin="4,0,0,0" IsChecked="{Binding EnableHtmlEscape, Mode=TwoWay}"/>
@@ -113,17 +115,7 @@
 							 IsChecked="{Binding ExpandChildDocuments, Mode=TwoWay}"
 							 ToolTip="By enabling this option, child documents included (with the extension to include child Markdown documents) are expanded before export."/>
 
-    <GroupBox Header="Formulas" Grid.Row="29" Grid.RowSpan="7" Grid.ColumnSpan="4" Background="Azure" ToolTip="In order to show formulas with the right size, information about the font family and the font size of the body text is needed. In addition, information about whether or not the Maml files are intended to be used to build a HTML1 Help file is needed."/>
-    <Label Grid.Row="30" Grid.Column="0" Content="Font family of body text: "/>
-    <axogcd:FontFamilyComboBox Grid.Row="30" Grid.Column="2"
-															 SelectedFontFamilyName="{Binding BodyTextFontFamilyName, Mode=TwoWay}"
-															 ToolTip="Concerns export of formulas only. Since formulas are exported as images, it is important to know the properties of the text they are embedded in. Therefore, font family and font size have to be known in advance. For use with the Sandcastle Help file builder, at the time of writing the font family was 'Segoe UI', and the font size 15." />
-    <Label Grid.Row="32" Grid.Column="0" Content="Font size of body text: "/>
-    <axogcd:FontSizeComboBox Grid.Row="32" Grid.Column="2"
-														 SelectedQuantityAsValueInPoints="{Binding BodyTextFontSize, Mode=TwoWay}"
-														 ToolTip="Concerns export of formulas only. Since formulas are exported as images, it is important to know the properties of the text they are embedded in. Therefore, font family and font size have to be known in advance. For use with the Sandcastle Help file builder, at the time of writing the font family was 'Segoe UI', and the font size 15." />
-
-    <GroupBox Header="Output file name:" Grid.Row="36" Grid.ColumnSpan="3">
+    <GroupBox Header="Name of the Html file with table of contents:" Grid.Row="36" Grid.ColumnSpan="3">
       <DockPanel>
         <Button Content="Select ..." DockPanel.Dock="Right" Margin="4,0,0,0" Command="{Binding CommandSelectOutputFile}"/>
         <TextBox

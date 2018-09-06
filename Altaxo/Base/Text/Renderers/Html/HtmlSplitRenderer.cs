@@ -28,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Collections;
 using Markdig;
 using Markdig.Extensions.Mathematics;
 using Markdig.Renderers;
@@ -244,12 +245,44 @@ namespace Altaxo.Text.Renderers.Html
 
     public static void RemoveOldContentsOfContentFolder(string fullContentFolderName)
     {
-      throw new NotImplementedException();
+      var dir = new DirectoryInfo(fullContentFolderName);
+      if (!dir.Exists)
+      {
+        return;
+      }
+
+      var filesToDelete = new HashSet<string>();
+      foreach (var extension in new string[] { ".html" })
+      {
+        filesToDelete.AddRange(dir.GetFiles("*" + extension).Select(x => x.FullName));
+      }
+
+      // now delete the files
+      foreach (var file in filesToDelete)
+      {
+        File.Delete(file);
+      }
     }
 
     public static void RemoveOldContentsOfImageFolder(string fullImageFolderName)
     {
-      throw new NotImplementedException();
+      var dir = new DirectoryInfo(fullImageFolderName);
+      if (!dir.Exists)
+      {
+        return;
+      }
+
+      var filesToDelete = new HashSet<string>();
+      foreach (var extension in new string[] { ".png", ".tif", ".jpg", ".jpeg", ".bmp" })
+      {
+        filesToDelete.AddRange(dir.GetFiles("????????????????" + extension).Select(x => x.FullName));
+      }
+
+      // now delete the files
+      foreach (var file in filesToDelete)
+      {
+        File.Delete(file);
+      }
     }
 
     public void Render(string documentSourceText)
