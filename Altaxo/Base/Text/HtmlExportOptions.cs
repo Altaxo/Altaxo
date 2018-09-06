@@ -78,6 +78,8 @@ namespace Altaxo.Text
         info.AddValue("LinkToPreviousSectionLabelText", s.LinkToPreviousSectionLabelText);
         info.AddValue("EnableLinkToNextSection", s.EnableLinkToNextSection);
         info.AddValue("LinkToNextSectionLabelText", s.LinkToNextSectionLabelText);
+        info.AddValue("EnableLinkToTableOfContents", s.EnableLinkToTableOfContents);
+        info.AddValue("LinkToTableOfContentsLabelText", s.LinkToTableOfContentsLabelText);
         info.AddValue("ExpandChildDocuments", s.ExpandChildDocuments);
         info.AddValue("BodyTextFontFamily", s.BodyTextFontFamily);
         info.AddValue("BodyTextFontSize", s.BodyTextFontSize);
@@ -96,6 +98,8 @@ namespace Altaxo.Text
         s.LinkToPreviousSectionLabelText = info.GetString("LinkToPreviousSectionLabelText");
         s.EnableLinkToNextSection = info.GetBoolean("EnableLinkToNextSection");
         s.LinkToNextSectionLabelText = info.GetString("LinkToNextSectionLabelText");
+        s.EnableLinkToTableOfContents = info.GetBoolean("EnableLinkToTableOfContents");
+        s.LinkToTableOfContentsLabelText = info.GetString("LinkToTableOfContentsLabelText");
         s.ExpandChildDocuments = info.GetBoolean("ExpandChildDocuments");
         s.BodyTextFontFamily = info.GetString("BodyTextFontFamily");
         s.BodyTextFontSize = info.GetDouble("BodyTextFontSize");
@@ -144,7 +148,10 @@ namespace Altaxo.Text
       set
       {
         if (string.IsNullOrEmpty(value))
+        {
           throw new ArgumentNullException(nameof(value));
+        }
+
         _bodyTextFontFamily = value;
       }
     }
@@ -159,7 +166,10 @@ namespace Altaxo.Text
       set
       {
         if (!(value > 0))
+        {
           throw new ArgumentOutOfRangeException(nameof(value), "Must be >0");
+        }
+
         _bodyTextFontSize = value;
       }
     }
@@ -175,7 +185,10 @@ namespace Altaxo.Text
       set
       {
         if (string.IsNullOrEmpty(value))
+        {
           throw new ArgumentNullException(nameof(value));
+        }
+
         _imageFolderName = value;
       }
     }
@@ -195,7 +208,10 @@ namespace Altaxo.Text
       set
       {
         if (!(value >= 0))
+        {
           throw new ArgumentOutOfRangeException(nameof(value), "Must be >= 0");
+        }
+
         _splitLevel = value;
       }
     }
@@ -221,9 +237,21 @@ namespace Altaxo.Text
     public string LinkToNextSectionLabelText { get; set; } = "Next section: ";
 
     /// <summary>
+    /// If true, a link to the next section is inserted at the end of each Html document.
+    /// </summary>
+    public bool EnableLinkToTableOfContents { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the text that is inserted immediately before the link to the next section.
+    /// </summary>
+    public string LinkToTableOfContentsLabelText { get; set; } = "Table of contents";
+
+    /// <summary>
     /// If true, included child documents are expanded before the markdown document is processed.
     /// </summary>
     public bool ExpandChildDocuments { get; set; } = true;
+
+
 
     /// <summary>
     /// If true, the default Htlm viewer application is opened after the Html files were exported.
@@ -291,9 +319,15 @@ namespace Altaxo.Text
     public void Export(TextDocument document, string fileName)
     {
       if (null == document)
+      {
         throw new ArgumentNullException(nameof(document));
+      }
+
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException(nameof(fileName));
+      }
+
       var basePathName = Path.GetDirectoryName(fileName);
 
       if (ExpandChildDocuments)
@@ -332,6 +366,8 @@ namespace Altaxo.Text
         linkToPreviousSectionLabelText: LinkToPreviousSectionLabelText,
         enableLinkToNextSection: EnableLinkToNextSection,
         linkToNextSectionLabelText: LinkToNextSectionLabelText,
+        enableLinkToTableOfContents: EnableLinkToTableOfContents,
+        linkToTableOfContentsLabelText: LinkToTableOfContentsLabelText,
         imagesFullFileNames: listOfReferencedImageFileNames,
         oldToNewImageUris: oldToNewImageUrl,
         bodyTextFontFamily: BodyTextFontFamily,
@@ -375,7 +411,9 @@ namespace Altaxo.Text
             var imageFileName = hashName + extension;
 
             if (!Directory.Exists(imagePath))
+            {
               Directory.CreateDirectory(imagePath);
+            }
 
             // Copy stream to FileSystem
             var fullImageFileName = Path.Combine(imagePath, imageFileName);

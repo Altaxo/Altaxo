@@ -91,6 +91,8 @@ namespace Altaxo.Gui.Text
     public string LinkToPreviousSectionLabelText { get { return _doc.LinkToPreviousSectionLabelText; } set { _doc.LinkToPreviousSectionLabelText = value; OnPropertyChanged(nameof(LinkToPreviousSectionLabelText)); } }
     public bool EnableLinkToNextSection { get { return _doc.EnableLinkToNextSection; } set { _doc.EnableLinkToNextSection = value; OnPropertyChanged(nameof(EnableLinkToNextSection)); } }
     public string LinkToNextSectionLabelText { get { return _doc.LinkToNextSectionLabelText; } set { _doc.LinkToNextSectionLabelText = value; OnPropertyChanged(nameof(LinkToNextSectionLabelText)); } }
+    public bool EnableLinkToTableOfContents { get { return _doc.EnableLinkToTableOfContents; } set { _doc.EnableLinkToTableOfContents = value; OnPropertyChanged(nameof(EnableLinkToTableOfContents)); } }
+    public string LinkToTableOfContentsLabelText { get { return _doc.LinkToTableOfContentsLabelText; } set { _doc.LinkToTableOfContentsLabelText = value; OnPropertyChanged(nameof(LinkToTableOfContentsLabelText)); } }
     public bool ExpandChildDocuments { get { return _doc.ExpandChildDocuments; } set { _doc.ExpandChildDocuments = value; OnPropertyChanged(nameof(ExpandChildDocuments)); } }
     public string BodyTextFontFamilyName { get { return _doc.BodyTextFontFamily; } set { _doc.BodyTextFontFamily = value; OnPropertyChanged(nameof(BodyTextFontFamilyName)); } }
     public double BodyTextFontSize { get { return _doc.BodyTextFontSize; } set { _doc.BodyTextFontSize = value; OnPropertyChanged(nameof(BodyTextFontSize)); } }
@@ -112,7 +114,7 @@ namespace Altaxo.Gui.Text
 
     public override bool Apply(bool disposeController)
     {
-      bool failed = false;
+      var failed = false;
 
       if (string.IsNullOrEmpty(ImageFolderName))
       {
