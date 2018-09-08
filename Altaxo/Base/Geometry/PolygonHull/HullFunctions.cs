@@ -37,12 +37,12 @@ namespace Altaxo.Geometry.PolygonHull
     {
       /* lineA is vertical */
       double y_intersection;
-      if ((lineB.nodes[0].x > lineA.nodes[0].x) && (lineA.nodes[0].x > lineB.nodes[1].x) ||
-              ((lineB.nodes[1].x > lineA.nodes[0].x) && (lineA.nodes[0].x > lineB.nodes[0].x)))
+      if ((lineB.nodes[0].X > lineA.nodes[0].X) && (lineA.nodes[0].X > lineB.nodes[1].X) ||
+              ((lineB.nodes[1].X > lineA.nodes[0].X) && (lineA.nodes[0].X > lineB.nodes[0].X)))
       {
-        y_intersection = (((lineB.nodes[1].y - lineB.nodes[0].y) * (lineA.nodes[0].x - lineB.nodes[0].x)) / (lineB.nodes[1].x - lineB.nodes[0].x)) + lineB.nodes[0].y;
-        return ((lineA.nodes[0].y > y_intersection) && (y_intersection > lineA.nodes[1].y))
-            || ((lineA.nodes[1].y > y_intersection) && (y_intersection > lineA.nodes[0].y));
+        y_intersection = (((lineB.nodes[1].Y - lineB.nodes[0].Y) * (lineA.nodes[0].X - lineB.nodes[0].X)) / (lineB.nodes[1].X - lineB.nodes[0].X)) + lineB.nodes[0].Y;
+        return ((lineA.nodes[0].Y > y_intersection) && (y_intersection > lineA.nodes[1].Y))
+            || ((lineA.nodes[1].Y > y_intersection) && (y_intersection > lineA.nodes[0].Y));
       }
       else
       {
@@ -63,15 +63,15 @@ namespace Altaxo.Geometry.PolygonHull
       double b1, b2;
       decimal X;
 
-      if (Math.Max(lineA.nodes[0].x, lineA.nodes[1].x) < Math.Min(lineB.nodes[0].x, lineB.nodes[1].x))
+      if (Math.Max(lineA.nodes[0].X, lineA.nodes[1].X) < Math.Min(lineB.nodes[0].X, lineB.nodes[1].X))
       {
         return false; //Not a chance of intersection
       }
 
-      dif = lineA.nodes[0].x - lineA.nodes[1].x;
+      dif = lineA.nodes[0].X - lineA.nodes[1].X;
       if (dif != 0)
       { //Avoids dividing by 0
-        A1 = (lineA.nodes[0].y - lineA.nodes[1].y) / dif;
+        A1 = (lineA.nodes[0].Y - lineA.nodes[1].Y) / dif;
       }
       else
       {
@@ -79,10 +79,10 @@ namespace Altaxo.Geometry.PolygonHull
         A1 = 9999999;
       }
 
-      dif = lineB.nodes[0].x - lineB.nodes[1].x;
+      dif = lineB.nodes[0].X - lineB.nodes[1].X;
       if (dif != 0)
       { //Avoids dividing by 0
-        A2 = (lineB.nodes[0].y - lineB.nodes[1].y) / dif;
+        A2 = (lineB.nodes[0].Y - lineB.nodes[1].Y) / dif;
       }
       else
       {
@@ -103,11 +103,11 @@ namespace Altaxo.Geometry.PolygonHull
         return verticalIntersection(lineB, lineA);
       }
 
-      b1 = lineA.nodes[0].y - (A1 * lineA.nodes[0].x);
-      b2 = lineB.nodes[0].y - (A2 * lineB.nodes[0].x);
+      b1 = lineA.nodes[0].Y - (A1 * lineA.nodes[0].X);
+      b2 = lineB.nodes[0].Y - (A2 * lineB.nodes[0].X);
       X = Math.Round(System.Convert.ToDecimal((b2 - b1) / (A1 - A2)), 4);
-      if ((X <= System.Convert.ToDecimal(Math.Max(Math.Min(lineA.nodes[0].x, lineA.nodes[1].x), Math.Min(lineB.nodes[0].x, lineB.nodes[1].x)))) ||
-          (X >= System.Convert.ToDecimal(Math.Min(Math.Max(lineA.nodes[0].x, lineA.nodes[1].x), Math.Max(lineB.nodes[0].x, lineB.nodes[1].x)))))
+      if ((X <= System.Convert.ToDecimal(Math.Max(Math.Min(lineA.nodes[0].X, lineA.nodes[1].X), Math.Min(lineB.nodes[0].X, lineB.nodes[1].X)))) ||
+          (X >= System.Convert.ToDecimal(Math.Min(Math.Max(lineA.nodes[0].X, lineA.nodes[1].X), Math.Max(lineB.nodes[0].X, lineB.nodes[1].X)))))
       {
         return false; //Out of bound
       }
@@ -123,7 +123,7 @@ namespace Altaxo.Geometry.PolygonHull
       var concave = new List<Line>();
       decimal cos1, cos2;
       decimal sumCos = -2;
-      Node middle_point = null;
+      Node? middle_point = null;
       bool edgeIntersects;
       var count = 0;
       var count_line = 0;
@@ -166,8 +166,8 @@ namespace Altaxo.Geometry.PolygonHull
       }
       else
       {
-        concave.Add(new Line(middle_point, line.nodes[0]));
-        concave.Add(new Line(middle_point, line.nodes[1]));
+        concave.Add(new Line(middle_point.Value, line.nodes[0]));
+        concave.Add(new Line(middle_point.Value, line.nodes[1]));
       }
       return concave;
     }
@@ -197,9 +197,9 @@ namespace Altaxo.Geometry.PolygonHull
         while (!isTangent && count_node < 2)
         {
           node_in_hull = line.nodes[count_node];
-          if (!nodes_searched.Contains(node_in_hull.id))
+          if (!nodes_searched.Contains(node_in_hull.Id))
           {
-            if (node_in_hull.id != line_treated.nodes[0].id && node_in_hull.id != line_treated.nodes[1].id)
+            if (node_in_hull.Id != line_treated.nodes[0].Id && node_in_hull.Id != line_treated.nodes[1].Id)
             {
               current_cos1 = getCos(node_in_hull, line_treated.nodes[0], line_treated.nodes[1]);
               current_cos2 = getCos(node_in_hull, line_treated.nodes[1], line_treated.nodes[0]);
@@ -209,7 +209,7 @@ namespace Altaxo.Geometry.PolygonHull
               }
             }
           }
-          nodes_searched.Add(node_in_hull.id);
+          nodes_searched.Add(node_in_hull.Id);
           count_node++;
         }
         count_node = 0;
@@ -221,9 +221,9 @@ namespace Altaxo.Geometry.PolygonHull
     public static decimal getCos(Node a, Node b, Node o)
     {
       /* Law of cosines */
-      var aPow2 = Math.Pow(a.x - o.x, 2) + Math.Pow(a.y - o.y, 2);
-      var bPow2 = Math.Pow(b.x - o.x, 2) + Math.Pow(b.y - o.y, 2);
-      var cPow2 = Math.Pow(a.x - b.x, 2) + Math.Pow(a.y - b.y, 2);
+      var aPow2 = Math.Pow(a.X - o.X, 2) + Math.Pow(a.Y - o.Y, 2);
+      var bPow2 = Math.Pow(b.X - o.X, 2) + Math.Pow(b.Y - o.Y, 2);
+      var cPow2 = Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2);
       var cos = (aPow2 + bPow2 - cPow2) / (2 * Math.Sqrt(aPow2 * bPow2));
       return Math.Round(System.Convert.ToDecimal(cos), 4);
     }
@@ -236,10 +236,10 @@ namespace Altaxo.Geometry.PolygonHull
       var boundary = new int[4];
       var aNode = line.nodes[0];
       var bNode = line.nodes[1];
-      var min_x_position = (int)Math.Floor(Math.Min(aNode.x, bNode.x) / scaleFactor);
-      var min_y_position = (int)Math.Floor(Math.Min(aNode.y, bNode.y) / scaleFactor);
-      var max_x_position = (int)Math.Floor(Math.Max(aNode.x, bNode.x) / scaleFactor);
-      var max_y_position = (int)Math.Floor(Math.Max(aNode.y, bNode.y) / scaleFactor);
+      var min_x_position = (int)Math.Floor(Math.Min(aNode.X, bNode.X) / scaleFactor);
+      var min_y_position = (int)Math.Floor(Math.Min(aNode.Y, bNode.Y) / scaleFactor);
+      var max_x_position = (int)Math.Floor(Math.Max(aNode.X, bNode.X) / scaleFactor);
+      var max_y_position = (int)Math.Floor(Math.Max(aNode.Y, bNode.Y) / scaleFactor);
 
       boundary[0] = min_x_position;
       boundary[1] = min_y_position;
@@ -269,11 +269,11 @@ namespace Altaxo.Geometry.PolygonHull
         foreach (var node in nodeList)
         {
           //Not part of the line
-          if (!(node.x == line.nodes[0].x && node.y == line.nodes[0].y ||
-              node.x == line.nodes[1].x && node.y == line.nodes[1].y))
+          if (!(node.X == line.nodes[0].X && node.Y == line.nodes[0].Y ||
+              node.X == line.nodes[1].X && node.Y == line.nodes[1].Y))
           {
-            node_x_rel_pos = (int)Math.Floor(node.x / scaleFactor);
-            node_y_rel_pos = (int)Math.Floor(node.y / scaleFactor);
+            node_x_rel_pos = (int)Math.Floor(node.X / scaleFactor);
+            node_y_rel_pos = (int)Math.Floor(node.Y / scaleFactor);
             //Inside the boundary
             if (node_x_rel_pos >= boundary[0] && node_x_rel_pos <= boundary[2] &&
                 node_y_rel_pos >= boundary[1] && node_y_rel_pos <= boundary[3])
@@ -293,8 +293,8 @@ namespace Altaxo.Geometry.PolygonHull
     {
       /* Return previous and next nodes to a line in the hull */
       var nearbyHullNodes = new Node[2];
-      var leftNodeID = line.nodes[0].id;
-      var rightNodeID = line.nodes[1].id;
+      var leftNodeID = line.nodes[0].Id;
+      var rightNodeID = line.nodes[1].Id;
       int currentID;
       var nodesFound = 0;
       var line_count = 0;
@@ -307,15 +307,15 @@ namespace Altaxo.Geometry.PolygonHull
         opposite_position = 1;
         while (position < 2)
         {
-          currentID = concave_hull[line_count].nodes[position].id;
+          currentID = concave_hull[line_count].nodes[position].Id;
           if (currentID == leftNodeID &&
-              concave_hull[line_count].nodes[opposite_position].id != rightNodeID)
+              concave_hull[line_count].nodes[opposite_position].Id != rightNodeID)
           {
             nearbyHullNodes[0] = concave_hull[line_count].nodes[opposite_position];
             nodesFound++;
           }
           else if (currentID == rightNodeID &&
-             concave_hull[line_count].nodes[opposite_position].id != leftNodeID)
+             concave_hull[line_count].nodes[opposite_position].Id != leftNodeID)
           {
             nearbyHullNodes[1] = concave_hull[line_count].nodes[opposite_position];
             nodesFound++;

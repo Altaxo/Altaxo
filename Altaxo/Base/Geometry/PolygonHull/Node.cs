@@ -26,21 +26,26 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Altaxo.Geometry.PolygonHull
 {
-  public class Node
+  public struct Node
   {
-    public int id;
-    public double x;
-    public double y;
-    public Node(double x, double y)
-    {
-      this.x = x;
-      this.y = y;
-    }
+    public int Id { get; private set; }
+    public double X { get; private set; }
+    public double Y { get; private set; }
+
+    public PointD2D Point { get { return new PointD2D(X, Y); } }
+
     public Node(double x, double y, int id)
     {
-      this.x = x;
-      this.y = y;
-      this.id = id;
+      X = x;
+      Y = y;
+      Id = id;
+    }
+
+    public void Deconstruct(out double x, out double y, out int id)
+    {
+      x = X;
+      y = Y;
+      id = Id;
     }
   }
 }

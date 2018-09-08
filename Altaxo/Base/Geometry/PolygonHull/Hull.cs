@@ -61,9 +61,12 @@ namespace Altaxo.Geometry.PolygonHull
       {
         foreach (var node in line.nodes)
         {
-          if (_unused_nodes.Find(a => a.id == node.id) != null)
+          for (var i = _unused_nodes.Count - 1; i >= 0; --i)
           {
-            _unused_nodes.Remove(_unused_nodes.Where(a => a.id == node.id).First());
+            if (_unused_nodes[i].Id == node.Id)
+            {
+              _unused_nodes.RemoveAt(i);
+            }
           }
         }
       }
@@ -103,9 +106,12 @@ namespace Altaxo.Geometry.PolygonHull
             {
               foreach (var node in aux[0].nodes)
               {
-                if (_unused_nodes.Find(a => a.id == node.id) != null)
+                for (var i = _unused_nodes.Count - 1; i >= 0; --i)
                 {
-                  _unused_nodes.Remove(_unused_nodes.Where(a => a.id == node.id).First());
+                  if (_unused_nodes[i].Id == node.Id)
+                  {
+                    _unused_nodes.RemoveAt(i);
+                  }
                 }
               }
             }

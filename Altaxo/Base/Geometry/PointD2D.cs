@@ -61,7 +61,7 @@ namespace Altaxo.Geometry
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        PointD2D s = (PointD2D)obj;
+        var s = (PointD2D)obj;
         info.AddValue("X", s.X);
         info.AddValue("Y", s.Y);
       }
@@ -79,6 +79,12 @@ namespace Altaxo.Geometry
     {
       X = x;
       Y = y;
+    }
+
+    public void Deconstruct(out double x, out double y)
+    {
+      x = X;
+      y = Y;
     }
 
     /// <summary>
@@ -233,7 +239,7 @@ namespace Altaxo.Geometry
     {
       if (obj is PointD2D)
       {
-        PointD2D q = (PointD2D)obj;
+        var q = (PointD2D)obj;
         return X == q.X && Y == q.Y;
       }
       else
@@ -320,13 +326,13 @@ namespace Altaxo.Geometry
 
     public PointD2D GetRotatedByRad(double phi, PointD2D pivot)
     {
-      double dx = X - pivot.X;
-      double dy = Y - pivot.Y;
+      var dx = X - pivot.X;
+      var dy = Y - pivot.Y;
 
       if (phi != 0)
       {
-        double cosphi = Math.Cos(phi);
-        double sinphi = Math.Sin(phi);
+        var cosphi = Math.Cos(phi);
+        var sinphi = Math.Sin(phi);
         return new PointD2D(pivot.X + (dx * cosphi - dy * sinphi), pivot.Y + (dx * sinphi + dy * cosphi));
       }
       else
@@ -364,8 +370,8 @@ namespace Altaxo.Geometry
     /// <returns>The distance between points p1 and p2.</returns>
     public static double Distance(PointD2D p1, PointD2D p2)
     {
-      double x = p1.X - p2.X;
-      double y = p1.Y - p2.Y;
+      var x = p1.X - p2.X;
+      var y = p1.Y - p2.Y;
       return Math.Sqrt(x * x + y * y);
     }
 
@@ -377,8 +383,8 @@ namespace Altaxo.Geometry
     /// <returns>The distance between points p1 and p2.</returns>
     public static double DistanceSquared(PointD2D p1, PointD2D p2)
     {
-      double x = p1.X - p2.X;
-      double y = p1.Y - p2.Y;
+      var x = p1.X - p2.X;
+      var y = p1.Y - p2.Y;
       return (x * x + y * y);
     }
 
@@ -433,9 +439,13 @@ namespace Altaxo.Geometry
       var ym = (lineOrg.Y + lineEnd.Y) / 2;
       var r = Math.Abs(lineOrg.X - xm) + Math.Abs(lineOrg.Y - ym) + distance;
       if (Math.Max(Math.Abs(point.X - xm), Math.Abs(point.Y - ym)) > r)
+      {
         return false;
+      }
       else
+      {
         return SquareDistanceLineToPoint(point, lineOrg, lineEnd) <= distance * distance;
+      }
     }
   }
 }

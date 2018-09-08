@@ -41,7 +41,7 @@ namespace Altaxo.Geometry.PolygonHull
     {
       /* It actually calculates relative length */
       double length;
-      length = Math.Pow(node1.y - node2.y, 2) + Math.Pow(node1.x - node2.x, 2);
+      length = Math.Pow(node1.Y - node2.Y, 2) + Math.Pow(node1.X - node2.X, 2);
       //length = Math.sqrt(Math.Pow(node1.y - node2.y, 2) + Math.Pow(node1.x - node2.x, 2));
       return length;
     }

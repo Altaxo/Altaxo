@@ -39,27 +39,27 @@ namespace Altaxo.Geometry.PolygonHull
     private const int TURN_NONE = 0;
 
 
-    private static int turn(Node p, Node q, Node r)
+    private static int Turn(Node p, Node q, Node r)
     {
-      return ((q.x - p.x) * (r.y - p.y) - (r.x - p.x) * (q.y - p.y)).CompareTo(0);
+      return ((q.X - p.X) * (r.Y - p.Y) - (r.X - p.X) * (q.Y - p.Y)).CompareTo(0);
     }
 
-    private static void keepLeft(List<Node> hull, Node r)
+    private static void KeepLeft(List<Node> hull, Node r)
     {
-      while (hull.Count > 1 && turn(hull[hull.Count - 2], hull[hull.Count - 1], r) != TURN_LEFT)
+      while (hull.Count > 1 && Turn(hull[hull.Count - 2], hull[hull.Count - 1], r) != TURN_LEFT)
       {
         hull.RemoveAt(hull.Count - 1);
       }
-      if (hull.Count == 0 || hull[hull.Count - 1] != r)
+      if (hull.Count == 0 || hull[hull.Count - 1].Id != r.Id)
       {
         hull.Add(r);
       }
     }
 
-    private static double getAngle(Node p1, Node p2)
+    private static double GetAngle(Node p1, Node p2)
     {
-      var xDiff = p2.x - p1.x;
-      var yDiff = p2.y - p1.y;
+      var xDiff = p2.X - p1.X;
+      var yDiff = p2.Y - p1.Y;
       return Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
     }
 
@@ -89,7 +89,7 @@ namespace Altaxo.Geometry.PolygonHull
           arrSortedInt.Add(leftArray[leftptr]);
           leftptr++;
         }
-        else if (getAngle(p0, leftArray[leftptr]) < getAngle(p0, rightArray[rightptr]))
+        else if (GetAngle(p0, leftArray[leftptr]) < GetAngle(p0, rightArray[rightptr]))
         {
           arrSortedInt.Add(leftArray[leftptr]);
           leftptr++;
@@ -110,25 +110,31 @@ namespace Altaxo.Geometry.PolygonHull
     /// <returns>The ordered set of points that forms the hull.</returns>
     public static IReadOnlyList<Node> GetConvexHull(IEnumerable<Node> points)
     {
-      Node p0 = null;
+      Node p0 = default;
+      bool is_p0_initialized=false;
       foreach (var value in points)
       {
-        if (p0 == null)
+        if (!is_p0_initialized)
         {
           p0 = value;
+          is_p0_initialized = true;
         }
         else
         {
-          if (p0.y > value.y)
+          if (p0.Y > value.Y)
           {
             p0 = value;
           }
         }
       }
+
+      if (!is_p0_initialized)
+        throw new ArgumentException("Enumeration is empty", nameof(points));
+
       var order = new List<Node>();
       foreach (var value in points)
       {
-        if (p0 != value)
+        if (p0.Id != value.Id)
         {
           order.Add(value);
         }
@@ -145,7 +151,7 @@ namespace Altaxo.Geometry.PolygonHull
       order.RemoveAt(0);
       foreach (var value in order)
       {
-        keepLeft(result, value);
+        KeepLeft(result, value);
       }
       return result;
     }
