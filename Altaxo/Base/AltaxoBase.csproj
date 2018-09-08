@@ -249,6 +249,11 @@
     <Compile Include="Analysis\Statistics\Histograms\IBinning.cs" />
     <Compile Include="Analysis\Statistics\Histograms\LinearBinning.cs" />
     <Compile Include="Analysis\Statistics\Histograms\LogarithmicBinning.cs" />
+    <Compile Include="Geometry\PolygonHull\GrahamScan.cs" />
+    <Compile Include="Geometry\PolygonHull\Hull.cs" />
+    <Compile Include="Geometry\PolygonHull\HullFunctions.cs" />
+    <Compile Include="Geometry\PolygonHull\Line.cs" />
+    <Compile Include="Geometry\PolygonHull\Node.cs" />
     <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeColumnsData.cs" />
     <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeDataBase.cs" />
     <Compile Include="Graph\Plot\IGPlotItem.cs" />
