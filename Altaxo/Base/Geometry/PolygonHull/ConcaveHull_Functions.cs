@@ -30,19 +30,19 @@ using System.Linq;
 
 namespace Altaxo.Geometry.PolygonHull
 {
-  public class HullFunctions
+  public partial class ConcaveHull
   {
 
-    public static bool verticalIntersection(Line lineA, Line lineB)
+    private static bool verticalIntersection(LineD2DAnnotated lineA, LineD2DAnnotated lineB)
     {
       /* lineA is vertical */
       double y_intersection;
-      if ((lineB.nodes[0].X > lineA.nodes[0].X) && (lineA.nodes[0].X > lineB.nodes[1].X) ||
-              ((lineB.nodes[1].X > lineA.nodes[0].X) && (lineA.nodes[0].X > lineB.nodes[0].X)))
+      if ((lineB.P0.X > lineA.P0.X) && (lineA.P0.X > lineB.P1.X) ||
+              ((lineB.P1.X > lineA.P0.X) && (lineA.P0.X > lineB.P0.X)))
       {
-        y_intersection = (((lineB.nodes[1].Y - lineB.nodes[0].Y) * (lineA.nodes[0].X - lineB.nodes[0].X)) / (lineB.nodes[1].X - lineB.nodes[0].X)) + lineB.nodes[0].Y;
-        return ((lineA.nodes[0].Y > y_intersection) && (y_intersection > lineA.nodes[1].Y))
-            || ((lineA.nodes[1].Y > y_intersection) && (y_intersection > lineA.nodes[0].Y));
+        y_intersection = (((lineB.P1.Y - lineB.P0.Y) * (lineA.P0.X - lineB.P0.X)) / (lineB.P1.X - lineB.P0.X)) + lineB.P0.Y;
+        return ((lineA.P0.Y > y_intersection) && (y_intersection > lineA.P1.Y))
+            || ((lineA.P1.Y > y_intersection) && (y_intersection > lineA.P0.Y));
       }
       else
       {
@@ -50,7 +50,7 @@ namespace Altaxo.Geometry.PolygonHull
       }
     }
 
-    public static bool intersection(Line lineA, Line lineB)
+    private static bool intersection(LineD2DAnnotated lineA, LineD2DAnnotated lineB)
     {
       /* Returns true if segments collide
        * If they have in common a segment edge returns false
@@ -61,17 +61,17 @@ namespace Altaxo.Geometry.PolygonHull
       double dif;
       double A1, A2;
       double b1, b2;
-      decimal X;
+      double X;
 
-      if (Math.Max(lineA.nodes[0].X, lineA.nodes[1].X) < Math.Min(lineB.nodes[0].X, lineB.nodes[1].X))
+      if (Math.Max(lineA.P0.X, lineA.P1.X) < Math.Min(lineB.P0.X, lineB.P1.X))
       {
         return false; //Not a chance of intersection
       }
 
-      dif = lineA.nodes[0].X - lineA.nodes[1].X;
+      dif = lineA.P0.X - lineA.P1.X;
       if (dif != 0)
       { //Avoids dividing by 0
-        A1 = (lineA.nodes[0].Y - lineA.nodes[1].Y) / dif;
+        A1 = (lineA.P0.Y - lineA.P1.Y) / dif;
       }
       else
       {
@@ -79,10 +79,10 @@ namespace Altaxo.Geometry.PolygonHull
         A1 = 9999999;
       }
 
-      dif = lineB.nodes[0].X - lineB.nodes[1].X;
+      dif = lineB.P0.X - lineB.P1.X;
       if (dif != 0)
       { //Avoids dividing by 0
-        A2 = (lineB.nodes[0].Y - lineB.nodes[1].Y) / dif;
+        A2 = (lineB.P0.Y - lineB.P1.Y) / dif;
       }
       else
       {
@@ -103,11 +103,11 @@ namespace Altaxo.Geometry.PolygonHull
         return verticalIntersection(lineB, lineA);
       }
 
-      b1 = lineA.nodes[0].Y - (A1 * lineA.nodes[0].X);
-      b2 = lineB.nodes[0].Y - (A2 * lineB.nodes[0].X);
-      X = Math.Round(System.Convert.ToDecimal((b2 - b1) / (A1 - A2)), 4);
-      if ((X <= System.Convert.ToDecimal(Math.Max(Math.Min(lineA.nodes[0].X, lineA.nodes[1].X), Math.Min(lineB.nodes[0].X, lineB.nodes[1].X)))) ||
-          (X >= System.Convert.ToDecimal(Math.Min(Math.Max(lineA.nodes[0].X, lineA.nodes[1].X), Math.Max(lineB.nodes[0].X, lineB.nodes[1].X)))))
+      b1 = lineA.P0.Y - (A1 * lineA.P0.X);
+      b2 = lineB.P0.Y - (A2 * lineB.P0.X);
+      X = (b2 - b1) / (A1 - A2);
+      if ((X <= Math.Max(Math.Min(lineA.P0.X, lineA.P1.X), Math.Min(lineB.P0.X, lineB.P1.X))) ||
+          (X >= Math.Min(Math.Max(lineA.P0.X, lineA.P1.X), Math.Max(lineB.P0.X, lineB.P1.X))))
       {
         return false; //Out of bound
       }
@@ -117,13 +117,13 @@ namespace Altaxo.Geometry.PolygonHull
       }
     }
 
-    public static List<Line> setConcave(Line line, List<Node> nearbyPoints, List<Line> concave_hull, decimal concavity, bool isSquareGrid)
+    private static List<LineD2DAnnotated> setConcave(LineD2DAnnotated line, List<PointD2DAnnotated> nearbyPoints, List<LineD2DAnnotated> concave_hull, double concavity, bool isSquareGrid)
     {
       /* Adds a middlepoint to a line (if there can be one) to make it concave */
-      var concave = new List<Line>();
-      decimal cos1, cos2;
-      decimal sumCos = -2;
-      Node? middle_point = null;
+      var concave = new List<LineD2DAnnotated>();
+      double cos1, cos2;
+      double sumCos = -2;
+      PointD2DAnnotated? middle_point = null;
       bool edgeIntersects;
       var count = 0;
       var count_line = 0;
@@ -131,23 +131,23 @@ namespace Altaxo.Geometry.PolygonHull
       while (count < nearbyPoints.Count)
       {
         edgeIntersects = false;
-        cos1 = getCos(nearbyPoints[count], line.nodes[0], line.nodes[1]);
-        cos2 = getCos(nearbyPoints[count], line.nodes[1], line.nodes[0]);
+        cos1 = getCos(nearbyPoints[count], line.P0, line.P1);
+        cos2 = getCos(nearbyPoints[count], line.P1, line.P0);
         if (cos1 + cos2 >= sumCos && (cos1 > concavity && cos2 > concavity))
         {
           count_line = 0;
           while (!edgeIntersects && count_line < concave_hull.Count)
           {
-            edgeIntersects = (intersection(concave_hull[count_line], new Line(nearbyPoints[count], line.nodes[0]))
-                || (intersection(concave_hull[count_line], new Line(nearbyPoints[count], line.nodes[1]))));
+            edgeIntersects = (intersection(concave_hull[count_line], new LineD2DAnnotated(nearbyPoints[count], line.P0))
+                || (intersection(concave_hull[count_line], new LineD2DAnnotated(nearbyPoints[count], line.P1))));
             count_line++;
           }
           if (!edgeIntersects)
           {
             // Prevents from getting sharp angles between middlepoints
             var nearNodes = getHullNearbyNodes(line, concave_hull);
-            if ((getCos(nearbyPoints[count], nearNodes[0], line.nodes[0]) < -concavity) &&
-                (getCos(nearbyPoints[count], nearNodes[1], line.nodes[1]) < -concavity))
+            if ((getCos(nearbyPoints[count], nearNodes[0], line.P0) < -concavity) &&
+                (getCos(nearbyPoints[count], nearNodes[1], line.P1) < -concavity))
             {
               // Prevents inner tangent lines to the concave hull
               if (!(tangentToHull(line, nearbyPoints[count], cos1, cos2, concave_hull) && isSquareGrid))
@@ -166,29 +166,29 @@ namespace Altaxo.Geometry.PolygonHull
       }
       else
       {
-        concave.Add(new Line(middle_point.Value, line.nodes[0]));
-        concave.Add(new Line(middle_point.Value, line.nodes[1]));
+        concave.Add(new LineD2DAnnotated(middle_point.Value, line.P0));
+        concave.Add(new LineD2DAnnotated(middle_point.Value, line.P1));
       }
       return concave;
     }
 
-    public static bool tangentToHull(Line line_treated, Node node, decimal cos1, decimal cos2, List<Line> concave_hull)
+    private static bool tangentToHull(LineD2DAnnotated line_treated, PointD2DAnnotated node, double cos1, double cos2, List<LineD2DAnnotated> concave_hull)
     {
       /* A new middlepoint could (rarely) make a segment that's tangent to the hull.
        * This method detects these situations
        * I suggest turning this method of if you are not using square grids or if you have a high dot density
        * */
       var isTangent = false;
-      decimal current_cos1;
-      decimal current_cos2;
+      double current_cos1;
+      double current_cos2;
       double edge_length;
       var nodes_searched = new List<int>();
-      Line line;
-      Node node_in_hull;
+      LineD2DAnnotated line;
+      PointD2DAnnotated node_in_hull;
       var count_line = 0;
       var count_node = 0;
 
-      edge_length = Line.getLength(node, line_treated.nodes[0]) + Line.getLength(node, line_treated.nodes[1]);
+      edge_length = LineD2DAnnotated.GetDistance(node, line_treated.P0) + LineD2DAnnotated.GetDistance(node, line_treated.P1);
 
 
       while (!isTangent && count_line < concave_hull.Count)
@@ -196,20 +196,20 @@ namespace Altaxo.Geometry.PolygonHull
         line = concave_hull[count_line];
         while (!isTangent && count_node < 2)
         {
-          node_in_hull = line.nodes[count_node];
-          if (!nodes_searched.Contains(node_in_hull.Id))
+          node_in_hull = line[count_node];
+          if (!nodes_searched.Contains(node_in_hull.ID))
           {
-            if (node_in_hull.Id != line_treated.nodes[0].Id && node_in_hull.Id != line_treated.nodes[1].Id)
+            if (node_in_hull.ID != line_treated.P0.ID && node_in_hull.ID != line_treated.P1.ID)
             {
-              current_cos1 = getCos(node_in_hull, line_treated.nodes[0], line_treated.nodes[1]);
-              current_cos2 = getCos(node_in_hull, line_treated.nodes[1], line_treated.nodes[0]);
+              current_cos1 = getCos(node_in_hull, line_treated.P0, line_treated.P1);
+              current_cos2 = getCos(node_in_hull, line_treated.P1, line_treated.P0);
               if (current_cos1 == cos1 || current_cos2 == cos2)
               {
-                isTangent = (Line.getLength(node_in_hull, line_treated.nodes[0]) + Line.getLength(node_in_hull, line_treated.nodes[1]) < edge_length);
+                isTangent = (LineD2DAnnotated.GetDistance(node_in_hull, line_treated.P0) + LineD2DAnnotated.GetDistance(node_in_hull, line_treated.P1) < edge_length);
               }
             }
           }
-          nodes_searched.Add(node_in_hull.Id);
+          nodes_searched.Add(node_in_hull.ID);
           count_node++;
         }
         count_node = 0;
@@ -218,24 +218,23 @@ namespace Altaxo.Geometry.PolygonHull
       return isTangent;
     }
 
-    public static decimal getCos(Node a, Node b, Node o)
+    private static double getCos(PointD2DAnnotated a, PointD2DAnnotated b, PointD2DAnnotated o)
     {
       /* Law of cosines */
       var aPow2 = Math.Pow(a.X - o.X, 2) + Math.Pow(a.Y - o.Y, 2);
       var bPow2 = Math.Pow(b.X - o.X, 2) + Math.Pow(b.Y - o.Y, 2);
       var cPow2 = Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2);
-      var cos = (aPow2 + bPow2 - cPow2) / (2 * Math.Sqrt(aPow2 * bPow2));
-      return Math.Round(System.Convert.ToDecimal(cos), 4);
+      return (aPow2 + bPow2 - cPow2) / (2 * Math.Sqrt(aPow2 * bPow2));
     }
 
-    public static int[] getBoundary(Line line, int scaleFactor)
+    private static int[] getBoundary(LineD2DAnnotated line, int scaleFactor)
     {
       /* Giving a scaleFactor it returns an area around the line 
        * where we will search for nearby points 
        * */
       var boundary = new int[4];
-      var aNode = line.nodes[0];
-      var bNode = line.nodes[1];
+      var aNode = line.P0;
+      var bNode = line.P1;
       var min_x_position = (int)Math.Floor(Math.Min(aNode.X, bNode.X) / scaleFactor);
       var min_y_position = (int)Math.Floor(Math.Min(aNode.Y, bNode.Y) / scaleFactor);
       var max_x_position = (int)Math.Floor(Math.Max(aNode.X, bNode.X) / scaleFactor);
@@ -249,7 +248,7 @@ namespace Altaxo.Geometry.PolygonHull
       return boundary;
     }
 
-    public static List<Node> getNearbyPoints(Line line, List<Node> nodeList, int scaleFactor)
+    private static List<PointD2DAnnotated> getNearbyPoints(LineD2DAnnotated line, List<PointD2DAnnotated> nodeList, int scaleFactor)
     {
       /* The bigger the scaleFactor the more points it will return
        * Inspired by this precious algorithm:
@@ -257,7 +256,7 @@ namespace Altaxo.Geometry.PolygonHull
        * Be carefull: if it's too small it will return very little points (or non!), 
        * if it's too big it will add points that will not be used and will consume time
        * */
-      var nearbyPoints = new List<Node>();
+      var nearbyPoints = new List<PointD2DAnnotated>();
       int[] boundary;
       var tries = 0;
       int node_x_rel_pos;
@@ -269,8 +268,8 @@ namespace Altaxo.Geometry.PolygonHull
         foreach (var node in nodeList)
         {
           //Not part of the line
-          if (!(node.X == line.nodes[0].X && node.Y == line.nodes[0].Y ||
-              node.X == line.nodes[1].X && node.Y == line.nodes[1].Y))
+          if (!(node.X == line.P0.X && node.Y == line.P0.Y ||
+              node.X == line.P1.X && node.Y == line.P1.Y))
           {
             node_x_rel_pos = (int)Math.Floor(node.X / scaleFactor);
             node_y_rel_pos = (int)Math.Floor(node.Y / scaleFactor);
@@ -289,12 +288,12 @@ namespace Altaxo.Geometry.PolygonHull
       return nearbyPoints;
     }
 
-    public static Node[] getHullNearbyNodes(Line line, List<Line> concave_hull)
+    private static PointD2DAnnotated[] getHullNearbyNodes(LineD2DAnnotated line, List<LineD2DAnnotated> concave_hull)
     {
       /* Return previous and next nodes to a line in the hull */
-      var nearbyHullNodes = new Node[2];
-      var leftNodeID = line.nodes[0].Id;
-      var rightNodeID = line.nodes[1].Id;
+      var nearbyHullNodes = new PointD2DAnnotated[2];
+      var leftNodeID = line.P0.ID;
+      var rightNodeID = line.P1.ID;
       int currentID;
       var nodesFound = 0;
       var line_count = 0;
@@ -307,17 +306,17 @@ namespace Altaxo.Geometry.PolygonHull
         opposite_position = 1;
         while (position < 2)
         {
-          currentID = concave_hull[line_count].nodes[position].Id;
+          currentID = concave_hull[line_count][position].ID;
           if (currentID == leftNodeID &&
-              concave_hull[line_count].nodes[opposite_position].Id != rightNodeID)
+              concave_hull[line_count][opposite_position].ID != rightNodeID)
           {
-            nearbyHullNodes[0] = concave_hull[line_count].nodes[opposite_position];
+            nearbyHullNodes[0] = concave_hull[line_count][opposite_position];
             nodesFound++;
           }
           else if (currentID == rightNodeID &&
-             concave_hull[line_count].nodes[opposite_position].Id != leftNodeID)
+             concave_hull[line_count][opposite_position].ID != leftNodeID)
           {
-            nearbyHullNodes[1] = concave_hull[line_count].nodes[opposite_position];
+            nearbyHullNodes[1] = concave_hull[line_count][opposite_position];
             nodesFound++;
           }
           position++;

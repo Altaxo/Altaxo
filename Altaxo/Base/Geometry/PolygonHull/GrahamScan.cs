@@ -3,6 +3,7 @@
 Adapted from: https://github.com/masphei/ConvexHull
 The MIT License (MIT)
 Copyright (c) 2013 masphei
+Copyright (c) 2018 Dr. Dirk Lellinger
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -39,37 +40,37 @@ namespace Altaxo.Geometry.PolygonHull
     private const int TURN_NONE = 0;
 
 
-    private static int Turn(Node p, Node q, Node r)
+    private static int Turn(PointD2DAnnotated p, PointD2DAnnotated q, PointD2DAnnotated r)
     {
       return ((q.X - p.X) * (r.Y - p.Y) - (r.X - p.X) * (q.Y - p.Y)).CompareTo(0);
     }
 
-    private static void KeepLeft(List<Node> hull, Node r)
+    private static void KeepLeft(List<PointD2DAnnotated> hull, PointD2DAnnotated r)
     {
       while (hull.Count > 1 && Turn(hull[hull.Count - 2], hull[hull.Count - 1], r) != TURN_LEFT)
       {
         hull.RemoveAt(hull.Count - 1);
       }
-      if (hull.Count == 0 || hull[hull.Count - 1].Id != r.Id)
+      if (hull.Count == 0 || hull[hull.Count - 1].ID != r.ID)
       {
         hull.Add(r);
       }
     }
 
-    private static double GetAngle(Node p1, Node p2)
+    private static double GetAngle(PointD2DAnnotated p1, PointD2DAnnotated p2)
     {
       var xDiff = p2.X - p1.X;
       var yDiff = p2.Y - p1.Y;
       return Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
     }
 
-    private static List<Node> MergeSort(Node p0, List<Node> arrPoint)
+    private static List<PointD2DAnnotated> MergeSort(PointD2DAnnotated p0, List<PointD2DAnnotated> arrPoint)
     {
       if (arrPoint.Count == 1)
       {
         return arrPoint;
       }
-      var arrSortedInt = new List<Node>();
+      var arrSortedInt = new List<PointD2DAnnotated>();
       var middle = arrPoint.Count / 2;
       var leftArray = arrPoint.GetRange(0, middle);
       var rightArray = arrPoint.GetRange(middle, arrPoint.Count - middle);
@@ -108,10 +109,10 @@ namespace Altaxo.Geometry.PolygonHull
     /// </summary>
     /// <param name="points">The points.</param>
     /// <returns>The ordered set of points that forms the hull.</returns>
-    public static IReadOnlyList<Node> GetConvexHull(IEnumerable<Node> points)
+    public static IReadOnlyList<PointD2DAnnotated> GetConvexHull(IEnumerable<PointD2DAnnotated> points)
     {
-      Node p0 = default;
-      bool is_p0_initialized=false;
+      PointD2DAnnotated p0 = default;
+      var is_p0_initialized = false;
       foreach (var value in points)
       {
         if (!is_p0_initialized)
@@ -129,19 +130,21 @@ namespace Altaxo.Geometry.PolygonHull
       }
 
       if (!is_p0_initialized)
+      {
         throw new ArgumentException("Enumeration is empty", nameof(points));
+      }
 
-      var order = new List<Node>();
+      var order = new List<PointD2DAnnotated>();
       foreach (var value in points)
       {
-        if (p0.Id != value.Id)
+        if (p0.ID != value.ID)
         {
           order.Add(value);
         }
       }
 
       order = MergeSort(p0, order);
-      var result = new List<Node>
+      var result = new List<PointD2DAnnotated>
       {
         p0,
         order[0],

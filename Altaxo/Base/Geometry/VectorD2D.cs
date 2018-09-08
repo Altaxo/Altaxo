@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Geometry
 {
   /// <summary>
-  /// Represents a vector with members of type Doube in 2D space.
+  /// Represents a vector with members of type Double in 2D space.
   /// </summary>
   public struct VectorD2D : IEquatable<VectorD2D>
   {
@@ -122,7 +122,7 @@ namespace Altaxo.Geometry
 
     public bool Equals(VectorD2D other)
     {
-      return this.X == other.X && this.Y == other.Y;
+      return X == other.X && Y == other.Y;
     }
 
     public static VectorD2D Empty
@@ -237,10 +237,14 @@ namespace Altaxo.Geometry
       var k = x * x + y * y;
 
       if (0 == k)
+      {
         throw new ArgumentException("The provided data for x, y are all zero. This is not allowed for a vector to be normalized.", nameof(x));
+      }
 
       if (!(k > 0))
+      {
         throw new ArgumentException("The data for x, y contain invalid or infinite values", nameof(x));
+      }
 
       k = 1 / Math.Sqrt(k);
       return new VectorD2D(x * k, y * k);

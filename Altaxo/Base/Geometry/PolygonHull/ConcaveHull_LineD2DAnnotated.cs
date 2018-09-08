@@ -24,28 +24,57 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *
 */
 
+using System;
+using System.Collections.Generic;
+
 namespace Altaxo.Geometry.PolygonHull
 {
-  public struct Node
+  public partial class ConcaveHull
   {
-    public int Id { get; private set; }
-    public double X { get; private set; }
-    public double Y { get; private set; }
-
-    public PointD2D Point { get { return new PointD2D(X, Y); } }
-
-    public Node(double x, double y, int id)
+    private class LineD2DAnnotated
     {
-      X = x;
-      Y = y;
-      Id = id;
-    }
+      public bool IsChecked { get; set; }
+      public PointD2DAnnotated P0 { get; private set; }
+      public PointD2DAnnotated P1 { get; private set; }
 
-    public void Deconstruct(out double x, out double y, out int id)
-    {
-      x = X;
-      y = Y;
-      id = Id;
+
+      public LineD2DAnnotated(PointD2DAnnotated p0, PointD2DAnnotated p1)
+      {
+        P0 = p0;
+        P1 = p1;
+      }
+
+      public IEnumerable<PointD2DAnnotated> Points
+      {
+        get
+        {
+          yield return P0;
+          yield return P1;
+        }
+      }
+
+      public PointD2DAnnotated this[int idx]
+      {
+        get
+        {
+          switch (idx)
+          {
+            case 0:
+              return P0;
+            case 1:
+              return P1;
+            default:
+              throw new IndexOutOfRangeException("Index out of range [0,1]");
+          }
+        }
+      }
+
+      public static double GetDistance(PointD2DAnnotated node1, PointD2DAnnotated node2)
+      {
+        var dx = node1.X - node2.X;
+        var dy = node1.Y - node2.Y;
+        return Math.Sqrt(dx * dx + dy * dy);
+      }
     }
   }
 }
