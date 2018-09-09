@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Settings.Scripting
 {
@@ -46,10 +46,10 @@ namespace Altaxo.Settings.Scripting
     public static bool IsFrameworkVersion47Installed { get; private set; } = Altaxo.Serialization.AutoUpdates.NetFrameworkVersionDetermination.IsVersion47Installed();
 
     private static List<Assembly> _startupAssemblies = new List<Assembly>();
-    private static List<Assembly> _userAssemblies = new List<Assembly>();
+    private static readonly List<Assembly> _userAssemblies = new List<Assembly>();
     private static List<Assembly> _userTemporaryAssemblies = new List<Assembly>();
-    private static List<Assembly> _additionalReferencedAssemblies = new List<Assembly>();
-    private static List<Assembly> _assemblyIncludedInClassReference;
+    private static readonly List<Assembly> _additionalReferencedAssemblies = new List<Assembly>();
+    private static readonly List<Assembly> _assemblyIncludedInClassReference;
 
     public static AssemblyAddedEventHandler AssemblyAdded;
 
@@ -60,16 +60,21 @@ namespace Altaxo.Settings.Scripting
       AppDomain.CurrentDomain.AssemblyLoad += new AssemblyLoadEventHandler(CurrentDomain_AssemblyLoad);
 
       // Add available assemblies including the application itself
-      foreach (Assembly asm in assembliesLoadedSoFar)
+      foreach (var asm in assembliesLoadedSoFar)
       {
         if (asm.IsDynamic || (asm is System.Reflection.Emit.AssemblyBuilder))
+        {
           continue;
+        }
+
         try
         {
           // this will include only those assemblies that have an external file
           // we put this in a try .. catch clause since for some assemblies asking for the location will cause an UnsupportedException
           if (string.IsNullOrEmpty(asm.Location))
+          {
             continue;
+          }
         }
         catch (Exception)
         {
@@ -85,20 +90,45 @@ namespace Altaxo.Settings.Scripting
 
       // try to load some assemblies given in the .addin file(s)
       // TODO the following code does not work properly, make it work!
-      string addInPath = Altaxo.Main.Services.StringParser.Parse("/${AppName}/CodeEditing/AdditionalAssemblyReferences");
+      var addInPath = Altaxo.Main.Services.StringParser.Parse("/${AppName}/CodeEditing/AdditionalAssemblyReferences");
       IList<string> additionalUserAssemblyNames = AddInTree.BuildItems<string>(addInPath, null, false);
       var additionalReferencedAssemblies = new HashSet<Assembly>();
       foreach (var additionalUserAssemblyName in additionalUserAssemblyNames)
       {
         Assembly additionalAssembly = null;
+        Exception exception = null;
         try
         {
+          // try to load the assembly with its long name from GAC
           additionalAssembly = Assembly.Load(additionalUserAssemblyName);
-          additionalReferencedAssemblies.Add(additionalAssembly);
+          exception = null;
         }
         catch (Exception ex)
         {
-          Current.MessageService.ShowWarningFormatted("Assembly with name '{0}' that was given in {1} could not be loaded. Error: {2}", additionalUserAssemblyName, "/Altaxo/CodeEditing/AdditionalAssemblyReferences", ex.Message);
+          exception = ex;
+        }
+
+        if (additionalAssembly == null)
+        {
+          try
+          {
+            // try to load the assembly by its file name
+            additionalAssembly = Assembly.LoadFrom(additionalUserAssemblyName);
+            exception = null;
+          }
+          catch (Exception ex)
+          {
+            exception = ex;
+          }
+        }
+
+        if (null == exception)
+        {
+          additionalReferencedAssemblies.Add(additionalAssembly);
+        }
+        else
+        {
+          Current.MessageService.ShowWarningFormatted("Assembly with name '{0}' that was given in {1} could not be loaded. Error: {2}", additionalUserAssemblyName, "/Altaxo/CodeEditing/AdditionalAssemblyReferences", exception.Message);
         }
       }
 
@@ -113,7 +143,9 @@ namespace Altaxo.Settings.Scripting
       foreach (var ass in All)
       {
         if (hash.Contains(ass.GetName().Name.ToUpperInvariant()))
+        {
           list.Add(ass);
+        }
       }
 
       _assemblyIncludedInClassReference = list;
@@ -124,13 +156,18 @@ namespace Altaxo.Settings.Scripting
       var asm = args.LoadedAssembly;
 
       if (asm.IsDynamic || (asm is System.Reflection.Emit.AssemblyBuilder))
+      {
         return;
+      }
+
       try
       {
         // this will include only those assemblies that have an external file
         // we put this in a try .. catch clause since for some assemblies asking for the location will cause an UnsupportedException
         if (string.IsNullOrEmpty(asm.Location))
+        {
           return;
+        }
       }
       catch (Exception)
       {
@@ -151,7 +188,9 @@ namespace Altaxo.Settings.Scripting
     private static void OnAssemblyAdded(Assembly asm)
     {
       if (null != AssemblyAdded)
+      {
         AssemblyAdded(asm);
+      }
     }
 
     /// <summary>
@@ -161,7 +200,7 @@ namespace Altaxo.Settings.Scripting
     {
       get
       {
-        List<Assembly> list = new List<Assembly>();
+        var list = new List<Assembly>();
 
         if (IsFrameworkVersion47Installed)
         {
@@ -189,11 +228,13 @@ namespace Altaxo.Settings.Scripting
     /// <returns></returns>
     private static int FindAssemblyInList(Assembly asm, List<Assembly> list)
     {
-      for (int i = 0; i < list.Count; i++)
+      for (var i = 0; i < list.Count; i++)
+      {
         if (list[i].Location == asm.Location)
         {
           return i;
         }
+      }
 
       return -1;
     }
@@ -205,11 +246,15 @@ namespace Altaxo.Settings.Scripting
     /// <param name="asm">Provided assembly to add.</param>
     public static void AddTemporaryUserAssembly(Assembly asm)
     {
-      int idx = FindAssemblyInList(asm, _userTemporaryAssemblies);
+      var idx = FindAssemblyInList(asm, _userTemporaryAssemblies);
       if (idx < 0)
+      {
         _userTemporaryAssemblies.Add(asm);
+      }
       else
+      {
         _userTemporaryAssemblies[idx] = asm;
+      }
 
       OnAssemblyAdded(asm);
     }
