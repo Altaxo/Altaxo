@@ -105,7 +105,7 @@ namespace Altaxo.Geometry.PolygonHull
 
       b1 = lineA.P0.Y - (A1 * lineA.P0.X);
       b2 = lineB.P0.Y - (A2 * lineB.P0.X);
-      X = (b2 - b1) / (A1 - A2);
+      X = Math.Round((b2 - b1) / (A1 - A2), 4);
       if ((X <= Math.Max(Math.Min(lineA.P0.X, lineA.P1.X), Math.Min(lineB.P0.X, lineB.P1.X))) ||
           (X >= Math.Min(Math.Max(lineA.P0.X, lineA.P1.X), Math.Max(lineB.P0.X, lineB.P1.X))))
       {
@@ -218,21 +218,22 @@ namespace Altaxo.Geometry.PolygonHull
       return isTangent;
     }
 
+    private static double Pow2(double x) => x * x;
+
     private static double getCos(PointD2DAnnotated a, PointD2DAnnotated b, PointD2DAnnotated o)
     {
       /* Law of cosines */
-      var aPow2 = Math.Pow(a.X - o.X, 2) + Math.Pow(a.Y - o.Y, 2);
-      var bPow2 = Math.Pow(b.X - o.X, 2) + Math.Pow(b.Y - o.Y, 2);
-      var cPow2 = Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2);
-      return (aPow2 + bPow2 - cPow2) / (2 * Math.Sqrt(aPow2 * bPow2));
+      var aPow2 = Pow2(a.X - o.X) + Pow2(a.Y - o.Y);
+      var bPow2 = Pow2(b.X - o.X) + Pow2(b.Y - o.Y);
+      var cPow2 = Pow2(a.X - b.X) + Pow2(a.Y - b.Y);
+      return Math.Round((aPow2 + bPow2 - cPow2) / (2 * Math.Sqrt(aPow2 * bPow2)), 4);
     }
 
-    private static int[] getBoundary(LineD2DAnnotated line, int scaleFactor)
+    private static (int minx, int miny, int maxx, int maxy) getBoundary(LineD2DAnnotated line, int scaleFactor)
     {
       /* Giving a scaleFactor it returns an area around the line 
        * where we will search for nearby points 
        * */
-      var boundary = new int[4];
       var aNode = line.P0;
       var bNode = line.P1;
       var min_x_position = (int)Math.Floor(Math.Min(aNode.X, bNode.X) / scaleFactor);
@@ -240,12 +241,7 @@ namespace Altaxo.Geometry.PolygonHull
       var max_x_position = (int)Math.Floor(Math.Max(aNode.X, bNode.X) / scaleFactor);
       var max_y_position = (int)Math.Floor(Math.Max(aNode.Y, bNode.Y) / scaleFactor);
 
-      boundary[0] = min_x_position;
-      boundary[1] = min_y_position;
-      boundary[2] = max_x_position;
-      boundary[3] = max_y_position;
-
-      return boundary;
+      return (min_x_position, min_y_position, max_x_position, max_y_position);
     }
 
     private static List<PointD2DAnnotated> getNearbyPoints(LineD2DAnnotated line, List<PointD2DAnnotated> nodeList, int scaleFactor)
@@ -257,14 +253,13 @@ namespace Altaxo.Geometry.PolygonHull
        * if it's too big it will add points that will not be used and will consume time
        * */
       var nearbyPoints = new List<PointD2DAnnotated>();
-      int[] boundary;
       var tries = 0;
       int node_x_rel_pos;
       int node_y_rel_pos;
 
       while (tries < 2 && nearbyPoints.Count == 0)
       {
-        boundary = getBoundary(line, scaleFactor);
+        var boundary = getBoundary(line, scaleFactor);
         foreach (var node in nodeList)
         {
           //Not part of the line
@@ -274,8 +269,8 @@ namespace Altaxo.Geometry.PolygonHull
             node_x_rel_pos = (int)Math.Floor(node.X / scaleFactor);
             node_y_rel_pos = (int)Math.Floor(node.Y / scaleFactor);
             //Inside the boundary
-            if (node_x_rel_pos >= boundary[0] && node_x_rel_pos <= boundary[2] &&
-                node_y_rel_pos >= boundary[1] && node_y_rel_pos <= boundary[3])
+            if (node_x_rel_pos >= boundary.minx && node_x_rel_pos <= boundary.maxx &&
+                node_y_rel_pos >= boundary.miny && node_y_rel_pos <= boundary.maxy)
             {
               nearbyPoints.Add(node);
             }
