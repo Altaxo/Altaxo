@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
 using System;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -34,14 +34,19 @@ namespace Altaxo.Worksheet.Commands
   {
     public bool IsValid(object caller, Condition condition)
     {
-      string selectedData = condition.Properties["ContainsPLSModelData"];
+      var selectedData = condition.Properties["ContainsPLSModelData"];
 
       if (Current.Workbench.ActiveViewContent == null)
+      {
         return false;
-      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
-        return false;
+      }
 
-      return ctrl.DataTable.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento;
+      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
+      {
+        return false;
+      }
+
+      return ctrl.DataTable?.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento;
     }
   }
 

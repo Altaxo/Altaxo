@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
 using System;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -35,11 +35,16 @@ namespace Altaxo.Worksheet.Commands
     public bool IsValid(object caller, Condition condition)
     {
       if (Current.Workbench.ActiveViewContent == null)
+      {
         return false;
-      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
-        return false;
+      }
 
-      return ctrl.DataTable.DataSource != null;
+      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
+      {
+        return false;
+      }
+
+      return ctrl.DataTable?.DataSource != null;
     }
   }
 }
