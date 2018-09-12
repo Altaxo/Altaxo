@@ -27,24 +27,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClipperLib;
 using NUnit.Framework;
 
-namespace Altaxo.Geometry.PolygonHull
+namespace Altaxo.Geometry.PolygonHull.Int64
 {
   [TestFixture]
-  public class ConcaveHull_Test : PolygonTestBase
+  public class GrahamScan_Test : PolygonTestBase
   {
     private Random _random = new Random(1);
+
+    [Test]
+    public void Test1()
+    {
+      const int numberOfPoints = 4;
+
+      var a = new double[2 * numberOfPoints]
+      {
+595,
+-662,
+587,
+-386,
+646,
+772,
+112,
+433,
+      };
+
+
+      var arr = new IntPoint[numberOfPoints];
+      for (var i = 0; i < numberOfPoints; ++i)
+      {
+        arr[i] = new IntPoint(a[2 * i], a[2 * i + 1]);
+      }
+
+      var convexHull = GrahamScan.GetConvexHull(arr);
+      IncludenessTest(convexHull, arr);
+    }
 
     [Test]
     public void Test_Includeness()
     {
       var hash = new HashSet<(int, int)>();
 
-      for (var numberOfTests = 0; numberOfTests < 10; ++numberOfTests)
+      for (var numberOfTests = 0; numberOfTests < 100; ++numberOfTests)
       {
         var numberOfPoints = 20 + numberOfTests * 10;
-        var arr = new PointD2DAnnotated[numberOfPoints];
+        var arr = new IntPoint[numberOfPoints];
 
         hash.Clear();
         for (var i = 0; i < numberOfPoints;)
@@ -55,18 +84,14 @@ namespace Altaxo.Geometry.PolygonHull
           if (!hash.Contains((x, y)))
           {
             hash.Add((x, y));
-            arr[i] = new PointD2DAnnotated(x, y, i);
+            arr[i] = new IntPoint(x, y);
             ++i;
           }
         }
 
-        for (double concaveness = 1; concaveness >= -1; concaveness -= 1 / 16.0)
-        {
-          var concaveCalc = new ConcaveHull(arr, concaveness, 100, true);
+        var convexHull = GrahamScan.GetConvexHull(arr);
 
-          IncludenessTest(concaveCalc.ConvexHullPoints, arr);
-          IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
-        }
+        IncludenessTest(convexHull, arr);
       }
     }
   }

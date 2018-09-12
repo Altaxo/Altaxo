@@ -27,9 +27,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClipperLib;
 using NUnit.Framework;
 
-namespace Altaxo.Geometry.PolygonHull
+namespace Altaxo.Geometry.PolygonHull.Int64
 {
   public class PolygonTestBase
   {
@@ -39,7 +40,7 @@ namespace Altaxo.Geometry.PolygonHull
     /// </summary>
     /// <param name="hull">The hull.</param>
     /// <param name="allPoints">All points.</param>
-    public void IncludenessTest(IReadOnlyList<PointD2DAnnotated> hull, IReadOnlyList<PointD2DAnnotated> allPoints)
+    public void IncludenessTest(IReadOnlyList<(IntPoint point, int index)> hull, IReadOnlyList<IntPoint> allPoints)
     {
 
       Assert.IsNotNull(hull);        // convex hull has to be != null
@@ -50,21 +51,29 @@ namespace Altaxo.Geometry.PolygonHull
       var hash = new HashSet<(int, int)>();
       for (var i = 0; i < hull.Count; ++i)
       {
-        Assert.IsFalse(hash.Contains(((int)hull[i].X, (int)hull[i].Y)));
-        hash.Add(((int)hull[i].X, (int)hull[i].Y));
+        Assert.IsFalse(hash.Contains(((int)hull[i].point.X, (int)hull[i].point.Y)));
+        hash.Add(((int)hull[i].point.X, (int)hull[i].point.Y));
       }
 
 
       // Various tests with clipper
-      var clipperPoly = new List<ClipperLib.IntPoint>(hull.Select(dp => new ClipperLib.IntPoint(dp.X, dp.Y)));
+      var clipperPoly = new List<ClipperLib.IntPoint>(hull.Select(dp => new ClipperLib.IntPoint(dp.point.X, dp.point.Y)));
 
       // The area should be != 0
       Assert.Greater(Math.Abs(ClipperLib.Clipper.Area(clipperPoly)), 0); // Area should be != 0
-      //Assert.Greater(ClipperLib.Clipper.Area(clipperPoly), 0); // Polygon should be positive oriented
+      Assert.Greater(ClipperLib.Clipper.Area(clipperPoly), 0); // Polygon should be positive oriented
 
       // The polygon should be simple
       var clipperPolys = ClipperLib.Clipper.SimplifyPolygon(clipperPoly);
-      Assert.AreEqual(1, clipperPolys.Count); // if polygon is simple, it can not be transformed into two or more polygons
+
+      if (clipperPolys.Count != 1)
+      {
+        // note: Clipper simplifies polygons even if the segments do not touch, but are near enough to each other
+        // thus when clipper has created two or more polygons, we need some check with
+        // or own library if this is "wrong" alarm
+        CheckHullForIntersections(hull);
+      }
+
       Assert.LessOrEqual(clipperPolys[0].Count, clipperPoly.Count); // the resulting polygon should have the same number of points than the original one
 
 
@@ -74,5 +83,33 @@ namespace Altaxo.Geometry.PolygonHull
         Assert.AreNotEqual(0, ClipperLib.Clipper.PointInPolygon(new ClipperLib.IntPoint(allPoints[i].X, allPoints[i].Y), clipperPoly));
       }
     }
+
+    public static void CheckHullForIntersections(IReadOnlyList<(IntPoint point, int index)> hull)
+    {
+      var segments = new Int64LineD2DAnnotated[hull.Count];
+
+      for (var i = 0; i < hull.Count - 1; ++i)
+      {
+        segments[i] = new Int64LineD2DAnnotated(hull[i], hull[i + 1]);
+      }
+
+      segments[segments.Length - 1] = new Int64LineD2DAnnotated(hull[hull.Count - 1], hull[0]);
+
+      for (var i = 0; i < segments.Length - 1; ++i)
+      {
+        for (var j = i + 2; j < segments.Length; ++j)
+        {
+
+          // two adjacent segments are allowed to touch,
+          // thus either j==i+1, or i==0 and j==segments.Count-1 are allowed
+          if (!(i == 0 && j == segments.Length - 1))
+          {
+            Assert.False(ConcaveHull.DoLinesIntersectOrTouch(segments[i].Line, segments[j].Line));
+          }
+        }
+      }
+    }
+
+
   }
 }

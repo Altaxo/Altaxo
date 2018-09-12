@@ -165,6 +165,10 @@
     </Compile>
     <Compile Include="Geometry\PolygonHull\ConcaveHull_Test.cs" />
     <Compile Include="Geometry\PolygonHull\GrahamScan_Test.cs" />
+    <Compile Include="Geometry\PolygonHull\Int64\ConcaveHull_Test.cs" />
+    <Compile Include="Geometry\PolygonHull\Int64\GrahamScan_Test.cs" />
+    <Compile Include="Geometry\PolygonHull\Int64\Intersect_Test.cs" />
+    <Compile Include="Geometry\PolygonHull\Int64\PolygonTestBase.cs" />
     <Compile Include="Geometry\PolygonHull\PolygonTestBase.cs" />
     <Compile Include="Geometry\TestMath2D.cs" />
     <Compile Include="Graph\CS\G2DCartesicCoordinateSystem_Test.cs" />

@@ -65,7 +65,7 @@ namespace Altaxo.Geometry.PolygonHull
     {
       CalculateConvexHullAsLineList(nodes);
 
-      var unused_nodes = new List<PointD2DAnnotated>(nodes);
+      var unused_nodes = new List<PointD2DAnnotated>();
       // from _unused_nodes remove all nodes that are part of the convex hull
       // so that only those nodes that are not part of the convex hull remain
       var convexHullIDs = new HashSet<int>(ConvexHullPoints.Select(hullpoint => hullpoint.ID));
@@ -93,7 +93,7 @@ namespace Altaxo.Geometry.PolygonHull
       {
         hull_convex_edges.Add(new LineD2DAnnotated(ConvexHullPoints[i], ConvexHullPoints[i + 1]));
       }
-      hull_convex_edges.Add(new LineD2DAnnotated(ConvexHullPoints[0], ConvexHullPoints[ConvexHullPoints.Count - 1]));
+      hull_convex_edges.Add(new LineD2DAnnotated(ConvexHullPoints[ConvexHullPoints.Count - 1], ConvexHullPoints[0]));
 
       _hull_convex_edges = hull_convex_edges;
     }

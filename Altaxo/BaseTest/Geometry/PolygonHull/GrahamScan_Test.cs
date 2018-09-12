@@ -47,7 +47,7 @@ namespace Altaxo.Geometry.PolygonHull
         var arr = new PointD2DAnnotated[numberOfPoints];
 
         hash.Clear();
-        for (var i = 0; i < numberOfPoints; ++i)
+        for (var i = 0; i < numberOfPoints;)
         {
           var x = _random.Next(-1000, 1000);
           var y = _random.Next(-1000, 1000);
@@ -56,6 +56,7 @@ namespace Altaxo.Geometry.PolygonHull
           {
             hash.Add((x, y));
             arr[i] = new PointD2DAnnotated(x, y, i);
+            ++i;
           }
         }
 
