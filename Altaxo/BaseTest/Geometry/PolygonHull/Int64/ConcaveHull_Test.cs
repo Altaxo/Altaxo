@@ -117,6 +117,22 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     }
 
     [Test]
+    public void Test_FivePoints2()
+    {
+      var arr = new IntPoint[5];
+
+      arr[0] = new IntPoint(-100, -100);
+      arr[1] = new IntPoint(100, -100);
+      arr[2] = new IntPoint(100, 100);
+      arr[3] = new IntPoint(0, 90);
+      arr[4] = new IntPoint(-100, 100);
+      var concaveCalc = new ConcaveHull(arr, Math.Cos(Math.PI / 8), 2);
+      IncludenessTest(concaveCalc.ConvexHullPoints, arr);
+      IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
+      Assert.AreEqual(5, concaveCalc.ConcaveHullPoints.Count);
+    }
+
+    [Test]
     public void Test_ColinearPointsHorizontal()
     {
       var arr = new IntPoint[7];

@@ -155,4 +155,30 @@ namespace Altaxo.Geometry.PolygonHull.Int64
       }
     }
   }
+
+  public readonly struct Int64BoundingBox
+  {
+    public readonly IntPoint P0;
+    public readonly IntPoint P1;
+
+    public Int64BoundingBox(IntPoint p0, IntPoint p1)
+    {
+      if (!(p0.X <= p1.X && p0.Y <= p1.Y))
+      {
+        throw new ArgumentException();
+      }
+
+      P0 = p0;
+      P1 = p1;
+    }
+
+    public bool IsPointWithin(in IntPoint p)
+    {
+      return
+           p.X >= P0.X
+        && p.Y >= P0.Y
+        && p.X <= P1.X
+        && p.Y <= P1.Y;
+    }
+  }
 }

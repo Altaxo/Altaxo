@@ -3,7 +3,7 @@
 Adapted from: https://github.com/masphei/ConvexHull
 The MIT License (MIT)
 Copyright (c) 2013 masphei
-Copyright (c) 2018 Dr. Dirk Lellinger (adapted to IntPoints)
+Copyright (c) 2018 Dr. Dirk Lellinger (adapted to IntPoints, get rid of angle calculation)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -41,14 +41,14 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     private const int TURN_NONE = 0;
 
 
-    private static int Turn(IntPoint p, IntPoint q, IntPoint r)
+    private static int Turn(in IntPoint p, in IntPoint q, in IntPoint r)
     {
       var d1 = Int128.Int128Mul((q.X - p.X), (r.Y - p.Y));
       var d2 = Int128.Int128Mul((r.X - p.X), (q.Y - p.Y));
       return d1 == d2 ? 0 : (d1 < d2 ? -1 : 1);
     }
 
-    private static void KeepLeft(List<(IntPoint point, int index)> hull, (IntPoint point, int index) r)
+    private static void KeepLeft(List<(IntPoint point, int index)> hull, in (IntPoint point, int index) r)
     {
       while (hull.Count > 1 && Turn(hull[hull.Count - 2].point, hull[hull.Count - 1].point, r.point) != TURN_LEFT)
       {
@@ -60,14 +60,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
       }
     }
 
-    private static double GetAngle(IntPoint p1, IntPoint p2)
-    {
-      var xDiff = p2.X - p1.X;
-      var yDiff = p2.Y - p1.Y;
-      return Math.Atan2(yDiff, xDiff);
-    }
-
-    private static List<(IntPoint point, int index)> MergeSort(IntPoint p0, List<(IntPoint point, int index)> arrPoint)
+    private static List<(IntPoint point, int index)> MergeSort(in IntPoint p0, List<(IntPoint point, int index)> arrPoint)
     {
       if (arrPoint.Count == 1)
       {
@@ -93,7 +86,8 @@ namespace Altaxo.Geometry.PolygonHull.Int64
           arrSortedInt.Add(leftArray[leftptr]);
           leftptr++;
         }
-        else if (GetAngle(p0, leftArray[leftptr].point) < GetAngle(p0, rightArray[rightptr].point))
+        // else if (GetAngle(p0, leftArray[leftptr].point) < GetAngle(p0, rightArray[rightptr].point))
+        else if (TURN_LEFT == Turn(p0, leftArray[leftptr].point, rightArray[rightptr].point))
         {
           arrSortedInt.Add(leftArray[leftptr]);
           leftptr++;

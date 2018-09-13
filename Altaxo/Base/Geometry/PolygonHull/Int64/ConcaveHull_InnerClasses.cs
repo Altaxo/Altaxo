@@ -33,8 +33,6 @@ namespace Altaxo.Geometry.PolygonHull.Int64
 {
   public partial class ConcaveHull
   {
-
-
     public class LengthComparer : IComparer<Int64LineD2DAnnotated>
     {
       public static LengthComparer Instance { get; private set; } = new LengthComparer();
@@ -44,6 +42,5 @@ namespace Altaxo.Geometry.PolygonHull.Int64
         return Comparer<double>.Default.Compare(x.Length, y.Length);
       }
     }
-
   }
 }

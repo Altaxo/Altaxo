@@ -68,6 +68,27 @@ namespace Altaxo.Geometry.PolygonHull.Int64
       var z = (rX * sX + rY * sY) / Math.Sqrt((rX * rX + rY * rY) * (sX * sX + sY * sY));
       return z;
     }
+
+
+    /// <summary>
+    /// Gets the angle between the lines pivot-a and pivot-b
+    /// </summary>
+    /// <param name="pivot">The pivot.</param>
+    /// <param name="a">a.</param>
+    /// <param name="b">The b.</param>
+    /// <returns></returns>
+    public static double GetAngle(IntPoint pivot, IntPoint a, IntPoint b)
+    {
+      var aX = (double)(a.X - pivot.X);
+      var aY = (double)(a.Y - pivot.Y);
+      var bX = (double)(b.X - pivot.X);
+      var bY = (double)(b.Y - pivot.Y);
+      var d1 = aX * bY - aY * bX;
+      var d2 = aX * bX + aY * bY;
+      return Math.Atan2(d1, d2);
+    }
+
+
   }
 
 
@@ -85,7 +106,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     /// <param name="a">The line segment.</param>
     /// <param name="b">The point to test.</param>
     /// <returns>0 if the point is on, -1 if it is right, and +1 if it is left on/to the infinite long line that is defined by the line segment.</returns>
-    public static int SignOfCrossProduct(Int64LineSegment a, IntPoint b)
+    public static int SignOfCrossProduct(in Int64LineSegment a, in IntPoint b)
     {
       var aX = a.P1.X - a.P0.X;
       var aY = a.P1.Y - a.P0.Y;
@@ -96,7 +117,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
       return d1 == d2 ? 0 : (d1 < d2 ? -1 : 1); // for non-integer we have to use some delta for comparison with 0
     }
 
-    public static bool DoesPointTouchLine(IntPoint b, Int64LineSegment a)
+    public static bool DoesPointTouchLine(in IntPoint b, in Int64LineSegment a)
     {
       if (
            Math.Min(a.P0.X, a.P1.X) > b.X // then a is right of b
@@ -118,7 +139,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     /// <param name="a">Line segment a.</param>
     /// <param name="b">Line segment b.</param>
     /// <returns>True if the two line segments touch each other or intersect; otherwise, false.</returns>
-    public static bool DoLinesIntersectOrTouch(Int64LineSegment a, Int64LineSegment b)
+    public static bool DoLinesIntersectOrTouch(in Int64LineSegment a, in Int64LineSegment b)
     {
       if (
            Math.Min(a.P0.X, a.P1.X) > Math.Max(b.P0.X, b.P1.X) // then a is right of b

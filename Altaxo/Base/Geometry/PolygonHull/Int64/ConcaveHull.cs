@@ -104,20 +104,37 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     public void CalculateConcaveHull(double concavity, double minimalEdgeLength)
     {
       concavity = Math.Min(1, Math.Max(concavity, -1));
+      var angle_concavity = Math.Acos(concavity);
+
+      if (!(concavity < 1))
+      {
+        // if concavity is 1, the concave hull is equal to the convex hull
+        ConcaveHullPoints = ConvexHullPoints;
+        return;
+      }
 
       var pointsNotOnHull = new List<(IntPoint point, int index)>(PointsNotOnConvexHull); // make a copy of the unused points
       var hull_concave_edges_temp = new List<Int64LineD2DAnnotated>(_hull_convex_edges); // list A in the paper
       hull_concave_edges_temp.Sort(LengthComparer.Instance); // the edge with greatest length is at the end of the list!
       var hull_concave_edges_final = new List<Int64LineD2DAnnotated>(); // list B in the paper
 
-      var maxAngleOuterVertex = Math.Acos(concavity);
-      var minimumAngleInnerVertex = Math.Max(0, Math.PI - 2 * maxAngleOuterVertex);
+      var maximumAngleOfOuterVertex = Math.Acos(concavity); // the maximum angle between one segment of the convex hull and the new segment of the concave hull
+      var maximumAngleOfOuterVertexLimitedToPiHalf = Math.Min(maximumAngleOfOuterVertex, Math.PI / 2); // same angle, but clamped to Pi/2
 
-      var maxRelativeRadius = double.PositiveInfinity;
-      if (minimumAngleInnerVertex > 0)
-      {
-        maxRelativeRadius = Math.Sqrt(1 + 1 / Pow2(Math.Tan(minimumAngleInnerVertex)));
-      }
+      // not in the paper: in order to limit the search for potential points of the concave hull, we can take advantage
+      // of the fact that when the maximum angle of the outer vertex is less than Pi/2, the angle of the inner vertex of the new
+      // two segments of the concave hull is greater than Pi-2*maximumAngleOfOuterVertex
+      // thus we can use an inscribed circle that goes through the vertices of the convex hull segment, and has the property
+      // that any point on this circle, when connected to the two vertices of the convex hull segment,
+      // then those two connection lines form an angle of Pi-2*maximumAngleOfOuterVertex
+      // the bounding circle reaches its smallest diameter if maximumAngleOfOuterVertex is Pi/4 (then the diameter of the circle is equal to the length of the convex hull segment)
+      // if maximumAngleOfOuterVertex is smaller than Pi/4, the circle gets bigger, but its center is to the right (i.e. outside) the hull
+      // if maximumAngleOfOuterVertex is greater than Pi/4 and less than Pi/2, the circle gets bigger, with its center to the left (i.e. inside) the hull
+      // for maximumAngleOfOuterVertex greater then or equal Pi/2, the bounding circle would be infinite, and thus is useless
+      // in order to save computing time, instead of a bounding circle we are using a bounding rectangle
+
+      // boundingCircleRelativeRadius and boundingCircleRelativeOffset are relative to length/2 of the convex hull segment
+      var (boundingCircleRelativeRadius, boundingCircleRelativeOffset) = GetBoundingCircleParametersFor(maximumAngleOfOuterVertex);
 
       Int64LineD2DAnnotated selected_edge;
 
@@ -138,26 +155,45 @@ namespace Altaxo.Geometry.PolygonHull.Int64
         hull_concave_edges_temp.RemoveAt(hull_concave_edges_temp.Count - 1);
         var wereNewEdgesCreated = false;
 
-
+        // gets the bounding box for potential concave hull points. If bounding box would be infinite,
+        // a value of null is returned
+        var boundingBox = GetBoundingBox(selected_edge, boundingCircleRelativeRadius, boundingCircleRelativeOffset);
         var nearPoints = GetPointsNearby(selected_edge, pointsNotOnHull);
 
         // paper: foreach of nearPoints, calculate the two angles and select that point with the minimum angles
         // note instead of the angle, we use the cosine, thus instead of minimum angle, we need maximum cosine
-        var maxCosOfAngle = double.NegativeInfinity;
+        var bestAngle = double.PositiveInfinity;
         (IntPoint point, int index) bestPoint = default;
         foreach (var np in nearPoints)
         {
-          var cosangle1 = Int64LineSegment.GetCosOfAngle(selected_edge.P0, selected_edge.P1, np.point);
-          var cosangle2 = Int64LineSegment.GetCosOfAngle(selected_edge.P1, np.point, selected_edge.P0);
-
-          if (Math.Min(cosangle1, cosangle2) > maxCosOfAngle)
+          if (null == boundingBox || boundingBox.Value.IsPointWithin(np.point))
           {
-            maxCosOfAngle = Math.Min(cosangle1, cosangle2);
-            bestPoint = np;
+            var angle1 = Int64LineSegment.GetAngle(selected_edge.P0, selected_edge.P1, np.point);
+            var angle2 = Int64LineSegment.GetAngle(selected_edge.P1, np.point, selected_edge.P0);
+            var maxAngle = Math.Max(angle1, angle2);
+            if (maxAngle >= 0 && maxAngle < bestAngle)
+            {
+              bestAngle = maxAngle;
+              bestPoint = np;
+
+
+              if (bestAngle == 0)
+              {
+                break;
+              }
+              else if (bestAngle < maximumAngleOfOuterVertexLimitedToPiHalf)  // update bounding box if useful
+              {
+                // if our best angle was updated and is less than Pi/2,
+                // we can recalculate the bounding box using the new angle, in order to make it smaller
+                // and to limit the search further
+                boundingBox = GetBoundingBox(selected_edge, bestAngle);
+              }
+
+            }
           }
         }
 
-        if (maxCosOfAngle >= concavity)
+        if (bestAngle <= angle_concavity)
         {
           // paper: Create edges e2 and e3 between point p and endpoints of edge e;
           var e2 = new Int64LineD2DAnnotated((selected_edge.P0, selected_edge.I0), bestPoint);
@@ -195,6 +231,82 @@ namespace Altaxo.Geometry.PolygonHull.Int64
 
       // calculate the hull points from the edges
       ConcaveHullPoints = GetHullPoints(hull_concave_edges_final);
+    }
+
+
+    /// <summary>
+    /// Gets the parameters relative radius and offset for a bounding circle that limit the search for potential candidates for the concave hull.
+    /// </summary>
+    /// <param name="maximumAngleOfOuterVertex">The maximum allowed angle between the (old) convex hull segment and the new segment of the concave hull.</param>
+    /// <returns>The parameters relative radius and offset for a bounding circle.</returns>
+    /// <remarks>
+    /// Not in the paper: in order to limit the search for potential points of the concave hull, we can take advantage
+    /// of the fact that when the maximum angle of the outer vertex is less than Pi/2, the angle of the inner vertex of the new
+    /// two segments of the concave hull is greater than Pi-2*maximumAngleOfOuterVertex
+    /// thus we can use an inscribed circle that goes through the vertices of the convex hull segment, and has the property
+    /// that any point on this circle, when connected to the two vertices of the convex hull segment,
+    /// then those two connection lines form an angle of Pi-2*maximumAngleOfOuterVertex.
+    /// The bounding circle reaches its smallest diameter if maximumAngleOfOuterVertex is Pi/4 (then the diameter of the circle is equal to the length of the convex hull segment)
+    /// If maximumAngleOfOuterVertex is smaller than Pi/4, the circle gets bigger, but its center is to the right (i.e. outside) the hull
+    /// If maximumAngleOfOuterVertex is greater than Pi/4 and less than Pi/2, the circle gets bigger, with its center to the left (i.e. inside) the hull
+    /// For maximumAngleOfOuterVertex greater then or equal to Pi/2, the bounding circle would be infinite, and thus is useless (we return PositiveInfinity for both values).
+    /// </remarks>
+    private static (double relativeRadius, double relativeOffset) GetBoundingCircleParametersFor(double maximumAngleOfOuterVertex)
+    {
+      var boundingCircleRelativeRadius = double.PositiveInfinity;
+      var boundingCircleRelativeOffset = double.PositiveInfinity;
+      if (2 * maximumAngleOfOuterVertex < Math.PI)
+      {
+        boundingCircleRelativeRadius = 1 / Math.Sin(2 * maximumAngleOfOuterVertex);
+        boundingCircleRelativeOffset = -1 / Math.Tan(2 * maximumAngleOfOuterVertex);
+      }
+
+      return (boundingCircleRelativeRadius, boundingCircleRelativeOffset);
+
+    }
+
+    /// <summary>
+    /// Gets the bounding box for a convex hull segment, given the maximum allowed angle between the (old) convex hull segment and the new segment of the concave hull.
+    /// </summary>
+    /// <param name="segment">The convex hull segment.</param>
+    /// <param name="maximumAngleOfOuterVertex">The maximum allowed angle between the (old) convex hull segment and the new segment of the concave hull.</param>
+    /// <returns>A bounding box to limit the search for potential candidates for a concave hull.</returns>
+    private static Int64BoundingBox? GetBoundingBox(in Int64LineD2DAnnotated segment, in double maximumAngleOfOuterVertex)
+    {
+      var (radius, offset) = GetBoundingCircleParametersFor(maximumAngleOfOuterVertex);
+      return GetBoundingBox(segment, radius, offset);
+    }
+
+    /// <summary>
+    /// Gets the bounding box for a convex hull segment, given the precalculated relative circle radius and offset
+    /// </summary>
+    /// <param name="segment">The convex hull segment.</param>
+    /// <param name="boundingCircleRelativeRadius">The bounding circle relative radius.</param>
+    /// <param name="boundingCircleRelativeOffset">The bounding circle relative offset.</param>
+    /// <returns>A bounding box to limit the search for potential candidates for a concave hull.</returns>
+    private static Int64BoundingBox? GetBoundingBox(in Int64LineD2DAnnotated segment, in double boundingCircleRelativeRadius, in double boundingCircleRelativeOffset)
+    {
+      if (double.IsPositiveInfinity(boundingCircleRelativeRadius))
+      {
+        return null;
+      }
+
+      // note: we assume here that the inside of our hull is to the left of the segment
+      var centerX = 0.5 * (segment.P0.X + segment.P1.X + (segment.P0.Y - segment.P1.Y) * boundingCircleRelativeOffset);
+      var centerY = 0.5 * (segment.P0.Y + segment.P1.Y + (segment.P1.X - segment.P0.X) * boundingCircleRelativeOffset);
+      var dim2 = 0.5 * segment.Length * boundingCircleRelativeRadius;
+
+      // Note: the bounding box must at least include the convex hull segment itself,
+      // because any point on this segment would fulfill the requirments for a potential hull point
+      var leftX = Math.Min(centerX - dim2, Math.Min(segment.P0.X, segment.P1.X));
+      var lowerY = Math.Min(centerY - dim2, Math.Min(segment.P0.Y, segment.P1.Y));
+      var rightX = Math.Max(centerX + dim2, Math.Max(segment.P0.X, segment.P1.X));
+      var upperY = Math.Max(centerY + dim2, Math.Max(segment.P0.Y, segment.P1.Y));
+
+      return new Int64BoundingBox(
+        new IntPoint(Math.Floor(leftX), Math.Floor(lowerY)),
+        new IntPoint(Math.Ceiling(rightX), Math.Ceiling(upperY))
+        );
     }
 
     /// <summary>
