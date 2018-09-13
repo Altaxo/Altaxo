@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Win32;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -59,6 +59,15 @@ namespace Altaxo.Serialization.AutoUpdates
         case "4.6.2":
           return IsVersion462Installed();
 
+        case "4.7":
+          return IsVersion47Installed();
+
+        case "4.7.1":
+          return IsVersion471Installed();
+
+        case "4.7.2":
+          return IsVersion472Installed();
+
         default:
           return false;
       }
@@ -68,10 +77,10 @@ namespace Altaxo.Serialization.AutoUpdates
     {
       try
       {
-        using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+        using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
            RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\"))
         {
-          int releaseKey = (int)ndpKey.GetValue("Release");
+          var releaseKey = (int)ndpKey.GetValue("Release");
           return releaseKey;
         }
       }
@@ -85,63 +94,118 @@ namespace Altaxo.Serialization.AutoUpdates
     {
       var release = GetFramework45ReleaseNumber();
       if (!release.HasValue)
+      {
         return false;
+      }
       else
+      {
         return true;
+      }
     }
 
     public static bool IsVersion451Installed()
     {
       var release = GetFramework45ReleaseNumber();
       if (!release.HasValue)
+      {
         return false;
+      }
       else
+      {
         return release >= 378675;
+      }
     }
 
     public static bool IsVersion452Installed()
     {
       var release = GetFramework45ReleaseNumber();
       if (!release.HasValue)
+      {
         return false;
+      }
       else
+      {
         return release >= 379893;
+      }
     }
 
     public static bool IsVersion46Installed()
     {
       var release = GetFramework45ReleaseNumber();
       if (!release.HasValue)
+      {
         return false;
+      }
       else
+      {
         return release >= 393273;
+      }
     }
 
     public static bool IsVersion461Installed()
     {
       var release = GetFramework45ReleaseNumber();
       if (!release.HasValue)
+      {
         return false;
+      }
       else
+      {
         return release >= 394254;
+      }
     }
 
     public static bool IsVersion462Installed()
     {
       var release = GetFramework45ReleaseNumber();
       if (!release.HasValue)
+      {
         return false;
+      }
       else
+      {
         return release >= 394802;
+      }
     }
 
     public static bool IsVersion47Installed()
     {
       var release = GetFramework45ReleaseNumber();
       if (!release.HasValue)
+      {
         return false;
+      }
       else
+      {
         return release >= 460798;
+      }
     }
+
+    public static bool IsVersion471Installed()
+    {
+      var release = GetFramework45ReleaseNumber();
+      if (!release.HasValue)
+      {
+        return false;
+      }
+      else
+      {
+        return release >= 461308;
+      }
+    }
+
+    public static bool IsVersion472Installed()
+    {
+      var release = GetFramework45ReleaseNumber();
+      if (!release.HasValue)
+      {
+        return false;
+      }
+      else
+      {
+        return release >= 461808;
+      }
+    }
+
   }
 }
