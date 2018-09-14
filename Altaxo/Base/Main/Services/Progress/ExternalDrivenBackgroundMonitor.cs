@@ -39,8 +39,8 @@ namespace Altaxo.Main.Services
     private double _progressFraction = double.NaN;
     private OperationStatus _operationStatus;
     private string _taskName;
-
     private bool _cancellationPending;
+    private CancellationTokenSource _cancellationTokenSource;
 
     #region IBackgroundMonitor Members
 
@@ -114,11 +114,19 @@ namespace Altaxo.Main.Services
       set { _taskName = value; }
     }
 
-    public CancellationToken CancellationToken => throw new NotImplementedException();
+    public CancellationToken CancellationToken
+    {
+      get
+      {
+        _cancellationTokenSource = _cancellationTokenSource ?? new CancellationTokenSource();
+        return _cancellationTokenSource.Token;
+      }
+    }
 
     public void SetCancellationPending()
     {
       _cancellationPending = true;
+      _cancellationTokenSource?.Cancel();
     }
 
     public IProgressReporter CreateSubTask(double workAmount)
