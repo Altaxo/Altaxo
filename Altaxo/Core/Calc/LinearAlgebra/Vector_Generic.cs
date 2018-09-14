@@ -229,16 +229,16 @@ namespace Altaxo.Calc.LinearAlgebra
         return false;
       }
 
-      if (this._array.Length != vector._array.Length)
+      if (_array.Length != vector._array.Length)
       {
         return false;
       }
 
       var comparer = EqualityComparer<T>.Default;
 
-      for (int i = 0; i < this._array.Length; ++i)
+      for (int i = 0; i < _array.Length; ++i)
       {
-        if (!comparer.Equals(this._array[i], vector._array[i]))
+        if (!comparer.Equals(_array[i], vector._array[i]))
         {
           return false;
         }
@@ -264,7 +264,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>Reference to the underlying array of this vector.</returns>
     public T[] GetInternalData()
     {
-      return this._array;
+      return _array;
     }
 
     ///<summary>Returns an array of data copyied (not used directly) from this instance.</summary>
@@ -289,7 +289,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentException("The starting element must be less that the ending element.");
       }
 
-      if (startElement < 0 || endElement < 0 || startElement >= this.Length || endElement >= this.Length)
+      if (startElement < 0 || endElement < 0 || startElement >= Length || endElement >= Length)
       {
         throw new ArgumentException("startElement and startElement must be greater than or equal to zero, endElement must be less than Length, and endElement must be less than Length.");
       }
@@ -309,7 +309,7 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       if (src == null)
         throw new System.ArgumentNullException(nameof(src));
-      if (src.Length != this.Length)
+      if (src.Length != Length)
         throw new ArgumentException("Source length must be equal to length of this vector", nameof(src));
 
       if (!(_array.Length == src.Count))
@@ -349,11 +349,11 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       if (src == null)
         throw new System.ArgumentNullException(nameof(src));
-      if (src.Length != this.Length)
+      if (src.Length != Length)
         throw new ArgumentException("Length of source vector must be equal to length of this vector", nameof(src));
 
-      var h = this._array;
-      this._array = src._array;
+      var h = _array;
+      _array = src._array;
       src._array = h;
     }
 
@@ -365,9 +365,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     // --- ICloneable Interface ---
     ///<summary>Clone (deep copy) a <c>FloatVector</c> variable</summary>
-    Object ICloneable.Clone()
+    object ICloneable.Clone()
     {
-      return this.Clone();
+      return Clone();
     }
 
     // --- IFormattable Interface ---
@@ -401,7 +401,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
     public virtual string ToString(string format, IFormatProvider formatProvider)
     {
-      StringBuilder sb = new StringBuilder("Length: ");
+      var sb = new StringBuilder("Length: ");
       sb.Append(_array.Length).Append(System.Environment.NewLine);
       for (int i = 0; i < _array.Length; ++i)
       {

@@ -57,7 +57,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
       set
       {
@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.beta;
+        return beta;
       }
       set
       {
@@ -100,7 +100,7 @@ namespace Altaxo.Calc.Probability
 
       this.alpha = alpha;
       this.beta = beta;
-      this.UpdateHelpers();
+      UpdateHelpers();
     }
 
     /// <summary>
@@ -195,17 +195,17 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     private void UpdateHelpers()
     {
-      if (null == this.chiSquareDistributionAlpha)
-        this.chiSquareDistributionAlpha = new ChiSquareDistribution(alpha, generator);
+      if (null == chiSquareDistributionAlpha)
+        chiSquareDistributionAlpha = new ChiSquareDistribution(alpha, generator);
       else
-        this.chiSquareDistributionAlpha.Alpha = this.alpha;
+        chiSquareDistributionAlpha.Alpha = alpha;
 
-      if (null == this.chiSquareDistributionBeta)
-        this.chiSquareDistributionBeta = new ChiSquareDistribution(beta, generator);
+      if (null == chiSquareDistributionBeta)
+        chiSquareDistributionBeta = new ChiSquareDistribution(beta, generator);
       else
-        this.chiSquareDistributionBeta.Alpha = this.beta;
+        chiSquareDistributionBeta.Alpha = beta;
 
-      this.helper1 = (double)this.beta / (double)this.alpha;
+      helper1 = beta / alpha;
     }
 
     #endregion instance methods
@@ -241,9 +241,9 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.beta > 2)
+        if (beta > 2)
         {
-          return (double)this.beta / ((double)this.beta - 2.0);
+          return beta / (beta - 2.0);
         }
         else
         {
@@ -312,7 +312,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A Fisher-Snedecor distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return this.chiSquareDistributionAlpha.NextDouble() / this.chiSquareDistributionBeta.NextDouble() * this.helper1;
+      return chiSquareDistributionAlpha.NextDouble() / chiSquareDistributionBeta.NextDouble() * helper1;
     }
 
     #endregion overridden Distribution members

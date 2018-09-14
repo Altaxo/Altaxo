@@ -184,11 +184,11 @@ namespace Altaxo.Calc.Probability
       if (!IsValidLocation(location))
         throw new ArgumentOutOfRangeException("Mu out of range (must be finite)");
 
-      this._alpha = alpha;
-      this._beta = beta;
-      this._abe = abe;
-      this._scale = scale;
-      this._location = location;
+      _alpha = alpha;
+      _beta = beta;
+      _abe = abe;
+      _scale = scale;
+      _location = location;
 
       // Generator variables
       if (_alpha != 1 && _alpha != 2)
@@ -400,8 +400,7 @@ namespace Altaxo.Calc.Probability
 
       if (alpha != 1)
       {
-        double gamma, aga, sigmaf, muf;
-        ParameterConversionS1ToFeller(alpha, beta, abe, scale, location, out gamma, out aga, out sigmaf, out muf);
+        ParameterConversionS1ToFeller(alpha, beta, abe, scale, location, out var gamma, out var aga, out var sigmaf, out var muf);
         return StableDistributionFeller.PDF((x - muf) / sigmaf, alpha, gamma, aga) / sigmaf;
       }
       else
@@ -515,8 +514,7 @@ namespace Altaxo.Calc.Probability
 
       if (alpha != 1)
       {
-        double gamma, aga, sigmaf, muf;
-        ParameterConversionS1ToFeller(alpha, beta, abe, scale, location, out gamma, out aga, out sigmaf, out muf);
+        ParameterConversionS1ToFeller(alpha, beta, abe, scale, location, out var gamma, out var aga, out var sigmaf, out var muf);
         return StableDistributionFeller.CDF((x - muf) / sigmaf, alpha, gamma, aga, ref tempStorage, precision);
       }
       else
@@ -591,8 +589,7 @@ namespace Altaxo.Calc.Probability
     {
       double tan_pi_alpha_2 = TanXPiBy2(alpha);
 
-      double aga;
-      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out var aga);
       dev = Math.PI * (gamma < 0 ? 0.5 * aga : 1 - 0.5 * aga);
       // double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
       facdiv = CosGammaPiBy2(alpha, gamma, aga); // Inverse part of the original factor without power
@@ -605,8 +602,7 @@ namespace Altaxo.Calc.Probability
     {
       double tan_pi_alpha_2 = TanXPiBy2(alpha);
 
-      double aga;
-      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out var aga);
       dev = Math.PI * (gamma >= 0 ? 0.5 * aga : 1 - 0.5 * aga);
       // double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
       facdiv = CosGammaPiBy2(alpha, gamma, aga); // Inverse part of the original factor without power
@@ -619,8 +615,7 @@ namespace Altaxo.Calc.Probability
     {
       double tan_pi_alpha_2 = TanXPiBy2(alpha);
 
-      double aga;
-      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out var aga);
 
       dev = Math.PI * (gamma < 0 ? 0.5 * aga : (0.5 * ((2 - alpha) + gamma)));
       if (dev < 0)

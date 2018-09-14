@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Fourier
 {
@@ -274,9 +274,9 @@ namespace Altaxo.Calc.Fourier
 
       int msize = GetNecessaryTransformationSize(arrsize);
 
-      Complex[] xjfj = new Complex[msize];
-      Complex[] fserp = new Complex[msize];
-      Complex[] resarray = new Complex[msize];
+      var xjfj = new Complex[msize];
+      var fserp = new Complex[msize];
+      var resarray = new Complex[msize];
       //Complex[] cmparray = new Complex[arrsize];
 
       // bilde xj*fj
@@ -285,7 +285,7 @@ namespace Altaxo.Calc.Fourier
       for (int i = 0; i < arrsize; i++)
       {
         double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
-        Complex val = new Complex(Math.Cos(phi), Math.Sin(phi));
+        var val = new Complex(Math.Cos(phi), Math.Sin(phi));
         xjfj[i] = arr[i] * val;
 
         np += i + i + 1;  // np == (k*k)%n2
@@ -408,7 +408,7 @@ namespace Altaxo.Calc.Fourier
       if (x.Length != y.Length)
         throw new ArgumentException("Length of real and imaginary array do not match!");
 
-      ChirpNativeFFTStorage s = temporaryStorage as ChirpNativeFFTStorage;
+      var s = temporaryStorage as ChirpNativeFFTStorage;
       chirpnativefft(x, y, x, y, x.Length, direction, ref s);
       temporaryStorage = s;
     }
@@ -441,7 +441,7 @@ namespace Altaxo.Calc.Fourier
     public static void
       FFT(double[] x, double[] y, uint n, FourierDirection direction, ref object temporaryStorage)
     {
-      ChirpNativeFFTStorage s = temporaryStorage as ChirpNativeFFTStorage;
+      var s = temporaryStorage as ChirpNativeFFTStorage;
       chirpnativefft(x, y, x, y, (int)n, direction, ref s);
       temporaryStorage = s;
     }

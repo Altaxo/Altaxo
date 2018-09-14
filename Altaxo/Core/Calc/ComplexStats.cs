@@ -80,14 +80,14 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexFloat Sum(ComplexFloat[] data)
+    public static ComplexFloat Sum(ComplexFloat[] data)
     {
       if (!(data != null))
         throw new ArgumentNullException(nameof(data));
       return SumRecursion(data, 0, data.Length);
     }
 
-    static private ComplexFloat SumRecursion(ComplexFloat[] data, int start, int end)
+    private static ComplexFloat SumRecursion(ComplexFloat[] data, int start, int end)
     {
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
@@ -116,14 +116,14 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public Complex Sum(Complex[] data)
+    public static Complex Sum(Complex[] data)
     {
       if (!(data != null))
         throw new ArgumentNullException(nameof(data));
       return SumRecursion(data, 0, data.Length);
     }
 
-    static private Complex SumRecursion(Complex[] data, int start, int end)
+    private static Complex SumRecursion(Complex[] data, int start, int end)
     {
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
@@ -156,14 +156,14 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexFloat SumOfSquares(ComplexFloat[] data)
+    public static ComplexFloat SumOfSquares(ComplexFloat[] data)
     {
       if (!(data != null))
         throw new ArgumentNullException(nameof(data));
       return SumOfSquaresRecursion(data, 0, data.Length);
     }
 
-    static private ComplexFloat SumOfSquaresRecursion(ComplexFloat[] data, int start, int end)
+    private static ComplexFloat SumOfSquaresRecursion(ComplexFloat[] data, int start, int end)
     {
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
@@ -193,14 +193,14 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public Complex SumOfSquares(Complex[] data)
+    public static Complex SumOfSquares(Complex[] data)
     {
       if (!(data != null))
         throw new ArgumentNullException(nameof(data));
       return SumOfSquaresRecursion(data, 0, data.Length);
     }
 
-    static private Complex SumOfSquaresRecursion(Complex[] data, int start, int end)
+    private static Complex SumOfSquaresRecursion(Complex[] data, int start, int end)
     {
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
@@ -233,7 +233,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexFloat Mean(ComplexFloat[] data)
+    public static ComplexFloat Mean(ComplexFloat[] data)
     {
       return ComplexStats.Sum(data) / data.Length;
     }
@@ -243,7 +243,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public Complex Mean(Complex[] data)
+    public static Complex Mean(Complex[] data)
     {
       return ComplexStats.Sum(data) / data.Length;
     }
@@ -253,7 +253,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexFloat Variance(ComplexFloat[] data)
+    public static ComplexFloat Variance(ComplexFloat[] data)
     {
       if (!(data != null))
         throw new ArgumentNullException(nameof(data));
@@ -269,7 +269,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public Complex Variance(Complex[] data)
+    public static Complex Variance(Complex[] data)
     {
       if (!(data != null))
         throw new ArgumentNullException(nameof(data));
@@ -285,7 +285,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexFloat StdDev(ComplexFloat[] data)
+    public static ComplexFloat StdDev(ComplexFloat[] data)
     {
       if (!(data != null))
         throw new ArgumentNullException(nameof(data));
@@ -301,7 +301,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public Complex StdDev(Complex[] data)
+    public static Complex StdDev(Complex[] data)
     {
       if (!(data != null))
         throw new ArgumentNullException(nameof(data));
@@ -321,7 +321,7 @@ namespace Altaxo.Calc
     /// <param name="alpha"></param>
     /// <param name="beta"></param>
     /// <returns></returns>
-    static public float RMSError(ComplexFloat[] alpha, ComplexFloat[] beta)
+    public static float RMSError(ComplexFloat[] alpha, ComplexFloat[] beta)
     {
       if (!(alpha != null))
         throw new ArgumentNullException(nameof(alpha));
@@ -333,7 +333,7 @@ namespace Altaxo.Calc
       return (float)Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
     }
 
-    static private float SumOfSquaredErrorRecursion(ComplexFloat[] alpha, ComplexFloat[] beta, int start, int end)
+    private static float SumOfSquaredErrorRecursion(ComplexFloat[] alpha, ComplexFloat[] beta, int start, int end)
     {
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
@@ -367,7 +367,7 @@ namespace Altaxo.Calc
     /// <param name="alpha"></param>
     /// <param name="beta"></param>
     /// <returns></returns>
-    static public double RMSError(Complex[] alpha, Complex[] beta)
+    public static double RMSError(Complex[] alpha, Complex[] beta)
     {
       if (!(alpha != null))
         throw new ArgumentNullException(nameof(alpha));
@@ -379,7 +379,7 @@ namespace Altaxo.Calc
       return Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
     }
 
-    static private double SumOfSquaredErrorRecursion(Complex[] alpha, Complex[] beta, int start, int end)
+    private static double SumOfSquaredErrorRecursion(Complex[] alpha, Complex[] beta, int start, int end)
     {
       if (!(start >= 0))
         throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");

@@ -423,9 +423,8 @@ namespace Altaxo.Calc.Probability
     {
       if (alpha < 1)
       {
-        double factorp, facdiv, dev, logPdfPrefactor;
-        GetAlt1GnParameter(x, alpha, out factorp, out facdiv, out dev, out logPdfPrefactor);
-        Alt1GnI intg = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+        GetAlt1GnParameter(x, alpha, out var factorp, out var facdiv, out var dev, out var logPdfPrefactor);
+        var intg = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
         if (intg.IsMaximumLeftHandSide())
           return intg.PDFIntegrate(ref tempStorage, precision);
         else
@@ -433,9 +432,8 @@ namespace Altaxo.Calc.Probability
       }
       else
       {
-        double factorp, factorw, dev, logPdfPrefactor;
-        GetAgt1GnParameter(x, alpha, out factorp, out factorw, out dev, out logPdfPrefactor);
-        Agt1GnI intg = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
+        GetAgt1GnParameter(x, alpha, out var factorp, out var factorw, out var dev, out var logPdfPrefactor);
+        var intg = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
         if (intg.IsMaximumLeftHandSide())
           return intg.Integrate(ref tempStorage, precision);
         else
@@ -583,9 +581,8 @@ namespace Altaxo.Calc.Probability
 
       if (alpha < 1)
       {
-        double factorp, facdiv, dev, logPdfPrefactor;
-        GetAlt1GnParameter(x, alpha, out factorp, out facdiv, out dev, out logPdfPrefactor);
-        Alt1GnI inc = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+        GetAlt1GnParameter(x, alpha, out var factorp, out var facdiv, out var dev, out var logPdfPrefactor);
+        var inc = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
         if (inc.IsMaximumLeftHandSide())
         {
           integFromXZero = inc.CDFIntegrate(ref tempStorage, precision) / Math.PI;
@@ -612,9 +609,8 @@ namespace Altaxo.Calc.Probability
       }
       else // if(alpha>1)
       {
-        double factorp, factorw, dev, logPdfPrefactor;
-        GetAgt1GnParameter(x, alpha, out factorp, out factorw, out dev, out logPdfPrefactor);
-        Agt1GnI inc = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
+        GetAgt1GnParameter(x, alpha, out var factorp, out var factorw, out var dev, out var logPdfPrefactor);
+        var inc = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
         if (inc.IsMaximumLeftHandSide())
         {
           integFromXInfinity = inc.CDFIntegrate(ref tempStorage, precision) / Math.PI;
@@ -655,9 +651,8 @@ namespace Altaxo.Calc.Probability
       if (BracketRootByExtensionOnly(delegate (double x)
       { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, 0, ref x0, ref x1))
       {
-        double root;
         if (null == QuickRootFinding.ByBrentsAlgorithm(delegate (double x)
-        { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+        { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out var root))
           return root;
       }
       return double.NaN;
@@ -686,9 +681,8 @@ namespace Altaxo.Calc.Probability
       if (QuickRootFinding.BracketRootByExtensionOnly(delegate (double x)
       { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, 0, ref x0, ref x1))
       {
-        double root;
         if (null == QuickRootFinding.ByBrentsAlgorithm(delegate (double x)
-        { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+        { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out var root))
           return root;
       }
       return double.NaN;

@@ -31,8 +31,8 @@
  * NB: Problem class inspired by the optimization frame in the QuantLib library
 */
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -52,15 +52,15 @@ namespace Altaxo.Calc.Optimization
     {
       double eps = 1e-8;
       double fp, fm;
-      DoubleVector grad = new DoubleVector(x.Length, 0.0);
+      var grad = new DoubleVector(x.Length, 0.0);
 
-      DoubleVector xx = new DoubleVector(x);
+      var xx = new DoubleVector(x);
       for (int i = 0; i < x.Length; i++)
       {
         xx[i] += eps;
-        fp = this.Value(xx);
+        fp = Value(xx);
         xx[i] -= 2.0 * eps;
-        fm = this.Value(xx);
+        fm = Value(xx);
         grad[i] = 0.5 * (fp - fm) / eps;
         xx[i] = x[i];
       }
@@ -79,7 +79,7 @@ namespace Altaxo.Calc.Optimization
     public virtual ConstraintDefinition Constraint
     {
       get { return constraint_; }
-      set { this.constraint_ = value; }
+      set { constraint_ = value; }
     }
 
     protected ConstraintDefinition constraint_ = new NoConstraint();

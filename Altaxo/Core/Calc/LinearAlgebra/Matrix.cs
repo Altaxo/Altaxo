@@ -117,7 +117,7 @@ namespace Altaxo.Calc.LinearAlgebra
           m_Array[i] = new double[m_VectorLen];
         MatrixMath.Copy(a, this);
       }
-      else if (this.m_bVerticalVectors == false)
+      else if (m_bVerticalVectors == false)
       {
         double[][] newArray = new double[m_NumVectors + a.RowCount][];
         for (int i = 0; i < m_NumVectors; i++)
@@ -127,7 +127,7 @@ namespace Altaxo.Calc.LinearAlgebra
         m_Array = newArray;
         m_NumVectors += a.RowCount;
 
-        MatrixMath.Copy(a, this, this.RowCount - a.RowCount, 0);
+        MatrixMath.Copy(a, this, RowCount - a.RowCount, 0);
       }
       else
         throw new System.NotImplementedException("This worst case is not implemented yet.");
@@ -145,7 +145,7 @@ namespace Altaxo.Calc.LinearAlgebra
           m_Array[i] = new double[m_VectorLen];
         MatrixMath.Copy(a, this);
       }
-      else if (this.m_bVerticalVectors == true)
+      else if (m_bVerticalVectors == true)
       {
         double[][] newArray = new double[m_NumVectors + a.ColumnCount][];
         for (int i = 0; i < m_NumVectors; i++)
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.LinearAlgebra
         m_Array = newArray;
         m_NumVectors += a.ColumnCount;
 
-        MatrixMath.Copy(a, this, 0, this.ColumnCount - a.ColumnCount);
+        MatrixMath.Copy(a, this, 0, ColumnCount - a.ColumnCount);
       }
       else
         throw new System.NotImplementedException("This worst case is not implemented yet.");
@@ -163,7 +163,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public override string ToString()
     {
-      System.Text.StringBuilder s = new System.Text.StringBuilder();
+      var s = new System.Text.StringBuilder();
       for (int i = 0; i < RowCount; i++)
       {
         s.Append("\n(");
@@ -179,7 +179,7 @@ namespace Altaxo.Calc.LinearAlgebra
       return s.ToString();
     }
 
-    public string MatrixForm { get { return this.ToString(); } }
+    public string MatrixForm { get { return ToString(); } }
 
     public void Transpose()
     {
@@ -195,7 +195,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       int rows = a.RowCount;
       int cols = b.ColumnCount;
-      TransposableMatrix c = new TransposableMatrix(rows, cols);
+      var c = new TransposableMatrix(rows, cols);
 
       int summands = b.RowCount;
       for (int i = 0; i < rows; i++)
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (a.ColumnCount != b.ColumnCount || a.RowCount != b.RowCount)
         throw new ArithmeticException(string.Format("Try to subtract a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
 
-      TransposableMatrix c = new TransposableMatrix(a.RowCount, a.ColumnCount);
+      var c = new TransposableMatrix(a.RowCount, a.ColumnCount);
       for (int i = 0; i < c.RowCount; i++)
         for (int j = 0; j < c.ColumnCount; j++)
           c[i, j] = a[i, j] - b[i, j];
@@ -234,7 +234,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public TransposableMatrix ColumnsToZeroMean()
     {
       // allocate the mean vector
-      TransposableMatrix mean = new TransposableMatrix(1, ColumnCount);
+      var mean = new TransposableMatrix(1, ColumnCount);
 
       for (int col = 0; col < ColumnCount; col++)
       {
@@ -251,7 +251,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public TransposableMatrix Submatrix(int rows, int cols, int rowoffset, int coloffset)
     {
-      TransposableMatrix c = new TransposableMatrix(rows, cols);
+      var c = new TransposableMatrix(rows, cols);
       for (int i = 0; i < rows; i++)
         for (int j = 0; j < cols; j++)
           c[i, j] = this[i + rowoffset, j + coloffset];
@@ -266,27 +266,27 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public void SetColumn(int col, TransposableMatrix b)
     {
-      if (col >= this.ColumnCount)
-        throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!", col, this.RowCount, this.ColumnCount));
+      if (col >= ColumnCount)
+        throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!", col, RowCount, ColumnCount));
       if (b.ColumnCount != 1)
         throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!", col, b.ColumnCount));
-      if (this.RowCount != b.RowCount)
-        throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({2})!", col, this.RowCount, b.RowCount));
+      if (RowCount != b.RowCount)
+        throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({2})!", col, RowCount, b.RowCount));
 
-      for (int i = 0; i < this.RowCount; i++)
+      for (int i = 0; i < RowCount; i++)
         this[i, col] = b[i, 0];
     }
 
     public void SetRow(int row, TransposableMatrix b)
     {
-      if (row >= this.RowCount)
-        throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!", row, this.RowCount, this.ColumnCount));
+      if (row >= RowCount)
+        throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!", row, RowCount, ColumnCount));
       if (b.RowCount != 1)
         throw new ArithmeticException(string.Format("Try to set row {0} with a matrix of more than one, namely {1} rows, is not allowed!", row, b.RowCount));
-      if (this.ColumnCount != b.ColumnCount)
-        throw new ArithmeticException(string.Format("Try to set row {0}, but number of columns of the matrix ({1}) not match number of colums of the vector ({2})!", row, this.ColumnCount, b.ColumnCount));
+      if (ColumnCount != b.ColumnCount)
+        throw new ArithmeticException(string.Format("Try to set row {0}, but number of columns of the matrix ({1}) not match number of colums of the vector ({2})!", row, ColumnCount, b.ColumnCount));
 
-      for (int j = 0; j < this.ColumnCount; j++)
+      for (int j = 0; j < ColumnCount; j++)
         this[row, j] = b[0, row];
     }
 
@@ -316,8 +316,8 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       // Presumtion:
       // a.Cols == b.Rows;
-      if (this.ColumnCount != m.ColumnCount || this.RowCount != m.RowCount)
-        throw new ArithmeticException(string.Format("Try to compare a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", m.RowCount, m.ColumnCount, this.RowCount, this.ColumnCount));
+      if (ColumnCount != m.ColumnCount || RowCount != m.RowCount)
+        throw new ArithmeticException(string.Format("Try to compare a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", m.RowCount, m.ColumnCount, RowCount, ColumnCount));
 
       double thresh = Math.Sqrt(m.SumOfSquares()) * accuracy;
       for (int i = 0; i < RowCount; i++)

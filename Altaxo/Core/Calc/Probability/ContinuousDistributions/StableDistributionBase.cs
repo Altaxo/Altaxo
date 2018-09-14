@@ -1100,12 +1100,11 @@ namespace Altaxo.Calc.Probability
         double resultLeft = xm * pdfFunc(0); // note that logPdfPrefactor is already included in pdfFunc(0), so it is not neccessary to include it here
 
         GSL_ERROR error1;
-        double resultRight, abserrRight;
         // now integrate logarithmically
         error1 = Calc.Integration.QagpIntegration.Integration(
                     PDFFuncLogInt,
                     new double[] { Math.Log(xm), Math.Log(Math.PI) }, 2,
-                    0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+                    0, precision, 100, out var resultRight, out var abserrRight, ref tempStorage);
 
         if (null != error1)
           resultRight = double.NaN;
@@ -1159,19 +1158,16 @@ namespace Altaxo.Calc.Probability
         {
           if (xm * 10 < UpperIntegrationLimit) // then a logarithmic integration from left to right
           {
-            double result1 = 0, abserr1 = 0;
             GSL_ERROR error1 = Calc.Integration.QagpIntegration.Integration(
             pdfFunc,
             new double[] { 0, xm }, 2,
-            0, precision, 200, out result1, out abserr1, ref tempStorage);
-
-            double result2 = 0, abserr2 = 0;
+            0, precision, 200, out var result1, out var abserr1, ref tempStorage);
             double xincrement = xm / 10;
             _x0 = xm - xincrement;
             GSL_ERROR error2 = Calc.Integration.QagpIntegration.Integration(
                         PDFFuncLogIntToRight,
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
-                        0, precision, 200, out result2, out abserr2, ref tempStorage);
+                        0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
             if (null == error1 && null == error2)
               return result1 + result2;
@@ -1180,11 +1176,10 @@ namespace Altaxo.Calc.Probability
           }
           else
           {
-            double result = 0, abserr = 0;
             GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
                         pdfFunc,
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
-                        0, precision, 200, out result, out abserr, ref tempStorage);
+                        0, precision, 200, out var result, out var abserr, ref tempStorage);
 
             if (null == error)
               return result;
@@ -1201,14 +1196,13 @@ namespace Altaxo.Calc.Probability
       private double PDFIntegrateUnknownRightSideInc(double x0, double x1a, ref object tempStorage, double precision)
       {
         const double diffOneDecade = 7;
-        double y1;
         GSL_ERROR error1 = null;
         GSL_ERROR error2 = null;
         double result1 = 0;
         double result2 = 0;
         double abserr1, abserr2;
 
-        double x1 = FindIncreasingYEqualTo(pdfCore, x0, x1a, MinusLogTiny + 1, 1, out y1);
+        double x1 = FindIncreasingYEqualTo(pdfCore, x0, x1a, MinusLogTiny + 1, 1, out var y1);
         double y0 = pdfCore(x0);
 
         // When the difference of y values results in a difference able to handle by the algorithm, then return immediately
@@ -1272,8 +1266,7 @@ namespace Altaxo.Calc.Probability
           else if (s0 < s01 && s1 < s01)
           {
             // in this case, there is the fast transition somewhere inbetween the interval, so we have to search for it
-            double ym;
-            double xm = FindIncreasingYEqualTo(pdfCore, x0, x1, 0.5 * (y0 + y1), 0.1, out ym); // Point where the fast transtion is (hopefully)
+            double xm = FindIncreasingYEqualTo(pdfCore, x0, x1, 0.5 * (y0 + y1), 0.1, out var ym); // Point where the fast transtion is (hopefully)
             double sm = PDFCoreDerivative(xm);
 
             double xinterval = sm > 0 ? diffOneDecade / sm : xm * DoubleConstants.DBL_EPSILON;
@@ -1381,9 +1374,8 @@ namespace Altaxo.Calc.Probability
 
       public double FindXOfPDFCoreY(double ysearch, double tolerance)
       {
-        double yfound;
         double result;
-        result = FindIncreasingYEqualTo(pdfCore, 0, UpperIntegrationLimit, ysearch, tolerance, out yfound);
+        result = FindIncreasingYEqualTo(pdfCore, 0, UpperIntegrationLimit, ysearch, tolerance, out var yfound);
         return result;
       }
 
@@ -1413,9 +1405,9 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
         if (dev == 0)
-          xm = FindIncreasingYEqualTo(PDFCore, 0, UpperIntegrationLimit, PDFCore(0) + 1, 0.1, out yfound);
+          xm = FindIncreasingYEqualTo(PDFCore, 0, UpperIntegrationLimit, PDFCore(0) + 1, 0.1, out var yfound);
         else
           xm = FindIncreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
@@ -1605,11 +1597,8 @@ namespace Altaxo.Calc.Probability
           return PDFIntegrateZeroDevAlphaNearOne(ref tempStorage, precision);
 
         GSL_ERROR error;
-        double resultLeft = 0, resultRight;
-        double abserrLeft, abserrRight;
-        double yfound;
         // we want to find xm now with very high accuracy
-        _xm = FindIncreasingYEqualTo(pdfCore, 0, Math.PI - dev, 1, 0, out yfound);
+        _xm = FindIncreasingYEqualTo(pdfCore, 0, Math.PI - dev, 1, 0, out var yfound);
 
         double r1c = PDF_R1Core(_xm);
         _a = PDF_R1CoreDerivativeByR1Core(_xm);
@@ -1640,13 +1629,13 @@ namespace Altaxo.Calc.Probability
         error = Calc.Integration.QagpIntegration.Integration(
                     PDFFuncLogIntToLeft,
                     new double[] { Math.Log(_x0), Math.Log(_xm + _x0) }, 2,
-                    0, precision, 200, out resultLeft, out abserrLeft, ref tempStorage);
+                    0, precision, 200, out var resultLeft, out var abserrLeft, ref tempStorage);
 
         _x0 = -xinc;
         error = Calc.Integration.QagpIntegration.Integration(
-                    new Func<double, double>(this.PDFFuncLogIntToRight),
+                    new Func<double, double>(PDFFuncLogIntToRight),
                     new double[] { Math.Log(-_x0), Math.Log(Math.PI - dev - _xm - _x0) }, 2,
-                    0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+                    0, precision, 100, out var resultRight, out var abserrRight, ref tempStorage);
 
         return (resultLeft + resultRight);
       }
@@ -1672,9 +1661,8 @@ namespace Altaxo.Calc.Probability
           logPdfPrefactor += logPrefactorOffset;
         }
 
-        double ye;
         //double xe = FindIncreasingYEqualTo(pdfCore, 0, UpperIntegrationLimit, y0 + 9, 1, out ye);
-        double xe = FindIncreasingYEqualTo(PDFCoreZeroDev, 0, UpperIntegrationLimit, y0 + 9, 1, out ye);
+        double xe = FindIncreasingYEqualTo(PDFCoreZeroDev, 0, UpperIntegrationLimit, y0 + 9, 1, out var ye);
 
         GSL_ERROR error1;
         double result, abserr;
@@ -1816,11 +1804,10 @@ namespace Altaxo.Calc.Probability
                0, precision, 100, out result, out abserr, ref tempStorage);
             if (error == null)
             {
-              double result1;
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogInt,
                new double[] { Math.Log(xm), Math.Log(x1) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
+               0, precision, 100, out var result1, out abserr, ref tempStorage);
 
               result += result1;
             }
@@ -1956,11 +1943,8 @@ namespace Altaxo.Calc.Probability
       public double PDFIntegrateAlphaNearOne(ref object tempStorage, double precision)
       {
         GSL_ERROR error;
-        double resultLeft = 0, resultRight;
-        double abserrLeft, abserrRight;
-        double yfound;
         // we want to find xm now with very high accuracy
-        _xm = FindDecreasingYEqualTo(pdfCore, 0, Math.PI - dev, 1, 0, out yfound);
+        _xm = FindDecreasingYEqualTo(pdfCore, 0, Math.PI - dev, 1, 0, out var yfound);
 
         double r1c = PDF_R1Core(_xm);
         _a = PDF_R1CoreDerivativeByR1Core(_xm);
@@ -1987,13 +1971,13 @@ namespace Altaxo.Calc.Probability
         error = Calc.Integration.QagpIntegration.Integration(
                   PDFFuncLogIntToLeft,
                   new double[] { Math.Log(_x0), Math.Log(_xm + _x0) }, 2,
-                  0, precision, 100, out resultLeft, out abserrLeft, ref tempStorage);
+                  0, precision, 100, out var resultLeft, out var abserrLeft, ref tempStorage);
 
         _x0 = -xinc;
         error = Calc.Integration.QagpIntegration.Integration(
                     PDFFuncLogIntToRight,
                     new double[] { Math.Log(-_x0), Math.Log(Math.PI - dev - _xm - _x0) }, 2,
-                    0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+                    0, precision, 100, out var resultRight, out var abserrRight, ref tempStorage);
 
         return (resultLeft + resultRight);
       }
@@ -2100,11 +2084,10 @@ namespace Altaxo.Calc.Probability
                0, precision, 100, out result, out abserr, ref tempStorage);
             if (error == null)
             {
-              double result1;
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogInt,
                new double[] { Math.Log(xm), Math.Log(x1) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
+               0, precision, 100, out var result1, out abserr, ref tempStorage);
 
               result += result1;
             }
@@ -2166,9 +2149,9 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
         if (dev == 0)
-          xm = FindIncreasingYEqualTo(PDFCore, 0, UpperIntegrationLimit, PDFCore(0) + 1, 0.1, out yfound);
+          xm = FindIncreasingYEqualTo(PDFCore, 0, UpperIntegrationLimit, PDFCore(0) + 1, 0.1, out var yfound);
         else
           xm = FindIncreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
@@ -2255,11 +2238,8 @@ namespace Altaxo.Calc.Probability
       public double PDFIntegrateAlphaNearOne(ref object tempStorage, double precision)
       {
         GSL_ERROR error;
-        double resultLeft = 0, resultRight;
-        double abserrLeft, abserrRight;
-        double yfound;
         // we want to find xm now with very high accuracy
-        _xm = FindIncreasingYEqualTo(pdfCore, 0, dev, 1, 0, out yfound);
+        _xm = FindIncreasingYEqualTo(pdfCore, 0, dev, 1, 0, out var yfound);
 
         double r1c = PDF_R1Core(_xm);
         _a = PDF_R1CoreDerivativeByR1Core(_xm);
@@ -2283,13 +2263,13 @@ namespace Altaxo.Calc.Probability
         error = Calc.Integration.QagpIntegration.Integration(
                   PDFFuncLogIntToLeft,
                   new double[] { Math.Log(_x0), Math.Log(_xm + _x0) }, 2,
-                  0, precision, 100, out resultLeft, out abserrLeft, ref tempStorage);
+                  0, precision, 100, out var resultLeft, out var abserrLeft, ref tempStorage);
 
         _x0 = -xinc;
         error = Calc.Integration.QagpIntegration.Integration(
                     PDFFuncLogIntToRight,
                     new double[] { Math.Log(-_x0), Math.Log(dev - _xm - _x0) }, 2,
-                    0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+                    0, precision, 100, out var resultRight, out var abserrRight, ref tempStorage);
 
         return (resultLeft + resultRight);
       }
@@ -2398,11 +2378,10 @@ namespace Altaxo.Calc.Probability
                0, precision, 100, out result, out abserr, ref tempStorage);
             if (error == null)
             {
-              double result1;
               error = Calc.Integration.QagpIntegration.Integration(
                         PDFFuncLogInt,
                         new double[] { Math.Log(xm), Math.Log(x1) }, 2,
-                        0, precision, 100, out result1, out abserr, ref tempStorage);
+                        0, precision, 100, out var result1, out abserr, ref tempStorage);
 
               result += result1;
             }
@@ -2538,11 +2517,8 @@ namespace Altaxo.Calc.Probability
       public double PDFIntegrateAlphaNearOne(ref object tempStorage, double precision)
       {
         GSL_ERROR error;
-        double resultLeft = 0, resultRight;
-        double abserrLeft, abserrRight;
-        double yfound;
         // we want to find xm now with very high accuracy
-        _xm = FindDecreasingYEqualTo(pdfCore, 0, dev, 1, 0, out yfound);
+        _xm = FindDecreasingYEqualTo(pdfCore, 0, dev, 1, 0, out var yfound);
 
         double r1c = PDF_R1Core(_xm);
         _a = PDF_R1CoreDerivativeByR1Core(_xm);
@@ -2566,13 +2542,13 @@ namespace Altaxo.Calc.Probability
         error = Calc.Integration.QagpIntegration.Integration(
                   PDFFuncLogIntToLeft,
                   new double[] { Math.Log(_x0), Math.Log(_xm + _x0) }, 2,
-                  0, precision, 100, out resultLeft, out abserrLeft, ref tempStorage);
+                  0, precision, 100, out var resultLeft, out var abserrLeft, ref tempStorage);
 
         _x0 = -xinc;
         error = Calc.Integration.QagpIntegration.Integration(
                     PDFFuncLogIntToRight,
                     new double[] { Math.Log(-_x0), Math.Log(dev - _xm - _x0) }, 2,
-                    0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+                    0, precision, 100, out var resultRight, out var abserrRight, ref tempStorage);
 
         return (resultLeft + resultRight);
       }
@@ -2608,8 +2584,8 @@ namespace Altaxo.Calc.Probability
       {
         this.beta = beta;
         this.abe = abe;
-        this.logFactorp = -0.5 * Math.PI * x / beta;
-        this.logPdfPrefactor = -Math.Log(2 * Math.Abs(beta));
+        logFactorp = -0.5 * Math.PI * x / beta;
+        logPdfPrefactor = -Math.Log(2 * Math.Abs(beta));
       }
 
       public double PDFCore(double thetas)
@@ -2705,8 +2681,7 @@ namespace Altaxo.Calc.Probability
         double result;
         double x1 = UpperIntegrationLimit;
 
-        double ym;
-        double xm = FindIncreasingYEqualTo(PDFCore, 0, x1, 1, 0.125, out ym);
+        double xm = FindIncreasingYEqualTo(PDFCore, 0, x1, 1, 0.125, out var ym);
 
         try
         {
@@ -2721,12 +2696,11 @@ namespace Altaxo.Calc.Probability
 
             if (error == null)
             {
-              double result1;
               _x0 = xm - xwidth;
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogIntToRight,
                new double[] { Math.Log(xwidth), Math.Log(x1 - _x0) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
+               0, precision, 100, out var result1, out abserr, ref tempStorage);
 
               result += result1;
             }
@@ -2740,11 +2714,10 @@ namespace Altaxo.Calc.Probability
 
             if (error == null)
             {
-              double result1;
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogInt,
                new double[] { Math.Log(xm), Math.Log(x1) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
+               0, precision, 100, out var result1, out abserr, ref tempStorage);
 
               result += result1;
             }
@@ -2770,8 +2743,6 @@ namespace Altaxo.Calc.Probability
       public double IntegrateAbeEqZero(ref object tempStorage, double precision)
       {
         GSL_ERROR error;
-        double abserr;
-        double result;
         double x1 = UpperIntegrationLimit;
         double xm = 1e-10;
 
@@ -2780,15 +2751,14 @@ namespace Altaxo.Calc.Probability
           error = Calc.Integration.QagpIntegration.Integration(
               PDFFunc,
               new double[] { 0, xm }, 2,
-              0, precision, 100, out result, out abserr, ref tempStorage);
+              0, precision, 100, out var result, out var abserr, ref tempStorage);
 
           if (error == null)
           {
-            double result1;
             error = Calc.Integration.QagpIntegration.Integration(
              PDFFuncLogInt,
              new double[] { Math.Log(xm), Math.Log(x1) }, 2,
-             0, precision, 100, out result1, out abserr, ref tempStorage);
+             0, precision, 100, out var result1, out abserr, ref tempStorage);
 
             result += result1;
           }
@@ -2843,9 +2813,9 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
         if (abe == 0)
-          xm = FindIncreasingYEqualTo(PDFCore, 0, UpperIntegrationLimit, PDFCore(0) + 1, 0.1, out yfound);
+          xm = FindIncreasingYEqualTo(PDFCore, 0, UpperIntegrationLimit, PDFCore(0) + 1, 0.1, out var yfound);
         else
           xm = FindIncreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
@@ -2886,8 +2856,8 @@ namespace Altaxo.Calc.Probability
       {
         this.beta = beta;
         this.abe = abe;
-        this.logFactorp = -0.5 * Math.PI * x / beta;
-        this.logPdfPrefactor = -Math.Log(2 * Math.Abs(beta));
+        logFactorp = -0.5 * Math.PI * x / beta;
+        logPdfPrefactor = -Math.Log(2 * Math.Abs(beta));
       }
 
       public double PDFCore(double thetas)
@@ -2966,8 +2936,7 @@ namespace Altaxo.Calc.Probability
         double abserr;
         double result;
         double x1 = UpperIntegrationLimit;
-        double ym;
-        double xm = FindDecreasingYEqualTo(PDFCore, 0, x1, 1, 0.125, out ym);
+        double xm = FindDecreasingYEqualTo(PDFCore, 0, x1, 1, 0.125, out var ym);
         try
         {
           double xwidth = 1 / (PDFCoreDerivativeByCore(xm) * ym);
@@ -2981,12 +2950,11 @@ namespace Altaxo.Calc.Probability
 
             if (error == null)
             {
-              double result1;
               _x0 = xm - xwidth;
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogIntToRight,
                new double[] { Math.Log(xwidth), Math.Log(x1 - _x0) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
+               0, precision, 100, out var result1, out abserr, ref tempStorage);
 
               result += result1;
             }
@@ -2999,11 +2967,10 @@ namespace Altaxo.Calc.Probability
                0, precision, 100, out result, out abserr, ref tempStorage);
             if (error == null)
             {
-              double result1;
               error = Calc.Integration.QagpIntegration.Integration(
                PDFFuncLogInt,
                new double[] { Math.Log(xm), Math.Log(x1) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
+               0, precision, 100, out var result1, out abserr, ref tempStorage);
 
               result += result1;
             }
@@ -3178,19 +3145,16 @@ namespace Altaxo.Calc.Probability
         {
           if (xm * 10 < UpperIntegrationLimit) // then a logarithmic integration from left to right
           {
-            double result1 = 0, abserr1 = 0;
             GSL_ERROR error1 = Calc.Integration.QagpIntegration.Integration(
             pdfFunc,
             new double[] { 0, xm }, 2,
-            0, precision, 200, out result1, out abserr1, ref tempStorage);
-
-            double result2 = 0, abserr2 = 0;
+            0, precision, 200, out var result1, out var abserr1, ref tempStorage);
             double xincrement = xm / 10;
             _x0 = xm - xincrement;
             GSL_ERROR error2 = Calc.Integration.QagpIntegration.Integration(
                         PDFFuncLogIntToRight,
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
-                        0, precision, 200, out result2, out abserr2, ref tempStorage);
+                        0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
             if (null == error1 && null == error2)
               return result1 + result2;
@@ -3199,11 +3163,10 @@ namespace Altaxo.Calc.Probability
           }
           else
           {
-            double result = 0, abserr = 0;
             GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
                         pdfFunc,
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
-                        0, precision, 200, out result, out abserr, ref tempStorage);
+                        0, precision, 200, out var result, out var abserr, ref tempStorage);
 
             if (null == error)
               return result;
@@ -3256,9 +3219,9 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
         if (dev == 0)
-          xm = FindIncreasingYEqualTo(PDFCore, 0, UpperIntegrationLimit, PDFCore(0) + 1, 0.1, out yfound);
+          xm = FindIncreasingYEqualTo(PDFCore, 0, UpperIntegrationLimit, PDFCore(0) + 1, 0.1, out var yfound);
         else
           xm = FindIncreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
@@ -3367,19 +3330,16 @@ namespace Altaxo.Calc.Probability
         {
           if (xm * 10 < UpperIntegrationLimit) // then a logarithmic integration from left to right
           {
-            double result1 = 0, abserr1 = 0;
             GSL_ERROR error1 = Calc.Integration.QagpIntegration.Integration(
             pdfFunc,
             new double[] { 0, xm }, 2,
-            0, precision, 200, out result1, out abserr1, ref tempStorage);
-
-            double result2 = 0, abserr2 = 0;
+            0, precision, 200, out var result1, out var abserr1, ref tempStorage);
             double xincrement = xm / 10;
             _x0 = xm - xincrement;
             GSL_ERROR error2 = Calc.Integration.QagpIntegration.Integration(
                         PDFFuncLogIntToRight,
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
-                        0, precision, 200, out result2, out abserr2, ref tempStorage);
+                        0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
             if (null == error1 && null == error2)
               return result1 + result2;
@@ -3388,11 +3348,10 @@ namespace Altaxo.Calc.Probability
           }
           else
           {
-            double result = 0, abserr = 0;
             GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
                         pdfFunc,
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
-                        0, precision, 200, out result, out abserr, ref tempStorage);
+                        0, precision, 200, out var result, out var abserr, ref tempStorage);
 
             if (null == error)
               return result;
@@ -3547,19 +3506,16 @@ namespace Altaxo.Calc.Probability
         {
           if (xm * 10 < UpperIntegrationLimit) // then a logarithmic integration from left to right
           {
-            double result1 = 0, abserr1 = 0;
             GSL_ERROR error1 = Calc.Integration.QagpIntegration.Integration(
             pdfFunc,
             new double[] { 0, xm }, 2,
-            0, precision, 200, out result1, out abserr1, ref tempStorage);
-
-            double result2 = 0, abserr2 = 0;
+            0, precision, 200, out var result1, out var abserr1, ref tempStorage);
             double xincrement = xm / 10;
             _x0 = xm - xincrement;
             GSL_ERROR error2 = Calc.Integration.QagpIntegration.Integration(
                         PDFFuncLogIntToRight,
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
-                        0, precision, 200, out result2, out abserr2, ref tempStorage);
+                        0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
             if (null == error1 && null == error2)
               return result1 + result2;
@@ -3568,11 +3524,10 @@ namespace Altaxo.Calc.Probability
           }
           else
           {
-            double result = 0, abserr = 0;
             GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
                         pdfFunc,
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
-                        0, precision, 200, out result, out abserr, ref tempStorage);
+                        0, precision, 200, out var result, out var abserr, ref tempStorage);
 
             if (null == error)
               return result;
@@ -3727,19 +3682,16 @@ namespace Altaxo.Calc.Probability
         {
           if (xm * 10 < UpperIntegrationLimit) // then a logarithmic integration from left to right
           {
-            double result1 = 0, abserr1 = 0;
             GSL_ERROR error1 = Calc.Integration.QagpIntegration.Integration(
             pdfFunc,
             new double[] { 0, xm }, 2,
-            0, precision, 200, out result1, out abserr1, ref tempStorage);
-
-            double result2 = 0, abserr2 = 0;
+            0, precision, 200, out var result1, out var abserr1, ref tempStorage);
             double xincrement = xm / 10;
             _x0 = xm - xincrement;
             GSL_ERROR error2 = Calc.Integration.QagpIntegration.Integration(
                         PDFFuncLogIntToRight,
                         new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
-                        0, precision, 200, out result2, out abserr2, ref tempStorage);
+                        0, precision, 200, out var result2, out var abserr2, ref tempStorage);
 
             if (null == error1 && null == error2)
               return result1 + result2;
@@ -3748,11 +3700,10 @@ namespace Altaxo.Calc.Probability
           }
           else
           {
-            double result = 0, abserr = 0;
             GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
                         pdfFunc,
                         new double[] { 0, xm, UpperIntegrationLimit }, 3,
-                        0, precision, 200, out result, out abserr, ref tempStorage);
+                        0, precision, 200, out var result, out var abserr, ref tempStorage);
 
             if (null == error)
               return result;

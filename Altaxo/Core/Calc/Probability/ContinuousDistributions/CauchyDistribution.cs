@@ -46,7 +46,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
       set
       {
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.gamma;
+        return gamma;
       }
       set
       {
@@ -213,7 +213,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
     }
 
@@ -235,7 +235,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { this.alpha };
+        return new double[] { alpha };
       }
     }
 
@@ -245,7 +245,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A cauchy distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return this.alpha + this.gamma * Math.Tan(Math.PI * (this.Generator.NextDouble() - 0.5));
+      return alpha + gamma * Math.Tan(Math.PI * (Generator.NextDouble() - 0.5));
     }
 
     #endregion overridden Distribution members

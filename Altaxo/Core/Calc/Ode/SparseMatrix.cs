@@ -39,14 +39,14 @@ namespace Altaxo.Calc.Ode
     {
       this.m = m;
       this.n = n;
-      this.items = matrixItems;
-      this.indices = matrixIndices;
-      this.count = _count;
+      items = matrixItems;
+      indices = matrixIndices;
+      count = _count;
     }
 
     public int[] Count
     {
-      get { return this.count; }
+      get { return count; }
     }
 
     /// <summary>Get row dimension.</summary>
@@ -103,11 +103,11 @@ namespace Altaxo.Calc.Ode
           C.items[i] = new double[count[i]];
           for (int j = 0; j < count[i]; j++)
           {
-            C.indices[i][j] = this.indices[i][j];
-            C.items[i][j] = this.items[i][j] + B.items[i][j];
+            C.indices[i][j] = indices[i][j];
+            C.items[i][j] = items[i][j] + B.items[i][j];
           }
         }
-        C.count[i] = this.count[i];
+        C.count[i] = count[i];
       }
 
       return C;
@@ -143,11 +143,11 @@ namespace Altaxo.Calc.Ode
           C.items[i] = new double[count[i]];
           for (int j = 0; j < count[i]; j++)
           {
-            C.indices[i][j] = this.indices[i][j];
-            C.items[i][j] = this.items[i][j] - B.items[i][j];
+            C.indices[i][j] = indices[i][j];
+            C.items[i][j] = items[i][j] - B.items[i][j];
           }
         }
-        C.count[i] = this.count[i];
+        C.count[i] = count[i];
       }
 
       return C;
@@ -172,7 +172,7 @@ namespace Altaxo.Calc.Ode
     public Vector times(Vector v)
     {
       double[] vv = v;
-      Vector result = Vector.Zeros(m);
+      var result = Vector.Zeros(m);
       unchecked // Turns off integral overflow checking: small speedup
       {
         for (int i = 0; i < m; i++)
@@ -205,7 +205,7 @@ namespace Altaxo.Calc.Ode
     public Vector timesRight(Vector v)
     {
       double[] vv = v;
-      Vector result = Vector.Zeros(n);
+      var result = Vector.Zeros(n);
       unchecked // Turns off integral overflow checking: small speedup
       {
         for (int i = 0; i < n; i++)
@@ -245,11 +245,11 @@ namespace Altaxo.Calc.Ode
           B.items[i] = new double[count[i]];
           for (int j = 0; j < count[i]; j++)
           {
-            B.indices[i][j] = this.indices[i][j];
-            B.items[i][j] = s * this.items[i][j];
+            B.indices[i][j] = indices[i][j];
+            B.items[i][j] = s * items[i][j];
           }
         }
-        B.count[i] = this.count[i];
+        B.count[i] = count[i];
       }
       return B;
     }
@@ -274,7 +274,7 @@ namespace Altaxo.Calc.Ode
       {
         for (int j = 0; j < count[i]; j++)
         {
-          this.items[i][j] *= s;
+          items[i][j] *= s;
         }
       }
       return this;
@@ -334,7 +334,7 @@ namespace Altaxo.Calc.Ode
       {
 #if DEBUG
         if (i < 0 || j < 0 || i >= m || j >= n)
-          throw new IndexOutOfRangeException(String.Format(CultureInfo.InvariantCulture,
+          throw new IndexOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
               "Element index ({0},{1}) is out of range", i, j));
 #endif
         if (indices[i] == null)
@@ -349,7 +349,7 @@ namespace Altaxo.Calc.Ode
       {
 #if DEBUG
         if (i < 0 || j < 0 || i >= m || j >= n)
-          throw new IndexOutOfRangeException(String.Format(CultureInfo.InvariantCulture,
+          throw new IndexOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
               "Element index ({0},{1}) is out of range", i, j));
 #endif
         if (indices[i] == null)
@@ -397,9 +397,9 @@ namespace Altaxo.Calc.Ode
     /// <returns>New matrix that is the transposed of the original.</returns>
     public SparseMatrix Transpose()
     {
-      var At = new SparseMatrix(this.ColumnDimension, this.RowDimension);
+      var At = new SparseMatrix(ColumnDimension, RowDimension);
 
-      for (int i = 0; i < this.RowDimension; i++)
+      for (int i = 0; i < RowDimension; i++)
         for (int j = 0; j < this[i].count; j++)
           At[this[i].indices[j], i] = this[i].items[j];
 
@@ -461,7 +461,7 @@ namespace Altaxo.Calc.Ode
     /// <returns></returns>
     public Vector SolveLower(Vector b)
     {
-      Vector x = Vector.Zeros(m);
+      var x = Vector.Zeros(m);
 
       for (int i = 0; i < m; i++)
       {

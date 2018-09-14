@@ -141,27 +141,27 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       _alpha0_n_lntau = 29.8;
       _alpha0_n_taulntau = 0;
 
-      _alpha0_Poly = new(double ni, double thetai)[]
+      _alpha0_Poly = new (double ni, double thetai)[]
       {
       };
 
-      _alpha0_Exp = new(double ni, double thetai)[]
+      _alpha0_Exp = new (double ni, double thetai)[]
       {
           (                29.8,     4.39102781738757),
       };
 
-      _alpha0_Cosh = new(double ni, double thetai)[]
+      _alpha0_Cosh = new (double ni, double thetai)[]
       {
       };
 
-      _alpha0_Sinh = new(double ni, double thetai)[]
+      _alpha0_Sinh = new (double ni, double thetai)[]
       {
       };
       #endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
       #region Residual part(s) of dimensionless Helmholtz energy and derivatives
 
-      _alphaR_Poly = new(double ni, double ti, int di)[]
+      _alphaR_Poly = new (double ni, double ti, int di)[]
       {
           (          0.05623648,                    1,                    4),
           (            2.973616,                 0.25,                    1),
@@ -172,14 +172,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           (           0.2077767,                 0.75,                    3),
       };
 
-      _alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
+      _alphaR_Exp = new (double ni, double ti, int di, double gi, int li)[]
       {
           (            2.168307,                  1.3,                    2,                   -1,                    1),
           (           -2.124648,                 2.25,                    1,                   -1,                    2),
           (           -1.296704,                  1.9,                    2,                   -1,                    2),
       };
 
-      _alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
+      _alphaR_Gauss = new (double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
       {
           (           -1.010569,                 0.88,                    1,                -0.32,                -0.12,                  1.1,                 1.16),
           (            2.701505,                 1.63,                    1,                -1.32,                -0.83,                 1.04,                0.793),
@@ -190,7 +190,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           (         -0.04848043,                  1.5,                    1,                -5.15,                  -65,                 1.19,                 0.82),
       };
 
-      _alphaR_Nonanalytical = new(double ni, double b, double beta, double A, double C, double D, double B, double a)[]
+      _alphaR_Nonanalytical = new (double ni, double b, double beta, double A, double C, double D, double B, double a)[]
       {
       };
 
@@ -199,7 +199,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       #region Saturated densities and pressure
 
       _saturatedLiquidDensity_Type = 1;
-      _saturatedLiquidDensity_Coefficients = new(double factor, double exponent)[]
+      _saturatedLiquidDensity_Coefficients = new (double factor, double exponent)[]
       {
           (              1.5545,                0.297),
           (               1.149,                  0.7),
@@ -207,7 +207,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       };
 
       _saturatedVaporDensity_Type = 3;
-      _saturatedVaporDensity_Coefficients = new(double factor, double exponent)[]
+      _saturatedVaporDensity_Coefficients = new (double factor, double exponent)[]
       {
           (             -1.6073,                0.291),
           (             -5.8095,                 0.82),
@@ -217,7 +217,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       };
 
       _saturatedVaporPressure_Type = 5;
-      _saturatedVaporPressure_Coefficients = new(double factor, double exponent)[]
+      _saturatedVaporPressure_Coefficients = new (double factor, double exponent)[]
       {
           (             -8.4411,                    1),
           (               2.711,                  1.5),

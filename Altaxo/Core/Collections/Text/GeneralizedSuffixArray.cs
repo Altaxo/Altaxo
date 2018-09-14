@@ -179,7 +179,7 @@ namespace Altaxo.Collections.Text
     public static GeneralizedSuffixArray FromWords(IEnumerable<string> words, bool withSeparators, bool useSortedMapping, IComparer<char> customSortingComparer)
     {
       var integerText = IntegerText.FromWords(words, true, 3, customSortingComparer);
-      GeneralizedSuffixArray result = new GeneralizedSuffixArray(integerText.Text, integerText.TextLength, integerText.NumberOfWords, integerText.WordStartPositions, integerText.AlphabetSize);
+      var result = new GeneralizedSuffixArray(integerText.Text, integerText.TextLength, integerText.NumberOfWords, integerText.WordStartPositions, integerText.AlphabetSize);
       return result;
     }
 
@@ -205,7 +205,7 @@ namespace Altaxo.Collections.Text
     public static GeneralizedSuffixArray FromWords<T>(IEnumerable<IEnumerable<T>> words, bool withSeparators, bool useSortedMapping, IComparer<T> customSortingComparer)
     {
       var integerText = IntegerText.FromWords<T>(words, true, 3, useSortedMapping, customSortingComparer);
-      GeneralizedSuffixArray result = new GeneralizedSuffixArray(integerText.Text, integerText.TextLength, integerText.NumberOfWords, integerText.WordStartPositions, integerText.AlphabetSize);
+      var result = new GeneralizedSuffixArray(integerText.Text, integerText.TextLength, integerText.NumberOfWords, integerText.WordStartPositions, integerText.AlphabetSize);
       return result;
     }
 

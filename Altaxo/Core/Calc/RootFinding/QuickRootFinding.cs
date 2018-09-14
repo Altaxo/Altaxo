@@ -364,8 +364,7 @@ brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, 
 
     public static double ByBrentsAlgorithm(Func<double, double> f, double x0, double x1, double epsabs, double epsrel)
     {
-      double root;
-      if (null == ByBrentsAlgorithm(f, x0, x1, epsabs, epsrel, out root))
+      if (null == ByBrentsAlgorithm(f, x0, x1, epsabs, epsrel, out var root))
         return root;
       else
         return double.NaN;
@@ -373,9 +372,8 @@ brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, 
 
     public static GSL_ERROR ByBrentsAlgorithm(Func<double, double> f, double x0, double x1, double epsabs, double epsrel, out double root)
     {
-      brent_state_t state;
       GSL_ERROR err;
-      err = brent_init(f, x0, x1, out root, out state);
+      err = brent_init(f, x0, x1, out root, out var state);
       if (null != err)
         return err;
       do

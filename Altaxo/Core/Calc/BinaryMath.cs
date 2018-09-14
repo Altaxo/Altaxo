@@ -37,7 +37,7 @@ namespace Altaxo.Calc
     /// Returns k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x&lt;0 then <see cref="System.Int32.MinValue"/> is returned.</returns>
+    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x&lt;0 then <see cref="int.MinValue"/> is returned.</returns>
     public static int Ld(int x)
     {
       if (x < 0)
@@ -49,7 +49,7 @@ namespace Altaxo.Calc
     /// Returns k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then <see cref="System.Int32.MinValue"/> is returned.</returns>
+    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then <see cref="int.MinValue"/> is returned.</returns>
     public static int Ld(uint x)
     {
       if (0 == x)
@@ -74,7 +74,7 @@ namespace Altaxo.Calc
     /// If x==0 then 0 is returned.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x&lt;0 then <see cref="System.Int32.MinValue"/> is returned.</returns>
+    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x&lt;0 then <see cref="int.MinValue"/> is returned.</returns>
     public static int Ld(long x)
     {
       if (x < 0)
@@ -87,7 +87,7 @@ namespace Altaxo.Calc
     /// If x==0 then 0 is returned.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then <see cref="System.Int32.MinValue"/> is returned.</returns>
+    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then <see cref="int.MinValue"/> is returned.</returns>
     public static int Ld(ulong x)
     {
       if (0 == x)
@@ -294,7 +294,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(UInt16 x)
+    public static bool IsParityOdd(ushort x)
     {
       uint xx = x;
       xx ^= xx >> 8;
@@ -309,9 +309,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(Int16 x)
+    public static bool IsParityOdd(short x)
     {
-      return IsParityOdd((UInt16)x);
+      return IsParityOdd((ushort)x);
     }
 
     /// <summary>
@@ -319,7 +319,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(UInt32 x)
+    public static bool IsParityOdd(uint x)
     {
       x ^= x >> 16;
       x ^= x >> 8;
@@ -334,9 +334,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(Int32 x)
+    public static bool IsParityOdd(int x)
     {
-      return IsParityOdd((UInt32)x);
+      return IsParityOdd((uint)x);
     }
 
     /// <summary>
@@ -344,7 +344,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(UInt64 x)
+    public static bool IsParityOdd(ulong x)
     {
       uint xx = (uint)(x) ^ (uint)(x >> 32);
       xx ^= xx >> 16;
@@ -360,9 +360,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(Int64 x)
+    public static bool IsParityOdd(long x)
     {
-      return IsParityOdd((UInt64)x);
+      return IsParityOdd((ulong)x);
     }
 
     #endregion Parity calculations

@@ -98,8 +98,8 @@ namespace Altaxo.Calc
 
     public GSL_ERROR(string message, GSL_ERR number, bool bDebug)
     {
-      this.Message = message;
-      this.Number = number;
+      Message = message;
+      Number = number;
 
       if (bDebug)
         throw new ArithmeticException(message);
@@ -107,9 +107,9 @@ namespace Altaxo.Calc
 
     public override bool Equals(object obj)
     {
-      GSL_ERROR b = obj as GSL_ERROR;
+      var b = obj as GSL_ERROR;
       if (b != null)
-        return this.Number == b.Number;
+        return Number == b.Number;
       else
         return false;
     }

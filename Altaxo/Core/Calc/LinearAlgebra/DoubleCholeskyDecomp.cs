@@ -194,7 +194,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         // Copy right hand side.
         int cols = B.ColumnCount;
-        DoubleMatrix X = new DoubleMatrix(B);
+        var X = new DoubleMatrix(B);
         for (int c = 0; c < cols; c++)
         {
           // Solve L*Y = B;
@@ -256,7 +256,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 #if MANAGED
         // Copy right hand side.
-        DoubleVector X = new DoubleVector(B);
+        var X = new DoubleVector(B);
         var xarray = X.GetInternalData();
 
         // Solve L*Y = B;
@@ -304,7 +304,7 @@ namespace Altaxo.Calc.LinearAlgebra
       else
       {
 #if MANAGED
-        DoubleMatrix ret = DoubleMatrix.CreateIdentity(order);
+        var ret = DoubleMatrix.CreateIdentity(order);
         ret = Solve(ret);
         return ret;
 #else

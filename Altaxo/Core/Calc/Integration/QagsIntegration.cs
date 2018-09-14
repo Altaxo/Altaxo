@@ -165,7 +165,7 @@ namespace Altaxo.Calc.Integration
           out double result, out double abserr,
           ref object tempStorage)
     {
-      QagsIntegration algo = tempStorage as QagsIntegration;
+      var algo = tempStorage as QagsIntegration;
       if (null == algo)
         tempStorage = algo = new QagsIntegration(integrationRule, debug);
       return algo.Integrate(f, a, b, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr);
@@ -193,7 +193,7 @@ namespace Altaxo.Calc.Integration
           ref object tempStorage
           )
     {
-      QagsIntegration algo = tempStorage as QagsIntegration;
+      var algo = tempStorage as QagsIntegration;
       if (null == algo)
         tempStorage = algo = new QagsIntegration();
       return algo.Integrate(f, a, b, epsabs, epsrel, limit, out result, out abserr);

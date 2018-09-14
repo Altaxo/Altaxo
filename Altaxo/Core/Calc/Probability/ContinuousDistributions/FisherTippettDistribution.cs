@@ -46,7 +46,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
       set
       {
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.mu;
+        return mu;
       }
       set
       {
@@ -188,7 +188,7 @@ namespace Altaxo.Calc.Probability
       get
       {
         // 0.577.. is an approximate value for the Euler-Mascheroni constant
-        return this.mu + this.alpha * 0.577215664901532860606512090082402431042159335;
+        return mu + alpha * 0.577215664901532860606512090082402431042159335;
       }
     }
 
@@ -199,7 +199,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.mu - this.alpha * Math.Log(Math.Log(2));
+        return mu - alpha * Math.Log(Math.Log(2));
       }
     }
 
@@ -210,7 +210,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Pow(Math.PI, 2.0) / 6.0 * Math.Pow(this.alpha, 2.0);
+        return Math.Pow(Math.PI, 2.0) / 6.0 * Math.Pow(alpha, 2.0);
       }
     }
 
@@ -221,7 +221,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { this.mu };
+        return new double[] { mu };
       }
     }
 
@@ -231,7 +231,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A Fisher-Tippett distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return this.mu - this.alpha * Math.Log(-Math.Log(1.0 - this.Generator.NextDouble()));
+      return mu - alpha * Math.Log(-Math.Log(1.0 - Generator.NextDouble()));
     }
 
     #endregion overridden Distribution members

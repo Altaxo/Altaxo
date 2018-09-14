@@ -45,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   [System.Serializable]
-  sealed public class FloatMatrix : IMatrix<float>, ICloneable, IFormattable, IEnumerable, ICollection, IList
+  public sealed class FloatMatrix : IMatrix<float>, ICloneable, IFormattable, IEnumerable, ICollection, IList
   {
 #if MANAGED
     internal float[][] data;
@@ -154,8 +154,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
       }
-      this.rows = source.rows;
-      this.columns = source.columns;
+      rows = source.rows;
+      columns = source.columns;
 #if MANAGED
       data = new float[rows][];
       for (int i = 0; i < rows; i++)
@@ -186,8 +186,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("values", "The input matrix cannot be null.");
       }
-      this.rows = values.GetLength(0);
-      this.columns = values.GetLength(1);
+      rows = values.GetLength(0);
+      columns = values.GetLength(1);
 #if MANAGED
       data = new float[rows][];
       for (int i = 0; i < rows; i++)
@@ -213,13 +213,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Explicit conversion from <c>DoubleMatrix</c> matrix</summary>
     ///<param name="source"><c>DoubleMatrix</c> to make a deep copy conversion from.</param>
-    static public explicit operator FloatMatrix(DoubleMatrix source)
+    public static explicit operator FloatMatrix(DoubleMatrix source)
     {
       if (source == null)
       {
         return null;
       }
-      FloatMatrix ret = new FloatMatrix(source.RowLength, source.ColumnLength);
+      var ret = new FloatMatrix(source.RowLength, source.ColumnLength);
 #if MANAGED
       for (int i = 0; i < source.RowLength; i++)
       {
@@ -238,7 +238,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Explicit conversion from <c>DoubleMatrix</c> matrix</summary>
     ///<param name="source"><c>DoubleMatrix</c> to make a deep copy conversion from.</param>
-    static public FloatMatrix ToFloatMatrix(DoubleMatrix source)
+    public static FloatMatrix ToFloatMatrix(DoubleMatrix source)
     {
       if (source == null)
       {
@@ -249,7 +249,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>explicit conversion from <c>double</c> array.</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    static public explicit operator FloatMatrix(double[,] source)
+    public static explicit operator FloatMatrix(double[,] source)
     {
       if (source == null)
       {
@@ -257,7 +257,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       int rows = source.GetLength(0);
       int columns = source.GetLength(1);
-      FloatMatrix ret = new FloatMatrix(rows, columns);
+      var ret = new FloatMatrix(rows, columns);
 #if MANAGED
       for (int i = 0; i < rows; i++)
       {
@@ -278,7 +278,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>explicit conversion from <c>double</c> array</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    static public FloatMatrix ToComplexFloatMatrix(double[,] source)
+    public static FloatMatrix ToComplexFloatMatrix(double[,] source)
     {
       if (source == null)
       {
@@ -289,7 +289,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>float</c> array.</summary>
     ///<param name="source"><c>float</c> array to make a deep copy conversion from.</param>
-    static public implicit operator FloatMatrix(float[,] source)
+    public static implicit operator FloatMatrix(float[,] source)
     {
       if (source == null)
       {
@@ -300,7 +300,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>float</c> array</summary>
     ///<param name="source"><c>float</c> array to make a deep copy conversion from.</param>
-    static public FloatMatrix ToFloatMatrix(float[,] source)
+    public static FloatMatrix ToFloatMatrix(float[,] source)
     {
       if (source == null)
       {
@@ -313,7 +313,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="rank">Rank of identity matrix.</param>
     public static FloatMatrix CreateIdentity(int rank)
     {
-      FloatMatrix ret = new FloatMatrix(rank);
+      var ret = new FloatMatrix(rank);
       for (int i = 0; i < rank; i++)
       {
 #if MANAGED
@@ -393,10 +393,10 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Check if <c>FloatMatrix</c> variable is the same as another object.</summary>
     ///<param name="obj"><c>obj</c> to compare present <c>FloatMatrix</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>FloatMatrix</c> variable</returns>
-    public override bool Equals(Object obj)
+    public override bool Equals(object obj)
     {
-      FloatMatrix matrix = obj as FloatMatrix;
-      if ((Object)matrix == null)
+      var matrix = obj as FloatMatrix;
+      if (matrix == null)
       {
         return false;
       }
@@ -431,7 +431,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The Hashcode representation of <c>FloatMatrix</c></returns>
     public override int GetHashCode()
     {
-      return (int)this.GetFrobeniusNorm();
+      return (int)GetFrobeniusNorm();
     }
 
     ///<summary>Convert <c>FloatMatrix</c> into <c>float</c> array</summary>
@@ -487,7 +487,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The transpose of the <c>FloatMatrix</c>.</returns>
     public FloatMatrix GetTranspose()
     {
-      FloatMatrix ret = new FloatMatrix(columns, rows);
+      var ret = new FloatMatrix(columns, rows);
 #if MANAGED
       for (int i = 0; i < rows; i++)
       {
@@ -516,7 +516,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
-      FloatLUDecomp lu = new FloatLUDecomp(this);
+      var lu = new FloatLUDecomp(this);
       return lu.GetInverse();
     }
 
@@ -529,9 +529,9 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
-      FloatLUDecomp lu = new FloatLUDecomp(this);
+      var lu = new FloatLUDecomp(this);
       FloatMatrix temp = lu.GetInverse();
-      this.data = temp.data;
+      data = temp.data;
     }
 
     /// <summary>Computes the determinant the <c>FloatMatrix</c>.</summary>
@@ -543,7 +543,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
-      FloatLUDecomp lu = new FloatLUDecomp(this);
+      var lu = new FloatLUDecomp(this);
       return lu.GetDeterminant();
     }
 
@@ -558,12 +558,12 @@ namespace Altaxo.Calc.LinearAlgebra
         for (int i = 0; i < rows; i++)
         {
 #if MANAGED
-          s += (float)System.Math.Abs(data[i][j]);
+          s += System.Math.Abs(data[i][j]);
 #else
           s += (float)System.Math.Abs(data[j*rows+i]);
 #endif
         }
-        ret = (float)System.Math.Max(ret, s);
+        ret = System.Math.Max(ret, s);
       }
       return ret;
     }
@@ -586,12 +586,12 @@ namespace Altaxo.Calc.LinearAlgebra
         for (int j = 0; j < columns; j++)
         {
 #if MANAGED
-          s += (float)System.Math.Abs(data[i][j]);
+          s += System.Math.Abs(data[i][j]);
 #else
           s += (float)System.Math.Abs(data[j*rows+i]);
 #endif
         }
-        ret = (float)System.Math.Max(ret, s);
+        ret = System.Math.Max(ret, s);
       }
       return ret;
     }
@@ -620,7 +620,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <exception cref="NotSquareMatrixException">the matrix is not square.</exception>
     public float GetConditionNumber()
     {
-      if (this.rows != this.columns)
+      if (rows != columns)
       {
         throw new NotSquareMatrixException();
       }
@@ -636,7 +636,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentOutOfRangeException("row");
       }
-      FloatVector ret = new FloatVector(columns);
+      var ret = new FloatVector(columns);
       var retArray = ret.GetInternalData();
       for (int i = 0; i < columns; i++)
       {
@@ -658,7 +658,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentOutOfRangeException("column");
       }
-      FloatVector ret = new FloatVector(rows);
+      var ret = new FloatVector(rows);
       var retArray = ret.GetInternalData();
       for (int i = 0; i < rows; i++)
       {
@@ -676,7 +676,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public FloatVector GetDiagonal()
     {
       int min = System.Math.Min(rows, columns);
-      FloatVector ret = new FloatVector(min);
+      var ret = new FloatVector(min);
       var retArray = ret.GetInternalData();
       for (int i = 0; i < min; i++)
       {
@@ -849,7 +849,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       int nRows = endRow - startRow + 1;
       int nCols = endColumn - startColumn + 1;
-      FloatMatrix ret = new FloatMatrix(nRows, nCols);
+      var ret = new FloatMatrix(nRows, nCols);
 
       for (int i = 0; i < nRows; i++)
       {
@@ -869,7 +869,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>FloatMatrix</c> with upper triangle values from <c>FloatMatrix</c>.</returns>
     public FloatMatrix GetUpperTriangle()
     {
-      FloatMatrix ret = new FloatMatrix(rows, columns);
+      var ret = new FloatMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -891,7 +891,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>FloatMatrix</c> with strictly upper triangle values from <c>FloatMatrix</c>.</returns>
     public FloatMatrix GetStrictlyUpperTriangle()
     {
-      FloatMatrix ret = new FloatMatrix(rows, columns);
+      var ret = new FloatMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -913,7 +913,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>FloatMatrix</c> with lower triangle values from <c>FloatMatrix</c>.</returns>
     public FloatMatrix GetLowerTriangle()
     {
-      FloatMatrix ret = new FloatMatrix(rows, columns);
+      var ret = new FloatMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -935,7 +935,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>FloatMatrix</c> with strictly lower triangle values from <c>FloatMatrix</c>.</returns>
     public FloatMatrix GetStrictlyLowerTriangle()
     {
-      FloatMatrix ret = new FloatMatrix(rows, columns);
+      var ret = new FloatMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -962,7 +962,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      FloatMatrix ret = new FloatMatrix(a.rows, a.columns);
+      var ret = new FloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1006,7 +1006,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
-      FloatMatrix ret = new FloatMatrix(a.rows, a.columns);
+      var ret = new FloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1034,7 +1034,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      FloatMatrix ret = new FloatMatrix(b.rows, b.columns);
+      var ret = new FloatMatrix(b.rows, b.columns);
 #if MANAGED
       for (int i = 0; i < b.rows; i++)
       {
@@ -1062,7 +1062,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      FloatMatrix ret = new FloatMatrix(a.rows, a.columns);
+      var ret = new FloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1195,7 +1195,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
-      FloatMatrix ret = new FloatMatrix(a.rows, a.columns);
+      var ret = new FloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1223,7 +1223,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      FloatMatrix ret = new FloatMatrix(b.rows, b.columns);
+      var ret = new FloatMatrix(b.rows, b.columns);
 #if MANAGED
       for (int i = 0; i < b.rows; i++)
       {
@@ -1251,7 +1251,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      FloatMatrix ret = new FloatMatrix(a.rows, a.columns);
+      var ret = new FloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1369,7 +1369,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      FloatMatrix ret = new FloatMatrix(a);
+      var ret = new FloatMatrix(a);
 #if MANAGED
       for (int i = 0; i < ret.rows; i++)
       {
@@ -1426,7 +1426,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      FloatMatrix ret = new FloatMatrix(b);
+      var ret = new FloatMatrix(b);
 #if MANAGED
       for (int i = 0; i < ret.rows; i++)
       {
@@ -1521,7 +1521,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentException("Vector and Matrix are not conformable.");
       }
 
-      FloatVector ret = new FloatVector(x.rows);
+      var ret = new FloatVector(x.rows);
       var retArray = ret.GetInternalData();
 #if MANAGED
       for (int i = 0; i < x.rows; i++)
@@ -1607,7 +1607,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
-      FloatMatrix ret = new FloatMatrix(x.rows, y.columns);
+      var ret = new FloatMatrix(x.rows, y.columns);
 #if MANAGED
       float[] column = new float[x.columns];
       for (int j = 0; j < y.columns; j++)
@@ -1706,7 +1706,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("x", "Matrix cannot be null");
       }
-      if (this.rows != x.rows || this.columns != x.columns)
+      if (rows != x.rows || columns != x.columns)
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
@@ -1715,7 +1715,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         for (int j = 0; j < x.columns; j++)
         {
-          this.data[i][j] = x.data[i][j];
+          data[i][j] = x.data[i][j];
         }
       }
 #else
@@ -1731,9 +1731,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     // --- ICloneable Interface ---
     ///<summary>Clone (deep copy) a <c>FloatMatrix</c> variable.</summary>
-    Object ICloneable.Clone()
+    object ICloneable.Clone()
     {
-      return this.Clone();
+      return Clone();
     }
 
     // --- IFormattable Interface ---
@@ -1767,7 +1767,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
     public string ToString(string format, IFormatProvider formatProvider)
     {
-      StringBuilder sb = new StringBuilder("rows: ");
+      var sb = new StringBuilder("rows: ");
       sb.Append(rows).Append(", cols: ").Append(columns).Append(System.Environment.NewLine);
 
       for (int i = 0; i < rows; i++)
@@ -1799,40 +1799,40 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary> Get the number of elements in the matrix </summary>
     public int Count
     {
-      get { return this.rows * this.columns; }
+      get { return rows * columns; }
     }
 
     int ICollection.Count
     {
-      get { return this.Count; }
+      get { return Count; }
     }
 
     ///<summary> Get a boolean indicating whether the data storage method of this matrix is thread-safe</summary>
     public bool IsSynchronized
     {
-      get { return this.data.IsSynchronized; }
+      get { return data.IsSynchronized; }
     }
 
     bool ICollection.IsSynchronized
     {
-      get { return this.IsSynchronized; }
+      get { return IsSynchronized; }
     }
 
     ///<summary> Get an object that can be used to synchronize the data storage method of this matrix</summary>
     object ICollection.SyncRoot
     {
-      get { return this.data.SyncRoot; }
+      get { return data.SyncRoot; }
     }
 
     ///<summary> Copy the components of this vector to an array </summary>
     public void CopyTo(Array array, int index)
     {
-      this.data.CopyTo(array, index);
+      data.CopyTo(array, index);
     }
 
     void ICollection.CopyTo(Array array, int index)
     {
-      this.CopyTo(array, index);
+      CopyTo(array, index);
     }
 
     // --- IList Interface ---
@@ -1855,8 +1855,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>Returns a <c>float</c> matrix element</returns>
     object IList.this[int index]
     {
-      get { return this[index % this.rows, index / this.rows]; }
-      set { this[index % this.rows, index / this.rows] = (float)value; }
+      get { return this[index % rows, index / rows]; }
+      set { this[index % rows, index / rows] = (float)value; }
     }
 
     ///<summary>Add a new value to the end of the <c>FloatMatrix</c></summary>
@@ -1868,8 +1868,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Set all values in the <c>FloatMatrix</c> to zero </summary>
     public void Clear()
     {
-      for (int i = 0; i < this.rows; i++)
-        for (int j = 0; j < this.columns; j++)
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
 #if MANAGED
           data[i][j] = 0;
 #else
@@ -1880,8 +1880,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Check if the any of the <c>FloatMatrix</c> components equals a given <c>float</c></summary>
     public bool Contains(object value)
     {
-      for (int i = 0; i < this.rows; i++)
-        for (int j = 0; j < this.columns; j++)
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
 #if MANAGED
           if (data[i][j] == (float)value)
 #else
@@ -1895,8 +1895,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Return the index of the <c>FloatMatrix</c> for the first component that equals a given <c>float</c></summary>
     public int IndexOf(object value)
     {
-      for (int i = 0; i < this.rows; i++)
-        for (int j = 0; j < this.columns; j++)
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
 #if MANAGED
           if (data[i][j] == (float)value)
 #else
@@ -1936,13 +1936,13 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
       }
 
-      this.rows = source.RowCount;
-      this.columns = source.ColumnCount;
+      rows = source.RowCount;
+      columns = source.ColumnCount;
 #if MANAGED
       data = new float[rows][];
       if (source is FloatMatrix)
       {
-        FloatMatrix cdmsource = (FloatMatrix)source;
+        var cdmsource = (FloatMatrix)source;
         for (int i = 0; i < rows; i++)
           data[i] = (float[])cdmsource.data[i].Clone();
       }

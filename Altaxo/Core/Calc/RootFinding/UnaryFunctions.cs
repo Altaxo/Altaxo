@@ -44,31 +44,31 @@ namespace Altaxo.Calc.RootFinding
       { return a; });
     }
 
-    static public Func<double, double> Add(Func<double, double> f1, Func<double, double> f2)
+    public static Func<double, double> Add(Func<double, double> f1, Func<double, double> f2)
     {
       return new Func<double, double>(delegate (double x)
       { return f1(x) + f2(x); });
     }
 
-    static public Func<double, double> Multiply(Func<double, double> f, double lambda)
+    public static Func<double, double> Multiply(Func<double, double> f, double lambda)
     {
       return new Func<double, double>(delegate (double x)
       { return lambda * f(x); });
     }
 
-    static public Func<double, double> Minus(Func<double, double> f)
+    public static Func<double, double> Minus(Func<double, double> f)
     {
       return new Func<double, double>(delegate (double x)
       { return -f(x); });
     }
 
-    static public Func<double, double> Subtract(Func<double, double> f1, Func<double, double> f2)
+    public static Func<double, double> Subtract(Func<double, double> f1, Func<double, double> f2)
     {
       return new Func<double, double>(delegate (double x)
       { return f1(x) - f2(x); });
     }
 
-    static public Func<double, double> Compound(Func<double, double> f1, Func<double, double> f2)
+    public static Func<double, double> Compound(Func<double, double> f1, Func<double, double> f2)
     {
       return new Func<double, double>(delegate (double x)
       { return f1(f2(x)); });

@@ -31,9 +31,9 @@
  * NB: Constraint class inspired by the optimization frame in the QuantLib library
 */
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -59,21 +59,21 @@ namespace Altaxo.Calc.Optimization
     ///<summary> Perform an evaluation of Cost Function value </summary>
     protected double FunctionEvaluation(DoubleVector x)
     {
-      this.endCriteria_.functionEvaluationCounter++;
+      endCriteria_.functionEvaluationCounter++;
       return costFunction_.Value(x);
     }
 
     ///<summary> Perform an evaluation of Cost Function gradient </summary>
     protected DoubleVector GradientEvaluation(DoubleVector x)
     {
-      this.endCriteria_.gradientEvaluationCounter++;
+      endCriteria_.gradientEvaluationCounter++;
       return costFunction_.Gradient(x);
     }
 
     ///<summary> Perform an evaluation of Cost Function hessian </summary>
     protected DoubleMatrix HessianEvaluation(DoubleVector x)
     {
-      this.endCriteria_.hessianEvaluationCounter++;
+      endCriteria_.hessianEvaluationCounter++;
       return costFunction_.Hessian(x);
     }
 

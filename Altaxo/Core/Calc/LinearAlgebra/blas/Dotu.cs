@@ -83,7 +83,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       }
       ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
 
-      ComplexFloat ret = new ComplexFloat(0);
+      var ret = new ComplexFloat(0);
 #if MANAGED
       int ix = 0;
       int iy = 0;
@@ -107,7 +107,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       }
       ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
 
-      Complex ret = new Complex(0);
+      var ret = new Complex(0);
 #if MANAGED
       int ix = 0;
       int iy = 0;

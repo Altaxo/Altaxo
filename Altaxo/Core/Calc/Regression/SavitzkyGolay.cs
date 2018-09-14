@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
@@ -85,7 +85,7 @@ namespace Altaxo.Calc.Regression
       // Set up the design matrix
       // this is the matrix of i^j where i ranges from -leftpoints..rightpoints and j from 0 to polynomialorder
       // as usual for regression, we not use the matrix directly, but instead the covariance matrix At*A
-      Matrix mat = new Matrix(polynomialorder + 1, polynomialorder + 1);
+      var mat = new Matrix(polynomialorder + 1, polynomialorder + 1);
 
       double[] val = new double[totalpoints];
       for (int i = 0; i < totalpoints; i++)
@@ -112,7 +112,7 @@ namespace Altaxo.Calc.Regression
       // now solve the equation
       ILuDecomposition decompose = mat.GetLuDecomposition();
       // ISingularValueDecomposition decompose = mat.GetSingularValueDecomposition();
-      Matrix y = new Matrix(polynomialorder + 1, 1);
+      var y = new Matrix(polynomialorder + 1, 1);
       y[derivativeorder, 0] = 1;
       IMapackMatrix result = decompose.Solve(y);
 

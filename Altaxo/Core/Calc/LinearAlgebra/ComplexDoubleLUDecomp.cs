@@ -90,7 +90,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       sign = 1;
       Complex[] LUrowi;
-      Complex[] LUcolj = new Complex[m];
+      var LUcolj = new Complex[m];
 
       // Outer loop.
       for (int j = 0; j < n; j++)
@@ -158,12 +158,12 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
       SetLU();
 
-      this.singular = false;
+      singular = false;
       for (int j = 0; j < u.RowLength; j++)
       {
         if (u[j, j] == 0)
         {
-          this.singular = true;
+          singular = true;
           break;
         }
       }
@@ -294,7 +294,7 @@ namespace Altaxo.Calc.LinearAlgebra
       else
       {
 #if MANAGED
-        ComplexDoubleMatrix ret = ComplexDoubleMatrix.CreateIdentity(order);
+        var ret = ComplexDoubleMatrix.CreateIdentity(order);
         ret = Solve(ret);
         return ret;
 #else
@@ -315,7 +315,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int m = B.Rows;
       int n = B.Columns;
 
-      ComplexDoubleMatrix ret = new ComplexDoubleMatrix(m, n);
+      var ret = new ComplexDoubleMatrix(m, n);
       for (int i = 0; i < pivots.Length; i++)
       {
         for (int j = 0; j < n; j++)
@@ -328,7 +328,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     private ComplexDoubleVector Pivot(IROComplexDoubleVector B)
     {
-      ComplexDoubleVector ret = new ComplexDoubleVector(B.Length);
+      var ret = new ComplexDoubleVector(B.Length);
       for (int i = 0; i < pivots.Length; i++)
       {
         ret.data[i] = B[pivots[i]];

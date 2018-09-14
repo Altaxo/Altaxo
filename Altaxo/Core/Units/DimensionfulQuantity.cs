@@ -99,7 +99,7 @@ namespace Altaxo.Units
     /// <returns>Returns <c>true</c> if <paramref name="a"/> is equal in all three components(value, prefix, unit) to this quantity; otherwise, <c>false</c>.</returns>
     public bool IsEqualInValuePrefixUnit(DimensionfulQuantity a)
     {
-      return this._value == a._value && this.Prefix == a.Prefix && this._unit == a._unit;
+      return _value == a._value && Prefix == a.Prefix && _unit == a._unit;
     }
 
     /// <summary>
@@ -189,8 +189,8 @@ namespace Altaxo.Units
         throw new ArgumentNullException("unit");
       if (null == _unit)
         throw new InvalidOperationException("This instance is empty, i.e. the unit of this quantity is set to null.");
-      if (unit.SIUnit != this._unit.SIUnit)
-        throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, this._unit));
+      if (unit.SIUnit != _unit.SIUnit)
+        throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, _unit));
 
       return unit.FromSIUnit(AsValueInSIUnits);
     }
@@ -209,8 +209,8 @@ namespace Altaxo.Units
         throw new ArgumentNullException("prefix");
       if (null == _unit)
         throw new InvalidOperationException("This instance is empty");
-      if (unit.SIUnit != this._unit.SIUnit)
-        throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, this._unit));
+      if (unit.SIUnit != _unit.SIUnit)
+        throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, _unit));
 
       return prefix.FromSIUnit(unit.FromSIUnit(AsValueInSIUnits));
     }
@@ -262,10 +262,10 @@ namespace Altaxo.Units
     /// <returns>The value is 1, if this quantity is greater than the other quantity; 0 if both quantities are equal, and -1 if this quantity is less than the other quantity.</returns>
     public int CompareTo(DimensionfulQuantity other)
     {
-      if (null == this._unit || null == other._unit || this._unit.SIUnit != other._unit.SIUnit)
-        throw new ArgumentException(string.Format("Incompatible units in comparison of a quantity in {0} with a quantity in {1}", this._unit.Name, other._unit.Name));
+      if (null == _unit || null == other._unit || _unit.SIUnit != other._unit.SIUnit)
+        throw new ArgumentException(string.Format("Incompatible units in comparison of a quantity in {0} with a quantity in {1}", _unit.Name, other._unit.Name));
 
-      double thisval = this.AsValueIn(_unit.SIUnit);
+      double thisval = AsValueIn(_unit.SIUnit);
       double otherval = other.AsValueIn(_unit.SIUnit);
       return thisval.CompareTo(otherval);
     }
@@ -323,7 +323,7 @@ namespace Altaxo.Units
       get
       {
         if (HasBiasedUnit)
-          return new DimensionfulQuantity(((IBiasedUnit)this.Unit).ToSIUnitIfTreatedAsDifference(this.Value), SIPrefix.None, this.Unit.SIUnit);
+          return new DimensionfulQuantity(((IBiasedUnit)Unit).ToSIUnitIfTreatedAsDifference(Value), SIPrefix.None, Unit.SIUnit);
         else
           return this;
       }

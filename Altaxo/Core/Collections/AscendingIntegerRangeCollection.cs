@@ -157,8 +157,7 @@ namespace Altaxo.Collections
     /// <returns><c>True</c> if the collection contains the element, otherwise <c>false</c>.</returns>
     public bool Contains(int element)
     {
-      int rangeIndex;
-      return Contains(element, out rangeIndex);
+      return Contains(element, out var rangeIndex);
     }
 
     /// <summary>

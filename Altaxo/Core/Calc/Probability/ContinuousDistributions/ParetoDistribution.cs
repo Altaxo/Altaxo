@@ -47,7 +47,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
       set
       {
@@ -68,7 +68,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.beta;
+        return beta;
       }
       set
       {
@@ -141,7 +141,7 @@ namespace Altaxo.Calc.Probability
       this.alpha = alpha;
       this.beta = beta;
 
-      this.helper1 = 1.0 / this.beta;
+      helper1 = 1.0 / this.beta;
     }
 
     /// <summary>
@@ -179,7 +179,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
     }
 
@@ -201,9 +201,9 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.beta > 1.0)
+        if (beta > 1.0)
         {
-          return this.alpha * this.beta / (this.beta - 1.0);
+          return alpha * beta / (beta - 1.0);
         }
         else
         {
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha * Math.Pow(2.0, 1.0 / this.beta);
+        return alpha * Math.Pow(2.0, 1.0 / beta);
       }
     }
 
@@ -230,9 +230,9 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.beta > 2.0)
+        if (beta > 2.0)
         {
-          return this.beta * Math.Pow(this.alpha, 2.0) / Math.Pow(this.beta - 1.0, 2.0) / (this.beta - 2.0);
+          return beta * Math.Pow(alpha, 2.0) / Math.Pow(beta - 1.0, 2.0) / (beta - 2.0);
         }
         else
         {
@@ -248,7 +248,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { this.alpha };
+        return new double[] { alpha };
       }
     }
 
@@ -258,7 +258,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A pareto distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return this.alpha / Math.Pow(1.0 - this.Generator.NextDouble(), this.helper1);
+      return alpha / Math.Pow(1.0 - Generator.NextDouble(), helper1);
     }
 
     #endregion overridden Distribution members

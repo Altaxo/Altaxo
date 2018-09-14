@@ -191,7 +191,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         // Copy right hand side.
         int cols = B.Columns;
-        ComplexDoubleMatrix X = new ComplexDoubleMatrix(B);
+        var X = new ComplexDoubleMatrix(B);
         for (int c = 0; c < cols; c++)
         {
           // Solve L*Y = B;
@@ -253,7 +253,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 #if MANAGED
         // Copy right hand side.
-        ComplexDoubleVector X = new ComplexDoubleVector(B);
+        var X = new ComplexDoubleVector(B);
         // Solve L*Y = B;
         for (int i = 0; i < order; i++)
         {
@@ -300,7 +300,7 @@ namespace Altaxo.Calc.LinearAlgebra
       else
       {
 #if MANAGED
-        ComplexDoubleMatrix ret = ComplexDoubleMatrix.CreateIdentity(order);
+        var ret = ComplexDoubleMatrix.CreateIdentity(order);
         ret = Solve(ret);
         return ret;
 #else

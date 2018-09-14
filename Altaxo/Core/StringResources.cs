@@ -70,8 +70,10 @@ namespace Altaxo
       _resourceName = resourceName;
       _assemblyContainingTheResources = assemblyContainingTheResources;
       _defaultResourceMgr = new System.Resources.ResourceManager(path + "." + resourceName, assemblyContainingTheResources);
-      _resourceManagersByLanguage = new Dictionary<string, System.Resources.ResourceManager>();
-      _resourceManagersByLanguage.Add("en", _defaultResourceMgr);
+      _resourceManagersByLanguage = new Dictionary<string, System.Resources.ResourceManager>
+      {
+        { "en", _defaultResourceMgr }
+      };
     }
 
     /// <summary>
@@ -93,11 +95,10 @@ namespace Altaxo
     /// <returns>The resource string corresponding to the given resource key.</returns>
     public string GetString(StringResourceKey resourceKey, bool fallbackToExampleValue)
     {
-      System.Resources.ResourceManager mgr;
 
       string cu = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
 
-      if (!_resourceManagersByLanguage.TryGetValue(cu, out mgr))
+      if (!_resourceManagersByLanguage.TryGetValue(cu, out var mgr))
       {
         string resName = string.Format("{0}.{1}.{2}", _resourcePath, cu, _resourceName);
         mgr = null;

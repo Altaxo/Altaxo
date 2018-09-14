@@ -45,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   [Serializable]
-  public partial class DoubleVector : Vector<Double>
+  public partial class DoubleVector : Vector<double>
   {
     /// <summary>
     /// Returns a wrapper object, so that the returned vector is read only. Please note, that changes to the elements
@@ -59,61 +59,61 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>FloatVector</c></summary>
-    static public explicit operator DoubleVector(FloatVector src)
+    public static explicit operator DoubleVector(FloatVector src)
     {
       if (src == null)
       {
         return null;
       }
-      DoubleVector ret = new DoubleVector(src.Count);
+      var ret = new DoubleVector(src.Count);
       Array.Copy(src.GetInternalData(), ret._array, src.Length);
       return ret;
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>FloatVector</c></summary>
-    static public DoubleVector ToDoubleVector(FloatVector src)
+    public static DoubleVector ToDoubleVector(FloatVector src)
     {
       if (src == null)
       {
         return null;
       }
-      DoubleVector ret = new DoubleVector(src.Length);
+      var ret = new DoubleVector(src.Length);
       Array.Copy(src.GetInternalData(), ret._array, src.Length);
       return ret;
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
-    static public explicit operator DoubleVector(double[] src)
+    public static explicit operator DoubleVector(double[] src)
     {
       if (src == null)
       {
         return null;
       }
-      DoubleVector ret = new DoubleVector(src.Length);
+      var ret = new DoubleVector(src.Length);
       Array.Copy(src, ret._array, src.Length);
       return ret;
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
-    static public explicit operator DoubleVector(float[] src)
+    public static explicit operator DoubleVector(float[] src)
     {
       if (src == null)
       {
         return null;
       }
-      DoubleVector ret = new DoubleVector(src.Length);
+      var ret = new DoubleVector(src.Length);
       Array.Copy(src, ret._array, src.Length);
       return ret;
     }
 
     ///<summary>Implicit cast conversion to <c>DoubleVector</c> from <c>float</c> array</summary>
-    static public DoubleVector ToDoubleVector(float[] src)
+    public static DoubleVector ToDoubleVector(float[] src)
     {
       if (src == null)
       {
         return null;
       }
-      DoubleVector ret = new DoubleVector(src.Length);
+      var ret = new DoubleVector(src.Length);
       Array.Copy(src, ret._array, src.Length);
       return ret;
     }

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Fourier
 {
@@ -207,7 +207,7 @@ namespace Altaxo.Calc.Fourier
       // fourier transform either with Pfa (faster) or with the Chirp-z-transform
       if (Pfa235FFT.CanFactorized(numRows) && Pfa235FFT.CanFactorized(numColumns))
       {
-        Pfa235FFT fft = new Pfa235FFT(numRows, numColumns);
+        var fft = new Pfa235FFT(numRows, numColumns);
         fft.FFT(rePart, imPart, FourierDirection.Forward);
       }
       else

@@ -132,7 +132,7 @@ namespace Altaxo.Collections.Text
     /// <returns>The integer text data, which holds the text converted to an integer alphabet.</returns>
     public static IntegerText FromWords(IEnumerable<string> words, bool withSeparators, int padding, IComparer<char> customComparer)
     {
-      IntegerText result = new IntegerText();
+      var result = new IntegerText();
 
       int totalNumberOfElements = 0;
       var sSet = new SortedSet<char>();
@@ -196,7 +196,7 @@ namespace Altaxo.Collections.Text
     /// <returns>The integer text data, which holds the text converted to an integer alphabet.</returns>
     public static IntegerText FromWords<T>(IEnumerable<IEnumerable<T>> lists, bool withSeparators, int padding, bool useSortedMapping, IComparer<T> customSortingComparer)
     {
-      IntegerText result = new IntegerText();
+      var result = new IntegerText();
 
       int totalNumberOfElements = 0;
       ISet<T> sSet;

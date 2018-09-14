@@ -52,7 +52,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._N;
+        return _N;
       }
       set
       {
@@ -117,7 +117,7 @@ namespace Altaxo.Calc.Probability
     public ChiDistribution(int N, Generator generator)
       : base(generator)
     {
-      this._normalDistribution = new NormalDistribution(0, 1, generator);
+      _normalDistribution = new NormalDistribution(0, 1, generator);
       Initialize(N);
     }
 
@@ -129,7 +129,7 @@ namespace Altaxo.Calc.Probability
     {
       if (!IsValidN(N))
         throw new ArgumentOutOfRangeException("N out of range (must be >0)");
-      this._N = N;
+      _N = N;
     }
 
     /// <summary>
@@ -194,7 +194,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Sqrt(2.0) * this.Gamma((this._N + 1.0) / 2.0) / this.Gamma(this._N / 2.0);
+        return Math.Sqrt(2.0) * Gamma((_N + 1.0) / 2.0) / Gamma(_N / 2.0);
       }
     }
 
@@ -216,7 +216,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._N - Math.Pow(this.Mean, 2.0);
+        return _N - Math.Pow(Mean, 2.0);
       }
     }
 
@@ -227,9 +227,9 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this._N >= 1)
+        if (_N >= 1)
         {
-          return new double[] { Math.Sqrt(this._N - 1.0) };
+          return new double[] { Math.Sqrt(_N - 1.0) };
         }
         else
         {
@@ -245,9 +245,9 @@ namespace Altaxo.Calc.Probability
     public override double NextDouble()
     {
       double sum = 0.0;
-      for (int i = 0; i < this._N; i++)
+      for (int i = 0; i < _N; i++)
       {
-        sum += Math.Pow(this._normalDistribution.NextDouble(), 2);
+        sum += Math.Pow(_normalDistribution.NextDouble(), 2);
       }
 
       return Math.Sqrt(sum);

@@ -147,7 +147,7 @@ namespace Altaxo.Calc
         s = t;
       for (int k = 1; k <= 200; ++k)
       {
-        double fk = (double)k;
+        double fk = k;
         te = -x * te / fk;
         t = te / (ae + fk);
         s += t;
@@ -302,7 +302,7 @@ L20:
         s = p;
       for (int k = 1; k <= 300; ++k)
       {
-        double fk = (double)k,
+        double fk = k,
           t = fk * (a - fk) * (r + 1.0);
         r = -t / ((xma + fk * 2.0) * (xpa + fk * 2.0) + t);
         p *= r;
@@ -354,7 +354,7 @@ result:
           s = p;
         for (int k = 1; k <= 200; ++k)
         {
-          double fk = (double)k,
+          double fk = k,
             t = (a + fk) * x * (r + 1.0);
           r = t / ((ax + fk) * (a1x + fk) - t);
           p *= r;
@@ -503,14 +503,14 @@ result:
           throw new ArgumentException("x must be > zero");
 
         int m = (int)(-(a - 0.5));
-        fm = (double)m;
+        fm = m;
 
         te = 1.0;
         t = 1.0;
         s = t;
         for (int k = 1; k <= 200; ++k)
         {
-          fkp1 = (double)(k + 1);
+          fkp1 = k + 1;
           te = -x * te / (fm + fkp1);
           t = te / fkp1;
           s += t;
@@ -535,7 +535,7 @@ L30:
         int mm1 = m - 1;
         for (int k = 1; k <= mm1; ++k)
         {
-          fk = (double)k;
+          fk = k;
           te = -x * te / fk;
           t = te / (fm - fk);
           s += t;
@@ -1116,7 +1116,7 @@ L50:
             return double.PositiveInfinity;
         }
 
-        double x = (double)(n + 1);
+        double x = n + 1;
         return Math.Exp((x - 0.5) * Math.Log(x) - x + sq2pil_Fac + d9lgmc.f(x));
       }
     }
@@ -1193,8 +1193,8 @@ L50:
         return 0.0;
       else if (Math.Abs(x) > 10.0)
       {
-        double alngx, sgngx;
-        alngx = LnGamma(x, out sgngx, bDebug);
+        double alngx;
+        alngx = LnGamma(x, out var sgngx, bDebug);
         return sgngx * Math.Exp(-alngx);
       }
       else
@@ -2179,7 +2179,7 @@ L20:
         i__1 = n;
         for (i__ = 1; i__ <= i__1; ++i__)
         {
-          xi = (double)i__;
+          xi = i__;
           d__1 = term * (xi - ps);
           term = d__1 * y / xi;
           ret_val += term / (p + xi);
@@ -2203,7 +2203,7 @@ L40:
 
         finsum = 0.0;
         n = (int)q;
-        if (q == (double)n)
+        if (q == n)
           --n;
 
         i__1 = n;
@@ -2211,7 +2211,7 @@ L40:
         {
           if (p1 <= 1.0 && term / eps_BetaI <= finsum)
             goto L60;
-          xi = (double)i__;
+          xi = i__;
           d__1 = (q - xi + 1.0) * c__;
           term = d__1 * term / (p + q - xi);
           if (term > 1.0)
@@ -2462,7 +2462,7 @@ L80:
         }
         int n;
         double argsum;
-        Complex corr = new Complex(0.0, 0.0);
+        var corr = new Complex(0.0, 0.0);
 
         if (x >= 0.0 && cabsz > _LnGamma_bound)
           goto L50;
@@ -2507,7 +2507,7 @@ L20:
         if (x >= -0.5 || Math.Abs(y) > _LnGamma_dxrel)
           goto L30;
 
-        if (bDebug && ComplexMath.Abs((z - (double)((int)(x - 0.5))) / x) < _LnGamma_dxrel)
+        if (bDebug && ComplexMath.Abs((z - (int)(x - 0.5)) / x) < _LnGamma_dxrel)
           System.Diagnostics.Trace.WriteLine("Warning (LnGamma): answer less than half precision because z too near negative integer");
 L30:
         n = (int)(Math.Sqrt(_LnGamma_bound * _LnGamma_bound - y * y) - x + 1.0);
@@ -2933,7 +2933,7 @@ L5:
 
     #region igami
 
-    static public double InverseGammaRegularized(double a, double z)
+    public static double InverseGammaRegularized(double a, double z)
     {
       return _Cephes.igami(a, z);
     }
@@ -3044,7 +3044,7 @@ L5:
       private static double big = 4.503599627370496e15;
       private static double biginv = 2.22044604925031308085e-16;
 
-      static public double igamc(double a, double x)
+      public static double igamc(double a, double x)
       {
         double ans, ax, c, yc, r, t, y, z;
         double pk, pkm1, pkm2, qk, qkm1, qkm2;
@@ -3115,7 +3115,7 @@ L5:
 			 *
 			 */
 
-      static public double igam(double a, double x)
+      public static double igam(double a, double x)
       {
         double ans, ax, c, r;
 
@@ -3203,7 +3203,7 @@ L5:
       //#include "mconf.h"
       //#include "cephes.h"
 
-      static public double igami(double a, double y0)
+      public static double igami(double a, double y0)
       {
         double x0, x1, x, yl, yh, y, d, lgm, dithresh;
         int i, dir;

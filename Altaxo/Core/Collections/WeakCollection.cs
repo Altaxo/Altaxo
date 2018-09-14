@@ -75,7 +75,7 @@ namespace Altaxo.Collections
       var comparer = EqualityComparer<T>.Default;
       for (int i = 0; i < innerList.Count;)
       {
-        T element = (T)innerList[i].Target;
+        var element = (T)innerList[i].Target;
         if (element == null)
         {
           RemoveAt(i);
@@ -121,7 +121,7 @@ namespace Altaxo.Collections
         hasEnumerator = true;
         for (int i = 0; i < innerList.Count;)
         {
-          T element = (T)innerList[i].Target;
+          var element = (T)innerList[i].Target;
           if (element == null)
           {
             RemoveAt(i);

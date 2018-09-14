@@ -112,7 +112,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 
       float ret = 0;
 #if MANAGED
-      ComplexFloat temp = new ComplexFloat(0);
+      var temp = new ComplexFloat(0);
       int ix = 0;
       for (int i = 0; i < n; ++i)
       {
@@ -132,7 +132,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 
       double ret = 0;
 #if MANAGED
-      Complex temp = new Complex(0);
+      var temp = new Complex(0);
       int ix = 0;
       for (int i = 0; i < n; ++i)
       {

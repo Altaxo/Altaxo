@@ -45,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   [System.Serializable]
-  sealed public class DoubleMatrix : IMatrix<double>, ICloneable, IFormattable, IEnumerable, ICollection, IList
+  public sealed class DoubleMatrix : IMatrix<double>, ICloneable, IFormattable, IEnumerable, ICollection, IList
   {
 #if MANAGED
     internal double[][] data;
@@ -154,8 +154,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("source", "The input DoubleMatrix cannot be null.");
       }
-      this.rows = source.rows;
-      this.columns = source.columns;
+      rows = source.rows;
+      columns = source.columns;
 #if MANAGED
       data = new double[rows][];
       for (int i = 0; i < rows; i++)
@@ -186,8 +186,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
       }
-      this.rows = source.RowLength;
-      this.columns = source.ColumnLength;
+      rows = source.RowLength;
+      columns = source.ColumnLength;
 #if MANAGED
       data = new double[rows][];
       for (int i = 0; i < rows; i++)
@@ -218,8 +218,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("values", "The input matrix cannot be null.");
       }
-      this.rows = values.GetLength(0);
-      this.columns = values.GetLength(1);
+      rows = values.GetLength(0);
+      columns = values.GetLength(1);
 #if MANAGED
       data = new double[rows][];
       for (int i = 0; i < rows; i++)
@@ -252,8 +252,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("values", "The input matrix cannot be null.");
       }
-      this.rows = values.GetLength(0);
-      this.columns = values.GetLength(1);
+      rows = values.GetLength(0);
+      columns = values.GetLength(1);
 #if MANAGED
       data = new double[rows][];
       for (int i = 0; i < rows; i++)
@@ -285,7 +285,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>Matrix with elements set to random values between 0 and 1</returns>
     public static DoubleMatrix Random(int rows, int columns)
     {
-      Random rnd = new Random();
+      var rnd = new Random();
 
       var result = new DoubleMatrix(rows, columns);
       for (int i = 0; i < rows; ++i)
@@ -306,7 +306,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    static public implicit operator DoubleMatrix(FloatMatrix source)
+    public static implicit operator DoubleMatrix(FloatMatrix source)
     {
       if (source == null)
       {
@@ -326,7 +326,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <value>
     /// The internal data.
     /// </value>
-    public MatrixWrapperStructForLeftSpineJaggedArray<double> InternalData { get { return new MatrixWrapperStructForLeftSpineJaggedArray<double>(this.data, this.RowCount, this.ColumnCount); } }
+    public MatrixWrapperStructForLeftSpineJaggedArray<double> InternalData { get { return new MatrixWrapperStructForLeftSpineJaggedArray<double>(data, RowCount, ColumnCount); } }
 
     private class RoWrapper : IROMatrix<double>
     {
@@ -356,23 +356,23 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public IROMatrix<double> ToROMatrix()
     {
-      return new RoWrapper(this.data, rows, columns);
+      return new RoWrapper(data, rows, columns);
     }
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    static public DoubleMatrix ToDoubleMatrix(FloatMatrix source)
+    public static DoubleMatrix ToDoubleMatrix(FloatMatrix source)
     {
       if (source == null)
       {
         return null;
       }
-      return (DoubleMatrix)source;
+      return source;
     }
 
     ///<summary>Implicit conversion from <c>double</c> array.</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    static public implicit operator DoubleMatrix(double[,] source)
+    public static implicit operator DoubleMatrix(double[,] source)
     {
       if (source == null)
       {
@@ -383,7 +383,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>double</c> array</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    static public DoubleMatrix ToDoubleMatrix(double[,] source)
+    public static DoubleMatrix ToDoubleMatrix(double[,] source)
     {
       if (source == null)
       {
@@ -394,7 +394,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>float</c> array</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    static public implicit operator DoubleMatrix(float[,] source)
+    public static implicit operator DoubleMatrix(float[,] source)
     {
       if (source == null)
       {
@@ -405,7 +405,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>float</c> array</summary>
     ///<param name="source"><c>double</c> array to make a deep copy conversion from.</param>
-    static public DoubleMatrix ToDoubleMatrix(float[,] source)
+    public static DoubleMatrix ToDoubleMatrix(float[,] source)
     {
       if (source == null)
       {
@@ -418,7 +418,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="rank">Rank of identity matrix.</param>
     public static DoubleMatrix CreateIdentity(int rank)
     {
-      DoubleMatrix ret = new DoubleMatrix(rank);
+      var ret = new DoubleMatrix(rank);
       for (int i = 0; i < rank; i++)
       {
 #if MANAGED
@@ -535,13 +535,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public void CopyFrom(DoubleMatrix x)
     {
-      if (this.RowCount != x.RowCount || this.ColumnCount != x.ColumnCount)
+      if (RowCount != x.RowCount || ColumnCount != x.ColumnCount)
         throw new RankException("Number of rows or columns of matrix to copy from does not match.");
 
-      var cols = this.ColumnCount;
-      var rows = this.RowCount;
+      var cols = ColumnCount;
+      var rows = RowCount;
       var fromData = x.data;
-      var toData = this.data;
+      var toData = data;
       for (int i = 0; i < rows; ++i)
         Array.Copy(fromData[i], toData[i], cols);
     }
@@ -549,10 +549,10 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Check if <c>DoubleMatrix</c> variable is the same as another object.</summary>
     ///<param name="obj"><c>obj</c> to compare present <c>DoubleMatrix</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>DoubleMatrix</c> variable</returns>
-    public override bool Equals(Object obj)
+    public override bool Equals(object obj)
     {
-      DoubleMatrix matrix = obj as DoubleMatrix;
-      if ((Object)matrix == null)
+      var matrix = obj as DoubleMatrix;
+      if (matrix == null)
       {
         return false;
       }
@@ -586,7 +586,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The Hashcode representation of <c>DoubleMatrix</c></returns>
     public override int GetHashCode()
     {
-      return (int)this.GetFrobeniusNorm();
+      return (int)GetFrobeniusNorm();
     }
 
     ///<summary>Convert <c>DoubleMatrix</c> into <c>double</c> array</summary>
@@ -642,7 +642,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The transpose of the <c>DoubleMatrix</c>.</returns>
     public DoubleMatrix GetTranspose()
     {
-      DoubleMatrix ret = new DoubleMatrix(columns, rows);
+      var ret = new DoubleMatrix(columns, rows);
 #if MANAGED
       for (int i = 0; i < rows; i++)
       {
@@ -671,7 +671,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
-      DoubleLUDecomp lu = new DoubleLUDecomp(this);
+      var lu = new DoubleLUDecomp(this);
       return lu.GetInverse();
     }
 
@@ -684,9 +684,9 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
-      DoubleLUDecomp lu = new DoubleLUDecomp(this);
+      var lu = new DoubleLUDecomp(this);
       DoubleMatrix temp = lu.GetInverse();
-      this.data = temp.data;
+      data = temp.data;
     }
 
     /// <summary>Computes the determinant the <c>DoubleMatrix</c>.</summary>
@@ -698,7 +698,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
-      DoubleLUDecomp lu = new DoubleLUDecomp(this);
+      var lu = new DoubleLUDecomp(this);
       return lu.GetDeterminant();
     }
 
@@ -775,7 +775,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <exception cref="NotSquareMatrixException">the matrix is not square.</exception>
     public double GetConditionNumber()
     {
-      if (this.rows != this.columns)
+      if (rows != columns)
       {
         throw new NotSquareMatrixException();
       }
@@ -791,7 +791,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentOutOfRangeException("row", "row must be greater than or equal to zero and less than RowLength.");
       }
-      DoubleVector ret = new DoubleVector(columns);
+      var ret = new DoubleVector(columns);
       var retArray = ret.GetInternalData();
       for (int i = 0; i < columns; i++)
       {
@@ -813,7 +813,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentOutOfRangeException("column", "column must be greater than or equal to zero and less than ColumnLength.");
       }
-      DoubleVector ret = new DoubleVector(rows);
+      var ret = new DoubleVector(rows);
       var retArray = ret.GetInternalData();
       for (int i = 0; i < rows; i++)
       {
@@ -839,7 +839,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       if (null == destinationVector)
         throw new ArgumentNullException(nameof(destinationVector));
-      if (destinationVector.Count != this.RowCount)
+      if (destinationVector.Count != RowCount)
         throw new RankException("destinationVector.Length is not equal to matrix.Rows");
 
       for (int i = 0; i < rows; i++)
@@ -853,7 +853,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public DoubleVector GetDiagonal()
     {
       int min = System.Math.Min(rows, columns);
-      DoubleVector ret = new DoubleVector(min);
+      var ret = new DoubleVector(min);
       var retArray = ret.GetInternalData();
       for (int i = 0; i < min; i++)
       {
@@ -1044,7 +1044,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       int nRows = endRow - startRow + 1;
       int nCols = endColumn - startColumn + 1;
-      DoubleMatrix ret = new DoubleMatrix(nRows, nCols);
+      var ret = new DoubleMatrix(nRows, nCols);
 
       for (int i = 0; i < nRows; i++)
       {
@@ -1064,7 +1064,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>DoubleMatrix</c> with upper triangle values from <c>DoubleMatrix</c>.</returns>
     public DoubleMatrix GetUpperTriangle()
     {
-      DoubleMatrix ret = new DoubleMatrix(rows, columns);
+      var ret = new DoubleMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -1086,7 +1086,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>DoubleMatrix</c> with strictly upper triangle values from <c>DoubleMatrix</c>.</returns>
     public DoubleMatrix GetStrictlyUpperTriangle()
     {
-      DoubleMatrix ret = new DoubleMatrix(rows, columns);
+      var ret = new DoubleMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -1108,7 +1108,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>DoubleMatrix</c> with lower triangle values from <c>DoubleMatrix</c>.</returns>
     public DoubleMatrix GetLowerTriangle()
     {
-      DoubleMatrix ret = new DoubleMatrix(rows, columns);
+      var ret = new DoubleMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -1130,7 +1130,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>DoubleMatrix</c> with strictly lower triangle values from <c>DoubleMatrix</c>.</returns>
     public DoubleMatrix GetStrictlyLowerTriangle()
     {
-      DoubleMatrix ret = new DoubleMatrix(rows, columns);
+      var ret = new DoubleMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -1157,7 +1157,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      DoubleMatrix ret = new DoubleMatrix(a.rows, a.columns);
+      var ret = new DoubleMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1201,7 +1201,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
-      DoubleMatrix ret = new DoubleMatrix(a.rows, a.columns);
+      var ret = new DoubleMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1229,7 +1229,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      DoubleMatrix ret = new DoubleMatrix(b.rows, b.columns);
+      var ret = new DoubleMatrix(b.rows, b.columns);
 #if MANAGED
       for (int i = 0; i < b.rows; i++)
       {
@@ -1257,7 +1257,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      DoubleMatrix ret = new DoubleMatrix(a.rows, a.columns);
+      var ret = new DoubleMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1396,7 +1396,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
-      DoubleMatrix ret = new DoubleMatrix(a.rows, a.columns);
+      var ret = new DoubleMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1424,7 +1424,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      DoubleMatrix ret = new DoubleMatrix(b.rows, b.columns);
+      var ret = new DoubleMatrix(b.rows, b.columns);
 #if MANAGED
       for (int i = 0; i < b.rows; i++)
       {
@@ -1452,7 +1452,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      DoubleMatrix ret = new DoubleMatrix(a.rows, a.columns);
+      var ret = new DoubleMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1570,7 +1570,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      DoubleMatrix ret = new DoubleMatrix(a);
+      var ret = new DoubleMatrix(a);
 #if MANAGED
       for (int i = 0; i < ret.rows; i++)
       {
@@ -1627,7 +1627,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      DoubleMatrix ret = new DoubleMatrix(b);
+      var ret = new DoubleMatrix(b);
 #if MANAGED
       for (int i = 0; i < ret.rows; i++)
       {
@@ -1723,7 +1723,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentException("Vector and Matrix are not conformable.");
       }
 
-      DoubleVector ret = new DoubleVector(a.rows);
+      var ret = new DoubleVector(a.rows);
       var retArray = ret.GetInternalData();
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
@@ -1809,7 +1809,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
-      DoubleMatrix ret = new DoubleMatrix(a.rows, b.columns);
+      var ret = new DoubleMatrix(a.rows, b.columns);
 #if MANAGED
       double[] column = new double[a.columns];
       for (int j = 0; j < b.columns; j++)
@@ -1911,7 +1911,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("x", "Matrix cannot be null");
       }
-      if (this.rows != x.rows || this.columns != x.columns)
+      if (rows != x.rows || columns != x.columns)
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
@@ -1920,7 +1920,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         for (int j = 0; j < x.columns; j++)
         {
-          this.data[i][j] = x.data[i][j];
+          data[i][j] = x.data[i][j];
         }
       }
 #else
@@ -1936,9 +1936,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     // --- ICloneable Interface ---
     ///<summary>Clone (deep copy) a <c>DoubleMatrix</c> variable.</summary>
-    Object ICloneable.Clone()
+    object ICloneable.Clone()
     {
-      return this.Clone();
+      return Clone();
     }
 
     // --- IFormattable Interface ---
@@ -1972,7 +1972,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
     public string ToString(string format, IFormatProvider formatProvider)
     {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
 
       sb.AppendFormat("{0}x{1} ", rows, columns);
 
@@ -2009,40 +2009,40 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary> Get the number of elements in the matrix </summary>
     public int Count
     {
-      get { return this.rows * this.columns; }
+      get { return rows * columns; }
     }
 
     int ICollection.Count
     {
-      get { return this.Count; }
+      get { return Count; }
     }
 
     ///<summary> Get a boolean indicating whether the data storage method of this vector is thread-safe</summary>
     public bool IsSynchronized
     {
-      get { return this.data.IsSynchronized; }
+      get { return data.IsSynchronized; }
     }
 
     bool ICollection.IsSynchronized
     {
-      get { return this.IsSynchronized; }
+      get { return IsSynchronized; }
     }
 
     ///<summary> Get an object that can be used to synchronize the data storage method of this vector</summary>
     object ICollection.SyncRoot
     {
-      get { return this.data.SyncRoot; }
+      get { return data.SyncRoot; }
     }
 
     ///<summary> Copy the components of this vector to an array </summary>
     public void CopyTo(Array array, int index)
     {
-      this.data.CopyTo(array, index);
+      data.CopyTo(array, index);
     }
 
     void ICollection.CopyTo(Array array, int index)
     {
-      this.CopyTo(array, index);
+      CopyTo(array, index);
     }
 
     // --- IList Interface ---
@@ -2065,8 +2065,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>Returns a <c>ComplexDouble</c> vector element</returns>
     object IList.this[int index]
     {
-      get { return this[index % this.rows, index / this.rows]; }
-      set { this[index % this.rows, index / this.rows] = (double)value; }
+      get { return this[index % rows, index / rows]; }
+      set { this[index % rows, index / rows] = (double)value; }
     }
 
     ///<summary>Add a new value to the end of the <c>DoubleVector</c></summary>
@@ -2078,8 +2078,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Set all values in the <c>DoubleVector</c> to zero </summary>
     public void Clear()
     {
-      for (int i = 0; i < this.rows; i++)
-        for (int j = 0; j < this.columns; j++)
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
 #if MANAGED
           data[i][j] = 0;
 #else
@@ -2090,8 +2090,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Check if the any of the <c>DoubleVector</c> components equals a given <c>double</c></summary>
     public bool Contains(object value)
     {
-      for (int i = 0; i < this.rows; i++)
-        for (int j = 0; j < this.columns; j++)
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
 #if MANAGED
           if (data[i][j] == (double)value)
 #else
@@ -2105,8 +2105,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Return the index of the <c>xDoubleVector</c> for the first component that equals a given <c>double</c></summary>
     public int IndexOf(object value)
     {
-      for (int i = 0; i < this.rows; i++)
-        for (int j = 0; j < this.columns; j++)
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
 #if MANAGED
           if (data[i][j] == (double)value)
 #else
@@ -2146,13 +2146,13 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentNullException("source", "The input ComplexDoubleMatrix cannot be null.");
       }
 
-      this.rows = source.RowCount;
-      this.columns = source.ColumnCount;
+      rows = source.RowCount;
+      columns = source.ColumnCount;
 #if MANAGED
       data = new double[rows][];
       if (source is DoubleMatrix)
       {
-        DoubleMatrix cdmsource = (DoubleMatrix)source;
+        var cdmsource = (DoubleMatrix)source;
         for (int i = 0; i < rows; i++)
           data[i] = (double[])cdmsource.data[i].Clone();
       }

@@ -126,28 +126,30 @@ namespace Altaxo.Units
 
     static SIPrefix()
     {
-      _instances = new List<SIPrefix>();
-      _instances.Add(_prefix_yocto = new SIPrefix("yocto", "y", -24));
-      _instances.Add(_prefix_zepto = new SIPrefix("zepto", "z", -21));
-      _instances.Add(_prefix_atto = new SIPrefix("atto", "a", -18));
-      _instances.Add(_prefix_femto = new SIPrefix("femto", "f", -15));
-      _instances.Add(_prefix_pico = new SIPrefix("pico", "p", -12));
-      _instances.Add(_prefix_nano = new SIPrefix("nano", "n", -9));
-      _instances.Add(_prefix_micro = new SIPrefix("micro", "µ", -6));
-      _instances.Add(_prefix_milli = new SIPrefix("milli", "m", -3));
-      _instances.Add(_prefix_centi = new SIPrefix("centi", "c", -2));
-      _instances.Add(_prefix_deci = new SIPrefix("deci", "d", -1));
-      _instances.Add(_prefix_none = new SIPrefix("", "", 0));
-      _instances.Add(_prefix_deca = new SIPrefix("deca", "da", 1));
-      _instances.Add(_prefix_hecto = new SIPrefix("hecto", "h", 2));
-      _instances.Add(_prefix_kilo = new SIPrefix("kilo", "k", 3));
-      _instances.Add(_prefix_mega = new SIPrefix("mega", "M", 6));
-      _instances.Add(_prefix_giga = new SIPrefix("giga", "G", 9));
-      _instances.Add(_prefix_tera = new SIPrefix("tera", "T", 12));
-      _instances.Add(_prefix_peta = new SIPrefix("peta", "P", 15));
-      _instances.Add(_prefix_exa = new SIPrefix("exa", "E", 18));
-      _instances.Add(_prefix_zetta = new SIPrefix("zetta", "Z", 21));
-      _instances.Add(_prefix_yotta = new SIPrefix("yotta", "Y", 24));
+      _instances = new List<SIPrefix>
+      {
+        (_prefix_yocto = new SIPrefix("yocto", "y", -24)),
+        (_prefix_zepto = new SIPrefix("zepto", "z", -21)),
+        (_prefix_atto = new SIPrefix("atto", "a", -18)),
+        (_prefix_femto = new SIPrefix("femto", "f", -15)),
+        (_prefix_pico = new SIPrefix("pico", "p", -12)),
+        (_prefix_nano = new SIPrefix("nano", "n", -9)),
+        (_prefix_micro = new SIPrefix("micro", "µ", -6)),
+        (_prefix_milli = new SIPrefix("milli", "m", -3)),
+        (_prefix_centi = new SIPrefix("centi", "c", -2)),
+        (_prefix_deci = new SIPrefix("deci", "d", -1)),
+        (_prefix_none = new SIPrefix("", "", 0)),
+        (_prefix_deca = new SIPrefix("deca", "da", 1)),
+        (_prefix_hecto = new SIPrefix("hecto", "h", 2)),
+        (_prefix_kilo = new SIPrefix("kilo", "k", 3)),
+        (_prefix_mega = new SIPrefix("mega", "M", 6)),
+        (_prefix_giga = new SIPrefix("giga", "G", 9)),
+        (_prefix_tera = new SIPrefix("tera", "T", 12)),
+        (_prefix_peta = new SIPrefix("peta", "P", 15)),
+        (_prefix_exa = new SIPrefix("exa", "E", 18)),
+        (_prefix_zetta = new SIPrefix("zetta", "Z", 21)),
+        (_prefix_yotta = new SIPrefix("yotta", "Y", 24))
+      };
 
       _nonePrefixList = new SIPrefixList(new SIPrefix[] { _prefix_none });
       _allPrefixes = new SIPrefixList(_instances);
@@ -284,7 +286,7 @@ namespace Altaxo.Units
     public bool Equals(SIPrefix other)
     {
       return other == null ? false :
-          this._exponent == other._exponent;
+          _exponent == other._exponent;
     }
 
     public override bool Equals(object obj)
@@ -300,10 +302,10 @@ namespace Altaxo.Units
 
     public int CompareTo(SIPrefix other)
     {
-      if (this._exponent == other._exponent)
+      if (_exponent == other._exponent)
         return 0;
       else
-        return this._exponent < other._exponent ? -1 : 1;
+        return _exponent < other._exponent ? -1 : 1;
     }
 
     #region IUnit implementation

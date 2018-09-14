@@ -172,8 +172,8 @@ namespace Altaxo.Calc.LinearAlgebra
       // Initialize.
       u = new ComplexDoubleMatrix(rows, rows); // left vectors
       v = new ComplexDoubleMatrix(cols, cols); // right vectors
-      ComplexDoubleVector e = new ComplexDoubleVector(cols);
-      ComplexDoubleVector work = new ComplexDoubleVector(rows);
+      var e = new ComplexDoubleVector(cols);
+      var work = new ComplexDoubleVector(rows);
 
       int i, iter, j, k, kase, l, lp1, ls = 0, lu, m, nct, nctp1, ncu, nrt, nrtp1;
       double b, c, cs = 0.0, el, emm1, f, g, scale, shift, sl,
@@ -197,7 +197,7 @@ namespace Altaxo.Calc.LinearAlgebra
           // compute the transformation for the l-th column and
           // place the l-th diagonal in s[l].
           xnorm = dznrm2Column(matrix, l, l);
-          s[l] = new Complex(xnorm, (double)0.0);
+          s[l] = new Complex(xnorm, 0.0);
           if (dcabs1(s[l]) != 0.0)
           {
             if (dcabs1(matrix[l, l]) != 0.0)

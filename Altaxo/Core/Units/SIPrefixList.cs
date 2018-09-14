@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
 
 namespace Altaxo.Units
 {
@@ -78,8 +78,7 @@ namespace Altaxo.Units
 
     public SIPrefix TryGetPrefixFromShortCut(string shortCut)
     {
-      SIPrefix result;
-      if (_shortCutDictionary.TryGetValue(shortCut, out result))
+      if (_shortCutDictionary.TryGetValue(shortCut, out var result))
         return result;
       else
         return null;

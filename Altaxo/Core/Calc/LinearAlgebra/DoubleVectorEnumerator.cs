@@ -44,7 +44,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
 
-  sealed internal class DoubleVectorEnumerator : IEnumerator
+  internal sealed class DoubleVectorEnumerator : IEnumerator
   {
     private DoubleVector v;
     private int index;

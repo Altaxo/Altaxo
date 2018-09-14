@@ -45,10 +45,10 @@ namespace Altaxo.Calc.Ode.Radau5
     {
       #region Set Dependencies
 
-      this._dec = dec;
-      this._decb = decb;
-      this._elmhes = elmhes;
-      this._dech = dech;
+      _dec = dec;
+      _decb = decb;
+      _elmhes = elmhes;
+      _dech = dech;
 
       #endregion Set Dependencies
 
@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Ode.Radau5
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -74,25 +74,25 @@ namespace Altaxo.Calc.Ode.Radau5
     {
       #region Initialization Common Blocks
 
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DEC dec = new DEC();
-      DECB decb = new DECB();
-      ELMHES elmhes = new ELMHES();
-      DECH dech = new DECH();
+      var dec = new DEC();
+      var decb = new DECB();
+      var elmhes = new ELMHES();
+      var dech = new DECH();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dec = dec;
-      this._decb = decb;
-      this._elmhes = elmhes;
-      this._dech = dech;
+      _dec = dec;
+      _decb = decb;
+      _elmhes = elmhes;
+      _dech = dech;
 
       #endregion Set Dependencies
 
@@ -100,7 +100,7 @@ namespace Altaxo.Calc.Ode.Radau5
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -198,7 +198,7 @@ LABEL1:
         }
         E1[J + J * LDE1 + o_e1] += FAC1;
       }
-      this._dec.Run(N, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
+      _dec.Run(N, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
       return;
 // C
 // C -----------------------------------------------------------
@@ -232,7 +232,7 @@ LABEL45:
           E1[I + E1_J] -= SUM;
         }
       }
-      this._dec.Run(NM1, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
+      _dec.Run(NM1, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
       return;
 // C
 // C -----------------------------------------------------------
@@ -250,7 +250,7 @@ LABEL2:
         }
         E1[MDIAG.v + J * LDE1 + o_e1] += FAC1;
       }
-      this._decb.Run(N, LDE1, ref E1, offset_e1, MLE.v, MUE.v, ref IP1, offset_ip1
+      _decb.Run(N, LDE1, ref E1, offset_e1, MLE.v, MUE.v, ref IP1, offset_ip1
                      , ref IER);
       return;
 // C
@@ -285,7 +285,7 @@ LABEL46:
           E1[I + MLE.v + E1_J] -= SUM;
         }
       }
-      this._decb.Run(NM1, LDE1, ref E1, offset_e1, MLE.v, MUE.v, ref IP1, offset_ip1
+      _decb.Run(NM1, LDE1, ref E1, offset_e1, MLE.v, MUE.v, ref IP1, offset_ip1
                      , ref IER);
       return;
 // C
@@ -309,7 +309,7 @@ LABEL3:
           E1[I + E1_J] += FAC1 * FMAS[I - J + MBDIAG.v + FMAS_J];
         }
       }
-      this._dec.Run(N, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
+      _dec.Run(N, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
       return;
 // C
 // C -----------------------------------------------------------
@@ -355,7 +355,7 @@ LABEL4:
           E1[IB + J * LDE1 + o_e1] += FAC1 * FMAS[I + FMAS_J];
         }
       }
-      this._decb.Run(N, LDE1, ref E1, offset_e1, MLE.v, MUE.v, ref IP1, offset_ip1
+      _decb.Run(N, LDE1, ref E1, offset_e1, MLE.v, MUE.v, ref IP1, offset_ip1
                      , ref IER);
       return;
 // C
@@ -397,7 +397,7 @@ LABEL5:
           E1[I + E1_J] = FMAS[I + FMAS_J] * FAC1 - FJAC[I + FJAC_J];
         }
       }
-      this._dec.Run(N, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
+      _dec.Run(N, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
       return;
 // C
 // C -----------------------------------------------------------
@@ -432,7 +432,7 @@ LABEL7:
       ;
       // C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, HESSENBERG-OPTION
       if (CALHES)
-        this._elmhes.Run(LDJAC, N, 1, N, ref FJAC, offset_fjac, ref IPHES, offset_iphes);
+        _elmhes.Run(LDJAC, N, 1, N, ref FJAC, offset_fjac, ref IPHES, offset_iphes);
       CALHES = false;
       for (J = 1; J <= N - 1; J++)
       {
@@ -449,7 +449,7 @@ LABEL7:
         }
         E1[J + J * LDE1 + o_e1] += FAC1;
       }
-      this._dech.Run(N, LDE1, ref E1, offset_e1, 1, ref IP1, offset_ip1, ref IER);
+      _dech.Run(N, LDE1, ref E1, offset_e1, 1, ref IP1, offset_ip1, ref IER);
       return;
 // C
 // C -----------------------------------------------------------
@@ -494,9 +494,9 @@ LABEL55:
     {
       #region Set Dependencies
 
-      this._decc = decc;
-      this._decbc = decbc;
-      this._dechc = dechc;
+      _decc = decc;
+      _decbc = decbc;
+      _dechc = dechc;
 
       #endregion Set Dependencies
 
@@ -504,7 +504,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -522,23 +522,23 @@ LABEL55:
     {
       #region Initialization Common Blocks
 
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DECC decc = new DECC();
-      DECBC decbc = new DECBC();
-      DECHC dechc = new DECHC();
+      var decc = new DECC();
+      var decbc = new DECBC();
+      var dechc = new DECHC();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._decc = decc;
-      this._decbc = decbc;
-      this._dechc = dechc;
+      _decc = decc;
+      _decbc = decbc;
+      _dechc = dechc;
 
       #endregion Set Dependencies
 
@@ -546,7 +546,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -656,7 +656,7 @@ LABEL1:
         E2R[J + J * LDE1 + o_e2r] += ALPHN;
         E2I[J + J * LDE1 + o_e2i] = BETAN;
       }
-      this._decc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
+      _decc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
       return;
 // C
 // C -----------------------------------------------------------
@@ -701,7 +701,7 @@ LABEL45:
           E2I[I + E2I_J] -= SUMI;
         }
       }
-      this._decc.Run(NM1, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
+      _decc.Run(NM1, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
       return;
 // C
 // C -----------------------------------------------------------
@@ -721,7 +721,7 @@ LABEL2:
         E2R[MDIAG.v + J * LDE1 + o_e2r] += ALPHN;
         E2I[MDIAG.v + J * LDE1 + o_e2i] = BETAN;
       }
-      this._decbc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, MLE.v, MUE.v
+      _decbc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, MLE.v, MUE.v
                       , ref IP2, offset_ip2, ref IER);
       return;
 // C
@@ -766,7 +766,7 @@ LABEL46:
           E2I[IMLE + J * LDE1 + o_e2i] -= SUMI;
         }
       }
-      this._decbc.Run(NM1, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, MLE.v, MUE.v
+      _decbc.Run(NM1, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, MLE.v, MUE.v
                       , ref IP2, offset_ip2, ref IER);
       return;
 // C
@@ -798,7 +798,7 @@ LABEL3:
           E2I[I + E2I_J] = BETAN * BB;
         }
       }
-      this._decc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
+      _decc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
       return;
 // C
 // C -----------------------------------------------------------
@@ -852,7 +852,7 @@ LABEL4:
           E2I[IB + J * LDE1 + o_e2i] = BETAN * BB;
         }
       }
-      this._decbc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, MLE.v, MUE.v
+      _decbc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, MLE.v, MUE.v
                       , ref IP2, offset_ip2, ref IER);
       return;
 // C
@@ -901,7 +901,7 @@ LABEL5:
           E2I[I + E2I_J] = BB * BETAN;
         }
       }
-      this._decc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
+      _decc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
       return;
 // C
 // C -----------------------------------------------------------
@@ -956,7 +956,7 @@ LABEL7:
         E2R[J + J * LDE1 + o_e2r] += ALPHN;
         E2I[J + J * LDE1 + o_e2i] = BETAN;
       }
-      this._dechc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, 1, ref IP2, offset_ip2
+      _dechc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, 1, ref IP2, offset_ip2
                       , ref IER);
       return;
 // C
@@ -1002,9 +1002,9 @@ LABEL55:
     {
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
-      this._solh = solh;
+      _sol = sol;
+      _solb = solb;
+      _solh = solh;
 
       #endregion Set Dependencies
 
@@ -1012,7 +1012,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -1030,23 +1030,23 @@ LABEL55:
     {
       #region Initialization Common Blocks
 
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      SOL sol = new SOL();
-      SOLB solb = new SOLB();
-      SOLH solh = new SOLH();
+      var sol = new SOL();
+      var solb = new SOLB();
+      var solh = new SOLH();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
-      this._solh = solh;
+      _sol = sol;
+      _solb = solb;
+      _solh = solh;
 
       #endregion Set Dependencies
 
@@ -1054,7 +1054,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -1150,7 +1150,7 @@ LABEL1:
       {
         Z1[I + o_z1] += -F1[I + o_f1] * FAC1;
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
+      _sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
       return;
 // C
 // C -----------------------------------------------------------
@@ -1180,7 +1180,7 @@ LABEL48:
           }
         }
       }
-      this._sol.Run(NM1, LDE1, E1, offset_e1, ref Z1, M1 + 1 + o_z1, IP1, offset_ip1);
+      _sol.Run(NM1, LDE1, E1, offset_e1, ref Z1, M1 + 1 + o_z1, IP1, offset_ip1);
 LABEL49:
       ;
       for (I = M1; I >= 1; I += -1)
@@ -1198,7 +1198,7 @@ LABEL2:
       {
         Z1[I + o_z1] += -F1[I + o_f1] * FAC1;
       }
-      this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
+      _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
                      , IP1, offset_ip1);
       return;
 // C
@@ -1229,7 +1229,7 @@ LABEL45:
           }
         }
       }
-      this._solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, M1 + 1 + o_z1
+      _solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, M1 + 1 + o_z1
                      , IP1, offset_ip1);
       goto LABEL49;
 // C
@@ -1247,7 +1247,7 @@ LABEL3:
         }
         Z1[I + o_z1] += S1 * FAC1;
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
+      _sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
       return;
 // C
 // C -----------------------------------------------------------
@@ -1287,7 +1287,7 @@ LABEL4:
         }
         Z1[I + o_z1] += S1 * FAC1;
       }
-      this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
+      _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
                      , IP1, offset_ip1);
       return;
 // C
@@ -1305,7 +1305,7 @@ LABEL5:
         }
         Z1[I + o_z1] += S1 * FAC1;
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
+      _sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
       return;
 // C
 // C -----------------------------------------------------------
@@ -1364,7 +1364,7 @@ LABEL746:
           Z1[I + o_z1] += -FJAC[I + FJAC_MP1] * Z1[MP + o_z1];
         }
       }
-      this._solh.Run(N, LDE1, E1, offset_e1, 1, ref Z1, offset_z1, IP1, offset_ip1);
+      _solh.Run(N, LDE1, E1, offset_e1, 1, ref Z1, offset_z1, IP1, offset_ip1);
       for (MM = 1; MM <= N - 2; MM++)
       {
         MP = N - MM;
@@ -1427,9 +1427,9 @@ LABEL55:
     {
       #region Set Dependencies
 
-      this._solc = solc;
-      this._solbc = solbc;
-      this._solhc = solhc;
+      _solc = solc;
+      _solbc = solbc;
+      _solhc = solhc;
 
       #endregion Set Dependencies
 
@@ -1437,7 +1437,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -1455,23 +1455,23 @@ LABEL55:
     {
       #region Initialization Common Blocks
 
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      SOLC solc = new SOLC();
-      SOLBC solbc = new SOLBC();
-      SOLHC solhc = new SOLHC();
+      var solc = new SOLC();
+      var solbc = new SOLBC();
+      var solhc = new SOLHC();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._solc = solc;
-      this._solbc = solbc;
-      this._solhc = solhc;
+      _solc = solc;
+      _solbc = solbc;
+      _solhc = solhc;
 
       #endregion Set Dependencies
 
@@ -1479,7 +1479,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -1593,7 +1593,7 @@ LABEL1:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
+      _solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
                      , IP2, offset_ip2);
       return;
 // C
@@ -1632,7 +1632,7 @@ LABEL48:
           }
         }
       }
-      this._solc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3
+      _solc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3
                      , IP2, offset_ip2);
 LABEL49:
       ;
@@ -1658,7 +1658,7 @@ LABEL2:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
+      _solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
                       , ref Z2, offset_z2, ref Z3, offset_z3, IP2, offset_ip2);
       return;
 // C
@@ -1697,7 +1697,7 @@ LABEL45:
           }
         }
       }
-      this._solbc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
+      _solbc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
                       , ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3, IP2, offset_ip2);
       goto LABEL49;
 // C
@@ -1719,7 +1719,7 @@ LABEL3:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
+      _solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
                      , IP2, offset_ip2);
       return;
 // C
@@ -1772,7 +1772,7 @@ LABEL4:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
+      _solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
                       , ref Z2, offset_z2, ref Z3, offset_z3, IP2, offset_ip2);
       return;
 // C
@@ -1794,7 +1794,7 @@ LABEL5:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
+      _solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
                      , IP2, offset_ip2);
       return;
 // C
@@ -1870,7 +1870,7 @@ LABEL746:
           Z3[I + o_z3] += -E1IMP * Z3[MP + o_z3];
         }
       }
-      this._solhc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, 1, ref Z2, offset_z2
+      _solhc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, 1, ref Z2, offset_z2
                       , ref Z3, offset_z3, IP2, offset_ip2);
       for (MM = 1; MM <= N - 2; MM++)
       {
@@ -1939,12 +1939,12 @@ LABEL55:
     {
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solc = solc;
-      this._solb = solb;
-      this._solbc = solbc;
-      this._solh = solh;
-      this._solhc = solhc;
+      _sol = sol;
+      _solc = solc;
+      _solb = solb;
+      _solbc = solbc;
+      _solh = solh;
+      _solhc = solhc;
 
       #endregion Set Dependencies
 
@@ -1952,7 +1952,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -1970,29 +1970,29 @@ LABEL55:
     {
       #region Initialization Common Blocks
 
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      SOL sol = new SOL();
-      SOLC solc = new SOLC();
-      SOLB solb = new SOLB();
-      SOLBC solbc = new SOLBC();
-      SOLH solh = new SOLH();
-      SOLHC solhc = new SOLHC();
+      var sol = new SOL();
+      var solc = new SOLC();
+      var solb = new SOLB();
+      var solbc = new SOLBC();
+      var solh = new SOLH();
+      var solhc = new SOLHC();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solc = solc;
-      this._solb = solb;
-      this._solbc = solbc;
-      this._solh = solh;
-      this._solhc = solhc;
+      _sol = sol;
+      _solc = solc;
+      _solb = solb;
+      _solbc = solbc;
+      _solh = solh;
+      _solhc = solhc;
 
       #endregion Set Dependencies
 
@@ -2000,7 +2000,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -2124,8 +2124,8 @@ LABEL1:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
-      this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
+      _sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
+      _solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
                      , IP2, offset_ip2);
       return;
 // C
@@ -2168,8 +2168,8 @@ LABEL48:
           }
         }
       }
-      this._sol.Run(NM1, LDE1, E1, offset_e1, ref Z1, M1 + 1 + o_z1, IP1, offset_ip1);
-      this._solc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3
+      _sol.Run(NM1, LDE1, E1, offset_e1, ref Z1, M1 + 1 + o_z1, IP1, offset_ip1);
+      _solc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3
                      , IP2, offset_ip2);
 LABEL49:
       ;
@@ -2197,9 +2197,9 @@ LABEL2:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
+      _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
                      , IP1, offset_ip1);
-      this._solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
+      _solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
                       , ref Z2, offset_z2, ref Z3, offset_z3, IP2, offset_ip2);
       return;
 // C
@@ -2243,9 +2243,9 @@ LABEL45:
           }
         }
       }
-      this._solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, M1 + 1 + o_z1
+      _solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, M1 + 1 + o_z1
                      , IP1, offset_ip1);
-      this._solbc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
+      _solbc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
                       , ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3, IP2, offset_ip2);
       goto LABEL49;
 // C
@@ -2270,8 +2270,8 @@ LABEL3:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
-      this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
+      _sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
+      _solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
                      , IP2, offset_ip2);
       return;
 // C
@@ -2333,9 +2333,9 @@ LABEL4:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
+      _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
                      , IP1, offset_ip1);
-      this._solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
+      _solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
                       , ref Z2, offset_z2, ref Z3, offset_z3, IP2, offset_ip2);
       return;
 // C
@@ -2360,8 +2360,8 @@ LABEL5:
         Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
         Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
-      this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
+      _sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
+      _solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
                      , IP2, offset_ip2);
       return;
 // C
@@ -2446,8 +2446,8 @@ LABEL746:
           Z3[I + o_z3] += -E1IMP * Z3[MP + o_z3];
         }
       }
-      this._solh.Run(N, LDE1, E1, offset_e1, 1, ref Z1, offset_z1, IP1, offset_ip1);
-      this._solhc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, 1, ref Z2, offset_z2
+      _solh.Run(N, LDE1, E1, offset_e1, 1, ref Z1, offset_z1, IP1, offset_ip1);
+      _solhc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, 1, ref Z2, offset_z2
                       , ref Z3, offset_z3, IP2, offset_ip2);
       for (MM = 1; MM <= N - 2; MM++)
       {
@@ -2520,9 +2520,9 @@ LABEL55:
     {
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
-      this._solh = solh;
+      _sol = sol;
+      _solb = solb;
+      _solh = solh;
 
       #endregion Set Dependencies
 
@@ -2530,7 +2530,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -2548,23 +2548,23 @@ LABEL55:
     {
       #region Initialization Common Blocks
 
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      SOL sol = new SOL();
-      SOLB solb = new SOLB();
-      SOLH solh = new SOLH();
+      var sol = new SOL();
+      var solb = new SOLB();
+      var solh = new SOLH();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
-      this._solh = solh;
+      _sol = sol;
+      _solb = solb;
+      _solh = solh;
 
       #endregion Set Dependencies
 
@@ -2572,7 +2572,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -2687,7 +2687,7 @@ LABEL1:
         F2[I + o_f2] = HEE1 * Z1[I + o_z1] + HEE2 * Z2[I + o_z2] + HEE3 * Z3[I + o_z3];
         CONT[I + o_cont] = F2[I + o_f2] + Y0[I + o_y0];
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
+      _sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
       goto LABEL77;
 // C
 LABEL11:
@@ -2714,7 +2714,7 @@ LABEL48:
           }
         }
       }
-      this._sol.Run(NM1, LDE1, E1, offset_e1, ref CONT, M1 + 1 + o_cont, IP1, offset_ip1);
+      _sol.Run(NM1, LDE1, E1, offset_e1, ref CONT, M1 + 1 + o_cont, IP1, offset_ip1);
       for (I = M1; I >= 1; I += -1)
       {
         CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
@@ -2729,7 +2729,7 @@ LABEL2:
         F2[I + o_f2] = HEE1 * Z1[I + o_z1] + HEE2 * Z2[I + o_z2] + HEE3 * Z3[I + o_z3];
         CONT[I + o_cont] = F2[I + o_f2] + Y0[I + o_y0];
       }
-      this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
+      _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
                      , IP1, offset_ip1);
       goto LABEL77;
 // C
@@ -2757,7 +2757,7 @@ LABEL45:
           }
         }
       }
-      this._solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, M1 + 1 + o_cont
+      _solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, M1 + 1 + o_cont
                      , IP1, offset_ip1);
       for (I = M1; I >= 1; I += -1)
       {
@@ -2782,7 +2782,7 @@ LABEL3:
         F2[I + o_f2] = SUM;
         CONT[I + o_cont] = SUM + Y0[I + o_y0];
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
+      _sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
       goto LABEL77;
 // C
 LABEL13:
@@ -2827,7 +2827,7 @@ LABEL4:
         F2[I + o_f2] = SUM;
         CONT[I + o_cont] = SUM + Y0[I + o_y0];
       }
-      this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
+      _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
                      , IP1, offset_ip1);
       goto LABEL77;
 // C
@@ -2873,7 +2873,7 @@ LABEL5:
         F2[I + o_f2] = SUM;
         CONT[I + o_cont] = SUM + Y0[I + o_y0];
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
+      _sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
       goto LABEL77;
 // C
 LABEL15:
@@ -2932,7 +2932,7 @@ LABEL310:
           CONT[I + o_cont] += -FJAC[I + FJAC_2] * CONT[MP + o_cont];
         }
       }
-      this._solh.Run(N, LDE1, E1, offset_e1, 1, ref CONT, offset_cont, IP1, offset_ip1);
+      _solh.Run(N, LDE1, E1, offset_e1, 1, ref CONT, offset_cont, IP1, offset_ip1);
       for (MM = 1; MM <= N - 2; MM++)
       {
         MP = N - MM;
@@ -3012,7 +3012,7 @@ LABEL77:
 // C ------ FULL MATRIX OPTION
 LABEL31:
         ;
-        this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
+        _sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
         goto LABEL88;
 // C ------ FULL MATRIX OPTION, SECOND ORDER
 LABEL41:
@@ -3031,7 +3031,7 @@ LABEL41:
             }
           }
         }
-        this._sol.Run(NM1, LDE1, E1, offset_e1, ref CONT, M1 + 1 + o_cont, IP1, offset_ip1);
+        _sol.Run(NM1, LDE1, E1, offset_e1, ref CONT, M1 + 1 + o_cont, IP1, offset_ip1);
         for (I = M1; I >= 1; I += -1)
         {
           CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
@@ -3040,7 +3040,7 @@ LABEL41:
 // C ------ BANDED MATRIX OPTION
 LABEL32:
         ;
-        this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
+        _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
                        , IP1, offset_ip1);
         goto LABEL88;
 // C ------ BANDED MATRIX OPTION, SECOND ORDER
@@ -3060,7 +3060,7 @@ LABEL42:
             }
           }
         }
-        this._solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, M1 + 1 + o_cont
+        _solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, M1 + 1 + o_cont
                        , IP1, offset_ip1);
         for (I = M1; I >= 1; I += -1)
         {
@@ -3087,7 +3087,7 @@ LABEL510:
             CONT[I + o_cont] += -FJAC[I + FJAC_6] * CONT[MP + o_cont];
           }
         }
-        this._solh.Run(N, LDE1, E1, offset_e1, 1, ref CONT, offset_cont, IP1, offset_ip1);
+        _solh.Run(N, LDE1, E1, offset_e1, 1, ref CONT, offset_cont, IP1, offset_ip1);
         for (MM = 1; MM <= N - 2; MM++)
         {
           MP = N - MM;
@@ -3157,9 +3157,9 @@ LABEL55:
     {
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
-      this._solh = solh;
+      _sol = sol;
+      _solb = solb;
+      _solh = solh;
 
       #endregion Set Dependencies
 
@@ -3167,7 +3167,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -3185,23 +3185,23 @@ LABEL55:
     {
       #region Initialization Common Blocks
 
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      SOL sol = new SOL();
-      SOLB solb = new SOLB();
-      SOLH solh = new SOLH();
+      var sol = new SOL();
+      var solb = new SOLB();
+      var solh = new SOLH();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
-      this._solh = solh;
+      _sol = sol;
+      _solb = solb;
+      _solh = solh;
 
       #endregion Set Dependencies
 
@@ -3209,7 +3209,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -3320,7 +3320,7 @@ LABEL1:
         FF[I + N + o_ff] = SUM / H;
         CONT[I + o_cont] = FF[I + N + o_ff] + Y0[I + o_y0];
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
+      _sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
       goto LABEL77;
 // C
 LABEL11:
@@ -3352,7 +3352,7 @@ LABEL48:
           }
         }
       }
-      this._sol.Run(NM1, LDE1, E1, offset_e1, ref CONT, M1 + 1 + o_cont, IP1, offset_ip1);
+      _sol.Run(NM1, LDE1, E1, offset_e1, ref CONT, M1 + 1 + o_cont, IP1, offset_ip1);
       for (I = M1; I >= 1; I += -1)
       {
         CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
@@ -3372,7 +3372,7 @@ LABEL2:
         FF[I + N + o_ff] = SUM / H;
         CONT[I + o_cont] = FF[I + N + o_ff] + Y0[I + o_y0];
       }
-      this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
+      _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
                      , IP1, offset_ip1);
       goto LABEL77;
 // C
@@ -3405,7 +3405,7 @@ LABEL45:
           }
         }
       }
-      this._solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, M1 + 1 + o_cont
+      _solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, M1 + 1 + o_cont
                      , IP1, offset_ip1);
       for (I = M1; I >= 1; I += -1)
       {
@@ -3435,7 +3435,7 @@ LABEL3:
         FF[I + N + o_ff] = SUM;
         CONT[I + o_cont] = SUM + Y0[I + o_y0];
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
+      _sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
       goto LABEL77;
 // C
 LABEL13:
@@ -3495,7 +3495,7 @@ LABEL4:
         FF[I + N + o_ff] = SUM;
         CONT[I + o_cont] = SUM + Y0[I + o_y0];
       }
-      this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
+      _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
                      , IP1, offset_ip1);
       goto LABEL77;
 // C
@@ -3556,7 +3556,7 @@ LABEL5:
         FF[I + N + o_ff] = SUM;
         CONT[I + o_cont] = SUM + Y0[I + o_y0];
       }
-      this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
+      _sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
       goto LABEL77;
 // C
 LABEL15:
@@ -3630,7 +3630,7 @@ LABEL310:
           CONT[I + o_cont] += -FJAC[I + FJAC_2] * CONT[MP + o_cont];
         }
       }
-      this._solh.Run(N, LDE1, E1, offset_e1, 1, ref CONT, offset_cont, IP1, offset_ip1);
+      _solh.Run(N, LDE1, E1, offset_e1, 1, ref CONT, offset_cont, IP1, offset_ip1);
       for (MM = 1; MM <= N - 2; MM++)
       {
         MP = N - MM;
@@ -3710,7 +3710,7 @@ LABEL77:
 // C ------ FULL MATRIX OPTION
 LABEL31:
         ;
-        this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
+        _sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
         goto LABEL88;
 // C ------ FULL MATRIX OPTION, SECOND ORDER
 LABEL41:
@@ -3729,7 +3729,7 @@ LABEL41:
             }
           }
         }
-        this._sol.Run(NM1, LDE1, E1, offset_e1, ref CONT, M1 + 1 + o_cont, IP1, offset_ip1);
+        _sol.Run(NM1, LDE1, E1, offset_e1, ref CONT, M1 + 1 + o_cont, IP1, offset_ip1);
         for (I = M1; I >= 1; I += -1)
         {
           CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
@@ -3738,7 +3738,7 @@ LABEL41:
 // C ------ BANDED MATRIX OPTION
 LABEL32:
         ;
-        this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
+        _solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
                        , IP1, offset_ip1);
         goto LABEL88;
 // C ------ BANDED MATRIX OPTION, SECOND ORDER
@@ -3758,7 +3758,7 @@ LABEL42:
             }
           }
         }
-        this._solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, M1 + 1 + o_cont
+        _solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, M1 + 1 + o_cont
                        , IP1, offset_ip1);
         for (I = M1; I >= 1; I += -1)
         {
@@ -3785,7 +3785,7 @@ LABEL510:
             CONT[I + o_cont] += -FJAC[I + FJAC_6] * CONT[MP + o_cont];
           }
         }
-        this._solh.Run(N, LDE1, E1, offset_e1, 1, ref CONT, offset_cont, IP1, offset_ip1);
+        _solh.Run(N, LDE1, E1, offset_e1, 1, ref CONT, offset_cont, IP1, offset_ip1);
         for (MM = 1; MM <= N - 2; MM++)
         {
           MP = N - MM;
@@ -3857,8 +3857,8 @@ LABEL55:
     {
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
+      _sol = sol;
+      _solb = solb;
 
       #endregion Set Dependencies
 
@@ -3866,7 +3866,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -3884,21 +3884,21 @@ LABEL55:
     {
       #region Initialization Common Blocks
 
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      SOL sol = new SOL();
-      SOLB solb = new SOLB();
+      var sol = new SOL();
+      var solb = new SOLB();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
+      _sol = sol;
+      _solb = solb;
 
       #endregion Set Dependencies
 
@@ -3906,7 +3906,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -4016,7 +4016,7 @@ LABEL1:
           AK[I + o_ak] += YNEW[I + o_ynew];
         }
       }
-      this._sol.Run(N, LDE, E, offset_e, ref AK, offset_ak, IP, offset_ip);
+      _sol.Run(N, LDE, E, offset_e, ref AK, offset_ak, IP, offset_ip);
       return;
 // C
 // C -----------------------------------------------------------
@@ -4048,7 +4048,7 @@ LABEL48:
           }
         }
       }
-      this._sol.Run(NM1, LDE, E, offset_e, ref AK, M1 + 1 + o_ak, IP, offset_ip);
+      _sol.Run(NM1, LDE, E, offset_e, ref AK, M1 + 1 + o_ak, IP, offset_ip);
       for (I = M1; I >= 1; I += -1)
       {
         AK[I + o_ak] = (AK[I + o_ak] + AK[M2 + I + o_ak]) / FAC1;
@@ -4067,7 +4067,7 @@ LABEL2:
           AK[I + o_ak] += YNEW[I + o_ynew];
         }
       }
-      this._solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref AK, offset_ak
+      _solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref AK, offset_ak
                      , IP, offset_ip);
       return;
 // C
@@ -4100,7 +4100,7 @@ LABEL45:
           }
         }
       }
-      this._solb.Run(NM1, LDE, E, offset_e, MLE.v, MUE.v, ref AK, M1 + 1 + o_ak
+      _solb.Run(NM1, LDE, E, offset_e, MLE.v, MUE.v, ref AK, M1 + 1 + o_ak
                      , IP, offset_ip);
       for (I = M1; I >= 1; I += -1)
       {
@@ -4125,7 +4125,7 @@ LABEL3:
           AK[I + o_ak] += SUM;
         }
       }
-      this._sol.Run(N, LDE, E, offset_e, ref AK, offset_ak, IP, offset_ip);
+      _sol.Run(N, LDE, E, offset_e, ref AK, offset_ak, IP, offset_ip);
       return;
 // C
 // C -----------------------------------------------------------
@@ -4171,7 +4171,7 @@ LABEL4:
           AK[I + o_ak] += SUM;
         }
       }
-      this._solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref AK, offset_ak
+      _solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref AK, offset_ak
                      , IP, offset_ip);
       return;
 // C
@@ -4192,7 +4192,7 @@ LABEL5:
           AK[I + o_ak] += SUM;
         }
       }
-      this._sol.Run(N, LDE, E, offset_e, ref AK, offset_ak, IP, offset_ip);
+      _sol.Run(N, LDE, E, offset_e, ref AK, offset_ak, IP, offset_ip);
       return;
 // C
 // C -----------------------------------------------------------
@@ -4236,7 +4236,7 @@ LABEL6:
           }
           AK[I + o_ak] += SUM;
         }
-        this._solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref AK, offset_ak
+        _solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref AK, offset_ak
                        , IP, offset_ip);
       }
       return;
@@ -4284,9 +4284,9 @@ LABEL55:
     {
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
-      this._solh = solh;
+      _sol = sol;
+      _solb = solb;
+      _solh = solh;
 
       #endregion Set Dependencies
 
@@ -4294,7 +4294,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -4312,23 +4312,23 @@ LABEL55:
     {
       #region Initialization Common Blocks
 
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      SOL sol = new SOL();
-      SOLB solb = new SOLB();
-      SOLH solh = new SOLH();
+      var sol = new SOL();
+      var solb = new SOLB();
+      var solh = new SOLH();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._sol = sol;
-      this._solb = solb;
-      this._solh = solh;
+      _sol = sol;
+      _solb = solb;
+      _solh = solh;
 
       #endregion Set Dependencies
 
@@ -4336,7 +4336,7 @@ LABEL55:
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -4427,7 +4427,7 @@ LABEL55:
 LABEL1:
       ;
       // C ---  B=IDENTITY, JACOBIAN A FULL MATRIX
-      this._sol.Run(N, LDE, E, offset_e, ref DEL, offset_del, IP, offset_ip);
+      _sol.Run(N, LDE, E, offset_e, ref DEL, offset_del, IP, offset_ip);
       return;
 // C
 // C -----------------------------------------------------------
@@ -4451,7 +4451,7 @@ LABEL11:
           }
         }
       }
-      this._sol.Run(NM1, LDE, E, offset_e, ref DEL, M1 + 1 + o_del, IP, offset_ip);
+      _sol.Run(NM1, LDE, E, offset_e, ref DEL, M1 + 1 + o_del, IP, offset_ip);
       for (I = M1; I >= 1; I += -1)
       {
         DEL[I + o_del] = (DEL[I + o_del] + DEL[M2 + I + o_del]) / FAC1;
@@ -4463,7 +4463,7 @@ LABEL11:
 LABEL2:
       ;
       // C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX
-      this._solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref DEL, offset_del
+      _solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref DEL, offset_del
                      , IP, offset_ip);
       return;
 // C
@@ -4488,7 +4488,7 @@ LABEL12:
           }
         }
       }
-      this._solb.Run(NM1, LDE, E, offset_e, MLE.v, MUE.v, ref DEL, M1 + 1 + o_del
+      _solb.Run(NM1, LDE, E, offset_e, MLE.v, MUE.v, ref DEL, M1 + 1 + o_del
                      , IP, offset_ip);
       for (I = M1; I >= 1; I += -1)
       {
@@ -4519,7 +4519,7 @@ LABEL110:
           DEL[I + o_del] += -FJAC[I + FJAC_MP1] * DEL[MP + o_del];
         }
       }
-      this._solh.Run(N, LDE, E, offset_e, 1, ref DEL, offset_del, IP, offset_ip);
+      _solh.Run(N, LDE, E, offset_e, 1, ref DEL, offset_del, IP, offset_ip);
       for (MMM = 1; MMM <= N - 2; MMM++)
       {
         MP = N - MMM;

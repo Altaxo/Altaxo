@@ -170,7 +170,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </code>
   /// </para>
   /// </example>
-  sealed public class ComplexFloatLevinson : Algorithm
+  public sealed class ComplexFloatLevinson : Algorithm
   {
     #region Fields
 
@@ -268,7 +268,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a ComplexFloatMatrix
-        ComplexFloatMatrix Lower = new ComplexFloatMatrix(m_Order);
+        var Lower = new ComplexFloatMatrix(m_Order);
 #if MANAGED
         for (int i = 0; i < m_Order; i++)
         {
@@ -312,7 +312,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy diagonal vector into a ComplexFloatMatrix
-        ComplexFloatMatrix Diagonal = new ComplexFloatMatrix(m_Order);
+        var Diagonal = new ComplexFloatMatrix(m_Order);
         Diagonal.SetDiagonal(m_Diagonal);
 
         return Diagonal;
@@ -343,7 +343,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a ComplexFloatMatrix
-        ComplexFloatMatrix Upper = new ComplexFloatMatrix(m_Order);
+        var Upper = new ComplexFloatMatrix(m_Order);
 #if MANAGED
         for (int i = 0; i < m_Order; i++)
         {
@@ -562,7 +562,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i;
 
       // allocate memory for the matrix
-      ComplexFloatMatrix tm = new ComplexFloatMatrix(m_Order);
+      var tm = new ComplexFloatMatrix(m_Order);
 #if MANAGED
       // fill lower triangle
       for (i = 0; i < m_Order; i++)
@@ -665,7 +665,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new SingularMatrixException("One of the leading sub-matrices is singular.");
       }
 
-      ComplexFloatMatrix I = new ComplexFloatMatrix(m_Order);           // the solution matrix
+      var I = new ComplexFloatMatrix(m_Order);           // the solution matrix
       ComplexFloat[] A = m_LowerTriangle[m_Order - 1];
       ComplexFloat[] B = m_UpperTriangle[m_Order - 1];
       ComplexFloat A1, B1, scale;
@@ -952,9 +952,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
       // decompose matrix
       int order = col.Length;
-      ComplexFloat[] A = new ComplexFloat[order];
-      ComplexFloat[] B = new ComplexFloat[order];
-      ComplexFloat[] Z = new ComplexFloat[order];
+      var A = new ComplexFloat[order];
+      var B = new ComplexFloat[order];
+      var Z = new ComplexFloat[order];
       ComplexFloat Q, S, Ke, Kr, e;
       int i, j, k, l;
 
@@ -1016,7 +1016,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       // calculate the inverse
-      ComplexFloatMatrix I = new ComplexFloatMatrix(order);           // the solution matrix
+      var I = new ComplexFloatMatrix(order);           // the solution matrix
       ComplexFloat A1, B1;
 
 #if MANAGED
@@ -1160,10 +1160,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
       // decompose matrix
       int order = col.Length;
-      ComplexFloat[] A = new ComplexFloat[order];
-      ComplexFloat[] B = new ComplexFloat[order];
-      ComplexFloat[] Z = new ComplexFloat[order];
-      ComplexFloatVector X = new ComplexFloatVector(order);
+      var A = new ComplexFloat[order];
+      var B = new ComplexFloat[order];
+      var Z = new ComplexFloat[order];
+      var X = new ComplexFloatVector(order);
       ComplexFloat Q, S, Ke, Kr, e;
       ComplexFloat Inner;
       int i, j, l;
@@ -1326,10 +1326,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
       // decompose matrix
       int order = col.Length;
-      ComplexFloat[] A = new ComplexFloat[order];
-      ComplexFloat[] B = new ComplexFloat[order];
-      ComplexFloat[] Z = new ComplexFloat[order];
-      ComplexFloatMatrix X = new ComplexFloatMatrix(order);
+      var A = new ComplexFloat[order];
+      var B = new ComplexFloat[order];
+      var Z = new ComplexFloat[order];
+      var X = new ComplexFloatMatrix(order);
       ComplexFloat Q, S, Ke, Kr, e;
       ComplexFloat Inner;
       int i, j, l;
@@ -1394,7 +1394,7 @@ namespace Altaxo.Calc.LinearAlgebra
         for (l = 0; l < Y.Rows; l++)
         {
           ComplexFloatVector W = X.GetColumn(l);
-          ComplexFloatVector M = ComplexFloatVector.GetColumn(Y, l);
+          var M = ComplexFloatVector.GetColumn(Y, l);
 
           Inner = M[i];
           for (j = 0; j < i; j++)

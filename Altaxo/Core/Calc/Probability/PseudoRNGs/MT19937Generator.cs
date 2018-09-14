@@ -123,13 +123,13 @@ namespace Altaxo.Calc.Probability
     /// Represents the multiplier that computes a double-precision floating point number greater than or equal to 0.0
     ///   and less than 1.0 when it gets applied to a nonnegative 32-bit signed integer.
     /// </summary>
-    private const double IntToDoubleMultiplier = 1.0 / ((double)int.MaxValue + 1.0);
+    private const double IntToDoubleMultiplier = 1.0 / (int.MaxValue + 1.0);
 
     /// <summary>
     /// Represents the multiplier that computes a double-precision floating point number greater than or equal to 0.0
     ///   and less than 1.0  when it gets applied to a 32-bit unsigned integer.
     /// </summary>
-    private const double UIntToDoubleMultiplier = 1.0 / ((double)uint.MaxValue + 1.0);
+    private const double UIntToDoubleMultiplier = 1.0 / (uint.MaxValue + 1.0);
 
     #endregion class fields
 
@@ -156,12 +156,12 @@ namespace Altaxo.Calc.Probability
     private uint[] seedArray;
 
     /// <summary>
-    /// Stores an <see cref="uint"/> used to generate up to 32 random <see cref="Boolean"/> values.
+    /// Stores an <see cref="uint"/> used to generate up to 32 random <see cref="bool"/> values.
     /// </summary>
     private uint bitBuffer;
 
     /// <summary>
-    /// Stores how many random <see cref="Boolean"/> values still can be generated from <see cref="bitBuffer"/>.
+    /// Stores how many random <see cref="bool"/> values still can be generated from <see cref="bitBuffer"/>.
     /// </summary>
     private int bitCount;
 
@@ -199,10 +199,10 @@ namespace Altaxo.Calc.Probability
 
     public MT19937Generator(uint seed)
     {
-      this.mt = new uint[MT19937Generator.N];
+      mt = new uint[MT19937Generator.N];
       this.seed = seed;
-      this.seedArray = null;
-      this.ResetGenerator();
+      seedArray = null;
+      ResetGenerator();
     }
 
     /// <summary>
@@ -223,14 +223,14 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentNullException("seedArray", message);
       }
 
-      this.mt = new uint[MT19937Generator.N];
-      this.seed = 19650218U;
+      mt = new uint[MT19937Generator.N];
+      seed = 19650218U;
       this.seedArray = new uint[seedArray.Length];
       for (int index = 0; index < seedArray.Length; index++)
       {
         this.seedArray[index] = (uint)Math.Abs(seedArray[index]);
       }
-      this.ResetGenerator();
+      ResetGenerator();
     }
 
     /// <summary>
@@ -251,10 +251,10 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentNullException("seedArray", message);
       }
 
-      this.mt = new uint[MT19937Generator.N];
-      this.seed = 19650218U;
+      mt = new uint[MT19937Generator.N];
+      seed = 19650218U;
       this.seedArray = seedArray;
-      this.ResetGenerator();
+      ResetGenerator();
     }
 
     #endregion construction
@@ -266,24 +266,24 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     private void ResetGenerator()
     {
-      this.mt[0] = this.seed & 0xffffffffU;
-      for (this.mti = 1; this.mti < MT19937Generator.N; this.mti++)
+      mt[0] = seed & 0xffffffffU;
+      for (mti = 1; mti < MT19937Generator.N; mti++)
       {
-        this.mt[mti] = (1812433253U * (this.mt[this.mti - 1] ^ (this.mt[this.mti - 1] >> 30)) + this.mti);
+        mt[mti] = (1812433253U * (mt[mti - 1] ^ (mt[mti - 1] >> 30)) + mti);
         // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
         // In the previous versions, MSBs of the seed affect only MSBs of the array mt[].
         // 2002/01/09 modified by Makoto Matsumoto
       }
 
       // If the object was instanciated with a seed array do some further (re)initialisation.
-      if (this.seedArray != null)
+      if (seedArray != null)
       {
-        this.ResetBySeedArray();
+        ResetBySeedArray();
       }
 
       // Reset helper variables used for generation of random bools.
-      this.bitBuffer = 0;
-      this.bitCount = 32;
+      bitBuffer = 0;
+      bitCount = 32;
     }
 
     /// <summary>
@@ -293,10 +293,10 @@ namespace Altaxo.Calc.Probability
     {
       uint i = 1;
       uint j = 0;
-      int k = (MT19937Generator.N > this.seedArray.Length) ? MT19937Generator.N : this.seedArray.Length;
+      int k = (MT19937Generator.N > seedArray.Length) ? MT19937Generator.N : seedArray.Length;
       for (; k > 0; k--)
       {
-        mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >> 30)) * 1664525U)) + this.seedArray[j] + j; // non linear
+        mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >> 30)) * 1664525U)) + seedArray[j] + j; // non linear
         i++;
         j++;
         if (i >= MT19937Generator.N)
@@ -304,7 +304,7 @@ namespace Altaxo.Calc.Probability
           mt[0] = mt[MT19937Generator.N - 1];
           i = 1;
         }
-        if (j >= this.seedArray.Length)
+        if (j >= seedArray.Length)
         {
           j = 0;
         }
@@ -327,8 +327,8 @@ namespace Altaxo.Calc.Probability
     /// Generates <see cref="MT19937Generator.N"/> unsigned random numbers.
     /// </summary>
     /// <remarks>
-    /// Generated random numbers are 32-bit unsigned integers greater than or equal to <see cref="UInt32.MinValue"/>
-    ///   and less than or equal to <see cref="UInt32.MaxValue"/>.
+    /// Generated random numbers are 32-bit unsigned integers greater than or equal to <see cref="uint.MinValue"/>
+    ///   and less than or equal to <see cref="uint.MaxValue"/>.
     /// </remarks>
     private void GenerateNUInts()
     {
@@ -338,36 +338,36 @@ namespace Altaxo.Calc.Probability
 
       for (kk = 0; kk < MT19937Generator.N - MT19937Generator.M; kk++)
       {
-        y = (this.mt[kk] & MT19937Generator.UpperMask) | (this.mt[kk + 1] & MT19937Generator.LowerMask);
-        this.mt[kk] = this.mt[kk + MT19937Generator.M] ^ (y >> 1) ^ mag01[y & 0x1U];
+        y = (mt[kk] & MT19937Generator.UpperMask) | (mt[kk + 1] & MT19937Generator.LowerMask);
+        mt[kk] = mt[kk + MT19937Generator.M] ^ (y >> 1) ^ mag01[y & 0x1U];
       }
       for (; kk < MT19937Generator.N - 1; kk++)
       {
-        y = (this.mt[kk] & MT19937Generator.UpperMask) | (this.mt[kk + 1] & MT19937Generator.LowerMask);
-        this.mt[kk] = this.mt[kk + (MT19937Generator.M - MT19937Generator.N)] ^ (y >> 1) ^ mag01[y & 0x1U];
+        y = (mt[kk] & MT19937Generator.UpperMask) | (mt[kk + 1] & MT19937Generator.LowerMask);
+        mt[kk] = mt[kk + (MT19937Generator.M - MT19937Generator.N)] ^ (y >> 1) ^ mag01[y & 0x1U];
       }
-      y = (this.mt[MT19937Generator.N - 1] & MT19937Generator.UpperMask) | (this.mt[0] & MT19937Generator.LowerMask);
-      this.mt[MT19937Generator.N - 1] = this.mt[MT19937Generator.M - 1] ^ (y >> 1) ^ mag01[y & 0x1U];
+      y = (mt[MT19937Generator.N - 1] & MT19937Generator.UpperMask) | (mt[0] & MT19937Generator.LowerMask);
+      mt[MT19937Generator.N - 1] = mt[MT19937Generator.M - 1] ^ (y >> 1) ^ mag01[y & 0x1U];
 
-      this.mti = 0;
+      mti = 0;
     }
 
     /// <summary>
     /// Returns an unsigned random number.
     /// </summary>
     /// <returns>
-    /// A 32-bit unsigned integer greater than or equal to <see cref="UInt32.MinValue"/> and
-    ///   less than or equal to <see cref="UInt32.MaxValue"/>.
+    /// A 32-bit unsigned integer greater than or equal to <see cref="uint.MinValue"/> and
+    ///   less than or equal to <see cref="uint.MaxValue"/>.
     /// </returns>
 
     public uint NextUInt()
     {
-      if (this.mti >= MT19937Generator.N)
+      if (mti >= MT19937Generator.N)
       {// generate N words at one time
-        this.GenerateNUInts();
+        GenerateNUInts();
       }
 
-      uint y = this.mt[this.mti++];
+      uint y = mt[mti++];
       // Tempering
       y ^= (y >> 11);
       y ^= (y << 7) & 0x9d2c5680U;
@@ -376,20 +376,20 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Returns a nonnegative random number less than or equal to <see cref="Int32.MaxValue"/>.
+    /// Returns a nonnegative random number less than or equal to <see cref="int.MaxValue"/>.
     /// </summary>
     /// <returns>
-    /// A 32-bit signed integer greater than or equal to 0, and less than or equal to <see cref="Int32.MaxValue"/>;
-    ///   that is, the range of return values includes 0 and <see cref="Int32.MaxValue"/>.
+    /// A 32-bit signed integer greater than or equal to 0, and less than or equal to <see cref="int.MaxValue"/>;
+    ///   that is, the range of return values includes 0 and <see cref="int.MaxValue"/>.
     /// </returns>
     public int NextInclusiveMaxValue()
     {
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.mti >= MT19937Generator.N)
+      if (mti >= MT19937Generator.N)
       {// generate N words at one time
-        this.GenerateNUInts();
+        GenerateNUInts();
       }
-      uint y = this.mt[this.mti++];
+      uint y = mt[mti++];
       // Tempering
       y ^= (y >> 11);
       y ^= (y << 7) & 0x9d2c5680U;
@@ -421,25 +421,25 @@ namespace Altaxo.Calc.Probability
     /// <returns><see langword="true"/>.</returns>
     public override bool Reset()
     {
-      this.ResetGenerator();
+      ResetGenerator();
       return true;
     }
 
     /// <summary>
-    /// Returns a nonnegative random number less than <see cref="Int32.MaxValue"/>.
+    /// Returns a nonnegative random number less than <see cref="int.MaxValue"/>.
     /// </summary>
     /// <returns>
-    /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="Int32.MaxValue"/>; that is,
-    ///   the range of return values includes 0 but not <see cref="Int32.MaxValue"/>.
+    /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="int.MaxValue"/>; that is,
+    ///   the range of return values includes 0 but not <see cref="int.MaxValue"/>.
     /// </returns>
     public override int Next()
     {
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.mti >= MT19937Generator.N)
+      if (mti >= MT19937Generator.N)
       {// generate N words at one time
-        this.GenerateNUInts();
+        GenerateNUInts();
       }
-      uint y = this.mt[this.mti++];
+      uint y = mt[mti++];
       // Tempering
       y ^= (y >> 11);
       y ^= (y << 7) & 0x9d2c5680U;
@@ -448,9 +448,9 @@ namespace Altaxo.Calc.Probability
 
       int result = (int)(y >> 1);
       // Exclude Int32.MaxValue from the range of return values.
-      if (result == Int32.MaxValue)
+      if (result == int.MaxValue)
       {
-        return this.Next();
+        return Next();
       }
       else
       {
@@ -482,11 +482,11 @@ namespace Altaxo.Calc.Probability
       }
 
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.mti >= MT19937Generator.N)
+      if (mti >= MT19937Generator.N)
       {// generate N words at one time
-        this.GenerateNUInts();
+        GenerateNUInts();
       }
-      uint y = this.mt[this.mti++];
+      uint y = mt[mti++];
       // Tempering
       y ^= (y >> 11);
       y ^= (y << 7) & 0x9d2c5680U;
@@ -495,7 +495,7 @@ namespace Altaxo.Calc.Probability
 
       // The shift operation and extra int cast before the first multiplication give better performance.
       // See comment in NextDouble().
-      return (int)((double)(int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier * (double)maxValue);
+      return (int)((int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier * maxValue);
     }
 
     /// <summary>
@@ -527,11 +527,11 @@ namespace Altaxo.Calc.Probability
       }
 
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.mti >= MT19937Generator.N)
+      if (mti >= MT19937Generator.N)
       {// generate N words at one time
-        this.GenerateNUInts();
+        GenerateNUInts();
       }
-      uint y = this.mt[this.mti++];
+      uint y = mt[mti++];
       // Tempering
       y ^= (y >> 11);
       y ^= (y << 7) & 0x9d2c5680U;
@@ -544,13 +544,13 @@ namespace Altaxo.Calc.Probability
         // The range is greater than Int32.MaxValue, so we have to use slower floating point arithmetic.
         // Also all 32 random bits (uint) have to be used which again is slower (See comment in NextDouble()).
         return minValue + (int)
-            ((double)y * MT19937Generator.UIntToDoubleMultiplier * ((double)maxValue - (double)minValue));
+            (y * MT19937Generator.UIntToDoubleMultiplier * (maxValue - (double)minValue));
       }
       else
       {
         // 31 random bits (int) will suffice which allows us to shift and cast to an int before the first multiplication and gain better performance.
         // See comment in NextDouble().
-        return minValue + (int)((double)(int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier * (double)range);
+        return minValue + (int)((int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier * range);
       }
     }
 
@@ -564,11 +564,11 @@ namespace Altaxo.Calc.Probability
     public override double NextDouble()
     {
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.mti >= MT19937Generator.N)
+      if (mti >= MT19937Generator.N)
       {// generate N words at one time
-        this.GenerateNUInts();
+        GenerateNUInts();
       }
-      uint y = this.mt[this.mti++];
+      uint y = mt[mti++];
       // Tempering
       y ^= (y >> 11);
       y ^= (y << 7) & 0x9d2c5680U;
@@ -580,7 +580,7 @@ namespace Altaxo.Calc.Probability
       // Casting a double from an int is a lot faster than from an uint and the extra shift operation
       //   and cast to an int are very fast (the allocated bits remain the same), so overall there's
       //   a significant performance improvement.
-      return (double)(int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier;
+      return (int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier;
     }
 
     /// <summary>
@@ -607,11 +607,11 @@ namespace Altaxo.Calc.Probability
       }
 
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.mti >= MT19937Generator.N)
+      if (mti >= MT19937Generator.N)
       {// generate N words at one time
-        this.GenerateNUInts();
+        GenerateNUInts();
       }
-      uint y = this.mt[this.mti++];
+      uint y = mt[mti++];
       // Tempering
       y ^= (y >> 11);
       y ^= (y << 7) & 0x9d2c5680U;
@@ -620,7 +620,7 @@ namespace Altaxo.Calc.Probability
 
       // The shift operation and extra int cast before the first multiplication give better performance.
       // See comment in NextDouble().
-      return (double)(int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier * maxValue;
+      return (int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier * maxValue;
     }
 
     /// <summary>
@@ -629,13 +629,13 @@ namespace Altaxo.Calc.Probability
     /// <param name="minValue">
     /// The inclusive lower bound of the random number to be generated.
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="Double.MaxValue"/>
+    ///   <see cref="double.MaxValue"/>
     /// </param>
     /// <param name="maxValue">
     /// The exclusive upper bound of the random number to be generated.
     /// <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="Double.MaxValue"/>.
+    ///   <see cref="double.MaxValue"/>.
     /// </param>
     /// <returns>
     /// A double-precision floating point number greater than or equal to <paramref name="minValue"/>, and less than
@@ -648,7 +648,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     /// <exception cref="ArgumentException">
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> is greater than
-    ///   <see cref="Double.MaxValue"/>.
+    ///   <see cref="double.MaxValue"/>.
     /// </exception>
     public override double NextDouble(double minValue, double maxValue)
     {
@@ -669,11 +669,11 @@ namespace Altaxo.Calc.Probability
       }
 
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.mti >= MT19937Generator.N)
+      if (mti >= MT19937Generator.N)
       {// generate N words at one time
-        this.GenerateNUInts();
+        GenerateNUInts();
       }
-      uint y = this.mt[this.mti++];
+      uint y = mt[mti++];
       // Tempering
       y ^= (y >> 11);
       y ^= (y << 7) & 0x9d2c5680U;
@@ -682,7 +682,7 @@ namespace Altaxo.Calc.Probability
 
       // The shift operation and extra int cast before the first multiplication give better performance.
       // See comment in NextDouble().
-      return minValue + (double)(int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier * range;
+      return minValue + (int)(y >> 1) * MT19937Generator.IntToDoubleMultiplier * range;
     }
 
     /// <summary>
@@ -691,32 +691,32 @@ namespace Altaxo.Calc.Probability
     /// <remarks>
     /// Buffers 32 random bits (1 uint) for future calls, so a new random number is only generated every 32 calls.
     /// </remarks>
-    /// <returns>A <see cref="Boolean"/> value.</returns>
+    /// <returns>A <see cref="bool"/> value.</returns>
     public override bool NextBoolean()
     {
-      if (this.bitCount == 32)
+      if (bitCount == 32)
       {
         // Generate 32 more bits (1 uint) and store it for future calls.
         // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-        if (this.mti >= MT19937Generator.N)
+        if (mti >= MT19937Generator.N)
         {// generate N words at one time
-          this.GenerateNUInts();
+          GenerateNUInts();
         }
-        uint y = this.mt[this.mti++];
+        uint y = mt[mti++];
         // Tempering
         y ^= (y >> 11);
         y ^= (y << 7) & 0x9d2c5680U;
         y ^= (y << 15) & 0xefc60000U;
-        this.bitBuffer = (y ^ (y >> 18));
+        bitBuffer = (y ^ (y >> 18));
 
         // Reset the bitCount and use rightmost bit of buffer to generate random bool.
-        this.bitCount = 1;
-        return (this.bitBuffer & 0x1) == 1;
+        bitCount = 1;
+        return (bitBuffer & 0x1) == 1;
       }
 
       // Increase the bitCount and use rightmost bit of shifted buffer to generate random bool.
-      this.bitCount++;
-      return ((this.bitBuffer >>= 1) & 0x1) == 1;
+      bitCount++;
+      return ((bitBuffer >>= 1) & 0x1) == 1;
     }
 
     /// <summary>
@@ -724,7 +724,7 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <remarks>
     /// Each element of the array of bytes is set to a random number greater than or equal to 0, and less than or
-    ///   equal to <see cref="Byte.MaxValue"/>.
+    ///   equal to <see cref="byte.MaxValue"/>.
     /// </remarks>
     /// <param name="buffer">An array of bytes to contain random numbers.</param>
     /// <exception cref="ArgumentNullException">
@@ -744,11 +744,11 @@ namespace Altaxo.Calc.Probability
       while (i < buffer.Length - 3)
       {
         // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-        if (this.mti >= MT19937Generator.N)
+        if (mti >= MT19937Generator.N)
         {// generate N words at one time
-          this.GenerateNUInts();
+          GenerateNUInts();
         }
-        y = this.mt[this.mti++];
+        y = mt[mti++];
         // Tempering
         y ^= (y >> 11);
         y ^= (y << 7) & 0x9d2c5680U;
@@ -765,11 +765,11 @@ namespace Altaxo.Calc.Probability
       if (i < buffer.Length)
       {
         // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-        if (this.mti >= MT19937Generator.N)
+        if (mti >= MT19937Generator.N)
         {// generate N words at one time
-          this.GenerateNUInts();
+          GenerateNUInts();
         }
-        y = this.mt[this.mti++];
+        y = mt[mti++];
         // Tempering
         y ^= (y >> 11);
         y ^= (y << 7) & 0x9d2c5680U;

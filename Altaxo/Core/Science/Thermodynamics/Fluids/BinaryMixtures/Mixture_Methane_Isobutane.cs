@@ -70,7 +70,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       _gamma_v = 1.054319053;
       _F = 0.771035405688;
 
-      _departureCoefficients_Polynomial = new(double ai, double ti, double di)[]
+      _departureCoefficients_Polynomial = new (double ai, double ti, double di)[]
        {
         (     2.5574776844118,                    1,                    1),
         (    -7.9846357136353,                 1.55,                    1),

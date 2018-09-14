@@ -74,7 +74,7 @@ namespace Altaxo.Calc.Ode
           throw new System.ArgumentException("All rows must have the same length.");
         }
       }
-      this.a = A;
+      a = A;
     }
 
     /// <summary>Construct a matrix from a copy of a 2-D array.</summary>
@@ -85,13 +85,13 @@ namespace Altaxo.Calc.Ode
         throw new ArgumentNullException(nameof(arr));
       m = arr.GetLength(0);
       n = arr.GetLength(1);
-      this.a = new double[m][];
+      a = new double[m][];
       for (int i = 0; i < m; i++)
       {
-        this.a[i] = new double[n];
+        a[i] = new double[n];
         for (int j = 0; j < n; j++)
         {
-          this.a[i][j] = arr[i, j];
+          a[i][j] = arr[i, j];
         }
       }
     }
@@ -102,7 +102,7 @@ namespace Altaxo.Calc.Ode
     /// <param name="n">Number of columns.</param>
     public Matrix(double[][] A, int m, int n)
     {
-      this.a = A;
+      a = A;
       this.m = m;
       this.n = n;
     }
@@ -162,7 +162,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>Make a deep copy of a matrix</summary>
     public Matrix Clone()
     {
-      Matrix X = new Matrix(m, n);
+      var X = new Matrix(m, n);
       double[][] C = X.a;
       for (int i = 0; i < m; i++)
       {
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.Ode
     {
       if (0 > columnNum || columnNum > ColumnDimension - 1)
         throw new IndexOutOfRangeException("Column index is out of range");
-      Vector v = Vector.Zeros(RowDimension);
+      var v = Vector.Zeros(RowDimension);
       for (int i = 0; i < RowDimension; i++)
       {
         v[i] = a[i][columnNum];
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.Ode
     /// <exception cref="IndexOutOfRangeException">Submatrix indices </exception>
     public Matrix Submatrix(int i0, int i1, int j0, int j1)
     {
-      Matrix X = new Matrix(i1 - i0 + 1, j1 - j0 + 1);
+      var X = new Matrix(i1 - i0 + 1, j1 - j0 + 1);
       double[][] B = X.a;
       try
       {
@@ -249,7 +249,7 @@ namespace Altaxo.Calc.Ode
         throw new ArgumentNullException("r");
       if (c == null)
         throw new ArgumentNullException("c");
-      Matrix X = new Matrix(r.Length, c.Length);
+      var X = new Matrix(r.Length, c.Length);
       double[][] B = X.a;
       try
       {
@@ -278,7 +278,7 @@ namespace Altaxo.Calc.Ode
     {
       if (c == null)
         throw new ArgumentNullException("c");
-      Matrix X = new Matrix(i1 - i0 + 1, c.Length);
+      var X = new Matrix(i1 - i0 + 1, c.Length);
       double[][] B = X.a;
       try
       {
@@ -307,7 +307,7 @@ namespace Altaxo.Calc.Ode
     {
       if (r == null)
         throw new ArgumentNullException("r");
-      Matrix X = new Matrix(r.Length, j1 - j0 + 1);
+      var X = new Matrix(r.Length, j1 - j0 + 1);
       double[][] B = X.a;
       try
       {
@@ -337,7 +337,7 @@ namespace Altaxo.Calc.Ode
       if (B == null)
         throw new ArgumentNullException("B");
       A.CheckMatrixDimensions(B);
-      Matrix X = new Matrix(A.m, A.n);
+      var X = new Matrix(A.m, A.n);
       double[][] C = X.a;
       for (int i = 0; i < A.m; i++)
       {
@@ -356,7 +356,7 @@ namespace Altaxo.Calc.Ode
       if (B == null)
         throw new ArgumentNullException("B");
       A.CheckMatrixDimensions(B);
-      Matrix X = new Matrix(A.m, A.n);
+      var X = new Matrix(A.m, A.n);
       double[][] C = X.a;
       for (int i = 0; i < A.m; i++)
       {
@@ -373,7 +373,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>     s*A</returns>
     public Matrix times(double s)
     {
-      Matrix X = new Matrix(m, n);
+      var X = new Matrix(m, n);
       double[][] C = X.a;
       for (int i = 0; i < m; i++)
       {
@@ -389,7 +389,7 @@ namespace Altaxo.Calc.Ode
     {
       if (A == null)
         throw new ArgumentNullException("A");
-      Matrix X = new Matrix(A.m, A.n);
+      var X = new Matrix(A.m, A.n);
       double[][] C = X.a;
       for (int i = 0; i < A.m; i++)
       {
@@ -429,7 +429,7 @@ namespace Altaxo.Calc.Ode
       {
         throw new System.ArgumentException("Matrix inner dimensions must agree.");
       }
-      Matrix X = new Matrix(A.m, B.n);
+      var X = new Matrix(A.m, B.n);
       double[][] C = X.a;
       double[] Bcolj = new double[A.n];
       for (int j = 0; j < B.n; j++)
@@ -470,7 +470,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>     An m-by-n matrix with ones on the diagonal and zeros elsewhere.</returns>
     public static Matrix Identity(int m, int n)
     {
-      Matrix A = new Matrix(m, n);
+      var A = new Matrix(m, n);
       double[][] X = A.a;
       for (int i = 0; i < m; i++)
       {
@@ -486,7 +486,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>  An n-by-m matrix where the input matrix has m rows and n columns.</returns>
     public Matrix Transpose()
     {
-      Matrix result = new Matrix(n, m);
+      var result = new Matrix(n, m);
       double[][] T = result.a;
       for (int i = 0; i < m; i++)
         for (int j = 0; j < n; j++)
@@ -498,7 +498,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Lower-triangular Cholesky factor for a symmetric positive-definite matrix</returns>
     public Matrix Cholesky()
     {
-      Matrix result = new Matrix(m, m);
+      var result = new Matrix(m, m);
       var Li = result.a;
 
       // Main loop
@@ -525,14 +525,14 @@ namespace Altaxo.Calc.Ode
     /// <returns></returns>
     public Matrix InverseLower()
     {
-      int n = this.ColumnDimension;
+      int n = ColumnDimension;
       var I = Matrix.Identity(n, n);
       var invLtr = new double[n][];
       for (int col = 0; col < n; col++)
       {
-        Vector x = Vector.Zeros(n);
+        var x = Vector.Zeros(n);
         x[col] = 1;
-        invLtr[col] = this.SolveLower(x);
+        invLtr[col] = SolveLower(x);
       }
       var invL = new Matrix(invLtr).Transpose();
 

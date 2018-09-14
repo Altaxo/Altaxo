@@ -171,8 +171,7 @@ namespace Altaxo.Calc.Probability
         _gen_t = -TanGammaPiBy2(_alpha, _gamma, _aga);
         _gen_B = -0.5 * Math.PI * _gamma / _alpha;
         _gen_S = PowerOfOnePlusXSquared(_gen_t, 0.5 / _alpha);
-        double beta, abe, mu0;
-        ParameterConversionFellerToS0(_alpha, _gamma, _aga, _scale, _location, out beta, out abe, out _gen_Scale, out mu0);
+        ParameterConversionFellerToS0(_alpha, _gamma, _aga, _scale, _location, out var beta, out var abe, out _gen_Scale, out var mu0);
       }
       else if (alpha == 1) // this case is for the case alpha=1
       {
@@ -543,9 +542,8 @@ namespace Altaxo.Calc.Probability
           }
           else // x != 0
           {
-            double factorp, facdiv, dev, logPdfPrefactor;
-            GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out logPdfPrefactor);
-            Alt1GnI inc = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+            GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var logPdfPrefactor);
+            var inc = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
             if (inc.IsMaximumLeftHandSide())
             {
               integFromXZero = inc.CDFIntegrate(ref tempStorage, precision) / Math.PI;
@@ -568,9 +566,8 @@ namespace Altaxo.Calc.Probability
           }
           else // x!=0
           {
-            double factorp, facdiv, dev, logPdfPrefactor;
-            GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out logPdfPrefactor);
-            Alt1GpI inc = new Alt1GpI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+            GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var logPdfPrefactor);
+            var inc = new Alt1GpI(factorp, facdiv, logPdfPrefactor, alpha, dev);
             if (inc.IsMaximumLeftHandSide())
             {
               integFromXZero = inc.CDFIntegrate(ref tempStorage, precision) / Math.PI;
@@ -1426,9 +1423,9 @@ namespace Altaxo.Calc.Probability
     {
       if (gamma < 0)
       {
-        double factorp, facdiv, dev, prefactor, integrand;
-        GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out prefactor);
-        Alt1GnIA1 ingI = new Alt1GnIA1(factorp, facdiv, prefactor, alpha, dev);
+        double integrand;
+        GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
+        var ingI = new Alt1GnIA1(factorp, facdiv, prefactor, alpha, dev);
         if (dev == 0 || ingI.IsMaximumLeftHandSide())
         {
           integrand = ingI.PDFIntegrateAlphaNearOne(ref temp, precision);
@@ -1441,9 +1438,9 @@ namespace Altaxo.Calc.Probability
       }
       else // gamma>=0
       {
-        double factorp, facdiv, dev, prefactor, integrand;
-        GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out prefactor);
-        Alt1GpIA1 intI = new Alt1GpIA1(factorp, facdiv, prefactor, alpha, dev);
+        double integrand;
+        GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
+        var intI = new Alt1GpIA1(factorp, facdiv, prefactor, alpha, dev);
         if (intI.IsMaximumLeftHandSide())
         {
           integrand = intI.PDFIntegrateAlphaNearOne(ref temp, precision); // IntegrateFuncExpMFuncInc(delegate(double theta) { return PDFCoreAlt1GpI(factorp, facdiv, alpha, dev, theta); }, 0, dev, ref temp, precision);
@@ -1493,11 +1490,10 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     public static double PDFIntegralAlt1Gn(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, facdiv, dev, prefactor;
-      GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out prefactor);
+      GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
       double integrand;
-      Alt1GnI ingI = new Alt1GnI(factorp, facdiv, prefactor, alpha, dev);
+      var ingI = new Alt1GnI(factorp, facdiv, prefactor, alpha, dev);
       if (ingI.IsMaximumLeftHandSide())
       {
         integrand = ingI.PDFIntegrate(ref temp, precision);
@@ -1527,10 +1523,9 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     public static double PDFIntegralAlt1GnI(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, facdiv, dev, prefactor;
-      GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out prefactor);
+      GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
-      Alt1GnI ing = new Alt1GnI(factorp, facdiv, prefactor, alpha, dev);
+      var ing = new Alt1GnI(factorp, facdiv, prefactor, alpha, dev);
       double integrand = ing.PDFIntegrate(ref temp, precision);
       return integrand;
     }
@@ -1548,8 +1543,7 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     public static double PDFIntegralAlt1GnD(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, facdiv, dev, prefactor;
-      GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out prefactor);
+      GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
       double integrand = new Alt1GnD(factorp, facdiv, prefactor, alpha, dev).Integrate(ref temp, precision);
       return integrand;
@@ -1594,11 +1588,10 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     public static double PDFIntegralAlt1Gp(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, facdiv, dev, prefactor;
-      GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out prefactor);
+      GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
       double integrand;
-      Alt1GpI intI = new Alt1GpI(factorp, facdiv, prefactor, alpha, dev);
+      var intI = new Alt1GpI(factorp, facdiv, prefactor, alpha, dev);
       if (intI.IsMaximumLeftHandSide())
         integrand = intI.Integrate(ref temp, precision); // IntegrateFuncExpMFuncInc(delegate(double theta) { return PDFCoreAlt1GpI(factorp, facdiv, alpha, dev, theta); }, 0, dev, ref temp, precision);
       else
@@ -1620,10 +1613,9 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     public static double PDFIntegralAlt1GpI(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, facdiv, dev, prefactor;
-      GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out prefactor);
+      GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
-      Alt1GpI intI = new Alt1GpI(factorp, facdiv, prefactor, alpha, dev);
+      var intI = new Alt1GpI(factorp, facdiv, prefactor, alpha, dev);
       double integrand = intI.Integrate(ref temp, precision); // IntegrateFuncExpMFuncInc(delegate(double theta) { return PDFCoreAlt1GpI(factorp, facdiv, alpha, dev, theta); }, 0, dev, ref temp, precision);
       return integrand;
     }
@@ -1641,10 +1633,9 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     public static double PDFIntegralAlt1GpD(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, facdiv, dev, prefactor;
-      GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out prefactor);
+      GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var prefactor);
 
-      Alt1GpD intD = new Alt1GpD(factorp, facdiv, prefactor, alpha, dev);
+      var intD = new Alt1GpD(factorp, facdiv, prefactor, alpha, dev);
       double integrand = intD.Integrate(ref temp, precision); // IntegrateFuncExpMFuncDec(delegate(double theta) { return PDFCoreAlt1GpD(factorp, facdiv, alpha, dev, theta); }, 0, dev, ref temp, precision);
       return integrand;
     }
@@ -1687,10 +1678,9 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     public static double PDFIntegralAgt1Gn(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, factorw, dev, prefactor;
-      GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out factorw, out dev, out prefactor);
+      GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var prefactor);
 
-      Agt1GnI intI = new Agt1GnI(factorp, factorw, prefactor, alpha, dev);
+      var intI = new Agt1GnI(factorp, factorw, prefactor, alpha, dev);
       double integrand;
       if (intI.IsMaximumLeftHandSide())
         integrand = intI.Integrate(ref temp, precision); // IntegrateFuncExpMFuncInc(delegate(double theta) { return PDFCoreAgt1GnI(factorp, factorw, alpha, dev, theta); }, 0, (Math.PI - dev) / alpha, ref temp, precision);
@@ -1712,10 +1702,9 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     public static double PDFIntegralAgt1GnD(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, factorw, dev, prefactor;
-      GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out factorw, out dev, out prefactor);
+      GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var prefactor);
 
-      Agt1GnD intD = new Agt1GnD(factorp, factorw, prefactor, alpha, dev);
+      var intD = new Agt1GnD(factorp, factorw, prefactor, alpha, dev);
       double integrand = intD.Integrate(ref temp, precision); // IntegrateFuncExpMFuncDec(delegate(double theta) { return PDFCoreAgt1GnD(factorp, factorw, alpha, dev, theta); }, 0, (Math.PI - dev) / alpha, ref temp, precision);
       return integrand;
     }
@@ -1732,10 +1721,9 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     public static double PDFIntegralAgt1GnI(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, factorw, dev, prefactor;
-      GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out factorw, out dev, out prefactor);
+      GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var prefactor);
 
-      Agt1GnI intI = new Agt1GnI(factorp, factorw, prefactor, alpha, dev);
+      var intI = new Agt1GnI(factorp, factorw, prefactor, alpha, dev);
       double integrand = intI.Integrate(ref temp, precision); // IntegrateFuncExpMFuncInc(delegate(double theta) { return PDFCoreAgt1GnI(factorp, factorw, alpha, dev, theta); }, 0, (Math.PI - dev) / alpha, ref temp, precision);
       return integrand;
     }
@@ -1749,17 +1737,15 @@ namespace Altaxo.Calc.Probability
       double result;
       if (gamma <= 0)
       {
-        double factorp, facdiv, dev, logPdfPrefactor;
-        GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out logPdfPrefactor);
-        Alt1GnI a = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+        GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var logPdfPrefactor);
+        var a = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
         result = a.CDFIntegrate(ref temp, precision);
         inverseRuleUsed = false;
       }
       else
       {
-        double factorp, facdiv, dev, logPdfPrefactor;
-        GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out logPdfPrefactor);
-        Alt1GpI a = new Alt1GpI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+        GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out var factorp, out var facdiv, out var dev, out var logPdfPrefactor);
+        var a = new Alt1GpI(factorp, facdiv, logPdfPrefactor, alpha, dev);
         result = a.CDFIntegrate(ref temp, precision);
         inverseRuleUsed = false;
       }
@@ -1768,9 +1754,8 @@ namespace Altaxo.Calc.Probability
 
     private static double CDFIntegralForPositiveXAgt1(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
-      double factorp, factorw, dev, logPdfPrefactor;
-      GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out factorw, out dev, out logPdfPrefactor);
-      Agt1GnI a = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
+      GetAgt1GnParameterByGamma(x, alpha, gamma, aga, out var factorp, out var factorw, out var dev, out var logPdfPrefactor);
+      var a = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
       return a.CDFIntegrate(ref temp, precision);
     }
 

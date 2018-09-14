@@ -81,7 +81,7 @@ namespace Altaxo.Calc.RootFinding
       if (Degree <= 0)
         throw new ArgumentException("Provided polynomial has a degree of zero. Root finding is therefore not possible");
 
-      List<Complex> result = new List<Complex>();
+      var result = new List<Complex>();
 
       const double cosr = -0.06975647374412530077596; // Math.Cos(-94 * Math.PI / 180);
       const double sinr = -0.9975640502598242476132; // Math.Sin(-94 * Math.PI / 180);

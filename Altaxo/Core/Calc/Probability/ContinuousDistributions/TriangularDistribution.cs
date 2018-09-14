@@ -66,7 +66,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
     }
 
@@ -83,7 +83,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.beta;
+        return beta;
       }
     }
 
@@ -100,7 +100,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.gamma;
+        return gamma;
       }
     }
 
@@ -212,7 +212,7 @@ namespace Altaxo.Calc.Probability
     /// </returns>
     public bool IsValidAlpha(double value)
     {
-      return (value < this.beta && value <= this.gamma);
+      return (value < beta && value <= gamma);
     }
 
     /// <summary>
@@ -225,7 +225,7 @@ namespace Altaxo.Calc.Probability
     /// </returns>
     public bool IsValidBeta(double value)
     {
-      return (value > this.alpha && value >= this.gamma);
+      return (value > alpha && value >= gamma);
     }
 
     /// <summary>
@@ -238,7 +238,7 @@ namespace Altaxo.Calc.Probability
     /// </returns>
     public bool IsValidGamma(double value)
     {
-      return (value >= this.alpha && value <= this.beta);
+      return (value >= alpha && value <= beta);
     }
 
     /// <summary>
@@ -247,10 +247,10 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     private void UpdateHelpers()
     {
-      this.helper1 = this.gamma - this.alpha;
-      this.helper2 = this.beta - this.alpha;
-      this.helper3 = Math.Sqrt(this.helper1 * this.helper2);
-      this.helper4 = Math.Sqrt(this.beta - this.gamma);
+      helper1 = gamma - alpha;
+      helper2 = beta - alpha;
+      helper3 = Math.Sqrt(helper1 * helper2);
+      helper4 = Math.Sqrt(beta - gamma);
     }
 
     #endregion instance methods
@@ -264,7 +264,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
     }
 
@@ -275,7 +275,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.beta;
+        return beta;
       }
     }
 
@@ -286,7 +286,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha / 3.0 + this.beta / 3.0 + this.gamma / 3.0;
+        return alpha / 3.0 + beta / 3.0 + gamma / 3.0;
       }
     }
 
@@ -297,15 +297,15 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.gamma >= (this.beta - this.alpha) / 2.0)
+        if (gamma >= (beta - alpha) / 2.0)
         {
-          return this.alpha +
-              (Math.Sqrt((this.beta - this.alpha) * (this.gamma - this.alpha)) / Math.Sqrt(2.0));
+          return alpha +
+              (Math.Sqrt((beta - alpha) * (gamma - alpha)) / Math.Sqrt(2.0));
         }
         else
         {
-          return this.beta -
-              (Math.Sqrt((this.beta - this.alpha) * (this.beta - this.gamma)) / Math.Sqrt(2.0));
+          return beta -
+              (Math.Sqrt((beta - alpha) * (beta - gamma)) / Math.Sqrt(2.0));
         }
       }
     }
@@ -317,8 +317,8 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return (Math.Pow(this.alpha, 2.0) + Math.Pow(this.beta, 2.0) + Math.Pow(this.gamma, 2.0) -
-          this.alpha * this.beta - this.alpha * this.gamma - this.beta * this.gamma) / 18.0;
+        return (Math.Pow(alpha, 2.0) + Math.Pow(beta, 2.0) + Math.Pow(gamma, 2.0) -
+          alpha * beta - alpha * gamma - beta * gamma) / 18.0;
       }
     }
 
@@ -329,7 +329,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { this.gamma };
+        return new double[] { gamma };
       }
     }
 
@@ -339,14 +339,14 @@ namespace Altaxo.Calc.Probability
     /// <returns>A triangular distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      double genNum = this.Generator.NextDouble();
-      if (genNum <= this.helper1 / this.helper2)
+      double genNum = Generator.NextDouble();
+      if (genNum <= helper1 / helper2)
       {
-        return this.alpha + Math.Sqrt(genNum) * this.helper3;
+        return alpha + Math.Sqrt(genNum) * helper3;
       }
       else
       {
-        return this.beta - Math.Sqrt(genNum * this.helper2 - this.helper1) * this.helper4;
+        return beta - Math.Sqrt(genNum * helper2 - helper1) * helper4;
       }
     }
 
@@ -356,7 +356,7 @@ namespace Altaxo.Calc.Probability
 
     public override double CDF(double x)
     {
-      return CDF(x, this.Alpha, this.Beta, this.Gamma);
+      return CDF(x, Alpha, Beta, Gamma);
     }
 
     public static double CDF(double x, double A, double B, double C)
@@ -373,7 +373,7 @@ namespace Altaxo.Calc.Probability
 
     public override double PDF(double x)
     {
-      return PDF(x, this.Alpha, this.Beta, this.Gamma);
+      return PDF(x, Alpha, Beta, Gamma);
     }
 
     public static double PDF(double x, double A, double B, double C)
@@ -390,7 +390,7 @@ namespace Altaxo.Calc.Probability
 
     public override double Quantile(double p)
     {
-      return Quantile(p, this.Alpha, this.Beta, this.Gamma);
+      return Quantile(p, Alpha, Beta, Gamma);
     }
 
     public static double Quantile(double p, double A, double B, double C)

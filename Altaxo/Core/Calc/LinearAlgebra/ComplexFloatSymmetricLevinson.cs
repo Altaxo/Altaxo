@@ -168,7 +168,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </code>
   /// </para>
   /// </example>
-  sealed public class ComplexFloatSymmetricLevinson : Algorithm
+  public sealed class ComplexFloatSymmetricLevinson : Algorithm
   {
     #region Fields
 
@@ -256,7 +256,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a ComplexFloatMatrix
-        ComplexFloatMatrix Lower = new ComplexFloatMatrix(m_Order);
+        var Lower = new ComplexFloatMatrix(m_Order);
         for (int i = 0; i < m_Order; i++)
         {
 #if MANAGED
@@ -299,7 +299,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy diagonal vector into a ComplexFloatMatrix
-        ComplexFloatMatrix Diagonal = new ComplexFloatMatrix(m_Order);
+        var Diagonal = new ComplexFloatMatrix(m_Order);
         for (int i = 0; i < m_Order; i++)
         {
 #if MANAGED
@@ -339,7 +339,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a ComplexFloatMatrix and then calculate the transpose
-        ComplexFloatMatrix Upper = this.L.GetTranspose();
+        ComplexFloatMatrix Upper = L.GetTranspose();
 
         return Upper;
       }
@@ -489,7 +489,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i, j;
 
       // allocate memory for the matrix
-      ComplexFloatMatrix tm = new ComplexFloatMatrix(m_Order);
+      var tm = new ComplexFloatMatrix(m_Order);
 
 #if MANAGED
       // fill top row
@@ -636,10 +636,12 @@ namespace Altaxo.Calc.LinearAlgebra
       ComplexFloat[] A;       // reference to current order coefficients
 
       // allocate memory for solution
-      X = new ComplexFloatVector(m_Order);
+      X = new ComplexFloatVector(m_Order)
+      {
 
-      // setup zero order solution
-      X[0] = Y[0] / m_LeftColumn[0];
+        // setup zero order solution
+        [0] = Y[0] / m_LeftColumn[0]
+      };
 
       // solve systems of increasing order
       for (i = 1; i < m_Order; i++)
@@ -808,7 +810,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new SingularMatrixException("The Toeplitz matrix or one of the the leading sub-matrices is singular.");
       }
 
-      ComplexFloatMatrix I = new ComplexFloatMatrix(m_Order);           // the solution matrix
+      var I = new ComplexFloatMatrix(m_Order);           // the solution matrix
       ComplexFloat[] A = m_LowerTriangle[m_Order - 1];
       ComplexFloat A1, A2, scale;
 
@@ -949,8 +951,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
         if (N > 1)
         {
-          ComplexFloatVector a = new ComplexFloatVector(N - 1);   // prediction coefficients
-          ComplexFloatVector Z = new ComplexFloatVector(N - 1);   // temporary storage vector
+          var a = new ComplexFloatVector(N - 1);   // prediction coefficients
+          var Z = new ComplexFloatVector(N - 1);   // temporary storage vector
           ComplexFloat g;                                   // reflection coefficient
           ComplexFloat inner;                               // inner product
           ComplexFloat k;
@@ -1056,7 +1058,7 @@ namespace Altaxo.Calc.LinearAlgebra
         int N = T.Length;
         int M = Y.Rows;
         X = new ComplexFloatMatrix(N, M);                 // solution matrix
-        ComplexFloatVector Z = new ComplexFloatVector(N);       // temporary storage vector
+        var Z = new ComplexFloatVector(N);       // temporary storage vector
         ComplexFloat e;                                   // prediction error
         int i, j, l, m;
 
@@ -1073,7 +1075,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
         if (N > 1)
         {
-          ComplexFloatVector a = new ComplexFloatVector(N - 1);   // prediction coefficients
+          var a = new ComplexFloatVector(N - 1);   // prediction coefficients
           ComplexFloat p;                                   // reflection coefficient
           ComplexFloat inner;                               // inner product
           ComplexFloat k;
@@ -1189,7 +1191,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         int N = R.Length - 1;
         a = new ComplexFloatVector(N);              // prediction coefficients
-        ComplexFloatVector Z = new ComplexFloatVector(N);   // temporary storage vector
+        var Z = new ComplexFloatVector(N);   // temporary storage vector
         ComplexFloat e;                   // predictor error
         ComplexFloat inner;                 // inner product
         ComplexFloat g;                   // reflection coefficient
@@ -1278,8 +1280,10 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       else if (T.Length == 1)
       {
-        X = new ComplexFloatMatrix(1);
-        X[0, 0] = ComplexFloat.One / T[0];
+        X = new ComplexFloatMatrix(1)
+        {
+          [0, 0] = ComplexFloat.One / T[0]
+        };
       }
       else
       {

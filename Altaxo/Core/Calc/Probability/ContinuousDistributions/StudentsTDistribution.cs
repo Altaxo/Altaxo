@@ -43,7 +43,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.nu;
+        return nu;
       }
       set
       {
@@ -105,8 +105,8 @@ namespace Altaxo.Calc.Probability
     public StudentsTDistribution(double nu, Generator generator)
       : base(generator)
     {
-      this.normalDistribution = new NormalDistribution(0, 1, generator);
-      this.Initialize(nu);
+      normalDistribution = new NormalDistribution(0, 1, generator);
+      Initialize(nu);
     }
 
     #endregion construction
@@ -136,9 +136,9 @@ namespace Altaxo.Calc.Probability
 
       this.nu = nu;
       if (null == chiSquareDistribution)
-        this.chiSquareDistribution = new ChiSquareDistribution(nu);
+        chiSquareDistribution = new ChiSquareDistribution(nu);
       else
-        this.chiSquareDistribution.Alpha = this.nu;
+        chiSquareDistribution.Alpha = this.nu;
     }
 
     #endregion instance methods
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.nu > 1)
+        if (nu > 1)
         {
           return 0.0;
         }
@@ -203,9 +203,9 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.nu > 2)
+        if (nu > 2)
         {
-          return (double)this.nu / ((double)this.nu - 2.0);
+          return nu / (nu - 2.0);
         }
         else
         {
@@ -231,7 +231,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A t-distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return this.normalDistribution.NextDouble() / Math.Sqrt(this.chiSquareDistribution.NextDouble() / (double)this.nu);
+      return normalDistribution.NextDouble() / Math.Sqrt(chiSquareDistribution.NextDouble() / nu);
     }
 
     #endregion overridden Distribution members

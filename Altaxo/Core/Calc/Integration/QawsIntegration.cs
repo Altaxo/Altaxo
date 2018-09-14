@@ -101,16 +101,13 @@ namespace Altaxo.Calc.Integration
       /* perform the first integration */
 
       {
-        double area1, area2;
-        double error1, error2;
-        bool err_reliable1, err_reliable2;
         double a1 = a;
         double b1 = 0.5 * (a + b);
         double a2 = b1;
         double b2 = b;
 
-        qc25s(f, a, b, a1, b1, t, out area1, out error1, out err_reliable1);
-        qc25s(f, a, b, a2, b2, t, out area2, out error2, out err_reliable2);
+        qc25s(f, a, b, a1, b1, t, out var area1, out var error1, out var err_reliable1);
+        qc25s(f, a, b, a2, b2, t, out var area2, out var error2, out var err_reliable2);
 
         if (error1 > error2)
         {
@@ -157,22 +154,20 @@ namespace Altaxo.Calc.Integration
       do
       {
         double a1, b1, a2, b2;
-        double a_i, b_i, r_i, e_i;
-        double area1 = 0, area2 = 0, area12 = 0;
-        double error1 = 0, error2 = 0, error12 = 0;
-        bool err_reliable1, err_reliable2;
+        double area12 = 0;
+        double error12 = 0;
 
         /* Bisect the subinterval with the largest error estimate */
 
-        workspace.retrieve(out a_i, out b_i, out r_i, out e_i);
+        workspace.retrieve(out var a_i, out var b_i, out var r_i, out var e_i);
 
         a1 = a_i;
         b1 = 0.5 * (a_i + b_i);
         a2 = b1;
         b2 = b_i;
 
-        qc25s(f, a, b, a1, b1, t, out area1, out error1, out err_reliable1);
-        qc25s(f, a, b, a2, b2, t, out area2, out error2, out err_reliable2);
+        qc25s(f, a, b, a1, b1, t, out var area1, out var error1, out var err_reliable1);
+        qc25s(f, a, b, a2, b2, t, out var area2, out var error2, out var err_reliable2);
 
         area12 = area1 + area2;
         error12 = error1 + error2;
@@ -283,11 +278,13 @@ namespace Altaxo.Calc.Integration
            gsl_integration_qaws_table t,
            out double result, out double abserr, out bool err_reliable)
     {
-      fn_qaws_params fn_params = new fn_qaws_params();
-      fn_params.function = f;
-      fn_params.a = a;
-      fn_params.b = b;
-      fn_params.table = t;
+      var fn_params = new fn_qaws_params
+      {
+        function = f,
+        a = a,
+        b = b,
+        table = t
+      };
 
       Func<double, double> weighted_function;
 
@@ -304,24 +301,20 @@ namespace Altaxo.Calc.Integration
 
         if (t.mu == 0)
         {
-          double res12 = 0, res24 = 0;
           double u = factor;
 
-          compute_result(t.ri, cheb12, cheb24, out res12, out res24);
+          compute_result(t.ri, cheb12, cheb24, out var res12, out var res24);
 
           result = u * res24;
           abserr = Math.Abs(u * (res24 - res12));
         }
         else
         {
-          double res12a = 0, res24a = 0;
-          double res12b = 0, res24b = 0;
-
           double u = factor * Math.Log(b1 - a1);
           double v = factor;
 
-          compute_result(t.ri, cheb12, cheb24, out res12a, out res24a);
-          compute_result(t.rg, cheb12, cheb24, out res12b, out res24b);
+          compute_result(t.ri, cheb12, cheb24, out var res12a, out var res24a);
+          compute_result(t.rg, cheb12, cheb24, out var res12b, out var res24b);
 
           result = u * res24a + v * res24b;
           abserr = Math.Abs(u * (res24a - res12a)) + Math.Abs(v * (res24b - res12b));
@@ -343,24 +336,20 @@ namespace Altaxo.Calc.Integration
 
         if (t.nu == 0)
         {
-          double res12 = 0, res24 = 0;
           double u = factor;
 
-          compute_result(t.rj, cheb12, cheb24, out res12, out res24);
+          compute_result(t.rj, cheb12, cheb24, out var res12, out var res24);
 
           result = u * res24;
           abserr = Math.Abs(u * (res24 - res12));
         }
         else
         {
-          double res12a = 0, res24a = 0;
-          double res12b = 0, res24b = 0;
-
           double u = factor * Math.Log(b1 - a1);
           double v = factor;
 
-          compute_result(t.rj, cheb12, cheb24, out res12a, out res24a);
-          compute_result(t.rh, cheb12, cheb24, out res12b, out res24b);
+          compute_result(t.rj, cheb12, cheb24, out var res12a, out var res24a);
+          compute_result(t.rh, cheb12, cheb24, out var res12b, out var res24b);
 
           result = u * res24a + v * res24b;
           abserr = Math.Abs(u * (res24a - res12a)) + Math.Abs(v * (res24b - res12b));
@@ -372,13 +361,11 @@ namespace Altaxo.Calc.Integration
       }
       else
       {
-        double resabs, resasc;
-
         weighted_function = delegate (double tt)
         { return fn_qaws(tt, fn_params); };
 
         QK15.Integration(weighted_function, a1, b1, out result, out abserr,
-                              out resabs, out resasc);
+                              out var resabs, out var resasc);
 
         if (abserr == resasc)
         {

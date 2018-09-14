@@ -174,8 +174,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
       u = new FloatMatrix(rows, rows); // left vectors
       v = new FloatMatrix(cols, cols); // right vectors
-      FloatVector e = new FloatVector(cols);
-      FloatVector work = new FloatVector(rows);
+      var e = new FloatVector(cols);
+      var work = new FloatVector(rows);
 
       int i, iter, j, k, kase, l, lp1, ls = 0, lu, m, nct, nctp1, ncu, nrt, nrtp1;
       float b, c, cs = 0.0f, el, emm1, f, g, scale, shift, sl,
@@ -659,7 +659,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       float eps = (float)System.Math.Pow(2.0, -52.0);
-      float tol = (float)System.Math.Max(matrix.RowLength, matrix.ColumnLength) * s[0] * eps;
+      float tol = System.Math.Max(matrix.RowLength, matrix.ColumnLength) * s[0] * eps;
       rank = 0;
 
       for (int h = 0; h < mm; h++)

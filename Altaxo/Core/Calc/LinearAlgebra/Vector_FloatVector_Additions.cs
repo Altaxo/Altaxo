@@ -39,28 +39,28 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   [Serializable]
-  public partial class FloatVector : Vector<Single>
+  public partial class FloatVector : Vector<float>
   {
     ///<summary>Implicit cast conversion to <c>FloatVector</c> from <c>float</c> array</summary>
-    static public implicit operator FloatVector(float[] src)
+    public static implicit operator FloatVector(float[] src)
     {
       return new FloatVector(src);
     }
 
     ///<summary>Implicit cast conversion to <c>FloatVector</c> from <c>float</c> array</summary>
-    static public FloatVector ToFloatVector(float[] src)
+    public static FloatVector ToFloatVector(float[] src)
     {
       return new FloatVector(src);
     }
 
     ///<summary>Explicit cast conversion to <c>FloatVector</c> from <c>DoubleVector</c></summary>
-    static public explicit operator FloatVector(DoubleVector src)
+    public static explicit operator FloatVector(DoubleVector src)
     {
       if (src == null)
       {
         throw new ArgumentNullException("DoubleVector cannot be null");
       }
-      FloatVector ret = new FloatVector(src.Length);
+      var ret = new FloatVector(src.Length);
       // Can't use Array.Copy to implicitly copy from a double[] to a float[]
       for (int i = 0; i < src.Length; i++)
       {

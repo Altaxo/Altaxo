@@ -149,11 +149,11 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return this._value;
+          return _value;
         }
         set
         {
-          this._value = value;
+          _value = value;
         }
       }
 
@@ -1123,9 +1123,9 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <param name="x">Jagged double array containing the matrix data. The data are used directly (no copy)!</param>
       public LeftSpineJaggedArrayMatrix(T[][] x)
       {
-        this._array = x;
-        this._rows = _array.Length;
-        this._columns = this._rows == 0 ? 0 : this._array[0].Length;
+        _array = x;
+        _rows = _array.Length;
+        _columns = _rows == 0 ? 0 : _array[0].Length;
       }
 
       /// <summary>
@@ -1134,9 +1134,9 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <param name="wrapper">Wrapper around a left spine jagged array containing the matrix data. The data are used directly (no copy)!</param>
       public LeftSpineJaggedArrayMatrix(MatrixWrapperStructForLeftSpineJaggedArray<T> wrapper)
       {
-        this._array = wrapper.Array;
-        this._rows = wrapper.RowCount;
-        this._columns = wrapper.ColumnCount;
+        _array = wrapper.Array;
+        _rows = wrapper.RowCount;
+        _columns = wrapper.ColumnCount;
       }
 
       public void Clear()
@@ -1217,17 +1217,17 @@ namespace Altaxo.Calc.LinearAlgebra
         if (a.RowCount == 0)
           return; // nothing to append
 
-        if (this.ColumnCount > 0)
+        if (ColumnCount > 0)
         {
-          if (a.ColumnCount != this.ColumnCount) // throw an error if this column is not empty and the columns does not match
-            throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.ColumnCount, a.ColumnCount));
+          if (a.ColumnCount != ColumnCount) // throw an error if this column is not empty and the columns does not match
+            throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!", ColumnCount, a.ColumnCount));
         }
         else // if the matrix was empty before
         {
           _columns = a.ColumnCount;
         }
 
-        int newRows = a.RowCount + this.RowCount;
+        int newRows = a.RowCount + RowCount;
 
         // we must reallocate the array if neccessary
         if (newRows >= _array.Length)
@@ -1389,17 +1389,17 @@ namespace Altaxo.Calc.LinearAlgebra
         if (a.ColumnCount == 0)
           return; // nothing to append
 
-        if (this.RowCount > 0)
+        if (RowCount > 0)
         {
-          if (a.RowCount != this.RowCount) // throw an error if this column is not empty and the columns does not match
-            throw new ArithmeticException(string.Format("The number of rows of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.RowCount, a.RowCount));
+          if (a.RowCount != RowCount) // throw an error if this column is not empty and the columns does not match
+            throw new ArithmeticException(string.Format("The number of rows of this matrix ({0}) and of the matrix to append ({1}) does not match!", RowCount, a.RowCount));
         }
         else // if the matrix was empty before set the number of rows
         {
           _rows = a.RowCount;
         }
 
-        int newCols = a.ColumnCount + this.ColumnCount;
+        int newCols = a.ColumnCount + ColumnCount;
 
         // we must newly allocate the bone array, if neccessary
         if (newCols >= _array.Length)

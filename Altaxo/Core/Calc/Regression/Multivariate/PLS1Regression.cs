@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -36,11 +36,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     protected IExtensibleVector<double> _PRESS;
 
-    public IROVector<double> PRESS { get { return this._PRESS; } }
+    public IROVector<double> PRESS { get { return _PRESS; } }
 
     public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
     {
-      return this._PRESS;
+      return _PRESS;
     }
 
     protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; } }
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
     public static PLS1Regression CreateFromPreprocessed(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
     {
-      PLS1Regression result = new PLS1Regression();
+      var result = new PLS1Regression();
       result.AnalyzeFromPreprocessed(matrixX, matrixY, maxFactors);
       return result;
     }
@@ -93,7 +93,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         MatrixMath.Submatrix(matrixY, helperY, 0, i);
 
-        PLS2Regression r = PLS2Regression.CreateFromPreprocessed(matrixX, helperY, maxFactors);
+        var r = PLS2Regression.CreateFromPreprocessed(matrixX, helperY, maxFactors);
 
         IPLS2CalibrationModel cal = r.CalibrationModel;
         _calib.NumberOfFactors = Math.Min(_calib.NumberOfFactors, cal.NumberOfFactors);

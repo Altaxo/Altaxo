@@ -57,7 +57,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.lambda;
+        return lambda;
       }
       set
       {
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentOutOfRangeException("Lambda out of range (must be positive)");
 
       this.lambda = lambda;
-      this.helper1 = -1.0 / this.lambda;
+      helper1 = -1.0 / this.lambda;
     }
 
     #endregion instance methods
@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return 1.0 / this.lambda;
+        return 1.0 / lambda;
       }
     }
 
@@ -202,7 +202,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Log(2.0) / this.lambda;
+        return Math.Log(2.0) / lambda;
       }
     }
 
@@ -213,7 +213,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Pow(this.lambda, -2.0);
+        return Math.Pow(lambda, -2.0);
       }
     }
 
@@ -235,7 +235,7 @@ namespace Altaxo.Calc.Probability
     public override double NextDouble()
     {
       // Subtract random number from 1.0 to avoid Math.Log(0.0)
-      return this.helper1 * Math.Log(1.0 - this.Generator.NextDouble());
+      return helper1 * Math.Log(1.0 - Generator.NextDouble());
     }
 
     #endregion overridden Distribution members

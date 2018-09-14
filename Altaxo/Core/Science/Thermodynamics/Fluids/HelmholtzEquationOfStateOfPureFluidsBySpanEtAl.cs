@@ -757,7 +757,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     protected static readonly double[] _emptyDoubleArray = new double[0];
 
-    protected static readonly (double, double)[] _emptyDoubleDoubleArray = new(double, double)[] { };
+    protected static readonly (double, double)[] _emptyDoubleDoubleArray = new (double, double)[] { };
 
     private static double Coth(double x)
     {
@@ -1392,7 +1392,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     protected char _meltingPressure_Type;
     protected double _meltingPressure_ReducingTemperature;
     protected double _meltingPressure_ReducingPressure;
-    protected (double factor, double exponent)[][] _meltingPressure_Coefficients = Enumerable.Repeat(new(double, double)[0], 3).ToArray();
+    protected (double factor, double exponent)[][] _meltingPressure_Coefficients = Enumerable.Repeat(new (double, double)[0], 3).ToArray();
 
     public bool IsMeltingPressureCurveImplemented { get { return _meltingPressure_Type != '\0'; } }
 
@@ -1640,7 +1640,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <summary>
     /// The triple points of water. Index 0 is the normal triple point; the other indices are triple points of two ice types and the liquid.
     /// </summary>
-    private static readonly (double temperature, double pressure, int equationType)[] _triplePointsOfWater = new(double temperature, double pressure, int equationType)[]
+    private static readonly (double temperature, double pressure, int equationType)[] _triplePointsOfWater = new (double temperature, double pressure, int equationType)[]
       {
         (273.16,  611.657, 0),
         (251.165, 209.9E6, 0),

@@ -183,10 +183,10 @@ namespace Altaxo.Calc.Ode.Dopri5
 
     internal FAREN(int NEq, OdeFunction Func)
     {
-      this.MeNEq = NEq;
-      this.MeY = new double[NEq];
-      this.MeYDot = new double[NEq];
-      this.MeFunction = Func;
+      MeNEq = NEq;
+      MeY = new double[NEq];
+      MeYDot = new double[NEq];
+      MeFunction = Func;
     }
 
     #endregion Constructor
@@ -205,16 +205,16 @@ namespace Altaxo.Calc.Ode.Dopri5
 
       #endregion Array Index Correction
 
-      for (int i = 0; i < this.MeNEq; i++)
+      for (int i = 0; i < MeNEq; i++)
       {
-        this.MeY[i] = Y[i + o_y];
+        MeY[i] = Y[i + o_y];
       }
 
-      this.MeFunction(X, this.MeY, this.MeYDot);
+      MeFunction(X, MeY, MeYDot);
 
-      for (int i = 0; i < this.MeNEq; i++)
+      for (int i = 0; i < MeNEq; i++)
       {
-        F[i + o_f] = this.MeYDot[i];
+        F[i + o_f] = MeYDot[i];
       }
 
       return;

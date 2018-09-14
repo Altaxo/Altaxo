@@ -1457,7 +1457,6 @@ L250:
     {
       const double err = 0.01;
       double CG = 0.0;
-      double m2min, m2max;
       double[] cofp;
 
       // reset error flag
@@ -1479,7 +1478,7 @@ L250:
       cofp = new double[njm];
 
       // calculate series of 3-j symbols
-      ThreeJSymbolM(l1, l2, l3, m1, out m2min, out m2max, cofp, njm, out errflag);
+      ThreeJSymbolM(l1, l2, l3, m1, out var m2min, out var m2max, cofp, njm, out errflag);
 
       // calculated Clebsch-Gordan coefficient
       if (errflag == 0)

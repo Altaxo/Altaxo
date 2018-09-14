@@ -50,12 +50,12 @@ namespace Altaxo.Calc.Probability
     private int seed;
 
     /// <summary>
-    /// Stores an <see cref="int"/> used to generate up to 31 random <see cref="Boolean"/> values.
+    /// Stores an <see cref="int"/> used to generate up to 31 random <see cref="bool"/> values.
     /// </summary>
     private int bitBuffer;
 
     /// <summary>
-    /// Stores how many random <see cref="Boolean"/> values still can be generated from <see cref="bitBuffer"/>.
+    /// Stores how many random <see cref="bool"/> values still can be generated from <see cref="bitBuffer"/>.
     /// </summary>
     private int bitCount;
 
@@ -82,7 +82,7 @@ namespace Altaxo.Calc.Probability
     public StandardGenerator(int seed)
     {
       this.seed = Math.Abs(seed);
-      this.ResetGenerator();
+      ResetGenerator();
     }
 
     #endregion construction
@@ -95,11 +95,11 @@ namespace Altaxo.Calc.Probability
     private void ResetGenerator()
     {
       // Create a new Random object using the same seed.
-      this.generator = new System.Random(this.seed);
+      generator = new System.Random(seed);
 
       // Reset helper variables used for generation of random bools.
-      this.bitBuffer = 0;
-      this.bitCount = 0;
+      bitBuffer = 0;
+      bitCount = 0;
     }
 
     #endregion instance methods
@@ -124,7 +124,7 @@ namespace Altaxo.Calc.Probability
     /// <returns><see langword="true"/>.</returns>
     public override bool Reset()
     {
-      this.ResetGenerator();
+      ResetGenerator();
       return true;
     }
 
@@ -132,11 +132,11 @@ namespace Altaxo.Calc.Probability
     /// Returns a nonnegative random number.
     /// </summary>
     /// <returns>
-    /// A 32-bit signed integer greater than or equal to zero and less than <see cref="Int32.MaxValue"/>.
+    /// A 32-bit signed integer greater than or equal to zero and less than <see cref="int.MaxValue"/>.
     /// </returns>
     public override int Next()
     {
-      return this.generator.Next();
+      return generator.Next();
     }
 
     /// <summary>
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     public override int Next(int maxValue)
     {
-      return this.generator.Next(maxValue);
+      return generator.Next(maxValue);
     }
 
     /// <summary>
@@ -179,7 +179,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     public override int Next(int minValue, int maxValue)
     {
-      return this.generator.Next(minValue, maxValue);
+      return generator.Next(minValue, maxValue);
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Probability
     /// </returns>
     public override double NextDouble()
     {
-      return this.generator.NextDouble();
+      return generator.NextDouble();
     }
 
     /// <summary>
@@ -217,7 +217,7 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentOutOfRangeException("maxValue", maxValue, message);
       }
 
-      return this.generator.NextDouble() * maxValue;
+      return generator.NextDouble() * maxValue;
     }
 
     /// <summary>
@@ -226,13 +226,13 @@ namespace Altaxo.Calc.Probability
     /// <param name="minValue">
     /// The inclusive lower bound of the random number to be generated.
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="Double.MaxValue"/>
+    ///   <see cref="double.MaxValue"/>
     /// </param>
     /// <param name="maxValue">
     /// The exclusive upper bound of the random number to be generated.
     /// <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="Double.MaxValue"/>.
+    ///   <see cref="double.MaxValue"/>.
     /// </param>
     /// <returns>
     /// A double-precision floating point number greater than or equal to <paramref name="minValue"/>, and less than
@@ -245,7 +245,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     /// <exception cref="ArgumentException">
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> is greater than
-    ///   <see cref="Double.MaxValue"/>.
+    ///   <see cref="double.MaxValue"/>.
     /// </exception>
     public override double NextDouble(double minValue, double maxValue)
     {
@@ -265,7 +265,7 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentException(message);
       }
 
-      return minValue + this.generator.NextDouble() * range;
+      return minValue + generator.NextDouble() * range;
     }
 
     /// <summary>
@@ -274,22 +274,22 @@ namespace Altaxo.Calc.Probability
     /// <remarks>
     /// Buffers 31 random bits (1 int) for future calls, so a new random number is only generated every 31 calls.
     /// </remarks>
-    /// <returns>A <see cref="Boolean"/> value.</returns>
+    /// <returns>A <see cref="bool"/> value.</returns>
     public override bool NextBoolean()
     {
-      if (this.bitCount == 0)
+      if (bitCount == 0)
       {
         // Generate 31 more bits (1 int) and store it for future calls.
-        this.bitBuffer = this.generator.Next();
+        bitBuffer = generator.Next();
 
         // Reset the bitCount and use rightmost bit of buffer to generate random bool.
-        this.bitCount = 30;
-        return (this.bitBuffer & 0x1) == 1;
+        bitCount = 30;
+        return (bitBuffer & 0x1) == 1;
       }
 
       // Decrease the bitCount and use rightmost bit of shifted buffer to generate random bool.
-      this.bitCount--;
-      return ((this.bitBuffer >>= 1) & 0x1) == 1;
+      bitCount--;
+      return ((bitBuffer >>= 1) & 0x1) == 1;
     }
 
     /// <summary>
@@ -297,7 +297,7 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <remarks>
     /// Each element of the array of bytes is set to a random number greater than or equal to zero, and less than or
-    ///   equal to <see cref="Byte.MaxValue"/>.
+    ///   equal to <see cref="byte.MaxValue"/>.
     /// </remarks>
     /// <param name="buffer">An array of bytes to contain random numbers.</param>
     /// <exception cref="ArgumentNullException">
@@ -305,7 +305,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     public override void NextBytes(byte[] buffer)
     {
-      this.generator.NextBytes(buffer);
+      generator.NextBytes(buffer);
     }
 
     #endregion overridden Generator members

@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
@@ -203,7 +203,7 @@ namespace Altaxo.Calc.Regression
       }
 
       /* set up work arrays */
-      WorkArrays work = workingmemory as WorkArrays;
+      var work = workingmemory as WorkArrays;
       if (null == work)
       {
         work = new WorkArrays(n, m);
@@ -490,10 +490,10 @@ if(!(k%100)){
           if (tmp < jacTjac[i * m + i])
             tmp = jacTjac[i * m + i];
         info[4] = mu / tmp;
-        info[5] = (double)k;
-        info[6] = (double)stop;
-        info[7] = (double)nfev;
-        info[8] = (double)njev;
+        info[5] = k;
+        info[6] = stop;
+        info[7] = nfev;
+        info[8] = njev;
       }
 
       /* covariance matrix */
@@ -505,7 +505,7 @@ if(!(k%100)){
       return (stop != 4) ? k : -1;
     }
 
-    static public int LEVMAR_DIF(
+    public static int LEVMAR_DIF(
       FitFunction func, /* functional relation describing measurements. A p \in R^m yields a \hat{x} \in  R^n */
       double[] p,         /* I/O: initial parameter estimates. On output has the estimated solution */
       double[] x,         /* I: measurement vector */
@@ -608,7 +608,7 @@ if(!(k%100)){
         delta = LM_DIFF_DELTA;
       }
 
-      WorkArrays work = workingmemory as WorkArrays;
+      var work = workingmemory as WorkArrays;
       if (null == work)
       {
         work = new WorkArrays(n, m);
@@ -899,10 +899,10 @@ if(!(k%100)){
           if (tmp < jacTjac[i * m + i])
             tmp = jacTjac[i * m + i];
         info[4] = mu / tmp;
-        info[5] = (double)k;
-        info[6] = (double)stop;
-        info[7] = (double)nfev;
-        info[8] = (double)njap;
+        info[5] = k;
+        info[6] = stop;
+        info[7] = nfev;
+        info[8] = njap;
       }
 
       /* covariance matrix */
@@ -1096,7 +1096,7 @@ if(!(k%100)){
       rnk = m; /* assume full rank */
 #endif // HAVE_LAPACK
 
-      fact = sumsq / (double)(n - rnk);
+      fact = sumsq / (n - rnk);
       for (i = 0; i < m * m; ++i)
         C[i] *= fact;
 
@@ -1389,7 +1389,7 @@ if(!(k%100)){
     private static int LEVMAR_PSEUDOINVERSE(double[] A, double[] B, int m)
     {
       var Amat = MatrixMath.ToROMatrixFromColumnMajorLinearArray(A, m);
-      DoubleSVDDecomp decomp = new DoubleSVDDecomp(Amat);
+      var decomp = new DoubleSVDDecomp(Amat);
 
       DoubleVector s = decomp.S;
       DoubleMatrix u = decomp.U;

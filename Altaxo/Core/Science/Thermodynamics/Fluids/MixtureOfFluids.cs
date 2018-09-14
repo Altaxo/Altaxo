@@ -99,12 +99,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
       // now that we have all fluids, we can calculate mole fractions
       double sum = 0;
-      foreach(var (fluid, massFraction) in list)
+      foreach (var (fluid, massFraction) in list)
       {
         sum += massFraction / fluid.MolecularWeight;
       }
 
-      for(int i=0;i<list.Count;++i)
+      for (int i = 0; i < list.Count; ++i)
       {
         var (fluid, massFraction) = list[i];
         list[i] = (fluid, (massFraction / fluid.MolecularWeight) / sum);
@@ -117,7 +117,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
       bool checkForSumEqualsOne = true)
-      : this(new(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[]
+      : this(new (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[]
       {
         (fluid1, moleFraction1),
         (fluid2, moleFraction2),
@@ -130,7 +130,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid3, double moleFraction3,
       bool checkForSumEqualsOne = true)
-  : this(new(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[]
+  : this(new (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[]
   {
         (fluid1, moleFraction1),
         (fluid2, moleFraction2),
@@ -145,7 +145,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid3, double moleFraction3,
     HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid4, double moleFraction4,
     bool checkForSumEqualsOne = true)
-: this(new(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[]
+: this(new (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[]
 {
         (fluid1, moleFraction1),
         (fluid2, moleFraction2),
@@ -162,7 +162,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid4, double moleFraction4,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid5, double moleFraction5,
       bool checkForSumEqualsOne = true)
-    : this(new(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[]
+    : this(new (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[]
 {
         (fluid1, moleFraction1),
         (fluid2, moleFraction2),
@@ -176,7 +176,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public MixtureOfFluids(IReadOnlyList<(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl pureFluid, double moleFraction)> fluidsAndMoleFractions, bool checkForSumEqualToOne = true)
     {
       // Parameter check and copy of the provided array
-      _fluidsAndMoleFractions = new(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl pureFluid, double moleFraction)[fluidsAndMoleFractions.Count];
+      _fluidsAndMoleFractions = new (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl pureFluid, double moleFraction)[fluidsAndMoleFractions.Count];
 
       for (int i = 0; i < _fluidsAndMoleFractions.Length; ++i)
       {
@@ -190,7 +190,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       }
 
       // Binary mixture definitions
-      _mixtureDefinitions = new(BinaryMixtureDefinitionBase definition, bool reverse)[_fluidsAndMoleFractions.Length, _fluidsAndMoleFractions.Length];
+      _mixtureDefinitions = new (BinaryMixtureDefinitionBase definition, bool reverse)[_fluidsAndMoleFractions.Length, _fluidsAndMoleFractions.Length];
 
       for (int i = 0; i < _fluidsAndMoleFractions.Length; ++i)
       {
@@ -248,11 +248,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         checksum += massFractions[i];
       }
 
-      if ( Math.Abs(checksum - 1) > 1E-7)
+      if (Math.Abs(checksum - 1) > 1E-7)
         throw new ArgumentOutOfRangeException(string.Format("The provided mass fractions do not sum up to 1, but to a value of {0}.", checksum));
 
 
-      var moleFractions =  massFractions.Select( (massFraction, i) => (massFraction/_fluidsAndMoleFractions[i].pureFluid.MolecularWeight)/sum);
+      var moleFractions = massFractions.Select((massFraction, i) => (massFraction / _fluidsAndMoleFractions[i].pureFluid.MolecularWeight) / sum);
 
       return WithMoleFractions(moleFractions, true);
     }
@@ -267,7 +267,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <returns></returns>
     public MixtureOfFluids WithMoleFractions(IEnumerable<double> moleFractions, bool checkForSumEqualToOne = true)
     {
-      var result = (MixtureOfFluids)this.MemberwiseClone();
+      var result = (MixtureOfFluids)MemberwiseClone();
 
       int index = 0;
       double sum = 0;
@@ -637,11 +637,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     public override IEnumerable<double> MoleDensityEstimates_FromPressureAndTemperature(double pressure, double temperature)
     {
-      foreach(var fluidAndMF in _fluidsAndMoleFractions)
+      foreach (var fluidAndMF in _fluidsAndMoleFractions)
       {
         foreach (var moleDensityGuess in fluidAndMF.pureFluid.MoleDensityEstimates_FromPressureAndTemperature(pressure, temperature))
           yield return moleDensityGuess;
-        
+
       }
     }
 
@@ -715,7 +715,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
                       () =>
                       {
                         var pd = entry.Value.GetProperty("Instance").GetGetMethod();
-                        var definition =  (BinaryMixtureDefinitionBase)pd.Invoke(null, null);
+                        var definition = (BinaryMixtureDefinitionBase)pd.Invoke(null, null);
                         return definition;
                       }
           );

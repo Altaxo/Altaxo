@@ -7,11 +7,11 @@
 
 #endregion Copyright © 2009, De Santiago-Castillo JA. All rights reserved.
 
-using Altaxo.Calc.Ode.Dopri5;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using Altaxo.Calc.Ode.Dopri5;
 
 namespace Altaxo.Calc.Ode
 {
@@ -46,7 +46,7 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     public OdeExplicitRungeKutta45()
     {
-      this.InitializeRungeKuttaClasses();
+      InitializeRungeKuttaClasses();
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Ode
     /// <param name="numEquations">The number of differential equations.</param>
     public OdeExplicitRungeKutta45(OdeFunction function, int numEquations)
     {
-      this.InitializeRungeKuttaClasses();
+      InitializeRungeKuttaClasses();
       base.InitializeRungeKutta(function, null, numEquations);
     }
 
@@ -73,7 +73,7 @@ namespace Altaxo.Calc.Ode
     {
       base.InitializeRungeKutta(function, null, numEquations);
 
-      this._InvokeSetInitialValues = true;
+      _InvokeSetInitialValues = true;
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ namespace Altaxo.Calc.Ode
     {
       base.InitializeRungeKutta(function, null, numEquations);
 
-      this.SetInitialValues(t0, y0);
+      SetInitialValues(t0, y0);
     }
 
     #endregion Methods
@@ -118,24 +118,24 @@ namespace Altaxo.Calc.Ode
       _cdopri = new CDOPRI();
       _contd5 = new CONTD5(_CONDO5);
       _dopcor = new DOPCOR(_hinit, _cdopri, _CONDO5);
-      this._Dopri5 = new DOPRI5(_dopcor);
+      _Dopri5 = new DOPRI5(_dopcor);
 
-      base._RKSolOut = new RKSolOut(this._contd5);
+      base._RKSolOut = new RKSolOut(_contd5);
     }
 
     internal override void InitializeExceptionMessages()
     {
-      this._Errors = new string[5];
-      this._Errors[0] = "";
-      this._Errors[1] = "INPUT IS NOT CONSISTENT.";
-      this._Errors[2] = "LARGER NMAX IS NEEDED.";
-      this._Errors[3] = "STEP SIZE BECOMES TOO SMALL.";
-      this._Errors[4] = "PROBLEM IS PROBABLY STIFF.";
+      _Errors = new string[5];
+      _Errors[0] = "";
+      _Errors[1] = "INPUT IS NOT CONSISTENT.";
+      _Errors[2] = "LARGER NMAX IS NEEDED.";
+      _Errors[3] = "STEP SIZE BECOMES TOO SMALL.";
+      _Errors[4] = "PROBLEM IS PROBABLY STIFF.";
     }
 
     internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian jac)
     {
-      this._Faren = new FAREN(this._NEquations, fun);
+      _Faren = new FAREN(_NEquations, fun);
     }
 
     internal override void InitializeWorkingSpace()
@@ -164,17 +164,17 @@ namespace Altaxo.Calc.Ode
 
       // C                 WHERE  NRDENS = IWORK(5)
       // C              FOR  NRDENS=N  THIS IS DONE BY THE CODE.
-      int NRDENS = this._NEquations;
+      int NRDENS = _NEquations;
       // C                 "LWORK" MUST BE AT LEAST  8*N+5*NRDENS+21
-      int LWORK = 8 * this._NEquations + 5 * NRDENS + 21;
+      int LWORK = 8 * _NEquations + 5 * NRDENS + 21;
       // C                 "LIWORK" MUST BE AT LEAST NRDENS+21 .
       int LIWORK = NRDENS + 21;
 
-      this._Lrw = LWORK;
-      this._Liw = LIWORK;
+      _Lrw = LWORK;
+      _Liw = LIWORK;
 
-      this._RWork = new double[this._Lrw];
-      this._IWork = new int[this._Liw];
+      _RWork = new double[_Lrw];
+      _IWork = new int[_Liw];
     }
 
     #endregion Internal Metods
@@ -185,16 +185,16 @@ namespace Altaxo.Calc.Ode
     {
       bool WasSuccessfully = true;
 
-      this._Dopri5.Run(this._NEquations, this._Faren, ref this._T0, ref this._Y0, 0, this.MeTf, this._RelTolArray, 0
-      , this._AbsTolArray, 0, this._ITolRK, this._RKSolOut, this._IOut, ref this._RWork, 0, this._Lrw
-      , ref this._IWork, 0, this._Liw, this._RPar, 0, this._IPar, 0, ref this._IDID);
+      _Dopri5.Run(_NEquations, _Faren, ref _T0, ref _Y0, 0, MeTf, _RelTolArray, 0
+      , _AbsTolArray, 0, _ITolRK, _RKSolOut, _IOut, ref _RWork, 0, _Lrw
+      , ref _IWork, 0, _Liw, _RPar, 0, _IPar, 0, ref _IDID);
 
-      if (this._IDID < 0)
+      if (_IDID < 0)
         WasSuccessfully = false;
 
       if (WasSuccessfully == false)
       {
-        throw new Exception(this._Errors[-this._IDID]);
+        throw new Exception(_Errors[-_IDID]);
       }
     }
 

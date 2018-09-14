@@ -793,7 +793,7 @@ namespace Altaxo.Calc
           bestDivisorGreater = div;
       }
 
-      List<int> result = new List<int>();
+      var result = new List<int>();
       if (bestDivisorLess > 0)
         result.Add(bestDivisorLess);
       if (bestDivisorGreater < int.MaxValue)

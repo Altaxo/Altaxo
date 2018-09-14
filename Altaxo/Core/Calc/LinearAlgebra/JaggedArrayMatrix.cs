@@ -69,9 +69,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="cols">Number of columns of the matrix.</param>
     public JaggedArrayMatrix(double[][] x, int rows, int cols)
     {
-      this.m_Array = x;
-      this.m_Rows = rows;
-      this.m_Cols = cols;
+      m_Array = x;
+      m_Rows = rows;
+      m_Cols = cols;
     }
 
     /// <summary>
@@ -167,17 +167,17 @@ namespace Altaxo.Calc.LinearAlgebra
       if (a.RowCount == 0)
         return; // nothing to append
 
-      if (this.ColumnCount > 0)
+      if (ColumnCount > 0)
       {
-        if (a.ColumnCount != this.ColumnCount) // throw an error if this column is not empty and the columns does not match
-          throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.ColumnCount, a.ColumnCount));
+        if (a.ColumnCount != ColumnCount) // throw an error if this column is not empty and the columns does not match
+          throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!", ColumnCount, a.ColumnCount));
       }
       else // if the matrix was empty before
       {
         m_Cols = a.ColumnCount;
       }
 
-      int newRows = a.RowCount + this.RowCount;
+      int newRows = a.RowCount + RowCount;
 
       // we must reallocate the array if neccessary
       if (newRows >= m_Array.Length)

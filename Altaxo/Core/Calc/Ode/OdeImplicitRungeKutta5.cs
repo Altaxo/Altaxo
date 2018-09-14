@@ -7,12 +7,12 @@
 
 #endregion Copyright © 2009, De Santiago-Castillo JA. All rights reserved.
 
-using Altaxo.Calc.Ode.Dopri5;
-using Altaxo.Calc.Ode.Radau5;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using Altaxo.Calc.Ode.Dopri5;
+using Altaxo.Calc.Ode.Radau5;
 
 namespace Altaxo.Calc.Ode
 {
@@ -114,7 +114,7 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     public OdeImplicitRungeKutta5()
     {
-      this.InitializeRungeKuttaClasses();
+      InitializeRungeKuttaClasses();
     }
 
     /// <summary>
@@ -125,13 +125,13 @@ namespace Altaxo.Calc.Ode
     /// <param name="numEquations">The number of differential equations.</param>
     public OdeImplicitRungeKutta5(OdeFunction function, OdeJacobian jacobian, int numEquations)
     {
-      this.InitializeRungeKuttaClasses();
+      InitializeRungeKuttaClasses();
 
       // C     IOUT        SWITCH FOR CALLING THE SUBROUTINE SOLOUTR:
       // C                    IOUT=0: SUBROUTINE IS NEVER CALLED
       // C
-      this._IOut = 1;
-      this.MeIJAC = 1;
+      _IOut = 1;
+      MeIJAC = 1;
       base.InitializeRungeKutta(function, jacobian, numEquations);
     }
 
@@ -142,13 +142,13 @@ namespace Altaxo.Calc.Ode
     /// <param name="numEquations">The number of differential equations.</param>
     public OdeImplicitRungeKutta5(OdeFunction function, int numEquations)
     {
-      this.InitializeRungeKuttaClasses();
+      InitializeRungeKuttaClasses();
 
       // C     IOUT        SWITCH FOR CALLING THE SUBROUTINE SOLOUTR:
       // C                    IOUT=0: SUBROUTINE IS NEVER CALLED
       // C
-      this._IOut = 1;
-      this.MeIJAC = 0;
+      _IOut = 1;
+      MeIJAC = 0;
       base.InitializeRungeKutta(function, null, numEquations);
     }
 
@@ -166,11 +166,11 @@ namespace Altaxo.Calc.Ode
       // C     IOUT        SWITCH FOR CALLING THE SUBROUTINE SOLOUTR:
       // C                    IOUT=0: SUBROUTINE IS NEVER CALLED
       // C
-      this._IOut = 1;
-      this.MeIJAC = 0;
+      _IOut = 1;
+      MeIJAC = 0;
       base.InitializeRungeKutta(function, null, numEquations);
 
-      this._InvokeSetInitialValues = true;
+      _InvokeSetInitialValues = true;
     }
 
     /// <summary>
@@ -185,10 +185,10 @@ namespace Altaxo.Calc.Ode
       // C     IOUT        SWITCH FOR CALLING THE SUBROUTINE SOLOUTR:
       // C                    IOUT=0: SUBROUTINE IS NEVER CALLED
       // C
-      this._IOut = 1;
-      this.MeIJAC = 0;
+      _IOut = 1;
+      MeIJAC = 0;
       base.InitializeRungeKutta(function, null, numEquations);
-      this.SetInitialValues(t0, y0);
+      SetInitialValues(t0, y0);
     }
 
     /// <summary>
@@ -199,11 +199,11 @@ namespace Altaxo.Calc.Ode
     /// <param name="numEquations">The number of differential equations.</param>
     public void InitializeODEs(OdeFunction function, OdeJacobian jacobian, int numEquations)
     {
-      this._IOut = 1;
-      this.MeIJAC = 1;
+      _IOut = 1;
+      MeIJAC = 1;
       base.InitializeRungeKutta(function, jacobian, numEquations);
 
-      this._InvokeSetInitialValues = true;
+      _InvokeSetInitialValues = true;
     }
 
     /// <summary>
@@ -216,11 +216,11 @@ namespace Altaxo.Calc.Ode
     /// <param name="y0">A vector of size N containing the initial conditions. N is the number of differential equations.</param>
     public void InitializeODEs(OdeFunction function, OdeJacobian jacobian, int numEquations, double t0, double[] y0)
     {
-      this._IOut = 1;
-      this.MeIJAC = 1;
+      _IOut = 1;
+      MeIJAC = 1;
       base.InitializeRungeKutta(function, jacobian, numEquations);
 
-      this.SetInitialValues(t0, y0);
+      SetInitialValues(t0, y0);
     }
 
     #endregion Methods
@@ -258,23 +258,23 @@ namespace Altaxo.Calc.Ode
       radau5 = new RADAU5(radcor);
       //dr1_radau5 = new DR1_RADAU5(fvpol, jvpol, solout, bbampl, radau5);
 
-      base._RKSolOut = new RKSolOut(this.contr5);
+      base._RKSolOut = new RKSolOut(contr5);
     }
 
     internal override void InitializeExceptionMessages()
     {
-      this._Errors = new string[5];
-      this._Errors[0] = "";
-      this._Errors[1] = "INPUT IS NOT CONSISTENT.";
-      this._Errors[2] = "LARGER NMAX IS NEEDED.";
-      this._Errors[3] = "STEP SIZE BECOMES TOO SMALL.";
-      this._Errors[4] = "MATRIX IS REPEATEDLY SINGULAR.";
+      _Errors = new string[5];
+      _Errors[0] = "";
+      _Errors[1] = "INPUT IS NOT CONSISTENT.";
+      _Errors[2] = "LARGER NMAX IS NEEDED.";
+      _Errors[3] = "STEP SIZE BECOMES TOO SMALL.";
+      _Errors[4] = "MATRIX IS REPEATEDLY SINGULAR.";
     }
 
     internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian jac)
     {
-      this.fvpol = new FVPOL(this._NEquations, fun);
-      this.jvpol = new JVPOL(this._NEquations, jac);
+      fvpol = new FVPOL(_NEquations, fun);
+      jvpol = new JVPOL(_NEquations, jac);
     }
 
     internal override void InitializeWorkingSpace()
@@ -323,7 +323,7 @@ namespace Altaxo.Calc.Ode
       // C                 MASS-MATRIX IS THE INDENTITY (IMAS=0), THE MINIMUM
       // C                 STORAGE REQUIREMENT IS
       // C                             LWORK = 4*N*N+12*N+20.
-      this._Lrw = 4 * this._NEquations * this._NEquations + 12 * this._NEquations + 20;
+      _Lrw = 4 * _NEquations * _NEquations + 12 * _NEquations + 20;
 
       // C     IWORK       INTEGER WORKING SPACE OF LENGTH "LIWORK".
       // C                 IWORK(1),IWORK(2),...,IWORK(20) SERVE AS PARAMETERS
@@ -331,29 +331,29 @@ namespace Altaxo.Calc.Ode
       // C                 IWORK(20) TO ZERO BEFORE CALLING.
       // C                 IWORK(21),...,IWORK(LIWORK) SERVE AS WORKING AREA.
       // C                 "LIWORK" MUST BE AT LEAST 3*N+20.
-      this._Liw = 3 * this._NEquations + 20;
+      _Liw = 3 * _NEquations + 20;
 
-      this._RWork = new double[this._Lrw];
-      this._IWork = new int[this._Liw];
+      _RWork = new double[_Lrw];
+      _IWork = new int[_Liw];
     }
 
     internal override void Solve()
     {
       bool WasSuccessfully = true;
 
-      this.MeMLJAC = this._NEquations;
-      this.MeMLMAS = this._NEquations;
+      MeMLJAC = _NEquations;
+      MeMLMAS = _NEquations;
 
-      this.radau5.Run(this._NEquations, this.fvpol, ref this._T0, ref this._Y0, 0, this.MeTf, ref this.MeH, ref this._RelTolArray, 0
-      , ref this._AbsTolArray, 0, this._ITolRK, this.jvpol, this.MeIJAC, ref this.MeMLJAC, ref this.MeMUJAC, this.bbampl, this.MeIMAS, this.MeMLMAS, ref this.MeMUMAS, this._RKSolOut, this._IOut, ref this._RWork, 0, this._Lrw
-      , ref this._IWork, 0, this._Liw, this._RPar, 0, this._IPar, 0, ref this._IDID);
+      radau5.Run(_NEquations, fvpol, ref _T0, ref _Y0, 0, MeTf, ref MeH, ref _RelTolArray, 0
+      , ref _AbsTolArray, 0, _ITolRK, jvpol, MeIJAC, ref MeMLJAC, ref MeMUJAC, bbampl, MeIMAS, MeMLMAS, ref MeMUMAS, _RKSolOut, _IOut, ref _RWork, 0, _Lrw
+      , ref _IWork, 0, _Liw, _RPar, 0, _IPar, 0, ref _IDID);
 
-      if (this._IDID < 0)
+      if (_IDID < 0)
         WasSuccessfully = false;
 
       if (WasSuccessfully == false)
       {
-        throw new Exception(this._Errors[-this._IDID]);
+        throw new Exception(_Errors[-_IDID]);
       }
     }
 

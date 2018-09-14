@@ -46,7 +46,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
       set
       {
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.mu;
+        return mu;
       }
       set
       {
@@ -187,7 +187,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.mu;
+        return mu;
       }
     }
 
@@ -198,7 +198,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.mu;
+        return mu;
       }
     }
 
@@ -220,7 +220,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { this.mu };
+        return new double[] { mu };
       }
     }
 
@@ -230,8 +230,8 @@ namespace Altaxo.Calc.Probability
     /// <returns>A laplace distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      double rand = 0.5 - this.Generator.NextDouble();
-      return this.mu - this.alpha * Math.Sign(rand) * Math.Log(2.0 * Math.Abs(rand));
+      double rand = 0.5 - Generator.NextDouble();
+      return mu - alpha * Math.Sign(rand) * Math.Log(2.0 * Math.Abs(rand));
     }
 
     #endregion overridden Distribution members

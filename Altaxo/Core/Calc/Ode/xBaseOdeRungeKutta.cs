@@ -68,17 +68,17 @@ namespace Altaxo.Calc.Ode
     /// </returns>
     public double[,] Solve(double[] y0, double[] tspan)
     {
-      this.CheckTArray(tspan);
+      CheckTArray(tspan);
 
       base.SetInitialValues(tspan[0], y0);
 
-      this.MeTf = tspan[tspan.Length - 1];
+      MeTf = tspan[tspan.Length - 1];
 
-      this._RKSolOut.Initialize(y0, tspan, out this._Solution);
+      _RKSolOut.Initialize(y0, tspan, out _Solution);
 
-      this.Solve();
+      Solve();
 
-      return this._Solution;
+      return _Solution;
     }
 
     /// <summary>
@@ -94,17 +94,17 @@ namespace Altaxo.Calc.Ode
     /// </returns>
     public double[,] Solve(double[] y0, double t0, double deltaT, double tf)
     {
-      this.CheckArguments(t0, deltaT, tf);
+      CheckArguments(t0, deltaT, tf);
 
       base.SetInitialValues(t0, y0);
 
-      this.MeTf = tf;
+      MeTf = tf;
 
-      this._RKSolOut.Initialize(y0, t0, deltaT, tf, out this._Solution);
+      _RKSolOut.Initialize(y0, t0, deltaT, tf, out _Solution);
 
-      this.Solve();
+      Solve();
 
-      return this._Solution;
+      return _Solution;
     }
 
     /// <summary>
@@ -117,15 +117,15 @@ namespace Altaxo.Calc.Ode
     /// <param name="solution">A delegate where to return the solution.</param>
     public void Solve(double[] y0, double t0, double deltaT, double tf, OdeSolution solution)
     {
-      this.CheckArguments(t0, deltaT, tf);
+      CheckArguments(t0, deltaT, tf);
 
       base.SetInitialValues(t0, y0);
 
-      this.MeTf = tf;
+      MeTf = tf;
 
-      this._RKSolOut.Initialize(y0, t0, deltaT, tf, solution);
+      _RKSolOut.Initialize(y0, t0, deltaT, tf, solution);
 
-      this.Solve();
+      Solve();
     }
 
     /// <summary>
@@ -136,15 +136,15 @@ namespace Altaxo.Calc.Ode
     /// <param name="solution">A delegate where to return the solution.</param>
     public void Solve(double[] y0, double[] tspan, OdeSolution solution)
     {
-      this.CheckTArray(tspan);
+      CheckTArray(tspan);
 
       base.SetInitialValues(tspan[0], y0);
 
-      this.MeTf = tspan[tspan.Length - 1];
+      MeTf = tspan[tspan.Length - 1];
 
-      this._RKSolOut.Initialize(y0, tspan, solution);
+      _RKSolOut.Initialize(y0, tspan, solution);
 
-      this.Solve();
+      Solve();
     }
 
     #endregion Public Methods
@@ -162,13 +162,13 @@ namespace Altaxo.Calc.Ode
       //this.MeY0 = y0;
       //this.MeTf = tEnd;
 
-      this.InitializeInternal(function, jacobian, numEquations);
+      InitializeInternal(function, jacobian, numEquations);
 
       // IOUT=2: DENSE OUTPUT IS PERFORMED IN SOLOUTR
       // (IN THIS CASE WORK(5) MUST BE SPECIFIED)
-      if (this._IOut == 2)
+      if (_IOut == 2)
       {
-        this._IWork[4] = numEquations;
+        _IWork[4] = numEquations;
       }
 
       //this.SetSolutionDimension(y0, t0, deltaT, tEnd);

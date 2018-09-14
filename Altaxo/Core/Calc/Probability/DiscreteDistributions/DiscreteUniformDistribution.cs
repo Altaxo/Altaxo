@@ -75,7 +75,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._lowerBound;
+        return _lowerBound;
       }
     }
 
@@ -91,7 +91,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._upperBound;
+        return _upperBound;
       }
     }
 
@@ -161,7 +161,7 @@ namespace Altaxo.Calc.Probability
     /// </returns>
     public bool IsValidLowerBound(int value)
     {
-      return (value <= this._upperBound);
+      return (value <= _upperBound);
     }
 
     /// <summary>
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.Probability
     /// </returns>
     public bool IsValidUpperBound(int value)
     {
-      return (value >= this._lowerBound && value < int.MaxValue);
+      return (value >= _lowerBound && value < int.MaxValue);
     }
 
     /// <summary>
@@ -190,7 +190,7 @@ namespace Altaxo.Calc.Probability
 
       _lowerBound = lower;
       _upperBound = upper;
-      this._upperPlus1 = this._upperBound + 1;
+      _upperPlus1 = _upperBound + 1;
     }
 
     /// <summary>
@@ -199,7 +199,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A geometric distributed 32-bit signed integer.</returns>
     public int Next()
     {
-      return this.Generator.Next(this._lowerBound, this._upperPlus1);
+      return Generator.Next(_lowerBound, _upperPlus1);
     }
 
     #endregion instance methods
@@ -213,7 +213,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._lowerBound;
+        return _lowerBound;
       }
     }
 
@@ -224,7 +224,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._upperBound;
+        return _upperBound;
       }
     }
 
@@ -235,7 +235,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._lowerBound / 2.0 + this._upperBound / 2.0;
+        return _lowerBound / 2.0 + _upperBound / 2.0;
       }
     }
 
@@ -246,7 +246,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._lowerBound / 2.0 + this._upperBound / 2.0;
+        return _lowerBound / 2.0 + _upperBound / 2.0;
       }
     }
 
@@ -257,7 +257,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return (Math.Pow(this._upperBound - this._lowerBound + 1.0, 2.0) - 1.0) / 12.0;
+        return (Math.Pow(_upperBound - _lowerBound + 1.0, 2.0) - 1.0) / 12.0;
       }
     }
 
@@ -278,7 +278,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A uniformly distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return this.Generator.Next(this._lowerBound, this._upperPlus1);
+      return Generator.Next(_lowerBound, _upperPlus1);
     }
 
     #endregion overridden Distribution members
@@ -287,7 +287,7 @@ namespace Altaxo.Calc.Probability
 
     public override double CDF(double x)
     {
-      return CDF(x, this.LowerBound, this.UpperBound);
+      return CDF(x, LowerBound, UpperBound);
     }
 
     public static double CDF(double x, double low, double high)
@@ -303,7 +303,7 @@ namespace Altaxo.Calc.Probability
 
     public override double PDF(double x)
     {
-      return PDF(x, this.LowerBound, this.UpperBound);
+      return PDF(x, LowerBound, UpperBound);
     }
 
     public static double PDF(double x, double low, double high)

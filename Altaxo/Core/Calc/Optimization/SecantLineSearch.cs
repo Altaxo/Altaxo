@@ -31,8 +31,8 @@
  * NB: Problem class inspired by the optimization frame in the QuantLib library
 */
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -56,10 +56,10 @@ namespace Altaxo.Calc.Optimization
     public SecantLineSearch(CostFunction costfunction, EndCriteria endcriteria, double sigma_0,
       int maxiteration, double tolerance)
     {
-      this.costFunction_ = costfunction;
-      this.endCriteria_ = endcriteria;
+      costFunction_ = costfunction;
+      endCriteria_ = endcriteria;
       this.sigma_0 = sigma_0;
-      this.maxIteration = maxiteration;
+      maxIteration = maxiteration;
       this.tolerance = tolerance;
     }
 
@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Optimization
     ///<summary> Minimize the given cost function </summary>
     public override DoubleVector Search(DoubleVector x, DoubleVector d, double step)
     {
-      DoubleVector ret = new DoubleVector(x);
+      var ret = new DoubleVector(x);
       double j = 0;
       double eta;
 

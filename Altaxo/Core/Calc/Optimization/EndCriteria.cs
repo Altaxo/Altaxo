@@ -50,16 +50,16 @@ namespace Altaxo.Calc.Optimization
 
     public EndCriteria(int maxiteration, double epsilon, int maxfunctionevaluation, int maxstationarypointiterations)
     {
-      this.maxIteration = maxiteration;
-      this.maxFunctionEvaluation = maxfunctionevaluation;
-      this.maxGradientEvaluation = maxfunctionevaluation;
-      this.maxHessianEvaluation = maxfunctionevaluation;
-      this.maxStationaryPointIterations = maxstationarypointiterations;
-      this.maxStationaryGradientIterations = maxstationarypointiterations;
-      this.maxStationaryHessianIterations = maxstationarypointiterations;
-      this.minFunctionEpsilon = epsilon;
-      this.minGradientEpsilon = epsilon;
-      this.minHessianEpsilon = epsilon;
+      maxIteration = maxiteration;
+      maxFunctionEvaluation = maxfunctionevaluation;
+      maxGradientEvaluation = maxfunctionevaluation;
+      maxHessianEvaluation = maxfunctionevaluation;
+      maxStationaryPointIterations = maxstationarypointiterations;
+      maxStationaryGradientIterations = maxstationarypointiterations;
+      maxStationaryHessianIterations = maxstationarypointiterations;
+      minFunctionEpsilon = epsilon;
+      minGradientEpsilon = epsilon;
+      minHessianEpsilon = epsilon;
       Reset();
     }
 
@@ -149,7 +149,7 @@ namespace Altaxo.Calc.Optimization
     {
       bool test = (iterationCounter >= maxIteration);
       if (test)
-        this.endCriteria = CriteriaType.MaximumIteration;
+        endCriteria = CriteriaType.MaximumIteration;
       return test;
     }
 
@@ -163,7 +163,7 @@ namespace Altaxo.Calc.Optimization
     {
       bool test = (functionEvaluationCounter >= maxFunctionEvaluation);
       if (test)
-        this.endCriteria = CriteriaType.MaximumFunctionEvaluation;
+        endCriteria = CriteriaType.MaximumFunctionEvaluation;
       return test;
     }
 
@@ -177,7 +177,7 @@ namespace Altaxo.Calc.Optimization
     {
       bool test = (gradientEvaluationCounter >= maxGradientEvaluation);
       if (test)
-        this.endCriteria = CriteriaType.MaximumGradientEvaluation;
+        endCriteria = CriteriaType.MaximumGradientEvaluation;
       return test;
     }
 
@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Optimization
     {
       bool test = (hessianEvaluationCounter >= maxHessianEvaluation);
       if (test)
-        this.endCriteria = CriteriaType.MaximumHessianEvaluation;
+        endCriteria = CriteriaType.MaximumHessianEvaluation;
       return test;
     }
 
@@ -329,7 +329,7 @@ namespace Altaxo.Calc.Optimization
       stationaryPointIterationsCounter = 0;
       stationaryGradientIterationsCounter = 0;
       stationaryHessianIterationsCounter = 0;
-      this.endCriteria = CriteriaType.None;
+      endCriteria = CriteriaType.None;
     }
 
     // --- IFormattable Interface ---

@@ -68,7 +68,7 @@ namespace Altaxo
 
     public override string ToString()
     {
-      return this.Key;
+      return Key;
     }
   }
 }

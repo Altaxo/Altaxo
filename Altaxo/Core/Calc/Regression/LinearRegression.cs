@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
@@ -338,7 +338,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Gives the corrected sum of squares of y, i.e. SUM(yi-ymean), where yi is the ith y value and ymean is the mean of all y values.
     /// </summary>
-    public double TotalCorrectedSumOfSquares { get { return this._yCorrectedSumOfSquares; } }
+    public double TotalCorrectedSumOfSquares { get { return _yCorrectedSumOfSquares; } }
 
     /// <summary>
     /// Gives the coefficient of determination, also called R^2, squared correlation coefficient. It is a measure, how  much
@@ -427,7 +427,7 @@ namespace Altaxo.Calc.Regression
     /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.134</para></remarks>
     public double StudentizedResidual(int i)
     {
-      return _residual[i] / Math.Sqrt((1 - _decomposition.HatDiagonal[i]) * this.EstimatedVariance);
+      return _residual[i] / Math.Sqrt((1 - _decomposition.HatDiagonal[i]) * EstimatedVariance);
     }
 
     /// <summary>
@@ -443,8 +443,8 @@ namespace Altaxo.Calc.Regression
     /// </remarks>
     public double ExternallyStudentizedResidual(int i)
     {
-      double ssi = this._chiSquare - square(_residual[i]) / (1 - _decomposition.HatDiagonal[i]);
-      ssi /= (this._numberOfData - this._numberOfFreeParameter - 1);
+      double ssi = _chiSquare - square(_residual[i]) / (1 - _decomposition.HatDiagonal[i]);
+      ssi /= (_numberOfData - _numberOfFreeParameter - 1);
 
       return _residual[i] / Math.Sqrt(ssi * (1 - _decomposition.HatDiagonal[i]));
     }
@@ -462,7 +462,7 @@ namespace Altaxo.Calc.Regression
       get
       {
         if (_numberOfData > _numberOfFreeParameter)
-          return this._chiSquare / (_numberOfData - _numberOfFreeParameter);
+          return _chiSquare / (_numberOfData - _numberOfFreeParameter);
         else
           return 0;
       }
@@ -475,7 +475,7 @@ namespace Altaxo.Calc.Regression
     /// <returns>The variance of the ith prediction value.</returns>
     public double PredictionVariance(int i)
     {
-      return this.EstimatedVariance * this._reducedPredictionVariance[i];
+      return EstimatedVariance * _reducedPredictionVariance[i];
     }
 
     /// <summary>Get the standard error of regression, defined as <c>Sqrt(SigmaSquare)</c>.</summary>
@@ -639,7 +639,7 @@ namespace Altaxo.Calc.Regression
       for (int i = 0; i < numberOfDataPoints; ++i)
         xarr[i] *= xinvscale;
 
-      LinearFitBySvd fit =
+      var fit =
           new LinearFitBySvd(
           xarr, yarr, earr, numberOfDataPoints, order + 1, new FunctionBaseEvaluator(GetPolynomialFunctionBase(order)), 1E-15);
 

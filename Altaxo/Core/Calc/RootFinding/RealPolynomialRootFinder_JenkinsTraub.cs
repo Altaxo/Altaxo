@@ -51,7 +51,7 @@ namespace Altaxo.Calc.RootFinding
       if (Degree <= 0)
         throw new ArgumentException("Provided polynomial has a degree of zero. Root finding is therefore not possible");
 
-      List<Complex> result = new List<Complex>();
+      var result = new List<Complex>();
 
       int j = 0;
       int l = 0;

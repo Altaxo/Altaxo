@@ -174,8 +174,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
       u = new DoubleMatrix(rows, rows); // left vectors
       v = new DoubleMatrix(cols, cols); // right vectors
-      DoubleVector e = new DoubleVector(cols);
-      DoubleVector work = new DoubleVector(rows);
+      var e = new DoubleVector(cols);
+      var work = new DoubleVector(rows);
 
       int i, iter, j, k, kase, l, lp1, ls = 0, lu, m, nct, nctp1, ncu, nrt, nrtp1;
       double b, c, cs = 0.0, el, emm1, f, g, scale, shift, sl,

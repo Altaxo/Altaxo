@@ -141,12 +141,12 @@ namespace Altaxo.Collections.Text
         if (null != prev)
           prev.Next = next;
         else
-          _first = (LLElement)next;
+          _first = next;
 
         if (null != next)
           next.Previous = prev;
         else
-          _last = (LLElement)prev;
+          _last = prev;
 
         --_count;
       }

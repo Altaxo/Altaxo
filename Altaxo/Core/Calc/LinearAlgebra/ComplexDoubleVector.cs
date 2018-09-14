@@ -38,7 +38,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   [Serializable]
-  sealed public class ComplexDoubleVector
+  public sealed class ComplexDoubleVector
     : ICloneable, IFormattable, IEnumerable, ICollection, IList, IComplexDoubleVector
   {
     internal Complex[] data;
@@ -156,8 +156,8 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       get
       {
-        DoubleVector returnvector = new DoubleVector(this.Length);
-        for (int i = 0; i < this.Length; i++)
+        var returnvector = new DoubleVector(Length);
+        for (int i = 0; i < Length; i++)
           returnvector[i] = this[i].Real;
         return returnvector;
       }
@@ -169,8 +169,8 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       get
       {
-        DoubleVector returnvector = new DoubleVector(this.Length);
-        for (int i = 0; i < this.Length; i++)
+        var returnvector = new DoubleVector(Length);
+        for (int i = 0; i < Length; i++)
           returnvector[i] = this[i].Imag;
         return returnvector;
       }
@@ -180,29 +180,29 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The Hashcode representation of <c>ComplexDoubleVector</c></returns>
     public override int GetHashCode()
     {
-      return (int)this.GetNorm();
+      return (int)GetNorm();
     }
 
     ///<summary>Check if <c>ComplexDoubleVector</c> variable is the same as another object</summary>
     ///<param name="obj"><c>obj</c> to compare present <c>ComplexDoubleVector</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>ComplexDoubleVector</c> variable</returns>
     ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexDoubleVector</c> variable before comparing with the current <c>ComplexDoubleVector</c>.</remarks>
-    public override bool Equals(Object obj)
+    public override bool Equals(object obj)
     {
-      ComplexDoubleVector vector = obj as ComplexDoubleVector;
+      var vector = obj as ComplexDoubleVector;
       if (vector == null)
       {
         return false;
       }
 
-      if (this.data.Length != vector.data.Length)
+      if (data.Length != vector.data.Length)
       {
         return false;
       }
 
-      for (int i = 0; i < this.data.Length; ++i)
+      for (int i = 0; i < data.Length; ++i)
       {
-        if (this.data[i] != vector.data[i])
+        if (data[i] != vector.data[i])
         {
           return false;
         }
@@ -214,14 +214,14 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>Reference to the public <c>Complex</c> array.</returns>
     public Complex[] GetInternalData()
     {
-      return this.data;
+      return data;
     }
 
     ///<summary>Return <c>Complex</c> array of data from <c>ComplexDoubleVector</c></summary>
     ///<returns><c>Complex</c> array with data.</returns>
     public Complex[] ToArray()
     {
-      Complex[] ret = new Complex[data.Length];
+      var ret = new Complex[data.Length];
       Array.Copy(data, 0, ret, 0, data.Length);
       return ret;
     }
@@ -239,13 +239,13 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentException("The starting element must be less that the ending element.");
       }
 
-      if (startElement < 0 || endElement < 0 || startElement >= this.Length || endElement >= this.Length)
+      if (startElement < 0 || endElement < 0 || startElement >= Length || endElement >= Length)
       {
         throw new ArgumentException("startElement and startElement must be greater than or equal to zero, endElement must be less than Length, and endElement must be less than Length.");
       }
 
       int n = endElement - startElement + 1;
-      ComplexDoubleVector ret = new ComplexDoubleVector(n);
+      var ret = new ComplexDoubleVector(n);
       for (int i = 0; i < n; i++)
       {
         ret[i] = this[i + startElement];
@@ -254,13 +254,13 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>float</c> array</summary>
-    static public implicit operator ComplexDoubleVector(float[] src)
+    public static implicit operator ComplexDoubleVector(float[] src)
     {
       if (src == null)
       {
         return null;
       }
-      ComplexDoubleVector ret = new ComplexDoubleVector(src.Length);
+      var ret = new ComplexDoubleVector(src.Length);
       for (int i = 0; i < src.Length; ++i)
       {
         ret.data[i] = src[i];
@@ -269,13 +269,13 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>float</c> array</summary>
-    static public ComplexDoubleVector ToComplexDoubleVector(float[] src)
+    public static ComplexDoubleVector ToComplexDoubleVector(float[] src)
     {
       if (src == null)
       {
         return null;
       }
-      ComplexDoubleVector ret = new ComplexDoubleVector(src.Length);
+      var ret = new ComplexDoubleVector(src.Length);
       for (int i = 0; i < src.Length; ++i)
       {
         ret.data[i] = src[i];
@@ -284,13 +284,13 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>double</c> array</summary>
-    static public implicit operator ComplexDoubleVector(double[] src)
+    public static implicit operator ComplexDoubleVector(double[] src)
     {
       if (src == null)
       {
         return null;
       }
-      ComplexDoubleVector ret = new ComplexDoubleVector(src.Length);
+      var ret = new ComplexDoubleVector(src.Length);
       for (int i = 0; i < src.Length; ++i)
       {
         ret.data[i] = src[i];
@@ -299,13 +299,13 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>double</c> array</summary>
-    static public ComplexDoubleVector ToComplexDoubleVector(double[] src)
+    public static ComplexDoubleVector ToComplexDoubleVector(double[] src)
     {
       if (src == null)
       {
         return null;
       }
-      ComplexDoubleVector ret = new ComplexDoubleVector(src.Length);
+      var ret = new ComplexDoubleVector(src.Length);
       for (int i = 0; i < src.Length; ++i)
       {
         ret.data[i] = src[i];
@@ -315,13 +315,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>ComplexFloat</c> array</summary>
     ///<returns><c>Complex</c> array with data from <c>ComplexFloat</c> array.</returns>
-    static public implicit operator ComplexDoubleVector(ComplexFloat[] src)
+    public static implicit operator ComplexDoubleVector(ComplexFloat[] src)
     {
       if (src == null)
       {
         return null;
       }
-      ComplexDoubleVector ret = new ComplexDoubleVector(src.Length);
+      var ret = new ComplexDoubleVector(src.Length);
       for (int i = 0; i < src.Length; ++i)
       {
         ret.data[i] = src[i];
@@ -331,13 +331,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>ComplexFloat</c> array</summary>
     ///<returns><c>Complex</c> array with data from <c>ComplexFloat</c> array.</returns>
-    static public ComplexDoubleVector ToComplexDoubleVector(ComplexFloat[] src)
+    public static ComplexDoubleVector ToComplexDoubleVector(ComplexFloat[] src)
     {
       if (src == null)
       {
         return null;
       }
-      ComplexDoubleVector ret = new ComplexDoubleVector(src.Length);
+      var ret = new ComplexDoubleVector(src.Length);
       for (int i = 0; i < src.Length; ++i)
       {
         ret.data[i] = src[i];
@@ -347,23 +347,23 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>Complex</c> array</summary>
     ///<returns><c>Complex</c> array with data from <c>Complex</c> array.</returns>
-    static public implicit operator ComplexDoubleVector(Complex[] src)
+    public static implicit operator ComplexDoubleVector(Complex[] src)
     {
       return new ComplexDoubleVector(src);
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>Complex</c> array</summary>
     ///<returns><c>Complex</c> array with data from <c>Complex</c> array.</returns>
-    static public ComplexDoubleVector ToComplexDoubleVector(Complex[] src)
+    public static ComplexDoubleVector ToComplexDoubleVector(Complex[] src)
     {
       return new ComplexDoubleVector(src);
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>DoubleVector</c></summary>
-    static public implicit operator ComplexDoubleVector(DoubleVector src)
+    public static implicit operator ComplexDoubleVector(DoubleVector src)
     {
       double[] temp = src.ToArray();
-      ComplexDoubleVector ret = new ComplexDoubleVector(temp.Length);
+      var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
       {
         ret.data[i] = temp[i];
@@ -372,10 +372,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>DoubleVector</c></summary>
-    static public ComplexDoubleVector ToComplexDoubleVector(DoubleVector src)
+    public static ComplexDoubleVector ToComplexDoubleVector(DoubleVector src)
     {
       double[] temp = src.ToArray();
-      ComplexDoubleVector ret = new ComplexDoubleVector(temp.Length);
+      var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
       {
         ret.data[i] = temp[i];
@@ -384,10 +384,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>FloatVector</c></summary>
-    static public implicit operator ComplexDoubleVector(FloatVector src)
+    public static implicit operator ComplexDoubleVector(FloatVector src)
     {
       float[] temp = src.ToArray();
-      ComplexDoubleVector ret = new ComplexDoubleVector(temp.Length);
+      var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
       {
         ret.data[i] = temp[i];
@@ -396,10 +396,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>FloatVector</c></summary>
-    static public ComplexDoubleVector ToComplexDoubleVector(FloatVector src)
+    public static ComplexDoubleVector ToComplexDoubleVector(FloatVector src)
     {
       float[] temp = src.ToArray();
-      ComplexDoubleVector ret = new ComplexDoubleVector(temp.Length);
+      var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
       {
         ret.data[i] = temp[i];
@@ -408,10 +408,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>ComplexFloatVector</c></summary>
-    static public implicit operator ComplexDoubleVector(ComplexFloatVector src)
+    public static implicit operator ComplexDoubleVector(ComplexFloatVector src)
     {
       ComplexFloat[] temp = src.ToArray();
-      ComplexDoubleVector ret = new ComplexDoubleVector(temp.Length);
+      var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
       {
         ret.data[i] = temp[i];
@@ -420,10 +420,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>ComplexFloatVector</c></summary>
-    static public ComplexDoubleVector ToComplexDoubleVector(ComplexFloatVector src)
+    public static ComplexDoubleVector ToComplexDoubleVector(ComplexFloatVector src)
     {
       ComplexFloat[] temp = src.ToArray();
-      ComplexDoubleVector ret = new ComplexDoubleVector(temp.Length);
+      var ret = new ComplexDoubleVector(temp.Length);
       for (int i = 0; i < temp.Length; ++i)
       {
         ret.data[i] = temp[i];
@@ -435,28 +435,28 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>Index value of maximum element.</returns>
     public int GetAbsMaximumIndex()
     {
-      return Blas.Imax.Compute(this.Length, this.data, 1);
+      return Blas.Imax.Compute(Length, data, 1);
     }
 
     ///<summary>Return the <c>Complex</c> value of the absolute maximum element in the <c>ComplexDoubleVector</c></summary>
     ///<returns><c>Complex</c> value of maximum element.</returns>
     public Complex GetAbsMaximum()
     {
-      return this.data[GetAbsMaximumIndex()];
+      return data[GetAbsMaximumIndex()];
     }
 
     ///<summary>Return the index of the absolute minimum element in the <c>ComplexDoubleVector</c></summary>
     ///<returns>Index value of minimum element.</returns>
     public int GetAbsMinimumIndex()
     {
-      return Blas.Imin.Compute(this.Length, this.data, 1);
+      return Blas.Imin.Compute(Length, data, 1);
     }
 
     ///<summary>Return the <c>Complex</c> value of the absolute minimum element in the <c>ComplexDoubleVector</c></summary>
     ///<returns><c>Complex</c> value of minimum element.</returns>
     public Complex GetAbsMinimum()
     {
-      return this.data[Blas.Imin.Compute(this.Length, this.data, 1)];
+      return data[Blas.Imin.Compute(Length, data, 1)];
     }
 
     ///<summary>Clone (deep copy) of this <c>ComplexDoubleVector</c> into another <c>ComplexDoubleVector</c></summary>
@@ -467,7 +467,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
-      Blas.Copy.Compute(src.Length, src.data, 1, this.data, 1);
+      Blas.Copy.Compute(src.Length, src.data, 1, data, 1);
     }
 
     ///<summary>Swap data in this <c>ComplexDoubleVector</c> with another <c>ComplexDoubleVector</c></summary>
@@ -478,7 +478,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
-      Blas.Swap.Compute(src.Length, src.data, 1, this.data, 1);
+      Blas.Swap.Compute(src.Length, src.data, 1, data, 1);
     }
 
     ///<summary>Compute the complex scalar product x^Tx and return as <c>Complex</c></summary>
@@ -497,7 +497,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
-      return Blas.Dotu.Compute(this.Length, this.data, 1, Y.data, 1);
+      return Blas.Dotu.Compute(Length, data, 1, Y.data, 1);
     }
 
     ///<summary>Compute the complex conjugate scalar product x^Hx and return as <c>Complex</c></summary>
@@ -516,14 +516,14 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
-      return Blas.Dotc.Compute(this.Length, this.data, 1, Y.data, 1);
+      return Blas.Dotc.Compute(Length, data, 1, Y.data, 1);
     }
 
     ///<summary>Compute the Euclidean Norm ||x||_2 of this <c>ComplexDoubleVector</c></summary>
     ///<returns><c>double</c> results from norm.</returns>
     public double GetNorm()
     {
-      return Blas.Nrm2.Compute(this.Length, this.data, 1);
+      return Blas.Nrm2.Compute(Length, data, 1);
     }
 
     ///<summary>Compute the P Norm of this <c>ComplexDoubleVector</c></summary>
@@ -579,7 +579,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>double</c> of absolute sum of the elements.</returns>
     public double GetSumMagnitudes()
     {
-      return Blas.Asum.Compute(this.data.Length, this.data, 1);
+      return Blas.Asum.Compute(data.Length, data, 1);
     }
 
     ///<summary>Compute the sum y = alpha * x + y where y is this <c>ComplexDoubleVector</c></summary>
@@ -592,7 +592,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
-      Blas.Axpy.Compute(data.Length, alpha, X.data, 1, this.data, 1);
+      Blas.Axpy.Compute(data.Length, alpha, X.data, 1, data, 1);
     }
 
     ///<summary>Scale this <c>ComplexDoubleVector</c> by a <c>double</c> scalar</summary>
@@ -615,7 +615,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexDoubleVector</c> with values to negate.</returns>
     public static ComplexDoubleVector operator -(ComplexDoubleVector rhs)
     {
-      ComplexDoubleVector ret = new ComplexDoubleVector(rhs);
+      var ret = new ComplexDoubleVector(rhs);
       Blas.Scal.Compute(ret.Length, -1, ret.data, 1);
       return ret;
     }
@@ -637,7 +637,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexDoubleVector</c> with results.</returns>
     public static ComplexDoubleVector operator -(ComplexDoubleVector lhs, ComplexDoubleVector rhs)
     {
-      ComplexDoubleVector ret = new ComplexDoubleVector(lhs);
+      var ret = new ComplexDoubleVector(lhs);
       Blas.Axpy.Compute(ret.Length, -1, rhs.data, 1, ret.data, 1);
       return ret;
     }
@@ -657,7 +657,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexDoubleVector</c> with results.</returns>
     public static ComplexDoubleVector operator +(ComplexDoubleVector lhs, ComplexDoubleVector rhs)
     {
-      ComplexDoubleVector ret = new ComplexDoubleVector(lhs);
+      var ret = new ComplexDoubleVector(lhs);
       Blas.Axpy.Compute(ret.Length, 1, rhs.data, 1, ret.data, 1);
       return ret;
     }
@@ -679,7 +679,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
-      Blas.Axpy.Compute(this.Length, 1, vector.data, 1, this.data, 1);
+      Blas.Axpy.Compute(Length, 1, vector.data, 1, data, 1);
     }
 
     ///<summary>Subtract a <c>ComplexDoubleVector</c> from this<c>ComplexDoubleVector</c></summary>
@@ -691,7 +691,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new System.ArgumentNullException("ComplexDoubleVector cannot be null.");
       }
-      Blas.Axpy.Compute(this.Length, -1, vector.data, 1, this.data, 1);
+      Blas.Axpy.Compute(Length, -1, vector.data, 1, data, 1);
     }
 
     ///<summary>Scale this <c>ComplexDoubleVector</c> by a <c>Complex</c> scalar</summary>
@@ -699,7 +699,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<remarks>Results of computation replace data in this variable</remarks>
     public void Multiply(Complex value)
     {
-      this.Scale(value);
+      Scale(value);
     }
 
     ///<summary>Divide this <c>ComplexDoubleVector</c> by a <c>Complex</c> scalar</summary>
@@ -707,7 +707,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<remarks>Results of computation replace data in this variable</remarks>
     public void Divide(Complex value)
     {
-      this.Scale(1.0 / value);
+      Scale(1.0 / value);
     }
 
     ///<summary>Add a <c>ComplexDoubleVector</c> to another <c>ComplexDoubleVector</c></summary>
@@ -725,7 +725,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexDoubleVector</c> with results.</returns>
     public static ComplexDoubleMatrix operator *(ComplexDoubleVector lhs, ComplexDoubleVector rhs)
     {
-      ComplexDoubleMatrix ret = new ComplexDoubleMatrix(lhs.data.Length, rhs.data.Length);
+      var ret = new ComplexDoubleMatrix(lhs.data.Length, rhs.data.Length);
 #if MANAGED
       for (int i = 0; i < lhs.data.Length; i++)
       {
@@ -755,7 +755,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexDoubleVector</c> with results.</returns>
     public static ComplexDoubleVector operator *(Complex lhs, ComplexDoubleVector rhs)
     {
-      ComplexDoubleVector ret = new ComplexDoubleVector(rhs);
+      var ret = new ComplexDoubleVector(rhs);
       Blas.Scal.Compute(ret.Length, lhs, ret.data, 1);
       return ret;
     }
@@ -793,7 +793,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexDoubleVector</c> with results.</returns>
     public static ComplexDoubleVector operator /(ComplexDoubleVector lhs, Complex rhs)
     {
-      ComplexDoubleVector ret = new ComplexDoubleVector(lhs);
+      var ret = new ComplexDoubleVector(lhs);
       Blas.Scal.Compute(ret.Length, 1 / rhs, ret.data, 1);
       return ret;
     }
@@ -815,9 +815,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     // --- ICloneable Interface ---
     ///<summary>Clone (deep copy) a <c>ComplexDoubleVector</c> variable</summary>
-    Object ICloneable.Clone()
+    object ICloneable.Clone()
     {
-      return this.Clone();
+      return Clone();
     }
 
     // --- IFormattable Interface ---
@@ -851,7 +851,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
     public string ToString(string format, IFormatProvider formatProvider)
     {
-      StringBuilder sb = new StringBuilder("Length: ");
+      var sb = new StringBuilder("Length: ");
       sb.Append(data.Length).Append(System.Environment.NewLine);
       for (int i = 0; i < data.Length; ++i)
       {
@@ -875,40 +875,40 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary> Get the number of elements in the vector </summary>
     public int Count
     {
-      get { return this.Length; }
+      get { return Length; }
     }
 
     int ICollection.Count
     {
-      get { return this.Count; }
+      get { return Count; }
     }
 
     ///<summary> Get a boolean indicating whether the data storage method of this vector is thread-safe</summary>
     public bool IsSynchronized
     {
-      get { return this.data.IsSynchronized; }
+      get { return data.IsSynchronized; }
     }
 
     bool ICollection.IsSynchronized
     {
-      get { return this.IsSynchronized; }
+      get { return IsSynchronized; }
     }
 
     ///<summary> Get an object that can be used to synchronize the data storage method of this vector</summary>
     object ICollection.SyncRoot
     {
-      get { return this.data.SyncRoot; }
+      get { return data.SyncRoot; }
     }
 
     ///<summary> Copy the components of this vector to an array </summary>
     public void CopyTo(Complex[] array, int index)
     {
-      this.data.CopyTo(array, index);
+      data.CopyTo(array, index);
     }
 
     void ICollection.CopyTo(Array array, int index)
     {
-      this.CopyTo((Complex[])array, index);
+      CopyTo((Complex[])array, index);
     }
 
     // --- IList Interface ---
@@ -943,14 +943,14 @@ namespace Altaxo.Calc.LinearAlgebra
 
     object IList.this[int index]
     {
-      get { return (object)this[index]; }
+      get { return this[index]; }
       set { this[index] = (Complex)value; }
     }
 
     ///<summary>Add a new value to the end of the <c>ComplexDoubleVector</c></summary>
     public int Add(object value)
     {
-      Complex[] newdata = new Complex[data.Length + 1];
+      var newdata = new Complex[data.Length + 1];
       int newpos = newdata.Length - 1;
 
       System.Array.Copy(data, newdata, data.Length);
@@ -996,7 +996,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.ArgumentOutOfRangeException("index");
       }
 
-      Complex[] newdata = new Complex[data.Length + 1];
+      var newdata = new Complex[data.Length + 1];
       System.Array.Copy(data, newdata, index);
       newdata[index] = (Complex)value;
       System.Array.Copy(data, index, newdata, index + 1, data.Length - index);
@@ -1006,11 +1006,11 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Remove the first instance of a given <c>Complex</c> from the <c>ComplexDoubleVector</c></summary>
     public void Remove(object value)
     {
-      int index = this.IndexOf(value);
+      int index = IndexOf(value);
 
       if (index == -1)
         return;
-      this.RemoveAt(index);
+      RemoveAt(index);
     }
 
     ///<summary>Remove the component of the <c>ComplexDoubleVector</c> at a given index</summary>
@@ -1019,7 +1019,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (index >= data.Length)
         throw new System.ArgumentOutOfRangeException("index");
 
-      Complex[] newdata = new Complex[data.Length - 1];
+      var newdata = new Complex[data.Length - 1];
       System.Array.Copy(data, newdata, index);
       if (index < data.Length)
         System.Array.Copy(data, index + 1, newdata, index, newdata.Length - index);
@@ -1036,7 +1036,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>A new <c>ComplexDoubleVector</c> with the same elements as the column of the given matrix.</returns>
     public static ComplexDoubleVector GetColumn(IROComplexDoubleMatrix mat, int col)
     {
-      ComplexDoubleVector result = new ComplexDoubleVector(mat.Rows);
+      var result = new ComplexDoubleVector(mat.Rows);
       for (int i = 0; i < result.data.Length; ++i)
         result.data[i] = mat[i, col];
 
@@ -1051,7 +1051,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>A new array of <c>Complex</c> with the same elements as the column of the given matrix.</returns>
     public static Complex[] GetColumnAsArray(IROComplexDoubleMatrix mat, int col)
     {
-      Complex[] result = new Complex[mat.Rows];
+      var result = new Complex[mat.Rows];
       for (int i = 0; i < result.Length; ++i)
         result[i] = mat[i, col];
 
@@ -1066,7 +1066,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>A new <c>ComplexDoubleVector</c> with the same elements as the row of the given matrix.</returns>
     public static ComplexDoubleVector GetRow(IROComplexDoubleMatrix mat, int row)
     {
-      ComplexDoubleVector result = new ComplexDoubleVector(mat.Columns);
+      var result = new ComplexDoubleVector(mat.Columns);
       for (int i = 0; i < result.data.Length; ++i)
         result.data[i] = mat[row, i];
 

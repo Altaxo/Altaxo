@@ -155,12 +155,12 @@ namespace Altaxo.Collections.Text
         if (null != prev)
           prev.Next = next;
         else
-          _first = (DDLElement)next;
+          _first = next;
 
         if (null != next)
           next.Previous = prev;
         else
-          _last = (DDLElement)prev;
+          _last = prev;
 
         --_count;
       }

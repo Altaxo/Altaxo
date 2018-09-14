@@ -186,8 +186,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public IEnumerable<(int row, int column, double value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip)
     {
-      var rowCount = this._rowCount;
-      var colCount = this._columnCount;
+      var rowCount = _rowCount;
+      var colCount = _columnCount;
       int i, j;
 
       switch (zeros)

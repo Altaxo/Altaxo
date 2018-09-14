@@ -51,7 +51,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <param name="casRegistryNumber">The CAS registry number.</param>
     public CASRegistryNumberAttribute(string casRegistryNumber)
     {
-      this.CASRegistryNumber = casRegistryNumber;
+      CASRegistryNumber = casRegistryNumber;
     }
   }
 }

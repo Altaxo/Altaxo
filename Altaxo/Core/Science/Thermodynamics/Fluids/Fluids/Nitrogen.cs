@@ -143,30 +143,30 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       _alpha0_n_lntau = 2.5;
       _alpha0_n_taulntau = 0;
 
-      _alpha0_Poly = new(double ni, double thetai)[]
+      _alpha0_Poly = new (double ni, double thetai)[]
       {
           (  -0.000193481928024,                   -1),
           (-1.24774207237786E-05,                   -2),
           (6.67832625326269E-08,                   -3),
       };
 
-      _alpha0_Exp = new(double ni, double thetai)[]
+      _alpha0_Exp = new (double ni, double thetai)[]
       {
           (            1.012941,     26.6578784709015),
       };
 
-      _alpha0_Cosh = new(double ni, double thetai)[]
+      _alpha0_Cosh = new (double ni, double thetai)[]
       {
       };
 
-      _alpha0_Sinh = new(double ni, double thetai)[]
+      _alpha0_Sinh = new (double ni, double thetai)[]
       {
       };
       #endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
       #region Residual part(s) of dimensionless Helmholtz energy and derivatives
 
-      _alphaR_Poly = new(double ni, double ti, int di)[]
+      _alphaR_Poly = new (double ni, double ti, int di)[]
       {
           (      0.924803575275,                 0.25,                    1),
           (     -0.492448489428,                0.875,                    1),
@@ -176,7 +176,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           (      0.349943957581,                 0.75,                    3),
       };
 
-      _alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
+      _alphaR_Exp = new (double ni, double ti, int di, double gi, int li)[]
       {
           (      0.564857472498,                  0.5,                    1,                   -1,                    1),
           (      -1.61720005987,                 0.75,                    1,                   -1,                    1),
@@ -206,7 +206,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           (   0.000264832491957,                   16,                    9,                   -1,                    4),
       };
 
-      _alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
+      _alphaR_Gauss = new (double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
       {
           (       19.6688194015,                    0,                    1,                  -20,                 -325,                 1.16,                    1),
           (       -20.911560073,                    1,                    1,                  -20,                 -325,                 1.16,                    1),
@@ -214,7 +214,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           (       2627.67566274,                    3,                    2,                  -25,                 -275,                 1.25,                    1),
       };
 
-      _alphaR_Nonanalytical = new(double ni, double b, double beta, double A, double C, double D, double B, double a)[]
+      _alphaR_Nonanalytical = new (double ni, double b, double beta, double A, double C, double D, double B, double a)[]
       {
       };
 
@@ -223,7 +223,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       #region Saturated densities and pressure
 
       _saturatedLiquidDensity_Type = 4;
-      _saturatedLiquidDensity_Coefficients = new(double factor, double exponent)[]
+      _saturatedLiquidDensity_Coefficients = new (double factor, double exponent)[]
       {
           (          1.48654237,               0.9882),
           (        -0.280476066,                    2),
@@ -232,7 +232,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       };
 
       _saturatedVaporDensity_Type = 6;
-      _saturatedVaporDensity_Coefficients = new(double factor, double exponent)[]
+      _saturatedVaporDensity_Coefficients = new (double factor, double exponent)[]
       {
           (         -1.70127164,                 1.02),
           (         -3.70402649,                  2.5),
@@ -242,7 +242,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       };
 
       _saturatedVaporPressure_Type = 6;
-      _saturatedVaporPressure_Coefficients = new(double factor, double exponent)[]
+      _saturatedVaporPressure_Coefficients = new (double factor, double exponent)[]
       {
           (         -6.12445284,                    2),
           (           1.2632722,                    3),
@@ -257,11 +257,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       _sublimationPressure_Type = 3;
       _sublimationPressure_ReducingTemperature = 63.151;
       _sublimationPressure_ReducingPressure = 12523;
-      _sublimationPressure_PolynomialCoefficients1 = new(double factor, double exponent)[]
+      _sublimationPressure_PolynomialCoefficients1 = new (double factor, double exponent)[]
       {
       };
 
-      _sublimationPressure_PolynomialCoefficients2 = new(double factor, double exponent)[]
+      _sublimationPressure_PolynomialCoefficients2 = new (double factor, double exponent)[]
       {
           (          -13.088692,                    1),
       };
@@ -273,7 +273,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       _meltingPressure_Type = '1';
       _meltingPressure_ReducingTemperature = 63.151;
       _meltingPressure_ReducingPressure = 12523;
-      _meltingPressure_Coefficients = new(double factor, double exponent)[][]
+      _meltingPressure_Coefficients = new (double factor, double exponent)[][]
       {
       new (double factor, double exponent)[]
         {

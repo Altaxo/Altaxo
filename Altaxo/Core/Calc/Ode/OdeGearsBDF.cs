@@ -7,11 +7,11 @@
 
 #endregion Copyright © 2009, De Santiago-Castillo JA. All rights reserved.
 
-using Altaxo.Calc.Ode.DVode;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using Altaxo.Calc.Ode.DVode;
 
 namespace Altaxo.Calc.Ode
 {
@@ -66,7 +66,7 @@ namespace Altaxo.Calc.Ode
     {
       base.InitializationWithoutJacobian(function, ODEType.Stiff, numEquations);
 
-      this._InvokeSetInitialValues = true;
+      _InvokeSetInitialValues = true;
     }
 
     /// <summary>
@@ -79,7 +79,7 @@ namespace Altaxo.Calc.Ode
     public override void InitializeODEs(OdeFunction function, int numEquations, double t0, double[] y0)
     {
       base.InitializationWithoutJacobian(function, ODEType.Stiff, numEquations);
-      this.SetInitialValues(t0, y0);
+      SetInitialValues(t0, y0);
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ namespace Altaxo.Calc.Ode
     {
       base.InitializationWithJacobian(function, jacobian, numEquations);
 
-      this._InvokeSetInitialValues = true;
+      _InvokeSetInitialValues = true;
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.Ode
     public void InitializeODEs(OdeFunction function, OdeJacobian jacobian, int numEquations, double t0, double[] y0)
     {
       base.InitializationWithJacobian(function, jacobian, numEquations);
-      this.SetInitialValues(t0, y0);
+      SetInitialValues(t0, y0);
     }
 
     #endregion Methods

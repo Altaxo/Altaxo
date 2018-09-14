@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
@@ -425,13 +425,13 @@ namespace Altaxo.Calc.Regression
     public virtual Complex GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
-      Complex nom = new Complex();
+      var nom = new Complex();
       for (int i = 0; i < _numX; i++)
       {
         nom += Complex.FromModulusArgument(_parameter[i], -i * w);
       }
 
-      Complex denom = new Complex();
+      var denom = new Complex();
       for (int i = 0; i < _numY; i++)
       {
         denom += Complex.FromModulusArgument(_parameter[_numX + i], -(i + 1) * w);
@@ -556,7 +556,7 @@ namespace Altaxo.Calc.Regression
       if (yOrder >= (yTraining.Count - yOrder))
         throw new ArgumentException("Not enough data points for this degree (yOrder must be less than yTraining.Length/2).");
 
-      DynamicParameterEstimation est = new DynamicParameterEstimation(null, yTraining, 0, yOrder, 0);
+      var est = new DynamicParameterEstimation(null, yTraining, 0, yOrder, 0);
       // now calculate the extrapolation data
 
       for (int i = len; i < yPredValues.Length; i++)
@@ -598,10 +598,10 @@ namespace Altaxo.Calc.Regression
 
       public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
       {
-        JaggedArrayMatrix outputMatrix = new JaggedArrayMatrix(a.ColumnCount, a.ColumnCount);
+        var outputMatrix = new JaggedArrayMatrix(a.ColumnCount, a.ColumnCount);
         JaggedArrayMath.MultiplyFirstTransposedWithItself(a.Array, a.RowCount, a.ColumnCount, outputMatrix.Array, outputMatrix.RowCount, outputMatrix.ColumnCount);
 
-        DoubleLUDecomp decomp = new DoubleLUDecomp(outputMatrix);
+        var decomp = new DoubleLUDecomp(outputMatrix);
         decomp.Compute();
 
         double[] ycov = new double[a.ColumnCount];
@@ -645,8 +645,8 @@ namespace Altaxo.Calc.Regression
     public DynamicParameterEstimationVariableX(int[] xcount, int numY, int backgroundOrder)
       : base(xcount.Length, numY, backgroundOrder)
     {
-      this._xcount = xcount;
-      this._ycount = GetUniformCountArray(numY, 1);
+      _xcount = xcount;
+      _ycount = GetUniformCountArray(numY, 1);
     }
 
     /// <summary>
@@ -661,8 +661,8 @@ namespace Altaxo.Calc.Regression
     public DynamicParameterEstimationVariableX(int[] xcount, int numY, int backgroundOrder, IDynamicParameterEstimationSolver solver)
       : base(xcount.Length, numY, backgroundOrder, solver)
     {
-      this._xcount = xcount;
-      this._ycount = GetUniformCountArray(numY, 1);
+      _xcount = xcount;
+      _ycount = GetUniformCountArray(numY, 1);
     }
 
     /// <summary>
@@ -679,8 +679,8 @@ namespace Altaxo.Calc.Regression
     public DynamicParameterEstimationVariableX(int[] xcount, int[] ycount, int backgroundOrder, IDynamicParameterEstimationSolver solver)
       : base(xcount.Length, ycount.Length, backgroundOrder, solver)
     {
-      this._xcount = xcount;
-      this._ycount = ycount;
+      _xcount = xcount;
+      _ycount = ycount;
     }
 
     protected override void CalculateStartingPoint()
@@ -825,14 +825,14 @@ namespace Altaxo.Calc.Regression
     public override Complex GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
-      Complex nom = new Complex();
+      var nom = new Complex();
       for (int i = 0, j = 0; i < _numX; i++)
       {
         for (int k = _xcount[i]; k > 0; --k, ++j)
           nom += Complex.FromModulusArgument(_parameter[i], -j * w);
       }
 
-      Complex denom = new Complex();
+      var denom = new Complex();
       for (int i = 0, j = 0; i < _numY; i++)
       {
         for (int k = _ycount[i]; k > 0; --k, ++j)
@@ -858,7 +858,7 @@ namespace Altaxo.Calc.Regression
       if (totallength < start)
         throw new ArgumentException("totallength must not be smaller than start");
 
-      List<int> list = new List<int>();
+      var list = new List<int>();
       double scaledfactor = factor / (1 + factor);
       int curridx = totallength;
       for (; curridx > 0;)
@@ -941,9 +941,8 @@ namespace Altaxo.Calc.Regression
 
     public static int[] GetXCountFromNumberOfParametersAndLength(int numX, int start, int totallength)
     {
-      double factor;
       int len = totallength;
-      return GetXCountFromNumberOfParametersAndLength(numX, start, ref len, out factor);
+      return GetXCountFromNumberOfParametersAndLength(numX, start, ref len, out var factor);
     }
 
     public static int[] GetXCountFromNumberOfParametersAndLength(int numX, int start, ref int totallength, out double factor)
@@ -1082,8 +1081,8 @@ namespace Altaxo.Calc.Regression
     public DynamicParameterEstimationCombXY(int numX, int xSpacing, int numY, int ySpacing, int backgroundOrder)
       : base(numX, numY, backgroundOrder)
     {
-      this._xSpacing = xSpacing;
-      this._ySpacing = ySpacing;
+      _xSpacing = xSpacing;
+      _ySpacing = ySpacing;
     }
 
     /// <summary>
@@ -1098,8 +1097,8 @@ namespace Altaxo.Calc.Regression
     public DynamicParameterEstimationCombXY(int numX, int xSpacing, int numY, int ySpacing, int backgroundOrder, IDynamicParameterEstimationSolver solver)
       : base(numX, numY, backgroundOrder, solver)
     {
-      this._xSpacing = xSpacing;
-      this._ySpacing = ySpacing;
+      _xSpacing = xSpacing;
+      _ySpacing = ySpacing;
     }
 
     protected override void CalculateStartingPoint()
@@ -1184,13 +1183,13 @@ namespace Altaxo.Calc.Regression
     public override Complex GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
-      Complex nom = new Complex();
+      var nom = new Complex();
       for (int i = 0; i < _numX; i++)
       {
         nom += Complex.FromModulusArgument(_parameter[i], -i * _xSpacing * w);
       }
 
-      Complex denom = new Complex();
+      var denom = new Complex();
       for (int i = 0; i < _numY; i++)
       {
         denom += Complex.FromModulusArgument(_parameter[_numX + i], -(1 + i * _ySpacing) * w);
@@ -1309,13 +1308,13 @@ namespace Altaxo.Calc.Regression
     public override Complex GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
-      Complex nom = new Complex();
+      var nom = new Complex();
       for (int i = 0; i < _numX; i++)
       {
         nom += Complex.FromModulusArgument(_parameter[i], -w * _xBins[i]);
       }
 
-      Complex denom = new Complex();
+      var denom = new Complex();
       for (int i = 0; i < _numY; i++)
       {
         denom += Complex.FromModulusArgument(_parameter[_numX + i], -w * _yBins[i]);

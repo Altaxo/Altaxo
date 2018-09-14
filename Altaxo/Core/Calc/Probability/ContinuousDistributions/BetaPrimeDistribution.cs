@@ -42,7 +42,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
       set
       {
@@ -63,7 +63,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.beta;
+        return beta;
       }
       set
       {
@@ -172,8 +172,8 @@ namespace Altaxo.Calc.Probability
 
       this.alpha = alpha;
       this.beta = beta;
-      this.betaDistribution = new BetaDistribution();
-      this.betaDistribution.Initialize(this.alpha, this.beta);
+      betaDistribution = new BetaDistribution();
+      betaDistribution.Initialize(this.alpha, this.beta);
     }
 
     #endregion instance methods
@@ -209,7 +209,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha / (this.beta - 1.0);
+        return alpha / (beta - 1.0);
       }
     }
 
@@ -231,9 +231,9 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.beta > 2)
+        if (beta > 2)
         {
-          return this.alpha * (this.alpha + this.beta - 1.0) / (Math.Pow(this.beta - 1.0, 2) * (this.beta - 2.0));
+          return alpha * (alpha + beta - 1.0) / (Math.Pow(beta - 1.0, 2) * (beta - 2.0));
         }
         else
         {
@@ -249,7 +249,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { (this.alpha - 1.0) / (this.beta + 1.0) };
+        return new double[] { (alpha - 1.0) / (beta + 1.0) };
       }
     }
 
@@ -259,7 +259,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A beta-prime distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      double betaVariate = this.betaDistribution.NextDouble();
+      double betaVariate = betaDistribution.NextDouble();
 
       return betaVariate / (1.0 - betaVariate);
     }

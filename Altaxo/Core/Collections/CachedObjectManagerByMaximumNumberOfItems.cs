@@ -46,22 +46,22 @@ namespace Altaxo.Collections
   /// </remarks>
   public sealed class CachedObjectManagerByMaximumNumberOfItems<TKey, TValue>
   {
-    object _syncObj;
+    private object _syncObj;
 
     /// <summary>
     /// Saves the LinkedListNodes that are associated with a key in a HashSet that is accessible by the key.
     /// </summary>
-    Dictionary<TKey, HashSet<LinkedListNode<KeyValuePair<TKey, TValue>>>> _keyDictionary;
+    private Dictionary<TKey, HashSet<LinkedListNode<KeyValuePair<TKey, TValue>>>> _keyDictionary;
 
     /// <summary>
     /// Saves all stored values together with their key.
     /// </summary>
-    LinkedList<KeyValuePair<TKey, TValue>> _valueList;
+    private LinkedList<KeyValuePair<TKey, TValue>> _valueList;
 
     /// <summary>
     /// Maximum number of items that are allowed to store here. If more items are added, the least used item is removed from the collection.
     /// </summary>
-    int _maxItemsAllowedToStore;
+    private int _maxItemsAllowedToStore;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CachedObjectManagerByMaximumNumberOfItems{TKey, TValue}"/> class.
@@ -126,9 +126,8 @@ namespace Altaxo.Collections
 
     private bool InternalTryTake_Unlocked(TKey key, out TValue value)
     {
-      HashSet<LinkedListNode<KeyValuePair<TKey, TValue>>> nodeSet;
 
-      if (_keyDictionary.TryGetValue(key, out nodeSet))
+      if (_keyDictionary.TryGetValue(key, out var nodeSet))
       {
         var firstStackItem = nodeSet.First();
         nodeSet.Remove(firstStackItem);
@@ -148,8 +147,7 @@ namespace Altaxo.Collections
 
     private void InternalAdd_Unlocked(TKey key, TValue value)
     {
-      HashSet<LinkedListNode<KeyValuePair<TKey, TValue>>> nodeSet;
-      if (!_keyDictionary.TryGetValue(key, out nodeSet))
+      if (!_keyDictionary.TryGetValue(key, out var nodeSet))
       {
         nodeSet = new HashSet<LinkedListNode<KeyValuePair<TKey, TValue>>>();
         _keyDictionary.Add(key, nodeSet);

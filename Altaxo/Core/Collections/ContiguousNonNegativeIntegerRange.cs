@@ -97,7 +97,7 @@ namespace Altaxo.Collections
     /// <param name="start">First element belonging to the range.</param>
     /// <param name="end">Element following immediately after the last element, i.e. <see cref="Last"/>+1.</param>
     /// <returns>Newly constructed integer range.</returns>
-    static public ContiguousNonNegativeIntegerRange NewFromStartAndEnd(int start, int end)
+    public static ContiguousNonNegativeIntegerRange NewFromStartAndEnd(int start, int end)
     {
       return new ContiguousNonNegativeIntegerRange(start, end - start);
     }
@@ -108,7 +108,7 @@ namespace Altaxo.Collections
     /// <param name="start">First element belonging to the range.</param>
     /// <param name="last">Last element belonging to the range.</param>
     /// <returns>Newly constructed integer range.</returns>
-    static public ContiguousNonNegativeIntegerRange NewFromStartAndLast(int start, int last)
+    public static ContiguousNonNegativeIntegerRange NewFromStartAndLast(int start, int last)
     {
       return new ContiguousNonNegativeIntegerRange(start, 1 + (last - start));
     }
@@ -116,7 +116,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets a standard empty integer range (<see cref="Start"/> and <see cref="Count"/> set to zero).
     /// </summary>
-    static public ContiguousNonNegativeIntegerRange Empty
+    public static ContiguousNonNegativeIntegerRange Empty
     {
       get
       {

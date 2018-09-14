@@ -194,7 +194,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         // Copy right hand side.
         int cols = B.ColumnCount;
-        FloatMatrix X = new FloatMatrix(B);
+        var X = new FloatMatrix(B);
         for (int c = 0; c < cols; c++)
         {
           // Solve L*Y = B;
@@ -256,7 +256,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 #if MANAGED
         // Copy right hand side.
-        FloatVector X = new FloatVector(B);
+        var X = new FloatVector(B);
         var xarray = X.GetInternalData();
         // Solve L*Y = B;
         for (int i = 0; i < order; i++)
@@ -303,7 +303,7 @@ namespace Altaxo.Calc.LinearAlgebra
       else
       {
 #if MANAGED
-        FloatMatrix ret = FloatMatrix.CreateIdentity(order);
+        var ret = FloatMatrix.CreateIdentity(order);
         ret = Solve(ret);
         return ret;
 #else

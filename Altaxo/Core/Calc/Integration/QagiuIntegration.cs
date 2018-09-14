@@ -161,7 +161,7 @@ namespace Altaxo.Calc.Integration
           out double result, out double abserr,
           ref object tempStorage)
     {
-      QagiuIntegration algo = tempStorage as QagiuIntegration;
+      var algo = tempStorage as QagiuIntegration;
       if (null == algo)
         tempStorage = algo = new QagiuIntegration(integrationRule, debug);
       return algo.Integrate(f, a, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr);
@@ -188,7 +188,7 @@ namespace Altaxo.Calc.Integration
           ref object tempStorage
           )
     {
-      QagiuIntegration algo = tempStorage as QagiuIntegration;
+      var algo = tempStorage as QagiuIntegration;
       if (null == algo)
         tempStorage = algo = new QagiuIntegration();
       return algo.Integrate(f, a, epsabs, epsrel, limit, out result, out abserr);
@@ -270,9 +270,11 @@ namespace Altaxo.Calc.Integration
       //int status;
 
       //  gsl_function f_transform;
-      iu_params transform_params = new iu_params();
-      transform_params.a = a;
-      transform_params.f = f;
+      var transform_params = new iu_params
+      {
+        a = a,
+        f = f
+      };
 
       //f_transform.function = &iu_transform;
       //f_transform.params = &transform_params;

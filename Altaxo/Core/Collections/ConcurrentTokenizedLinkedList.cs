@@ -36,9 +36,9 @@ namespace Altaxo.Collections
   /// <typeparam name="TValue">The type of the value.</typeparam>
   public class ConcurrentTokenizedLinkedList<TKey, TValue>
   {
-    LinkedList<Tuple<TKey, TValue>> _list;
-    Dictionary<TKey, LinkedListNode<Tuple<TKey, TValue>>> _dictionary;
-    System.Threading.ReaderWriterLockSlim _lock;
+    private LinkedList<Tuple<TKey, TValue>> _list;
+    private Dictionary<TKey, LinkedListNode<Tuple<TKey, TValue>>> _dictionary;
+    private System.Threading.ReaderWriterLockSlim _lock;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConcurrentTokenizedLinkedList{TKey, TValue}"/> class.

@@ -178,7 +178,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </code>
   /// </para>
   /// </example>
-  sealed public class FloatSymmetricLevinson : Algorithm
+  public sealed class FloatSymmetricLevinson : Algorithm
   {
     #region Constants
 
@@ -310,7 +310,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a FloatMatrix
-        FloatMatrix Lower = new FloatMatrix(m_Order);
+        var Lower = new FloatMatrix(m_Order);
         for (int i = 0; i < m_Order; i++)
         {
 #if MANAGED
@@ -353,7 +353,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy diagonal vector into a FloatMatrix
-        FloatMatrix Diagonal = new FloatMatrix(m_Order);
+        var Diagonal = new FloatMatrix(m_Order);
         for (int i = 0; i < m_Order; i++)
         {
 #if MANAGED
@@ -393,7 +393,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a FloatMatrix and then calculate the transpose
-        FloatMatrix Upper = this.L.GetTranspose();
+        FloatMatrix Upper = L.GetTranspose();
 
         return Upper;
       }
@@ -697,7 +697,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i, j;
 
       // allocate memory for the matrix
-      FloatMatrix tm = new FloatMatrix(m_Order);
+      var tm = new FloatMatrix(m_Order);
 
 #if MANAGED
       // fill top row
@@ -844,10 +844,12 @@ namespace Altaxo.Calc.LinearAlgebra
       float[] A;        // reference to current order coefficients
 
       // allocate memory for solution
-      X = new FloatVector(m_Order);
+      X = new FloatVector(m_Order)
+      {
 
-      // setup zero order solution
-      X[0] = Y[0] / m_LeftColumn[0];
+        // setup zero order solution
+        [0] = Y[0] / m_LeftColumn[0]
+      };
 
       // solve systems of increasing order
       for (i = 1; i < m_Order; i++)
@@ -925,10 +927,12 @@ namespace Altaxo.Calc.LinearAlgebra
       float[] A;        // reference to current order coefficients
 
       // allocate memory for solution
-      X = new FloatVector(m_Order);
+      X = new FloatVector(m_Order)
+      {
 
-      // setup zero order solution
-      X[0] = Y[0] / m_LeftColumn[0];
+        // setup zero order solution
+        [0] = Y[0] / m_LeftColumn[0]
+      };
 
       // solve systems of increasing order
       for (i = 1; i < m_Order; i++)
@@ -1097,7 +1101,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new SingularMatrixException("The Toeplitz matrix or one of the the leading sub-matrices is singular.");
       }
 
-      FloatMatrix I = new FloatMatrix(m_Order);           // the solution matrix
+      var I = new FloatMatrix(m_Order);           // the solution matrix
       float[] A = m_LowerTriangle[m_Order - 1];
       float A1, A2, scale;
 
@@ -1238,8 +1242,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
         if (N > 1)
         {
-          FloatVector a = new FloatVector(N - 1);   // prediction coefficients
-          FloatVector Z = new FloatVector(N - 1);   // temporary storage vector
+          var a = new FloatVector(N - 1);   // prediction coefficients
+          var Z = new FloatVector(N - 1);   // temporary storage vector
           float g;                                   // reflection coefficient
           float inner;                               // inner product
           float k;
@@ -1345,7 +1349,7 @@ namespace Altaxo.Calc.LinearAlgebra
         int N = T.Count;
         int M = Y.RowCount;
         X = new FloatMatrix(N, M);                 // solution matrix
-        FloatVector Z = new FloatVector(N);       // temporary storage vector
+        var Z = new FloatVector(N);       // temporary storage vector
         float e;                                   // prediction error
         int i, j, l, m;
 
@@ -1362,7 +1366,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
         if (N > 1)
         {
-          FloatVector a = new FloatVector(N - 1);   // prediction coefficients
+          var a = new FloatVector(N - 1);   // prediction coefficients
           float p;                                   // reflection coefficient
           float inner;                               // inner product
           float k;
@@ -1478,7 +1482,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         int N = R.Count - 1;
         a = new FloatVector(N);                    // prediction coefficients
-        FloatVector Z = new FloatVector(N);   // temporary storage vector
+        var Z = new FloatVector(N);   // temporary storage vector
         float e;                            // predictor error
         float inner;                               // inner product
         float g;                                   // reflection coefficient
@@ -1567,8 +1571,10 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       else if (T.Count == 1)
       {
-        X = new FloatMatrix(1);
-        X[0, 0] = 1.0f / T[0];
+        X = new FloatMatrix(1)
+        {
+          [0, 0] = 1.0f / T[0]
+        };
       }
       else
       {

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -38,8 +38,8 @@ namespace Altaxo.Calc.Optimization
 
     public BruteForceLineSearch(ICostFunction cost)
     {
-      this.costFunction_ = cost;
-      this.endCriteria_ = new EndCriteria();
+      costFunction_ = cost;
+      endCriteria_ = new EndCriteria();
 
       _numberOfInitialDivisions = 128;
       _numberOfSubsequentDivisions = 2;

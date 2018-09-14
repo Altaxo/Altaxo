@@ -1473,7 +1473,7 @@ L20:
         double ax = Math.Abs(x);
         if (ax == 0.0)
           return 0.0;
-        else if (ax > (double)n)
+        else if (ax > n)
         {
           double bj, bjm, bjp;
           double tox = 2.0 / ax;
@@ -1609,8 +1609,7 @@ L20:
 
         if (x > 4.0)
         {
-          double ampl, theta;
-          d9b0mp(x, out ampl, out theta);
+          d9b0mp(x, out var ampl, out var theta);
           return ampl * Math.Sin(theta);
         }
         else
@@ -3288,11 +3287,11 @@ L20:
       /// </code></remarks>
       public static double AiryAi(double x, bool bDebug)
       {
-        double z, theta, xm;
+        double z;
 
         if (x >= -1.0)
           goto L20;
-        d9aimp(x, out xm, out theta);
+        d9aimp(x, out var xm, out var theta);
         return xm * Math.Cos(theta);
 
 L20:
@@ -3540,11 +3539,11 @@ L40:
       /// </code></remarks>
       public static double AiryExpAi(double x, bool bDebug)
       {
-        double sqrtx, xm, z, theta, ret_val;
+        double sqrtx, z, ret_val;
 
         if (x >= -1.0)
           goto L20;
-        d9aimp(x, out xm, out theta);
+        d9aimp(x, out var xm, out var theta);
         return xm * Math.Cos(theta);
 
 L20:
@@ -3725,11 +3724,11 @@ L40:
       /// </code></remarks>
       public static double AiryBi(double x, bool bDebug)
       {
-        double z, theta, xm;
+        double z;
 
         if (x >= -1.0)
           goto L20;
-        d9aimp(x, out xm, out theta);
+        d9aimp(x, out var xm, out var theta);
         return xm * Math.Sin(theta);
 
 L20:
@@ -4088,11 +4087,11 @@ L40:
       /// </code></remarks>
       public static double AiryExpBi(double x, bool bDebug)
       {
-        double ret_val, z, theta, sqrtx, xm;
+        double ret_val, z, sqrtx;
 
         if (x >= -1.0)
           goto L20;
-        d9aimp(x, out xm, out theta);
+        d9aimp(x, out var xm, out var theta);
         return xm * Math.Sin(theta);
 
 L20:

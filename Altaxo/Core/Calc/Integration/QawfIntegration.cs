@@ -128,7 +128,7 @@ namespace Altaxo.Calc.Integration
           ref object tempStorage
           )
     {
-      QawfIntegration algo = tempStorage as QawfIntegration;
+      var algo = tempStorage as QawfIntegration;
       if (null == algo)
         tempStorage = algo = new QawfIntegration();
       return algo.Integrate(f, a, oscTerm, omega, epsabs, limit, out result, out abserr);
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Integration
       int ktmin = 0;
       int iteration = 0;
 
-      extrapolation_table table = new extrapolation_table();
+      var table = new extrapolation_table();
 
       double cycle;
       double omega = wf.omega;
@@ -254,8 +254,6 @@ namespace Altaxo.Calc.Integration
 
       for (iteration = 0; iteration < limit; iteration++)
       {
-        double area1, error1, reseps, erreps;
-
         double a1 = a + iteration * cycle;
         double b1 = a1 + cycle;
 
@@ -263,7 +261,7 @@ namespace Altaxo.Calc.Integration
 
         GSL_ERROR status = gsl_integration_qawo(f, a1, epsabs1, 0.0, limit,
                                            cycle_workspace, wf,
-                                           out area1, out error1, false);
+                                           out var area1, out var error1, false);
 
         workspace.append_interval(a1, b1, area1, error1);
 
@@ -305,7 +303,7 @@ namespace Altaxo.Calc.Integration
           continue;
         }
 
-        table.qelg(out reseps, out erreps);
+        table.qelg(out var reseps, out var erreps);
 
         ktmin++;
 

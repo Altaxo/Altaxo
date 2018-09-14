@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.m;
+        return m;
       }
     }
 
@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.m;
+        return m;
       }
     }
 
@@ -203,13 +203,13 @@ namespace Altaxo.Calc.Probability
       get
       {
         // Check if the value of lambda is a whole number.
-        if (this.m == Math.Floor(this.m))
+        if (m == Math.Floor(m))
         {
-          return new double[] { this.m - 1.0, this.m };
+          return new double[] { m - 1.0, m };
         }
         else
         {
-          return new double[] { Math.Floor(this.m) };
+          return new double[] { Math.Floor(m) };
         }
       }
     }

@@ -121,7 +121,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.mu;
+        return mu;
       }
       set
       {
@@ -142,7 +142,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.sigma;
+        return sigma;
       }
       set
       {
@@ -196,7 +196,7 @@ namespace Altaxo.Calc.Probability
     public LognormalDistribution(double mu, double sigma, Generator generator)
       : base(generator)
     {
-      this.normalDistribution = new NormalDistribution(0, 1, generator);
+      normalDistribution = new NormalDistribution(0, 1, generator);
       Initialize(mu, sigma);
     }
 
@@ -270,7 +270,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Exp(this.mu + 0.5 * Math.Pow(this.sigma, 2.0));
+        return Math.Exp(mu + 0.5 * Math.Pow(sigma, 2.0));
       }
     }
 
@@ -281,7 +281,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Exp(this.mu);
+        return Math.Exp(mu);
       }
     }
 
@@ -292,7 +292,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return (Math.Exp(Math.Pow(this.sigma, 2.0)) - 1.0) * Math.Exp(2.0 * this.mu + Math.Pow(this.sigma, 2.0));
+        return (Math.Exp(Math.Pow(sigma, 2.0)) - 1.0) * Math.Exp(2.0 * mu + Math.Pow(sigma, 2.0));
       }
     }
 
@@ -303,7 +303,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { Math.Exp(this.mu - Math.Pow(this.sigma, 2.0)) };
+        return new double[] { Math.Exp(mu - Math.Pow(sigma, 2.0)) };
       }
     }
 
@@ -313,7 +313,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A lognormal distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return Math.Exp(this.normalDistribution.NextDouble() * this.sigma + this.mu);
+      return Math.Exp(normalDistribution.NextDouble() * sigma + mu);
     }
 
     #endregion overridden Distribution members

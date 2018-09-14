@@ -173,11 +173,11 @@ namespace Altaxo.Calc.Probability
       if (!IsValidMu(mu))
         throw new ArgumentOutOfRangeException("Mu out of range (must be finite)");
 
-      this._alpha = alpha;
-      this._beta = beta;
-      this._abe = abe;
-      this._scale = sigma;
-      this._mu = mu;
+      _alpha = alpha;
+      _beta = beta;
+      _abe = abe;
+      _scale = sigma;
+      _mu = mu;
       ParameterConversionS0ToS1(_alpha, _beta, _scale, _mu, out _muOffsetToS1);
 
       // Generator variables
@@ -345,8 +345,7 @@ namespace Altaxo.Calc.Probability
 
       if (alpha < 1)
       {
-        double gamma, aga, sigmaf, muf;
-        ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
+        ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out var gamma, out var aga, out var sigmaf, out var muf);
         return StableDistributionFeller.PDF((x - muf) / sigmaf, alpha, gamma, aga) / sigmaf;
         /*
 				PdfEvaluationMethod method = GetEvaluationMethod(alpha, (x - muf) / sigmaf, abe == 0, beta < 0);
@@ -358,8 +357,7 @@ namespace Altaxo.Calc.Probability
       }
       else if (alpha > 1)
       {
-        double gamma, aga, sigmaf, muf;
-        ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
+        ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out var gamma, out var aga, out var sigmaf, out var muf);
         return StableDistributionFeller.PDF((x - muf) / sigmaf, alpha, gamma, aga) / sigmaf;
       }
       else
@@ -376,14 +374,14 @@ namespace Altaxo.Calc.Probability
       }
       else
       {
-        Aeq1I inc = new Aeq1I(x, beta, abe);
+        var inc = new Aeq1I(x, beta, abe);
         if (inc.IsMaximumLeftHandSide())
         {
           return inc.Integrate(ref tempStorage, precision);
         }
         else
         {
-          Aeq1D dec = new Aeq1D(x, beta, abe);
+          var dec = new Aeq1D(x, beta, abe);
           return dec.Integrate(ref tempStorage, precision);
         }
       }
@@ -441,8 +439,7 @@ namespace Altaxo.Calc.Probability
 
       if (alpha != 1)
       {
-        double gamma, aga, sigmaf, muf;
-        ParameterConversionS0ToFeller(alpha, beta, abe, scale, location, out gamma, out aga, out sigmaf, out muf);
+        ParameterConversionS0ToFeller(alpha, beta, abe, scale, location, out var gamma, out var aga, out var sigmaf, out var muf);
         return StableDistributionFeller.CDF((x - muf) / sigmaf, alpha, gamma, aga, ref tempStorage, precision);
       }
       else
@@ -459,7 +456,7 @@ namespace Altaxo.Calc.Probability
       }
       else
       {
-        Aeq1I inc = new Aeq1I(x, beta, abe);
+        var inc = new Aeq1I(x, beta, abe);
 
         if (beta > 0)
           return inc.CDFIntegrate(ref tempStorage, precision) / Math.PI;
@@ -516,8 +513,7 @@ namespace Altaxo.Calc.Probability
       double zeta = -beta * tan_pi_alpha_2;
       double xx = x - zeta;
 
-      double aga;
-      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out var aga);
       dev = Math.PI * (gamma < 0 ? 0.5 * aga : 1 - 0.5 * aga);
       // double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
       facdiv = CosGammaPiBy2(alpha, gamma, aga); // Inverse part of the original factor without power
@@ -533,8 +529,7 @@ namespace Altaxo.Calc.Probability
       double zeta = -beta * tan_pi_alpha_2;
       double xx = x - zeta;
 
-      double aga;
-      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out var aga);
       dev = Math.PI * (gamma >= 0 ? 0.5 * aga : 1 - 0.5 * aga);
       // double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
       facdiv = CosGammaPiBy2(alpha, gamma, aga); // Inverse part of the original factor without power
@@ -549,8 +544,7 @@ namespace Altaxo.Calc.Probability
       double zeta = -beta * tan_pi_alpha_2;
       double xx = x - zeta; // equivalent to x-zeta in S0 integral
 
-      double aga;
-      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out var aga);
 
       dev = Math.PI * (gamma < 0 ? 0.5 * aga : (0.5 * ((2 - alpha) + gamma)));
       if (dev < 0)
@@ -571,8 +565,7 @@ namespace Altaxo.Calc.Probability
       double zeta = -beta * tan_pi_alpha_2;
       double xx = x - zeta; // equivalent to x-zeta in S0 integral
 
-      double aga;
-      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out var aga);
 
       // original formula: dev = Math.PI * 0.5 * (alpha - gamma) / alpha;
       // original formula (2): Math.PI * 0.5 + Math.Atan(beta * tan_pi_alpha_2) / alpha;

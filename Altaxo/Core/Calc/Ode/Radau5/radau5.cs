@@ -30,7 +30,7 @@ namespace Altaxo.Calc.Ode.Radau5
     {
       #region Set Dependencies
 
-      this._radcor = radcor;
+      _radcor = radcor;
 
       #endregion Set Dependencies
     }
@@ -39,37 +39,37 @@ namespace Altaxo.Calc.Ode.Radau5
     {
       #region Initialization Common Blocks
 
-      CommonBlock CONRA5 = new CommonBlock(4, 4, 0, 0);
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var CONRA5 = new CommonBlock(4, 4, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DEC dec = new DEC();
-      DECB decb = new DECB();
-      ELMHES elmhes = new ELMHES();
-      DECH dech = new DECH();
-      DECC decc = new DECC();
-      DECBC decbc = new DECBC();
-      DECHC dechc = new DECHC();
-      SOL sol = new SOL();
-      SOLC solc = new SOLC();
-      SOLB solb = new SOLB();
-      SOLBC solbc = new SOLBC();
-      SOLH solh = new SOLH();
-      SOLHC solhc = new SOLHC();
-      DECOMR decomr = new DECOMR(dec, decb, elmhes, dech, LINAL);
-      DECOMC decomc = new DECOMC(decc, decbc, dechc, LINAL);
-      SLVRAD slvrad = new SLVRAD(sol, solc, solb, solbc, solh, solhc, LINAL);
-      ESTRAD estrad = new ESTRAD(sol, solb, solh, LINAL);
-      RADCOR radcor = new RADCOR(decomr, decomc, slvrad, estrad, CONRA5, LINAL);
+      var dec = new DEC();
+      var decb = new DECB();
+      var elmhes = new ELMHES();
+      var dech = new DECH();
+      var decc = new DECC();
+      var decbc = new DECBC();
+      var dechc = new DECHC();
+      var sol = new SOL();
+      var solc = new SOLC();
+      var solb = new SOLB();
+      var solbc = new SOLBC();
+      var solh = new SOLH();
+      var solhc = new SOLHC();
+      var decomr = new DECOMR(dec, decb, elmhes, dech, LINAL);
+      var decomc = new DECOMC(decc, decbc, dechc, LINAL);
+      var slvrad = new SLVRAD(sol, solc, solb, solbc, solh, solhc, LINAL);
+      var estrad = new ESTRAD(sol, solb, solh, LINAL);
+      var radcor = new RADCOR(decomr, decomc, slvrad, estrad, CONRA5, LINAL);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._radcor = radcor;
+      _radcor = radcor;
 
       #endregion Set Dependencies
     }
@@ -1060,7 +1060,7 @@ namespace Altaxo.Calc.Ode.Radau5
         return;
       }
       // C -------- CALL TO CORE INTEGRATOR ------------
-      this._radcor.Run(N, FCN, ref X, ref Y, offset_y, XEND, HMAX
+      _radcor.Run(N, FCN, ref X, ref Y, offset_y, XEND, HMAX
                        , ref H, RTOL, offset_rtol, ATOL, offset_atol, ITOL, JAC, IJAC
                        , MLJAC, MUJAC, MAS, MLMAS, MUMAS, SOLOUT
                        , IOUT, ref IDID, NMAX, UROUND, SAFE, THET
@@ -1143,10 +1143,10 @@ namespace Altaxo.Calc.Ode.Radau5
     {
       #region Set Dependencies
 
-      this._decomr = decomr;
-      this._decomc = decomc;
-      this._slvrad = slvrad;
-      this._estrad = estrad;
+      _decomr = decomr;
+      _decomc = decomc;
+      _slvrad = slvrad;
+      _estrad = estrad;
 
       #endregion Set Dependencies
 
@@ -1154,7 +1154,7 @@ namespace Altaxo.Calc.Ode.Radau5
 
       #region Common Block: CONRA5 Initialization
 
-      this._conra5 = CONRA5;
+      _conra5 = CONRA5;
       NN = CONRA5.intData[0];
       NN2 = CONRA5.intData[1];
       NN3 = CONRA5.intData[2];
@@ -1168,7 +1168,7 @@ namespace Altaxo.Calc.Ode.Radau5
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -1186,39 +1186,39 @@ namespace Altaxo.Calc.Ode.Radau5
     {
       #region Initialization Common Blocks
 
-      CommonBlock CONRA5 = new CommonBlock(4, 4, 0, 0);
-      CommonBlock LINAL = new CommonBlock(0, 7, 0, 0);
+      var CONRA5 = new CommonBlock(4, 4, 0, 0);
+      var LINAL = new CommonBlock(0, 7, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DEC dec = new DEC();
-      DECB decb = new DECB();
-      ELMHES elmhes = new ELMHES();
-      DECH dech = new DECH();
-      DECC decc = new DECC();
-      DECBC decbc = new DECBC();
-      DECHC dechc = new DECHC();
-      SOL sol = new SOL();
-      SOLC solc = new SOLC();
-      SOLB solb = new SOLB();
-      SOLBC solbc = new SOLBC();
-      SOLH solh = new SOLH();
-      SOLHC solhc = new SOLHC();
-      DECOMR decomr = new DECOMR(dec, decb, elmhes, dech, LINAL);
-      DECOMC decomc = new DECOMC(decc, decbc, dechc, LINAL);
-      SLVRAD slvrad = new SLVRAD(sol, solc, solb, solbc, solh, solhc, LINAL);
-      ESTRAD estrad = new ESTRAD(sol, solb, solh, LINAL);
+      var dec = new DEC();
+      var decb = new DECB();
+      var elmhes = new ELMHES();
+      var dech = new DECH();
+      var decc = new DECC();
+      var decbc = new DECBC();
+      var dechc = new DECHC();
+      var sol = new SOL();
+      var solc = new SOLC();
+      var solb = new SOLB();
+      var solbc = new SOLBC();
+      var solh = new SOLH();
+      var solhc = new SOLHC();
+      var decomr = new DECOMR(dec, decb, elmhes, dech, LINAL);
+      var decomc = new DECOMC(decc, decbc, dechc, LINAL);
+      var slvrad = new SLVRAD(sol, solc, solb, solbc, solh, solhc, LINAL);
+      var estrad = new ESTRAD(sol, solb, solh, LINAL);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._decomr = decomr;
-      this._decomc = decomc;
-      this._slvrad = slvrad;
-      this._estrad = estrad;
+      _decomr = decomr;
+      _decomc = decomc;
+      _slvrad = slvrad;
+      _estrad = estrad;
 
       #endregion Set Dependencies
 
@@ -1226,7 +1226,7 @@ namespace Altaxo.Calc.Ode.Radau5
 
       #region Common Block: CONRA5 Initialization
 
-      this._conra5 = CONRA5;
+      _conra5 = CONRA5;
       NN = CONRA5.intData[0];
       NN2 = CONRA5.intData[1];
       NN3 = CONRA5.intData[2];
@@ -1240,7 +1240,7 @@ namespace Altaxo.Calc.Ode.Radau5
 
       #region Common Block: LINAL Initialization
 
-      this._linal = LINAL;
+      _linal = LINAL;
       MLE = LINAL.intData[0];
       MUE = LINAL.intData[1];
       MBJAC = LINAL.intData[2];
@@ -1611,12 +1611,12 @@ LABEL20:
       FAC1 = U1 / H;
       ALPHN = ALPH / H;
       BETAN = BETA / H;
-      this._decomr.Run(N, ref FJAC, offset_fjac, LDJAC, FMAS, offset_fmas, LDMAS, MLMAS
+      _decomr.Run(N, ref FJAC, offset_fjac, LDJAC, FMAS, offset_fmas, LDMAS, MLMAS
                        , MUMAS, M1, M2, NM1, FAC1, ref E1, offset_e1
                        , LDE1, ref IP1, offset_ip1, ref IER, IJOB, ref CALHES, ref IPHES, offset_iphes);
       if (IER != 0)
         goto LABEL78;
-      this._decomc.Run(N, FJAC, offset_fjac, LDJAC, FMAS, offset_fmas, LDMAS, MLMAS
+      _decomc.Run(N, FJAC, offset_fjac, LDJAC, FMAS, offset_fmas, LDMAS, MLMAS
                        , MUMAS, M1, M2, NM1, ALPHN, BETAN
                        , ref E2R, offset_e2r, ref E2I, offset_e2i, LDE1, ref IP2, offset_ip2, ref IER, IJOB);
       if (IER != 0)
@@ -1717,7 +1717,7 @@ LABEL40:
         Z2[I + o_z2] = TI21 * A1 + TI22 * A2 + TI23 * A3;
         Z3[I + o_z3] = TI31 * A1 + TI32 * A2 + TI33 * A3;
       }
-      this._slvrad.Run(N, FJAC, offset_fjac, LDJAC, MLJAC, MUJAC, FMAS, offset_fmas
+      _slvrad.Run(N, FJAC, offset_fjac, LDJAC, MLJAC, MUJAC, FMAS, offset_fmas
                        , LDMAS, MLMAS, MUMAS, M1, M2, NM1
                        , FAC1, ALPHN, BETAN, E1, offset_e1, E2R, offset_e2r, E2I, offset_e2i
                        , LDE1, ref Z1, offset_z1, ref Z2, offset_z2, ref Z3, offset_z3, F1, offset_f1, F2, offset_f2
@@ -1782,7 +1782,7 @@ LABEL40:
       if (FACCON * DYNO > FNEWT)
         goto LABEL40;
       // C --- ERROR ESTIMATION
-      this._estrad.Run(N, FJAC, offset_fjac, LDJAC, MLJAC, MUJAC, FMAS, offset_fmas
+      _estrad.Run(N, FJAC, offset_fjac, LDJAC, MLJAC, MUJAC, FMAS, offset_fmas
                        , LDMAS, MLMAS, MUMAS, H, DD1, DD2
                        , DD3, FCN, ref NFCN, Y0, offset_y0, Y, offset_y, IJOB
                        , X, M1, M2, NM1, E1, offset_e1, LDE1
@@ -1989,7 +1989,7 @@ LABEL179:
 
       #region Common Block: CONRA5 Initialization
 
-      this._conra5 = CONRA5;
+      _conra5 = CONRA5;
       NN = CONRA5.intData[0];
       NN2 = CONRA5.intData[1];
       NN3 = CONRA5.intData[2];
@@ -2008,7 +2008,7 @@ LABEL179:
     {
       #region Initialization Common Blocks
 
-      CommonBlock CONRA5 = new CommonBlock(4, 4, 0, 0);
+      var CONRA5 = new CommonBlock(4, 4, 0, 0);
 
       #endregion Initialization Common Blocks
 
@@ -2016,7 +2016,7 @@ LABEL179:
 
       #region Common Block: CONRA5 Initialization
 
-      this._conra5 = CONRA5;
+      _conra5 = CONRA5;
       NN = CONRA5.intData[0];
       NN2 = CONRA5.intData[1];
       NN3 = CONRA5.intData[2];

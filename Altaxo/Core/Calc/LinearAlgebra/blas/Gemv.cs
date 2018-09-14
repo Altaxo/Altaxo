@@ -298,7 +298,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
         return;
       }
 
-      ComplexFloat add_val = new ComplexFloat(0);
+      var add_val = new ComplexFloat(0);
       if ((order == Order.RowMajor && transA == Transpose.NoTrans)
         || (order == Order.ColumnMajor && transA == Transpose.Trans))
       {
@@ -389,7 +389,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       {
         return;
       }
-      Complex add_val = new Complex(0);
+      var add_val = new Complex(0);
       if ((order == Order.RowMajor && transA == Transpose.NoTrans)
         || (order == Order.ColumnMajor && transA == Transpose.Trans))
       {

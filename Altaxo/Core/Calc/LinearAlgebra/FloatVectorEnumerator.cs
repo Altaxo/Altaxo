@@ -43,7 +43,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
-  sealed internal class FloatVectorEnumerator : IEnumerator
+  internal sealed class FloatVectorEnumerator : IEnumerator
   {
     private FloatVector v;
     private int index;

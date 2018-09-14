@@ -73,7 +73,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
       int minmn = m < n ? m : n;
       r_ = new ComplexFloatMatrix(matrix); // create a copy
-      ComplexFloatVector[] u = new ComplexFloatVector[minmn];
+      var u = new ComplexFloatVector[minmn];
       for (int i = 0; i < minmn; i++)
       {
         u[i] = Householder.GenerateColumn(r_, i, m - 1, i);
@@ -176,7 +176,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.InvalidOperationException("A must have at lest as a many rows as columns.");
       }
       Compute();
-      if (!this.isFullRank)
+      if (!isFullRank)
       {
         throw new System.InvalidOperationException("Matrix is rank deficient.");
       }
@@ -185,11 +185,11 @@ namespace Altaxo.Calc.LinearAlgebra
       int m = matrix.Rows;
       int n = matrix.Columns;
       int nx = B.Columns;
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(n, nx);
+      var ret = new ComplexFloatMatrix(n, nx);
 #if MANAGED
-      ComplexFloatMatrix X = new ComplexFloatMatrix(B);
+      var X = new ComplexFloatMatrix(B);
       // Compute Y = transpose(Q)*B
-      ComplexFloat[] column = new ComplexFloat[q_.RowLength];
+      var column = new ComplexFloat[q_.RowLength];
       for (int j = 0; j < nx; j++)
       {
         for (int k = 0; k < m; k++)

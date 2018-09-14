@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -318,18 +318,16 @@ namespace Altaxo.Calc.Interpolation
       const double ratio = 2.0;
       double tau = (Math.Sqrt(5.0) + 1.0) / 2.0;
 
-      ErrorFlag error_flag;
       int i, wk_dim1;
 
-      double avdf, avar, gf1, gf2, gf3, gf4,
-        avh, err, p, q, delta, r1, r2, r3, r4;
+      double avar, gf1, gf3, err, delta, r1, r2, r3, r4;
       double[] stat = new double[6];
 
       // Parameter adjustments
       wk_dim1 = n + 2;
 
-      spint(n, xx, out avh, f, df, out avdf, yy, c1, c2, c3,
-        wwr, wwt, out error_flag); // Note wwr has 3*(N+2), wwt has 2*(N+2)
+      spint(n, xx, out var avh, f, df, out var avdf, yy, c1, c2, c3,
+        wwr, wwt, out var error_flag); // Note wwr has 3*(N+2), wwt has 2*(N+2)
 
       if (ErrorFlag.no_error != error_flag)
         return (int)error_flag;
@@ -348,7 +346,7 @@ namespace Altaxo.Calc.Interpolation
       // find local minimum of gcv or the expected mean square error
       r1 = one;
       r2 = ratio * r1;
-      spfit(n, xx, avh, df, r2, out p, out q, out gf2, avar, stat, yy, c1, c2, c3,
+      spfit(n, xx, avh, df, r2, out var p, out var q, out var gf2, avar, stat, yy, c1, c2, c3,
         wwr, wwt,
         wwu, // [wk_dim1 * 6],
         wwv //[wk_dim1 * 7]
@@ -405,7 +403,7 @@ namespace Altaxo.Calc.Interpolation
         wwv //[wk_dim1 * 7]
         );
 
-      spfit(n, xx, avh, df, r4, out p, out q, out gf4, avar, stat, yy, c1, c2, c3,
+      spfit(n, xx, avh, df, r4, out p, out q, out var gf4, avar, stat, yy, c1, c2, c3,
         wwr, // [wk_offset]
         wwt, // [wk_dim1 * 4]
         wwu, // [wk_dim1 * 6]

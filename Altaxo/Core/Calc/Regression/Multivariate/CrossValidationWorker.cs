@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -75,11 +75,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public void EhCrossPRESS(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
     {
-      IVector<double> meanX, scaleX, meanY, scaleY;
       if (_predictedY == null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);
 
-      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY, out meanX, out scaleX, out meanY, out scaleY);
+      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY, out var meanX, out var scaleX, out var meanY, out var scaleY);
       _analysis.AnalyzeFromPreprocessed(XX, YY, _numFactors);
       _numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);
 
@@ -120,12 +119,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public void EhYCrossPredicted(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
     {
-      IVector<double> meanX, scaleX, meanY, scaleY;
       if (_predictedY == null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);
 
       MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY,
-        out meanX, out scaleX, out meanY, out scaleY);
+        out var meanX, out var scaleX, out var meanY, out var scaleY);
 
       _analysis.AnalyzeFromPreprocessed(XX, YY, _numFactors);
       _numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);
@@ -162,10 +160,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public void EhCrossValidationWorker(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
     {
-      IVector<double> meanX, scaleX, meanY, scaleY;
-
       MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY,
-        out meanX, out scaleX, out meanY, out scaleY);
+        out var meanX, out var scaleX, out var meanY, out var scaleY);
 
       _analysis.AnalyzeFromPreprocessed(XX, YY, _numFactors);
       _numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);
@@ -173,11 +169,11 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessSpectraForPrediction(_preprocessOptions, XU, meanX, scaleX);
       IROMatrix<double> xResidual = _analysis.SpectralResidualsFromPreprocessed(XU, _numFactors);
 
-      if (this._XCrossResiduals == null)
-        this._XCrossResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_numberOfPoints, xResidual.ColumnCount);
+      if (_XCrossResiduals == null)
+        _XCrossResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_numberOfPoints, xResidual.ColumnCount);
 
       for (int i = 0; i < group.Length; i++)
-        MatrixMath.SetRow(xResidual, i, this._XCrossResiduals, group[i]);
+        MatrixMath.SetRow(xResidual, i, _XCrossResiduals, group[i]);
     }
   }
 
@@ -203,10 +199,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public void EhCrossValidationWorker(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
     {
-      IVector<double> meanX, scaleX, meanY, scaleY;
-
       MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY,
-        out meanX, out scaleX, out meanY, out scaleY);
+        out var meanX, out var scaleX, out var meanY, out var scaleY);
 
       _analysis.AnalyzeFromPreprocessed(XX, YY, _numFactors);
       _numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);

@@ -51,7 +51,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Initializes a new instance of the <c>NotSquareMatrixException</c> class with a specified error message.</summary>
     ///<param name="message">The error message that explains the reason for the exception.</param>
-    public NotSquareMatrixException(String message)
+    public NotSquareMatrixException(string message)
       : base(message)
     {
     }
@@ -62,7 +62,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="inner">The exception that is the cause of the current exception.
     ///If the innerException parameter is not a null reference, the current exception is raised in a <c>catch</c> block
     ///that handles the inner exception.</param>
-    public NotSquareMatrixException(String message, System.Exception inner)
+    public NotSquareMatrixException(string message, System.Exception inner)
       : base(message, inner)
     {
     }

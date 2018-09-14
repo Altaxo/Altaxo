@@ -75,7 +75,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._probability;
+        return _probability;
       }
       set
       {
@@ -88,7 +88,7 @@ namespace Altaxo.Calc.Probability
       if (!IsValidProbability(probability))
         throw new ArgumentOutOfRangeException("probability has to be between 0 and 1");
 
-      this._probability = probability;
+      _probability = probability;
     }
 
     /// <summary>
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A bernoulli distributed 32-bit signed integer.</returns>
     public int Next()
     {
-      if (this.Generator.NextDouble() < this._probability)
+      if (Generator.NextDouble() < _probability)
       {
         return 1;
       }
@@ -198,7 +198,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._probability;
+        return _probability;
       }
     }
 
@@ -220,7 +220,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._probability * (1.0 - this._probability);
+        return _probability * (1.0 - _probability);
       }
     }
 
@@ -231,11 +231,11 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this._probability > (1 - this._probability))
+        if (_probability > (1 - _probability))
         {
           return new double[] { 1.0 };
         }
-        else if (this._probability < (1 - this._probability))
+        else if (_probability < (1 - _probability))
         {
           return new double[] { 0.0 };
         }
@@ -252,7 +252,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A bernoulli distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      if (this.Generator.NextDouble() < this._probability)
+      if (Generator.NextDouble() < _probability)
       {
         return 1.0;
       }
@@ -268,7 +268,7 @@ namespace Altaxo.Calc.Probability
 
     public override double CDF(double x)
     {
-      return CDF(x, this.Probability);
+      return CDF(x, Probability);
     }
 
     public static double CDF(double x, double p)
@@ -283,7 +283,7 @@ namespace Altaxo.Calc.Probability
 
     public override double PDF(double x)
     {
-      return PDF(x, this.Probability);
+      return PDF(x, Probability);
     }
 
     public static double PDF(double x, double p)

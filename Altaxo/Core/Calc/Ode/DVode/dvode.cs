@@ -65,16 +65,16 @@ namespace Altaxo.Calc.Ode.DVode
     {
       #region Set Dependencies
 
-      this._dvnlsd = dvnlsd;
-      this._dumach = dumach;
-      this._dvnorm = dvnorm;
-      this._dcopy = dcopy;
-      this._dewset = dewset;
-      this._dvhin = dvhin;
-      this._dscal = dscal;
-      this._dvindy = dvindy;
-      this._xerrwd = xerrwd;
-      this._dvstep = dvstep;
+      _dvnlsd = dvnlsd;
+      _dumach = dumach;
+      _dvnorm = dvnorm;
+      _dcopy = dcopy;
+      _dewset = dewset;
+      _dvhin = dvhin;
+      _dscal = dscal;
+      _dvindy = dvindy;
+      _xerrwd = xerrwd;
+      _dvstep = dvstep;
 
       #endregion Set Dependencies
 
@@ -107,7 +107,7 @@ namespace Altaxo.Calc.Ode.DVode
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Ode.DVode
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -195,53 +195,53 @@ namespace Altaxo.Calc.Ode.DVode
     {
       #region Initialization Common Blocks
 
-      CommonBlock DVOD01 = new CommonBlock(48, 33, 0, 0);
-      CommonBlock DVOD02 = new CommonBlock(1, 8, 0, 0);
+      var DVOD01 = new CommonBlock(48, 33, 0, 0);
+      var DVOD02 = new CommonBlock(1, 8, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DVNORM dvnorm = new DVNORM();
-      DCOPY dcopy = new DCOPY();
-      DSCAL dscal = new DSCAL();
-      IDAMAX idamax = new IDAMAX();
-      DAXPY daxpy = new DAXPY();
-      DDOT ddot = new DDOT();
-      DUMSUM dumsum = new DUMSUM();
-      DEWSET dewset = new DEWSET();
-      IUMACH iumach = new IUMACH();
-      DVSET dvset = new DVSET(DVOD01);
-      DGEFA dgefa = new DGEFA(idamax, dscal, daxpy);
-      DACOPY dacopy = new DACOPY(dcopy);
-      DGBFA dgbfa = new DGBFA(idamax, dscal, daxpy);
-      DVJAC dvjac = new DVJAC(dvnorm, dcopy, dscal, dgefa, dacopy, dgbfa, DVOD01, DVOD02);
-      DGESL dgesl = new DGESL(ddot, daxpy);
-      DGBSL dgbsl = new DGBSL(ddot, daxpy);
-      DVSOL dvsol = new DVSOL(dgesl, dgbsl, DVOD01);
-      DVNLSD dvnlsd = new DVNLSD(dvnorm, dcopy, dvjac, dvsol, dscal, daxpy, DVOD01, DVOD02);
-      DUMACH dumach = new DUMACH(dumsum);
-      DVHIN dvhin = new DVHIN(dvnorm);
-      IXSAV ixsav = new IXSAV(iumach);
-      XERRWD xerrwd = new XERRWD(ixsav);
-      DVINDY dvindy = new DVINDY(dscal, xerrwd, DVOD01, DVOD02);
-      DVJUST dvjust = new DVJUST(daxpy, DVOD01);
-      DVSTEP dvstep = new DVSTEP(dvnorm, dvjust, dscal, dvset, daxpy, dcopy, DVOD01, DVOD02);
+      var dvnorm = new DVNORM();
+      var dcopy = new DCOPY();
+      var dscal = new DSCAL();
+      var idamax = new IDAMAX();
+      var daxpy = new DAXPY();
+      var ddot = new DDOT();
+      var dumsum = new DUMSUM();
+      var dewset = new DEWSET();
+      var iumach = new IUMACH();
+      var dvset = new DVSET(DVOD01);
+      var dgefa = new DGEFA(idamax, dscal, daxpy);
+      var dacopy = new DACOPY(dcopy);
+      var dgbfa = new DGBFA(idamax, dscal, daxpy);
+      var dvjac = new DVJAC(dvnorm, dcopy, dscal, dgefa, dacopy, dgbfa, DVOD01, DVOD02);
+      var dgesl = new DGESL(ddot, daxpy);
+      var dgbsl = new DGBSL(ddot, daxpy);
+      var dvsol = new DVSOL(dgesl, dgbsl, DVOD01);
+      var dvnlsd = new DVNLSD(dvnorm, dcopy, dvjac, dvsol, dscal, daxpy, DVOD01, DVOD02);
+      var dumach = new DUMACH(dumsum);
+      var dvhin = new DVHIN(dvnorm);
+      var ixsav = new IXSAV(iumach);
+      var xerrwd = new XERRWD(ixsav);
+      var dvindy = new DVINDY(dscal, xerrwd, DVOD01, DVOD02);
+      var dvjust = new DVJUST(daxpy, DVOD01);
+      var dvstep = new DVSTEP(dvnorm, dvjust, dscal, dvset, daxpy, dcopy, DVOD01, DVOD02);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dvnlsd = dvnlsd;
-      this._dumach = dumach;
-      this._dvnorm = dvnorm;
-      this._dcopy = dcopy;
-      this._dewset = dewset;
-      this._dvhin = dvhin;
-      this._dscal = dscal;
-      this._dvindy = dvindy;
-      this._xerrwd = xerrwd;
-      this._dvstep = dvstep;
+      _dvnlsd = dvnlsd;
+      _dumach = dumach;
+      _dvnorm = dvnorm;
+      _dcopy = dcopy;
+      _dewset = dewset;
+      _dvhin = dvhin;
+      _dscal = dscal;
+      _dvindy = dvindy;
+      _xerrwd = xerrwd;
+      _dvstep = dvstep;
 
       #endregion Set Dependencies
 
@@ -274,7 +274,7 @@ namespace Altaxo.Calc.Ode.DVode
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -342,7 +342,7 @@ namespace Altaxo.Calc.Ode.DVode
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -2083,7 +2083,7 @@ LABEL60:
       if (NQ.v <= MAXORD.v)
         goto LABEL90;
       // C MAXORD was reduced below NQ.  Copy YH(*,MAXORD+2) into SAVF. ---------
-      this._dcopy.Run(N.v, RWORK, LWM.v + o_rwork, 1, ref RWORK, LSAVF.v + o_rwork, 1);
+      _dcopy.Run(N.v, RWORK, LWM.v + o_rwork, 1, ref RWORK, LSAVF.v + o_rwork, 1);
 // C Reload WM(1) = RWORK(LWM), since LWM may have changed. ---------------
 LABEL90:
       if (MITER.v > 0)
@@ -2097,7 +2097,7 @@ LABEL90:
 // C The error weights in EWT are inverted after being loaded.
 // C-----------------------------------------------------------------------
 LABEL100:
-      UROUND.v = this._dumach.Run();
+      UROUND.v = _dumach.Run();
       TN.v = T;
       if (ITASK != 4 && ITASK != 5)
         goto LABEL110;
@@ -2128,11 +2128,11 @@ LABEL110:
       F.Run(N.v, T, Y, offset_y, ref RWORK, LF0 + o_rwork, RPAR[1 + o_rpar], IPAR[1 + o_ipar]);
       NFE.v = 1;
       // C Load the initial value vector in YH. ---------------------------------
-      this._dcopy.Run(N.v, Y, offset_y, 1, ref RWORK, LYH.v + o_rwork, 1);
+      _dcopy.Run(N.v, Y, offset_y, 1, ref RWORK, LYH.v + o_rwork, 1);
       // C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
       NQ.v = 1;
       H.v = ONE;
-      this._dewset.Run(N.v, ITOL, RTOL, offset_rtol, ATOL, offset_atol, RWORK, LYH.v + o_rwork, ref RWORK, LEWT.v + o_rwork);
+      _dewset.Run(N.v, ITOL, RTOL, offset_rtol, ATOL, offset_atol, RWORK, LYH.v + o_rwork, ref RWORK, LEWT.v + o_rwork);
       for (I = 1; I <= N.v; I++)
       {
         if (RWORK[I + LEWT.v - 1 + o_rwork] <= ZERO)
@@ -2142,7 +2142,7 @@ LABEL110:
       if (H0 != ZERO)
         goto LABEL180;
       // C Call DVHIN to set initial step size H0 to be attempted. --------------
-      this._dvhin.Run(N.v, T, RWORK, LYH.v + o_rwork, RWORK, LF0 + o_rwork, F, RPAR, offset_rpar
+      _dvhin.Run(N.v, T, RWORK, LYH.v + o_rwork, RWORK, LF0 + o_rwork, F, RPAR, offset_rpar
                       , IPAR, offset_ipar, TOUT, UROUND.v, RWORK, LEWT.v + o_rwork, ITOL, ATOL, offset_atol
                       , ref Y, offset_y, ref RWORK, LACOR.v + o_rwork, ref H0, ref NITER, ref IER);
       NFE.v += NITER;
@@ -2155,7 +2155,7 @@ LABEL180:
         H0 /= RH;
       // C Load H with H0 and scale YH(*,2) by H0. ------------------------------
       H.v = H0;
-      this._dscal.Run(N.v, H0, ref RWORK, LF0 + o_rwork, 1);
+      _dscal.Run(N.v, H0, ref RWORK, LF0 + o_rwork, 1);
       goto LABEL270;
 // C-----------------------------------------------------------------------
 // C Block D.
@@ -2181,7 +2181,7 @@ LABEL200:
 LABEL210:
       if ((TN.v - TOUT) * H.v < ZERO)
         goto LABEL250;
-      this._dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
+      _dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
       if (IFLAG != 0)
         goto LABEL627;
       T = TOUT;
@@ -2201,7 +2201,7 @@ LABEL230:
         goto LABEL625;
       if ((TN.v - TOUT) * H.v < ZERO)
         goto LABEL245;
-      this._dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
+      _dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
       if (IFLAG != 0)
         goto LABEL627;
       T = TOUT;
@@ -2235,7 +2235,7 @@ LABEL250:
       ;
       if ((NST.v - NSLAST) >= MXSTEP.v)
         goto LABEL500;
-      this._dewset.Run(N.v, ITOL, RTOL, offset_rtol, ATOL, offset_atol, RWORK, LYH.v + o_rwork, ref RWORK, LEWT.v + o_rwork);
+      _dewset.Run(N.v, ITOL, RTOL, offset_rtol, ATOL, offset_atol, RWORK, LYH.v + o_rwork, ref RWORK, LEWT.v + o_rwork);
       for (I = 1; I <= N.v; I++)
       {
         if (RWORK[I + LEWT.v - 1 + o_rwork] <= ZERO)
@@ -2243,7 +2243,7 @@ LABEL250:
         RWORK[I + LEWT.v - 1 + o_rwork] = ONE / RWORK[I + LEWT.v - 1 + o_rwork];
       }
 LABEL270:
-      TOLSF = UROUND.v * this._dvnorm.Run(N.v, RWORK, LYH.v + o_rwork, RWORK, LEWT.v + o_rwork);
+      TOLSF = UROUND.v * _dvnorm.Run(N.v, RWORK, LYH.v + o_rwork, RWORK, LEWT.v + o_rwork);
       if (TOLSF <= ONE)
         goto LABEL280;
       TOLSF *= TWO;
@@ -2257,21 +2257,21 @@ LABEL280:
       if (NHNIL.v > MXHNIL.v)
         goto LABEL290;
       FortranLib.Copy(ref MSG, "DVODE--  Warning: internal T (=R1) and H (=R2) are");
-      this._xerrwd.Run(MSG, 50, 101, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 101, 1, 0, 0
                        , 0, 0, ZERO, ZERO);
       FortranLib.Copy(ref MSG, "      such that in the machine, T + H = T on the next step  ");
-      this._xerrwd.Run(MSG, 60, 101, 1, 0, 0
+      _xerrwd.Run(MSG, 60, 101, 1, 0, 0
                        , 0, 0, ZERO, ZERO);
       FortranLib.Copy(ref MSG, "      (H = step size). solver will continue anyway");
-      this._xerrwd.Run(MSG, 50, 101, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 101, 1, 0, 0
                        , 0, 2, TN.v, H.v);
       if (NHNIL.v < MXHNIL.v)
         goto LABEL290;
       FortranLib.Copy(ref MSG, "DVODE--  Above warning has been issued I1 times.  ");
-      this._xerrwd.Run(MSG, 50, 102, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 102, 1, 0, 0
                        , 0, 0, ZERO, ZERO);
       FortranLib.Copy(ref MSG, "      it will not be issued again for this problem");
-      this._xerrwd.Run(MSG, 50, 102, 1, 1, MXHNIL.v
+      _xerrwd.Run(MSG, 50, 102, 1, 1, MXHNIL.v
                        , 0, 0, ZERO, ZERO);
 LABEL290:
       ;
@@ -2279,9 +2279,9 @@ LABEL290:
       // C CALL DVSTEP (Y, YH, NYH, YH, EWT, SAVF, VSAV, ACOR,
       // C              WM, IWM, F, JAC, F, DVNLSD, RPAR, IPAR)
       // C-----------------------------------------------------------------------
-      this._dvstep.Run(ref Y, offset_y, ref RWORK, LYH.v + o_rwork, NYH.v, ref RWORK, LYH.v + o_rwork, RWORK, LEWT.v + o_rwork, ref RWORK, LSAVF.v + o_rwork
+      _dvstep.Run(ref Y, offset_y, ref RWORK, LYH.v + o_rwork, NYH.v, ref RWORK, LYH.v + o_rwork, RWORK, LEWT.v + o_rwork, ref RWORK, LSAVF.v + o_rwork
                        , Y, offset_y, ref RWORK, LACOR.v + o_rwork, ref RWORK, LWM.v + o_rwork, ref IWORK, LIWM.v + o_iwork, F, JAC
-                       , F, this._dvnlsd, RPAR, offset_rpar, IPAR, offset_ipar);
+                       , F, _dvnlsd, RPAR, offset_rpar, IPAR, offset_ipar);
       KGO = 1 - KFLAG.v;
       // C Branch on KFLAG.  Note: In this version, KFLAG can not be set to -3.
       // C  KFLAG .eq. 0,   -1,  -2
@@ -2319,7 +2319,7 @@ LABEL300:
 LABEL310:
       if ((TN.v - TOUT) * H.v < ZERO)
         goto LABEL250;
-      this._dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
+      _dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
       T = TOUT;
       goto LABEL420;
 // C ITASK = 3.  Jump to exit if TOUT was reached. ------------------------
@@ -2331,7 +2331,7 @@ LABEL330:
 LABEL340:
       if ((TN.v - TOUT) * H.v < ZERO)
         goto LABEL345;
-      this._dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
+      _dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
       T = TOUT;
       goto LABEL420;
 LABEL345:
@@ -2358,7 +2358,7 @@ LABEL350:
 // C-----------------------------------------------------------------------
 LABEL400:
       ;
-      this._dcopy.Run(N.v, RWORK, LYH.v + o_rwork, 1, ref Y, offset_y, 1);
+      _dcopy.Run(N.v, RWORK, LYH.v + o_rwork, 1, ref Y, offset_y, 1);
       T = TN.v;
       if (ITASK != 4 && ITASK != 5)
         goto LABEL420;
@@ -2390,10 +2390,10 @@ LABEL420:
 // C The maximum number of steps was taken before reaching TOUT. ----------
 LABEL500:
       FortranLib.Copy(ref MSG, "DVODE--  At current T (=R1), MXSTEP (=I1) steps   ");
-      this._xerrwd.Run(MSG, 50, 201, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 201, 1, 0, 0
                        , 0, 0, ZERO, ZERO);
       FortranLib.Copy(ref MSG, "      taken on this call before reaching TOUT     ");
-      this._xerrwd.Run(MSG, 50, 201, 1, 1, MXSTEP.v
+      _xerrwd.Run(MSG, 50, 201, 1, 1, MXSTEP.v
                        , 0, 1, TN.v, ZERO);
       ISTATE = -1;
       goto LABEL580;
@@ -2401,17 +2401,17 @@ LABEL500:
 LABEL510:
       EWTI = RWORK[LEWT.v + I - 1 + o_rwork];
       FortranLib.Copy(ref MSG, "DVODE--  At T (=R1), EWT(I1) has become R2 .le. 0.");
-      this._xerrwd.Run(MSG, 50, 202, 1, 1, I
+      _xerrwd.Run(MSG, 50, 202, 1, 1, I
                        , 0, 2, TN.v, EWTI);
       ISTATE = -6;
       goto LABEL580;
 // C Too much accuracy requested for machine precision. -------------------
 LABEL520:
       FortranLib.Copy(ref MSG, "DVODE--  At T (=R1), too much accuracy requested  ");
-      this._xerrwd.Run(MSG, 50, 203, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 203, 1, 0, 0
                        , 0, 0, ZERO, ZERO);
       FortranLib.Copy(ref MSG, "      for precision of machine:   see TOLSF (=R2) ");
-      this._xerrwd.Run(MSG, 50, 203, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 203, 1, 0, 0
                        , 0, 2, TN.v, TOLSF);
       RWORK[14 + o_rwork] = TOLSF;
       ISTATE = -2;
@@ -2419,23 +2419,23 @@ LABEL520:
 // C KFLAG = -1.  Error test failed repeatedly or with ABS(H) = HMIN. -----
 LABEL530:
       FortranLib.Copy(ref MSG, "DVODE--  At T(=R1) and step size H(=R2), the error");
-      this._xerrwd.Run(MSG, 50, 204, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 204, 1, 0, 0
                        , 0, 0, ZERO, ZERO);
       FortranLib.Copy(ref MSG, "      test failed repeatedly or with abs(H) = HMIN");
-      this._xerrwd.Run(MSG, 50, 204, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 204, 1, 0, 0
                        , 0, 2, TN.v, H.v);
       ISTATE = -4;
       goto LABEL560;
 // C KFLAG = -2.  Convergence failed repeatedly or with ABS(H) = HMIN. ----
 LABEL540:
       FortranLib.Copy(ref MSG, "DVODE--  At T (=R1) and step size H (=R2), the    ");
-      this._xerrwd.Run(MSG, 50, 205, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 205, 1, 0, 0
                        , 0, 0, ZERO, ZERO);
       FortranLib.Copy(ref MSG, "      corrector convergence failed repeatedly     ");
-      this._xerrwd.Run(MSG, 50, 205, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 205, 1, 0, 0
                        , 0, 0, ZERO, ZERO);
       FortranLib.Copy(ref MSG, "      or with abs(H) = HMIN   ");
-      this._xerrwd.Run(MSG, 30, 205, 1, 0, 0
+      _xerrwd.Run(MSG, 30, 205, 1, 0, 0
                        , 0, 2, TN.v, H.v);
       ISTATE = -5;
 // C Compute IMXER if relevant. -------------------------------------------
@@ -2456,7 +2456,7 @@ LABEL570:
 // C Set Y vector, T, and optional output. --------------------------------
 LABEL580:
       ;
-      this._dcopy.Run(N.v, RWORK, LYH.v + o_rwork, 1, ref Y, offset_y, 1);
+      _dcopy.Run(N.v, RWORK, LYH.v + o_rwork, 1, ref Y, offset_y, 1);
       T = TN.v;
       RWORK[11 + o_rwork] = HU.v;
       RWORK[12 + o_rwork] = H.v;
@@ -2480,153 +2480,153 @@ LABEL580:
 // C-----------------------------------------------------------------------
 LABEL601:
       FortranLib.Copy(ref MSG, "DVODE--  ISTATE (=I1) illegal ");
-      this._xerrwd.Run(MSG, 30, 1, 1, 1, ISTATE
+      _xerrwd.Run(MSG, 30, 1, 1, 1, ISTATE
                        , 0, 0, ZERO, ZERO);
       if (ISTATE < 0)
         goto LABEL800;
       goto LABEL700;
 LABEL602:
       FortranLib.Copy(ref MSG, "DVODE--  ITASK (=I1) illegal  ");
-      this._xerrwd.Run(MSG, 30, 2, 1, 1, ITASK
+      _xerrwd.Run(MSG, 30, 2, 1, 1, ITASK
                        , 0, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL603:
       FortranLib.Copy(ref MSG, "DVODE--  ISTATE (=I1) .gt. 1 but DVODE not initialized      ");
-      this._xerrwd.Run(MSG, 60, 3, 1, 1, ISTATE
+      _xerrwd.Run(MSG, 60, 3, 1, 1, ISTATE
                        , 0, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL604:
       FortranLib.Copy(ref MSG, "DVODE--  NEQ (=I1) .lt. 1     ");
-      this._xerrwd.Run(MSG, 30, 4, 1, 1, NEQ
+      _xerrwd.Run(MSG, 30, 4, 1, 1, NEQ
                        , 0, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL605:
       FortranLib.Copy(ref MSG, "DVODE--  ISTATE = 3 and NEQ increased (I1 to I2)  ");
-      this._xerrwd.Run(MSG, 50, 5, 1, 2, N.v
+      _xerrwd.Run(MSG, 50, 5, 1, 2, N.v
                        , NEQ, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL606:
       FortranLib.Copy(ref MSG, "DVODE--  ITOL (=I1) illegal   ");
-      this._xerrwd.Run(MSG, 30, 6, 1, 1, ITOL
+      _xerrwd.Run(MSG, 30, 6, 1, 1, ITOL
                        , 0, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL607:
       FortranLib.Copy(ref MSG, "DVODE--  IOPT (=I1) illegal   ");
-      this._xerrwd.Run(MSG, 30, 7, 1, 1, IOPT
+      _xerrwd.Run(MSG, 30, 7, 1, 1, IOPT
                        , 0, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL608:
       FortranLib.Copy(ref MSG, "DVODE--  MF (=I1) illegal     ");
-      this._xerrwd.Run(MSG, 30, 8, 1, 1, MF
+      _xerrwd.Run(MSG, 30, 8, 1, 1, MF
                        , 0, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL609:
       FortranLib.Copy(ref MSG, "DVODE--  ML (=I1) illegal:  .lt.0 or .ge.NEQ (=I2)");
-      this._xerrwd.Run(MSG, 50, 9, 1, 2, ML
+      _xerrwd.Run(MSG, 50, 9, 1, 2, ML
                        , NEQ, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL610:
       FortranLib.Copy(ref MSG, "DVODE--  MU (=I1) illegal:  .lt.0 or .ge.NEQ (=I2)");
-      this._xerrwd.Run(MSG, 50, 10, 1, 2, MU
+      _xerrwd.Run(MSG, 50, 10, 1, 2, MU
                        , NEQ, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL611:
       FortranLib.Copy(ref MSG, "DVODE--  MAXORD (=I1) .lt. 0  ");
-      this._xerrwd.Run(MSG, 30, 11, 1, 1, MAXORD.v
+      _xerrwd.Run(MSG, 30, 11, 1, 1, MAXORD.v
                        , 0, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL612:
       FortranLib.Copy(ref MSG, "DVODE--  MXSTEP (=I1) .lt. 0  ");
-      this._xerrwd.Run(MSG, 30, 12, 1, 1, MXSTEP.v
+      _xerrwd.Run(MSG, 30, 12, 1, 1, MXSTEP.v
                        , 0, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL613:
       FortranLib.Copy(ref MSG, "DVODE--  MXHNIL (=I1) .lt. 0  ");
-      this._xerrwd.Run(MSG, 30, 13, 1, 1, MXHNIL.v
+      _xerrwd.Run(MSG, 30, 13, 1, 1, MXHNIL.v
                        , 0, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL614:
       FortranLib.Copy(ref MSG, "DVODE--  TOUT (=R1) behind T (=R2)      ");
-      this._xerrwd.Run(MSG, 40, 14, 1, 0, 0
+      _xerrwd.Run(MSG, 40, 14, 1, 0, 0
                        , 0, 2, TOUT, T);
       FortranLib.Copy(ref MSG, "      integration direction is given by H0 (=R1)  ");
-      this._xerrwd.Run(MSG, 50, 14, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 14, 1, 0, 0
                        , 0, 1, H0, ZERO);
       goto LABEL700;
 LABEL615:
       FortranLib.Copy(ref MSG, "DVODE--  HMAX (=R1) .lt. 0.0  ");
-      this._xerrwd.Run(MSG, 30, 15, 1, 0, 0
+      _xerrwd.Run(MSG, 30, 15, 1, 0, 0
                        , 0, 1, HMAX, ZERO);
       goto LABEL700;
 LABEL616:
       FortranLib.Copy(ref MSG, "DVODE--  HMIN (=R1) .lt. 0.0  ");
-      this._xerrwd.Run(MSG, 30, 16, 1, 0, 0
+      _xerrwd.Run(MSG, 30, 16, 1, 0, 0
                        , 0, 1, HMIN.v, ZERO);
       goto LABEL700;
 LABEL617:
       ;
       FortranLib.Copy(ref MSG, "DVODE--  RWORK length needed, LENRW (=I1), exceeds LRW (=I2)");
-      this._xerrwd.Run(MSG, 60, 17, 1, 2, LENRW
+      _xerrwd.Run(MSG, 60, 17, 1, 2, LENRW
                        , LRW, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL618:
       ;
       FortranLib.Copy(ref MSG, "DVODE--  IWORK length needed, LENIW (=I1), exceeds LIW (=I2)");
-      this._xerrwd.Run(MSG, 60, 18, 1, 2, LENIW
+      _xerrwd.Run(MSG, 60, 18, 1, 2, LENIW
                        , LIW, 0, ZERO, ZERO);
       goto LABEL700;
 LABEL619:
       FortranLib.Copy(ref MSG, "DVODE--  RTOL(I1) is R1 .lt. 0.0        ");
-      this._xerrwd.Run(MSG, 40, 19, 1, 1, I
+      _xerrwd.Run(MSG, 40, 19, 1, 1, I
                        , 0, 1, RTOLI, ZERO);
       goto LABEL700;
 LABEL620:
       FortranLib.Copy(ref MSG, "DVODE--  ATOL(I1) is R1 .lt. 0.0        ");
-      this._xerrwd.Run(MSG, 40, 20, 1, 1, I
+      _xerrwd.Run(MSG, 40, 20, 1, 1, I
                        , 0, 1, ATOLI, ZERO);
       goto LABEL700;
 LABEL621:
       EWTI = RWORK[LEWT.v + I - 1 + o_rwork];
       FortranLib.Copy(ref MSG, "DVODE--  EWT(I1) is R1 .le. 0.0         ");
-      this._xerrwd.Run(MSG, 40, 21, 1, 1, I
+      _xerrwd.Run(MSG, 40, 21, 1, 1, I
                        , 0, 1, EWTI, ZERO);
       goto LABEL700;
 LABEL622:
       ;
       FortranLib.Copy(ref MSG, "DVODE--  TOUT (=R1) too close to T(=R2) to start integration");
-      this._xerrwd.Run(MSG, 60, 22, 1, 0, 0
+      _xerrwd.Run(MSG, 60, 22, 1, 0, 0
                        , 0, 2, TOUT, T);
       goto LABEL700;
 LABEL623:
       ;
       FortranLib.Copy(ref MSG, "DVODE--  ITASK = I1 and TOUT (=R1) behind TCUR - HU (= R2)  ");
-      this._xerrwd.Run(MSG, 60, 23, 1, 1, ITASK
+      _xerrwd.Run(MSG, 60, 23, 1, 1, ITASK
                        , 0, 2, TOUT, TP);
       goto LABEL700;
 LABEL624:
       ;
       FortranLib.Copy(ref MSG, "DVODE--  ITASK = 4 or 5 and TCRIT (=R1) behind TCUR (=R2)   ");
-      this._xerrwd.Run(MSG, 60, 24, 1, 0, 0
+      _xerrwd.Run(MSG, 60, 24, 1, 0, 0
                        , 0, 2, TCRIT, TN.v);
       goto LABEL700;
 LABEL625:
       ;
       FortranLib.Copy(ref MSG, "DVODE--  ITASK = 4 or 5 and TCRIT (=R1) behind TOUT (=R2)   ");
-      this._xerrwd.Run(MSG, 60, 25, 1, 0, 0
+      _xerrwd.Run(MSG, 60, 25, 1, 0, 0
                        , 0, 2, TCRIT, TOUT);
       goto LABEL700;
 LABEL626:
       FortranLib.Copy(ref MSG, "DVODE--  At start of problem, too much accuracy   ");
-      this._xerrwd.Run(MSG, 50, 26, 1, 0, 0
+      _xerrwd.Run(MSG, 50, 26, 1, 0, 0
                        , 0, 0, ZERO, ZERO);
       FortranLib.Copy(ref MSG, "      requested for precision of machine:   see TOLSF (=R1) ");
-      this._xerrwd.Run(MSG, 60, 26, 1, 0, 0
+      _xerrwd.Run(MSG, 60, 26, 1, 0, 0
                        , 0, 1, TOLSF, ZERO);
       RWORK[14 + o_rwork] = TOLSF;
       goto LABEL700;
 LABEL627:
       FortranLib.Copy(ref MSG, "DVODE--  Trouble from DVINDY.  ITASK = I1, TOUT = R1.       ");
-      this._xerrwd.Run(MSG, 60, 27, 1, 1, ITASK
+      _xerrwd.Run(MSG, 60, 27, 1, 1, ITASK
                        , 0, 1, TOUT, ZERO);
 // C
 LABEL700:
@@ -2636,7 +2636,7 @@ LABEL700:
 // C
 LABEL800:
       FortranLib.Copy(ref MSG, "DVODE--  Run aborted:  apparent infinite loop     ");
-      this._xerrwd.Run(MSG, 50, 303, 2, 0, 0
+      _xerrwd.Run(MSG, 50, 303, 2, 0, 0
                        , 0, 0, ZERO, ZERO);
       return;
       // C----------------------- End of Subroutine DVODE -----------------------
@@ -2668,7 +2668,7 @@ LABEL800:
     {
       #region Set Dependencies
 
-      this._dvnorm = dvnorm;
+      _dvnorm = dvnorm;
 
       #endregion Set Dependencies
 
@@ -2690,13 +2690,13 @@ LABEL800:
     {
       #region Dependencies (Initialization)
 
-      DVNORM dvnorm = new DVNORM();
+      var dvnorm = new DVNORM();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dvnorm = dvnorm;
+      _dvnorm = dvnorm;
 
       #endregion Set Dependencies
 
@@ -2886,7 +2886,7 @@ LABEL50:
       {
         TEMP[I + o_temp] = (TEMP[I + o_temp] - YDOT[I + o_ydot]) / H;
       }
-      YDDNRM = this._dvnorm.Run(N, TEMP, offset_temp, EWT, offset_ewt);
+      YDDNRM = _dvnorm.Run(N, TEMP, offset_temp, EWT, offset_ewt);
       // C Get the corresponding new value of h. --------------------------------
       if (YDDNRM * HUB * HUB > TWO)
       {
@@ -2987,8 +2987,8 @@ LABEL100:
     {
       #region Set Dependencies
 
-      this._dscal = dscal;
-      this._xerrwd = xerrwd;
+      _dscal = dscal;
+      _xerrwd = xerrwd;
 
       #endregion Set Dependencies
 
@@ -3005,7 +3005,7 @@ LABEL100:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -3073,7 +3073,7 @@ LABEL100:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -3093,24 +3093,24 @@ LABEL100:
     {
       #region Initialization Common Blocks
 
-      CommonBlock DVOD01 = new CommonBlock(48, 33, 0, 0);
-      CommonBlock DVOD02 = new CommonBlock(1, 8, 0, 0);
+      var DVOD01 = new CommonBlock(48, 33, 0, 0);
+      var DVOD02 = new CommonBlock(1, 8, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DSCAL dscal = new DSCAL();
-      IUMACH iumach = new IUMACH();
-      IXSAV ixsav = new IXSAV(iumach);
-      XERRWD xerrwd = new XERRWD(ixsav);
+      var dscal = new DSCAL();
+      var iumach = new IUMACH();
+      var ixsav = new IXSAV(iumach);
+      var xerrwd = new XERRWD(ixsav);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dscal = dscal;
-      this._xerrwd = xerrwd;
+      _dscal = dscal;
+      _xerrwd = xerrwd;
 
       #endregion Set Dependencies
 
@@ -3127,7 +3127,7 @@ LABEL100:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -3195,7 +3195,7 @@ LABEL100:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -3347,21 +3347,21 @@ LABEL35:
         return;
 LABEL55:
       R = Math.Pow(H.v, -K);
-      this._dscal.Run(N.v, R, ref DKY, offset_dky, 1);
+      _dscal.Run(N.v, R, ref DKY, offset_dky, 1);
       return;
 // C
 LABEL80:
       FortranLib.Copy(ref MSG, "DVINDY-- K (=I1) illegal      ");
-      this._xerrwd.Run(MSG, 30, 51, 1, 1, K
+      _xerrwd.Run(MSG, 30, 51, 1, 1, K
                        , 0, 0, ZERO, ZERO);
       IFLAG = -1;
       return;
 LABEL90:
       FortranLib.Copy(ref MSG, "DVINDY-- T (=R1) illegal      ");
-      this._xerrwd.Run(MSG, 30, 52, 1, 0, 0
+      _xerrwd.Run(MSG, 30, 52, 1, 0, 0
                        , 0, 1, T, ZERO);
       FortranLib.Copy(ref MSG, "      T not in interval TCUR - HU (= R1) to TCUR (=R2)      ");
-      this._xerrwd.Run(MSG, 60, 52, 1, 0, 0
+      _xerrwd.Run(MSG, 60, 52, 1, 0, 0
                        , 0, 2, TP, TN.v);
       IFLAG = -2;
       return;
@@ -3421,12 +3421,12 @@ LABEL90:
     {
       #region Set Dependencies
 
-      this._dvnorm = dvnorm;
-      this._dvjust = dvjust;
-      this._dscal = dscal;
-      this._dvset = dvset;
-      this._daxpy = daxpy;
-      this._dcopy = dcopy;
+      _dvnorm = dvnorm;
+      _dvjust = dvjust;
+      _dscal = dscal;
+      _dvset = dvset;
+      _daxpy = daxpy;
+      _dcopy = dcopy;
 
       #endregion Set Dependencies
 
@@ -3473,7 +3473,7 @@ LABEL90:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -3541,7 +3541,7 @@ LABEL90:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -3561,30 +3561,30 @@ LABEL90:
     {
       #region Initialization Common Blocks
 
-      CommonBlock DVOD01 = new CommonBlock(48, 33, 0, 0);
-      CommonBlock DVOD02 = new CommonBlock(1, 8, 0, 0);
+      var DVOD01 = new CommonBlock(48, 33, 0, 0);
+      var DVOD02 = new CommonBlock(1, 8, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DVNORM dvnorm = new DVNORM();
-      DAXPY daxpy = new DAXPY();
-      DSCAL dscal = new DSCAL();
-      DCOPY dcopy = new DCOPY();
-      DVSET dvset = new DVSET(DVOD01);
-      DVJUST dvjust = new DVJUST(daxpy, DVOD01);
+      var dvnorm = new DVNORM();
+      var daxpy = new DAXPY();
+      var dscal = new DSCAL();
+      var dcopy = new DCOPY();
+      var dvset = new DVSET(DVOD01);
+      var dvjust = new DVJUST(daxpy, DVOD01);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dvnorm = dvnorm;
-      this._dvjust = dvjust;
-      this._dscal = dscal;
-      this._dvset = dvset;
-      this._daxpy = daxpy;
-      this._dcopy = dcopy;
+      _dvnorm = dvnorm;
+      _dvjust = dvjust;
+      _dscal = dscal;
+      _dvset = dvset;
+      _daxpy = daxpy;
+      _dcopy = dcopy;
 
       #endregion Set Dependencies
 
@@ -3631,7 +3631,7 @@ LABEL90:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -3699,7 +3699,7 @@ LABEL90:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -3940,7 +3940,7 @@ LABEL50:
         goto LABEL150;
       if (NEWQ.v < NQ.v)
       {
-        this._dvjust.Run(ref YH, offset_yh, LDYH, -1);
+        _dvjust.Run(ref YH, offset_yh, LDYH, -1);
         NQ.v = NEWQ.v;
         L.v = NQ.v + 1;
         NQWAIT.v = L.v;
@@ -3948,7 +3948,7 @@ LABEL50:
       }
       if (NEWQ.v > NQ.v)
       {
-        this._dvjust.Run(ref YH, offset_yh, LDYH, 1);
+        _dvjust.Run(ref YH, offset_yh, LDYH, 1);
         NQ.v = NEWQ.v;
         L.v = NQ.v + 1;
         NQWAIT.v = L.v;
@@ -3985,7 +3985,7 @@ LABEL120:
       FLOTL = Convert.ToSingle(LMAX.v);
       if (MAXORD.v < NQ.v - 1)
       {
-        DDN = this._dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt) / TQ[1 + o_tq].v;
+        DDN = _dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt) / TQ[1 + o_tq].v;
         ETA.v = ONE / (Math.Pow(BIAS1 * DDN, ONE / FLOTL) + ADDON);
       }
       if (MAXORD.v == NQ.v && NEWQ.v == NQ.v + 1)
@@ -3993,13 +3993,13 @@ LABEL120:
       if (MAXORD.v == NQ.v - 1 && NEWQ.v == NQ.v + 1)
       {
         ETA.v = ETAQM1;
-        this._dvjust.Run(ref YH, offset_yh, LDYH, -1);
+        _dvjust.Run(ref YH, offset_yh, LDYH, -1);
       }
       if (MAXORD.v == NQ.v - 1 && NEWQ.v == NQ.v)
       {
-        DDN = this._dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt) / TQ[1 + o_tq].v;
+        DDN = _dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt) / TQ[1 + o_tq].v;
         ETA.v = ONE / (Math.Pow(BIAS1 * DDN, ONE / FLOTL) + ADDON);
-        this._dvjust.Run(ref YH, offset_yh, LDYH, -1);
+        _dvjust.Run(ref YH, offset_yh, LDYH, -1);
       }
       ETA.v = Math.Min(ETA.v, ONE);
       NQ.v = MAXORD.v;
@@ -4020,7 +4020,7 @@ LABEL150:
       for (J = 2; J <= L.v; J++)
       {
         R *= ETA.v;
-        this._dscal.Run(N.v, R, ref YH, 1 + J * LDYH + o_yh, 1);
+        _dscal.Run(N.v, R, ref YH, 1 + J * LDYH + o_yh, 1);
       }
       H.v = HSCAL.v * ETA.v;
       HSCAL.v = H.v;
@@ -4043,7 +4043,7 @@ LABEL200:
           YH1[I + o_yh1] += YH1[I + LDYH + o_yh1];
         }
       }
-      this._dvset.Run();
+      _dvset.Run();
       RL1.v = ONE / EL[2 + o_el].v;
       RC.v = RC.v * (RL1.v / PRL1.v);
       PRL1.v = RL1.v;
@@ -4112,12 +4112,12 @@ LABEL450:
       TAU[1 + o_tau].v = H.v;
       for (J = 1; J <= L.v; J++)
       {
-        this._daxpy.Run(N.v, EL[J + o_el].v, ACOR, offset_acor, 1, ref YH, 1 + J * LDYH + o_yh, 1);
+        _daxpy.Run(N.v, EL[J + o_el].v, ACOR, offset_acor, 1, ref YH, 1 + J * LDYH + o_yh, 1);
       }
       NQWAIT.v -= 1;
       if ((L.v == LMAX.v) || (NQWAIT.v != 1))
         goto LABEL490;
-      this._dcopy.Run(N.v, ACOR, offset_acor, 1, ref YH, 1 + LMAX.v * LDYH + o_yh, 1);
+      _dcopy.Run(N.v, ACOR, offset_acor, 1, ref YH, 1 + LMAX.v * LDYH + o_yh, 1);
       CONP.v = TQ[5 + o_tq].v;
 LABEL490:
       if (ETAMAX.v != ONE)
@@ -4176,7 +4176,7 @@ LABEL530:
       if (NQ.v == 1)
         goto LABEL540;
       ETA.v = Math.Max(ETAMIN, HMIN.v / Math.Abs(H.v));
-      this._dvjust.Run(ref YH, offset_yh, LDYH, -1);
+      _dvjust.Run(ref YH, offset_yh, LDYH, -1);
       L.v = NQ.v;
       NQ.v -= 1;
       NQWAIT.v = L.v;
@@ -4215,7 +4215,7 @@ LABEL560:
       if (NQ.v == 1)
         goto LABEL570;
       // C Compute ratio of new H to current H at the current order less one. ---
-      DDN = this._dvnorm.Run(N.v, YH, 1 + L.v * LDYH + o_yh, EWT, offset_ewt) / TQ[1 + o_tq].v;
+      DDN = _dvnorm.Run(N.v, YH, 1 + L.v * LDYH + o_yh, EWT, offset_ewt) / TQ[1 + o_tq].v;
       ETAQM1 = ONE / (Math.Pow(BIAS1 * DDN, ONE / (FLOTL - ONE)) + ADDON);
 LABEL570:
       ETAQP1 = ZERO;
@@ -4227,7 +4227,7 @@ LABEL570:
       {
         SAVF[I + o_savf] = ACOR[I + o_acor] - CNQUOT * YH[I + LMAX.v * LDYH + o_yh];
       }
-      DUP = this._dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt) / TQ[3 + o_tq].v;
+      DUP = _dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt) / TQ[3 + o_tq].v;
       ETAQP1 = ONE / (Math.Pow(BIAS3 * DUP, ONE / (FLOTL + ONE)) + ADDON);
 LABEL580:
       if (ETAQ >= ETAQP1)
@@ -4249,7 +4249,7 @@ LABEL610:
 LABEL620:
       ETA.v = ETAQP1;
       NEWQ.v = NQ.v + 1;
-      this._dcopy.Run(N.v, ACOR, offset_acor, 1, ref YH, 1 + LMAX.v * LDYH + o_yh, 1);
+      _dcopy.Run(N.v, ACOR, offset_acor, 1, ref YH, 1 + LMAX.v * LDYH + o_yh, 1);
 // C Test tentative new H against THRESH, ETAMAX, and HMXI, then exit. ----
 LABEL630:
       if (ETA.v < THRESH || ETAMAX.v == ONE)
@@ -4286,7 +4286,7 @@ LABEL690:
       if (NST.v <= 10)
         ETAMAX.v = ETAMX2;
       R = ONE / TQ[2 + o_tq].v;
-      this._dscal.Run(N.v, R, ref ACOR, offset_acor, 1);
+      _dscal.Run(N.v, R, ref ACOR, offset_acor, 1);
 LABEL720:
       JSTART.v = 1;
       return;
@@ -4347,7 +4347,7 @@ LABEL720:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -4420,7 +4420,7 @@ LABEL720:
     {
       #region Initialization Common Blocks
 
-      CommonBlock DVOD01 = new CommonBlock(48, 33, 0, 0);
+      var DVOD01 = new CommonBlock(48, 33, 0, 0);
 
       #endregion Initialization Common Blocks
 
@@ -4443,7 +4443,7 @@ LABEL720:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -4810,7 +4810,7 @@ LABEL300:
     {
       #region Set Dependencies
 
-      this._daxpy = daxpy;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
 
@@ -4827,7 +4827,7 @@ LABEL300:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -4900,19 +4900,19 @@ LABEL300:
     {
       #region Initialization Common Blocks
 
-      CommonBlock DVOD01 = new CommonBlock(48, 33, 0, 0);
+      var DVOD01 = new CommonBlock(48, 33, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DAXPY daxpy = new DAXPY();
+      var daxpy = new DAXPY();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._daxpy = daxpy;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
 
@@ -4929,7 +4929,7 @@ LABEL300:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -5210,7 +5210,7 @@ LABEL340:
       NQP1 = NQ.v + 1;
       for (J = 3; J <= NQP1; J++)
       {
-        this._daxpy.Run(N.v, EL[J + o_el].v, YH, 1 + LP1 * LDYH + o_yh, 1, ref YH, 1 + J * LDYH + o_yh, 1);
+        _daxpy.Run(N.v, EL[J + o_el].v, YH, 1 + LP1 * LDYH + o_yh, 1, ref YH, 1 + J * LDYH + o_yh, 1);
       }
       return;
       // C----------------------- End of Subroutine DVJUST ----------------------
@@ -5268,12 +5268,12 @@ LABEL340:
     {
       #region Set Dependencies
 
-      this._dvnorm = dvnorm;
-      this._dcopy = dcopy;
-      this._dvjac = dvjac;
-      this._dvsol = dvsol;
-      this._dscal = dscal;
-      this._daxpy = daxpy;
+      _dvnorm = dvnorm;
+      _dcopy = dcopy;
+      _dvjac = dvjac;
+      _dvsol = dvsol;
+      _dscal = dscal;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
 
@@ -5302,7 +5302,7 @@ LABEL340:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -5370,7 +5370,7 @@ LABEL340:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -5390,37 +5390,37 @@ LABEL340:
     {
       #region Initialization Common Blocks
 
-      CommonBlock DVOD01 = new CommonBlock(48, 33, 0, 0);
-      CommonBlock DVOD02 = new CommonBlock(1, 8, 0, 0);
+      var DVOD01 = new CommonBlock(48, 33, 0, 0);
+      var DVOD02 = new CommonBlock(1, 8, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DVNORM dvnorm = new DVNORM();
-      DCOPY dcopy = new DCOPY();
-      DSCAL dscal = new DSCAL();
-      IDAMAX idamax = new IDAMAX();
-      DAXPY daxpy = new DAXPY();
-      DDOT ddot = new DDOT();
-      DGEFA dgefa = new DGEFA(idamax, dscal, daxpy);
-      DACOPY dacopy = new DACOPY(dcopy);
-      DGBFA dgbfa = new DGBFA(idamax, dscal, daxpy);
-      DVJAC dvjac = new DVJAC(dvnorm, dcopy, dscal, dgefa, dacopy, dgbfa, DVOD01, DVOD02);
-      DGESL dgesl = new DGESL(ddot, daxpy);
-      DGBSL dgbsl = new DGBSL(ddot, daxpy);
-      DVSOL dvsol = new DVSOL(dgesl, dgbsl, DVOD01);
+      var dvnorm = new DVNORM();
+      var dcopy = new DCOPY();
+      var dscal = new DSCAL();
+      var idamax = new IDAMAX();
+      var daxpy = new DAXPY();
+      var ddot = new DDOT();
+      var dgefa = new DGEFA(idamax, dscal, daxpy);
+      var dacopy = new DACOPY(dcopy);
+      var dgbfa = new DGBFA(idamax, dscal, daxpy);
+      var dvjac = new DVJAC(dvnorm, dcopy, dscal, dgefa, dacopy, dgbfa, DVOD01, DVOD02);
+      var dgesl = new DGESL(ddot, daxpy);
+      var dgbsl = new DGBSL(ddot, daxpy);
+      var dvsol = new DVSOL(dgesl, dgbsl, DVOD01);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dvnorm = dvnorm;
-      this._dcopy = dcopy;
-      this._dvjac = dvjac;
-      this._dvsol = dvsol;
-      this._dscal = dscal;
-      this._daxpy = daxpy;
+      _dvnorm = dvnorm;
+      _dcopy = dcopy;
+      _dvjac = dvjac;
+      _dvsol = dvsol;
+      _dscal = dscal;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
 
@@ -5449,7 +5449,7 @@ LABEL340:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -5517,7 +5517,7 @@ LABEL340:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -5731,7 +5731,7 @@ LABEL340:
 LABEL220:
       M = 0;
       DELP = ZERO;
-      this._dcopy.Run(N.v, YH, 1 + 1 * LDYH + o_yh, 1, ref Y, offset_y, 1);
+      _dcopy.Run(N.v, YH, 1 + 1 * LDYH + o_yh, 1, ref Y, offset_y, 1);
       F.Run(N.v, TN.v, Y, offset_y, ref SAVF, offset_savf, RPAR[1 + o_rpar], IPAR[1 + o_ipar]);
       NFE.v += 1;
       if (IPUP.v <= 0)
@@ -5741,7 +5741,7 @@ LABEL220:
       // C preprocessed before starting the corrector iteration.  IPUP is set
       // C to 0 as an indicator that this has been done.
       // C-----------------------------------------------------------------------
-      this._dvjac.Run(ref Y, offset_y, YH, offset_yh, LDYH, EWT, offset_ewt, ref ACOR, offset_acor, SAVF, offset_savf
+      _dvjac.Run(ref Y, offset_y, YH, offset_yh, LDYH, EWT, offset_ewt, ref ACOR, offset_acor, SAVF, offset_savf
                       , ref WM, offset_wm, ref IWM, offset_iwm, F, JAC, ref IERPJ, RPAR, offset_rpar
                       , IPAR, offset_ipar);
       IPUP.v = 0;
@@ -5773,12 +5773,12 @@ LABEL270:
       {
         Y[I + o_y] = SAVF[I + o_savf] - ACOR[I + o_acor];
       }
-      DEL = this._dvnorm.Run(N.v, Y, offset_y, EWT, offset_ewt);
+      DEL = _dvnorm.Run(N.v, Y, offset_y, EWT, offset_ewt);
       for (I = 1; I <= N.v; I++)
       {
         Y[I + o_y] = YH[I + 1 * LDYH + o_yh] + SAVF[I + o_savf];
       }
-      this._dcopy.Run(N.v, SAVF, offset_savf, 1, ref ACOR, offset_acor, 1);
+      _dcopy.Run(N.v, SAVF, offset_savf, 1, ref ACOR, offset_acor, 1);
       goto LABEL400;
 // C-----------------------------------------------------------------------
 // C In the case of the chord method, compute the corrector error,
@@ -5791,17 +5791,17 @@ LABEL350:
       {
         Y[I + o_y] = (RL1.v * H.v) * SAVF[I + o_savf] - (RL1.v * YH[I + 2 * LDYH + o_yh] + ACOR[I + o_acor]);
       }
-      this._dvsol.Run(ref WM, offset_wm, IWM, offset_iwm, ref Y, offset_y, ref IERSL);
+      _dvsol.Run(ref WM, offset_wm, IWM, offset_iwm, ref Y, offset_y, ref IERSL);
       NNI.v += 1;
       if (IERSL > 0)
         goto LABEL410;
       if (METH.v == 2 && RC.v != ONE)
       {
         CSCALE = TWO / (ONE + RC.v);
-        this._dscal.Run(N.v, CSCALE, ref Y, offset_y, 1);
+        _dscal.Run(N.v, CSCALE, ref Y, offset_y, 1);
       }
-      DEL = this._dvnorm.Run(N.v, Y, offset_y, EWT, offset_ewt);
-      this._daxpy.Run(N.v, ONE, Y, offset_y, 1, ref ACOR, offset_acor, 1);
+      DEL = _dvnorm.Run(N.v, Y, offset_y, EWT, offset_ewt);
+      _daxpy.Run(N.v, ONE, Y, offset_y, 1, ref ACOR, offset_acor, 1);
       for (I = 1; I <= N.v; I++)
       {
         Y[I + o_y] = YH[I + 1 * LDYH + o_yh] + ACOR[I + o_acor];
@@ -5848,7 +5848,7 @@ LABEL450:
       if (M == 0)
         ACNRM.v = DEL;
       if (M > 0)
-        ACNRM.v = this._dvnorm.Run(N.v, ACOR, offset_acor, EWT, offset_ewt);
+        ACNRM.v = _dvnorm.Run(N.v, ACOR, offset_acor, EWT, offset_ewt);
       return;
       // C----------------------- End of Subroutine DVNLSD ----------------------
 
@@ -5904,12 +5904,12 @@ LABEL450:
     {
       #region Set Dependencies
 
-      this._dvnorm = dvnorm;
-      this._dcopy = dcopy;
-      this._dscal = dscal;
-      this._dgefa = dgefa;
-      this._dacopy = dacopy;
-      this._dgbfa = dgbfa;
+      _dvnorm = dvnorm;
+      _dcopy = dcopy;
+      _dscal = dscal;
+      _dgefa = dgefa;
+      _dacopy = dacopy;
+      _dgbfa = dgbfa;
 
       #endregion Set Dependencies
 
@@ -5930,7 +5930,7 @@ LABEL450:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -5998,7 +5998,7 @@ LABEL450:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -6018,32 +6018,32 @@ LABEL450:
     {
       #region Initialization Common Blocks
 
-      CommonBlock DVOD01 = new CommonBlock(48, 33, 0, 0);
-      CommonBlock DVOD02 = new CommonBlock(1, 8, 0, 0);
+      var DVOD01 = new CommonBlock(48, 33, 0, 0);
+      var DVOD02 = new CommonBlock(1, 8, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DVNORM dvnorm = new DVNORM();
-      DCOPY dcopy = new DCOPY();
-      DSCAL dscal = new DSCAL();
-      IDAMAX idamax = new IDAMAX();
-      DAXPY daxpy = new DAXPY();
-      DGEFA dgefa = new DGEFA(idamax, dscal, daxpy);
-      DACOPY dacopy = new DACOPY(dcopy);
-      DGBFA dgbfa = new DGBFA(idamax, dscal, daxpy);
+      var dvnorm = new DVNORM();
+      var dcopy = new DCOPY();
+      var dscal = new DSCAL();
+      var idamax = new IDAMAX();
+      var daxpy = new DAXPY();
+      var dgefa = new DGEFA(idamax, dscal, daxpy);
+      var dacopy = new DACOPY(dcopy);
+      var dgbfa = new DGBFA(idamax, dscal, daxpy);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dvnorm = dvnorm;
-      this._dcopy = dcopy;
-      this._dscal = dscal;
-      this._dgefa = dgefa;
-      this._dacopy = dacopy;
-      this._dgbfa = dgbfa;
+      _dvnorm = dvnorm;
+      _dcopy = dcopy;
+      _dscal = dscal;
+      _dgefa = dgefa;
+      _dacopy = dacopy;
+      _dgbfa = dgbfa;
 
       #endregion Set Dependencies
 
@@ -6064,7 +6064,7 @@ LABEL450:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -6132,7 +6132,7 @@ LABEL450:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       HU = DVOD02.doubleData[0];
       NCFN = DVOD02.intData[0];
       NETF = DVOD02.intData[1];
@@ -6358,7 +6358,7 @@ LABEL450:
         JAC.Run(N.v, TN.v, Y, offset_y, 0, 0, ref WM, 3 + o_wm
                 , N.v, RPAR[1 + o_rpar], IPAR[1 + o_ipar]);
         if (JSV.v == 1)
-          this._dcopy.Run(LENP, WM, 3 + o_wm, 1, ref WM, LOCJS.v + o_wm, 1);
+          _dcopy.Run(LENP, WM, 3 + o_wm, 1, ref WM, LOCJS.v + o_wm, 1);
       }
       // C
       if (JOK == -1 && MITER.v == 2)
@@ -6367,7 +6367,7 @@ LABEL450:
         NJE.v += 1;
         NSLJ.v = NST.v;
         JCUR.v = 1;
-        FAC = this._dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt);
+        FAC = _dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt);
         R0 = THOU * Math.Abs(H.v) * UROUND.v * Convert.ToSingle(N.v) * FAC;
         if (R0 == ZERO)
           R0 = ONE;
@@ -6390,21 +6390,21 @@ LABEL450:
         NFE.v += N.v;
         LENP = N.v * N.v;
         if (JSV.v == 1)
-          this._dcopy.Run(LENP, WM, 3 + o_wm, 1, ref WM, LOCJS.v + o_wm, 1);
+          _dcopy.Run(LENP, WM, 3 + o_wm, 1, ref WM, LOCJS.v + o_wm, 1);
       }
       // C
       if (JOK == 1 && (MITER.v == 1 || MITER.v == 2))
       {
         JCUR.v = 0;
         LENP = N.v * N.v;
-        this._dcopy.Run(LENP, WM, LOCJS.v + o_wm, 1, ref WM, 3 + o_wm, 1);
+        _dcopy.Run(LENP, WM, LOCJS.v + o_wm, 1, ref WM, 3 + o_wm, 1);
       }
       // C
       if (MITER.v == 1 || MITER.v == 2)
       {
         // C Multiply Jacobian by scalar, add identity, and do LU decomposition. --
         CON = -HRL1;
-        this._dscal.Run(LENP, CON, ref WM, 3 + o_wm, 1);
+        _dscal.Run(LENP, CON, ref WM, 3 + o_wm, 1);
         J = 3;
         NP1 = N.v + 1;
         for (I = 1; I <= N.v; I++)
@@ -6413,7 +6413,7 @@ LABEL450:
           J += NP1;
         }
         NLU.v += 1;
-        this._dgefa.Run(ref WM, 3 + o_wm, N.v, N.v, ref IWM, 31 + o_iwm, ref IER);
+        _dgefa.Run(ref WM, 3 + o_wm, N.v, N.v, ref IWM, 31 + o_iwm, ref IER);
         if (IER != 0)
           IERPJ = 1;
         return;
@@ -6475,7 +6475,7 @@ LABEL330:
         JAC.Run(N.v, TN.v, Y, offset_y, ML, MU, ref WM, ML3 + o_wm
                 , MEBAND, RPAR[1 + o_rpar], IPAR[1 + o_ipar]);
         if (JSV.v == 1)
-          this._dacopy.Run(MBAND, N.v, WM, ML3 + o_wm, MEBAND, ref WM, LOCJS.v + o_wm, MBAND);
+          _dacopy.Run(MBAND, N.v, WM, ML3 + o_wm, MEBAND, ref WM, LOCJS.v + o_wm, MBAND);
       }
       // C
       if (JOK == -1 && MITER.v == 5)
@@ -6487,7 +6487,7 @@ LABEL330:
         MBA = Math.Min(MBAND, N.v);
         MEB1 = MEBAND - 1;
         SRUR = WM[1 + o_wm];
-        FAC = this._dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt);
+        FAC = _dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt);
         R0 = THOU * Math.Abs(H.v) * UROUND.v * Convert.ToSingle(N.v) * FAC;
         if (R0 == ZERO)
           R0 = ONE;
@@ -6518,18 +6518,18 @@ LABEL330:
         }
         NFE.v += MBA;
         if (JSV.v == 1)
-          this._dacopy.Run(MBAND, N.v, WM, ML3 + o_wm, MEBAND, ref WM, LOCJS.v + o_wm, MBAND);
+          _dacopy.Run(MBAND, N.v, WM, ML3 + o_wm, MEBAND, ref WM, LOCJS.v + o_wm, MBAND);
       }
       // C
       if (JOK == 1)
       {
         JCUR.v = 0;
-        this._dacopy.Run(MBAND, N.v, WM, LOCJS.v + o_wm, MBAND, ref WM, ML3 + o_wm, MEBAND);
+        _dacopy.Run(MBAND, N.v, WM, LOCJS.v + o_wm, MBAND, ref WM, ML3 + o_wm, MEBAND);
       }
       // C
       // C Multiply Jacobian by scalar, add identity, and do LU decomposition.
       CON = -HRL1;
-      this._dscal.Run(LENP, CON, ref WM, 3 + o_wm, 1);
+      _dscal.Run(LENP, CON, ref WM, 3 + o_wm, 1);
       II = MBAND + 2;
       for (I = 1; I <= N.v; I++)
       {
@@ -6537,7 +6537,7 @@ LABEL330:
         II += MEBAND;
       }
       NLU.v += 1;
-      this._dgbfa.Run(ref WM, 3 + o_wm, MEBAND, N.v, ML, MU, ref IWM, 31 + o_iwm
+      _dgbfa.Run(ref WM, 3 + o_wm, MEBAND, N.v, ML, MU, ref IWM, 31 + o_iwm
                       , ref IER);
       if (IER != 0)
         IERPJ = 1;
@@ -6567,7 +6567,7 @@ LABEL330:
     {
       #region Set Dependencies
 
-      this._dcopy = dcopy;
+      _dcopy = dcopy;
 
       #endregion Set Dependencies
     }
@@ -6576,13 +6576,13 @@ LABEL330:
     {
       #region Dependencies (Initialization)
 
-      DCOPY dcopy = new DCOPY();
+      var dcopy = new DCOPY();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dcopy = dcopy;
+      _dcopy = dcopy;
 
       #endregion Set Dependencies
     }
@@ -6622,7 +6622,7 @@ LABEL330:
 
       for (IC = 1; IC <= NCOL; IC++)
       {
-        this._dcopy.Run(NROW, A, 1 + IC * NROWA + o_a, 1, ref B, 1 + IC * NROWB + o_b, 1);
+        _dcopy.Run(NROW, A, 1 + IC * NROWA + o_a, 1, ref B, 1 + IC * NROWB + o_b, 1);
       }
       // C
       return;
@@ -6670,8 +6670,8 @@ LABEL330:
     {
       #region Set Dependencies
 
-      this._dgesl = dgesl;
-      this._dgbsl = dgbsl;
+      _dgesl = dgesl;
+      _dgbsl = dgbsl;
 
       #endregion Set Dependencies
 
@@ -6688,7 +6688,7 @@ LABEL330:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -6761,23 +6761,23 @@ LABEL330:
     {
       #region Initialization Common Blocks
 
-      CommonBlock DVOD01 = new CommonBlock(48, 33, 0, 0);
+      var DVOD01 = new CommonBlock(48, 33, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      DDOT ddot = new DDOT();
-      DAXPY daxpy = new DAXPY();
-      DGESL dgesl = new DGESL(ddot, daxpy);
-      DGBSL dgbsl = new DGBSL(ddot, daxpy);
+      var ddot = new DDOT();
+      var daxpy = new DAXPY();
+      var dgesl = new DGESL(ddot, daxpy);
+      var dgbsl = new DGBSL(ddot, daxpy);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dgesl = dgesl;
-      this._dgbsl = dgbsl;
+      _dgesl = dgesl;
+      _dgbsl = dgbsl;
 
       #endregion Set Dependencies
 
@@ -6794,7 +6794,7 @@ LABEL330:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       ACNRM = DVOD01.doubleData[0];
       CCMXJ = DVOD01.doubleData[1];
       CONP = DVOD01.doubleData[2];
@@ -6972,7 +6972,7 @@ LABEL330:
           goto LABEL400;
       }
 LABEL100:
-      this._dgesl.Run(WM, 3 + o_wm, N.v, N.v, IWM, 31 + o_iwm, ref X, offset_x, 0);
+      _dgesl.Run(WM, 3 + o_wm, N.v, N.v, IWM, 31 + o_iwm, ref X, offset_x, 0);
       return;
 // C
 LABEL300:
@@ -7004,7 +7004,7 @@ LABEL400:
       ML = IWM[1 + o_iwm];
       MU = IWM[2 + o_iwm];
       MEBAND = 2 * ML + MU + 1;
-      this._dgbsl.Run(WM, 3 + o_wm, MEBAND, N.v, ML, MU, IWM, 31 + o_iwm
+      _dgbsl.Run(WM, 3 + o_wm, MEBAND, N.v, ML, MU, IWM, 31 + o_iwm
                       , ref X, offset_x, 0);
       return;
       // C----------------------- End of Subroutine DVSOL -----------------------
@@ -7065,7 +7065,7 @@ LABEL400:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       //Start Array: RVOD1  StartIndex: 0  LastIndex: 47
       RVOD1 = DVOD01.doubleData;
       o_rvod1 = -1;  //o_ = StartIndex-1
@@ -7079,7 +7079,7 @@ LABEL400:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       //Start Array: RVOD2  StartIndex: 0  LastIndex: 0
       RVOD2 = DVOD02.doubleData;
       o_rvod2 = -1;  //o_ = StartIndex-1
@@ -7098,8 +7098,8 @@ LABEL400:
     {
       #region Initialization Common Blocks
 
-      CommonBlock DVOD01 = new CommonBlock(48, 33, 0, 0);
-      CommonBlock DVOD02 = new CommonBlock(1, 8, 0, 0);
+      var DVOD01 = new CommonBlock(48, 33, 0, 0);
+      var DVOD02 = new CommonBlock(1, 8, 0, 0);
 
       #endregion Initialization Common Blocks
 
@@ -7120,7 +7120,7 @@ LABEL400:
 
       #region Common Block: DVOD01 Initialization
 
-      this._dvod01 = DVOD01;
+      _dvod01 = DVOD01;
       //Start Array: RVOD1  StartIndex: 0  LastIndex: 47
       RVOD1 = DVOD01.doubleData;
       o_rvod1 = -1;  //o_ = StartIndex-1
@@ -7134,7 +7134,7 @@ LABEL400:
 
       #region Common Block: DVOD02 Initialization
 
-      this._dvod02 = DVOD02;
+      _dvod02 = DVOD02;
       //Start Array: RVOD2  StartIndex: 0  LastIndex: 0
       RVOD2 = DVOD02.doubleData;
       o_rvod2 = -1;  //o_ = StartIndex-1
@@ -7593,7 +7593,7 @@ LABEL40:
     {
       #region Set Dependencies
 
-      this._ixsav = ixsav;
+      _ixsav = ixsav;
 
       #endregion Set Dependencies
     }
@@ -7602,14 +7602,14 @@ LABEL40:
     {
       #region Dependencies (Initialization)
 
-      IUMACH iumach = new IUMACH();
-      IXSAV ixsav = new IXSAV(iumach);
+      var iumach = new IUMACH();
+      var ixsav = new IXSAV(iumach);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._ixsav = ixsav;
+      _ixsav = ixsav;
 
       #endregion Set Dependencies
     }
@@ -7773,8 +7773,8 @@ LABEL40:
 
       #endregion Prolog
 
-      LUNIT = this._ixsav.Run(1, 0, false);
-      MESFLG = this._ixsav.Run(2, 0, false);
+      LUNIT = _ixsav.Run(1, 0, false);
+      MESFLG = _ixsav.Run(2, 0, false);
       if (MESFLG == 0)
         goto LABEL100;
       // C
@@ -7846,7 +7846,7 @@ LABEL100:
     {
       #region Set Dependencies
 
-      this._ixsav = ixsav;
+      _ixsav = ixsav;
 
       #endregion Set Dependencies
     }
@@ -7855,14 +7855,14 @@ LABEL100:
     {
       #region Dependencies (Initialization)
 
-      IUMACH iumach = new IUMACH();
-      IXSAV ixsav = new IXSAV(iumach);
+      var iumach = new IUMACH();
+      var ixsav = new IXSAV(iumach);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._ixsav = ixsav;
+      _ixsav = ixsav;
 
       #endregion Set Dependencies
     }
@@ -7938,7 +7938,7 @@ LABEL100:
       #endregion Prolog
 
       if (MFLAG == 0 || MFLAG == 1)
-        JUNK = this._ixsav.Run(2, MFLAG, true);
+        JUNK = _ixsav.Run(2, MFLAG, true);
       return;
       // C----------------------- End of Subroutine XSETF -----------------------
     }
@@ -7988,7 +7988,7 @@ LABEL100:
     {
       #region Set Dependencies
 
-      this._ixsav = ixsav;
+      _ixsav = ixsav;
 
       #endregion Set Dependencies
     }
@@ -7997,14 +7997,14 @@ LABEL100:
     {
       #region Dependencies (Initialization)
 
-      IUMACH iumach = new IUMACH();
-      IXSAV ixsav = new IXSAV(iumach);
+      var iumach = new IUMACH();
+      var ixsav = new IXSAV(iumach);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._ixsav = ixsav;
+      _ixsav = ixsav;
 
       #endregion Set Dependencies
     }
@@ -8076,7 +8076,7 @@ LABEL100:
       #endregion Prolog
 
       if (LUN > 0)
-        JUNK = this._ixsav.Run(1, LUN, true);
+        JUNK = _ixsav.Run(1, LUN, true);
       return;
       // C----------------------- End of Subroutine XSETUN ----------------------
     }
@@ -8157,7 +8157,7 @@ LABEL100:
     {
       #region Set Dependencies
 
-      this._iumach = iumach;
+      _iumach = iumach;
 
       #endregion Set Dependencies
 
@@ -8175,13 +8175,13 @@ LABEL100:
     {
       #region Dependencies (Initialization)
 
-      IUMACH iumach = new IUMACH();
+      var iumach = new IUMACH();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._iumach = iumach;
+      _iumach = iumach;
 
       #endregion Set Dependencies
 
@@ -8323,7 +8323,7 @@ LABEL100:
       if (IPAR == 1)
       {
         if (LUNIT == -1)
-          LUNIT = this._iumach.Run();
+          LUNIT = _iumach.Run();
         ixsav = LUNIT;
         if (ISET)
           LUNIT = IVALUE;
@@ -8494,7 +8494,7 @@ LABEL100:
     {
       #region Set Dependencies
 
-      this._dumsum = dumsum;
+      _dumsum = dumsum;
 
       #endregion Set Dependencies
     }
@@ -8503,13 +8503,13 @@ LABEL100:
     {
       #region Dependencies (Initialization)
 
-      DUMSUM dumsum = new DUMSUM();
+      var dumsum = new DUMSUM();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dumsum = dumsum;
+      _dumsum = dumsum;
 
       #endregion Set Dependencies
     }
@@ -8590,7 +8590,7 @@ LABEL100:
       U = 1.0E0;
 LABEL10:
       U *= 0.5E0;
-      this._dumsum.Run(1.0E0, U, ref COMP);
+      _dumsum.Run(1.0E0, U, ref COMP);
       if (COMP != 1.0E0)
         goto LABEL10;
       dumach = U * 2.0E0;
@@ -8692,9 +8692,9 @@ LABEL10:
     {
       #region Set Dependencies
 
-      this._idamax = idamax;
-      this._dscal = dscal;
-      this._daxpy = daxpy;
+      _idamax = idamax;
+      _dscal = dscal;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
     }
@@ -8703,17 +8703,17 @@ LABEL10:
     {
       #region Dependencies (Initialization)
 
-      IDAMAX idamax = new IDAMAX();
-      DSCAL dscal = new DSCAL();
-      DAXPY daxpy = new DAXPY();
+      var idamax = new IDAMAX();
+      var dscal = new DSCAL();
+      var daxpy = new DAXPY();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._idamax = idamax;
-      this._dscal = dscal;
-      this._daxpy = daxpy;
+      _idamax = idamax;
+      _dscal = dscal;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
     }
@@ -8900,7 +8900,7 @@ LABEL10:
         // C
         // C        FIND L = PIVOT INDEX
         // C
-        L = this._idamax.Run(N - K + 1, A, K + K * LDA + o_a, 1) + K - 1;
+        L = _idamax.Run(N - K + 1, A, K + K * LDA + o_a, 1) + K - 1;
         IPVT[K + o_ipvt] = L;
         // C
         // C        ZERO PIVOT IMPLIES THIS COLUMN ALREADY TRIANGULARIZED
@@ -8921,7 +8921,7 @@ LABEL10:
         // C           COMPUTE MULTIPLIERS
         // C
         T = -1.0E0 / A[K + K * LDA + o_a];
-        this._dscal.Run(N - K, T, ref A, K + 1 + K * LDA + o_a, 1);
+        _dscal.Run(N - K, T, ref A, K + 1 + K * LDA + o_a, 1);
         // C
         // C           ROW ELIMINATION WITH COLUMN INDEXING
         // C
@@ -8934,7 +8934,7 @@ LABEL10:
           A[K + J * LDA + o_a] = T;
 LABEL20:
           ;
-          this._daxpy.Run(N - K, T, A, K + 1 + K * LDA + o_a, 1, ref A, K + 1 + J * LDA + o_a, 1);
+          _daxpy.Run(N - K, T, A, K + 1 + K * LDA + o_a, 1, ref A, K + 1 + J * LDA + o_a, 1);
         }
         goto LABEL50;
 LABEL40:
@@ -9042,8 +9042,8 @@ LABEL70:
     {
       #region Set Dependencies
 
-      this._ddot = ddot;
-      this._daxpy = daxpy;
+      _ddot = ddot;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
     }
@@ -9052,15 +9052,15 @@ LABEL70:
     {
       #region Dependencies (Initialization)
 
-      DDOT ddot = new DDOT();
-      DAXPY daxpy = new DAXPY();
+      var ddot = new DDOT();
+      var daxpy = new DAXPY();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._ddot = ddot;
-      this._daxpy = daxpy;
+      _ddot = ddot;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
     }
@@ -9278,7 +9278,7 @@ LABEL70:
         B[K + o_b] = T;
 LABEL10:
         ;
-        this._daxpy.Run(N - K, T, A, K + 1 + K * LDA + o_a, 1, ref B, K + 1 + o_b, 1);
+        _daxpy.Run(N - K, T, A, K + 1 + K * LDA + o_a, 1, ref B, K + 1 + o_b, 1);
       }
 LABEL30:
       ;
@@ -9290,7 +9290,7 @@ LABEL30:
         K = N + 1 - KB;
         B[K + o_b] /= A[K + K * LDA + o_a];
         T = -B[K + o_b];
-        this._daxpy.Run(K - 1, T, A, 1 + K * LDA + o_a, 1, ref B, 1 + o_b, 1);
+        _daxpy.Run(K - 1, T, A, 1 + K * LDA + o_a, 1, ref B, 1 + o_b, 1);
       }
       goto LABEL100;
 LABEL50:
@@ -9301,7 +9301,7 @@ LABEL50:
       // C
       for (K = 1; K <= N; K++)
       {
-        T = this._ddot.Run(K - 1, A, 1 + K * LDA + o_a, 1, B, 1 + o_b, 1);
+        T = _ddot.Run(K - 1, A, 1 + K * LDA + o_a, 1, B, 1 + o_b, 1);
         B[K + o_b] = (B[K + o_b] - T) / A[K + K * LDA + o_a];
       }
       // C
@@ -9312,7 +9312,7 @@ LABEL50:
       for (KB = 1; KB <= NM1; KB++)
       {
         K = N - KB;
-        B[K + o_b] += this._ddot.Run(N - K, A, K + 1 + K * LDA + o_a, 1, B, K + 1 + o_b, 1);
+        B[K + o_b] += _ddot.Run(N - K, A, K + 1 + K * LDA + o_a, 1, B, K + 1 + o_b, 1);
         L = IPVT[K + o_ipvt];
         if (L == K)
           goto LABEL70;
@@ -9443,9 +9443,9 @@ LABEL100:
     {
       #region Set Dependencies
 
-      this._idamax = idamax;
-      this._dscal = dscal;
-      this._daxpy = daxpy;
+      _idamax = idamax;
+      _dscal = dscal;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
     }
@@ -9454,17 +9454,17 @@ LABEL100:
     {
       #region Dependencies (Initialization)
 
-      IDAMAX idamax = new IDAMAX();
-      DSCAL dscal = new DSCAL();
-      DAXPY daxpy = new DAXPY();
+      var idamax = new IDAMAX();
+      var dscal = new DSCAL();
+      var daxpy = new DAXPY();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._idamax = idamax;
-      this._dscal = dscal;
-      this._daxpy = daxpy;
+      _idamax = idamax;
+      _dscal = dscal;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
     }
@@ -9793,7 +9793,7 @@ LABEL50:
         // C        FIND L = PIVOT INDEX
         // C
         LM = Math.Min(ML, N - K);
-        L = this._idamax.Run(LM + 1, ABD, M + K * LDA + o_abd, 1) + M - 1;
+        L = _idamax.Run(LM + 1, ABD, M + K * LDA + o_abd, 1) + M - 1;
         IPVT[K + o_ipvt] = L + K - M;
         // C
         // C        ZERO PIVOT IMPLIES THIS COLUMN ALREADY TRIANGULARIZED
@@ -9814,7 +9814,7 @@ LABEL60:
         // C           COMPUTE MULTIPLIERS
         // C
         T = -1.0E0 / ABD[M + K * LDA + o_abd];
-        this._dscal.Run(LM, T, ref ABD, M + 1 + K * LDA + o_abd, 1);
+        _dscal.Run(LM, T, ref ABD, M + 1 + K * LDA + o_abd, 1);
         // C
         // C           ROW ELIMINATION WITH COLUMN INDEXING
         // C
@@ -9833,7 +9833,7 @@ LABEL60:
           ABD[MM + J * LDA + o_abd] = T;
 LABEL70:
           ;
-          this._daxpy.Run(LM, T, ABD, M + 1 + K * LDA + o_abd, 1, ref ABD, MM + 1 + J * LDA + o_abd, 1);
+          _daxpy.Run(LM, T, ABD, M + 1 + K * LDA + o_abd, 1, ref ABD, MM + 1 + J * LDA + o_abd, 1);
         }
 LABEL90:
         ;
@@ -9950,8 +9950,8 @@ LABEL130:
     {
       #region Set Dependencies
 
-      this._ddot = ddot;
-      this._daxpy = daxpy;
+      _ddot = ddot;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
     }
@@ -9960,15 +9960,15 @@ LABEL130:
     {
       #region Dependencies (Initialization)
 
-      DDOT ddot = new DDOT();
-      DAXPY daxpy = new DAXPY();
+      var ddot = new DDOT();
+      var daxpy = new DAXPY();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._ddot = ddot;
-      this._daxpy = daxpy;
+      _ddot = ddot;
+      _daxpy = daxpy;
 
       #endregion Set Dependencies
     }
@@ -10217,7 +10217,7 @@ LABEL130:
         B[K + o_b] = T;
 LABEL10:
         ;
-        this._daxpy.Run(LM, T, ABD, M + 1 + K * LDA + o_abd, 1, ref B, K + 1 + o_b, 1);
+        _daxpy.Run(LM, T, ABD, M + 1 + K * LDA + o_abd, 1, ref B, K + 1 + o_b, 1);
       }
 LABEL30:
       ;
@@ -10232,7 +10232,7 @@ LABEL30:
         LA = M - LM;
         LB = K - LM;
         T = -B[K + o_b];
-        this._daxpy.Run(LM, T, ABD, LA + K * LDA + o_abd, 1, ref B, LB + o_b, 1);
+        _daxpy.Run(LM, T, ABD, LA + K * LDA + o_abd, 1, ref B, LB + o_b, 1);
       }
       goto LABEL100;
 LABEL50:
@@ -10246,7 +10246,7 @@ LABEL50:
         LM = Math.Min(K, M) - 1;
         LA = M - LM;
         LB = K - LM;
-        T = this._ddot.Run(LM, ABD, LA + K * LDA + o_abd, 1, B, LB + o_b, 1);
+        T = _ddot.Run(LM, ABD, LA + K * LDA + o_abd, 1, B, LB + o_b, 1);
         B[K + o_b] = (B[K + o_b] - T) / ABD[M + K * LDA + o_abd];
       }
       // C
@@ -10260,7 +10260,7 @@ LABEL50:
       {
         K = N - KB;
         LM = Math.Min(ML, N - K);
-        B[K + o_b] += this._ddot.Run(LM, ABD, M + 1 + K * LDA + o_abd, 1, B, K + 1 + o_b, 1);
+        B[K + o_b] += _ddot.Run(LM, ABD, M + 1 + K * LDA + o_abd, 1, B, K + 1 + o_b, 1);
         L = IPVT[K + o_ipvt];
         if (L == K)
           goto LABEL70;

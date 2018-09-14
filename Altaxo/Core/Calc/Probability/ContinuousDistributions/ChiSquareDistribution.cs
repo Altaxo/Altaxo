@@ -126,7 +126,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.F;
+        return F;
       }
       set
       {
@@ -165,7 +165,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.F;
+        return F;
       }
     }
 
@@ -176,7 +176,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.F - 2.0 / 3.0;
+        return F - 2.0 / 3.0;
       }
     }
 
@@ -187,7 +187,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return 2.0 * this.F;
+        return 2.0 * F;
       }
     }
 
@@ -198,9 +198,9 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.F >= 2)
+        if (F >= 2)
         {
-          return new double[] { this.F - 2.0 };
+          return new double[] { F - 2.0 };
         }
         else
         {

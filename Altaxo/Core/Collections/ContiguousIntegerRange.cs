@@ -103,7 +103,7 @@ namespace Altaxo.Collections
     /// <param name="start">First element belonging to the range.</param>
     /// <param name="last">Last element belonging to the range.</param>
     /// <returns>Newly constructed integer range.</returns>
-    static public ContiguousIntegerRange FromFirstAndLastInclusive(int start, int last)
+    public static ContiguousIntegerRange FromFirstAndLastInclusive(int start, int last)
     {
       if (!(last >= start))
         throw new ArgumentOutOfRangeException("Last has to be greater than or equal to start");
@@ -118,7 +118,7 @@ namespace Altaxo.Collections
     /// <param name="start">First element belonging to the range.</param>
     /// <param name="end">Element following immediately after the last element, i.e. <see cref="LastInclusive"/>+1.</param>
     /// <returns>Newly constructed integer range.</returns>
-    static public ContiguousIntegerRange FromStartAndEndExclusive(int start, int end)
+    public static ContiguousIntegerRange FromStartAndEndExclusive(int start, int end)
     {
       if (end == start)
         return new ContiguousIntegerRange(); // return an empty range
@@ -131,7 +131,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets a standard empty integer range (<see cref="Start"/> and <see cref="Count"/> set to zero).
     /// </summary>
-    static public ContiguousIntegerRange Empty
+    public static ContiguousIntegerRange Empty
     {
       get
       {
@@ -320,7 +320,7 @@ namespace Altaxo.Collections
 
     public object Clone()
     {
-      return new ContiguousIntegerRange { _start = this._start, _count = this._count };
+      return new ContiguousIntegerRange { _start = _start, _count = _count };
     }
 
     #endregion ICloneable Members

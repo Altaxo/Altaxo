@@ -85,9 +85,9 @@ namespace Altaxo.Calc.Ode.DVode
     {
       //dvode = new DVODE();
 
-      this._IState = 1;
-      this._UserJacobian = false;
-      this._Type = type;
+      _IState = 1;
+      _UserJacobian = false;
+      _Type = type;
 
       OdeJacobian jac = null;
 
@@ -104,9 +104,9 @@ namespace Altaxo.Calc.Ode.DVode
     {
       //dvode = new DVODE();
 
-      this._IState = 1;
-      this._UserJacobian = true;
-      this._Type = ODEType.Stiff;
+      _IState = 1;
+      _UserJacobian = true;
+      _Type = ODEType.Stiff;
 
       base.InitializeInternal(Func, Jac, numEquations);
     }
@@ -122,23 +122,23 @@ namespace Altaxo.Calc.Ode.DVode
     /// <returns>A array containing the solution of the differential equations at the point <paramref name="tEnd"/>.</returns>
     public double[] Solve(double tEnd)
     {
-      this.CheckInitialization();
+      CheckInitialization();
 
       bool WasSuccessfully = true;
-      this._dvode.Run(this._fex, this._NEquations, ref this._Y, 0, ref this._T0, tEnd, this._ITolAdamsGears,
-          this._RelTolArray, 0, this._AbsTolArray, 0,
-          this._ITask, ref this._IState, this._IOpt, ref this._RWork, 0,
-          this._Lrw, ref this._IWork, 0, this._Liw, this._jex, this._Mf, this._RPar, 0,
-          this._IPar, 0);
-      if (this._IState < 0)
+      _dvode.Run(_fex, _NEquations, ref _Y, 0, ref _T0, tEnd, _ITolAdamsGears,
+          _RelTolArray, 0, _AbsTolArray, 0,
+          _ITask, ref _IState, _IOpt, ref _RWork, 0,
+          _Lrw, ref _IWork, 0, _Liw, _jex, _Mf, _RPar, 0,
+          _IPar, 0);
+      if (_IState < 0)
         WasSuccessfully = false;
 
       if (WasSuccessfully == false)
       {
-        throw new Exception(this._Errors[-this._IState]);
+        throw new Exception(_Errors[-_IState]);
       }
 
-      return this._Y;
+      return _Y;
     }
 
     /// <summary>
@@ -152,11 +152,11 @@ namespace Altaxo.Calc.Ode.DVode
     /// </returns>
     public double[,] Solve(double[] y0, double[] tspan)
     {
-      this.CheckTArray(tspan);
+      CheckTArray(tspan);
 
-      this.SetInitialValues(tspan[0], y0);
+      SetInitialValues(tspan[0], y0);
 
-      double[,] solution = new double[tspan.Length, this._NEquations + 1];
+      double[,] solution = new double[tspan.Length, _NEquations + 1];
 
       double[] tempY;
 
@@ -165,7 +165,7 @@ namespace Altaxo.Calc.Ode.DVode
       for (int i = 0; i < tspan.Length; i++)
       {
         time = tspan[i];
-        tempY = this.Solve(time);
+        tempY = Solve(time);
 
         solution[i, 0] = time;
 
@@ -191,20 +191,20 @@ namespace Altaxo.Calc.Ode.DVode
     /// </returns>
     public double[,] Solve(double[] y0, double t0, double deltaT, double tf)
     {
-      this.CheckArguments(t0, deltaT, tf);
+      CheckArguments(t0, deltaT, tf);
 
-      this.SetInitialValues(t0, y0);
+      SetInitialValues(t0, y0);
 
       int maxIndex = (int)(Math.Abs(tf - t0) / Math.Abs(deltaT)) + 1;
 
-      double[,] solution = new double[maxIndex, this._NEquations + 1];
+      double[,] solution = new double[maxIndex, _NEquations + 1];
 
       double[] tempY;
       double time = t0;
 
       for (int i = 0; i < maxIndex; i++)
       {
-        tempY = this.Solve(time);
+        tempY = Solve(time);
 
         solution[i, 0] = time;
 
@@ -229,9 +229,9 @@ namespace Altaxo.Calc.Ode.DVode
     /// <param name="solution">A delegate where to return the solution.</param>
     public void Solve(double[] y0, double t0, double deltaT, double tf, OdeSolution solution)
     {
-      this.CheckArguments(t0, deltaT, tf);
+      CheckArguments(t0, deltaT, tf);
 
-      this.SetInitialValues(t0, y0);
+      SetInitialValues(t0, y0);
 
       int maxIndex = (int)(Math.Abs(tf - t0) / Math.Abs(deltaT)) + 1;
 
@@ -240,7 +240,7 @@ namespace Altaxo.Calc.Ode.DVode
 
       for (int i = 0; i < maxIndex; i++)
       {
-        tempY = this.Solve(time);
+        tempY = Solve(time);
 
         solution(time, tempY);
 
@@ -256,7 +256,7 @@ namespace Altaxo.Calc.Ode.DVode
     /// <param name="solution">A delegate where to return the solution.</param>
     public void Solve(double[] y0, double[] tspan, OdeSolution solution)
     {
-      this.CheckTArray(tspan);
+      CheckTArray(tspan);
 
       base.SetInitialValues(tspan[0], y0);
 
@@ -268,7 +268,7 @@ namespace Altaxo.Calc.Ode.DVode
       {
         time = tspan[i];
 
-        tempY = this.Solve(time);
+        tempY = Solve(time);
 
         solution(time, tempY);
       }
@@ -287,7 +287,7 @@ namespace Altaxo.Calc.Ode.DVode
     {
       base.SetInitialValues(t0, y0);
 
-      this._IState = 1;
+      _IState = 1;
     }
 
     #endregion Public Methods
@@ -326,45 +326,45 @@ namespace Altaxo.Calc.Ode.DVode
       // C             30        if MITER = 0 or 3 (MF = 10, 13, 20, 23), or
       // C             30 + NEQ  otherwise (abs(MF) = 11,12,14,15,21,22,24,25).
 
-      if (this._Type == ODEType.NonStiff)
+      if (_Type == ODEType.NonStiff)
       {
-        this._Mf = 10; //  10 for nonstiff (Adams) method, no Jacobian used.
-        this._Liw = 30; //if MITER = 0 or 3 (MF = 10, 13, 20, 23)
-        this._Lrw = 20 + 16 * this._NEquations; //// 20 + 16*NEQ                    for MF = 10,
+        _Mf = 10; //  10 for nonstiff (Adams) method, no Jacobian used.
+        _Liw = 30; //if MITER = 0 or 3 (MF = 10, 13, 20, 23)
+        _Lrw = 20 + 16 * _NEquations; //// 20 + 16*NEQ                    for MF = 10,
       }
-      else if (this._Type == ODEType.Stiff)
+      else if (_Type == ODEType.Stiff)
       {
-        if (this._UserJacobian == false)
+        if (_UserJacobian == false)
         {
-          this._Mf = 22; //  22 for stiff method, internally generated full Jacobian.
+          _Mf = 22; //  22 for stiff method, internally generated full Jacobian.
         }
-        if (this._UserJacobian == true)
+        if (_UserJacobian == true)
         {
-          this._Mf = 21; //  21 for stiff (BDF) method, user-supplied full Jacobian.
+          _Mf = 21; //  21 for stiff (BDF) method, user-supplied full Jacobian.
         }
-        this._Liw = 30 + this._NEquations; //30 + NEQ  if (abs(MF) = 11,12,14,15,21,22,24,25).
-        this._Lrw = Convert.ToInt32(22 + 9 * this._NEquations + 2 * Math.Pow(this._NEquations, 2)); // 22 +  9*NEQ + 2*NEQ**2         for MF = 21 or 22,
+        _Liw = 30 + _NEquations; //30 + NEQ  if (abs(MF) = 11,12,14,15,21,22,24,25).
+        _Lrw = Convert.ToInt32(22 + 9 * _NEquations + 2 * Math.Pow(_NEquations, 2)); // 22 +  9*NEQ + 2*NEQ**2         for MF = 21 or 22,
       }
-      this._RWork = new double[this._Lrw];
-      this._IWork = new int[this._Liw];
+      _RWork = new double[_Lrw];
+      _IWork = new int[_Liw];
     }
 
     internal override void InitializeFunctionAndJacobian(OdeFunction fun, OdeJacobian jac)
     {
-      _fex = new FEX(this._NEquations, fun);
-      _jex = new JEX(this._NEquations, jac);
+      _fex = new FEX(_NEquations, fun);
+      _jex = new JEX(_NEquations, jac);
     }
 
     internal override void InitializeExceptionMessages()
     {
-      this._Errors = new string[7];
-      this._Errors[0] = "";
-      this._Errors[1] = "Excessive amount of work (more than MXSTEP steps) was done on this call, before completing the requested task, but the integration was otherwise successful as far as T.";
-      this._Errors[2] = "Too much accuracy was requested for the precision of the machine being used.";
-      this._Errors[3] = "Illegal input was detected.";
-      this._Errors[4] = "There were repeated error test failures on one attempted step, before completing the requested task, but the integration was successful as far as T.";
-      this._Errors[5] = "There were repeated convergence test failures on one attempted step, before completing the requested task, but the integration was successful as far as T. This may be caused by an inaccurate Jacobian matrix, if one is being used.";
-      this._Errors[6] = "EWT(i) became zero for some i during the integration.   Pure relative error control (AbsTol(i)=0.0) was requested on a variable which has now vanished. The integration was successful as far as T.";
+      _Errors = new string[7];
+      _Errors[0] = "";
+      _Errors[1] = "Excessive amount of work (more than MXSTEP steps) was done on this call, before completing the requested task, but the integration was otherwise successful as far as T.";
+      _Errors[2] = "Too much accuracy was requested for the precision of the machine being used.";
+      _Errors[3] = "Illegal input was detected.";
+      _Errors[4] = "There were repeated error test failures on one attempted step, before completing the requested task, but the integration was successful as far as T.";
+      _Errors[5] = "There were repeated convergence test failures on one attempted step, before completing the requested task, but the integration was successful as far as T. This may be caused by an inaccurate Jacobian matrix, if one is being used.";
+      _Errors[6] = "EWT(i) became zero for some i during the integration.   Pure relative error control (AbsTol(i)=0.0) was requested on a variable which has now vanished. The integration was successful as far as T.";
     }
 
     ///// <summary>
@@ -445,10 +445,10 @@ namespace Altaxo.Calc.Ode.DVode
 
     internal FEX(int NEq, OdeFunction Func)
     {
-      this.MeNEq = NEq;
-      this.MeY = new double[NEq];
-      this.MeYDot = new double[NEq];
-      this.MeFunction = Func;
+      MeNEq = NEq;
+      MeY = new double[NEq];
+      MeYDot = new double[NEq];
+      MeFunction = Func;
     }
 
     #endregion Constructor
@@ -466,16 +466,16 @@ namespace Altaxo.Calc.Ode.DVode
 
       #endregion Array Index Correction
 
-      for (int i = 0; i < this.MeNEq; i++)
+      for (int i = 0; i < MeNEq; i++)
       {
-        this.MeY[i] = Y[i + o_y];
+        MeY[i] = Y[i + o_y];
       }
 
-      this.MeFunction(T, this.MeY, this.MeYDot);
+      MeFunction(T, MeY, MeYDot);
 
-      for (int i = 0; i < this.MeNEq; i++)
+      for (int i = 0; i < MeNEq; i++)
       {
-        YDOT[i + o_ydot] = this.MeYDot[i];
+        YDOT[i + o_ydot] = MeYDot[i];
       }
 
       return;
@@ -500,10 +500,10 @@ namespace Altaxo.Calc.Ode.DVode
 
     internal JEX(int NEq, OdeJacobian Jac)
     {
-      this.MeNEq = NEq;
-      this.MeY = new double[NEq];
-      this.MeJacobian = Jac;
-      this.MeJac = new double[NEq, NEq];
+      MeNEq = NEq;
+      MeY = new double[NEq];
+      MeJacobian = Jac;
+      MeJac = new double[NEq, NEq];
     }
 
     public void Run(int NEQ, double T, double[] Y, int o_y, int ML, int MU, ref double[] PD, int o_pd
@@ -520,18 +520,18 @@ namespace Altaxo.Calc.Ode.DVode
 
       #endregion Array Index Correction
 
-      for (int i = 0; i < this.MeNEq; i++)
+      for (int i = 0; i < MeNEq; i++)
       {
-        this.MeY[i] = Y[i + o_y];
+        MeY[i] = Y[i + o_y];
       }
 
-      this.MeJacobian(T, this.MeY, this.MeJac);
+      MeJacobian(T, MeY, MeJac);
 
-      for (int j = 0; j < this.MeNEq; j++)
+      for (int j = 0; j < MeNEq; j++)
       {
-        for (int i = 0; i < this.MeNEq; i++)
+        for (int i = 0; i < MeNEq; i++)
         {
-          PD[i + j * NRPD + o_pd] = this.MeJac[i, j];
+          PD[i + j * NRPD + o_pd] = MeJac[i, j];
         }
       }
 

@@ -48,8 +48,10 @@ namespace Altaxo.Calc.Ode
     /// <returns>Constructed vector</returns>
     public static Vector Zeros(int n)
     {
-      Vector v = new Vector();
-      v.v = new double[n];
+      var v = new Vector
+      {
+        v = new double[n]
+      };
       return v;
     }
 
@@ -246,7 +248,7 @@ namespace Altaxo.Calc.Ode
       double[] av1 = v1.v;
       if (av1 == null)
         throw new ArgumentNullException("v1");
-      if (this.Length != av1.Length)
+      if (Length != av1.Length)
         throw new InvalidOperationException("Cannot add vectors of different length");
 
       for (int i = 0; i < v.Length; i++)
@@ -401,7 +403,7 @@ namespace Altaxo.Calc.Ode
     public static Matrix operator &(Vector a, Vector b)
     {
       int m = a.Length, n = b.Length;
-      Matrix res = new Matrix(m, n);
+      var res = new Matrix(m, n);
       for (int i = 0; i < m; i++)
       {
         for (int j = 0; j < n; j++)
@@ -468,7 +470,7 @@ namespace Altaxo.Calc.Ode
 
       if (av1.Length != av2.Length)
         throw new ArgumentException("Vector lengths do not match");
-      Vector y = Vector.Zeros(av1.Length);
+      var y = Vector.Zeros(av1.Length);
       for (int i = 0; i < av1.Length; i++)
         y[i] = Math.Max(av1[i], av2[i]);
 
@@ -485,7 +487,7 @@ namespace Altaxo.Calc.Ode
         return new Vector();
 
       int n = v.Length;
-      Vector y = Vector.Zeros(n);
+      var y = Vector.Zeros(n);
       for (int i = 0; i < n; i++)
         y[i] = Math.Abs(v[i]);
       return y;
@@ -495,7 +497,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>String consists from vector components separated by comma.</returns>
     public override string ToString()
     {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
       sb.Append("[");
       if (v != null)
         for (int i = 0; i < v.Length; i++)

@@ -88,7 +88,7 @@ namespace Altaxo.Calc.Ode
       if (string.IsNullOrEmpty(s) == true || ncopies < 1)
         return value;
 
-      StringBuilder sBuilder = new StringBuilder(s.Length * ncopies);
+      var sBuilder = new StringBuilder(s.Length * ncopies);
       for (int i = 0; i < ncopies; i++)
       {
         sBuilder.Append(s);
@@ -407,7 +407,7 @@ namespace Altaxo.Calc.Ode
     /// <returns></returns>
     public static string ADJUSTL(string s)
     {
-      StringBuilder sBuilder = new StringBuilder(s.Length);
+      var sBuilder = new StringBuilder(s.Length);
       sBuilder.Append(s.TrimStart());
       string spaces = new string(' ', s.Length - sBuilder.Length);
       sBuilder.Append(spaces);
@@ -440,7 +440,7 @@ namespace Altaxo.Calc.Ode
     /// <returns></returns>
     public string ADJUSTR(string s)
     {
-      StringBuilder sBuilder = new StringBuilder(s.Length);
+      var sBuilder = new StringBuilder(s.Length);
       sBuilder.Append(s.TrimEnd());
       string spaces = new string(' ', s.Length - sBuilder.Length);
       sBuilder.Insert(0, spaces);
@@ -476,7 +476,7 @@ namespace Altaxo.Calc.Ode
     {
       if (startIndex != lastIndex)
       {
-        ArgumentException argEx = new ArgumentException("startIndex != lastIndex");
+        var argEx = new ArgumentException("startIndex != lastIndex");
       }
 
       FortranLib.Copy(ref destinationString, startIndex, lastIndex, source.ToString());

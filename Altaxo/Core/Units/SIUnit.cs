@@ -105,13 +105,13 @@ namespace Altaxo.Units
     public bool Equals(SIUnit b)
     {
       return null == b ? false :
-      this._metre == b._metre &&
-      this._kilogram == b._kilogram &&
-      this._second == b._second &&
-      this._ampere == b._ampere &&
-      this._kelvin == b._kelvin &&
-      this._mole == b._mole &&
-      this._candela == b._candela;
+      _metre == b._metre &&
+      _kilogram == b._kilogram &&
+      _second == b._second &&
+      _ampere == b._ampere &&
+      _kelvin == b._kelvin &&
+      _mole == b._mole &&
+      _candela == b._candela;
     }
 
     public static bool operator ==(SIUnit a, SIUnit b)
@@ -143,7 +143,7 @@ namespace Altaxo.Units
       if (!(obj is SIUnit other))
         return false;
 
-      return this.GetType() == other.GetType();
+      return GetType() == other.GetType();
     }
 
     /// <summary>Determines whether the specified <see cref="System.Object"/> is equal to this instance.</summary>

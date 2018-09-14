@@ -7,11 +7,11 @@
 
 #endregion Copyright © 2009, De Santiago-Castillo JA. All rights reserved.
 
-using Altaxo.Calc.Ode.Dopri5;
-using Altaxo.Calc.Ode.Radau5;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Calc.Ode.Dopri5;
+using Altaxo.Calc.Ode.Radau5;
 
 namespace Altaxo.Calc.Ode
 {
@@ -141,12 +141,12 @@ namespace Altaxo.Calc.Ode
 
     public RKSolOut(CONTD5 contd5ExpicitRK)
     {
-      this._Contd5ExpicitRK = contd5ExpicitRK;
+      _Contd5ExpicitRK = contd5ExpicitRK;
     }
 
     public RKSolOut(CONTR5 contr5ImplicitRK)
     {
-      this._Contr5ImplicitRK = contr5ImplicitRK;
+      _Contr5ImplicitRK = contr5ImplicitRK;
     }
 
     #endregion Constructor
@@ -155,77 +155,77 @@ namespace Altaxo.Calc.Ode
 
     internal void Initialize(double[] y0, double t0, double deltaT, double tf, OdeSolution solution)
     {
-      this._SolutionOutType = SolutionOutType.Delegate;
-      this.InitializeValues(y0, t0, deltaT, tf);
+      _SolutionOutType = SolutionOutType.Delegate;
+      InitializeValues(y0, t0, deltaT, tf);
 
-      this._SolutionOut = solution;
+      _SolutionOut = solution;
     }
 
     internal void Initialize(double[] y0, double t0, double deltaT, double tf, out double[,] solutionArray)
     {
-      this._SolutionOutType = SolutionOutType.Array;
-      this.InitializeValues(y0, t0, deltaT, tf);
+      _SolutionOutType = SolutionOutType.Array;
+      InitializeValues(y0, t0, deltaT, tf);
 
       int NCols = y0.Length + 1;
-      solutionArray = new double[this._MaxIndex, NCols];
+      solutionArray = new double[_MaxIndex, NCols];
 
-      this._SolutionArray = solutionArray;
+      _SolutionArray = solutionArray;
     }
 
     internal void Initialize(double[] y0, double[] tspan, OdeSolution solution)
     {
-      this._SolutionOutType = SolutionOutType.Delegate;
-      this.InitializeValues(y0, tspan);
+      _SolutionOutType = SolutionOutType.Delegate;
+      InitializeValues(y0, tspan);
 
-      this._SolutionOut = solution;
+      _SolutionOut = solution;
     }
 
     internal void Initialize(double[] y0, double[] tspan, out double[,] solutionArray)
     {
-      this._SolutionOutType = SolutionOutType.Array;
-      this.InitializeValues(y0, tspan);
+      _SolutionOutType = SolutionOutType.Array;
+      InitializeValues(y0, tspan);
 
       int NCols = y0.Length + 1;
-      solutionArray = new double[this._MaxIndex, NCols];
+      solutionArray = new double[_MaxIndex, NCols];
 
-      this._SolutionArray = solutionArray;
+      _SolutionArray = solutionArray;
     }
 
     private void InitializeValues(double[] y0, double t0, double deltaT, double tf)
     {
-      this._IsTimeArrayUsed = false;
+      _IsTimeArrayUsed = false;
 
-      this._NEquations = y0.Length;
-      this._Y0 = y0;
-      this._T0 = t0;
-      this._DeltaT = deltaT;
-      this._TF = tf;
-      this._MaxIndex = (int)(Math.Abs(tf - t0) / Math.Abs(deltaT)) + 1;
+      _NEquations = y0.Length;
+      _Y0 = y0;
+      _T0 = t0;
+      _DeltaT = deltaT;
+      _TF = tf;
+      _MaxIndex = (int)(Math.Abs(tf - t0) / Math.Abs(deltaT)) + 1;
 
       if (deltaT > 0)
-        this._isDeltaPositive = true;
+        _isDeltaPositive = true;
       else
-        this._isDeltaPositive = false;
+        _isDeltaPositive = false;
 
-      this._TemporalSolution = new double[y0.Length];
+      _TemporalSolution = new double[y0.Length];
     }
 
     private void InitializeValues(double[] y0, double[] tspan)
     {
-      this._IsTimeArrayUsed = true;
+      _IsTimeArrayUsed = true;
 
-      this._NEquations = y0.Length;
-      this._Y0 = y0;
+      _NEquations = y0.Length;
+      _Y0 = y0;
 
-      this._TSpan = tspan;
-      this._MaxIndex = tspan.Length;
+      _TSpan = tspan;
+      _MaxIndex = tspan.Length;
 
       if ((tspan[1] - tspan[0]) > 0)
-        this._isDeltaPositive = true;
+        _isDeltaPositive = true;
       else
-        this._isDeltaPositive = false;
+        _isDeltaPositive = false;
 
-      this._TemporalSolution = new double[y0.Length];
+      _TemporalSolution = new double[y0.Length];
     }
 
     //protected void SetSolutionDimension(double[] y0, double t0, double deltaT, double tEnd)
@@ -259,9 +259,9 @@ namespace Altaxo.Calc.Ode
     {
       double t = 0;
 
-      if (this._IsTimeArrayUsed == true)
+      if (_IsTimeArrayUsed == true)
       {
-        t = this._TSpan[index];
+        t = _TSpan[index];
       }
       else
       {
@@ -293,48 +293,48 @@ namespace Altaxo.Calc.Ode
 
       if (NR == 1)
       {
-        if (this._SolutionOutType == SolutionOutType.Array)
+        if (_SolutionOutType == SolutionOutType.Array)
         {
-          this._SolutionArray[0, 0] = this._T0;
-          for (int j = 1; j <= this._NEquations; j++)
+          _SolutionArray[0, 0] = _T0;
+          for (int j = 1; j <= _NEquations; j++)
           {
-            this._SolutionArray[0, j] = this._Y0[j - 1];
+            _SolutionArray[0, j] = _Y0[j - 1];
           }
         }
         else
         {
-          this._SolutionOut(this._T0, this._Y0);
+          _SolutionOut(_T0, _Y0);
         }
 
-        this._Index = 1;
+        _Index = 1;
       }
 
       bool MyContinue = true;
 
-      while (MyContinue && this._Index < this._MaxIndex)
+      while (MyContinue && _Index < _MaxIndex)
       {
-        this._T = this.GetTime(this._Index);
+        _T = GetTime(_Index);
 
-        if ((this._isDeltaPositive && X >= this._T) || (this._isDeltaPositive == false && X <= this._T))
+        if ((_isDeltaPositive && X >= _T) || (_isDeltaPositive == false && X <= _T))
         {
-          if (this._SolutionOutType == SolutionOutType.Array)
+          if (_SolutionOutType == SolutionOutType.Array)
           {
-            this._SolutionArray[this._Index, 0] = this._T;
-            for (int j = 1; j <= this._NEquations; j++)
+            _SolutionArray[_Index, 0] = _T;
+            for (int j = 1; j <= _NEquations; j++)
             {
-              this._SolutionArray[this._Index, j] = this._Contd5ExpicitRK.Run(j, this._T, CON, o_con, ICOMP, o_icomp, ND);
+              _SolutionArray[_Index, j] = _Contd5ExpicitRK.Run(j, _T, CON, o_con, ICOMP, o_icomp, ND);
             }
           }
           else
           {
-            for (int j = 0; j < this._NEquations; j++)
+            for (int j = 0; j < _NEquations; j++)
             {
-              this._TemporalSolution[j] = this._Contd5ExpicitRK.Run(j + 1, this._T, CON, o_con, ICOMP, o_icomp, ND);
+              _TemporalSolution[j] = _Contd5ExpicitRK.Run(j + 1, _T, CON, o_con, ICOMP, o_icomp, ND);
             }
-            this._SolutionOut(this._T, this._TemporalSolution);
+            _SolutionOut(_T, _TemporalSolution);
           }
 
-          this._Index++;
+          _Index++;
         }
         else
           MyContinue = false;
@@ -362,48 +362,48 @@ namespace Altaxo.Calc.Ode
 
       if (NR == 1)
       {
-        if (this._SolutionOutType == SolutionOutType.Array)
+        if (_SolutionOutType == SolutionOutType.Array)
         {
-          this._SolutionArray[0, 0] = this._T0;
-          for (int j = 1; j <= this._NEquations; j++)
+          _SolutionArray[0, 0] = _T0;
+          for (int j = 1; j <= _NEquations; j++)
           {
-            this._SolutionArray[0, j] = this._Y0[j - 1];
+            _SolutionArray[0, j] = _Y0[j - 1];
           }
         }
         else
         {
-          this._SolutionOut(this._T0, this._Y0);
+          _SolutionOut(_T0, _Y0);
         }
 
-        this._Index = 1;
+        _Index = 1;
       }
 
       bool MyContinue = true;
 
-      while (MyContinue && this._Index < this._MaxIndex)
+      while (MyContinue && _Index < _MaxIndex)
       {
-        this._T = this.GetTime(this._Index);
+        _T = GetTime(_Index);
 
-        if ((this._isDeltaPositive && X >= this._T) || (this._isDeltaPositive == false && X <= this._T))
+        if ((_isDeltaPositive && X >= _T) || (_isDeltaPositive == false && X <= _T))
         {
-          if (this._SolutionOutType == SolutionOutType.Array)
+          if (_SolutionOutType == SolutionOutType.Array)
           {
-            this._SolutionArray[this._Index, 0] = this._T;
-            for (int j = 1; j <= this._NEquations; j++)
+            _SolutionArray[_Index, 0] = _T;
+            for (int j = 1; j <= _NEquations; j++)
             {
-              this._SolutionArray[this._Index, j] = this._Contr5ImplicitRK.Run(j, this._T, CONT, o_cont, LRC);
+              _SolutionArray[_Index, j] = _Contr5ImplicitRK.Run(j, _T, CONT, o_cont, LRC);
             }
           }
           else
           {
-            for (int j = 0; j < this._NEquations; j++)
+            for (int j = 0; j < _NEquations; j++)
             {
-              this._TemporalSolution[j] = this._Contr5ImplicitRK.Run(j + 1, this._T, CONT, o_cont, LRC);
+              _TemporalSolution[j] = _Contr5ImplicitRK.Run(j + 1, _T, CONT, o_cont, LRC);
             }
-            this._SolutionOut(this._T, this._TemporalSolution);
+            _SolutionOut(_T, _TemporalSolution);
           }
 
-          this._Index++;
+          _Index++;
         }
         else
           MyContinue = false;

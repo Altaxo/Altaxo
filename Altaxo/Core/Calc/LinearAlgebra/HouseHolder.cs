@@ -46,7 +46,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static ComplexDoubleVector GenerateColumn(IComplexDoubleMatrix A, int r1, int r2, int c)
     {
       int ru = r2 - r1 + 1;
-      ComplexDoubleVector u = new ComplexDoubleVector(r2 - r1 + 1);
+      var u = new ComplexDoubleVector(r2 - r1 + 1);
 
       for (int i = r1; i <= r2; i++)
       {
@@ -63,7 +63,7 @@ namespace Altaxo.Calc.LinearAlgebra
         return u;
       }
 
-      Complex scale = new Complex(1 / norm, 0);
+      var scale = new Complex(1 / norm, 0);
 
       Complex t = Complex.Zero;
       Complex t1 = Complex.Zero;
@@ -95,7 +95,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static ComplexDoubleVector GenerateRow(IComplexDoubleMatrix A, int r, int c1, int c2)
     {
       int cu = c2 - c1 + 1;
-      ComplexDoubleVector u = new ComplexDoubleVector(cu);
+      var u = new ComplexDoubleVector(cu);
 
       for (int j = c1; j <= c2; j++)
       {
@@ -112,7 +112,7 @@ namespace Altaxo.Calc.LinearAlgebra
         return u;
       }
 
-      Complex scale = new Complex(1 / norm);
+      var scale = new Complex(1 / norm);
 
       Complex t = Complex.Zero;
       Complex t1 = Complex.Zero;
@@ -242,7 +242,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static ComplexFloatVector GenerateColumn(IComplexFloatMatrix A, int r1, int r2, int c)
     {
       int ru = r2 - r1 + 1;
-      ComplexFloatVector u = new ComplexFloatVector(r2 - r1 + 1);
+      var u = new ComplexFloatVector(r2 - r1 + 1);
 
       for (int i = r1; i <= r2; i++)
       {
@@ -259,7 +259,7 @@ namespace Altaxo.Calc.LinearAlgebra
         return u;
       }
 
-      ComplexFloat scale = new ComplexFloat(1 / norm, 0);
+      var scale = new ComplexFloat(1 / norm, 0);
 
       ComplexFloat t = ComplexFloat.Zero;
       ComplexFloat t1 = ComplexFloat.Zero;
@@ -292,7 +292,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static ComplexFloatVector GenerateRow(IComplexFloatMatrix A, int r, int c1, int c2)
     {
       int cu = c2 - c1 + 1;
-      ComplexFloatVector u = new ComplexFloatVector(cu);
+      var u = new ComplexFloatVector(cu);
 
       for (int j = c1; j <= c2; j++)
       {
@@ -309,7 +309,7 @@ namespace Altaxo.Calc.LinearAlgebra
         return u;
       }
 
-      ComplexFloat scale = new ComplexFloat(1 / norm);
+      var scale = new ComplexFloat(1 / norm);
 
       ComplexFloat t = ComplexFloat.Zero;
       ComplexFloat t1 = ComplexFloat.Zero;
@@ -439,7 +439,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static FloatVector GenerateColumn(IMatrix<float> A, int r1, int r2, int c)
     {
       int ru = r2 - r1 + 1;
-      FloatVector u = new FloatVector(r2 - r1 + 1);
+      var u = new FloatVector(r2 - r1 + 1);
 
       for (int i = r1; i <= r2; i++)
       {
@@ -481,7 +481,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static FloatVector GenerateRow(IMatrix<float> A, int r, int c1, int c2)
     {
       int cu = c2 - c1 + 1;
-      FloatVector u = new FloatVector(cu);
+      var u = new FloatVector(cu);
 
       for (int j = c1; j <= c2; j++)
       {
@@ -615,7 +615,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static DoubleVector GenerateColumn(IMatrix<double> A, int r1, int r2, int c)
     {
       int ru = r2 - r1 + 1;
-      DoubleVector u = new DoubleVector(r2 - r1 + 1);
+      var u = new DoubleVector(r2 - r1 + 1);
 
       for (int i = r1; i <= r2; i++)
       {
@@ -628,7 +628,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (r1 == r2 || norm == 0)
       {
         A[r1, c] = -u[0];
-        u[0] = (double)System.Math.Sqrt(2);
+        u[0] = System.Math.Sqrt(2);
         return u;
       }
 
@@ -644,7 +644,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       u[0] += 1.0;
-      double s = (double)System.Math.Sqrt(1 / u[0]);
+      double s = System.Math.Sqrt(1 / u[0]);
 
       for (int i = 0; i < ru; i++)
       {
@@ -656,7 +656,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static DoubleVector GenerateRow(IMatrix<double> A, int r, int c1, int c2)
     {
       int cu = c2 - c1 + 1;
-      DoubleVector u = new DoubleVector(cu);
+      var u = new DoubleVector(cu);
 
       for (int j = c1; j <= c2; j++)
       {
@@ -669,7 +669,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (c1 == c2 || norm == 0)
       {
         A[r, c1] = -u[0];
-        u[0] = (double)System.Math.Sqrt(2);
+        u[0] = System.Math.Sqrt(2);
         return u;
       }
 
@@ -685,7 +685,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       u[0] = u[0] + 1.0;
-      double s = (double)System.Math.Sqrt(1 / u[0]);
+      double s = System.Math.Sqrt(1 / u[0]);
 
       for (int j = 0; j < cu; j++)
       {

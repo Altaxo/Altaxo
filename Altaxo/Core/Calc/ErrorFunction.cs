@@ -1403,7 +1403,7 @@ L40:
         b = h > 0.0;
 
         if (b)
-          qlambda = Math.Pow(h2, (double)kapn);
+          qlambda = Math.Pow(h2, kapn);
 
         rx = ry = sx = sy = 0.0;
         for (n = nu; n >= 0; --n)

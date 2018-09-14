@@ -41,7 +41,7 @@ namespace Altaxo.Collections
     /// <param name="list">List to operate with.</param>
     /// <param name="i">Position of the first item.</param>
     /// <param name="j">Position of the second item.</param>
-    static public void ExchangePositions<T>(this IList<T> list, int i, int j)
+    public static void ExchangePositions<T>(this IList<T> list, int i, int j)
     {
       if (i == j)
         return;
@@ -67,7 +67,7 @@ namespace Altaxo.Collections
     /// <param name="list">List to operate with.</param>
     /// <param name="originalIndex">Original position of the  item.</param>
     /// <param name="destinationIndex">Destination position of the item.</param>
-    static public void MoveItemToIndex<T>(this IList<T> list, int originalIndex, int destinationIndex)
+    public static void MoveItemToIndex<T>(this IList<T> list, int originalIndex, int destinationIndex)
     {
       if (originalIndex == destinationIndex)
         return;

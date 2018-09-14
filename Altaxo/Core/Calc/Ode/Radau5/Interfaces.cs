@@ -172,10 +172,10 @@ namespace Altaxo.Calc.Ode.Radau5
 
     internal FVPOL(int NEq, OdeFunction Func)
     {
-      this.MeNEq = NEq;
-      this.MeY = new double[NEq];
-      this.MeYDot = new double[NEq];
-      this.MeFunction = Func;
+      MeNEq = NEq;
+      MeY = new double[NEq];
+      MeYDot = new double[NEq];
+      MeFunction = Func;
     }
 
     #endregion Constructor
@@ -193,18 +193,18 @@ namespace Altaxo.Calc.Ode.Radau5
 
       #endregion Array Index Correction
 
-      for (int i = 0; i < this.MeNEq; i++)
+      for (int i = 0; i < MeNEq; i++)
       {
-        this.MeY[i] = Y[i + o_y];
+        MeY[i] = Y[i + o_y];
       }
 
-      this.MeFunction(X, this.MeY, this.MeYDot);
+      MeFunction(X, MeY, MeYDot);
 
-      if (this.MeYDot.Length == this.MeNEq)
+      if (MeYDot.Length == MeNEq)
       {
-        for (int i = 0; i < this.MeNEq; i++)
+        for (int i = 0; i < MeNEq; i++)
         {
-          F[i + o_f] = this.MeYDot[i];
+          F[i + o_f] = MeYDot[i];
         }
       }
       else
@@ -232,10 +232,10 @@ namespace Altaxo.Calc.Ode.Radau5
 
     internal JVPOL(int NEq, OdeJacobian Jac)
     {
-      this.MeNEq = NEq;
-      this.MeY = new double[NEq];
-      this.MeJacobian = Jac;
-      this.MeJac = new double[NEq, NEq];
+      MeNEq = NEq;
+      MeY = new double[NEq];
+      MeJacobian = Jac;
+      MeJac = new double[NEq, NEq];
     }
 
     public void Run(int N, double X, double[] Y, int o_y, ref double[] DFY, int o_dfy, int LDFY, double RPAR
@@ -259,18 +259,18 @@ namespace Altaxo.Calc.Ode.Radau5
       //DFY[2 + 2 * LDFY + c_dfy] = (1.0E0 - Math.Pow(Y[1 + c_y], 2)) / RPAR;
       //return;
 
-      for (int i = 0; i < this.MeNEq; i++)
+      for (int i = 0; i < MeNEq; i++)
       {
-        this.MeY[i] = Y[i + o_y];
+        MeY[i] = Y[i + o_y];
       }
 
-      this.MeJacobian(X, this.MeY, this.MeJac);
+      MeJacobian(X, MeY, MeJac);
 
-      for (int j = 0; j < this.MeNEq; j++)
+      for (int j = 0; j < MeNEq; j++)
       {
-        for (int i = 0; i < this.MeNEq; i++)
+        for (int i = 0; i < MeNEq; i++)
         {
-          DFY[i + j * LDFY + o_dfy] = this.MeJac[i, j];
+          DFY[i + j * LDFY + o_dfy] = MeJac[i, j];
         }
       }
 

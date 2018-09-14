@@ -170,7 +170,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </code>
   /// </para>
   /// </example>
-  sealed public class ComplexDoubleLevinson : Algorithm
+  public sealed class ComplexDoubleLevinson : Algorithm
   {
     #region Fields
 
@@ -268,7 +268,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a ComplexDoubleMatrix
-        ComplexDoubleMatrix Lower = new ComplexDoubleMatrix(m_Order);
+        var Lower = new ComplexDoubleMatrix(m_Order);
 #if MANAGED
         for (int i = 0; i < m_Order; i++)
         {
@@ -312,7 +312,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy diagonal vector into a ComplexDoubleMatrix
-        ComplexDoubleMatrix Diagonal = new ComplexDoubleMatrix(m_Order);
+        var Diagonal = new ComplexDoubleMatrix(m_Order);
         Diagonal.SetDiagonal(m_Diagonal);
 
         return Diagonal;
@@ -343,7 +343,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a ComplexDoubleMatrix
-        ComplexDoubleMatrix Upper = new ComplexDoubleMatrix(m_Order);
+        var Upper = new ComplexDoubleMatrix(m_Order);
 #if MANAGED
         for (int i = 0; i < m_Order; i++)
         {
@@ -562,7 +562,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i;
 
       // allocate memory for the matrix
-      ComplexDoubleMatrix tm = new ComplexDoubleMatrix(m_Order);
+      var tm = new ComplexDoubleMatrix(m_Order);
 #if MANAGED
       // fill lower triangle
       for (i = 0; i < m_Order; i++)
@@ -665,7 +665,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new SingularMatrixException("One of the leading sub-matrices is singular.");
       }
 
-      ComplexDoubleMatrix I = new ComplexDoubleMatrix(m_Order);           // the solution matrix
+      var I = new ComplexDoubleMatrix(m_Order);           // the solution matrix
       Complex[] A = m_LowerTriangle[m_Order - 1];
       Complex[] B = m_UpperTriangle[m_Order - 1];
       Complex A1, B1, scale;
@@ -952,9 +952,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
       // decompose matrix
       int order = col.Length;
-      Complex[] A = new Complex[order];
-      Complex[] B = new Complex[order];
-      Complex[] Z = new Complex[order];
+      var A = new Complex[order];
+      var B = new Complex[order];
+      var Z = new Complex[order];
       Complex Q, S, Ke, Kr, e;
       int i, j, k, l;
 
@@ -1016,7 +1016,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       // calculate the inverse
-      ComplexDoubleMatrix I = new ComplexDoubleMatrix(order);           // the solution matrix
+      var I = new ComplexDoubleMatrix(order);           // the solution matrix
       Complex A1, B1;
 
 #if MANAGED
@@ -1160,10 +1160,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
       // decompose matrix
       int order = col.Length;
-      Complex[] A = new Complex[order];
-      Complex[] B = new Complex[order];
-      Complex[] Z = new Complex[order];
-      ComplexDoubleVector X = new ComplexDoubleVector(order);
+      var A = new Complex[order];
+      var B = new Complex[order];
+      var Z = new Complex[order];
+      var X = new ComplexDoubleVector(order);
       Complex Q, S, Ke, Kr, e;
       Complex Inner;
       int i, j, l;
@@ -1326,10 +1326,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
       // decompose matrix
       int order = col.Length;
-      Complex[] A = new Complex[order];
-      Complex[] B = new Complex[order];
-      Complex[] Z = new Complex[order];
-      ComplexDoubleMatrix X = new ComplexDoubleMatrix(order);
+      var A = new Complex[order];
+      var B = new Complex[order];
+      var Z = new Complex[order];
+      var X = new ComplexDoubleMatrix(order);
       Complex Q, S, Ke, Kr, e;
       Complex Inner;
       int i, j, l;
@@ -1394,7 +1394,7 @@ namespace Altaxo.Calc.LinearAlgebra
         for (l = 0; l < Y.Rows; l++)
         {
           ComplexDoubleVector W = X.GetColumn(l);
-          ComplexDoubleVector M = ComplexDoubleVector.GetColumn(Y, l);
+          var M = ComplexDoubleVector.GetColumn(Y, l);
 
           Inner = M[i];
           for (j = 0; j < i; j++)

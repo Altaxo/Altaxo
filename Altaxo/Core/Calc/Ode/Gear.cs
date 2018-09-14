@@ -57,7 +57,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Rescaled history matrix</returns>
     public static Matrix Rescale(Matrix arg, double r)
     {
-      Matrix res = (Matrix)arg.Clone();
+      var res = arg.Clone();
       ;
       double R = 1;
       int q = res.ColumnDimension;
@@ -84,7 +84,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>So-called Zn0,initial vaue of Z in new step</returns>
     public static Matrix ZNew(Matrix arg)
     {
-      Matrix res = (Matrix)arg.Clone();
+      var res = arg.Clone();
       int q = arg.ColumnDimension;
       int n = arg.RowDimension;
 
@@ -110,9 +110,9 @@ namespace Altaxo.Calc.Ode
     public static Matrix Jacobian(Func<double, Vector, Vector> f, Vector x, double t)
     {
       int N = x.Length;
-      Matrix J = new Matrix(N, N);
+      var J = new Matrix(N, N);
 
-      Vector variation = Vector.Zeros(N);
+      var variation = Vector.Zeros(N);
       for (int i = 0; i < N; i++)
       {
         variation[i] = Math.Sqrt(1e-6 * Math.Max(1e-5, Math.Abs(x[i])));
@@ -120,7 +120,7 @@ namespace Altaxo.Calc.Ode
 
       Vector fold = f(t, x);
 
-      Vector[] fnew = new Vector[N];
+      var fnew = new Vector[N];
       for (int i = 0; i < N; i++)
       {
         var x_i = x[i];
@@ -198,7 +198,7 @@ namespace Altaxo.Calc.Ode
       int n = x0.Length;
 
       double tout = t0;
-      Vector xout = new Vector();
+      var xout = new Vector();
 
       if (opts.OutputStep > 0) // Store previous solution point if OutputStep is specified (non-zero)
       {
@@ -226,10 +226,10 @@ namespace Altaxo.Calc.Ode
         {
           ewt[i] = opts.RelativeTolerance * Math.Abs(x[i]) + opts.AbsoluteTolerance;
           ywt[i] = ewt[i] / tol;
-          sum = sum + (double)dx[i] * dx[i] / (ywt[i] * ywt[i]);
+          sum = sum + dx[i] * dx[i] / (ywt[i] * ywt[i]);
         }
 
-        dt = Math.Sqrt(tol / ((double)1.0d / (ywt[0] * ywt[0]) + sum / n));
+        dt = Math.Sqrt(tol / (1.0d / (ywt[0] * ywt[0]) + sum / n));
       }
 
       dt = Math.Min(dt, opts.MaxStep);
@@ -239,7 +239,7 @@ namespace Altaxo.Calc.Ode
       int qcurr = 2;
 
       //Compute Nordstieck's history matrix at t=t0;
-      Matrix zn = new Matrix(n, qmax + 1);
+      var zn = new Matrix(n, qmax + 1);
       for (int i = 0; i < n; i++)
       {
         zn[i, 0] = x[i];
@@ -252,18 +252,20 @@ namespace Altaxo.Calc.Ode
 
       var eold = Vector.Zeros(n);
 
-      NordsieckState currstate = new NordsieckState();
-      currstate.delta = 0.0d;
-      currstate.Dq = 0.0d;
-      currstate.dt = dt;
-      currstate.en = eold;
-      currstate.tn = t;
-      currstate.xn = x0;
-      currstate.qn = qcurr;
-      currstate.qmax = qmax;
-      currstate.nsuccess = 0;
-      currstate.zn = zn;
-      currstate.rFactor = 1.0d;
+      var currstate = new NordsieckState
+      {
+        delta = 0.0d,
+        Dq = 0.0d,
+        dt = dt,
+        en = eold,
+        tn = t,
+        xn = x0,
+        qn = qcurr,
+        qmax = qmax,
+        nsuccess = 0,
+        zn = zn,
+        rFactor = 1.0d
+      };
 
       bool isIterationFailed = false;
 
@@ -294,7 +296,7 @@ namespace Altaxo.Calc.Ode
 
           if (currstate.delta >= 1.0d)
           {
-            if (opts.MaxStep < Double.MaxValue)
+            if (opts.MaxStep < double.MaxValue)
             {
               r = Math.Min(r, opts.MaxStep / currstate.dt);
             }
@@ -329,7 +331,7 @@ namespace Altaxo.Calc.Ode
 
             currstate.tn = currstate.tn + currstate.dt;
 
-            if (opts.MaxStep < Double.MaxValue)
+            if (opts.MaxStep < double.MaxValue)
             {
               r = Math.Min(r, opts.MaxStep / currstate.dt);
             }
@@ -363,7 +365,7 @@ namespace Altaxo.Calc.Ode
     {
       if (opts == null)
         throw new ArgumentNullException("opts");
-      if (opts.MaxStep == Double.MaxValue)
+      if (opts.MaxStep == double.MaxValue)
         opts.MaxStep = (tfinal - tstart) * 1e-2;
       if (opts.MinStep == 0)
         opts.MinStep = (tfinal - tstart) * 1e-7;
@@ -397,17 +399,17 @@ namespace Altaxo.Calc.Ode
     {
       int n = currstate.xn.Length;
 
-      NordsieckState newstate = new NordsieckState();
+      var newstate = new NordsieckState();
       var ecurr = currstate.en;
       newstate.en = ecurr.Clone();
       var xcurr = currstate.xn;
       var x0 = currstate.xn;
-      var zcurr = (Matrix)currstate.zn.Clone();
+      var zcurr = currstate.zn.Clone();
       var qcurr = currstate.qn;
       var qmax = currstate.qmax;
       var dt = currstate.dt;
       var t = currstate.tn;
-      var z0 = (Matrix)currstate.zn.Clone();
+      var z0 = currstate.zn.Clone();
 
       //Tolerance computation factors
       double Cq = Math.Pow(qcurr + 1, -1.0);
@@ -500,14 +502,14 @@ namespace Altaxo.Calc.Ode
       if (count < opts.NumberOfIterations)
       {
         flag = false;
-        newstate.zn = (Matrix)zcurr.Clone();
+        newstate.zn = zcurr.Clone();
         newstate.xn = zcurr.CloneColumn(0);
         newstate.en = ecurr.Clone();
       }
       else
       {
         flag = true;
-        newstate.zn = (Matrix)currstate.zn.Clone();
+        newstate.zn = currstate.zn.Clone();
         newstate.xn = currstate.zn.CloneColumn(0);
         newstate.en = currstate.en.Clone();
       }

@@ -68,13 +68,13 @@ namespace Altaxo.Calc.Probability
     /// Represents the multiplier that computes a double-precision floating point number greater than or equal to 0.0
     ///   and less than 1.0 when it gets applied to a nonnegative 32-bit signed integer.
     /// </summary>
-    private const double IntToDoubleMultiplier = 1.0 / ((double)int.MaxValue + 1.0);
+    private const double IntToDoubleMultiplier = 1.0 / (int.MaxValue + 1.0);
 
     /// <summary>
     /// Represents the multiplier that computes a double-precision floating point number greater than or equal to 0.0
     ///   and less than 1.0  when it gets applied to a 32-bit unsigned integer.
     /// </summary>
-    private const double UIntToDoubleMultiplier = 1.0 / ((double)uint.MaxValue + 1.0);
+    private const double UIntToDoubleMultiplier = 1.0 / (uint.MaxValue + 1.0);
 
     #endregion class fields
 
@@ -88,13 +88,13 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.shortLag;
+        return shortLag;
       }
       set
       {
-        if (this.IsValidShortLag(value))
+        if (IsValidShortLag(value))
         {
-          this.shortLag = value;
+          shortLag = value;
         }
       }
     }
@@ -112,14 +112,14 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.longLag;
+        return longLag;
       }
       set
       {
-        if (this.IsValidLongLag(value))
+        if (IsValidLongLag(value))
         {
-          this.longLag = value;
-          this.Reset();
+          longLag = value;
+          Reset();
         }
       }
     }
@@ -145,12 +145,12 @@ namespace Altaxo.Calc.Probability
     private uint seed;
 
     /// <summary>
-    /// Stores an <see cref="uint"/> used to generate up to 32 random <see cref="Boolean"/> values.
+    /// Stores an <see cref="uint"/> used to generate up to 32 random <see cref="bool"/> values.
     /// </summary>
     private uint bitBuffer;
 
     /// <summary>
-    /// Stores how many random <see cref="Boolean"/> values still can be generated from <see cref="bitBuffer"/>.
+    /// Stores how many random <see cref="bool"/> values still can be generated from <see cref="bitBuffer"/>.
     /// </summary>
     private int bitCount;
 
@@ -188,9 +188,9 @@ namespace Altaxo.Calc.Probability
     public ALFGenerator(uint seed)
     {
       this.seed = seed;
-      this.shortLag = 418;
-      this.longLag = 1279;
-      this.ResetGenerator();
+      shortLag = 418;
+      longLag = 1279;
+      ResetGenerator();
     }
 
     #endregion construction
@@ -218,7 +218,7 @@ namespace Altaxo.Calc.Probability
     /// </returns>
     public bool IsValidLongLag(int value)
     {
-      return value > this.shortLag;
+      return value > shortLag;
     }
 
     /// <summary>
@@ -226,71 +226,71 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     private void ResetGenerator()
     {
-      MT19937Generator gen = new MT19937Generator(this.seed);
-      this.x = new uint[this.longLag];
-      for (uint j = 0; j < this.longLag; ++j)
+      var gen = new MT19937Generator(seed);
+      x = new uint[longLag];
+      for (uint j = 0; j < longLag; ++j)
       {
-        this.x[j] = gen.NextUInt();
+        x[j] = gen.NextUInt();
       }
-      this.i = this.longLag;
+      i = longLag;
 
       // Reset helper variables used for generation of random bools.
-      this.bitBuffer = 0;
-      this.bitCount = 0;
+      bitBuffer = 0;
+      bitCount = 0;
     }
 
     /// <summary>
     /// Fills the array <see cref="x"/> with <see cref="longLag"/> new unsigned random numbers.
     /// </summary>
     /// <remarks>
-    /// Generated random numbers are 32-bit unsigned integers greater than or equal to <see cref="UInt32.MinValue"/>
-    ///   and less than or equal to <see cref="UInt32.MaxValue"/>.
+    /// Generated random numbers are 32-bit unsigned integers greater than or equal to <see cref="uint.MinValue"/>
+    ///   and less than or equal to <see cref="uint.MaxValue"/>.
     /// </remarks>
     private void Fill()
     {
       // two loops to avoid costly modulo operations
-      for (int j = 0; j < this.shortLag; ++j)
+      for (int j = 0; j < shortLag; ++j)
       {
-        this.x[j] = this.x[j] + this.x[j + (this.longLag - this.shortLag)];
+        x[j] = x[j] + x[j + (longLag - shortLag)];
       }
-      for (int j = this.shortLag; j < this.longLag; ++j)
+      for (int j = shortLag; j < longLag; ++j)
       {
-        this.x[j] = this.x[j] + this.x[j - this.shortLag];
+        x[j] = x[j] + x[j - shortLag];
       }
-      this.i = 0;
+      i = 0;
     }
 
     /// <summary>
     /// Returns an unsigned random number.
     /// </summary>
     /// <returns>
-    /// A 32-bit unsigned integer greater than or equal to <see cref="UInt32.MinValue"/> and
-    ///   less than or equal to <see cref="UInt32.MaxValue"/>.
+    /// A 32-bit unsigned integer greater than or equal to <see cref="uint.MinValue"/> and
+    ///   less than or equal to <see cref="uint.MaxValue"/>.
     /// </returns>
     public uint NextUInt()
     {
-      if (this.i >= this.longLag)
+      if (i >= longLag)
       {
-        this.Fill();
+        Fill();
       }
-      return this.x[this.i++];
+      return x[i++];
     }
 
     /// <summary>
-    /// Returns a nonnegative random number less than or equal to <see cref="Int32.MaxValue"/>.
+    /// Returns a nonnegative random number less than or equal to <see cref="int.MaxValue"/>.
     /// </summary>
     /// <returns>
-    /// A 32-bit signed integer greater than or equal to 0, and less than or equal to <see cref="Int32.MaxValue"/>;
-    ///   that is, the range of return values includes 0 and <see cref="Int32.MaxValue"/>.
+    /// A 32-bit signed integer greater than or equal to 0, and less than or equal to <see cref="int.MaxValue"/>;
+    ///   that is, the range of return values includes 0 and <see cref="int.MaxValue"/>.
     /// </returns>
     public int NextInclusiveMaxValue()
     {
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.i >= this.longLag)
+      if (i >= longLag)
       {
-        this.Fill();
+        Fill();
       }
-      uint x = this.x[this.i++];
+      uint x = this.x[i++];
 
       return (int)(x >> 1);
     }
@@ -317,31 +317,31 @@ namespace Altaxo.Calc.Probability
     /// <returns><see langword="true"/>.</returns>
     public override bool Reset()
     {
-      this.ResetGenerator();
+      ResetGenerator();
       return true;
     }
 
     /// <summary>
-    /// Returns a nonnegative random number less than <see cref="Int32.MaxValue"/>.
+    /// Returns a nonnegative random number less than <see cref="int.MaxValue"/>.
     /// </summary>
     /// <returns>
-    /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="Int32.MaxValue"/>; that is,
-    ///   the range of return values includes 0 but not <see cref="Int32.MaxValue"/>.
+    /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="int.MaxValue"/>; that is,
+    ///   the range of return values includes 0 but not <see cref="int.MaxValue"/>.
     /// </returns>
     public override int Next()
     {
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.i >= this.longLag)
+      if (i >= longLag)
       {
-        this.Fill();
+        Fill();
       }
-      uint x = this.x[this.i++];
+      uint x = this.x[i++];
 
       int result = (int)(x >> 1);
       // Exclude Int32.MaxValue from the range of return values.
-      if (result == Int32.MaxValue)
+      if (result == int.MaxValue)
       {
-        return this.Next();
+        return Next();
       }
       else
       {
@@ -373,15 +373,15 @@ namespace Altaxo.Calc.Probability
       }
 
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.i >= this.longLag)
+      if (i >= longLag)
       {
-        this.Fill();
+        Fill();
       }
-      uint x = this.x[this.i++];
+      uint x = this.x[i++];
 
       // The shift operation and extra int cast before the first multiplication give better performance.
       // See comment in NextDouble().
-      return (int)((double)(int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * (double)maxValue);
+      return (int)((int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * maxValue);
     }
 
     /// <summary>
@@ -413,11 +413,11 @@ namespace Altaxo.Calc.Probability
       }
 
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.i >= this.longLag)
+      if (i >= longLag)
       {
-        this.Fill();
+        Fill();
       }
-      uint x = this.x[this.i++];
+      uint x = this.x[i++];
 
       int range = maxValue - minValue;
       if (range < 0)
@@ -425,14 +425,14 @@ namespace Altaxo.Calc.Probability
         // The range is greater than Int32.MaxValue, so we have to use slower floating point arithmetic.
         // Also all 32 random bits (uint) have to be used which again is slower (See comment in NextDouble()).
         return minValue + (int)
-            ((double)x * ALFGenerator.UIntToDoubleMultiplier * ((double)maxValue - (double)minValue));
+            (x * ALFGenerator.UIntToDoubleMultiplier * (maxValue - (double)minValue));
       }
       else
       {
         // 31 random bits (int) will suffice which allows us to shift and cast to an int before the first multiplication and gain better performance.
         // See comment in NextDouble().
         return minValue + (int)
-            ((double)(int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * (double)range);
+            ((int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * range);
       }
     }
 
@@ -446,18 +446,18 @@ namespace Altaxo.Calc.Probability
     public override double NextDouble()
     {
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.i >= this.longLag)
+      if (i >= longLag)
       {
-        this.Fill();
+        Fill();
       }
-      uint x = this.x[this.i++];
+      uint x = this.x[i++];
 
       // Here a ~2x speed improvement is gained by computing a value that can be cast to an int
       //   before casting to a double to perform the multiplication.
       // Casting a double from an int is a lot faster than from an uint and the extra shift operation
       //   and cast to an int are very fast (the allocated bits remain the same), so overall there's
       //   a significant performance improvement.
-      return (double)(int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier;
+      return (int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier;
     }
 
     /// <summary>
@@ -484,15 +484,15 @@ namespace Altaxo.Calc.Probability
       }
 
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.i >= this.longLag)
+      if (i >= longLag)
       {
-        this.Fill();
+        Fill();
       }
-      uint x = this.x[this.i++];
+      uint x = this.x[i++];
 
       // The shift operation and extra int cast before the first multiplication give better performance.
       // See comment in NextDouble().
-      return (double)(int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * maxValue;
+      return (int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * maxValue;
     }
 
     /// <summary>
@@ -501,13 +501,13 @@ namespace Altaxo.Calc.Probability
     /// <param name="minValue">
     /// The inclusive lower bound of the random number to be generated.
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="Double.MaxValue"/>
+    ///   <see cref="double.MaxValue"/>
     /// </param>
     /// <param name="maxValue">
     /// The exclusive upper bound of the random number to be generated.
     /// <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="Double.MaxValue"/>.
+    ///   <see cref="double.MaxValue"/>.
     /// </param>
     /// <returns>
     /// A double-precision floating point number greater than or equal to <paramref name="minValue"/>, and less than
@@ -520,7 +520,7 @@ namespace Altaxo.Calc.Probability
     /// </exception>
     /// <exception cref="ArgumentException">
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than
-    ///   or equal to <see cref="Double.MaxValue"/>.
+    ///   or equal to <see cref="double.MaxValue"/>.
     /// </exception>
     public override double NextDouble(double minValue, double maxValue)
     {
@@ -541,15 +541,15 @@ namespace Altaxo.Calc.Probability
       }
 
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-      if (this.i >= this.longLag)
+      if (i >= longLag)
       {
-        this.Fill();
+        Fill();
       }
-      uint x = this.x[this.i++];
+      uint x = this.x[i++];
 
       // The shift operation and extra int cast before the first multiplication give better performance.
       // See comment in NextDouble().
-      return minValue + (double)(int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * range;
+      return minValue + (int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * range;
     }
 
     /// <summary>
@@ -560,27 +560,27 @@ namespace Altaxo.Calc.Probability
     /// Buffers 32 random bits (1 uint) for future calls, so a new random number is only generated every 32 calls.
     /// </remarks>
     /// </remarks>
-    /// <returns>A <see cref="Boolean"/> value.</returns>
+    /// <returns>A <see cref="bool"/> value.</returns>
     public override bool NextBoolean()
     {
-      if (this.bitCount == 0)
+      if (bitCount == 0)
       {
         // Generate 32 more bits (1 uint) and store it for future calls.
         // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-        if (this.i >= this.longLag)
+        if (i >= longLag)
         {
-          this.Fill();
+          Fill();
         }
-        this.bitBuffer = this.x[this.i++];
+        bitBuffer = x[i++];
 
         // Reset the bitCount and use rightmost bit of buffer to generate random bool.
-        this.bitCount = 31;
-        return (this.bitBuffer & 0x1) == 1;
+        bitCount = 31;
+        return (bitBuffer & 0x1) == 1;
       }
 
       // Decrease the bitCount and use rightmost bit of shifted buffer to generate random bool.
-      this.bitCount--;
-      return ((this.bitBuffer >>= 1) & 0x1) == 1;
+      bitCount--;
+      return ((bitBuffer >>= 1) & 0x1) == 1;
     }
 
     /// <summary>
@@ -588,7 +588,7 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <remarks>
     /// Each element of the array of bytes is set to a random number greater than or equal to 0, and less than or
-    ///   equal to <see cref="Byte.MaxValue"/>.
+    ///   equal to <see cref="byte.MaxValue"/>.
     /// </remarks>
     /// <param name="buffer">An array of bytes to contain random numbers.</param>
     /// <exception cref="ArgumentNullException">
@@ -608,11 +608,11 @@ namespace Altaxo.Calc.Probability
       while (i < buffer.Length - 3)
       {
         // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-        if (this.i >= this.longLag)
+        if (this.i >= longLag)
         {
-          this.Fill();
+          Fill();
         }
-        w = this.x[this.i++];
+        w = x[this.i++];
 
         buffer[i++] = (byte)w;
         buffer[i++] = (byte)(w >> 8);
@@ -624,11 +624,11 @@ namespace Altaxo.Calc.Probability
       if (i < buffer.Length)
       {
         // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
-        if (this.i >= this.longLag)
+        if (this.i >= longLag)
         {
-          this.Fill();
+          Fill();
         }
-        w = this.x[this.i++];
+        w = x[this.i++];
 
         buffer[i++] = (byte)w;
         if (i < buffer.Length)

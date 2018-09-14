@@ -49,7 +49,7 @@ namespace Altaxo.Units
       if (null == obj)
         return false;
 
-      return this.GetType() == obj.GetType();
+      return GetType() == obj.GetType();
     }
 
     public override bool Equals(object obj)
@@ -57,12 +57,12 @@ namespace Altaxo.Units
       if (!(obj is IUnit other))
         return false;
 
-      return this.GetType() == obj.GetType();
+      return GetType() == obj.GetType();
     }
 
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode();
+      return GetType().GetHashCode();
     }
 
     public static bool operator ==(UnitBase a, IUnit b)

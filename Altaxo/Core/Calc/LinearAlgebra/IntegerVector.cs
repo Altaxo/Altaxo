@@ -72,7 +72,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         x = new int[length];
       }
-      this.len = length;
+      len = length;
     }
   }
 }

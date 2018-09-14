@@ -159,12 +159,12 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
       SetLU();
 
-      this.singular = false;
+      singular = false;
       for (int j = 0; j < u.RowLength; j++)
       {
         if (u[j, j] == 0)
         {
-          this.singular = true;
+          singular = true;
           break;
         }
       }
@@ -295,7 +295,7 @@ namespace Altaxo.Calc.LinearAlgebra
       else
       {
 #if MANAGED
-        FloatMatrix ret = FloatMatrix.CreateIdentity(order);
+        var ret = FloatMatrix.CreateIdentity(order);
         ret = Solve(ret);
         return ret;
 #else
@@ -316,7 +316,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int m = B.RowCount;
       int n = B.ColumnCount;
 
-      FloatMatrix ret = new FloatMatrix(m, n);
+      var ret = new FloatMatrix(m, n);
       for (int i = 0; i < pivots.Length; i++)
       {
         for (int j = 0; j < n; j++)
@@ -329,7 +329,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     private FloatVector Pivot(IReadOnlyList<float> B)
     {
-      FloatVector ret = new FloatVector(B.Count);
+      var ret = new FloatVector(B.Count);
       var retArray = ret.GetInternalData();
       for (int i = 0; i < pivots.Length; i++)
       {

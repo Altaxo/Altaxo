@@ -72,7 +72,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
       int minmn = m < n ? m : n;
       r_ = new DoubleMatrix(matrix); // create a copy
-      DoubleVector[] u = new DoubleVector[minmn];
+      var u = new DoubleVector[minmn];
       for (int i = 0; i < minmn; i++)
       {
         u[i] = Householder.GenerateColumn(r_, i, m - 1, i);
@@ -173,7 +173,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.InvalidOperationException("A must have at lest as a many rows as columns.");
       }
       Compute();
-      if (!this.isFullRank)
+      if (!isFullRank)
       {
         throw new System.InvalidOperationException("Matrix is rank deficient.");
       }
@@ -182,10 +182,10 @@ namespace Altaxo.Calc.LinearAlgebra
       int m = matrix.RowCount;
       int n = matrix.ColumnCount;
       int nx = B.ColumnCount;
-      DoubleMatrix ret = new DoubleMatrix(n, nx);
+      var ret = new DoubleMatrix(n, nx);
 
 #if MANAGED
-      DoubleMatrix X = new DoubleMatrix(B);
+      var X = new DoubleMatrix(B);
       // Compute Y = transpose(Q)*B
       double[] column = new double[q_.RowLength];
       for (int j = 0; j < nx; j++)

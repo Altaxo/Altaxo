@@ -8,13 +8,13 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Ode
 {
@@ -236,17 +236,17 @@ namespace Altaxo.Calc.Ode
         if (n < 1)
           throw new ArgumentOutOfRangeException(nameof(n));
 
-        this._qmax = qmax;
-        this._qn = qcurr;
-        this._delta = 0;
-        this._Dq = 0;
-        this._dt = dt;
-        this._tn = t0;
-        this._nsuccess = 0;
-        this._rFactor = 1;
+        _qmax = qmax;
+        _qn = qcurr;
+        _delta = 0;
+        _Dq = 0;
+        _dt = dt;
+        _tn = t0;
+        _nsuccess = 0;
+        _rFactor = 1;
 
         // Copy x0
-        this._xn = new double[n];
+        _xn = new double[n];
         VectorMath.Copy(x0, _xn);
 
         //Compute Nordstieck's history matrix at t=t0;
@@ -460,7 +460,7 @@ namespace Altaxo.Calc.Ode
         else if (null != sparseJacobianEvaluation)
         {
           SparseDoubleMatrix J = sparseJacobianEvaluation(t + dt, xcurr);
-          SparseDoubleMatrix P = new SparseDoubleMatrix(J.RowCount, J.ColumnCount);
+          var P = new SparseDoubleMatrix(J.RowCount, J.ColumnCount);
 
           do
           {
@@ -782,7 +782,7 @@ namespace Altaxo.Calc.Ode
 
       var dydt = (double[])x0.Clone(); // just to get the array.
 
-      this.n = x0.Length;
+      n = x0.Length;
 
       this.f = f;
       this.opts = opts;
@@ -804,10 +804,10 @@ namespace Altaxo.Calc.Ode
         {
           ewt[i] = opts.RelativeTolerance * Math.Abs(x[i]) + opts.AbsoluteTolerance;
           ywt[i] = ewt[i] / tol;
-          sum = sum + (double)dydt[i] * dydt[i] / (ywt[i] * ywt[i]);
+          sum = sum + dydt[i] * dydt[i] / (ywt[i] * ywt[i]);
         }
 
-        dt = Math.Sqrt(tol / ((double)1.0d / (ywt[0] * ywt[0]) + sum / n));
+        dt = Math.Sqrt(tol / (1.0d / (ywt[0] * ywt[0]) + sum / n));
       }
 
       dt = Math.Min(dt, opts.MaxStep);
@@ -822,8 +822,8 @@ namespace Altaxo.Calc.Ode
 
       isIterationFailed = false;
 
-      this.tout = t0;
-      this.xout = (double[])x0.Clone();
+      tout = t0;
+      xout = (double[])x0.Clone();
 
       // ---------------------------------------------------------------------------------------------------
       // End of initialize
@@ -906,7 +906,7 @@ namespace Altaxo.Calc.Ode
 
         currstate._tn = currstate._tn + currstate._dt;
 
-        if (opts.MaxStep < Double.MaxValue)
+        if (opts.MaxStep < double.MaxValue)
         {
           r = Math.Min(r, opts.MaxStep / currstate._dt);
         }
@@ -952,7 +952,7 @@ namespace Altaxo.Calc.Ode
 
           if (currstate._delta >= 1.0d)
           {
-            if (opts.MaxStep < Double.MaxValue)
+            if (opts.MaxStep < double.MaxValue)
             {
               r = Math.Min(r, opts.MaxStep / currstate._dt);
             }
@@ -993,7 +993,7 @@ namespace Altaxo.Calc.Ode
 
             currstate._tn = currstate._tn + currstate._dt;
 
-            if (opts.MaxStep < Double.MaxValue)
+            if (opts.MaxStep < double.MaxValue)
             {
               r = Math.Min(r, opts.MaxStep / currstate._dt);
             }

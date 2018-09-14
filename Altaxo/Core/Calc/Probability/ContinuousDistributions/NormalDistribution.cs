@@ -120,7 +120,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.mu;
+        return mu;
       }
       set
       {
@@ -141,7 +141,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.sigma;
+        return sigma;
       }
       set
       {
@@ -299,7 +299,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.mu;
+        return mu;
       }
     }
 
@@ -310,7 +310,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.mu;
+        return mu;
       }
     }
 
@@ -321,7 +321,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Pow(this.sigma, 2.0);
+        return Math.Pow(sigma, 2.0);
       }
     }
 
@@ -332,7 +332,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { this.mu };
+        return new double[] { mu };
       }
     }
 

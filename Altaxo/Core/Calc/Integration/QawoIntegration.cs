@@ -129,7 +129,7 @@ namespace Altaxo.Calc.Integration
           ref object tempStorage
           )
     {
-      QawoIntegration algo = tempStorage as QawoIntegration;
+      var algo = tempStorage as QawoIntegration;
       if (null == algo)
         tempStorage = algo = new QawoIntegration();
       return algo.Integrate(f, a, b, oscTerm, omega, epsabs, epsrel, limit, out result, out abserr);
@@ -158,12 +158,12 @@ namespace Altaxo.Calc.Integration
           throw new ArgumentOutOfRangeException("table length n must be positive integer");
         }
 
-        this.chebmo = new double[25 * n];
+        chebmo = new double[25 * n];
         this.n = n;
         this.sine = sine;
         this.omega = omega;
         this.L = L;
-        this.par = 0.5 * omega * L;
+        par = 0.5 * omega * L;
 
         /* precompute the moments */
 
@@ -173,7 +173,7 @@ namespace Altaxo.Calc.Integration
 
           for (i = 0; i < this.n; i++)
           {
-            compute_moments(this.par * scale, this.chebmo, 25 * i);
+            compute_moments(par * scale, chebmo, 25 * i);
             scale *= 0.5;
           }
         }
@@ -184,7 +184,7 @@ namespace Altaxo.Calc.Integration
         this.omega = omega;
         this.sine = sine;
         this.L = L;
-        this.par = 0.5 * omega * L;
+        par = 0.5 * omega * L;
 
         /* recompute the moments */
 
@@ -192,9 +192,9 @@ namespace Altaxo.Calc.Integration
           int i;
           double scale = 1.0;
 
-          for (i = 0; i < this.n; i++)
+          for (i = 0; i < n; i++)
           {
-            compute_moments(this.par * scale, this.chebmo, 25 * i);
+            compute_moments(par * scale, chebmo, 25 * i);
             scale *= 0.5;
           }
         }
@@ -212,7 +212,7 @@ namespace Altaxo.Calc.Integration
         /* otherwise reset the table and compute the new parameters */
 
         this.L = L;
-        this.par = 0.5 * this.omega * L;
+        par = 0.5 * omega * L;
 
         /* recompute the moments */
 
@@ -220,9 +220,9 @@ namespace Altaxo.Calc.Integration
           int i;
           double scale = 1.0;
 
-          for (i = 0; i < this.n; i++)
+          for (i = 0; i < n; i++)
           {
-            compute_moments(this.par * scale, this.chebmo, 25 * i);
+            compute_moments(par * scale, chebmo, 25 * i);
             scale *= 0.5;
           }
         }
@@ -496,7 +496,6 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b
     {
       double area, errsum;
       double res_ext, err_ext;
-      double result0, abserr0, resabs0, resasc0;
       double tolerance;
 
       double ertest = 0;
@@ -514,7 +513,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b
       bool extall = false;
       bool disallow_extrapolation = false;
 
-      extrapolation_table table = new extrapolation_table();
+      var table = new extrapolation_table();
 
       double b = a + wf.L;
       double abs_omega = Math.Abs(wf.omega);
@@ -541,7 +540,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b
 
       /* Perform the first integration */
 
-      qc25f(f, a, b, wf, 0, out result0, out abserr0, out resabs0, out resasc0);
+      qc25f(f, a, b, wf, 0, out var result0, out var abserr0, out var resabs0, out var resasc0);
 
       workspace.set_initial_result(result0, abserr0);
 
@@ -593,16 +592,13 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b
       {
         int current_level;
         double a1, b1, a2, b2;
-        double a_i, b_i, r_i, e_i;
-        double area1 = 0, area2 = 0, area12 = 0;
-        double error1 = 0, error2 = 0, error12 = 0;
-        double resasc1, resasc2;
-        double resabs1, resabs2;
+        double area12 = 0;
+        double error12 = 0;
         double last_e_i;
 
         /* Bisect the subinterval with the largest error estimate */
 
-        workspace.retrieve(out a_i, out b_i, out r_i, out e_i);
+        workspace.retrieve(out var a_i, out var b_i, out var r_i, out var e_i);
 
         current_level = workspace.level[workspace.i] + 1;
 
@@ -619,8 +615,8 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b
 
         iteration++;
 
-        qc25f(f, a1, b1, wf, current_level, out area1, out error1, out resabs1, out resasc1);
-        qc25f(f, a2, b2, wf, current_level, out area2, out error2, out resabs2, out resasc2);
+        qc25f(f, a1, b1, wf, current_level, out var area1, out var error1, out var resabs1, out var resasc1);
+        qc25f(f, a2, b2, wf, current_level, out var area2, out var error2, out var resabs2, out var resasc2);
 
         area12 = area1 + area2;
         error12 = error1 + error2;

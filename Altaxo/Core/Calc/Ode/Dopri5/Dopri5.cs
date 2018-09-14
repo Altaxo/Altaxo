@@ -30,7 +30,7 @@ namespace Altaxo.Calc.Ode.Dopri5
     {
       #region Set Dependencies
 
-      this._dopcor = dopcor;
+      _dopcor = dopcor;
 
       #endregion Set Dependencies
     }
@@ -39,21 +39,21 @@ namespace Altaxo.Calc.Ode.Dopri5
     {
       #region Initialization Common Blocks
 
-      CommonBlock CONDO5 = new CommonBlock(2, 0, 0, 0);
+      var CONDO5 = new CommonBlock(2, 0, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      HINIT hinit = new HINIT();
-      CDOPRI cdopri = new CDOPRI();
-      DOPCOR dopcor = new DOPCOR(hinit, cdopri, CONDO5);
+      var hinit = new HINIT();
+      var cdopri = new CDOPRI();
+      var dopcor = new DOPCOR(hinit, cdopri, CONDO5);
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._dopcor = dopcor;
+      _dopcor = dopcor;
 
       #endregion Set Dependencies
     }
@@ -583,7 +583,7 @@ namespace Altaxo.Calc.Ode.Dopri5
         return;
       }
       // C -------- CALL TO CORE INTEGRATOR ------------
-      this._dopcor.Run(N, FCN, ref X, ref Y, offset_y, XEND, ref HMAX
+      _dopcor.Run(N, FCN, ref X, ref Y, offset_y, XEND, ref HMAX
                        , ref H, RTOL, offset_rtol, ATOL, offset_atol, ITOL, IPRINT, SOLOUT
                        , IOUT, ref IDID, NMAX, UROUND, METH, NSTIFF
                        , SAFE, BETA, FAC1, FAC2, ref WORK, IEY1 + o_work, ref WORK, IEK1 + o_work
@@ -634,8 +634,8 @@ namespace Altaxo.Calc.Ode.Dopri5
     {
       #region Set Dependencies
 
-      this._hinit = hinit;
-      this._cdopri = cdopri;
+      _hinit = hinit;
+      _cdopri = cdopri;
 
       #endregion Set Dependencies
 
@@ -643,7 +643,7 @@ namespace Altaxo.Calc.Ode.Dopri5
 
       #region Common Block: CONDO5 Initialization
 
-      this._condo5 = CONDO5;
+      _condo5 = CONDO5;
       XOLD = CONDO5.doubleData[0];
       HOUT = CONDO5.doubleData[1];
 
@@ -656,21 +656,21 @@ namespace Altaxo.Calc.Ode.Dopri5
     {
       #region Initialization Common Blocks
 
-      CommonBlock CONDO5 = new CommonBlock(2, 0, 0, 0);
+      var CONDO5 = new CommonBlock(2, 0, 0, 0);
 
       #endregion Initialization Common Blocks
 
       #region Dependencies (Initialization)
 
-      HINIT hinit = new HINIT();
-      CDOPRI cdopri = new CDOPRI();
+      var hinit = new HINIT();
+      var cdopri = new CDOPRI();
 
       #endregion Dependencies (Initialization)
 
       #region Set Dependencies
 
-      this._hinit = hinit;
-      this._cdopri = cdopri;
+      _hinit = hinit;
+      _cdopri = cdopri;
 
       #endregion Set Dependencies
 
@@ -678,7 +678,7 @@ namespace Altaxo.Calc.Ode.Dopri5
 
       #region Common Block: CONDO5 Initialization
 
-      this._condo5 = CONDO5;
+      _condo5 = CONDO5;
       XOLD = CONDO5.doubleData[0];
       HOUT = CONDO5.doubleData[1];
 
@@ -802,7 +802,7 @@ namespace Altaxo.Calc.Ode.Dopri5
 
       if (METH == 1)
       {
-        this._cdopri.Run(ref C2, ref C3, ref C4, ref C5, ref E1, ref E3
+        _cdopri.Run(ref C2, ref C3, ref C4, ref C5, ref E1, ref E3
                          , ref E4, ref E5, ref E6, ref E7, ref A21, ref A31
                          , ref A32, ref A41, ref A42, ref A43, ref A51, ref A52
                          , ref A53, ref A54, ref A61, ref A62, ref A63, ref A64
@@ -824,7 +824,7 @@ namespace Altaxo.Calc.Ode.Dopri5
       HMAX = Math.Abs(HMAX);
       IORD = 5;
       if (H == 0.0E0)
-        H = this._hinit.Run(N, FCN, X, Y, offset_y, XEND, POSNEG, K1, offset_k1, ref K2, offset_k2, ref K3, offset_k3, IORD, HMAX, ATOL, offset_atol, RTOL, offset_rtol, ITOL, RPAR, offset_rpar, IPAR, offset_ipar);
+        H = _hinit.Run(N, FCN, X, Y, offset_y, XEND, POSNEG, K1, offset_k1, ref K2, offset_k2, ref K3, offset_k3, IORD, HMAX, ATOL, offset_atol, RTOL, offset_rtol, ITOL, RPAR, offset_rpar, IPAR, offset_ipar);
       NFCN += 2;
       REJECT = false;
       XOLD.v = X;
@@ -1205,7 +1205,7 @@ LABEL79:
 
       #region Common Block: CONDO5 Initialization
 
-      this._condo5 = CONDO5;
+      _condo5 = CONDO5;
       XOLD = CONDO5.doubleData[0];
       H = CONDO5.doubleData[1];
 
@@ -1218,7 +1218,7 @@ LABEL79:
     {
       #region Initialization Common Blocks
 
-      CommonBlock CONDO5 = new CommonBlock(2, 0, 0, 0);
+      var CONDO5 = new CommonBlock(2, 0, 0, 0);
 
       #endregion Initialization Common Blocks
 
@@ -1226,7 +1226,7 @@ LABEL79:
 
       #region Common Block: CONDO5 Initialization
 
-      this._condo5 = CONDO5;
+      _condo5 = CONDO5;
       XOLD = CONDO5.doubleData[0];
       H = CONDO5.doubleData[1];
 

@@ -81,7 +81,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       int iy = 0;
       for (int i = 0; i < n; ++i)
       {
-        ret += ((double)X[ix] * (double)Y[iy]);
+        ret += (X[ix] * (double)Y[iy]);
         ix += incx;
         iy += incy;
       }
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       int iy = 0;
       for (int i = 0; i < n; ++i)
       {
-        ret += ((double)X[ix] * (double)Y[iy]);
+        ret += (X[ix] * (double)Y[iy]);
         ix += incx;
         iy += incy;
       }

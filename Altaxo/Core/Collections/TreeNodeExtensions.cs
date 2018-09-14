@@ -627,8 +627,7 @@ namespace Altaxo.Collections
     /// <returns><c>true</c> if the given index is valid; otherwise, <c>false</c>.</returns>
     public static bool IsValidIndex<T>(this T rootNode, IEnumerable<int> index) where T : ITreeListNode<T>
     {
-      T nodeAtIndex;
-      return IsValidIndex(rootNode, index, out nodeAtIndex);
+      return IsValidIndex(rootNode, index, out var nodeAtIndex);
     }
 
     /// <summary>
@@ -869,9 +868,10 @@ namespace Altaxo.Collections
       if (null == node)
         throw new ArgumentNullException("node");
 
-      var list = new List<T>();
-
-      list.Add(node);
+      var list = new List<T>
+      {
+        node
+      };
       node = node.ParentNode;
       while (null != node)
       {
@@ -962,7 +962,7 @@ namespace Altaxo.Collections
       {
         foreach (var n in TakeFromHereToRoot(node.ParentNode))
         {
-          M nodeAsM = n as M;
+          var nodeAsM = n as M;
           if (null != nodeAsM)
             return nodeAsM;
         }
@@ -1024,7 +1024,7 @@ namespace Altaxo.Collections
       foreach (var node in nodes)
         level = Math.Min(node.Level(), level);
 
-      HashSet<T> hashSet = new HashSet<T>();
+      var hashSet = new HashSet<T>();
       foreach (var node in nodes)
         if (level == node.Level())
           hashSet.Add(node);
@@ -1104,7 +1104,7 @@ namespace Altaxo.Collections
     /// <remarks>The following assumptions must be fullfilled:
     /// <para>The nodes have to have the same parent, otherwise an exception is thrown.</para>
     /// </remarks>
-    static public int MoveNodesUpDown<T>(int indexDelta, IEnumerable<T> nodesToMove) where T : ITreeListNodeWithParent<T>
+    public static int MoveNodesUpDown<T>(int indexDelta, IEnumerable<T> nodesToMove) where T : ITreeListNodeWithParent<T>
     {
       if (indexDelta == 0)
         return 0; // nothing moved

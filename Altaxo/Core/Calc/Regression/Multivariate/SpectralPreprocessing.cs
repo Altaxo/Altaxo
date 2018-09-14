@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -215,7 +215,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       for (int n = 0; n < xMatrix.RowCount; n++)
       {
         // 2.) Do linear regression of the current spectrum versus the mean spectrum
-        QuickLinearRegression regression = new QuickLinearRegression();
+        var regression = new QuickLinearRegression();
         for (int i = regionstart; i < regionend; i++)
           regression.Add(xMean[i], xMatrix[n, i]);
 
@@ -478,7 +478,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         case 1: // Detrending of order 1 - subtract linear regression line
           for (int n = 0; n < xMatrix.RowCount; n++)
           {
-            QuickLinearRegression regression = new QuickLinearRegression();
+            var regression = new QuickLinearRegression();
             for (int i = regionstart; i < regionend; i++)
               regression.Add(i, xMatrix[n, i]);
 
@@ -493,7 +493,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         case 2: // Detrending of order 2 - subtract quadratic regression line
           for (int n = 0; n < xMatrix.RowCount; n++)
           {
-            QuickQuadraticRegression regression = new QuickQuadraticRegression();
+            var regression = new QuickQuadraticRegression();
             for (int i = regionstart; i < regionend; i++)
               regression.Add(i, xMatrix[n, i]);
 

@@ -31,8 +31,8 @@
  * TODO: Add preconditioning and selection of either Fletcher-Reeves or Polak-Ribiere
 */
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -66,20 +66,20 @@ namespace Altaxo.Calc.Optimization
     ///<param name="lsm">User specified line search method, defaults to Secant line search method</param>
     public ConjugateGradient(CostFunction costfunction, EndCriteria endcriteria, LineSearchMethod lsm)
     {
-      this.costFunction_ = costfunction;
-      this.endCriteria_ = endcriteria;
-      this.lineSearchMethod_ = lsm;
+      costFunction_ = costfunction;
+      endCriteria_ = endcriteria;
+      lineSearchMethod_ = lsm;
     }
 
     ///<summary>Number of iterations between restarts.  Must be a non-negative number.  If 0 is
     /// specified then the number of iterations between restart is the number of variables </summary>
     public int RestartCount
     {
-      get { return this.restartCount; }
+      get { return restartCount; }
       set
       {
         if (value >= 0)
-          this.restartCount = value;
+          restartCount = value;
         else
           throw new OptimizationException("Restart Counter must be a non-negative number");
       }
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.Optimization
 
       // Calculate Diagonal preconditioner
       DoubleMatrix h = HessianEvaluation(initialvector);
-      DoubleMatrix m_inv = new DoubleMatrix(initialvector.Length, initialvector.Length);
+      var m_inv = new DoubleMatrix(initialvector.Length, initialvector.Length);
       for (int i = 0; i < initialvector.Length; i++)
         m_inv[i, i] = 1 / h[i, i];
       s = m_inv * g;
@@ -127,40 +127,40 @@ namespace Altaxo.Calc.Optimization
 
       restartCounter = 0;
       /* ------------------------------ */
-      this.iterationVectors_ = new DoubleVector[endCriteria_.maxIteration + 1];
-      this.iterationVectors_[0] = initialvector;
+      iterationVectors_ = new DoubleVector[endCriteria_.maxIteration + 1];
+      iterationVectors_[0] = initialvector;
 
-      this.iterationValues_ = new double[endCriteria_.maxIteration + 1];
-      this.iterationValues_[0] = FunctionEvaluation(this.iterationVectors_[0]);
+      iterationValues_ = new double[endCriteria_.maxIteration + 1];
+      iterationValues_[0] = FunctionEvaluation(iterationVectors_[0]);
 
-      this.iterationGradients_ = new DoubleVector[endCriteria_.maxIteration + 1];
-      this.iterationGradients_[0] = new DoubleVector(g);
+      iterationGradients_ = new DoubleVector[endCriteria_.maxIteration + 1];
+      iterationGradients_[0] = new DoubleVector(g);
 
-      this.iterationGradientNorms_ = new double[endCriteria_.maxIteration + 1];
-      this.iterationGradientNorms_[0] = g.L2Norm;
+      iterationGradientNorms_ = new double[endCriteria_.maxIteration + 1];
+      iterationGradientNorms_[0] = g.L2Norm;
 
-      this.iterationDirections_ = new DoubleVector[endCriteria_.maxIteration + 1];
-      this.iterationDirections_[0] = d;
+      iterationDirections_ = new DoubleVector[endCriteria_.maxIteration + 1];
+      iterationDirections_[0] = d;
 
-      this.iterationTrialSteps_ = new double[endCriteria_.maxIteration + 1];
-      this.iterationTrialSteps_[0] = 1 / this.iterationGradientNorms_[0];
+      iterationTrialSteps_ = new double[endCriteria_.maxIteration + 1];
+      iterationTrialSteps_[0] = 1 / iterationGradientNorms_[0];
     }
 
     ///<summary> Perform a single iteration of the optimization method </summary>
     ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
     public override void IterateMethod()
     {
-      DoubleVector d = this.iterationDirections_[endCriteria_.iterationCounter - 1];
-      DoubleVector x = this.iterationVectors_[endCriteria_.iterationCounter - 1];
-      DoubleVector g = this.iterationGradients_[endCriteria_.iterationCounter - 1];
-      double stp = this.iterationTrialSteps_[endCriteria_.iterationCounter - 1];
+      DoubleVector d = iterationDirections_[endCriteria_.iterationCounter - 1];
+      DoubleVector x = iterationVectors_[endCriteria_.iterationCounter - 1];
+      DoubleVector g = iterationGradients_[endCriteria_.iterationCounter - 1];
+      double stp = iterationTrialSteps_[endCriteria_.iterationCounter - 1];
 
       // Shanno-Phua's Formula for Trial Step
       if (restartCounter == 0 && endCriteria_.iterationCounter > 1)
       {
         double dg = d.GetDotProduct(g);
-        double dg0 = this.iterationDirections_[endCriteria_.iterationCounter - 2].GetDotProduct(
-          this.iterationGradients_[endCriteria_.iterationCounter - 2]) / stp;
+        double dg0 = iterationDirections_[endCriteria_.iterationCounter - 2].GetDotProduct(
+          iterationGradients_[endCriteria_.iterationCounter - 2]) / stp;
         stp = dg0 / dg;
       }
 
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Optimization
 
       // Calculate Diagonal preconditioner
       DoubleMatrix h = HessianEvaluation(x);
-      DoubleMatrix m_inv = new DoubleMatrix(x.Length, x.Length);
+      var m_inv = new DoubleMatrix(x.Length, x.Length);
       for (int i = 0; i < x.Length; i++)
         m_inv[i, i] = 1 / h[i, i];
       s = m_inv * g;
@@ -195,12 +195,12 @@ namespace Altaxo.Calc.Optimization
       // Calculate next line search direction
       d = -s + beta * d;
 
-      this.iterationVectors_[endCriteria_.iterationCounter] = x;
-      this.iterationValues_[endCriteria_.iterationCounter] = FunctionEvaluation(x);
-      this.iterationGradients_[endCriteria_.iterationCounter] = g;
-      this.iterationGradientNorms_[endCriteria_.iterationCounter] = g.L2Norm;
-      this.iterationDirections_[endCriteria_.iterationCounter] = d;
-      this.iterationTrialSteps_[endCriteria_.iterationCounter] = stp;
+      iterationVectors_[endCriteria_.iterationCounter] = x;
+      iterationValues_[endCriteria_.iterationCounter] = FunctionEvaluation(x);
+      iterationGradients_[endCriteria_.iterationCounter] = g;
+      iterationGradientNorms_[endCriteria_.iterationCounter] = g.L2Norm;
+      iterationDirections_[endCriteria_.iterationCounter] = d;
+      iterationTrialSteps_[endCriteria_.iterationCounter] = stp;
     }
   }
 }

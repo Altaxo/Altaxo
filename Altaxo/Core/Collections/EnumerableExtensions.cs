@@ -53,7 +53,7 @@ namespace Altaxo.Collections
     /// <returns>Iterator that enumerates the tree structure in preorder.</returns>
     public static IEnumerable<T> FlattenFromRootToLeaves<T>(this IEnumerable<T> input, Func<T, IEnumerable<T>> recursion)
     {
-      Stack<IEnumerator<T>> stack = new Stack<IEnumerator<T>>();
+      var stack = new Stack<IEnumerator<T>>();
       try
       {
         stack.Push(input.GetEnumerator());

@@ -30,9 +30,9 @@ namespace Altaxo.Calc.Ode
     public SparseVector(int n)
     {
       this.n = n;
-      this.items = new double[IncrementSize];
-      this.indices = new int[IncrementSize];
-      this.count = 0;
+      items = new double[IncrementSize];
+      indices = new int[IncrementSize];
+      count = 0;
     }
 
     /// <summary>Constructs a sparse vector with defined nonzero elements</summary>
@@ -47,7 +47,7 @@ namespace Altaxo.Calc.Ode
         throw new ArgumentNullException("indices");
       this.items = items;
       this.indices = indices;
-      this.count = items.Length;
+      count = items.Length;
       this.n = n;
     }
 

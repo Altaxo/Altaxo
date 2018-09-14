@@ -50,11 +50,11 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.generator;
+        return generator;
       }
       set
       {
-        this.generator = value;
+        generator = value;
       }
     }
 
@@ -79,7 +79,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.generator.CanReset;
+        return generator.CanReset;
       }
     }
 
@@ -126,7 +126,7 @@ namespace Altaxo.Calc.Probability
     /// </returns>
     public bool Reset()
     {
-      return this.generator.Reset();
+      return generator.Reset();
     }
 
     #endregion instance methods

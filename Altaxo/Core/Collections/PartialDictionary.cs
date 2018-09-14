@@ -143,8 +143,7 @@ namespace Altaxo.Collections
 
     public bool ContainsKey(TKey key)
     {
-      TBaseValue b;
-      if (!_parent.TryGetValue(key, out b))
+      if (!_parent.TryGetValue(key, out var b))
         return false;
 
       return b is TDerivValue;
@@ -170,8 +169,7 @@ namespace Altaxo.Collections
 
     public bool Remove(KeyValuePair<TKey, TDerivValue> item)
     {
-      TBaseValue b;
-      if (!_parent.TryGetValue(item.Key, out b))
+      if (!_parent.TryGetValue(item.Key, out var b))
         return false;
       if (!(object.ReferenceEquals(item.Value, b)))
         return false;
@@ -180,8 +178,7 @@ namespace Altaxo.Collections
 
     public bool Remove(TKey key)
     {
-      TBaseValue b;
-      if (!_parent.TryGetValue(key, out b))
+      if (!_parent.TryGetValue(key, out var b))
         return false;
       if (!(b is TDerivValue))
         return false;
@@ -190,8 +187,7 @@ namespace Altaxo.Collections
 
     public bool TryGetValue(TKey key, out TDerivValue value)
     {
-      TBaseValue d;
-      if (!_parent.TryGetValue(key, out d))
+      if (!_parent.TryGetValue(key, out var d))
       {
         value = default(TDerivValue);
         return false;

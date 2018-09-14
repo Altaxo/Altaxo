@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -36,11 +36,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     protected IExtensibleVector<double> _PRESS;
 
-    public IROVector<double> PRESS { get { return this._PRESS; } }
+    public IROVector<double> PRESS { get { return _PRESS; } }
 
     public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
     {
-      return this._PRESS;
+      return _PRESS;
     }
 
     protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; } }
@@ -74,7 +74,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
     public static PLS2Regression CreateFromPreprocessed(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
     {
-      PLS2Regression result = new PLS2Regression();
+      var result = new PLS2Regression();
       result.AnalyzeFromPreprocessed(matrixX, matrixY, maxFactors);
       return result;
     }
@@ -367,20 +367,20 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix<double> predictionScores
       )
     {
-      Matrix bidiag = new Matrix(numFactors, numFactors);
+      var bidiag = new Matrix(numFactors, numFactors);
       var subweights = MatrixMath.ToROSubMatrix(W, 0, 0, numFactors, W.ColumnCount);
       var subxloads = MatrixMath.ToROSubMatrix(xLoads, 0, 0, numFactors, xLoads.ColumnCount);
       MatrixMath.MultiplySecondTransposed(subxloads, subweights, bidiag);
       IMatrix<double> invbidiag = bidiag.Inverse;
 
-      Matrix subyloads = new Matrix(numFactors, yLoads.ColumnCount);
+      var subyloads = new Matrix(numFactors, yLoads.ColumnCount);
       MatrixMath.Submatrix(yLoads, subyloads, 0, 0);
       // multiply each row of the subyloads matrix by the appropriate weight
       for (int i = 0; i < subyloads.RowCount; i++)
         for (int j = 0; j < subyloads.ColumnCount; j++)
           subyloads[i, j] *= V[0, i];
 
-      Matrix helper = new Matrix(numFactors, yLoads.ColumnCount);
+      var helper = new Matrix(numFactors, yLoads.ColumnCount);
       MatrixMath.Multiply(invbidiag, subyloads, helper);
 
       //Matrix scores = new Matrix(yLoads.Columns,xLoads.Columns);

@@ -75,8 +75,8 @@
 // prototypes
 // ----------
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
@@ -1487,7 +1487,7 @@ L100:
       // --x; LELLID!!
 
       s1 = s2 = s3 = x1max = x3max = 0.0;
-      floatn = (double)n;
+      floatn = n;
       agiant = rgiant / floatn;
 
       for (i = 0; i < n; i++)
@@ -1585,7 +1585,7 @@ L130:
       // --x; LELLID!!
 
       s1 = s2 = s3 = x1max = x3max = 0.0;
-      floatn = (double)n;
+      floatn = n;
       agiant = rgiant / floatn;
 
       for (i = 0; i < n; i++)
@@ -1971,13 +1971,12 @@ L130:
     private static int LEVMAR_COVAR(double[] JtJ, double[] C, double sumsq, int m, int n, out double sigmasq)
     {
       int i;
-      int rnk;
       double fact;
 
-      var matresult = MatrixMath.PseudoInverse(MatrixMath.ToROMatrixFromColumnMajorLinearArray(JtJ, m), out rnk);
+      var matresult = MatrixMath.PseudoInverse(MatrixMath.ToROMatrixFromColumnMajorLinearArray(JtJ, m), out var rnk);
       MatrixMath.Copy(matresult, MatrixMath.ToMatrixFromColumnMajorLinearArray(C, m));
 
-      fact = sumsq / (double)(n - rnk);
+      fact = sumsq / (n - rnk);
       for (i = 0; i < m * m; ++i)
         C[i] *= fact;
 

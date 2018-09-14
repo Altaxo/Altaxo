@@ -42,7 +42,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.sigma;
+        return sigma;
       }
       set
       {
@@ -99,9 +99,9 @@ namespace Altaxo.Calc.Probability
     public RayleighDistribution(double sigma, Generator generator)
       : base(generator)
     {
-      this.normalDistribution1 = new NormalDistribution(0, 1, generator);
-      this.normalDistribution2 = new NormalDistribution(0, 1, generator);
-      this.Initialize(sigma);
+      normalDistribution1 = new NormalDistribution(0, 1, generator);
+      normalDistribution2 = new NormalDistribution(0, 1, generator);
+      Initialize(sigma);
     }
 
     #endregion construction
@@ -130,8 +130,8 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentOutOfRangeException("Sigma out of range (must be >0)");
 
       this.sigma = sigma;
-      this.normalDistribution1.Sigma = this.sigma;
-      this.normalDistribution2.Sigma = this.sigma;
+      normalDistribution1.Sigma = this.sigma;
+      normalDistribution2.Sigma = this.sigma;
     }
 
     #endregion instance methods
@@ -167,7 +167,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.sigma * Math.Sqrt(Math.PI / 2.0);
+        return sigma * Math.Sqrt(Math.PI / 2.0);
       }
     }
 
@@ -178,7 +178,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.sigma * Math.Sqrt(Math.Log(4));
+        return sigma * Math.Sqrt(Math.Log(4));
       }
     }
 
@@ -189,7 +189,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Pow(this.sigma, 2.0) * (4.0 - Math.PI) / 2.0;
+        return Math.Pow(sigma, 2.0) * (4.0 - Math.PI) / 2.0;
       }
     }
 
@@ -200,7 +200,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { this.sigma };
+        return new double[] { sigma };
       }
     }
 
@@ -210,7 +210,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A rayleigh distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return Math.Sqrt(Math.Pow(this.normalDistribution1.NextDouble(), 2) + Math.Pow(this.normalDistribution2.NextDouble(), 2));
+      return Math.Sqrt(Math.Pow(normalDistribution1.NextDouble(), 2) + Math.Pow(normalDistribution2.NextDouble(), 2));
     }
 
     #endregion overridden Distribution members
@@ -244,7 +244,7 @@ namespace Altaxo.Calc.Probability
 
     public override double Quantile(double p)
     {
-      return Quantile(p, this.sigma);
+      return Quantile(p, sigma);
     }
 
     public static double Quantile(double p, double sigma)

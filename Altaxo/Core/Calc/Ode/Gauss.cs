@@ -26,7 +26,7 @@ namespace Altaxo.Calc.Ode
         throw new ArgumentNullException("b");
       int n = a.Length;
       int[] map = Enumerable.Range(0, n).ToArray();
-      Vector x = Vector.Zeros(n);
+      var x = Vector.Zeros(n);
       for (int j = 0; j < n; j++)
       {
         // Find row with largest absolute value of j-st element
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.Ode
         throw new ArgumentNullException("A");
       if ((double[])b == null)
         throw new ArgumentNullException("b");
-      return SolveCore((double[][])A.Clone(), (double[])b.Clone());
+      return SolveCore((double[][])A.Clone(), b.Clone());
     }
 
     /// <summary>Solves system of linear equations Ax = b using Gaussian elimination with partial pivoting</summary>
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>Solution of system, 'x'</returns>
     public static double[] Solve(SparseMatrix A, Vector b)
     {
-      return SolveCore((double[][])A.DenseMatrix(), (double[])b);
+      return SolveCore((double[][])A.DenseMatrix(), b);
     }
   }
 }

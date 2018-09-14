@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix<double> predictedY // Matrix of predicted y-values, must be same number of rows as spectra
       )
     {
-      this.PredictedYAndSpectralResidualsFromPreprocessed(XU, numFactors, predictedY, null);
+      PredictedYAndSpectralResidualsFromPreprocessed(XU, numFactors, predictedY, null);
     }
 
     /// <summary>
@@ -170,7 +170,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       )
     {
       var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, InternalCalibrationModel.NumberOfY);
-      this.PredictedYAndSpectralResidualsFromPreprocessed(XU, numFactors, predictedY, null);
+      PredictedYAndSpectralResidualsFromPreprocessed(XU, numFactors, predictedY, null);
       return predictedY;
     }
 
@@ -186,7 +186,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column
       )
     {
-      this.PredictedYAndSpectralResidualsFromPreprocessed(XU, numFactors, null, spectralResiduals);
+      PredictedYAndSpectralResidualsFromPreprocessed(XU, numFactors, null, spectralResiduals);
     }
 
     /// <summary>
@@ -200,7 +200,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numFactors // number of factors to use for prediction
       )
     {
-      var result = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, this.NumberOfSpectralResiduals);
+      var result = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, NumberOfSpectralResiduals);
       SpectralResidualsFromPreprocessed(XU, numFactors, result);
       return result;
     }
@@ -222,14 +222,14 @@ namespace Altaxo.Calc.Regression.Multivariate
       // check the dimensions of the matrices
       if (predictedY != null)
       {
-        if (predictedY.RowCount != XU.RowCount || predictedY.ColumnCount != this.InternalCalibrationModel.NumberOfY)
+        if (predictedY.RowCount != XU.RowCount || predictedY.ColumnCount != InternalCalibrationModel.NumberOfY)
           predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, InternalCalibrationModel.NumberOfY);
       }
 
       if (spectralResiduals != null)
       {
-        if (spectralResiduals.RowCount != XU.RowCount || spectralResiduals.ColumnCount != this.NumberOfSpectralResiduals)
-          spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, this.NumberOfSpectralResiduals);
+        if (spectralResiduals.RowCount != XU.RowCount || spectralResiduals.ColumnCount != NumberOfSpectralResiduals)
+          spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, NumberOfSpectralResiduals);
       }
 
       PredictedYAndSpectralResidualsFromPreprocessed(XU, numFactors, predictedY, spectralResiduals);
@@ -260,7 +260,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         predictedY = null;
 
       if (calculateSpectralResiduals)
-        spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, this.NumberOfSpectralResiduals);
+        spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, NumberOfSpectralResiduals);
       else
         spectralResiduals = null;
 
@@ -426,22 +426,17 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix<double> matrixX,
       IMatrix<double> matrixY)
     {
-      MultivariatePreprocessingModel data = new MultivariatePreprocessingModel();
+      var data = new MultivariatePreprocessingModel
+      {
+        PreprocessOptions = (SpectralPreprocessingOptions)preprocessOptions.Clone(),
 
-      data.PreprocessOptions = (SpectralPreprocessingOptions)preprocessOptions.Clone();
-
-      data.SpectralRegions = spectralRegions;
-
-      IVector<double> meanX, scaleX;
-
-      PreprocessSpectraForAnalysis(preprocessOptions, spectralRegions, matrixX, out meanX, out scaleX);
+        SpectralRegions = spectralRegions
+      };
+      PreprocessSpectraForAnalysis(preprocessOptions, spectralRegions, matrixX, out var meanX, out var scaleX);
 
       data.XMean = meanX;
       data.XScale = scaleX;
-
-      IVector<double> meanY, scaleY;
-
-      PreprocessYForAnalysis(matrixY, out meanY, out scaleY);
+      PreprocessYForAnalysis(matrixY, out var meanY, out var scaleY);
 
       data.YMean = meanY;
       data.YScale = scaleY;
@@ -731,7 +726,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       out IROVector<double> crossPRESS // vertical value of PRESS values for the cross validation
       )
     {
-      CrossPRESSEvaluator worker = new CrossPRESSEvaluator(spectralRegions, numFactors, groupingStrategy, preprocessOptions, regress);
+      var worker = new CrossPRESSEvaluator(spectralRegions, numFactors, groupingStrategy, preprocessOptions, regress);
       double result = CrossValidationIteration(X, Y, groupingStrategy, new CrossValidationIterationFunction(worker.EhCrossPRESS));
 
       crossPRESS = VectorMath.ToROVector(worker.CrossPRESS, worker.NumberOfFactors + 1);
@@ -796,7 +791,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix<double> yCrossPredicted // vertical value of PRESS values for the cross validation
       )
     {
-      CrossPredictedYEvaluator worker = new CrossPredictedYEvaluator(spectralRegions, numFactors, groupingStrategy, preprocessOptions, regress, yCrossPredicted);
+      var worker = new CrossPredictedYEvaluator(spectralRegions, numFactors, groupingStrategy, preprocessOptions, regress, yCrossPredicted);
       double result = CrossValidationIteration(X, Y, groupingStrategy, new CrossValidationIterationFunction(worker.EhYCrossPredicted));
 
       return result;
@@ -861,7 +856,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       out IROMatrix<double> crossXResiduals
       )
     {
-      CrossPredictedXResidualsEvaluator worker = new CrossPredictedXResidualsEvaluator(X.RowCount, spectralRegions, numFactors, groupingStrategy, preprocessOptions, regress);
+      var worker = new CrossPredictedXResidualsEvaluator(X.RowCount, spectralRegions, numFactors, groupingStrategy, preprocessOptions, regress);
       double result = CrossValidationIteration(X, Y, groupingStrategy, new CrossValidationIterationFunction(worker.EhCrossValidationWorker));
       crossXResiduals = worker.XCrossResiduals;
       return result;
@@ -913,7 +908,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public virtual IROMatrix<double> GetPredictionScores(int numberOfFactors)
     {
       var result = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(InternalCalibrationModel.NumberOfX, InternalCalibrationModel.NumberOfY);
-      this.InternalGetPredictionScores(numberOfFactors, result);
+      InternalGetPredictionScores(numberOfFactors, result);
       return result;
     }
 
@@ -926,7 +921,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public virtual IROMatrix<double> GetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors)
     {
       var result = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, 1);
-      this.InternalGetXLeverageFromPreprocessed(matrixX, numFactors, result);
+      InternalGetXLeverageFromPreprocessed(matrixX, numFactors, result);
       return result;
     }
 

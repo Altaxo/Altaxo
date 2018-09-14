@@ -89,7 +89,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       sign = 1;
       ComplexFloat[] LUrowi;
-      ComplexFloat[] LUcolj = new ComplexFloat[m];
+      var LUcolj = new ComplexFloat[m];
 
       // Outer loop.
       for (int j = 0; j < n; j++)
@@ -157,12 +157,12 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
       SetLU();
 
-      this.singular = false;
+      singular = false;
       for (int j = 0; j < u.RowLength; j++)
       {
         if (u[j, j] == 0)
         {
-          this.singular = true;
+          singular = true;
           break;
         }
       }
@@ -293,7 +293,7 @@ namespace Altaxo.Calc.LinearAlgebra
       else
       {
 #if MANAGED
-        ComplexFloatMatrix ret = ComplexFloatMatrix.CreateIdentity(order);
+        var ret = ComplexFloatMatrix.CreateIdentity(order);
         ret = Solve(ret);
         return ret;
 #else
@@ -314,7 +314,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int m = B.Rows;
       int n = B.Columns;
 
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(m, n);
+      var ret = new ComplexFloatMatrix(m, n);
       for (int i = 0; i < pivots.Length; i++)
       {
         for (int j = 0; j < n; j++)
@@ -327,7 +327,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     private ComplexFloatVector Pivot(IROComplexFloatVector B)
     {
-      ComplexFloatVector ret = new ComplexFloatVector(B.Length);
+      var ret = new ComplexFloatVector(B.Length);
       for (int i = 0; i < pivots.Length; i++)
       {
         ret.data[i] = B[pivots[i]];

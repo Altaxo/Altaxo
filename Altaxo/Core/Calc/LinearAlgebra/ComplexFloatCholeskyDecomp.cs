@@ -192,7 +192,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         // Copy right hand side.
         int cols = B.Columns;
-        ComplexFloatMatrix X = new ComplexFloatMatrix(B);
+        var X = new ComplexFloatMatrix(B);
         for (int c = 0; c < cols; c++)
         {
           // Solve L*Y = B;
@@ -254,7 +254,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 #if MANAGED
         // Copy right hand side.
-        ComplexFloatVector X = new ComplexFloatVector(B);
+        var X = new ComplexFloatVector(B);
         // Solve L*Y = B;
         for (int i = 0; i < order; i++)
         {
@@ -301,7 +301,7 @@ namespace Altaxo.Calc.LinearAlgebra
       else
       {
 #if MANAGED
-        ComplexFloatMatrix ret = ComplexFloatMatrix.CreateIdentity(order);
+        var ret = ComplexFloatMatrix.CreateIdentity(order);
         ret = Solve(ret);
         return ret;
 #else

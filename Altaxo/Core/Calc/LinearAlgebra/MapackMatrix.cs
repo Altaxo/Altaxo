@@ -146,10 +146,10 @@ namespace Altaxo.Calc.LinearAlgebra
     IMapackMatrix Solve(IMapackMatrix rhs);
 
     /// <summary>Returns <see langword="true"/> if the matrix is positive definite.</summary>
-    Boolean IsPositiveDefinite { get; }
+    bool IsPositiveDefinite { get; }
 
     /// <summary>Returns <see langword="true"/> if the matrix is symmetric.</summary>
-    Boolean IsSymmetric { get; }
+    bool IsSymmetric { get; }
 
     /// <summary>Returns the left triangular factor <c>L</c> so that <c>A = L * L'</c>.</summary>
     IMapackMatrix LeftTriangularFactor { get; }
@@ -295,10 +295,10 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       this.rows = rows;
       this.columns = columns;
-      this.data = new double[rows][];
+      data = new double[rows][];
       for (int i = 0; i < rows; i++)
       {
-        this.data[i] = new double[columns];
+        data[i] = new double[columns];
       }
     }
 
@@ -310,7 +310,7 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       this.rows = rows;
       this.columns = columns;
-      this.data = new double[rows][];
+      data = new double[rows][];
       for (int i = 0; i < rows; i++)
       {
         data[i] = new double[columns];
@@ -325,8 +325,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="data">The array the matrix gets constructed from.</param>
     public Matrix(double[][] data)
     {
-      this.rows = data.Length;
-      this.columns = data[0].Length;
+      rows = data.Length;
+      columns = data[0].Length;
 
       for (int i = 0; i < rows; i++)
       {
@@ -367,7 +367,7 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       get
       {
-        if (this.IsSquare)
+        if (IsSquare)
         {
           for (int i = 0; i < rows; i++)
           {
@@ -401,7 +401,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="j1">End column index</param>
     public IMapackMatrix Submatrix(int i0, int i1, int j0, int j1)
     {
-      Matrix X = new Matrix(i1 - i0 + 1, j1 - j0 + 1);
+      var X = new Matrix(i1 - i0 + 1, j1 - j0 + 1);
       double[][] x = X.Array;
       for (int i = i0; i <= i1; i++)
         for (int j = j0; j <= j1; j++)
@@ -414,7 +414,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="c">Array of row indices</param>
     public IMapackMatrix Submatrix(int[] r, int[] c)
     {
-      Matrix X = new Matrix(r.Length, c.Length);
+      var X = new Matrix(r.Length, c.Length);
       double[][] x = X.Array;
       for (int i = 0; i < r.Length; i++)
         for (int j = 0; j < c.Length; j++)
@@ -428,7 +428,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="c">Array of row indices</param>
     public IMapackMatrix Submatrix(int i0, int i1, int[] c)
     {
-      Matrix X = new Matrix(i1 - i0 + 1, c.Length);
+      var X = new Matrix(i1 - i0 + 1, c.Length);
       double[][] x = X.Array;
       for (int i = i0; i <= i1; i++)
         for (int j = 0; j < c.Length; j++)
@@ -442,7 +442,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="j1">End column index</param>
     public IMapackMatrix Submatrix(int[] r, int j0, int j1)
     {
-      Matrix X = new Matrix(r.Length, j1 - j0 + 1);
+      var X = new Matrix(r.Length, j1 - j0 + 1);
       double[][] x = X.Array;
       for (int i = 0; i < r.Length; i++)
         for (int j = j0; j <= j1; j++)
@@ -453,7 +453,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>Creates a copy of the matrix.</summary>
     public IMapackMatrix Clone()
     {
-      Matrix X = new Matrix(rows, columns);
+      var X = new Matrix(rows, columns);
       double[][] x = X.Array;
       for (int i = 0; i < rows; i++)
         for (int j = 0; j < columns; j++)
@@ -464,7 +464,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>Returns the transposed matrix.</summary>
     public IMapackMatrix Transpose()
     {
-      Matrix X = new Matrix(columns, rows);
+      var X = new Matrix(columns, rows);
       double[][] x = X.Array;
       for (int i = 0; i < rows; i++)
         for (int j = 0; j < columns; j++)
@@ -532,7 +532,7 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       int rows = this.rows;
       int columns = this.columns;
-      Matrix X = new Matrix(rows, columns);
+      var X = new Matrix(rows, columns);
       double[][] x = X.Array;
       for (int i = 0; i < rows; i++)
         for (int j = 0; j < columns; j++)
@@ -547,7 +547,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrix dimension do not match.");
       }
-      Matrix X = new Matrix(rows, columns);
+      var X = new Matrix(rows, columns);
       double[][] x = X.Array;
       for (int i = 0; i < rows; i++)
       {
@@ -566,7 +566,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrix dimension do not match.");
       }
-      Matrix X = new Matrix(rows, columns);
+      var X = new Matrix(rows, columns);
       double[][] x = X.Array;
       for (int i = 0; i < rows; i++)
       {
@@ -581,7 +581,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>Matrix-scalar multiplication.</summary>
     public IMapackMatrix Multiply(double s)
     {
-      Matrix X = new Matrix(rows, columns);
+      var X = new Matrix(rows, columns);
       double[][] x = X.Array;
       for (int i = 0; i < rows; i++)
       {
@@ -603,7 +603,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       int columns = B.ColumnCount;
-      Matrix X = new Matrix(rows, columns);
+      var X = new Matrix(rows, columns);
       double[][] x = X.Array;
 
       int size = this.columns;
@@ -695,7 +695,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>Returns a matrix filled with random values.</summary>
     public static IMapackMatrix Random(int rows, int columns)
     {
-      Matrix X = new Matrix(rows, columns);
+      var X = new Matrix(rows, columns);
       double[][] x = X.Array;
       for (int i = 0; i < rows; i++)
       {
@@ -710,7 +710,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>Returns a diagonal matrix of the given size.</summary>
     public static IMapackMatrix Diagonal(int rows, int columns, double value)
     {
-      Matrix X = new Matrix(rows, columns);
+      var X = new Matrix(rows, columns);
       double[][] x = X.Array;
       for (int i = 0; i < rows; i++)
       {
@@ -725,7 +725,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>Returns the matrix in a textual form.</summary>
     public override string ToString()
     {
-      StringBuilder builder = new StringBuilder();
+      var builder = new StringBuilder();
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -847,7 +847,7 @@ namespace Altaxo.Calc.LinearAlgebra
         int dimension = L.RowCount;
         int count = rhs.ColumnCount;
 
-        IMapackMatrix B = (IMapackMatrix)rhs.Clone();
+        var B = rhs.Clone();
         double[][] l = L.Array;
 
         // Solve L*Y = B;
@@ -978,7 +978,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           if (LU.RowCount != LU.ColumnCount)
             throw new ArgumentException("Matrix must be square.");
-          double determinant = (double)pivotSign;
+          double determinant = pivotSign;
           for (int j = 0; j < LU.ColumnCount; j++)
             determinant *= LU[j, j];
           return determinant;
@@ -991,7 +991,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           int rows = LU.RowCount;
           int columns = LU.ColumnCount;
-          Matrix X = new Matrix(rows, columns);
+          var X = new Matrix(rows, columns);
           for (int i = 0; i < rows; i++)
             for (int j = 0; j < columns; j++)
               if (i > j)
@@ -1010,7 +1010,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           int rows = LU.RowCount;
           int columns = LU.ColumnCount;
-          Matrix X = new Matrix(rows, columns);
+          var X = new Matrix(rows, columns);
           for (int i = 0; i < rows; i++)
             for (int j = 0; j < columns; j++)
               if (i <= j)
@@ -1028,7 +1028,7 @@ namespace Altaxo.Calc.LinearAlgebra
           int rows = LU.RowCount;
           double[] p = new double[rows];
           for (int i = 0; i < rows; i++)
-            p[i] = (double)pivotVector[i];
+            p[i] = pivotVector[i];
           return p;
         }
       }
@@ -1184,7 +1184,7 @@ namespace Altaxo.Calc.LinearAlgebra
         get
         {
           int n = QR.ColumnCount;
-          Matrix X = new Matrix(n, n);
+          var X = new Matrix(n, n);
           double[][] x = X.Array;
           double[][] qr = QR.Array;
           for (int i = 0; i < n; i++)
@@ -1204,7 +1204,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          Matrix X = new Matrix(QR.RowCount, QR.ColumnCount);
+          var X = new Matrix(QR.RowCount, QR.ColumnCount);
           double[][] x = X.Array;
           double[][] qr = QR.Array;
           for (int k = QR.ColumnCount - 1; k >= 0; k--)
@@ -1241,7 +1241,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       public SingularValueDecomposition(Matrix A)
       {
-        Matrix copy = (Matrix)A.Clone();
+        var copy = (Matrix)A.Clone();
         double[][] a = copy.Array;
         m = A.RowCount;
         n = A.ColumnCount;
@@ -2552,7 +2552,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          Matrix X = new Matrix(n, n);
+          var X = new Matrix(n, n);
           double[][] x = X.Array;
 
           for (int i = 0; i < n; i++)

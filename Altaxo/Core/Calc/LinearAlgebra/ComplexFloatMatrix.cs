@@ -44,7 +44,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   [System.Serializable]
-  sealed public class ComplexFloatMatrix : IComplexFloatMatrix, ICloneable, IFormattable, IEnumerable, ICollection, IList
+  public sealed class ComplexFloatMatrix : IComplexFloatMatrix, ICloneable, IFormattable, IEnumerable, ICollection, IList
   {
 #if MANAGED
     internal ComplexFloat[][] data;
@@ -153,8 +153,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("source", "The input ComplexFloatMatrix cannot be null.");
       }
-      this.rows = source.rows;
-      this.columns = source.columns;
+      rows = source.rows;
+      columns = source.columns;
 #if MANAGED
       data = new ComplexFloat[rows][];
       for (int i = 0; i < rows; i++)
@@ -185,8 +185,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
       }
-      this.rows = source.RowLength;
-      this.columns = source.ColumnLength;
+      rows = source.RowLength;
+      columns = source.ColumnLength;
 #if MANAGED
       data = new ComplexFloat[rows][];
       for (int i = 0; i < rows; i++)
@@ -217,8 +217,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("values", "The input ComplexFloatMatrix cannot be null.");
       }
-      this.rows = values.GetLength(0);
-      this.columns = values.GetLength(1);
+      rows = values.GetLength(0);
+      columns = values.GetLength(1);
 #if MANAGED
       data = new ComplexFloat[rows][];
       for (int i = 0; i < rows; i++)
@@ -251,8 +251,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("values", "The input matrix cannot be null.");
       }
-      this.rows = values.GetLength(0);
-      this.columns = values.GetLength(1);
+      rows = values.GetLength(0);
+      columns = values.GetLength(1);
 #if MANAGED
       data = new ComplexFloat[rows][];
       for (int i = 0; i < rows; i++)
@@ -278,13 +278,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>explicit conversion from <c>ComplexFloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>ComplexFloatMatrix</c> to make a deep copy conversion from.</param>
-    static public explicit operator ComplexFloatMatrix(ComplexDoubleMatrix source)
+    public static explicit operator ComplexFloatMatrix(ComplexDoubleMatrix source)
     {
       if (source == null)
       {
         return null;
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(source.RowLength, source.ColumnLength);
+      var ret = new ComplexFloatMatrix(source.RowLength, source.ColumnLength);
 #if MANAGED
       for (int i = 0; i < source.RowLength; i++)
       {
@@ -303,7 +303,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>explicit conversion from <c>ComplexDoubleMatrix</c> matrix.</summary>
     ///<param name="source"><c>ComplexDoubleMatrix</c> to make a deep copy conversion from.</param>
-    static public ComplexFloatMatrix ToComplexFloatMatrix(ComplexDoubleMatrix source)
+    public static ComplexFloatMatrix ToComplexFloatMatrix(ComplexDoubleMatrix source)
     {
       if (source == null)
       {
@@ -314,13 +314,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    static public implicit operator ComplexFloatMatrix(FloatMatrix source)
+    public static implicit operator ComplexFloatMatrix(FloatMatrix source)
     {
       if (source == null)
       {
         return null;
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(source.RowLength, source.ColumnLength);
+      var ret = new ComplexFloatMatrix(source.RowLength, source.ColumnLength);
 #if MANAGED
       for (int i = 0; i < source.RowLength; i++)
       {
@@ -339,18 +339,18 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    static public ComplexFloatMatrix ToComplexFloatMatrix(FloatMatrix source)
+    public static ComplexFloatMatrix ToComplexFloatMatrix(FloatMatrix source)
     {
       if (source == null)
       {
         return null;
       }
-      return (ComplexFloatMatrix)source;
+      return source;
     }
 
     ///<summary>explicit conversion from <c>Complex</c> array.</summary>
     ///<param name="source"><c>Complex</c> array to make a deep copy conversion from.</param>
-    static public explicit operator ComplexFloatMatrix(Complex[,] source)
+    public static explicit operator ComplexFloatMatrix(Complex[,] source)
     {
       if (source == null)
       {
@@ -358,7 +358,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       int rows = source.GetLength(0);
       int columns = source.GetLength(1);
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(rows, columns);
+      var ret = new ComplexFloatMatrix(rows, columns);
 #if MANAGED
       for (int i = 0; i < rows; i++)
       {
@@ -379,7 +379,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>explicit conversion from <c>Complex</c> array</summary>
     ///<param name="source"><c>Complex</c> array to make a deep copy conversion from.</param>
-    static public ComplexFloatMatrix ToComplexFloatMatrix(Complex[,] source)
+    public static ComplexFloatMatrix ToComplexFloatMatrix(Complex[,] source)
     {
       if (source == null)
       {
@@ -390,7 +390,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>implicit conversion from <c>ComplexFloat</c> array.</summary>
     ///<param name="source"><c>ComplexFloat</c> array to make a deep copy conversion from.</param>
-    static public implicit operator ComplexFloatMatrix(ComplexFloat[,] source)
+    public static implicit operator ComplexFloatMatrix(ComplexFloat[,] source)
     {
       if (source == null)
       {
@@ -398,7 +398,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       int rows = source.GetLength(0);
       int columns = source.GetLength(1);
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(rows, columns);
+      var ret = new ComplexFloatMatrix(rows, columns);
 #if MANAGED
       for (int i = 0; i < rows; i++)
       {
@@ -419,18 +419,18 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>implicit conversion from <c>ComplexFloat</c> array</summary>
     ///<param name="source"><c>ComplexFloat</c> array to make a deep copy conversion from.</param>
-    static public ComplexFloatMatrix ToComplexFloatMatrix(ComplexFloat[,] source)
+    public static ComplexFloatMatrix ToComplexFloatMatrix(ComplexFloat[,] source)
     {
       if (source == null)
       {
         return null;
       }
-      return (ComplexFloatMatrix)source;
+      return source;
     }
 
     ///<summary>Implicit conversion from <c>float</c> array</summary>
     ///<param name="source"><c>float</c> array to make a deep copy conversion from.</param>
-    static public ComplexFloatMatrix ToComplexFloatMatrix(float[,] source)
+    public static ComplexFloatMatrix ToComplexFloatMatrix(float[,] source)
     {
       if (source == null)
       {
@@ -443,7 +443,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="rank">Rank of identity matrix.</param>
     public static ComplexFloatMatrix CreateIdentity(int rank)
     {
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(rank);
+      var ret = new ComplexFloatMatrix(rank);
       for (int i = 0; i < rank; i++)
       {
 #if MANAGED
@@ -523,10 +523,10 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Check if <c>ComplexFloatMatrix</c> variable is the same as another object.</summary>
     ///<param name="obj"><c>obj</c> to compare present <c>ComplexFloatMatrix</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>ComplexFloatMatrix</c> variable</returns>
-    public override bool Equals(Object obj)
+    public override bool Equals(object obj)
     {
-      ComplexFloatMatrix matrix = obj as ComplexFloatMatrix;
-      if ((Object)matrix == null)
+      var matrix = obj as ComplexFloatMatrix;
+      if (matrix == null)
       {
         return false;
       }
@@ -561,14 +561,14 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The Hashcode representation of <c>ComplexFloatMatrix</c></returns>
     public override int GetHashCode()
     {
-      return (int)this.GetFrobeniusNorm();
+      return (int)GetFrobeniusNorm();
     }
 
     ///<summary>Convert <c>ComplexFloatMatrix</c> into <c>ComplexFloat</c> 2D array</summary>
     ///<returns><c>ComplexFloat</c> 2D array with data from <c>ComplexFloatMatrix</c>.</returns>
     public ComplexFloat[,] ToArray()
     {
-      ComplexFloat[,] ret = new ComplexFloat[rows, columns];
+      var ret = new ComplexFloat[rows, columns];
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; ++j)
@@ -587,7 +587,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public void Transpose()
     {
 #if MANAGED
-      ComplexFloat[][] temp = new ComplexFloat[columns][];
+      var temp = new ComplexFloat[columns][];
       for (int i = 0; i < columns; i++)
       {
         temp[i] = new ComplexFloat[rows];
@@ -617,7 +617,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The transpose of the <c>ComplexFloatMatrix</c>.</returns>
     public ComplexFloatMatrix GetTranspose()
     {
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(columns, rows);
+      var ret = new ComplexFloatMatrix(columns, rows);
 #if MANAGED
       for (int i = 0; i < rows; i++)
       {
@@ -640,7 +640,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public void ConjugateTranspose()
     {
 #if MANAGED
-      ComplexFloat[][] temp = new ComplexFloat[columns][];
+      var temp = new ComplexFloat[columns][];
       for (int i = 0; i < columns; i++)
       {
         temp[i] = new ComplexFloat[rows];
@@ -670,7 +670,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The conjugate transpose of the <c>ComplexFloatMatrix</c>.</returns>
     public ComplexFloatMatrix GetConjugateTranspose()
     {
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(columns, rows);
+      var ret = new ComplexFloatMatrix(columns, rows);
 #if MANAGED
       for (int i = 0; i < rows; i++)
       {
@@ -699,7 +699,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
-      ComplexFloatLUDecomp lu = new ComplexFloatLUDecomp(this);
+      var lu = new ComplexFloatLUDecomp(this);
       return lu.GetInverse();
     }
 
@@ -712,9 +712,9 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
-      ComplexFloatLUDecomp lu = new ComplexFloatLUDecomp(this);
+      var lu = new ComplexFloatLUDecomp(this);
       ComplexFloatMatrix temp = lu.GetInverse();
-      this.data = temp.data;
+      data = temp.data;
     }
 
     /// <summary>Computes the determinant the <c>ComplexFloatMatrix</c>.</summary>
@@ -726,7 +726,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
-      ComplexFloatLUDecomp lu = new ComplexFloatLUDecomp(this);
+      var lu = new ComplexFloatLUDecomp(this);
       return lu.GetDeterminant();
     }
 
@@ -783,7 +783,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>the Frobenius norm of this matrix.</returns>
     public float GetFrobeniusNorm()
     {
-      ComplexFloatMatrix tmp = this * this.GetConjugateTranspose();
+      ComplexFloatMatrix tmp = this * GetConjugateTranspose();
       ComplexFloat ret = ComplexFloat.Zero;
       for (int i = 0; i < tmp.RowLength; i++)
       {
@@ -801,7 +801,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <exception cref="NotSquareMatrixException">the matrix is not square.</exception>
     public double GetConditionNumber()
     {
-      if (this.rows != this.columns)
+      if (rows != columns)
       {
         throw new NotSquareMatrixException();
       }
@@ -817,7 +817,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentOutOfRangeException("row", "row must be greater than or equal to zero and less than RowLength.");
       }
-      ComplexFloatVector ret = new ComplexFloatVector(columns);
+      var ret = new ComplexFloatVector(columns);
       for (int i = 0; i < columns; i++)
       {
 #if MANAGED
@@ -838,7 +838,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentOutOfRangeException("column", "column must be greater than or equal to zero and less than ColumnLength.");
       }
-      ComplexFloatVector ret = new ComplexFloatVector(rows);
+      var ret = new ComplexFloatVector(rows);
       for (int i = 0; i < rows; i++)
       {
 #if MANAGED
@@ -855,7 +855,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public ComplexFloatVector GetDiagonal()
     {
       int min = System.Math.Min(rows, columns);
-      ComplexFloatVector ret = new ComplexFloatVector(min);
+      var ret = new ComplexFloatVector(min);
       for (int i = 0; i < min; i++)
       {
 #if MANAGED
@@ -1027,7 +1027,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       int nRows = endRow - startRow + 1;
       int nCols = endColumn - startColumn + 1;
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(nRows, nCols);
+      var ret = new ComplexFloatMatrix(nRows, nCols);
 
       for (int i = 0; i < nRows; i++)
       {
@@ -1047,7 +1047,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexFloatMatrix</c> with upper triangle values from <c>ComplexFloatMatrix</c>.</returns>
     public ComplexFloatMatrix GetUpperTriangle()
     {
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(rows, columns);
+      var ret = new ComplexFloatMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -1069,7 +1069,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexFloatMatrix</c> with strictly upper triangle values from <c>ComplexFloatMatrix</c>.</returns>
     public ComplexFloatMatrix GetStrictlyUpperTriangle()
     {
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(rows, columns);
+      var ret = new ComplexFloatMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -1091,7 +1091,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexFloatMatrix</c> with lower triangle values from <c>ComplexFloatMatrix</c>.</returns>
     public ComplexFloatMatrix GetLowerTriangle()
     {
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(rows, columns);
+      var ret = new ComplexFloatMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -1113,7 +1113,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns><c>ComplexFloatMatrix</c> with strictly lower triangle values from <c>ComplexFloatMatrix</c>.</returns>
     public ComplexFloatMatrix GetStrictlyLowerTriangle()
     {
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(rows, columns);
+      var ret = new ComplexFloatMatrix(rows, columns);
       for (int i = 0; i < rows; i++)
       {
         for (int j = 0; j < columns; j++)
@@ -1141,7 +1141,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentNullException("Matrix cannot be null");
       }
 
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(a.rows, a.columns);
+      var ret = new ComplexFloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1185,7 +1185,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(a.rows, a.columns);
+      var ret = new ComplexFloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1213,7 +1213,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(b.rows, b.columns);
+      var ret = new ComplexFloatMatrix(b.rows, b.columns);
 #if MANAGED
       for (int i = 0; i < b.rows; i++)
       {
@@ -1241,7 +1241,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(a.rows, a.columns);
+      var ret = new ComplexFloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1374,7 +1374,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(a.rows, a.columns);
+      var ret = new ComplexFloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1402,7 +1402,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(b.rows, b.columns);
+      var ret = new ComplexFloatMatrix(b.rows, b.columns);
 #if MANAGED
       for (int i = 0; i < b.rows; i++)
       {
@@ -1430,7 +1430,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(a.rows, a.columns);
+      var ret = new ComplexFloatMatrix(a.rows, a.columns);
 #if MANAGED
       for (int i = 0; i < a.rows; i++)
       {
@@ -1548,7 +1548,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(a);
+      var ret = new ComplexFloatMatrix(a);
 #if MANAGED
       for (int i = 0; i < ret.rows; i++)
       {
@@ -1605,7 +1605,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("Matrix cannot be null");
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(b);
+      var ret = new ComplexFloatMatrix(b);
 #if MANAGED
       for (int i = 0; i < ret.rows; i++)
       {
@@ -1700,7 +1700,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentException("Vector and Matrix are not conformable.");
       }
 
-      ComplexFloatVector ret = new ComplexFloatVector(x.rows);
+      var ret = new ComplexFloatVector(x.rows);
 #if MANAGED
       for (int i = 0; i < x.rows; i++)
       {
@@ -1749,7 +1749,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentException("Vector and matrix are not conformable.");
       }
 #if MANAGED
-      ComplexFloat[][] temp = new ComplexFloat[rows][];
+      var temp = new ComplexFloat[rows][];
       for (int i = 0; i < rows; i++)
       {
         temp[i] = new ComplexFloat[1];
@@ -1785,9 +1785,9 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
-      ComplexFloatMatrix ret = new ComplexFloatMatrix(x.rows, y.columns);
+      var ret = new ComplexFloatMatrix(x.rows, y.columns);
 #if MANAGED
-      ComplexFloat[] column = new ComplexFloat[x.columns];
+      var column = new ComplexFloat[x.columns];
       for (int j = 0; j < y.columns; j++)
       {
         for (int k = 0; k < x.columns; k++)
@@ -1843,12 +1843,12 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentException("Matrices are not conformable.");
       }
 #if MANAGED
-      ComplexFloat[][] temp = new ComplexFloat[rows][];
+      var temp = new ComplexFloat[rows][];
       for (int i = 0; i < rows; i++)
       {
         temp[i] = new ComplexFloat[x.columns];
       }
-      ComplexFloat[] column = new ComplexFloat[columns];
+      var column = new ComplexFloat[columns];
       for (int j = 0; j < x.columns; j++)
       {
         for (int k = 0; k < columns; k++)
@@ -1883,7 +1883,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("x", "Matrix cannot be null");
       }
-      if (this.rows != x.rows || this.columns != x.columns)
+      if (rows != x.rows || columns != x.columns)
       {
         throw new ArgumentException("Matrices are not conformable.");
       }
@@ -1892,7 +1892,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         for (int j = 0; j < x.columns; j++)
         {
-          this.data[i][j] = x.data[i][j];
+          data[i][j] = x.data[i][j];
         }
       }
 #else
@@ -1908,9 +1908,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     // --- ICloneable Interface ---
     ///<summary>Clone (deep copy) a <c>ComplexFloatMatrix</c> variable.</summary>
-    Object ICloneable.Clone()
+    object ICloneable.Clone()
     {
-      return this.Clone();
+      return Clone();
     }
 
     // --- IFormattable Interface ---
@@ -1944,7 +1944,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
     public string ToString(string format, IFormatProvider formatProvider)
     {
-      StringBuilder sb = new StringBuilder("rows: ");
+      var sb = new StringBuilder("rows: ");
       sb.Append(rows).Append(", cols: ").Append(columns).Append(System.Environment.NewLine);
 
       for (int i = 0; i < rows; i++)
@@ -1976,40 +1976,40 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary> Get the number of elements in the matrix </summary>
     public int Count
     {
-      get { return this.rows * this.columns; }
+      get { return rows * columns; }
     }
 
     int ICollection.Count
     {
-      get { return this.Count; }
+      get { return Count; }
     }
 
     ///<summary> Get a boolean indicating whether the data storage method of this vector is thread-safe</summary>
     public bool IsSynchronized
     {
-      get { return this.data.IsSynchronized; }
+      get { return data.IsSynchronized; }
     }
 
     bool ICollection.IsSynchronized
     {
-      get { return this.IsSynchronized; }
+      get { return IsSynchronized; }
     }
 
     ///<summary> Get an object that can be used to synchronize the data storage method of this vector</summary>
     object ICollection.SyncRoot
     {
-      get { return this.data.SyncRoot; }
+      get { return data.SyncRoot; }
     }
 
     ///<summary> Copy the components of this vector to an array </summary>
     public void CopyTo(Array array, int index)
     {
-      this.data.CopyTo(array, index);
+      data.CopyTo(array, index);
     }
 
     void ICollection.CopyTo(Array array, int index)
     {
-      this.CopyTo(array, index);
+      CopyTo(array, index);
     }
 
     // --- IList Interface ---
@@ -2032,8 +2032,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>Returns a <c>ComplexFloat</c> vector element</returns>
     object IList.this[int index]
     {
-      get { return this[index % this.rows, index / this.rows]; }
-      set { this[index % this.rows, index / this.rows] = (ComplexFloat)value; }
+      get { return this[index % rows, index / rows]; }
+      set { this[index % rows, index / rows] = (ComplexFloat)value; }
     }
 
     ///<summary>Add a new value to the end of the <c>ComplexFloatMatrix</c></summary>
@@ -2045,8 +2045,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Set all values in the <c>ComplexFloatMatrix</c> to zero </summary>
     public void Clear()
     {
-      for (int i = 0; i < this.rows; i++)
-        for (int j = 0; j < this.columns; j++)
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
 #if MANAGED
           data[i][j] = 0;
 #else
@@ -2057,8 +2057,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Check if the any of the <c>ComplexFloatMatrix</c> components equals a given <c>ComplexFloat</c></summary>
     public bool Contains(object value)
     {
-      for (int i = 0; i < this.rows; i++)
-        for (int j = 0; j < this.columns; j++)
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
 #if MANAGED
           if (data[i][j] == (ComplexFloat)value)
 #else
@@ -2072,8 +2072,8 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Return the index of the <c>ComplexFloatMatrix</c> for the first component that equals a given <c>ComplexFloat</c></summary>
     public int IndexOf(object value)
     {
-      for (int i = 0; i < this.rows; i++)
-        for (int j = 0; j < this.columns; j++)
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
 #if MANAGED
           if (data[i][j] == (ComplexFloat)value)
 #else
@@ -2113,13 +2113,13 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentNullException("source", "The input ComplexDoubleMatrix cannot be null.");
       }
 
-      this.rows = source.Rows;
-      this.columns = source.Columns;
+      rows = source.Rows;
+      columns = source.Columns;
 #if MANAGED
       data = new ComplexFloat[rows][];
       if (source is ComplexFloatMatrix)
       {
-        ComplexFloatMatrix cdmsource = (ComplexFloatMatrix)source;
+        var cdmsource = (ComplexFloatMatrix)source;
         for (int i = 0; i < rows; i++)
           data[i] = (ComplexFloat[])cdmsource.data[i].Clone();
       }
@@ -2153,7 +2153,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int rows = matrix.Rows;
       int columns = matrix.Columns;
 
-      ComplexFloat[] result = new ComplexFloat[rows * columns];
+      var result = new ComplexFloat[rows * columns];
 
       int k = 0;
       for (int j = 0; j < columns; ++j)
@@ -2173,7 +2173,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int rows = matrix.RowCount;
       int columns = matrix.ColumnCount;
 
-      ComplexFloat[] result = new ComplexFloat[rows * columns];
+      var result = new ComplexFloat[rows * columns];
 
       int k = 0;
       for (int j = 0; j < columns; ++j)
@@ -2193,7 +2193,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int rows = matrix.Rows;
       int columns = matrix.Columns;
 
-      ComplexFloat[] result = new ComplexFloat[rows * columns];
+      var result = new ComplexFloat[rows * columns];
 
       int k = 0;
       for (int j = 0; j < columns; ++j)
@@ -2211,7 +2211,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public static ComplexFloat[] ToLinearComplexArray(IROComplexFloatVector source)
     {
       int length = source.Length;
-      ComplexFloat[] result = new ComplexFloat[length];
+      var result = new ComplexFloat[length];
       for (int i = 0; i < length; ++i)
         result[i] = source[i];
 

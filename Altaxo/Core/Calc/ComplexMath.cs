@@ -106,7 +106,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
-    static public void Swap(ref Complex a, ref Complex b)
+    public static void Swap(ref Complex a, ref Complex b)
     {
       Complex temp = a;
       a = b;
@@ -118,7 +118,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
-    static public void Swap(ref ComplexFloat a, ref ComplexFloat b)
+    public static void Swap(ref ComplexFloat a, ref ComplexFloat b)
     {
       ComplexFloat temp = a;
       a = b;
@@ -929,7 +929,7 @@ namespace Altaxo.Calc
     /// <returns>The exponential function of the spezified complex function argument.</returns>
     public static ComplexFloat Exp(ComplexFloat z)
     {
-      return ComplexFloat.FromModulusArgument((float)Math.Exp(z.Re), (float)z.Im);
+      return ComplexFloat.FromModulusArgument((float)Math.Exp(z.Re), z.Im);
     }
 
     /// <summary>
@@ -1133,7 +1133,7 @@ namespace Altaxo.Calc
     /// <param name="a">The function argument.</param>
     /// <param name="b">The exponent.</param>
     /// <returns>The power of z to the exponent b.</returns>
-    static public Complex Pow(Complex a, double b)
+    public static Complex Pow(Complex a, double b)
     {
       Complex z;
 
@@ -1159,7 +1159,7 @@ namespace Altaxo.Calc
     /// <param name="c"></param>
     /// <param name="exponent"></param>
     /// <returns></returns>
-    static public ComplexFloat Pow(ComplexFloat c, double exponent)
+    public static ComplexFloat Pow(ComplexFloat c, double exponent)
     {
       double x = c.Re;
       double y = c.Im;
@@ -1178,7 +1178,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="c">Argument.</param>
     /// <returns>Square of c.</returns>
-    static public Complex Pow2(Complex c)
+    public static Complex Pow2(Complex c)
     {
       return c * c;
     }
@@ -1188,7 +1188,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="c">Argument.</param>
     /// <returns>3rd power of c.</returns>
-    static public Complex Pow3(Complex c)
+    public static Complex Pow3(Complex c)
     {
       return c * c * c;
     }

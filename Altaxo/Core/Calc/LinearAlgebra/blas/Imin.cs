@@ -62,7 +62,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
         throw new ArgumentException("The dimension of X must be a least 1 + (n-1) * incx.");
       }
       int index = 0;
-      float min = System.Single.MaxValue;
+      float min = float.MaxValue;
       for (int i = 0, ix = 0; i < n; ++i, ix += incx)
       {
         float test = System.Math.Abs(X[ix]);
@@ -95,7 +95,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
         throw new ArgumentException("The dimension of X must be a least 1 + (n-1) * incx.");
       }
       int index = 0;
-      double min = System.Double.MaxValue;
+      double min = double.MaxValue;
       for (int i = 0, ix = 0; i < n; ++i, ix += incx)
       {
         double test = System.Math.Abs(X[ix]);
@@ -128,7 +128,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
         throw new ArgumentException("The dimension of X must be a least 1 + (n-1) * incx.");
       }
       int index = 0;
-      float min = System.Single.MaxValue;
+      float min = float.MaxValue;
       for (int i = 0, ix = 0; i < n; ++i, ix += incx)
       {
         float test = System.Math.Abs(X[ix].Real) + System.Math.Abs(X[ix].Imag);
@@ -161,7 +161,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
         throw new ArgumentException("The dimension of X must be a least 1 + (n-1) * incx.");
       }
       int index = 0;
-      double min = System.Double.MaxValue;
+      double min = double.MaxValue;
       for (int i = 0, ix = 0; i < n; ++i, ix += incx)
       {
         double test = System.Math.Abs(X[ix].Real) + System.Math.Abs(X[ix].Imag);

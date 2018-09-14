@@ -150,7 +150,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.A;
+        return A;
       }
       set
       {
@@ -166,7 +166,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.lambda;
+        return lambda;
       }
       set
       {
@@ -229,7 +229,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.A / this.lambda;
+        return A / lambda;
       }
     }
 
@@ -251,7 +251,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.A / Math.Pow(this.lambda, 2.0);
+        return A / Math.Pow(lambda, 2.0);
       }
     }
 
@@ -262,7 +262,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { (this.A - 1) / this.lambda };
+        return new double[] { (A - 1) / lambda };
       }
     }
 

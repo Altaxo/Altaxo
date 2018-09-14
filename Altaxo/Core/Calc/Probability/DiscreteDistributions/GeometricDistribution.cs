@@ -134,7 +134,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this._probability;
+        return _probability;
       }
       set
       {
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return 1.0 / this._probability;
+        return 1.0 / _probability;
       }
     }
 
@@ -263,7 +263,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return (1.0 - this._probability) / Math.Pow(this._probability, 2.0);
+        return (1.0 - _probability) / Math.Pow(_probability, 2.0);
       }
     }
 
@@ -288,7 +288,7 @@ namespace Altaxo.Calc.Probability
 
       double k;
 
-      if (this._probability == 1)
+      if (_probability == 1)
       {
         k = 1;
       }
@@ -306,7 +306,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A geometric distributed 32-bit signed integer.</returns>
     public int Next()
     {
-      double k = this.NextDouble();
+      double k = NextDouble();
       return k > int.MaxValue ? int.MaxValue : (int)k;
     }
 
@@ -316,7 +316,7 @@ namespace Altaxo.Calc.Probability
 
     public override double CDF(double x)
     {
-      return CDF(x, this.Probability);
+      return CDF(x, Probability);
     }
 
     public static double CDF(double x, double p)
@@ -341,7 +341,7 @@ namespace Altaxo.Calc.Probability
 
     public override double PDF(double x)
     {
-      return PDF(x, this.Probability);
+      return PDF(x, Probability);
     }
 
     public static double PDF(double x, double p)

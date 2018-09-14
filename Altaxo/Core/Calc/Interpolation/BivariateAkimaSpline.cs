@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -84,7 +84,7 @@ namespace Altaxo.Calc.Interpolation
     public double Interpolate(double x, double y)
     {
       var z = new MatrixMath.ScalarAsMatrix<double>();
-      this.itplbv_(_myX.Count, _myY.Count, _myX, _myY, _myZ, 1, new MatrixMath.ScalarAsMatrix<double>(x), new MatrixMath.ScalarAsMatrix<double>(y), z);
+      itplbv_(_myX.Count, _myY.Count, _myX, _myY, _myZ, 1, new MatrixMath.ScalarAsMatrix<double>(x), new MatrixMath.ScalarAsMatrix<double>(y), z);
       return z;
     }
 
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="w">VECTOR OF DIMENSION N WHERE THE INTERPOLATED Z VALUES AT DESIRED POINTS ARE TO BE DISPLAYED</param>
     public static void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, IROMatrix<double> z, IReadOnlyList<double> u, IReadOnlyList<double> v, IVector<double> w)
     {
-      BivariateAkimaSpline spline = new BivariateAkimaSpline();
+      var spline = new BivariateAkimaSpline();
       spline.itplbv_(x.Count, y.Count, x, y, z, w.Length, u, v, w);
     }
 
@@ -121,7 +121,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="w">ARRAY OF DIMENSION N WHERE THE INTERPOLATED Z VALUES AT DESIRED POINTS ARE TO BE DISPLAYED</param>
     public static void Interpolate(double[] x, double[] y, double[] z, double[] u, double[] v, double[] w)
     {
-      BivariateAkimaSpline spline = new BivariateAkimaSpline();
+      var spline = new BivariateAkimaSpline();
       spline.itplbv_(x.Length, y.Length, VectorMath.ToROVector(x), VectorMath.ToROVector(y), MatrixMath.ToROMatrixFromColumnMajorLinearArray(z, x.Length),
         w.Length, VectorMath.ToROVector(u), VectorMath.ToROVector(v), VectorMath.ToVector(w));
     }

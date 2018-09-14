@@ -239,7 +239,7 @@ namespace Altaxo.Collections
       using (var token = _eventState.Disable())
       {
         foreach (var item in enumeration)
-          this.Add(item);
+          Add(item);
       }
     }
 

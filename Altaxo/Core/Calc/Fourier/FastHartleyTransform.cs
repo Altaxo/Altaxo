@@ -83,7 +83,7 @@ namespace Altaxo.Calc.Fourier
     // CForm[Table[N[Sec[Pi/(2^n)]/2,50],{n,3,60}]]
     //----------------------------------------------------------------------------//
 
-    private readonly static double[] halsec =
+    private static readonly double[] halsec =
   {
     0.0,
     0.0,
@@ -153,7 +153,7 @@ namespace Altaxo.Calc.Fourier
     // CForm[Table[N[Cos[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private readonly static double[] costab =
+    private static readonly double[] costab =
   {
     0.0,
     0.70710678118654752440084436210484903928483593768847,
@@ -223,7 +223,7 @@ namespace Altaxo.Calc.Fourier
     // CForm[Table[N[Sin[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private readonly static double[] sintab =
+    private static readonly double[] sintab =
   {
     1.0,
     0.70710678118654752440084436210484903928483593768847,
@@ -293,7 +293,7 @@ namespace Altaxo.Calc.Fourier
     // CForm[Table[N[Cos[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private readonly static double[] coswrk =
+    private static readonly double[] coswrk =
   {
     0.0,
     0.70710678118654752440084436210484903928483593768847,
@@ -363,7 +363,7 @@ namespace Altaxo.Calc.Fourier
     // CForm[Table[N[Sin[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private readonly static double[] sinwrk =
+    private static readonly double[] sinwrk =
   {
     1.0,
     0.70710678118654752440084436210484903928483593768847,

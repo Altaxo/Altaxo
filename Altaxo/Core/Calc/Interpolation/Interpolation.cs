@@ -48,9 +48,9 @@
 
 #endregion Acknowledgements
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -2839,7 +2839,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       epsilon = Math.Max(epsilon, 128.0 * DBL_EPSILON);
 
       // allocate auxilliary storage
-      DoubleVector z = new DoubleVector(lo, hi);
+      var z = new DoubleVector(lo, hi);
 
       // copy original values
       xr.CopyFrom(x);
@@ -2921,7 +2921,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         y2 += Math.Abs(yr[i]);
       for (i = lo; i <= hi; i++)
       {
-        x2 = this.GetYOfU(x[i]);
+        x2 = GetYOfU(x[i]);
         if (Math.Abs(x2 - y[i]) > n * epsilon * y2)
           return 4; // not all points have been used
       }

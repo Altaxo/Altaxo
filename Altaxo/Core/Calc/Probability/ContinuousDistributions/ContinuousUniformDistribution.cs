@@ -47,7 +47,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
     }
 
@@ -64,7 +64,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.beta;
+        return beta;
       }
     }
 
@@ -132,9 +132,9 @@ namespace Altaxo.Calc.Probability
       if (!IsValidBeta(upper))
         throw new ArgumentOutOfRangeException("Upper bound is out of range");
 
-      this.alpha = lower;
-      this.beta = upper;
-      this.helper1 = this.beta - this.alpha;
+      alpha = lower;
+      beta = upper;
+      helper1 = beta - alpha;
     }
 
     /// <summary>
@@ -172,7 +172,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
     }
 
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.beta;
+        return beta;
       }
     }
 
@@ -194,7 +194,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha / 2.0 + this.beta / 2.0;
+        return alpha / 2.0 + beta / 2.0;
       }
     }
 
@@ -205,7 +205,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha / 2.0 + this.beta / 2.0;
+        return alpha / 2.0 + beta / 2.0;
       }
     }
 
@@ -216,7 +216,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Pow(this.beta - this.alpha, 2.0) / 12.0;
+        return Math.Pow(beta - alpha, 2.0) / 12.0;
       }
     }
 
@@ -237,7 +237,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A uniformly distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return this.alpha + this.Generator.NextDouble() * this.helper1;
+      return alpha + Generator.NextDouble() * helper1;
     }
 
     #endregion overridden Distribution members

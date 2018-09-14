@@ -107,7 +107,7 @@ namespace Altaxo.Collections.Text
     public List<T> GetCommonSubstring<T>(IList<IList<T>> words)
     {
       IList<T> word = words[_wordIndex];
-      List<T> result = new List<T>(_count);
+      var result = new List<T>(_count);
       for (int i = 0; i < _count; ++i)
       {
         result.Add(word[i + _start]);

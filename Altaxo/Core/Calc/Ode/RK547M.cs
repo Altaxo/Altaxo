@@ -154,7 +154,7 @@ namespace Altaxo.Calc.Ode
       const double MinFactor = 0.2d; // Maximum possible step decrease
       int Refine = 4;
 
-      Vector S = Vector.Zeros(Refine - 1);
+      var S = Vector.Zeros(Refine - 1);
       for (int i = 0; i < Refine - 1; i++)
         S[i] = (double)(i + 1) / Refine;
 
@@ -177,13 +177,13 @@ namespace Altaxo.Calc.Ode
       a[4] = new double[] { 9017 / 3168d, -355 / 33d, 46732 / 5247d, 49 / 176d, -5103 / 18656d };
       a[5] = new double[] { 35 / 384d, 0, 500 / 1113d, 125 / 192d, -2187 / 6784d, 11 / 84d };
 
-      Vector c = new Vector(0, 1 / 5d, 3 / 10d, 4 / 5d, 8 / 9d, 1, 1);
+      var c = new Vector(0, 1 / 5d, 3 / 10d, 4 / 5d, 8 / 9d, 1, 1);
 
       // Coeffs for higher order
-      Vector b1 = new Vector(5179 / 57600d, 0, 7571 / 16695d, 393 / 640d, -92097 / 339200d, 187 / 2100d, 1 / 40d);
+      var b1 = new Vector(5179 / 57600d, 0, 7571 / 16695d, 393 / 640d, -92097 / 339200d, 187 / 2100d, 1 / 40d);
 
       // Coeffs for lower order
-      Vector b = new Vector(35 / 384d, 0, 500 / 1113d, 125 / 192d, -2187 / 6784d, 11 / 84d, 0);
+      var b = new Vector(35 / 384d, 0, 500 / 1113d, 125 / 192d, -2187 / 6784d, 11 / 84d, 0);
 
       const int s = 7; // == c.Length
       double dt0;
@@ -224,12 +224,12 @@ namespace Altaxo.Calc.Ode
       yield return new SolutionPoint(t0, x0.Clone());
 
       // Pre-allocate arrays
-      Vector[] k = new Vector[s];
-      Vector[] x2 = new Vector[s - 1];
+      var k = new Vector[s];
+      var x2 = new Vector[s - 1];
       for (int i = 0; i < s - 1; i++)
         x2[i] = Vector.Zeros(n);
 
-      Vector prevX = Vector.Zeros(n);
+      var prevX = Vector.Zeros(n);
       double prevErr = 1.0d; // Previous error, used for step PI-filtering
       double prevDt;
 
@@ -270,10 +270,10 @@ namespace Altaxo.Calc.Ode
           // PI-filter. Beta = 0.08
           dt = e == 0 ? dt : dt * Math.Min(MaxFactor, Math.Max(MinFactor, SafetyFactor * Math.Pow(1.0d / e, 1.0d / 5.0d) * Math.Pow(prevErr, 0.08d)));
 
-          if (opts.MaxStep < Double.MaxValue)
+          if (opts.MaxStep < double.MaxValue)
             dt = Math.Min(dt, opts.MaxStep);
           //if (opts.MinStep > 0) dt = Math.Max(dt, opts.MinStep);
-          if (Double.IsNaN(dt))
+          if (double.IsNaN(dt))
             throw new ArgumentException("Derivatives function returned NaN");
           if (dt < 1e-12)
             throw new ArgumentException("Cannot generate numerical solution");
@@ -293,7 +293,7 @@ namespace Altaxo.Calc.Ode
         else
             if (Refine > 1) // Output interpolated points set by Refine property
         {
-          Vector ts = Vector.Zeros(S.Length);
+          var ts = Vector.Zeros(S.Length);
           for (int i = 0; i < S.Length; i++)
             ts[i] = t + prevDt * S[i];
 
@@ -332,7 +332,7 @@ namespace Altaxo.Calc.Ode
       if (opts == null)
         throw new ArgumentException("opts");
 
-      if (opts.MaxStep == Double.MaxValue)
+      if (opts.MaxStep == double.MaxValue)
         opts.MaxStep = (tfinal - tstart) * 1e-2;
 
       return Ode.RK547M(tstart, x0, f, opts).SolveFromTo(tstart, tfinal);
@@ -350,7 +350,7 @@ namespace Altaxo.Calc.Ode
       int nk = k.Length;
       int ns = s.Length;
 
-      Vector[] ys = new Vector[ns];
+      var ys = new Vector[ns];
       for (int i = 0; i < ns; i++)
         ys[i] = y.Clone();
 

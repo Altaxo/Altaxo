@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
       set
       {
@@ -77,7 +77,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.lambda;
+        return lambda;
       }
       set
       {
@@ -149,7 +149,7 @@ namespace Altaxo.Calc.Probability
 
       this.alpha = alpha;
       this.lambda = lambda;
-      this.helper1 = 1.0 / this.alpha;
+      helper1 = 1.0 / this.alpha;
     }
 
     /// <summary>
@@ -227,7 +227,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.lambda * this.Gamma(1.0 + 1.0 / this.alpha);
+        return lambda * Gamma(1.0 + 1.0 / alpha);
       }
     }
 
@@ -238,7 +238,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.lambda * Math.Pow(Math.Log(2.0), 1.0 / this.alpha);
+        return lambda * Math.Pow(Math.Log(2.0), 1.0 / alpha);
       }
     }
 
@@ -249,7 +249,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return Math.Pow(this.lambda, 2.0) * this.Gamma(1.0 + 2.0 / this.alpha) - Math.Pow(this.Mean, 2.0);
+        return Math.Pow(lambda, 2.0) * Gamma(1.0 + 2.0 / alpha) - Math.Pow(Mean, 2.0);
       }
     }
 
@@ -260,9 +260,9 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.alpha >= 1.0)
+        if (alpha >= 1.0)
         {
-          return new double[] { this.lambda * Math.Pow(1.0 - 1.0 / this.alpha, 1.0 / this.alpha) };
+          return new double[] { lambda * Math.Pow(1.0 - 1.0 / alpha, 1.0 / alpha) };
         }
         else
         {
@@ -278,7 +278,7 @@ namespace Altaxo.Calc.Probability
     public override double NextDouble()
     {
       // Subtract random number from 1.0 to avoid Math.Log(0.0)
-      return this.lambda * Math.Pow(-Math.Log(1.0 - this.Generator.NextDouble()), this.helper1);
+      return lambda * Math.Pow(-Math.Log(1.0 - Generator.NextDouble()), helper1);
     }
 
     #endregion overridden Distribution members
@@ -307,7 +307,7 @@ namespace Altaxo.Calc.Probability
 
     public override double Quantile(double p)
     {
-      return Quantile(p, alpha, this.lambda);
+      return Quantile(p, alpha, lambda);
     }
 
     public static double Quantile(double p, double alpha, double lambda)

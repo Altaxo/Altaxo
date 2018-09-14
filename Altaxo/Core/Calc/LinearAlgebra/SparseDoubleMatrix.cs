@@ -32,8 +32,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="numberOfColumns">Number of columns</param>
     public SparseDoubleMatrix(int numberOfRows, int numberOfColumns)
     {
-      this.m = numberOfRows;
-      this.n = numberOfColumns;
+      m = numberOfRows;
+      n = numberOfColumns;
 
       items = new double[numberOfRows][];
       indices = new int[numberOfRows][];
@@ -44,14 +44,14 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       this.m = m;
       this.n = n;
-      this.items = matrixItems;
-      this.indices = matrixIndices;
-      this.count = _count;
+      items = matrixItems;
+      indices = matrixIndices;
+      count = _count;
     }
 
     public int[] Count
     {
-      get { return this.count; }
+      get { return count; }
     }
 
     /// <summary>Get row dimension.</summary>
@@ -153,11 +153,11 @@ namespace Altaxo.Calc.LinearAlgebra
           C.items[i] = new double[count[i]];
           for (int j = 0; j < count[i]; j++)
           {
-            C.indices[i][j] = this.indices[i][j];
-            C.items[i][j] = this.items[i][j] + B.items[i][j];
+            C.indices[i][j] = indices[i][j];
+            C.items[i][j] = items[i][j] + B.items[i][j];
           }
         }
-        C.count[i] = this.count[i];
+        C.count[i] = count[i];
       }
 
       return C;
@@ -193,11 +193,11 @@ namespace Altaxo.Calc.LinearAlgebra
           C.items[i] = new double[count[i]];
           for (int j = 0; j < count[i]; j++)
           {
-            C.indices[i][j] = this.indices[i][j];
-            C.items[i][j] = this.items[i][j] - B.items[i][j];
+            C.indices[i][j] = indices[i][j];
+            C.items[i][j] = items[i][j] - B.items[i][j];
           }
         }
-        C.count[i] = this.count[i];
+        C.count[i] = count[i];
       }
 
       return C;
@@ -293,11 +293,11 @@ namespace Altaxo.Calc.LinearAlgebra
           B.items[i] = new double[count[i]];
           for (int j = 0; j < count[i]; j++)
           {
-            B.indices[i][j] = this.indices[i][j];
-            B.items[i][j] = s * this.items[i][j];
+            B.indices[i][j] = indices[i][j];
+            B.items[i][j] = s * items[i][j];
           }
         }
-        B.count[i] = this.count[i];
+        B.count[i] = count[i];
       }
       return B;
     }
@@ -322,7 +322,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         for (int j = 0; j < count[i]; j++)
         {
-          this.items[i][j] *= s;
+          items[i][j] *= s;
         }
       }
       return this;
@@ -383,7 +383,7 @@ namespace Altaxo.Calc.LinearAlgebra
               var srcIndicesLength = count[i];
               if (srcIndicesLength > 0)
               {
-                var srcIndices = this.indices[i];
+                var srcIndices = indices[i];
                 var items_i = items[i];
                 for (int jj = 0; jj < srcIndices.Length; ++jj)
                   yield return (i, srcIndices[jj], items_i[jj]);
@@ -420,7 +420,7 @@ namespace Altaxo.Calc.LinearAlgebra
         var srcIndicesLength = count[row];
         if (srcIndicesLength > 0)
         {
-          var srcIndices = this.indices[row];
+          var srcIndices = indices[row];
           int jidx = Array.BinarySearch(srcIndices, 0, srcIndicesLength, row);
 
           reqLength = jidx < 0 ? srcIndicesLength + 1 : srcIndicesLength;
@@ -439,7 +439,7 @@ namespace Altaxo.Calc.LinearAlgebra
             for (int i = 0; i < srcIndicesLength; ++i)
             {
               int idx = srcIndices[i];
-              val = f(this.items[row][i], row, idx);
+              val = f(items[row][i], row, idx);
               if (!(val == 0))
               {
                 result.indices[row][j] = idx;
@@ -459,7 +459,7 @@ namespace Altaxo.Calc.LinearAlgebra
             for (int i = 0; i < upTo; ++i)
             {
               int idx = srcIndices[i];
-              val = f(this.items[row][i], row, idx);
+              val = f(items[row][i], row, idx);
               if (!(0 == val))
               {
                 result.indices[row][j] = idx;
@@ -481,7 +481,7 @@ namespace Altaxo.Calc.LinearAlgebra
             for (int i = upTo; i < srcIndicesLength; ++i)
             {
               int idx = srcIndices[i];
-              val = f(this.items[row][i], row, idx);
+              val = f(items[row][i], row, idx);
               if (!(0 == val))
               {
                 result.indices[row][j] = idx;
@@ -528,7 +528,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
 #if DEBUG
         if (i < 0 || j < 0 || i >= m || j >= n)
-          throw new IndexOutOfRangeException(String.Format(CultureInfo.InvariantCulture,
+          throw new IndexOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
               "Element index ({0},{1}) is out of range", i, j));
 #endif
         if (indices[i] == null)
@@ -543,7 +543,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
 #if DEBUG
         if (i < 0 || j < 0 || i >= m || j >= n)
-          throw new IndexOutOfRangeException(String.Format(CultureInfo.InvariantCulture,
+          throw new IndexOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
               "Element index ({0},{1}) is out of range", i, j));
 #endif
         if (indices[i] == null)
@@ -591,11 +591,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>New matrix that is the transposed of the original.</returns>
     public SparseDoubleMatrix Transpose()
     {
-      var At = new SparseDoubleMatrix(this.ColumnCount, this.RowCount);
+      var At = new SparseDoubleMatrix(ColumnCount, RowCount);
 
-      for (int i = 0; i < this.RowCount; i++)
-        for (int j = 0; j < this.GetRow(i).count; j++)
-          At[this.GetRow(i).indices[j], i] = this.GetRow(i).items[j];
+      for (int i = 0; i < RowCount; i++)
+        for (int j = 0; j < GetRow(i).count; j++)
+          At[GetRow(i).indices[j], i] = GetRow(i).items[j];
 
       return At;
     }
@@ -661,7 +661,7 @@ namespace Altaxo.Calc.LinearAlgebra
           if (j < i)
             x[i] -= its[k] * x[j];
         }
-        x[i] /= this.GetRow(i)[i];
+        x[i] /= GetRow(i)[i];
       }
 
       return x;

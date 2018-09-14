@@ -413,23 +413,23 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </remarks>
     public virtual double MassDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy = 1E-6)
     {
-      return MolecularWeight*MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy);
+      return MolecularWeight * MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy);
     }
 
-      /// <summary>
-      /// Gets the mole density from a given pressure and temperature.
-      /// </summary>
-      /// <param name="pressure">The pressure in Pa.</param>
-      /// <param name="temperature">The temperature in Kelvin.</param>
-      /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
-      /// <param name="moleDensityStartValue">The start value for the density to search for.</param>
-      /// <returns>The density in mol/m³</returns>
-      /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
-      /// Therefore we need the target accuracy.
-      /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
-      /// is within the relative accuracy.
-      /// </remarks>
-      public double MoleDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy, double moleDensityStartValue)
+    /// <summary>
+    /// Gets the mole density from a given pressure and temperature.
+    /// </summary>
+    /// <param name="pressure">The pressure in Pa.</param>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
+    /// <param name="moleDensityStartValue">The start value for the density to search for.</param>
+    /// <returns>The density in mol/m³</returns>
+    /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
+    /// Therefore we need the target accuracy.
+    /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
+    /// is within the relative accuracy.
+    /// </remarks>
+    public double MoleDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy, double moleDensityStartValue)
     {
       if (!(pressure > 0))
         throw new ArgumentOutOfRangeException(nameof(pressure), "Must be >0");
@@ -460,7 +460,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         if (currentError < relativeAccuracy)
           return delta * ReducingMoleDensity;
         if (currentError > previousError && newtonIterations > 10)
-          return previousDelta*ReducingMoleDensity;
+          return previousDelta * ReducingMoleDensity;
 
         previousDelta = delta;
         previousError = currentError;
@@ -481,7 +481,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           delta = delta / 2;  // then make it simply smaller
           newtonIterations = 0;
         }
-  
+
       }
 
       return double.NaN;
@@ -506,14 +506,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return MolecularWeight * MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy, massDensityStartValue / MolecularWeight);
     }
 
-      /// <summary>
-      /// Get the Helmholtz energy from a given mole density and temperature.
-      /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
-      /// </summary>
-      /// <param name="moleDensity">The density in mol/m³.</param>
-      /// <param name="temperature">The temperature in Kelvin.</param>
-      /// <returns>The Helmholtz energy in J/(mol K).</returns>
-      public double MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+    /// <summary>
+    /// Get the Helmholtz energy from a given mole density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density in mol/m³.</param>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <returns>The Helmholtz energy in J/(mol K).</returns>
+    public double MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
       double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
@@ -955,7 +955,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public double IsentropicDerivativeOfMoleSpecificVolumeWrtPressure_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       var c = SpeedOfSound_FromMoleDensityAndTemperature(moleDensity, temperature);
-      
+
       return -1 / (c * c * moleDensity * moleDensity * MolecularWeight);
     }
 

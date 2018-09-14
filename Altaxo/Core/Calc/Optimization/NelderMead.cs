@@ -31,9 +31,9 @@
  * NB: Constraint class inspired by the optimization frame in the QuantLib library
 */
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Threading;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -50,8 +50,8 @@ namespace Altaxo.Calc.Optimization
 
     public NelderMead(ICostFunction costfunction, EndCriteria endcriteria)
     {
-      this.costFunction_ = costfunction;
-      this.endCriteria_ = endcriteria;
+      costFunction_ = costfunction;
+      endCriteria_ = endcriteria;
     }
 
     ///<summary> Types of steps the Nelder-Mead Simplex Algorithm can take</summary>
@@ -71,8 +71,8 @@ namespace Altaxo.Calc.Optimization
     ///<summary> Delta used to generate initial simplex for non-zero value elements </summary>
     public double SimplexDelta
     {
-      set { this.delta = value; }
-      get { return this.delta; }
+      set { delta = value; }
+      get { return delta; }
     }
 
     private double rho_ = 1;
@@ -83,49 +83,49 @@ namespace Altaxo.Calc.Optimization
     ///<summary> Coefficient of reflection (Rho) </summary>
     public double Rho
     {
-      set { this.rho_ = value; }
-      get { return this.rho_; }
+      set { rho_ = value; }
+      get { return rho_; }
     }
 
     ///<summary> Coefficient of expansion (Chi) </summary>
     public double Chi
     {
-      set { this.chi_ = value; }
-      get { return this.chi_; }
+      set { chi_ = value; }
+      get { return chi_; }
     }
 
     ///<summary> Coefficient of contraction (Psi) </summary>
     public double Psi
     {
-      set { this.psi_ = value; }
-      get { return this.psi_; }
+      set { psi_ = value; }
+      get { return psi_; }
     }
 
     ///<summary> Coefficient of shrinkage (Sigma) </summary>
     public double Sigma
     {
-      set { this.sigma_ = value; }
-      get { return this.sigma_; }
+      set { sigma_ = value; }
+      get { return sigma_; }
     }
 
     ///<summary> Delta used to generate initial simplex for zero value elements </summary>
     public double SimplexZeroDelta
     {
-      set { this.zdelta = value; }
-      get { return this.zdelta; }
+      set { zdelta = value; }
+      get { return zdelta; }
     }
 
     ///<summary> Return the current iteration Simplex</summary>
     public DoubleVector[] Simplex
     {
-      get { return this.x; }
+      get { return x; }
     }
 
     ///<summary> Create an initial simplex </summary>
     private DoubleVector[] CreateSimplex(DoubleVector x)
     {
       int n = x.Length;
-      DoubleVector[] simplex = new DoubleVector[n + 1];
+      var simplex = new DoubleVector[n + 1];
       //DoubleVector direction;
       simplex[0] = new DoubleVector(x);
       for (int i = 1; i <= n; i++)
@@ -146,8 +146,8 @@ namespace Altaxo.Calc.Optimization
     private void RankVertices()
     {
       // determine the values of each vertice in the initial simplex
-      for (int i = 0; i < this.x.Length; i++)
-        fx[i] = FunctionEvaluation(this.x[i]);
+      for (int i = 0; i < x.Length; i++)
+        fx[i] = FunctionEvaluation(x[i]);
 
       Array.Sort(fx, x);
     }
@@ -177,10 +177,10 @@ namespace Altaxo.Calc.Optimization
     ///<summary> Minimize the given cost function </summary>
     public void Minimize(DoubleVector[] initialsimplex, double rho, double chi, double psi, double sigma)
     {
-      this.rho_ = rho;
-      this.chi_ = chi;
-      this.psi_ = psi;
-      this.sigma_ = sigma;
+      rho_ = rho;
+      chi_ = chi;
+      psi_ = psi;
+      sigma_ = sigma;
       Minimize(initialsimplex);
     }
 
@@ -223,18 +223,18 @@ namespace Altaxo.Calc.Optimization
     ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
     public void InitializeMethod(DoubleVector[] initialsimplex)
     {
-      this.x = new DoubleVector[initialsimplex.Length];
-      initialsimplex.CopyTo(this.x, 0);
-      this.fx = new double[this.x.Length];
+      x = new DoubleVector[initialsimplex.Length];
+      initialsimplex.CopyTo(x, 0);
+      fx = new double[x.Length];
       RankVertices();
-      this.laststep_ = Step.Initialization;
-      this.iterationVectors_ = new DoubleVector[endCriteria_.maxIteration + 1];
-      this.iterationVectors_[0] = initialsimplex[0];
-      this.iterationValues_ = new double[endCriteria_.maxIteration + 1];
-      this.iterationValues_[0] = FunctionEvaluation(this.iterationVectors_[0]);
-      this.iterationGradientNorms_ = new double[endCriteria_.maxIteration + 1];
-      this.iterationGradientNorms_[0] = 2.0 * System.Math.Abs(fx[x.Length - 1] - fx[0]) /
-        (System.Math.Abs(fx[x.Length - 1]) + System.Math.Abs(fx[0]) + System.Double.Epsilon);
+      laststep_ = Step.Initialization;
+      iterationVectors_ = new DoubleVector[endCriteria_.maxIteration + 1];
+      iterationVectors_[0] = initialsimplex[0];
+      iterationValues_ = new double[endCriteria_.maxIteration + 1];
+      iterationValues_[0] = FunctionEvaluation(iterationVectors_[0]);
+      iterationGradientNorms_ = new double[endCriteria_.maxIteration + 1];
+      iterationGradientNorms_[0] = 2.0 * System.Math.Abs(fx[x.Length - 1] - fx[0]) /
+        (System.Math.Abs(fx[x.Length - 1]) + System.Math.Abs(fx[0]) + double.Epsilon);
     }
 
     ///<summary> Perform a single iteration of the optimization method </summary>
@@ -245,10 +245,10 @@ namespace Altaxo.Calc.Optimization
       double fxr, fxe, fxc, fxcc;
 
       // Calculate centroid of n best points (ie excluding worst point)
-      xbar = new DoubleVector(this.x[0].Length, 0.0);
-      for (int i = 0; i < (this.x.Length - 1); i++)
-        xbar = xbar + this.x[i];
-      xbar = xbar / (this.x.Length - 1);
+      xbar = new DoubleVector(x[0].Length, 0.0);
+      for (int i = 0; i < (x.Length - 1); i++)
+        xbar = xbar + x[i];
+      xbar = xbar / (x.Length - 1);
 
       // Calculate reflection point
       xr = (1 + rho_) * xbar - rho_ * x[x.Length - 1];
@@ -267,14 +267,14 @@ namespace Altaxo.Calc.Optimization
             // accept expansion point
             x[x.Length - 1] = xe;
             fx[x.Length - 1] = fxe;
-            this.laststep_ = Step.Expansion;
+            laststep_ = Step.Expansion;
           }
           else
           {
             // accept reflection point
             x[x.Length - 1] = xr;
             fx[x.Length - 1] = fxr;
-            this.laststep_ = Step.Reflection;
+            laststep_ = Step.Reflection;
           }
         }
         else
@@ -282,7 +282,7 @@ namespace Altaxo.Calc.Optimization
           // accept reflection point
           x[x.Length - 1] = xr;
           fx[x.Length - 1] = fxr;
-          this.laststep_ = Step.Reflection;
+          laststep_ = Step.Reflection;
         }
       }
       else
@@ -298,7 +298,7 @@ namespace Altaxo.Calc.Optimization
             // accept the outside contraction
             x[x.Length - 1] = xc;
             fx[x.Length - 1] = fxc;
-            this.laststep_ = Step.OutsideContraction;
+            laststep_ = Step.OutsideContraction;
           }
           else
           {
@@ -308,7 +308,7 @@ namespace Altaxo.Calc.Optimization
               x[i] = x[0] + sigma_ * (x[i] - x[0]);
               fx[i] = FunctionEvaluation(x[i]);
             }
-            this.laststep_ = Step.Shrink;
+            laststep_ = Step.Shrink;
           }
         }
         else
@@ -321,7 +321,7 @@ namespace Altaxo.Calc.Optimization
             // accept inside contraction
             x[x.Length - 1] = xcc;
             fx[x.Length - 1] = fxcc;
-            this.laststep_ = Step.InsideContraction;
+            laststep_ = Step.InsideContraction;
           }
           else
           {
@@ -331,15 +331,15 @@ namespace Altaxo.Calc.Optimization
               x[i] = x[0] + sigma_ * (x[i] - x[0]);
               fx[i] = FunctionEvaluation(x[i]);
             }
-            this.laststep_ = Step.Shrink;
+            laststep_ = Step.Shrink;
           }
         }
       }
       RankVertices();
-      this.iterationVectors_[endCriteria_.iterationCounter] = this.x[0];
-      this.iterationValues_[endCriteria_.iterationCounter] = this.fx[0];
-      this.iterationGradientNorms_[endCriteria_.iterationCounter] = 2.0 * System.Math.Abs(fx[x.Length - 1] - fx[0]) /
-        (System.Math.Abs(fx[x.Length - 1]) + System.Math.Abs(fx[0]) + System.Double.Epsilon);
+      iterationVectors_[endCriteria_.iterationCounter] = x[0];
+      iterationValues_[endCriteria_.iterationCounter] = fx[0];
+      iterationGradientNorms_[endCriteria_.iterationCounter] = 2.0 * System.Math.Abs(fx[x.Length - 1] - fx[0]) /
+        (System.Math.Abs(fx[x.Length - 1]) + System.Math.Abs(fx[0]) + double.Epsilon);
     }
   }
 }

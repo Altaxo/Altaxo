@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -108,10 +108,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._method = from._method;
-      this._detrendingOrder = from._detrendingOrder;
-      this._ensembleScale = from._ensembleScale;
-      this._regions = (int[])from._regions.Clone();
+      _method = from._method;
+      _detrendingOrder = from._detrendingOrder;
+      _ensembleScale = from._ensembleScale;
+      _regions = (int[])from._regions.Clone();
     }
 
     /// <summary>

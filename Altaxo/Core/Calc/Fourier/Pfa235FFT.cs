@@ -270,7 +270,7 @@ namespace Altaxo.Calc.Fourier
 
       // allocate and copy trigs
       trigs = new double[trisize];
-      Array.Copy(fft.trigs, 0, this.trigs, 0, fft.trigs.Length);
+      Array.Copy(fft.trigs, 0, trigs, 0, fft.trigs.Length);
     }
 
     // FFT functions
@@ -560,7 +560,7 @@ int FFT (complex<FLOAT> c[], int isign)
       int n = dim[0];
       if (isign == FourierDirection.Forward)
       {
-        this.FFT(real1, real2, isign);
+        FFT(real1, real2, isign);
         int i, j;
         for (i = 1, j = n - 1; i < j; i++, j--)
         {
@@ -593,7 +593,7 @@ int FFT (complex<FLOAT> c[], int isign)
           real2[j] = re2 - im1;
         }
 
-        this.FFT(real1, real2, isign);
+        FFT(real1, real2, isign);
       }
 
       return 0;
@@ -682,7 +682,7 @@ iterate:
 
       nblox = (lot - 1) / lvr + 1;
       left = lot;
-      s = (double)isign;
+      s = isign;
       istart = 1;
 
       //  loop on blocks of lvr transforms
@@ -1954,14 +1954,14 @@ L490:
         mu = 3 - mu;
       m = mm;
       mh = (m + 1) / 2;
-      s = (double)isign;
+      s = isign;
       c1 = sin60;
       if (mu == 2)
         c1 = -c1;
 
       nblox = (lot - 1) / lvr + 1;
       left = lot;
-      s = (double)isign;
+      s = isign;
       istart = 1;
 
       //  loop on blocks of lvr transforms
@@ -2507,7 +2507,7 @@ L490:
 
       m = mm;
       mh = (m + 1) / 2;
-      s = (double)isign;
+      s = isign;
       c1 = qrt5;
       c2 = sin72;
       c3 = sin36;
@@ -2524,7 +2524,7 @@ L490:
 
       nblox = (lot - 1) / lvr + 1;
       left = lot;
-      s = (double)isign;
+      s = isign;
       istart = 1;
 
       //  loop on blocks of lvr transforms
@@ -3515,14 +3515,14 @@ L20:
         ni = nj[ll - 1];
         if (ni != 1)
         {
-          del = twopi / (double)ni;
+          del = twopi / ni;
           irot = n / ni;
           kink = irot % ni;
           kk = 0;
 
           for (k = 1; k <= ni; ++k)
           {
-            angle = (double)kk * del;
+            angle = kk * del;
             trigs[trOffs + i] = Math.Cos(angle);
             trigs[trOffs + i + 1] = Math.Sin(angle);
             i += 2;

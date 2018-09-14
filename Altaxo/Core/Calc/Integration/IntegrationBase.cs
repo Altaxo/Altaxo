@@ -143,17 +143,17 @@ namespace Altaxo.Calc.Integration
 
     public void initialise(double a, double b)
     {
-      this.size = 0;
-      this.nrmax = 0;
-      this.i = 0;
-      this.alist[0] = a;
-      this.blist[0] = b;
-      this.rlist[0] = 0.0;
-      this.elist[0] = 0.0;
-      this.order[0] = 0;
-      this.level[0] = 0;
+      size = 0;
+      nrmax = 0;
+      i = 0;
+      alist[0] = a;
+      blist[0] = b;
+      rlist[0] = 0.0;
+      elist[0] = 0.0;
+      order[0] = 0;
+      level[0] = 0;
 
-      this.maximum_level = 0;
+      maximum_level = 0;
     }
 
     public void reset_nrmax()
@@ -212,25 +212,25 @@ retrieve(out double a, out double b, out double r, out double e)
 
     public void append_interval(double a1, double b1, double area1, double error1)
     {
-      int i_new = this.size;
+      int i_new = size;
 
-      this.alist[i_new] = a1;
-      this.blist[i_new] = b1;
-      this.rlist[i_new] = area1;
-      this.elist[i_new] = error1;
-      this.order[i_new] = i_new;
-      this.level[i_new] = 0;
+      alist[i_new] = a1;
+      blist[i_new] = b1;
+      rlist[i_new] = area1;
+      elist[i_new] = error1;
+      order[i_new] = i_new;
+      level[i_new] = 0;
 
-      this.size++;
+      size++;
     }
 
     public bool increase_nrmax()
     {
       int k;
-      int id = this.nrmax;
+      int id = nrmax;
       int jupbnd;
 
-      int last = this.size - 1;
+      int last = size - 1;
 
       if (last > (1 + limit / 2))
       {
@@ -243,23 +243,23 @@ retrieve(out double a, out double b, out double r, out double e)
 
       for (k = id; k <= jupbnd; k++)
       {
-        int i_max = order[this.nrmax];
+        int i_max = order[nrmax];
 
-        this.i = i_max;
+        i = i_max;
 
-        if (level[i_max] < this.maximum_level)
+        if (level[i_max] < maximum_level)
         {
           return true;
         }
 
-        this.nrmax++;
+        nrmax++;
       }
       return false;
     }
 
     public double sum_results()
     {
-      int n = this.size;
+      int n = size;
 
       int k;
       double result_sum = 0;
@@ -275,10 +275,10 @@ retrieve(out double a, out double b, out double r, out double e)
     public void update(double a1, double b1, double area1, double error1,
              double a2, double b2, double area2, double error2)
     {
-      int i_max = this.i;
-      int i_new = this.size;
+      int i_max = i;
+      int i_new = size;
 
-      int new_level = this.level[i_max] + 1;
+      int new_level = level[i_max] + 1;
 
       /* append the newly-created intervals to the list */
 
@@ -309,11 +309,11 @@ retrieve(out double a, out double b, out double r, out double e)
         level[i_new] = new_level;
       }
 
-      this.size++;
+      size++;
 
-      if (new_level > this.maximum_level)
+      if (new_level > maximum_level)
       {
-        this.maximum_level = new_level;
+        maximum_level = new_level;
       }
 
       qpsrt();
@@ -321,14 +321,14 @@ retrieve(out double a, out double b, out double r, out double e)
 
     private void qpsrt()
     {
-      int last = this.size - 1;
+      int last = size - 1;
       int limit = this.limit;
 
       double errmax;
       double errmin;
       int i, k, top;
 
-      int i_nrmax = this.nrmax;
+      int i_nrmax = nrmax;
       int i_maxerr = order[i_nrmax];
 
       /* Check whether the list contains more than two error estimates */
@@ -402,7 +402,7 @@ retrieve(out double a, out double b, out double r, out double e)
       i_maxerr = order[i_nrmax];
 
       this.i = i_maxerr;
-      this.nrmax = i_nrmax;
+      nrmax = i_nrmax;
     }
 
     /* integration/ptsort.c
@@ -431,7 +431,7 @@ retrieve(out double a, out double b, out double r, out double e)
       double[] elist = this.elist;
       int[] order = this.order;
 
-      int nint = this.size;
+      int nint = size;
 
       for (i = 0; i < nint; i++)
       {
@@ -481,7 +481,7 @@ append_table(double y)
     {
       int n;
       n = this.n;
-      this.rlist2[n] = y;
+      rlist2[n] = y;
       this.n++;
     }
 
@@ -501,7 +501,7 @@ qelg(out double result, out double abserr)
       int n_final = n;
       int i;
 
-      int nres_orig = this.nres;
+      int nres_orig = nres;
 
       result = current;
       abserr = GSL_CONST.GSL_DBL_MAX;
@@ -646,7 +646,7 @@ qelg(out double result, out double abserr)
 				 have moved the update to this point so that its value more
 				 useful. */
 
-      this.nres = nres_orig + 1;
+      nres = nres_orig + 1;
 
       abserr = Math.Max(abserr, 5 * GSL_CONST.GSL_DBL_EPSILON * Math.Abs(result));
 
@@ -727,7 +727,6 @@ qelg(out double result, out double abserr)
     {
       double area, errsum;
       double res_ext, err_ext;
-      double result0, abserr0, resabs0, resasc0;
       double tolerance;
 
       double ertest = 0;
@@ -744,7 +743,7 @@ qelg(out double result, out double abserr)
       bool extrapolate = false;
       bool disallow_extrapolation = false;
 
-      extrapolation_table table = new extrapolation_table();
+      var table = new extrapolation_table();
 
       /* Initialize results */
 
@@ -768,7 +767,7 @@ qelg(out double result, out double abserr)
 
       /* Perform the first integration */
 
-      q(f, a, b, out result0, out abserr0, out resabs0, out resasc0);
+      q(f, a, b, out var result0, out var abserr0, out var resabs0, out var resasc0);
 
       workspace.set_initial_result(result0, abserr0);
 
@@ -815,16 +814,13 @@ qelg(out double result, out double abserr)
       {
         int current_level;
         double a1, b1, a2, b2;
-        double a_i, b_i, r_i, e_i;
-        double area1 = 0, area2 = 0, area12 = 0;
-        double error1 = 0, error2 = 0, error12 = 0;
-        double resasc1, resasc2;
-        double resabs1, resabs2;
+        double area12 = 0;
+        double error12 = 0;
         double last_e_i;
 
         /* Bisect the subinterval with the largest error estimate */
 
-        workspace.retrieve(out a_i, out b_i, out r_i, out e_i);
+        workspace.retrieve(out var a_i, out var b_i, out var r_i, out var e_i);
 
         current_level = workspace.level[workspace.i] + 1;
 
@@ -835,8 +831,8 @@ qelg(out double result, out double abserr)
 
         iteration++;
 
-        q(f, a1, b1, out area1, out error1, out resabs1, out resasc1);
-        q(f, a2, b2, out area2, out error2, out resabs2, out resasc2);
+        q(f, a1, b1, out var area1, out var error1, out var resabs1, out var resasc1);
+        q(f, a2, b2, out var area2, out var error2, out var resabs2, out var resasc2);
 
         area12 = area1 + area2;
         error12 = error1 + error2;

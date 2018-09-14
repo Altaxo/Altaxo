@@ -51,11 +51,11 @@ namespace Altaxo.Calc.Probability
     public virtual int Maximum { get { return int.MaxValue - 1; } }
 
     /// <summary>
-    /// Returns a nonnegative random number less than <see cref="Int32.MaxValue"/>.
+    /// Returns a nonnegative random number less than <see cref="int.MaxValue"/>.
     /// </summary>
     /// <returns>
-    /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="Int32.MaxValue"/>; that is,
-    ///   the range of return values includes 0 but not <see cref="Int32.MaxValue"/>.
+    /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="int.MaxValue"/>; that is,
+    ///   the range of return values includes 0 but not <see cref="int.MaxValue"/>.
     /// </returns>
     public abstract int Next();
 
@@ -134,13 +134,13 @@ namespace Altaxo.Calc.Probability
     /// <param name="minValue">
     /// The inclusive lower bound of the random number to be generated.
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="Double.MaxValue"/>
+    ///   <see cref="double.MaxValue"/>
     /// </param>
     /// <param name="maxValue">
     /// The exclusive upper bound of the random number to be generated.
     /// <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="Double.MaxValue"/>.
+    ///   <see cref="double.MaxValue"/>.
     /// </param>
     /// <returns>
     /// A double-precision floating point number greater than or equal to <paramref name="minValue"/>, and less than
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.Probability
     /// <remarks>
     /// Buffers 31 random bits for future calls, so the random number generator is only invoked once in every 31 calls.
     /// </remarks>
-    /// <returns>A <see cref="Boolean"/> value.</returns>
+    /// <returns>A <see cref="bool"/> value.</returns>
     public abstract bool NextBoolean();
 
     /// <summary>
@@ -163,7 +163,7 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <remarks>
     /// Each element of the array of bytes is set to a random number greater than or equal to 0, and less than or
-    ///   equal to <see cref="Byte.MaxValue"/>.
+    ///   equal to <see cref="byte.MaxValue"/>.
     /// </remarks>
     /// <param name="buffer">An array of bytes to contain random numbers.</param>
     public abstract void NextBytes(byte[] buffer);

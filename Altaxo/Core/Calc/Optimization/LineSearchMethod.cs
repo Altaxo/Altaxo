@@ -31,8 +31,8 @@
  * NB: Problem class inspired by the optimization frame in the QuantLib library
 */
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {

@@ -94,7 +94,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (a.RowCount == 0 || a.ColumnCount == 0)
         return string.Format("EmptyMatrix {0}({1},{2})", name, a.RowCount, a.ColumnCount);
 
-      System.Text.StringBuilder s = new System.Text.StringBuilder();
+      var s = new System.Text.StringBuilder();
       s.Append("Matrix " + name + ":");
       for (int i = 0; i < a.RowCount; i++)
       {
@@ -119,7 +119,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (a.RowCount == 0 || a.ColumnCount == 0)
         return string.Format("EmptyMatrix {0}({1},{2})", name, a.RowCount, a.ColumnCount);
 
-      System.Text.StringBuilder s = new System.Text.StringBuilder();
+      var s = new System.Text.StringBuilder();
       s.Append("Matrix " + name + ":");
       for (int i = 0; i < a.RowCount; i++)
       {
@@ -144,7 +144,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (a.Rows == 0 || a.Columns == 0)
         return string.Format("EmptyMatrix {0}({1},{2})", name, a.Rows, a.Columns);
 
-      System.Text.StringBuilder s = new System.Text.StringBuilder();
+      var s = new System.Text.StringBuilder();
       s.Append("Matrix " + name + ":");
       for (int i = 0; i < a.Rows; i++)
       {
@@ -169,7 +169,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (a.Rows == 0 || a.Columns == 0)
         return string.Format("EmptyMatrix {0}({1},{2})", name, a.Rows, a.Columns);
 
-      System.Text.StringBuilder s = new System.Text.StringBuilder();
+      var s = new System.Text.StringBuilder();
       s.Append("Matrix " + name + ":");
       for (int i = 0; i < a.Rows; i++)
       {
@@ -1301,8 +1301,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="a">The matrix.</param>
     public static void ToZeroMean(this IMatrix<double> a)
     {
-      double mean;
-      ToZeroMean(a, out mean);
+      ToZeroMean(a, out var mean);
     }
 
     /// <summary>
@@ -1827,8 +1826,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>The pseudo inverse of matrix <c>input</c>.</returns>
     public static IMatrix<double> PseudoInverse(IROMatrix<double> input)
     {
-      int rank;
-      return PseudoInverse(input, out rank);
+      return PseudoInverse(input, out var rank);
     }
 
     /// <summary>
@@ -1842,7 +1840,7 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       var ma = new LeftSpineJaggedArrayMatrix<double>(input.RowCount, input.ColumnCount);
       MatrixMath.Copy(input, ma);
-      SingularValueDecomposition svd = new SingularValueDecomposition(ma);
+      var svd = new SingularValueDecomposition(ma);
 
       double[][] B = GetMatrixArray(input.ColumnCount, input.RowCount);
 
@@ -2473,8 +2471,10 @@ namespace Altaxo.Calc.LinearAlgebra
           }
         }
         // tempstorage can not be used
-        sts = new SolveTempStorage();
-        sts.A = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(A.RowCount, A.ColumnCount);
+        sts = new SolveTempStorage
+        {
+          A = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(A.RowCount, A.ColumnCount)
+        };
         MatrixMath.Copy(A, sts.A);
         sts.SVD = new SingularValueDecomposition(sts.A);
         sts.SVD.Backsubstitution(B, x);

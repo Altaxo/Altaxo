@@ -249,7 +249,7 @@ fin:
     {
       get
       {
-        return this._alpha;
+        return _alpha;
       }
       set
       {
@@ -265,7 +265,7 @@ fin:
     {
       get
       {
-        return this._beta;
+        return _beta;
       }
       set
       {
@@ -330,7 +330,7 @@ fin:
     {
       get
       {
-        return this._alpha / (this._alpha + this._beta);
+        return _alpha / (_alpha + _beta);
       }
     }
 
@@ -352,7 +352,7 @@ fin:
     {
       get
       {
-        return (this._alpha * this._beta) / (Math.Pow(this._alpha + this._beta, 2.0) * (this._alpha + this.b + 1.0));
+        return (_alpha * _beta) / (Math.Pow(_alpha + _beta, 2.0) * (_alpha + b + 1.0));
       }
     }
 
@@ -363,19 +363,19 @@ fin:
     {
       get
       {
-        if ((this._alpha > 1) && (this._beta > 1))
+        if ((_alpha > 1) && (_beta > 1))
         {
-          return new double[] { (this._alpha - 1.0) / (this._alpha + this._beta - 2.0) };
+          return new double[] { (_alpha - 1.0) / (_alpha + _beta - 2.0) };
         }
-        else if ((this._alpha < 1) && (this._beta < 1))
+        else if ((_alpha < 1) && (_beta < 1))
         {
           return new double[] { 0.0, 1.0 };
         }
-        else if (((this._alpha < 1) && (this._beta >= 1)) || ((this._alpha == 1) && (this._beta > 1)))
+        else if (((_alpha < 1) && (_beta >= 1)) || ((_alpha == 1) && (_beta > 1)))
         {
           return new double[] { 0.0 };
         }
-        else if (((this._alpha >= 1) && (this._beta < 1)) || ((this._alpha > 1) && (this._beta == 1)))
+        else if (((_alpha >= 1) && (_beta < 1)) || ((_alpha > 1) && (_beta == 1)))
         {
           return new double[] { 1.0 };
         }

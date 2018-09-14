@@ -6,11 +6,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Ode
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Calc.Ode
       InitialStep = 0.0d;
       AbsoluteTolerance = 1e-6;
       RelativeTolerance = 1e-3;
-      MaxStep = Double.MaxValue;
+      MaxStep = double.MaxValue;
       MinStep = 0.0d;
       MaxScale = 1.1d;
       MinScale = 0.9d;

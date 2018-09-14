@@ -49,7 +49,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <remarks>
   /// This class provides members for inverting the Toeplitz matrix (see <see cref="GetInverse"/> member),
   /// calculating the determinant of the matrix (see <see cref="GetDeterminant"/> member) and solving
-  /// linear systems associated with the matrix (see <see cref="Solve(IROVector{Double})"/> members).
+  /// linear systems associated with the matrix (see <see cref="Solve(IROVector{double})"/> members).
   /// <para>
   /// The class implements a <B>UDL</B> decomposition of the inverse of the
   /// square Toeplitz matrix. The decomposition is based upon Levinson's algorithm. As
@@ -163,7 +163,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </code>
   /// </para>
   /// </example>
-  sealed public class DoubleLevinson : Algorithm
+  public sealed class DoubleLevinson : Algorithm
   {
     #region Fields
 
@@ -261,7 +261,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a DoubleMatrix
-        DoubleMatrix Lower = new DoubleMatrix(m_Order);
+        var Lower = new DoubleMatrix(m_Order);
 #if MANAGED
         for (int i = 0; i < m_Order; i++)
         {
@@ -305,7 +305,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy diagonal vector into a DoubleMatrix
-        DoubleMatrix Diagonal = new DoubleMatrix(m_Order);
+        var Diagonal = new DoubleMatrix(m_Order);
         Diagonal.SetDiagonal(m_Diagonal);
 
         return Diagonal;
@@ -336,7 +336,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a DoubleMatrix
-        DoubleMatrix Upper = new DoubleMatrix(m_Order);
+        var Upper = new DoubleMatrix(m_Order);
 #if MANAGED
         for (int i = 0; i < m_Order; i++)
         {
@@ -615,7 +615,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i;
 
       // allocate memory for the matrix
-      DoubleMatrix tm = new DoubleMatrix(m_Order);
+      var tm = new DoubleMatrix(m_Order);
 #if MANAGED
       // fill lower triangle
       for (i = 0; i < m_Order; i++)
@@ -716,7 +716,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new SingularMatrixException("One of the leading sub-matrices is singular.");
       }
 
-      DoubleMatrix I = new DoubleMatrix(m_Order);           // the solution matrix
+      var I = new DoubleMatrix(m_Order);           // the solution matrix
       double[] A = m_LowerTriangle[m_Order - 1];
       double[] B = m_UpperTriangle[m_Order - 1];
       double A1, B1, scale;
@@ -1139,7 +1139,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       // calculate the inverse
-      DoubleMatrix I = new DoubleMatrix(order);           // the solution matrix
+      var I = new DoubleMatrix(order);           // the solution matrix
       double A1, B1;
 
 #if MANAGED
@@ -1286,7 +1286,7 @@ namespace Altaxo.Calc.LinearAlgebra
       double[] A = new double[order];
       double[] B = new double[order];
       double[] Z = new double[order];
-      DoubleVector X = new DoubleVector(order);
+      var X = new DoubleVector(order);
       double Q, S, Ke, Kr, e;
       double Inner;
       int i, j, l;
@@ -1452,7 +1452,7 @@ namespace Altaxo.Calc.LinearAlgebra
       double[] A = new double[order];
       double[] B = new double[order];
       double[] Z = new double[order];
-      DoubleMatrix X = new DoubleMatrix(order);
+      var X = new DoubleMatrix(order);
       double Q, S, Ke, Kr, e;
       double Inner;
       int i, j, l;
@@ -1517,7 +1517,7 @@ namespace Altaxo.Calc.LinearAlgebra
         for (l = 0; l < Y.RowCount; l++)
         {
           DoubleVector W = X.GetColumn(l);
-          DoubleVector M = DoubleVector.GetColumn(Y, l);
+          var M = DoubleVector.GetColumn(Y, l);
 
           Inner = M[i];
           for (j = 0; j < i; j++)

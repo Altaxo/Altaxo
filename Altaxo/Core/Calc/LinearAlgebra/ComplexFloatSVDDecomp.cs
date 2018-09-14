@@ -172,8 +172,8 @@ namespace Altaxo.Calc.LinearAlgebra
       // Initialize.
       u = new ComplexFloatMatrix(rows, rows); // left vectors
       v = new ComplexFloatMatrix(cols, cols); // right vectors
-      ComplexFloatVector e = new ComplexFloatVector(cols);
-      ComplexFloatVector work = new ComplexFloatVector(rows);
+      var e = new ComplexFloatVector(cols);
+      var work = new ComplexFloatVector(rows);
 
       int i, iter, j, k, kase, l, lp1, ls = 0, lu, m, nct, nctp1, ncu, nrt, nrtp1;
       float b, c, cs = 0.0f, el, emm1, f, g, scale, shift, sl,

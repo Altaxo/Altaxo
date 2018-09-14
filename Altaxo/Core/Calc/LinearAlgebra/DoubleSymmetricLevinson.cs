@@ -50,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// This class provides members for inverting a symmetric square Toeplitz matrix
   /// (see <see cref="GetInverse"/> member), calculating the determinant of the matrix
   /// (see <see cref="GetDeterminant"/> member) and solving linear systems associated
-  /// with the matrix (see <see cref="Solve(IROVector{Double})"/> members).
+  /// with the matrix (see <see cref="Solve(IROVector{double})"/> members).
   /// <para>
   /// The class implements an <B>UDL</B> decomposition of the inverse of the Toeplitz matrix.
   /// The decomposition is based upon Levinson's algorithm. As a consequence, all operations
@@ -178,7 +178,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </code>
   /// </para>
   /// </example>
-  sealed public class DoubleSymmetricLevinson : Algorithm
+  public sealed class DoubleSymmetricLevinson : Algorithm
   {
     #region Constants
 
@@ -310,7 +310,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a DoubleMatrix
-        DoubleMatrix Lower = new DoubleMatrix(m_Order);
+        var Lower = new DoubleMatrix(m_Order);
         for (int i = 0; i < m_Order; i++)
         {
 #if MANAGED
@@ -353,7 +353,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy diagonal vector into a DoubleMatrix
-        DoubleMatrix Diagonal = new DoubleMatrix(m_Order);
+        var Diagonal = new DoubleMatrix(m_Order);
         for (int i = 0; i < m_Order; i++)
         {
 #if MANAGED
@@ -393,7 +393,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a DoubleMatrix and then calculate the transpose
-        DoubleMatrix Upper = this.L.GetTranspose();
+        DoubleMatrix Upper = L.GetTranspose();
 
         return Upper;
       }
@@ -697,7 +697,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i, j;
 
       // allocate memory for the matrix
-      DoubleMatrix tm = new DoubleMatrix(m_Order);
+      var tm = new DoubleMatrix(m_Order);
 
 #if MANAGED
       // fill top row
@@ -844,10 +844,12 @@ namespace Altaxo.Calc.LinearAlgebra
       double[] A;       // reference to current order coefficients
 
       // allocate memory for solution
-      X = new DoubleVector(m_Order);
+      X = new DoubleVector(m_Order)
+      {
 
-      // setup zero order solution
-      X[0] = Y[0] / m_LeftColumn[0];
+        // setup zero order solution
+        [0] = Y[0] / m_LeftColumn[0]
+      };
 
       // solve systems of increasing order
       for (i = 1; i < m_Order; i++)
@@ -925,10 +927,12 @@ namespace Altaxo.Calc.LinearAlgebra
       double[] A;       // reference to current order coefficients
 
       // allocate memory for solution
-      X = new DoubleVector(m_Order);
+      X = new DoubleVector(m_Order)
+      {
 
-      // setup zero order solution
-      X[0] = Y[0] / m_LeftColumn[0];
+        // setup zero order solution
+        [0] = Y[0] / m_LeftColumn[0]
+      };
 
       // solve systems of increasing order
       for (i = 1; i < m_Order; i++)
@@ -1097,7 +1101,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new SingularMatrixException("The Toeplitz matrix or one of the the leading sub-matrices is singular.");
       }
 
-      DoubleMatrix I = new DoubleMatrix(m_Order);           // the solution matrix
+      var I = new DoubleMatrix(m_Order);           // the solution matrix
       double[] A = m_LowerTriangle[m_Order - 1];
       double A1, A2, scale;
 
@@ -1238,8 +1242,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
         if (N > 1)
         {
-          DoubleVector a = new DoubleVector(N - 1);   // prediction coefficients
-          DoubleVector Z = new DoubleVector(N - 1);   // temporary storage vector
+          var a = new DoubleVector(N - 1);   // prediction coefficients
+          var Z = new DoubleVector(N - 1);   // temporary storage vector
           double g;                                   // reflection coefficient
           double inner;                               // inner product
           double k;
@@ -1345,7 +1349,7 @@ namespace Altaxo.Calc.LinearAlgebra
         int N = T.Count;
         int M = Y.RowCount;
         X = new DoubleMatrix(N, M);                 // solution matrix
-        DoubleVector Z = new DoubleVector(N);       // temporary storage vector
+        var Z = new DoubleVector(N);       // temporary storage vector
         double e;                                   // prediction error
         int i, j, l, m;
 
@@ -1362,7 +1366,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
         if (N > 1)
         {
-          DoubleVector a = new DoubleVector(N - 1);   // prediction coefficients
+          var a = new DoubleVector(N - 1);   // prediction coefficients
           double p;                                   // reflection coefficient
           double inner;                               // inner product
           double k;
@@ -1478,7 +1482,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         int N = R.Count - 1;
         a = new DoubleVector(N);                    // prediction coefficients
-        DoubleVector Z = new DoubleVector(N);   // temporary storage vector
+        var Z = new DoubleVector(N);   // temporary storage vector
         double e;                           // predictor error
         double inner;                               // inner product
         double g;                                   // reflection coefficient
@@ -1567,8 +1571,10 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       else if (T.Count == 1)
       {
-        X = new DoubleMatrix(1);
-        X[0, 0] = 1.0 / T[0];
+        X = new DoubleMatrix(1)
+        {
+          [0, 0] = 1.0 / T[0]
+        };
       }
       else
       {

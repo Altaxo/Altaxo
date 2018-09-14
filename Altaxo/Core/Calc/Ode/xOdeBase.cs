@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Ode
       get { return _RelTolArray; }
       set
       {
-        if (value == null || value.Length != this._NEquations)
+        if (value == null || value.Length != _NEquations)
         {
           throw new ArgumentException("RelTolArray.Length is invalid, RelTolArray.Length must be equal to the number of equations.");
         }
@@ -189,9 +189,9 @@ namespace Altaxo.Calc.Ode
       set
       {
         _RelTol = value;
-        for (int i = 0; i < this._NEquations; i++)
+        for (int i = 0; i < _NEquations; i++)
         {
-          this._RelTolArray[i] = this._RelTol;
+          _RelTolArray[i] = _RelTol;
         }
       }
     }
@@ -208,9 +208,9 @@ namespace Altaxo.Calc.Ode
       set
       {
         _AbsTol = value;
-        for (int i = 0; i < this._NEquations; i++)
+        for (int i = 0; i < _NEquations; i++)
         {
-          this._AbsTolArray[i] = this._AbsTol;
+          _AbsTolArray[i] = _AbsTol;
         }
       }
     }
@@ -226,7 +226,7 @@ namespace Altaxo.Calc.Ode
       get { return _AbsTolArray; }
       set
       {
-        if (value == null || value.Length != this._NEquations)
+        if (value == null || value.Length != _NEquations)
         {
           throw new ArgumentException("AbsTolArray.Length is invalid, AbsTolArray.Length must be equal to the number of equations.");
         }
@@ -245,13 +245,13 @@ namespace Altaxo.Calc.Ode
         _ErrorToleranceType = value;
         if (value == ErrorToleranceEnum.Scalar)
         {
-          this._ITolAdamsGears = 1;
-          this._ITolRK = 0;
+          _ITolAdamsGears = 1;
+          _ITolRK = 0;
         }
         else if (value == ErrorToleranceEnum.Array)
         {
-          this._ITolAdamsGears = 4;
-          this._ITolRK = 1;
+          _ITolAdamsGears = 4;
+          _ITolRK = 1;
         }
       }
     }
@@ -271,26 +271,26 @@ namespace Altaxo.Calc.Ode
     /// </remarks>
     public virtual void SetInitialValues(double t0, double[] y0)
     {
-      if (this._InvokeInitializeODEs == true)
+      if (_InvokeInitializeODEs == true)
       {
         throw new Exception("Before to start the integration you must specify the ODE system. Please invoke the method InitializeODEs before this method.");
       }
 
-      if (this._NEquations != y0.Length)
+      if (_NEquations != y0.Length)
       {
         throw new ArgumentException("The y0.Length is invalid, y0.Length must be equal to the number of equations");
       }
 
-      this._InvokeSetInitialValues = false;
+      _InvokeSetInitialValues = false;
 
-      this._Y0 = new double[this._NEquations];
-      this._Y = new double[this._NEquations];
+      _Y0 = new double[_NEquations];
+      _Y = new double[_NEquations];
       for (int i = 0; i < y0.Length; i++)
       {
-        this._Y0[i] = y0[i];
-        this._Y[i] = y0[i];
+        _Y0[i] = y0[i];
+        _Y[i] = y0[i];
       }
-      this._T0 = t0;
+      _T0 = t0;
     }
 
     /// <summary>
@@ -300,21 +300,21 @@ namespace Altaxo.Calc.Ode
     /// <param name="numEquations">The number of equations.</param>
     internal void InitializeSizeDependentVariables(int numEquations)
     {
-      this._NEquations = numEquations;
-      if (this._NEquations < 1)
+      _NEquations = numEquations;
+      if (_NEquations < 1)
       {
         throw new ArgumentException("numEquations <1.");
       }
 
-      this._RelTolArray = new double[this._NEquations];
-      this._AbsTolArray = new double[this._NEquations];
-      for (int i = 0; i < this._NEquations; i++)
+      _RelTolArray = new double[_NEquations];
+      _AbsTolArray = new double[_NEquations];
+      for (int i = 0; i < _NEquations; i++)
       {
-        this._RelTolArray[i] = this._RelTol;
-        this._AbsTolArray[i] = this._AbsTol;
+        _RelTolArray[i] = _RelTol;
+        _AbsTolArray[i] = _AbsTol;
       }
 
-      this.InitializeWorkingSpace();
+      InitializeWorkingSpace();
     }
 
     internal virtual void InitializeInternal(OdeFunction function, OdeJacobian jacobian, int numEquations)
@@ -326,11 +326,11 @@ namespace Altaxo.Calc.Ode
       //    throw new ArgumentException("Please call the Inizialize method first.");
       //}
 
-      this._InvokeInitializeODEs = false;
+      _InvokeInitializeODEs = false;
 
-      this.InitializeSizeDependentVariables(numEquations);
-      this.InitializeFunctionAndJacobian(function, jacobian);
-      this.InitializeExceptionMessages();
+      InitializeSizeDependentVariables(numEquations);
+      InitializeFunctionAndJacobian(function, jacobian);
+      InitializeExceptionMessages();
     }
 
     protected void CheckTArray(double[] tspan)
@@ -385,12 +385,12 @@ namespace Altaxo.Calc.Ode
 
     protected internal void CheckInitialization()
     {
-      if (this._InvokeInitializeODEs == true)
+      if (_InvokeInitializeODEs == true)
       {
         throw new Exception("Before to start the integration you must specify the ODE system. Please invoke the method InitializeODEs before this method.");
       }
 
-      if (this._InvokeSetInitialValues == true)
+      if (_InvokeSetInitialValues == true)
       {
         throw new Exception("Before to start the integration you must set the initial values. Please invoke the method SetInitialValues before this method.");
       }

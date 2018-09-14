@@ -31,9 +31,9 @@
  * NB: Constraint class inspired by the optimization frame in the QuantLib library
 */
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -56,43 +56,43 @@ namespace Altaxo.Calc.Optimization
     ///<summary> Get solution vectors for all iterations </summary>
     public DoubleVector[] IterationVectors
     {
-      get { return this.iterationVectors_; }
+      get { return iterationVectors_; }
     }
 
     ///<summary> Get initial vector </summary>
     public DoubleVector InitialVector
     {
-      get { return this.iterationVectors_[0]; }
+      get { return iterationVectors_[0]; }
     }
 
     ///<summary> Get minimum vector </summary>
     public DoubleVector SolutionVector
     {
-      get { return this.iterationVectors_[endCriteria_.iterationCounter]; }
+      get { return iterationVectors_[endCriteria_.iterationCounter]; }
     }
 
     ///<summary> Get solution function values for all iterations </summary>
     public double[] IterationValues
     {
-      get { return this.iterationValues_; }
+      get { return iterationValues_; }
     }
 
     ///<summary> Get initial value </summary>
     public double InitialValue
     {
-      get { return this.iterationValues_[0]; }
+      get { return iterationValues_[0]; }
     }
 
     ///<summary> Get value of minimum vector </summary>
     public double SolutionValue
     {
-      get { return this.iterationValues_[endCriteria_.iterationCounter]; }
+      get { return iterationValues_[endCriteria_.iterationCounter]; }
     }
 
     ///<summary> Get gradient norms  for all iterations </summary>
     public double[] IterationGradientNorms
     {
-      get { return this.iterationGradientNorms_; }
+      get { return iterationGradientNorms_; }
     }
 
     ///<summary> Initialize the optimization method </summary>
@@ -100,10 +100,10 @@ namespace Altaxo.Calc.Optimization
     public virtual void InitializeMethod(DoubleVector initialvector)
     {
       // Initialize optimization method
-      this.iterationVectors_ = new DoubleVector[endCriteria_.maxIteration + 1];
-      this.iterationVectors_[0] = initialvector;
-      this.iterationValues_ = new double[endCriteria_.maxIteration + 1];
-      this.iterationValues_[0] = costFunction_.Value(this.iterationVectors_[0]);
+      iterationVectors_ = new DoubleVector[endCriteria_.maxIteration + 1];
+      iterationVectors_[0] = initialvector;
+      iterationValues_ = new double[endCriteria_.maxIteration + 1];
+      iterationValues_[0] = costFunction_.Value(iterationVectors_[0]);
     }
 
     ///<summary> Perform a single iteration of the optimization method </summary>

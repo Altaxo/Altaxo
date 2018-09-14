@@ -30,8 +30,8 @@
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
 */
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -48,8 +48,8 @@ namespace Altaxo.Calc.Optimization
 
     public MoreThuenteLineSearch(CostFunction costfunction, EndCriteria endcriteria)
     {
-      this.costFunction_ = costfunction;
-      this.endCriteria_ = endcriteria;
+      costFunction_ = costfunction;
+      endCriteria_ = endcriteria;
     }
 
     ///<summary> Method Name </summary>
@@ -73,7 +73,7 @@ namespace Altaxo.Calc.Optimization
       double dginit = grad.GetDotProduct(s);
 
       // this is a port of CVSMOD in CG++
-      DoubleVector retx = new DoubleVector(x);
+      var retx = new DoubleVector(x);
       bool brackt;
       bool stage1;
       int nfev;
@@ -103,7 +103,7 @@ namespace Altaxo.Calc.Optimization
       //double p66 = 0.66;
       double xtrapf = 4.0;
       //double zero = 0.0;
-      DoubleVector wa = new DoubleVector(x);
+      var wa = new DoubleVector(x);
 
       // CHECK THE INPUT PARAMETERS FOR ERRORS.
       if (x.Length <= 0)

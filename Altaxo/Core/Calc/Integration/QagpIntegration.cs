@@ -217,7 +217,7 @@ namespace Altaxo.Calc.Integration
           out double result, out double abserr,
           ref object tempStorage)
     {
-      QagpIntegration algo = tempStorage as QagpIntegration;
+      var algo = tempStorage as QagpIntegration;
       if (null == algo)
         tempStorage = algo = new QagpIntegration(integrationRule, debug);
       return algo.Integrate(f, pts, npts, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr);
@@ -245,7 +245,7 @@ namespace Altaxo.Calc.Integration
           ref object tempStorage
           )
     {
-      QagpIntegration algo = tempStorage as QagpIntegration;
+      var algo = tempStorage as QagpIntegration;
       if (null == algo)
         tempStorage = algo = new QagpIntegration();
       return algo.Integrate(f, pts, npts, epsabs, epsrel, limit, out result, out abserr);
@@ -353,7 +353,7 @@ namespace Altaxo.Calc.Integration
       bool extrapolate = false;
       bool disallow_extrapolation = false;
 
-      extrapolation_table table = new extrapolation_table();
+      var table = new extrapolation_table();
 
       int nint = npts - 1; /* number of intervals */
 
@@ -405,11 +405,10 @@ namespace Altaxo.Calc.Integration
 
       for (i = 0; i < nint; i++)
       {
-        double area1, error1, resabs1, resasc1;
         double a1 = pts[i];
         double b1 = pts[i + 1];
 
-        q(f, a1, b1, out area1, out error1, out resabs1, out resasc1);
+        q(f, a1, b1, out var area1, out var error1, out var resabs1, out var resasc1);
 
         result0 = result0 + area1;
         abserr0 = abserr0 + error1;
@@ -498,16 +497,13 @@ namespace Altaxo.Calc.Integration
       {
         int current_level;
         double a1, b1, a2, b2;
-        double a_i, b_i, r_i, e_i;
-        double area1 = 0, area2 = 0, area12 = 0;
-        double error1 = 0, error2 = 0, error12 = 0;
-        double resasc1, resasc2;
-        double resabs1, resabs2;
+        double area12 = 0;
+        double error12 = 0;
         double last_e_i;
 
         /* Bisect the subinterval with the largest error estimate */
 
-        workspace.retrieve(out a_i, out b_i, out r_i, out e_i);
+        workspace.retrieve(out var a_i, out var b_i, out var r_i, out var e_i);
 
         current_level = workspace.level[workspace.i] + 1;
 
@@ -518,8 +514,8 @@ namespace Altaxo.Calc.Integration
 
         iteration++;
 
-        q(f, a1, b1, out area1, out error1, out resabs1, out resasc1);
-        q(f, a2, b2, out area2, out error2, out resabs2, out resasc2);
+        q(f, a1, b1, out var area1, out var error1, out var resabs1, out var resasc1);
+        q(f, a2, b2, out var area2, out var error2, out var resabs2, out var resasc2);
 
         area12 = area1 + area2;
         error12 = error1 + error2;

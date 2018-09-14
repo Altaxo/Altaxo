@@ -47,7 +47,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
       set
       {
@@ -68,7 +68,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.beta;
+        return beta;
       }
       set
       {
@@ -168,7 +168,7 @@ namespace Altaxo.Calc.Probability
 
       this.alpha = alpha;
       this.beta = beta;
-      this.helper1 = 1.0 / this.alpha;
+      helper1 = 1.0 / this.alpha;
     }
 
     #endregion instance methods
@@ -193,7 +193,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return 1.0 / this.beta;
+        return 1.0 / beta;
       }
     }
 
@@ -204,7 +204,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha / this.beta / (this.alpha + 1.0);
+        return alpha / beta / (alpha + 1.0);
       }
     }
 
@@ -226,7 +226,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha / Math.Pow(this.beta, 2.0) / Math.Pow(this.alpha + 1.0, 2.0) / (this.alpha + 2.0);
+        return alpha / Math.Pow(beta, 2.0) / Math.Pow(alpha + 1.0, 2.0) / (alpha + 2.0);
       }
     }
 
@@ -237,11 +237,11 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.alpha > 1.0)
+        if (alpha > 1.0)
         {
-          return new double[] { 1.0 / this.beta };
+          return new double[] { 1.0 / beta };
         }
-        else if (this.alpha < 1.0)
+        else if (alpha < 1.0)
         {
           return new double[] { 0.0 };
         }
@@ -258,7 +258,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A power distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      return Math.Pow(this.Generator.NextDouble(), this.helper1) / this.beta;
+      return Math.Pow(Generator.NextDouble(), helper1) / beta;
     }
 
     #endregion overridden Distribution members

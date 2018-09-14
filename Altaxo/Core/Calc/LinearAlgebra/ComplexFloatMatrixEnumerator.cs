@@ -44,7 +44,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
 
-  sealed internal class ComplexFloatMatrixEnumerator : IEnumerator
+  internal sealed class ComplexFloatMatrixEnumerator : IEnumerator
   {
     private ComplexFloatMatrix m;
     private int index;

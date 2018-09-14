@@ -74,7 +74,6 @@ namespace Altaxo.Calc.Integration
          bool bDebug)
     {
       double area, errsum;
-      double result0, abserr0, resabs0, resasc0;
       double tolerance;
       int iteration = 0;
       int roundoff_type1 = 0, roundoff_type2 = 0, error_type = 0;
@@ -101,7 +100,7 @@ namespace Altaxo.Calc.Integration
 
       /* perform the first integration */
 
-      q(f, a, b, out result0, out abserr0, out resabs0, out resasc0);
+      q(f, a, b, out var result0, out var abserr0, out var resabs0, out var resasc0);
 
       workspace.set_initial_result(result0, abserr0);
 
@@ -143,23 +142,20 @@ namespace Altaxo.Calc.Integration
       do
       {
         double a1, b1, a2, b2;
-        double a_i, b_i, r_i, e_i;
-        double area1 = 0, area2 = 0, area12 = 0;
-        double error1 = 0, error2 = 0, error12 = 0;
-        double resasc1, resasc2;
-        double resabs1, resabs2;
+        double area12 = 0;
+        double error12 = 0;
 
         /* Bisect the subinterval with the largest error estimate */
 
-        workspace.retrieve(out a_i, out b_i, out r_i, out e_i);
+        workspace.retrieve(out var a_i, out var b_i, out var r_i, out var e_i);
 
         a1 = a_i;
         b1 = 0.5 * (a_i + b_i);
         a2 = b1;
         b2 = b_i;
 
-        q(f, a1, b1, out area1, out error1, out resabs1, out resasc1);
-        q(f, a2, b2, out area2, out error2, out resabs2, out resasc2);
+        q(f, a1, b1, out var area1, out var error1, out var resabs1, out var resasc1);
+        q(f, a2, b2, out var area2, out var error2, out var resabs2, out var resasc2);
 
         area12 = area1 + area2;
         error12 = error1 + error2;

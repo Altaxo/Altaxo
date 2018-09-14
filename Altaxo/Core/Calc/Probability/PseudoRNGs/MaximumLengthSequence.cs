@@ -132,10 +132,12 @@ namespace Altaxo.Calc.Probability
       if (!(numberOfStages <= 64))
         throw new ArgumentOutOfRangeException("numberOfStages must be <= 64");
 
-      var result = new MaximumLengthSequence();
-      result._numberOfStages = numberOfStages;
-      result._sequenceLength = GetSequenceLengthFromNumberOfStages(numberOfStages);
-      result._tap = TapValues[numberOfStages];
+      var result = new MaximumLengthSequence
+      {
+        _numberOfStages = numberOfStages,
+        _sequenceLength = GetSequenceLengthFromNumberOfStages(numberOfStages),
+        _tap = TapValues[numberOfStages]
+      };
 
       return result;
     }
@@ -168,8 +170,10 @@ namespace Altaxo.Calc.Probability
     /// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given tap value.</returns>
     public static MaximumLengthSequence FromTapValue(ulong tapValue)
     {
-      var result = new MaximumLengthSequence();
-      result.TapValue = tapValue;
+      var result = new MaximumLengthSequence
+      {
+        TapValue = tapValue
+      };
       return result;
     }
 
@@ -274,7 +278,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
     public IEnumerable<T> GetSequence<T>(T logicalZero, T logicalOne)
     {
-      if (_sequenceLength <= UInt32.MaxValue)
+      if (_sequenceLength <= uint.MaxValue)
         return GetSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)_sequenceLength, logicalZero, logicalOne);
       else
         return GetSequence64<T>(_sequenceLength, _tap, _sequenceLength, logicalZero, logicalOne);
@@ -288,7 +292,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
     public IEnumerable<T> GetSequence<T>(T logicalZero, T logicalOne, ulong startValue)
     {
-      if (_sequenceLength <= UInt32.MaxValue)
+      if (_sequenceLength <= uint.MaxValue)
         return GetSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)startValue, logicalZero, logicalOne);
       else
         return GetSequence64<T>(_sequenceLength, _tap, startValue, logicalZero, logicalOne);
@@ -301,7 +305,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
     public IEnumerable<T> GetInfiniteSequence<T>(T logicalZero, T logicalOne)
     {
-      if (_sequenceLength <= UInt32.MaxValue)
+      if (_sequenceLength <= uint.MaxValue)
         return GetInfiniteSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)_sequenceLength, logicalZero, logicalOne);
       else
         return GetInfiniteSequence64<T>(_sequenceLength, _tap, _sequenceLength, logicalZero, logicalOne);
@@ -315,7 +319,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
     public IEnumerable<T> GetInfiniteSequence<T>(T logicalZero, T logicalOne, ulong startValue)
     {
-      if (_sequenceLength <= UInt32.MaxValue)
+      if (_sequenceLength <= uint.MaxValue)
         return GetInfiniteSequence32<T>((uint)_sequenceLength, (uint)_tap, (uint)startValue, logicalZero, logicalOne);
       else
         return GetInfiniteSequence64<T>(_sequenceLength, _tap, startValue, logicalZero, logicalOne);

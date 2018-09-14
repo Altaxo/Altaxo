@@ -168,7 +168,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </code>
   /// </para>
   /// </example>
-  sealed public class ComplexDoubleSymmetricLevinson : Algorithm
+  public sealed class ComplexDoubleSymmetricLevinson : Algorithm
   {
     #region Fields
 
@@ -256,7 +256,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a ComplexDoubleMatrix
-        ComplexDoubleMatrix Lower = new ComplexDoubleMatrix(m_Order);
+        var Lower = new ComplexDoubleMatrix(m_Order);
         for (int i = 0; i < m_Order; i++)
         {
 #if MANAGED
@@ -299,7 +299,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy diagonal vector into a ComplexDoubleMatrix
-        ComplexDoubleMatrix Diagonal = new ComplexDoubleMatrix(m_Order);
+        var Diagonal = new ComplexDoubleMatrix(m_Order);
         for (int i = 0; i < m_Order; i++)
         {
 #if MANAGED
@@ -339,7 +339,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
         // copy jagged array into a ComplexDoubleMatrix and then calculate the transpose
-        ComplexDoubleMatrix Upper = this.L.GetTranspose();
+        ComplexDoubleMatrix Upper = L.GetTranspose();
 
         return Upper;
       }
@@ -489,7 +489,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int i, j;
 
       // allocate memory for the matrix
-      ComplexDoubleMatrix tm = new ComplexDoubleMatrix(m_Order);
+      var tm = new ComplexDoubleMatrix(m_Order);
 
 #if MANAGED
       // fill top row
@@ -636,10 +636,12 @@ namespace Altaxo.Calc.LinearAlgebra
       Complex[] A;        // reference to current order coefficients
 
       // allocate memory for solution
-      X = new ComplexDoubleVector(m_Order);
+      X = new ComplexDoubleVector(m_Order)
+      {
 
-      // setup zero order solution
-      X[0] = Y[0] / m_LeftColumn[0];
+        // setup zero order solution
+        [0] = Y[0] / m_LeftColumn[0]
+      };
 
       // solve systems of increasing order
       for (i = 1; i < m_Order; i++)
@@ -808,7 +810,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new SingularMatrixException("The Toeplitz matrix or one of the the leading sub-matrices is singular.");
       }
 
-      ComplexDoubleMatrix I = new ComplexDoubleMatrix(m_Order);           // the solution matrix
+      var I = new ComplexDoubleMatrix(m_Order);           // the solution matrix
       Complex[] A = m_LowerTriangle[m_Order - 1];
       Complex A1, A2, scale;
 
@@ -949,8 +951,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
         if (N > 1)
         {
-          ComplexDoubleVector a = new ComplexDoubleVector(N - 1);   // prediction coefficients
-          ComplexDoubleVector Z = new ComplexDoubleVector(N - 1);   // temporary storage vector
+          var a = new ComplexDoubleVector(N - 1);   // prediction coefficients
+          var Z = new ComplexDoubleVector(N - 1);   // temporary storage vector
           Complex g;                                   // reflection coefficient
           Complex inner;                               // inner product
           Complex k;
@@ -1056,7 +1058,7 @@ namespace Altaxo.Calc.LinearAlgebra
         int N = T.Length;
         int M = Y.Rows;
         X = new ComplexDoubleMatrix(N, M);                 // solution matrix
-        ComplexDoubleVector Z = new ComplexDoubleVector(N);       // temporary storage vector
+        var Z = new ComplexDoubleVector(N);       // temporary storage vector
         Complex e;                                   // prediction error
         int i, j, l, m;
 
@@ -1073,7 +1075,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
         if (N > 1)
         {
-          ComplexDoubleVector a = new ComplexDoubleVector(N - 1);   // prediction coefficients
+          var a = new ComplexDoubleVector(N - 1);   // prediction coefficients
           Complex p;                                   // reflection coefficient
           Complex inner;                               // inner product
           Complex k;
@@ -1189,7 +1191,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         int N = R.Length - 1;
         a = new ComplexDoubleVector(N);             // prediction coefficients
-        ComplexDoubleVector Z = new ComplexDoubleVector(N);   // temporary storage vector
+        var Z = new ComplexDoubleVector(N);   // temporary storage vector
         Complex e;                    // predictor error
         Complex inner;                  // inner product
         Complex g;                    // reflection coefficient
@@ -1278,8 +1280,10 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       else if (T.Length == 1)
       {
-        X = new ComplexDoubleMatrix(1);
-        X[0, 0] = Complex.One / T[0];
+        X = new ComplexDoubleMatrix(1)
+        {
+          [0, 0] = Complex.One / T[0]
+        };
       }
       else
       {

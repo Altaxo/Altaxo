@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -57,11 +57,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns></returns>
     public int[][] Group(IROMatrix<double> Y)
     {
-      System.Collections.ArrayList groups = new System.Collections.ArrayList();
+      var groups = new System.Collections.ArrayList();
 
       // add the first y-row to the first group
-      System.Collections.ArrayList newcoll = new System.Collections.ArrayList();
-      newcoll.Add(0);
+      var newcoll = new System.Collections.ArrayList
+      {
+        0
+      };
       groups.Add(newcoll);
       // now test all other rows of the y-matrix against the existing groups
       for (int i = 1; i < Y.RowCount; i++)
@@ -89,8 +91,10 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
         if (bNewGroup)
         {
-          newcoll = new System.Collections.ArrayList();
-          newcoll.Add(i);
+          newcoll = new System.Collections.ArrayList
+          {
+            i
+          };
           groups.Add(newcoll);
         }
       }
@@ -110,7 +114,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     public int[][] Group(IROMatrix<double> Y)
     {
-      System.Collections.ArrayList[] groups = new System.Collections.ArrayList[2];
+      var groups = new System.Collections.ArrayList[2];
       for (int i = 0; i < 2; i++)
         groups[i] = new System.Collections.ArrayList();
 

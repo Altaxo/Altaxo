@@ -90,7 +90,7 @@ namespace Altaxo.Science
 
     public IDoubleToDoubleValueTransformation BackTransformation
     {
-      get { return new OffsetTransformation() { _offsetValue = -this._offsetValue }; }
+      get { return new OffsetTransformation() { _offsetValue = -_offsetValue }; }
     }
   }
 
@@ -110,7 +110,7 @@ namespace Altaxo.Science
 
     public IDoubleToDoubleValueTransformation BackTransformation
     {
-      get { return new ScaleTransformation() { _scaleValue = 1 / this._scaleValue }; }
+      get { return new ScaleTransformation() { _scaleValue = 1 / _scaleValue }; }
     }
   }
 
@@ -170,7 +170,7 @@ namespace Altaxo.Science
     {
       get
       {
-        CombinedTransform t = new CombinedTransform();
+        var t = new CombinedTransform();
         for (int i = _transformations.Count - 1; i >= 0; i--)
           t._transformations.Add(_transformations[i].BackTransformation);
         return t;

@@ -86,7 +86,7 @@ namespace Altaxo.Calc
       yp = 1.0;
       for (int k = 2; k <= n; ++k)
       {
-        dk = (double)(k - 1);
+        dk = k - 1;
         ym = y;
         y = x * 2.0 * y - dk * 2.0 * yp;
         ypm = yp;
@@ -150,7 +150,7 @@ namespace Altaxo.Calc
       d2yp = 0.0;
       for (int k = 2; k <= n; ++k)
       {
-        dk = (double)k;
+        dk = k;
         b1 = (dk * 2.0 + a - 1.0 - x) / dk;
         b2 = (dk + a - 1.0) / dk;
         ym = y;
@@ -220,7 +220,7 @@ namespace Altaxo.Calc
       d2yp = 0.0;
       for (int i = 2; i <= n; ++i)
       {
-        di = (double)i;
+        di = i;
         c0 = di * 2.0 + ab;
         c1 = di * 2.0 * (di + ab) * (c0 - 2.0);
         c2 = (c0 - 1.0) * (c0 - 2.0) * c0;
@@ -352,7 +352,7 @@ namespace Altaxo.Calc
       d2yp = 0.0;
       for (int i = 2; i <= n; ++i)
       {
-        c1 = (double)i;
+        c1 = i;
         c2 = c1 * 2.0 - 1.0;
         c4 = c1 - 1.0;
         ym = y;

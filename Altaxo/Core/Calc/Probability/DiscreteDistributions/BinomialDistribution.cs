@@ -208,7 +208,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.n;
+        return n;
       }
     }
 
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.Probability * this.n;
+        return Probability * n;
       }
     }
 
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.p * (1.0 - this.p) * this.n;
+        return p * (1.0 - p) * n;
       }
     }
 
@@ -252,7 +252,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new double[] { Math.Floor(this.Probability * (this.n + 1.0)) };
+        return new double[] { Math.Floor(Probability * (n + 1.0)) };
       }
     }
 
@@ -262,7 +262,7 @@ namespace Altaxo.Calc.Probability
 
     public override double CDF(double x)
     {
-      return CDF(x, this.Probability, n);
+      return CDF(x, Probability, n);
     }
 
     public static double CDF(double x, double p, int n)
@@ -272,7 +272,7 @@ namespace Altaxo.Calc.Probability
 
     public override double PDF(double x)
     {
-      return PDF(x, this.Probability, n);
+      return PDF(x, Probability, n);
     }
 
     public static double PDF(double x, double p, int n)

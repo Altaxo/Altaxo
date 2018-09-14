@@ -157,7 +157,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public JaggedArrayMatrix GetH()
     {
-      JaggedArrayMatrix X = new JaggedArrayMatrix(m, n);
+      var X = new JaggedArrayMatrix(m, n);
       double[][] H = X.Array;
       for (int i = 0; i < m; i++)
       {
@@ -182,7 +182,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public JaggedArrayMatrix GetR()
     {
-      JaggedArrayMatrix X = new JaggedArrayMatrix(n, n);
+      var X = new JaggedArrayMatrix(n, n);
       double[][] R = X.Array;
       for (int i = 0; i < n; i++)
       {
@@ -211,7 +211,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public JaggedArrayMatrix GetQ()
     {
-      JaggedArrayMatrix X = new JaggedArrayMatrix(m, n);
+      var X = new JaggedArrayMatrix(m, n);
       double[][] Q = X.Array;
       for (int k = n - 1; k >= 0; k--)
       {
@@ -242,7 +242,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public IMatrix<double> GetSolution(IROMatrix<double> B)
     {
-      JaggedArrayMatrix result = new JaggedArrayMatrix(m, B.ColumnCount);
+      var result = new JaggedArrayMatrix(m, B.ColumnCount);
       Solve(B, result);
       return result;
     }
@@ -250,14 +250,14 @@ namespace Altaxo.Calc.LinearAlgebra
     public IMatrix<double> GetSolution(IROMatrix<double> A, IROMatrix<double> B)
     {
       Decompose(A);
-      JaggedArrayMatrix result = new JaggedArrayMatrix(m, B.ColumnCount);
+      var result = new JaggedArrayMatrix(m, B.ColumnCount);
       Solve(B, result);
       return result;
     }
 
     public DoubleVector GetSolution(IReadOnlyList<double> B)
     {
-      DoubleVector result = new DoubleVector(m);
+      var result = new DoubleVector(m);
       Solve(B, result);
       return result;
     }
@@ -265,7 +265,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public DoubleVector GetSolution(IROMatrix<double> A, IReadOnlyList<double> B)
     {
       Decompose(A);
-      DoubleVector result = new DoubleVector(m);
+      var result = new DoubleVector(m);
       Solve(B, result);
       return result;
     }
@@ -295,7 +295,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrix row dimensions must agree.");
       }
-      if (!this.IsFullRank())
+      if (!IsFullRank())
       {
         throw new Exception("Matrix is rank deficient.");
       }
@@ -363,7 +363,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentException("Matrix row dimensions must agree.");
       }
-      if (!this.IsFullRank())
+      if (!IsFullRank())
       {
         throw new Exception("Matrix is rank deficient.");
       }

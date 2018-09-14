@@ -82,7 +82,7 @@ namespace Altaxo.Calc.Probability
       // store parameters
       this.alpha = alpha;  // a is the mean of the standard gamma distribution (b = 0)
       this.theta = theta;
-      this._invTheta = 1 / theta;
+      _invTheta = 1 / theta;
 
       // scale random long to (0,1) - boundaries are not allowed !
       scale = 1.0 / (normalDistribution.Generator.Maximum + 1.0); // original: scale  = 1.0 / (NormalDistribution::max_val+1.0);
@@ -298,7 +298,7 @@ loop:
     {
       get
       {
-        return this.alpha;
+        return alpha;
       }
       set
       {
@@ -388,7 +388,7 @@ loop:
     {
       get
       {
-        return this.alpha * this.theta;
+        return alpha * theta;
       }
     }
 
@@ -410,7 +410,7 @@ loop:
     {
       get
       {
-        return this.alpha * Math.Pow(this.theta, 2.0);
+        return alpha * Math.Pow(theta, 2.0);
       }
     }
 
@@ -421,9 +421,9 @@ loop:
     {
       get
       {
-        if (this.alpha >= 1.0)
+        if (alpha >= 1.0)
         {
-          return new double[] { (this.alpha - 1.0) * this.theta };
+          return new double[] { (alpha - 1.0) * theta };
         }
         else
         {

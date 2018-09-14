@@ -54,7 +54,7 @@ namespace Altaxo.Calc.Ode
       //this.MeName = TheName;
       if (DimensionDouble > 0)
       {
-        this.MeDoubleData = new Odouble[DimensionDouble];
+        MeDoubleData = new Odouble[DimensionDouble];
 
         for (int i = 0; i < DimensionDouble; i++)
         {
@@ -63,7 +63,7 @@ namespace Altaxo.Calc.Ode
       }
       if (DimensionInt > 0)
       {
-        this.MeIntData = new Oint[DimensionInt];
+        MeIntData = new Oint[DimensionInt];
 
         for (int i = 0; i < DimensionInt; i++)
         {
@@ -78,14 +78,14 @@ namespace Altaxo.Calc.Ode
 
     public Odouble[] doubleData
     {
-      get { return this.MeDoubleData; }
-      set { this.MeDoubleData = value; }
+      get { return MeDoubleData; }
+      set { MeDoubleData = value; }
     }
 
     public Oint[] intData
     {
-      get { return this.MeIntData; }
-      set { this.MeIntData = value; }
+      get { return MeIntData; }
+      set { MeIntData = value; }
     }
 
     #endregion Properties
@@ -198,11 +198,11 @@ namespace Altaxo.Calc.Ode
     {
       if (length < 0)
         length = 0;
-      this._CharArray = new char[length];
+      _CharArray = new char[length];
 
-      for (int i = 0; i < this._CharArray.Length; i++)
+      for (int i = 0; i < _CharArray.Length; i++)
       {
-        this._CharArray[i] = ' ';
+        _CharArray[i] = ' ';
       }
     }
 
@@ -214,12 +214,12 @@ namespace Altaxo.Calc.Ode
       }
       if (copy == true)
       {
-        this._CharArray = new char[sourceChars.Length];
-        Array.Copy(sourceChars, this._CharArray, this._CharArray.Length);
+        _CharArray = new char[sourceChars.Length];
+        Array.Copy(sourceChars, _CharArray, _CharArray.Length);
       }
       else
       {
-        this._CharArray = sourceChars;
+        _CharArray = sourceChars;
       }
     }
 
@@ -230,7 +230,7 @@ namespace Altaxo.Calc.Ode
     public Characters(string s, int length)
         : this(length)
     {
-      this.Copy(s);
+      Copy(s);
     }
 
     #endregion Constructor
@@ -239,12 +239,12 @@ namespace Altaxo.Calc.Ode
 
     public char[] CharArray
     {
-      get { return this._CharArray; }
+      get { return _CharArray; }
     }
 
     public int Length
     {
-      get { return this._CharArray.Length; }
+      get { return _CharArray.Length; }
     }
 
     #endregion Properties
@@ -253,14 +253,14 @@ namespace Altaxo.Calc.Ode
 
     public void Copy(int startIndex, int lastIndex, char[] sourceCharArray)
     {
-      if (lastIndex > this.Length)
-        lastIndex = this.Length;
+      if (lastIndex > Length)
+        lastIndex = Length;
       int length = lastIndex - startIndex + 1;
       length = Math.Min(length, sourceCharArray.Length);
 
       startIndex--; //C# index
 
-      Array.Copy(sourceCharArray, 0, this._CharArray, startIndex, length);
+      Array.Copy(sourceCharArray, 0, _CharArray, startIndex, length);
 
       //for (int i = 0; i < length; i++)
       //{
@@ -270,121 +270,121 @@ namespace Altaxo.Calc.Ode
 
     public void Copy(int startIndex, char[] sourceCharArray)
     {
-      this.Copy(startIndex, this.Length, sourceCharArray);
+      Copy(startIndex, Length, sourceCharArray);
     }
 
     public void Copy(char[] sourceCharArray)
     {
-      this.Copy(1, sourceCharArray);
+      Copy(1, sourceCharArray);
     }
 
     public void Copy(int startIndex, int lastIndex, string sourceString)
     {
-      this.Copy(startIndex, lastIndex, sourceString.ToCharArray());
+      Copy(startIndex, lastIndex, sourceString.ToCharArray());
     }
 
     public void Copy(int startIndex, string sourceString)
     {
-      this.Copy(startIndex, sourceString.ToCharArray());
+      Copy(startIndex, sourceString.ToCharArray());
     }
 
     public void Copy(string sourceString)
     {
-      this.Copy(sourceString.ToCharArray());
+      Copy(sourceString.ToCharArray());
     }
 
     public void Replace(char[] source)
     {
-      this.ToBlanks();
-      this.Copy(source);
+      ToBlanks();
+      Copy(source);
     }
 
     public void Replace(Characters source)
     {
-      this.Replace(source.CharArray);
+      Replace(source.CharArray);
     }
 
     public void Replace(string source)
     {
-      this.Replace(source.ToCharArray());
+      Replace(source.ToCharArray());
     }
 
     public Characters Substring(int startIndex, int lastIndex)
     {
       int length = lastIndex - startIndex + 1;
-      Characters sub = new Characters(length);
+      var sub = new Characters(length);
 
       startIndex--; //C# index
-      Array.Copy(this._CharArray, startIndex, sub.CharArray, 0, length);
+      Array.Copy(_CharArray, startIndex, sub.CharArray, 0, length);
 
       return sub;
     }
 
     public Characters Substring(int startIndex)
     {
-      return Substring(startIndex, this.Length);
+      return Substring(startIndex, Length);
     }
 
     public void ToUpper()
     {
-      for (int i = 0; i < this._CharArray.Length; i++)
+      for (int i = 0; i < _CharArray.Length; i++)
       {
-        this._CharArray[i] = Char.ToUpper(this._CharArray[i]);
+        _CharArray[i] = char.ToUpper(_CharArray[i]);
       }
     }
 
     public void ToLower()
     {
-      for (int i = 0; i < this._CharArray.Length; i++)
+      for (int i = 0; i < _CharArray.Length; i++)
       {
-        this._CharArray[i] = Char.ToLower(this._CharArray[i]);
+        _CharArray[i] = char.ToLower(_CharArray[i]);
       }
     }
 
     public void ToBlanks()
     {
-      for (int i = 0; i < this._CharArray.Length; i++)
+      for (int i = 0; i < _CharArray.Length; i++)
       {
-        this._CharArray[i] = ' ';
+        _CharArray[i] = ' ';
       }
     }
 
     public void ToBlanks(int start, int last)
     {
       start--;
-      int max = Math.Min(last, this._CharArray.Length);
+      int max = Math.Min(last, _CharArray.Length);
       for (int i = start; i < max; i++)
       {
-        this._CharArray[i] = ' ';
+        _CharArray[i] = ' ';
       }
     }
 
     public void ToBlanks(int length)
     {
-      this.ToBlanks(1, length + 1);
+      ToBlanks(1, length + 1);
     }
 
     public int ToInt32()
     {
-      if (this.LenTrim() == 0)
+      if (LenTrim() == 0)
         return 0;
-      string s = new string(this._CharArray);
+      string s = new string(_CharArray);
       int val = Convert.ToInt32(s);
       return val;
     }
 
     public string Trim()
     {
-      string s = new string(this._CharArray);
+      string s = new string(_CharArray);
       return s.TrimEnd(new char[] { ' ' });
     }
 
     public void AdjustLeft()
     {
       int numLeftBlanks = 0;
-      for (int i = 0; i < this._CharArray.Length; i++)
+      for (int i = 0; i < _CharArray.Length; i++)
       {
-        if (this._CharArray[i] == ' ')
+        if (_CharArray[i] == ' ')
         {
           numLeftBlanks++;
         }
@@ -398,16 +398,16 @@ namespace Altaxo.Calc.Ode
         return;
       else
       {
-        int lastIndex = this._CharArray.Length - numLeftBlanks;
-        for (int i = 0; i < this._CharArray.Length; i++)
+        int lastIndex = _CharArray.Length - numLeftBlanks;
+        for (int i = 0; i < _CharArray.Length; i++)
         {
           if (i < lastIndex)
           {
-            this._CharArray[i] = this._CharArray[numLeftBlanks + i];
+            _CharArray[i] = _CharArray[numLeftBlanks + i];
           }
           else
           {
-            this._CharArray[i] = ' ';
+            _CharArray[i] = ' ';
           }
         }
       }
@@ -415,19 +415,19 @@ namespace Altaxo.Calc.Ode
 
     public void AdjustRight()
     {
-      Array.Reverse(this._CharArray);
-      this.AdjustLeft();
-      Array.Reverse(this._CharArray);
+      Array.Reverse(_CharArray);
+      AdjustLeft();
+      Array.Reverse(_CharArray);
     }
 
     public int LenTrim()
     {
-      int lentrim = this._CharArray.Length;
+      int lentrim = _CharArray.Length;
       char blank = ' ';
 
-      for (int i = this._CharArray.Length - 1; i > -1; i--)
+      for (int i = _CharArray.Length - 1; i > -1; i--)
       {
-        if (this._CharArray[i] == blank)
+        if (_CharArray[i] == blank)
         {
           lentrim--;
         }
@@ -462,7 +462,7 @@ namespace Altaxo.Calc.Ode
 
     public static Characters Add(char[] c1, char[] c2)
     {
-      Characters newCharacters = new Characters(c1.Length + c2.Length);
+      var newCharacters = new Characters(c1.Length + c2.Length);
 
       Array.Copy(c1, newCharacters.CharArray, c1.Length);
 
@@ -527,7 +527,7 @@ namespace Altaxo.Calc.Ode
       return areEqual;
     }
 
-    public override bool Equals(System.Object obj)
+    public override bool Equals(object obj)
     {
       // If parameter is null return false.
       if (obj == null)
@@ -536,14 +536,14 @@ namespace Altaxo.Calc.Ode
       }
 
       // If parameter cannot be cast to Characters return false.
-      Characters c = obj as Characters;
-      if ((System.Object)c == null)
+      var c = obj as Characters;
+      if ((object)c == null)
       {
         return false;
       }
 
       // Return true if the fields match:
-      return Characters.AreEqual(c.CharArray, this.CharArray);
+      return Characters.AreEqual(c.CharArray, CharArray);
     }
 
     public override int GetHashCode()
@@ -753,7 +753,7 @@ namespace Altaxo.Calc.Ode
 
     public static implicit operator Characters(string s)  // implicit string to Characters conversion operator
     {
-      Characters TheChararacters = new Characters(s);
+      var TheChararacters = new Characters(s);
       return TheChararacters;
     }
 
@@ -763,7 +763,7 @@ namespace Altaxo.Calc.Ode
 
     public override string ToString()
     {
-      return new String(this._CharArray);
+      return new string(_CharArray);
     }
   }
 }

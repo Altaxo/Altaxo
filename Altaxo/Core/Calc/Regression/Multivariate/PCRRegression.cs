@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -76,7 +76,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
     public static PCRRegression CreateFromPreprocessed(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
     {
-      PCRRegression result = new PCRRegression();
+      var result = new PCRRegression();
       result.AnalyzeFromPreprocessed(matrixX, matrixY, maxFactors);
       return result;
     }
@@ -118,7 +118,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       )
     {
       if (numFactors > _calib.NumberOfFactors)
-        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numFactors, this.NumberOfFactors));
+        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numFactors, NumberOfFactors));
 
       Predict(
         XU, // unknown spectrum or spectra,  horizontal oriented
@@ -158,7 +158,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(X.RowCount, X.ColumnCount);
       MatrixMath.Copy(X, matrixX);
-      MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(matrixX);
+      var decompose = new MatrixMath.SingularValueDecomposition(matrixX);
 
       numFactors = Math.Min(numFactors, matrixX.ColumnCount);
       numFactors = Math.Min(numFactors, matrixX.RowCount);
@@ -347,7 +347,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       var subscores = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(xScores.RowCount, numberOfFactors);
       MatrixMath.Submatrix(xScores, subscores);
 
-      MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(subscores);
+      var decompose = new MatrixMath.SingularValueDecomposition(subscores);
 
       for (int i = 0; i < xScores.RowCount; i++)
         leverage[i, 0] = decompose.HatDiagonal[i];

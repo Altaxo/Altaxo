@@ -75,28 +75,28 @@ namespace Altaxo.Calc.Fourier
 
     //======================================================================================
 
-    static private void Swap(ref float a, ref float b)
+    private static void Swap(ref float a, ref float b)
     {
       float temp = a;
       a = b;
       b = temp;
     }
 
-    static private void Swap(ref double a, ref double b)
+    private static void Swap(ref double a, ref double b)
     {
       double temp = a;
       a = b;
       b = temp;
     }
 
-    static private void Swap(ref ComplexFloat a, ref ComplexFloat b)
+    private static void Swap(ref ComplexFloat a, ref ComplexFloat b)
     {
       ComplexFloat temp = a;
       a = b;
       b = temp;
     }
 
-    static private void Swap(ref Complex a, ref Complex b)
+    private static void Swap(ref Complex a, ref Complex b)
     {
       Complex temp = a;
       a = b;
@@ -111,13 +111,13 @@ namespace Altaxo.Calc.Fourier
     private const int cMaxBits = 12;
     private const int cMinBits = 0;
 
-    static private bool IsPowerOf2(int x)
+    private static bool IsPowerOf2(int x)
     {
       return (x & (x - 1)) == 0;
       //return  ( x == Pow2( Log2( x ) ) );
     }
 
-    static private int Pow2(int exponent)
+    private static int Pow2(int exponent)
     {
       if (exponent >= 0 && exponent < 31)
       {
@@ -126,7 +126,7 @@ namespace Altaxo.Calc.Fourier
       return 0;
     }
 
-    static private int Log2(int x)
+    private static int Log2(int x)
     {
       if (x <= 65536)
       {
@@ -234,7 +234,7 @@ namespace Altaxo.Calc.Fourier
     //-------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------
 
-    static private int ReverseBits(int index, int numberOfBits)
+    private static int ReverseBits(int index, int numberOfBits)
     {
       if (!(numberOfBits >= cMinBits))
         throw new InvalidProgramException();
@@ -252,9 +252,9 @@ namespace Altaxo.Calc.Fourier
 
     //-------------------------------------------------------------------------------------
 
-    static private int[][] _reversedBits = new int[cMaxBits][];
+    private static int[][] _reversedBits = new int[cMaxBits][];
 
-    static private int[] GetReversedBits(int numberOfBits)
+    private static int[] GetReversedBits(int numberOfBits)
     {
       if (!(numberOfBits >= cMinBits))
         throw new InvalidProgramException();
@@ -282,7 +282,7 @@ namespace Altaxo.Calc.Fourier
 
     //-------------------------------------------------------------------------------------
 
-    static private void ReorderArray(float[] data)
+    private static void ReorderArray(float[] data)
     {
       if (!(data != null))
         throw new InvalidProgramException();
@@ -308,7 +308,7 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
-    static private void ReorderArray(double[] data)
+    private static void ReorderArray(double[] data)
     {
       if (!(data != null))
         throw new InvalidProgramException();
@@ -334,7 +334,7 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
-    static private void ReorderArray(Complex[] data)
+    private static void ReorderArray(Complex[] data)
     {
       if (!(data != null))
         throw new InvalidProgramException();
@@ -361,7 +361,7 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
-    static private void ReorderArray(ComplexFloat[] data)
+    private static void ReorderArray(ComplexFloat[] data)
     {
       if (!(data != null))
         throw new InvalidProgramException();
@@ -478,9 +478,9 @@ namespace Altaxo.Calc.Fourier
         {
           double uR = 1;
           double uI = 0;
-          double angle = (double)Math.PI / M * 1;
-          double wR = (double)Math.Cos(angle);
-          double wI = (double)Math.Sin(angle);
+          double angle = Math.PI / M * 1;
+          double wR = Math.Cos(angle);
+          double wI = Math.Sin(angle);
 
           _uRLookup[level, 0] = new double[M];
           _uILookup[level, 0] = new double[M];
@@ -500,9 +500,9 @@ namespace Altaxo.Calc.Fourier
           // negative sign ( i.e. [M,1] )
           double uR = 1;
           double uI = 0;
-          double angle = (double)Math.PI / M * -1;
-          double wR = (double)Math.Cos(angle);
-          double wI = (double)Math.Sin(angle);
+          double angle = Math.PI / M * -1;
+          double wR = Math.Cos(angle);
+          double wI = Math.Sin(angle);
 
           _uRLookup[level, 1] = new double[M];
           _uILookup[level, 1] = new double[M];
@@ -524,10 +524,10 @@ namespace Altaxo.Calc.Fourier
     //======================================================================================
     //======================================================================================
 
-    static private bool _bufferFLocked = false;
-    static private float[] _bufferF = new float[0];
+    private static bool _bufferFLocked = false;
+    private static float[] _bufferF = new float[0];
 
-    static private void LockBufferF(int length, ref float[] buffer)
+    private static void LockBufferF(int length, ref float[] buffer)
     {
       if (!(_bufferFLocked == false))
         throw new InvalidProgramException();
@@ -539,7 +539,7 @@ namespace Altaxo.Calc.Fourier
       buffer = _bufferF;
     }
 
-    static private void UnlockBufferF(ref float[] buffer)
+    private static void UnlockBufferF(ref float[] buffer)
     {
       if (!(_bufferF == buffer))
         throw new InvalidProgramException();
@@ -617,10 +617,10 @@ namespace Altaxo.Calc.Fourier
     //======================================================================================
     //======================================================================================
 
-    static private bool _bufferCFLocked = false;
-    static private ComplexFloat[] _bufferCF = new ComplexFloat[0];
+    private static bool _bufferCFLocked = false;
+    private static ComplexFloat[] _bufferCF = new ComplexFloat[0];
 
-    static private void LockBufferCF(int length, ref ComplexFloat[] buffer)
+    private static void LockBufferCF(int length, ref ComplexFloat[] buffer)
     {
       if (!(length >= 0))
         throw new InvalidProgramException();
@@ -635,7 +635,7 @@ namespace Altaxo.Calc.Fourier
       buffer = _bufferCF;
     }
 
-    static private void UnlockBufferCF(ref ComplexFloat[] buffer)
+    private static void UnlockBufferCF(ref ComplexFloat[] buffer)
     {
       if (!(_bufferCF == buffer))
         throw new InvalidProgramException();
@@ -714,10 +714,10 @@ namespace Altaxo.Calc.Fourier
     //======================================================================================
     //======================================================================================
 
-    static private bool _bufferCLocked = false;
-    static private Complex[] _bufferC = new Complex[0];
+    private static bool _bufferCLocked = false;
+    private static Complex[] _bufferC = new Complex[0];
 
-    static private void LockBufferC(int length, ref Complex[] buffer)
+    private static void LockBufferC(int length, ref Complex[] buffer)
     {
       if (!(length >= 0))
         throw new InvalidProgramException();
@@ -732,7 +732,7 @@ namespace Altaxo.Calc.Fourier
       buffer = _bufferC;
     }
 
-    static private void UnlockBufferC(ref Complex[] buffer)
+    private static void UnlockBufferC(ref Complex[] buffer)
     {
       if (!(_bufferC == buffer))
         throw new InvalidProgramException();
