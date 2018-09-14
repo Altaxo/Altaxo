@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Runtime.Serialization;
+using Altaxo.Main;
+using Altaxo.Serialization;
 
 namespace Altaxo
 {
@@ -93,12 +93,12 @@ namespace Altaxo
 
     public void SaveToZippedFile(ZipArchive zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
     {
-      System.Text.StringBuilder errorText = new System.Text.StringBuilder();
+      var errorText = new System.Text.StringBuilder();
       int compressionLevel = 1;
       // DateTime time1 = DateTime.UtcNow;
 
       // first, we save all tables into the tables subdirectory
-      foreach (Altaxo.Data.DataTable table in this._dataTables)
+      foreach (Altaxo.Data.DataTable table in _dataTables)
       {
         try
         {
@@ -120,7 +120,7 @@ namespace Altaxo
       }
 
       // second, we save all graphs into the Graphs subdirectory
-      foreach (Graph.Gdi.GraphDocument graph in this._graphs)
+      foreach (Graph.Gdi.GraphDocument graph in _graphs)
       {
         try
         {
@@ -142,7 +142,7 @@ namespace Altaxo
       }
 
       // second, we save all graphs into the Graphs3D subdirectory
-      foreach (Graph.Graph3D.GraphDocument graph in this._graphs3D)
+      foreach (Graph.Graph3D.GraphDocument graph in _graphs3D)
       {
         try
         {
@@ -164,7 +164,7 @@ namespace Altaxo
       }
 
       // next, we save all notes documents
-      foreach (var item in this._textDocuments)
+      foreach (var item in _textDocuments)
       {
         try
         {
@@ -183,7 +183,7 @@ namespace Altaxo
       }
 
       // third, we save all TableLayouts into the TableLayouts subdirectory
-      foreach (Altaxo.Worksheet.WorksheetLayout layout in this._tableLayouts)
+      foreach (Altaxo.Worksheet.WorksheetLayout layout in _tableLayouts)
       {
         if (layout.DataTable == null)
           continue; // dont save orphaned layouts
@@ -208,7 +208,7 @@ namespace Altaxo
       }
 
       // 4th, we save all FitFunctions into the FitFunctions subdirectory
-      foreach (Altaxo.Scripting.FitFunctionScript fit in this._fitFunctionScripts)
+      foreach (Altaxo.Scripting.FitFunctionScript fit in _fitFunctionScripts)
       {
         try
         {
@@ -230,7 +230,7 @@ namespace Altaxo
       }
       {
         // 5th, we save all folder properties
-        foreach (var folderProperty in this._projectFolderProperties)
+        foreach (var folderProperty in _projectFolderProperties)
         {
           try
           {
@@ -270,7 +270,7 @@ namespace Altaxo
 
     public void RestoreFromZippedFile(ZipArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
     {
-      System.Text.StringBuilder errorText = new System.Text.StringBuilder();
+      var errorText = new System.Text.StringBuilder();
 
       foreach (var zipEntry in zipFile.Entries)
       {
@@ -283,7 +283,7 @@ namespace Altaxo
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Table", null);
               if (readedobject is Altaxo.Data.DataTable)
-                this._dataTables.Add((Altaxo.Data.DataTable)readedobject);
+                _dataTables.Add((Altaxo.Data.DataTable)readedobject);
               info.EndReading();
             }
           }
@@ -294,7 +294,7 @@ namespace Altaxo
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Graph", null);
               if (readedobject is Graph.Gdi.GraphDocument)
-                this._graphs.Add((Graph.Gdi.GraphDocument)readedobject);
+                _graphs.Add((Graph.Gdi.GraphDocument)readedobject);
               info.EndReading();
             }
           }
@@ -305,7 +305,7 @@ namespace Altaxo
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Graph", null);
               if (readedobject is Graph.Graph3D.GraphDocument)
-                this._graphs3D.Add((Graph.Graph3D.GraphDocument)readedobject);
+                _graphs3D.Add((Graph.Graph3D.GraphDocument)readedobject);
               info.EndReading();
             }
           }
@@ -316,7 +316,7 @@ namespace Altaxo
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Text", null);
               if (readedobject is Text.TextDocument noteDoc)
-                this._textDocuments.Add(noteDoc);
+                _textDocuments.Add(noteDoc);
               info.EndReading();
             }
           }
@@ -327,7 +327,7 @@ namespace Altaxo
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("WorksheetLayout", null);
               if (readedobject is Altaxo.Worksheet.WorksheetLayout)
-                this._tableLayouts.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
+                _tableLayouts.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
               info.EndReading();
             }
           }
@@ -338,7 +338,7 @@ namespace Altaxo
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("FitFunctionScript", null);
               if (readedobject is Altaxo.Scripting.FitFunctionScript)
-                this._fitFunctionScripts.Add((Altaxo.Scripting.FitFunctionScript)readedobject);
+                _fitFunctionScripts.Add((Altaxo.Scripting.FitFunctionScript)readedobject);
               info.EndReading();
             }
           }
@@ -349,7 +349,7 @@ namespace Altaxo
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("FolderProperty", null);
               if (readedobject is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-                this._projectFolderProperties.Add((Altaxo.Main.Properties.ProjectFolderPropertyDocument)readedobject);
+                _projectFolderProperties.Add((Altaxo.Main.Properties.ProjectFolderPropertyDocument)readedobject);
               info.EndReading();
             }
           }
@@ -360,7 +360,7 @@ namespace Altaxo
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("DocumentInformation", null);
               if (readedobject is DocumentInformation)
-                this._documentInformation = (DocumentInformation)readedobject;
+                _documentInformation = (DocumentInformation)readedobject;
               info.EndReading();
             }
           }
@@ -411,7 +411,7 @@ namespace Altaxo
 
     public Altaxo.Worksheet.WorksheetLayoutCollection TableLayouts
     {
-      get { return this._tableLayouts; }
+      get { return _tableLayouts; }
     }
 
     public Altaxo.Scripting.FitFunctionScriptCollection FitFunctionScripts
@@ -505,7 +505,7 @@ namespace Altaxo
 
     public Altaxo.Data.DataTable CreateNewTable(string worksheetName, bool bCreateDefaultColumns)
     {
-      Altaxo.Data.DataTable dt1 = new Altaxo.Data.DataTable(worksheetName);
+      var dt1 = new Altaxo.Data.DataTable(worksheetName);
 
       if (bCreateDefaultColumns)
       {
@@ -520,11 +520,11 @@ namespace Altaxo
 
     public Altaxo.Worksheet.WorksheetLayout CreateNewTableLayout(Altaxo.Data.DataTable table)
     {
-      if (!this._dataTables.Contains(table))
-        this._dataTables.Add(table);
+      if (!_dataTables.Contains(table))
+        _dataTables.Add(table);
 
-      Altaxo.Worksheet.WorksheetLayout layout = new Altaxo.Worksheet.WorksheetLayout(table);
-      this._tableLayouts.Add(layout);
+      var layout = new Altaxo.Worksheet.WorksheetLayout(table);
+      _tableLayouts.Add(layout);
       return layout;
     }
 
@@ -533,28 +533,28 @@ namespace Altaxo
       switch (name)
       {
         case "Tables":
-          return this._dataTables;
+          return _dataTables;
 
         case "Graphs":
-          return this._graphs;
+          return _graphs;
 
         case "Graphs3D":
-          return this._graphs3D;
+          return _graphs3D;
 
         case "Texts":
-          return this._textDocuments;
+          return _textDocuments;
 
         case "TableLayouts":
-          return this._tableLayouts;
+          return _tableLayouts;
 
         case "FitFunctionScripts":
-          return this._fitFunctionScripts;
+          return _fitFunctionScripts;
 
         case "FolderProperties":
-          return this._projectFolderProperties;
+          return _projectFolderProperties;
 
         case "ProjectFolders":
-          return this._projectFolders;
+          return _projectFolders;
       }
       return null;
     }
@@ -563,21 +563,21 @@ namespace Altaxo
     {
       if (null == o)
         return null;
-      else if (object.ReferenceEquals(o, this._dataTables))
+      else if (object.ReferenceEquals(o, _dataTables))
         return "Tables";
-      else if (object.ReferenceEquals(o, this._graphs))
+      else if (object.ReferenceEquals(o, _graphs))
         return "Graphs";
-      else if (object.ReferenceEquals(o, this._graphs3D))
+      else if (object.ReferenceEquals(o, _graphs3D))
         return "Graphs3D";
-      else if (object.ReferenceEquals(o, this._textDocuments))
+      else if (object.ReferenceEquals(o, _textDocuments))
         return "Texts";
-      else if (object.ReferenceEquals(o, this._tableLayouts))
+      else if (object.ReferenceEquals(o, _tableLayouts))
         return "TableLayouts";
-      else if (object.ReferenceEquals(o, this._fitFunctionScripts))
+      else if (object.ReferenceEquals(o, _fitFunctionScripts))
         return "FitFunctionScripts";
-      else if (object.ReferenceEquals(o, this._projectFolderProperties))
+      else if (object.ReferenceEquals(o, _projectFolderProperties))
         return "FolderProperties";
-      else if (object.ReferenceEquals(o, this._projectFolders))
+      else if (object.ReferenceEquals(o, _projectFolders))
         return "ProjectFolders";
       else
         return null;
@@ -685,7 +685,7 @@ namespace Altaxo
       if (null == item)
         throw new ArgumentNullException("item");
 
-      return GetRootPathForProjectItemType(item.GetType()).Append(((INameOwner)item).Name);
+      return GetRootPathForProjectItemType(item.GetType()).Append(item.Name);
     }
 
     /// <summary>
@@ -719,7 +719,7 @@ namespace Altaxo
 
       if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propDoc)
       {
-        if (!this.ProjectFolderProperties.Contains(propDoc.Name))
+        if (!ProjectFolderProperties.Contains(propDoc.Name))
         {
           ProjectFolderProperties.Add(propDoc); // if not existing, then add the new property document
         }

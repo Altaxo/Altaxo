@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Text.RegularExpressions;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Worksheet.Viewing;
-using System;
-using System.Text.RegularExpressions;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -89,8 +89,10 @@ namespace Altaxo.Worksheet.Commands
 
       int newposition = int.MinValue;
 
-      IntegerValueInputController ivictrl = new IntegerValueInputController(0, "Please enter the new position (>=0):");
-      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      var ivictrl = new IntegerValueInputController(0, "Please enter the new position (>=0):")
+      {
+        Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator()
+      };
       if (Current.Gui.ShowDialog(ivictrl, "New column position", false))
       {
         newposition = ivictrl.EnteredContents;
@@ -286,7 +288,7 @@ namespace Altaxo.Worksheet.Commands
       string pat;
       pat = @"(\S+)=(\S+)";
 
-      Regex r = new Regex(pat, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+      var r = new Regex(pat, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
       for (Match m = r.Match(strg); m.Success; m = m.NextMatch())
       {

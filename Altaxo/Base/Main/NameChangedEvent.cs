@@ -36,9 +36,9 @@ namespace Altaxo.Main
 
     public NameChangedEventArgs(object source, string oldName, string newName)
     {
-      this.Source = source;
-      this.OldName = oldName;
-      this.NewName = newName;
+      Source = source;
+      OldName = oldName;
+      NewName = newName;
     }
   }
 

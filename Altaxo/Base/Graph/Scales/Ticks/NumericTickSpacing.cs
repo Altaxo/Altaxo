@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Scales.Ticks
     public override AltaxoVariant[] GetMajorTicksAsVariant()
     {
       double[] ticks = GetMajorTicks();
-      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      var vticks = new AltaxoVariant[ticks.Length];
       for (int i = 0; i < ticks.Length; ++i)
         vticks[i] = ticks[i];
       return vticks;
@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Scales.Ticks
     public override AltaxoVariant[] GetMinorTicksAsVariant()
     {
       double[] ticks = GetMinorTicks();
-      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      var vticks = new AltaxoVariant[ticks.Length];
       for (int i = 0; i < ticks.Length; ++i)
         vticks[i] = ticks[i];
       return vticks;

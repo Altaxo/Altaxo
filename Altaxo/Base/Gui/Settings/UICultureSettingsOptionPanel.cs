@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Settings;
 
 namespace Altaxo.Gui.Settings
 {
@@ -34,13 +34,14 @@ namespace Altaxo.Gui.Settings
   {
     public override void Initialize(object optionPanelOwner)
     {
-      CultureSettings docCulture = null;
       CultureSettings sysCulture = null;
-      Current.PropertyService.UserSettings.TryGetValue(CultureSettings.PropertyKeyUICulture, out docCulture);
+      Current.PropertyService.UserSettings.TryGetValue(CultureSettings.PropertyKeyUICulture, out var docCulture);
       sysCulture = Current.PropertyService.GetValue(CultureSettings.PropertyKeyUICulture, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
 
-      _controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<CultureSettings>(() => sysCulture.Clone(), () => sysCulture);
-      _controller.EnablingText = "Override system settings";
+      _controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<CultureSettings>(() => sysCulture.Clone(), () => sysCulture)
+      {
+        EnablingText = "Override system settings"
+      };
       _controller.InitializeDocument(new object[] { docCulture, sysCulture });
     }
 

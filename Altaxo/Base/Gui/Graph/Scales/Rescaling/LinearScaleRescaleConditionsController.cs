@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Rescaling;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Rescaling;
+using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {

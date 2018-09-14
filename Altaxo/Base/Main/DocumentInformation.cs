@@ -41,7 +41,7 @@ namespace Altaxo.Main
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DocumentInformation s = (DocumentInformation)obj;
+        var s = (DocumentInformation)obj;
 
         info.AddValue("Identifier", s.DocumentIdentifier);
         info.AddValue("Notes", s.DocumentNotes);

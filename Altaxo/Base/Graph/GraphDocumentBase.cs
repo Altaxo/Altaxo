@@ -22,17 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-
-//using Altaxo.Graph;
-using Altaxo.Main;
-using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+//using Altaxo.Graph;
+using Altaxo.Main;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph
 {
@@ -317,7 +316,7 @@ namespace Altaxo.Graph
     protected override void AccumulateChangeData(object sender, EventArgs e)
     {
       if (sender != null && _accumulatedEventData == null)
-        this._accumulatedEventData = EventArgs.Empty;
+        _accumulatedEventData = EventArgs.Empty;
     }
 
     #endregion Change handling

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Main;
 
 namespace Altaxo.Drawing
 {
@@ -98,8 +98,7 @@ namespace Altaxo.Drawing
       if (null == item)
         return default(TList);
 
-      TList result;
-      if (_dictListEntryToList.TryGetValue(item, out result))
+      if (_dictListEntryToList.TryGetValue(item, out var result))
         return result;
       else
         return default(TList);
@@ -112,25 +111,18 @@ namespace Altaxo.Drawing
       if (null != renameDictionary && renameDictionary.ContainsKey(setName))
         setName = renameDictionary[setName];
 
-      TListManagerEntry foundSet;
 
-      if (_allLists.TryGetValue(setName, out foundSet)) // if a set with the give name and level was found
+      if (_allLists.TryGetValue(setName, out var foundSet)) // if a set with the give name and level was found
       {
         int idx;
         if (0 <= (idx = foundSet.List.IndexOf(instanceTemplate)))
           return foundSet.List[idx]; // then return this found instance
-
-        // set was found, but instance is not therein -> return an instance without set (or use the first set where the instance could be found
-        TList cset;
-        TItem citem;
-        if (TryFindListContaining(instanceTemplate, out cset, out citem))
+        if (TryFindListContaining(instanceTemplate, out var cset, out var citem))
           return citem;
       }
       else // the list with the given name was not found by name
       {
-        TList cset;
-        TItem citem;
-        if (TryFindListContaining(instanceTemplate, out cset, out citem))
+        if (TryFindListContaining(instanceTemplate, out var cset, out var citem))
           return citem;
       }
 

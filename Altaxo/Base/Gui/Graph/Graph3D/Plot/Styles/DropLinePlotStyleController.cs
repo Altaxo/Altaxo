@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
@@ -31,9 +34,6 @@ using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
 using Altaxo.Units;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
@@ -230,7 +230,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public void InitializeDropLineChoices()
     {
-      XYZPlotLayer layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(XYZPlotLayer)) as XYZPlotLayer;
+      var layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(XYZPlotLayer)) as XYZPlotLayer;
 
       _dropLineChoices = new SelectableListNodeList();
       foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _doc.DropTargets))

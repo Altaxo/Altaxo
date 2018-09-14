@@ -63,7 +63,7 @@ namespace Altaxo.Data
 
       public object Clone()
       {
-        return this.MemberwiseClone();
+        return MemberwiseClone();
       }
     }
 
@@ -115,8 +115,10 @@ namespace Altaxo.Data
       switch (options.OutputPlacement)
       {
         case RealFourierTransformOutputPlacement.CreateInNewWorksheet:
-          outputTable = new DataTable();
-          outputTable.Name = "Real FFT results";
+          outputTable = new DataTable
+          {
+            Name = "Real FFT results"
+          };
           Current.Project.DataTableCollection.Add(outputTable);
           Current.ProjectService.OpenOrCreateWorksheetForTable(outputTable);
           break;
@@ -132,44 +134,56 @@ namespace Altaxo.Data
       }
 
       // create the x-Column first
-      var freqCol = new DoubleColumn();
-      freqCol.AssignVector = wrapper.FrequenciesFromXIncrement(options.XIncrementValue);
+      var freqCol = new DoubleColumn
+      {
+        AssignVector = wrapper.FrequenciesFromXIncrement(options.XIncrementValue)
+      };
       int outputGroup = outputTable.DataColumns.GetUnusedColumnGroupNumber();
       outputTable.DataColumns.Add(freqCol, "Frequency", ColumnKind.X, outputGroup);
 
       // now create the other output cols
       if (options.Output.HasFlag(RealFourierTransformOutput.Re))
       {
-        var col = new DoubleColumn();
-        col.AssignVector = wrapper.RealPart;
+        var col = new DoubleColumn
+        {
+          AssignVector = wrapper.RealPart
+        };
         outputTable.DataColumns.Add(col, "Re", ColumnKind.V, outputGroup);
       }
 
       if (options.Output.HasFlag(RealFourierTransformOutput.Im))
       {
-        var col = new DoubleColumn();
-        col.AssignVector = wrapper.ImaginaryPart;
+        var col = new DoubleColumn
+        {
+          AssignVector = wrapper.ImaginaryPart
+        };
         outputTable.DataColumns.Add(col, "Im", ColumnKind.V, outputGroup);
       }
 
       if (options.Output.HasFlag(RealFourierTransformOutput.Abs))
       {
-        var col = new DoubleColumn();
-        col.AssignVector = wrapper.Amplitude;
+        var col = new DoubleColumn
+        {
+          AssignVector = wrapper.Amplitude
+        };
         outputTable.DataColumns.Add(col, "Abs", ColumnKind.V, outputGroup);
       }
 
       if (options.Output.HasFlag(RealFourierTransformOutput.Phase))
       {
-        var col = new DoubleColumn();
-        col.AssignVector = wrapper.Phase;
+        var col = new DoubleColumn
+        {
+          AssignVector = wrapper.Phase
+        };
         outputTable.DataColumns.Add(col, "Phase", ColumnKind.V, outputGroup);
       }
 
       if (options.Output.HasFlag(RealFourierTransformOutput.Power))
       {
-        var col = new DoubleColumn();
-        col.AssignVector = wrapper.Amplitude;
+        var col = new DoubleColumn
+        {
+          AssignVector = wrapper.Amplitude
+        };
         col.Data = col * col;
         outputTable.DataColumns.Add(col, "Power", ColumnKind.V, outputGroup);
       }
@@ -179,8 +193,7 @@ namespace Altaxo.Data
     {
       var options = new RealFourierTransformOptions() { ColumnToTransform = ycolumnToTransform };
 
-      double xIncrementValue;
-      options.XIncrementMessage = DetermineXIncrement(ycolumnToTransform, out xIncrementValue);
+      options.XIncrementMessage = DetermineXIncrement(ycolumnToTransform, out var xIncrementValue);
       options.XIncrementValue = xIncrementValue;
 
       if (Current.Gui.ShowDialog(ref options, "Choose fourier transform options", false))

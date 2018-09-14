@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Drawing;
@@ -38,8 +40,6 @@ using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
 using Altaxo.Units;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
@@ -365,25 +365,25 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       base.AttachView();
 
       _view.LabelColorLinkageChanged += EhLabelColorLinkageChanged;
-      _view.BackgroundColorLinkageChanged += this.EhBackgroundColorLinkageChanged;
-      _view.LabelBrushChanged += this.EhLabelBrushChanged;
-      _view.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
-      _view.UseBackgroundChanged += this.EhUseBackgroundChanged;
+      _view.BackgroundColorLinkageChanged += EhBackgroundColorLinkageChanged;
+      _view.LabelBrushChanged += EhLabelBrushChanged;
+      _view.BackgroundBrushChanged += EhBackgroundBrushChanged;
+      _view.UseBackgroundChanged += EhUseBackgroundChanged;
     }
 
     protected override void DetachView()
     {
       _view.LabelColorLinkageChanged -= EhLabelColorLinkageChanged;
-      _view.BackgroundColorLinkageChanged -= this.EhBackgroundColorLinkageChanged;
-      _view.LabelBrushChanged -= this.EhLabelBrushChanged;
-      _view.BackgroundBrushChanged -= this.EhBackgroundBrushChanged;
-      _view.UseBackgroundChanged -= this.EhUseBackgroundChanged;
+      _view.BackgroundColorLinkageChanged -= EhBackgroundColorLinkageChanged;
+      _view.LabelBrushChanged -= EhLabelBrushChanged;
+      _view.BackgroundBrushChanged -= EhBackgroundBrushChanged;
+      _view.UseBackgroundChanged -= EhUseBackgroundChanged;
       base.DetachView();
     }
 
     public void InitializeAttachmentDirectionChoices()
     {
-      IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
+      var layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
 
       _attachmentDirectionChoices = new SelectableListNodeList();
 
@@ -422,8 +422,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         (column, table, group) =>
         {
           _doc.LabelColumn = column;
-          this._supposedParentDataTable = table;
-          this._supposedGroupNumber = group;
+          _supposedParentDataTable = table;
+          _supposedGroupNumber = group;
           InitializeLabelColumnText();
         }
       );
@@ -446,7 +446,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         (column, table) =>
         {
           _doc.LabelColumn = column;
-          this._supposedParentDataTable = table;
+          _supposedParentDataTable = table;
           InitializeLabelColumnText();
         });
     }

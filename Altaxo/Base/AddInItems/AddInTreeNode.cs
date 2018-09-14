@@ -93,14 +93,14 @@ namespace Altaxo.AddInItems
     /// <param name="additionalConditions">Additional conditions applied to the node.</param>
     public List<T> BuildChildItems<T>(object parameter, IEnumerable<ICondition> additionalConditions = null)
     {
-      var codons = this.Codons;
-      List<T> items = new List<T>(codons.Count);
+      var codons = Codons;
+      var items = new List<T>(codons.Count);
       foreach (Codon codon in codons)
       {
         object result = BuildChildItem(codon, parameter, additionalConditions);
         if (result == null)
           continue;
-        IBuildItemsModifier mod = result as IBuildItemsModifier;
+        var mod = result as IBuildItemsModifier;
         if (mod != null)
         {
           mod.Apply(items);
@@ -124,8 +124,7 @@ namespace Altaxo.AddInItems
       if (codon == null)
         throw new ArgumentNullException("codon");
 
-      AddInTreeNode subItemNode;
-      childNodes.TryGetValue(codon.Id, out subItemNode);
+      childNodes.TryGetValue(codon.Id, out var subItemNode);
 
       IReadOnlyCollection<ICondition> conditions;
       if (additionalConditions == null)
@@ -151,7 +150,7 @@ namespace Altaxo.AddInItems
     /// </exception>
     public object BuildChildItem(string childItemID, object parameter, IEnumerable<ICondition> additionalConditions = null)
     {
-      foreach (Codon codon in this.Codons)
+      foreach (Codon codon in Codons)
       {
         if (codon.Id == childItemID)
         {

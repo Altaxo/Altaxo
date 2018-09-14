@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Main.Services.ScriptCompilation;
 using System;
 using System.Collections.Immutable;
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
 {
@@ -145,7 +145,7 @@ namespace Altaxo.Scripting
 
     public override int GetHashCode()
     {
-      return base.GetHashCode() + this._fitFunctionCategory.GetHashCode() + this._fitFunctionName.GetHashCode();
+      return base.GetHashCode() + _fitFunctionCategory.GetHashCode() + _fitFunctionName.GetHashCode();
     }
 
     public override string ToString()
@@ -162,7 +162,7 @@ namespace Altaxo.Scripting
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AbstractScript s = (AbstractScript)obj;
+        var s = (AbstractScript)obj;
 
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
@@ -174,8 +174,10 @@ namespace Altaxo.Scripting
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
 
-        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-        surr._deserializedObject = s;
+        var surr = new XmlSerializationSurrogate0
+        {
+          _deserializedObject = s
+        };
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
         return s;
@@ -187,7 +189,7 @@ namespace Altaxo.Scripting
 
         if (documentRoot is AltaxoDocument)
         {
-          AltaxoDocument doc = documentRoot as AltaxoDocument;
+          var doc = documentRoot as AltaxoDocument;
 
           // add this script to the collection of scripts
           doc.FitFunctionScripts.Add(_deserializedObject);
@@ -202,12 +204,12 @@ namespace Altaxo.Scripting
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        FitFunctionScript s = (FitFunctionScript)obj;
+        var s = (FitFunctionScript)obj;
 
         // Update the user defined paramter names
         if (s._scriptObject != null && s.IsUsingUserDefinedParameterNames)
         {
-          IFitFunction ff = (IFitFunction)s._scriptObject;
+          var ff = (IFitFunction)s._scriptObject;
           if (s._UserDefinedParameterNames == null || s._UserDefinedParameterNames.Length != ff.NumberOfParameters)
             s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
           for (int i = 0; i < ff.NumberOfParameters; ++i)
@@ -248,8 +250,10 @@ namespace Altaxo.Scripting
         info.GetArray("IndependentVariableNames", out s._IndependentVariablesNames);
         info.GetArray("DependentVariableNames", out s._DependentVariablesNames);
 
-        XmlSerializationSurrogate1 surr = new XmlSerializationSurrogate1();
-        surr._deserializedObject = s;
+        var surr = new XmlSerializationSurrogate1
+        {
+          _deserializedObject = s
+        };
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
 
         if (s._IsUsingUserDefinedParameterNames && s._NumberOfParameters != s._UserDefinedParameterNames.Length)
@@ -264,7 +268,7 @@ namespace Altaxo.Scripting
 
         if (documentRoot is AltaxoDocument)
         {
-          AltaxoDocument doc = documentRoot as AltaxoDocument;
+          var doc = documentRoot as AltaxoDocument;
 
           // add this script to the collection of scripts
           doc.FitFunctionScripts.Add(_deserializedObject);
@@ -279,12 +283,12 @@ namespace Altaxo.Scripting
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        FitFunctionScript s = (FitFunctionScript)obj;
+        var s = (FitFunctionScript)obj;
 
         // Update the user defined paramter names
         if (s._scriptObject != null && s.IsUsingUserDefinedParameterNames)
         {
-          IFitFunction ff = (IFitFunction)s._scriptObject;
+          var ff = (IFitFunction)s._scriptObject;
           if (s._UserDefinedParameterNames == null || s._UserDefinedParameterNames.Length != ff.NumberOfParameters)
             s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
           for (int i = 0; i < ff.NumberOfParameters; ++i)
@@ -328,8 +332,10 @@ namespace Altaxo.Scripting
         info.GetArray("IndependentVariableNames", out s._IndependentVariablesNames);
         info.GetArray("DependentVariableNames", out s._DependentVariablesNames);
 
-        XmlSerializationSurrogate2 surr = new XmlSerializationSurrogate2();
-        surr._deserializedObject = s;
+        var surr = new XmlSerializationSurrogate2
+        {
+          _deserializedObject = s
+        };
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
         return s;
@@ -341,7 +347,7 @@ namespace Altaxo.Scripting
 
         if (documentRoot is AltaxoDocument)
         {
-          AltaxoDocument doc = documentRoot as AltaxoDocument;
+          var doc = documentRoot as AltaxoDocument;
 
           // add this script to the collection of scripts
           doc.FitFunctionScripts.Add(_deserializedObject);
@@ -380,14 +386,14 @@ namespace Altaxo.Scripting
 
     private void CopyInstanceMembersFrom(FitFunctionScript from)
     {
-      this._IsUsingUserDefinedParameterNames = from._IsUsingUserDefinedParameterNames;
-      this._NumberOfParameters = from._NumberOfParameters;
-      this._UserDefinedParameterNames = null == from._UserDefinedParameterNames ? null : (string[])from._UserDefinedParameterNames.Clone();
-      this._IndependentVariablesNames = (string[])from._IndependentVariablesNames.Clone();
-      this._DependentVariablesNames = (string[])from._DependentVariablesNames.Clone();
-      this._fitFunctionName = from._fitFunctionName;
-      this._fitFunctionCategory = from.FitFunctionCategory;
-      this._fitFunctionCreationTime = from._fitFunctionCreationTime;
+      _IsUsingUserDefinedParameterNames = from._IsUsingUserDefinedParameterNames;
+      _NumberOfParameters = from._NumberOfParameters;
+      _UserDefinedParameterNames = null == from._UserDefinedParameterNames ? null : (string[])from._UserDefinedParameterNames.Clone();
+      _IndependentVariablesNames = (string[])from._IndependentVariablesNames.Clone();
+      _DependentVariablesNames = (string[])from._DependentVariablesNames.Clone();
+      _fitFunctionName = from._fitFunctionName;
+      _fitFunctionCategory = from.FitFunctionCategory;
+      _fitFunctionCreationTime = from._fitFunctionCreationTime;
     }
 
     public void CopyFrom(FitFunctionScript from, bool forModification)
@@ -466,15 +472,15 @@ namespace Altaxo.Scripting
     {
       bool success = base.Compile();
 
-      if (success && (this._scriptObject is IFitFunction))
+      if (success && (_scriptObject is IFitFunction))
       {
-        IFitFunction ff = (IFitFunction)_scriptObject;
+        var ff = (IFitFunction)_scriptObject;
 
         bool hasChanged = false;
 
-        hasChanged |= ObservedAssign(ref this._NumberOfParameters, ff.NumberOfParameters);
+        hasChanged |= ObservedAssign(ref _NumberOfParameters, ff.NumberOfParameters);
 
-        if (this.IsUsingUserDefinedParameterNames)
+        if (IsUsingUserDefinedParameterNames)
         {
           hasChanged = ObservedAllocateArray(ref _UserDefinedParameterNames, ff.NumberOfParameters);
           for (int i = 0; i < ff.NumberOfParameters; ++i)
@@ -482,12 +488,12 @@ namespace Altaxo.Scripting
         }
 
         hasChanged = ObservedAllocateArray(ref _IndependentVariablesNames, ff.NumberOfIndependentVariables);
-        for (int i = 0; i < this._IndependentVariablesNames.Length; ++i)
-          hasChanged = ObservedAssign(ref this._IndependentVariablesNames[i], ff.IndependentVariableName(i));
+        for (int i = 0; i < _IndependentVariablesNames.Length; ++i)
+          hasChanged = ObservedAssign(ref _IndependentVariablesNames[i], ff.IndependentVariableName(i));
 
         hasChanged = ObservedAllocateArray(ref _DependentVariablesNames, ff.NumberOfDependentVariables);
-        for (int i = 0; i < this._DependentVariablesNames.Length; ++i)
-          hasChanged = ObservedAssign(ref this._DependentVariablesNames[i], ff.DependentVariableName(i));
+        for (int i = 0; i < _DependentVariablesNames.Length; ++i)
+          hasChanged = ObservedAssign(ref _DependentVariablesNames[i], ff.DependentVariableName(i));
 
         if (hasChanged)
           EhSelfChanged(EventArgs.Empty);
@@ -518,17 +524,17 @@ namespace Altaxo.Scripting
             "\t{\r\n" +
             "\t\tpublic MyFitFunction()\r\n" +
             "\t\t{\r\n" +
-            this.DefinitionRegionIndentation + this.IndependentDefinitionRegionStart +
-            this.IndependentDefinitionRegionCore +
-            this.DefinitionRegionIndentation + this.IndependentDefinitionRegionEnd +
+            DefinitionRegionIndentation + IndependentDefinitionRegionStart +
+            IndependentDefinitionRegionCore +
+            DefinitionRegionIndentation + IndependentDefinitionRegionEnd +
             "\r\n" +
-            this.DefinitionRegionIndentation + this.DependentDefinitionRegionStart +
-            this.DependentDefinitionRegionCore +
-            this.DefinitionRegionIndentation + this.DependentDefinitionRegionEnd +
+            DefinitionRegionIndentation + DependentDefinitionRegionStart +
+            DependentDefinitionRegionCore +
+            DefinitionRegionIndentation + DependentDefinitionRegionEnd +
             "\r\n" +
-            this.DefinitionRegionIndentation + this.ParameterDefinitionRegionStart +
-            this.ParameterDefinitionRegionCore +
-            this.DefinitionRegionIndentation + this.ParameterDefinitionRegionEnd +
+            DefinitionRegionIndentation + ParameterDefinitionRegionStart +
+            ParameterDefinitionRegionCore +
+            DefinitionRegionIndentation + ParameterDefinitionRegionEnd +
             "\t\t}\r\n" +
             "\r\n" +
             "\t\tpublic override void Evaluate(double[] X, double[] P, double[] Y)\r\n" +
@@ -565,10 +571,10 @@ namespace Altaxo.Scripting
         stb.Append(DefinitionRegionIndentation);
         stb.Append("_independentVariableNames = new string[]{");
 
-        for (int i = 0; i < this._IndependentVariablesNames.Length; i++)
+        for (int i = 0; i < _IndependentVariablesNames.Length; i++)
         {
-          stb.Append("\"" + this._IndependentVariablesNames[i] + "\"");
-          if ((i + 1) == this._IndependentVariablesNames.Length)
+          stb.Append("\"" + _IndependentVariablesNames[i] + "\"");
+          if ((i + 1) == _IndependentVariablesNames.Length)
             stb.Append("};\r\n");
           else
             stb.Append(",");
@@ -602,10 +608,10 @@ namespace Altaxo.Scripting
         stb.Append(DefinitionRegionIndentation);
         stb.Append("_dependentVariableNames = new string[]{");
 
-        for (int i = 0; i < this._DependentVariablesNames.Length; i++)
+        for (int i = 0; i < _DependentVariablesNames.Length; i++)
         {
-          stb.Append("\"" + this._DependentVariablesNames[i] + "\"");
-          if ((i + 1) == this._DependentVariablesNames.Length)
+          stb.Append("\"" + _DependentVariablesNames[i] + "\"");
+          if ((i + 1) == _DependentVariablesNames.Length)
             stb.Append("};\r\n");
           else
             stb.Append(",");
@@ -639,10 +645,10 @@ namespace Altaxo.Scripting
         stb.Append(DefinitionRegionIndentation);
         stb.Append("_parameterNames = new string[]{");
 
-        for (int i = 0; i < this.NumberOfParameters; i++)
+        for (int i = 0; i < NumberOfParameters; i++)
         {
-          stb.Append("\"" + this.ParameterName(i, false) + "\"");
-          if ((i + 1) < this.NumberOfParameters)
+          stb.Append("\"" + ParameterName(i, false) + "\"");
+          if ((i + 1) < NumberOfParameters)
             stb.Append(",");
         }
         stb.Append("};\r\n");
@@ -673,12 +679,12 @@ namespace Altaxo.Scripting
     {
       get
       {
-        System.Text.StringBuilder stb = new System.Text.StringBuilder();
-        for (int i = 0; i < this._IndependentVariablesNames.Length; i++)
+        var stb = new System.Text.StringBuilder();
+        for (int i = 0; i < _IndependentVariablesNames.Length; i++)
         {
           stb.Append(AssignmentRegionIndentation);
           stb.Append("double ");
-          stb.Append(this._IndependentVariablesNames[i]);
+          stb.Append(_IndependentVariablesNames[i]);
           stb.Append(" = X[");
           stb.Append(i.ToString());
           stb.Append("];\r\n");
@@ -707,14 +713,14 @@ namespace Altaxo.Scripting
     {
       get
       {
-        System.Text.StringBuilder stb = new System.Text.StringBuilder();
-        if (this.IsUsingUserDefinedParameterNames)
+        var stb = new System.Text.StringBuilder();
+        if (IsUsingUserDefinedParameterNames)
         {
-          for (int i = 0; i < this.NumberOfParameters; i++)
+          for (int i = 0; i < NumberOfParameters; i++)
           {
             stb.Append(AssignmentRegionIndentation);
             stb.Append("double ");
-            stb.Append(this.ParameterName(i));
+            stb.Append(ParameterName(i));
             stb.Append(" = P[");
             stb.Append(i.ToString());
             stb.Append("];\r\n");
@@ -745,11 +751,11 @@ namespace Altaxo.Scripting
       get
       {
         var stb = new System.Text.StringBuilder();
-        for (int i = 0; i < this._DependentVariablesNames.Length; i++)
+        for (int i = 0; i < _DependentVariablesNames.Length; i++)
         {
           stb.Append(AssignmentRegionIndentation);
           stb.Append("double ");
-          stb.Append(this._DependentVariablesNames[i]);
+          stb.Append(_DependentVariablesNames[i]);
           stb.Append(";\r\n");
         }
         return stb.ToString();
@@ -776,12 +782,12 @@ namespace Altaxo.Scripting
     {
       get
       {
-        System.Text.StringBuilder stb = new System.Text.StringBuilder();
-        for (int i = 0; i < this._DependentVariablesNames.Length; i++)
+        var stb = new System.Text.StringBuilder();
+        for (int i = 0; i < _DependentVariablesNames.Length; i++)
         {
           stb.Append(AssignmentRegionIndentation);
           stb.Append("Y[" + i.ToString() + "] = ");
-          stb.Append(this._DependentVariablesNames[i]);
+          stb.Append(_DependentVariablesNames[i]);
           stb.Append(";\r\n");
         }
         return stb.ToString();
@@ -865,51 +871,51 @@ namespace Altaxo.Scripting
         System.Text.StringBuilder sb;
         int first, last;
 
-        this._DependentVariablesNames = (string[])value.Clone();
+        _DependentVariablesNames = (string[])value.Clone();
         string[] names = value;
 
-        first = this.ScriptText.IndexOf(this.DependentDefinitionRegionStart);
+        first = ScriptText.IndexOf(DependentDefinitionRegionStart);
         if (first < 0)
           throw new ApplicationException("The script text seems to no longer contain a dependent variables start region");
-        first += this.DependentDefinitionRegionStart.Length;
-        last = this.ScriptText.IndexOf(this.DependentDefinitionRegionEnd);
+        first += DependentDefinitionRegionStart.Length;
+        last = ScriptText.IndexOf(DependentDefinitionRegionEnd);
         if (last < 0)
           throw new ApplicationException("The script text seems to no longer contain a dependent variable definition end region");
         sb = new System.Text.StringBuilder();
-        sb.Append(this.ScriptText.Substring(0, first));
-        sb.Append(this.DependentDefinitionRegionCore);
-        sb.Append(this.DefinitionRegionIndentation);
-        sb.Append(this.ScriptText.Substring(last));
-        this.ScriptText = sb.ToString();
+        sb.Append(ScriptText.Substring(0, first));
+        sb.Append(DependentDefinitionRegionCore);
+        sb.Append(DefinitionRegionIndentation);
+        sb.Append(ScriptText.Substring(last));
+        ScriptText = sb.ToString();
 
-        first = this.ScriptText.IndexOf(this.DependentDeclarationRegionStart);
+        first = ScriptText.IndexOf(DependentDeclarationRegionStart);
         if (first < 0)
           throw new ApplicationException("The script text seems to no longer contain an dependent variables declaration start region");
-        first += this.DependentDeclarationRegionStart.Length;
-        last = this.ScriptText.IndexOf(this.DependentDeclarationRegionEnd);
+        first += DependentDeclarationRegionStart.Length;
+        last = ScriptText.IndexOf(DependentDeclarationRegionEnd);
         if (last < 0)
           throw new ApplicationException("The script text seems to no longer contain an dependent variable declaration end region");
 
         sb = new System.Text.StringBuilder();
-        sb.Append(this.ScriptText.Substring(0, first));
-        sb.Append(this.DependentDeclarationRegionCore);
-        sb.Append(this.DefinitionRegionIndentation);
-        sb.Append(this.ScriptText.Substring(last));
-        this.ScriptText = sb.ToString();
+        sb.Append(ScriptText.Substring(0, first));
+        sb.Append(DependentDeclarationRegionCore);
+        sb.Append(DefinitionRegionIndentation);
+        sb.Append(ScriptText.Substring(last));
+        ScriptText = sb.ToString();
 
-        first = this.ScriptText.IndexOf(this.DependentAssignmentRegionStart);
+        first = ScriptText.IndexOf(DependentAssignmentRegionStart);
         if (first < 0)
           throw new ApplicationException("The script text seems to no longer contain a dependent variables assignment start region");
-        first += this.DependentAssignmentRegionStart.Length;
-        last = this.ScriptText.IndexOf(this.DependentAssignmentRegionEnd);
+        first += DependentAssignmentRegionStart.Length;
+        last = ScriptText.IndexOf(DependentAssignmentRegionEnd);
         if (last < 0)
           throw new ApplicationException("The script text seems to no longer contain a dependent variable assignment end region");
         sb = new System.Text.StringBuilder();
-        sb.Append(this.ScriptText.Substring(0, first));
-        sb.Append(this.DependentAssignmentRegionCore);
-        sb.Append(this.AssignmentRegionIndentation);
-        sb.Append(this.ScriptText.Substring(last));
-        this.ScriptText = sb.ToString();
+        sb.Append(ScriptText.Substring(0, first));
+        sb.Append(DependentAssignmentRegionCore);
+        sb.Append(AssignmentRegionIndentation);
+        sb.Append(ScriptText.Substring(last));
+        ScriptText = sb.ToString();
       }
     }
 
@@ -919,39 +925,39 @@ namespace Altaxo.Scripting
       {
         System.Text.StringBuilder sb;
         int first, last;
-        this._IndependentVariablesNames = (string[])value.Clone();
+        _IndependentVariablesNames = (string[])value.Clone();
 
         string[] names = value;
 
-        first = this.ScriptText.IndexOf(this.IndependentDefinitionRegionStart);
+        first = ScriptText.IndexOf(IndependentDefinitionRegionStart);
         if (first < 0)
           throw new ApplicationException("The script text seems to no longer contain an independent variables definition start region");
-        first += this.IndependentDefinitionRegionStart.Length;
-        last = this.ScriptText.IndexOf(this.IndependentDefinitionRegionEnd);
+        first += IndependentDefinitionRegionStart.Length;
+        last = ScriptText.IndexOf(IndependentDefinitionRegionEnd);
         if (last < 0)
           throw new ApplicationException("The script text seems to no longer contain an independent variable definition end region");
 
         sb = new System.Text.StringBuilder();
-        sb.Append(this.ScriptText.Substring(0, first));
-        sb.Append(this.IndependentDefinitionRegionCore);
-        sb.Append(this.DefinitionRegionIndentation);
-        sb.Append(this.ScriptText.Substring(last));
-        this.ScriptText = sb.ToString();
+        sb.Append(ScriptText.Substring(0, first));
+        sb.Append(IndependentDefinitionRegionCore);
+        sb.Append(DefinitionRegionIndentation);
+        sb.Append(ScriptText.Substring(last));
+        ScriptText = sb.ToString();
 
-        first = this.ScriptText.IndexOf(this.IndependentAssignmentRegionStart);
+        first = ScriptText.IndexOf(IndependentAssignmentRegionStart);
         if (first < 0)
           throw new ApplicationException("The script text seems to no longer contain a dependent variables assignment start region");
-        first += this.IndependentAssignmentRegionStart.Length;
-        last = this.ScriptText.IndexOf(this.IndependentAssignmentRegionEnd);
+        first += IndependentAssignmentRegionStart.Length;
+        last = ScriptText.IndexOf(IndependentAssignmentRegionEnd);
         if (last < 0)
           throw new ApplicationException("The script text seems to no longer contain a dependent variable assignment end region");
 
         sb = new System.Text.StringBuilder();
-        sb.Append(this.ScriptText.Substring(0, first));
-        sb.Append(this.IndependentAssignmentRegionCore);
-        sb.Append(this.AssignmentRegionIndentation);
-        sb.Append(this.ScriptText.Substring(last));
-        this.ScriptText = sb.ToString();
+        sb.Append(ScriptText.Substring(0, first));
+        sb.Append(IndependentAssignmentRegionCore);
+        sb.Append(AssignmentRegionIndentation);
+        sb.Append(ScriptText.Substring(last));
+        ScriptText = sb.ToString();
       }
     }
 
@@ -959,13 +965,13 @@ namespace Altaxo.Scripting
     {
       get
       {
-        return this._IsUsingUserDefinedParameterNames;
+        return _IsUsingUserDefinedParameterNames;
       }
       set
       {
         if (value == true && _IsUsingUserDefinedParameterNames == false)
         {
-          string[] oldNames = this._UserDefinedParameterNames;
+          string[] oldNames = _UserDefinedParameterNames;
           if (oldNames == null)
             oldNames = new string[0];
 
@@ -977,7 +983,7 @@ namespace Altaxo.Scripting
           for (int i = len; i < newNames.Length; ++i)
             newNames[i] = "P" + i.ToString();
 
-          this.UserDefinedParameterNames = newNames;
+          UserDefinedParameterNames = newNames;
         }
 
         _IsUsingUserDefinedParameterNames = value;
@@ -990,53 +996,53 @@ namespace Altaxo.Scripting
       System.Text.StringBuilder sb;
       int first, last;
 
-      first = this.ScriptText.IndexOf(this.ParameterDefinitionRegionStart);
+      first = ScriptText.IndexOf(ParameterDefinitionRegionStart);
       if (first < 0)
         throw new ApplicationException("The script text seems to no longer contain a parameter definition start region");
-      first += this.ParameterDefinitionRegionStart.Length;
-      last = this.ScriptText.IndexOf(this.ParameterDefinitionRegionEnd);
+      first += ParameterDefinitionRegionStart.Length;
+      last = ScriptText.IndexOf(ParameterDefinitionRegionEnd);
       if (last < 0)
         throw new ApplicationException("The script text seems to no longer contain a parameter definition end region");
       sb = new System.Text.StringBuilder();
-      sb.Append(this.ScriptText.Substring(0, first));
-      sb.Append(this.ParameterDefinitionRegionCore);
-      sb.Append(this.DefinitionRegionIndentation);
-      sb.Append(this.ScriptText.Substring(last));
-      this.ScriptText = sb.ToString();
+      sb.Append(ScriptText.Substring(0, first));
+      sb.Append(ParameterDefinitionRegionCore);
+      sb.Append(DefinitionRegionIndentation);
+      sb.Append(ScriptText.Substring(last));
+      ScriptText = sb.ToString();
 
-      first = this.ScriptText.IndexOf(this.ParameterAssignmentRegionStart);
+      first = ScriptText.IndexOf(ParameterAssignmentRegionStart);
       if (first < 0)
         throw new ApplicationException("The script text seems to no longer contain a parameter assignment start region");
-      first += this.ParameterAssignmentRegionStart.Length;
-      last = this.ScriptText.IndexOf(this.ParameterAssignmentRegionEnd);
+      first += ParameterAssignmentRegionStart.Length;
+      last = ScriptText.IndexOf(ParameterAssignmentRegionEnd);
       if (last < 0)
         throw new ApplicationException("The script text seems to no longer contain a parameter assignment end region");
       sb = new System.Text.StringBuilder();
-      sb.Append(this.ScriptText.Substring(0, first));
-      sb.Append(this.ParameterAssignmentRegionCore);
-      sb.Append(this.AssignmentRegionIndentation);
-      sb.Append(this.ScriptText.Substring(last));
-      this.ScriptText = sb.ToString();
+      sb.Append(ScriptText.Substring(0, first));
+      sb.Append(ParameterAssignmentRegionCore);
+      sb.Append(AssignmentRegionIndentation);
+      sb.Append(ScriptText.Substring(last));
+      ScriptText = sb.ToString();
     }
 
     public string[] UserDefinedParameterNames
     {
       get
       {
-        if (this._IsUsingUserDefinedParameterNames)
-          return (string[])this._UserDefinedParameterNames.Clone();
+        if (_IsUsingUserDefinedParameterNames)
+          return (string[])_UserDefinedParameterNames.Clone();
         else
           return null;
       }
       set
       {
-        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        var sb = new System.Text.StringBuilder();
 
-        this._IsUsingUserDefinedParameterNames = true;
-        this._NumberOfParameters = value.Length;
-        this._UserDefinedParameterNames = (string[])value.Clone();
+        _IsUsingUserDefinedParameterNames = true;
+        _NumberOfParameters = value.Length;
+        _UserDefinedParameterNames = (string[])value.Clone();
 
-        this.SetParametersInScript();
+        SetParametersInScript();
       }
     }
 
@@ -1072,10 +1078,10 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (this._scriptObject != null)
+        if (_scriptObject != null)
           return ((IFitFunction)_scriptObject).NumberOfIndependentVariables;
         else
-          return this._IndependentVariablesNames.Length;
+          return _IndependentVariablesNames.Length;
       }
     }
 
@@ -1083,10 +1089,10 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (this._scriptObject != null)
+        if (_scriptObject != null)
           return ((IFitFunction)_scriptObject).NumberOfDependentVariables;
         else
-          return this._DependentVariablesNames.Length;
+          return _DependentVariablesNames.Length;
       }
     }
 
@@ -1094,38 +1100,38 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if (this._scriptObject != null)
+        if (_scriptObject != null)
           return ((IFitFunction)_scriptObject).NumberOfParameters;
         else
-          return this._NumberOfParameters;
+          return _NumberOfParameters;
       }
       set
       {
-        if (this._scriptObject != null)
+        if (_scriptObject != null)
           throw new ApplicationException("Number of parameters can not be changed after successfull compilation");
         else
         {
-          this._IsUsingUserDefinedParameterNames = false;
-          this._NumberOfParameters = value;
-          this.SetParametersInScript();
+          _IsUsingUserDefinedParameterNames = false;
+          _NumberOfParameters = value;
+          SetParametersInScript();
         }
       }
     }
 
     public string IndependentVariableName(int i)
     {
-      if (this._scriptObject != null)
+      if (_scriptObject != null)
         return ((IFitFunction)_scriptObject).IndependentVariableName(i);
       else
-        return this._IndependentVariablesNames[i];
+        return _IndependentVariablesNames[i];
     }
 
     public string DependentVariableName(int i)
     {
-      if (this._scriptObject != null)
+      if (_scriptObject != null)
         return ((IFitFunction)_scriptObject).DependentVariableName(i);
       else
-        return this._DependentVariablesNames[i];
+        return _DependentVariablesNames[i];
     }
 
     public string ParameterName(int i)
@@ -1141,7 +1147,7 @@ namespace Altaxo.Scripting
 
       string result;
 
-      if (this._scriptObject != null)
+      if (_scriptObject != null)
       {
         result = ((IFitFunction)_scriptObject).ParameterName(i);
       }
@@ -1149,7 +1155,7 @@ namespace Altaxo.Scripting
       {
         if (IsUsingUserDefinedParameterNames)
         {
-          result = this._UserDefinedParameterNames[i];
+          result = _UserDefinedParameterNames[i];
         }
         else
         {
@@ -1161,7 +1167,7 @@ namespace Altaxo.Scripting
 
     public double DefaultParameterValue(int i)
     {
-      if (this._scriptObject != null)
+      if (_scriptObject != null)
         return ((IFitFunction)_scriptObject).DefaultParameterValue(i);
       else
         return 0;
@@ -1169,7 +1175,7 @@ namespace Altaxo.Scripting
 
     public IVarianceScaling DefaultVarianceScaling(int i)
     {
-      if (this._scriptObject != null)
+      if (_scriptObject != null)
         return ((IFitFunction)_scriptObject).DefaultVarianceScaling(i);
       else
         return null;

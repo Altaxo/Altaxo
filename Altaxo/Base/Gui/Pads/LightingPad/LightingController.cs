@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D;
-using Altaxo.Gui.Workbench;
 using System;
 using System.ComponentModel;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.Pads.LightingPad
 {
@@ -139,7 +139,7 @@ namespace Altaxo.Gui.Pads.LightingPad
     {
       get
       {
-        return this._view;
+        return _view;
       }
       set
       {

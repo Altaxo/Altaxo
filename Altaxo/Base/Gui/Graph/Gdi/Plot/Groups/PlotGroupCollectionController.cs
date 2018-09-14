@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Gdi.Plot.Groups;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
@@ -86,8 +86,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
           _controllerAdvanced = null;
         }
 
-        bool isSerialStepping, isColor, isLineStyle, isSymbolStyle;
-        if (PlotGroupCollectionControllerSimple.IsSimplePlotGrouping(_doc, out isSerialStepping, out isColor, out isLineStyle, out isSymbolStyle))
+        if (PlotGroupCollectionControllerSimple.IsSimplePlotGrouping(_doc, out var isSerialStepping, out var isColor, out var isLineStyle, out var isSymbolStyle))
         {
           _controllerSimple = new PlotGroupCollectionControllerSimple() { UseDocumentCopy = UseDocument.Directly };
           _controllerSimple.InitializeDocument(_doc);
@@ -170,8 +169,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       if (PlotGroupCollectionControllerSimple.IsSimplePlotGrouping(_doc))
       {
         _controllerAdvanced = null;
-        _controllerSimple = new PlotGroupCollectionControllerSimple();
-        _controllerSimple.UseDocumentCopy = UseDocument.Directly;
+        _controllerSimple = new PlotGroupCollectionControllerSimple
+        {
+          UseDocumentCopy = UseDocument.Directly
+        };
         _controllerSimple.InitializeDocument(_doc);
         Initialize(false);
       }
@@ -187,8 +188,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       _doc = (PlotGroupStyleCollection)_controllerSimple.ModelObject;
       _controllerSimple = null;
 
-      var controllerAdvanced = new PlotGroupCollectionControllerAdvanced();
-      controllerAdvanced.UseDocumentCopy = UseDocument.Directly;
+      var controllerAdvanced = new PlotGroupCollectionControllerAdvanced
+      {
+        UseDocumentCopy = UseDocument.Directly
+      };
       controllerAdvanced.InitializeDocument(_doc);
       controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, (handler) => controllerAdvanced.GroupStyleChanged -= handler);
       _controllerAdvanced = controllerAdvanced;

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
 {
@@ -99,10 +99,12 @@ namespace Altaxo.Drawing.D3D
       get
       {
         const int segments = 4;
-        var r = new LineCapContour();
-        r._vertices = new PointD2D[2 + segments];
-        r._normals = new VectorD2D[2 + segments];
-        r._isVertexSharp = new bool[2 + segments];
+        var r = new LineCapContour
+        {
+          _vertices = new PointD2D[2 + segments],
+          _normals = new VectorD2D[2 + segments],
+          _isVertexSharp = new bool[2 + segments]
+        };
 
         r._vertices[0] = new PointD2D(0, 0);
         r._isVertexSharp[0] = false;
@@ -128,8 +130,10 @@ namespace Altaxo.Drawing.D3D
     {
       get
       {
-        LineCapContour r = new LineCapContour();
-        r._vertices = new PointD2D[3];
+        var r = new LineCapContour
+        {
+          _vertices = new PointD2D[3]
+        };
         r._vertices[0] = new PointD2D(0, 1);
         r._vertices[1] = new PointD2D(1, 0);
 
@@ -147,8 +151,10 @@ namespace Altaxo.Drawing.D3D
     {
       get
       {
-        LineCapContour r = new LineCapContour();
-        r._vertices = new PointD2D[3];
+        var r = new LineCapContour
+        {
+          _vertices = new PointD2D[3]
+        };
         r._vertices[0] = new PointD2D(0, 0);
         r._vertices[1] = new PointD2D(1, 0);
         r._vertices[2] = new PointD2D(0, 1);
@@ -174,8 +180,10 @@ namespace Altaxo.Drawing.D3D
     {
       get
       {
-        LineCapContour r = new LineCapContour();
-        r._vertices = new PointD2D[3];
+        var r = new LineCapContour
+        {
+          _vertices = new PointD2D[3]
+        };
         r._vertices[0] = new PointD2D(0, 0);
         r._vertices[1] = new PointD2D(2, 0);
         r._vertices[2] = new PointD2D(0, 4);
@@ -201,8 +209,10 @@ namespace Altaxo.Drawing.D3D
     {
       get
       {
-        LineCapContour r = new LineCapContour();
-        r._vertices = new PointD2D[4];
+        var r = new LineCapContour
+        {
+          _vertices = new PointD2D[4]
+        };
         r._vertices[0] = new PointD2D(0, 0);
         r._vertices[1] = new PointD2D(1, 0);
         r._vertices[2] = new PointD2D(1, 1);

@@ -162,8 +162,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         (column, table, group) =>
         {
           _doc.DataColumn = column;
-          this._supposedParentDataTable = table;
-          this._supposedGroupNumber = group;
+          _supposedParentDataTable = table;
+          _supposedGroupNumber = group;
           InitializeDataColumnText();
         }
       );

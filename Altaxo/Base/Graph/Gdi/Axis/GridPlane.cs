@@ -62,10 +62,10 @@ namespace Altaxo.Graph.Gdi.Axis
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._planeID = from._planeID;
-      this.GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
-      this.GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
-      this.Background = from._background == null ? null : (BrushX)from._background.Clone();
+      _planeID = from._planeID;
+      GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
+      GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
+      Background = from._background == null ? null : from._background.Clone();
     }
 
     #region Serialization
@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GridPlane s = (GridPlane)obj;
+        var s = (GridPlane)obj;
 
         info.AddValue("ID", s._planeID);
         info.AddValue("Grid1", s._grid1);
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
       protected virtual GridPlane SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        CSPlaneID id = (CSPlaneID)info.GetValue("ID", null);
+        var id = (CSPlaneID)info.GetValue("ID", null);
         GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
         s.GridStyleFirst = (GridStyle)info.GetValue("Grid1", s);
         s.GridStyleSecond = (GridStyle)info.GetValue("Grid2", s);

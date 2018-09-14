@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.DashPatternManagement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing.DashPatternManagement;
 
 namespace Altaxo.Drawing.DashPatterns
 {
@@ -52,8 +52,7 @@ namespace Altaxo.Drawing.DashPatterns
       if (info.CurrentElementName == "Set")
       {
         var originalSet = (DashPatternList)info.GetValue("Set", parent);
-        DashPatternList registeredSet;
-        DashPatternListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out registeredSet);
+        DashPatternListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out var registeredSet);
         return (TItem)DashPatternListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, originalSet.Name); // Note: here we use the name of the original set, not of the registered set. Because the original name is translated during registering into the registered name
       }
       else if (info.CurrentElementName == "SetName")
@@ -71,17 +70,17 @@ namespace Altaxo.Drawing.DashPatterns
 
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode();
+      return GetType().GetHashCode();
     }
 
     public override bool Equals(object obj)
     {
-      return this.GetType() == obj?.GetType();
+      return GetType() == obj?.GetType();
     }
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     public abstract double this[int index] { get; set; }

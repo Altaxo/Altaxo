@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -64,15 +64,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
       if (_view != null)
       {
-        List<ParameterSetViewItem> list = new List<ParameterSetViewItem>();
+        var list = new List<ParameterSetViewItem>();
 
         for (int i = 0; i < _doc.Count; i++)
         {
-          ParameterSetViewItem item = new ParameterSetViewItem();
-          item.Name = _doc[i].Name;
-          item.Value = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Parameter);
-          item.Vary = _doc[i].Vary;
-          item.Variance = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Variance);
+          var item = new ParameterSetViewItem
+          {
+            Name = _doc[i].Name,
+            Value = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Parameter),
+            Vary = _doc[i].Vary,
+            Variance = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Variance)
+          };
 
           list.Add(item);
         }
@@ -87,11 +89,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
       for (int i = 0; i < _doc.Count; i++)
       {
-        double paraValue;
-        double varianceValue;
 
         // Parameter
-        if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Value, out paraValue))
+        if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Value, out var paraValue))
         {
           _doc[i].Parameter = paraValue;
         }
@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _doc[i].Vary = list[i].Vary;
 
         // Variance
-        if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Variance, out varianceValue))
+        if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Variance, out var varianceValue))
         {
           _doc[i].Variance = varianceValue;
         }

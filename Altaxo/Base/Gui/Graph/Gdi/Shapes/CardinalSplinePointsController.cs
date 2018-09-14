@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Units;
 using AUL = Altaxo.Units.Length;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -248,8 +248,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       var points = _view.CurvePoints;
 
       var dao = Current.Gui.GetNewClipboardDataObject();
-      Altaxo.Data.DoubleColumn xcol = new Altaxo.Data.DoubleColumn();
-      Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn();
+      var xcol = new Altaxo.Data.DoubleColumn();
+      var ycol = new Altaxo.Data.DoubleColumn();
       for (int i = 0; i < points.Count; i++)
       {
         xcol[i] = new DimensionfulQuantity(points[i].X, AUL.Point.Instance).AsValueIn(PositionEnvironment.Instance.DefaultUnit);
@@ -273,8 +273,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       var points = _view.CurvePoints;
 
-      Altaxo.Data.DoubleColumn xcol = new Altaxo.Data.DoubleColumn();
-      Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn();
+      var xcol = new Altaxo.Data.DoubleColumn();
+      var ycol = new Altaxo.Data.DoubleColumn();
       for (int i = 0; i < points.Count; i++)
       {
         var pt = cachedTransformation.TransformPoint(points[i]);
@@ -307,8 +307,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       var cachedTransformation = _doc.TransformationFromHereToParent(layer);
       var points = _view.CurvePoints;
 
-      Altaxo.Data.DoubleColumn xcol = new Altaxo.Data.DoubleColumn();
-      Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn();
+      var xcol = new Altaxo.Data.DoubleColumn();
+      var ycol = new Altaxo.Data.DoubleColumn();
       for (int i = 0; i < points.Count; i++)
       {
         var pt = cachedTransformation.TransformPoint(points[i]);
@@ -330,7 +330,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private static void PutXYColumnsToClipboard(Altaxo.Data.DoubleColumn xcol, Altaxo.Data.DoubleColumn ycol)
     {
-      Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+      var tb = new Altaxo.Data.DataTable();
       tb.DataColumns.Add(xcol, "XPosition", Altaxo.Data.ColumnKind.V, 0);
       tb.DataColumns.Add(ycol, "YPosition", Altaxo.Data.ColumnKind.V, 0);
 

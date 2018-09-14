@@ -45,7 +45,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ParameterSet s = (ParameterSet)obj;
+        var s = (ParameterSet)obj;
 
         info.CreateArray("Parameters", s.Count);
         for (int i = 0; i < s.Count; ++i)
@@ -81,20 +81,20 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       get
       {
-        return (ParameterSetElement)this.InnerList[i];
+        return (ParameterSetElement)InnerList[i];
       }
     }
 
     public void Add(ParameterSetElement ele)
     {
-      this.InnerList.Add(ele);
+      InnerList.Add(ele);
     }
 
     #region ICloneable Members
 
     public object Clone()
     {
-      ParameterSet result = new ParameterSet();
+      var result = new ParameterSet();
       for (int i = 0; i < Count; ++i)
         result.Add((ParameterSetElement)this[i].Clone());
 

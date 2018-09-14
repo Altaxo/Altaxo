@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
@@ -63,10 +63,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._planeID = from._planeID;
-      this.GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
-      this.GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
-      this.Background = from._background;
+      _planeID = from._planeID;
+      GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
+      GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
+      Background = from._background;
     }
 
     #region Serialization
@@ -81,7 +81,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GridPlane s = (GridPlane)obj;
+        var s = (GridPlane)obj;
 
         info.AddValue("ID", s._planeID);
         info.AddValue("Grid1", s._grid1);
@@ -91,7 +91,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
       protected virtual GridPlane SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        CSPlaneID id = (CSPlaneID)info.GetValue("ID", null);
+        var id = (CSPlaneID)info.GetValue("ID", null);
         GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
         s.GridStyleFirst = (GridStyle)info.GetValue("Grid1", s);
         s.GridStyleSecond = (GridStyle)info.GetValue("Grid2", s);

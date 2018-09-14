@@ -101,10 +101,10 @@ namespace Altaxo.AddInItems
     {
       if (codon == null)
         throw new ArgumentNullException("codon");
-      this.Parameter = parameter;
-      this.Codon = codon;
-      this.SubItems = subItems;
-      this.Conditions = conditions;
+      Parameter = parameter;
+      Codon = codon;
+      SubItems = subItems;
+      Conditions = conditions;
     }
   }
 }

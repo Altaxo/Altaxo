@@ -89,7 +89,7 @@ namespace Altaxo.Graph
 
     public IEnumerator<KeyValuePair<string, ImageProxy>> GetEnumerator()
     {
-      List<KeyValuePair<string, ImageProxy>> dict = new List<KeyValuePair<string, ImageProxy>>();
+      var dict = new List<KeyValuePair<string, ImageProxy>>();
       foreach (ImageProxy p in _texturesByHash.Values)
         dict.Add(new KeyValuePair<string, ImageProxy>(p.Name, p));
       dict.Sort(new KVComparer());

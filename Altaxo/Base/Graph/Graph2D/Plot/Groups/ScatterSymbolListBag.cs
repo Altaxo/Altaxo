@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Styles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Styles;
 
 namespace Altaxo.Graph.Graph2D.Plot.Groups
 {

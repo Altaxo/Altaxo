@@ -33,11 +33,11 @@ namespace Altaxo.Main.Services
       if (writer == null)
         throw new ArgumentNullException("writer");
       this.writer = writer;
-      this.IsFatalEnabled = true;
-      this.IsErrorEnabled = true;
-      this.IsWarnEnabled = true;
-      this.IsInfoEnabled = true;
-      this.IsDebugEnabled = true;
+      IsFatalEnabled = true;
+      IsErrorEnabled = true;
+      IsWarnEnabled = true;
+      IsInfoEnabled = true;
+      IsDebugEnabled = true;
     }
 
     private void Write(object message, Exception exception)

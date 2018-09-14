@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph;
-using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Drawing.D3D;
+using Altaxo.Graph;
+using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Main;
 
 namespace Altaxo.Drawing.DashPatternManagement
 {
@@ -66,14 +66,12 @@ namespace Altaxo.Drawing.DashPatternManagement
           )
 
     {
-      DashPatternListBag userStyleLists;
-      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedDashPatternLists, out userStyleLists);
+      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedDashPatternLists, out var userStyleLists);
       if (null != userStyleLists)
       {
-        DashPatternList dummy;
         foreach (var list in userStyleLists.StyleLists)
         {
-          InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
+          InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out var dummy, false);
         }
       }
 
@@ -86,27 +84,27 @@ namespace Altaxo.Drawing.DashPatternManagement
     /// <value>
     /// The buildin default solid dash pattern belonging to the BuildinDefault list.
     /// </value>
-    public IDashPattern BuiltinDefaultSolid { get { return this.BuiltinDefault[0]; } }
+    public IDashPattern BuiltinDefaultSolid { get { return BuiltinDefault[0]; } }
 
     /// <summary>
     /// Gets the built-in default dash pattern belonging to the BuildinDefault list.
     /// </summary>
-    public IDashPattern BuiltinDefaultDash { get { return this.BuiltinDefault[1]; } }
+    public IDashPattern BuiltinDefaultDash { get { return BuiltinDefault[1]; } }
 
     /// <summary>
     /// Gets the built-in default dot dash pattern belonging to the BuildinDefault list.
     /// </summary>
-    public IDashPattern BuiltinDefaultDot { get { return this.BuiltinDefault[2]; } }
+    public IDashPattern BuiltinDefaultDot { get { return BuiltinDefault[2]; } }
 
     /// <summary>
     /// Gets the built-in default dash-dot pattern belonging to the BuildinDefault list.
     /// </summary>
-    public IDashPattern BuiltinDefaultDashDot { get { return this.BuiltinDefault[3]; } }
+    public IDashPattern BuiltinDefaultDashDot { get { return BuiltinDefault[3]; } }
 
     /// <summary>
     /// Gets the built-in default dash-dot-dot pattern belonging to the BuildinDefault list.
     /// </summary>
-    public IDashPattern BuiltinDefaultDashDotDot { get { return this.BuiltinDefault[4]; } }
+    public IDashPattern BuiltinDefaultDashDotDot { get { return BuiltinDefault[4]; } }
 
     public static DashPatternListManager Instance
     {

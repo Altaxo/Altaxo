@@ -82,17 +82,17 @@ namespace Altaxo.Data
     /// <param name="args">The other change state to be added.</param>
     public void Accumulate(DataColumnCollectionChangedEventArgs args)
     {
-      if (args._minColChanged < this._minColChanged)
-        this._minColChanged = args._minColChanged;
+      if (args._minColChanged < _minColChanged)
+        _minColChanged = args._minColChanged;
 
-      if (args._maxColChanged > this._maxColChanged)
-        this._maxColChanged = args._maxColChanged;
+      if (args._maxColChanged > _maxColChanged)
+        _maxColChanged = args._maxColChanged;
 
-      if (args._minRowChanged < this._minRowChanged)
-        this._minRowChanged = args._minRowChanged;
+      if (args._minRowChanged < _minRowChanged)
+        _minRowChanged = args._minRowChanged;
 
-      if (args.MaxRowChanged > this._maxRowChanged)
-        this._maxRowChanged = args._maxRowChanged;
+      if (args.MaxRowChanged > _maxRowChanged)
+        _maxRowChanged = args._maxRowChanged;
 
       _hasRowCountDecreased |= args._hasRowCountDecreased;
     }
@@ -106,7 +106,7 @@ namespace Altaxo.Data
     /// <returns>The change state that reflects the removal.</returns>
     public static DataColumnCollectionChangedEventArgs CreateColumnRemoveArgs(int firstColumnNumber, int originalNumberOfColumns, int maxRowCountOfRemovedColumns)
     {
-      DataColumnCollectionChangedEventArgs args = new DataColumnCollectionChangedEventArgs(firstColumnNumber, 0, maxRowCountOfRemovedColumns, true);
+      var args = new DataColumnCollectionChangedEventArgs(firstColumnNumber, 0, maxRowCountOfRemovedColumns, true);
       if (originalNumberOfColumns > args._maxColChanged)
         args._maxColChanged = originalNumberOfColumns;
       return args;
@@ -120,8 +120,10 @@ namespace Altaxo.Data
     /// <returns>The change state that reflects the move.</returns>
     public static DataColumnCollectionChangedEventArgs CreateColumnMoveArgs(int firstColumnNumber, int maxColumnNumber)
     {
-      DataColumnCollectionChangedEventArgs args = new DataColumnCollectionChangedEventArgs(firstColumnNumber, 0, 0, false);
-      args._maxColChanged = maxColumnNumber;
+      var args = new DataColumnCollectionChangedEventArgs(firstColumnNumber, 0, 0, false)
+      {
+        _maxColChanged = maxColumnNumber
+      };
       return args;
     }
 
@@ -134,8 +136,10 @@ namespace Altaxo.Data
     /// <returns>The change state that reflects the move.</returns>
     public static DataColumnCollectionChangedEventArgs CreateRowMoveArgs(int numberOfColumns, int firstRowNumber, int maxRowNumber)
     {
-      DataColumnCollectionChangedEventArgs args = new DataColumnCollectionChangedEventArgs(0, firstRowNumber, maxRowNumber, false);
-      args._maxColChanged = numberOfColumns;
+      var args = new DataColumnCollectionChangedEventArgs(0, firstRowNumber, maxRowNumber, false)
+      {
+        _maxColChanged = numberOfColumns
+      };
       return args;
     }
 
@@ -147,7 +151,7 @@ namespace Altaxo.Data
     /// <returns>The newly created ChangeEventArgs for this case.</returns>
     public static DataColumnCollectionChangedEventArgs CreateColumnAddArgs(int columnIndex, int rowCountOfAddedColumn)
     {
-      DataColumnCollectionChangedEventArgs args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, rowCountOfAddedColumn, false);
+      var args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, rowCountOfAddedColumn, false);
       return args;
     }
 
@@ -158,7 +162,7 @@ namespace Altaxo.Data
     /// <returns>The newly created ChangeEventArgs for this case.</returns>
     public static DataColumnCollectionChangedEventArgs CreateColumnRenameArgs(int columnIndex)
     {
-      DataColumnCollectionChangedEventArgs args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, 0, false);
+      var args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, 0, false);
       return args;
     }
 
@@ -171,7 +175,7 @@ namespace Altaxo.Data
     /// <returns>The newly created ChangeEventArgs for this case.</returns>
     public static DataColumnCollectionChangedEventArgs CreateColumnCopyOrReplaceArgs(int columnIndex, int oldRowCount, int newRowCount)
     {
-      DataColumnCollectionChangedEventArgs args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, Math.Max(oldRowCount, newRowCount), newRowCount < oldRowCount);
+      var args = new DataColumnCollectionChangedEventArgs(columnIndex, 0, Math.Max(oldRowCount, newRowCount), newRowCount < oldRowCount);
       return args;
     }
 

@@ -34,14 +34,14 @@ namespace Altaxo.Gui.Common
 
     public ViewDescriptionElement(ViewDescriptionElement from)
     {
-      this.Title = from.Title;
-      this.View = from.View;
+      Title = from.Title;
+      View = from.View;
     }
 
     public ViewDescriptionElement(string title, object view)
     {
-      this.Title = title;
-      this.View = view;
+      Title = title;
+      View = view;
     }
 
     public ViewDescriptionElement Clone()

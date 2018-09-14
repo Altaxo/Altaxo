@@ -133,7 +133,7 @@ namespace Altaxo.Drawing.D3D.Material
       {
         VerifySmoothness(smothness, nameof(smothness));
 
-        var result = (MaterialBase)this.MemberwiseClone();
+        var result = (MaterialBase)MemberwiseClone();
         result._smoothness = smothness;
         return result;
       }
@@ -185,7 +185,7 @@ namespace Altaxo.Drawing.D3D.Material
       {
         VerifyMetalness(metalness, nameof(metalness));
 
-        var result = (MaterialBase)this.MemberwiseClone();
+        var result = (MaterialBase)MemberwiseClone();
         result._metalness = metalness;
         return result;
       }
@@ -233,7 +233,7 @@ namespace Altaxo.Drawing.D3D.Material
       {
         VerifyIndexOfRefraction(indexOfRefraction, nameof(indexOfRefraction));
 
-        var result = (MaterialBase)this.MemberwiseClone();
+        var result = (MaterialBase)MemberwiseClone();
         result._indexOfRefraction = indexOfRefraction;
         return result;
       }
@@ -279,7 +279,7 @@ namespace Altaxo.Drawing.D3D.Material
         VerifyMetalness(metalness, nameof(metalness));
         VerifyIndexOfRefraction(indexOfRefraction, nameof(indexOfRefraction));
 
-        var result = (MaterialBase)this.MemberwiseClone();
+        var result = (MaterialBase)MemberwiseClone();
         result._indexOfRefraction = indexOfRefraction;
         result._smoothness = smoothness;
         result._metalness = metalness;
@@ -307,9 +307,9 @@ namespace Altaxo.Drawing.D3D.Material
     public bool HasSameSpecularPropertiesAs(IMaterial anotherMaterial)
     {
       return
-        this._indexOfRefraction == anotherMaterial.IndexOfRefraction &&
-        this._smoothness == anotherMaterial.Smoothness &&
-        this._metalness == anotherMaterial.Metalness;
+        _indexOfRefraction == anotherMaterial.IndexOfRefraction &&
+        _smoothness == anotherMaterial.Smoothness &&
+        _metalness == anotherMaterial.Metalness;
     }
 
     #endregion Specular Properties

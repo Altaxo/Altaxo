@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -140,17 +140,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._connectionStyle = from._connectionStyle;
-        this._connectCircular = from._connectCircular;
-        this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-        this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+        _connectionStyle = from._connectionStyle;
+        _connectCircular = from._connectCircular;
+        _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
-        this._fillDirection = from._fillDirection;
-        this._fillRule = from._fillRule;
+        _fillDirection = from._fillDirection;
+        _fillRule = from._fillRule;
         ChildCopyToMember(ref _fillBrush, from._fillBrush);
-        this._fillColorLinkage = from._fillColorLinkage;
+        _fillColorLinkage = from._fillColorLinkage;
         ChildCopyToMember(ref _framePen, from._framePen);
-        this._frameColorLinkage = from._frameColorLinkage;
+        _frameColorLinkage = from._frameColorLinkage;
 
         EhSelfChanged();
 
@@ -310,7 +310,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public CSPlaneID FillDirection
     {
-      get { return this._fillDirection; }
+      get { return _fillDirection; }
       set
       {
         CSPlaneID oldvalue = _fillDirection;
@@ -324,7 +324,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public FillAreaRule FillRule
     {
-      get { return this._fillRule; }
+      get { return _fillRule; }
       set
       {
         if (!(_fillRule == value))
@@ -337,7 +337,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public BrushX FillBrush
     {
-      get { return this._fillBrush; }
+      get { return _fillBrush; }
       set
       {
         // copy the brush only if not null
@@ -414,7 +414,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
     {
-      if (this._connectionStyle is LineConnectionStyles.NoConnection)
+      if (_connectionStyle is LineConnectionStyles.NoConnection)
         return;
 
       PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -441,7 +441,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var gp = new GraphicsPath();
 
       PlotRangeList rangeList = pdata.RangeList;
-      if (this._ignoreMissingDataPoints)
+      if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
         // as one range, i.e. continuously
@@ -488,12 +488,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
-      if (this._fillColorLinkage == ColorLinkage.Dependent && this._fillBrush != null)
+      if (_fillColorLinkage == ColorLinkage.Dependent && _fillBrush != null)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._fillBrush.Color; });
-      else if (this._frameColorLinkage == ColorLinkage.Dependent && this._framePen != null)
+        { return _fillBrush.Color; });
+      else if (_frameColorLinkage == ColorLinkage.Dependent && _framePen != null)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._framePen.Color; });
+        { return _framePen.Color; });
 
       IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
       LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => new Tuple<ILineConnectionStyle, bool>(_connectionStyle, _connectCircular));
@@ -502,10 +502,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
-      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => _ignoreMissingDataPoints = ignoreMissingDataPoints);
 
       // LineConnectionStyle is the same for all sub plot styles
-      LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection, connectCircular) => { this._connectionStyle = lineConnection; this._connectCircular = connectCircular; });
+      LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection, connectCircular) => { _connectionStyle = lineConnection; _connectCircular = connectCircular; });
 
       if (ColorLinkage.Independent != _fillColorLinkage)
       {

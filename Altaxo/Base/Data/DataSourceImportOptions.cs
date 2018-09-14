@@ -228,7 +228,7 @@ namespace Altaxo.Data
     /// <returns>A clone of this instance.</returns>
     public object Clone()
     {
-      var result = this.MemberwiseClone();
+      var result = MemberwiseClone();
       return result;
     }
 

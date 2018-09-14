@@ -45,7 +45,7 @@ namespace Altaxo.Geometry
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RectangleD3D s = (RectangleD3D)obj;
+        var s = (RectangleD3D)obj;
         info.AddValue("X", s._x);
         info.AddValue("Y", s._y);
         info.AddValue("Z", s._z);

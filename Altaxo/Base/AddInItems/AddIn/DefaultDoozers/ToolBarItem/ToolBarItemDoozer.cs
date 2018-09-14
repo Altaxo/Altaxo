@@ -88,10 +88,10 @@ namespace Altaxo.AddInItems
 
     public ToolbarItemDescriptor(object parameter, Codon codon, IList subItems, IReadOnlyCollection<ICondition> conditions)
     {
-      this.Parameter = parameter;
-      this.Codon = codon;
-      this.SubItems = subItems;
-      this.Conditions = conditions;
+      Parameter = parameter;
+      Codon = codon;
+      SubItems = subItems;
+      Conditions = conditions;
     }
   }
 }

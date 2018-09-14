@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
 {
@@ -95,19 +95,19 @@ namespace Altaxo.Drawing.D3D
     VectorD3D northVector,
     LineD3D line)
     {
-      this._crossSection = crossSection;
-      this._crossSectionVertexCount = crossSection.NumberOfVertices;
-      this._crossSectionNormalCount = crossSection.NumberOfNormals;
-      this._dashStartCap = startCap;
-      this._dashStartCapBaseInsetAbsolute = null == _dashStartCap ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
-      this._dashEndCap = endCap;
-      this._dashEndCapBaseInsetAbsolute = null == _dashEndCap ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
-      this._westVector = westVector;
-      this._northVector = northVector;
-      this._forwardVector = line.LineVectorNormalized;
-      this._lastNormalsTransformed = new VectorD3D[_crossSectionNormalCount];
-      this._lastPositionsTransformedStart = new PointD3D[_crossSectionVertexCount];
-      this._lastPositionsTransformedEnd = new PointD3D[_crossSectionVertexCount];
+      _crossSection = crossSection;
+      _crossSectionVertexCount = crossSection.NumberOfVertices;
+      _crossSectionNormalCount = crossSection.NumberOfNormals;
+      _dashStartCap = startCap;
+      _dashStartCapBaseInsetAbsolute = null == _dashStartCap ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _dashEndCap = endCap;
+      _dashEndCapBaseInsetAbsolute = null == _dashEndCap ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _westVector = westVector;
+      _northVector = northVector;
+      _forwardVector = line.LineVectorNormalized;
+      _lastNormalsTransformed = new VectorD3D[_crossSectionNormalCount];
+      _lastPositionsTransformedStart = new PointD3D[_crossSectionVertexCount];
+      _lastPositionsTransformedEnd = new PointD3D[_crossSectionVertexCount];
 
       // Get the matrix for the start plane
       var matrix = Math3D.Get2DProjectionToPlane(westVector, northVector, PointD3D.Empty);

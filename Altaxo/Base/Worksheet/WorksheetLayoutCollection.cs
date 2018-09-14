@@ -45,7 +45,7 @@ namespace Altaxo.Worksheet
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        WorksheetLayoutCollection s = (WorksheetLayoutCollection)obj;
+        var s = (WorksheetLayoutCollection)obj;
 
         info.CreateArray("TableLayoutArray", s._items.Count);
         foreach (object style in s._items.Values)
@@ -62,7 +62,7 @@ namespace Altaxo.Worksheet
 
         for (int i = 0; i < count; i++)
         {
-          WorksheetLayout style = (WorksheetLayout)info.GetValue("WorksheetLayout", s);
+          var style = (WorksheetLayout)info.GetValue("WorksheetLayout", s);
           s._items.Add(style.Guid.ToString(), style);
         }
         info.CloseArray(count);
@@ -131,7 +131,7 @@ namespace Altaxo.Worksheet
 
     public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
-      WorksheetLayout layout = o as WorksheetLayout;
+      var layout = o as WorksheetLayout;
       if (layout == null)
         return null;
       if (null == this[layout.Guid])
@@ -176,8 +176,7 @@ namespace Altaxo.Worksheet
         throw new ArgumentNullException("layout");
 
       // Test if this Guid is already present
-      WorksheetLayout o = null;
-      _items.TryGetValue(layout.Guid.ToString(), out o);
+      _items.TryGetValue(layout.Guid.ToString(), out var o);
       if (o != null)
       {
         if (object.ReferenceEquals(o, layout))
@@ -212,7 +211,7 @@ namespace Altaxo.Worksheet
       var items = _items;
       _items = new Dictionary<string, WorksheetLayout>();
 
-      using (var suspendToken = this.SuspendGetToken())
+      using (var suspendToken = SuspendGetToken())
       {
         foreach (var item in items.Values)
         {

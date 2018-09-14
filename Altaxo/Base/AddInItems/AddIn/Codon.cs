@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -112,8 +112,7 @@ namespace Altaxo.AddInItems
 
     internal object BuildItem(BuildItemArgs args)
     {
-      IDoozer doozer;
-      if (!addIn.AddInTree.Doozers.TryGetValue(Name, out doozer))
+      if (!addIn.AddInTree.Doozers.TryGetValue(Name, out var doozer))
         throw new BaseException("Doozer " + Name + " not found! " + ToString());
 
       if (!doozer.HandleConditions)
@@ -129,7 +128,7 @@ namespace Altaxo.AddInItems
 
     public override string ToString()
     {
-      return String.Format("[Codon: name = {0}, id = {1}, addIn={2}]",
+      return string.Format("[Codon: name = {0}, id = {1}, addIn={2}]",
                            name,
                            Id,
                            addIn.FileName);

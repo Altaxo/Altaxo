@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Scales.Rescaling;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Graph.Scales.Rescaling;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
@@ -80,12 +80,14 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private void BuildOriginList()
     {
-      _originList = new SelectableListNodeList();
-      _originList.Add(new SelectableListNode("-90°", -1, -1 == _doc.ScaleOrigin));
-      _originList.Add(new SelectableListNode("0°", 0, 0 == _doc.ScaleOrigin));
-      _originList.Add(new SelectableListNode("90°", 1, 1 == _doc.ScaleOrigin));
-      _originList.Add(new SelectableListNode("180°", 2, 2 == _doc.ScaleOrigin));
-      _originList.Add(new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin));
+      _originList = new SelectableListNodeList
+      {
+        new SelectableListNode("-90°", -1, -1 == _doc.ScaleOrigin),
+        new SelectableListNode("0°", 0, 0 == _doc.ScaleOrigin),
+        new SelectableListNode("90°", 1, 1 == _doc.ScaleOrigin),
+        new SelectableListNode("180°", 2, 2 == _doc.ScaleOrigin),
+        new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin)
+      };
     }
   }
 }

@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Scales
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, typeof(AngularScale));
-        AngularDegreeScale s = (AngularDegreeScale)obj;
+        var s = (AngularDegreeScale)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

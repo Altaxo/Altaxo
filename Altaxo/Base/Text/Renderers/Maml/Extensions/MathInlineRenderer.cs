@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
+using System.Collections.Generic;
+using System.IO;
 using Altaxo;
 using Altaxo.Graph;
 using Altaxo.Main.Services;
 using Altaxo.Text.Renderers;
 using Altaxo.Text.Renderers.Maml;
 using Markdig.Extensions.Mathematics;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Altaxo.Text.Renderers.Maml.Extensions
 {
@@ -67,12 +67,14 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
 
       string localUrl = "../media/" + streamHash + ".png";
 
-      var attributes = new Dictionary<string, string>();
-      attributes.Add("src", localUrl);
-      attributes.Add("align", placement);
+      var attributes = new Dictionary<string, string>
+      {
+        { "src", localUrl },
+        { "align", placement },
 
-      attributes.Add("width", System.Xml.XmlConvert.ToString(width));
-      attributes.Add("height", System.Xml.XmlConvert.ToString(height));
+        { "width", System.Xml.XmlConvert.ToString(width) },
+        { "height", System.Xml.XmlConvert.ToString(height) }
+      };
 
       renderer.Push(MamlElements.markup);
 

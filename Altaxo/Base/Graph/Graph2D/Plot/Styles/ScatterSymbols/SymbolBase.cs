@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Groups;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -71,8 +71,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       if (info.CurrentElementName == "Set")
       {
         var originalSet = (ScatterSymbolList)info.GetValue("Set", parent);
-        ScatterSymbolList registeredSet;
-        ScatterSymbolListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out registeredSet);
+        ScatterSymbolListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out var registeredSet);
         return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, originalSet.Name); // Note: here we use the name of the original set, not of the registered set. Because the original name is translated during registering into the registered name
       }
       else if (info.CurrentElementName == "SetName")

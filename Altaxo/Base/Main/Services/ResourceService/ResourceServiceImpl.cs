@@ -73,7 +73,7 @@ namespace Altaxo.Main.Services
       _resourceDirectory = resourceDirectory ?? throw new ArgumentNullException(nameof(resourceDirectory));
       _propertyService = propertyService ?? throw new ArgumentNullException(nameof(propertyService));
       _propertyService.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChange);
-      LoadLanguageResources(this.Language);
+      LoadLanguageResources(Language);
     }
 
     public string Language
@@ -100,7 +100,7 @@ namespace Altaxo.Main.Services
     public void RegisterStrings(string baseResourceName, Assembly assembly)
     {
       RegisterNeutralStrings(new ResourceManager(baseResourceName, assembly));
-      ResourceAssembly ra = new ResourceAssembly(this, assembly, baseResourceName, false);
+      var ra = new ResourceAssembly(this, assembly, baseResourceName, false);
       _resourceAssemblies.Add(ra);
       ra.Load();
     }
@@ -119,7 +119,7 @@ namespace Altaxo.Main.Services
     public void RegisterImages(string baseResourceName, Assembly assembly)
     {
       RegisterNeutralImages(new ResourceManager(baseResourceName, assembly));
-      ResourceAssembly ra = new ResourceAssembly(this, assembly, baseResourceName, true);
+      var ra = new ResourceAssembly(this, assembly, baseResourceName, true);
       _resourceAssemblies.Add(ra);
       ra.Load();
     }
@@ -183,8 +183,8 @@ namespace Altaxo.Main.Services
     {
       if (File.Exists(fileName))
       {
-        Hashtable resources = new Hashtable();
-        ResourceReader rr = new ResourceReader(fileName);
+        var resources = new Hashtable();
+        var rr = new ResourceReader(fileName);
         foreach (DictionaryEntry entry in rr)
         {
           resources.Add(entry.Key, entry.Value);
@@ -359,10 +359,10 @@ namespace Altaxo.Main.Services
 
       public ResourceAssembly(ResourceServiceImpl service, Assembly assembly, string baseResourceName, bool isIcons)
       {
-        this._service = service;
-        this._assembly = assembly;
-        this._baseResourceName = baseResourceName;
-        this._isIcons = isIcons;
+        _service = service;
+        _assembly = assembly;
+        _baseResourceName = baseResourceName;
+        _isIcons = isIcons;
       }
 
       private ResourceManager TrySatellite(string language)

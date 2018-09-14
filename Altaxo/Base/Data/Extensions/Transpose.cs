@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -119,7 +119,7 @@ namespace Altaxo.Data
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
   }
 
@@ -202,9 +202,9 @@ namespace Altaxo.Data
 
       using (var token = SuspendGetToken())
       {
-        this.TransposeOptions = dataSourceOptions;
-        this.ImportOptions = importOptions;
-        this.InputData = inputData;
+        TransposeOptions = dataSourceOptions;
+        ImportOptions = importOptions;
+        InputData = inputData;
       }
     }
 
@@ -240,9 +240,9 @@ namespace Altaxo.Data
           CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
           CopyHelper.Copy(ref inputData, from._processData);
 
-          this.TransposeOptions = dataSourceOptions;
-          this.ImportOptions = importOptions;
-          this.InputData = inputData;
+          TransposeOptions = dataSourceOptions;
+          ImportOptions = importOptions;
+          InputData = inputData;
 
           return true;
         }
@@ -279,7 +279,7 @@ namespace Altaxo.Data
       }
       catch (Exception ex)
       {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", this.GetType().Name, ex.Message);
+        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
       }
     }
 
@@ -522,8 +522,7 @@ namespace Altaxo.Data
 
       var dataColumnsToTransposeIndices = ContiguousIntegerRange.FromStartAndEndExclusive(numberOfDataColumnsChangeToPropertyColumns, srcTable.DataColumnCount);
 
-      int firstDifferentColumnIndex;
-      if (!AreAllColumnsOfTheSameType(srcTable.DataColumns, dataColumnsToTransposeIndices, out firstDifferentColumnIndex))
+      if (!AreAllColumnsOfTheSameType(srcTable.DataColumns, dataColumnsToTransposeIndices, out var firstDifferentColumnIndex))
       {
         throw new InvalidOperationException("The data columns to transpose are not of the same type. The first column that has a deviating type is column number " + firstDifferentColumnIndex.ToString());
       }

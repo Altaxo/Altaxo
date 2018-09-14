@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
-using Altaxo.Main;
-using Altaxo.Serialization.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph;
+using Altaxo.Main;
+using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Drawing.ColorManagement
 {
@@ -81,14 +81,12 @@ namespace Altaxo.Drawing.ColorManagement
       _builtinDarkPlotColors = new ColorSet("PlotColorsDark", GetPlotColorsDark_Version0());
       _allLists.Add(_builtinDarkPlotColors.Name, new ColorSetManagerEntryValue(_builtinDarkPlotColors, Main.ItemDefinitionLevel.Builtin, true));
 
-      ColorSetBag userColorSets;
-      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedColorSets, out userColorSets);
+      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedColorSets, out var userColorSets);
       if (null != userColorSets)
       {
-        IColorSet dummy;
         foreach (var userColorSet in userColorSets.ColorSets)
         {
-          InternalTryRegisterList(userColorSet.Item1, ItemDefinitionLevel.UserDefined, out dummy, false);
+          InternalTryRegisterList(userColorSet.Item1, ItemDefinitionLevel.UserDefined, out var dummy, false);
           if (userColorSet.Item2) // .IsPlotColorSet
             _allLists[dummy.Name] = new ColorSetManagerEntryValue(dummy, _allLists[dummy.Name].Level, true);
         }
@@ -177,8 +175,7 @@ namespace Altaxo.Drawing.ColorManagement
       if (null == colorSet)
         return false;
 
-      ColorSetManagerEntryValue value;
-      if (_allLists.TryGetValue(colorSet.Name, out value))
+      if (_allLists.TryGetValue(colorSet.Name, out var value))
         return value.IsPlotColorSet;
 
       return false;
@@ -203,7 +200,6 @@ namespace Altaxo.Drawing.ColorManagement
 
     public bool TryFindColorSetContaining(AxoColor color, out IColorSet value)
     {
-      NamedColor namedColor;
 
       foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
       {
@@ -212,7 +208,7 @@ namespace Altaxo.Drawing.ColorManagement
           if (entry.Value.Level != level)
             continue;
 
-          if (entry.Value.List.TryGetValue(color, out namedColor))
+          if (entry.Value.List.TryGetValue(color, out var namedColor))
           {
             value = entry.Value.List;
             return true;
@@ -226,7 +222,6 @@ namespace Altaxo.Drawing.ColorManagement
 
     public bool TryFindColorSetContaining(AxoColor colorValue, string colorName, out IColorSet value)
     {
-      NamedColor namedColor;
 
       foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
       {
@@ -235,7 +230,7 @@ namespace Altaxo.Drawing.ColorManagement
           if (entry.Value.Level != level)
             continue;
 
-          if (entry.Value.List.TryGetValue(colorValue, colorName, out namedColor))
+          if (entry.Value.List.TryGetValue(colorValue, colorName, out var namedColor))
           {
             value = entry.Value.List;
             return true;
@@ -250,8 +245,7 @@ namespace Altaxo.Drawing.ColorManagement
     public NamedColor GetDeserializedColorWithNoSet(AxoColor color, string name)
     {
       // test if it is a standard color
-      NamedColor foundColor;
-      if (_builtinKnownColors.TryGetValue(name, out foundColor) && color.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
+      if (_builtinKnownColors.TryGetValue(name, out var foundColor) && color.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
         return foundColor; // then return this found color
 
       if (_builtinKnownColors.TryGetValue(color, out foundColor)) // if only the color value matches, then return the found color, even if it has another name than the deserialized color
@@ -268,31 +262,27 @@ namespace Altaxo.Drawing.ColorManagement
 
     public NamedColor GetDeserializedColorFromLevelAndSetName(Altaxo.Serialization.Xml.IXmlDeserializationInfo deserializationInfo, AxoColor colorValue, string colorName, string colorSetName)
     {
-      ColorSetManagerEntryValue foundSet;
-      NamedColor foundColor;
 
       // first have a look in the rename dictionary - maybe our color set has been renamed during deserialization
       var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
       if (null != renameDictionary && renameDictionary.ContainsKey(colorSetName))
         colorSetName = renameDictionary[colorSetName];
 
-      if (_allLists.TryGetValue(colorSetName, out foundSet)) // if a set with the give name and level was found
+      if (_allLists.TryGetValue(colorSetName, out var foundSet)) // if a set with the give name and level was found
       {
-        if (foundSet.List.TryGetValue(colorName, out foundColor) && colorValue.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
+        if (foundSet.List.TryGetValue(colorName, out var foundColor) && colorValue.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
           return foundColor;                                                                  // then return this found color
         if (foundSet.List.TryGetValue(colorValue, out foundColor)) // if only the color value matches,
           return foundColor;                            // then return the found color, even if it has another name than the deserialized color
 
         // set was found, but color is not therein -> return a color without set (or use the first set where the color could be found
-        IColorSet cset;
-        TryFindColorSetContaining(colorValue, colorName, out cset);
+        TryFindColorSetContaining(colorValue, colorName, out var cset);
         var result = new NamedColor(colorValue, colorName, cset);
         return result;
       }
       else // the color set with the given name was not found by name
       {
-        IColorSet cset;
-        TryFindColorSetContaining(colorValue, colorName, out cset);
+        TryFindColorSetContaining(colorValue, colorName, out var cset);
         var result = new NamedColor(colorValue, colorName, cset);
         return result;
       }

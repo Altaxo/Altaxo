@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
+using Altaxo.Data;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -71,8 +71,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         int independentVariable = info.GetInt32("IndependentVariable");
         int dependentVariable = info.GetInt32("DependentVariable");
-        double[] parameter;
-        info.GetArray("ParameterValues", out parameter);
+        info.GetArray("ParameterValues", out double[] parameter);
 
         object fo = info.GetValue("FitFunction", null);
 
@@ -109,7 +108,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        FitFunctionToScalarFunctionDDWrapper s = (FitFunctionToScalarFunctionDDWrapper)obj;
+        var s = (FitFunctionToScalarFunctionDDWrapper)obj;
 
         info.AddValue("IndependentVariable", s._independentVariable);
         info.AddValue("IndependentVariableTransformation", s._independentVariableTransformation);
@@ -130,8 +129,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         int dependentVariable = info.GetInt32("DependentVariable");
         var dependentVariableTransformation = (IVariantToVariantTransformation)info.GetValue("DependentVariableTransformation", null);
 
-        double[] parameter;
-        info.GetArray("ParameterValues", out parameter);
+        info.GetArray("ParameterValues", out double[] parameter);
 
         object fo = info.GetValue("FitFunction", null);
 

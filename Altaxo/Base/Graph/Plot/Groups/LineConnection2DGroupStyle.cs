@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot.Styles;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Gdi.Plot.Styles;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LineConnection2DGroupStyle s = (LineConnection2DGroupStyle)obj;
+        var s = (LineConnection2DGroupStyle)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -77,8 +77,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public LineConnection2DGroupStyle(LineConnection2DGroupStyle from)
     {
-      this._isInitialized = from._isInitialized;
-      this._lineConnectionStyle = from._lineConnectionStyle;
+      _isInitialized = from._isInitialized;
+      _lineConnectionStyle = from._lineConnectionStyle;
     }
 
     #endregion Constructors
@@ -101,8 +101,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public void TransferFrom(IPlotGroupStyle fromb)
     {
-      LineConnection2DGroupStyle from = (LineConnection2DGroupStyle)fromb;
-      this._isInitialized = from._isInitialized;
+      var from = (LineConnection2DGroupStyle)fromb;
+      _isInitialized = from._isInitialized;
       _lineConnectionStyle = from._lineConnectionStyle;
     }
 

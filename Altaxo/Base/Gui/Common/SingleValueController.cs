@@ -99,14 +99,14 @@ namespace Altaxo.Gui.Common
       set
       {
         if (_view != null)
-          _view.ValueText_Validating -= this.EhView_ValidatingValue1;
+          _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value as ISingleValueView;
 
         if (_view != null)
         {
           Initialize();
-          _view.ValueText_Validating += this.EhView_ValidatingValue1;
+          _view.ValueText_Validating += EhView_ValidatingValue1;
         }
       }
     }
@@ -129,7 +129,7 @@ namespace Altaxo.Gui.Common
 
     public virtual bool Apply(bool disposeController)
     {
-      this._value1String = this._value1StringTemporary;
+      _value1String = _value1StringTemporary;
       return true;
     }
 

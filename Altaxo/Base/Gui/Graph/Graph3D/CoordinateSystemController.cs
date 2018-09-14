@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Gui.Common;
 using Altaxo.Main.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
         // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
         _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
-        if (_instanceController != null && (_instanceController.GetType() != this.GetType()))
+        if (_instanceController != null && (_instanceController.GetType() != GetType()))
         {
           Current.Gui.FindAndAttachControlTo(_instanceController);
           if (_instanceController.ViewObject != null)
@@ -124,7 +124,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       if (sel != null)
       {
-        System.Type t = (System.Type)sel.Tag;
+        var t = (System.Type)sel.Tag;
         if (_doc.GetType() != t)
         {
           _doc = (G3DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Tag);

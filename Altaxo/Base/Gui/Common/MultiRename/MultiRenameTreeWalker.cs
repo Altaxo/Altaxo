@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main.PegParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main.PegParser;
 
 namespace Altaxo.Gui.Common.MultiRename
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
     public IMultiRenameElement VisitTree()
     {
-      MultiRenameElementCollection result = new MultiRenameElementCollection();
+      var result = new MultiRenameElementCollection();
 
       var child = _tree.child_;
       int startLiteral = 0;
@@ -236,9 +236,8 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private string TransformToLiteral(string escString)
     {
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
 
-      int charValue;
 
       for (int i = 0; i < escString.Length; ++i)
       {
@@ -249,7 +248,7 @@ namespace Altaxo.Gui.Common.MultiRename
         }
         else if ((i + 5) < escString.Length &&
                   'u' == char.ToLower(escString[i + 1]) &&
-                   int.TryParse(escString.Substring(i + 2, 4), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out charValue)
+                   int.TryParse(escString.Substring(i + 2, 4), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out var charValue)
                 )
         {
           stb.Append((char)charValue);

@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        OpenPathShapeBase s = (OpenPathShapeBase)obj;
+        var s = (OpenPathShapeBase)obj;
         info.AddBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType);
 
         info.AddValue("LinePen", s._linePen);
@@ -56,7 +56,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        OpenPathShapeBase s = (OpenPathShapeBase)o;
+        var s = (OpenPathShapeBase)o;
         info.GetBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType, parent);
 
         s.Pen = (PenX)info.GetValue("LinePen", s);

@@ -68,8 +68,10 @@ namespace Altaxo.Gui.Worksheet
 
     private string[] GetAvailableDestinationTables()
     {
-      System.Collections.ArrayList result = new System.Collections.ArrayList();
-      result.Add("New table");
+      var result = new System.Collections.ArrayList
+      {
+        "New table"
+      };
       foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
         result.Add(table.Name);
 
@@ -97,15 +99,15 @@ namespace Altaxo.Gui.Worksheet
       int sel;
       sel = _view.GetCalibrationTableChoice();
       if (sel < 0)
-        this.SelectedCalibrationTableName = null;
+        SelectedCalibrationTableName = null;
       else
-        this.SelectedCalibrationTableName = this._calibrationTables[sel];
+        SelectedCalibrationTableName = _calibrationTables[sel];
 
       sel = _view.GetDestinationTableChoice();
       if (sel == 0)
-        this.SelectedDestinationTableName = null;
+        SelectedDestinationTableName = null;
       else
-        this.SelectedDestinationTableName = this._destinationTables[sel];
+        SelectedDestinationTableName = _destinationTables[sel];
 
       return true;
     }
@@ -134,7 +136,7 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        this.View = value as IPLSPredictValueView;
+        View = value as IPLSPredictValueView;
       }
     }
 

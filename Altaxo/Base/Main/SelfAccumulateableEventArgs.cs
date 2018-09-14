@@ -50,7 +50,7 @@ namespace Altaxo.Main
     /// </returns>
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode();
+      return GetType().GetHashCode();
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ namespace Altaxo.Main
     {
       if (null == obj)
         return false;
-      if (this.GetType() != obj.GetType())
+      if (GetType() != obj.GetType())
         return false;
 
       return true;

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
@@ -43,7 +43,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        TextBoundaries s = (TextBoundaries)obj;
+        var s = (TextBoundaries)obj;
         info.CreateArray("Items", s._itemList.Count);
         foreach (string name in s._itemList)
           info.AddValue("e", name);
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     {
       // because not only the number of items matter, but also their order, we have to save a full copy of the items
       // to compare it during the call to OnResume
-      this._savedItems = this._itemList.ToArray();
+      _savedItems = _itemList.ToArray();
 
       base.OnSuspended();
     }
@@ -217,7 +217,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     {
       BoundariesChangedData data = 0;
       // if anything changed in the meantime, fire the event
-      if (!EnumerableExtensions.AreStructurallyEqual(this._savedItems, this._itemList))
+      if (!EnumerableExtensions.AreStructurallyEqual(_savedItems, _itemList))
       {
         data |= BoundariesChangedData.ComplexChange;
       }

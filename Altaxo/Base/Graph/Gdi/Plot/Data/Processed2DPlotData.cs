@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Data
 {
@@ -208,9 +208,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
           Logical3D logicalMean = layer.GetLogical3D(pdata, originalRow);
           logicalMean.RX += logicalShiftX;
           logicalMean.RY += logicalShiftY;
-
-          double x, y;
-          layer.CoordinateSystem.LogicalToLayerCoordinates(logicalMean, out x, out y);
+          layer.CoordinateSystem.LogicalToLayerCoordinates(logicalMean, out var x, out var y);
           result[j] = new PointF((float)x, (float)y);
         }
       }

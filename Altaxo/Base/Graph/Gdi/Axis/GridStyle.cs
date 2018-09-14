@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GridStyle s = (GridStyle)obj;
+        var s = (GridStyle)obj;
 
         info.AddValue("Visible", s._showGrid);
         if (s._showGrid)
@@ -114,11 +114,11 @@ namespace Altaxo.Graph.Gdi.Axis
       if (object.ReferenceEquals(this, from))
         return;
 
-      this.MajorPen = from._majorPen == null ? null : (PenX)(from._majorPen.Clone());
-      this.MinorPen = from._minorPen == null ? null : (PenX)(from._minorPen.Clone());
-      this._showGrid = from._showGrid;
-      this._showMinor = from._showMinor;
-      this._showZeroOnly = from._showZeroOnly;
+      MajorPen = from._majorPen == null ? null : from._majorPen.Clone();
+      MinorPen = from._minorPen == null ? null : from._minorPen.Clone();
+      _showGrid = from._showGrid;
+      _showMinor = from._showMinor;
+      _showZeroOnly = from._showZeroOnly;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -211,11 +211,11 @@ namespace Altaxo.Graph.Gdi.Axis
       Scale axis = layer.Scales[axisnumber];
       TickSpacing ticking = layer.Scales[axisnumber].TickSpacing;
 
-      RectangleD2D layerRect = new RectangleD2D(PointD2D.Empty, layer.Size);
+      var layerRect = new RectangleD2D(PointD2D.Empty, layer.Size);
 
       if (_showZeroOnly)
       {
-        Altaxo.Data.AltaxoVariant var = new Altaxo.Data.AltaxoVariant(0.0);
+        var var = new Altaxo.Data.AltaxoVariant(0.0);
         double rel = axis.PhysicalVariantToNormal(var);
         _majorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
         if (rel >= 0 && rel <= 1)

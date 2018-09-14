@@ -83,7 +83,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AngularScale s = (AngularScale)obj;
+        var s = (AngularScale)obj;
 
         info.AddValue("UseDegree", s._useDegree);
         info.AddValue("MajorTickDiv", s._majorTickDivider);
@@ -126,14 +126,14 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public AngularScale(AngularScale from)
     {
-      this._useDegree = from._useDegree;
-      this._majorTickDivider = from._majorTickDivider;
-      this._minorTickDivider = from._minorTickDivider;
-      this._scaleOrigin = from._scaleOrigin;
-      this._usePositiveNegativeAngles = from._usePositiveNegativeAngles;
-      this._cachedAxisOrg = from._cachedAxisOrg;
-      this._cachedAxisSpan = from._cachedAxisSpan;
-      this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+      _useDegree = from._useDegree;
+      _majorTickDivider = from._majorTickDivider;
+      _minorTickDivider = from._minorTickDivider;
+      _scaleOrigin = from._scaleOrigin;
+      _usePositiveNegativeAngles = from._usePositiveNegativeAngles;
+      _cachedAxisOrg = from._cachedAxisOrg;
+      _cachedAxisSpan = from._cachedAxisSpan;
+      _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -254,7 +254,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override double[] GetMajorTicks()
     {
-      List<double> result = new List<double>();
+      var result = new List<double>();
 
       double start = GetOriginInDegrees();
       for (int i = 0; i < _majorTickDivider; i++)
@@ -327,7 +327,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
       int majorTicksEvery = _minorTickDivider / _majorTickDivider;
 
-      List<double> result = new List<double>();
+      var result = new List<double>();
 
       double start = GetOriginInDegrees();
       for (int i = 1; i < _minorTickDivider; i++)

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
@@ -49,17 +49,17 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
+        var s = (XYFunctionPlotItem)obj;
         info.AddValue("Data", s._plotData);
         info.AddValue("Style", s._plotStyles);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYFunctionPlotData pa = (XYFunctionPlotData)info.GetValue("Data", null);
-        XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
+        var pa = (XYFunctionPlotData)info.GetValue("Data", null);
+        var lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
 
-        G2DPlotStyleCollection ps = new G2DPlotStyleCollection();
+        var ps = new G2DPlotStyleCollection();
         if (null != lsps.ScatterStyle)
           ps.Add(new ScatterPlotStyle(lsps.ScatterStyle));
         if (null != lsps.XYPlotLineStyle)
@@ -71,7 +71,7 @@ namespace Altaxo.Graph.Gdi.Plot
         }
         else
         {
-          XYFunctionPlotItem s = (XYFunctionPlotItem)o;
+          var s = (XYFunctionPlotItem)o;
           s.Data = pa;
           s.Style = ps;
           return s;
@@ -85,7 +85,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
+        var s = (XYFunctionPlotItem)obj;
         info.AddValue("Data", s._plotData);
         info.AddValue("Style", s._plotStyles);
       }
@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Gdi.Plot
         }
         else
         {
-          XYFunctionPlotItem s = (XYFunctionPlotItem)o;
+          var s = (XYFunctionPlotItem)o;
           s.Data = pa;
           s.Style = ps;
           return s;
@@ -124,8 +124,8 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public XYFunctionPlotItem(IXYFunctionPlotData pa, G2DPlotStyleCollection ps)
     {
-      this.Data = pa;
-      this.Style = ps;
+      Data = pa;
+      Style = ps;
     }
 
     /// <summary>

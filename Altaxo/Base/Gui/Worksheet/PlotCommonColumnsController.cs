@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Worksheet.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Worksheet.Commands;
 
 namespace Altaxo.Gui.Worksheet
 {

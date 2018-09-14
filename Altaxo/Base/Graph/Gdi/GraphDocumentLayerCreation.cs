@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -36,8 +36,7 @@ namespace Altaxo.Graph.Gdi
 
     private static XYPlotLayer CreateNewLayerAtSamePosition(this GraphDocument doc, IEnumerable<int> linklayernumber)
     {
-      HostLayer oldLayer;
-      var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out oldLayer);
+      var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out var oldLayer);
       if (!isValidIndex)
         throw new ArgumentOutOfRangeException("index was not valid");
 
@@ -77,13 +76,15 @@ namespace Altaxo.Graph.Gdi
     public static void CreateNewLayerNormalBottomXLeftY(this GraphDocument doc)
     {
       var context = doc.GetPropertyHierarchy();
-      var location = new ItemLocationDirect();
-      location.PositionX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.X);
-      location.PositionY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.Y);
-      location.SizeX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.X);
-      location.SizeY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.Y);
+      var location = new ItemLocationDirect
+      {
+        PositionX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.X),
+        PositionY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.Y),
+        SizeX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.X),
+        SizeY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.Y)
+      };
 
-      XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer, location);
+      var newlayer = new XYPlotLayer(doc.RootLayer, location);
       doc.RootLayer.Layers.Add(newlayer);
       newlayer.CreateDefaultAxes(context);
     }
@@ -127,8 +128,7 @@ namespace Altaxo.Graph.Gdi
       var context = doc.GetPropertyHierarchy();
       var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 
-      HostLayer oldLayer;
-      var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out oldLayer);
+      var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out var oldLayer);
       var linkedLayerAsXYPlotLayer = oldLayer as XYPlotLayer;
 
       if (null != linkedLayerAsXYPlotLayer)

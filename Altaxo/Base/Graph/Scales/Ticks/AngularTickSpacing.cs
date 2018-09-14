@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -70,7 +70,7 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AngularTickSpacing s = (AngularTickSpacing)obj;
+        var s = (AngularTickSpacing)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -81,7 +81,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       protected virtual AngularTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        AngularTickSpacing s = (AngularTickSpacing)o;
+        var s = (AngularTickSpacing)o;
 
         return s;
       }

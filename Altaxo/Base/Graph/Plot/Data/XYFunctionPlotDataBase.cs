@@ -115,9 +115,9 @@ namespace Altaxo.Graph.Plot.Data
       const double MaxRelativeValue = 1E6;
 
       // allocate an array PointF to hold the line points
-      PointF[] ptArray = new PointF[functionPoints];
-      Processed2DPlotData result = new Processed2DPlotData();
-      MyPlotData pdata = new MyPlotData();
+      var ptArray = new PointF[functionPoints];
+      var result = new Processed2DPlotData();
+      var pdata = new MyPlotData();
       result.PlotPointsInAbsoluteLayerCoordinates = ptArray;
       double[] xPhysArray = new double[functionPoints];
       double[] yPhysArray = new double[functionPoints];
@@ -135,7 +135,7 @@ namespace Altaxo.Graph.Plot.Data
 
       bool bInPlotSpace = true;
       int rangeStart = 0;
-      PlotRangeList rangeList = new PlotRangeList();
+      var rangeList = new PlotRangeList();
       result.RangeList = rangeList;
       Gdi.G2DCoordinateSystem coordsys = layer.CoordinateSystem;
 
@@ -151,7 +151,7 @@ namespace Altaxo.Graph.Plot.Data
         double x = x_variant.ToDouble();
         double y = Evaluate(x);
 
-        if (Double.IsNaN(x) || Double.IsNaN(y))
+        if (double.IsNaN(x) || double.IsNaN(y))
         {
           if (!bInPlotSpace)
           {
@@ -169,13 +169,7 @@ namespace Altaxo.Graph.Plot.Data
           y_rel = MaxRelativeValue;
         if (y_rel < -MaxRelativeValue)
           y_rel = -MaxRelativeValue;
-
-        // after the conversion to relative coordinates it is possible
-        // that with the choosen axis the point is undefined
-        // (for instance negative values on a logarithmic axis)
-        // in this case the returned value is NaN
-        double xcoord, ycoord;
-        if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel), out xcoord, out ycoord))
+        if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel), out var xcoord, out var ycoord))
         {
           if (bInPlotSpace)
           {

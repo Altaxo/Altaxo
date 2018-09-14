@@ -79,8 +79,7 @@ namespace Altaxo.Main
         for (int i = docPath.Count; i >= 2; --i)
         {
           var subPath = docPath.SubPath(0, i);
-          AbsoluteDocumentPath replacePath;
-          if (_itemRelocationDictionary.TryGetValue(subPath, out replacePath))
+          if (_itemRelocationDictionary.TryGetValue(subPath, out var replacePath))
           {
             proxy.ReplacePathParts(subPath, replacePath, (IDocumentLeafNode)owner);
             return;

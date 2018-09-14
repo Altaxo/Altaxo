@@ -16,8 +16,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -42,8 +42,8 @@ namespace Altaxo.AddInItems
     public LazyLoadDoozer(AddIn addIn, Properties properties)
     {
       this.addIn = addIn;
-      this.name = properties["name"];
-      this.className = properties["class"];
+      name = properties["name"];
+      className = properties["class"];
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        IDoozer doozer = (IDoozer)addIn.CreateObject(className);
+        var doozer = (IDoozer)addIn.CreateObject(className);
         if (doozer == null)
         {
           return false;
@@ -66,7 +66,7 @@ namespace Altaxo.AddInItems
 
     public object BuildItem(BuildItemArgs args)
     {
-      IDoozer doozer = (IDoozer)addIn.CreateObject(className);
+      var doozer = (IDoozer)addIn.CreateObject(className);
       if (doozer == null)
       {
         return null;
@@ -77,7 +77,7 @@ namespace Altaxo.AddInItems
 
     public override string ToString()
     {
-      return String.Format("[LazyLoadDoozer: className = {0}, name = {1}]",
+      return string.Format("[LazyLoadDoozer: className = {0}, name = {1}]",
                            className,
                            name);
     }

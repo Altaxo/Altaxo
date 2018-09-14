@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph;
-using System;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -168,7 +168,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_ChooseErrorFunction(int idx)
     {
-      SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling), _doc.GetErrorEvaluation(idx));
+      var choice = new SingleInstanceChoice(typeof(IVarianceScaling), _doc.GetErrorEvaluation(idx));
 
       object choiceAsObject = choice;
       if (Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))

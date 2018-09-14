@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Gdi
       {
         var from = obj as GraphDocumentRenderTask;
         if (null != from)
-          return this.Owner.Equals(from.Owner);
+          return Owner.Equals(from.Owner);
         else
           return false;
       }
@@ -242,8 +242,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rendering">The rendering task that was just finished.</param>
     private void EhRenderTaskFinished(GraphDocumentRenderTask rendering)
     {
-      GraphDocumentRenderTask renderTask;
-      _tasksRendering.TryRemove(rendering.Document, out renderTask);
+      _tasksRendering.TryRemove(rendering.Document, out var renderTask);
 
       if (!renderTask.WasSuccessful && renderTask.MoreTrialsAllowed)
         _tasksWaiting.TryAddLast(renderTask.Owner, renderTask);
@@ -259,9 +258,6 @@ namespace Altaxo.Graph.Gdi
       if (!_isEnabled)
         return;
 
-      GraphDocumentRenderTask rendering;
-      object token;
-
       for (int i = _tasksWaiting.Count - 1; i >= 0; --i)
       {
         if (_tasksRendering.Count >= _maxTasksConcurrentlyRendering)
@@ -270,7 +266,7 @@ namespace Altaxo.Graph.Gdi
         // we try to start the first document in queue, but if this fails,
         // we put it back at the end of the queue, and try to start the now-first document
         // we will do this maximal  _documentsWaiting.Count times, in order to avoid infinite loops
-        if (_tasksWaiting.TryTakeFirst(out token, out rendering))
+        if (_tasksWaiting.TryTakeFirst(out var token, out var rendering))
         {
           if (_tasksRendering.TryAdd(rendering.Document, rendering))
           {

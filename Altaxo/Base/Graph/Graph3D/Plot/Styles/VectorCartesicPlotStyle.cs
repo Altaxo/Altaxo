@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
-using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Data;
+using Altaxo.Graph.Plot.Data;
+using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -149,7 +149,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        VectorCartesicPlotStyle s = (VectorCartesicPlotStyle)obj;
+        var s = (VectorCartesicPlotStyle)obj;
 
         info.AddEnum("MeaningOfValues", s._meaningOfValues);
         info.AddValue("ColumnX", s._columnX);
@@ -259,7 +259,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _lineWidth2Offset = penWidth;
       _lineWidth2Factor = 0;
 
-      this._strokePen = new PenX3D(color, penWidth).WithLineEndCap(new ContourArrow05());
+      _strokePen = new PenX3D(color, penWidth).WithLineEndCap(new ContourArrow05());
     }
 
     public VectorCartesicPlotStyle(VectorCartesicPlotStyle from, bool copyWithDataReferences)
@@ -274,37 +274,37 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       var from = obj as VectorCartesicPlotStyle;
       if (null != from)
       {
-        this._meaningOfValues = from._meaningOfValues;
-        this._independentSkipFrequency = from._independentSkipFrequency;
-        this._skipFrequency = from._skipFrequency;
-        this._useManualVectorLength = from._useManualVectorLength;
-        this._vectorLengthOffset = from._vectorLengthOffset;
-        this._vectorLengthFactor = from._vectorLengthFactor;
+        _meaningOfValues = from._meaningOfValues;
+        _independentSkipFrequency = from._independentSkipFrequency;
+        _skipFrequency = from._skipFrequency;
+        _useManualVectorLength = from._useManualVectorLength;
+        _vectorLengthOffset = from._vectorLengthOffset;
+        _vectorLengthFactor = from._vectorLengthFactor;
 
-        this._independentSymbolSize = from._independentSymbolSize;
-        this._symbolSize = from._symbolSize;
+        _independentSymbolSize = from._independentSymbolSize;
+        _symbolSize = from._symbolSize;
 
-        this._strokePen = from._strokePen;
-        this._independentColor = from._independentColor;
+        _strokePen = from._strokePen;
+        _independentColor = from._independentColor;
 
         _lineWidth1Offset = from._lineWidth1Offset;
         _lineWidth1Factor = from._lineWidth1Factor;
         _lineWidth2Offset = from._lineWidth2Offset;
         _lineWidth2Factor = from._lineWidth2Factor;
 
-        this._endCapSizeFactor = from._endCapSizeFactor;
-        this._endCapSizeOffset = from._endCapSizeOffset;
+        _endCapSizeFactor = from._endCapSizeFactor;
+        _endCapSizeOffset = from._endCapSizeOffset;
 
-        this._useSymbolGap = from._useSymbolGap;
-        this._symbolGapFactor = from._symbolGapFactor;
-        this._symbolGapOffset = from._symbolGapOffset;
+        _useSymbolGap = from._useSymbolGap;
+        _symbolGapFactor = from._symbolGapFactor;
+        _symbolGapOffset = from._symbolGapOffset;
 
-        this._independentSkipFrequency = from._independentSkipFrequency;
-        this._skipFrequency = from._skipFrequency;
-        this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+        _independentSkipFrequency = from._independentSkipFrequency;
+        _skipFrequency = from._skipFrequency;
+        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
-        this._cachedLogicalShiftX = from._cachedLogicalShiftX;
-        this._cachedLogicalShiftY = from._cachedLogicalShiftY;
+        _cachedLogicalShiftX = from._cachedLogicalShiftX;
+        _cachedLogicalShiftY = from._cachedLogicalShiftY;
 
         if (copyWithDataReferences)
         {
@@ -797,7 +797,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._strokePen.Color; });
+        { return _strokePen.Color; });
 
       if (!_independentSkipFrequency)
         SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
@@ -824,14 +824,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       if (!_independentSkipFrequency)
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this.SkipFrequency = c; });
+        { SkipFrequency = c; });
 
       // symbol size
       if (!_independentSymbolSize)
       {
-        this._symbolSize = 0;
+        _symbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._symbolSize = size; });
+        { _symbolSize = size; });
 
         // but if there is an symbol size evaluation function, then use this with higher priority.
         _cachedSymbolSizeForIndexFunction = null;

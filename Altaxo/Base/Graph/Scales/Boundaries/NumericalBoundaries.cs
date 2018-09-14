@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        NumericalBoundaries s = (NumericalBoundaries)obj;
+        var s = (NumericalBoundaries)obj;
 
         if ((s._minValue == double.MaxValue || s._maxValue == double.MinValue) && s._numberOfItems != 0)
           throw new InvalidOperationException(string.Format("Type {0} has NumberOfItems={1}, but MinValue is {2} and MaxValue is {3}", s.GetType(), s._numberOfItems, s._minValue, s._maxValue));
@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        NumericalBoundaries s = (NumericalBoundaries)o;
+        var s = (NumericalBoundaries)o;
 
         s._numberOfItems = info.GetInt32("NumberOfItems");
         s._minValue = info.GetDouble("MinValue");
@@ -96,8 +96,8 @@ namespace Altaxo.Graph.Scales.Boundaries
     public override void Reset()
     {
       base.Reset();
-      _minValue = Double.MaxValue;
-      _maxValue = Double.MinValue;
+      _minValue = double.MaxValue;
+      _maxValue = double.MinValue;
     }
 
     public virtual double LowerBound { get { return _minValue; } }
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// <param name="b">another physical boundary object of the same type as this</param>
     public virtual void Add(NumericalBoundaries b)
     {
-      if (this.GetType() == b.GetType())
+      if (GetType() == b.GetType())
       {
         if (b._numberOfItems > 0)
         {
@@ -134,7 +134,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       }
       else
       {
-        throw new ArgumentException("Argument has not the same type as this, argument type: " + b.GetType().ToString() + ", this type: " + this.GetType().ToString());
+        throw new ArgumentException("Argument has not the same type as this, argument type: " + b.GetType().ToString() + ", this type: " + GetType().ToString());
       }
     }
 
@@ -167,9 +167,9 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// </summary>
     protected override void OnSuspended()
     {
-      this._savedNumberOfItems = this._numberOfItems;
-      this._cachedMinValue = this._minValue;
-      this._cachedMaxValue = this._maxValue;
+      _savedNumberOfItems = _numberOfItems;
+      _cachedMinValue = _minValue;
+      _cachedMaxValue = _maxValue;
 
       base.OnSuspended();
     }
@@ -183,13 +183,13 @@ namespace Altaxo.Graph.Scales.Boundaries
       BoundariesChangedData data = 0;
 
       // if anything changed in the meantime, fire the event
-      if (this._savedNumberOfItems != this._numberOfItems)
+      if (_savedNumberOfItems != _numberOfItems)
         data |= BoundariesChangedData.NumberOfItemsChanged;
 
-      if (this._cachedMinValue != this._minValue)
+      if (_cachedMinValue != _minValue)
         data |= BoundariesChangedData.LowerBoundChanged;
 
-      if (this._cachedMaxValue != this._maxValue)
+      if (_cachedMaxValue != _maxValue)
         data |= BoundariesChangedData.UpperBoundChanged;
 
       if (0 != data)

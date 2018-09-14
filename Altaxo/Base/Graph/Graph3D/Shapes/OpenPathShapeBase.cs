@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Drawing.D3D;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        OpenPathShapeBase s = (OpenPathShapeBase)obj;
+        var s = (OpenPathShapeBase)obj;
         info.AddBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType);
 
         info.AddValue("LinePen", s._linePen);
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        OpenPathShapeBase s = (OpenPathShapeBase)o;
+        var s = (OpenPathShapeBase)o;
         info.GetBaseValueEmbedded(s, typeof(OpenPathShapeBase).BaseType, parent);
 
         s.Pen = (PenX3D)info.GetValue("LinePen", s);
@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         var from = obj as OpenPathShapeBase;
         if (from != null)
         {
-          this._linePen = from._linePen;
+          _linePen = from._linePen;
         }
       }
       return isCopied;

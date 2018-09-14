@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {

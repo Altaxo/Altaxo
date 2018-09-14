@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Main
 {
@@ -83,8 +83,7 @@ namespace Altaxo.Main
       }
 
       // send accumulated data if available and release it thereafter
-      EventArgs singleArg;
-      if (AccumulatedEventData_HasZeroOrOneEventArg(out singleArg)) // we have a single event arg accumulated
+      if (AccumulatedEventData_HasZeroOrOneEventArg(out var singleArg)) // we have a single event arg accumulated
       {
         if (null == singleArg) // no events during suspended state
         {

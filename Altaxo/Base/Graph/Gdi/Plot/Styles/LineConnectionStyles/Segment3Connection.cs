@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-using Altaxo.Graph.Gdi.Plot.Data;
-using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
@@ -87,10 +87,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       bool connectCircular,
       LinePlotStyle linePlotStyle)
     {
-      int lastIdx;
-      PointF[] subLinePoints = Segment3Connection_GetSubPoints(allLinePoints, range, layer, connectCircular, out lastIdx);
+      PointF[] subLinePoints = Segment3Connection_GetSubPoints(allLinePoints, range, layer, connectCircular, out var lastIdx);
 
-      GraphicsPath gp = new GraphicsPath();
+      var gp = new GraphicsPath();
       int i;
 
       // special efforts are necessary to realize a line/symbol gap
@@ -160,7 +159,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       out int lastIndex)
     {
       var layerSize = layer.Size;
-      PointF[] subLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
+      var subLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
       Array.Copy(allLinePoints, range.LowerBound, subLinePoints, 0, range.Length); // Extract
       if (connectCircular)
       {
@@ -189,8 +188,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       if (range.Length < 2)
         return;
 
-      int lastIdx;
-      PointF[] linePoints = Segment3Connection_GetSubPoints(allLinePointsShiftedAlready, range, layer, connectCircular, out lastIdx);
+      PointF[] linePoints = Segment3Connection_GetSubPoints(allLinePointsShiftedAlready, range, layer, connectCircular, out var lastIdx);
 
       if (connectCircular)
       {

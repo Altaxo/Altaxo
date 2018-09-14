@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services.ScriptCompilation;
 using System;
 using System.Collections.Immutable;
+using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
 {
@@ -57,7 +57,7 @@ namespace Altaxo.Scripting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AbstractScript s = (AbstractScript)obj;
+        var s = (AbstractScript)obj;
 
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
@@ -246,9 +246,9 @@ namespace Altaxo.Scripting
         return false;
       }
 
-      Altaxo.Data.DataColumnCollection myColumnCollection = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);
+      var myColumnCollection = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);
 
-      Altaxo.Data.DataTable myTable = Altaxo.Data.DataTable.GetParentDataTableOf(myColumnCollection);
+      var myTable = Altaxo.Data.DataTable.GetParentDataTableOf(myColumnCollection);
 
       myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
 
@@ -293,7 +293,7 @@ namespace Altaxo.Scripting
     public bool ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataColumn myColumn)
     {
       var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-      System.Threading.Thread t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myColumn, reporter));
+      var t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myColumn, reporter));
       t.Start();
       return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
     }

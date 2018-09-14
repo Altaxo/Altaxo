@@ -16,8 +16,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo;
 using System;
+using Altaxo;
 
 namespace Altaxo.AddInItems
 {
@@ -42,10 +42,10 @@ namespace Altaxo.AddInItems
         try
         {
           System.Enum state = ((IOwnerState)parameter).InternalState;
-          System.Enum conditionEnum = (System.Enum)Enum.Parse(state.GetType(), condition.Properties["ownerstate"]);
+          var conditionEnum = (System.Enum)Enum.Parse(state.GetType(), condition.Properties["ownerstate"]);
 
-          int stateInt = Int32.Parse(state.ToString("D"));
-          int conditionInt = Int32.Parse(conditionEnum.ToString("D"));
+          int stateInt = int.Parse(state.ToString("D"));
+          int conditionInt = int.Parse(conditionEnum.ToString("D"));
 
           return (stateInt & conditionInt) > 0;
         }

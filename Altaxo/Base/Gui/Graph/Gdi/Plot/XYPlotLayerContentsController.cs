@@ -24,6 +24,12 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Geometry;
@@ -35,12 +41,6 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
 using Altaxo.Serialization.Clipboard;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
@@ -212,7 +212,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       {
         _view.InitializePlotItems(_plotItemsTree);
 
-        _view.InitializeAvailableItems(this._availableItemsRootNode.Nodes);
+        _view.InitializeAvailableItems(_availableItemsRootNode.Nodes);
 
         _view.ShowRange = _showRange;
 
@@ -349,7 +349,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
       foreach (NGTreeNode node in selNodes)
       {
-        IGPlotItem item = (IGPlotItem)node.Tag;
+        var item = (IGPlotItem)node.Tag;
         var clonedItem = (IGPlotItem)item.Clone(); // clone necessary to maintain parent-child relationship and to prevent disposing of original items
         picoll.Add(clonedItem);
       }
@@ -433,7 +433,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       if (null == ycol)
         return null;
 
-      DataTable tab = DataTable.GetParentDataTableOf(ycol);
+      var tab = DataTable.GetParentDataTableOf(ycol);
       if (null == tab)
         return null;
 
@@ -480,7 +480,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       if (null != dt)
       {
         node.Nodes.Clear();
-        NGTreeNode[] toadd = new NGTreeNode[dt.DataColumns.ColumnCount];
+        var toadd = new NGTreeNode[dt.DataColumns.ColumnCount];
         for (int i = 0; i < toadd.Length; i++)
         {
           toadd[i] = new NGTreeNode(dt[i].Name);
@@ -540,15 +540,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       if (null == plotItem)
         throw new ArgumentNullException();
 
-      NGTreeNode newNode = new NGTreeNode();
-      newNode.Text = plotItem.GetName(2);
-      newNode.Tag = plotItem;
+      var newNode = new NGTreeNode
+      {
+        Text = plotItem.GetName(2),
+        Tag = plotItem
+      };
       return newNode;
     }
 
     private NGTreeNode CreatePlotItemNode(DataColumn dataCol)
     {
-      IGPlotItem newItem = this.CreatePlotItem(dataCol);
+      IGPlotItem newItem = CreatePlotItem(dataCol);
       if (null != newItem)
       {
         return CreatePlotItemNode(newItem);
@@ -594,7 +596,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       if (NGTreeNode.HaveSameParent(selNodes))
       {
         NGTreeNode.MoveUpDown(iDelta, selNodes);
-        HashSet<IGPlotItem> plotItems = new HashSet<IGPlotItem>(selNodes.Select(x => (IGPlotItem)x.Tag));
+        var plotItems = new HashSet<IGPlotItem>(selNodes.Select(x => (IGPlotItem)x.Tag));
         TreeNodeExtensions.MoveNodesUpDown(iDelta, plotItems);
         // _view.InitializePlotItems(this._plotItemsTree);
       }
@@ -747,7 +749,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     public void EhView_ContentsDoubleClick(NGTreeNode selNode)
     {
-      IGPlotItem pi = selNode.Tag as IGPlotItem;
+      var pi = selNode.Tag as IGPlotItem;
       if (null != pi)
       {
         if (pi is PlotItemCollection)
@@ -774,8 +776,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
       if (selNodes.Length == 0)
         return;
-      int minRange, maxRange;
-      if (!GetMinimumMaximumPlotRange(selNodes, out minRange, out maxRange))
+      if (!GetMinimumMaximumPlotRange(selNodes, out var minRange, out var maxRange))
         return;
       var range = new Altaxo.Collections.ContiguousNonNegativeIntegerRange(minRange, maxRange - minRange);
 
@@ -905,7 +906,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     public void PlotItems_Cut()
     {
       var selNodes = PlotItemsSelected;
-      this.PlotItems_Copy();
+      PlotItems_Copy();
       foreach (var node in selNodes)
       {
         ((IGPlotItem)node.Tag).Remove();
@@ -921,14 +922,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     public bool PlotItems_CanPaste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
-      PlotItemCollection coll = o as PlotItemCollection;
+      var coll = o as PlotItemCollection;
       return null != coll;
     }
 
     public void PlotItems_Paste()
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
-      PlotItemCollection coll = o as PlotItemCollection;
+      var coll = o as PlotItemCollection;
       // if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
       if (null != coll)
       {

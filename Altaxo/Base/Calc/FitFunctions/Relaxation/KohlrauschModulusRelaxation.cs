@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -46,7 +46,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        KohlrauschModulusRelaxation s = (KohlrauschModulusRelaxation)obj;
+        var s = (KohlrauschModulusRelaxation)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         //info.AddValue("IsDielectric", s._isDielectricData);
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        KohlrauschModulusRelaxation s = (KohlrauschModulusRelaxation)obj;
+        var s = (KohlrauschModulusRelaxation)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
@@ -100,9 +100,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateModulusOfOmega()
     {
-      KohlrauschModulusRelaxation result = new KohlrauschModulusRelaxation();
-      result._useFrequencyInsteadOmega = false;
-      result._useFlowTerm = true;
+      var result = new KohlrauschModulusRelaxation
+      {
+        _useFrequencyInsteadOmega = false,
+        _useFlowTerm = true
+      };
 
       return result;
     }
@@ -111,10 +113,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
-      KohlrauschModulusRelaxation result = new KohlrauschModulusRelaxation();
-      result._useFrequencyInsteadOmega = false;
-      result._useFlowTerm = true;
-      result._logarithmizeResults = true;
+      var result = new KohlrauschModulusRelaxation
+      {
+        _useFrequencyInsteadOmega = false,
+        _useFlowTerm = true,
+        _logarithmizeResults = true
+      };
 
       return result;
     }
@@ -123,9 +127,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateModulusOfFrequency()
     {
-      KohlrauschModulusRelaxation result = new KohlrauschModulusRelaxation();
-      result._useFrequencyInsteadOmega = true;
-      result._useFlowTerm = true;
+      var result = new KohlrauschModulusRelaxation
+      {
+        _useFrequencyInsteadOmega = true,
+        _useFlowTerm = true
+      };
 
       return result;
     }
@@ -134,10 +140,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
-      KohlrauschModulusRelaxation result = new KohlrauschModulusRelaxation();
-      result._useFrequencyInsteadOmega = true;
-      result._useFlowTerm = true;
-      result._logarithmizeResults = true;
+      var result = new KohlrauschModulusRelaxation
+      {
+        _useFrequencyInsteadOmega = true,
+        _useFlowTerm = true,
+        _logarithmizeResults = true
+      };
 
       return result;
     }
@@ -156,7 +164,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public string IndependentVariableName(int i)
     {
-      return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
+      return _useFrequencyInsteadOmega ? "Frequency" : "Omega";
     }
 
     #endregion independent variable definition
@@ -188,7 +196,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       get
       {
-        return this._useFlowTerm ? _parameterName.Length : _parameterName.Length - 1;
+        return _useFlowTerm ? _parameterName.Length : _parameterName.Length - 1;
       }
     }
 
@@ -247,7 +255,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       Complex result = P[1] + (P[0] - P[1]) * Kohlrausch.ReIm(P[3], w_r);
 
-      if (this._useFlowTerm)
+      if (_useFlowTerm)
       {
         result = 1 / ((1 / result) - Complex.I * P[4] / x);
       }

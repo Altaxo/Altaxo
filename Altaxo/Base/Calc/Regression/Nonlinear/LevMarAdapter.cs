@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -122,8 +122,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       // Preparation: Store the parameter names by name and index, and store
       // all parameter values in _constantParameters
-      System.Collections.Hashtable paraNames = new System.Collections.Hashtable();
-      System.Collections.Hashtable varyingParaNames = new System.Collections.Hashtable();
+      var paraNames = new System.Collections.Hashtable();
+      var varyingParaNames = new System.Collections.Hashtable();
 
       _constantParameters = new double[paraSet.Count];
       int numberOfVaryingParameters = 0;
@@ -148,7 +148,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _cachedFitElementInfo = new CachedFitElementInfo[_fitEnsemble.Count];
       for (int i = 0; i < _fitEnsemble.Count; i++)
       {
-        CachedFitElementInfo info = new CachedFitElementInfo();
+        var info = new CachedFitElementInfo();
         _cachedFitElementInfo[i] = info;
         FitElement fitEle = _fitEnsemble[i];
 
@@ -198,7 +198,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _cachedDependentValues = new double[_cachedNumberOfData];
       GetDependentValues(_cachedDependentValues);
 
-      if (this.HasToUseWeights())
+      if (HasToUseWeights())
       {
         _cachedWeights = new double[_cachedNumberOfData];
         GetWeights(_cachedWeights);
@@ -313,7 +313,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <returns>True if any of the fit elements use weights.</returns>
     public bool HasToUseWeights()
     {
-      for (int i = 0; i < this._fitEnsemble.Count; ++i)
+      for (int i = 0; i < _fitEnsemble.Count; ++i)
         if (_fitEnsemble[i].UseWeights)
           return true;
 
@@ -509,7 +509,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public double EvaluateChiSquare()
     {
       int info = 0;
-      double[] differences = new double[this.NumberOfData];
+      double[] differences = new double[NumberOfData];
       EvaluateFitDifferences(
           NumberOfData,
           _cachedVaryingParameters.Length,
@@ -546,8 +546,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public void DoSimplexMinimization(System.Threading.CancellationToken cancellationToken, Action<double> newMinimalCostValueFound)
     {
-      Calc.Optimization.NelderMead nm = new Altaxo.Calc.Optimization.NelderMead(new NelderMeadCostFunction(this));
-      nm.Minimize(new LinearAlgebra.DoubleVector(this._cachedVaryingParameters), cancellationToken, newMinimalCostValueFound);
+      var nm = new Altaxo.Calc.Optimization.NelderMead(new NelderMeadCostFunction(this));
+      nm.Minimize(new LinearAlgebra.DoubleVector(_cachedVaryingParameters), cancellationToken, newMinimalCostValueFound);
       for (int i = 0; i < _cachedVaryingParameters.Length; ++i)
         _cachedVaryingParameters[i] = nm.SolutionVector[i];
       _resultingSumChiSquare = nm.SolutionValue;
@@ -560,9 +560,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <returns>True if all fit functions provide the jacobian.</returns>
     public bool CanUseJacobianVersion()
     {
-      for (int i = 0; i < this._fitEnsemble.Count; i++)
+      for (int i = 0; i < _fitEnsemble.Count; i++)
       {
-        if (this._fitEnsemble[i].FitFunction != null && !(this._fitEnsemble[i].FitFunction is IFitFunctionWithGradient))
+        if (_fitEnsemble[i].FitFunction != null && !(_fitEnsemble[i].FitFunction is IFitFunctionWithGradient))
           return false;
       }
       return true;
@@ -581,11 +581,11 @@ else
     public void Fit1()
     {
       int info = 0;
-      double[] differences = new double[this.NumberOfData];
-      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, differences, 1E-10, ref info);
+      double[] differences = new double[NumberOfData];
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(EvaluateFitDifferences), _cachedVaryingParameters, differences, 1E-10, ref info);
 
       _resultingCovariances = new double[_cachedVaryingParameters.Length * _cachedVaryingParameters.Length];
-      NLFit.ComputeCovariances(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare, out _resultingSigmaSquare);
+      NLFit.ComputeCovariances(new NLFit.LMFunction(EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare, out _resultingSigmaSquare);
     }
 
     /// <summary>
@@ -597,8 +597,8 @@ else
       object workingmemory = null;
 
       NonLinearFit2.LEVMAR_DER(
-          new NonLinearFit2.FitFunction(this.EvalulateFitValues),
-          new NonLinearFit2.JacobianFunction(this.EvaluateFitJacobian),
+          new NonLinearFit2.FitFunction(EvalulateFitValues),
+          new NonLinearFit2.JacobianFunction(EvaluateFitJacobian),
           _cachedVaryingParameters,
           _cachedDependentValues,
           _cachedWeights,
@@ -611,7 +611,7 @@ else
           );
 
       _resultingCovariances = new double[_cachedVaryingParameters.Length * _cachedVaryingParameters.Length];
-      NLFit.ComputeCovariances(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare, out _resultingSigmaSquare);
+      NLFit.ComputeCovariances(new NLFit.LMFunction(EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare, out _resultingSigmaSquare);
     }
 
     public double ResultingChiSquare
@@ -632,7 +632,7 @@ else
 
     public void CopyParametersBackTo(ParameterSet pset)
     {
-      if (pset.Count != this._constantParameters.Length)
+      if (pset.Count != _constantParameters.Length)
         throw new ArgumentException("Length of parameter set pset does not match with cached length of parameter set");
       int varyingPara = 0;
       for (int i = 0; i < pset.Count; i++)
@@ -641,7 +641,7 @@ else
           varyingPara++;
       }
 
-      if (varyingPara != this._cachedVaryingParameters.Length)
+      if (varyingPara != _cachedVaryingParameters.Length)
         throw new ArgumentException("Number of varying parameters in pset does not match cached number of varying parameters");
 
       varyingPara = 0;
@@ -649,13 +649,13 @@ else
       {
         if (pset[i].Vary)
         {
-          pset[i].Parameter = this._cachedVaryingParameters[varyingPara];
+          pset[i].Parameter = _cachedVaryingParameters[varyingPara];
           pset[i].Variance = _resultingCovariances == null ? 0 : Math.Sqrt(_resultingCovariances[varyingPara + varyingPara * _cachedVaryingParameters.Length]);
           varyingPara++;
         }
         else
         {
-          pset[i].Parameter = this._constantParameters[i];
+          pset[i].Parameter = _constantParameters[i];
           pset[i].Variance = 0;
         }
       }

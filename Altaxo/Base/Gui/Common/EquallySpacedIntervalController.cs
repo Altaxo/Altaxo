@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Common
 {
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Common
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
   }
 
@@ -282,8 +282,7 @@ namespace Altaxo.Gui.Common
       if (_currentMethod == EquallySpacedIntervalSpecificationMethod.EndCountInterval)
         return;
 
-      double start;
-      if (!GUIConversion.IsDouble(text, out start))
+      if (!GUIConversion.IsDouble(text, out var start))
         return;
       _start = start;
 
@@ -295,8 +294,7 @@ namespace Altaxo.Gui.Common
       if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartCountInterval)
         return;
 
-      double end;
-      if (!GUIConversion.IsDouble(text, out end))
+      if (!GUIConversion.IsDouble(text, out var end))
         return;
       _end = end;
 
@@ -308,8 +306,7 @@ namespace Altaxo.Gui.Common
       if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartEndInterval)
         return;
 
-      double count;
-      if (!GUIConversion.IsDouble(text, out count))
+      if (!GUIConversion.IsDouble(text, out var count))
         return;
       _count = count;
 
@@ -321,8 +318,7 @@ namespace Altaxo.Gui.Common
       if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartEndCount)
         return;
 
-      double interval;
-      if (!GUIConversion.IsDouble(text, out interval))
+      if (!GUIConversion.IsDouble(text, out var interval))
         return;
       _interval = interval;
 

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -185,7 +185,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <returns>Object outline for arrangements in object world coordinates</returns>
     public override GraphicsPath GetObjectOutlineForArrangements()
     {
-      GraphicsPath result = new GraphicsPath();
+      var result = new GraphicsPath();
       foreach (var ele in _groupedObjects)
         result.AddPath(ele.GetObjectOutlineForArrangements(), false);
       return result;
@@ -199,7 +199,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public override void Paint(Graphics g, IPaintContext paintContext)
     {
       GraphicsState gs = g.Save();
-      this.TransformGraphics(g);
+      TransformGraphics(g);
 
       foreach (GraphicBase graphics in _groupedObjects)
         graphics.Paint(g, paintContext);
@@ -209,14 +209,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public GraphicsPath GetSelectionPath()
     {
-      GraphicsPath gp = new GraphicsPath();
-      Matrix myMatrix = new Matrix();
+      var gp = new GraphicsPath();
+      var myMatrix = new Matrix();
 
-      var bounds = this.Bounds;
+      var bounds = Bounds;
       gp.AddRectangle(new RectangleF((float)(X + bounds.X), (float)(Y + bounds.Y), (float)bounds.Width, (float)bounds.Height));
-      if (this.Rotation != 0)
+      if (Rotation != 0)
       {
-        myMatrix.RotateAt((float)(-this.Rotation), (PointF)Position, MatrixOrder.Append);
+        myMatrix.RotateAt((float)(-Rotation), (PointF)Position, MatrixOrder.Append);
       }
 
       gp.Transform(myMatrix);
@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="obj">Item to add.</param>
     public void Add(GraphicBase obj)
     {
-      obj.SetCoordinatesByAppendInverseTransformation(this._transformation, Main.EventFiring.Suppressed);
+      obj.SetCoordinatesByAppendInverseTransformation(_transformation, Main.EventFiring.Suppressed);
       _groupedObjects.Add(obj);
       obj.ParentObject = this;
       AdjustPosition();
@@ -266,7 +266,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         obj.Location.ChangeRelativePositionValuesToAbsolutePositionValues(); // all position values must be absolute
         obj.Location.ChangeParentAnchorToLeftTopButKeepPosition(); // Parent's anchor left top - this is our reference point
 
-        obj.SetCoordinatesByAppendInverseTransformation(this._transformation, Main.EventFiring.Suppressed);
+        obj.SetCoordinatesByAppendInverseTransformation(_transformation, Main.EventFiring.Suppressed);
         _groupedObjects.Add(obj);
         obj.ParentObject = this;
       }
@@ -327,7 +327,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         {
           e.ShiftPosition(-dx, -dy);
         }
-        this.ShiftPosition(dx, dy);
+        ShiftPosition(dx, dy);
 
         ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds.Size, false);
 
@@ -345,7 +345,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       foreach (GraphicBase e in _groupedObjects)
       {
-        e.SetCoordinatesByAppendTransformation(this._transformation, Main.EventFiring.Suppressed);
+        e.SetCoordinatesByAppendTransformation(_transformation, Main.EventFiring.Suppressed);
       }
 
       var result = _groupedObjects.ToArray();

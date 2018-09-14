@@ -45,7 +45,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        NonlinearFitDocument s = (NonlinearFitDocument)obj;
+        var s = (NonlinearFitDocument)obj;
 
         info.AddValue("FitEnsemble", s._fitEnsemble);
         info.AddValue("Parameters", s._currentParameters);
@@ -124,7 +124,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if (fitele.FitFunction == null)
         return;
 
-      System.Collections.Hashtable byName = new System.Collections.Hashtable();
+      var byName = new System.Collections.Hashtable();
       for (int i = 0; i < _currentParameters.Count; i++)
         byName.Add(_currentParameters[i].Name, i);
 
@@ -140,7 +140,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private void RecalculateParameterSet()
     {
       // save old values
-      System.Collections.Hashtable byName = new System.Collections.Hashtable();
+      var byName = new System.Collections.Hashtable();
       for (int i = 0; i < _currentParameters.Count; i++)
         byName.Add(_currentParameters[i].Name, _currentParameters[i]);
 

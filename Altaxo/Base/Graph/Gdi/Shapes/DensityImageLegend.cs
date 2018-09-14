@@ -65,7 +65,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DensityImageLegend s = (DensityImageLegend)obj;
+        var s = (DensityImageLegend)obj;
         info.AddBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType);
 
         info.AddValue("PlotItem", s._plotItemProxy);
@@ -114,13 +114,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       if (null == futureParentObject)
         throw new ArgumentNullException("futureParentObject");
 
-      this.ParentObject = futureParentObject;
-      this.PlotItem = plotItem;
-      if (null == this._plotItemProxy.DocumentPath)
+      ParentObject = futureParentObject;
+      PlotItem = plotItem;
+      if (null == _plotItemProxy.DocumentPath)
         throw new ArgumentException("No path could be found between plotItem and futureParentObject. This is an indication that one of the objects is not rooted.");
 
-      this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
-      this.SetPosition(initialLocation, Main.EventFiring.Suppressed);
+      SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
+      SetPosition(initialLocation, Main.EventFiring.Suppressed);
 
       // _orientationIsVertical = true;
       // _scaleIsReversed = false;
@@ -171,7 +171,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       // set the parent objects
       _axisStyles.ParentObject = this;
       _cachedArea.ParentObject = this;
-      this.UpdateTransformationMatrix();
+      UpdateTransformationMatrix();
     }
 
     public DensityImageLegend(DensityImageLegend from)
@@ -190,10 +190,10 @@ namespace Altaxo.Graph.Gdi.Shapes
           _cachedArea = new DensityLegendArea(from._cachedArea) { ParentObject = this };
 
           ChildCloneToMember(ref _axisStyles, from._axisStyles);
-          this._axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
-          this._axisStyles.ParentObject = this;
+          _axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
+          _axisStyles.ParentObject = this;
 
-          this._bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
+          _bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
 
           _plotItemProxy = new Main.RelDocNodeProxy(from._plotItemProxy, true, this);
         }
@@ -474,7 +474,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         if (null != axstyle.Title && null != (result = axstyle.Title.HitTest(myHitTestData)))
         {
-          result.Remove = this.EhAxisTitleRemove;
+          result.Remove = EhAxisTitleRemove;
           result.Transform(_transformation);
           return result;
         }
@@ -560,13 +560,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public DensityLegendArea(DensityLegendArea from)
       {
-        this._size = from._size;
+        _size = from._size;
 
-        this._scales = from._scales.Clone();
-        this._scales.ParentObject = this;
+        _scales = from._scales.Clone();
+        _scales.ParentObject = this;
 
-        this._coordinateSystem = (CS.G2DCartesicCoordinateSystem)from._coordinateSystem.Clone();
-        this._coordinateSystem.ParentObject = this;
+        _coordinateSystem = (CS.G2DCartesicCoordinateSystem)from._coordinateSystem.Clone();
+        _coordinateSystem.ParentObject = this;
       }
 
       protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

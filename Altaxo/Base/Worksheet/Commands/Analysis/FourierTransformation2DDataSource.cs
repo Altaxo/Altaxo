@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -115,9 +115,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       using (var token = SuspendGetToken())
       {
-        this.FourierTransformation2DOptions = transformationOptions;
-        this.ImportOptions = importOptions;
-        this.InputData = inputData;
+        FourierTransformation2DOptions = transformationOptions;
+        ImportOptions = importOptions;
+        InputData = inputData;
       }
     }
 
@@ -190,7 +190,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
       catch (Exception ex)
       {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", this.GetType().Name, ex.Message);
+        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
       }
     }
 

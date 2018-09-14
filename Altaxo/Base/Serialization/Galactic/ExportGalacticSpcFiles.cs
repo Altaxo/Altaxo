@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
+using Altaxo.Collections;
 
 namespace Altaxo.Serialization.Galactic
 {
@@ -93,18 +93,18 @@ namespace Altaxo.Serialization.Galactic
       try
       {
         stream = new System.IO.FileStream(filename, System.IO.FileMode.CreateNew);
-        System.IO.BinaryWriter binwriter = new System.IO.BinaryWriter(stream);
+        var binwriter = new System.IO.BinaryWriter(stream);
 
         binwriter.Write((byte)0x80); // ftflgs : not-evenly spaced data
         binwriter.Write((byte)0x4B); // fversn : new version
         binwriter.Write((byte)0x00); // fexper : general experimental technique
         binwriter.Write((byte)0x80); // fexp   : fractional scaling exponent (0x80 for floating point)
 
-        binwriter.Write((System.Int32)len); // fnpts  : number of points
+        binwriter.Write(len); // fnpts  : number of points
 
-        binwriter.Write((double)xvalues[0]); // ffirst : first x-value
-        binwriter.Write((double)xvalues[len - 1]); // flast : last x-value
-        binwriter.Write((System.Int32)1); // fnsub : 1 (one) subfile only
+        binwriter.Write(xvalues[0]); // ffirst : first x-value
+        binwriter.Write(xvalues[len - 1]); // flast : last x-value
+        binwriter.Write(1); // fnsub : 1 (one) subfile only
 
         binwriter.Write((byte)0); //  Type of X axis units (see definitions below)
         binwriter.Write((byte)0); //  Type of Y axis units (see definitions below)
@@ -126,16 +126,16 @@ namespace Altaxo.Serialization.Galactic
 
         binwriter.Write((byte)0); // subflgs : always 0
         binwriter.Write((byte)0x80); // subexp : y-values scaling exponent (set to 0x80 means floating point representation)
-        binwriter.Write((System.Int16)0); // subindx :  Integer index number of trace subfile (0=first)
+        binwriter.Write((short)0); // subindx :  Integer index number of trace subfile (0=first)
 
         binwriter.Write((float)0); // subtime;   Floating time for trace (Z axis corrdinate)
         binwriter.Write((float)0); // subnext;   Floating time for next trace (May be same as beg)
         binwriter.Write((float)0); // subnois;   Floating peak pick noise level if high byte nonzero
 
-        binwriter.Write((System.Int32)0); // subnpts;  Integer number of subfile points for TXYXYS type
-        binwriter.Write((System.Int32)0); // subscan; Integer number of co-added scans or 0 (for collect)
+        binwriter.Write(0); // subnpts;  Integer number of subfile points for TXYXYS type
+        binwriter.Write(0); // subscan; Integer number of co-added scans or 0 (for collect)
         binwriter.Write((float)0);        // subwlevel;  Floating W axis value (if fwplanes non-zero)
-        binwriter.Write((System.Int32)0); // subresv[4];   Reserved area (must be set to zero)
+        binwriter.Write(0); // subresv[4];   Reserved area (must be set to zero)
 
         // ---------------------------------------------------------------------
         //   following the y-values array
@@ -184,7 +184,7 @@ namespace Altaxo.Serialization.Galactic
       {
         i = bUseSel ? selectedColumns[j] : j;
 
-        if (xcolumn[i] == Double.NaN)
+        if (xcolumn[i] == double.NaN)
           return string.Format("X column at index {i} has no numeric value!", i);
 
         if (!(table[i] is Altaxo.Data.INumericColumn))
@@ -241,7 +241,7 @@ namespace Altaxo.Serialization.Galactic
         if (double.IsNaN(xcolumn[i]))
           return string.Format("X column at index {i} has no numeric value!", i);
 
-        if (((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber])[i] == Double.NaN)
+        if (((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber])[i] == double.NaN)
           return string.Format("Table cell [{0},{1}] (column {2}) has no numeric value!", columnnumber, i, table.DataColumns[columnnumber].FullName);
       }
 

@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph2D;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Collections;
+using Altaxo.Geometry;
+using Altaxo.Graph.Graph2D;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Graph2D
 {

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Camera
 {
@@ -117,7 +117,7 @@ namespace Altaxo.Graph.Graph3D.Camera
       if (!(zNear < zFar))
         throw new ArgumentOutOfRangeException(nameof(zFar) + " has to be > " + nameof(zNear));
 
-      var result = (PerspectiveCamera)this.MemberwiseClone();
+      var result = (PerspectiveCamera)MemberwiseClone();
 
       result._widthAtZNear = _widthAtZNear * zNear / _zNear; // Adjust width so that view angle is kept
       result._zNear = zNear;
@@ -138,7 +138,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <returns>New camera with the provided parameters.</returns>
     public PerspectiveCamera WithEyeTargetWidth(PointD3D eyePosition, PointD3D targetPosition, double widthAtZNear)
     {
-      var result = (PerspectiveCamera)this.MemberwiseClone();
+      var result = (PerspectiveCamera)MemberwiseClone();
       result._eyePosition = eyePosition;
       result._targetPosition = targetPosition;
       result._widthAtZNear = widthAtZNear;
@@ -209,7 +209,7 @@ namespace Altaxo.Graph.Graph3D.Camera
       if (rx == 0 && ry == 0)
       {
         var newEyePosition = _targetPosition + (_eyePosition - _targetPosition) * distanceFactor;
-        return (PerspectiveCamera)this.WithEyeTarget(newEyePosition, _targetPosition);
+        return (PerspectiveCamera)WithEyeTarget(newEyePosition, _targetPosition);
       }
       else
       {
@@ -246,17 +246,17 @@ namespace Altaxo.Graph.Graph3D.Camera
         var sinElevation = tanElevation * cosElevation;
 
         // now rotate our current LookAt with the azimuth and elevation (elevation first, then azimuth)
-        double distance = this.Distance;
-        Matrix4x3 rotMatrix = new Matrix4x3(
+        double distance = Distance;
+        var rotMatrix = new Matrix4x3(
           cosAzimuth, 0, sinAzimuth,
           -sinAzimuth * sinElevation, cosElevation, cosAzimuth * sinElevation,
           -cosElevation * sinAzimuth, -sinElevation, cosAzimuth * cosElevation,
           distance * (distanceFactor - 1) * sinAzimuth * cosElevation, distance * (distanceFactor - 1) * sinElevation, distance * (1 - distanceFactor) * cosAzimuth * cosElevation
           );
 
-        Matrix4x3 newLookAt = this.LookAtRHMatrix.WithAppendedTransformation(rotMatrix);
+        Matrix4x3 newLookAt = LookAtRHMatrix.WithAppendedTransformation(rotMatrix);
 
-        return (PerspectiveCamera)this.WithLookAtRHMatrix(newLookAt, Distance * distanceFactor);
+        return (PerspectiveCamera)WithLookAtRHMatrix(newLookAt, Distance * distanceFactor);
 
         /* the code that will setup the camera manually:
 				var newEyeVec = new VectorD3D(newLookAt.M13, newLookAt.M23, newLookAt.M33);
@@ -288,15 +288,15 @@ namespace Altaxo.Graph.Graph3D.Camera
       double tanx = rx * _widthAtZNear / (2 * _zNear);
       double tany = ry * _widthAtZNear * aspectRatio / (2 * _zNear);
 
-      double diffDistance = this.Distance * (1 - distanceFactor);
+      double diffDistance = Distance * (1 - distanceFactor);
 
-      var eyeVec = this.TargetToEyeVectorNormalized;
-      var up = this.UpVectorPerpendicularToEyeVectorNormalized;
-      var right = this.RightVectorPerpendicularToEyeVectorNormalized;
+      var eyeVec = TargetToEyeVectorNormalized;
+      var up = UpVectorPerpendicularToEyeVectorNormalized;
+      var right = RightVectorPerpendicularToEyeVectorNormalized;
 
       var diffVector = -diffDistance * eyeVec + tanx * diffDistance * right + tany * diffDistance * up;
 
-      return (PerspectiveCamera)this.WithEyeTarget(this.EyePosition + diffVector, this.TargetPosition + diffVector);
+      return (PerspectiveCamera)WithEyeTarget(EyePosition + diffVector, TargetPosition + diffVector);
     }
 
     #endregion Zoom by moving camera forward

@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Gui.Graph.Gdi;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       _docLocation = (ItemLocationDirect)_locationController.ModelObject;
 
       if (!object.ReferenceEquals(_doc.Location, _docLocation))
-        _doc.Location.CopyFrom((ItemLocationDirect)_docLocation);
+        _doc.Location.CopyFrom(_docLocation);
 
       // all other properties where already set during the session
 

@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.GraphicsContext;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing.D3D;
+using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D.GraphicsContext;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Graph3D.Background
 {
@@ -131,10 +131,10 @@ namespace Altaxo.Graph.Graph3D.Background
       var from = obj as RectangularBackground;
       if (null != from)
       {
-        this._material = from._material;
-        this._customDistance = from._customDistance;
-        this._customThickness = from._customThickness;
-        this._padding = from._padding;
+        _material = from._material;
+        _customDistance = from._customDistance;
+        _customThickness = from._customThickness;
+        _padding = from._padding;
         return true;
       }
       return false;

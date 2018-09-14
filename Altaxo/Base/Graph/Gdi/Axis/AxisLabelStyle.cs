@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Gdi.Background;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Data;
+using Altaxo.Graph.Gdi.Background;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
 
-        Edge edge = (Edge)info.GetValue("Edge", s);
+        var edge = (Edge)info.GetValue("Edge", s);
         s._font = (FontX)info.GetValue("Font", s);
 
         s._brush = new BrushX(NamedColors.Black) { ParentObject = s };
@@ -142,7 +142,7 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
 
-        Edge edge = (Edge)info.GetValue("Edge", s);
+        var edge = (Edge)info.GetValue("Edge", s);
         s._font = (FontX)info.GetValue("Font", s);
         s._brush = (BrushX)info.GetValue("Brush", s);
         if (null != s._brush)
@@ -179,7 +179,7 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AxisLabelStyle s = (AxisLabelStyle)obj;
+        var s = (AxisLabelStyle)obj;
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._brush);
         info.AddValue("Background", s._backgroundStyle);
@@ -362,7 +362,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AxisLabelStyle s = (AxisLabelStyle)obj;
+        var s = (AxisLabelStyle)obj;
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._brush);
         info.AddValue("Background", s._backgroundStyle);
@@ -588,13 +588,13 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>The brush color. If you set this, the font brush will be set to a solid brush.</summary>
     public NamedColor Color
     {
-      get { return this._brush.Color; }
+      get { return _brush.Color; }
       set
       {
-        var oldColor = this.Color;
+        var oldColor = Color;
         if (value != oldColor)
         {
-          this._brush.SetSolidBrush(value);
+          _brush.SetSolidBrush(value);
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -605,12 +605,12 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        return this._brush;
+        return _brush;
         ;
       }
       set
       {
-        this.ChildCloneToMember(ref _brush, value.Clone());
+        ChildCloneToMember(ref _brush, value.Clone());
         EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -643,7 +643,7 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        return this._labelFormatting;
+        return _labelFormatting;
       }
       set
       {
@@ -707,11 +707,11 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
     public double XOffset
     {
-      get { return this._xOffset; }
+      get { return _xOffset; }
       set
       {
-        double oldValue = this._xOffset;
-        this._xOffset = value;
+        double oldValue = _xOffset;
+        _xOffset = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -722,11 +722,11 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
     public double YOffset
     {
-      get { return this._yOffset; }
+      get { return _yOffset; }
       set
       {
-        double oldValue = this._yOffset;
-        this._yOffset = value;
+        double oldValue = _yOffset;
+        _yOffset = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -737,11 +737,11 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>The angle of the label.</summary>
     public double Rotation
     {
-      get { return this._rotation; }
+      get { return _rotation; }
       set
       {
-        double oldValue = this._rotation;
-        this._rotation = value;
+        double oldValue = _rotation;
+        _rotation = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -753,12 +753,12 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        return this._automaticRotationShift;
+        return _automaticRotationShift;
       }
       set
       {
-        bool oldValue = this.AutomaticAlignment;
-        this._automaticRotationShift = value;
+        bool oldValue = AutomaticAlignment;
+        _automaticRotationShift = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -771,12 +771,12 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        return this._horizontalAlignment;
+        return _horizontalAlignment;
       }
       set
       {
-        System.Drawing.StringAlignment oldValue = this.HorizontalAlignment;
-        this._horizontalAlignment = value;
+        System.Drawing.StringAlignment oldValue = HorizontalAlignment;
+        _horizontalAlignment = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -787,11 +787,11 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>Vertical aligment of the label.</summary>
     public System.Drawing.StringAlignment VerticalAlignment
     {
-      get { return this._verticalAlignment; }
+      get { return _verticalAlignment; }
       set
       {
-        System.Drawing.StringAlignment oldValue = this.VerticalAlignment;
-        this._verticalAlignment = value;
+        System.Drawing.StringAlignment oldValue = VerticalAlignment;
+        _verticalAlignment = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -907,13 +907,12 @@ namespace Altaxo.Graph.Gdi.Axis
 
       _enclosingPath.Reset();
       _enclosingPath.FillMode = FillMode.Winding; // with Winding also overlapping rectangles are selected
-      GraphicsPath helperPath = new GraphicsPath();
-      Matrix math = new Matrix();
+      var helperPath = new GraphicsPath();
+      var math = new Matrix();
 
       Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
       Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
 
-      PointD2D outVector;
       Logical3D outer;
       var dist_x = outerDistance; // Distance from axis tick point to label
       var dist_y = outerDistance; // y distance from axis tick point to label
@@ -941,8 +940,8 @@ namespace Altaxo.Graph.Gdi.Axis
 
       if (!_suppressedLabels.IsEmpty)
       {
-        List<AltaxoVariant> filteredTicks = new List<AltaxoVariant>();
-        List<double> filteredRelPositions = new List<double>();
+        var filteredTicks = new List<AltaxoVariant>();
+        var filteredRelPositions = new List<double>();
 
         for (int i = 0; i < ticks.Length; i++)
         {
@@ -972,7 +971,7 @@ namespace Altaxo.Graph.Gdi.Axis
           continue;
 
         outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, labelSide);
-        PointD2D tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+        PointD2D tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out var outVector);
         PointD2D tickend = tickorg + outVector * outerDistance;
 
         PointD2D msize = labels[i].Size;
@@ -989,7 +988,7 @@ namespace Altaxo.Graph.Gdi.Axis
           morg = morg.WithXPlus(outVector.X * _font.Size / 3);
         }
 
-        RectangleD2D mrect = new RectangleD2D(morg, msize);
+        var mrect = new RectangleD2D(morg, msize);
         if (_automaticRotationShift)
           AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center);
         else
@@ -997,16 +996,16 @@ namespace Altaxo.Graph.Gdi.Axis
 
         math.Reset();
         math.Translate((float)morg.X, (float)morg.Y);
-        if (this._rotation != 0)
+        if (_rotation != 0)
         {
-          math.Rotate((float)-this._rotation);
+          math.Rotate((float)-_rotation);
         }
         math.Translate((float)(mrect.X - morg.X + emSize * _xOffset), (float)(mrect.Y - morg.Y + emSize * _yOffset));
 
         System.Drawing.Drawing2D.GraphicsState gs = g.Save();
         g.MultiplyTransform(math);
 
-        if (this._backgroundStyle != null)
+        if (_backgroundStyle != null)
           _backgroundStyle.Draw(g, new RectangleD2D(PointD2D.Empty, msize));
 
         _brush.SetEnvironment(new RectangleD2D(PointD2D.Empty, msize), BrushX.GetEffectiveMaximumResolution(g, 1));

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -89,9 +89,11 @@ namespace Altaxo.Graph.Gdi
         s._isAutoZoomActive = info.GetBoolean("AutoZoom");
         s._zoomFactor = info.GetSingle("Zoom");
 
-        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-        surr._GraphController = s;
-        surr._PathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s);
+        var surr = new XmlSerializationSurrogate0
+        {
+          _GraphController = s,
+          _PathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s)
+        };
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
         return s;
@@ -103,7 +105,7 @@ namespace Altaxo.Graph.Gdi
         if (o is GraphDocument)
         {
           _GraphController._graphDocument = (GraphDocument)o;
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
         }
       }
     }
@@ -135,9 +137,11 @@ namespace Altaxo.Graph.Gdi
       {
         var s = null != o ? (GraphViewLayout)o : new GraphViewLayout();
 
-        XmlSerializationSurrogate1 surr = new XmlSerializationSurrogate1();
-        surr._GraphController = s;
-        surr._PathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s);
+        var surr = new XmlSerializationSurrogate1
+        {
+          _GraphController = s,
+          _PathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s)
+        };
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
         s._isAutoZoomActive = info.GetBoolean("AutoZoom");
@@ -156,7 +160,7 @@ namespace Altaxo.Graph.Gdi
         if (o is GraphDocument)
         {
           _GraphController._graphDocument = (GraphDocument)o;
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
         }
       }
     }

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -73,13 +73,13 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="from">Another HitTestData object to copy from.</param>
     public HitTestPointData(HitTestPointData from)
     {
-      this._hitTransformation = from._hitTransformation;
-      this._worldTransformation = from._worldTransformation;
+      _hitTransformation = from._hitTransformation;
+      _worldTransformation = from._worldTransformation;
     }
 
     public HitTestPointData NewFromAdditionalTransformation(Matrix4x3 additionalTransformation)
     {
-      return new HitTestPointData(this._hitTransformation.WithPrependedTransformation(additionalTransformation), this._worldTransformation.WithPrependedTransformation(additionalTransformation));
+      return new HitTestPointData(_hitTransformation.WithPrependedTransformation(additionalTransformation), _worldTransformation.WithPrependedTransformation(additionalTransformation));
     }
 
     /// <summary>Transformation that transform the coordinates of the object under test to hit coordinates. It is a hit if in hit coordinates
@@ -174,7 +174,7 @@ namespace Altaxo.Graph.Graph3D
     /// <returns>True if the rectangle is hit by a ray given by the provided hit ray matrix.</returns>
     public static bool IsRectangleHitByRay(RectangleD3D r, Matrix4x4 rayTransformation, out double z)
     {
-      PointD3D[] vertices = new PointD3D[8];
+      var vertices = new PointD3D[8];
 
       int i = 0;
       foreach (var v in r.Vertices)
@@ -246,7 +246,7 @@ namespace Altaxo.Graph.Graph3D
 
       double thickness1By2 = thickness1 / 2;
       double thickness2By2 = thickness2 / 2;
-      PointD3D[] pts = new PointD3D[8];
+      var pts = new PointD3D[8];
 
       PointD3D P0 = coll.Current.Position;
 
@@ -265,10 +265,9 @@ namespace Altaxo.Graph.Graph3D
         pts[6] = _hitTransformation.Transform(P0 + thickness1By2 * e + thickness2By2 * n);
         pts[7] = _hitTransformation.Transform(P1 + thickness1By2 * e + thickness2By2 * n);
 
-        double z;
         foreach (var ti in RectangleD3D.GetTriangleIndices())
         {
-          if (HitTestWithAlreadyTransformedPoints(pts[ti.Item1], pts[ti.Item2], pts[ti.Item3], out z) && z >= 0)
+          if (HitTestWithAlreadyTransformedPoints(pts[ti.Item1], pts[ti.Item2], pts[ti.Item3], out var z) && z >= 0)
             return true;
         }
 
@@ -289,7 +288,7 @@ namespace Altaxo.Graph.Graph3D
 
       double thickness1By2 = thickness1 / 2;
       double thickness2By2 = thickness2 / 2;
-      PointD3D[] pts = new PointD3D[8];
+      var pts = new PointD3D[8];
 
       pts[0] = _hitTransformation.Transform(line.P0 - thickness1By2 * e - thickness2By2 * n);
       pts[1] = _hitTransformation.Transform(line.P1 - thickness1By2 * e - thickness2By2 * n);

@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
@@ -173,7 +173,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_TableSelectionChanged()
     {
       var node = _availableTables.FirstSelectedNode;
-      DataTable tg = node?.Tag as DataTable;
+      var tg = node?.Tag as DataTable;
 
       if (null == tg || object.ReferenceEquals(_doc.NewTable, tg))
         return;
@@ -202,7 +202,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       if (object.ReferenceEquals(_doc.NewTable, tag)) // then nothing will change
         return;
 
-      _doc.NewTable = (DataTable)tag;
+      _doc.NewTable = tag;
       UpdateDiagnostics();
 
       _availableTables.SetSelection((nd) => object.ReferenceEquals(nd.Tag, _doc.NewTable));

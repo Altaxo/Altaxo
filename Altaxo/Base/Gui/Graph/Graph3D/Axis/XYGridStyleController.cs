@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D.Axis;
 using System;
+using Altaxo.Graph.Graph3D.Axis;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
@@ -99,11 +99,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     public override bool Apply(bool disposeController)
     {
-      if (!this._majorController.Apply(disposeController))
+      if (!_majorController.Apply(disposeController))
         return false;
       _doc.MajorPen = (Altaxo.Drawing.D3D.PenX3D)_majorController.ModelObject;
 
-      if (!this._minorController.Apply(disposeController))
+      if (!_minorController.Apply(disposeController))
         return false;
       _doc.MinorPen = (Altaxo.Drawing.D3D.PenX3D)_minorController.ModelObject;
 
@@ -113,16 +113,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     protected override void AttachView()
     {
       base.AttachView();
-      _view.ShowGridChanged += this.EhView_ShowGridChanged;
-      _view.ShowMinorGridChanged += this.EhView_ShowMinorGridChanged;
-      _view.ShowZeroOnlyChanged += this.EhView_ShowZeroOnlyChanged;
+      _view.ShowGridChanged += EhView_ShowGridChanged;
+      _view.ShowMinorGridChanged += EhView_ShowMinorGridChanged;
+      _view.ShowZeroOnlyChanged += EhView_ShowZeroOnlyChanged;
     }
 
     protected override void DetachView()
     {
-      _view.ShowGridChanged -= this.EhView_ShowGridChanged;
-      _view.ShowMinorGridChanged -= this.EhView_ShowMinorGridChanged;
-      _view.ShowZeroOnlyChanged -= this.EhView_ShowZeroOnlyChanged;
+      _view.ShowGridChanged -= EhView_ShowGridChanged;
+      _view.ShowMinorGridChanged -= EhView_ShowMinorGridChanged;
+      _view.ShowZeroOnlyChanged -= EhView_ShowZeroOnlyChanged;
       base.DetachView();
     }
 

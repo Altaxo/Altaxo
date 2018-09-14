@@ -22,6 +22,12 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
@@ -29,12 +35,6 @@ using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using Altaxo.Graph.Graph3D.Plot.Data;
 using Altaxo.Graph.Plot.Data;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {

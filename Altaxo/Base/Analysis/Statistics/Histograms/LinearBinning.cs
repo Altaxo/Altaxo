@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
 
 namespace Altaxo.Analysis.Statistics.Histograms
 {
@@ -195,7 +195,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
         // Width of a bin after Freedman and Diaconis
         double widthOfBin = 2 * (q3 - q1) / Math.Pow(list.Count, 1.0 / 3.0);
 
-        this.BinWidth = widthOfBin; // use property in order to invalidate the bins if the value has changed
+        BinWidth = widthOfBin; // use property in order to invalidate the bins if the value has changed
       }
 
       if (!IsUserDefinedBinOffset)
@@ -213,7 +213,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
           binOffset = 0.5 * minValue + 0.5 * maxValue;
         }
 
-        this.BinOffset = binOffset; // use property in order to invalidate the bins if the value has changed
+        BinOffset = binOffset; // use property in order to invalidate the bins if the value has changed
       }
 
       // calculate number of resulting bins
@@ -261,7 +261,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     private static double StrictCeiling(double x)

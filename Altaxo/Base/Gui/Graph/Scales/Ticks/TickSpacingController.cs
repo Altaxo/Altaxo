@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
@@ -78,12 +78,12 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       base.AttachView();
 
-      _view.TickSpacingTypeChanged += this.EhView_TickSpacingTypeChanged;
+      _view.TickSpacingTypeChanged += EhView_TickSpacingTypeChanged;
     }
 
     protected override void DetachView()
     {
-      _view.TickSpacingTypeChanged -= this.EhView_TickSpacingTypeChanged;
+      _view.TickSpacingTypeChanged -= EhView_TickSpacingTypeChanged;
 
       base.DetachView();
     }
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TickSpacing));
         for (int i = 0; i < classes.Length; i++)
         {
-          SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
+          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
           _tickSpacingTypes.Add(node);
         }
       }
@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       if (null == selNode)
         return;
 
-      Type spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
+      var spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
 
       if (spaceType == _doc.GetType())
         return;

@@ -102,10 +102,10 @@
 // 4. The functions IntegerTChar, StringTChar, ArrayTChar, and DateTimeTChar must be made virtual, so that they can be overridden
 // 5. The line endings must be corrected and the file must be formatted
 
-using Altaxo.Main.PegParser;
 using System;
 using System.IO;
 using System.Text;
+using Altaxo.Main.PegParser;
 
 namespace Altaxo.Gui.Common.MultiRename
 {
@@ -149,10 +149,9 @@ namespace Altaxo.Gui.Common.MultiRename
     {
       try
       {
-        EAltaxo_MultiRename ruleEnum = (EAltaxo_MultiRename)id;
+        var ruleEnum = (EAltaxo_MultiRename)id;
         string s = ruleEnum.ToString();
-        int val;
-        if (int.TryParse(s, out val))
+        if (int.TryParse(s, out var val))
         {
           return base.GetRuleNameFromId(id);
         }

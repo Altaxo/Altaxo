@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Altaxo.Collections;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -111,36 +111,36 @@ namespace Altaxo.Graph.Gdi
 
       if (0 != (options & GraphCopyOptions.CopyLayerScales))
       {
-        this.CoordinateSystem = (G2DCoordinateSystem)from.CoordinateSystem.Clone();
+        CoordinateSystem = (G2DCoordinateSystem)from.CoordinateSystem.Clone();
 
-        this.Scales = (ScaleCollection)from._scales.Clone();
-        this._dataClipping = from._dataClipping;
+        Scales = from._scales.Clone();
+        _dataClipping = from._dataClipping;
       }
 
       // Coordinate Systems size must be updated in any case
-      this.CoordinateSystem.UpdateAreaSize(this._cachedLayerSize);
+      CoordinateSystem.UpdateAreaSize(_cachedLayerSize);
 
       if (0 != (options & GraphCopyOptions.CopyLayerGrid))
       {
-        this.GridPlanes = from._gridPlanes.Clone();
+        GridPlanes = from._gridPlanes.Clone();
       }
 
       // Styles
 
       if (0 != (options & GraphCopyOptions.CopyLayerAxes))
       {
-        this.AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
+        AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
       }
 
       // Plot items
       if (0 != (options & GraphCopyOptions.CopyLayerPlotItems))
       {
-        this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
+        PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
       }
       else if (0 != (options & GraphCopyOptions.CopyLayerPlotStyles))
       {
         // TODO apply the styles from from._plotItems to the PlotItems here
-        this.PlotItems.CopyFrom(from._plotItems, options);
+        PlotItems.CopyFrom(from._plotItems, options);
       }
     }
 
@@ -177,12 +177,14 @@ namespace Altaxo.Graph.Gdi
     protected XYPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {
-      this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
-      this.AxisStyles = new AxisStyleCollection();
-      this.Scales = new ScaleCollection();
-      this.Location = new ItemLocationDirect();
-      this.GridPlanes = new GridPlaneCollection();
-      this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
+      CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
+      AxisStyles = new AxisStyleCollection();
+      Scales = new ScaleCollection();
+      Location = new ItemLocationDirect();
+      GridPlanes = new GridPlaneCollection
+      {
+        new GridPlane(CSPlaneID.Front)
+      };
     }
 
     public XYPlotLayer(HostLayer parentLayer)
@@ -214,12 +216,14 @@ namespace Altaxo.Graph.Gdi
     public XYPlotLayer(HostLayer parentLayer, IItemLocation location, G2DCoordinateSystem coordinateSystem)
       : base(parentLayer, location)
     {
-      this.CoordinateSystem = coordinateSystem;
-      this.AxisStyles = new AxisStyleCollection();
-      this.Scales = new ScaleCollection();
-      this.GridPlanes = new GridPlaneCollection();
-      this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-      this.PlotItems = new PlotItemCollection(this);
+      CoordinateSystem = coordinateSystem;
+      AxisStyles = new AxisStyleCollection();
+      Scales = new ScaleCollection();
+      GridPlanes = new GridPlaneCollection
+      {
+        new GridPlane(CSPlaneID.Front)
+      };
+      PlotItems = new PlotItemCollection(this);
     }
 
     #endregion Constructors
@@ -321,7 +325,7 @@ namespace Altaxo.Graph.Gdi
     {
       if (id.UsePhysicalValue)
       {
-        double l = this.Scales[id.PerpendicularAxisNumber].PhysicalVariantToNormal(id.PhysicalValue);
+        double l = Scales[id.PerpendicularAxisNumber].PhysicalVariantToNormal(id.PhysicalValue);
         id = id.WithLogicalValue(l);
       }
 
@@ -356,7 +360,7 @@ namespace Altaxo.Graph.Gdi
       {
         if (ChildSetMember(ref _axisStyles, value))
         {
-          value.UpdateCoordinateSystem(this.CoordinateSystem);
+          value.UpdateCoordinateSystem(CoordinateSystem);
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -473,7 +477,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     public void ClearLegends()
     {
-      for (int i = this.GraphObjects.Count - 1; i >= 0; --i)
+      for (int i = GraphObjects.Count - 1; i >= 0; --i)
       {
         if (GraphObjects[i] is LegendText)
           GraphObjects.RemoveAt(i);
@@ -507,8 +511,8 @@ namespace Altaxo.Graph.Gdi
       else
         tgo = new TextGraphic(this.GetPropertyContext());
 
-      System.Text.StringBuilder strg = new System.Text.StringBuilder();
-      for (int i = 0; i < this.PlotItems.Flattened.Length; i++)
+      var strg = new System.Text.StringBuilder();
+      for (int i = 0; i < PlotItems.Flattened.Length; i++)
       {
         strg.AppendFormat("{0}\\L({1}) \\%({2})", (i == 0 ? "" : "\r\n"), i, i);
       }
@@ -516,8 +520,8 @@ namespace Altaxo.Graph.Gdi
 
       // if the position of the old legend is outside, use a new position
       if (null == existingLegend || existingLegend.Position.X < 0 || existingLegend.Position.Y < 0 ||
-        existingLegend.Position.X > this.Size.X || existingLegend.Position.Y > this.Size.Y)
-        tgo.Position = new PointD2D(0.1 * this.Size.X, 0.1 * this.Size.Y);
+        existingLegend.Position.X > Size.X || existingLegend.Position.Y > Size.Y)
+        tgo.Position = new PointD2D(0.1 * Size.X, 0.1 * Size.Y);
       else
         tgo.Position = existingLegend.Position;
 
@@ -538,11 +542,11 @@ namespace Altaxo.Graph.Gdi
       {
         if (info.IsShownByDefault)
         {
-          this.AxisStyles.CreateDefault(info.Identifier, context);
+          AxisStyles.CreateDefault(info.Identifier, context);
 
           if (info.HasTitleByDefault)
           {
-            this.SetAxisTitleString(info.Identifier, info.Identifier.ParallelAxisNumber == 0 ? "X axis" : "Y axis");
+            SetAxisTitleString(info.Identifier, info.Identifier.ParallelAxisNumber == 0 ? "X axis" : "Y axis");
           }
         }
       }
@@ -588,14 +592,14 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return this._scales.X is LinkedScale;
+        return _scales.X is LinkedScale;
       }
     }
 
     private bool EhXAxisInterrogateBoundaryChangedEvent()
     {
       // do nothing here, for the future we can decide to change the linked axis boundaries
-      return this.IsXAxisLinked;
+      return IsXAxisLinked;
     }
 
     /// <summary>
@@ -629,14 +633,14 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return this._scales.Y is LinkedScale;
+        return _scales.Y is LinkedScale;
       }
     }
 
     private bool EhYAxisInterrogateBoundaryChangedEvent()
     {
       // do nothing here, for the future we can decide to change the linked axis boundaries
-      return this.IsYAxisLinked;
+      return IsYAxisLinked;
     }
 
     #endregion Scale related
@@ -684,7 +688,7 @@ namespace Altaxo.Graph.Gdi
     {
       AxisStyle style = _axisStyles[id];
       string oldtitle = (style == null || style.Title == null) ? null : style.Title.Text;
-      string newtitle = (value == null || value == String.Empty) ? null : value;
+      string newtitle = (value == null || value == string.Empty) ? null : value;
 
       if (newtitle != oldtitle)
       {
@@ -699,11 +703,11 @@ namespace Altaxo.Graph.Gdi
         }
         else
         {
-          TextGraphic tg = new TextGraphic(this.GetPropertyContext());
+          var tg = new TextGraphic(this.GetPropertyContext());
 
           CSAxisInformation info = CoordinateSystem.GetAxisStyleInformation(id);
 
-          tg.SetParentSize(this.Size, false);
+          tg.SetParentSize(Size, false);
           SetDefaultAxisTitlePositionAndOrientation(tg, id, info);
           tg.Text = newtitle;
           _axisStyles.AxisStyleEnsured(id).Title = tg;
@@ -720,13 +724,12 @@ namespace Altaxo.Graph.Gdi
       else
         rx0 = rx1 = id.LogicalValueOtherFirst;
 
-      PointD2D normDirection;
       Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferredLabelSide);
-      var location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out normDirection);
+      var location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out var normDirection);
       double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
-      axisTitle.Location.ParentAnchorX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
-      axisTitle.Location.ParentAnchorY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
+      axisTitle.Location.ParentAnchorX = RADouble.NewRel(location.X / Size.X); // set the x anchor of the parent
+      axisTitle.Location.ParentAnchorY = RADouble.NewRel(location.Y / Size.Y); // set the y anchor of the parent
 
       double distance = 0;
       AxisStyle axisStyle = _axisStyles[id];
@@ -946,7 +949,7 @@ namespace Altaxo.Graph.Gdi
 
       if (plotItemsOnly)
       {
-        HitTestPointData localCoord = parentHitTestData.NewFromAdditionalTransformation(this._transformation);
+        HitTestPointData localCoord = parentHitTestData.NewFromAdditionalTransformation(_transformation);
 
         // hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
         for (int i = _graphObjects.Count - 1; i >= 0; --i)
@@ -979,7 +982,7 @@ namespace Altaxo.Graph.Gdi
 
     private bool EhAxisLabelMajorStyleRemove(IHitTestObject o)
     {
-      AxisLabelStyle als = o.HittedObject as AxisLabelStyle;
+      var als = o.HittedObject as AxisLabelStyle;
       AxisStyle axisStyle = als == null ? null : als.ParentObject as AxisStyle;
       if (axisStyle != null)
       {
@@ -991,7 +994,7 @@ namespace Altaxo.Graph.Gdi
 
     private bool EhAxisLabelMinorStyleRemove(IHitTestObject o)
     {
-      AxisLabelStyle als = o.HittedObject as AxisLabelStyle;
+      var als = o.HittedObject as AxisLabelStyle;
       AxisStyle axisStyle = als == null ? null : als.ParentObject as AxisStyle;
       if (axisStyle != null)
       {
@@ -1009,7 +1012,7 @@ namespace Altaxo.Graph.Gdi
     {
       // first update out direct childs
       if (null != CoordinateSystem)
-        CoordinateSystem.UpdateAreaSize(this.Size);
+        CoordinateSystem.UpdateAreaSize(Size);
 
       base.OnCachedResultingSizeChanged();
     }
@@ -1075,7 +1078,7 @@ namespace Altaxo.Graph.Gdi
         using (var suspendToken = _scales.X.DataBoundsObject.SuspendGetToken())
         {
           _scales.X.DataBoundsObject.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             var paXB = pa as IXBoundsHolder;
             if (null != paXB)
@@ -1099,7 +1102,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     protected void InitializeXScaleDataBounds()
     {
-      if (null == this.PlotItems)
+      if (null == PlotItems)
         return; // can happen during deserialization
 
       var scaleBounds = _scales.X.DataBoundsObject;
@@ -1116,7 +1119,7 @@ namespace Altaxo.Graph.Gdi
         using (var suspendToken = scaleBounds.SuspendGetToken())
         {
           scaleBounds.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             if (pa is IXBoundsHolder)
             {
@@ -1154,7 +1157,7 @@ namespace Altaxo.Graph.Gdi
         using (var suspendToken = _scales.Y.DataBoundsObject.SuspendGetToken())
         {
           _scales.Y.DataBoundsObject.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             var paYB = pa as IYBoundsHolder;
             if (null != paYB)
@@ -1178,7 +1181,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     protected void InitializeYScaleDataBounds()
     {
-      if (null == this.PlotItems)
+      if (null == PlotItems)
         return; // can happen during deserialization
 
       var scaleBounds = _scales.Y.DataBoundsObject;
@@ -1196,7 +1199,7 @@ namespace Altaxo.Graph.Gdi
         using (var suspendToken = scaleBounds.SuspendGetToken())
         {
           scaleBounds.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             if (pa is IYBoundsHolder)
             {
@@ -1322,7 +1325,7 @@ namespace Altaxo.Graph.Gdi
         _coordinateSystem = value;
         _coordinateSystem.ParentObject = this;
 
-        _coordinateSystem.UpdateAreaSize(this.Size);
+        _coordinateSystem.UpdateAreaSize(Size);
 
         if (null != AxisStyles)
           AxisStyles.UpdateCoordinateSystem(value);
@@ -1454,12 +1457,12 @@ namespace Altaxo.Graph.Gdi
         if (object.ReferenceEquals(this, from))
           return;
 
-        this.GridStyle = from._gridStyle == null ? null : (GridStyle)from._gridStyle.Clone();
+        GridStyle = from._gridStyle == null ? null : (GridStyle)from._gridStyle.Clone();
 
-        this._axisStyles.Clear();
+        _axisStyles.Clear();
         for (int i = 0; i < _axisStyles.Count; ++i)
         {
-          this.AddAxisStyle((AxisStyle)from._axisStyles[i].Clone());
+          AddAxisStyle((AxisStyle)from._axisStyles[i].Clone());
         }
       }
 
@@ -1585,9 +1588,9 @@ namespace Altaxo.Graph.Gdi
       {
         _styles = new ScaleStyle[2];
 
-        this._styles[0] = new ScaleStyle();
+        _styles[0] = new ScaleStyle();
 
-        this._styles[1] = new ScaleStyle();
+        _styles[1] = new ScaleStyle();
       }
 
       /// <summary>
@@ -1761,7 +1764,7 @@ namespace Altaxo.Graph.Gdi
 
         var from = obj as AxisStylePlaceHolderBase;
         if (null != from)
-          this.Index = from.Index;
+          Index = from.Index;
 
         return true;
       }
@@ -2165,7 +2168,7 @@ namespace Altaxo.Graph.Gdi
 
       private static bool EhRemoveAxisStyleTitle(IHitTestObject o)
       {
-        GraphicBase go = (GraphicBase)o.HittedObject;
+        var go = (GraphicBase)o.HittedObject;
         var layer = o.ParentLayer as XYPlotLayer;
         if (null != layer)
         {
@@ -2289,8 +2292,8 @@ namespace Altaxo.Graph.Gdi
         var from = obj as PlotItemPlaceHolder;
         if (null != from)
         {
-          this.PlotItemParent = from.PlotItemParent;
-          this.PlotItemIndex = from.PlotItemIndex;
+          PlotItemParent = from.PlotItemParent;
+          PlotItemIndex = from.PlotItemIndex;
         }
 
         return true;

@@ -16,14 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.Main;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -222,7 +222,7 @@ namespace Altaxo.Gui.Workbench
 
     protected virtual void OnClosingStage8_WaitForBackgroundTasks()
     {
-      this.WaitForBackgroundTasks();
+      WaitForBackgroundTasks();
     }
 
     protected virtual void OnClosingStage9_DisposeServices()

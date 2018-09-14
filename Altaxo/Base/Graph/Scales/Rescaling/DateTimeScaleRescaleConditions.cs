@@ -246,22 +246,22 @@ namespace Altaxo.Graph.Scales.Rescaling
       if (null == from)
         return false;
 
-      this._orgRescaling = from._orgRescaling;
-      this._endRescaling = from._endRescaling;
+      _orgRescaling = from._orgRescaling;
+      _endRescaling = from._endRescaling;
 
-      this._userProvidedOrgRelativeTo = from._userProvidedOrgRelativeTo;
-      this._userProvidedEndRelativeTo = from._userProvidedEndRelativeTo;
+      _userProvidedOrgRelativeTo = from._userProvidedOrgRelativeTo;
+      _userProvidedEndRelativeTo = from._userProvidedEndRelativeTo;
 
-      this._userProvidedOrgValue = from._userProvidedOrgValue;
-      this._userProvidedOrgDateTimeKind = from._userProvidedOrgDateTimeKind;
-      this._userProvidedEndValue = from._userProvidedEndValue;
-      this._userProvidedEndDateTimeKind = from._userProvidedEndDateTimeKind;
+      _userProvidedOrgValue = from._userProvidedOrgValue;
+      _userProvidedOrgDateTimeKind = from._userProvidedOrgDateTimeKind;
+      _userProvidedEndValue = from._userProvidedEndValue;
+      _userProvidedEndDateTimeKind = from._userProvidedEndDateTimeKind;
 
-      this._resultingOrg = from._resultingOrg;
-      this._resultingEnd = from._resultingEnd;
+      _resultingOrg = from._resultingOrg;
+      _resultingEnd = from._resultingEnd;
 
-      this._resultingMinOrg = from._resultingMinOrg;
-      this._resultingMaxEnd = from._resultingMaxEnd;
+      _resultingMinOrg = from._resultingMinOrg;
+      _resultingMaxEnd = from._resultingMaxEnd;
 
       EhSelfChanged(EventArgs.Empty);
 
@@ -1001,7 +1001,7 @@ namespace Altaxo.Graph.Scales.Rescaling
         throw new InvalidOperationException("Can not convert endValue to either a DateTime or a double value.");
       }
 
-      this.SetUserParameters(orgRescaling, orgRelativeTo, orgV, orgK, endRescaling, endRelativeTo, endV, endK);
+      SetUserParameters(orgRescaling, orgRelativeTo, orgV, orgK, endRescaling, endRelativeTo, endV, endK);
     }
 
     #endregion IScaleRescaleConditions implementation

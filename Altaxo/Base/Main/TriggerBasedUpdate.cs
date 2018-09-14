@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Main
 {
@@ -142,7 +142,7 @@ namespace Altaxo.Main
       add
       {
         if (_isDisposed)
-          throw new ObjectDisposedException(this.GetType().ToString());
+          throw new ObjectDisposedException(GetType().ToString());
 
         var oldValue = _updateAction;
         _updateAction += value;
@@ -278,7 +278,7 @@ namespace Altaxo.Main
     public void Trigger()
     {
       if (_isDisposed)
-        throw new ObjectDisposedException(this.GetType().ToString());
+        throw new ObjectDisposedException(GetType().ToString());
 
       var currTime = _timerQueue.CurrentTime;
 

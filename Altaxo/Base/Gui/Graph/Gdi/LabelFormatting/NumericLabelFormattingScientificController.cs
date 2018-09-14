@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.LabelFormatting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph.Gdi.LabelFormatting;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {

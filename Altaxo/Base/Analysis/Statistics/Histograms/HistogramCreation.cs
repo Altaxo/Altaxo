@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Collections;
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
+using Altaxo.Collections;
+using Altaxo.Data;
 
 namespace Altaxo.Analysis.Statistics.Histograms
 {
@@ -388,7 +388,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     {
       var stb = new StringBuilder();
 
-      Calc.Regression.QuickStatistics stat = new Calc.Regression.QuickStatistics();
+      var stat = new Calc.Regression.QuickStatistics();
       foreach (var v in sortedListOfData)
         stat.Add(v);
 

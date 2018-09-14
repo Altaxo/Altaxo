@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Gui.Common;
-using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Gui.Common;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Drawing
 {
@@ -287,8 +287,7 @@ namespace Altaxo.Gui.Drawing
 
       foreach (var listAndLevel in allListsWithLevel)
       {
-        NGTreeNode levelNode;
-        if (!levelDict.TryGetValue(listAndLevel.Level, out levelNode))
+        if (!levelDict.TryGetValue(listAndLevel.Level, out var levelNode))
         {
           levelNode = new NGTreeNode(Enum.GetName(typeof(ItemDefinitionLevel), listAndLevel.Level));
           levelDict.Add(listAndLevel.Level, levelNode);
@@ -475,7 +474,7 @@ namespace Altaxo.Gui.Drawing
       var avNode = _availableItemsRootNode.FirstSelectedNode;
       if (null == avNode)
         return;
-      TItem newItem = default(TItem);
+      var newItem = default(TItem);
       try
       {
         newItem = (TItem)Activator.CreateInstance((Type)avNode.Tag);
@@ -535,8 +534,7 @@ namespace Altaxo.Gui.Drawing
 
     protected void SetListDirty()
     {
-      string existingName;
-      if (_manager.TryGetListByMembers(_currentItems.Select(node => (TItem)node.Tag), null, out existingName))
+      if (_manager.TryGetListByMembers(_currentItems.Select(node => (TItem)node.Tag), null, out var existingName))
       {
         _currentItems_IsDirty = false;
         _isNameOfNewListValid = true;
@@ -648,7 +646,7 @@ namespace Altaxo.Gui.Drawing
 
     private DropReturnData EhCurrentItems_Drop(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
     {
-      TItem droppedItem = default(TItem);
+      var droppedItem = default(TItem);
       if (data is Type)
       {
         object createdObj = null;

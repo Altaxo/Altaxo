@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services.ScriptCompilation;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Immutable;
+using Altaxo.Main.Services.ScriptCompilation;
+using Altaxo.Serialization;
 
 namespace Altaxo.Scripting
 {
@@ -44,7 +44,7 @@ namespace Altaxo.Scripting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        TableScript s = (TableScript)obj;
+        var s = (TableScript)obj;
 
         info.AddValue("Text", s.ScriptText);
       }
@@ -318,7 +318,7 @@ namespace Altaxo.Scripting
     public bool ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataTable myTable)
     {
       var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-      System.Threading.Thread t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myTable, reporter));
+      var t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myTable, reporter));
       t.Start();
       return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
     }

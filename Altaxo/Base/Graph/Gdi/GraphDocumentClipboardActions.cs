@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -95,8 +95,10 @@ namespace Altaxo.Graph.Gdi
 
       bmp.Save(filename, options.ImageFormat);
 
-      System.Collections.Specialized.StringCollection coll = new System.Collections.Specialized.StringCollection();
-      coll.Add(filename);
+      var coll = new System.Collections.Specialized.StringCollection
+      {
+        filename
+      };
       dao.SetFileDropList(coll);
 
       return filename;
@@ -168,7 +170,7 @@ namespace Altaxo.Graph.Gdi
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
       if (null == o)
         return;
-      XYPlotLayer layer = o as XYPlotLayer;
+      var layer = o as XYPlotLayer;
       if (null != layer)
       {
         doc.RootLayer.ElementAt(layerNumber).CopyFrom(layer, options);
@@ -199,7 +201,7 @@ namespace Altaxo.Graph.Gdi
     public static void PasteFromClipboardAsNewLayer(this GraphDocument doc)
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
-      XYPlotLayer layer = o as XYPlotLayer;
+      var layer = o as XYPlotLayer;
       if (null != layer)
         doc.RootLayer.Layers.Add(layer);
     }
@@ -212,7 +214,7 @@ namespace Altaxo.Graph.Gdi
     public static void PasteFromClipboardAsNewLayerBeforeLayerNumber(this GraphDocument doc, IEnumerable<int> currentActiveLayerNumber)
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
-      XYPlotLayer layer = o as XYPlotLayer;
+      var layer = o as XYPlotLayer;
       if (null != layer)
       {
         doc.RootLayer.Insert(currentActiveLayerNumber, layer);
@@ -227,7 +229,7 @@ namespace Altaxo.Graph.Gdi
     public static void PasteFromClipboardAsNewLayerAfterLayerNumber(this GraphDocument doc, IEnumerable<int> currentActiveLayerNumber)
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
-      XYPlotLayer layer = o as XYPlotLayer;
+      var layer = o as XYPlotLayer;
       if (null != layer)
       {
         doc.RootLayer.InsertAfter(currentActiveLayerNumber, layer);
@@ -242,7 +244,7 @@ namespace Altaxo.Graph.Gdi
     public static void PasteFromClipboardAsNewChildLayerOfLayerNumber(this GraphDocument doc, IEnumerable<int> currentActiveLayerNumber)
     {
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
-      XYPlotLayer layer = o as XYPlotLayer;
+      var layer = o as XYPlotLayer;
       if (null != layer)
       {
         var parentLayer = doc.RootLayer.ElementAt(currentActiveLayerNumber);

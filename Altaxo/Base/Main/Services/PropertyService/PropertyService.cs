@@ -63,9 +63,9 @@ namespace Altaxo.Main.Services
 
     public PropertyService(DirectoryName configDirectory, DirectoryName dataDirectory, string propertiesName)
     {
-      this.DataDirectory = dataDirectory;
-      this.ConfigDirectory = configDirectory;
-      this.PropertiesFileName = configDirectory.CombineFile(propertiesName + ".xml");
+      DataDirectory = dataDirectory;
+      ConfigDirectory = configDirectory;
+      PropertiesFileName = configDirectory.CombineFile(propertiesName + ".xml");
 
       _userSettings = InternalLoadUserSettingsBag(PropertiesFileName);
       ApplicationSettings = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
@@ -151,7 +151,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     private static IDisposable LockPropertyFile()
     {
-      Mutex mutex = new Mutex(false, "PropertyServiceSave-30F32619-F92D-4BC0-BF49-AA18BF4AC313");
+      var mutex = new Mutex(false, "PropertyServiceSave-30F32619-F92D-4BC0-BF49-AA18BF4AC313");
       mutex.WaitOne();
       return new CallbackOnDispose(
           delegate
@@ -236,7 +236,7 @@ namespace Altaxo.Main.Services
 
         using (var stream = streamForWriting)
         {
-          Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+          var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
           info.BeginWriting(stream);
           info.AddValue("UserSettings", UserSettings);
           info.EndWriting();

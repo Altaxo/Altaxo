@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
-using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Main;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Text
 {
@@ -238,7 +238,7 @@ namespace Altaxo.Text
           }
           else
           {
-            this._documentProperties = null;
+            _documentProperties = null;
           }
 
           _styleName = from._styleName;

@@ -89,7 +89,7 @@ namespace Altaxo.DataConnection
 
     public OleDbDataQuery WithSelectionStatement(string value)
     {
-      return new OleDbDataQuery(value, this._connectionString);
+      return new OleDbDataQuery(value, _connectionString);
     }
 
     public AltaxoOleDbConnectionString ConnectionString
@@ -102,7 +102,7 @@ namespace Altaxo.DataConnection
 
     public OleDbDataQuery WithConnectionString(AltaxoOleDbConnectionString value)
     {
-      return new OleDbDataQuery(this._selectionStatement, value);
+      return new OleDbDataQuery(_selectionStatement, value);
     }
 
     public bool IsEmpty

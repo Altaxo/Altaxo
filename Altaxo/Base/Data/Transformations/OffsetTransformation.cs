@@ -129,7 +129,7 @@ namespace Altaxo.Data.Transformations
       if (null == from)
         return false;
 
-      if (this._offset != from._offset)
+      if (_offset != from._offset)
         return false;
 
       return true;
@@ -137,7 +137,7 @@ namespace Altaxo.Data.Transformations
 
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode() + 17 * _offset.GetHashCode();
+      return GetType().GetHashCode() + 17 * _offset.GetHashCode();
     }
 
     public bool IsEditable { get { return true; } }

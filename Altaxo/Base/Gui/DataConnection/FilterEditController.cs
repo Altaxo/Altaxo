@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.DataConnection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Altaxo.Collections;
+using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
@@ -233,8 +233,7 @@ namespace Altaxo.Gui.DataConnection
       if (p.Length < 2 || p[0] != '\'' || p[p.Length - 1] != '\'')
       {
         // and if this is not a number
-        double d;
-        if (!double.TryParse(p, NumberStyles.Any, CultureInfo.InvariantCulture, out d))
+        if (!double.TryParse(p, NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
         {
           // then enclose in quotes
           p = string.Format("'{0}'", p);

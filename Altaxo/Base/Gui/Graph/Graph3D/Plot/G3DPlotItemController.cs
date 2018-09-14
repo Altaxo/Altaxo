@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Data;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Plot;
@@ -32,8 +34,6 @@ using Altaxo.Gui.Graph.Graph3D.Plot.Groups;
 using Altaxo.Gui.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot
 {
@@ -293,7 +293,7 @@ end_of_function:
       if (_styleControllerDictionary.ContainsKey(style))
         return _styleControllerDictionary[style];
 
-      IMVCANController ct = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController), UseDocument.Directly);
+      var ct = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController), UseDocument.Directly);
 
       if (ct != null)
         _styleControllerDictionary.Add(style, ct);

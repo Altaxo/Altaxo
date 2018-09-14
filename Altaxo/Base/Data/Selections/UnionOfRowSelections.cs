@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
@@ -148,7 +148,7 @@ namespace Altaxo.Data.Selections
     /// <inheritdoc/>
     public object Clone()
     {
-      return new UnionOfRowSelections(this, this._mergeAdjoiningSegments);
+      return new UnionOfRowSelections(this, _mergeAdjoiningSegments);
     }
 
     /// <inheritdoc/>
@@ -157,7 +157,7 @@ namespace Altaxo.Data.Selections
     /// <inheritdoc/>
     public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
     {
-      List<IEnumerator<(int start, int endExclusive)>> _enumerators = new List<IEnumerator<(int start, int endExclusive)>>(_rowSelections.Count);
+      var _enumerators = new List<IEnumerator<(int start, int endExclusive)>>(_rowSelections.Count);
 
       maxIndexExclusive = Math.Min(maxIndexExclusive, totalRowCount);
 

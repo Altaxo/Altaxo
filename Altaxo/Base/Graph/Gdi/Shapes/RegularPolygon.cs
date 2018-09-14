@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RegularPolygon s = (RegularPolygon)obj;
+        var s = (RegularPolygon)obj;
         info.AddBaseValueEmbedded(s, typeof(RegularPolygon).BaseType);
         info.AddValue("NumberOfVertices", s._vertices);
         info.AddValue("CornerRadius", s._cornerRadius);
@@ -113,8 +113,8 @@ namespace Altaxo.Graph.Gdi.Shapes
         var from = obj as RegularPolygon;
         if (null != from)
         {
-          this._vertices = from._vertices;
-          this._cornerRadius = from._cornerRadius;
+          _vertices = from._vertices;
+          _cornerRadius = from._cornerRadius;
         }
       }
       return isCopied;
@@ -189,7 +189,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       // we adjust the lower edge to be parallel to the x-axis
 
-      GraphicsPath gp = new GraphicsPath();
+      var gp = new GraphicsPath();
 
       double angleStep = 2 * Math.PI / _vertices;
       double startAngle = -Math.PI / 2 - angleStep / 2;
@@ -282,12 +282,12 @@ namespace Altaxo.Graph.Gdi.Shapes
     public static GraphicsPath GetPath(double x0, double y0, double radius, int vertices)
     {
       // we adjust the lower edge to be parallel to the x-axis
-      GraphicsPath gp = new GraphicsPath();
+      var gp = new GraphicsPath();
 
       double angleStep = 2 * Math.PI / vertices;
       double startAngle = -Math.PI / 2 - angleStep / 2;
 
-      PointF[] pts = new PointF[vertices];
+      var pts = new PointF[vertices];
       for (int i = 0; i < vertices; i++)
       {
         double w = i * angleStep + startAngle;
@@ -306,11 +306,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       HitTestObjectBase result = null;
       GraphicsPath gp = GetPath();
 
-      if (this._fillBrush.IsVisible && gp.IsVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation)))
+      if (_fillBrush.IsVisible && gp.IsVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation)))
       {
         result = new GraphicBaseHitTestObject(this);
       }
-      else if (this._linePen.IsVisible && gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
+      else if (_linePen.IsVisible && gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
       {
         result = new GraphicBaseHitTestObject(this);
       }

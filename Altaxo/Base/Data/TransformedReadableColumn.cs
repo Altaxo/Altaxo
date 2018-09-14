@@ -129,7 +129,7 @@ namespace Altaxo.Data
       {
         if (null == originalReadableColumn)
           throw new ArgumentNullException(nameof(originalReadableColumn));
-        var result = (TransformedReadableColumn)this.MemberwiseClone();
+        var result = (TransformedReadableColumn)MemberwiseClone();
         result._originalColumn = originalReadableColumn;
         return result;
       }
@@ -145,7 +145,7 @@ namespace Altaxo.Data
       {
         if (null == transformation)
           throw new ArgumentNullException(nameof(transformation));
-        var result = (TransformedReadableColumn)this.MemberwiseClone();
+        var result = (TransformedReadableColumn)MemberwiseClone();
         result._transformation = transformation;
         return result;
       }

@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DateTimeLabelFormatting s = (DateTimeLabelFormatting)obj;
+        var s = (DateTimeLabelFormatting)obj;
         info.AddBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase));
 
         info.AddEnum("TimeConversion", s._timeConversion);

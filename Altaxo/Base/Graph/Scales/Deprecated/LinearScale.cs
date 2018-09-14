@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
-using System;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinearScale s = (LinearScale)obj;
+        var s = (LinearScale)obj;
         info.AddValue("BaseOrg", s._baseOrg);
         info.AddValue("BaseEnd", s._baseEnd);
         info.AddValue("MajorSpan", s._majorSpan);
@@ -97,17 +97,17 @@ namespace Altaxo.Graph.Scales.Deprecated
       {
         LinearScale s = null != o ? (LinearScale)o : new LinearScale();
 
-        s._baseOrg = (double)info.GetDouble("BaseOrg");
-        s._baseEnd = (double)info.GetDouble("BaseEnd");
+        s._baseOrg = info.GetDouble("BaseOrg");
+        s._baseEnd = info.GetDouble("BaseEnd");
 
-        s._majorSpan = (double)info.GetDouble("MajorSpan");
-        s._minorTicks = (int)info.GetInt32("MinorTicks");
+        s._majorSpan = info.GetDouble("MajorSpan");
+        s._minorTicks = info.GetInt32("MinorTicks");
 
-        s._axisOrgByMajor = (double)info.GetDouble("OrgByMajor");
-        s._axisEndByMajor = (double)info.GetDouble("EndByMajor");
+        s._axisOrgByMajor = info.GetDouble("OrgByMajor");
+        s._axisEndByMajor = info.GetDouble("EndByMajor");
 
-        bool AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
-        bool AxisEndFixed = (bool)info.GetBoolean("EndFixed");
+        bool AxisOrgFixed = info.GetBoolean("OrgFixed");
+        bool AxisEndFixed = info.GetBoolean("EndFixed");
 
         s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
 
@@ -129,7 +129,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinearScale s = (LinearScale)obj;
+        var s = (LinearScale)obj;
         info.AddValue("BaseOrg", s._baseOrg);
         info.AddValue("BaseEnd", s._baseEnd);
         info.AddValue("MajorSpan", s._majorSpan);
@@ -150,14 +150,14 @@ namespace Altaxo.Graph.Scales.Deprecated
       {
         LinearScale s = null != o ? (LinearScale)o : new LinearScale();
 
-        s._baseOrg = (double)info.GetDouble("BaseOrg");
-        s._baseEnd = (double)info.GetDouble("BaseEnd");
+        s._baseOrg = info.GetDouble("BaseOrg");
+        s._baseEnd = info.GetDouble("BaseEnd");
 
-        s._majorSpan = (double)info.GetDouble("MajorSpan");
-        s._minorTicks = (int)info.GetInt32("MinorTicks");
+        s._majorSpan = info.GetDouble("MajorSpan");
+        s._minorTicks = info.GetInt32("MinorTicks");
 
-        s._axisOrgByMajor = (double)info.GetDouble("OrgByMajor");
-        s._axisEndByMajor = (double)info.GetDouble("EndByMajor");
+        s._axisOrgByMajor = info.GetDouble("OrgByMajor");
+        s._axisEndByMajor = info.GetDouble("EndByMajor");
 
         //s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         //s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
@@ -183,8 +183,10 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// </summary>
     public LinearScale()
     {
-      _dataBounds = new FiniteNumericalBoundaries();
-      _dataBounds.ParentObject = this;
+      _dataBounds = new FiniteNumericalBoundaries
+      {
+        ParentObject = this
+      };
     }
 
     /// <summary>
@@ -193,23 +195,23 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <param name="from">A other linear axis from which to copy from.</param>
     public LinearScale(LinearScale from)
     {
-      this.IsLinked = from.IsLinked;
+      IsLinked = from.IsLinked;
 
-      this._cachedAxisEnd = from._cachedAxisEnd;
-      this._axisEndByMajor = from._axisEndByMajor;
-      this._cachedAxisOrg = from._cachedAxisOrg;
-      this._axisOrgByMajor = from._axisOrgByMajor;
-      this._cachedAxisSpan = from._cachedAxisSpan;
-      this._baseEnd = from._baseEnd;
-      this._baseOrg = from._baseOrg;
-      this._dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
+      _cachedAxisEnd = from._cachedAxisEnd;
+      _axisEndByMajor = from._axisEndByMajor;
+      _cachedAxisOrg = from._cachedAxisOrg;
+      _axisOrgByMajor = from._axisOrgByMajor;
+      _cachedAxisSpan = from._cachedAxisSpan;
+      _baseEnd = from._baseEnd;
+      _baseOrg = from._baseOrg;
+      _dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
       _dataBounds.ParentObject = this;
-      this._majorSpan = from._majorSpan;
-      this._minorTicks = from._minorTicks;
-      this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+      _majorSpan = from._majorSpan;
+      _minorTicks = from._minorTicks;
+      _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-      this._rescaling = null == from.Rescaling ? new LinearScaleRescaleConditions() : (LinearScaleRescaleConditions)from.Rescaling.Clone();
-      this._rescaling.ParentObject = this;
+      _rescaling = null == from.Rescaling ? new LinearScaleRescaleConditions() : (LinearScaleRescaleConditions)from.Rescaling.Clone();
+      _rescaling.ParentObject = this;
     }
 
     public virtual void CopyFrom(LinearScale from)
@@ -217,18 +219,18 @@ namespace Altaxo.Graph.Scales.Deprecated
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._cachedAxisEnd = from._cachedAxisEnd;
-      this._axisEndByMajor = from._axisEndByMajor;
-      this._cachedAxisOrg = from._cachedAxisOrg;
-      this._axisOrgByMajor = from._axisOrgByMajor;
-      this._cachedAxisSpan = from._cachedAxisSpan;
-      this._baseEnd = from._baseEnd;
-      this._baseOrg = from._baseOrg;
+      _cachedAxisEnd = from._cachedAxisEnd;
+      _axisEndByMajor = from._axisEndByMajor;
+      _cachedAxisOrg = from._cachedAxisOrg;
+      _axisOrgByMajor = from._axisOrgByMajor;
+      _cachedAxisSpan = from._cachedAxisSpan;
+      _baseEnd = from._baseEnd;
+      _baseOrg = from._baseOrg;
       ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
 
-      this._majorSpan = from._majorSpan;
-      this._minorTicks = from._minorTicks;
-      this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+      _majorSpan = from._majorSpan;
+      _minorTicks = from._minorTicks;
+      _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
       ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());
     }
@@ -397,7 +399,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override void ProcessDataBounds()
     {
-      if (null == this._dataBounds || this._dataBounds.IsEmpty)
+      if (null == _dataBounds || _dataBounds.IsEmpty)
         return;
 
       ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);
@@ -425,9 +427,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       if (!(xorgfixed && xendfixed))
       {
         CalculateTicks(xorg, xend, out _majorSpan, out _minorTicks);
-
-        double orgByMajor, endByMajor;
-        CalculateActualLimits(xorg, xorgfixed, xend, xendfixed, _majorSpan, _minorTicks, out orgByMajor, out endByMajor);
+        CalculateActualLimits(xorg, xorgfixed, xend, xendfixed, _majorSpan, _minorTicks, out var orgByMajor, out var endByMajor);
         xorg = orgByMajor * _majorSpan;
         xend = endByMajor * _majorSpan;
       }
@@ -618,9 +618,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       )
     {
       // Make sure that minVal and maxVal are legitimate values
-      if (Double.IsInfinity(min) || Double.IsNaN(min) || min == Double.MaxValue)
+      if (double.IsInfinity(min) || double.IsNaN(min) || min == double.MaxValue)
         min = 0.0;
-      if (Double.IsInfinity(max) || Double.IsNaN(max) || max == Double.MaxValue)
+      if (double.IsInfinity(max) || double.IsNaN(max) || max == double.MaxValue)
         max = 0.0;
 
       if (min > max) // should not happen, but can happen when there are no data and min and max are uninitialized
@@ -694,7 +694,7 @@ namespace Altaxo.Graph.Scales.Deprecated
           break;
       }
       majorspan = majornormspan * TenToThePowerOf(nSpanPotCorr);
-      minorticks = (int)(majornormspan / minornormspan);
+      minorticks = majornormspan / minornormspan;
     } // end of function
   } // end of class LinearAxis
 }

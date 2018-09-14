@@ -80,7 +80,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         for (int i = 0; i < conditions.Length; ++i)
         {
           sb.Append(conditions[i].Name);
@@ -142,7 +142,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         for (int i = 0; i < conditions.Length; ++i)
         {
           sb.Append(conditions[i].Name);

@@ -204,7 +204,7 @@ namespace Altaxo.Main.Services
     {
       string[] resources = resource.Split(new char[] { ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-      System.Text.StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
 
       foreach (string res in resources)
       {

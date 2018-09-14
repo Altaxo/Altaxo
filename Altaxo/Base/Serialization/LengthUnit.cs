@@ -50,17 +50,19 @@ namespace Altaxo.Serialization
       _point = new LengthUnit(((decimal)254) / 720000, "Point", "pt");
       _inch = new LengthUnit(((decimal)254) / 10000, "Inch", "\"");
 
-      _shortcutToUnit = new SortedDictionary<string, LengthUnit>();
-      _shortcutToUnit.Add(_millimeter.Shortcut, _millimeter);
-      _shortcutToUnit.Add(_centimeter.Shortcut, _centimeter);
-      _shortcutToUnit.Add(_mil.Shortcut, _mil);
-      _shortcutToUnit.Add(_point.Shortcut, _point);
-      _shortcutToUnit.Add(_inch.Shortcut, _inch);
+      _shortcutToUnit = new SortedDictionary<string, LengthUnit>
+      {
+        { _millimeter.Shortcut, _millimeter },
+        { _centimeter.Shortcut, _centimeter },
+        { _mil.Shortcut, _mil },
+        { _point.Shortcut, _point },
+        { _inch.Shortcut, _inch },
 
-      // Alternative shortcuts
-      _shortcutToUnit.Add("Mil", _mil);
-      _shortcutToUnit.Add("Inch", _inch);
-      _shortcutToUnit.Add("inch", _inch);
+        // Alternative shortcuts
+        { "Mil", _mil },
+        { "Inch", _inch },
+        { "inch", _inch }
+      };
 
       _shortcuts = new List<string>();
       foreach (string k in _shortcutToUnit.Keys)
@@ -83,7 +85,7 @@ namespace Altaxo.Serialization
 
     public double ConvertFrom(double fromlength, LengthUnit fromunit)
     {
-      return fromlength * (double)(fromunit.UnitInMeter / this.UnitInMeter);
+      return fromlength * (double)(fromunit.UnitInMeter / UnitInMeter);
     }
 
     public static LengthUnit Millimeter { get { return _millimeter; } }

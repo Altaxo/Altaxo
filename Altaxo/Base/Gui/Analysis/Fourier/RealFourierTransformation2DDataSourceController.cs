@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Worksheet.Commands.Analysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Worksheet.Commands.Analysis;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {

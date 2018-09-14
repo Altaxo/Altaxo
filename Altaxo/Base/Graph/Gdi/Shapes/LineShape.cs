@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public LineShape(PointD2D startPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect(), context)
     {
-      this.Position = startPosition;
+      Position = startPosition;
     }
 
     public LineShape(double posX, double posY, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -148,8 +148,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(startPosition, context)
     {
-      this._location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
-      this._location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
+      _location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
+      _location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
     }
 
     public LineShape(double startX, double startY, PointD2D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -168,18 +168,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(startPosition, null)
     {
-      this._location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
-      this._location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
-      this.Pen.Width = (float)lineWidth;
-      this.Pen.Color = lineColor;
+      _location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
+      _location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
+      Pen.Width = (float)lineWidth;
+      Pen.Color = lineColor;
     }
 
     public LineShape(double startX, double startY, double endX, double endY, double lineWidth, NamedColor lineColor)
       :
       this(new PointD2D(startX, startY), new PointD2D(endX, endY), null)
     {
-      this.Pen.Width = (float)lineWidth;
-      this.Pen.Color = lineColor;
+      Pen.Width = (float)lineWidth;
+      Pen.Color = lineColor;
     }
 
     #endregion Constructors
@@ -217,7 +217,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <returns></returns>
     protected GraphicsPath GetPath()
     {
-      GraphicsPath gp = new GraphicsPath();
+      var gp = new GraphicsPath();
       var bounds = Bounds;
       gp.AddLine((float)(bounds.X), (float)(bounds.Y), (float)(bounds.X + Width), (float)(bounds.Y + Height));
       return gp;
@@ -265,7 +265,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       if (_outlinePen != null && _outlinePen.IsVisible)
       {
-        GraphicsPath p = new GraphicsPath();
+        var p = new GraphicsPath();
         p.AddLine((float)bounds.X, (float)bounds.Y, (float)bounds.Right, (float)bounds.Bottom);
         p.Widen(Pen);
         OutlinePen.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
@@ -286,19 +286,19 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         if (gripLevel <= 1)
         {
-          LineShape ls = (LineShape)_hitobject;
-          PointF[] pts = new PointF[] { new PointF(0, 0), new PointF((float)ls.Width, (float)ls.Height) };
+          var ls = (LineShape)_hitobject;
+          var pts = new PointF[] { new PointF(0, 0), new PointF((float)ls.Width, (float)ls.Height) };
           for (int i = 0; i < pts.Length; i++)
           {
             var pt = ls._transformation.TransformPoint(pts[i]);
-            pt = this.Transformation.TransformPoint(pt);
+            pt = Transformation.TransformPoint(pt);
             pts[i] = pt;
           }
 
-          IGripManipulationHandle[] grips = new IGripManipulationHandle[gripLevel == 0 ? 1 : 3];
+          var grips = new IGripManipulationHandle[gripLevel == 0 ? 1 : 3];
 
           // Translation grips
-          GraphicsPath path = new GraphicsPath();
+          var path = new GraphicsPath();
           path.AddLine(pts[0], pts[1]);
           path.Widen(new Pen(Color.Black, (float)(6 / pageScale)));
           grips[0] = new MovementGripHandle(this, path, null);

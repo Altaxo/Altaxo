@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Collections;
 
 namespace Altaxo.Main
 {
@@ -87,7 +87,7 @@ namespace Altaxo.Main
       if (numberOfLevelsDown < 0)
         throw new ArgumentOutOfRangeException(nameof(numberOfLevelsDown), "shall be >=0");
 
-      this._numberOfLevelsDown = numberOfLevelsDown;
+      _numberOfLevelsDown = numberOfLevelsDown;
       _pathParts = path.ToArray();
     }
 
@@ -127,7 +127,7 @@ namespace Altaxo.Main
     {
       var stringBuilder = new System.Text.StringBuilder(128);
 
-      if (this._numberOfLevelsDown > 0)
+      if (_numberOfLevelsDown > 0)
         stringBuilder.Append("../");
 
       for (int i = 1; i < _numberOfLevelsDown; ++i)
@@ -151,7 +151,7 @@ namespace Altaxo.Main
       var o = obj as RelativeDocumentPath;
       if (null == o)
         return false;
-      if (this._numberOfLevelsDown != o._numberOfLevelsDown)
+      if (_numberOfLevelsDown != o._numberOfLevelsDown)
         return false;
 
       if (_pathParts.Length != o._pathParts.Length)

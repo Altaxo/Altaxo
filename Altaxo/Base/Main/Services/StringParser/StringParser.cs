@@ -16,13 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.AddInItems;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Main.Services
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Main.Services
       var dict = new ConcurrentDictionary<string, IStringTagProvider>(StringComparer.OrdinalIgnoreCase);
 
       // entryAssembly == null might happen in unit test mode
-      Assembly entryAssembly = Assembly.GetEntryAssembly();
+      var entryAssembly = Assembly.GetEntryAssembly();
       if (entryAssembly != null)
       {
         string exeName = entryAssembly.Location;
@@ -70,7 +70,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     public static string Parse(string input)
     {
-      return Parse(input, (StringTagPair[])null);
+      return Parse(input, null);
     }
 
     public static void RegisterStringTagProvider(IStringTagProvider tagProvider)
@@ -286,13 +286,13 @@ namespace Altaxo.Main.Services
     {
       try
       {
-        return String.Format(StringParser.Parse(formatstring), formatitems);
+        return string.Format(StringParser.Parse(formatstring), formatitems);
       }
       catch (FormatException ex)
       {
         Current.Log.Warn(ex);
 
-        StringBuilder b = new StringBuilder(StringParser.Parse(formatstring));
+        var b = new StringBuilder(StringParser.Parse(formatstring));
         foreach (object formatitem in formatitems)
         {
           b.Append("\nItem: ");

@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Scales.Ticks
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         info.AddBaseValueEmbedded(obj, typeof(AngularTickSpacing));
-        AngularDegreeTickSpacing s = (AngularDegreeTickSpacing)obj;
+        var s = (AngularDegreeTickSpacing)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

@@ -24,14 +24,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Xml;
-
-using Altaxo.Main.Services;
-using System.Collections.ObjectModel;
-using Altaxo.Gui.Workbench;
 using System.Windows.Input;
+using System.Xml;
+using Altaxo.Gui.Workbench;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Main.Services
 {
@@ -91,8 +90,8 @@ namespace Altaxo.Gui.Main.Services
       _reversedDoc = new Collections.ObservableCollectionReversingWrapper<InfoWarningErrorTextMessageItem>(_unreversedDoc);
       _currentDoc = _unreversedDoc;
 
-      _commandClearAllMessages = new RelayCommand(this.EhClearAllMessages);
-      _commandReverseMessages = new RelayCommand(this.EhReverseAllMessages);
+      _commandClearAllMessages = new RelayCommand(EhClearAllMessages);
+      _commandReverseMessages = new RelayCommand(EhReverseAllMessages);
       EhServiceChanged();
     }
 
@@ -216,7 +215,7 @@ namespace Altaxo.Gui.Main.Services
       int count;
       tr.ReadStartElement(localName);
 
-      this._viewDirectionRecentIsFirst = tr.ReadElementContentAsBoolean("DirectionRecentFirst", string.Empty);
+      _viewDirectionRecentIsFirst = tr.ReadElementContentAsBoolean("DirectionRecentFirst", string.Empty);
 
       count = XmlConvert.ToInt32(tr.GetAttribute("Count"));
       tr.ReadStartElement("ColumnWidths");

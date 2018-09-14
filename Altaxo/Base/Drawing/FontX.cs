@@ -106,7 +106,7 @@ namespace Altaxo.Drawing
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         string invariantDescriptionString = info.GetNodeContent();
-        FontX s = new FontX(invariantDescriptionString);
+        var s = new FontX(invariantDescriptionString);
         return s;
       }
     }
@@ -125,7 +125,7 @@ namespace Altaxo.Drawing
 
       var creationEv = FontConstructed;
       if (null != creationEv)
-        creationEv(this._invariantDescriptionString);
+        creationEv(_invariantDescriptionString);
     }
 
     private FontX(string invariantDescriptionString)
@@ -135,7 +135,7 @@ namespace Altaxo.Drawing
 
       var creationEv = FontConstructed;
       if (null != creationEv)
-        creationEv(this._invariantDescriptionString);
+        creationEv(_invariantDescriptionString);
     }
 
     /// <summary>
@@ -146,7 +146,7 @@ namespace Altaxo.Drawing
     {
       var destructEv = FontDestructed;
       if (null != destructEv)
-        destructEv(this._invariantDescriptionString);
+        destructEv(_invariantDescriptionString);
     }
 
     /// <summary>
@@ -174,7 +174,7 @@ namespace Altaxo.Drawing
       if (FontFamilyName == newFamilyName)
         return this;
       else
-        return new FontX(newFamilyName, this._size, this._style);
+        return new FontX(newFamilyName, _size, _style);
     }
 
     /// <summary>
@@ -187,7 +187,7 @@ namespace Altaxo.Drawing
       if (Size == newSize)
         return this;
       else
-        return new FontX(this._fontFamilyName, newSize, this._style);
+        return new FontX(_fontFamilyName, newSize, _style);
     }
 
     /// <summary>
@@ -200,7 +200,7 @@ namespace Altaxo.Drawing
       if (Style == newStyle)
         return this;
       else
-        return new FontX(this._fontFamilyName, this._size, newStyle);
+        return new FontX(_fontFamilyName, _size, newStyle);
     }
 
     /// <summary>
@@ -341,7 +341,7 @@ namespace Altaxo.Drawing
       if (null == (object)from) // cast to avoid call of the ==(FontX, FontX) operator
         return false;
 
-      return this.InvariantDescriptionString == from.InvariantDescriptionString;
+      return InvariantDescriptionString == from.InvariantDescriptionString;
     }
 
     /// <summary>

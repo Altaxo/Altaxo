@@ -74,12 +74,12 @@ namespace Altaxo.Serialization.Xml
     /// <summary>
     /// 2015-06-30 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Int32), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(int), 0)]
     private class XmlSerializationSurrogateForSystemInt32 : IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Int32)obj;
+        var s = (int)obj;
         info.AddValue("e", s);
       }
 
@@ -92,12 +92,12 @@ namespace Altaxo.Serialization.Xml
     /// <summary>
     /// 2015-06-30 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Int64), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(long), 0)]
     private class XmlSerializationSurrogateForSystemInt64 : IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Int64)obj;
+        var s = (long)obj;
         info.AddValue("e", s);
       }
 
@@ -128,12 +128,12 @@ namespace Altaxo.Serialization.Xml
     /// <summary>
     /// 2018-04-11 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Boolean), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(bool), 0)]
     private class XmlSerializationSurrogateForBoolean : IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Boolean)obj;
+        var s = (bool)obj;
         info.AddValue("e", s);
       }
 

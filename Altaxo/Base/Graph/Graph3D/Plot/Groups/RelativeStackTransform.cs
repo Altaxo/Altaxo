@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Data;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RelativeStackTransform s = (RelativeStackTransform)obj;
+        var s = (RelativeStackTransform)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -82,10 +82,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     public void MergeZBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
-      Dictionary<G3DPlotItem, Processed3DPlotData> plotDataList;
-      IPhysicalBoundaries pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
+      var pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
       CoordinateTransformingStyleBase.MergeZBoundsInto(pbclone, coll);
-      if (!CanUseStyle(layer, coll, out plotDataList))
+      if (!CanUseStyle(layer, coll, out var plotDataList))
       {
         pb.Add(pbclone);
         return;
@@ -102,8 +101,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     public void PaintPreprocessing(IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
-      Dictionary<G3DPlotItem, Processed3DPlotData> plotDataDict = null;
-      if (!CanUseStyle(layer, coll, out plotDataDict))
+      if (!CanUseStyle(layer, coll, out var plotDataDict))
       {
         return;
       }
@@ -133,7 +131,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
           var gpi = pi as G3DPlotItem;
           var pdata = plotDataDict[gpi];
           vArray = AbsoluteStackTransform.AddUp(vArray, pdata);
-          AltaxoVariant[] localArray = new AltaxoVariant[vArray.Length];
+          var localArray = new AltaxoVariant[vArray.Length];
 
           int j = -1;
           foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
@@ -142,13 +140,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
             AltaxoVariant v = 100 * vArray[j] / vSumArray[j];
             localArray[j] = v;
 
-            Logical3D rel = new Logical3D(
+            var rel = new Logical3D(
             layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
             layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(originalIndex)),
             layer.ZAxis.PhysicalVariantToNormal(v));
 
-            PointD3D pabs;
-            layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out pabs);
+            layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out var pabs);
             pdata.PlotPointsInAbsoluteLayerCoordinates[j] = pabs;
           }
           // we have also to exchange the accessor for the physical z value and replace it by our own one

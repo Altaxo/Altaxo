@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
+        var s = (DensityImagePlotStyle)obj;
 
         // nothing to save up to now
       }
@@ -154,7 +154,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         var colorInvalid = (NamedColor)info.GetValue("ColorInvalid", s);
 
         var colorProvider = ColorProviderBGMYR.NewFromColorBelowAboveInvalidAndTransparency(colorBelow, colorAbove, colorInvalid, 0);
-        var scale = scalingStyle == ScalingStyle.Logarithmic ? (NumericalScale)new Log10Scale() : (NumericalScale)new LinearScale();
+        var scale = scalingStyle == ScalingStyle.Logarithmic ? new Log10Scale() : (NumericalScale)new LinearScale();
 
         scale.Rescaling.SetUserParameters(
           double.IsNaN(vRangeFrom) ? Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto : Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed,
@@ -174,7 +174,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
+        var s = (DensityImagePlotStyle)obj;
 
         info.AddValue("ClipToLayer", s._clipToLayer);
         info.AddValue("Scale", s._scale);
@@ -208,8 +208,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     public DensityImagePlotStyle()
     {
-      this.ColorProvider = new ColorProvider.ColorProviderBGMYR();
-      this.Scale = new LinearScale() { TickSpacing = new NoTickSpacing() }; // Ticks are not needed here, they will only disturb the bounds of the scale
+      ColorProvider = new ColorProvider.ColorProviderBGMYR();
+      Scale = new LinearScale() { TickSpacing = new NoTickSpacing() }; // Ticks are not needed here, they will only disturb the bounds of the scale
       InitializeMembers();
     }
 
@@ -234,10 +234,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._clipToLayer = from._clipToLayer;
-        this.ColorProvider = from._colorProvider;
-        this.Scale = (NumericalScale)from._scale.Clone();
-        this._imageType = CachedImageType.None;
+        _clipToLayer = from._clipToLayer;
+        ColorProvider = from._colorProvider;
+        Scale = (NumericalScale)from._scale.Clone();
+        _imageType = CachedImageType.None;
 
         EhSelfChanged();
         suspendToken.Resume();
@@ -326,7 +326,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="sender">The sender of the message.</param>
     public void EhDataChanged(object sender)
     {
-      this._imageType = CachedImageType.None;
+      _imageType = CachedImageType.None;
       EhSelfChanged(EventArgs.Empty);
     }
 
@@ -360,19 +360,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!(plotObject is XYZMeshedColumnPlotData))
         return; // we cannot plot any other than a TwoDimMeshDataAssociation now
 
-      XYZMeshedColumnPlotData myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
-
-      IROMatrix<double> matrix;
-      IROVector<double> logicalRowHeaderValues, logicalColumnHeaderValues;
-
+      var myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
       myPlotAssociation.DataTableMatrix.GetWrappers(
         gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
         Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values
         gl.YAxis.PhysicalVariantToNormal, // transformation function for column header values
         Altaxo.Calc.RMath.IsFinite,       // selection functiton for column header values
-        out matrix,
-        out logicalRowHeaderValues,
-        out logicalColumnHeaderValues
+        out var matrix,
+        out var logicalRowHeaderValues,
+        out var logicalColumnHeaderValues
         );
 
       int cols = matrix.ColumnCount;
@@ -387,17 +383,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         case CachedImageType.LinearEquidistant:
           {
-            ImageTypeEquiLinearMemento memento = new ImageTypeEquiLinearMemento(gl);
+            var memento = new ImageTypeEquiLinearMemento(gl);
             if (!memento.Equals(_imageConditionMemento))
-              this._imageType = CachedImageType.None;
+              _imageType = CachedImageType.None;
           }
           break;
 
         case CachedImageType.Other:
           {
-            ImageTypeOtherMemento memento = new ImageTypeOtherMemento(gl);
+            var memento = new ImageTypeOtherMemento(gl);
             if (!memento.Equals(_imageConditionMemento))
-              this._imageType = CachedImageType.None;
+              _imageType = CachedImageType.None;
           }
           break;
       }
@@ -435,16 +431,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
               double xEndRel = logicalRowHeaderValues[rows - 1];
               double yOrgRel = logicalColumnHeaderValues[0];
               double yEndRel = logicalColumnHeaderValues[cols - 1];
-
-              double x0, y0, x1, y1, x2, y2;
               bool isConvertible = true;
-              isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xOrgRel, yEndRel), out x0, out y0);
-              isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xOrgRel, yOrgRel), out x1, out y1);
-              isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xEndRel, yEndRel), out x2, out y2);
+              isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xOrgRel, yEndRel), out var x0, out var y0);
+              isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xOrgRel, yOrgRel), out var x1, out var y1);
+              isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xEndRel, yEndRel), out var x2, out var y2);
 
               if (isConvertible)
               {
-                if (this._clipToLayer)
+                if (_clipToLayer)
                   gfrx.Clip = gl.CoordinateSystem.GetRegion();
 
                 var pts = new PointF[] { new PointF((float)x0, (float)y0), new PointF((float)x2, (float)y2), new PointF((float)x1, (float)y1) };
@@ -478,14 +472,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       public override bool Equals(object obj)
       {
-        ImageTypeEquiLinearMemento from = obj as ImageTypeEquiLinearMemento;
+        var from = obj as ImageTypeEquiLinearMemento;
         if (from == null)
           return false;
         else
           return
-            this.xtype == from.xtype &&
-            this.ytype == from.ytype &&
-            this.cstype == from.cstype;
+            xtype == from.xtype &&
+            ytype == from.ytype &&
+            cstype == from.cstype;
       }
 
       public override int GetHashCode()
@@ -523,27 +517,27 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       public override bool Equals(object obj)
       {
-        ImageTypeOtherMemento from = obj as ImageTypeOtherMemento;
+        var from = obj as ImageTypeOtherMemento;
         if (from == null)
           return false;
         else
           return
-            this.xtype == from.xtype &&
-            this.ytype == from.ytype &&
-            this.xorg == from.xorg &&
-            this.xend == from.xend &&
-            this.yend == from.yend &&
-            this.cstype == from.cstype &&
-            this.x00 == from.x00 &&
-            this.x10 == from.x10 &&
-            this.x01 == from.x01 &&
-            this.x11 == from.x11 &&
-            this.x32 == from.x32 &&
-            this.y00 == from.y00 &&
-            this.y10 == from.y10 &&
-            this.y01 == from.y01 &&
-            this.y11 == from.y11 &&
-            this.y32 == from.y32;
+            xtype == from.xtype &&
+            ytype == from.ytype &&
+            xorg == from.xorg &&
+            xend == from.xend &&
+            yend == from.yend &&
+            cstype == from.cstype &&
+            x00 == from.x00 &&
+            x10 == from.x10 &&
+            x01 == from.x01 &&
+            x11 == from.x11 &&
+            x32 == from.x32 &&
+            y00 == from.y00 &&
+            y10 == from.y10 &&
+            y01 == from.y01 &&
+            y11 == from.y11 &&
+            y32 == from.y32;
       }
 
       public override int GetHashCode()
@@ -658,7 +652,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       double widthByDimX = gl.Size.X / dimX;
       double heightByDimY = gl.Size.Y / dimY;
-      Logical3D rel = new Logical3D();
+      var rel = new Logical3D();
 
       double minRX = lx[0];
       double maxRX = lx[lx.Count - 1];
@@ -678,7 +672,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         maxRY = h;
       }
 
-      BivariateLinearSpline interpol = new BivariateLinearSpline(lx, ly, vcolumns);
+      var interpol = new BivariateLinearSpline(lx, ly, vcolumns);
 
       Color colorInvalid = _colorProvider.GetColor(double.NaN);
 
@@ -734,7 +728,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
       // Lock the bitmap's bits.
-      Rectangle rect = new Rectangle(0, 0, _cachedImage.Width, _cachedImage.Height);
+      var rect = new Rectangle(0, 0, _cachedImage.Width, _cachedImage.Height);
       System.Drawing.Imaging.BitmapData bmpData =
           _cachedImage.LockBits(rect, System.Drawing.Imaging.ImageLockMode.WriteOnly,
           _cachedImage.PixelFormat);
@@ -800,11 +794,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       if (object.ReferenceEquals(sender, _scale))
       {
-        this._imageType = CachedImageType.None;
+        _imageType = CachedImageType.None;
       }
       else if (object.ReferenceEquals(sender, _colorProvider))
       {
-        this._imageType = CachedImageType.None;
+        _imageType = CachedImageType.None;
       }
 
       return base.HandleHighPriorityChildChangeCases(sender, ref e);

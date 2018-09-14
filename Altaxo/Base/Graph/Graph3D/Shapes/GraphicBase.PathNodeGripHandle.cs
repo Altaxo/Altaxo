@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
+using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
@@ -175,8 +175,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         var vec = new VectorD3D(_gripRadius, _gripRadius, _gripRadius);
         var rect = new RectangleD3D(_gripCenter - vec, 2 * vec);
 
-        double z;
-        return mousePosition.IsHit(rect, out z);
+        return mousePosition.IsHit(rect, out var z);
       }
 
       #endregion IGripManipulationHandle Members

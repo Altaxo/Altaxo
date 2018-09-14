@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Collections;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Worksheet;
-using System;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       // we have created a new WorksheetLayout in the constructor above
       // it is still not part of Altaxo, so we need to register it
-      Current.Project.TableLayouts.Add(this.WorksheetLayout);
+      Current.Project.TableLayouts.Add(WorksheetLayout);
     }
 
     public WorksheetController(WorksheetViewLayout viewLayout)
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
     {
       SetMemberVariablesToDefault();
-      this.WorksheetLayout = layout ?? throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
+      WorksheetLayout = layout ?? throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
     }
 
     public bool InitializeDocument(params object[] args)
@@ -80,9 +80,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
       if (null == args || args.Length == 0)
         return false;
       if (args[0] is WorksheetLayout)
-        this.WorksheetLayout = (WorksheetLayout)args[0];
+        WorksheetLayout = (WorksheetLayout)args[0];
       else if (args[0] is WorksheetViewLayout)
-        this.WorksheetLayout = ((WorksheetViewLayout)args[0]).WorksheetLayout;
+        WorksheetLayout = ((WorksheetViewLayout)args[0]).WorksheetLayout;
       else
         return false;
 
@@ -108,23 +108,23 @@ namespace Altaxo.Gui.Worksheet.Viewing
       _worksheetLayout = value;
       _table = _worksheetLayout.DataTable;
       var table = _table; // use local variable for anonymous method below
-      _table.Changed += (_weakTableNameChangedHandler = new WeakEventHandler(this.EhTableNameChanged, x => table.Changed -= x));
+      _table.Changed += (_weakTableNameChangedHandler = new WeakEventHandler(EhTableNameChanged, x => table.Changed -= x));
       Title = _table.Name;
 
       var dataColumns = _table.DataColumns;
-      dataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(this.EhTableDataChanged, x => dataColumns.Changed -= x));
+      dataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(EhTableDataChanged, x => dataColumns.Changed -= x));
       var propColumns = _table.PropCols;
-      propColumns.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(this.EhPropertyDataChanged, x => propColumns.Changed -= x));
+      propColumns.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(EhPropertyDataChanged, x => propColumns.Changed -= x));
 
-      this.SetCachedNumberOfDataColumns();
-      this.SetCachedNumberOfDataRows();
-      this.SetCachedNumberOfPropertyColumns();
+      SetCachedNumberOfDataColumns();
+      SetCachedNumberOfDataRows();
+      SetCachedNumberOfPropertyColumns();
     }
 
     public override void Dispose()
     {
       var view = _view;
-      this.ViewObject = null;
+      ViewObject = null;
       HideCellEditControl();
       if (view is IDisposable)
         ((IDisposable)view).Dispose();
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return this._table;
+        return _table;
       }
     }
 
@@ -174,7 +174,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
         if (eAsCCEA.WasItemRenamed)
         {
           var owner = (INameOwner)eAsCCEA.Item;
-          this.Title = owner.Name;
+          Title = owner.Name;
         }
       }
     }
@@ -221,14 +221,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
             AttachView();
 
             // Werte für gerade vorliegende Scrollpositionen und Scrollmaxima zum (neuen) View senden
-            this.VertScrollMaximum = this._scrollVertMax;
-            this.HorzScrollMaximum = this._scrollHorzMax;
+            VertScrollMaximum = _scrollVertMax;
+            HorzScrollMaximum = _scrollHorzMax;
 
-            this.VertScrollPos = this._scrollVertPos;
-            this.HorzScrollPos = this._scrollHorzPos;
+            VertScrollPos = _scrollVertPos;
+            HorzScrollPos = _scrollHorzPos;
 
             // Simulate a SizeChanged event
-            this.EhView_TableAreaSizeChanged(new EventArgs());
+            EhView_TableAreaSizeChanged(new EventArgs());
           }
         }
       }

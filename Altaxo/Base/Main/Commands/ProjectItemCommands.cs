@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Gui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Gui;
 
 namespace Altaxo.Main.Commands
 {
@@ -92,7 +92,7 @@ namespace Altaxo.Main.Commands
       {
         public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          ProjectItemClipboardList s = (ProjectItemClipboardList)obj;
+          var s = (ProjectItemClipboardList)obj;
 
           info.AddValue("BaseFolder", s.BaseFolder);
           info.AddValue("RelocateReferences", s.RelocateReferences);
@@ -234,7 +234,7 @@ namespace Altaxo.Main.Commands
       // first we have to make sure that list has values set for TryToKeepInternalReferences and RelocateReferences -- otherwise we have to show a dialog
       if (list.TryToKeepInternalReferences == null || list.RelocateReferences == null)
       {
-        ProjectItemsPasteOptions options = new ProjectItemsPasteOptions { TryToKeepInternalReferences = list.TryToKeepInternalReferences, RelocateReferences = list.RelocateReferences };
+        var options = new ProjectItemsPasteOptions { TryToKeepInternalReferences = list.TryToKeepInternalReferences, RelocateReferences = list.RelocateReferences };
 
         if (!Current.Gui.ShowDialog(ref options, "Paste options", false))
           return;
@@ -302,8 +302,10 @@ namespace Altaxo.Main.Commands
     {
       string projectItemTypeName = projectItem.GetType().Name;
 
-      TextValueInputController tvctrl = new TextValueInputController(projectItem.Name, string.Format("Enter a name for the {0}:", projectItem));
-      tvctrl.Validator = new RenameValidator(projectItem, projectItemTypeName);
+      var tvctrl = new TextValueInputController(projectItem.Name, string.Format("Enter a name for the {0}:", projectItem))
+      {
+        Validator = new RenameValidator(projectItem, projectItemTypeName)
+      };
       if (Current.Gui.ShowDialog(tvctrl, string.Format("Rename {0}", projectItemTypeName), false))
         projectItem.Name = tvctrl.InputText.Trim();
     }

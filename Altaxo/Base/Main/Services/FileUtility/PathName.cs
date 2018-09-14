@@ -34,14 +34,14 @@ namespace Altaxo.Main.Services
         throw new ArgumentNullException("path");
       if (path.Length == 0)
         throw new ArgumentException("The empty string is not a valid path");
-      this.normalizedPath = FileUtility.NormalizePath(path);
+      normalizedPath = FileUtility.NormalizePath(path);
     }
 
     protected PathName(PathName path)
     {
       if (path == null)
         throw new ArgumentNullException("path");
-      this.normalizedPath = path.normalizedPath;
+      normalizedPath = path.normalizedPath;
     }
 
     public static implicit operator string(PathName path)

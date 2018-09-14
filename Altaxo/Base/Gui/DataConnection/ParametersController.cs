@@ -45,7 +45,7 @@ namespace Altaxo.Gui.DataConnection
     public ParametersController(List<System.Data.OleDb.OleDbParameter> parms)
     {
       // TODO: Complete member initialization
-      this._doc = parms;
+      _doc = parms;
       Initialize(true);
     }
 

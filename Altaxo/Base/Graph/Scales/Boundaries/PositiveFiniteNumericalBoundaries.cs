@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
@@ -43,7 +43,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        PositiveFiniteNumericalBoundaries s = (PositiveFiniteNumericalBoundaries)obj;
+        var s = (PositiveFiniteNumericalBoundaries)obj;
         info.AddBaseValueEmbedded(s, typeof(PositiveFiniteNumericalBoundaries).BaseType);
       }
 

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization.Ascii;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Settings
 {
@@ -34,16 +34,17 @@ namespace Altaxo.Gui.Settings
   {
     public override void Initialize(object optionPanelOwner)
     {
-      AsciiDocumentAnalysisOptions userDoc = null;
       AsciiDocumentAnalysisOptions sysDoc = null;
 
-      Current.PropertyService.UserSettings.TryGetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, out userDoc);
+      Current.PropertyService.UserSettings.TryGetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, out var userDoc);
       sysDoc = Current.PropertyService.GetValue<AsciiDocumentAnalysisOptions>(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
       if (null == sysDoc)
         throw new ApplicationException("AsciiDocumentAnalysisOptions not properly registered with builtin settings!");
 
-      _controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>(() => sysDoc.Clone(), () => sysDoc);
-      _controller.EnablingText = "Override system settings";
+      _controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>(() => sysDoc.Clone(), () => sysDoc)
+      {
+        EnablingText = "Override system settings"
+      };
       _controller.InitializeDocument(new object[] { userDoc, sysDoc });
     }
 

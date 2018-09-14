@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Styles;
-using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
-using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets;
-using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Styles;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Graph2D.Plot.Groups
 {
@@ -86,10 +86,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
     {
       BuiltinSolid = BuiltinDefault;
 
-      ScatterSymbolList dummy;
 
       BuiltinOpen = new ScatterSymbolList("BuiltinOpen", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.White).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull)));
-      InternalTryRegisterList(BuiltinOpen, ItemDefinitionLevel.Builtin, out dummy, false);
+      InternalTryRegisterList(BuiltinOpen, ItemDefinitionLevel.Builtin, out var dummy, false);
 
       BuiltinHollow = new ScatterSymbolList("BuiltinHollow", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.Transparent).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull)));
       InternalTryRegisterList(BuiltinHollow, ItemDefinitionLevel.Builtin, out dummy, false);
@@ -215,8 +214,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
   });
       InternalTryRegisterList(OldBarVert, ItemDefinitionLevel.Builtin, out dummy, false);
 
-      ScatterSymbolListBag userStyleLists;
-      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out userStyleLists);
+      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out var userStyleLists);
       if (null != userStyleLists)
       {
         foreach (var listVar in userStyleLists.StyleLists)

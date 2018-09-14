@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.Serialization;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Background
 {
@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Background
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RectangleWithShadow s = (RectangleWithShadow)obj;
+        var s = (RectangleWithShadow)obj;
         info.AddValue("Brush", s._brush);
         info.AddValue("ShadowLength", s._shadowLength);
       }
@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public RectangleWithShadow(NamedColor c)
     {
-      this.Brush = new BrushX(c);
+      Brush = new BrushX(c);
     }
 
     public RectangleWithShadow(RectangleWithShadow from)
@@ -114,7 +114,7 @@ namespace Altaxo.Graph.Gdi.Background
       if (object.ReferenceEquals(this, from))
         return;
 
-      this.Brush = from._brush;
+      Brush = from._brush;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -133,7 +133,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     private void ResetCachedBrushes()
     {
-      this._cachedShadowBrush = null;
+      _cachedShadowBrush = null;
     }
 
     private static BrushX GetShadowBrush(BrushX mainBrush)
@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Gdi.Background
 
         case BrushType.LinearGradientBrush:
         case BrushType.PathGradientBrush:
-          cachedShadowBrush = (BrushX)mainBrush.Clone();
+          cachedShadowBrush = mainBrush.Clone();
           cachedShadowBrush.Color = NamedColor.FromArgb(mainBrush.Color.Color.A, 0, 0, 0);
           cachedShadowBrush.BackColor = NamedColor.FromArgb(mainBrush.BackColor.Color.A, 0, 0, 0);
           break;
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Gdi.Background
       shadowBrush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
 
       // shortCuts to floats
-      RectangleF iArea = (RectangleF)innerArea;
+      var iArea = (RectangleF)innerArea;
       float shadowLength = (float)_shadowLength;
       g.TranslateTransform(shadowLength, shadowLength);
       g.FillRectangle(shadowBrush, iArea);

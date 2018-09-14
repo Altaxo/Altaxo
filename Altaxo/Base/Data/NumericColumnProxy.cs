@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
+using Altaxo.Main;
 
 namespace Altaxo.Data
 {
@@ -130,7 +130,7 @@ namespace Altaxo.Data
 
     public object Clone()
     {
-      return FromColumn(this._column);
+      return FromColumn(_column);
     }
 
     public object DocumentObject

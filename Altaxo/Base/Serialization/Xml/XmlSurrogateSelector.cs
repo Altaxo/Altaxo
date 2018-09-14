@@ -169,7 +169,7 @@ namespace Altaxo.Serialization.Xml
       foreach (Assembly assembly in assemblies)
       {
         // test if the assembly supports Serialization
-        Attribute suppVersioning = Attribute.GetCustomAttribute(assembly, typeof(SupportsSerializationVersioningAttribute));
+        var suppVersioning = Attribute.GetCustomAttribute(assembly, typeof(SupportsSerializationVersioningAttribute));
         if (null == suppVersioning)
           continue; // this assembly don't support this, so skip it
 
@@ -185,7 +185,7 @@ namespace Altaxo.Serialization.Xml
               throw new InvalidProgramException(string.Format("Classes that have the XmlSerializationSurrogateForAttribute applied have to implement IXmlSerializationSurrogate. This is not the case for the type " + definedtype.ToString()));
             if (obj is IXmlSerializationSurrogate)
             {
-              this.AddSurrogate(att, (IXmlSerializationSurrogate)obj);
+              AddSurrogate(att, (IXmlSerializationSurrogate)obj);
             }
           }
         } // end foreach type

@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -170,7 +170,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       var predictionScores = _memento.Analysis.CalculatePredictionScores(
         _table,
-        this._numberOfFactors);
+        _numberOfFactors);
 
       for (int i = 0; i < _numberOfY; i++)
       {

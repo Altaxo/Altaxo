@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing.D3D;
+using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     public Ellipsoid()
     {
-      this.Size = new Geometry.VectorD3D(100, 100, 100);
+      Size = new Geometry.VectorD3D(100, 100, 100);
     }
 
     public Ellipsoid(Ellipsoid from)
@@ -100,15 +100,15 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
         var sphere = new SolidIcoSphere(3); // gives a sphere with radius = 1
 
-        var bounds = this.Bounds;
+        var bounds = Bounds;
 
-        double sx = this.Bounds.SizeX / 2;
-        double sy = this.Bounds.SizeY / 2;
-        double sz = this.Bounds.SizeZ / 2;
+        double sx = Bounds.SizeX / 2;
+        double sy = Bounds.SizeY / 2;
+        double sz = Bounds.SizeZ / 2;
 
-        var dx = this.Bounds.X + sx;
-        var dy = this.Bounds.Y + sy;
-        var dz = this.Bounds.Z + sz;
+        var dx = Bounds.X + sx;
+        var dy = Bounds.Y + sy;
+        var dz = Bounds.Z + sz;
 
         var transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(sx, sy, sz, 0, 0, 0, 0, 0, 0, dx, dy, dz);
         transformation.AppendTransform(_transformation);
@@ -135,15 +135,15 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <returns></returns>
     public override IObjectOutlineForArrangements GetObjectOutlineForArrangements(Matrix4x3 localToWorldTransformation)
     {
-      var bounds = this.Bounds;
+      var bounds = Bounds;
 
-      double sx = this.Bounds.SizeX / 2;
-      double sy = this.Bounds.SizeY / 2;
-      double sz = this.Bounds.SizeZ / 2;
+      double sx = Bounds.SizeX / 2;
+      double sy = Bounds.SizeY / 2;
+      double sz = Bounds.SizeZ / 2;
 
-      var dx = this.Bounds.X + sx;
-      var dy = this.Bounds.Y + sy;
-      var dz = this.Bounds.Z + sz;
+      var dx = Bounds.X + sx;
+      var dy = Bounds.Y + sy;
+      var dz = Bounds.Z + sz;
 
       var transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(sx, sy, sz, 0, 0, 0, 0, 0, 0, dx, dy, dz); // represents a transformation from a unit sphere to the real sphere
 

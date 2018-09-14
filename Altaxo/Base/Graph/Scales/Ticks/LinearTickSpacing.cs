@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -102,7 +102,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       public object Clone()
       {
-        return this.MemberwiseClone();
+        return MemberwiseClone();
       }
     }
 
@@ -115,7 +115,7 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinearTickSpacing s = (LinearTickSpacing)obj;
+        var s = (LinearTickSpacing)obj;
 
         info.AddValue("ZeroLever", s._zeroLever);
         info.AddValue("MinGrace", s._orgGrace);
@@ -645,8 +645,8 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <returns>True when org or end are changed. False otherwise.</returns>
     public override bool PreProcessScaleBoundaries(ref AltaxoVariant org, ref AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
     {
-      double dorg = (double)org;
-      double dend = (double)end;
+      double dorg = org;
+      double dend = end;
 
       dorg = TransformOriginalToModified(dorg);
       dend = TransformOriginalToModified(dend);
@@ -669,8 +669,8 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <param name="scale">The underlying scale.</param>
     public override void FinalProcessScaleBoundaries(AltaxoVariant org, AltaxoVariant end, Scale scale)
     {
-      double dorg = (double)org;
-      double dend = (double)end;
+      double dorg = org;
+      double dend = end;
 
       dorg = TransformOriginalToModified(dorg);
       dend = TransformOriginalToModified(dend);
@@ -824,17 +824,9 @@ namespace Altaxo.Graph.Scales.Ticks
         xend = h;
         modified = true;
       }
-      // here xorg and xend should both be positive, with xorg < xend
 
-      // try applying Grace and OneLever only ...
-      double xOrgWithGraceAndOneLever, xEndWithGraceAndOneLever;
-      bool modGraceAndOneLever = GetOrgEndWithGraceAndZeroLever(xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithGraceAndOneLever, out xEndWithGraceAndOneLever);
-
-      // try applying tick snapping only (without Grace and OneLever)
-      double xOrgWithTickSnapping, xEndWithTickSnapping;
-      double majorTickSpan;
-      int minorTicks;
-      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithTickSnapping, out xEndWithTickSnapping, out majorTickSpan, out minorTicks);
+      bool modGraceAndOneLever = GetOrgEndWithGraceAndZeroLever(xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithGraceAndOneLever, out var xEndWithGraceAndOneLever);
+      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithTickSnapping, out var xEndWithTickSnapping, out var majorTickSpan, out var minorTicks);
 
       // now compare the two
       if (xOrgWithTickSnapping <= xOrgWithGraceAndOneLever && xEndWithTickSnapping >= xEndWithGraceAndOneLever)

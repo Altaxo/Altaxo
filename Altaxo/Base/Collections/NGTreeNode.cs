@@ -99,8 +99,10 @@ namespace Altaxo.Collections
     {
       if (lazyLoadChildren)
       {
-        _nodes = new MyColl3(this);
-        _nodes.Add(_dummyNode);
+        _nodes = new MyColl3(this)
+        {
+          _dummyNode
+        };
       }
     }
 
@@ -151,7 +153,7 @@ namespace Altaxo.Collections
         if (value != _isExpanded)
         {
           _isExpanded = value;
-          this.OnPropertyChanged("IsExpanded");
+          OnPropertyChanged("IsExpanded");
         }
 
         // Expand all the way up to the root.
@@ -159,10 +161,10 @@ namespace Altaxo.Collections
           _parent.IsExpanded = true;
 
         // Lazy load the child items, if necessary.
-        if (this.HasDummyChild)
+        if (HasDummyChild)
         {
-          this._nodes.Remove(_dummyNode);
-          this.LoadChildren();
+          _nodes.Remove(_dummyNode);
+          LoadChildren();
         }
       }
     }
@@ -187,7 +189,7 @@ namespace Altaxo.Collections
     /// </summary>
     public bool HasDummyChild
     {
-      get { return null != this._nodes && this._nodes.Count == 1 && this._nodes[0] == _dummyNode; }
+      get { return null != _nodes && _nodes.Count == 1 && _nodes[0] == _dummyNode; }
     }
 
     /// <summary>
@@ -288,9 +290,9 @@ namespace Altaxo.Collections
 
       if (_parent != null)
       {
-        var idx = this.Index;
+        var idx = Index;
         _parent.Nodes[idx] = newNode;
-        this._parent = null;
+        _parent = null;
       }
     }
 
@@ -325,7 +327,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        int[] result = new int[this.Level];
+        int[] result = new int[Level];
         NGTreeNode n = this;
         for (int i = result.Length - 1; i >= 0; i--)
         {
@@ -358,11 +360,11 @@ namespace Altaxo.Collections
     /// <returns>Only the nodes who have no parent (or grand parent and so on) in the collection.</returns>
     public static NGTreeNode[] FilterIndependentNodes(NGTreeNode[] nodes)
     {
-      System.Collections.Hashtable hash = new System.Collections.Hashtable();
+      var hash = new System.Collections.Hashtable();
       for (int i = 0; i < nodes.Length; i++)
         hash.Add(nodes[i], null);
 
-      List<NGTreeNode> result = new List<NGTreeNode>();
+      var result = new List<NGTreeNode>();
       for (int i = 0; i < nodes.Length; i++)
       {
         bool isContained = false;
@@ -391,7 +393,7 @@ namespace Altaxo.Collections
       foreach (NGTreeNode node in nodes)
         level = Math.Min(node.Level, level);
 
-      List<NGTreeNode> list = new List<NGTreeNode>();
+      var list = new List<NGTreeNode>();
       foreach (NGTreeNode node in nodes)
         if (level == node.Level)
           list.Add(node);
@@ -450,7 +452,7 @@ namespace Altaxo.Collections
     /// </remarks>
     public static void SortByOrder(NGTreeNode[] nodes)
     {
-      SortedDictionary<int[], NGTreeNode> dic = new SortedDictionary<int[], NGTreeNode>(new IntArrayComparer());
+      var dic = new SortedDictionary<int[], NGTreeNode>(new IntArrayComparer());
       foreach (NGTreeNode node in nodes)
         dic.Add(node.HierarchyIndices, node);
 
@@ -538,7 +540,7 @@ namespace Altaxo.Collections
     /// the child nodes will be not moved.</para>
     /// <para>The remaining nodes must have the same parent, otherwise an exception is thrown.</para>
     /// </remarks>
-    static public void MoveUpDown(int iDelta, NGTreeNode[] selNodes)
+    public static void MoveUpDown(int iDelta, NGTreeNode[] selNodes)
     {
       if (iDelta == 0 || selNodes == null || selNodes.Length == 0)
         return;
@@ -602,7 +604,7 @@ namespace Altaxo.Collections
 
       public MyColl2(NGTreeNode parent)
       {
-        this._parent = parent;
+        _parent = parent;
       }
 
       public void AddRange(NGTreeNode[] nodes)

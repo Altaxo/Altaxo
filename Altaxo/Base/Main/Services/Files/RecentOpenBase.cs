@@ -16,12 +16,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main;
-using Altaxo.Main.Services;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using Altaxo.Main;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Main.Services
 {
@@ -71,7 +71,7 @@ namespace Altaxo.Main.Services
         info.CreateArray("Properties", count);
         foreach (var entry in s)
         {
-          info.AddValue("e", (string)entry);
+          info.AddValue("e", entry);
         }
         info.CommitArray();
       }

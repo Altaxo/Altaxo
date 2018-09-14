@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
@@ -148,9 +148,9 @@ namespace Altaxo.Data.Selections
     {
       return new PeriodicRowIndexSegments
       {
-        _firstRowIndexInclusive = this._firstRowIndexInclusive,
-        _lengthOfPeriod = this._lengthOfPeriod,
-        _numberOfItemsPerPeriod = this._numberOfItemsPerPeriod
+        _firstRowIndexInclusive = _firstRowIndexInclusive,
+        _lengthOfPeriod = _lengthOfPeriod,
+        _numberOfItemsPerPeriod = _numberOfItemsPerPeriod
       };
     }
 
@@ -175,7 +175,7 @@ namespace Altaxo.Data.Selections
     public override bool Equals(object obj)
     {
       if (obj is PeriodicRowIndexSegments from)
-        return this._firstRowIndexInclusive == from._firstRowIndexInclusive && this._lengthOfPeriod == from._lengthOfPeriod && this._numberOfItemsPerPeriod == from._numberOfItemsPerPeriod;
+        return _firstRowIndexInclusive == from._firstRowIndexInclusive && _lengthOfPeriod == from._lengthOfPeriod && _numberOfItemsPerPeriod == from._numberOfItemsPerPeriod;
       else
         return false;
     }

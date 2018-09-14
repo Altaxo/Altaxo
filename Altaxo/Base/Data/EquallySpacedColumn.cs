@@ -46,7 +46,7 @@ namespace Altaxo.Data
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        EquallySpacedColumn s = (EquallySpacedColumn)obj;
+        var s = (EquallySpacedColumn)obj;
         info.AddValue("StartValue", s._start);
         info.AddValue("Increment", s._increment);
       }
@@ -145,7 +145,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return new AltaxoVariant((double)(_start + i * _increment));
+        return new AltaxoVariant(_start + i * _increment);
       }
     }
 

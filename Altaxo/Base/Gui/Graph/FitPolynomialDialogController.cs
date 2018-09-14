@@ -100,10 +100,10 @@ namespace Altaxo.Gui.Graph
 
       if (null != View)
       {
-        View.Order = this._Order;
-        View.FitCurveXmin = this._FitCurveXmin;
-        View.FitCurveXmax = this._FitCurveXmax;
-        View.ShowFormulaOnGraph = this._ShowFormulaOnGraph;
+        View.Order = _Order;
+        View.FitCurveXmin = _FitCurveXmin;
+        View.FitCurveXmax = _FitCurveXmax;
+        View.ShowFormulaOnGraph = _ShowFormulaOnGraph;
       }
     }
 
@@ -134,10 +134,10 @@ namespace Altaxo.Gui.Graph
     {
       if (null != View)
       {
-        this._Order = View.Order;
-        this._FitCurveXmin = View.FitCurveXmin;
-        this._FitCurveXmax = View.FitCurveXmax;
-        this._ShowFormulaOnGraph = View.ShowFormulaOnGraph;
+        _Order = View.Order;
+        _FitCurveXmin = View.FitCurveXmin;
+        _FitCurveXmax = View.FitCurveXmax;
+        _ShowFormulaOnGraph = View.ShowFormulaOnGraph;
       }
 
       return true;

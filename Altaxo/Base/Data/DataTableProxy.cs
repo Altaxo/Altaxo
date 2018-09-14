@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
+using Altaxo.Main;
 
 namespace Altaxo.Data
 {
@@ -129,7 +129,7 @@ namespace Altaxo.Data
 
     public string GetName(int level)
     {
-      var table = this.Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
+      var table = Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
       if (null != table)
       {
         return table.Name;

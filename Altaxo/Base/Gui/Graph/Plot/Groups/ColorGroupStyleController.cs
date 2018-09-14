@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Graph.Plot.Groups;
-using Altaxo.Gui.Drawing;
-using Altaxo.Gui.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Drawing;
+using Altaxo.Gui.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Graph.Plot.Groups
 {

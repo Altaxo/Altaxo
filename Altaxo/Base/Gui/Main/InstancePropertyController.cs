@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services.PropertyReflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main.Services.PropertyReflection;
 
 namespace Altaxo.Gui.Main
 {
@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Main
     public override bool InitializeDocument(params object[] args)
     {
       if (IsDisposed)
-        throw new ObjectDisposedException("The controller was already disposed. Type: " + this.GetType().FullName);
+        throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
 
       if (null == args || 0 == args.Length)
         return false;
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Main
       // dont call base initialize here, because the _doc (document) may be null. For this controller, this is by design.
 
       if (IsDisposed)
-        throw new ObjectDisposedException("The controller was already disposed. Type: " + this.GetType().FullName);
+        throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
 
       if (initData)
       {
@@ -212,7 +212,7 @@ namespace Altaxo.Gui.Main
       {
         (ctrl as IMVCANDController).MadeDirty -= EhMadeDirty;
         if (ctrl is IDisposable)
-          ((IDisposable)ctrl).Dispose();
+          ctrl.Dispose();
       }
     }
 

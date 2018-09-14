@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.AddInItems;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Settings
 {
@@ -98,8 +98,10 @@ namespace Altaxo.Gui.Settings
 
     private void AddTopic(IOptionPanelDescriptor desc, NGTreeNodeCollection nodecoll)
     {
-      var newNode = new NGTreeNode(desc.Label);
-      newNode.Tag = desc;
+      var newNode = new NGTreeNode(desc.Label)
+      {
+        Tag = desc
+      };
       if (null != desc.ChildOptionPanelDescriptors)
       {
         foreach (var child in desc.ChildOptionPanelDescriptors)

@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
-        return FormatItem((double)item);
+        return FormatItem(item);
       else
         return item.ToString();
     }

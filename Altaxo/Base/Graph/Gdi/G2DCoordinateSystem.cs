@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -52,9 +52,9 @@ namespace Altaxo.Graph.Gdi
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._layerWidth = from._layerWidth;
-      this._layerHeight = from._layerHeight;
-      this._axisStyleInformation.Clear();
+      _layerWidth = from._layerWidth;
+      _layerHeight = from._layerHeight;
+      _axisStyleInformation.Clear();
     }
 
     /// <summary>
@@ -141,7 +141,7 @@ namespace Altaxo.Graph.Gdi
 
     protected virtual void ClearCachedObjects()
     {
-      this._axisStyleInformation = null;
+      _axisStyleInformation = null;
     }
 
     #region ICloneable Members
@@ -176,7 +176,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="r1">End point in logical coordinates.</param>
     public virtual void DrawIsoline(System.Drawing.Graphics g, System.Drawing.Pen pen, Logical3D r0, Logical3D r1)
     {
-      using (GraphicsPath path = new GraphicsPath())
+      using (var path = new GraphicsPath())
       {
         GetIsoline(path, r0, r1);
         g.DrawPath(pen, path);
@@ -352,11 +352,10 @@ namespace Altaxo.Graph.Gdi
       double angle,
       out PointD2D normalizeddirection)
     {
-      double ax, ay, adx, ady;
-      this.LogicalToLayerCoordinatesAndDirection(
+      LogicalToLayerCoordinatesAndDirection(
         r0, r1,
         t,
-        out ax, out ay, out adx, out ady);
+        out var ax, out var ay, out var adx, out var ady);
 
       if (angle != 0)
       {
@@ -397,10 +396,9 @@ namespace Altaxo.Graph.Gdi
         Logical3D direction,
         out PointD2D normalizeddirection)
     {
-      double ax, ay, adx, ady;
-      Logical3D rn0 = Logical3D.Interpolate(r0, r1, t);
+      var rn0 = Logical3D.Interpolate(r0, r1, t);
       Logical3D rn1 = rn0 + direction;
-      this.LogicalToLayerCoordinatesAndDirection(rn0, rn1, 0, out ax, out ay, out adx, out ady);
+      LogicalToLayerCoordinatesAndDirection(rn0, rn1, 0, out var ax, out var ay, out var adx, out var ady);
       double hypot = Calc.RMath.Hypot(adx, ady);
       if (0 == hypot)
       {
@@ -411,10 +409,9 @@ namespace Altaxo.Graph.Gdi
         else
           displT -= 1E-6;
 
-        Logical3D displR = Logical3D.Interpolate(r0, r1, displT);
+        var displR = Logical3D.Interpolate(r0, r1, displT);
         Logical3D displD = displR + direction;
-        double dummyx, dummyy;
-        LogicalToLayerCoordinatesAndDirection(displR, displD, 0, out dummyx, out dummyy, out adx, out ady);
+        LogicalToLayerCoordinatesAndDirection(displR, displD, 0, out var dummyx, out var dummyy, out adx, out ady);
         hypot = Calc.RMath.Hypot(adx, ady);
       }
 
@@ -500,7 +497,7 @@ namespace Altaxo.Graph.Gdi
 
       if (!styleID.UsePhysicalValueOtherFirst)
       {
-        foreach (CSAxisInformation info in this._axisStyleInformation)
+        foreach (CSAxisInformation info in _axisStyleInformation)
         {
           if (styleID.ParallelAxisNumber == info.Identifier.ParallelAxisNumber)
           {
@@ -526,7 +523,7 @@ namespace Altaxo.Graph.Gdi
         }
       }
 
-      CSAxisInformation result = new CSAxisInformation(styleID);
+      var result = new CSAxisInformation(styleID);
       if (nearestInfo == null)
       {
         result = CSAxisInformation.NewWithDefaultValues(styleID);
@@ -571,7 +568,7 @@ namespace Altaxo.Graph.Gdi
 
     public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
     {
-      Dictionary<CSLineID, object> dict = new Dictionary<CSLineID, object>();
+      var dict = new Dictionary<CSLineID, object>();
 
       foreach (CSAxisInformation info in AxisStyles)
       {
@@ -610,7 +607,7 @@ namespace Altaxo.Graph.Gdi
 
       foreach (CSAxisInformation info in AxisStyles)
       {
-        CSPlaneID p1 = CSPlaneID.GetPlaneParallelToAxis2D(info.Identifier);
+        var p1 = CSPlaneID.GetPlaneParallelToAxis2D(info.Identifier);
         if (!dict.Contains(p1))
         {
           dict.Add(p1);
@@ -622,7 +619,7 @@ namespace Altaxo.Graph.Gdi
       {
         foreach (CSLineID id in list1)
         {
-          CSPlaneID p2 = CSPlaneID.GetPlaneParallelToAxis2D(id);
+          var p2 = CSPlaneID.GetPlaneParallelToAxis2D(id);
           if (!dict.Contains(p2))
           {
             dict.Add(p2);

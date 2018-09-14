@@ -34,8 +34,8 @@ namespace Altaxo
   /// </summary>
   public static class TimeSpanExtensions
   {
-    private readonly static double TimeSpanMaxInSeconds = TimeSpan.MaxValue.Ticks / (double)TimeSpan.TicksPerSecond;
-    private readonly static double TimeSpanMinInSeconds = TimeSpan.MinValue.Ticks / (double)TimeSpan.TicksPerSecond;
+    private static readonly double TimeSpanMaxInSeconds = TimeSpan.MaxValue.Ticks / (double)TimeSpan.TicksPerSecond;
+    private static readonly double TimeSpanMinInSeconds = TimeSpan.MinValue.Ticks / (double)TimeSpan.TicksPerSecond;
 
     /// <summary>
     /// Constructs a TimeSpan from the provided seconds exactly (without rounding to milliseconds).
@@ -68,7 +68,7 @@ namespace Altaxo
 
     public static TimeSpan SafeAddition(this TimeSpan x, double y)
     {
-      double result = (double)x.Ticks + y * TimeSpan.TicksPerSecond;
+      double result = x.Ticks + y * TimeSpan.TicksPerSecond;
 
       if (result >= TimeSpan.MaxValue.Ticks)
         return TimeSpan.MaxValue;

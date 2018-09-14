@@ -28,13 +28,13 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.Collections.Generic;
   using Altaxo.Data;
   using Altaxo.Main;
   using Drawing;
   using Geometry;
   using Graph.Plot.Data;
   using Plot.Data;
-  using System.Collections.Generic;
 
   public class FillToCurvePlotStyle
     :
@@ -161,14 +161,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._independentFillColor = from._independentFillColor;
-        this.FillBrush = null == from._fillBrush ? null : from._fillBrush.Clone();
+        _independentFillColor = from._independentFillColor;
+        FillBrush = null == from._fillBrush ? null : from._fillBrush.Clone();
 
-        this._independentFrameColor = from._independentFrameColor;
-        this._framePen = null == from._framePen ? null : from._framePen.Clone();
+        _independentFrameColor = from._independentFrameColor;
+        _framePen = null == from._framePen ? null : from._framePen.Clone();
 
-        this._fillToPrevPlotItem = from._fillToPrevPlotItem;
-        this._fillToNextPlotItem = from._fillToNextPlotItem;
+        _fillToPrevPlotItem = from._fillToPrevPlotItem;
+        _fillToNextPlotItem = from._fillToNextPlotItem;
 
         //this._parent = from._parent;
 
@@ -216,19 +216,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="info">Deserialization info.</param>
     protected FillToCurvePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      _cachedPaintOneRange = this.StraightConnection_PaintOneRange;
+      _cachedPaintOneRange = StraightConnection_PaintOneRange;
       FillBrush = new BrushX(NamedColors.Aqua);
     }
 
     public FillToCurvePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      _cachedPaintOneRange = this.StraightConnection_PaintOneRange;
+      _cachedPaintOneRange = StraightConnection_PaintOneRange;
       FillBrush = new BrushX(NamedColors.Aqua); // Exception: do not use one of the colors of the default plot color set. Instead, use a light color.
     }
 
     public FillToCurvePlotStyle(FillToCurvePlotStyle from, bool copyWithDataReferences)
     {
-      _cachedPaintOneRange = this.StraightConnection_PaintOneRange;
+      _cachedPaintOneRange = StraightConnection_PaintOneRange;
       CopyFrom(from, copyWithDataReferences, Main.EventFiring.Suppressed);
     }
 
@@ -398,7 +398,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           // we have to ignore the missing points here, thus all ranges can be plotted
           // as one range, i.e. continuously
           // for this, we create the totalRange, which contains all ranges
-          PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+          var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
           _cachedPaintOneRange(g, pdata, totalRange, layer, nextItemData);
         }
       }
@@ -418,7 +418,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // we have to ignore the missing points here, thus all ranges can be plotted
       // as one range, i.e. continuously
       // for this, we create the totalRange, which contains all ranges
-      PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound, rangeList[0].OffsetToOriginal);
+      var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound, rangeList[0].OffsetToOriginal);
       _cachedPaintOneRange(g, pdata, totalRange, layer, prevItemData);
     }
 
@@ -449,7 +449,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       Processed2DPlotData previousData)
     {
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      PointF[] linepts = new PointF[range.Length];
+      var linepts = new PointF[range.Length];
       Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
       int lastIdx = range.Length - 1;
 
@@ -484,13 +484,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (minIdxLast < 0)
         minIdxLast = previousData.PlotPointsInAbsoluteLayerCoordinates.Length - 1;
 
-      PointF[] otherLinePoints = new PointF[minIdxLast + 1 - minIdxFirst];
+      var otherLinePoints = new PointF[minIdxLast + 1 - minIdxFirst];
       Array.Copy(previousData.PlotPointsInAbsoluteLayerCoordinates, minIdxFirst, otherLinePoints, 0, otherLinePoints.Length);
       Array.Reverse(otherLinePoints);
 
       // now paint this
 
-      GraphicsPath gp = new GraphicsPath();
+      var gp = new GraphicsPath();
       var layerSize = layer.Size;
 
       gp.StartFigure();
@@ -500,7 +500,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillBrush.IsVisible)
       {
-        g.FillPath(this._fillBrush, gp);
+        g.FillPath(_fillBrush, gp);
       }
 
       if (null != _framePen)

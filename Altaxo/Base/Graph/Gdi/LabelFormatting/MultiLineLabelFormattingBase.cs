@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Drawing;
 using Altaxo.Data;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
-using System;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        MultiLineLabelFormattingBase s = (MultiLineLabelFormattingBase)obj;
+        var s = (MultiLineLabelFormattingBase)obj;
         info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
         info.AddValue("LineSpacing", s._relativeLineSpacing);
         info.AddEnum("BlockAlignment", s._textBlockAlignment);
@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        MultiLineLabelFormattingBase s = (MultiLineLabelFormattingBase)o;
+        var s = (MultiLineLabelFormattingBase)o;
         info.GetBaseValueEmbedded(s, typeof(LabelFormattingBase), parent);
         s._relativeLineSpacing = info.GetDouble("LineSpacing");
         s._textBlockAlignment = (StringAlignment)info.GetEnum("BlockAlignment", typeof(StringAlignment));
@@ -81,8 +81,8 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         var from = obj as MultiLineLabelFormattingBase;
         if (null != from)
         {
-          this._relativeLineSpacing = from._relativeLineSpacing;
-          this._textBlockAlignment = from._textBlockAlignment;
+          _relativeLineSpacing = from._relativeLineSpacing;
+          _textBlockAlignment = from._textBlockAlignment;
         }
       }
       return isCopied;
@@ -129,10 +129,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
           titems[i] = _prefix + titems[i] + _suffix;
       }
 
-      MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];
+      var litems = new MeasuredLabelItem[titems.Length];
 
       FontX localfont = font;
-      StringFormat localstrfmt = (StringFormat)strfmt.Clone();
+      var localstrfmt = (StringFormat)strfmt.Clone();
 
       StringAlignment horizontalAlignment = localstrfmt.Alignment;
       StringAlignment verticalAlignment = localstrfmt.LineAlignment;

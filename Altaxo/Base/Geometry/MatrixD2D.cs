@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Geometry
 {
@@ -74,13 +74,13 @@ namespace Altaxo.Geometry
       if (object.ReferenceEquals(this, from))
         return;
 
-      this.sx = from.sx;
-      this.rx = from.rx;
-      this.ry = from.ry;
-      this.sy = from.sy;
-      this.dx = from.dx;
-      this.dy = from.dy;
-      this.determinant = from.determinant;
+      sx = from.sx;
+      rx = from.rx;
+      ry = from.ry;
+      sy = from.sy;
+      dx = from.dx;
+      dy = from.dy;
+      determinant = from.determinant;
     }
 
     public MatrixD2D Clone()
@@ -475,7 +475,7 @@ namespace Altaxo.Geometry
         (dy * rx - dx * sy) / determinant,
         (dx * ry - dy * sy) / determinant
         )
-      { determinant = 1 / this.determinant };
+      { determinant = 1 / determinant };
     }
 
     public PointD2D InverseTransformVector(PointD2D pt)

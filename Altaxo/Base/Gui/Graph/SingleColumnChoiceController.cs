@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph
 {
@@ -204,8 +204,10 @@ namespace Altaxo.Gui.Graph
     public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
     {
       // Create a dictionary of folders to TreeNodes relation
-      var folderDict = new Dictionary<string, NGTreeNode>();
-      folderDict.Add(ProjectFolder.RootFolderName, tableCollectionNode); // add the root folder node to the dictionary
+      var folderDict = new Dictionary<string, NGTreeNode>
+      {
+        { ProjectFolder.RootFolderName, tableCollectionNode } // add the root folder node to the dictionary
+      };
 
       tableCollectionNode.Nodes.Clear();
       foreach (var table in Current.Project.DataTableCollection)

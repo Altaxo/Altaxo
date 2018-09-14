@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Lighting
 {
@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     {
       if (!(isAffixedToCamera == _isAffixedToCamera))
       {
-        var result = (DirectionalLight)this.MemberwiseClone();
+        var result = (DirectionalLight)MemberwiseClone();
         result._isAffixedToCamera = isAffixedToCamera;
         return result;
       }
@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyLightAmplitude(lightAmplitude, nameof(lightAmplitude));
 
-        var result = (DirectionalLight)this.MemberwiseClone();
+        var result = (DirectionalLight)MemberwiseClone();
         result._lightAmplitude = lightAmplitude;
         return result;
       }
@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     {
       if (!(color == _color))
       {
-        var result = (DirectionalLight)this.MemberwiseClone();
+        var result = (DirectionalLight)MemberwiseClone();
         result._color = color;
         return result;
       }
@@ -235,7 +235,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         var len = VerifyDirection(directionToLight, nameof(directionToLight));
 
-        var result = (DirectionalLight)this.MemberwiseClone();
+        var result = (DirectionalLight)MemberwiseClone();
         result._directionToLight = directionToLight / len;
         return result;
       }

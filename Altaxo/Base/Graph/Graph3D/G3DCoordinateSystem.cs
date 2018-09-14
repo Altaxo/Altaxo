@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
+using Altaxo.Geometry;
+using Altaxo.Graph;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Graph3D
       }
       else
       {
-        var result = (G3DCoordinateSystem)this.MemberwiseClone();
+        var result = (G3DCoordinateSystem)MemberwiseClone();
         result._layerSize = size;
         return result;
       }
@@ -254,13 +254,10 @@ namespace Altaxo.Graph.Graph3D
       double angle,
       out VectorD3D normalizeddirection)
     {
-      //double ax, ay, adx, ady;
-      PointD3D position;
-      VectorD3D direction;
-      this.LogicalToLayerCoordinatesAndDirection(
+      LogicalToLayerCoordinatesAndDirection(
         r0, r1,
         t,
-        out position, out direction);
+        out var position, out var direction);
 
       if (angle != 0)
       {
@@ -296,11 +293,9 @@ namespace Altaxo.Graph.Graph3D
         Logical3D direction,
         out VectorD3D normalizeddirection)
     {
-      PointD3D pos;
-      VectorD3D dir;
-      Logical3D rn0 = Logical3D.Interpolate(r0, r1, t);
+      var rn0 = Logical3D.Interpolate(r0, r1, t);
       Logical3D rn1 = rn0 + direction;
-      this.LogicalToLayerCoordinatesAndDirection(rn0, rn1, 0, out pos, out dir);
+      LogicalToLayerCoordinatesAndDirection(rn0, rn1, 0, out var pos, out var dir);
       double hypot = dir.Length;
       if (0 == hypot)
       {
@@ -311,10 +306,9 @@ namespace Altaxo.Graph.Graph3D
         else
           displT -= 1E-6;
 
-        Logical3D displR = Logical3D.Interpolate(r0, r1, displT);
+        var displR = Logical3D.Interpolate(r0, r1, displT);
         Logical3D displD = displR + direction;
-        PointD3D dummyx;
-        LogicalToLayerCoordinatesAndDirection(displR, displD, 0, out dummyx, out dir);
+        LogicalToLayerCoordinatesAndDirection(displR, displD, 0, out var dummyx, out dir);
         hypot = dir.Length;
       }
 
@@ -436,7 +430,7 @@ namespace Altaxo.Graph.Graph3D
 
     public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
     {
-      Dictionary<CSLineID, object> dict = new Dictionary<CSLineID, object>();
+      var dict = new Dictionary<CSLineID, object>();
 
       foreach (CSAxisInformation info in AxisStyles)
       {
@@ -471,7 +465,7 @@ namespace Altaxo.Graph.Graph3D
 
     public IEnumerable<CSPlaneID> GetJoinedPlaneIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSPlaneID> list2)
     {
-      HashSet<CSPlaneID> set = new HashSet<CSPlaneID>();
+      var set = new HashSet<CSPlaneID>();
 
       foreach (CSAxisInformation info in AxisStyles)
       {

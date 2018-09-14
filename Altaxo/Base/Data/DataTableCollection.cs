@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -46,7 +46,7 @@ namespace Altaxo.Data
     public string[] GetSortedTableNames()
     {
       string[] arr = new string[_itemsByName.Count];
-      this._itemsByName.Keys.CopyTo(arr, 0);
+      _itemsByName.Keys.CopyTo(arr, 0);
       return arr;
     }
 
@@ -72,8 +72,7 @@ namespace Altaxo.Data
 
     public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
     {
-      DataTable result;
-      if (_itemsByName.TryGetValue(name, out result))
+      if (_itemsByName.TryGetValue(name, out var result))
         return result;
 
       return null;
@@ -83,7 +82,7 @@ namespace Altaxo.Data
     {
       if (o is DataTable)
       {
-        DataTable gr = (DataTable)o;
+        var gr = (DataTable)o;
         if (_itemsByName.ContainsKey(gr.Name))
           return gr.Name;
       }

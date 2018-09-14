@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.CS
 {
@@ -59,8 +59,8 @@ namespace Altaxo.Graph.Gdi.CS
       base.CopyFrom(fromb);
       if (fromb is G3DCartesicCoordinateSystem)
       {
-        G3DCartesicCoordinateSystem from = (G3DCartesicCoordinateSystem)fromb;
-        this._projectionMatrix = from._projectionMatrix;
+        var from = (G3DCartesicCoordinateSystem)fromb;
+        _projectionMatrix = from._projectionMatrix;
       }
     }
 
@@ -117,10 +117,8 @@ namespace Altaxo.Graph.Gdi.CS
     public override bool LogicalToLayerCoordinatesAndDirection(Logical3D r0, Logical3D r1, double t, out double ax, out double ay, out double adx, out double ady)
     {
       LogicalToLayerCoordinates(Logical3D.Interpolate(r0, r1, t), out ax, out ay);
-
-      double x0, y0, x1, y1;
-      LogicalToLayerCoordinates(r0, out x0, out y0);
-      LogicalToLayerCoordinates(r1, out x1, out y1);
+      LogicalToLayerCoordinates(r0, out var x0, out var y0);
+      LogicalToLayerCoordinates(r1, out var x1, out var y1);
       adx = x1 - x0;
       ady = y1 - y0;
 
@@ -134,9 +132,8 @@ namespace Altaxo.Graph.Gdi.CS
 
     public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath path, Logical3D r0, Logical3D r1)
     {
-      double x0, y0, x1, y1;
-      LogicalToLayerCoordinates(r0, out x0, out y0);
-      LogicalToLayerCoordinates(r1, out x1, out y1);
+      LogicalToLayerCoordinates(r0, out var x0, out var y0);
+      LogicalToLayerCoordinates(r1, out var x1, out var y1);
       path.AddLine((float)x0, (float)y0, (float)x1, (float)y1);
     }
 
@@ -470,7 +467,7 @@ namespace Altaxo.Graph.Gdi.CS
 
     public override object Clone()
     {
-      G3DCartesicCoordinateSystem result = new G3DCartesicCoordinateSystem();
+      var result = new G3DCartesicCoordinateSystem();
       result.CopyFrom(this);
       return result;
     }

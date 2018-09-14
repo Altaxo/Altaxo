@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {

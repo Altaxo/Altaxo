@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Gdi
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GraphExportOptions s = (GraphExportOptions)obj;
+        var s = (GraphExportOptions)obj;
 
         info.AddValue("ImageFormat", s._imageFormat);
         info.AddEnum("PixelFormat", s._pixelFormat);
@@ -84,11 +84,11 @@ namespace Altaxo.Graph.Gdi
 
       if (null != from)
       {
-        this._imageFormat = from.ImageFormat;
-        this._pixelFormat = from.PixelFormat;
-        this._backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
-        this.SourceDpiResolution = from.SourceDpiResolution;
-        this.DestinationDpiResolution = from.DestinationDpiResolution;
+        _imageFormat = from.ImageFormat;
+        _pixelFormat = from.PixelFormat;
+        _backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
+        SourceDpiResolution = from.SourceDpiResolution;
+        DestinationDpiResolution = from.DestinationDpiResolution;
         return true;
       }
 
@@ -97,11 +97,11 @@ namespace Altaxo.Graph.Gdi
 
     public GraphExportOptions()
     {
-      this._imageFormat = System.Drawing.Imaging.ImageFormat.Png;
-      this._pixelFormat = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-      this.SourceDpiResolution = 300;
-      this.DestinationDpiResolution = 300;
-      this.BackgroundBrush = null;
+      _imageFormat = System.Drawing.Imaging.ImageFormat.Png;
+      _pixelFormat = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
+      SourceDpiResolution = 300;
+      DestinationDpiResolution = 300;
+      BackgroundBrush = null;
     }
 
     public GraphExportOptions(GraphExportOptions from)

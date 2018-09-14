@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
+using Altaxo.Collections;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Main
 {
@@ -108,8 +108,10 @@ namespace Altaxo.Gui.Main
     public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
     {
       // Create a dictionary of folders to TreeNodes relation
-      var folderDict = new Dictionary<string, NGTreeNode>();
-      folderDict.Add(Altaxo.Main.ProjectFolder.RootFolderName, tableCollectionNode); // add the root folder node to the dictionary
+      var folderDict = new Dictionary<string, NGTreeNode>
+      {
+        { Altaxo.Main.ProjectFolder.RootFolderName, tableCollectionNode } // add the root folder node to the dictionary
+      };
 
       tableCollectionNode.Nodes.Clear();
       foreach (var table in Current.Project.DataTableCollection)
@@ -170,7 +172,7 @@ namespace Altaxo.Gui.Main
       {
         if (_view != null)
         {
-          _view.SelectionChanged -= this.EhSelectionChanged;
+          _view.SelectionChanged -= EhSelectionChanged;
         }
 
         _view = value as ISingleTreeViewItemChoiceView;
@@ -179,7 +181,7 @@ namespace Altaxo.Gui.Main
         {
           Initialize(false);
 
-          _view.SelectionChanged += this.EhSelectionChanged;
+          _view.SelectionChanged += EhSelectionChanged;
         }
       }
     }

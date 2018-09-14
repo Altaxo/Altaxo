@@ -63,13 +63,13 @@ namespace Altaxo.Gui.Common
       set
       {
         if (m_View != null)
-          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+          m_View.ValueText_Validating -= EhView_ValidatingValue1;
 
         m_View = value;
         Initialize();
 
         if (m_View != null)
-          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+          m_View.ValueText_Validating += EhView_ValidatingValue1;
       }
     }
 
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Common
       string err = null;
       if (Altaxo.Serialization.GUIConversion.IsInteger(value, out m_EnteredContents))
       {
-        if (null != this.m_Validator)
+        if (null != m_Validator)
           err = m_Validator.Validate(m_EnteredContents);
       }
       else
@@ -107,8 +107,7 @@ namespace Altaxo.Gui.Common
 
     public void EhView_ValidatingValue1(ValidationEventArgs<string> e)
     {
-      int val;
-      if (!int.TryParse(e.ValueToValidate, out val))
+      if (!int.TryParse(e.ValueToValidate, out var val))
         e.AddError("Value has to be a valid integer");
     }
 
@@ -149,13 +148,13 @@ namespace Altaxo.Gui.Common
       set
       {
         if (m_View != null)
-          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+          m_View.ValueText_Validating -= EhView_ValidatingValue1;
 
         m_View = value as ISingleValueView;
         if (m_View != null)
         {
           Initialize();
-          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+          m_View.ValueText_Validating += EhView_ValidatingValue1;
         }
       }
     }

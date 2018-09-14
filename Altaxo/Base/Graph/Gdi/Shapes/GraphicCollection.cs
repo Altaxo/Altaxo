@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GraphicCollection s = (GraphicCollection)obj;
+        var s = (GraphicCollection)obj;
 
         info.CreateArray("GraphObjects", s.Count);
         for (int i = 0; i < s.Count; i++)
@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         int count = info.OpenArray();
         for (int i = 0; i < count; i++)
         {
-          IGraphicBase go = (IGraphicBase)info.GetValue("e", s);
+          var go = (IGraphicBase)info.GetValue("e", s);
           s.Add(go);
         }
         info.CloseArray(count);

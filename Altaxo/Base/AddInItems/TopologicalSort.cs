@@ -16,9 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -47,16 +47,18 @@ namespace Altaxo.AddInItems
     public static List<Codon> Sort(IEnumerable<IEnumerable<Codon>> codonInput)
     {
       // Step 1: create nodes for graph
-      Dictionary<string, Node> nameToNodeDict = new Dictionary<string, Node>();
-      List<Node> allNodes = new List<Node>();
+      var nameToNodeDict = new Dictionary<string, Node>();
+      var allNodes = new List<Node>();
       foreach (IEnumerable<Codon> codonList in codonInput)
       {
         // create entries to preserve order within
         Node previous = null;
         foreach (Codon codon in codonList)
         {
-          Node node = new Node();
-          node.codon = codon;
+          var node = new Node
+          {
+            codon = codon
+          };
           if (!string.IsNullOrEmpty(codon.Id))
             nameToNodeDict[codon.Id] = node;
           // add implicit edges
@@ -74,8 +76,7 @@ namespace Altaxo.AddInItems
         {
           foreach (string beforeReference in node.codon.InsertBefore.Split(','))
           {
-            Node referencedNode;
-            if (nameToNodeDict.TryGetValue(beforeReference, out referencedNode))
+            if (nameToNodeDict.TryGetValue(beforeReference, out var referencedNode))
             {
               referencedNode.previous.Add(node);
             }
@@ -89,8 +90,7 @@ namespace Altaxo.AddInItems
         {
           foreach (string afterReference in node.codon.InsertAfter.Split(','))
           {
-            Node referencedNode;
-            if (nameToNodeDict.TryGetValue(afterReference, out referencedNode))
+            if (nameToNodeDict.TryGetValue(afterReference, out var referencedNode))
             {
               node.previous.Add(referencedNode);
             }
@@ -102,7 +102,7 @@ namespace Altaxo.AddInItems
         }
       }
       // Step 3: Perform Topological Sort
-      List<Codon> output = new List<Codon>();
+      var output = new List<Codon>();
       foreach (Node node in allNodes)
       {
         node.Visit(output);

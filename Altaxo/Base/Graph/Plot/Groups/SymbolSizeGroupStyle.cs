@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SymbolSizeGroupStyle s = (SymbolSizeGroupStyle)obj;
+        var s = (SymbolSizeGroupStyle)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -68,8 +68,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public SymbolSizeGroupStyle(SymbolSizeGroupStyle from)
     {
-      this._isInitialized = from._isInitialized;
-      this._symbolSize = from._symbolSize;
+      _isInitialized = from._isInitialized;
+      _symbolSize = from._symbolSize;
     }
 
     #endregion Constructors
@@ -92,8 +92,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public void TransferFrom(IPlotGroupStyle fromb)
     {
-      SymbolSizeGroupStyle from = (SymbolSizeGroupStyle)fromb;
-      this._isInitialized = from._isInitialized;
+      var from = (SymbolSizeGroupStyle)fromb;
+      _isInitialized = from._isInitialized;
       _symbolSize = from._symbolSize;
     }
 
@@ -179,8 +179,10 @@ namespace Altaxo.Graph.Plot.Groups
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(SymbolSizeGroupStyle)))
       {
-        SymbolSizeGroupStyle gstyle = new SymbolSizeGroupStyle();
-        gstyle.IsStepEnabled = true;
+        var gstyle = new SymbolSizeGroupStyle
+        {
+          IsStepEnabled = true
+        };
         externalGroups.Add(gstyle);
       }
     }

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -82,7 +82,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void MoveGrip(PointD2D newPosition)
       {
         newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
-        PointD2D diff = new PointD2D(newPosition.X - _initialMousePosition.X, newPosition.Y - _initialMousePosition.Y);
+        var diff = new PointD2D(newPosition.X - _initialMousePosition.X, newPosition.Y - _initialMousePosition.Y);
 
         GraphObject.SetShearFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialRotation, _initialShear, _initialScaleX, _initialScaleY, Main.EventFiring.Suppressed);
         _hasMoved = true;

@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph
 {
@@ -94,7 +94,7 @@ namespace Altaxo.Graph
 
     public bool HasSameContentAs(ImageProxy from)
     {
-      return this.ContentHash == from.ContentHash;
+      return ContentHash == from.ContentHash;
     }
 
     /// <summary>Returns the original size of the image in points (1/72 inch).</summary>
@@ -102,7 +102,7 @@ namespace Altaxo.Graph
 
     public static MemoryStream ImageToStream(Image image, ImageFormat format)
     {
-      MemoryStream str = new MemoryStream();
+      var str = new MemoryStream();
       image.Save(str, format);
       str.Flush();
       return str;
@@ -147,7 +147,7 @@ namespace Altaxo.Graph
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ResourceImageProxy s = (ResourceImageProxy)obj;
+        var s = (ResourceImageProxy)obj;
         info.AddValue("Url", s._url);
         info.AddValue("Name", s._name);
       }
@@ -186,22 +186,24 @@ namespace Altaxo.Graph
         var from = obj as ResourceImageProxy;
         if (null != from)
         {
-          this._url = from._url;
-          this._name = from._name;
-          this._imageSizePt = from._imageSizePt;
-          this._image = (from._image != null && from._image.IsAlive) ? new WeakReference(from._image.Target) : null;
+          _url = from._url;
+          _name = from._name;
+          _imageSizePt = from._imageSizePt;
+          _image = (from._image != null && from._image.IsAlive) ? new WeakReference(from._image.Target) : null;
         }
       }
     }
 
-    public new static ImageProxy FromResource(string fullpath)
+    public static new ImageProxy FromResource(string fullpath)
     {
       if (string.IsNullOrEmpty(fullpath))
         throw new ArgumentException("Path is null or empty");
 
-      ResourceImageProxy img = new ResourceImageProxy();
-      img._url = fullpath;
-      img._name = System.IO.Path.GetFileName(fullpath);
+      var img = new ResourceImageProxy
+      {
+        _url = fullpath,
+        _name = System.IO.Path.GetFileName(fullpath)
+      };
       return img;
     }
 
@@ -212,9 +214,11 @@ namespace Altaxo.Graph
       if (string.IsNullOrEmpty(fullpath))
         throw new ArgumentException("Path is null or empty");
 
-      ResourceImageProxy img = new ResourceImageProxy();
-      img._url = fullpath;
-      img._name = name;
+      var img = new ResourceImageProxy
+      {
+        _url = fullpath,
+        _name = name
+      };
       return img;
     }
 
@@ -286,7 +290,7 @@ namespace Altaxo.Graph
 
     public override object Clone()
     {
-      ResourceImageProxy result = new ResourceImageProxy();
+      var result = new ResourceImageProxy();
       result.CopyFrom(this);
       return result;
     }
@@ -372,7 +376,7 @@ namespace Altaxo.Graph
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        MemoryStreamImageProxy s = (MemoryStreamImageProxy)obj;
+        var s = (MemoryStreamImageProxy)obj;
         info.AddValue("Url", s._url);
         info.AddValue("Name", s._name);
         info.AddValue("Hash", s._hash);
@@ -418,13 +422,13 @@ namespace Altaxo.Graph
         var from = obj as MemoryStreamImageProxy;
         if (null != from)
         {
-          this._url = from._url;
-          this._name = from._name;
-          this._stream = from._stream;
-          this._hash = from._hash;
-          this._imageSizePt = from._imageSizePt;
-          this._extension = from._extension;
-          this._image = (null != from._image && from._image.IsAlive) ? new WeakReference(from._image.Target) : null;
+          _url = from._url;
+          _name = from._name;
+          _stream = from._stream;
+          _hash = from._hash;
+          _imageSizePt = from._imageSizePt;
+          _extension = from._extension;
+          _image = (null != from._image && from._image.IsAlive) ? new WeakReference(from._image.Target) : null;
         }
       }
       return isCopied;
@@ -432,10 +436,12 @@ namespace Altaxo.Graph
 
     public static new MemoryStreamImageProxy FromFile(string fullpath)
     {
-      MemoryStreamImageProxy img = new MemoryStreamImageProxy();
-      img._url = fullpath;
-      img._name = System.IO.Path.GetFileName(fullpath);
-      img._extension = System.IO.Path.GetExtension(fullpath);
+      var img = new MemoryStreamImageProxy
+      {
+        _url = fullpath,
+        _name = System.IO.Path.GetFileName(fullpath),
+        _extension = System.IO.Path.GetExtension(fullpath)
+      };
       img.LoadStreamBuffer(fullpath);
       return img;
     }
@@ -447,7 +453,7 @@ namespace Altaxo.Graph
 
     public static new MemoryStreamImageProxy FromImage(System.Drawing.Image image, string name)
     {
-      MemoryStreamImageProxy img = new MemoryStreamImageProxy();
+      var img = new MemoryStreamImageProxy();
       MemoryStream str1, str2;
       string fmt1, fmt2;
       if (image is Metafile)
@@ -515,10 +521,12 @@ namespace Altaxo.Graph
       if (string.IsNullOrEmpty(name))
         throw new ArgumentNullException(nameof(name), "Name must be provided in order to deduce the file extension");
 
-      MemoryStreamImageProxy img = new MemoryStreamImageProxy();
-      img._url = name;
-      img._name = name;
-      img._extension = System.IO.Path.GetExtension(name);
+      var img = new MemoryStreamImageProxy
+      {
+        _url = name,
+        _name = name,
+        _extension = System.IO.Path.GetExtension(name)
+      };
       img.CopyFromStream(istr);
       return img;
     }
@@ -531,7 +539,7 @@ namespace Altaxo.Graph
 
     private void SetHash(byte[] hash)
     {
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
       for (int i = 0; i < hash.Length; i++)
         stb.Append(hash[i].ToString("X2"));
 
@@ -548,7 +556,7 @@ namespace Altaxo.Graph
     {
       stream.Seek(0, SeekOrigin.Begin);
       byte[] hash = _md5.ComputeHash(stream);
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
       for (int i = 0; i < hash.Length; i++)
         stb.Append(hash[i].ToString("X2"));
       return stb.ToString();
@@ -575,7 +583,7 @@ namespace Altaxo.Graph
     private void LoadStreamBuffer(string fullpath)
     {
       // Copy the file into the stream
-      using (FileStream istr = new FileStream(fullpath, FileMode.Open, FileAccess.Read, FileShare.Read))
+      using (var istr = new FileStream(fullpath, FileMode.Open, FileAccess.Read, FileShare.Read))
       {
         CopyFromStream(istr);
         istr.Close();
@@ -682,7 +690,7 @@ namespace Altaxo.Graph
 
     public override object Clone()
     {
-      MemoryStreamImageProxy result = new MemoryStreamImageProxy();
+      var result = new MemoryStreamImageProxy();
       result.CopyFrom(this);
       return result;
     }

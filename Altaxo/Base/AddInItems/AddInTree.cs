@@ -16,13 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Resources;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -76,7 +76,7 @@ namespace Altaxo.AddInItems
 
     private string GetInstalledThirdPartyAddInsListAsString()
     {
-      System.Text.StringBuilder sb = new System.Text.StringBuilder();
+      var sb = new System.Text.StringBuilder();
       foreach (AddIn addIn in AddIns)
       {
         // Skip preinstalled AddIns (show only third party AddIns)
@@ -273,14 +273,14 @@ namespace Altaxo.AddInItems
         foreach (string bitmapResource in addIn.BitmapResources)
         {
           string path = Path.Combine(addInRoot, bitmapResource);
-          ResourceManager resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path), null);
+          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path), null);
           Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralImages(resourceManager);
         }
 
         foreach (string stringResource in addIn.StringResources)
         {
           string path = Path.Combine(addInRoot, stringResource);
-          ResourceManager resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path), null);
+          var resourceManager = ResourceManager.CreateFileBasedResourceManager(Path.GetFileNameWithoutExtension(path), Path.GetDirectoryName(path), null);
           Altaxo.Current.GetRequiredService<IResourceService>().RegisterNeutralStrings(resourceManager);
         }
       }
@@ -326,9 +326,9 @@ namespace Altaxo.AddInItems
     /// </param>
     public void Load(List<string> addInFiles, List<string> disabledAddIns)
     {
-      List<AddIn> list = new List<AddIn>();
-      Dictionary<string, Version> dict = new Dictionary<string, Version>();
-      Dictionary<string, AddIn> addInDict = new Dictionary<string, AddIn>();
+      var list = new List<AddIn>();
+      var dict = new Dictionary<string, Version>();
+      var addInDict = new Dictionary<string, AddIn>();
       var nameTable = new System.Xml.NameTable();
       foreach (string fileName in addInFiles)
       {
@@ -350,9 +350,11 @@ namespace Altaxo.AddInItems
             MessageService.ShowError("Error loading AddIn " + fileName + ":\n"
                                                              + ex.Message);
           }
-          addIn = new AddIn(this);
-          addIn.addInFileName = fileName;
-          addIn.CustomErrorMessage = ex.Message;
+          addIn = new AddIn(this)
+          {
+            addInFileName = fileName,
+            CustomErrorMessage = ex.Message
+          };
         }
         if (addIn.Action == AddInAction.CustomError)
         {

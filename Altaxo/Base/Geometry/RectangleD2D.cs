@@ -70,7 +70,7 @@ namespace Altaxo.Geometry
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RectangleD2D s = (RectangleD2D)obj;
+        var s = (RectangleD2D)obj;
         info.AddValue("X", s.X);
         info.AddValue("Y", s.Y);
         info.AddValue("Width", s.Width);
@@ -242,10 +242,10 @@ namespace Altaxo.Geometry
     /// <param name="y">The value used to inflate the rectangle in y-direction.</param>
     public void Inflate(double x, double y)
     {
-      this._x -= x;
-      this._w += x + x;
-      this._y -= y;
-      this._h += y + y;
+      _x -= x;
+      _w += x + x;
+      _y -= y;
+      _h += y + y;
     }
 
     /// <summary>Changes the location of the rectangle by the specified values for <paramref name="x"/> and <paramref name="y"/>.</summary>

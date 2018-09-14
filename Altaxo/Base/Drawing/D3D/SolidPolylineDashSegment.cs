@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D.CrossSections;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing.D3D.CrossSections;
+using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
 {
@@ -180,19 +180,19 @@ namespace Altaxo.Drawing.D3D
     ILineCap startCap,
     ILineCap endCap)
     {
-      this._crossSection = crossSection;
-      this._crossSectionVertexCount = crossSection.NumberOfVertices;
-      this._crossSectionNormalCount = crossSection.NumberOfNormals;
-      this._crossSectionMaximalDistanceFromCenter = _crossSection.GetMaximalDistanceFromCenter();
-      this._crossSectionPartsTriangleIndices = new Dictionary<Tuple<int, int>, int[]>();
-      this._lineJoin = lineJoin;
-      this._miterLimit = miterLimit;
-      this._miterLimitDotThreshold = Math.Cos(Math.PI - 2 * Math.Asin(1 / miterLimit));
+      _crossSection = crossSection;
+      _crossSectionVertexCount = crossSection.NumberOfVertices;
+      _crossSectionNormalCount = crossSection.NumberOfNormals;
+      _crossSectionMaximalDistanceFromCenter = _crossSection.GetMaximalDistanceFromCenter();
+      _crossSectionPartsTriangleIndices = new Dictionary<Tuple<int, int>, int[]>();
+      _lineJoin = lineJoin;
+      _miterLimit = miterLimit;
+      _miterLimitDotThreshold = Math.Cos(Math.PI - 2 * Math.Asin(1 / miterLimit));
 
-      this._dashStartCap = startCap;
-      this._dashStartCapBaseInsetAbsolute = null == _dashStartCap ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
-      this._dashEndCap = endCap;
-      this._dashEndCapBaseInsetAbsolute = null == _dashEndCap ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _dashStartCap = startCap;
+      _dashStartCapBaseInsetAbsolute = null == _dashStartCap ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
+      _dashEndCap = endCap;
+      _dashEndCapBaseInsetAbsolute = null == _dashEndCap ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
 
       _positionsTransformedStartCurrent = new PointD3D[_crossSectionVertexCount];
       _positionsTransformedEndCurrent = new PointD3D[_crossSectionVertexCount];
@@ -715,8 +715,7 @@ namespace Altaxo.Drawing.D3D
                 // Solution: the meshing triangle indices are the same, whether you would use the exact polygon cut by the line, or if you would use the points of the original cross section next to the cut points.
                 // thus we store for every polygon formed as a part of the cross section, defined by the first vertex index, and the last vertex index,
                 // the triangle indices that form the polygon mesh
-                int[] indexedTriangles;
-                if (!_crossSectionPartsTriangleIndices.TryGetValue(new Tuple<int, int>(firstPolygonIndex, lastPolygonIndex), out indexedTriangles))
+                if (!_crossSectionPartsTriangleIndices.TryGetValue(new Tuple<int, int>(firstPolygonIndex, lastPolygonIndex), out var indexedTriangles))
                 {
                   var polygon = PolygonClosedD2D.FromPoints(CrossSectionOfLine.GetVerticesFromToIncluding(_crossSection, firstPolygonIndex, lastPolygonIndex)); // polygon formed from a part of the cross section from firstPolygonIndex to (and including) lastPolygonIndex
                   indexedTriangles = Triangulate(polygon); // calculate the triangle indices that form the mesh of this polygon
@@ -936,18 +935,15 @@ namespace Altaxo.Drawing.D3D
         var p0 = new PointD2D(triangle.Points[0].X, triangle.Points[0].Y);
         var p1 = new PointD2D(triangle.Points[1].X, triangle.Points[1].Y);
         var p2 = new PointD2D(triangle.Points[2].X, triangle.Points[2].Y);
-
-        int i0, i1, i2;
-
-        if (!pointToIndex.TryGetValue(p0, out i0))
+        if (!pointToIndex.TryGetValue(p0, out var i0))
         {
           throw new InvalidOperationException("Should work except when our cross section was implified by pol2Tri");
         }
-        if (!pointToIndex.TryGetValue(p1, out i1))
+        if (!pointToIndex.TryGetValue(p1, out var i1))
         {
           throw new InvalidOperationException("Should work except when our cross section was implified by pol2Tri");
         }
-        if (!pointToIndex.TryGetValue(p2, out i2))
+        if (!pointToIndex.TryGetValue(p2, out var i2))
         {
           throw new InvalidOperationException("Should work except when our cross section was implified by pol2Tri");
         }

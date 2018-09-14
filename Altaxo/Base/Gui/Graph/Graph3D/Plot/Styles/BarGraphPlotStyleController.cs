@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
@@ -32,9 +35,6 @@ using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Plot.Groups;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {

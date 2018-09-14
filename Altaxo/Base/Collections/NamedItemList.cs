@@ -116,8 +116,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        int index;
-        if (_nameToIndex.TryGetValue(name, out index))
+        if (_nameToIndex.TryGetValue(name, out var index))
           return _list[index];
         else
           throw new ArgumentException("An item with the given name is not contained in the collection");
@@ -126,8 +125,7 @@ namespace Altaxo.Collections
 
     public bool TryGetValue(string name, out T item)
     {
-      int index;
-      if (_nameToIndex.TryGetValue(name, out index))
+      if (_nameToIndex.TryGetValue(name, out var index))
       {
         item = _list[index];
         return true;
@@ -150,8 +148,7 @@ namespace Altaxo.Collections
 
     public int IndexOf(string itemName)
     {
-      int index;
-      if (_nameToIndex.TryGetValue(itemName, out index))
+      if (_nameToIndex.TryGetValue(itemName, out var index))
         return index;
       else
         return -1;

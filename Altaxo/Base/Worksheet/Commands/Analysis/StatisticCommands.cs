@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Gui.Worksheet.Viewing;
-using System;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {

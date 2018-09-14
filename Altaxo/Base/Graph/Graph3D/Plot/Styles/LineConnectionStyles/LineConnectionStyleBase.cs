@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using Altaxo.Graph.Graph3D.Plot.Data;
 using Altaxo.Graph.Plot.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 {
@@ -66,12 +66,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode();
+      return GetType().GetHashCode();
     }
 
     public override bool Equals(object obj)
     {
-      return this.GetType() == obj?.GetType();
+      return GetType() == obj?.GetType();
     }
   }
 }

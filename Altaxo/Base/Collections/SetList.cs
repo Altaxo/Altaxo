@@ -156,8 +156,7 @@ namespace Altaxo.Collections
       if (_itemHash == null)
         EnsureHashNotNull();
 
-      int result;
-      return _itemHash.TryGetValue(item, out result) ? result : -1;
+      return _itemHash.TryGetValue(item, out var result) ? result : -1;
     }
 
     public T this[int i]

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -65,7 +65,7 @@ namespace Altaxo.Data
       /// </remarks>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
+        var s = (Altaxo.Data.DataColumn)obj;
       }
 
       /// <summary>
@@ -77,7 +77,7 @@ namespace Altaxo.Data
       /// <returns>The deserialized object.</returns>
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)o;
+        var s = (Altaxo.Data.DataColumn)o;
         // s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
         return s;
       }
@@ -205,7 +205,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return this.IsDisposeInProgress ? string.Empty : Main.AbsoluteDocumentPath.GetPathString(this, 3);
+        return IsDisposeInProgress ? string.Empty : Main.AbsoluteDocumentPath.GetPathString(this, 3);
       }
     }
 
@@ -216,7 +216,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return null == this.Name ? this.GetType().ToString() : this.GetType().ToString() + "(\"" + this.Name + "\")";
+        return null == Name ? GetType().ToString() : GetType().ToString() + "(\"" + Name + "\")";
       }
     }
 
@@ -248,7 +248,7 @@ namespace Altaxo.Data
           if (oldParent is Main.IChildChangedEventSink)
             ((Main.IChildChangedEventSink)oldParent).EhChildChanged(this, new Main.ParentChangedEventArgs(oldParent, _parent));
           if (_parent is Main.IChildChangedEventSink)
-            ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, new Main.ParentChangedEventArgs(oldParent, _parent));
+            _parent.EhChildChanged(this, new Main.ParentChangedEventArgs(oldParent, _parent));
         }
       }
     }
@@ -306,7 +306,7 @@ namespace Altaxo.Data
         // Notify parent
         if (_parent is Main.IChildChangedEventSink)
         {
-          ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, e); // parent may change our suspend state
+          _parent.EhChildChanged(this, e); // parent may change our suspend state
         }
 
         if (!IsSuspended)
@@ -387,7 +387,7 @@ namespace Altaxo.Data
     /// </summary>
     public void Clear()
     {
-      RemoveRows(0, this.Count);
+      RemoveRows(0, Count);
     }
 
     #endregion Data Access/Append/Clear
@@ -421,7 +421,7 @@ namespace Altaxo.Data
         for (int j = 0; j < numrows; j++)
         {
           int rowidx = selectedRows != null ? selectedRows[j] : j;
-          result[j] = (double)rowidx;
+          result[j] = rowidx;
         }
       }
       return result;
@@ -566,7 +566,7 @@ namespace Altaxo.Data
     {
       set
       {
-        throw new ArithmeticException(string.Format("Column {0} is a {1} and can thus not be converted to IROVector", Name, this.GetType()));
+        throw new ArithmeticException(string.Format("Column {0} is a {1} and can thus not be converted to IROVector", Name, GetType()));
       }
     }
 
@@ -574,7 +574,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return this.Count;
+        return Count;
       }
     }
 
@@ -604,7 +604,7 @@ namespace Altaxo.Data
     /// <returns>The wrapper vector.</returns>
     public virtual Altaxo.Calc.LinearAlgebra.IVector<double> ToVector(int start, int count)
     {
-      throw new ArithmeticException(string.Format("Column {0} is a {1} and can thus not be converted to IVector", Name, this.GetType()));
+      throw new ArithmeticException(string.Format("Column {0} is a {1} and can thus not be converted to IVector", Name, GetType()));
     }
 
     /// <summary>
@@ -615,7 +615,7 @@ namespace Altaxo.Data
     /// <returns>The wrapper vector.</returns>
     public virtual Altaxo.Calc.LinearAlgebra.IROVector<double> ToROVector(int start, int count)
     {
-      throw new ArithmeticException(string.Format("Column {0} is a {1} and can thus not be converted to IROVector", Name, this.GetType()));
+      throw new ArithmeticException(string.Format("Column {0} is a {1} and can thus not be converted to IROVector", Name, GetType()));
     }
 
     #endregion Converters
@@ -841,9 +841,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator +(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Addition(c2, out c3))
+      if (c1.vop_Addition(c2, out var c3))
         return c3;
       if (c2.vop_Addition_Rev(c1, out c3))
         return c3;
@@ -853,9 +852,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator +(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Addition(c2, out c3))
+      if (c1.vop_Addition(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -863,9 +861,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator +(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_Addition_Rev(c1, out c3))
+      if (c2.vop_Addition_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -873,9 +870,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator -(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Subtraction(c2, out c3))
+      if (c1.vop_Subtraction(c2, out var c3))
         return c3;
       if (c2.vop_Subtraction_Rev(c1, out c3))
         return c3;
@@ -885,9 +881,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator -(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Subtraction(c2, out c3))
+      if (c1.vop_Subtraction(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -895,9 +890,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator -(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_Subtraction_Rev(c1, out c3))
+      if (c2.vop_Subtraction_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -905,9 +899,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator *(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Multiplication(c2, out c3))
+      if (c1.vop_Multiplication(c2, out var c3))
         return c3;
       if (c2.vop_Multiplication_Rev(c1, out c3))
         return c3;
@@ -917,9 +910,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator *(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Multiplication(c2, out c3))
+      if (c1.vop_Multiplication(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -927,9 +919,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator *(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_Multiplication_Rev(c1, out c3))
+      if (c2.vop_Multiplication_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -937,9 +928,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator /(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Division(c2, out c3))
+      if (c1.vop_Division(c2, out var c3))
         return c3;
       if (c2.vop_Division_Rev(c1, out c3))
         return c3;
@@ -949,9 +939,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator /(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Division(c2, out c3))
+      if (c1.vop_Division(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -959,9 +948,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator /(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_Division_Rev(c1, out c3))
+      if (c2.vop_Division_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -969,9 +957,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator %(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Modulo(c2, out c3))
+      if (c1.vop_Modulo(c2, out var c3))
         return c3;
       if (c2.vop_Modulo_Rev(c1, out c3))
         return c3;
@@ -981,9 +968,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator %(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Modulo(c2, out c3))
+      if (c1.vop_Modulo(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -991,9 +977,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator %(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_Modulo_Rev(c1, out c3))
+      if (c2.vop_Modulo_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1001,9 +986,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator &(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_And(c2, out c3))
+      if (c1.vop_And(c2, out var c3))
         return c3;
       if (c2.vop_And_Rev(c1, out c3))
         return c3;
@@ -1013,9 +997,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator &(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_And(c2, out c3))
+      if (c1.vop_And(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator AND to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1023,9 +1006,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator &(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_And_Rev(c1, out c3))
+      if (c2.vop_And_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator AND to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1033,9 +1015,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator |(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Or(c2, out c3))
+      if (c1.vop_Or(c2, out var c3))
         return c3;
       if (c2.vop_Or_Rev(c1, out c3))
         return c3;
@@ -1045,9 +1026,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator |(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Or(c2, out c3))
+      if (c1.vop_Or(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator OR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1055,9 +1035,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator |(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_Or_Rev(c1, out c3))
+      if (c2.vop_Or_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator OR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1065,9 +1044,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator ^(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Xor(c2, out c3))
+      if (c1.vop_Xor(c2, out var c3))
         return c3;
       if (c2.vop_Xor_Rev(c1, out c3))
         return c3;
@@ -1077,9 +1055,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator ^(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Xor(c2, out c3))
+      if (c1.vop_Xor(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator XOR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1087,9 +1064,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator ^(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_Xor_Rev(c1, out c3))
+      if (c2.vop_Xor_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator XOR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1097,9 +1073,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator <<(DataColumn c1, int c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_ShiftLeft(c2, out c3))
+      if (c1.vop_ShiftLeft(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator << to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1107,9 +1082,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator >>(DataColumn c1, int c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_ShiftRight(c2, out c3))
+      if (c1.vop_ShiftRight(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator >> to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1117,9 +1091,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator <(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Lesser(c2, out c3))
+      if (c1.vop_Lesser(c2, out var c3))
         return c3;
       if (c2.vop_Lesser_Rev(c1, out c3))
         return c3;
@@ -1129,9 +1102,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator <(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Lesser(c2, out c3))
+      if (c1.vop_Lesser(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator < to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1139,9 +1111,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator <(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_Lesser_Rev(c1, out c3))
+      if (c2.vop_Lesser_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator < to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1149,9 +1120,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator >(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Greater(c2, out c3))
+      if (c1.vop_Greater(c2, out var c3))
         return c3;
       if (c2.vop_Greater_Rev(c1, out c3))
         return c3;
@@ -1161,9 +1131,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator >(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_Greater(c2, out c3))
+      if (c1.vop_Greater(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator > to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1171,9 +1140,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator >(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_Greater_Rev(c1, out c3))
+      if (c2.vop_Greater_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator > to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1181,9 +1149,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator <=(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_LesserOrEqual(c2, out c3))
+      if (c1.vop_LesserOrEqual(c2, out var c3))
         return c3;
       if (c2.vop_LesserOrEqual_Rev(c1, out c3))
         return c3;
@@ -1193,9 +1160,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator <=(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_LesserOrEqual(c2, out c3))
+      if (c1.vop_LesserOrEqual(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator <= to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1203,9 +1169,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator <=(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_LesserOrEqual_Rev(c1, out c3))
+      if (c2.vop_LesserOrEqual_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator <= " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1213,9 +1178,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator >=(DataColumn c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_GreaterOrEqual(c2, out c3))
+      if (c1.vop_GreaterOrEqual(c2, out var c3))
         return c3;
       if (c2.vop_GreaterOrEqual_Rev(c1, out c3))
         return c3;
@@ -1225,9 +1189,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator >=(DataColumn c1, AltaxoVariant c2)
     {
-      DataColumn c3;
 
-      if (c1.vop_GreaterOrEqual(c2, out c3))
+      if (c1.vop_GreaterOrEqual(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator >= to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1235,9 +1198,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator >=(AltaxoVariant c1, DataColumn c2)
     {
-      DataColumn c3;
 
-      if (c2.vop_GreaterOrEqual_Rev(c1, out c3))
+      if (c2.vop_GreaterOrEqual_Rev(c1, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator >= to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -1245,9 +1207,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator +(DataColumn c1)
     {
-      DataColumn c3;
 
-      if (c1.vop_Plus(out c3))
+      if (c1.vop_Plus(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator plus to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -1255,9 +1216,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator -(DataColumn c1)
     {
-      DataColumn c3;
 
-      if (c1.vop_Minus(out c3))
+      if (c1.vop_Minus(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator minus to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -1265,9 +1225,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator !(DataColumn c1)
     {
-      DataColumn c3;
 
-      if (c1.vop_Not(out c3))
+      if (c1.vop_Not(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator not to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -1275,9 +1234,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator ~(DataColumn c1)
     {
-      DataColumn c3;
 
-      if (c1.vop_Complement(out c3))
+      if (c1.vop_Complement(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator complement to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -1285,9 +1243,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator ++(DataColumn c1)
     {
-      DataColumn c3;
 
-      if (c1.vop_Increment(out c3))
+      if (c1.vop_Increment(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator increment to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -1295,9 +1252,8 @@ namespace Altaxo.Data
 
     public static DataColumn operator --(DataColumn c1)
     {
-      DataColumn c3;
 
-      if (c1.vop_Decrement(out c3))
+      if (c1.vop_Decrement(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator decrement to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -1305,9 +1261,8 @@ namespace Altaxo.Data
 
     public static bool operator true(DataColumn c1)
     {
-      bool c3;
 
-      if (c1.vop_True(out c3))
+      if (c1.vop_True(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator TRUE to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -1315,9 +1270,8 @@ namespace Altaxo.Data
 
     public static bool operator false(DataColumn c1)
     {
-      bool c3;
 
-      if (c1.vop_False(out c3))
+      if (c1.vop_False(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator FALSE to " + c1.ToString() + " (" + c1.GetType() + ")");

@@ -16,12 +16,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -164,10 +164,10 @@ namespace Altaxo.AddInItems
         Directory.CreateDirectory(userAddInPath);
       string removeFile = Path.Combine(addInInstallTemp, "remove.txt");
       bool allOK = true;
-      List<string> notRemoved = new List<string>();
+      var notRemoved = new List<string>();
       if (File.Exists(removeFile))
       {
-        using (StreamReader r = new StreamReader(removeFile))
+        using (var r = new StreamReader(removeFile))
         {
           string addInName;
           while ((addInName = r.ReadLine()) != null)
@@ -191,7 +191,7 @@ namespace Altaxo.AddInItems
         else
         {
           Current.Log.Info("Rewriting remove.txt");
-          using (StreamWriter w = new StreamWriter(removeFile))
+          using (var w = new StreamWriter(removeFile))
           {
             notRemoved.ForEach(w.WriteLine);
           }
@@ -262,11 +262,11 @@ namespace Altaxo.AddInItems
     /// <param name="identity">The identity of the addin to remove.</param>
     public static void RemoveUserAddInOnNextStart(string identity)
     {
-      List<string> removeEntries = new List<string>();
+      var removeEntries = new List<string>();
       string removeFile = Path.Combine(addInInstallTemp, "remove.txt");
       if (File.Exists(removeFile))
       {
-        using (StreamReader r = new StreamReader(removeFile))
+        using (var r = new StreamReader(removeFile))
         {
           string addInName;
           while ((addInName = r.ReadLine()) != null)
@@ -282,7 +282,7 @@ namespace Altaxo.AddInItems
       removeEntries.Add(identity);
       if (!Directory.Exists(addInInstallTemp))
         Directory.CreateDirectory(addInInstallTemp);
-      using (StreamWriter w = new StreamWriter(removeFile))
+      using (var w = new StreamWriter(removeFile))
       {
         removeEntries.ForEach(w.WriteLine);
       }
@@ -302,8 +302,8 @@ namespace Altaxo.AddInItems
       {
         return;
       }
-      List<string> removeEntries = new List<string>();
-      using (StreamReader r = new StreamReader(removeFile))
+      var removeEntries = new List<string>();
+      using (var r = new StreamReader(removeFile))
       {
         string addInName;
         while ((addInName = r.ReadLine()) != null)
@@ -315,7 +315,7 @@ namespace Altaxo.AddInItems
       }
       if (removeEntries.Remove(identity))
       {
-        using (StreamWriter w = new StreamWriter(removeFile))
+        using (var w = new StreamWriter(removeFile))
         {
           removeEntries.ForEach(w.WriteLine);
         }
@@ -332,8 +332,8 @@ namespace Altaxo.AddInItems
     /// </param>
     public static void AddExternalAddIns(IList<AddIn> addIns)
     {
-      List<string> addInFiles = new List<string>();
-      List<string> disabled = new List<string>();
+      var addInFiles = new List<string>();
+      var disabled = new List<string>();
       LoadAddInConfiguration(addInFiles, disabled);
 
       foreach (AddIn addIn in addIns)
@@ -356,8 +356,8 @@ namespace Altaxo.AddInItems
     /// (use external AddIns from the <see cref="IAddInTree.AddIns"/> collection).
     public static void RemoveExternalAddIns(IList<AddIn> addIns)
     {
-      List<string> addInFiles = new List<string>();
-      List<string> disabled = new List<string>();
+      var addInFiles = new List<string>();
+      var disabled = new List<string>();
       LoadAddInConfiguration(addInFiles, disabled);
 
       foreach (AddIn addIn in addIns)
@@ -383,8 +383,8 @@ namespace Altaxo.AddInItems
     /// </summary>
     public static void Enable(IList<AddIn> addIns)
     {
-      List<string> addInFiles = new List<string>();
-      List<string> disabled = new List<string>();
+      var addInFiles = new List<string>();
+      var disabled = new List<string>();
       LoadAddInConfiguration(addInFiles, disabled);
 
       foreach (AddIn addIn in addIns)
@@ -420,8 +420,8 @@ namespace Altaxo.AddInItems
     /// </summary>
     public static void Disable(IList<AddIn> addIns)
     {
-      List<string> addInFiles = new List<string>();
-      List<string> disabled = new List<string>();
+      var addInFiles = new List<string>();
+      var disabled = new List<string>();
       LoadAddInConfiguration(addInFiles, disabled);
 
       foreach (AddIn addIn in addIns)
@@ -451,7 +451,7 @@ namespace Altaxo.AddInItems
     {
       if (!File.Exists(configurationFileName))
         return;
-      using (XmlTextReader reader = new XmlTextReader(configurationFileName))
+      using (var reader = new XmlTextReader(configurationFileName))
       {
         while (reader.Read())
         {
@@ -486,7 +486,7 @@ namespace Altaxo.AddInItems
     /// <param name="disabledAddIns">List of Identities of disabled addins.</param>
     public static void SaveAddInConfiguration(List<string> addInFiles, List<string> disabledAddIns)
     {
-      using (XmlTextWriter writer = new XmlTextWriter(configurationFileName, Encoding.UTF8))
+      using (var writer = new XmlTextWriter(configurationFileName, Encoding.UTF8))
       {
         writer.Formatting = Formatting.Indented;
         writer.WriteStartDocument();

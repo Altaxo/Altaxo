@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.DashPatternManagement;
-using Altaxo.Graph.Plot.Groups;
-using Altaxo.Gui.Drawing;
-using Altaxo.Gui.Drawing.DashPatternManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing.DashPatternManagement;
+using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Drawing;
+using Altaxo.Gui.Drawing.DashPatternManagement;
 
 namespace Altaxo.Gui.Graph.Plot.Groups
 {

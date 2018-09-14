@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
@@ -160,8 +160,8 @@ namespace Altaxo.Gui.Data
         _view.UseAllAvailableDataColumns = _doc.UseAllAvailableDataColumnsOfGroup;
         _view.UseAllAvailableDataRows = _doc.UseAllAvailableDataRows;
 
-        _view.Initialize_XColumn(_xColumn == null ? String.Empty : _xColumn.FullName);
-        _view.Initialize_YColumn(_yColumn == null ? String.Empty : _yColumn.FullName);
+        _view.Initialize_XColumn(_xColumn == null ? string.Empty : _xColumn.FullName);
+        _view.Initialize_YColumn(_yColumn == null ? string.Empty : _yColumn.FullName);
         _view.Initialize_VColumns(_valueColumns);
         CalcMaxPossiblePlotRangeTo();
 
@@ -292,7 +292,7 @@ namespace Altaxo.Gui.Data
       var node = _availableColumns.FirstSelectedNode;
       _xColumn = node == null ? null : node.Tag as DataColumn;
       if (null != _view)
-        _view.Initialize_XColumn(_xColumn == null ? String.Empty : _xColumn.FullName);
+        _view.Initialize_XColumn(_xColumn == null ? string.Empty : _xColumn.FullName);
     }
 
     private void EhUseSelectedItemAsYColumn()
@@ -301,7 +301,7 @@ namespace Altaxo.Gui.Data
       _yColumn = node == null ? null : node.Tag as DataColumn;
 
       if (null != _view)
-        _view.Initialize_YColumn(_yColumn == null ? String.Empty : _yColumn.FullName);
+        _view.Initialize_YColumn(_yColumn == null ? string.Empty : _yColumn.FullName);
     }
 
     private void EhUseSelectedItemAsVColumns()
@@ -325,14 +325,14 @@ namespace Altaxo.Gui.Data
     {
       _xColumn = null;
       if (null != _view)
-        _view.Initialize_XColumn(_xColumn == null ? String.Empty : _xColumn.FullName);
+        _view.Initialize_XColumn(_xColumn == null ? string.Empty : _xColumn.FullName);
     }
 
     private void EhClearYColumn()
     {
       _yColumn = null;
       if (null != _view)
-        _view.Initialize_YColumn(_yColumn == null ? String.Empty : _yColumn.FullName);
+        _view.Initialize_YColumn(_yColumn == null ? string.Empty : _yColumn.FullName);
     }
 
     private void EhClearVColumns()

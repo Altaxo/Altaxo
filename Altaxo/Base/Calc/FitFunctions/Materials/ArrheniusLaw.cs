@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Science;
 using System;
 using System.ComponentModel;
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Science;
 
 namespace Altaxo.Calc.FitFunctions.Materials
 {
@@ -85,7 +85,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ArrheniusLaw s = (ArrheniusLaw)obj;
+        var s = (ArrheniusLaw)obj;
         info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
         info.AddEnum("DependentVariableTransform", s._dependentVariableTransform);
         info.AddEnum("ParamEnergyUnit", s._paramEnergyUnit);

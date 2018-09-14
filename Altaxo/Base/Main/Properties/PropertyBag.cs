@@ -138,7 +138,7 @@ namespace Altaxo.Main.Properties
       var from = (IPropertyBag)obj;
       if (null != from)
       {
-        this._properties.Clear();
+        _properties.Clear();
         foreach (var entry in from)
         {
           object value;
@@ -153,7 +153,7 @@ namespace Altaxo.Main.Properties
           {
             value = entry.Value;
           }
-          this._properties.Add(entry.Key, value);
+          _properties.Add(entry.Key, value);
         }
         EhSelfChanged(EventArgs.Empty);
         return true;
@@ -259,8 +259,7 @@ namespace Altaxo.Main.Properties
     /// </returns>
     public virtual bool TryGetValue<T>(PropertyKey<T> p, out T value)
     {
-      object o;
-      var isPresent = _properties.TryGetValue(p.GuidString, out o);
+      var isPresent = _properties.TryGetValue(p.GuidString, out var o);
       if (isPresent)
       {
         value = (T)o;
@@ -342,8 +341,7 @@ namespace Altaxo.Main.Properties
     /// </returns>
     public virtual bool TryGetValue<T>(string propName, out T value)
     {
-      object o;
-      var isPresent = _properties.TryGetValue(propName, out o);
+      var isPresent = _properties.TryGetValue(propName, out var o);
       if (isPresent)
       {
         value = (T)o;
@@ -408,7 +406,7 @@ namespace Altaxo.Main.Properties
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      return this.GetEnumerator();
+      return GetEnumerator();
     }
 
     /// <summary>
@@ -457,7 +455,7 @@ namespace Altaxo.Main.Properties
           {
             value = entry.Value;
           }
-          this._properties[entry.Key] = value;
+          _properties[entry.Key] = value;
 
           anythingChanged = true;
         }

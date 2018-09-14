@@ -17,9 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Altaxo.Main.Services.Implementation;
-
 using System;
+using Altaxo.Main.Services.Implementation;
 
 namespace Altaxo.Main.Services
 {
@@ -155,10 +154,10 @@ namespace Altaxo.Main.Services
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "ChooseSaveErrorResult is immutable")]
-    public readonly static ChooseSaveErrorResult Retry = new ChooseSaveErrorResult { IsRetry = true };
+    public static readonly ChooseSaveErrorResult Retry = new ChooseSaveErrorResult { IsRetry = true };
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "ChooseSaveErrorResult is immutable")]
-    public readonly static ChooseSaveErrorResult Ignore = new ChooseSaveErrorResult { IsIgnore = true };
+    public static readonly ChooseSaveErrorResult Ignore = new ChooseSaveErrorResult { IsIgnore = true };
 
     public static ChooseSaveErrorResult SaveAlternative(FileName alternativeFileName)
     {

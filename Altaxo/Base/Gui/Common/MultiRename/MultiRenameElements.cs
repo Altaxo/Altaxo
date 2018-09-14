@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
     public string GetContent(int originalListIndex, int currentSortIndex)
     {
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
       foreach (var ele in _elements)
         stb.Append(ele.GetContent(originalListIndex, currentSortIndex));
 

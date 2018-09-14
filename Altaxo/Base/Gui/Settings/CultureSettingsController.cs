@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Settings;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Settings;
 
 namespace Altaxo.Gui.Settings
 {
@@ -135,7 +135,7 @@ namespace Altaxo.Gui.Settings
       var node = _availableCulturesList.FirstSelectedNode;
       if (node != null)
       {
-        CultureInfo c = (CultureInfo)node.Tag;
+        var c = (CultureInfo)node.Tag;
         _doc = new CultureSettings(c);
         SetElementsAfterCultureChanged(_doc);
       }

@@ -47,9 +47,9 @@ namespace Altaxo.Graph.Plot.Groups
 
       public GroupInfo(GroupInfo from)
       {
-        this.WasApplied = false;
-        this.ChildGroupType = from.ChildGroupType;
-        this.ParentGroupType = from.ParentGroupType;
+        WasApplied = false;
+        ChildGroupType = from.ChildGroupType;
+        ParentGroupType = from.ParentGroupType;
       }
 
       #region ICloneable Members
@@ -89,7 +89,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        PlotGroupStyleCollectionBase s = (PlotGroupStyleCollectionBase)obj;
+        var s = (PlotGroupStyleCollectionBase)obj;
 
         int savedStyles = 0; // for test of consistency
         info.CreateArray("Styles", s.Count);
@@ -133,7 +133,7 @@ namespace Altaxo.Graph.Plot.Groups
         int count = info.OpenArray();
         for (int i = 0; i < count; i++)
         {
-          IPlotGroupStyle style = (IPlotGroupStyle)info.GetValue("Style", s);
+          var style = (IPlotGroupStyle)info.GetValue("Style", s);
           bool hasChild = info.GetBoolean("HasChild");
           s.Add(style, parentStyleType);
           parentStyleType = hasChild ? style.GetType() : null;
@@ -150,7 +150,7 @@ namespace Altaxo.Graph.Plot.Groups
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         base.Serialize(obj, info);
-        PlotGroupStyleCollectionBase s = (PlotGroupStyleCollectionBase)obj;
+        var s = (PlotGroupStyleCollectionBase)obj;
         info.AddValue("InheritFromParent", s._inheritFromParentGroups);
         info.AddValue("DistributeToChilds", s._distributeToChildGroups);
       }
@@ -196,15 +196,15 @@ namespace Altaxo.Graph.Plot.Groups
 
         foreach (KeyValuePair<System.Type, IPlotGroupStyle> entry in from._typeToInstance)
         {
-          this._typeToInstance.Add(entry.Key, ChildCloneFrom(entry.Value));
+          _typeToInstance.Add(entry.Key, ChildCloneFrom(entry.Value));
         }
 
         foreach (KeyValuePair<System.Type, GroupInfo> entry in from._typeToInfo)
-          this._typeToInfo.Add(entry.Key, entry.Value.Clone());
+          _typeToInfo.Add(entry.Key, entry.Value.Clone());
 
         _plotGroupStrictness = from._plotGroupStrictness;
-        this._inheritFromParentGroups = from._inheritFromParentGroups;
-        this._distributeToChildGroups = from._distributeToChildGroups;
+        _inheritFromParentGroups = from._inheritFromParentGroups;
+        _distributeToChildGroups = from._distributeToChildGroups;
 
         suspendToken.Resume();
       }
@@ -398,8 +398,10 @@ namespace Altaxo.Graph.Plot.Groups
 
       groupStyle.ParentObject = this;
       _typeToInstance.Add(groupStyle.GetType(), groupStyle);
-      GroupInfo groupInfo = new GroupInfo();
-      groupInfo.ParentGroupType = parentGroupStyleType;
+      var groupInfo = new GroupInfo
+      {
+        ParentGroupType = parentGroupStyleType
+      };
       _typeToInfo.Add(groupStyle.GetType(), groupInfo);
 
       if (parentGroupStyleType != null)
@@ -433,8 +435,10 @@ namespace Altaxo.Graph.Plot.Groups
 
       groupStyle.ParentObject = this;
       _typeToInstance.Add(groupStyle.GetType(), groupStyle);
-      GroupInfo groupInfo = new GroupInfo();
-      groupInfo.ChildGroupType = childGroupStyleType;
+      var groupInfo = new GroupInfo
+      {
+        ChildGroupType = childGroupStyleType
+      };
       _typeToInfo.Add(groupStyle.GetType(), groupInfo);
 
       if (childGroupStyleType != null)
@@ -709,7 +713,7 @@ namespace Altaxo.Graph.Plot.Groups
         }
       }
 
-      if (!(result.Count == this.Count))
+      if (!(result.Count == Count))
         throw new InvalidProgramException(); // hope that all items are now in the collection
 
       return result;

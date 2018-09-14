@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        XYFunctionPlotData s = (XYFunctionPlotData)obj;
+        var s = (XYFunctionPlotData)obj;
 
         info.AddValue("Function", s._function);
       }
@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public XYFunctionPlotData(Altaxo.Calc.IScalarFunctionDD function)
     {
-      this.Function = function;
+      Function = function;
     }
 
     public XYFunctionPlotData(XYFunctionPlotData from)
@@ -100,9 +100,9 @@ namespace Altaxo.Graph.Plot.Data
       if (obj is XYFunctionPlotData from)
       {
         if (from._function is ICloneable)
-          this.Function = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._function).Clone();
+          Function = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._function).Clone();
         else
-          this.Function = from._function;
+          Function = from._function;
 
         return true;
       }
@@ -195,7 +195,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        PolynomialFunction s = (PolynomialFunction)obj;
+        var s = (PolynomialFunction)obj;
 
         info.AddArray("Coefficients", s._coefficients, s._coefficients.Length);
       }
@@ -353,7 +353,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SquareRootFunction s = (SquareRootFunction)obj;
+        var s = (SquareRootFunction)obj;
 
         info.AddValue("BaseFunction", s._baseFunction);
       }
@@ -396,9 +396,9 @@ namespace Altaxo.Graph.Plot.Data
     public SquareRootFunction(SquareRootFunction from)
     {
       if (from._baseFunction is ICloneable)
-        this._baseFunction = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._baseFunction).Clone();
+        _baseFunction = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._baseFunction).Clone();
       else
-        this._baseFunction = from._baseFunction;
+        _baseFunction = from._baseFunction;
     }
 
     /// <summary>
@@ -493,7 +493,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ScaledSumFunction s = (ScaledSumFunction)obj;
+        var s = (ScaledSumFunction)obj;
 
         info.AddArray("Coefficients", s._coefficients, s._coefficients.Length);
         info.CreateArray("Functions", s._functions.Length);
@@ -670,7 +670,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ProductFunction s = (ProductFunction)obj;
+        var s = (ProductFunction)obj;
 
         info.AddArray("Coefficients", s._coefficients, s._coefficients.Length);
         info.CreateArray("Functions", s._functions.Length);

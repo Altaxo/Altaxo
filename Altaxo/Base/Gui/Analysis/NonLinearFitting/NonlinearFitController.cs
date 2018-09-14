@@ -22,21 +22,21 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Data.Transformations;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Scripting;
-using Altaxo.Scripting;
-using System;
-using Altaxo.Data.Transformations;
 using Altaxo.Main.Services;
-using System.Threading;
-using System.Linq;
+using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -201,11 +201,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_EvaluateChiSqr()
     {
-      if (true == this._parameterController.Apply(false))
+      if (true == _parameterController.Apply(false))
       {
-        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => this._chiSquare = fitAdapter.EvaluateChiSquare()));
+        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => _chiSquare = fitAdapter.EvaluateChiSquare()));
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, null);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
@@ -236,7 +236,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
       _showUnusedDependentVariables = _view.ShowUnusedDependentVariables;
 
-      if (true == this._parameterController.Apply(false))
+      if (true == _parameterController.Apply(false))
       {
         // test if there are any parameters to vary
         if (null == _doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault())
@@ -245,17 +245,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           return;
         }
 
-        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
         var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(fitAdapter.Fit));
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, null);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
         {
-          this._chiSquare = fitAdapter.ResultingChiSquare;
-          this._sigmaSquare = fitAdapter.ResultingSigmaSquare;
-          this._numberOfFitPoints = fitAdapter.NumberOfData;
-          this._covarianceMatrix = (double[])fitAdapter.CovarianceMatrix.Clone();
+          _chiSquare = fitAdapter.ResultingChiSquare;
+          _sigmaSquare = fitAdapter.ResultingSigmaSquare;
+          _numberOfFitPoints = fitAdapter.NumberOfData;
+          _covarianceMatrix = (double[])fitAdapter.CovarianceMatrix.Clone();
 
           fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
 
@@ -331,7 +331,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_DoSimplex()
     {
-      if (true == this._parameterController.Apply(false))
+      if (true == _parameterController.Apply(false))
       {
         // test if there are any parameters to vary
         if (null == _doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault())
@@ -342,7 +342,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
-        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
         var reportMonitor = new ReportCostMonitor();
         var threadStart = new System.Threading.ThreadStart(() => fitAdapter.DoSimplexMinimization(reportMonitor.GetCancellationToken(), reportMonitor.NewMinimumCostValueAvailable));
@@ -351,7 +351,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, reportMonitor);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
         {
-          this._chiSquare = fitAdapter.ResultingChiSquare;
+          _chiSquare = fitAdapter.ResultingChiSquare;
 
           fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
 
@@ -399,8 +399,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       bool changed = false;
       if (_doc.FitEnsemble.Count == 0) // Fitting is fresh, we can add the function silently
       {
-        FitElement newele = new FitElement();
-        newele.FitFunction = func;
+        var newele = new FitElement
+        {
+          FitFunction = func
+        };
         _doc.FitEnsemble.Add(newele);
         _doc.SetDefaultParametersForFitElement(0);
         changed = true;
@@ -435,8 +437,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
             case SelectionChoice.SelectAsAdditional:
               {
-                FitElement newele = new FitElement();
-                newele.FitFunction = func;
+                var newele = new FitElement
+                {
+                  FitFunction = func
+                };
                 _doc.FitEnsemble.Add(newele);
                 _doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
                 changed = true;
@@ -466,7 +470,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       {
         // _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
 
-        this._fitEnsembleController.Refresh();
+        _fitEnsembleController.Refresh();
       }
     }
 
@@ -487,7 +491,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_NewFitFunction()
     {
-      FitFunctionScript script = new FitFunctionScript();
+      var script = new FitFunctionScript();
 
 Label_EditScript:
       object scriptAsObject = script;
@@ -513,7 +517,7 @@ Label_EditScript:
       _parameterController.InitializeDocument(_doc.CurrentParameters);
 
       if (_view != null)
-        _view.SetChiSquare(this._chiSquare);
+        _view.SetChiSquare(_chiSquare);
 
       if (null != _activeLayer)
       {
@@ -770,7 +774,7 @@ Label_EditScript:
     public void OnSimulation(bool calculateUnusedDependentVariablesAlso)
     {
       // we investigate for every fit element the corresponding table, and add columns to that table
-      LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+      var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
       int numberOfData;
 
@@ -807,7 +811,7 @@ Label_EditScript:
           int numDependentVars = fitEle.NumberOfDependentVariables;
           for (int k = 0; k < fitEle.NumberOfDependentVariables; k++)
           {
-            DoubleColumn col = new DoubleColumn();
+            var col = new DoubleColumn();
             for (int j = 0; j < validRows.Count; j++)
               col[validRows[j]] = resultingValues[startOfDependentValues + k + j * numDependentVars];
 
@@ -820,7 +824,7 @@ Label_EditScript:
           // copy the evaluation result to the output array (interleaved)
           for (int k = 0; k < inUse.Length; ++k)
           {
-            DoubleColumn col = new DoubleColumn();
+            var col = new DoubleColumn();
             for (int j = 0; j < validRows.Count; j++)
               col[validRows[j]] = resultingValues[startOfDependentValues + k + j * inUse.Length];
 
@@ -848,7 +852,7 @@ Label_EditScript:
     public void OnSimulationWithInterval(bool calculateUnusedDependentVariablesAlso, Common.EquallySpacedInterval interval)
     {
       // we investigate for every fit element the corresponding table, and add columns to that table
-      LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+      var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
       int intervalCount = (int)interval.Count;
       for (int i = 0; i < _doc.FitEnsemble.Count; i++)
@@ -862,8 +866,8 @@ Label_EditScript:
         double[] X = new double[fitEle.NumberOfIndependentVariables];
         double[] Y = new double[fitEle.NumberOfDependentVariables];
         double[] P = new double[fitEle.NumberOfParameters];
-        DoubleColumn[] xCols = new DoubleColumn[fitEle.NumberOfIndependentVariables];
-        DoubleColumn[] yCols = new DoubleColumn[fitEle.NumberOfDependentVariables];
+        var xCols = new DoubleColumn[fitEle.NumberOfIndependentVariables];
+        var yCols = new DoubleColumn[fitEle.NumberOfDependentVariables];
 
         for (int k = 0; k < xCols.Length; k++)
           xCols[k] = new DoubleColumn();
@@ -933,14 +937,14 @@ Label_EditScript:
 
     public void EhView_CopyParameterV()
     {
-      if (true == this._parameterController.Apply(false))
+      if (true == _parameterController.Apply(false))
       {
         var dao = Current.Gui.GetNewClipboardDataObject();
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
         for (int i = 0; i < _doc.CurrentParameters.Count; i++)
           col[i] = _doc.CurrentParameters[i].Parameter;
 
-        Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+        var tb = new Altaxo.Data.DataTable();
         tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
         Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
             tb, new Altaxo.Collections.AscendingIntegerCollection(),
@@ -957,10 +961,10 @@ Label_EditScript:
 
     public void EhView_CopyParameterVAsCDef()
     {
-      if (true == this._parameterController.Apply(false))
+      if (true == _parameterController.Apply(false))
       {
         var dao = Current.Gui.GetNewClipboardDataObject();
-        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        var stb = new System.Text.StringBuilder();
         for (int i = 0; i < _doc.CurrentParameters.Count; i++)
         {
           stb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "double {0} = {1};\r\n", _doc.CurrentParameters[i].Name, _doc.CurrentParameters[i].Parameter);
@@ -976,11 +980,11 @@ Label_EditScript:
 
     public void EhView_CopyParameterNV()
     {
-      if (true == this._parameterController.Apply(false))
+      if (true == _parameterController.Apply(false))
       {
         var dao = Current.Gui.GetNewClipboardDataObject();
-        Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var txt = new Altaxo.Data.TextColumn();
+        var col = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < _doc.CurrentParameters.Count; i++)
         {
@@ -988,7 +992,7 @@ Label_EditScript:
           col[i] = _doc.CurrentParameters[i].Parameter;
         }
 
-        Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+        var tb = new Altaxo.Data.DataTable();
         tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
         tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
         Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
@@ -1006,12 +1010,12 @@ Label_EditScript:
 
     public void EhView_CopyParameterNVV()
     {
-      if (true == this._parameterController.Apply(false))
+      if (true == _parameterController.Apply(false))
       {
         var dao = Current.Gui.GetNewClipboardDataObject();
-        Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-        Altaxo.Data.DoubleColumn var = new Altaxo.Data.DoubleColumn();
+        var txt = new Altaxo.Data.TextColumn();
+        var col = new Altaxo.Data.DoubleColumn();
+        var var = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < _doc.CurrentParameters.Count; i++)
         {
@@ -1020,7 +1024,7 @@ Label_EditScript:
           var[i] = _doc.CurrentParameters[i].Variance;
         }
 
-        Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+        var tb = new Altaxo.Data.DataTable();
         tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
         tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
         tb.DataColumns.Add(var, "Variance", Altaxo.Data.ColumnKind.V, 0);
@@ -1045,12 +1049,12 @@ Label_EditScript:
         return;
       }
 
-      if (true == this._parameterController.Apply(false))
+      if (true == _parameterController.Apply(false))
       {
         var dao = Current.Gui.GetNewClipboardDataObject();
-        Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-        Altaxo.Data.DoubleColumn[] var = new DoubleColumn[_doc.CurrentParameters.Count];
+        var txt = new Altaxo.Data.TextColumn();
+        var col = new Altaxo.Data.DoubleColumn();
+        var var = new DoubleColumn[_doc.CurrentParameters.Count];
         for (int i = 0; i < _doc.CurrentParameters.Count; i++)
           var[i] = new DoubleColumn();
 
@@ -1062,7 +1066,7 @@ Label_EditScript:
             var[j][i] = _covarianceMatrix[i * _doc.CurrentParameters.Count + j];
         }
 
-        Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+        var tb = new Altaxo.Data.DataTable();
         tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
         tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
         for (int i = 0; i < _doc.CurrentParameters.Count; i++)
@@ -1097,10 +1101,10 @@ Label_EditScript:
         return;
       }
 
-      if (true == this._parameterController.Apply(false))
+      if (true == _parameterController.Apply(false))
       {
         var dao = Current.Gui.GetNewClipboardDataObject();
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
         int nRow = 0;
 
         col[nRow++] = _numberOfFitPoints;
@@ -1113,7 +1117,7 @@ Label_EditScript:
             col[nRow++] = _covarianceMatrix[i * _doc.CurrentParameters.Count + j];
         }
 
-        Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+        var tb = new Altaxo.Data.DataTable();
         tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
         Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
             tb, new Altaxo.Collections.AscendingIntegerCollection(),

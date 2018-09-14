@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -63,9 +63,11 @@ namespace Altaxo.Data
 
       public object Clone()
       {
-        var result = new ColumnBundleInfo();
-        result._maximumNumberOfColumns = this._maximumNumberOfColumns;
-        foreach (var p in this._dataColumns)
+        var result = new ColumnBundleInfo
+        {
+          _maximumNumberOfColumns = _maximumNumberOfColumns
+        };
+        foreach (var p in _dataColumns)
           result._dataColumns.Add((IReadableColumnProxy)p.Clone());
         return result;
       }
@@ -108,8 +110,8 @@ namespace Altaxo.Data
 
       InternalSetDataTable((DataTableProxy)from._dataTable.Clone());
       InternalSetDataColumnsWithCloning(from._dataColumnBundles);
-      this._groupNumber = from._groupNumber;
-      this._useAllAvailableDataRows = from._useAllAvailableDataRows;
+      _groupNumber = from._groupNumber;
+      _useAllAvailableDataRows = from._useAllAvailableDataRows;
       _participatingDataRows = (AscendingIntegerCollection)from._participatingDataRows.Clone();
 
       _isDirty = from._isDirty;
@@ -412,7 +414,7 @@ namespace Altaxo.Data
         _dataColumnBundles = new Dictionary<string, ColumnBundleInfo>();
       }
 
-      this._dataColumnBundles.Clear();
+      _dataColumnBundles.Clear();
       foreach (var entry in fromList)
       {
         ColumnBundleInfo fromB = entry.Value;
@@ -425,7 +427,7 @@ namespace Altaxo.Data
           thisB.DataColumns.Add(clone);
         }
 
-        this._dataColumnBundles.Add(entry.Key, thisB);
+        _dataColumnBundles.Add(entry.Key, thisB);
       }
     }
 

@@ -54,7 +54,7 @@ namespace System.Drawing
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      System.Drawing.SizeF s = (System.Drawing.SizeF)obj;
+      var s = (System.Drawing.SizeF)obj;
 
       info.AddValue("Width", s.Width);
       info.AddValue("Height", s.Height);
@@ -73,7 +73,7 @@ namespace System.Drawing
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      System.Drawing.PointF s = (System.Drawing.PointF)obj;
+      var s = (System.Drawing.PointF)obj;
 
       info.AddValue("X", s.X);
       info.AddValue("Y", s.Y);
@@ -92,7 +92,7 @@ namespace System.Drawing
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      System.Drawing.RectangleF s = (System.Drawing.RectangleF)obj;
+      var s = (System.Drawing.RectangleF)obj;
 
       info.AddValue("X", s.X);
       info.AddValue("Y", s.Y);

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        NumericLabelFormattingScientific s = (NumericLabelFormattingScientific)obj;
+        var s = (NumericLabelFormattingScientific)obj;
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
       }
 
@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        NumericLabelFormattingScientific s = (NumericLabelFormattingScientific)obj;
+        var s = (NumericLabelFormattingScientific)obj;
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
         info.AddValue("ShowExponentAlways", s._showExponentAlways);
       }
@@ -94,7 +94,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         var from = obj as NumericLabelFormattingScientific;
         if (null != from)
         {
-          this._showExponentAlways = from._showExponentAlways;
+          _showExponentAlways = from._showExponentAlways;
         }
       }
       return isCopied;
@@ -180,9 +180,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, FontX font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
     {
-      string firstpart, middelpart, exponent;
-      double mant;
-      SplitInFirstPartAndExponent((double)mtick, out firstpart, out mant, out middelpart, out exponent);
+      SplitInFirstPartAndExponent(mtick, out var firstpart, out var mant, out var middelpart, out var exponent);
 
       var gdiFont = GdiFontManager.ToGdi(font);
       SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, gdiFont, new PointF(0, 0), strfmt);
@@ -194,9 +192,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override void DrawItem(Graphics g, BrushX brush, FontX font, StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
     {
-      string firstpart, middelpart, exponent;
-      double mant;
-      SplitInFirstPartAndExponent((double)item, out firstpart, out mant, out middelpart, out exponent);
+      SplitInFirstPartAndExponent(item, out var firstpart, out var mant, out var middelpart, out var exponent);
 
       var gdiFont = GdiFontManager.ToGdi(font);
       SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, gdiFont, morg, strfmt);
@@ -221,12 +217,12 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, FontX font, StringFormat strfmt, Altaxo.Data.AltaxoVariant[] items)
     {
-      MeasuredLabelItem[] litems = new MeasuredLabelItem[items.Length];
+      var litems = new MeasuredLabelItem[items.Length];
 
       FontX localfont1 = font;
       FontX localfont2 = font.WithSize(font.Size * 2 / 3);
 
-      StringFormat localstrfmt = (StringFormat)strfmt.Clone();
+      var localstrfmt = (StringFormat)strfmt.Clone();
 
       string[] firstp = new string[items.Length];
       string[] middel = new string[items.Length];
@@ -241,7 +237,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         string firstpart, exponent;
         if (items[i].IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
         {
-          SplitInFirstPartAndExponent((double)items[i], out firstpart, out mants[i], out middel[i], out exponent);
+          SplitInFirstPartAndExponent(items[i], out firstpart, out mants[i], out middel[i], out exponent);
           if (exponent.Length > 0)
           {
             firstpartmin = Math.Min(firstpartmin, firstpart.Length);

@@ -148,7 +148,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
+        var s = (BarGraphPlotStyle)obj;
         info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
         info.AddValue("BaseValue", (object)s._baseValue);
         info.AddValue("StartAtPrevious", s._startAtPreviousItem);
@@ -204,26 +204,26 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       var from = obj as BarGraphPlotStyle;
       if (null != from)
       {
-        this._usePhysicalBaseValue = from._usePhysicalBaseValue;
-        this._baseValue = from._baseValue;
-        this._startAtPreviousItem = from._startAtPreviousItem;
-        this._previousItemZGap = from._previousItemZGap;
+        _usePhysicalBaseValue = from._usePhysicalBaseValue;
+        _baseValue = from._baseValue;
+        _startAtPreviousItem = from._startAtPreviousItem;
+        _previousItemZGap = from._previousItemZGap;
 
-        this._independentColor = from._independentColor;
-        this._pen = from._pen;
-        this._useUniformCrossSectionThickness = from._useUniformCrossSectionThickness;
+        _independentColor = from._independentColor;
+        _pen = from._pen;
+        _useUniformCrossSectionThickness = from._useUniformCrossSectionThickness;
 
-        this._barShiftStrategy = from._barShiftStrategy;
-        this._barShiftMaxNumberOfItemsInOneDirection = from._barShiftMaxNumberOfItemsInOneDirection;
-        this._relInnerGapX = from._relInnerGapX;
-        this._relOuterGapX = from._relOuterGapX;
-        this._relInnerGapY = from._relInnerGapY;
-        this._relOuterGapY = from._relOuterGapY;
+        _barShiftStrategy = from._barShiftStrategy;
+        _barShiftMaxNumberOfItemsInOneDirection = from._barShiftMaxNumberOfItemsInOneDirection;
+        _relInnerGapX = from._relInnerGapX;
+        _relOuterGapX = from._relOuterGapX;
+        _relInnerGapY = from._relInnerGapY;
+        _relOuterGapY = from._relOuterGapY;
 
-        this._xSizeLogical = from._xSizeLogical;
-        this._xOffsetLogical = from._xOffsetLogical;
-        this._ySizeLogical = from._ySizeLogical;
-        this._yOffsetLogical = from._yOffsetLogical;
+        _xSizeLogical = from._xSizeLogical;
+        _xOffsetLogical = from._xOffsetLogical;
+        _ySizeLogical = from._ySizeLogical;
+        _yOffsetLogical = from._yOffsetLogical;
 
         EhSelfChanged();
         return true;
@@ -312,7 +312,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return !this._independentColor;
+        return !_independentColor;
       }
     }
 
@@ -510,7 +510,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       if (!_independentColor) // else if is used here because fill color has precedence over frame color
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._pen.Color; });
+        { return _pen.Color; });
     }
 
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -542,12 +542,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       PlotRangeList rangeList = pdata.RangeList;
       var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-
-      // paint the style
-
-      PointD3D leftFrontBotton, rightBackTop;
-      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0, 0, 0), out leftFrontBotton);
-      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(1, 1, 1), out rightBackTop);
+      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0, 0, 0), out var leftFrontBotton);
+      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(1, 1, 1), out var rightBackTop);
 
       double globalBaseValue;
       if (_usePhysicalBaseValue)
@@ -591,12 +587,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
           }
         }
 
-        // calculate the size at the base
-        PointD3D lcp, ucp, clp, cup;
-        layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xLowerLogical, yCenterLogical, zBaseLogical), out lcp);
-        layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xUpperLogical, yCenterLogical, zBaseLogical), out ucp);
-        layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xCenterLogical, yLowerLogical, zBaseLogical), out clp);
-        layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xCenterLogical, yUpperLogical, zBaseLogical), out cup);
+        layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xLowerLogical, yCenterLogical, zBaseLogical), out var lcp);
+        layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xUpperLogical, yCenterLogical, zBaseLogical), out var ucp);
+        layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xCenterLogical, yLowerLogical, zBaseLogical), out var clp);
+        layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xCenterLogical, yUpperLogical, zBaseLogical), out var cup);
 
         double penWidth1 = (lcp - ucp).Length;
         double penWidth2 = (clp - cup).Length;

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using ClipperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using ClipperLib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 {
@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
       }
       else
       {
-        var result = (FrameBase)this.MemberwiseClone();
+        var result = (FrameBase)MemberwiseClone();
         result._color = value;
         return result;
       }
@@ -90,12 +90,12 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 
     public override bool Equals(object obj)
     {
-      return this.GetType() == obj?.GetType() && this._color == ((FrameBase)obj)._color;
+      return GetType() == obj?.GetType() && _color == ((FrameBase)obj)._color;
     }
 
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode() + 17 * _color.GetHashCode();
+      return GetType().GetHashCode() + 17 * _color.GetHashCode();
     }
   }
 }

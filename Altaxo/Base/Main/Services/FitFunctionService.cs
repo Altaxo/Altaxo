@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Main.Services
 {
@@ -96,7 +96,7 @@ namespace Altaxo.Main.Services
     /// <returns>Array of document fit function informations.</returns>
     public DocumentFitFunctionInformation[] GetDocumentFitFunctions()
     {
-      ArrayList arr = new ArrayList();
+      var arr = new ArrayList();
       foreach (Altaxo.Scripting.FitFunctionScript func in Current.Project.FitFunctionScripts)
       {
         arr.Add(new DocumentFitFunctionInformation(func));
@@ -134,7 +134,7 @@ namespace Altaxo.Main.Services
       {
         IEnumerable<Type> classentries = Altaxo.Main.Services.ReflectionService.GetUnsortedClassTypesHavingAttribute(typeof(FitFunctionClassAttribute), true);
 
-        SortedList<FitFunctionCreatorAttribute, System.Reflection.MethodInfo> list = new SortedList<FitFunctionCreatorAttribute, System.Reflection.MethodInfo>();
+        var list = new SortedList<FitFunctionCreatorAttribute, System.Reflection.MethodInfo>();
 
         foreach (Type definedtype in classentries)
         {
@@ -231,7 +231,7 @@ namespace Altaxo.Main.Services
 
           // Start the thread
           _threadIsWorking = true;
-          System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(this.ProcessFiles));
+          System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(ProcessFiles));
         }
       }
 
@@ -268,7 +268,7 @@ namespace Altaxo.Main.Services
 
       private void AddFitFunctionEntry(string category, string name, DateTime creationTime, string description, string fullfilename)
       {
-        FileBasedFitFunctionInformation info = new FileBasedFitFunctionInformation(category, name, creationTime, description, fullfilename);
+        var info = new FileBasedFitFunctionInformation(category, name, creationTime, description, fullfilename);
 
         string filename = System.IO.Path.GetFileName(fullfilename);
 
@@ -296,7 +296,7 @@ namespace Altaxo.Main.Services
             DateTime creationTime = DateTime.MinValue;
             string description = string.Empty;
 
-            System.Xml.XmlTextReader xmlReader = new System.Xml.XmlTextReader(fullfilename);
+            var xmlReader = new System.Xml.XmlTextReader(fullfilename);
             xmlReader.MoveToContent();
             while (xmlReader.Read())
             {
@@ -325,7 +325,7 @@ namespace Altaxo.Main.Services
 
         if (stb != null)
         {
-          Current.Console.WriteLine("Exception(s) thrown in " + this.GetType().ToString() + " during parsing of fit functions, details will follow:");
+          Current.Console.WriteLine("Exception(s) thrown in " + GetType().ToString() + " during parsing of fit functions, details will follow:");
           Current.Console.WriteLine(stb.ToString());
         }
         _threadIsWorking = false;
@@ -343,7 +343,7 @@ namespace Altaxo.Main.Services
         while (_threadIsWorking)
           System.Threading.Thread.Sleep(100);
 
-        FileBasedFitFunctionInformation[] result = new FileBasedFitFunctionInformation[_userDefinedFunctions.Count];
+        var result = new FileBasedFitFunctionInformation[_userDefinedFunctions.Count];
 
         int i = 0;
         foreach (FileBasedFitFunctionInformation info in _userDefinedFunctions.Values)
@@ -367,7 +367,7 @@ namespace Altaxo.Main.Services
         }
 
         string filename = Altaxo.Serialization.FileIOHelper.GetValidFileName(doc.FitFunctionCategory + "-" + doc.FitFunctionName + ".xml");
-        string fullfilename = System.IO.Path.Combine(this._fitFunctionDirectory, filename);
+        string fullfilename = System.IO.Path.Combine(_fitFunctionDirectory, filename);
 
         if (System.IO.File.Exists(fullfilename))
         {
@@ -376,7 +376,7 @@ namespace Altaxo.Main.Services
         }
 
         System.IO.Stream stream = new System.IO.FileStream(fullfilename, System.IO.FileMode.Create, System.IO.FileAccess.Write);
-        Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+        var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
         info.BeginWriting(stream);
         info.AddValue("FitFunctionScript", doc);
         info.EndWriting();
@@ -421,7 +421,7 @@ namespace Altaxo.Main.Services
         try
         {
           System.IO.File.Delete(info.FileName);
-          this.RemoveFitFunctionEntry(info.FileName);
+          RemoveFitFunctionEntry(info.FileName);
         }
         catch (Exception ex)
         {

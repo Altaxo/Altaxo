@@ -177,9 +177,9 @@ namespace Altaxo.Serialization.Origin
 
     public int Parse()
     {
-      using (System.IO.FileStream fstr = new FileStream(filename, FileMode.Open))
+      using (var fstr = new FileStream(filename, FileMode.Open))
       {
-        using (System.IO.BinaryReader f = new BinaryReader(fstr))
+        using (var f = new BinaryReader(fstr))
         {
           ////////////////////////////// check version from header ///////////////////////////////
           byte[] header = new byte[14];

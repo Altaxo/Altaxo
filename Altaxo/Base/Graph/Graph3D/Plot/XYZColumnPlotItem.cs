@@ -22,17 +22,17 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Altaxo.Data;
 using Altaxo.Graph.Graph3D.Plot.Data;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.Plot
 {
@@ -98,8 +98,8 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public XYZColumnPlotItem(XYZColumnPlotData pa, G3DPlotStyleCollection ps)
     {
-      this.Data = pa;
-      this.Style = ps;
+      Data = pa;
+      Style = ps;
     }
 
     public XYZColumnPlotItem(XYZColumnPlotItem from)
@@ -117,7 +117,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       if (object.ReferenceEquals(this, obj))
         return true;
       if (IsDisposed)
-        throw new ObjectDisposedException(this.GetType().FullName);
+        throw new ObjectDisposedException(GetType().FullName);
 
       var copied = base.CopyFrom(obj);
 
@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         var from = obj as XYZColumnPlotItem;
         if (null != from)
         {
-          this.Data = (XYZColumnPlotData)from.Data.Clone(); // also wires the event
+          Data = (XYZColumnPlotData)from.Data.Clone(); // also wires the event
         }
       }
       return copied;
@@ -183,12 +183,12 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public virtual string GetNameByStyle(int style)
     {
-      int st = (int)style;
+      int st = style;
       int sx = (st & 0x000F);
       int sy = (st & 0x00F0) >> 4;
       int sz = (st & 0x0F00) >> 8;
 
-      System.Text.StringBuilder stb = new System.Text.StringBuilder();
+      var stb = new System.Text.StringBuilder();
       if (sx > 0)
       {
         stb.Append(_plotData.GetXName(sx - 1));
@@ -217,7 +217,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     {
       if (col is Altaxo.Data.DataColumn)
       {
-        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
         string tablename = table == null ? string.Empty : table.Name + "\\";
         string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
@@ -262,7 +262,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != this._plotData)
+      if (null != _plotData)
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject, layer.ZAxis.DataBoundsObject);
 
       _plotStyles.PrepareScales(layer);
@@ -272,7 +272,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      this._plotData.MergeXBoundsInto(pb);
+      _plotData.MergeXBoundsInto(pb);
     }
 
     #endregion IXBoundsHolder Members
@@ -281,7 +281,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      this._plotData.MergeYBoundsInto(pb);
+      _plotData.MergeYBoundsInto(pb);
     }
 
     #endregion IYBoundsHolder Members
@@ -290,7 +290,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public void MergeZBoundsInto(IPhysicalBoundaries pb)
     {
-      this._plotData.MergeZBoundsInto(pb);
+      _plotData.MergeZBoundsInto(pb);
     }
 
     #endregion IZBoundsHolder Members

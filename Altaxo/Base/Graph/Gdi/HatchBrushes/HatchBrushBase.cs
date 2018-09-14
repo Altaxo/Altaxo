@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
     {
       get
       {
-        return this.GetType().ToString();
+        return GetType().ToString();
       }
     }
 

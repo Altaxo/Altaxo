@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
-using System;
 
 namespace Altaxo.Graph.Scales
 {
@@ -76,8 +76,8 @@ namespace Altaxo.Graph.Scales
       {
         LinearScale s = (LinearScale)o ?? new LinearScale(info);
 
-        s._cachedAxisOrg = (double)info.GetDouble("Org");
-        s._cachedAxisEnd = (double)info.GetDouble("End");
+        s._cachedAxisOrg = info.GetDouble("Org");
+        s._cachedAxisEnd = info.GetDouble("End");
         s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
         s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
 
@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Scales
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinearScale s = (LinearScale)obj;
+        var s = (LinearScale)obj;
         info.AddValue("Org", s._cachedAxisOrg);
         info.AddValue("End", s._cachedAxisEnd);
         info.AddValue("Bounds", s._dataBounds);
@@ -113,8 +113,8 @@ namespace Altaxo.Graph.Scales
       {
         LinearScale s = (LinearScale)o ?? new LinearScale(info);
 
-        s._cachedAxisOrg = (double)info.GetDouble("Org");
-        s._cachedAxisEnd = (double)info.GetDouble("End");
+        s._cachedAxisOrg = info.GetDouble("Org");
+        s._cachedAxisEnd = info.GetDouble("End");
         s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
         s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
 
@@ -167,10 +167,10 @@ namespace Altaxo.Graph.Scales
       var from = obj as LinearScale;
       if (null != from)
       {
-        this._cachedAxisEnd = from._cachedAxisEnd;
-        this._cachedAxisOrg = from._cachedAxisOrg;
-        this._cachedAxisSpan = from._cachedAxisSpan;
-        this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+        _cachedAxisEnd = from._cachedAxisEnd;
+        _cachedAxisOrg = from._cachedAxisOrg;
+        _cachedAxisSpan = from._cachedAxisSpan;
+        _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
         ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
         ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());

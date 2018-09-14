@@ -84,7 +84,7 @@ namespace Altaxo.Geometry
 
     public bool Equals(Margin2D other)
     {
-      return this.Left == other.Left && this.Top == other.Top && this.Right == other.Right && this.Bottom == other.Bottom;
+      return Left == other.Left && Top == other.Top && Right == other.Right && Bottom == other.Bottom;
     }
 
     public static bool operator ==(Margin2D a, Margin2D b)

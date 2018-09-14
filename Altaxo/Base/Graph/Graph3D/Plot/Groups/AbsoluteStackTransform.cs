@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Data;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AbsoluteStackTransform s = (AbsoluteStackTransform)obj;
+        var s = (AbsoluteStackTransform)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -85,10 +85,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     public void MergeZBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
-      Dictionary<G3DPlotItem, Processed3DPlotData> plotDataList;
-      IPhysicalBoundaries pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
+      var pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
       CoordinateTransformingStyleBase.MergeZBoundsInto(pbclone, coll);
-      if (!CanUseStyle(layer, coll, out plotDataList))
+      if (!CanUseStyle(layer, coll, out var plotDataList))
       {
         pb.Add(pbclone);
         return;
@@ -106,7 +105,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         {
           idx++;
 
-          G3DPlotItem gpi = (G3DPlotItem)pi;
+          var gpi = (G3DPlotItem)pi;
           Processed3DPlotData pdata = plotDataList[gpi];
 
           // Note: we can not use AddUp function here, since
@@ -160,7 +159,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         if (pi is G3DPlotItem)
         {
           idx++;
-          G3DPlotItem gpi = (G3DPlotItem)pi;
+          var gpi = (G3DPlotItem)pi;
           Processed3DPlotData pdata = gpi.GetRangesAndPoints(layer);
           plotDataList.Add(gpi, pdata);
 
@@ -234,8 +233,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     public void PaintPreprocessing(IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
-      Dictionary<G3DPlotItem, Processed3DPlotData> plotDataDict = null;
-      if (!CanUseStyle(layer, coll, out plotDataDict))
+      if (!CanUseStyle(layer, coll, out var plotDataDict))
       {
         return;
       }
@@ -254,7 +252,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         {
           idx++;
 
-          G3DPlotItem gpi = pi as G3DPlotItem;
+          var gpi = pi as G3DPlotItem;
           Processed3DPlotData pdata = plotDataDict[gpi];
           if (null == pdata)
             continue;
@@ -267,20 +265,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
             foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
             {
               j++;
-              Logical3D rel = new Logical3D(
+              var rel = new Logical3D(
               layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
               layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(originalIndex)),
               layer.ZAxis.PhysicalVariantToNormal(vArray[j]));
 
-              PointD3D pabs;
-              layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out pabs);
+              layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out var pabs);
               pdata.PlotPointsInAbsoluteLayerCoordinates[j] = pabs;
             }
           }
 
           // we have also to exchange the accessor for the physical y value and replace it by our own one
-          AltaxoVariant[] localArray = (AltaxoVariant[])vArray.Clone();
-          LocalArrayHolder localArrayHolder = new LocalArrayHolder(localArray, pdata);
+          var localArray = (AltaxoVariant[])vArray.Clone();
+          var localArrayHolder = new LocalArrayHolder(localArray, pdata);
           pdata.ZPhysicalAccessor = localArrayHolder.GetPhysical;
           pdata.PreviousItemData = previousItemData;
           previousItemData = pdata;
@@ -349,8 +346,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       /// If it is not found in the dictionary which associates the original row indices to the indices of the <see cref="_localArray"/>, a empty <see cref="Altaxo.Data.AltaxoVariant"/> instance is returned.</returns>
       public AltaxoVariant GetPhysical(int originalRowIndex)
       {
-        int idx;
-        if (_originalRowIndexToPlotIndex.TryGetValue(originalRowIndex, out idx))
+        if (_originalRowIndexToPlotIndex.TryGetValue(originalRowIndex, out var idx))
           return _localArray[idx];
         else
           return new AltaxoVariant();

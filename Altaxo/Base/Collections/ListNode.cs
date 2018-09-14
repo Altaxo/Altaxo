@@ -216,7 +216,7 @@ namespace Altaxo.Collections
     public SelectableListNode(string text, object tag, bool isSelected)
         : base(text, tag)
     {
-      this._isSelected = isSelected;
+      _isSelected = isSelected;
     }
   }
 
@@ -300,7 +300,7 @@ namespace Altaxo.Collections
     public int[] GetSelectedIndices()
     {
       var l = new List<int>();
-      for (int i = 0; i < this.Count; ++i)
+      for (int i = 0; i < Count; ++i)
         if (this[i].IsSelected)
           l.Add(i);
       return l.ToArray();
@@ -308,7 +308,7 @@ namespace Altaxo.Collections
 
     public SelectableListNode[] ToArray()
     {
-      SelectableListNode[] result = new SelectableListNode[Count];
+      var result = new SelectableListNode[Count];
       for (int i = Count - 1; i >= 0; i--)
         result[i] = this[i];
       return result;
@@ -354,7 +354,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        int len = this.Count;
+        int len = Count;
         for (int i = 0; i < len; i++)
           if (this[i].IsSelected)
             return i;
@@ -524,7 +524,7 @@ namespace Altaxo.Collections
     {
       for (int i = Count - 1; i >= 0; i--)
         if (this[i].IsSelected)
-          this.RemoveAt(i);
+          RemoveAt(i);
     }
 
     /// <summary>
@@ -541,7 +541,7 @@ namespace Altaxo.Collections
         if (this[i].IsSelected)
         {
           var node = this[i];
-          this.RemoveAt(i);
+          RemoveAt(i);
           if (null != docRemoveAction)
             docRemoveAction(i, node.Tag);
         }
@@ -594,7 +594,7 @@ namespace Altaxo.Collections
     public CheckableSelectableListNode(string text, object tag, bool isSelected, bool isChecked)
         : base(text, tag, isSelected)
     {
-      this._isChecked = isChecked;
+      _isChecked = isChecked;
     }
   }
 

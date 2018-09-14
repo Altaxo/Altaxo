@@ -42,7 +42,7 @@ namespace Altaxo.Serialization.Xml
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AssemblyAndTypeSurrogate s = (AssemblyAndTypeSurrogate)obj;
+        var s = (AssemblyAndTypeSurrogate)obj;
 
         info.AddValue("AssemblyName", s._assemblyName);
         info.AddValue("TypeName", s._typeName);
@@ -69,8 +69,8 @@ namespace Altaxo.Serialization.Xml
     {
       if (o == null)
         throw new ArgumentNullException("To determine the type, the argument must not be null");
-      this._assemblyName = o.GetType().Assembly.FullName;
-      this._typeName = o.GetType().FullName;
+      _assemblyName = o.GetType().Assembly.FullName;
+      _typeName = o.GetType().FullName;
     }
 
     public object CreateInstance()

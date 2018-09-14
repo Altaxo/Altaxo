@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
@@ -188,7 +188,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinearFermiDiracTransition s = (LinearFermiDiracTransition)obj;
+        var s = (LinearFermiDiracTransition)obj;
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -232,7 +232,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LogarithmicFermiDiracTransition s = (LogarithmicFermiDiracTransition)obj;
+        var s = (LogarithmicFermiDiracTransition)obj;
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

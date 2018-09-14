@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Plot
 {

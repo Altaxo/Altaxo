@@ -105,8 +105,7 @@ namespace Altaxo.Main
     /// </summary>
     protected virtual void OnResume()
     {
-      EventArgs singleArg;
-      if (AccumulatedEventData_HasZeroOrOneEventArg(out singleArg)) // we have a single event arg accumulated
+      if (AccumulatedEventData_HasZeroOrOneEventArg(out var singleArg)) // we have a single event arg accumulated
       {
         if (null == singleArg) // no events during suspended state
         {

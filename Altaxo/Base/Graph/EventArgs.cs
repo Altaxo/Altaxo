@@ -187,10 +187,10 @@ namespace Altaxo.Graph
       if (null == other)
         throw new ArgumentException("Expect event args of type: " + typeof(ScaleInstanceChangedEventArgs).ToString());
 
-      if (this.ScaleIndex != other.ScaleIndex)
+      if (ScaleIndex != other.ScaleIndex)
         throw new InvalidProgramException("This should not happen, because the overrides for GetHashCode and Equals should prevent this.");
 
-      this._newScale = other._newScale;
+      _newScale = other._newScale;
     }
 
     /// <summary>
@@ -201,7 +201,7 @@ namespace Altaxo.Graph
     /// </returns>
     public override int GetHashCode()
     {
-      return 17 * this.GetType().GetHashCode() + 31 * _scaleIndex;
+      return 17 * GetType().GetHashCode() + 31 * _scaleIndex;
     }
 
     /// <summary>
@@ -217,7 +217,7 @@ namespace Altaxo.Graph
       if (null == other)
         return false;
       else
-        return this._scaleIndex == other._scaleIndex;
+        return _scaleIndex == other._scaleIndex;
     }
   }
 }

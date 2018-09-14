@@ -134,14 +134,14 @@ namespace Altaxo.Graph.Plot.Groups
 
     public BarSizePosition2DGroupStyle Clone()
     {
-      BarSizePosition2DGroupStyle result = new BarSizePosition2DGroupStyle();
+      var result = new BarSizePosition2DGroupStyle();
       result.CopyFrom(this);
       return result;
     }
 
     object ICloneable.Clone()
     {
-      BarSizePosition2DGroupStyle result = new BarSizePosition2DGroupStyle();
+      var result = new BarSizePosition2DGroupStyle();
       result.CopyFrom(this);
       return result;
     }
@@ -176,7 +176,7 @@ namespace Altaxo.Graph.Plot.Groups
       _wasTouchedInThisPrepareStep = false;
 
       int totalNumberOfItems = 1;
-      if (this._isStepEnabled)
+      if (_isStepEnabled)
         totalNumberOfItems = Math.Max(totalNumberOfItems, _numberOfItems);
 
       // partition the total number of items in items in x-direction is easy for 2D: it is the number of items
@@ -319,8 +319,10 @@ namespace Altaxo.Graph.Plot.Groups
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(BarSizePosition2DGroupStyle)))
       {
-        BarSizePosition2DGroupStyle gstyle = new BarSizePosition2DGroupStyle();
-        gstyle.IsStepEnabled = true;
+        var gstyle = new BarSizePosition2DGroupStyle
+        {
+          IsStepEnabled = true
+        };
         externalGroups.Add(gstyle);
       }
     }

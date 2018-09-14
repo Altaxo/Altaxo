@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Units;
 using AUL = Altaxo.Units.Length;
-using System;
 
 namespace Altaxo.Gui.Graph.Gdi
 {

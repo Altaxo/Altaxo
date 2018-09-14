@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Collections;
 
 namespace Altaxo.Main
 {
@@ -101,7 +101,7 @@ namespace Altaxo.Main
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AbsoluteDocumentPath s = (AbsoluteDocumentPath)obj;
+        var s = (AbsoluteDocumentPath)obj;
 
         info.CreateArray("Path", s._pathParts.Length);
         for (int i = 0; i < s._pathParts.Length; i++)
@@ -147,13 +147,13 @@ namespace Altaxo.Main
 
     public override string ToString()
     {
-      System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder(128);
+      var stringBuilder = new System.Text.StringBuilder(128);
       stringBuilder.Append("/");
 
-      if (this.Count > 0)
+      if (Count > 0)
         stringBuilder.Append(this[0]);
 
-      for (int i = 1; i < this.Count; i++)
+      for (int i = 1; i < Count; i++)
       {
         stringBuilder.Append("/");
         stringBuilder.Append(this[i]);
@@ -166,10 +166,10 @@ namespace Altaxo.Main
       var o = obj as AbsoluteDocumentPath;
       if (null == o)
         return false;
-      if (this.Count != o.Count)
+      if (Count != o.Count)
         return false;
 
-      for (int i = this.Count - 1; i >= 0; --i)
+      for (int i = Count - 1; i >= 0; --i)
       {
         if (!(this[i] == o[i]))
           return false;
@@ -184,7 +184,7 @@ namespace Altaxo.Main
 
     public bool StartsWith(AbsoluteDocumentPath another)
     {
-      if (this.Count < another.Count)
+      if (Count < another.Count)
         return false;
 
       for (int i = 0; i < another.Count; ++i)
@@ -201,7 +201,7 @@ namespace Altaxo.Main
       if (!(count >= 0))
         throw new ArgumentOutOfRangeException("count should be >= 0");
 
-      return new AbsoluteDocumentPath(this._pathParts.Skip(start).Take(count));
+      return new AbsoluteDocumentPath(_pathParts.Skip(start).Take(count));
     }
 
     /// <summary>
@@ -243,9 +243,9 @@ namespace Altaxo.Main
       if (null == other)
         throw new ArgumentNullException("other");
 
-      var arr = new string[this._pathParts.Length + other._pathParts.Length];
-      Array.Copy(this._pathParts, arr, this._pathParts.Length);
-      Array.Copy(other._pathParts, 0, arr, this._pathParts.Length, other._pathParts.Length);
+      var arr = new string[_pathParts.Length + other._pathParts.Length];
+      Array.Copy(_pathParts, arr, _pathParts.Length);
+      Array.Copy(other._pathParts, 0, arr, _pathParts.Length, other._pathParts.Length);
 
       return new AbsoluteDocumentPath(arr);
     }
@@ -255,9 +255,9 @@ namespace Altaxo.Main
       if (null == other)
         throw new ArgumentNullException("other");
 
-      var arr = new string[this._pathParts.Length + 1];
-      Array.Copy(this._pathParts, arr, this._pathParts.Length);
-      arr[this._pathParts.Length] = other;
+      var arr = new string[_pathParts.Length + 1];
+      Array.Copy(_pathParts, arr, _pathParts.Length);
+      arr[_pathParts.Length] = other;
 
       return new AbsoluteDocumentPath(arr);
     }
@@ -266,12 +266,12 @@ namespace Altaxo.Main
     /// <param name="lastPart">The new last part of the <see cref="AbsoluteDocumentPath"/>.</param>
     public AbsoluteDocumentPath ReplaceLastPart(string lastPart)
     {
-      if (this.Count == 0)
+      if (Count == 0)
         throw new InvalidOperationException("DocumentPath is empty, thus replacement of last part is not possible");
       if (string.IsNullOrEmpty(lastPart))
         throw new ArgumentOutOfRangeException("lastPart is null or empty");
 
-      var arr = (string[])this._pathParts.Clone();
+      var arr = (string[])_pathParts.Clone();
       arr[arr.Length - 1] = lastPart;
       return new AbsoluteDocumentPath(arr);
     }
@@ -299,7 +299,7 @@ namespace Altaxo.Main
     {
       newPath = this;
       // Test if the start of my path is identical to that of partToReplace
-      if (this.Count < partToReplace.Count)
+      if (Count < partToReplace.Count)
         return false;
 
       for (int i = 0; i < partToReplace.Count - 1; i++)
@@ -312,7 +312,7 @@ namespace Altaxo.Main
       // ok, the beginning of my path and partToReplace is identical,
       // thus we replace the beginning of my path with that of newPart
 
-      var list = new List<string>(this._pathParts);
+      var list = new List<string>(_pathParts);
       string s = list[partToReplace.Count - 1].Substring(partToReplace[partToReplace.Count - 1].Length);
       list[partToReplace.Count - 1] = newPart[newPart.Count - 1] + s;
 

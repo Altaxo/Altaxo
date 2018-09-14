@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -167,29 +167,29 @@ namespace Altaxo.Graph.Gdi
       if (obj is ItemLocationDirect)
       {
         var from = (ItemLocationDirect)obj;
-        this._parentSize = from._parentSize;
-        this._positionX = from._positionX;
-        this._positionY = from._positionY;
-        this._sizeX = from._sizeX;
-        this._sizeY = from._sizeY;
-        this._localAnchorX = from._localAnchorX;
-        this._localAnchorY = from._localAnchorY;
-        this._parentAnchorX = from._parentAnchorX;
-        this._parentAnchorY = from._parentAnchorY;
-        this._rotation = from._rotation;
-        this._scaleX = from._scaleX;
-        this._scaleY = from._scaleY;
-        this._shear = from._shear;
+        _parentSize = from._parentSize;
+        _positionX = from._positionX;
+        _positionY = from._positionY;
+        _sizeX = from._sizeX;
+        _sizeY = from._sizeY;
+        _localAnchorX = from._localAnchorX;
+        _localAnchorY = from._localAnchorY;
+        _parentAnchorX = from._parentAnchorX;
+        _parentAnchorY = from._parentAnchorY;
+        _rotation = from._rotation;
+        _scaleX = from._scaleX;
+        _scaleY = from._scaleY;
+        _shear = from._shear;
         EhSelfChanged();
         return true;
       }
       else if (obj is IItemLocation)
       {
         var from = (IItemLocation)obj;
-        this._rotation = from.Rotation;
-        this._shear = from.ShearX;
-        this._scaleX = from.ScaleX;
-        this._scaleY = from.ScaleY;
+        _rotation = from.Rotation;
+        _shear = from.ShearX;
+        _scaleX = from.ScaleX;
+        _scaleY = from.ScaleY;
         EhSelfChanged();
         return true;
       }
@@ -518,11 +518,11 @@ namespace Altaxo.Graph.Gdi
     /// <returns>The enclosing rectangle in absolute values.</returns>
     public RectangleD2D GetAbsoluteEnclosingRectangle()
     {
-      MatrixD2D m = new MatrixD2D();
+      var m = new MatrixD2D();
       m.SetTranslationRotationShearxScale(AbsolutePivotPositionX, AbsolutePivotPositionY, -Rotation, ShearX, ScaleX, ScaleY);
       m.TranslatePrepend(AbsoluteVectorPivotToLeftUpper.X, AbsoluteVectorPivotToLeftUpper.Y);
 
-      var s = this.AbsoluteSize;
+      var s = AbsoluteSize;
       var p1 = m.TransformPoint(new PointD2D(0, 0));
       var p2 = m.TransformPoint(new PointD2D(s.X, 0));
       var p3 = m.TransformPoint(new PointD2D(0, s.Y));
@@ -862,7 +862,7 @@ namespace Altaxo.Graph.Gdi
 
     public void ChangeRelativePositionValuesToAbsolutePositionValues()
     {
-      if (this._positionX.IsRelative)
+      if (_positionX.IsRelative)
         _positionX = RADouble.NewAbs(AbsolutePositionX);
       if (_positionY.IsRelative)
         _positionY = RADouble.NewAbs(AbsolutePositionY);
@@ -875,9 +875,9 @@ namespace Altaxo.Graph.Gdi
       var newRefX = newParentAnchorX.GetValueRelativeTo(_parentSize.X);
       var newRefY = newParentAnchorY.GetValueRelativeTo(_parentSize.Y);
 
-      var oldPos = this.AbsolutePosition;
-      this.InternalSetAbsolutePositionXSilent(oldPos.X + (oldRefX - newRefX));
-      this.InternalSetAbsolutePositionYSilent(oldPos.Y + (oldRefY - newRefY));
+      var oldPos = AbsolutePosition;
+      InternalSetAbsolutePositionXSilent(oldPos.X + (oldRefX - newRefX));
+      InternalSetAbsolutePositionYSilent(oldPos.Y + (oldRefY - newRefY));
       _parentAnchorX = newParentAnchorX;
       _parentAnchorY = newParentAnchorY;
     }

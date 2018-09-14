@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Calc;
 using Altaxo.Calc.Probability;
 using Altaxo.Calc.Regression;
@@ -30,8 +32,6 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -49,8 +49,8 @@ namespace Altaxo.Graph.Procedures
     /// <returns>Null if all is ok, or error message if not.</returns>
     public static string GetActivePlotPoints(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl, out double[] xarr, out double[] yarr)
     {
-      List<double> xlist = new List<double>();
-      List<double> ylist = new List<double>();
+      var xlist = new List<double>();
+      var ylist = new List<double>();
 
       xarr = yarr = null;
 
@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Procedures
 
       IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
-      XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
+      var xyPlotItem = plotItem as XYColumnPlotItem;
 
       if (xyPlotItem == null)
         return "No active plot!";
@@ -74,8 +74,8 @@ namespace Altaxo.Graph.Procedures
       if (!(data.XColumn is Altaxo.Data.INumericColumn) || !(data.YColumn is Altaxo.Data.INumericColumn))
         return "X-Y values of plot data are not both numeric";
 
-      Altaxo.Data.INumericColumn xcol = (Altaxo.Data.INumericColumn)data.XColumn;
-      Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)data.YColumn;
+      var xcol = (Altaxo.Data.INumericColumn)data.XColumn;
+      var ycol = (Altaxo.Data.INumericColumn)data.YColumn;
 
       int maxRowIndex = data.GetMaximumRowIndexFromDataColumns();
 
@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Procedures
     /// the name of the y-column.</returns>
     public static string[] GetActivePlotName(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
     {
-      string[] result = new string[2] { String.Empty, String.Empty };
+      string[] result = new string[2] { string.Empty, string.Empty };
 
       var xylayer = ctrl.ActiveLayer as XYPlotLayer;
       if (null == xylayer || ctrl.CurrentPlotNumber < 0)
@@ -112,7 +112,7 @@ namespace Altaxo.Graph.Procedures
 
       IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
-      XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
+      var xyPlotItem = plotItem as XYColumnPlotItem;
 
       if (xyPlotItem == null)
         return result;
@@ -148,8 +148,8 @@ namespace Altaxo.Graph.Procedures
       double[] yarr = new double[count];
       double[] earr = new double[count];
 
-      Altaxo.Data.INumericColumn xcol = (Altaxo.Data.INumericColumn)xcolumn;
-      Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)ycolumn;
+      var xcol = (Altaxo.Data.INumericColumn)xcolumn;
+      var ycol = (Altaxo.Data.INumericColumn)ycolumn;
 
       int numberOfDataPoints = 0;
       int endIndex = firstIndex + count;
@@ -172,9 +172,7 @@ namespace Altaxo.Graph.Procedures
     public static string Fit(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
     {
       string error;
-
-      double[] xarr, yarr;
-      error = GetActivePlotPoints(ctrl, out xarr, out yarr);
+      error = GetActivePlotPoints(ctrl, out var xarr, out var yarr);
       int numberOfDataPoints = xarr.Length;
 
       if (null != error)
@@ -242,7 +240,7 @@ namespace Altaxo.Graph.Procedures
 
       // add the fit curve to the graph
       IScalarFunctionDD plotfunction = new PolynomialFunction(fit.Parameter);
-      XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, ctrl.Doc.GetPropertyContext()));
+      var fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, ctrl.Doc.GetPropertyContext()));
 
       var xylayer = ctrl.ActiveLayer as XYPlotLayer;
       if (null != xylayer)

@@ -38,7 +38,7 @@ namespace Altaxo.Main
 
     public CallbackOnDispose(Action action)
     {
-      this._action = action ?? throw new ArgumentNullException(nameof(action));
+      _action = action ?? throw new ArgumentNullException(nameof(action));
     }
 
     public void Dispose()

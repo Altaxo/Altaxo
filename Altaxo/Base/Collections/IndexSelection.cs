@@ -38,7 +38,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        return this.Count > 0 ? _lastSelectedIndex : 0;
+        return Count > 0 ? _lastSelectedIndex : 0;
       }
     }
 
@@ -51,21 +51,21 @@ namespace Altaxo.Collections
     {
       if (bControlKey) // Control pressed
       {
-        if (this.Contains(nIndex))
-          this.Remove(nIndex);
+        if (Contains(nIndex))
+          Remove(nIndex);
         else
-          this.Add(nIndex);
+          Add(nIndex);
       }
       else if (bShiftKey)
       {
-        if (0 == this.Count)
+        if (0 == Count)
           _lastSelectedIndex = 0;
 
-        if (!_useExtendedSelectionBehaviour && 0 != this.Count) // standard behaviour : clear the selection list before selecting the new range
+        if (!_useExtendedSelectionBehaviour && 0 != Count) // standard behaviour : clear the selection list before selecting the new range
         {
           // if standard behaviour, clear the list before selecting the new area
           // but keep lastSelectedIndex !
-          this.Clear();
+          Clear();
         }
 
         int beg, end;
@@ -77,21 +77,21 @@ namespace Altaxo.Collections
         // select all from lastSelectionIndex to here
         for (int i = beg; i <= end; i++)
         {
-          if (!this.Contains(i))
-            this.Add(i);
+          if (!Contains(i))
+            Add(i);
         }
       }
       else // no modifier key
       {
         // Clear the selection, if the user clicked again on a single selection
-        if (this.Count == 1 && this.Contains(nIndex))
+        if (Count == 1 && Contains(nIndex))
         {
-          this.Clear();
+          Clear();
         }
         else
         {
-          this.Clear();
-          this.Add(nIndex);
+          Clear();
+          Add(nIndex);
         }
       }
       _lastSelectedIndex = nIndex;

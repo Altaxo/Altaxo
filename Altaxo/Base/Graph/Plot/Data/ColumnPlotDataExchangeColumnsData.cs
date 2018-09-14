@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Plot.Data
 {
@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </returns>
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ namespace Altaxo.Graph.Plot.Data
     public void CollectCommonColumnNamesAndTablesFromPlotItems()
     {
       HashSet<(string ColumnGroup, string ColumnLabel, string ColumnName, string NewColumnName)> totalSet = null;
-      HashSet<DataTable> dataTables = new HashSet<DataTable>();
+      var dataTables = new HashSet<DataTable>();
 
       // collect all column names from those plot items
       foreach (var plotItem in PlotItems)
@@ -182,7 +182,7 @@ namespace Altaxo.Graph.Plot.Data
               {
                 if (string.IsNullOrEmpty(info.NewColumnName))
                 {
-                  columnInfo.ColumnSetAction(null, columnPlotData.DataTable, this.GroupNumber);
+                  columnInfo.ColumnSetAction(null, columnPlotData.DataTable, GroupNumber);
                 }
                 else
                 {
@@ -190,7 +190,7 @@ namespace Altaxo.Graph.Plot.Data
                   {
                     var newCol = columnPlotData.DataTable.DataColumns[info.NewColumnName];
                     var group = columnPlotData.DataTable.DataColumns.GetColumnGroup(newCol);
-                    columnInfo.ColumnSetAction(newCol, columnPlotData.DataTable, this.GroupNumber);
+                    columnInfo.ColumnSetAction(newCol, columnPlotData.DataTable, GroupNumber);
                   }
                 }
               }

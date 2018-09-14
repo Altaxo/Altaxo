@@ -22,21 +22,21 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
+  using System.Collections.Specialized;
+  using System.Linq;
   using Geometry;
   using Graph.Plot.Groups;
   using Plot.Groups;
-  using System.Collections.Specialized;
-  using System.Linq;
 
   [Serializable]
   public class PlotItemCollection
@@ -94,7 +94,7 @@ namespace Altaxo.Graph.Gdi.Plot
         PlotItemCollection s = null != o ? (PlotItemCollection)o : new PlotItemCollection();
 
         int count = info.OpenArray();
-        IGPlotItem[] plotItems = new IGPlotItem[count];
+        var plotItems = new IGPlotItem[count];
         for (int i = 0; i < count; i++)
         {
           plotItems[i] = (IGPlotItem)info.GetValue("PlotItem", s);
@@ -102,7 +102,7 @@ namespace Altaxo.Graph.Gdi.Plot
         info.CloseArray(count);
 
         count = info.OpenArray(); // PlotGroups
-        PGTrans[] plotGroups = new PGTrans[count];
+        var plotGroups = new PGTrans[count];
         for (int i = 0; i < count; i++)
         {
           plotGroups[i].PlotGroup = (PlotGroupMemento)info.GetValue("e", s);
@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Plot
           {
             if (plotGroups[foundidx].PlotItemCollection == null)
             {
-              PlotItemCollection newColl = new PlotItemCollection();
+              var newColl = new PlotItemCollection();
               plotGroups[foundidx].PlotItemCollection = newColl;
               s.Add(plotGroups[foundidx].PlotItemCollection);
               // now set the properties of this new collection
@@ -189,7 +189,7 @@ namespace Altaxo.Graph.Gdi.Plot
         PlotItemCollection s = null != o ? (PlotItemCollection)o : new PlotItemCollection();
 
         int count = info.OpenArray();
-        IGPlotItem[] plotItems = new IGPlotItem[count];
+        var plotItems = new IGPlotItem[count];
         for (int i = 0; i < count; i++)
         {
           s.Add((IGPlotItem)info.GetValue("PlotItem", s));
@@ -212,7 +212,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        PlotItemCollection s = (PlotItemCollection)obj;
+        var s = (PlotItemCollection)obj;
 
         info.AddValue("GroupStyles", s._plotGroupStyles);
 
@@ -231,7 +231,7 @@ namespace Altaxo.Graph.Gdi.Plot
           s._plotGroupStyles.ParentObject = s;
 
         int count = info.OpenArray();
-        IGPlotItem[] plotItems = new IGPlotItem[count];
+        var plotItems = new IGPlotItem[count];
         for (int i = 0; i < count; i++)
         {
           s.Add((IGPlotItem)info.GetValue("PlotItem", s));
@@ -313,7 +313,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
       if (GraphCopyOptions.CopyLayerPlotStyles == (GraphCopyOptions.CopyLayerPlotStyles & options))
       {
-        var thisFlat = this.Flattened;
+        var thisFlat = Flattened;
         var fromFlat = from.Flattened;
         int len = Math.Min(thisFlat.Length, fromFlat.Length);
         for (int i = 0; i < len; i++)
@@ -394,7 +394,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       get
       {
-        return this._plotGroupStyles;
+        return _plotGroupStyles;
       }
       set
       {
@@ -457,12 +457,12 @@ namespace Altaxo.Graph.Gdi.Plot
         return;
 
       // Distribute the changes backward to the first item
-      PrepareStylesIterativeBackward(pivotidx, this.ParentLayer);
+      PrepareStylesIterativeBackward(pivotidx, ParentLayer);
       PlotItemCollection rootCollection = ApplyStylesIterativeBackward(pivotidx);
 
       // now prepare and apply the styles forward normally beginning from the root collection
       // we can set the parent styles to null since rootCollection is the lowest collection that don't inherit from a lower group.
-      rootCollection.PrepareGroupStylesForward_HierarchyUpOnly(null, this.ParentLayer);
+      rootCollection.PrepareGroupStylesForward_HierarchyUpOnly(null, ParentLayer);
       rootCollection.ApplyGroupStylesForward_HierarchyUpOnly(null);
     }
 
@@ -485,7 +485,7 @@ namespace Altaxo.Graph.Gdi.Plot
           if (pi is PlotItemCollection)
           {
             _plotGroupStyles.PrepareStep();
-            PlotItemCollection pic = (PlotItemCollection)pi;
+            var pic = (PlotItemCollection)pi;
             pic.PrepareStylesBackward_HierarchyUpOnly(_plotGroupStyles, layer);
           }
           else
@@ -503,7 +503,7 @@ namespace Altaxo.Graph.Gdi.Plot
       ParentCollection != null &&
       ParentCollection._plotGroupStyles.Count != 0 &&
       ParentCollection._plotGroupStyles.DistributeToChildGroups &&
-      this._plotGroupStyles.InheritFromParentGroups;
+      _plotGroupStyles.InheritFromParentGroups;
 
       if (transferToParentStyles)
       {
@@ -531,7 +531,7 @@ namespace Altaxo.Graph.Gdi.Plot
           if (pi is PlotItemCollection)
           {
             _plotGroupStyles.Step(-1);
-            PlotItemCollection pic = (PlotItemCollection)pi;
+            var pic = (PlotItemCollection)pi;
             pic.ApplyStylesBackward_HierarchyUpOnly(_plotGroupStyles);
           }
           else
@@ -549,7 +549,7 @@ namespace Altaxo.Graph.Gdi.Plot
       ParentCollection != null &&
       ParentCollection._plotGroupStyles.Count != 0 &&
       ParentCollection._plotGroupStyles.DistributeToChildGroups &&
-      this._plotGroupStyles.InheritFromParentGroups;
+      _plotGroupStyles.InheritFromParentGroups;
 
       PlotItemCollection rootCollection = this;
       if (transferToParentStyles)
@@ -572,7 +572,7 @@ namespace Altaxo.Graph.Gdi.Plot
         styles != null &&
         styles.Count != 0 &&
         styles.DistributeToChildGroups &&
-        this._plotGroupStyles.InheritFromParentGroups;
+        _plotGroupStyles.InheritFromParentGroups;
 
       if (!transferToLocalStyles)
         return;
@@ -611,7 +611,7 @@ namespace Altaxo.Graph.Gdi.Plot
         styles != null &&
         styles.Count != 0 &&
         styles.DistributeToChildGroups &&
-        this._plotGroupStyles.InheritFromParentGroups;
+        _plotGroupStyles.InheritFromParentGroups;
 
       if (!transferToLocalStyles)
         return;
@@ -657,7 +657,7 @@ namespace Altaxo.Graph.Gdi.Plot
        parentGroupStyles != null &&
        parentGroupStyles.Count != 0 &&
        parentGroupStyles.DistributeToChildGroups &&
-       this._plotGroupStyles.InheritFromParentGroups;
+       _plotGroupStyles.InheritFromParentGroups;
 
       // Announce the local plot group styles, that we start preparing
       _plotGroupStyles.BeginPrepare();
@@ -680,7 +680,7 @@ namespace Altaxo.Graph.Gdi.Plot
         IGPlotItem pi = _plotItems[i];
         if (pi is PlotItemCollection)
         {
-          PlotItemCollection pic = (PlotItemCollection)pi;
+          var pic = (PlotItemCollection)pi;
           pic.PrepareGroupStylesForward_HierarchyUpOnly(_plotGroupStyles, layer);
           _plotGroupStyles.PrepareStepIfForeignSteppingFalse(((PlotItemCollection)pi)._plotGroupStyles);
         }
@@ -723,7 +723,7 @@ namespace Altaxo.Graph.Gdi.Plot
        parentGroupStyles != null &&
        parentGroupStyles.Count != 0 &&
        parentGroupStyles.DistributeToChildGroups &&
-       this._plotGroupStyles.InheritFromParentGroups;
+       _plotGroupStyles.InheritFromParentGroups;
 
       // if TransferFromParentStyles was choosen, transfer some of the plot group settings of the parental plot group styles to the local styles
       if (transferFromParentStyles)
@@ -742,7 +742,7 @@ namespace Altaxo.Graph.Gdi.Plot
         IGPlotItem pi = _plotItems[i];
         if (pi is PlotItemCollection)
         {
-          PlotItemCollection pic = (PlotItemCollection)pi;
+          var pic = (PlotItemCollection)pi;
           pic.ApplyGroupStylesForward_HierarchyUpOnly(_plotGroupStyles);
           _plotGroupStyles.StepIfForeignSteppingFalse(1, ((PlotItemCollection)pi)._plotGroupStyles);
         }
@@ -778,7 +778,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /> for more information.</param>
     public void DistributePlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
     {
-      foreach (IGPlotItem pi in this._plotItems)
+      foreach (IGPlotItem pi in _plotItems)
       {
         if (!object.ReferenceEquals(pi, template))
           pi.SetPlotStyleFromTemplate(template, strictness);
@@ -796,12 +796,12 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public string GetName(int level)
     {
-      return string.Format("<Collection of {0} plot items>", this._plotItems.Count);
+      return string.Format("<Collection of {0} plot items>", _plotItems.Count);
     }
 
     public string GetName(string style)
     {
-      return string.Format("<Collection of {0} plot items>", this._plotItems.Count);
+      return string.Format("<Collection of {0} plot items>", _plotItems.Count);
     }
 
     public IndexDirection ChildIndexDirection
@@ -870,7 +870,7 @@ namespace Altaxo.Graph.Gdi.Plot
         if (null != result)
         {
           if (result.Remove == null)
-            result.Remove = new DoubleClickHandler(this.EhHitTestObject_Remove);
+            result.Remove = new DoubleClickHandler(EhHitTestObject_Remove);
 
           return result;
         }
@@ -885,7 +885,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <returns>True if the item was removed.</returns>
     public bool EhHitTestObject_Remove(IHitTestObject target)
     {
-      return this.Remove(target.HittedObject as IGPlotItem);
+      return Remove(target.HittedObject as IGPlotItem);
     }
 
     #endregion Hit test
@@ -1037,7 +1037,7 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         if (_cachedPlotItemsFlattened == null)
         {
-          List<IGPlotItem> list = new List<IGPlotItem>();
+          var list = new List<IGPlotItem>();
           FillPlotItemList(list);
           _cachedPlotItemsFlattened = list.ToArray();
         }
@@ -1059,11 +1059,10 @@ namespace Altaxo.Graph.Gdi.Plot
       if (name == "PlotGroupStyles")
         return _plotGroupStyles;
 
-      double number;
-      if (double.TryParse(name, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out number))
+      if (double.TryParse(name, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out var number))
       {
         int idx = (int)number;
-        if (idx >= 0 && idx < this.Count)
+        if (idx >= 0 && idx < Count)
           return this[idx];
       }
       return null;
@@ -1131,7 +1130,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="pg">The plot group style to add.</param>
     public void Add(IPlotGroupStyle pg)
     {
-      this._plotGroupStyles.Add(pg);
+      _plotGroupStyles.Add(pg);
       EhSelfChanged(EventArgs.Empty);
     }
 
@@ -1183,7 +1182,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       ICoordinateTransformingGroupStyle coordTransStyle;
       if (null != (coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle))
-        coordTransStyle.MergeXBoundsInto(this.ParentLayer, pb, this);
+        coordTransStyle.MergeXBoundsInto(ParentLayer, pb, this);
       else
         CoordinateTransformingStyleBase.MergeXBoundsInto(pb, this);
     }
@@ -1196,7 +1195,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       ICoordinateTransformingGroupStyle coordTransStyle;
       if (null != (coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle))
-        coordTransStyle.MergeYBoundsInto(this.ParentLayer, pb, this);
+        coordTransStyle.MergeYBoundsInto(ParentLayer, pb, this);
       else
         CoordinateTransformingStyleBase.MergeYBoundsInto(pb, this);
     }

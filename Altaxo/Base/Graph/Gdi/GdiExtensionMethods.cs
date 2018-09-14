@@ -340,8 +340,10 @@ namespace Altaxo.Graph.Gdi
 
       if (p0.HasValue && p1.HasValue)
       {
-        var plist = new List<PointF>();
-        plist.Add(p0.Value);
+        var plist = new List<PointF>
+        {
+          p0.Value
+        };
         for (int i = i0; i <= i1; ++i)
           plist.Add(polyline[i]);
         plist.Add(p1.Value);
@@ -428,8 +430,10 @@ namespace Altaxo.Graph.Gdi
 
       if (p0.HasValue && p1.HasValue)
       {
-        var plist = new List<PointF>();
-        plist.Add(p0.Value);
+        var plist = new List<PointF>
+        {
+          p0.Value
+        };
         for (int i = i0; i <= i1; ++i)
           plist.Add(polyline[i]);
         plist.Add(p1.Value);

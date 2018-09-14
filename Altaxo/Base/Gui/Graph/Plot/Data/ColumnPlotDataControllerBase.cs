@@ -22,6 +22,12 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
@@ -29,12 +35,6 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Data.Selections;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
@@ -429,8 +429,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
           _doc.GroupNumber = docGroupNumber;
         }
 
-        _rowSelectionController = new RowSelectionController();
-        _rowSelectionController.SupposedParentDataTable = _doc.DataTable;
+        _rowSelectionController = new RowSelectionController
+        {
+          SupposedParentDataTable = _doc.DataTable
+        };
         _rowSelectionController.InitializeDocument(_doc.DataRowSelection);
         _rowSelectionController.ItemsChanged += EhRowSelectionItemsChanged;
         Current.Gui.FindAndAttachControlTo(_rowSelectionController);
@@ -565,10 +567,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       // do not believe in the DataTable and Group number. Instead try to get DataTable and GroupNumber from the columns
       {
-        bool dataTableIsNotUniform, groupNumberIsNotUniform;
-        DataTable resultingTable;
-        int? resultingGroupNumber;
-        IReadableColumnExtensions.GetCommonDataTableAndGroupNumberFromColumns(GetEnumerationOfAllColumns(), out dataTableIsNotUniform, out resultingTable, out groupNumberIsNotUniform, out resultingGroupNumber);
+        IReadableColumnExtensions.GetCommonDataTableAndGroupNumberFromColumns(GetEnumerationOfAllColumns(), out var dataTableIsNotUniform, out var resultingTable, out var groupNumberIsNotUniform, out var resultingGroupNumber);
 
         if (null != resultingTable && !dataTableIsNotUniform)
           _doc.DataTable = resultingTable;
@@ -745,7 +744,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public void EhView_TableSelectionChanged()
     {
       var node = _availableTables.FirstSelectedNode;
-      DataTable tg = node?.Tag as DataTable;
+      var tg = node?.Tag as DataTable;
 
       if (null == tg || object.ReferenceEquals(_doc.DataTable, tg))
         return;
@@ -787,8 +786,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         var colDict = newDataColl.GetNameDictionaryOfColumnsWithGroupNumber(groupNumber);
         foreach (var col in matchList)
         {
-          DataColumn otherColumn;
-          if (colDict.TryGetValue(col.Name, out otherColumn))
+          if (colDict.TryGetValue(col.Name, out var otherColumn))
           {
             numberOfPoints += 5;
             if (otherColumn.GetType() == col.GetType())
@@ -938,7 +936,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private IEnumerable<(DataTable dataTable, int groupNumber)> GetTablesWithGroupThatFitExistingPlotColumns(System.Threading.CancellationToken token)
     {
-      HashSet<string> columnNamesThatMustFit = new HashSet<string>();
+      var columnNamesThatMustFit = new HashSet<string>();
 
       // at first we build a list of column names that we need to fit
       for (int i = 0; i < _columnGroup.Count; ++i)
@@ -992,8 +990,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 
-      bool wasEdited;
-      var editedColumn = EditOtherAvailableColumn(info.UnderlyingColumn, out wasEdited);
+      var editedColumn = EditOtherAvailableColumn(info.UnderlyingColumn, out var wasEdited);
 
       if (wasEdited)
       {
@@ -1087,8 +1084,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
         if (null != createdObj)
         {
-          bool wasEdited;
-          info.UnderlyingColumn = EditOtherAvailableColumn(createdObj, out wasEdited);
+          info.UnderlyingColumn = EditOtherAvailableColumn(createdObj, out var wasEdited);
           info.Update(_doc.DataTable, _doc.GroupNumber);
           _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
         }
@@ -1154,8 +1150,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         return;
       }
 
-      bool wasEdited;
-      createdTransformation = EditAvailableTransformation(createdTransformation, out wasEdited);
+      createdTransformation = EditAvailableTransformation(createdTransformation, out var wasEdited);
 
       switch (multipleType)
       {
@@ -1240,8 +1235,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 
-      bool wasEdited;
-      info.Transformation = EditAvailableTransformation(info.Transformation, out wasEdited);
+      info.Transformation = EditAvailableTransformation(info.Transformation, out var wasEdited);
       if (wasEdited)
       {
         SetDirty();
@@ -1411,8 +1405,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
         if (createdObj is IReadableColumn)
         {
-          bool wasEdited;
-          info.UnderlyingColumn = EditOtherAvailableColumn((IReadableColumn)createdObj, out wasEdited);
+          info.UnderlyingColumn = EditOtherAvailableColumn((IReadableColumn)createdObj, out var wasEdited);
           TriggerUpdateOfMatchingTables();
         }
         else if (createdObj is IVariantToVariantTransformation)

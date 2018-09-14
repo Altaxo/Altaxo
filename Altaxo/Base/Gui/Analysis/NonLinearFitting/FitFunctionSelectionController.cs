@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Drawing;
-using Altaxo.Graph;
-using Altaxo.Main.Services;
-using Altaxo.Scripting;
 using System;
 using System.Text;
+using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Graph;
 using Altaxo.Main;
+using Altaxo.Main.Services;
+using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         base(text)
       {
         RootNodeType = type;
-        this.Tag = type;
+        Tag = type;
       }
     }
 
@@ -156,7 +156,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         : base(text)
       {
         FunctionType = functionType;
-        this.Tag = functionType;
+        Tag = functionType;
       }
     }
 
@@ -184,8 +184,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private void AttachView()
     {
-      _view.SelectionChanged += this.EhView_SelectionChanged;
-      _view.EditItem += this.EhView_EditItem;
+      _view.SelectionChanged += EhView_SelectionChanged;
+      _view.EditItem += EhView_EditItem;
       _view.EditCopyOfItem += EhView_CreateItemFromHere;
       _view.RemoveItem += EhView_RemoveItem;
       _view.ItemDoubleClicked += EhView_ItemDoubleClicked;
@@ -193,8 +193,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private void DetachView()
     {
-      _view.SelectionChanged -= this.EhView_SelectionChanged;
-      _view.EditItem -= this.EhView_EditItem;
+      _view.SelectionChanged -= EhView_SelectionChanged;
+      _view.EditItem -= EhView_EditItem;
       _view.EditCopyOfItem -= EhView_CreateItemFromHere;
       _view.RemoveItem -= EhView_RemoveItem;
       _view.ItemDoubleClicked -= EhView_ItemDoubleClicked;
@@ -256,7 +256,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           nodeText += " (" + creationTime.Value.ToString("yyyy-MM-dd HH:mm:ss") + ")";
         }
 
-        FitFunctionLeafNode leaf = new FitFunctionLeafNode(nodeText, entry);
+        var leaf = new FitFunctionLeafNode(nodeText, entry);
 
         switch (menustyle)
         {

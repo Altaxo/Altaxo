@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
+using System;
+using System.Drawing;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.ColorProvider;
 using Altaxo.Graph.Scales;
-using System;
-using System.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
@@ -146,7 +146,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
         {
           if (classes[i] == typeof(LinkedScale))
             continue;
-          SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
+          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
           _availableClasses.Add(node);
         }
       }
@@ -166,7 +166,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
         _detailController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { providerObject }, typeof(IMVCANController), UseDocument.Directly);
 
-        if (null != _detailController && this.GetType() == _detailController.GetType()) // the returned controller is of this common type here -> thus no specialized controller seems to exist for this type of color provider
+        if (null != _detailController && GetType() == _detailController.GetType()) // the returned controller is of this common type here -> thus no specialized controller seems to exist for this type of color provider
         {
           _detailController.Dispose();
           _detailController = null;
@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 
     private void EhColorProviderSelectionChanged()
     {
-      Type chosenType = (Type)_availableClasses.FirstSelectedNode.Tag;
+      var chosenType = (Type)_availableClasses.FirstSelectedNode.Tag;
 
       try
       {

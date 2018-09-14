@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Main.Properties
 {
@@ -139,8 +139,7 @@ namespace Altaxo.Main.Properties
     /// <returns>The name of the property</returns>
     public static string GetPropertyName(string propertyKeyString)
     {
-      PropertyKeyBase result;
-      if (_allRegisteredProperties.TryGetValue(propertyKeyString, out result))
+      if (_allRegisteredProperties.TryGetValue(propertyKeyString, out var result))
         return result._propertyName;
       else
         return null;
@@ -153,8 +152,7 @@ namespace Altaxo.Main.Properties
     /// <returns>Type of the property value associated with the provided key.</returns>
     public static Type GetPropertyValueType(string propertyKeyString)
     {
-      PropertyKeyBase result;
-      if (_allRegisteredProperties.TryGetValue(propertyKeyString, out result))
+      if (_allRegisteredProperties.TryGetValue(propertyKeyString, out var result))
         return result._type;
       else
         return null;
@@ -167,8 +165,7 @@ namespace Altaxo.Main.Properties
     /// <returns>The property key.</returns>
     public static PropertyKeyBase GetPropertyKey(string propertyKeyString)
     {
-      PropertyKeyBase result;
-      if (_allRegisteredProperties.TryGetValue(propertyKeyString, out result))
+      if (_allRegisteredProperties.TryGetValue(propertyKeyString, out var result))
         return result;
       else
         return null;

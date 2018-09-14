@@ -49,7 +49,7 @@ namespace Altaxo
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RADouble s = (RADouble)obj;
+        var s = (RADouble)obj;
 
         info.AddValue("IsRelative", s._isRelative);
         info.AddValue("Value", s._value);

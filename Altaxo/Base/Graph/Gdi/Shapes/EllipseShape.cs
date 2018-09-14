@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        EllipseShape s = (EllipseShape)obj;
+        var s = (EllipseShape)obj;
         info.AddBaseValueEmbedded(s, typeof(EllipseShape).BaseType);
       }
 
@@ -85,8 +85,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <returns>Object outline for arrangements in object world coordinates</returns>
     public override GraphicsPath GetObjectOutlineForArrangements()
     {
-      GraphicsPath gp = new GraphicsPath();
-      var bounds = this.Bounds;
+      var gp = new GraphicsPath();
+      var bounds = Bounds;
       gp.AddEllipse(new RectangleF((float)(bounds.X), (float)(bounds.Y), (float)bounds.Width, (float)bounds.Height));
       return gp;
     }

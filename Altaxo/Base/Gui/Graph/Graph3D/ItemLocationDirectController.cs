@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Units;
 using AUL = Altaxo.Units.Length;
-using System;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {

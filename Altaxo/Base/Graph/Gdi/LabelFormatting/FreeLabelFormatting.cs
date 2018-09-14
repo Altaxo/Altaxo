@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        FreeLabelFormatting s = (FreeLabelFormatting)obj;
+        var s = (FreeLabelFormatting)obj;
         info.AddBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase));
         info.AddValue("FormatString", s._formatString);
       }

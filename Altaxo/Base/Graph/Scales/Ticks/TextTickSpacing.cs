@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        TextTickSpacing s = (TextTickSpacing)obj;
+        var s = (TextTickSpacing)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -117,8 +117,8 @@ namespace Altaxo.Graph.Scales.Ticks
       _majorTextTicks.Clear();
 
       // make major ticks at integral numbers and minor ticks at halfway
-      double dorg = (double)org;
-      double dend = (double)end;
+      double dorg = org;
+      double dend = end;
 
       if (!(dorg < dend))
         return;
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Scales.Ticks
       if (double.IsInfinity(span))
         return;
 
-      Boundaries.TextBoundaries textBounds = scale.DataBoundsObject as Boundaries.TextBoundaries;
+      var textBounds = scale.DataBoundsObject as Boundaries.TextBoundaries;
 
       double majorSpan = 1;
       if (span > 100)

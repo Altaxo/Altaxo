@@ -67,14 +67,14 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     public ColorProviderBase()
     {
-      this._colorBelow = NamedColors.Black;
-      this._cachedGdiColorBelow = NamedColors.Black;
+      _colorBelow = NamedColors.Black;
+      _cachedGdiColorBelow = NamedColors.Black;
 
-      this._colorAbove = NamedColors.Snow;
-      this._cachedGdiColorAbove = NamedColors.Snow;
+      _colorAbove = NamedColors.Snow;
+      _cachedGdiColorAbove = NamedColors.Snow;
 
-      this._colorInvalid = NamedColors.Transparent;
-      this._cachedGdiColorInvalid = NamedColors.Transparent;
+      _colorInvalid = NamedColors.Transparent;
+      _cachedGdiColorInvalid = NamedColors.Transparent;
 
       _alphaChannel = 255;
       _colorSteps = 0;
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ColorProviderBase s = (ColorProviderBase)obj;
+        var s = (ColorProviderBase)obj;
 
         info.AddValue("ColorBelow", s._colorBelow);
         info.AddValue("ColorAbove", s._colorAbove);
@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ColorProviderBase s = (ColorProviderBase)o;
+        var s = (ColorProviderBase)o;
 
         s._colorBelow = (NamedColor)info.GetValue("ColorBelow", s);
         s._cachedGdiColorBelow = GdiColorHelper.ToGdi(s._colorBelow);
@@ -134,7 +134,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderBase)this.MemberwiseClone();
+        var result = (ColorProviderBase)MemberwiseClone();
         result._colorBelow = color;
         result._cachedGdiColorBelow = GdiColorHelper.ToGdi(color);
         return result;
@@ -157,7 +157,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderBase)this.MemberwiseClone();
+        var result = (ColorProviderBase)MemberwiseClone();
         result._colorAbove = color;
         result._cachedGdiColorAbove = GdiColorHelper.ToGdi(color);
         return result;
@@ -180,7 +180,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderBase)this.MemberwiseClone();
+        var result = (ColorProviderBase)MemberwiseClone();
         result._colorInvalid = color;
         result._cachedGdiColorInvalid = GdiColorHelper.ToGdi(color);
         return result;
@@ -217,7 +217,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderBase)this.MemberwiseClone();
+        var result = (ColorProviderBase)MemberwiseClone();
         result._alphaChannel = alphaChannel;
         return result;
       }
@@ -245,7 +245,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderBase)this.MemberwiseClone();
+        var result = (ColorProviderBase)MemberwiseClone();
         result._colorSteps = colorSteps;
         return result;
       }
@@ -296,7 +296,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     public virtual bool Equals(IColorProvider other)
     {
-      if (null == other || other.GetType() != this.GetType())
+      if (null == other || other.GetType() != GetType())
         return false;
 
       var from = (ColorProviderBase)other;

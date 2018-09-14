@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
-using Altaxo.Serialization;
 using System;
 using System.Drawing;
+using Altaxo.Graph.Gdi;
+using Altaxo.Serialization;
 
 namespace Altaxo.Worksheet
 {
@@ -93,7 +93,7 @@ namespace Altaxo.Worksheet
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ColumnStyle s = (ColumnStyle)o;
+        var s = (ColumnStyle)o;
         s._columnSize = (int)info.GetSingle("Size");
 
         object notneeded;
@@ -117,7 +117,7 @@ namespace Altaxo.Worksheet
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ColumnStyle s = (ColumnStyle)obj;
+        var s = (ColumnStyle)obj;
         info.AddEnum("Type", s._columnStyleType);
         info.AddValue("Size", (float)s._columnSize);
         info.AddValue("Alignment", Enum.GetName(typeof(System.Drawing.StringAlignment), s._textFormat.Alignment));
@@ -141,7 +141,7 @@ namespace Altaxo.Worksheet
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ColumnStyle s = (ColumnStyle)o;
+        var s = (ColumnStyle)o;
 
         if ("Size" == info.CurrentElementName)
           return new XmlSerializationSurrogate0().Deserialize(o, info, parent);
@@ -263,43 +263,43 @@ namespace Altaxo.Worksheet
     public static PenX GetDefaultCellBorder(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
-        return (PenX)_defaultCellPen.Clone();
+        return _defaultCellPen.Clone();
       else
         return new PenX(GdiColorHelper.ToNamedColor(SystemColors.ControlDarkDark), 1);
     }
 
     public void SetDefaultCellBorder()
     {
-      this.CellBorder = GetDefaultCellBorder(this._columnStyleType);
-      this._isCellPenCustom = false;
+      CellBorder = GetDefaultCellBorder(_columnStyleType);
+      _isCellPenCustom = false;
     }
 
     public static BrushX GetDefaultTextBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
-        return (BrushX)_defaultNormalTextBrush.Clone();
+        return _defaultNormalTextBrush.Clone();
       else
         return new BrushX(GdiColorHelper.ToNamedColor(SystemColors.ControlText));
     }
 
     public void SetDefaultTextBrush()
     {
-      this.TextBrush = GetDefaultTextBrush(_columnStyleType);
-      this._isTextBrushCustom = false;
+      TextBrush = GetDefaultTextBrush(_columnStyleType);
+      _isTextBrushCustom = false;
     }
 
     public static BrushX GetDefaultBackgroundBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell)
-        return (BrushX)_defaultNormalBackgroundBrush.Clone();
+        return _defaultNormalBackgroundBrush.Clone();
       else
-        return (BrushX)_defaultHeaderBackgroundBrush.Clone();
+        return _defaultHeaderBackgroundBrush.Clone();
     }
 
     public void SetDefaultBackgroundBrush()
     {
-      this.BackgroundBrush = GetDefaultBackgroundBrush(_columnStyleType);
-      this._isBackgroundBrushCustom = false;
+      BackgroundBrush = GetDefaultBackgroundBrush(_columnStyleType);
+      _isBackgroundBrushCustom = false;
     }
 
     public static FontX GetDefaultTextFont(ColumnStyleType type)
@@ -309,7 +309,7 @@ namespace Altaxo.Worksheet
 
     public void SetDefaultTextFont()
     {
-      this.TextFont = GetDefaultTextFont(_columnStyleType);
+      TextFont = GetDefaultTextFont(_columnStyleType);
     }
 
     public int Width

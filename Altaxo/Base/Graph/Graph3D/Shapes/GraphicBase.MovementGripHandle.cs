@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {

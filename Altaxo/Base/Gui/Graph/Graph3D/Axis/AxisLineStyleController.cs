@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Axis;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Drawing;
 using System;
 using System.Drawing;
+using Altaxo.Data;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
@@ -48,14 +48,14 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LabelFormattingBase s = (LabelFormattingBase)obj;
+        var s = (LabelFormattingBase)obj;
         info.AddValue("Prefix", s._prefix);
         info.AddValue("Suffix", s._suffix);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        LabelFormattingBase s = (LabelFormattingBase)o;
+        var s = (LabelFormattingBase)o;
         s.PrefixText = info.GetString("Prefix");
         s.SuffixText = info.GetString("Suffix");
         return s;
@@ -195,10 +195,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
           titems[i] = _prefix + titems[i] + _suffix;
       }
 
-      MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];
+      var litems = new MeasuredLabelItem[titems.Length];
 
       FontX localfont = font;
-      StringFormat localstrfmt = (StringFormat)strfmt.Clone();
+      var localstrfmt = (StringFormat)strfmt.Clone();
 
       for (int i = 0; i < titems.Length; ++i)
       {

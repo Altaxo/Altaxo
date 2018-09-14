@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common.MultiRename
 {
@@ -244,7 +244,7 @@ namespace Altaxo.Gui.Common.MultiRename
     private void EhRenameStringTemplateChanged()
     {
       string template = _view.RenameStringTemplate;
-      MultiRenameTreeWalker walker = new MultiRenameTreeWalker(template, _doc);
+      var walker = new MultiRenameTreeWalker(template, _doc);
       var result = walker.VisitTree();
 
       for (int i = 0; i < _itemsShown.Count; ++i)

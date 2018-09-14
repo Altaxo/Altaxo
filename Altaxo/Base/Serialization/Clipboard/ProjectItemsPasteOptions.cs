@@ -43,7 +43,7 @@ namespace Altaxo.Serialization.Clipboard
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
   }
 }

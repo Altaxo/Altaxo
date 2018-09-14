@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Ticks;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -160,12 +160,12 @@ namespace Altaxo.Graph.Graph3D
       {
         // after deserialisation the data bounds object of the scale is empty:
         // then we have to rescale the axis
-        if (this.Scales.X.DataBoundsObject.IsEmpty)
-          this.InitializeXScaleDataBounds();
-        if (this.Scales.Y.DataBoundsObject.IsEmpty)
-          this.InitializeYScaleDataBounds();
-        if (this.Scales.Z.DataBoundsObject.IsEmpty)
-          this.InitializeZScaleDataBounds();
+        if (Scales.X.DataBoundsObject.IsEmpty)
+          InitializeXScaleDataBounds();
+        if (Scales.Y.DataBoundsObject.IsEmpty)
+          InitializeYScaleDataBounds();
+        if (Scales.Z.DataBoundsObject.IsEmpty)
+          InitializeZScaleDataBounds();
       }
     }
 
@@ -200,33 +200,33 @@ namespace Altaxo.Graph.Graph3D
 
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerScales))
       {
-        this.CoordinateSystem = from.CoordinateSystem; // immutable
+        CoordinateSystem = from.CoordinateSystem; // immutable
 
-        this.Scales = (ScaleCollection)from._scales.Clone();
-        this._dataClipping = from._dataClipping;
+        Scales = from._scales.Clone();
+        _dataClipping = from._dataClipping;
       }
 
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerGrid))
       {
-        this.GridPlanes = from._gridPlanes.Clone();
+        GridPlanes = from._gridPlanes.Clone();
       }
 
       // Styles
 
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerAxes))
       {
-        this.AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
+        AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
       }
 
       // Plot items
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerPlotItems))
       {
-        this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems, true);
+        PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems, true);
       }
       else if (0 != (options & Gdi.GraphCopyOptions.CopyLayerPlotStyles))
       {
         // TODO apply the styles from from._plotItems to the PlotItems here
-        this.PlotItems.CopyFrom(from._plotItems, options);
+        PlotItems.CopyFrom(from._plotItems, options);
       }
     }
 
@@ -263,12 +263,14 @@ namespace Altaxo.Graph.Graph3D
     protected XYZPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {
-      this.CoordinateSystem = new CS.G3DCartesicCoordinateSystem();
-      this.AxisStyles = new AxisStyleCollection();
-      this.Scales = new ScaleCollection(3);
-      this.Location = new ItemLocationDirect();
-      this.GridPlanes = new GridPlaneCollection();
-      this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
+      CoordinateSystem = new CS.G3DCartesicCoordinateSystem();
+      AxisStyles = new AxisStyleCollection();
+      Scales = new ScaleCollection(3);
+      Location = new ItemLocationDirect();
+      GridPlanes = new GridPlaneCollection
+      {
+        new GridPlane(CSPlaneID.Front)
+      };
     }
 
     public XYZPlotLayer(HostLayer parentLayer)
@@ -300,12 +302,14 @@ namespace Altaxo.Graph.Graph3D
     public XYZPlotLayer(HostLayer parentLayer, IItemLocation location, G3DCoordinateSystem coordinateSystem)
       : base(parentLayer, location)
     {
-      this.CoordinateSystem = coordinateSystem;
-      this.AxisStyles = new AxisStyleCollection();
-      this.Scales = new ScaleCollection(3);
-      this.GridPlanes = new GridPlaneCollection();
-      this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-      this.PlotItems = new PlotItemCollection(this);
+      CoordinateSystem = coordinateSystem;
+      AxisStyles = new AxisStyleCollection();
+      Scales = new ScaleCollection(3);
+      GridPlanes = new GridPlaneCollection
+      {
+        new GridPlane(CSPlaneID.Front)
+      };
+      PlotItems = new PlotItemCollection(this);
     }
 
     #endregion Constructors
@@ -355,7 +359,7 @@ namespace Altaxo.Graph.Graph3D
     {
       if (id.UsePhysicalValue)
       {
-        double l = this.Scales[id.PerpendicularAxisNumber].PhysicalVariantToNormal(id.PhysicalValue);
+        double l = Scales[id.PerpendicularAxisNumber].PhysicalVariantToNormal(id.PhysicalValue);
         id = id.WithLogicalValue(l);
       }
       return id;
@@ -390,7 +394,7 @@ namespace Altaxo.Graph.Graph3D
         AxisStyleCollection oldvalue = _axisStyles;
         _axisStyles = value;
         value.ParentObject = this;
-        value.UpdateCoordinateSystem(this.CoordinateSystem);
+        value.UpdateCoordinateSystem(CoordinateSystem);
 
         if (!object.ReferenceEquals(oldvalue, value))
         {
@@ -502,7 +506,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     public void ClearLegends()
     {
-      for (int i = this.GraphObjects.Count - 1; i >= 0; --i)
+      for (int i = GraphObjects.Count - 1; i >= 0; --i)
       {
         if (GraphObjects[i] is LegendText)
           GraphObjects.RemoveAt(i);
@@ -536,8 +540,8 @@ namespace Altaxo.Graph.Graph3D
       else
         tgo = new TextGraphic(this.GetPropertyContext());
 
-      System.Text.StringBuilder strg = new System.Text.StringBuilder();
-      for (int i = 0; i < this.PlotItems.Flattened.Length; i++)
+      var strg = new System.Text.StringBuilder();
+      for (int i = 0; i < PlotItems.Flattened.Length; i++)
       {
         strg.AppendFormat("{0}\\L({1}) \\%({2})", (i == 0 ? "" : "\r\n"), i, i);
       }
@@ -545,8 +549,8 @@ namespace Altaxo.Graph.Graph3D
 
       // if the position of the old legend is outside, use a new position
       if (null == existingLegend || existingLegend.Position.X < 0 || existingLegend.Position.Y < 0 ||
-        existingLegend.Position.X > this.Size.X || existingLegend.Position.Y > this.Size.Y)
-        tgo.Position = new PointD3D(0.1 * this.Size.X, 0.1 * this.Size.Y, 0.1 * this.Size.Z);
+        existingLegend.Position.X > Size.X || existingLegend.Position.Y > Size.Y)
+        tgo.Position = new PointD3D(0.1 * Size.X, 0.1 * Size.Y, 0.1 * Size.Z);
       else
         tgo.Position = existingLegend.Position;
 
@@ -567,11 +571,11 @@ namespace Altaxo.Graph.Graph3D
       {
         if (info.IsShownByDefault)
         {
-          this.AxisStyles.CreateDefault(info, context);
+          AxisStyles.CreateDefault(info, context);
 
           if (info.HasTitleByDefault)
           {
-            this.SetAxisTitleString(info.Identifier, info.Identifier.ParallelAxisNumber == 0 ? "X axis" : info.Identifier.ParallelAxisNumber == 1 ? "Y axis" : "Z axis");
+            SetAxisTitleString(info.Identifier, info.Identifier.ParallelAxisNumber == 0 ? "X axis" : info.Identifier.ParallelAxisNumber == 1 ? "Y axis" : "Z axis");
           }
         }
       }
@@ -617,14 +621,14 @@ namespace Altaxo.Graph.Graph3D
     {
       get
       {
-        return this._scales.X is LinkedScale;
+        return _scales.X is LinkedScale;
       }
     }
 
     private bool EhXAxisInterrogateBoundaryChangedEvent()
     {
       // do nothing here, for the future we can decide to change the linked axis boundaries
-      return this.IsXAxisLinked;
+      return IsXAxisLinked;
     }
 
     /// <summary>
@@ -660,14 +664,14 @@ namespace Altaxo.Graph.Graph3D
     {
       get
       {
-        return this._scales.Y is LinkedScale;
+        return _scales.Y is LinkedScale;
       }
     }
 
     private bool EhYAxisInterrogateBoundaryChangedEvent()
     {
       // do nothing here, for the future we can decide to change the linked axis boundaries
-      return this.IsYAxisLinked;
+      return IsYAxisLinked;
     }
 
     #endregion Scale related
@@ -715,7 +719,7 @@ namespace Altaxo.Graph.Graph3D
     {
       AxisStyle style = _axisStyles[id];
       string oldtitle = (style == null || style.Title == null) ? null : style.Title.Text;
-      string newtitle = (value == null || value == String.Empty) ? null : value;
+      string newtitle = (value == null || value == string.Empty) ? null : value;
 
       if (newtitle != oldtitle)
       {
@@ -730,11 +734,11 @@ namespace Altaxo.Graph.Graph3D
         }
         else
         {
-          TextGraphic tg = new TextGraphic(this.GetPropertyContext());
+          var tg = new TextGraphic(this.GetPropertyContext());
 
           CSAxisInformation info = CoordinateSystem.GetAxisStyleInformation(id);
 
-          tg.SetParentSize(this.Size, false);
+          tg.SetParentSize(Size, false);
           SetDefaultAxisTitlePositionAndOrientation(tg, id, info);
           tg.Text = newtitle;
           _axisStyles.AxisStyleEnsured(id).Title = tg;
@@ -769,13 +773,12 @@ namespace Altaxo.Graph.Graph3D
         throw new NotImplementedException();
       }
 
-      VectorD3D normDirection;
       Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferredLabelSide);
-      var location = CoordinateSystem.GetPositionAndNormalizedDirection(new Logical3D(rx0, ry0, rz0), new Logical3D(rx1, ry1, rz1), relOnAxis, tdirection, out normDirection);
+      var location = CoordinateSystem.GetPositionAndNormalizedDirection(new Logical3D(rx0, ry0, rz0), new Logical3D(rx1, ry1, rz1), relOnAxis, tdirection, out var normDirection);
 
-      axisTitle.Location.ParentAnchorX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
-      axisTitle.Location.ParentAnchorY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
-      axisTitle.Location.ParentAnchorZ = RADouble.NewRel(location.Z / this.Size.Z); // set the z anchor of the parent
+      axisTitle.Location.ParentAnchorX = RADouble.NewRel(location.X / Size.X); // set the x anchor of the parent
+      axisTitle.Location.ParentAnchorY = RADouble.NewRel(location.Y / Size.Y); // set the y anchor of the parent
+      axisTitle.Location.ParentAnchorZ = RADouble.NewRel(location.Z / Size.Z); // set the z anchor of the parent
 
       double distance = 0;
       AxisStyle axisStyle = _axisStyles[id];
@@ -793,7 +796,7 @@ namespace Altaxo.Graph.Graph3D
       axisTitle.Location.LocalAnchorY = normDirection.Z == 0 ? RADouble.NewRel(0.5) : normDirection.Z < 0 ? RADouble.NewRel(1) : RADouble.NewRel(0);
       axisTitle.Location.LocalAnchorZ = normDirection.Y == 0 ? RADouble.NewRel(0.5) : normDirection.Y < 0 ? RADouble.NewRel(1) : RADouble.NewRel(0);
 
-      VectorD3D scaleFont = new VectorD3D(1, 1, 1.4);
+      var scaleFont = new VectorD3D(1, 1, 1.4);
 
       distance += Math.Abs(scaleFont.X * normDirection.X) * labelFontSize;
       distance += Math.Abs(scaleFont.Y * normDirection.Y) * labelFontSize;
@@ -942,7 +945,7 @@ namespace Altaxo.Graph.Graph3D
     {
       // first update out direct childs
       if (null != CoordinateSystem)
-        _coordinateSystem = _coordinateSystem.WithLayerSize(this.Size);
+        _coordinateSystem = _coordinateSystem.WithLayerSize(Size);
 
       base.OnCachedResultingSizeChanged();
     }
@@ -1008,7 +1011,7 @@ namespace Altaxo.Graph.Graph3D
         using (var suspendToken = _scales.X.DataBoundsObject.SuspendGetToken())
         {
           _scales.X.DataBoundsObject.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             var paXB = pa as IXBoundsHolder;
             if (null != paXB)
@@ -1032,7 +1035,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     protected void InitializeXScaleDataBounds()
     {
-      if (null == this.PlotItems)
+      if (null == PlotItems)
         return; // can happen during deserialization
 
       var scaleBounds = _scales.X.DataBoundsObject;
@@ -1048,7 +1051,7 @@ namespace Altaxo.Graph.Graph3D
         using (var suspendToken = scaleBounds.SuspendGetToken())
         {
           scaleBounds.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             if (pa is IXBoundsHolder)
             {
@@ -1086,7 +1089,7 @@ namespace Altaxo.Graph.Graph3D
         using (var suspendToken = _scales.Y.DataBoundsObject.SuspendGetToken())
         {
           _scales.Y.DataBoundsObject.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             var paYB = pa as IYBoundsHolder;
             if (null != paYB)
@@ -1110,7 +1113,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     protected void InitializeYScaleDataBounds()
     {
-      if (null == this.PlotItems)
+      if (null == PlotItems)
         return; // can happen during deserialization
 
       var scaleBounds = _scales.Y.DataBoundsObject;
@@ -1127,7 +1130,7 @@ namespace Altaxo.Graph.Graph3D
         using (var suspendToken = scaleBounds.SuspendGetToken())
         {
           scaleBounds.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             if (pa is IYBoundsHolder)
             {
@@ -1167,7 +1170,7 @@ namespace Altaxo.Graph.Graph3D
         using (var suspendToken = _scales[2].DataBoundsObject.SuspendGetToken())
         {
           _scales[2].DataBoundsObject.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             var paZB = pa as IZBoundsHolder;
             if (null != paZB)
@@ -1191,7 +1194,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     protected void InitializeZScaleDataBounds()
     {
-      if (null == this.PlotItems)
+      if (null == PlotItems)
         return; // can happen during deserialization
 
       var scaleBounds = _scales[2].DataBoundsObject;
@@ -1208,7 +1211,7 @@ namespace Altaxo.Graph.Graph3D
         using (var suspendToken = scaleBounds.SuspendGetToken())
         {
           scaleBounds.Reset();
-          foreach (IGPlotItem pa in this.PlotItems)
+          foreach (IGPlotItem pa in PlotItems)
           {
             if (pa is IZBoundsHolder)
             {
@@ -1238,7 +1241,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="e">The event data of the scale.</param>
     private void EhScaleInstanceChanged(ScaleInstanceChangedEventArgs e)
     {
-      if (this.IsDisposeInProgress)
+      if (IsDisposeInProgress)
         return;
 
       if (object.ReferenceEquals(_scales.X, e.NewScale))
@@ -1330,7 +1333,7 @@ namespace Altaxo.Graph.Graph3D
         if (object.ReferenceEquals(_coordinateSystem, value))
           return;
 
-        _coordinateSystem = value.WithLayerSize(this.Size);
+        _coordinateSystem = value.WithLayerSize(Size);
 
         if (null != AxisStyles)
           AxisStyles.UpdateCoordinateSystem(_coordinateSystem);

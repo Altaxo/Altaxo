@@ -134,13 +134,17 @@ namespace Poly2Tri
     {
       AdvancingFrontNode head, tail, middle;
       // Initial triangle
-      DelaunayTriangle iTriangle = new DelaunayTriangle(Points[0], Tail, Head);
+      var iTriangle = new DelaunayTriangle(Points[0], Tail, Head);
       Triangles.Add(iTriangle);
 
-      head = new AdvancingFrontNode(iTriangle.Points[1]);
-      head.Triangle = iTriangle;
-      middle = new AdvancingFrontNode(iTriangle.Points[0]);
-      middle.Triangle = iTriangle;
+      head = new AdvancingFrontNode(iTriangle.Points[1])
+      {
+        Triangle = iTriangle
+      };
+      middle = new AdvancingFrontNode(iTriangle.Points[0])
+      {
+        Triangle = iTriangle
+      };
       tail = new AdvancingFrontNode(iTriangle.Points[2]);
 
       Front = new AdvancingFront(head, tail);
@@ -194,8 +198,8 @@ namespace Poly2Tri
 
       double deltaX = ALPHA * (xmax - xmin);
       double deltaY = ALPHA * (ymax - ymin);
-      TriangulationPoint p1 = new TriangulationPoint(xmax + deltaX, ymin - deltaY);
-      TriangulationPoint p2 = new TriangulationPoint(xmin - deltaX, ymin - deltaY);
+      var p1 = new TriangulationPoint(xmax + deltaX, ymin - deltaY);
+      var p2 = new TriangulationPoint(xmin - deltaX, ymin - deltaY);
 
       Head = p1;
       Tail = p2;

@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
@@ -33,8 +35,6 @@ using Altaxo.Graph.Plot.Groups;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -246,7 +246,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public void InitializeFillDirectionChoices()
     {
       _areaFillDirectionChoices = new SelectableListNodeList();
-      IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
+      var layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
       if (layer != null)
       {
         foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.FillDirection }))

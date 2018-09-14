@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -43,7 +43,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        KohlrauschDecay s = (KohlrauschDecay)obj;
+        var s = (KohlrauschDecay)obj;
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -61,7 +61,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        KohlrauschDecay s = (KohlrauschDecay)obj;
+        var s = (KohlrauschDecay)obj;
         info.AddValue("NumberOfRelaxations", s._numberOfRelaxations);
         info.AddValue("LogarithmizeResult", s._logarithmizeResult);
       }

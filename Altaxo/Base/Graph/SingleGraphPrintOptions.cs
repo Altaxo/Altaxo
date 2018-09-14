@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Graph
 {
@@ -95,14 +95,14 @@ namespace Altaxo.Graph
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._fitGraphToPrintIfSmaller = from._fitGraphToPrintIfSmaller;
-      this._fitGraphToPrintIfLarger = from._fitGraphToPrintIfLarger;
-      this._useFixedZoomFactor = from._useFixedZoomFactor;
-      this._zoomFactor = from._zoomFactor;
-      this._tilePages = from._tilePages;
-      this._rotatePageAutomatically = from._rotatePageAutomatically;
-      this._printCropMarks = from._printCropMarks;
-      this._printLocation = from._printLocation;
+      _fitGraphToPrintIfSmaller = from._fitGraphToPrintIfSmaller;
+      _fitGraphToPrintIfLarger = from._fitGraphToPrintIfLarger;
+      _useFixedZoomFactor = from._useFixedZoomFactor;
+      _zoomFactor = from._zoomFactor;
+      _tilePages = from._tilePages;
+      _rotatePageAutomatically = from._rotatePageAutomatically;
+      _printCropMarks = from._printCropMarks;
+      _printLocation = from._printLocation;
     }
 
     public object Clone()
@@ -250,19 +250,19 @@ namespace Altaxo.Graph
       }
 
       zoom = 1;
-      if (this.UseFixedZoomFactor)
+      if (UseFixedZoomFactor)
       {
-        zoom = (float)this.ZoomFactor;
+        zoom = (float)ZoomFactor;
       }
-      else if (this.FitGraphToPrintIfSmaller || this.FitGraphToPrintIfLarger)
+      else if (FitGraphToPrintIfSmaller || FitGraphToPrintIfLarger)
       {
         float zoomx = MarginBounds.Width / graphSize.Width;
         float zoomy = MarginBounds.Height / graphSize.Height;
-        if (zoomx > 1 && zoomy > 1 && this.FitGraphToPrintIfSmaller)
+        if (zoomx > 1 && zoomy > 1 && FitGraphToPrintIfSmaller)
         {
           zoom = Math.Min(zoomx, zoomy);
         }
-        else if ((zoomx < 1 || zoomy < 1) && this.FitGraphToPrintIfLarger)
+        else if ((zoomx < 1 || zoomy < 1) && FitGraphToPrintIfLarger)
         {
           zoom = Math.Min(zoomx, zoomy);
         }
@@ -272,7 +272,7 @@ namespace Altaxo.Graph
 
       // First the location where to start from
       startLocationOnPage = PointF.Empty;
-      switch (this.PrintLocation)
+      switch (PrintLocation)
       {
         case SingleGraphPrintLocation.PrintableAreaLeftUpper:
           startLocationOnPage = MarginBounds.Location;

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Lighting
 {

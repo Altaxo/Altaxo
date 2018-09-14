@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
+using Altaxo.Geometry;
 
 namespace Altaxo.Worksheet
 {
@@ -98,7 +98,7 @@ namespace Altaxo.Worksheet
 
       //int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.RowHeaderStyle.Height));
       //return FirstVisibleTableRow + Math.Max(0,firstTotRow-RemainingEnabledPropertyColumns);
-      int firstVis = (int)Math.Floor((top - posOfDataRow0) / (double)layout.RowHeaderStyle.Height);
+      int firstVis = (int)Math.Floor((top - posOfDataRow0) / layout.RowHeaderStyle.Height);
       return (firstVis < 0 ? 0 : firstVis) + Math.Max(0, VertScrollPos);
     }
 
@@ -117,8 +117,8 @@ namespace Altaxo.Worksheet
       if (top < posOfDataRow0)
         top = posOfDataRow0;
 
-      int firstRow = (int)Math.Floor((top - posOfDataRow0) / (double)layout.RowHeaderStyle.Height);
-      int lastRow = (int)Math.Ceiling((bottom - posOfDataRow0) / (double)layout.RowHeaderStyle.Height) - 1;
+      int firstRow = (int)Math.Floor((top - posOfDataRow0) / layout.RowHeaderStyle.Height);
+      int lastRow = (int)Math.Ceiling((bottom - posOfDataRow0) / layout.RowHeaderStyle.Height) - 1;
       return Math.Max(0, 1 + lastRow - firstRow);
     }
 
@@ -139,8 +139,8 @@ namespace Altaxo.Worksheet
       if (top < posOfDataRow0)
         top = posOfDataRow0;
 
-      int firstRow = (int)Math.Floor((top - posOfDataRow0) / (double)layout.RowHeaderStyle.Height);
-      int lastRow = (int)Math.Floor((bottom - posOfDataRow0) / (double)layout.RowHeaderStyle.Height) - 1;
+      int firstRow = (int)Math.Floor((top - posOfDataRow0) / layout.RowHeaderStyle.Height);
+      int lastRow = (int)Math.Floor((bottom - posOfDataRow0) / layout.RowHeaderStyle.Height) - 1;
       return Math.Max(0, 1 + lastRow - firstRow);
     }
 
@@ -176,7 +176,7 @@ namespace Altaxo.Worksheet
       if (VertScrollPos >= 0 || !layout.ShowPropertyColumns)
         return -1;
 
-      int firstTotRow = (int)Math.Max(0, Math.Floor((top - layout.ColumnHeaderStyle.Height) / (double)layout.PropertyColumnHeaderStyle.Height));
+      int firstTotRow = (int)Math.Max(0, Math.Floor((top - layout.ColumnHeaderStyle.Height) / layout.PropertyColumnHeaderStyle.Height));
       return firstTotRow + GetFirstVisiblePropertyColumn(layout, VertScrollPos);
     }
 
@@ -194,8 +194,8 @@ namespace Altaxo.Worksheet
     {
       if (layout.ShowPropertyColumns)
       {
-        int firstTotRow = (int)Math.Max(0, Math.Floor((top - layout.ColumnHeaderStyle.Height) / (double)layout.PropertyColumnHeaderStyle.Height));
-        int lastTotRow = (int)Math.Ceiling((bottom - layout.ColumnHeaderStyle.Height) / (double)layout.PropertyColumnHeaderStyle.Height) - 1;
+        int firstTotRow = (int)Math.Max(0, Math.Floor((top - layout.ColumnHeaderStyle.Height) / layout.PropertyColumnHeaderStyle.Height));
+        int lastTotRow = (int)Math.Ceiling((bottom - layout.ColumnHeaderStyle.Height) / layout.PropertyColumnHeaderStyle.Height) - 1;
         int maxPossRows = Math.Max(0, GetRemainingEnabledPropertyColumns(layout, VertScrollPos) - firstTotRow);
         return Math.Min(maxPossRows, Math.Max(0, 1 + lastTotRow - firstTotRow));
       }
@@ -219,8 +219,8 @@ namespace Altaxo.Worksheet
     {
       if (layout.ShowPropertyColumns)
       {
-        int firstTotRow = (int)Math.Max(0, Math.Floor((top - layout.ColumnHeaderStyle.Height) / (double)layout.PropertyColumnHeaderStyle.Height));
-        int lastTotRow = (int)Math.Floor((bottom - layout.ColumnHeaderStyle.Height) / (double)layout.PropertyColumnHeaderStyle.Height) - 1;
+        int firstTotRow = (int)Math.Max(0, Math.Floor((top - layout.ColumnHeaderStyle.Height) / layout.PropertyColumnHeaderStyle.Height));
+        int lastTotRow = (int)Math.Floor((bottom - layout.ColumnHeaderStyle.Height) / layout.PropertyColumnHeaderStyle.Height) - 1;
         int maxPossRows = Math.Max(0, GetRemainingEnabledPropertyColumns(layout, VertScrollPos) - firstTotRow);
         return Math.Min(maxPossRows, Math.Max(0, 1 + lastTotRow - firstTotRow));
       }
@@ -393,8 +393,8 @@ namespace Altaxo.Worksheet
 
     public static RectangleD2D GetCoordinatesOfDataCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
     {
-      double x, y, w, h;
-      GetXCoordinatesOfColumn(nCol, layout, HorzScrollPos, out x, out w);
+      double y, h;
+      GetXCoordinatesOfColumn(nCol, layout, HorzScrollPos, out var x, out var w);
 
       y = GetTopCoordinateOfTableRow(nRow, layout, VertScrollPos);
       h = layout.RowHeaderStyle.Height;
@@ -403,8 +403,8 @@ namespace Altaxo.Worksheet
 
     public static RectangleD2D GetCoordinatesOfPropertyCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
     {
-      double x, y, w, h;
-      GetXCoordinatesOfColumn(nRow, layout, HorzScrollPos, out x, out w);
+      double y, h;
+      GetXCoordinatesOfColumn(nRow, layout, HorzScrollPos, out var x, out var w);
 
       y = GetTopCoordinateOfPropertyColumn(nCol, layout, VertScrollPos);
       h = layout.PropertyColumnHeaderStyle.Height;
@@ -477,7 +477,7 @@ namespace Altaxo.Worksheet
       if (positionY < verticalPositionOfFirstVisibleDataRow && visiblePropertyColumns > 0)
       {
         // calculate the raw row number
-        int rawrow = (int)Math.Floor((positionY - layout.ColumnHeaderStyle.Height) / (double)layout.PropertyColumnHeaderStyle.Height);
+        int rawrow = (int)Math.Floor((positionY - layout.ColumnHeaderStyle.Height) / layout.PropertyColumnHeaderStyle.Height);
 
         top = layout.ColumnHeaderStyle.Height + rawrow * layout.PropertyColumnHeaderStyle.Height;
         height = layout.PropertyColumnHeaderStyle.Height;
@@ -487,7 +487,7 @@ namespace Altaxo.Worksheet
       }
       else
       {
-        int rawrow = (int)Math.Floor((positionY - verticalPositionOfFirstVisibleDataRow) / (double)layout.RowHeaderStyle.Height);
+        int rawrow = (int)Math.Floor((positionY - verticalPositionOfFirstVisibleDataRow) / layout.RowHeaderStyle.Height);
 
         top = verticalPositionOfFirstVisibleDataRow + rawrow * layout.RowHeaderStyle.Height;
         height = layout.RowHeaderStyle.Height;
@@ -506,11 +506,9 @@ namespace Altaxo.Worksheet
     /// <param name="VertScrollPos">Value of the vertical scroll bar.</param>
     public static AreaInfo GetAreaType(double positionX, double positionY, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
     {
-      bool bIsPropertyColumn = false;
-      double left, top, width, height; // coordinates of clicked cell
-                                       //var _clickedCellRectangle = new Rect(0,0,0,0);
-      var hittedColumn = GetColumnNumber(positionX, layout, HorzScrollPos, out left, out width);
-      var hittedRow = GetRowNumber(positionY, layout, VertScrollPos, out top, out height, out bIsPropertyColumn);
+      //var _clickedCellRectangle = new Rect(0,0,0,0);
+      var hittedColumn = GetColumnNumber(positionX, layout, HorzScrollPos, out var left, out var width);
+      var hittedRow = GetRowNumber(positionY, layout, VertScrollPos, out var top, out var height, out var bIsPropertyColumn);
       AreaType hittedAreaType;
 
       if (bIsPropertyColumn)
@@ -541,7 +539,7 @@ namespace Altaxo.Worksheet
           hittedAreaType = AreaType.OutsideAll;
       }
 
-      AreaInfo result = new AreaInfo()
+      var result = new AreaInfo()
       {
         ColumnNumber = hittedColumn,
         RowNumber = hittedRow,

@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {

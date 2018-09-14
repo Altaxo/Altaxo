@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
-using Altaxo.Serialization.Xml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
+using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Drawing
 {
@@ -101,7 +101,7 @@ namespace Altaxo.Drawing
       BuiltinDefault = builtinDefaultList;
       _allLists.Add(BuiltinDefault.Name, EntryValueCreator(BuiltinDefault, Main.ItemDefinitionLevel.Builtin));
 
-      Altaxo.Serialization.Xml.XmlStreamDeserializationInfo.InstanceCreated += this.EhDeserializationInfoCreated; // this is save because the event is a weak event
+      Altaxo.Serialization.Xml.XmlStreamDeserializationInfo.InstanceCreated += EhDeserializationInfoCreated; // this is save because the event is a weak event
     }
 
     #region ListAdded event
@@ -273,8 +273,7 @@ namespace Altaxo.Drawing
     /// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
     protected bool InternalTryRegisterList(TList instance, Main.ItemDefinitionLevel level, out TList storedList, bool fireAddEvent)
     {
-      string nameOfExistingGroup;
-      if (TryGetListByMembers(instance, instance.Name, out nameOfExistingGroup)) // if a group with such a list already exist
+      if (TryGetListByMembers(instance, instance.Name, out var nameOfExistingGroup)) // if a group with such a list already exist
       {
         if (nameOfExistingGroup != instance.Name) // if it has the same list, but a different name, do nothing at all
         {
@@ -322,8 +321,7 @@ namespace Altaxo.Drawing
       if (string.IsNullOrEmpty(listName))
         throw new ArgumentNullException(nameof(listName));
 
-      string nameOfExistingGroup;
-      if (TryGetListByMembers(listItems, listName, out nameOfExistingGroup)) // if a group with such a list already exist
+      if (TryGetListByMembers(listItems, listName, out var nameOfExistingGroup)) // if a group with such a list already exist
       {
         storedList = _allLists[nameOfExistingGroup].List;
         return false;
@@ -371,8 +369,7 @@ namespace Altaxo.Drawing
     public bool TryGetListByMembers(IEnumerable<TItem> symbols, string nameHint, out string nameOfExistingList)
     {
       // fast lookup: first test if a list with the hinted name exists and has the same items
-      TListManagerEntry existingEntry;
-      if (!string.IsNullOrEmpty(nameHint) && _allLists.TryGetValue(nameHint, out existingEntry) && existingEntry.List.IsStructuralEquivalentTo(symbols))
+      if (!string.IsNullOrEmpty(nameHint) && _allLists.TryGetValue(nameHint, out var existingEntry) && existingEntry.List.IsStructuralEquivalentTo(symbols))
       {
         nameOfExistingList = existingEntry.List.Name;
         return true;
@@ -411,7 +408,7 @@ namespace Altaxo.Drawing
       get
       {
         if (null == _deserializationRenameDictionaryKey)
-          _deserializationRenameDictionaryKey = this.GetType().FullName + "_RenameDictionary";
+          _deserializationRenameDictionaryKey = GetType().FullName + "_RenameDictionary";
         return _deserializationRenameDictionaryKey;
       }
     }

@@ -93,12 +93,12 @@ namespace Altaxo.Gui.Workbench
     public PadDescriptor(Type padType, string title, string icon)
     {
       this.padType = padType ?? throw new ArgumentNullException(nameof(padType));
-      this.@class = padType.FullName;
+      @class = padType.FullName;
       this.title = title ?? throw new ArgumentNullException(nameof(title));
       this.icon = icon ?? throw new ArgumentNullException(nameof(icon));
-      this.category = "none";
-      this.shortcut = "";
-      this.serviceInterface = null;
+      category = "none";
+      shortcut = "";
+      serviceInterface = null;
     }
 
     /// <summary>
@@ -249,7 +249,7 @@ namespace Altaxo.Gui.Workbench
 
     public override string ToString()
     {
-      return "[PadDescriptor " + this.Class + "]";
+      return "[PadDescriptor " + Class + "]";
     }
   }
 }

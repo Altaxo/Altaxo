@@ -65,7 +65,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
       if (endPoint <= 0)
         endPoint = 1e-3f;
 
-      GraphicsPath hPath = new GraphicsPath();
+      var hPath = new GraphicsPath();
 
       var r = endPoint / (2 * Math.Sin(_designAngle * (Math.PI / 180)));
       var b = r - r * Math.Cos(_designAngle * (Math.PI / 180));
@@ -83,7 +83,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
         (float)(2 * r), (float)(2 * r),
         (float)(90 + _designAngle), (float)(-2 * _designAngle));
 
-      CustomLineCap clone = new CustomLineCap(null, hPath); // we set the stroke path only
+      var clone = new CustomLineCap(null, hPath); // we set the stroke path only
       clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
       return clone;
     }

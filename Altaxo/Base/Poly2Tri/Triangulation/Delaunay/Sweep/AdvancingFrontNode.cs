@@ -47,7 +47,7 @@ namespace Poly2Tri
 
     public AdvancingFrontNode(TriangulationPoint point)
     {
-      this.Point = point;
+      Point = point;
       Value = point.X;
     }
 

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -54,9 +54,9 @@ namespace Altaxo.Data
 
     public TextColumn(TextColumn from)
     {
-      this._count = from._count;
-      this._capacity = from._capacity;
-      this._data = null == from._data ? null : (string[])from._data.Clone();
+      _count = from._count;
+      _capacity = from._capacity;
+      _data = null == from._data ? null : (string[])from._data.Clone();
     }
 
     public override object Clone()
@@ -71,7 +71,7 @@ namespace Altaxo.Data
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.TextColumn s = (Altaxo.Data.TextColumn)obj;
+        var s = (Altaxo.Data.TextColumn)obj;
         // serialize the base class
         info.AddBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn));
 
@@ -120,7 +120,7 @@ namespace Altaxo.Data
     {
       get
       {
-        int len = this.Count;
+        int len = Count;
         string[] arr = new string[len];
         System.Array.Copy(_data, 0, arr, 0, len);
         return arr;
@@ -129,9 +129,9 @@ namespace Altaxo.Data
       set
       {
         _data = (string[])value.Clone();
-        this._count = _data.Length;
-        this._capacity = _data.Length;
-        this.EhSelfChanged(0, _count, true);
+        _count = _data.Length;
+        _capacity = _data.Length;
+        EhSelfChanged(0, _count, true);
       }
     }
 
@@ -190,7 +190,7 @@ namespace Altaxo.Data
           if (o == null)
             throw new ArgumentNullException("o");
           else
-            throw new ArgumentException("Try to copy " + o.GetType() + " to " + this.GetType(), "o"); // throw exception
+            throw new ArgumentException("Try to copy " + o.GetType() + " to " + GetType(), "o"); // throw exception
         }
 
         TrimEmptyElementsAtEnd();
@@ -226,7 +226,7 @@ namespace Altaxo.Data
     public override void SetValueAt(int i, AltaxoVariant val)
     {
       if (val.IsTypeOrNull(AltaxoVariant.Content.VString))
-        this[i] = (string)val;
+        this[i] = val;
       else
         this[i] = val.ToString();
       // throw new ApplicationException("Error: Try to set " + this.TypeAndName + "[" + i + "] with " + val.ToString());
@@ -320,7 +320,7 @@ namespace Altaxo.Data
       if (nInsCount <= 0 || nInsBeforeColumn >= Count)
         return; // nothing to do
 
-      int newlen = this._count + nInsCount;
+      int newlen = _count + nInsCount;
       if (newlen > _capacity)
         Realloc(newlen);
 
@@ -331,8 +331,8 @@ namespace Altaxo.Data
       for (int i = nInsBeforeColumn + nInsCount - 1; i >= nInsBeforeColumn; i--)
         _data[i] = NullValue;
 
-      this._count = newlen;
-      this.EhSelfChanged(nInsBeforeColumn, _count, false);
+      _count = newlen;
+      EhSelfChanged(nInsBeforeColumn, _count, false);
     }
 
     public override void RemoveRows(int nDelFirstRow, int nDelCount)
@@ -354,7 +354,7 @@ namespace Altaxo.Data
       _count = i < _count ? i : _count; // m_Count can only decrease
 
       if (_count != prevCount) // raise a event only if something really changed
-        this.EhSelfChanged(nDelFirstRow, prevCount, true);
+        EhSelfChanged(nDelFirstRow, prevCount, true);
     }
 
     #region "Operators"
@@ -369,7 +369,7 @@ namespace Altaxo.Data
     public static Altaxo.Data.TextColumn operator +(Altaxo.Data.TextColumn c1, Altaxo.Data.TextColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
-      Altaxo.Data.TextColumn c3 = new Altaxo.Data.TextColumn(len);
+      var c3 = new Altaxo.Data.TextColumn(len);
       for (int i = 0; i < len; i++)
       {
         c3._data[i] = c1._data[i] + c2._data[i];
@@ -381,7 +381,7 @@ namespace Altaxo.Data
     public static Altaxo.Data.TextColumn operator +(Altaxo.Data.TextColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
-      Altaxo.Data.TextColumn c3 = new Altaxo.Data.TextColumn(len);
+      var c3 = new Altaxo.Data.TextColumn(len);
       for (int i = 0; i < len; i++)
       {
         c3._data[i] = c1._data[i] + c2.GetValueDirect(i).ToString();
@@ -395,7 +395,7 @@ namespace Altaxo.Data
     public static Altaxo.Data.TextColumn operator +(Altaxo.Data.TextColumn c1, Altaxo.Data.DateTimeColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
-      Altaxo.Data.TextColumn c3 = new Altaxo.Data.TextColumn(len);
+      var c3 = new Altaxo.Data.TextColumn(len);
       for (int i = 0; i < len; i++)
       {
         c3._data[i] = c1._data[i] + c2.GetValueDirect(i).ToString();

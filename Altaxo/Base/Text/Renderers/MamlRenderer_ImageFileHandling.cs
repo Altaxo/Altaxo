@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Markdig.Renderers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +29,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Altaxo.Collections;
+using Markdig.Renderers;
 
 namespace Altaxo.Text.Renderers
 {

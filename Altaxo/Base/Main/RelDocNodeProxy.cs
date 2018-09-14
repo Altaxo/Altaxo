@@ -116,14 +116,14 @@ namespace Altaxo.Main
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RelDocNodeProxy s = (RelDocNodeProxy)obj;
+        var s = (RelDocNodeProxy)obj;
         if (!(s._parent != null))
           throw new InvalidProgramException();
         Main.RelativeDocumentPath path;
         var docNode = s.InternalDocNode;
         if (null != docNode)
         {
-          path = Main.RelativeDocumentPath.GetRelativePathFromTo(s._parent, (Main.IDocumentLeafNode)docNode);
+          path = Main.RelativeDocumentPath.GetRelativePathFromTo(s._parent, docNode);
         }
         else
         {
@@ -153,8 +153,8 @@ namespace Altaxo.Main
 
     private void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
     {
-      if (this.Document != null || isFinallyCall)
-        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
+      if (Document != null || isFinallyCall)
+        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhXmlDeserializationFinished);
     }
 
     #endregion Serialization
@@ -210,8 +210,8 @@ namespace Altaxo.Main
     /// <param name="parentNode">The parent node of this proxy.</param>
     public RelDocNodeProxy(RelDocNodeProxy from, bool copyPathOnly, Main.IDocumentNode parentNode)
     {
-      this._parent = parentNode;
-      this._docNodePath = from._docNodePath.Clone();
+      _parent = parentNode;
+      _docNodePath = from._docNodePath.Clone();
 
       if (!copyPathOnly && null != from.Document)
         InternalSetDocNode(from.Document, parentNode);
@@ -250,7 +250,7 @@ namespace Altaxo.Main
       set
       {
         if (!IsValidDocument(value))
-          throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
+          throw new ArgumentException("This type of document is not allowed for the proxy of type " + GetType().ToString());
         if (null == _parent)
           throw new InvalidOperationException("Parent of this node must be set in order to set the docnode.");
         InternalSetDocNode(value, _parent);
@@ -340,11 +340,11 @@ namespace Altaxo.Main
     protected void InternalSetDocNode(Main.IDocumentLeafNode value, IDocumentLeafNode parentNode)
     {
       if (!IsValidDocument(value))
-        throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
+        throw new ArgumentException("This type of document is not allowed for the proxy of type " + GetType().ToString());
       if (null == parentNode)
         throw new InvalidOperationException("Parent of this node must be set in order to set the docnode.");
 
-      var oldValue = this.InternalDocNode;
+      var oldValue = InternalDocNode;
       if (object.ReferenceEquals(oldValue, value))
         return; // Nothing to do
 
@@ -440,8 +440,7 @@ namespace Altaxo.Main
       var docNode = InternalDocNode;
       if (docNode == null)
       {
-        bool wasCompletelyResolved;
-        var node = Main.RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, _parent, out wasCompletelyResolved);
+        var node = Main.RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, _parent, out var wasCompletelyResolved);
         if (null == node)
         {
           // this can happen only if we dived to deep with our relative path, in this case we should use the root node, which should be of type AltaxoDocument
@@ -500,8 +499,7 @@ namespace Altaxo.Main
           // thus trying to get an actual document path here is in must cases unsuccessfull. We have to rely on our stored path, and that it was always updated!
           // the only case were it is successfull if a new node immediately replaces an old document node
 
-          bool wasResolvedCompletely;
-          var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out wasResolvedCompletely);
+          var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out var wasResolvedCompletely);
           if (wasResolvedCompletely)
           {
             InternalSetDocNode(node, _parent);
@@ -611,8 +609,7 @@ namespace Altaxo.Main
 				Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_TunneledEvent");
 #endif
 
-        bool wasResolvedCompletely;
-        var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);
+        var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out var wasResolvedCompletely);
         if (null == node)
           throw new InvalidProgramException(nameof(node) + " should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
@@ -653,9 +650,8 @@ namespace Altaxo.Main
       if (!(senderAsDocNode != null))
         throw new InvalidProgramException();
 
-      bool wasResolvedCompletely;
 
-      var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out wasResolvedCompletely);
+      var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out var wasResolvedCompletely);
       if (null == node)
         throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 

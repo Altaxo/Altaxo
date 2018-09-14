@@ -22,6 +22,10 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Drawing;
@@ -31,10 +35,6 @@ using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Axis;
 using Altaxo.Graph.Graph3D.Background;
 using Altaxo.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
@@ -184,8 +184,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       if (initData)
       {
         // Label sides
-        _labelSides = new Collections.SelectableListNodeList();
-        _labelSides.Add(new Collections.SelectableListNode("Automatic", null, null == _doc.LabelSide));
+        _labelSides = new Collections.SelectableListNodeList
+        {
+          new Collections.SelectableListNode("Automatic", null, null == _doc.LabelSide)
+        };
         var list = new List<Collections.SelectableListNode>();
         if (_doc.CachedAxisInformation != null)
         {
@@ -252,8 +254,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       _doc.OffsetZ = _view.OffsetZ;
       _doc.BackgroundStyle = _view.Background;
 
-      AltaxoVariant[] varVals;
-      if (GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressedLabelsByValue, out varVals))
+      if (GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressedLabelsByValue, out var varVals))
       {
         _doc.SuppressedLabels.ByValues.Clear();
         foreach (AltaxoVariant v in varVals)
@@ -262,8 +263,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       else
         return false;
 
-      int[] intVals;
-      if (GUIConversion.TryParseMultipleInt32(_view.SuppressedLabelsByNumber, out intVals))
+      if (GUIConversion.TryParseMultipleInt32(_view.SuppressedLabelsByNumber, out var intVals))
       {
         _doc.SuppressedLabels.ByNumbers.Clear();
         foreach (int v in intVals)

@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
-using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -51,8 +51,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public override IMultivariateCalibrationModel GetCalibrationModel(
       DataTable calibTable)
     {
-      PLS2CalibrationModel model;
-      Export(calibTable, out model);
+      Export(calibTable, out var model);
 
       return model;
     }
@@ -112,12 +111,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMultivariateCalibrationModel calibrationSet,
       DataTable table)
     {
-      PLS2CalibrationModel calib = (PLS2CalibrationModel)calibrationSet;
+      var calib = (PLS2CalibrationModel)calibrationSet;
 
       // store the x-loads - careful - they are horizontal in the matrix
       for (int i = 0; i < calib.XLoads.RowCount; i++)
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
 
         for (int j = 0; j < calib.XLoads.ColumnCount; j++)
           col[j] = calib.XLoads[i, j];
@@ -128,7 +127,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // now store the y-loads - careful - they are horizontal in the matrix
       for (int i = 0; i < calib.YLoads.RowCount; i++)
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
 
         for (int j = 0; j < calib.YLoads.ColumnCount; j++)
           col[j] = calib.YLoads[i, j];
@@ -139,7 +138,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // now store the weights - careful - they are horizontal in the matrix
       for (int i = 0; i < calib.XWeights.RowCount; i++)
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
 
         for (int j = 0; j < calib.XWeights.ColumnCount; j++)
           col[j] = calib.XWeights[i, j];
@@ -149,7 +148,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       // now store the cross product vector - it is a horizontal vector
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
 
         for (int j = 0; j < calib.CrossProduct.ColumnCount; j++)
           col[j] = calib.CrossProduct[0, j];
@@ -170,18 +169,19 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numberOfY = GetNumberOfY(table);
       int numberOfFactors = GetNumberOfFactors(table);
 
-      calibrationSet = new PLS2CalibrationModel();
-
-      calibrationSet.NumberOfX = numberOfX;
-      calibrationSet.NumberOfY = numberOfY;
-      calibrationSet.NumberOfFactors = numberOfFactors;
-      MultivariatePreprocessingModel preprocessSet = new MultivariatePreprocessingModel();
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      calibrationSet = new PLS2CalibrationModel
+      {
+        NumberOfX = numberOfX,
+        NumberOfY = numberOfY,
+        NumberOfFactors = numberOfFactors
+      };
+      var preprocessSet = new MultivariatePreprocessingModel();
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo != null)
         preprocessSet.PreprocessOptions = plsMemo.SpectralPreprocessing;
       calibrationSet.SetPreprocessingModel(preprocessSet);
 
-      Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
+      var sel = new Altaxo.Collections.AscendingIntegerCollection();
       Altaxo.Data.DataColumn col;
 
       col = table.DataColumns.TryGetColumn(GetXOfX_ColumnName());

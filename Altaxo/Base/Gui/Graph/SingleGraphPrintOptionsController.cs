@@ -170,14 +170,14 @@ namespace Altaxo.Gui.Graph
       {
         if (null != _view)
         {
-          _view.PrintLocationChanged -= this.EhPrintLocationChanged;
-          _view.FitGraphToPrintIfLargerChanged -= this.EhFitGraphToPrintIfLargerChanged;
-          _view.FitGraphToPrintIfSmallerChanged -= this.EhFitGraphToPrintIfSmallerChanged;
-          _view.PrintCropMarksChanged -= this.EhPrintCropMarksChanged;
-          _view.RotatePageAutomaticallyChanged -= this.EhRotatePageAutomaticallyChanged;
-          _view.TilePagesChanged -= this.EhTilePagesChanged;
-          _view.UseFixedZoomFactorChanged -= this.EhUseFixedZoomFactorChanged;
-          _view.ZoomFactorChanged -= this.EhZoomFactorChanged;
+          _view.PrintLocationChanged -= EhPrintLocationChanged;
+          _view.FitGraphToPrintIfLargerChanged -= EhFitGraphToPrintIfLargerChanged;
+          _view.FitGraphToPrintIfSmallerChanged -= EhFitGraphToPrintIfSmallerChanged;
+          _view.PrintCropMarksChanged -= EhPrintCropMarksChanged;
+          _view.RotatePageAutomaticallyChanged -= EhRotatePageAutomaticallyChanged;
+          _view.TilePagesChanged -= EhTilePagesChanged;
+          _view.UseFixedZoomFactorChanged -= EhUseFixedZoomFactorChanged;
+          _view.ZoomFactorChanged -= EhZoomFactorChanged;
         }
 
         _view = value as ISingleGraphPrintOptionsView;
@@ -186,14 +186,14 @@ namespace Altaxo.Gui.Graph
         {
           Initialize(false);
 
-          _view.PrintLocationChanged += this.EhPrintLocationChanged;
-          _view.FitGraphToPrintIfLargerChanged += this.EhFitGraphToPrintIfLargerChanged;
-          _view.FitGraphToPrintIfSmallerChanged += this.EhFitGraphToPrintIfSmallerChanged;
-          _view.PrintCropMarksChanged += this.EhPrintCropMarksChanged;
-          _view.RotatePageAutomaticallyChanged += this.EhRotatePageAutomaticallyChanged;
-          _view.TilePagesChanged += this.EhTilePagesChanged;
-          _view.UseFixedZoomFactorChanged += this.EhUseFixedZoomFactorChanged;
-          _view.ZoomFactorChanged += this.EhZoomFactorChanged;
+          _view.PrintLocationChanged += EhPrintLocationChanged;
+          _view.FitGraphToPrintIfLargerChanged += EhFitGraphToPrintIfLargerChanged;
+          _view.FitGraphToPrintIfSmallerChanged += EhFitGraphToPrintIfSmallerChanged;
+          _view.PrintCropMarksChanged += EhPrintCropMarksChanged;
+          _view.RotatePageAutomaticallyChanged += EhRotatePageAutomaticallyChanged;
+          _view.TilePagesChanged += EhTilePagesChanged;
+          _view.UseFixedZoomFactorChanged += EhUseFixedZoomFactorChanged;
+          _view.ZoomFactorChanged += EhZoomFactorChanged;
         }
       }
     }

@@ -150,7 +150,7 @@ namespace Altaxo.Serialization.Ascii
       string sLine;
 
       stream.Position = 0;
-      System.IO.StreamReader sr = new System.IO.StreamReader(stream, System.Text.Encoding.Default, true);
+      var sr = new System.IO.StreamReader(stream, System.Text.Encoding.Default, true);
 
       bool reachingEOF = false;
       _headerLines = new List<string>();
@@ -269,9 +269,7 @@ namespace Altaxo.Serialization.Ascii
       // for each of the separation strategies, determine the maximum number of equal lines and the line with the highest score among the equal lines
       foreach (var analysisOption in _lineAnalysisOptionsToTest)
       {
-        int maxNumberOfEqualLines;
-        AsciiLineStructure mostFrequentLineStructure;
-        CalculateScoreOfLineAnalysisOption(analysisOption, _lineAnalysisOfBodyLines, out maxNumberOfEqualLines, out mostFrequentLineStructure);
+        CalculateScoreOfLineAnalysisOption(analysisOption, _lineAnalysisOfBodyLines, out var maxNumberOfEqualLines, out var mostFrequentLineStructure);
         if (null != mostFrequentLineStructure)
           _lineAnalysisOptionsScoring.Add(analysisOption, new NumberAndStructure() { NumberOfLines = maxNumberOfEqualLines, LineStructure = mostFrequentLineStructure });
       }
@@ -348,8 +346,10 @@ namespace Altaxo.Serialization.Ascii
       else // number of header lines was known before. Thus we have to analyze those lines, but only with the best separation strategy
       {
         _lineAnalysisOfHeaderLines = new List<AsciiLineAnalysis>();
-        var separationStrategiesToEvaluate = new List<AsciiLineAnalysisOption>();
-        separationStrategiesToEvaluate.Add(_highestScoredLineAnalysisOption);
+        var separationStrategiesToEvaluate = new List<AsciiLineAnalysisOption>
+        {
+          _highestScoredLineAnalysisOption
+        };
 
         for (int i = 0; i < _headerLines.Count; i++)
           _lineAnalysisOfHeaderLines.Add(new AsciiLineAnalysis(i, _headerLines[i], separationStrategiesToEvaluate));
@@ -388,7 +388,7 @@ namespace Altaxo.Serialization.Ascii
     public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IList<AsciiLineAnalysis> result, HashSet<int> excludeLineStructureHashes, out int maxNumberOfEqualLines, out AsciiLineStructure bestLine)
     {
       // Dictionary, Key is the hash of the line structure hash, Value is the number of lines that have this hash
-      Dictionary<int, int> numberOfLinesForLineStructureHash = new Dictionary<int, int>();
+      var numberOfLinesForLineStructureHash = new Dictionary<int, int>();
 
       bestLine = null;
       for (int i = 0; i < result.Count; i++)

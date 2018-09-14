@@ -105,7 +105,7 @@ namespace Altaxo.Graph
 
     public object Clone()
     {
-      return new LinearPartitioning(this._innerList);
+      return new LinearPartitioning(_innerList);
     }
 
     #region event handling
@@ -157,7 +157,7 @@ namespace Altaxo.Graph
 
       int i = -1;
       double position = 0;
-      double[] result = new double[this.Count];
+      double[] result = new double[Count];
       foreach (var x in this)
       {
         position += x.IsAbsolute ? x.Value : x.Value * absValuePerRelativeValue;

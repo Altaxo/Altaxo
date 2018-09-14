@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Worksheet.Viewing;
-using System;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -46,9 +46,10 @@ namespace Altaxo.Worksheet.Commands
 
       int newposition = int.MinValue;
 
-      IntegerValueInputController ivictrl = new IntegerValueInputController(0, "Please enter the new position (>=0):");
-
-      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      var ivictrl = new IntegerValueInputController(0, "Please enter the new position (>=0):")
+      {
+        Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator()
+      };
       if (Current.Gui.ShowDialog(ivictrl, "New row position", false))
       {
         newposition = ivictrl.EnteredContents;
@@ -104,7 +105,7 @@ namespace Altaxo.Worksheet.Commands
     public static void InsertDataRows(IWorksheetController ctrl, int rowBeforeToInsert)
     {
       // ask for the number of rows to insert
-      Altaxo.Gui.Common.IntegerValueInputController ictrl = new IntegerValueInputController(1, "Enter the number of rows to insert:");
+      var ictrl = new IntegerValueInputController(1, "Enter the number of rows to insert:");
       if (Current.Gui.ShowDialog(ictrl, "Insert rows", false))
         InsertDataRows(ctrl, rowBeforeToInsert, ictrl.EnteredContents);
     }

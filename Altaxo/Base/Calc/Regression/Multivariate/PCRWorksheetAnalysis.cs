@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
-using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -52,7 +52,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMultivariateCalibrationModel calibrationSet,
       DataTable table)
     {
-      PCRCalibrationModel calib = (PCRCalibrationModel)calibrationSet;
+      var calib = (PCRCalibrationModel)calibrationSet;
 
       int numFactors = calib.NumberOfFactors;
       int numberOfY = calib.NumberOfY;
@@ -61,7 +61,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // store the x-loads - careful - they are horizontal
       for (int i = 0; i < numFactors; i++)
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
 
         for (int j = 0; j < calib.XLoads.ColumnCount; j++)
           col[j] = calib.XLoads[i, j];
@@ -72,7 +72,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // now store the scores - careful - they are vertical in the matrix
       for (int i = 0; i < numFactors; i++)
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
 
         for (int j = 0; j < calib.XScores.RowCount; j++)
           col[j] = calib.XScores[j, i];
@@ -83,7 +83,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // now store the y-loads (this are the preprocessed y in this case
       for (int cn = 0; cn < numberOfY; cn++)
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < numberOfPoints; i++)
           col[i] = calib.YLoads[i, cn];
@@ -93,7 +93,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       // now store the cross product vector - it is a horizontal vector
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
 
         for (int j = 0; j < numFactors; j++)
           col[j] = calib.CrossProduct[j];
@@ -115,18 +115,19 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numberOfFactors = GetNumberOfFactors(table);
       int numberOfMeasurements = GetNumberOfMeasurements(table);
 
-      calibrationSet = new PCRCalibrationModel();
-
-      calibrationSet.NumberOfX = numberOfX;
-      calibrationSet.NumberOfY = numberOfY;
-      calibrationSet.NumberOfFactors = numberOfFactors;
-      MultivariatePreprocessingModel preprocessSet = new MultivariatePreprocessingModel();
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      calibrationSet = new PCRCalibrationModel
+      {
+        NumberOfX = numberOfX,
+        NumberOfY = numberOfY,
+        NumberOfFactors = numberOfFactors
+      };
+      var preprocessSet = new MultivariatePreprocessingModel();
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo != null)
         preprocessSet.PreprocessOptions = plsMemo.SpectralPreprocessing;
       calibrationSet.SetPreprocessingModel(preprocessSet);
 
-      Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
+      var sel = new Altaxo.Collections.AscendingIntegerCollection();
       Altaxo.Data.DataColumn col;
 
       col = table.DataColumns.TryGetColumn(GetXOfX_ColumnName());
@@ -201,8 +202,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public override IMultivariateCalibrationModel GetCalibrationModel(
       DataTable calibTable)
     {
-      PCRCalibrationModel model;
-      Export(calibTable, out model);
+      Export(calibTable, out var model);
       return model;
     }
 

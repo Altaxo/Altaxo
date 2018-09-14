@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Fourier;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Gui.Worksheet.Viewing;
-using System;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
         return;
 
-      Altaxo.Data.DoubleColumn col = (Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]];
+      var col = (Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]];
 
       Altaxo.Data.AnalysisRealFourierTransformationCommands.ShowRealFourierTransformDialog(col);
     }
@@ -82,13 +82,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
         proxy = new DataTableMatrixProxy(table, selectedDataRows, selectedDataColumns, selectedPropertyColumns);
 
         options = null != _lastUsedOptions ? (RealFourierTransformation2DOptions)_lastUsedOptions.Clone() : new RealFourierTransformation2DOptions();
-
-        double rowIncrementValue;
-        string rowIncrementMessage;
-        proxy.TryGetRowHeaderIncrement(out rowIncrementValue, out rowIncrementMessage);
-        double columnIncrementValue;
-        string columnIncrementMessage;
-        proxy.TryGetColumnHeaderIncrement(out columnIncrementValue, out columnIncrementMessage);
+        proxy.TryGetRowHeaderIncrement(out var rowIncrementValue, out var rowIncrementMessage);
+        proxy.TryGetColumnHeaderIncrement(out var columnIncrementValue, out var columnIncrementMessage);
 
         options.IsUserDefinedRowIncrementValue = false;
         options.RowIncrementValue = rowIncrementValue;
@@ -115,7 +110,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         ExecuteFouriertransformation2D(proxy, options, resultTable);
 
         // Create a DataSource
-        Altaxo.Worksheet.Commands.Analysis.FourierTransformation2DDataSource dataSource = new FourierTransformation2DDataSource(proxy, options, new Altaxo.Data.DataSourceImportOptions());
+        var dataSource = new FourierTransformation2DDataSource(proxy, options, new Altaxo.Data.DataSourceImportOptions());
         resultTable.DataSource = dataSource;
 
         Current.ProjectService.OpenOrCreateWorksheetForTable(resultTable);
@@ -140,27 +135,25 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       if (!options.IsUserDefinedRowIncrementValue)
       {
-        double rowIncrementValue;
-        string rowIncrementMessage;
-        matrixProxy.TryGetRowHeaderIncrement(out rowIncrementValue, out rowIncrementMessage);
+        matrixProxy.TryGetRowHeaderIncrement(out var rowIncrementValue, out var rowIncrementMessage);
         options.RowIncrementValue = rowIncrementValue;
         options.RowIncrementMessage = rowIncrementMessage;
       }
 
       if (!options.IsUserDefinedColumnIncrementValue)
       {
-        double columnIncrementValue;
-        string columnIncrementMessage;
-        matrixProxy.TryGetColumnHeaderIncrement(out columnIncrementValue, out columnIncrementMessage);
+        matrixProxy.TryGetColumnHeaderIncrement(out var columnIncrementValue, out var columnIncrementMessage);
         options.ColumnIncrementValue = columnIncrementValue;
         options.ColumnIncrementMessage = columnIncrementMessage;
       }
 
       var matrix = matrixProxy.GetMatrix((r, c) => new Altaxo.Calc.LinearAlgebra.DoubleMatrixInArray1DRowMajorRepresentation(r, c));
 
-      var fft = new Altaxo.Calc.Fourier.RealFourierTransformation2D(matrix, true);
-      fft.ColumnSpacing = options.RowIncrementValue;
-      fft.RowSpacing = options.ColumnIncrementValue;
+      var fft = new Altaxo.Calc.Fourier.RealFourierTransformation2D(matrix, true)
+      {
+        ColumnSpacing = options.RowIncrementValue,
+        RowSpacing = options.ColumnIncrementValue
+      };
 
       if (options.DataPretreatmentCorrectionOrder.HasValue)
       {
@@ -261,8 +254,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       Calc.Fourier.NativeFourierMethods.ConvolutionNonCyclic(arr1, arr2, result);
 
-      Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-      col.Array = result;
+      var col = new Altaxo.Data.DoubleColumn
+      {
+        Array = result
+      };
 
       dg.DataTable.DataColumns.Add(col, "Convolute");
 
@@ -305,8 +300,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       Calc.Fourier.NativeFourierMethods.CorrelationNonCyclic(arr1, arr2, result);
 
-      Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-      col.Array = result;
+      var col = new Altaxo.Data.DoubleColumn
+      {
+        Array = result
+      };
 
       dg.DataTable.DataColumns.Add(col, "Correlate");
 

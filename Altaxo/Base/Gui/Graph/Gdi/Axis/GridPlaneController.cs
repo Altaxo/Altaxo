@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.Drawing;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
@@ -60,17 +60,17 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         _grid1 = new XYGridStyleController() { UseDocumentCopy = UseDocument.Directly };
         _grid1.InitializeDocument(_doc.GridStyleFirst ?? new GridStyle() { ShowGrid = false });
         Current.Gui.FindAndAttachControlTo(_grid1);
-        ControlViewElement c1 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber1), _grid1, _grid1.ViewObject);
+        var c1 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber1), _grid1, _grid1.ViewObject);
 
         _grid2 = new XYGridStyleController() { UseDocumentCopy = UseDocument.Directly };
         _grid2.InitializeDocument(_doc.GridStyleSecond ?? new GridStyle() { ShowGrid = false });
         Current.Gui.FindAndAttachControlTo(_grid2);
-        ControlViewElement c2 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber2), _grid2, _grid2.ViewObject);
+        var c2 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber2), _grid2, _grid2.ViewObject);
 
         _background = new BrushControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
         _background.InitializeDocument(_doc.Background ?? BrushX.Empty);
         Current.Gui.FindAndAttachControlTo(_background);
-        ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
+        var c3 = new ControlViewElement("Background", _background, _background.ViewObject);
 
         _innerController = new MultiChildController(new ControlViewElement[] { c1, c2, c3 }, false);
       }

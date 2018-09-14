@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
-using System;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
@@ -143,8 +143,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public bool EhRowSpacingChanged(string val)
     {
-      double v;
-      if (!GUIConversion.IsDouble(val, out v))
+      if (!GUIConversion.IsDouble(val, out var v))
       {
         Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
         return true;
@@ -161,8 +160,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public bool EhColumnSpacingChanged(string val)
     {
-      double v;
-      if (!GUIConversion.IsDouble(val, out v))
+      if (!GUIConversion.IsDouble(val, out var v))
       {
         Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
         return true;
@@ -179,8 +177,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public bool EhTopMarginChanged(string val)
     {
-      double v;
-      if (!GUIConversion.IsDouble(val, out v))
+      if (!GUIConversion.IsDouble(val, out var v))
       {
         Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
         return true;
@@ -191,8 +188,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public bool EhLeftMarginChanged(string val)
     {
-      double v;
-      if (!GUIConversion.IsDouble(val, out v))
+      if (!GUIConversion.IsDouble(val, out var v))
       {
         Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
         return true;
@@ -203,8 +199,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public bool EhBottomMarginChanged(string val)
     {
-      double v;
-      if (!GUIConversion.IsDouble(val, out v))
+      if (!GUIConversion.IsDouble(val, out var v))
       {
         Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
         return true;
@@ -215,8 +210,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public bool EhRightMarginChanged(string val)
     {
-      double v;
-      if (!GUIConversion.IsDouble(val, out v))
+      if (!GUIConversion.IsDouble(val, out var v))
       {
         Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
         return true;

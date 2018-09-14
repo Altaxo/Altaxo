@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -151,12 +151,9 @@ namespace Altaxo.Graph.Graph3D
     public RectangleD3D GetTileRectangle(double columnPosX, double columnPosY, double columnPosZ,
       double columnSpanX, double columnSpanY, double columnSpanZ, VectorD3D totalSize)
     {
-      double xstart, xsize;
-      double ystart, ysize;
-      double zstart, zsize;
-      _xPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.X, columnPosX, columnSpanX, out xstart, out xsize);
-      _yPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.Y, columnPosY, columnSpanY, out ystart, out ysize);
-      _zPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.Z, columnPosZ, columnSpanZ, out zstart, out zsize);
+      _xPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.X, columnPosX, columnSpanX, out var xstart, out var xsize);
+      _yPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.Y, columnPosY, columnSpanY, out var ystart, out var ysize);
+      _zPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.Z, columnPosZ, columnSpanZ, out var zstart, out var zsize);
       return new RectangleD3D(xstart, ystart, zstart, xsize, ysize, zsize);
     }
   }

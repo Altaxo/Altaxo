@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph.Gdi;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Graph.Gdi;
+using Altaxo.Serialization;
 
 namespace Altaxo.Worksheet
 {
@@ -40,7 +40,7 @@ namespace Altaxo.Worksheet
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DoubleColumnStyle s = (DoubleColumnStyle)obj;
+        var s = (DoubleColumnStyle)obj;
         info.AddBaseValueEmbedded(s, typeof(DoubleColumnStyle).BaseType);
       }
 
@@ -68,14 +68,14 @@ namespace Altaxo.Worksheet
 
     public override object Clone()
     {
-      Altaxo.Worksheet.DoubleColumnStyle ns = new Altaxo.Worksheet.DoubleColumnStyle(this);
+      var ns = new Altaxo.Worksheet.DoubleColumnStyle(this);
       return ns;
     }
 
     public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
     {
       double val = ((Altaxo.Data.DoubleColumn)data)[nRow];
-      return Double.IsNaN(val) ? "" : val.ToString(Altaxo.Settings.GuiCulture.Instance);
+      return double.IsNaN(val) ? "" : val.ToString(Altaxo.Settings.GuiCulture.Instance);
     }
 
     public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
@@ -101,8 +101,7 @@ namespace Altaxo.Worksheet
 
     public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
-      Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool> action;
-      if (RegisteredPaintMethods.TryGetValue(dctype, out action))
+      if (RegisteredPaintMethods.TryGetValue(dctype, out var action))
         action(this, dc, cellRectangle, nRow, data, bSelected);
       else
         throw new NotImplementedException("Paint method is not implemented for context type " + dc.GetType().ToString());

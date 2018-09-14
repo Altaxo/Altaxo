@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-using Altaxo.Graph.Gdi.Plot.Data;
-using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
@@ -85,10 +85,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     {
       if (range.Length <= 1)
         return; // seems to be only a single point, thus no connection possible
-
-      int lastIdx;
-      int numberOfPointsPerOriginalPoint;
-      PointF[] stepPolylinePoints = GetStepPolylinePoints(allLinePoints, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
+      PointF[] stepPolylinePoints = GetStepPolylinePoints(allLinePoints, range, layer, connectCircular, out var numberOfPointsPerOriginalPoint, out var lastIdx);
 
       if (null != symbolGap)
       {
@@ -135,10 +132,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     {
       if (range.Length < 2)
         return;
-
-      int lastIdx;
-      int numberOfPointsPerOriginalPoint;
-      PointF[] linepts = GetStepPolylinePoints(allLinePoints, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
+      PointF[] linepts = GetStepPolylinePoints(allLinePoints, range, layer, connectCircular, out var numberOfPointsPerOriginalPoint, out var lastIdx);
       FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular, allLinePoints, logicalShiftX, logicalShiftY);
     }
 

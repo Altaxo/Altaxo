@@ -56,7 +56,7 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        NoTickSpacing s = (NoTickSpacing)obj;
+        var s = (NoTickSpacing)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -112,34 +112,34 @@ namespace Altaxo.Graph.Graph3D
       if (obj is ItemLocationDirectAspectPreserving)
       {
         var from = (ItemLocationDirectAspectPreserving)obj;
-        this._originalItemSize = from._originalItemSize;
-        this._aspectPreserving = from._aspectPreserving;
+        _originalItemSize = from._originalItemSize;
+        _aspectPreserving = from._aspectPreserving;
       }
 
       if (obj is ItemLocationDirect)
       {
         var from = (ItemLocationDirect)obj;
-        this._parentSize = from.ParentSize;
+        _parentSize = from.ParentSize;
         InternalSetSizeSilent(from.SizeX * from.ScaleX, from.SizeY * from.ScaleY, from.SizeZ * from.ScaleZ);
 
-        this._scaleX = 1;
-        this._scaleY = 1;
-        this._scaleZ = 1;
-        this._positionX = from.PositionX;
-        this._positionY = from.PositionY;
-        this._positionZ = from.PositionZ;
-        this._localAnchorX = from.LocalAnchorX;
-        this._localAnchorY = from.LocalAnchorY;
-        this._localAnchorZ = from.LocalAnchorZ;
-        this._parentAnchorX = from.ParentAnchorX;
-        this._parentAnchorY = from.ParentAnchorY;
-        this._parentAnchorZ = from.ParentAnchorZ;
-        this._rotationX = from.RotationX;
-        this._rotationY = from.RotationY;
-        this._rotationZ = from.RotationZ;
-        this._shearX = from.ShearX;
-        this._shearY = from.ShearY;
-        this._shearZ = from.ShearZ;
+        _scaleX = 1;
+        _scaleY = 1;
+        _scaleZ = 1;
+        _positionX = from.PositionX;
+        _positionY = from.PositionY;
+        _positionZ = from.PositionZ;
+        _localAnchorX = from.LocalAnchorX;
+        _localAnchorY = from.LocalAnchorY;
+        _localAnchorZ = from.LocalAnchorZ;
+        _parentAnchorX = from.ParentAnchorX;
+        _parentAnchorY = from.ParentAnchorY;
+        _parentAnchorZ = from.ParentAnchorZ;
+        _rotationX = from.RotationX;
+        _rotationY = from.RotationY;
+        _rotationZ = from.RotationZ;
+        _shearX = from.ShearX;
+        _shearY = from.ShearY;
+        _shearZ = from.ShearZ;
 
         EhSelfChanged();
         return true;
@@ -148,14 +148,14 @@ namespace Altaxo.Graph.Graph3D
       {
         var from = (IItemLocation)obj;
 
-        this._rotationX = from.RotationX;
-        this._rotationY = from.RotationY;
-        this._rotationZ = from.RotationZ;
-        this._shearX = from.ShearX;
-        this._shearY = from.ShearY;
-        this._shearZ = from.ShearZ;
+        _rotationX = from.RotationX;
+        _rotationY = from.RotationY;
+        _rotationZ = from.RotationZ;
+        _shearX = from.ShearX;
+        _shearY = from.ShearY;
+        _shearZ = from.ShearZ;
 
-        this.InternalSetScaleSilent(new VectorD3D(from.ScaleX, from.ScaleY, from.ScaleZ));
+        InternalSetScaleSilent(new VectorD3D(from.ScaleX, from.ScaleY, from.ScaleZ));
 
         EhSelfChanged();
         return true;

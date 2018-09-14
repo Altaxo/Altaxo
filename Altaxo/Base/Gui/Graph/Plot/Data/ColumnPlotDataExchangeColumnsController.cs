@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
@@ -328,7 +328,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       GetEnumerationForAllGroupsOfPlotColumns()
     {
       string currentColumnGroup = null;
-      List<(PlotColumnTag PlotColumnTag, string ColumnLabel)> list = new List<(PlotColumnTag PlotColumnTag, string ColumnLabel)>();
+      var list = new List<(PlotColumnTag PlotColumnTag, string ColumnLabel)>();
       int columnNumber = -1;
       foreach (var info in _doc.Columns)
       {

@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Gui.Graph.Gdi.Axis;
 using Altaxo.Gui.Graph.Scales;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -141,8 +141,10 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       {
         SetCoordinateSystemDependentObjects(_currentAxisID);
 
-        _listOfUniqueItem = new SelectableListNodeList();
-        _listOfUniqueItem.Add(new SelectableListNode("Common", null, true));
+        _listOfUniqueItem = new SelectableListNodeList
+        {
+          new SelectableListNode("Common", null, true)
+        };
       }
 
       if (null != _view)
@@ -193,8 +195,10 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     private void SetCoordinateSystemDependentObjects(CSLineID id)
     {
       // Scales
-      _listOfScales = new SelectableListNodeList();
-      _listOfScales.Add(new SelectableListNode("Z-Scale", 0, false));
+      _listOfScales = new SelectableListNodeList
+      {
+        new SelectableListNode("Z-Scale", 0, false)
+      };
 
       // Axes
       // collect the AxisStyleIdentifier from the actual layer and also all possible AxisStyleIdentifier
@@ -224,12 +228,12 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
             _view.SelectTab(_currentPageName);
             SetSecondaryChoiceToUnique();
           }
-          if (null == this._coordinateController)
+          if (null == _coordinateController)
           {
-            this._coordinateController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CoordinateSystem }, typeof(IMVCAController), UseDocument.Directly);
+            _coordinateController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CoordinateSystem }, typeof(IMVCAController), UseDocument.Directly);
           }
-          _currentController = this._coordinateController;
-          _view.CurrentContent = this._coordinateController.ViewObject;
+          _currentController = _coordinateController;
+          _view.CurrentContent = _coordinateController.ViewObject;
           break;
 
         case "Position":
@@ -303,8 +307,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void SetSecondaryChoiceToUnique()
     {
-      this._primaryChoice = LayerControllerTabType.Unique;
-      _view.InitializeSecondaryChoice(_listOfUniqueItem, this._primaryChoice);
+      _primaryChoice = LayerControllerTabType.Unique;
+      _view.InitializeSecondaryChoice(_listOfUniqueItem, _primaryChoice);
     }
 
     private void SetSecondaryChoiceToScales()
@@ -312,8 +316,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       _listOfScales.ClearSelectionsAll();
       _listOfScales[_currentScale].IsSelected = true;
 
-      this._primaryChoice = LayerControllerTabType.Scales;
-      _view.InitializeSecondaryChoice(_listOfScales, this._primaryChoice);
+      _primaryChoice = LayerControllerTabType.Scales;
+      _view.InitializeSecondaryChoice(_listOfScales, _primaryChoice);
     }
 
     private void SetSecondaryChoiceToAxes()
@@ -321,14 +325,14 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       foreach (var item in _listOfAxes)
         item.IsSelected = ((CSLineID)item.Tag) == _currentAxisID;
 
-      this._primaryChoice = LayerControllerTabType.Axes;
-      _view.InitializeSecondaryChoice(_listOfAxes, this._primaryChoice);
+      _primaryChoice = LayerControllerTabType.Axes;
+      _view.InitializeSecondaryChoice(_listOfAxes, _primaryChoice);
     }
 
     private void SetSecondaryChoiceToPlanes()
     {
-      this._primaryChoice = LayerControllerTabType.Planes;
-      _view.InitializeSecondaryChoice(_listOfPlanes, this._primaryChoice);
+      _primaryChoice = LayerControllerTabType.Planes;
+      _view.InitializeSecondaryChoice(_listOfPlanes, _primaryChoice);
     }
 
     public void EhView_PageChanged(string firstChoice)
@@ -452,7 +456,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     public static bool ShowDialog(DensityImageLegend layer, string currentPage, CSLineID currentEdge)
     {
-      DensityImageLegendController ctrl = new DensityImageLegendController(layer, currentPage, currentEdge);
+      var ctrl = new DensityImageLegendController(layer, currentPage, currentEdge);
       return Current.Gui.ShowDialog(ctrl, layer.Name, true);
     }
 
@@ -469,7 +473,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
-      DensityImageLegend layer = hit.HittedObject as DensityImageLegend;
+      var layer = hit.HittedObject as DensityImageLegend;
       if (layer == null)
         return false;
 

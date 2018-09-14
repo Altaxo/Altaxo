@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D.CrossSections
 {
@@ -83,11 +83,12 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
     public static CrossSectionOfLine GetRegularSharpPolygon(double radius, int edges)
     {
-      CrossSectionOfLine result = new CrossSectionOfLine();
-
-      result._vertices = new PointD2D[edges];
-      result._isVertexSharp = new bool[edges];
-      result._normals = new VectorD2D[2 * edges];
+      var result = new CrossSectionOfLine
+      {
+        _vertices = new PointD2D[edges],
+        _isVertexSharp = new bool[edges],
+        _normals = new VectorD2D[2 * edges]
+      };
 
       for (int i = 0; i < edges; ++i)
       {
@@ -106,11 +107,12 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
     public static CrossSectionOfLine GetRegularRoundedPolygon(double radius, int edges)
     {
-      CrossSectionOfLine result = new CrossSectionOfLine();
-
-      result._vertices = new PointD2D[edges];
-      result._isVertexSharp = new bool[edges];
-      result._normals = new VectorD2D[edges];
+      var result = new CrossSectionOfLine
+      {
+        _vertices = new PointD2D[edges],
+        _isVertexSharp = new bool[edges],
+        _normals = new VectorD2D[edges]
+      };
 
       for (int i = 0; i < edges; ++i)
       {
@@ -126,7 +128,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
     public static CrossSectionOfLine GetStarShapedPolygon(double innerRadius, double outerRadius, int starArms)
     {
-      CrossSectionOfLine result = new CrossSectionOfLine();
+      var result = new CrossSectionOfLine();
 
       int numVertices = starArms * 2;
       int numNormals = 2 * numVertices;
@@ -143,10 +145,10 @@ namespace Altaxo.Drawing.D3D.CrossSections
       }
 
       // now the normals, we calculate them using the cross product with the z-axis
-      VectorD3D zaxis = new VectorD3D(0, 0, 1);
+      var zaxis = new VectorD3D(0, 0, 1);
       for (int i = 0; i < numVertices; ++i)
       {
-        VectorD2D line = (VectorD2D)(result._vertices[(i + 1) % numVertices] - result._vertices[i]);
+        var line = (VectorD2D)(result._vertices[(i + 1) % numVertices] - result._vertices[i]);
         VectorD2D cross = new VectorD2D(line.Y, line.X).Normalized;
         result._normals[(2 * i + 1) % numNormals] = cross;
         result._normals[(2 * i + 2) % numNormals] = cross;
@@ -158,7 +160,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
     public static CrossSectionOfLine GetQuadraticCrossSection(double width)
     {
-      CrossSectionOfLine result = new CrossSectionOfLine();
+      var result = new CrossSectionOfLine();
       double w2 = width / 2;
       result._vertices = new PointD2D[4];
       result._isVertexSharp = new bool[4];
@@ -188,7 +190,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
     public static CrossSectionOfLine GetSquareCrossSection(double width, double height)
     {
-      CrossSectionOfLine result = new CrossSectionOfLine();
+      var result = new CrossSectionOfLine();
       double w2 = width / 2;
       double h2 = height / 2;
       result._vertices = new PointD2D[4];

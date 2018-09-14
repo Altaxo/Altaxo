@@ -22,6 +22,10 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
@@ -29,18 +33,14 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
+  using System.ComponentModel;
   using Altaxo.Drawing;
   using Altaxo.Geometry;
   using Altaxo.Gui.Workbench;
   using Altaxo.Main.Services;
-  using System.ComponentModel;
 
   /// <summary>
   /// GraphController is our default implementation to control a graph view.
@@ -207,8 +207,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <returns>True if the object should be deleted, false otherwise.</returns>
     protected static bool EhEditPlotItem(IHitTestObject hit)
     {
-      XYPlotLayer actLayer = hit.ParentLayer as XYPlotLayer;
-      IGPlotItem pa = (IGPlotItem)hit.HittedObject;
+      var actLayer = hit.ParentLayer as XYPlotLayer;
+      var pa = (IGPlotItem)hit.HittedObject;
 
       // get plot group
       PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
@@ -226,7 +226,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     protected static bool EhEditTextGraphics(IHitTestObject hit)
     {
       var layer = hit.ParentLayer;
-      TextGraphic tg = (TextGraphic)hit.HittedObject;
+      var tg = (TextGraphic)hit.HittedObject;
 
       bool shouldDeleted = false;
 
@@ -244,7 +244,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         else
         {
           if (tg.ParentObject is IChildChangedEventSink)
-            ((IChildChangedEventSink)tg.ParentObject).EhChildChanged(tg, EventArgs.Empty);
+            tg.ParentObject.EhChildChanged(tg, EventArgs.Empty);
         }
       }
 
@@ -279,14 +279,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       // used to adjust grid and margin sizing.
 
       g.PageUnit = GraphicsUnit.Point;
-      g.PageScale = (float)this.ZoomFactor;
+      g.PageScale = (float)ZoomFactor;
     }
 
     public void ScaleForPaintingGraphDocument(Graphics g)
     {
       ScaleForPaint(g);
 
-      g.Clear(this._nonPageAreaColor);
+      g.Clear(_nonPageAreaColor);
       // Fill the page with its own color
       //g.FillRectangle(_pageGroundBrush,_doc.PageBounds);
       //g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
@@ -394,7 +394,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     public bool FindGraphObjectAtPixelPosition(PointD2D pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int[] foundInLayerNumber)
     {
       var mousePT = ConvertMouseToRootLayerCoordinates(pixelPos);
-      var hitData = new HitTestPointData(mousePT, this.ZoomFactor);
+      var hitData = new HitTestPointData(mousePT, ZoomFactor);
 
       foundObject = RootLayer.HitTest(hitData, plotItemsOnly);
       if (null != foundObject && null != foundObject.ParentLayer)
@@ -411,7 +411,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     public void FindGraphObjectInRootLayerRectangle(RectangleD2D rectRootLayerCoordinates, out List<IHitTestObject> foundObjects)
     {
       foundObjects = new List<IHitTestObject>();
-      var hitData = new HitTestRectangularData(rectRootLayerCoordinates, this.ZoomFactor);
+      var hitData = new HitTestRectangularData(rectRootLayerCoordinates, ZoomFactor);
       RootLayer.HitTest(hitData, foundObjects);
     }
 

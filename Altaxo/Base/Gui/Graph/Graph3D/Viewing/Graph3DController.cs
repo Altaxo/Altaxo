@@ -30,6 +30,8 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
+  using System.Collections;
+  using System.Drawing;
   using Altaxo.Collections;
   using Altaxo.Drawing;
   using Altaxo.Drawing.D3D;
@@ -42,13 +44,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using Altaxo.Graph.Graph3D.Plot;
   using Altaxo.Graph.Graph3D.Shapes;
   using Altaxo.Gui.Workbench;
-
   //using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
   using Altaxo.Main;
   using Altaxo.Serialization.Clipboard;
   using Graph.Graph3D;
-  using System.Collections;
-  using System.Drawing;
 
   [UserControllerForObject(typeof(GraphDocument))]
   [UserControllerForObject(typeof(GraphViewOptions))]
@@ -158,11 +157,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         var o = (Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions)args[0];
         _rootLayerMarkersVisibility = o.RootLayerMarkersVisibility;
-        if (this._doc == null)
+        if (_doc == null)
         {
           InternalInitializeGraphDocument(o.GraphDocument);
         }
-        else if (!object.ReferenceEquals(this._doc, o.GraphDocument))
+        else if (!object.ReferenceEquals(_doc, o.GraphDocument))
         {
           throw new InvalidProgramException("The already initialized document and the document in the option class are not identical");
         }
@@ -193,10 +192,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         _view.SetCamera(_doc.Camera, _doc.Lighting);
 
         InitLayerStructure();
-        _view.SetLayerStructure(_layerStructure, this.CurrentLayerNumber.ToArray()); // tell the view how many layers we have
+        _view.SetLayerStructure(_layerStructure, CurrentLayerNumber.ToArray()); // tell the view how many layers we have
 
         // Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
-        this.EhView_GraphPanelSizeChanged();
+        EhView_GraphPanelSizeChanged();
 
         if (null != _drawing)
         {
@@ -230,10 +229,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private void InitTriggerBasedUpdate()
     {
-      _triggerBasedUpdate = new Altaxo.Main.TriggerBasedUpdate(Current.TimerQueue);
-      _triggerBasedUpdate.MinimumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02);
-      _triggerBasedUpdate.MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02);
-      _triggerBasedUpdate.MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.1);
+      _triggerBasedUpdate = new Altaxo.Main.TriggerBasedUpdate(Current.TimerQueue)
+      {
+        MinimumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02),
+        MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02),
+        MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.1)
+      };
       _triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
     }
 
@@ -276,19 +277,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         // Attention: use local variable doc instead of member _doc for the anonymous methods below!
         var rootLayer = doc.RootLayer; // local variable for rootLayer
         _weakEventHandlersForDoc = new WeakEventHandler[3]; // storage for WeakEventhandlers for later removal
-        doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(this.EhGraph_Changed, x => doc.Changed -= x));
-        rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => rootLayer.LayerCollectionChanged -= x));
-        doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(this.EhGraph_SizeChanged, x => doc.SizeChanged -= x));
+        doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(EhGraph_Changed, x => doc.Changed -= x));
+        rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(EhGraph_LayerCollectionChanged, x => rootLayer.LayerCollectionChanged -= x));
+        doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(EhGraph_SizeChanged, x => doc.SizeChanged -= x));
       }
       // if the host layer has at least one child, we set the active layer to the first child of the host layer
       if (_doc.RootLayer.Layers.Count >= 1)
         _currentLayerNumber = new List<int>() { 0 };
 
       // Ensure the current layer and plot numbers are valid
-      this.EnsureValidityOfCurrentLayerNumber();
-      this.EnsureValidityOfCurrentPlotNumber();
+      EnsureValidityOfCurrentLayerNumber();
+      EnsureValidityOfCurrentPlotNumber();
 
-      this.Title = _doc.Name;
+      Title = _doc.Name;
     }
 
     private void InternalUninitializeGraphDocument()
@@ -361,7 +362,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     {
       get
       {
-        return _doc.RootLayer.ElementAt(this._currentLayerNumber);
+        return _doc.RootLayer.ElementAt(_currentLayerNumber);
       }
       set
       {
@@ -397,7 +398,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         {
           // reflect the change in layer number in the layer tool bar
           if (_view != null)
-            _view.CurrentLayer = this._currentLayerNumber.ToArray();
+            _view.CurrentLayer = _currentLayerNumber.ToArray();
         }
       }
     }
@@ -473,8 +474,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <param name="bAlternative">Normally false, can be set to true if the user clicked for instance with the right mouse button on the layer button.</param>
     public virtual void EhView_CurrentLayerChoosen(int[] currLayer, bool bAlternative)
     {
-      var oldCurrLayer = this.CurrentLayerNumber;
-      this.CurrentLayerNumber = new List<int>(currLayer);
+      var oldCurrLayer = CurrentLayerNumber;
+      CurrentLayerNumber = new List<int>(currLayer);
 
       // if we have clicked the button already down then open the layer dialog
       if (null != ActiveLayer && System.Linq.Enumerable.SequenceEqual(_currentLayerNumber, oldCurrLayer) && false == bAlternative)
@@ -508,7 +509,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       foreach (IHitTestObject o in notSerialized)
         SelectedObjects.Remove(o);
 
-      this.RemoveSelectedObjects();
+      RemoveSelectedObjects();
     }
 
     public bool IsCmdCopyEnabled()
@@ -542,7 +543,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public void PasteObjectsFromClipboard()
     {
-      GraphDocument gd = this.Doc;
+      GraphDocument gd = Doc;
       var dao = Current.Gui.OpenClipboardDataObject();
 
       if (dao.GetDataPresent("Altaxo.Graph.Graph3D.GraphObjectListAsXml"))
@@ -550,11 +551,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         object obj = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Graph3D.GraphObjectListAsXml");
         if (obj is ICollection)
         {
-          ICollection list = (ICollection)obj;
+          var list = (ICollection)obj;
           foreach (object item in list)
           {
             if (item is GraphicBase)
-              this.ActiveLayer.GraphObjects.Add(item as GraphicBase);
+              ActiveLayer.GraphObjects.Add(item as GraphicBase);
             else if (item is Altaxo.Graph.Graph3D.Plot.IGPlotItem && ActiveLayer is XYZPlotLayer)
               ((XYZPlotLayer)ActiveLayer).PlotItems.Add((Altaxo.Graph.Graph3D.Plot.IGPlotItem)item);
           }
@@ -584,15 +585,15 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
             img = ImageProxy.FromFile(filename);
             if (img != null)
             {
-              var size = this.ActiveLayer.Size / 2;
+              var size = ActiveLayer.Size / 2;
 
               PointD2D imgSize = img.GetImage().PhysicalDimension;
 
               double scale = Math.Min(size.X / imgSize.X, size.Y / imgSize.Y);
               imgSize = imgSize * scale;
 
-              EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD3D.Empty, new VectorD3D(imgSize.X, imgSize.Y, 0), img);
-              this.ActiveLayer.GraphObjects.Add(item);
+              var item = new EmbeddedImageGraphic(PointD3D.Empty, new VectorD3D(imgSize.X, imgSize.Y, 0), img);
+              ActiveLayer.GraphObjects.Add(item);
               bSuccess = true;
               continue;
             }
@@ -607,12 +608,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       if (dao.GetDataPresent(typeof(System.Drawing.Imaging.Metafile)))
       {
-        System.Drawing.Imaging.Metafile img = dao.GetData(typeof(System.Drawing.Imaging.Metafile)) as System.Drawing.Imaging.Metafile;
+        var img = dao.GetData(typeof(System.Drawing.Imaging.Metafile)) as System.Drawing.Imaging.Metafile;
         if (img != null)
         {
-          var size = (0.5 * this.ActiveLayer.Size).WithZ(0);
-          EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD3D.Empty, size, ImageProxy.FromImage(img));
-          this.ActiveLayer.GraphObjects.Add(item);
+          var size = (0.5 * ActiveLayer.Size).WithZ(0);
+          var item = new EmbeddedImageGraphic(PointD3D.Empty, size, ImageProxy.FromImage(img));
+          ActiveLayer.GraphObjects.Add(item);
           return;
         }
       }
@@ -621,9 +622,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         Image img = dao.GetImage();
         if (img != null)
         {
-          var size = 0.5 * this.ActiveLayer.Size.WithZ(0);
-          EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD3D.Empty, size, ImageProxy.FromImage(img));
-          this.ActiveLayer.GraphObjects.Add(item);
+          var size = 0.5 * ActiveLayer.Size.WithZ(0);
+          var item = new EmbeddedImageGraphic(PointD3D.Empty, size, ImageProxy.FromImage(img));
+          ActiveLayer.GraphObjects.Add(item);
           return;
         }
       }
@@ -654,7 +655,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       using (var token = Doc.SuspendGetToken())
       {
-        System.Collections.Generic.List<IHitTestObject> removedObjects = new System.Collections.Generic.List<IHitTestObject>();
+        var removedObjects = new System.Collections.Generic.List<IHitTestObject>();
 
         foreach (IHitTestObject o in SelectedObjects)
         {
@@ -919,7 +920,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (stepX != 0)
       {
         double angleRadian = stepX * Math.PI / 180.0;
-        VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.TargetToEyeVector, VectorD3D.CrossProduct(cam.TargetToEyeVector, cam.UpVector)));
+        var axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.TargetToEyeVector, VectorD3D.CrossProduct(cam.TargetToEyeVector, cam.UpVector)));
         var matrix = Matrix4x3.NewRotationFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
         var newEye = matrix.Transform(cam.EyePosition);
@@ -930,7 +931,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (stepY != 0)
       {
         double angleRadian = stepY * Math.PI / 180.0;
-        VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.TargetToEyeVectorNormalized, cam.UpVector));
+        var axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.TargetToEyeVectorNormalized, cam.UpVector));
         var matrix = Matrix4x3.NewRotationFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
         var newEye = matrix.Transform(cam.EyePosition);
@@ -1012,8 +1013,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <returns>The new camera after the movement.</returns>
     public static CameraBase CameraMoveRelative(CameraBase camera, double stepX, double stepY)
     {
-      VectorD3D xaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.TargetToEyeVectorNormalized, camera.UpVector));
-      VectorD3D yaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.TargetToEyeVector, VectorD3D.CrossProduct(camera.TargetToEyeVector, camera.UpVector)));
+      var xaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.TargetToEyeVectorNormalized, camera.UpVector));
+      var yaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.TargetToEyeVector, VectorD3D.CrossProduct(camera.TargetToEyeVector, camera.UpVector)));
 
       if (camera is OrthographicCamera)
       {
@@ -1086,8 +1087,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private void EhUpdateByTimerQueue()
     {
       // if something changed on the graph, make sure that the layer and plot number reflect this change
-      this.EnsureValidityOfCurrentLayerNumber();
-      this.EnsureValidityOfCurrentPlotNumber();
+      EnsureValidityOfCurrentLayerNumber();
+      EnsureValidityOfCurrentPlotNumber();
 
       if (null != _view)
       {
@@ -1096,8 +1097,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
         var propertyContextOfDocument = Altaxo.PropertyExtensions.GetPropertyHierarchy(_doc);
         var sceneBackColor = propertyContextOfDocument.GetValue(GraphDocument.PropertyKeyDefaultSceneBackColor, NamedColors.White);
-        RootLayerMarkersVisibility rootLayerMarkersVisibility;
-        if (!propertyContextOfDocument.TryGetValue(GraphDocument.PropertyKeyRootLayerMarkersVisibility, out rootLayerMarkersVisibility))
+        if (!propertyContextOfDocument.TryGetValue(GraphDocument.PropertyKeyRootLayerMarkersVisibility, out var rootLayerMarkersVisibility))
         {
           if (_rootLayerMarkersVisibility.HasValue)
             rootLayerMarkersVisibility = _rootLayerMarkersVisibility.Value;
@@ -1155,7 +1155,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     protected void EhGraph_LayerCollectionChanged_Unsynchronized()
     {
-      var oldActiveLayer = new List<int>(this._currentLayerNumber);
+      var oldActiveLayer = new List<int>(_currentLayerNumber);
 
       // Ensure that the current layer and current plot are valid anymore
       var newActiveLayer = EnsureValidityOfCurrentLayerNumber();
@@ -1174,7 +1174,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private void EhGraphDocumentNameChanged_Unsynchronized(INameOwner sender, string oldName)
     {
-      this.Title = Doc.Name;
+      Title = Doc.Name;
     }
 
     /// <summary>
@@ -1184,8 +1184,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <returns>True if the object should be deleted, false otherwise.</returns>
     protected static bool EhEditPlotItem(IHitTestObject hit)
     {
-      XYZPlotLayer actLayer = hit.ParentLayer as XYZPlotLayer;
-      IGPlotItem pa = (IGPlotItem)hit.HittedObject;
+      var actLayer = hit.ParentLayer as XYZPlotLayer;
+      var pa = (IGPlotItem)hit.HittedObject;
 
       Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);
 
@@ -1200,7 +1200,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     protected static bool EhEditTextGraphics(IHitTestObject hit)
     {
       var layer = hit.ParentLayer;
-      TextGraphic tg = (TextGraphic)hit.HittedObject;
+      var tg = (TextGraphic)hit.HittedObject;
 
       bool shouldDeleted = false;
 
@@ -1218,7 +1218,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         else
         {
           if (tg.ParentObject is IChildChangedEventSink)
-            ((IChildChangedEventSink)tg.ParentObject).EhChildChanged(tg, EventArgs.Empty);
+            tg.ParentObject.EhChildChanged(tg, EventArgs.Empty);
         }
       }
 
@@ -1253,11 +1253,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <param name="pt">The location where the context menu should be shown.</param>
     public virtual void EhView_ShowDataContextMenu(int[] currLayer, object parent, PointD2D pt)
     {
-      int oldCurrLayer = this.ActiveLayer.Number;
+      int oldCurrLayer = ActiveLayer.Number;
 
-      this.CurrentLayerNumber = new List<int>(currLayer);
+      CurrentLayerNumber = new List<int>(currLayer);
 
-      if (null != this.ActiveLayer)
+      if (null != ActiveLayer)
       {
         Current.Gui.ShowContextMenu(parent, parent, "/Altaxo/Views/Graph3D/LayerButton/ContextMenu", pt.X, pt.Y);
       }
@@ -1443,7 +1443,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       double markerLenBy2 = markerLen / 2;
       double markerThicknessBy2 = markerLenBy2 / 5.0;
 
-      RectangleD3D rect = new RectangleD3D(PointD3D.Empty, size);
+      var rect = new RectangleD3D(PointD3D.Empty, size);
 
       if (_cachedResultingRootLayerMarkersVisibility.HasFlag(RootLayerMarkersVisibility.Arrows))
       {
@@ -1507,7 +1507,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <exception cref="InvalidProgramException">There should always be a plane of a rectangle that can be hit!</exception>
     public static void GetCoordinateSystemBasedOnLayerPlaneFacingTheCamera(CameraBase camera, HostLayer activeLayer, out Matrix3x3 transformation)
     {
-      PointD3D hitposition = new PointD3D(0.5, 0.5, 1); // this hit position is arbitrary, every other position should work similarly
+      var hitposition = new PointD3D(0.5, 0.5, 1); // this hit position is arbitrary, every other position should work similarly
 
       var activeLayerTransformation = activeLayer.TransformationFromRootToHere();
 
@@ -1581,8 +1581,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     public Matrix3x3 GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects()
     {
       var layer = GetParentLayerOfSelectedObjects() ?? _doc.RootLayer;
-      Matrix3x3 principalMoveVectorsInLayerCoordinates;
-      GetCoordinateSystemBasedOnLayerPlaneFacingTheCamera(_doc.Camera, layer, out principalMoveVectorsInLayerCoordinates); // transformation is in layer coordinates
+      GetCoordinateSystemBasedOnLayerPlaneFacingTheCamera(_doc.Camera, layer, out var principalMoveVectorsInLayerCoordinates); // transformation is in layer coordinates
       var transformation = layer.TransformationFromHereToRoot();
       var principalVector1_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M11, principalMoveVectorsInLayerCoordinates.M21, principalMoveVectorsInLayerCoordinates.M31)).Normalized;
       var principalVector2_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M12, principalMoveVectorsInLayerCoordinates.M22, principalMoveVectorsInLayerCoordinates.M32)).Normalized;

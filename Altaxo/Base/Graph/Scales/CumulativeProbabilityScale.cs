@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.Scales.Rescaling;
 using System;
 using System.Collections.Generic;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.Scales.Rescaling;
 
 namespace Altaxo.Graph.Scales
 {
@@ -77,8 +77,8 @@ namespace Altaxo.Graph.Scales
       {
         var s = null != o ? (CumulativeProbabilityScale)o : new CumulativeProbabilityScale(info);
 
-        s._cachedAxisOrg = (double)info.GetDouble("Org");
-        s._cachedAxisEnd = (double)info.GetDouble("End");
+        s._cachedAxisOrg = info.GetDouble("Org");
+        s._cachedAxisEnd = info.GetDouble("End");
         s._cachedAxisQuantileOrg = SquareRootOf2 * Altaxo.Calc.ErrorFunction.InverseErf(-1 + 2 * s._cachedAxisOrg);
         s._cachedAxisQuantileSpan = SquareRootOf2 * Altaxo.Calc.ErrorFunction.InverseErf(-1 + 2 * s._cachedAxisEnd) - s._cachedAxisOrg;
 
@@ -137,10 +137,10 @@ namespace Altaxo.Graph.Scales
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._cachedAxisOrg = from._cachedAxisOrg;
-        this._cachedAxisEnd = from._cachedAxisEnd;
-        this._cachedAxisQuantileOrg = from._cachedAxisQuantileOrg;
-        this._cachedAxisQuantileSpan = from._cachedAxisQuantileSpan;
+        _cachedAxisOrg = from._cachedAxisOrg;
+        _cachedAxisEnd = from._cachedAxisEnd;
+        _cachedAxisQuantileOrg = from._cachedAxisQuantileOrg;
+        _cachedAxisQuantileSpan = from._cachedAxisQuantileSpan;
 
         ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
         ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new CumulativeProbabilityScaleRescaleConditions());

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.DashPatternManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing.DashPatternManagement;
 
 namespace Altaxo.Drawing.D3D
 {
@@ -195,7 +195,7 @@ namespace Altaxo.Drawing.D3D
       var newCrossSection = _crossSection.WithSize1(thickness1);
       if (!object.ReferenceEquals(newCrossSection, _crossSection))
       {
-        var result = (PenX3D)this.MemberwiseClone();
+        var result = (PenX3D)MemberwiseClone();
         result._crossSection = newCrossSection;
         return result;
       }
@@ -218,7 +218,7 @@ namespace Altaxo.Drawing.D3D
       var newCrossSection = _crossSection.WithSize2(thickness2);
       if (!object.ReferenceEquals(newCrossSection, _crossSection))
       {
-        var result = (PenX3D)this.MemberwiseClone();
+        var result = (PenX3D)MemberwiseClone();
         result._crossSection = newCrossSection;
         return result;
       }
@@ -233,7 +233,7 @@ namespace Altaxo.Drawing.D3D
       var newCrossSection = _crossSection.WithSize(thickness, thickness);
       if (!object.ReferenceEquals(newCrossSection, _crossSection))
       {
-        var result = (PenX3D)this.MemberwiseClone();
+        var result = (PenX3D)MemberwiseClone();
         result._crossSection = newCrossSection;
         return result;
       }
@@ -256,7 +256,7 @@ namespace Altaxo.Drawing.D3D
       if (null == material)
         throw new ArgumentNullException(nameof(material));
 
-      var result = (PenX3D)this.MemberwiseClone();
+      var result = (PenX3D)MemberwiseClone();
       result._material = material;
       return result;
     }
@@ -271,7 +271,7 @@ namespace Altaxo.Drawing.D3D
 
     public PenX3D WithColor(NamedColor color)
     {
-      var result = (PenX3D)this.MemberwiseClone();
+      var result = (PenX3D)MemberwiseClone();
       result._material = Materials.GetMaterialWithNewColor(result._material, color);
       return result;
     }
@@ -288,7 +288,7 @@ namespace Altaxo.Drawing.D3D
     {
       if (!object.ReferenceEquals(crossSection, _crossSection))
       {
-        var result = (PenX3D)this.MemberwiseClone();
+        var result = (PenX3D)MemberwiseClone();
         result._crossSection = crossSection;
         return result;
       }
@@ -312,7 +312,7 @@ namespace Altaxo.Drawing.D3D
     {
       if (!(lineJoin == _lineJoin))
       {
-        var result = (PenX3D)this.MemberwiseClone();
+        var result = (PenX3D)MemberwiseClone();
         result._lineJoin = lineJoin;
         return result;
       }
@@ -339,7 +339,7 @@ namespace Altaxo.Drawing.D3D
 
       if (!(miterLimit == _miterLimit))
       {
-        var result = (PenX3D)this.MemberwiseClone();
+        var result = (PenX3D)MemberwiseClone();
         result._miterLimit = miterLimit;
         return result;
       }
@@ -386,7 +386,7 @@ namespace Altaxo.Drawing.D3D
       }
       else
       {
-        var result = (PenX3D)this.MemberwiseClone();
+        var result = (PenX3D)MemberwiseClone();
         result._dashPattern = dashPattern;
         return result;
       }
@@ -412,7 +412,7 @@ namespace Altaxo.Drawing.D3D
       if (object.Equals(_lineStartCap, cap))
         return this;
 
-      var result = (PenX3D)this.MemberwiseClone();
+      var result = (PenX3D)MemberwiseClone();
       result._lineStartCap = cap;
       return result;
     }
@@ -437,7 +437,7 @@ namespace Altaxo.Drawing.D3D
       if (object.Equals(_lineEndCap, cap))
         return this;
 
-      var result = (PenX3D)this.MemberwiseClone();
+      var result = (PenX3D)MemberwiseClone();
       result._lineEndCap = cap;
       return result;
     }
@@ -462,7 +462,7 @@ namespace Altaxo.Drawing.D3D
       if (object.Equals(_dashStartCap, cap))
         return this;
 
-      var result = (PenX3D)this.MemberwiseClone();
+      var result = (PenX3D)MemberwiseClone();
       result._dashStartCap = cap;
       return result;
     }
@@ -487,7 +487,7 @@ namespace Altaxo.Drawing.D3D
       if (object.Equals(_dashEndCap, cap))
         return this;
 
-      var result = (PenX3D)this.MemberwiseClone();
+      var result = (PenX3D)MemberwiseClone();
       result._dashEndCap = cap;
       return result;
     }

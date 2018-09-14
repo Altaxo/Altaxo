@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Drawing.D3D;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing.D3D
 {
@@ -73,19 +73,19 @@ namespace Altaxo.Gui.Common.Drawing.D3D
 
       // make sure that regular style is available
       if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
-        this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Regular);
+        _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Regular);
       else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
-        this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold);
+        _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold);
       else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
-        this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Italic);
+        _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Italic);
       else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
-        this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold | FontXStyle.Italic);
+        _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold | FontXStyle.Italic);
     }
 
     private void ApplyFontSize()
     {
       var newSize = _view.SelectedFontSize;
-      this._doc = _doc.WithSize(_view.SelectedFontSize);
+      _doc = _doc.WithSize(_view.SelectedFontSize);
     }
 
     public override bool Apply(bool disposeController)

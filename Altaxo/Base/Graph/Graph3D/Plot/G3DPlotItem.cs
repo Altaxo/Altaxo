@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     public override Main.IDocumentLeafNode StyleObject
     {
       get { return _plotStyles; }
-      set { this.Style = (G3DPlotStyleCollection)value; }
+      set { Style = (G3DPlotStyleCollection)value; }
     }
 
     public G3DPlotStyleCollection Style
@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         if (null == value)
           throw new System.ArgumentNullException();
 
-        if (ChildSetMember(ref _plotStyles, (G3DPlotStyleCollection)value))
+        if (ChildSetMember(ref _plotStyles, value))
         {
           EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
         }
@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         var from = obj as G3DPlotItem;
         if (from != null)
         {
-          this.Style = from.Style.Clone();
+          Style = from.Style.Clone();
         }
       }
       return copied;
@@ -167,7 +167,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       if (!(template is G3DPlotItem) || object.ReferenceEquals(this, template))
         return;
       var from = (G3DPlotItem)template;
-      this._plotStyles.SetFromTemplate(from._plotStyles, strictness);
+      _plotStyles.SetFromTemplate(from._plotStyles, strictness);
     }
 
     public override void PaintSymbol(IGraphicsContext3D g, RectangleD3D location)
@@ -207,7 +207,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     {
       _cachedPlotDataUsedForPainting = plotdata ?? throw new ArgumentNullException(nameof(plotdata));
 
-      if (null != this._plotStyles)
+      if (null != _plotStyles)
       {
         _plotStyles.Paint(g, layer, plotdata, prevPlotData, nextPlotData);
       }

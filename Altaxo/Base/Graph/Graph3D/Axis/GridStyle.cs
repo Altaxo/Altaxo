@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
@@ -56,7 +56,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GridStyle s = (GridStyle)obj;
+        var s = (GridStyle)obj;
 
         info.AddValue("Visible", s._showGrid);
         if (s._showGrid)
@@ -113,11 +113,11 @@ namespace Altaxo.Graph.Graph3D.Axis
       if (object.ReferenceEquals(this, from))
         return;
 
-      this.MajorPen = from._majorPen;
-      this.MinorPen = from._minorPen;
-      this._showGrid = from._showGrid;
-      this._showMinor = from._showMinor;
-      this._showZeroOnly = from._showZeroOnly;
+      MajorPen = from._majorPen;
+      MinorPen = from._minorPen;
+      _showGrid = from._showGrid;
+      _showMinor = from._showMinor;
+      _showZeroOnly = from._showZeroOnly;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -211,16 +211,16 @@ namespace Altaxo.Graph.Graph3D.Axis
       Scale axis = layer.Scales[axisnumber];
       TickSpacing ticking = layer.Scales[axisnumber].TickSpacing;
 
-      RectangleD3D layerRect = new RectangleD3D(PointD3D.Empty, layer.Size);
+      var layerRect = new RectangleD3D(PointD3D.Empty, layer.Size);
 
       if (_showZeroOnly)
       {
-        Altaxo.Data.AltaxoVariant var = new Altaxo.Data.AltaxoVariant(0.0);
+        var var = new Altaxo.Data.AltaxoVariant(0.0);
         double rel = axis.PhysicalVariantToNormal(var);
         //_majorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
         if (rel >= 0 && rel <= 1)
         {
-          Logical3D logV = new Logical3D();
+          var logV = new Logical3D();
           logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
           logV.SetR(axisnumber, rel);
           var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
@@ -238,7 +238,7 @@ namespace Altaxo.Graph.Graph3D.Axis
           ticks = ticking.GetMinorTicksNormal(axis);
           for (int i = 0; i < ticks.Length; ++i)
           {
-            Logical3D logV = new Logical3D();
+            var logV = new Logical3D();
             logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
             logV.SetR(axisnumber, ticks[i]);
             var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
@@ -251,7 +251,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         ticks = ticking.GetMajorTicksNormal(axis);
         for (int i = 0; i < ticks.Length; ++i)
         {
-          Logical3D logV = new Logical3D();
+          var logV = new Logical3D();
           logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
           logV.SetR(axisnumber, ticks[i]);
           var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);

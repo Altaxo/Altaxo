@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Altaxo.Data;
+using Altaxo.Main;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -76,10 +76,10 @@ namespace Altaxo.Serialization.Ascii
 
       string sLine;
       stream.Position = 0; // rewind the stream to the beginning
-      StreamReader sr = new StreamReader(stream, System.Text.Encoding.Default, true);
-      DataColumnCollection newcols = new DataColumnCollection();
+      var sr = new StreamReader(stream, System.Text.Encoding.Default, true);
+      var newcols = new DataColumnCollection();
 
-      DataColumnCollection newpropcols = new DataColumnCollection();
+      var newpropcols = new DataColumnCollection();
 
       // in case a structure is provided, allocate already the columsn
 
@@ -209,14 +209,12 @@ namespace Altaxo.Serialization.Ascii
 
           if (newcols[k] is DoubleColumn)
           {
-            double val;
-            if (double.TryParse(token, System.Globalization.NumberStyles.Any, numberFormatInfo, out val))
+            if (double.TryParse(token, System.Globalization.NumberStyles.Any, numberFormatInfo, out var val))
               ((DoubleColumn)newcols[k])[i] = val;
           }
           else if (newcols[k] is DateTimeColumn)
           {
-            DateTime val;
-            if (DateTime.TryParse(token, dateTimeFormat, System.Globalization.DateTimeStyles.NoCurrentDateDefault, out val))
+            if (DateTime.TryParse(token, dateTimeFormat, System.Globalization.DateTimeStyles.NoCurrentDateDefault, out var val))
               ((DateTimeColumn)newcols[k])[i] = val;
           }
           else if (newcols[k] is TextColumn)
@@ -226,7 +224,7 @@ namespace Altaxo.Serialization.Ascii
           else if (null == newcols[k] || newcols[k] is DBNullColumn)
           {
             bool bConverted = false;
-            double val = Double.NaN;
+            double val = double.NaN;
             DateTime valDateTime = DateTime.MinValue;
 
             try
@@ -239,8 +237,10 @@ namespace Altaxo.Serialization.Ascii
             }
             if (bConverted)
             {
-              DoubleColumn newc = new DoubleColumn();
-              newc[i] = val;
+              var newc = new DoubleColumn
+              {
+                [i] = val
+              };
               newcols.Replace(k, newc);
             }
             else
@@ -255,15 +255,19 @@ namespace Altaxo.Serialization.Ascii
               }
               if (bConverted)
               {
-                DateTimeColumn newc = new DateTimeColumn();
-                newc[i] = valDateTime;
+                var newc = new DateTimeColumn
+                {
+                  [i] = valDateTime
+                };
 
                 newcols.Replace(k, newc);
               }
               else
               {
-                TextColumn newc = new TextColumn();
-                newc[i] = token;
+                var newc = new TextColumn
+                {
+                  [i] = token
+                };
                 newcols.Replace(k, newc);
               }
             } // end outer if null==newcol
@@ -351,8 +355,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="streamOriginHint">Designates a hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
     public static void ImportFromAsciiStream(this DataTable dataTable, Stream stream, string streamOriginHint)
     {
-      AsciiImportOptions dummy;
-      ImportFromAsciiStream(dataTable, stream, streamOriginHint, out dummy);
+      ImportFromAsciiStream(dataTable, stream, streamOriginHint, out var dummy);
     }
 
     #endregion From stream
@@ -429,8 +432,7 @@ namespace Altaxo.Serialization.Ascii
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException("Argument fileName is null or empty");
 
-      AsciiImportOptions importOptions;
-      ImportFromAsciiFile(dataTable, fileName, out importOptions);
+      ImportFromAsciiFile(dataTable, fileName, out var importOptions);
     }
 
     #endregion From single file
@@ -502,8 +504,7 @@ namespace Altaxo.Serialization.Ascii
       if (null == asciiText)
         throw new ArgumentNullException("Argument asciiText is null");
 
-      AsciiImportOptions importOptions;
-      ImportFromAsciiText(dataTable, asciiText, out importOptions);
+      ImportFromAsciiText(dataTable, asciiText, out var importOptions);
     }
 
     #endregion From text
@@ -529,14 +530,14 @@ namespace Altaxo.Serialization.Ascii
       DataColumn xcol = null;
       DataColumn xvalues;
 
-      System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+      var errorList = new System.Text.StringBuilder();
 
       var dataTable = new DataTable(); // destination table
 
       int lastColumnGroup = 0;
 
       // add also a property column named "FilePath" if not existing so far
-      TextColumn filePathPropCol = (TextColumn)dataTable.PropCols.EnsureExistence("FilePath", typeof(TextColumn), ColumnKind.Label, 0);
+      var filePathPropCol = (TextColumn)dataTable.PropCols.EnsureExistence("FilePath", typeof(TextColumn), ColumnKind.Label, 0);
       filePathPropCol.Clear();
 
       if (sortFileNames)
@@ -546,7 +547,7 @@ namespace Altaxo.Serialization.Ascii
 
       foreach (string fileName in fileNames)
       {
-        DataTable srcTable = new DataTable();
+        var srcTable = new DataTable();
         if (determineImportOptionsSeparatelyForEachFile)
           ImportFromAsciiFile(srcTable, fileName);
         else if (null != importOptions && importOptions.IsFullySpecified)
@@ -592,7 +593,7 @@ namespace Altaxo.Serialization.Ascii
         for (int i = 1; i < srcTable.DataColumns.ColumnCount; i++)
         {
           // now add the y-values
-          DataColumn ycol = (DataColumn)srcTable.DataColumns[i].Clone();
+          var ycol = (DataColumn)srcTable.DataColumns[i].Clone();
           dataTable.DataColumns.Add(ycol,
           dataTable.DataColumns.FindUniqueColumnName(srcTable.DataColumns.GetColumnName(i)),
             ColumnKind.V,
@@ -629,9 +630,8 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>Null if no error occurs, or an error description.</returns>
     private static string InternalImportFromMultipleAsciiFilesHorizontally(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile)
     {
-      string errors;
 
-      var temporaryTable = InternalImportMultipleFilesHorizontallyIntoNewTable(fileNames, sortFileNames, ref importOptions, determineImportOptionsSeparatelyForEachFile, out errors);
+      var temporaryTable = InternalImportMultipleFilesHorizontallyIntoNewTable(fileNames, sortFileNames, ref importOptions, determineImportOptionsSeparatelyForEachFile, out var errors);
 
       if (null != temporaryTable)
       {
@@ -661,14 +661,14 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>A newly created table (not included in the project) with the imported data.</returns>
     private static DataTable InternalImportMultipleFilesVerticallyIntoNewTable(IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile, out string errors)
     {
-      System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+      var errorList = new System.Text.StringBuilder();
       var dataTable = new DataTable();
 
       int lastDestinationRow = 0;
       int numberOfImportedTables = 0;
 
       // add also a property column named "FilePath" if not existing so far
-      TextColumn filePathCol = (TextColumn)dataTable.Col.EnsureExistenceAtPositionStrictly(0, "FilePath", typeof(TextColumn), ColumnKind.Label, 0);
+      var filePathCol = (TextColumn)dataTable.Col.EnsureExistenceAtPositionStrictly(0, "FilePath", typeof(TextColumn), ColumnKind.Label, 0);
       filePathCol.Clear();
 
       if (sortFileNames)
@@ -679,7 +679,7 @@ namespace Altaxo.Serialization.Ascii
 
       foreach (string fileName in fileNames)
       {
-        DataTable srcTable = new DataTable();
+        var srcTable = new DataTable();
         if (determineImportOptionsSeparatelyForEachFile)
           ImportFromAsciiFile(srcTable, fileName);
         else if (null != importOptions && importOptions.IsFullySpecified)
@@ -762,8 +762,7 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>Null if no error occurs, or an error description.</returns>
     private static string InternalImportFromMultipleAsciiFilesVertically(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile)
     {
-      string errors;
-      var temporaryTable = InternalImportMultipleFilesVerticallyIntoNewTable(fileNames, sortFileNames, ref importOptions, determineImportOptionsSeparatelyForEachFile, out errors);
+      var temporaryTable = InternalImportMultipleFilesVerticallyIntoNewTable(fileNames, sortFileNames, ref importOptions, determineImportOptionsSeparatelyForEachFile, out var errors);
 
       if (null != temporaryTable)
       {
@@ -1035,7 +1034,7 @@ namespace Altaxo.Serialization.Ascii
       var importOptions = AsciiDocumentAnalysis.Analyze(defaultImportOptions ?? new AsciiImportOptions(), stream, GetDefaultAsciiDocumentAnalysisOptions(null));
       if (importOptions != null)
       {
-        DataTable table = new DataTable();
+        var table = new DataTable();
         ImportFromAsciiStream(table, stream, streamOriginHint, importOptions);
         return table;
       }
@@ -1102,8 +1101,10 @@ namespace Altaxo.Serialization.Ascii
       if (string.IsNullOrEmpty(filename))
         throw new ArgumentNullException("filename is null or empty");
 
-      var defaultImportOptions = new AsciiImportOptions();
-      defaultImportOptions.SeparationStrategy = new SingleCharSeparationStrategy(separatorChar);
+      var defaultImportOptions = new AsciiImportOptions
+      {
+        SeparationStrategy = new SingleCharSeparationStrategy(separatorChar)
+      };
       using (var stream = GetAsciiInputFileStream(filename))
       {
         return InternalImportStreamIntoNewTable(stream, FileUrlStart + filename, defaultImportOptions);

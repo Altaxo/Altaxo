@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     public override AltaxoVariant[] GetMajorTicksAsVariant()
     {
       double[] ticks = GetMajorTicks();
-      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      var vticks = new AltaxoVariant[ticks.Length];
       for (int i = 0; i < ticks.Length; ++i)
         vticks[i] = ticks[i];
       return vticks;
@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     public override AltaxoVariant[] GetMinorTicksAsVariant()
     {
       double[] ticks = GetMinorTicks();
-      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      var vticks = new AltaxoVariant[ticks.Length];
       for (int i = 0; i < ticks.Length; ++i)
         vticks[i] = ticks[i];
       return vticks;
@@ -149,7 +149,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
       set
       {
-        Org = (double)value;
+        Org = value;
       }
     }
 
@@ -161,7 +161,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
       set
       {
-        End = (double)value;
+        End = value;
       }
     }
 

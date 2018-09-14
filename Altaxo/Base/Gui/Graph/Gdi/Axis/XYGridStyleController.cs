@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Common.Drawing;
-using System;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
@@ -100,10 +100,10 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     public override bool Apply(bool disposeController)
     {
-      if (!this._majorController.Apply(disposeController))
+      if (!_majorController.Apply(disposeController))
         return false;
 
-      if (!this._minorController.Apply(disposeController))
+      if (!_minorController.Apply(disposeController))
         return false;
 
       return ApplyEnd(true, disposeController);
@@ -112,16 +112,16 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     protected override void AttachView()
     {
       base.AttachView();
-      _view.ShowGridChanged += this.EhView_ShowGridChanged;
-      _view.ShowMinorGridChanged += this.EhView_ShowMinorGridChanged;
-      _view.ShowZeroOnlyChanged += this.EhView_ShowZeroOnlyChanged;
+      _view.ShowGridChanged += EhView_ShowGridChanged;
+      _view.ShowMinorGridChanged += EhView_ShowMinorGridChanged;
+      _view.ShowZeroOnlyChanged += EhView_ShowZeroOnlyChanged;
     }
 
     protected override void DetachView()
     {
-      _view.ShowGridChanged -= this.EhView_ShowGridChanged;
-      _view.ShowMinorGridChanged -= this.EhView_ShowMinorGridChanged;
-      _view.ShowZeroOnlyChanged -= this.EhView_ShowZeroOnlyChanged;
+      _view.ShowGridChanged -= EhView_ShowGridChanged;
+      _view.ShowMinorGridChanged -= EhView_ShowMinorGridChanged;
+      _view.ShowZeroOnlyChanged -= EhView_ShowZeroOnlyChanged;
       base.DetachView();
     }
 

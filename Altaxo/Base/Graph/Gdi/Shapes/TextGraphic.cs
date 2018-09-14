@@ -224,10 +224,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       FontX textFont, NamedColor textColor)
       : base(new ItemLocationDirectAutoSize())
     {
-      this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
-      this.Font = textFont;
-      this.Text = text;
-      this.Color = textColor;
+      SetPosition(graphicPosition, Main.EventFiring.Suppressed);
+      Font = textFont;
+      Text = text;
+      Color = textColor;
     }
 
     public TextGraphic(double posX, double posY,
@@ -269,22 +269,22 @@ namespace Altaxo.Graph.Gdi.Shapes
         var from = obj as TextGraphic;
         if (from != null)
         {
-          this._text = from._text;
-          this._font = from._font;
+          _text = from._text;
+          _font = from._font;
 
-          this._textBrush = from._textBrush == null ? null : (BrushX)from._textBrush.Clone();
+          _textBrush = from._textBrush == null ? null : from._textBrush.Clone();
           if (null != _textBrush)
             _textBrush.ParentObject = this;
 
-          this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
+          _background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
           if (null != _background)
             _background.ParentObject = this;
 
-          this._lineSpacingFactor = from._lineSpacingFactor;
+          _lineSpacingFactor = from._lineSpacingFactor;
 
           // don't clone the cached items
-          this._isStructureInSync = false;
-          this._isMeasureInSync = false;
+          _isStructureInSync = false;
+          _isMeasureInSync = false;
         }
       }
       return isCopied;
@@ -330,7 +330,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       double distanceYU = 0;   // upper y distance bounding rectangle-string
       double distanceYL = 0; // lower y distance
 
-      if (this._background != null)
+      if (_background != null)
       {
         // the distance to the sides should be like the character n
         distanceXL = 0.25 * widthOfOne_n; // left distance bounds-text
@@ -339,13 +339,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         distanceYL = 0; // lower y distance
       }
 
-      PointD2D size = new PointD2D((textWidth + distanceXL + distanceXR), (textHeight + distanceYU + distanceYL));
+      var size = new PointD2D((textWidth + distanceXL + distanceXR), (textHeight + distanceYU + distanceYL));
       _cachedExtendedTextBounds = new RectangleD2D(PointD2D.Empty, size);
-      RectangleD2D textRectangle = new RectangleD2D(new PointD2D(-distanceXL, -distanceYU), size);
+      var textRectangle = new RectangleD2D(new PointD2D(-distanceXL, -distanceYU), size);
 
-      if (this._background != null)
+      if (_background != null)
       {
-        var backgroundRect = this._background.MeasureItem(g, textRectangle);
+        var backgroundRect = _background.MeasureItem(g, textRectangle);
         _cachedExtendedTextBounds.Offset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y);
 
         size = backgroundRect.Size;
@@ -361,7 +361,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       // this._leftTop = new PointD2D(-xanchor, -yanchor);
       ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size, false);
 
-      this._cachedTextOffset = new PointD2D(distanceXL, distanceYU);
+      _cachedTextOffset = new PointD2D(distanceXL, distanceYU);
     }
 
     public IBackgroundStyle Background
@@ -441,7 +441,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       // 1. the overall size of the structure must be measured before, i.e. bMeasureInSync is true
       // 2. the graphics object was translated and rotated before, so that the paining starts at (0,0)
 
-      if (!this._isMeasureInSync)
+      if (!_isMeasureInSync)
         return;
 
       if (_background != null)
@@ -476,8 +476,8 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (!(_font == value))
         {
           _font = value;
-          this._isStructureInSync = false; // since the font is cached in the structure, it must be renewed
-          this._isMeasureInSync = false;
+          _isStructureInSync = false; // since the font is cached in the structure, it must be renewed
+          _isMeasureInSync = false;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -499,7 +499,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (!(_text == value))
         {
           _text = value;
-          this._isStructureInSync = false;
+          _isStructureInSync = false;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -572,19 +572,23 @@ namespace Altaxo.Graph.Gdi.Shapes
       bool bMatches = parser.MainSentence();
       var tree = parser.GetRoot();
 
-      TreeWalker walker = new TreeWalker(_text);
-      StyleContext style = new StyleContext(_font, _textBrush);
-      style.BaseFontId = _font;
+      var walker = new TreeWalker(_text);
+      var style = new StyleContext(_font, _textBrush)
+      {
+        BaseFontId = _font
+      };
 
       _rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
     }
 
     private void MeasureGlyphs(Graphics g, FontCache cache, IPaintContext paintContext)
     {
-      MeasureContext mc = new MeasureContext();
-      mc.FontCache = cache;
-      mc.LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this);
-      mc.TabStop = Glyph.MeasureString(g, "MMMM", _font).X;
+      var mc = new MeasureContext
+      {
+        FontCache = cache,
+        LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this),
+        TabStop = Glyph.MeasureString(g, "MMMM", _font).X
+      };
 
       if (null != _rootNode)
         _rootNode.Measure(g, mc, 0);
@@ -614,21 +618,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       //_isStructureInSync = false;
       _isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID
 
-      if (!this._isStructureInSync)
+      if (!_isStructureInSync)
       {
         // this.Interpret(g);
-        this.InterpretText();
+        InterpretText();
 
         _isStructureInSync = true;
         _isMeasureInSync = false;
       }
 
-      using (FontCache fontCache = new FontCache())
+      using (var fontCache = new FontCache())
       {
-        if (!this._isMeasureInSync)
+        if (!_isMeasureInSync)
         {
           // this.MeasureStructure(g, obj);
-          this.MeasureGlyphs(g, fontCache, paintContext);
+          MeasureGlyphs(g, fontCache, paintContext);
 
           MeasureBackground(g, _rootNode.Width, _rootNode.Height);
 
@@ -642,7 +646,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         var bounds = Bounds;
 
-        Matrix transformmatrix = new Matrix();
+        var transformmatrix = new Matrix();
         transformmatrix.Translate((float)_location.AbsolutePivotPositionX, (float)_location.AbsolutePivotPositionY);
         transformmatrix.Rotate((float)(-Rotation));
         transformmatrix.Shear((float)Shear, 0);
@@ -658,12 +662,14 @@ namespace Altaxo.Graph.Gdi.Shapes
         // first of all paint the background
         PaintBackground(g);
 
-        DrawContext dc = new DrawContext();
-        dc.FontCache = fontCache;
-        dc.bForPreview = bForPreview;
-        dc.LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this);
-        dc.transformMatrix = transformmatrix;
-        dc._cachedSymbolPositions = _cachedSymbolPositions;
+        var dc = new DrawContext
+        {
+          FontCache = fontCache,
+          bForPreview = bForPreview,
+          LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this),
+          transformMatrix = transformmatrix,
+          _cachedSymbolPositions = _cachedSymbolPositions
+        };
         DrawGlyphs(g, dc, _cachedTextOffset.X, _cachedTextOffset.Y);
         g.Restore(gs);
       }
@@ -682,12 +688,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       var pt = htd.GetHittedPointInWorldCoord(_transformation);
 
-      foreach (GraphicsPath gp in this._cachedSymbolPositions.Keys)
+      foreach (GraphicsPath gp in _cachedSymbolPositions.Keys)
       {
         if (gp.IsVisible((PointF)pt))
         {
-          result = new HitTestObject(gp, _cachedSymbolPositions[gp]);
-          result.DoubleClick = PlotItemEditorMethod;
+          result = new HitTestObject(gp, _cachedSymbolPositions[gp])
+          {
+            DoubleClick = PlotItemEditorMethod
+          };
           return result;
         }
       }

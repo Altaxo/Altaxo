@@ -16,23 +16,18 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Text;
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using Microsoft.Win32;
-
 using System;
 using System.Collections.Generic;
-
+using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Collections;
-
+using System.Text;
 using System.Text.RegularExpressions;
+using Altaxo.Collections;
+using Microsoft.Win32;
 
 namespace Altaxo.Main.Services
 {
@@ -94,7 +89,7 @@ namespace Altaxo.Main.Services
 
     private static string GetPathFromRegistryX86(string key, string valueName)
     {
-      using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+      using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
       {
         using (RegistryKey installRootKey = baseKey.OpenSubKey(key))
         {
@@ -277,7 +272,7 @@ namespace Altaxo.Main.Services
 
       string[] aPath = dir1.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
       string[] bPath = dir2.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-      StringBuilder result = new StringBuilder();
+      var result = new StringBuilder();
       int indx = 0;
       for (; indx < Math.Min(bPath.Length, aPath.Length); ++indx)
       {
@@ -388,13 +383,13 @@ namespace Altaxo.Main.Services
       {
         return ".";
       }
-      StringBuilder erg = new StringBuilder();
+      var erg = new StringBuilder();
       for (int i = indx; i < bPath.Length; ++i)
       {
         erg.Append("..");
         erg.Append(Path.DirectorySeparatorChar);
       }
-      erg.Append(String.Join(Path.DirectorySeparatorChar.ToString(), aPath, indx, aPath.Length - indx));
+      erg.Append(string.Join(Path.DirectorySeparatorChar.ToString(), aPath, indx, aPath.Length - indx));
       if (erg[erg.Length - 1] == Path.DirectorySeparatorChar)
         erg.Length -= 1;
       return erg.ToString();
@@ -593,7 +588,7 @@ namespace Altaxo.Main.Services
 
       return !((nameWithoutExtension.StartsWith("COM", StringComparison.Ordinal) ||
                           nameWithoutExtension.StartsWith("LPT", StringComparison.Ordinal)) &&
-                       Char.IsDigit(ch));
+                       char.IsDigit(ch));
     }
 
     /// <summary>

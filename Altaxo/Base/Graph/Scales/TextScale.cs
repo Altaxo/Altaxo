@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
-using System;
 
 namespace Altaxo.Graph.Scales
 {
@@ -75,8 +75,8 @@ namespace Altaxo.Graph.Scales
       {
         TextScale s = null != o ? (TextScale)o : new TextScale(info);
 
-        s._cachedAxisOrg = (double)info.GetDouble("Org");
-        s._cachedAxisEnd = (double)info.GetDouble("End");
+        s._cachedAxisOrg = info.GetDouble("Org");
+        s._cachedAxisEnd = info.GetDouble("End");
         s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
         s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
 
@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Scales
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        TextScale s = (TextScale)obj;
+        var s = (TextScale)obj;
 
         info.AddValue("Org", s._cachedAxisOrg);
         info.AddValue("End", s._cachedAxisEnd);
@@ -112,8 +112,8 @@ namespace Altaxo.Graph.Scales
       {
         TextScale s = null != o ? (TextScale)o : new TextScale(info);
 
-        s._cachedAxisOrg = (double)info.GetDouble("Org");
-        s._cachedAxisEnd = (double)info.GetDouble("End");
+        s._cachedAxisOrg = info.GetDouble("Org");
+        s._cachedAxisEnd = info.GetDouble("End");
         s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
         s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
 
@@ -155,7 +155,7 @@ namespace Altaxo.Graph.Scales
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      TextScale from = obj as TextScale;
+      var from = obj as TextScale;
 
       if (null == from)
         return false;
@@ -240,7 +240,7 @@ namespace Altaxo.Graph.Scales
           throw new ArgumentNullException();
 
         if (ChildSetMember(ref _tickSpacing, value))
-          EhChildChanged(this.RescalingObject, EventArgs.Empty);
+          EhChildChanged(RescalingObject, EventArgs.Empty);
       }
     }
 

@@ -60,13 +60,13 @@ namespace Altaxo.Gui.Common
       set
       {
         if (_view != null)
-          _view.ValueText_Validating -= this.EhView_ValidatingValue1;
+          _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value;
         Initialize();
 
         if (_view != null)
-          _view.ValueText_Validating += this.EhView_ValidatingValue1;
+          _view.ValueText_Validating += EhView_ValidatingValue1;
       }
     }
 
@@ -162,13 +162,13 @@ namespace Altaxo.Gui.Common
       set
       {
         if (_view != null)
-          _view.ValueText_Validating -= this.EhView_ValidatingValue1;
+          _view.ValueText_Validating -= EhView_ValidatingValue1;
 
         _view = value as ISingleValueView;
         if (_view != null)
         {
           Initialize();
-          _view.ValueText_Validating += this.EhView_ValidatingValue1;
+          _view.ValueText_Validating += EhView_ValidatingValue1;
         }
       }
     }

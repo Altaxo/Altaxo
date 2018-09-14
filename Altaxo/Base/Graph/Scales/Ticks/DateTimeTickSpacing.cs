@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -267,7 +267,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       public bool Equals(TimeSpanEx other)
       {
-        return this._unit == other._unit && this._span == other._span;
+        return _unit == other._unit && _span == other._span;
       }
 
       bool IEquatable<object>.Equals(object other)
@@ -297,7 +297,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       public object Clone()
       {
-        return this.MemberwiseClone();
+        return MemberwiseClone();
       }
     }
 
@@ -453,7 +453,7 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DateTimeTickSpacing s = (DateTimeTickSpacing)obj;
+        var s = (DateTimeTickSpacing)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -712,14 +712,14 @@ namespace Altaxo.Graph.Scales.Ticks
     private static void ConvertOrgEndToDateTimeValues(AltaxoVariant org, AltaxoVariant end, out DateTime dorg, out DateTime dend)
     {
       if (org.IsType(AltaxoVariant.Content.VDateTime))
-        dorg = (DateTime)org;
+        dorg = org;
       else if (org.CanConvertedToDouble)
         dorg = new DateTime((long)(org.ToDouble() * 1E7));
       else
         throw new ArgumentException("Variant org is not a DateTime nor a numeric value");
 
       if (end.IsType(AltaxoVariant.Content.VDateTime))
-        dend = (DateTime)end;
+        dend = end;
       else if (end.CanConvertedToDouble)
         dend = new DateTime((long)(end.ToDouble() * 1E7));
       else
@@ -728,9 +728,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override bool PreProcessScaleBoundaries(ref AltaxoVariant org, ref AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
     {
-      DateTime dorg;
-      DateTime dend;
-      ConvertOrgEndToDateTimeValues(org, end, out dorg, out dend);
+      ConvertOrgEndToDateTimeValues(org, end, out var dorg, out var dend);
 
       //dorg = TransformOriginalToModified(dorg);
       //dend = TransformOriginalToModified(dend);
@@ -747,9 +745,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
     public override void FinalProcessScaleBoundaries(AltaxoVariant org, AltaxoVariant end, Scale scale)
     {
-      DateTime dorg;
-      DateTime dend;
-      ConvertOrgEndToDateTimeValues(org, end, out dorg, out dend);
+      ConvertOrgEndToDateTimeValues(org, end, out var dorg, out var dend);
 
       if (_cachedMajorMinor == null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
       {
@@ -850,7 +846,7 @@ namespace Altaxo.Graph.Scales.Ticks
       }
       if (xorg == xend)
       {
-        TimeSpan defaultSpanBy2 = TimeSpan.FromDays(1);
+        var defaultSpanBy2 = TimeSpan.FromDays(1);
         if (xorg > (DateTime.MinValue + defaultSpanBy2))
           xorg -= defaultSpanBy2;
         else
@@ -866,16 +862,8 @@ namespace Altaxo.Graph.Scales.Ticks
       // here xorg should be < xend in any case
       if (!(xorg < xend))
         throw new InvalidProgramException();
-
-      // try applying Grace and OneLever only ...
-      DateTime xOrgWithGraceAndOneLever, xEndWithGraceAndOneLever;
-      bool modGraceAndOneLever = GetOrgEndWithGraceAndOneLever(xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithGraceAndOneLever, out xEndWithGraceAndOneLever);
-
-      // try applying tick snapping only (without Grace and OneLever)
-      DateTime xOrgWithTickSnapping, xEndWithTickSnapping;
-      TimeSpanEx decadesPerMajorTick;
-      TimeSpanEx minorTicks;
-      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithTickSnapping, out xEndWithTickSnapping, out decadesPerMajorTick, out minorTicks);
+      bool modGraceAndOneLever = GetOrgEndWithGraceAndOneLever(xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithGraceAndOneLever, out var xEndWithGraceAndOneLever);
+      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithTickSnapping, out var xEndWithTickSnapping, out var decadesPerMajorTick, out var minorTicks);
 
       // now compare the two
       if (xOrgWithTickSnapping <= xOrgWithGraceAndOneLever && xEndWithTickSnapping >= xEndWithGraceAndOneLever)
@@ -1114,7 +1102,7 @@ namespace Altaxo.Graph.Scales.Ticks
           return TimeSpanEx.FromMonths(RoundTo1_2_3_4_6_8_12_18(monthPerTick));
       }
       int i = _possibleMajorTickSpans.Length - 1;
-      TimeSpan destMajorTickSpan = new TimeSpan(span.Ticks / targetNumberOfMajorTicks);
+      var destMajorTickSpan = new TimeSpan(span.Ticks / targetNumberOfMajorTicks);
       for (i = _possibleMajorTickSpans.Length - 1; i >= 0; i--)
       {
         if (_possibleMajorTickSpans[i] < destMajorTickSpan)
@@ -1155,7 +1143,7 @@ namespace Altaxo.Graph.Scales.Ticks
             if (ticks < years && ticks > 0 && 0 == years % ticks)
               return TimeSpanEx.FromYears(years / ticks);
             double minDiff = double.MaxValue;
-            TimeSpanEx result = TimeSpanEx.FromYears(1);
+            var result = TimeSpanEx.FromYears(1);
             var divisors = Calc.PrimeNumberMath.GetNeighbouringDivisors(years, targetNumberOfMinorTicks, years);
             foreach (var c in divisors)
             {
@@ -1188,7 +1176,7 @@ namespace Altaxo.Graph.Scales.Ticks
               return TimeSpanEx.FromMonths(months / ticks);
 
             double minDiff = double.MaxValue;
-            TimeSpanEx result = TimeSpanEx.FromMonths(1);
+            var result = TimeSpanEx.FromMonths(1);
             var divisors = Calc.PrimeNumberMath.GetNeighbouringDivisors(months, targetNumberOfMinorTicks, months);
             foreach (var c in divisors)
             {
@@ -1212,7 +1200,7 @@ namespace Altaxo.Graph.Scales.Ticks
                 return TimeSpanEx.FromTicks(majorSpan._span.Ticks / ticks);
             }
 
-            TimeSpanEx result = TimeSpanEx.FromDays(1);
+            var result = TimeSpanEx.FromDays(1);
             double minDiff = double.MaxValue;
             foreach (var c in _possibleMinorTicksForDays)
             {

@@ -51,8 +51,7 @@ namespace Altaxo.Graph.Gdi
     ///<inheritdoc/>
     public T GetValueOrDefault<T>(object key)
     {
-      object o;
-      if (_dictionary.TryGetValue(key, out o))
+      if (_dictionary.TryGetValue(key, out var o))
       {
         return (T)o;
       }
@@ -68,8 +67,7 @@ namespace Altaxo.Graph.Gdi
 
     public void PushHierarchicalValue<T>(string name, T value)
     {
-      object existing;
-      if (_hierarchicalData.TryGetValue(name, out existing))
+      if (_hierarchicalData.TryGetValue(name, out var existing))
       {
         var existingStack = existing as Stack<T>;
         if (null != existingStack)
@@ -87,8 +85,7 @@ namespace Altaxo.Graph.Gdi
 
     public T PopHierarchicalValue<T>(string name)
     {
-      object existing;
-      if (_hierarchicalData.TryGetValue(name, out existing))
+      if (_hierarchicalData.TryGetValue(name, out var existing))
       {
         var existingStack = existing as Stack<T>;
         if (null != existingStack)
@@ -108,8 +105,7 @@ namespace Altaxo.Graph.Gdi
 
     public T GetHierarchicalValue<T>(string name)
     {
-      object existing;
-      if (_hierarchicalData.TryGetValue(name, out existing))
+      if (_hierarchicalData.TryGetValue(name, out var existing))
       {
         var existingStack = existing as Stack<T>;
         if (null != existingStack)

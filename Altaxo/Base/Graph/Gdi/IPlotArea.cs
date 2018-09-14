@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Geometry;
 using Altaxo.Graph.Scales;
-using System;
 
 namespace Altaxo.Graph.Gdi
 {

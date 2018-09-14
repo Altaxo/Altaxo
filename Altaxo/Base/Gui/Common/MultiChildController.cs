@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Common
 {
@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Common
       {
         _view.InitializeBegin();
 
-        ViewDescriptionElement[] controls = new ViewDescriptionElement[_childController.Length];
+        var controls = new ViewDescriptionElement[_childController.Length];
         for (int i = 0; i < controls.Length; i++)
           controls[i] = new ViewDescriptionElement(_childController[i].Title, _childController[i].View);
 
@@ -188,8 +188,8 @@ namespace Altaxo.Gui.Common
       {
         if (_view != null)
         {
-          _view.ChildControlEntered -= this.EhView_ChildControlEntered;
-          _view.ChildControlValidated -= this.EhView_ChildControlValidated;
+          _view.ChildControlEntered -= EhView_ChildControlEntered;
+          _view.ChildControlValidated -= EhView_ChildControlValidated;
         }
 
         _view = value as IMultiChildView;
@@ -198,8 +198,8 @@ namespace Altaxo.Gui.Common
 
         if (_view != null)
         {
-          _view.ChildControlEntered += this.EhView_ChildControlEntered;
-          _view.ChildControlValidated += this.EhView_ChildControlValidated;
+          _view.ChildControlEntered += EhView_ChildControlEntered;
+          _view.ChildControlValidated += EhView_ChildControlValidated;
         }
       }
     }

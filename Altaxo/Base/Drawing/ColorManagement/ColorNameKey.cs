@@ -55,7 +55,7 @@ namespace Altaxo.Drawing.ColorManagement
     /// <returns><c>True</c> if this key matches with name and color value to the other key. Otherwise, <c>false</c>.</returns>
     public bool Equals(ColorNameKey other)
     {
-      return 0 == string.Compare(this._name, other._name) && this._color.Equals(other._color);
+      return 0 == string.Compare(_name, other._name) && _color.Equals(other._color);
     }
 
     /// <summary>

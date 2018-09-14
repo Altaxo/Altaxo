@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
@@ -291,8 +291,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
       foreach (var list in allLists)
       {
-        NGTreeNode levelNode;
-        if (!levelDict.TryGetValue(list.Level, out levelNode))
+        if (!levelDict.TryGetValue(list.Level, out var levelNode))
         {
           levelNode = new NGTreeNode(Enum.GetName(typeof(ItemDefinitionLevel), list.Level));
           levelDict.Add(list.Level, levelNode);

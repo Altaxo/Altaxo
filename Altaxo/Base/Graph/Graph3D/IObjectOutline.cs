@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -143,8 +143,7 @@ namespace Altaxo.Graph.Graph3D
 
     public bool IsHittedBy(HitTestPointData hitData)
     {
-      double z;
-      return hitData.IsHit(_rectangle, _transformation, out z);
+      return hitData.IsHit(_rectangle, _transformation, out var z);
     }
   }
 
@@ -221,10 +220,9 @@ namespace Altaxo.Graph.Graph3D
 
     public bool IsHittedBy(HitTestPointData hitData)
     {
-      double z;
       foreach (var rect in _rectangles)
       {
-        if (hitData.IsHit(rect, _transformation, out z))
+        if (hitData.IsHit(rect, _transformation, out var z))
           return true;
       }
       return false;

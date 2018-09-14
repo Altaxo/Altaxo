@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -462,25 +462,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._independentSkipFrequency = from._independentSkipFrequency;
-        this._skipFrequency = from._skipFrequency;
+        _independentSkipFrequency = from._independentSkipFrequency;
+        _skipFrequency = from._skipFrequency;
 
-        this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-        this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+        _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
-        this._connectCircular = from._connectCircular;
-        this._connectionStyle = from._connectionStyle;
+        _connectCircular = from._connectCircular;
+        _connectionStyle = from._connectionStyle;
 
-        this._linePen = null == from._linePen ? null : (PenX)from._linePen.Clone();
-        this._independentDashStyle = from._independentDashStyle;
-        this._independentColor = from._independentColor;
+        _linePen = null == from._linePen ? null : from._linePen.Clone();
+        _independentDashStyle = from._independentDashStyle;
+        _independentColor = from._independentColor;
 
-        this._independentSymbolSize = from._independentSymbolSize;
-        this._symbolSize = from._symbolSize;
+        _independentSymbolSize = from._independentSymbolSize;
+        _symbolSize = from._symbolSize;
 
-        this._useSymbolGap = from._useSymbolGap;
-        this._symbolGapOffset = from._symbolGapOffset;
-        this._symbolGapFactor = from._symbolGapFactor;
+        _useSymbolGap = from._useSymbolGap;
+        _symbolGapOffset = from._symbolGapOffset;
+        _symbolGapFactor = from._symbolGapFactor;
 
         EhSelfChanged();
 
@@ -845,7 +845,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         GraphicsState gs = g.Save();
         g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
         float halfwidth = bounds.Width / 2;
-        if (this.UseSymbolGap == true)
+        if (UseSymbolGap == true)
         {
           // plot a line with the length of symbolsize from
           var symGap = (float)(_symbolGapOffset + _symbolGapFactor * _symbolSize);
@@ -864,7 +864,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
     {
-      if (this._connectionStyle is LineConnectionStyles.NoConnection)
+      if (_connectionStyle is LineConnectionStyles.NoConnection)
         return;
 
       if (_independentOnShiftingGroupStyles)
@@ -902,7 +902,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _linePen.Cached = true;
 
       PlotRangeList rangeList = pdata.RangeList;
-      if (this._ignoreMissingDataPoints)
+      if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
         // as one range, i.e. continuously
@@ -932,12 +932,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       int rangelistlen = rangeList.Count;
 
-      if (this._ignoreMissingDataPoints)
+      if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
         // as one range, i.e. continuously
         // for this, we create the totalRange, which contains all ranges
-        PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+        var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
         _connectionStyle.FillOneRange(gp, pdata, totalRange, layer, fillDirection, _ignoreMissingDataPoints, _connectCircular, plotPositions, _cachedLogicalShiftX, _cachedLogicalShiftY);
       }
       else // we not ignore missing points, so plot all ranges separately
@@ -953,24 +953,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public bool IsColorProvider
     {
-      get { return !this._independentColor; }
+      get { return !_independentColor; }
     }
 
     public NamedColor Color
     {
       get
       {
-        return this._linePen.Color;
+        return _linePen.Color;
       }
       set
       {
-        this._linePen.Color = value;
+        _linePen.Color = value;
       }
     }
 
     public bool IsColorReceiver
     {
-      get { return !this._independentColor; }
+      get { return !_independentColor; }
     }
 
     #region IG2DPlotStyle Members
@@ -989,13 +989,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this.Color; });
+        { return Color; });
 
       if (!_independentDashStyle)
         DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate
-        { return this.LinePen.DashPattern; });
+        { return LinePen.DashPattern; });
 
       IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
       LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => new Tuple<ILineConnectionStyle, bool>(_connectionStyle, _connectCircular));
@@ -1004,40 +1004,40 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
-      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => _ignoreMissingDataPoints = ignoreMissingDataPoints);
 
       // LineConnectionStyle is the same for all sub plot styles
-      LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection, connectCircular) => { this._connectionStyle = lineConnection; this._connectCircular = connectCircular; });
+      LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection, connectCircular) => { _connectionStyle = lineConnection; _connectCircular = connectCircular; });
 
       // SkipFrequency should be the same for all sub plot styles
       if (!_independentSkipFrequency)
       {
         _skipFrequency = 1;
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this._skipFrequency = c; });
+        { _skipFrequency = c; });
       }
 
-      if (this.IsColorReceiver)
+      if (IsColorReceiver)
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { this.Color = c; });
+        { Color = c; });
 
       if (!_independentDashStyle)
         DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c)
-        { this._linePen.DashPattern = c; });
+        { _linePen.DashPattern = c; });
 
       if (!_independentSymbolSize)
       {
         _symbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._symbolSize = size; });
+        { _symbolSize = size; });
       }
 
       // symbol size
       if (!_independentSymbolSize)
       {
-        this._symbolSize = 0;
+        _symbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._symbolSize = size; });
+        { _symbolSize = size; });
 
         // but if there is an symbol size evaluation function, then use this with higher priority.
         _cachedSymbolSizeForIndexFunction = null;

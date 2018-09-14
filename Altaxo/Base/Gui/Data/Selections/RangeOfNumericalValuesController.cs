@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
-using Altaxo.Data.Selections;
-using Altaxo.Gui.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Data.Selections;
+using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Data.Selections
 {

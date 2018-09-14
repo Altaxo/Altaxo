@@ -44,9 +44,9 @@ namespace Altaxo.Main.Commands
       var from = obj as TestAllProjectsInFolderOptions;
       if (null != from)
       {
-        this.FolderPaths = from.FolderPaths;
-        this.TestSavingAndReopening = from.TestSavingAndReopening;
-        this.ProtocolFileName = from.ProtocolFileName;
+        FolderPaths = from.FolderPaths;
+        TestSavingAndReopening = from.TestSavingAndReopening;
+        ProtocolFileName = from.ProtocolFileName;
         return true;
       }
       return false;

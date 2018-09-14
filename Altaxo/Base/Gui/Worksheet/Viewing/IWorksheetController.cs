@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Geometry;
-using Altaxo.Worksheet;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Geometry;
+using Altaxo.Worksheet;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {

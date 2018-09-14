@@ -85,7 +85,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DashPatternGroupStyle s = (DashPatternGroupStyle)obj;
+        var s = (DashPatternGroupStyle)obj;
         info.AddValue("StepEnabled", s._isStepEnabled);
 
         info.AddValue("Value", s._value);
@@ -101,8 +101,7 @@ namespace Altaxo.Graph.Plot.Groups
         var value = (IDashPattern)info.GetValue("Value", s);
 
         var listOfValues = (DashPatternList)info.GetValue("ListOfValues", s);
-        DashPatternList registeredList;
-        DashPatternListManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out registeredList);
+        DashPatternListManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out var registeredList);
         s._listOfValues = registeredList;
         s.SetValueCoercedToGroup(value);
 
@@ -122,16 +121,16 @@ namespace Altaxo.Graph.Plot.Groups
 
     public DashPatternGroupStyle(DashPatternGroupStyle from)
     {
-      this._isStepEnabled = from._isStepEnabled;
-      this._value = from._value;
-      this._listOfValues = from._listOfValues;
+      _isStepEnabled = from._isStepEnabled;
+      _value = from._value;
+      _listOfValues = from._listOfValues;
     }
 
     public void TransferFrom(IPlotGroupStyle fromb)
     {
-      DashPatternGroupStyle from = (DashPatternGroupStyle)fromb;
-      this._value = from._value;
-      this._listOfValues = from._listOfValues;
+      var from = (DashPatternGroupStyle)fromb;
+      _value = from._value;
+      _listOfValues = from._listOfValues;
     }
 
     #endregion Constructors

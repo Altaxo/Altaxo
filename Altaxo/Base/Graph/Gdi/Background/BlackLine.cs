@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Background
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Background
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        BlackLine s = (BlackLine)obj;
+        var s = (BlackLine)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

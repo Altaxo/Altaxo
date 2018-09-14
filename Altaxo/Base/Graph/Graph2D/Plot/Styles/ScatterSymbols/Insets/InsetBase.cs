@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
       }
       else
       {
-        var result = (InsetBase)this.MemberwiseClone();
+        var result = (InsetBase)MemberwiseClone();
         result._color = value;
         return result;
       }
@@ -92,12 +92,12 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 
     public override bool Equals(object obj)
     {
-      return this.GetType() == obj?.GetType() && this._color == ((InsetBase)obj)._color;
+      return GetType() == obj?.GetType() && _color == ((InsetBase)obj)._color;
     }
 
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode() + 17 * _color.GetHashCode();
+      return GetType().GetHashCode() + 17 * _color.GetHashCode();
     }
   }
 }

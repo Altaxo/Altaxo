@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -63,8 +63,8 @@ namespace Altaxo.Graph.Gdi
     public HitTestPointData(HitTestPointData from)
     {
       _hittedPointInPageCoord = from._hittedPointInPageCoord;
-      this._pageScale = from._pageScale;
-      this._transformation = new MatrixD2D(from._transformation);
+      _pageScale = from._pageScale;
+      _transformation = new MatrixD2D(from._transformation);
     }
 
     /// <summary>

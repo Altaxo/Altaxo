@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.Scales.Rescaling;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
+using Altaxo.Data;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.Scales.Rescaling;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        WaterfallTransform s = (WaterfallTransform)obj;
+        var s = (WaterfallTransform)obj;
         info.AddValue("XScale", s._scaleXInc);
         info.AddValue("YScale", s._scaleYInc);
         info.AddValue("UseClipping", s._useClipping);
@@ -98,12 +98,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     /// <param name="from">The waterfall plot style to copy from.</param>
     public WaterfallTransform(WaterfallTransform from)
     {
-      this._scaleXInc = from._scaleXInc;
-      this._scaleYInc = from._scaleYInc;
-      this._useClipping = from._useClipping;
+      _scaleXInc = from._scaleXInc;
+      _scaleYInc = from._scaleYInc;
+      _useClipping = from._useClipping;
 
-      this._xinc = from._xinc;
-      this._yinc = from._yinc;
+      _xinc = from._xinc;
+      _yinc = from._yinc;
     }
 
     public double XScale
@@ -162,7 +162,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         return;
       }
 
-      NumericalBoundaries xbounds = (NumericalBoundaries)pb.Clone();
+      var xbounds = (NumericalBoundaries)pb.Clone();
       xbounds.Reset();
 
       int nItems = 0;
@@ -170,7 +170,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         if (pi is IXBoundsHolder)
         {
-          IXBoundsHolder xbpi = (IXBoundsHolder)pi;
+          var xbpi = (IXBoundsHolder)pi;
           xbpi.MergeXBoundsInto(xbounds);
         }
         if (pi is G2DPlotItem)
@@ -187,7 +187,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         if (pi is IXBoundsHolder)
         {
-          IXBoundsHolder xbpi = (IXBoundsHolder)pi;
+          var xbpi = (IXBoundsHolder)pi;
           xbounds.Reset();
           xbpi.MergeXBoundsInto(xbounds);
           xbounds.Shift(_xinc * _scaleXInc * idx);
@@ -206,7 +206,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         return;
       }
 
-      NumericalBoundaries ybounds = (NumericalBoundaries)pb.Clone();
+      var ybounds = (NumericalBoundaries)pb.Clone();
       ybounds.Reset();
 
       int nItems = 0;
@@ -214,7 +214,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         if (pi is IYBoundsHolder)
         {
-          IYBoundsHolder ybpi = (IYBoundsHolder)pi;
+          var ybpi = (IYBoundsHolder)pi;
           ybpi.MergeYBoundsInto(ybounds);
         }
         if (pi is G2DPlotItem)
@@ -231,7 +231,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         if (pi is IYBoundsHolder)
         {
-          IYBoundsHolder ybpi = (IYBoundsHolder)pi;
+          var ybpi = (IYBoundsHolder)pi;
           ybounds.Reset();
           ybpi.MergeYBoundsInto(ybounds);
           ybounds.Shift(_yinc * _scaleYInc * idx);
@@ -275,7 +275,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
           double currxinc = paintData._xincColl[i] = idx * _xinc * _scaleXInc;
           double curryinc = paintData._yincColl[i] = idx * _yinc * _scaleYInc;
 
-          G2DPlotItem gpi = coll[i] as G2DPlotItem;
+          var gpi = coll[i] as G2DPlotItem;
           Processed2DPlotData plotdata = paintData._plotDataColl[i] = gpi.GetRangesAndPoints(layer);
           plotdata.PreviousItemData = previousPlotData;
           previousPlotData = plotdata;
@@ -288,9 +288,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
             AltaxoVariant xx = plotdata.GetXPhysical(rowIndex) + currxinc;
             AltaxoVariant yy = plotdata.GetYPhysical(rowIndex) + curryinc;
 
-            Logical3D rel = new Logical3D(layer.XAxis.PhysicalVariantToNormal(xx), layer.YAxis.PhysicalVariantToNormal(yy));
-            double xabs, yabs;
-            layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+            var rel = new Logical3D(layer.XAxis.PhysicalVariantToNormal(xx), layer.YAxis.PhysicalVariantToNormal(yy));
+            layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out var xabs, out var yabs);
             plotdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
           }
 
@@ -313,11 +312,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
             if (null != linestyle)
             {
-              GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+              var path = new System.Drawing.Drawing2D.GraphicsPath();
               linestyle.GetFillPath(path, layer, plotdata, CSPlaneID.Bottom);
               if ((i + 1) < paintData._clippingColl.Length)
               {
-                paintData._clippingColl[i + 1] = (Region)paintData._clippingColl[i].Clone();
+                paintData._clippingColl[i + 1] = paintData._clippingColl[i].Clone();
                 paintData._clippingColl[i + 1].Exclude(path);
               }
             }
@@ -351,7 +350,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
       else
       {
-        TransformedLayerWrapper layerwrapper = new TransformedLayerWrapper(layer, paintData._xincColl[i], paintData._yincColl[i]);
+        var layerwrapper = new TransformedLayerWrapper(layer, paintData._xincColl[i], paintData._yincColl[i]);
         ((G2DPlotItem)coll[i]).Paint(g, layerwrapper, paintData._plotDataColl[i], i == coll.Count - 1 ? null : paintData._plotDataColl[i + 1], i == 0 ? null : paintData._plotDataColl[i - 1]);
       }
 
@@ -545,7 +544,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
       public Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx)
       {
-        Logical3D shifted = new Logical3D(
+        var shifted = new Logical3D(
           _xScale.PhysicalVariantToNormal(acc.GetXPhysical(idx)),
           _yScale.PhysicalVariantToNormal(acc.GetYPhysical(idx)));
         return shifted;
@@ -553,7 +552,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
       public Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y)
       {
-        Logical3D shifted = new Logical3D(
+        var shifted = new Logical3D(
           _xScale.PhysicalVariantToNormal(x),
           _yScale.PhysicalVariantToNormal(y));
         return shifted;

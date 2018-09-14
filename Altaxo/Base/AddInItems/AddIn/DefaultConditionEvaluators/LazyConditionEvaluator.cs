@@ -16,8 +16,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -43,13 +43,13 @@ namespace Altaxo.AddInItems
       if (addIn == null)
         throw new ArgumentNullException("addIn");
       this.addIn = addIn;
-      this.name = properties["name"];
-      this.className = properties["class"];
+      name = properties["name"];
+      className = properties["class"];
     }
 
     public bool IsValid(object parameter, Condition condition)
     {
-      IConditionEvaluator evaluator = (IConditionEvaluator)addIn.CreateObject(className);
+      var evaluator = (IConditionEvaluator)addIn.CreateObject(className);
       if (evaluator == null)
         return false;
       addIn.AddInTree.ConditionEvaluators[name] = evaluator;
@@ -58,7 +58,7 @@ namespace Altaxo.AddInItems
 
     public override string ToString()
     {
-      return String.Format("[LazyLoadConditionEvaluator: className = {0}, name = {1}]",
+      return string.Format("[LazyLoadConditionEvaluator: className = {0}, name = {1}]",
                            className,
                            name);
     }

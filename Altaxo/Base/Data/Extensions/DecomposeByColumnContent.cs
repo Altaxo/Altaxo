@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -129,8 +129,8 @@ namespace Altaxo.Data
       var from = obj as DecomposeByColumnContentOptions;
       if (null != from)
       {
-        this._destinationOutput = from._destinationOutput;
-        this._destinationColumnSorting = from._destinationColumnSorting;
+        _destinationOutput = from._destinationOutput;
+        _destinationColumnSorting = from._destinationColumnSorting;
 
         EhSelfChanged();
 
@@ -228,7 +228,7 @@ namespace Altaxo.Data
     /// </returns>
     public object Clone()
     {
-      return new DecomposeByColumnContentDataAndOptions((DataTableMultipleColumnProxy)this.Data.Clone(), (DecomposeByColumnContentOptions)this.Options.Clone());
+      return new DecomposeByColumnContentDataAndOptions((DataTableMultipleColumnProxy)Data.Clone(), (DecomposeByColumnContentOptions)Options.Clone());
     }
   }
 

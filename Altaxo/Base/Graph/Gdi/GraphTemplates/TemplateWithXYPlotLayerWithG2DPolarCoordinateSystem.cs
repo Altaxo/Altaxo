@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph.Gdi;
-using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Gui.Graph.Gdi;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Gdi.GraphTemplates
 {
@@ -61,11 +61,11 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
       if (null == propertyContext)
         propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
-      Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
+      var graph = new Altaxo.Graph.Gdi.GraphDocument();
       TemplateBase.AddStandardPropertiesToGraph(graph, propertyContext);
       graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));  // apply the default location from the property in the path
 
-      Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
+      var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
       layer.Scales[0] = new Scales.AngularDegreeScale() { TickSpacing = new Scales.Ticks.AngularDegreeTickSpacing() };
 
       layer.CreateDefaultAxes(propertyContext);

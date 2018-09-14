@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -145,10 +145,10 @@ namespace Altaxo.Data
       var from = obj as ExpandCyclingVariableColumnOptions;
       if (null != from)
       {
-        this._destinationX = from._destinationX;
-        this._destinationOutput = from._destinationOutput;
-        this._destinationRowSorting = from._destinationRowSorting;
-        this._destinationColumnSorting = from._destinationColumnSorting;
+        _destinationX = from._destinationX;
+        _destinationOutput = from._destinationOutput;
+        _destinationRowSorting = from._destinationRowSorting;
+        _destinationColumnSorting = from._destinationColumnSorting;
 
         EhSelfChanged();
 
@@ -262,7 +262,7 @@ namespace Altaxo.Data
     /// </returns>
     public object Clone()
     {
-      return new ExpandCyclingVariableColumnDataAndOptions((DataTableMultipleColumnProxy)this.Data.Clone(), (ExpandCyclingVariableColumnOptions)this.Options.Clone());
+      return new ExpandCyclingVariableColumnDataAndOptions((DataTableMultipleColumnProxy)Data.Clone(), (ExpandCyclingVariableColumnOptions)Options.Clone());
     }
   }
 
@@ -311,7 +311,7 @@ namespace Altaxo.Data
         destTable.Name = srcTable.Name + "_Expanded";
 
         // Create a DataSource
-        ExpandCyclingVariableColumnDataSource dataSource = new ExpandCyclingVariableColumnDataSource(proxy, options, new Altaxo.Data.DataSourceImportOptions());
+        var dataSource = new ExpandCyclingVariableColumnDataSource(proxy, options, new Altaxo.Data.DataSourceImportOptions());
         destTable.DataSource = dataSource;
 
         Current.Project.DataTableCollection.Add(destTable);

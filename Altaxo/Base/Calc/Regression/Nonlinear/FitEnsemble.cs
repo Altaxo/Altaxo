@@ -59,7 +59,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        FitEnsemble s = (FitEnsemble)obj;
+        var s = (FitEnsemble)obj;
 
         info.CreateArray("FitElements", s._fitElements.Count);
         for (int i = 0; i < s._fitElements.Count; ++i)

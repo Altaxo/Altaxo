@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Multivariate;
-using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Calc.Regression.Multivariate;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Worksheet
 {

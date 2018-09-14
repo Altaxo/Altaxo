@@ -222,7 +222,7 @@ namespace Altaxo.Graph.Plot.Groups
       _wasTouchedInThisPrepareStep = false;
 
       int totalNumberOfItems = 1;
-      if (this._isStepEnabled)
+      if (_isStepEnabled)
         totalNumberOfItems = Math.Max(totalNumberOfItems, _numberOfItems);
 
       // partition the total number of items in items in x-direction and in items in y-direction
@@ -452,8 +452,10 @@ namespace Altaxo.Graph.Plot.Groups
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(BarSizePosition3DGroupStyle)))
       {
-        BarSizePosition3DGroupStyle gstyle = new BarSizePosition3DGroupStyle();
-        gstyle.IsStepEnabled = true;
+        var gstyle = new BarSizePosition3DGroupStyle
+        {
+          IsStepEnabled = true
+        };
         externalGroups.Add(gstyle);
       }
     }

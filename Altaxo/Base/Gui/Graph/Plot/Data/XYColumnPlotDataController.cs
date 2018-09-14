@@ -22,17 +22,17 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
-using Altaxo.Gui.Graph.Plot.Data;
-using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.Graph.Plot.Data;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 {

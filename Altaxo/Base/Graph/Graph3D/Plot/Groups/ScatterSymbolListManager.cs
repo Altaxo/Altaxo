@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
@@ -63,14 +63,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
           )
 
     {
-      ScatterSymbolListBag userStyleLists;
-      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out userStyleLists);
+      Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out var userStyleLists);
       if (null != userStyleLists)
       {
-        ScatterSymbolList dummy;
         foreach (var list in userStyleLists.StyleLists)
         {
-          InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
+          InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out var dummy, false);
         }
       }
 

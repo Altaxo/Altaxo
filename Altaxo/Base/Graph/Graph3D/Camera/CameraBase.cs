@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Camera
 {
@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Graph3D.Camera
       if (_widthAtZNear == widthAtZNear)
         return this;
 
-      var result = (CameraBase)this.MemberwiseClone();
+      var result = (CameraBase)MemberwiseClone();
       result._widthAtZNear = widthAtZNear;
       return result;
     }
@@ -145,7 +145,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     {
       if (screenOffset != _screenOffset)
       {
-        var result = (CameraBase)this.MemberwiseClone();
+        var result = (CameraBase)MemberwiseClone();
         result._screenOffset = screenOffset;
         return result;
       }
@@ -157,12 +157,12 @@ namespace Altaxo.Graph.Graph3D.Camera
 
     protected CameraBase(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition, double zNear, double zFar, double widthAtZNear)
     {
-      this._upVector = upVector;
-      this._eyePosition = eyePosition;
-      this._targetPosition = targetPosition;
-      this._zNear = zNear;
-      this._zFar = zFar;
-      this._widthAtZNear = widthAtZNear;
+      _upVector = upVector;
+      _eyePosition = eyePosition;
+      _targetPosition = targetPosition;
+      _zNear = zNear;
+      _zFar = zFar;
+      _widthAtZNear = widthAtZNear;
     }
 
     /// <summary>
@@ -176,7 +176,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <returns>New camera with the provided parameters.</returns>
     public CameraBase WithUpEyeTargetZNearZFar(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition, double zNear, double zFar)
     {
-      var result = (CameraBase)this.MemberwiseClone();
+      var result = (CameraBase)MemberwiseClone();
       result._upVector = upVector;
       result._eyePosition = eyePosition;
       result._targetPosition = targetPosition;
@@ -194,7 +194,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <returns>New camera with the provided parameters.</returns>
     public CameraBase WithUpEyeTarget(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition)
     {
-      var result = (CameraBase)this.MemberwiseClone();
+      var result = (CameraBase)MemberwiseClone();
       result._upVector = upVector;
       result._eyePosition = eyePosition;
       result._targetPosition = targetPosition;
@@ -209,7 +209,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <returns>New camera with the provided parameters.</returns>
     public CameraBase WithUpEye(VectorD3D upVector, PointD3D eyePosition)
     {
-      var result = (CameraBase)this.MemberwiseClone();
+      var result = (CameraBase)MemberwiseClone();
       result._upVector = upVector;
       result._eyePosition = eyePosition;
       return result;
@@ -223,7 +223,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <returns>New camera with the provided parameters.</returns>
     public CameraBase WithEyeTarget(PointD3D eyePosition, PointD3D targetPosition)
     {
-      var result = (CameraBase)this.MemberwiseClone();
+      var result = (CameraBase)MemberwiseClone();
       result._eyePosition = eyePosition;
       result._targetPosition = targetPosition;
       return result;
@@ -276,7 +276,7 @@ namespace Altaxo.Graph.Graph3D.Camera
       if (diff.Length == distance)
         return this;
 
-      var result = (CameraBase)this.MemberwiseClone();
+      var result = (CameraBase)MemberwiseClone();
 
       result._eyePosition = TargetPosition + diff * (distance / oldDistance);
 
@@ -358,7 +358,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public CameraBase WithLookAtRHMatrix(Matrix4x3 l)
     {
-      return WithLookAtRHMatrix(l, this.Distance);
+      return WithLookAtRHMatrix(l, Distance);
     }
 
     /// <summary>

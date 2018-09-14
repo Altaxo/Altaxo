@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Probability;
 using Altaxo.Collections;
 using Altaxo.Data;
-using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -138,7 +138,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       if (!Current.Gui.ShowDialog(ref paramobject, "Multivariate linear fit"))
         return null;
 
-      MultivariateLinearFitParameters parameters = (MultivariateLinearFitParameters)paramobject;
+      var parameters = (MultivariateLinearFitParameters)paramobject;
 
       LinearFitBySvd result = Regress(parameters, true);
 
@@ -149,7 +149,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       DataColumnCollection table = parameters.Table;
       IAscendingIntegerCollection selectedCols = parameters.SelectedDataColumns;
-      AscendingIntegerCollection selectedColsWODependent = new AscendingIntegerCollection(selectedCols);
+      var selectedColsWODependent = new AscendingIntegerCollection(selectedCols);
       selectedColsWODependent.RemoveAt(parameters.DependentColumnIndexIntoSelection);
 
       IAscendingIntegerCollection validRows = DataTableWrapper.GetCollectionOfValidNumericRows(parameters.Table, selectedCols);
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       double[] yarr = new double[validRows.Count];
       double[] earr = new double[validRows.Count];
 
-      Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)table[selectedCols[parameters.DependentColumnIndexIntoSelection]];
+      var ycol = (Altaxo.Data.INumericColumn)table[selectedCols[parameters.DependentColumnIndexIntoSelection]];
 
       for (int i = 0; i < validRows.Count; i++)
       {
@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         earr[i] = 1;
       }
 
-      LinearFitBySvd fit =
+      var fit =
         new LinearFitBySvd(
         xbase, yarr, earr, xbase.RowCount, xbase.ColumnCount, 1E-5);
 
@@ -200,8 +200,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public static LinearFitBySvd Regress(MultivariateLinearFitParameters parameters, bool outputResults)
     {
-      string[] paramNames;
-      LinearFitBySvd fit = Regress(parameters, out paramNames);
+      LinearFitBySvd fit = Regress(parameters, out var paramNames);
 
       if (outputResults)
       {
@@ -221,14 +220,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       if (parameters.GenerateRegressionValues)
       {
-        DoubleColumn col = new DoubleColumn();
+        var col = new DoubleColumn();
         VectorMath.Copy(VectorMath.ToROVector(fit.PredictedValues), DataColumnWrapper.ToVector(col, parameters.SelectedDataRows));
         parameters.Table.Add(col, dependentColumn.Name + "(predicted)", ColumnKind.V, parameters.Table.GetColumnGroup(dependentColumn));
       }
 
       if (parameters.GenerateResidualValues)
       {
-        DoubleColumn col = new DoubleColumn();
+        var col = new DoubleColumn();
         VectorMath.Copy(VectorMath.ToROVector(fit.ResidualValues), DataColumnWrapper.ToVector(col, parameters.SelectedDataRows));
         parameters.Table.Add(col, dependentColumn.Name + "(residual)", ColumnKind.V, parameters.Table.GetColumnGroup(dependentColumn));
       }

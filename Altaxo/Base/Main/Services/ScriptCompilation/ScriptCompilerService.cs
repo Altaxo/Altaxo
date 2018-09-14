@@ -202,9 +202,9 @@ namespace Altaxo.Main.Services.ScriptCompilation
 
         byte[] hash = null;
 
-        using (System.IO.MemoryStream stream = new System.IO.MemoryStream(len))
+        using (var stream = new System.IO.MemoryStream(len))
         {
-          using (System.IO.StreamWriter sw = new System.IO.StreamWriter(stream, System.Text.Encoding.Unicode))
+          using (var sw = new System.IO.StreamWriter(stream, System.Text.Encoding.Unicode))
           {
             for (int i = 0; i < scripts.Length; i++)
             {
@@ -213,7 +213,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
             sw.Flush();
 
             sw.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
-            System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+            var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
             hash = md5.ComputeHash(sw.BaseStream);
             sw.Close();
           }
@@ -247,11 +247,10 @@ namespace Altaxo.Main.Services.ScriptCompilation
       /// <returns>True if successfully compiles, otherwise false.</returns>
       public IScriptCompilerResult Compile(string[] scriptText)
       {
-        IScriptCompilerResult result;
 
         var scriptTextWithHash = new CodeTextsWithHash(scriptText);
 
-        if (_compilerResults.TryGetValue(scriptTextWithHash.Hash, out result))
+        if (_compilerResults.TryGetValue(scriptTextWithHash.Hash, out var result))
         {
           return result;
         }
@@ -260,15 +259,16 @@ namespace Altaxo.Main.Services.ScriptCompilation
       {
         { "CompilerVersion", "v4.0" }
       };
-        Microsoft.CSharp.CSharpCodeProvider codeProvider = new Microsoft.CSharp.CSharpCodeProvider(providerOptions);
+        var codeProvider = new Microsoft.CSharp.CSharpCodeProvider(providerOptions);
 
         // For Visual Basic Compiler try this :
         //Microsoft.VisualBasic.VBCodeProvider
 
-        System.CodeDom.Compiler.CompilerParameters parameters = new CompilerParameters();
-
-        parameters.GenerateInMemory = true;
-        parameters.IncludeDebugInformation = true;
+        var parameters = new CompilerParameters
+        {
+          GenerateInMemory = true,
+          IncludeDebugInformation = true
+        };
         // parameters.OutputAssembly = this.ScriptName;
 
         // Add available assemblies including the application itself

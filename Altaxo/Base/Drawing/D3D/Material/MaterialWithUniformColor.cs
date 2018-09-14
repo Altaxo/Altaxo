@@ -122,9 +122,9 @@ namespace Altaxo.Drawing.D3D.Material
     ///<inheritdoc/>
     public override IMaterial WithColor(NamedColor color)
     {
-      if (!(color == this._color))
+      if (!(color == _color))
       {
-        var result = (MaterialWithUniformColor)this.MemberwiseClone();
+        var result = (MaterialWithUniformColor)MemberwiseClone();
         result._color = color;
         return result;
       }
@@ -172,10 +172,10 @@ namespace Altaxo.Drawing.D3D.Material
       if (null != other)
       {
         return
-          this._color == other._color &&
-          this._smoothness == other._smoothness &&
-          this._metalness == other._metalness &&
-          this._indexOfRefraction == other._indexOfRefraction;
+          _color == other._color &&
+          _smoothness == other._smoothness &&
+          _metalness == other._metalness &&
+          _indexOfRefraction == other._indexOfRefraction;
       }
 
       return false;
@@ -189,11 +189,11 @@ namespace Altaxo.Drawing.D3D.Material
       if (null != other)
       {
         return
-          this._color == other._color &&
+          _color == other._color &&
 
-          this._smoothness == other._smoothness &&
-          this._metalness == other._metalness &&
-          this._indexOfRefraction == other._indexOfRefraction;
+          _smoothness == other._smoothness &&
+          _metalness == other._metalness &&
+          _indexOfRefraction == other._indexOfRefraction;
       }
 
       return false;
@@ -201,7 +201,7 @@ namespace Altaxo.Drawing.D3D.Material
 
     public override int GetHashCode()
     {
-      return this._color.GetHashCode() + 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();
+      return _color.GetHashCode() + 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();
     }
 
     #endregion Infrastructure

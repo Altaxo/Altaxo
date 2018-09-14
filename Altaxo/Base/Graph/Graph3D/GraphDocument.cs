@@ -22,17 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-
-//using Altaxo.Graph;
-using Altaxo.Main;
-using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+//using Altaxo.Graph;
+using Altaxo.Main;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -320,8 +319,8 @@ namespace Altaxo.Graph.Graph3D
     {
       _camera = new Camera.OrthographicCamera();
       _lighting = new LightSettings();
-      this.RootLayer = new HostLayer() { ParentObject = this };
-      this.RootLayer.Location = new ItemLocationDirect
+      RootLayer = new HostLayer() { ParentObject = this };
+      RootLayer.Location = new ItemLocationDirect
       {
         SizeX = RADouble.NewAbs(DefaultRootLayerSizeX),
         SizeY = RADouble.NewAbs(DefaultRootLayerSizeY),
@@ -334,7 +333,7 @@ namespace Altaxo.Graph.Graph3D
       using (var suppressToken = SuspendGetToken())
       {
         _creationTime = _lastChangeTime = DateTime.UtcNow;
-        this.RootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY), SizeZ = RADouble.NewAbs(DefaultRootLayerSizeZ) });
+        RootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY), SizeZ = RADouble.NewAbs(DefaultRootLayerSizeZ) });
 
         CopyFrom(from, Altaxo.Graph.Gdi.GraphCopyOptions.All);
 
@@ -366,7 +365,7 @@ namespace Altaxo.Graph.Graph3D
           }
           else
           {
-            this._graphProperties = null;
+            _graphProperties = null;
           }
         }
 
@@ -382,7 +381,7 @@ namespace Altaxo.Graph.Graph3D
           // don't clone the layers, but copy the style of each each of the souce layers to the destination layers - this has to be done recursively
           newRootLayer.CopyFrom(from._rootLayer, options);
         }
-        this.RootLayer = newRootLayer;
+        RootLayer = newRootLayer;
 
         suspendToken.Resume();
       }
@@ -604,7 +603,7 @@ namespace Altaxo.Graph.Graph3D
 #if DEBUG
             if (ithRetry == MaxFixupRetries)
             {
-              Current.Console.WriteLine("Warning: MaxFixupRetries exceeded during painting of graph {0}.", this.Name);
+              Current.Console.WriteLine("Warning: MaxFixupRetries exceeded during painting of graph {0}.", Name);
             }
 #endif
           }

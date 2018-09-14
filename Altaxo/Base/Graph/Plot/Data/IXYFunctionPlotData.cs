@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Graph.Gdi.Plot.Data;
 
 namespace Altaxo.Graph.Plot.Data
 {

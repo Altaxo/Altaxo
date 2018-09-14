@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -55,9 +55,9 @@ namespace Altaxo.Data
 
     public DateTimeColumn(DateTimeColumn from)
     {
-      this._count = from._count;
-      this._capacity = from._capacity;
-      this._data = null == from._data ? null : (DateTime[])from._data.Clone();
+      _count = from._count;
+      _capacity = from._capacity;
+      _data = null == from._data ? null : (DateTime[])from._data.Clone();
     }
 
     public override object Clone()
@@ -72,7 +72,7 @@ namespace Altaxo.Data
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
+        var s = (Altaxo.Data.DateTimeColumn)obj;
         // serialize the base class
         info.AddBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn));
 
@@ -120,8 +120,8 @@ namespace Altaxo.Data
     {
       get
       {
-        int len = this.Count;
-        DateTime[] arr = new DateTime[len];
+        int len = Count;
+        var arr = new DateTime[len];
         System.Array.Copy(_data, 0, arr, 0, len);
         return arr;
       }
@@ -129,9 +129,9 @@ namespace Altaxo.Data
       set
       {
         _data = (DateTime[])value.Clone();
-        this._count = _data.Length;
-        this._capacity = _data.Length;
-        this.EhSelfChanged(0, _count, true);
+        _count = _data.Length;
+        _capacity = _data.Length;
+        EhSelfChanged(0, _count, true);
       }
     }
 
@@ -201,7 +201,7 @@ namespace Altaxo.Data
           if (o == null)
             throw new ArgumentNullException("o");
           else
-            throw new ArgumentException("Try to copy " + o.GetType() + " to " + this.GetType(), "o"); // throw exception
+            throw new ArgumentException("Try to copy " + o.GetType() + " to " + GetType(), "o"); // throw exception
         }
 
         TrimEmptyElementsAtEnd();
@@ -223,7 +223,7 @@ namespace Altaxo.Data
       int newcapacity2 = i + _addSpace + 1;
       int newcapacity = newcapacity1 > newcapacity2 ? newcapacity1 : newcapacity2;
 
-      DateTime[] newarray = new DateTime[newcapacity];
+      var newarray = new DateTime[newcapacity];
       if (_count > 0)
       {
         System.Array.Copy(_data, newarray, _count);
@@ -242,7 +242,7 @@ namespace Altaxo.Data
       }
       catch (Exception ex)
       {
-        throw new ApplicationException(string.Format("Error: Try to set {0}[{1}] with the string {2}, exception: {3}", this.TypeAndName, i, val.ToString(), ex.Message));
+        throw new ApplicationException(string.Format("Error: Try to set {0}[{1}] with the string {2}, exception: {3}", TypeAndName, i, val.ToString(), ex.Message));
       }
     }
 
@@ -255,7 +255,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return i < _count ? this[i].Ticks / 1E7 : Double.NaN;
+        return i < _count ? this[i].Ticks / 1E7 : double.NaN;
       }
     }
 
@@ -263,7 +263,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return i < _count ? this[i].Ticks / 1E7 : Double.NaN;
+        return i < _count ? this[i].Ticks / 1E7 : double.NaN;
       }
     }
 
@@ -350,7 +350,7 @@ namespace Altaxo.Data
       if (nInsCount <= 0 || nInsBeforeColumn >= Count)
         return; // nothing to do
 
-      int newlen = this._count + nInsCount;
+      int newlen = _count + nInsCount;
       if (newlen > _capacity)
         Realloc(newlen);
 
@@ -361,8 +361,8 @@ namespace Altaxo.Data
       for (int i = nInsBeforeColumn + nInsCount - 1; i >= nInsBeforeColumn; i--)
         _data[i] = NullValue;
 
-      this._count = newlen;
-      this.EhSelfChanged(nInsBeforeColumn, _count, false);
+      _count = newlen;
+      EhSelfChanged(nInsBeforeColumn, _count, false);
     }
 
     public override void RemoveRows(int nDelFirstRow, int nDelCount)
@@ -384,7 +384,7 @@ namespace Altaxo.Data
       _count = i < _count ? i : _count; // m_Count can only decrease
 
       if (_count != prevCount) // raise a event only if something really changed
-        this.EhSelfChanged(nDelFirstRow, prevCount, true);
+        EhSelfChanged(nDelFirstRow, prevCount, true);
     }
 
     #region "Operators"
@@ -399,7 +399,7 @@ namespace Altaxo.Data
     public static Altaxo.Data.DateTimeColumn operator +(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
-      Altaxo.Data.DateTimeColumn c3 = new Altaxo.Data.DateTimeColumn(len);
+      var c3 = new Altaxo.Data.DateTimeColumn(len);
       for (int i = 0; i < len; i++)
       {
         c3._data[i] = c1._data[i].AddSeconds(c2.GetValueDirect(i));
@@ -413,7 +413,7 @@ namespace Altaxo.Data
     public static Altaxo.Data.DateTimeColumn operator +(Altaxo.Data.DateTimeColumn c1, double c2)
     {
       int len = c1._count;
-      Altaxo.Data.DateTimeColumn c3 = new Altaxo.Data.DateTimeColumn(len);
+      var c3 = new Altaxo.Data.DateTimeColumn(len);
       for (int i = 0; i < len; i++)
       {
         c3._data[i] = c1._data[i].AddSeconds(c2);
@@ -432,7 +432,7 @@ namespace Altaxo.Data
     public static Altaxo.Data.DateTimeColumn operator -(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DoubleColumn c2)
     {
       int len = c1.Count < c2.Count ? c1.Count : c2.Count;
-      Altaxo.Data.DateTimeColumn c3 = new Altaxo.Data.DateTimeColumn(len);
+      var c3 = new Altaxo.Data.DateTimeColumn(len);
       for (int i = 0; i < len; i++)
       {
         c3._data[i] = c1._data[i].AddSeconds(-c2.GetValueDirect(i));
@@ -445,7 +445,7 @@ namespace Altaxo.Data
 
     public static Altaxo.Data.DateTimeColumn operator -(Altaxo.Data.DateTimeColumn c1, double c2)
     {
-      Altaxo.Data.DateTimeColumn c3 = new Altaxo.Data.DateTimeColumn(c1._count);
+      var c3 = new Altaxo.Data.DateTimeColumn(c1._count);
       int len = c1._count;
       for (int i = 0; i < len; i++)
       {
@@ -491,9 +491,9 @@ namespace Altaxo.Data
 
     public override bool vop_Subtraction(AltaxoVariant c2, out DataColumn c3)
     {
-      if (((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDateTime))
+      if (c2.IsType(AltaxoVariant.Content.VDateTime))
       {
-        DateTime c22 = (DateTime)c2;
+        var c22 = (DateTime)c2;
         c3 = this - c22;
         return true;
       }
@@ -503,9 +503,9 @@ namespace Altaxo.Data
 
     public override bool vop_Subtraction_Rev(AltaxoVariant c2, out DataColumn c3)
     {
-      if (((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDateTime))
+      if (c2.IsType(AltaxoVariant.Content.VDateTime))
       {
-        DateTime c22 = (DateTime)c2;
+        var c22 = (DateTime)c2;
         c3 = c22 - this;
         return true;
       }

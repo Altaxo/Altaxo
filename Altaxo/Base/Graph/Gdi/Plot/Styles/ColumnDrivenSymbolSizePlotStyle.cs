@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -474,7 +474,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <returns></returns>
     private double GetSymbolSize(int idx)
     {
-      var dataColumn = this.DataColumn;
+      var dataColumn = DataColumn;
 
       if (null != dataColumn)
       {

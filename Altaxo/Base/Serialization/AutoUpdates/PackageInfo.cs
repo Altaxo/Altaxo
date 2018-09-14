@@ -59,7 +59,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <returns>The package infos. If the format of the stream is invalid, various exceptions will be thrown.</returns>
     public static PackageInfo[] FromStream(Stream fs)
     {
-      StreamReader sr = new StreamReader(fs, true);
+      var sr = new StreamReader(fs, true);
       string line;
       var resultList = new List<PackageInfo>();
 
@@ -93,10 +93,9 @@ namespace Altaxo.Serialization.AutoUpdates
       if (entries.Length < 4)
         throw new InvalidOperationException(string.Format("Line number {0} of the package info file doesn't contain at least 4 words, separated by tabulators", lineNumber));
 
-      PackageInfo result = new PackageInfo();
+      var result = new PackageInfo();
 
-      bool isUnstableVersion;
-      if (!IsValidStableIdentifier(entries[0].Trim(), out isUnstableVersion))
+      if (!IsValidStableIdentifier(entries[0].Trim(), out var isUnstableVersion))
         throw new InvalidOperationException(string.Format("First item in line number {0} of the package info file is neither 'stable' nor 'unstable'", lineNumber));
       result.IsUnstableVersion = isUnstableVersion;
       result.Version = new Version(entries[1].Trim());
@@ -208,8 +207,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <returns>The info for the already present package in the download directory. If anything is invalid, the return value is null.</returns>
     public static PackageInfo GetPresentDownloadedPackage(Stream fs, string storagePath)
     {
-      FileStream packageStream;
-      var result = GetPresentDownloadedPackage(fs, storagePath, out packageStream);
+      var result = GetPresentDownloadedPackage(fs, storagePath, out var packageStream);
       if (null != packageStream)
         packageStream.Close();
 
@@ -264,7 +262,7 @@ namespace Altaxo.Serialization.AutoUpdates
       try
       {
         var fileName = Path.Combine(GetDownloadDirectory(loadUnstable), VersionFileName);
-        FileInfo info = new FileInfo(fileName);
+        var info = new FileInfo(fileName);
         if (info.Exists)
           return info.LastWriteTimeUtc;
       }

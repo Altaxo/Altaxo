@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Drawing.D3D.Material;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing.D3D;
+using Altaxo.Drawing.D3D.Material;
 
 namespace Altaxo.Gui.Drawing.D3D
 {

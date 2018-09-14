@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales;
-using System;
 
 namespace Altaxo.Gui.Graph.Scales
 {
@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Graph.Scales
         {
           if (classes[i] == typeof(LinkedScale))
             continue;
-          SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
+          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
           _scaleTypes.Add(node);
         }
       }
@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Graph.Scales
 
     public void EhView_AxisTypeChanged()
     {
-      Type axistype = (Type)_scaleTypes.FirstSelectedNode.Tag;
+      var axistype = (Type)_scaleTypes.FirstSelectedNode.Tag;
 
       try
       {
@@ -179,7 +179,7 @@ namespace Altaxo.Gui.Graph.Scales
           try
           {
             if (newScale.RescalingObject is Altaxo.Main.ICopyFrom)
-              ((Altaxo.Main.ICopyFrom)newScale.RescalingObject).CopyFrom(oldScale.RescalingObject);
+              newScale.RescalingObject.CopyFrom(oldScale.RescalingObject);
           }
           catch (Exception)
           {

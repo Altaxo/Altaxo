@@ -40,7 +40,7 @@ namespace Altaxo.Worksheet
     /// <param name="saveAsTemplate">If true, the data are not saved, but only the layout of the worksheet (columns, property columns, scripts). If false, everything including the data is saved.</param>
     public static void Save(this WorksheetLayout worksheet, System.IO.Stream myStream, bool saveAsTemplate)
     {
-      Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+      var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
       if (saveAsTemplate)
       {
         info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", "true");
@@ -54,7 +54,7 @@ namespace Altaxo.Worksheet
       // references the already present table with the same name in the document instead of the table
       // deserialized. Also, the GUID isn't unique if the template is deserialized more than one time.
 
-      Altaxo.Worksheet.TablePlusLayout tableAndLayout =
+      var tableAndLayout =
         new Altaxo.Worksheet.TablePlusLayout(worksheet.DataTable, worksheet);
       info.AddValue("TablePlusLayout", tableAndLayout);
       info.EndWriting();

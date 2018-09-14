@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.CS
 {
@@ -65,14 +65,14 @@ namespace Altaxo.Graph.Gdi.CS
       base.CopyFrom(fromb);
       if (fromb is G2DPolarCoordinateSystem)
       {
-        G2DPolarCoordinateSystem from = (G2DPolarCoordinateSystem)fromb;
-        this._isXYInterchanged = from._isXYInterchanged;
-        this._isXreverse = from._isXreverse;
-        this._isYreverse = from._isYreverse;
+        var from = (G2DPolarCoordinateSystem)fromb;
+        _isXYInterchanged = from._isXYInterchanged;
+        _isXreverse = from._isXreverse;
+        _isYreverse = from._isYreverse;
 
-        this._radius = from._radius;
-        this._midX = from._midX;
-        this._midY = from._midY;
+        _radius = from._radius;
+        _midX = from._midX;
+        _midY = from._midY;
       }
     }
 
@@ -85,7 +85,7 @@ namespace Altaxo.Graph.Gdi.CS
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        G2DPolarCoordinateSystem s = (G2DPolarCoordinateSystem)obj;
+        var s = (G2DPolarCoordinateSystem)obj;
 
         info.AddValue("Rotation", 0.0);
         info.AddValue("XYInterchanged", s._isXYInterchanged);
@@ -482,8 +482,7 @@ namespace Altaxo.Graph.Gdi.CS
 
     public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, Logical3D r0, Logical3D r1)
     {
-      double ax0, ax1, ay0, ay1;
-      if (LogicalToLayerCoordinates(r0, out ax0, out ay0) && LogicalToLayerCoordinates(r1, out ax1, out ay1))
+      if (LogicalToLayerCoordinates(r0, out var ax0, out var ay0) && LogicalToLayerCoordinates(r1, out var ax1, out var ay1))
       {
         // add a line when this is a radial ray
         if (((r0.RX == r1.RX) && !_isXYInterchanged) || ((r0.RY == r1.RY) && _isXYInterchanged))
@@ -515,12 +514,11 @@ namespace Altaxo.Graph.Gdi.CS
         {
           int points = _isXYInterchanged ? (int)(Math.Abs(r1.RY - r0.RY) * 360) : (int)(Math.Abs(r1.RX - r0.RX) * 360);
           points = Math.Max(1, Math.Min(points, 3600)); // in case there is a rotation more than one turn limit the number of points
-          PointF[] pts = new PointF[points + 1];
+          var pts = new PointF[points + 1];
           for (int i = 0; i <= points; i++)
           {
-            Logical3D r = new Logical3D(r0.RX + i * (r1.RX - r0.RX) / points, r0.RY + i * (r1.RY - r0.RY) / points);
-            double ax, ay;
-            LogicalToLayerCoordinates(r, out ax, out ay);
+            var r = new Logical3D(r0.RX + i * (r1.RX - r0.RX) / points, r0.RY + i * (r1.RY - r0.RY) / points);
+            LogicalToLayerCoordinates(r, out var ax, out var ay);
             pts[i] = new PointF((float)ax, (float)ay);
           }
           g.AddLines(pts);
@@ -535,7 +533,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// <returns>A region object describing the plotting area.</returns>
     public override Region GetRegion()
     {
-      GraphicsPath path = new GraphicsPath();
+      var path = new GraphicsPath();
       path.AddEllipse((float)(_midX - _radius), (float)(_midY - _radius), (float)(2 * _radius), (float)(2 * _radius));
       return new Region(path);
     }
@@ -550,7 +548,7 @@ namespace Altaxo.Graph.Gdi.CS
 
     public override object Clone()
     {
-      G2DPolarCoordinateSystem result = new G2DPolarCoordinateSystem();
+      var result = new G2DPolarCoordinateSystem();
       result.CopyFrom(this);
       return result;
     }

@@ -49,8 +49,8 @@ namespace Altaxo.Collections
         return false;
       if (!(obj is NamedItem<T>))
         return false;
-      NamedItem<T> from = (NamedItem<T>)obj;
-      return object.Equals(this._item, from._item);
+      var from = (NamedItem<T>)obj;
+      return object.Equals(_item, from._item);
     }
 
     public override int GetHashCode()

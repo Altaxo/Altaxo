@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -361,7 +361,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       )
     {
       int numFactors = Math.Min(matrixX.ColumnCount, plsOptions.MaxNumberOfFactors);
-      MultivariateRegression regress = this.CreateNewRegressionObject();
+      MultivariateRegression regress = CreateNewRegressionObject();
       regress.AnalyzeFromPreprocessed(matrixX, matrixY, numFactors);
       plsContent.NumberOfFactors = regress.NumberOfFactors;
       plsContent.CrossValidationType = plsOptions.CrossPRESSCalculation;
@@ -397,9 +397,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataTable table
       )
     {
-      IROVector<double> crossPRESSMatrix;
 
-      Altaxo.Data.DoubleColumn crosspresscol = new Altaxo.Data.DoubleColumn();
+      var crosspresscol = new Altaxo.Data.DoubleColumn();
 
       double meanNumberOfExcludedSpectra = 0;
       if (plsOptions.CrossPRESSCalculation != CrossPRESSCalculationType.None)
@@ -409,8 +408,8 @@ namespace Altaxo.Calc.Regression.Multivariate
         MultivariateRegression.GetCrossPRESS(
           xOfX, matrixX, matrixY, plsOptions.MaxNumberOfFactors, GetGroupingStrategy(plsOptions),
           plsContent.SpectralPreprocessing,
-          this.CreateNewRegressionObject(),
-          out crossPRESSMatrix);
+          CreateNewRegressionObject(),
+          out var crossPRESSMatrix);
 
         VectorMath.Copy(crossPRESSMatrix, DataColumnWrapper.ToVector(crosspresscol, crossPRESSMatrix.Length));
 
@@ -449,7 +448,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       MultivariateRegression.GetCrossYPredicted(xOfX,
         matrixX, matrixY, numberOfFactors, groupingStrategy, preprocessOptions,
-        this.CreateNewRegressionObject(),
+        CreateNewRegressionObject(),
         predictedY);
     }
 
@@ -487,19 +486,19 @@ namespace Altaxo.Calc.Regression.Multivariate
       if (plsMemo == null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
-      IMultivariateCalibrationModel calib = this.GetCalibrationModel(table);
+      IMultivariateCalibrationModel calib = GetCalibrationModel(table);
       IMatrix<double> matrixX = GetRawSpectra(plsMemo);
 
       MultivariateRegression.PreprocessSpectraForPrediction(calib, plsMemo.SpectralPreprocessing, matrixX);
 
-      MultivariateRegression regress = this.CreateNewRegressionObject();
+      MultivariateRegression regress = CreateNewRegressionObject();
       regress.SetCalibrationModel(calib);
 
       var xLeverage = regress.GetXLeverageFromRaw(matrixX, numberOfFactors);
 
       for (int i = 0; i < xLeverage.ColumnCount; i++)
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
         MatrixMath.SetColumn(xLeverage, i, DataColumnWrapper.ToVertMatrix(col, xLeverage.RowCount), 0);
         table.DataColumns.Add(
           col,
@@ -517,8 +516,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>A matrix with the prediction scores. Each score (for one y-value) is a row in the matrix.</returns>
     public virtual IROMatrix<double> CalculatePredictionScores(DataTable table, int preferredNumberOfFactors)
     {
-      MultivariateRegression regress = this.CreateNewRegressionObject();
-      IMultivariateCalibrationModel model = this.GetCalibrationModel(table);
+      MultivariateRegression regress = CreateNewRegressionObject();
+      IMultivariateCalibrationModel model = GetCalibrationModel(table);
       regress.SetCalibrationModel(model);
       return regress.GetPredictionScores(preferredNumberOfFactors);
     }
@@ -542,7 +541,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       MultivariateRegression.PreprocessSpectraForPrediction(mcalib, preprocessOptions, matrixX);
 
-      MultivariateRegression regress = this.CreateNewRegressionObject();
+      MultivariateRegression regress = CreateNewRegressionObject();
       regress.SetCalibrationModel(mcalib);
 
       regress.PredictedYAndSpectralResidualsFromPreprocessed(matrixX, numberOfFactors, predictedY, spectralResiduals);
@@ -629,7 +628,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         for (int i = 0; i < spectralIndices.Count; i++)
         {
           // labelColumnOfX[i] = spectralIndices[i];
-          Altaxo.Data.INumericColumn col = srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn;
+          var col = srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn;
           for (int j = 0; j < measurementIndices.Count; j++)
           {
             matrixX[j, i] = col[measurementIndices[j]];
@@ -644,7 +643,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
         for (int i = 0; i < measurementIndices.Count; i++)
         {
-          Altaxo.Data.INumericColumn col = srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn;
+          var col = srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn;
           for (int j = 0; j < spectralIndices.Count; j++)
           {
             matrixX[i, j] = col[spectralIndices[j]];
@@ -717,7 +716,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       var matrixY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, concentrationIndices.Count);
       for (int i = 0; i < concentrationIndices.Count; i++)
       {
-        Altaxo.Data.INumericColumn col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
+        var col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
         for (int j = 0; j < measurementIndices.Count; j++)
         {
           matrixY[j, i] = col[measurementIndices[j]];
@@ -765,9 +764,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       // we presume for now that the spectrum is horizontally,
       // if not we exchange the collections later
 
-      AscendingIntegerCollection numericDataCols = new AscendingIntegerCollection();
-      AscendingIntegerCollection numericDataRows = new AscendingIntegerCollection();
-      AscendingIntegerCollection concentrationIndices = new AscendingIntegerCollection();
+      var numericDataCols = new AscendingIntegerCollection();
+      var numericDataRows = new AscendingIntegerCollection();
+      var concentrationIndices = new AscendingIntegerCollection();
 
       AscendingIntegerCollection spectralIndices = bHorizontalOrientedSpectrum ? numericDataCols : numericDataRows;
       AscendingIntegerCollection measurementIndices = bHorizontalOrientedSpectrum ? numericDataRows : numericDataCols;
@@ -938,7 +937,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       matrixY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, concentrationIndices.Count);
       for (int i = 0; i < concentrationIndices.Count; i++)
       {
-        Altaxo.Data.INumericColumn col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
+        var col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
         for (int j = 0; j < measurementIndices.Count; j++)
         {
           matrixY[j, i] = col[measurementIndices[j]];
@@ -951,7 +950,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         for (int i = 0; i < spectralIndices.Count; i++)
         {
           labelColumnOfX[i] = spectralIndices[i];
-          Altaxo.Data.INumericColumn col = srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn;
+          var col = srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn;
           for (int j = 0; j < measurementIndices.Count; j++)
           {
             matrixX[j, i] = col[measurementIndices[j]];
@@ -966,7 +965,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
         for (int i = 0; i < measurementIndices.Count; i++)
         {
-          Altaxo.Data.INumericColumn col = srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn;
+          var col = srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn;
           for (int j = 0; j < spectralIndices.Count; j++)
           {
             matrixX[i, j] = col[spectralIndices[j]];
@@ -999,7 +998,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         return null;
       }
 
-      Altaxo.Collections.AscendingIntegerCollection result = new Altaxo.Collections.AscendingIntegerCollection();
+      var result = new Altaxo.Collections.AscendingIntegerCollection();
       // return an empty collection if there is nothing to map
       if (mastercount == 0)
         return result;
@@ -1105,8 +1104,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataTable table)
     {
       // Store X-Mean and X-Scale
-      Altaxo.Data.DoubleColumn colXMean = new Altaxo.Data.DoubleColumn();
-      Altaxo.Data.DoubleColumn colXScale = new Altaxo.Data.DoubleColumn();
+      var colXMean = new Altaxo.Data.DoubleColumn();
+      var colXScale = new Altaxo.Data.DoubleColumn();
 
       for (int i = 0; i < meanX.Count; i++)
       {
@@ -1118,8 +1117,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       table.DataColumns.Add(colXScale, _XScale_ColumnName, Altaxo.Data.ColumnKind.V, 0);
 
       // store the y-mean and y-scale
-      Altaxo.Data.DoubleColumn colYMean = new Altaxo.Data.DoubleColumn();
-      Altaxo.Data.DoubleColumn colYScale = new Altaxo.Data.DoubleColumn();
+      var colYMean = new Altaxo.Data.DoubleColumn();
+      var colYScale = new Altaxo.Data.DoubleColumn();
 
       for (int i = 0; i < meanY.Count; i++)
       {
@@ -1133,7 +1132,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public virtual void StoreXOfX(IReadOnlyList<double> xOfX, DataTable table)
     {
-      DoubleColumn xColOfX = new DoubleColumn();
+      var xColOfX = new DoubleColumn();
       VectorMath.Copy(xOfX, DataColumnWrapper.ToVector(xColOfX, xOfX.Count));
       table.DataColumns.Add(xColOfX, _XOfX_ColumnName, Altaxo.Data.ColumnKind.X, 0);
     }
@@ -1170,7 +1169,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       StoreNumberOfFactors(PRESS.Count, table);
 
-      Altaxo.Data.DoubleColumn presscol = new Altaxo.Data.DoubleColumn();
+      var presscol = new Altaxo.Data.DoubleColumn();
       for (int i = 0; i < PRESS.Count; i++)
         presscol[i] = PRESS[i];
       table.DataColumns.Add(presscol, GetPRESSValue_ColumnName(), Altaxo.Data.ColumnKind.V, 4);
@@ -1208,8 +1207,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       double pressMin = double.MaxValue;
       for (int i = 0; i < press.Length; i++)
         pressMin = Math.Min(pressMin, press[i]);
-      DoubleColumn fratiocol = new DoubleColumn();
-      DoubleColumn fprobcol = new DoubleColumn();
+      var fratiocol = new DoubleColumn();
+      var fprobcol = new DoubleColumn();
       for (int i = 0; i < press.Length; i++)
       {
         double fratio = press[i] / pressMin;
@@ -1233,7 +1232,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
 
       // add a label column for the measurement number
-      Altaxo.Data.DoubleColumn measurementLabel = new Altaxo.Data.DoubleColumn();
+      var measurementLabel = new Altaxo.Data.DoubleColumn();
       for (int i = 0; i < plsContent.MeasurementIndices.Count; i++)
         measurementLabel[i] = plsContent.MeasurementIndices[i];
       table.DataColumns.Add(measurementLabel, _MeasurementLabel_ColumnName, Altaxo.Data.ColumnKind.Label, _MeasurementLabel_ColumnGroup);
@@ -1241,7 +1240,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // now add the original Y-Columns
       for (int i = 0; i < matrixY.ColumnCount; i++)
       {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        var col = new Altaxo.Data.DoubleColumn();
         for (int j = 0; j < matrixY.RowCount; j++)
           col[j] = matrixY[j, i];
         table.DataColumns.Add(col, _YOriginal_ColumnName + i.ToString(), Altaxo.Data.ColumnKind.X, 5 + i);
@@ -1314,7 +1313,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         // insert a column with the proper name into the table and fill it
         string ycolname = GetYCrossPredicted_ColumnName(whichY, numberOfFactors);
-        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+        var ycolumn = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < predictedY.RowCount; i++)
           ycolumn[i] = predictedY[i, whichY];
@@ -1330,7 +1329,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         // insert a column with the proper name into the table and fill it
         string ycolname = GetYCrossResidual_ColumnName(whichY, numberOfFactors);
-        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+        var ycolumn = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < predictedY.RowCount; i++)
           ycolumn[i] = predictedY[i, whichY];
@@ -1342,7 +1341,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         // insert a column with the proper name into the table and fill it
         string ycolname = GetXCrossResidual_ColumnName(whichY, numberOfFactors);
-        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+        var ycolumn = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < matrixX.RowCount; i++)
         {
@@ -1378,7 +1377,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         // insert a column with the proper name into the table and fill it
         string ycolname = GetYPredicted_ColumnName(whichY, numberOfFactors);
-        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+        var ycolumn = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < predictedY.RowCount; i++)
           ycolumn[i] = predictedY[i, whichY];
@@ -1394,7 +1393,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         // insert a column with the proper name into the table and fill it
         string ycolname = GetYResidual_ColumnName(whichY, numberOfFactors);
-        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+        var ycolumn = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < predictedY.RowCount; i++)
           ycolumn[i] = predictedY[i, whichY];
@@ -1406,7 +1405,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         // insert a column with the proper name into the table and fill it
         string ycolname = GetXResidual_ColumnName(whichY, numberOfFactors);
-        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+        var ycolumn = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < matrixX.RowCount; i++)
         {
@@ -1418,10 +1417,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public void CalculateAndStorePredictionScores(DataTable table, int preferredNumberOfFactors)
     {
-      var predictionScores = this.CalculatePredictionScores(table, preferredNumberOfFactors);
+      var predictionScores = CalculatePredictionScores(table, preferredNumberOfFactors);
       for (int i = 0; i < predictionScores.ColumnCount; i++)
       {
-        DoubleColumn col = new DoubleColumn();
+        var col = new DoubleColumn();
         for (int j = 0; j < predictionScores.RowCount; j++)
           col[j] = predictionScores[j, i];
 
@@ -1475,13 +1474,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         double[] xofx = GetXOfSpectra(srctable, spectrumIsRow, spectralIndices, measurementIndices);
 
-        string errormsg;
-        AscendingIntegerCollection map = MapSpectralX(calibModel.PreprocessingModel.XOfX, VectorMath.ToROVector(xofx), out errormsg);
+        AscendingIntegerCollection map = MapSpectralX(calibModel.PreprocessingModel.XOfX, VectorMath.ToROVector(xofx), out var errormsg);
         if (map == null)
           throw new ApplicationException("Can not map spectral data: " + errormsg);
         else
         {
-          AscendingIntegerCollection newspectralindices = new AscendingIntegerCollection();
+          var newspectralindices = new AscendingIntegerCollection();
           for (int i = 0; i < map.Count; i++)
             newspectralindices.Add(spectralIndices[map[i]]);
           spectralIndices = newspectralindices;
@@ -1495,7 +1493,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       // now save the predicted y in the destination table
 
-      Altaxo.Data.DoubleColumn labelCol = new Altaxo.Data.DoubleColumn();
+      var labelCol = new Altaxo.Data.DoubleColumn();
       for (int i = 0; i < measurementIndices.Count; i++)
       {
         labelCol[i] = measurementIndices[i];
@@ -1504,7 +1502,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       for (int k = 0; k < predictedY.ColumnCount; k++)
       {
-        Altaxo.Data.DoubleColumn predictedYcol = new Altaxo.Data.DoubleColumn();
+        var predictedYcol = new Altaxo.Data.DoubleColumn();
 
         for (int i = 0; i < measurementIndices.Count; i++)
         {
@@ -1536,14 +1534,14 @@ namespace Altaxo.Calc.Regression.Multivariate
       plsMemo.SpectralPreprocessing.ProcessForPrediction(matrixX, calib.PreprocessingModel.XMean, calib.PreprocessingModel.XScale);
 
       // for the new table, save the spectra as column
-      DoubleColumn xcol = new DoubleColumn();
+      var xcol = new DoubleColumn();
       for (int i = matrixX.ColumnCount; i >= 0; i--)
         xcol[i] = calib.PreprocessingModel.XOfX[i];
       desttable.DataColumns.Add(xcol, _XOfX_ColumnName, ColumnKind.X, 0);
 
       for (int n = 0; n < matrixX.RowCount; n++)
       {
-        DoubleColumn col = new DoubleColumn();
+        var col = new DoubleColumn();
         for (int i = matrixX.ColumnCount - 1; i >= 0; i--)
           col[i] = matrixX[n, i];
         desttable.DataColumns.Add(col, n.ToString(), ColumnKind.V, 0);
@@ -1575,17 +1573,17 @@ namespace Altaxo.Calc.Regression.Multivariate
       SpectralPreprocessingOptions preprocessOptions
       )
     {
-      IMatrix<double> matrixX, matrixY;
-      IROVector<double> xOfX;
-      var plsContent = new MultivariateContentMemento();
-      plsContent.Analysis = this;
+      var plsContent = new MultivariateContentMemento
+      {
+        Analysis = this
+      };
 
       // now we have to create a new table where to place the calculated factors and loads
       // we will do that in a vertical oriented manner, i.e. even if the loads are
       // here in horizontal vectors: in our table they are stored in (vertical) columns
-      string newName = this.AnalysisName + " of " + Main.ProjectFolder.GetNamePart(srctable.Name);
+      string newName = AnalysisName + " of " + Main.ProjectFolder.GetNamePart(srctable.Name);
       newName = Main.ProjectFolder.CreateFullName(srctable.Name, newName);
-      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable(newName);
+      var table = new Altaxo.Data.DataTable(newName);
       // Fill the Table
       using (var suspendToken = table.SuspendGetToken())
       {
@@ -1600,15 +1598,14 @@ namespace Altaxo.Calc.Regression.Multivariate
           selectedPropertyColumns,
           bHorizontalOrientedSpectrum,
           plsContent,
-          out matrixX, out matrixY, out xOfX);
+          out var matrixX, out var matrixY, out var xOfX);
 
         StoreXOfX(xOfX, table);
 
         // Preprocess
         plsContent.SpectralPreprocessing = preprocessOptions;
-        IVector<double> meanX, scaleX, meanY, scaleY;
         MultivariateRegression.PreprocessForAnalysis(preprocessOptions, xOfX, matrixX, matrixY,
-          out meanX, out scaleX, out meanY, out scaleY);
+          out var meanX, out var scaleX, out var meanY, out var scaleY);
 
         StorePreprocessedData(meanX, scaleX, meanY, scaleY, table);
 
@@ -1621,7 +1618,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           plsContent,
           table, out var press);
 
-        this.StorePRESSData(press, table);
+        StorePRESSData(press, table);
 
         if (plsOptions.CrossPRESSCalculation != CrossPRESSCalculationType.None)
           CalculateCrossPRESS(xOfX, matrixX, matrixY, plsOptions, plsContent, table);

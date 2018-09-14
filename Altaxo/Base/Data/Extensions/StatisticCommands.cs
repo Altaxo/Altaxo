@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
+using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -107,24 +107,24 @@ namespace Altaxo.Data
       // otherwise in one column doubles and i.e. dates are mixed, which is not possible
 
       // 1st column is the name of the column of which the statistics is made
-      Data.TextColumn colCol = new Data.TextColumn();
+      var colCol = new Data.TextColumn();
 
       // 2nd column is the mean
-      Data.DoubleColumn colMean = new Data.DoubleColumn();
+      var colMean = new Data.DoubleColumn();
 
       // 3rd column is the standard deviation
-      Data.DoubleColumn colSd = new Data.DoubleColumn();
+      var colSd = new Data.DoubleColumn();
 
       // 4th column is the standard e (N)
-      Data.DoubleColumn colSe = new Data.DoubleColumn();
+      var colSe = new Data.DoubleColumn();
 
       // 5th column is the sum
-      Data.DoubleColumn colSum = new Data.DoubleColumn();
+      var colSum = new Data.DoubleColumn();
 
       var colSumSqr = new Data.DoubleColumn();
 
       // 6th column is the number of items for statistics
-      Data.DoubleColumn colN = new Data.DoubleColumn();
+      var colN = new Data.DoubleColumn();
 
       var colFracOneSigma = new Data.DoubleColumn();
       var colFracTwoSigma = new Data.DoubleColumn();
@@ -145,7 +145,7 @@ namespace Altaxo.Data
           continue;
 
         // now do the statistics
-        Data.INumericColumn ncol = (Data.INumericColumn)col;
+        var ncol = (Data.INumericColumn)col;
         double sum = 0;
         double sumsqr = 0;
         int NN = 0;
@@ -155,7 +155,7 @@ namespace Altaxo.Data
         for (int i = 0; i < rows; i++)
         {
           double val = bUseSelectedRows ? ncol[selectedRows[i]] : ncol[i];
-          if (Double.IsNaN(val))
+          if (double.IsNaN(val))
             continue;
 
           NN++;
@@ -182,7 +182,7 @@ namespace Altaxo.Data
         for (int i = 0; i < rows; i++)
         {
           double val = bUseSelectedRows ? ncol[selectedRows[i]] : ncol[i];
-          if (Double.IsNaN(val))
+          if (double.IsNaN(val))
             continue;
 
           if (Altaxo.Calc.RMath.IsInIntervalCC(val, oneSigmaLo, oneSigmaHi))
@@ -278,22 +278,22 @@ namespace Altaxo.Data
       if (numrows == 0)
         return;
 
-      Data.DoubleColumn cRows = new DoubleColumn();
+      var cRows = new DoubleColumn();
 
       // 1st column is the mean, and holds the sum during the calculation
-      Data.DoubleColumn colMean = new Data.DoubleColumn();
+      var colMean = new Data.DoubleColumn();
 
       // 2rd column is the standard deviation, and holds the square sum during calculation
-      Data.DoubleColumn colSD = new Data.DoubleColumn();
+      var colSD = new Data.DoubleColumn();
 
       // 3th column is the standard e (N)
-      Data.DoubleColumn colSE = new Data.DoubleColumn();
+      var colSE = new Data.DoubleColumn();
 
       // 4th column is the sum
-      Data.DoubleColumn colSum = new Data.DoubleColumn();
+      var colSum = new Data.DoubleColumn();
 
       // 5th column is the number of items for statistics
-      Data.DoubleColumn colNN = new Data.DoubleColumn();
+      var colNN = new Data.DoubleColumn();
 
       var colSumSqr = new Data.DoubleColumn();
       var colFracOneSigma = new Data.DoubleColumn();
@@ -319,14 +319,14 @@ namespace Altaxo.Data
           continue;
 
         // now do the statistics
-        Data.INumericColumn ncol = (Data.INumericColumn)col;
+        var ncol = (Data.INumericColumn)col;
         for (int i = 0; i < numrows; i++)
         {
           int row = bUseSelectedRows ? selectedRows[i] : i;
           cRows[i] = row;
 
           double val = ncol[row];
-          if (Double.IsNaN(val))
+          if (double.IsNaN(val))
             continue;
 
           colSum[i] += val;
@@ -386,9 +386,9 @@ namespace Altaxo.Data
             continue;
 
           // now do the statistics
-          Data.INumericColumn ncol = (Data.INumericColumn)col;
+          var ncol = (Data.INumericColumn)col;
           double val = ncol[row];
-          if (Double.IsNaN(val))
+          if (double.IsNaN(val))
             continue;
 
           if (Altaxo.Calc.RMath.IsInIntervalCC(val, oneSigmaLo, oneSigmaHi))
@@ -399,9 +399,9 @@ namespace Altaxo.Data
             ++cntThreeSigma;
         }
 
-        colFracOneSigma[i] = cntOneSigma / (double)colNN[i];
-        colFracTwoSigma[i] = cntTwoSigma / (double)colNN[i];
-        colFracThreeSigma[i] = cntThreeSigma / (double)colNN[i];
+        colFracOneSigma[i] = cntOneSigma / colNN[i];
+        colFracTwoSigma[i] = cntTwoSigma / colNN[i];
+        colFracThreeSigma[i] = cntThreeSigma / colNN[i];
       }
 
       destinationTable.EnsureExistence(DefaultRowNumberColumnName, typeof(DoubleColumn), ColumnKind.X, 0).Append(cRows);
@@ -416,8 +416,10 @@ namespace Altaxo.Data
     /// <returns></returns>
     private static DataTable CreateStatisticalTable(DataTable srcTable, IAscendingIntegerCollection selectedColumns)
     {
-      DataTable result = new DataTable();
-      result.Name = Altaxo.Main.ProjectFolder.PrependToName(srcTable.Name, "Statistics of ");
+      var result = new DataTable
+      {
+        Name = Altaxo.Main.ProjectFolder.PrependToName(srcTable.Name, "Statistics of ")
+      };
 
       result.DataColumns.Add(new TextColumn(), DefaultColumnNameColumnName, ColumnKind.X, 0);
       AddSourcePropertyColumns(srcTable, selectedColumns, result);
@@ -433,7 +435,7 @@ namespace Altaxo.Data
     /// <returns></returns>
     private static DataTable CreateStatisticalTable(DataColumnCollection srcTable, IAscendingIntegerCollection selectedColumns)
     {
-      DataTable result = new DataTable();
+      var result = new DataTable();
 
       result.DataColumns.Add(new TextColumn(), DefaultColumnNameColumnName, ColumnKind.X, 0);
       AddStatisticColumns(result);
@@ -446,7 +448,7 @@ namespace Altaxo.Data
     /// <returns></returns>
     private static DataTable CreateStatisticalTable()
     {
-      DataTable result = new DataTable();
+      var result = new DataTable();
 
       result.DataColumns.Add(new DoubleColumn(), DefaultRowNumberColumnName, ColumnKind.X, 0);
       AddStatisticColumns(result);
@@ -490,7 +492,7 @@ namespace Altaxo.Data
       for (int i = 0; i < srctable.PropertyColumnCount; i++)
       {
         DataColumn originalColumn = srctable.PropertyColumns[i];
-        DataColumn clonedColumn = (DataColumn)originalColumn.Clone();
+        var clonedColumn = (DataColumn)originalColumn.Clone();
         clonedColumn.Clear();
         for (int si = 0; si < numcols; si++)
         {

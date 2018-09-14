@@ -256,7 +256,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddArray(string name, float[] val, int count)
     {
-      this.CreateArray(name, count);
+      CreateArray(name, count);
 
       if (count > 0)
       {
@@ -277,12 +277,12 @@ namespace Altaxo.Serialization.Xml
           AddArrayOfPrimitiveType(name, val, count, _size_of_float, m_DefaultArrayEncoding);
         }
       } // count>0
-      this.CommitArray();
+      CommitArray();
     }
 
     public void AddArray(string name, double[] val, int count)
     {
-      this.CreateArray(name, count);
+      CreateArray(name, count);
 
       if (count > 0)
       {
@@ -303,12 +303,12 @@ namespace Altaxo.Serialization.Xml
           AddArrayOfPrimitiveType(name, val, count, _size_of_double, m_DefaultArrayEncoding);
         }
       } // count>0
-      this.CommitArray();
+      CommitArray();
     }
 
     public void AddArray(string name, int[] val, int count)
     {
-      this.CreateArray(name, count);
+      CreateArray(name, count);
 
       if (count > 0)
       {
@@ -329,12 +329,12 @@ namespace Altaxo.Serialization.Xml
           AddArrayOfPrimitiveType(name, val, count, _size_of_int, m_DefaultArrayEncoding);
         }
       } // count>0
-      this.CommitArray();
+      CommitArray();
     }
 
     public void AddArray(string name, DateTime[] val, int count)
     {
-      this.CreateArray(name, count);
+      CreateArray(name, count);
 
       if (count > 0)
       {
@@ -355,12 +355,12 @@ namespace Altaxo.Serialization.Xml
           AddArrayOfPrimitiveType(name, val, count, _size_of_DateTime, m_DefaultArrayEncoding);
         }
       } // count>0
-      this.CommitArray();
+      CommitArray();
     }
 
     public void AddArray(string name, string[] val, int count)
     {
-      this.CreateArray(name, count);
+      CreateArray(name, count);
 
       if (count > 0)
       {
@@ -369,7 +369,7 @@ namespace Altaxo.Serialization.Xml
           m_Writer.WriteElementString("e", val[i]);
         }
       } // count>0
-      this.CommitArray();
+      CommitArray();
     }
 
     public void AddArrayOfPrimitiveType(string name, System.Array val, int count, int sizeofelement, XmlArrayEncoding encoding)
@@ -417,16 +417,16 @@ namespace Altaxo.Serialization.Xml
 
     public void AddArray(string name, object[] val, int count)
     {
-      this.CreateArray(name, count);
+      CreateArray(name, count);
 
       if (count > 0)
       {
         for (int i = 0; i < count; i++)
         {
-          this.AddValue("e", val[i]);
+          AddValue("e", val[i]);
         }
       } // count>0
-      this.CommitArray();
+      CommitArray();
     }
 
     public void CreateElement(string name)

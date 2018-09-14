@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Units;
 
 namespace Altaxo.Gui
 {
@@ -39,11 +39,12 @@ namespace Altaxo.Gui
 
     static GuiRelationUnits()
     {
-      var instance = new List<IUnit>();
-
-      instance.Add(Unity.Instance);
-      instance.Add(Percent.Instance);
-      instance.Add(Permille.Instance);
+      var instance = new List<IUnit>
+      {
+        Unity.Instance,
+        Percent.Instance,
+        Permille.Instance
+      };
       _instance = instance.AsReadOnly();
     }
 

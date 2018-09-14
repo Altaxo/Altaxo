@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Gui.Worksheet.Viewing;
-using System;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -80,8 +80,7 @@ namespace Altaxo.Worksheet.Commands
         if (object.ReferenceEquals(vcol, xcol) || object.ReferenceEquals(vcol, ycol))
           continue;
 
-        DataTable newtable;
-        string msg = XYVToMatrix(xcol, ycol, vcol, ctrl.DataTable, out newtable);
+        string msg = XYVToMatrix(xcol, ycol, vcol, ctrl.DataTable, out var newtable);
         if (msg != null)
           return msg;
 
@@ -105,8 +104,8 @@ namespace Altaxo.Worksheet.Commands
     public static string XYVToMatrix(DataColumn xcol, DataColumn ycol, DataColumn vcol, DataTable originalTable, out DataTable newtable)
     {
       newtable = null;
-      System.Collections.SortedList xx = new System.Collections.SortedList();
-      System.Collections.SortedList yy = new System.Collections.SortedList();
+      var xx = new System.Collections.SortedList();
+      var yy = new System.Collections.SortedList();
       int len = xcol.Count;
       len = Math.Min(len, ycol.Count);
       len = Math.Min(len, vcol.Count);
@@ -121,8 +120,8 @@ namespace Altaxo.Worksheet.Commands
           yy.Add(ycol[i], null);
       }
 
-      DataColumn xnew = (DataColumn)Activator.CreateInstance(xcol.GetType());
-      DataColumn ynew = (DataColumn)Activator.CreateInstance(ycol.GetType());
+      var xnew = (DataColumn)Activator.CreateInstance(xcol.GetType());
+      var ynew = (DataColumn)Activator.CreateInstance(ycol.GetType());
       xnew.Clear();
       ynew.Clear();
 
@@ -138,10 +137,10 @@ namespace Altaxo.Worksheet.Commands
         yy[yy.GetKey(i)] = i;
       }
 
-      DataColumn vtemplate = (DataColumn)Activator.CreateInstance(vcol.GetType());
+      var vtemplate = (DataColumn)Activator.CreateInstance(vcol.GetType());
 
       // make a new table with yy.Count number of columns
-      DataColumn[] vcols = new DataColumn[yy.Count];
+      var vcols = new DataColumn[yy.Count];
       for (int i = yy.Count - 1; i >= 0; --i)
       {
         vcols[i] = (DataColumn)vtemplate.Clone();
@@ -420,7 +419,7 @@ namespace Altaxo.Worksheet.Commands
         selRows.AddRange(0, nRows);
       }
 
-      System.IO.StringWriter str = new System.IO.StringWriter();
+      var str = new System.IO.StringWriter();
       for (int i = 0; i < selPropCols.Count; i++)
       {
         for (int j = 0; j < selCols.Count; j++)
@@ -447,7 +446,7 @@ namespace Altaxo.Worksheet.Commands
       dao.SetCommaSeparatedValues(str.ToString());
 
       // now also as tab separated text
-      System.IO.StringWriter sw = new System.IO.StringWriter();
+      var sw = new System.IO.StringWriter();
 
       for (int i = 0; i < selPropCols.Count; i++)
       {
@@ -491,7 +490,7 @@ namespace Altaxo.Worksheet.Commands
         selRows.AddRange(0, dg.DataTable.PropertyRowCount);
       }
 
-      System.IO.StringWriter str = new System.IO.StringWriter();
+      var str = new System.IO.StringWriter();
       for (int i = 0; i < selRows.Count; i++)
       {
         for (int j = 0; j < selCols.Count; j++)
@@ -506,7 +505,7 @@ namespace Altaxo.Worksheet.Commands
       dao.SetCommaSeparatedValues(str.ToString());
 
       // now also as tab separated text
-      System.IO.StringWriter sw = new System.IO.StringWriter();
+      var sw = new System.IO.StringWriter();
 
       for (int i = 0; i < selRows.Count; i++)
       {
@@ -601,7 +600,7 @@ namespace Altaxo.Worksheet.Commands
         string name = sourcetable.DataColumns.GetColumnName(nCol);
         int group = sourcetable.DataColumns.GetColumnGroup(nCol);
         Altaxo.Data.ColumnKind kind = sourcetable.DataColumns.GetColumnKind(nCol);
-        Altaxo.Data.DataColumn destcolumn = (Altaxo.Data.DataColumn)sourcetable.DataColumns[nCol].Clone();
+        var destcolumn = (Altaxo.Data.DataColumn)sourcetable.DataColumns[nCol].Clone();
         desttable.DataColumns.Add(destcolumn, name, kind, group);
 
         // also fill in the property values
@@ -618,7 +617,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="destRowIndex">The row index of destination columns to fill.</param>
     /// <param name="sourceColumns">The source table's property column collection.</param>
     /// <param name="sourceRowIndex">The row index of the source columns to use.</param>
-    static private void FillRow(Altaxo.Data.DataColumn[] destColumns, int destRowIndex, Altaxo.Data.DataColumnCollection sourceColumns, int sourceRowIndex)
+    private static void FillRow(Altaxo.Data.DataColumn[] destColumns, int destRowIndex, Altaxo.Data.DataColumnCollection sourceColumns, int sourceRowIndex)
     {
       for (int nCol = 0; nCol < sourceColumns.ColumnCount; nCol++)
       {
@@ -878,9 +877,9 @@ namespace Altaxo.Worksheet.Commands
     /// a new property column of the same type as in the source table and with a reasonable name is created.
     /// Therefore each mapped property column has the same type as its counterpart in the source table.
     /// </remarks>
-    static protected Altaxo.Data.DataColumn[] MapOrCreatePropertyColumns(Altaxo.Data.DataTable desttable, Altaxo.Data.DataTable sourcetable)
+    protected static Altaxo.Data.DataColumn[] MapOrCreatePropertyColumns(Altaxo.Data.DataTable desttable, Altaxo.Data.DataTable sourcetable)
     {
-      Altaxo.Data.DataColumn[] columnmap = new Altaxo.Data.DataColumn[sourcetable.PropCols.ColumnCount];
+      var columnmap = new Altaxo.Data.DataColumn[sourcetable.PropCols.ColumnCount];
       for (int nCol = 0; nCol < sourcetable.PropCols.ColumnCount; nCol++)
       {
         string name = sourcetable.PropCols.GetColumnName(nCol);
@@ -922,9 +921,9 @@ namespace Altaxo.Worksheet.Commands
     /// table exists, the match is done 1:1 after the last selected column of the destination table. If there is no further column in the destination
     /// table to match, new columns are created in the destination table.
     /// </remarks>
-    static protected Altaxo.Data.DataColumn[] MapOrCreateDataColumns(Altaxo.Data.DataTable desttable, IAscendingIntegerCollection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
+    protected static Altaxo.Data.DataColumn[] MapOrCreateDataColumns(Altaxo.Data.DataTable desttable, IAscendingIntegerCollection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
     {
-      Altaxo.Data.DataColumn[] columnmap = new Altaxo.Data.DataColumn[sourcetable.DataColumns.ColumnCount];
+      var columnmap = new Altaxo.Data.DataColumn[sourcetable.DataColumns.ColumnCount];
       int nDestCol = -1;
       for (int nCol = 0; nCol < sourcetable.DataColumns.ColumnCount; nCol++)
       {
@@ -968,9 +967,9 @@ namespace Altaxo.Worksheet.Commands
     /// table to match, new columns are created in the destination table. The type of the newly created columns in the destination table is
     /// the same as the first column of the source table in this case.
     /// </remarks>
-    static protected Altaxo.Data.DataColumn[] MapOrCreateDataColumnsToRows(Altaxo.Data.DataTable desttable, IAscendingIntegerCollection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
+    protected static Altaxo.Data.DataColumn[] MapOrCreateDataColumnsToRows(Altaxo.Data.DataTable desttable, IAscendingIntegerCollection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
     {
-      Altaxo.Data.DataColumn[] columnmap = new Altaxo.Data.DataColumn[sourcetable.DataColumns.RowCount];
+      var columnmap = new Altaxo.Data.DataColumn[sourcetable.DataColumns.RowCount];
       int nDestCol = -1;
       int group = 0;
       for (int nCol = 0; nCol < sourcetable.DataColumns.RowCount; nCol++)

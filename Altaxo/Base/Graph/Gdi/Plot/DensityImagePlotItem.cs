@@ -22,16 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Main;
-using Altaxo.Serialization;
 using System;
-
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Main;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
@@ -60,15 +59,15 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DensityImagePlotItem s = (DensityImagePlotItem)obj;
+        var s = (DensityImagePlotItem)obj;
         info.AddValue("Data", s._plotData);
         info.AddValue("Style", s._plotStyle);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYZMeshedColumnPlotData pa = (XYZMeshedColumnPlotData)info.GetValue("Data", null);
-        DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style", null);
+        var pa = (XYZMeshedColumnPlotData)info.GetValue("Data", null);
+        var ps = (DensityImagePlotStyle)info.GetValue("Style", null);
 
         if (o == null)
         {
@@ -76,7 +75,7 @@ namespace Altaxo.Graph.Gdi.Plot
         }
         else
         {
-          DensityImagePlotItem s = (DensityImagePlotItem)o;
+          var s = (DensityImagePlotItem)o;
           s.Data = pa;
           s.Style = ps;
           return s;
@@ -96,8 +95,8 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public DensityImagePlotItem(XYZMeshedColumnPlotData pa, DensityImagePlotStyle ps)
     {
-      this.Data = pa;
-      this.Style = ps;
+      Data = pa;
+      Style = ps;
     }
 
     public DensityImagePlotItem(DensityImagePlotItem from)
@@ -116,8 +115,8 @@ namespace Altaxo.Graph.Gdi.Plot
         var from = obj as DensityImagePlotItem;
         if (null != from)
         {
-          this.Data = from._plotData.Clone();   // also wires the event
-          this.Style = (DensityImagePlotStyle)from.Style.Clone(); // also wires the event
+          Data = from._plotData.Clone();   // also wires the event
+          Style = (DensityImagePlotStyle)from.Style.Clone(); // also wires the event
         }
       }
       return copied;
@@ -150,7 +149,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public override Main.IDocumentLeafNode StyleObject
     {
       get { return _plotStyle; }
-      set { this.Style = (DensityImagePlotStyle)value; }
+      set { Style = (DensityImagePlotStyle)value; }
     }
 
     public override Main.IDocumentLeafNode DataObject
@@ -165,7 +164,7 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         if (null == value)
           throw new System.ArgumentNullException();
-        if (ChildSetMember(ref _plotStyle, (DensityImagePlotStyle)value))
+        if (ChildSetMember(ref _plotStyle, value))
         {
           EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
         }
@@ -189,7 +188,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
     {
-      if (null != this._plotStyle)
+      if (null != _plotStyle)
       {
         _plotStyle.Paint(g, layer, _plotData);
       }
@@ -203,11 +202,11 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != this._plotData)
+      if (null != _plotData)
       {
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
 
-        if (null != this._plotStyle)
+        if (null != _plotStyle)
           _plotStyle.PrepareScales(layer, _plotData);
       }
     }
@@ -217,7 +216,7 @@ namespace Altaxo.Graph.Gdi.Plot
       if (e is PlotItemDataChangedEventArgs)
       {
         // first inform our AbstractXYPlotStyle of the change, so it can invalidate its cached data
-        if (null != this._plotStyle)
+        if (null != _plotStyle)
           _plotStyle.EhDataChanged(this);
       }
 
@@ -228,12 +227,12 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      this._plotData.SetXBoundsFromTemplate(val);
+      _plotData.SetXBoundsFromTemplate(val);
     }
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      this._plotData.MergeXBoundsInto(pb);
+      _plotData.MergeXBoundsInto(pb);
     }
 
     #endregion IXBoundsHolder Members
@@ -242,12 +241,12 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      this._plotData.SetYBoundsFromTemplate(val);
+      _plotData.SetYBoundsFromTemplate(val);
     }
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      this._plotData.MergeYBoundsInto(pb);
+      _plotData.MergeYBoundsInto(pb);
     }
 
     #endregion IYBoundsHolder Members
@@ -273,7 +272,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       if (!(template is DensityImagePlotItem))
         return;
-      DensityImagePlotItem from = (DensityImagePlotItem)template;
+      var from = (DensityImagePlotItem)template;
       _plotStyle.CopyFrom(from._plotStyle);
     }
 
@@ -299,16 +298,14 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
     public void GetPixelwiseImage(ref Bitmap image)
     {
-      Altaxo.Calc.LinearAlgebra.IROMatrix<double> matrix;
-      Altaxo.Calc.LinearAlgebra.IROVector<double> rowVec, colVec;
       _plotData.DataTableMatrix.GetWrappers(
-        x => (double)x, // transformation function for row header values
+        x => x, // transformation function for row header values
         Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values
-        x => (double)x, // transformation function for column header values
+        x => x, // transformation function for column header values
         Altaxo.Calc.RMath.IsFinite,       // selection functiton for column header values
-        out matrix,
-        out rowVec,
-        out colVec
+        out var matrix,
+        out var rowVec,
+        out var colVec
         );
 
       _plotStyle.GetPixelwiseImage(matrix, ref image);

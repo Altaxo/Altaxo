@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        HavriliakNegamiModulusRelaxation s = (HavriliakNegamiModulusRelaxation)obj;
+        var s = (HavriliakNegamiModulusRelaxation)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
@@ -77,9 +77,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateModulusOfOmega()
     {
-      HavriliakNegamiModulusRelaxation result = new HavriliakNegamiModulusRelaxation();
-      result._useFrequencyInsteadOmega = false;
-      result._useFlowTerm = true;
+      var result = new HavriliakNegamiModulusRelaxation
+      {
+        _useFrequencyInsteadOmega = false,
+        _useFlowTerm = true
+      };
 
       return result;
     }
@@ -88,10 +90,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
-      HavriliakNegamiModulusRelaxation result = new HavriliakNegamiModulusRelaxation();
-      result._useFrequencyInsteadOmega = false;
-      result._useFlowTerm = true;
-      result._logarithmizeResults = true;
+      var result = new HavriliakNegamiModulusRelaxation
+      {
+        _useFrequencyInsteadOmega = false,
+        _useFlowTerm = true,
+        _logarithmizeResults = true
+      };
 
       return result;
     }
@@ -100,9 +104,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateModulusOfFrequency()
     {
-      HavriliakNegamiModulusRelaxation result = new HavriliakNegamiModulusRelaxation();
-      result._useFrequencyInsteadOmega = true;
-      result._useFlowTerm = true;
+      var result = new HavriliakNegamiModulusRelaxation
+      {
+        _useFrequencyInsteadOmega = true,
+        _useFlowTerm = true
+      };
 
       return result;
     }
@@ -111,10 +117,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
-      HavriliakNegamiModulusRelaxation result = new HavriliakNegamiModulusRelaxation();
-      result._useFrequencyInsteadOmega = true;
-      result._useFlowTerm = true;
-      result._logarithmizeResults = true;
+      var result = new HavriliakNegamiModulusRelaxation
+      {
+        _useFrequencyInsteadOmega = true,
+        _useFlowTerm = true,
+        _logarithmizeResults = true
+      };
 
       return result;
     }
@@ -133,7 +141,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public string IndependentVariableName(int i)
     {
-      return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
+      return _useFrequencyInsteadOmega ? "Frequency" : "Omega";
     }
 
     #endregion independent variable definition
@@ -165,7 +173,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       get
       {
-        return this._useFlowTerm ? _parameterNameS.Length : _parameterNameS.Length - 1;
+        return _useFlowTerm ? _parameterNameS.Length : _parameterNameS.Length - 1;
       }
     }
 
@@ -231,7 +239,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       Complex result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[2], P[3]), P[4]);
       result = P[1] + (P[0] - P[1]) * result;
 
-      if (this._useFlowTerm)
+      if (_useFlowTerm)
       {
         result = 1 / ((1 / result) - Complex.I * P[5] / x);
       }

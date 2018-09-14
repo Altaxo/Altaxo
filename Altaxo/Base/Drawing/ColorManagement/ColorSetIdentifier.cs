@@ -96,7 +96,7 @@ namespace Altaxo.Drawing.ColorManagement
 
     public bool Equals(ColorSetIdentifier other)
     {
-      return this._level == other._level && 0 == string.Compare(this._name, other._name);
+      return _level == other._level && 0 == string.Compare(_name, other._name);
     }
 
     public override bool Equals(object obj)
@@ -104,7 +104,7 @@ namespace Altaxo.Drawing.ColorManagement
       if (obj is ColorSetIdentifier)
       {
         var other = (ColorSetIdentifier)obj;
-        return this._level == other._level && 0 == string.Compare(this._name, other._name);
+        return _level == other._level && 0 == string.Compare(_name, other._name);
       }
       return false;
     }
@@ -112,11 +112,11 @@ namespace Altaxo.Drawing.ColorManagement
     public int CompareTo(ColorSetIdentifier other)
     {
       int result;
-      result = Comparer<int>.Default.Compare((int)this._level, (int)other._level);
+      result = Comparer<int>.Default.Compare((int)_level, (int)other._level);
       if (0 != result)
         return result;
       else
-        return string.Compare(this._name, other._name);
+        return string.Compare(_name, other._name);
     }
 
     public override string ToString()

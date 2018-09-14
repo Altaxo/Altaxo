@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -86,8 +86,8 @@ namespace Altaxo.AddInItems
 
     private void DoSetUp(XmlReader reader, string endElement, AddIn addIn)
     {
-      Stack<ICondition> conditionStack = new Stack<ICondition>();
-      List<Codon> innerCodons = new List<Codon>();
+      var conditionStack = new Stack<ICondition>();
+      var innerCodons = new List<Codon>();
       while (reader.Read())
       {
         switch (reader.NodeType)
@@ -100,7 +100,7 @@ namespace Altaxo.AddInItems
             else if (reader.LocalName == endElement)
             {
               if (innerCodons.Count > 0)
-                this.codons.Add(innerCodons);
+                codons.Add(innerCodons);
               return;
             }
             break;
@@ -117,11 +117,11 @@ namespace Altaxo.AddInItems
             }
             else
             {
-              Codon newCodon = new Codon(this.AddIn, elementName, Properties.ReadFromAttributes(reader), conditionStack.ToArray());
+              var newCodon = new Codon(AddIn, elementName, Properties.ReadFromAttributes(reader), conditionStack.ToArray());
               innerCodons.Add(newCodon);
               if (!reader.IsEmptyElement)
               {
-                ExtensionPath subPath = this.AddIn.GetExtensionPath(this.Name + "/" + newCodon.Id);
+                ExtensionPath subPath = AddIn.GetExtensionPath(Name + "/" + newCodon.Id);
                 subPath.DoSetUp(reader, elementName, addIn);
               }
             }
@@ -129,7 +129,7 @@ namespace Altaxo.AddInItems
         }
       }
       if (innerCodons.Count > 0)
-        this.codons.Add(innerCodons);
+        codons.Add(innerCodons);
     }
   }
 }

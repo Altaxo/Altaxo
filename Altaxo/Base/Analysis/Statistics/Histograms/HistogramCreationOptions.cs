@@ -106,8 +106,8 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <inheritdoc />
     public object Clone()
     {
-      var result = (HistogramCreationOptions)this.MemberwiseClone();
-      result._binning = this._binning == null ? null : (IBinning)this._binning.Clone();
+      var result = (HistogramCreationOptions)MemberwiseClone();
+      result._binning = _binning == null ? null : (IBinning)_binning.Clone();
       return result;
     }
 

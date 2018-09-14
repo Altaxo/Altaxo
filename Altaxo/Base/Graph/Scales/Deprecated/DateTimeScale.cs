@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
@@ -59,7 +59,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DateTimeScale s = (DateTimeScale)obj;
+        var s = (DateTimeScale)obj;
 
         info.AddValue("Org", s._axisOrg);
         info.AddValue("End", s._axisEnd);
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
         s._axisOrg = info.GetDateTime("Org");
         s._axisEnd = info.GetDateTime("End");
-        Unit spanUnit = (Unit)info.GetEnum("MajorSpanUnit", typeof(Unit));
+        var spanUnit = (Unit)info.GetEnum("MajorSpanUnit", typeof(Unit));
         TimeSpan span = info.GetTimeSpan("MajorSpanValue");
         s._majorSpan = new SpanCompound(spanUnit, span);
         s._minorTicks = info.GetInt32("MinorTicks");
@@ -107,15 +107,15 @@ namespace Altaxo.Graph.Scales.Deprecated
       if (object.ReferenceEquals(this, from))
         return;
 
-      this.IsLinked = from.IsLinked;
+      IsLinked = from.IsLinked;
 
-      this._axisOrg = from._axisOrg;
-      this._axisEnd = from._axisEnd;
-      this._majorSpan = from._majorSpan;
-      this._minorTicks = from._minorTicks;
+      _axisOrg = from._axisOrg;
+      _axisEnd = from._axisEnd;
+      _majorSpan = from._majorSpan;
+      _minorTicks = from._minorTicks;
 
-      this.InternalSetDataBounds((FiniteDateTimeBoundaries)from._dataBounds.Clone());
-      this.InternalSetRescaling((DateTimeScaleRescaleConditions)from._rescaling.Clone());
+      InternalSetDataBounds((FiniteDateTimeBoundaries)from._dataBounds.Clone());
+      InternalSetRescaling((DateTimeScaleRescaleConditions)from._rescaling.Clone());
     }
 
     public DateTimeScale(DateTimeScale from)
@@ -125,8 +125,8 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public DateTimeScale()
     {
-      this.InternalSetDataBounds(new FiniteDateTimeBoundaries());
-      this.InternalSetRescaling(new DateTimeScaleRescaleConditions());
+      InternalSetDataBounds(new FiniteDateTimeBoundaries());
+      InternalSetRescaling(new DateTimeScaleRescaleConditions());
     }
 
     /// <summary>
@@ -150,17 +150,17 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected void InternalSetDataBounds(FiniteDateTimeBoundaries bounds)
     {
-      if (this._dataBounds != null)
+      if (_dataBounds != null)
       {
-        this._dataBounds = null;
+        _dataBounds = null;
       }
-      this._dataBounds = bounds;
-      this._dataBounds.ParentObject = this;
+      _dataBounds = bounds;
+      _dataBounds.ParentObject = this;
     }
 
     protected void InternalSetRescaling(DateTimeScaleRescaleConditions rescaling)
     {
-      this._rescaling = rescaling;
+      _rescaling = rescaling;
     }
 
     /// <summary>
@@ -203,7 +203,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
     {
       if (x.IsType(AltaxoVariant.Content.VDateTime))
-        return PhysicalToNormal((DateTime)x);
+        return PhysicalToNormal(x);
       else if (x.CanConvertedToDouble)
         return PhysicalToNormal(new DateTime((long)(x.ToDouble() * 10000000)));
       else
@@ -230,7 +230,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
       set
       {
-        Org = (DateTime)value;
+        Org = value;
       }
     }
 
@@ -242,7 +242,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
       set
       {
-        End = (DateTime)value;
+        End = value;
       }
     }
 
@@ -259,7 +259,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     public override AltaxoVariant[] GetMajorTicksAsVariant()
     {
       DateTime[] ticks = GetMajorTicks();
-      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      var vticks = new AltaxoVariant[ticks.Length];
       for (int i = 0; i < ticks.Length; ++i)
         vticks[i] = ticks[i];
       return vticks;
@@ -268,7 +268,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     public override AltaxoVariant[] GetMinorTicksAsVariant()
     {
       DateTime[] ticks = GetMinorTicks();
-      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      var vticks = new AltaxoVariant[ticks.Length];
       for (int i = 0; i < ticks.Length; ++i)
         vticks[i] = ticks[i];
       return vticks;
@@ -276,7 +276,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     private System.Collections.ArrayList GetMajorTicksAsList()
     {
-      System.Collections.ArrayList arr = new System.Collections.ArrayList();
+      var arr = new System.Collections.ArrayList();
 
       if (_axisOrg <= _axisEnd)
       {
@@ -313,7 +313,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <returns>physical values for the minor ticks</returns>
     public DateTime[] GetMinorTicks()
     {
-      if (this._minorTicks == 0)
+      if (_minorTicks == 0)
         return new DateTime[0];
 
       System.Collections.ArrayList major = GetMajorTicksAsList();
@@ -350,7 +350,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       get
       {
-        return this._rescaling;
+        return _rescaling;
       }
     }
 
@@ -361,7 +361,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       get
       {
-        return this._rescaling;
+        return _rescaling;
       }
     }
 
@@ -372,7 +372,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       get
       {
-        return this._dataBounds;
+        return _dataBounds;
       }
     } // return a PhysicalBoundarie object that is associated with that axis
 
@@ -383,7 +383,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       get
       {
-        return this._dataBounds;
+        return _dataBounds;
       }
     } // return a PhysicalBoundarie object that is associated with that axis
 
@@ -392,11 +392,11 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       get
       {
-        return this._axisOrg;
+        return _axisOrg;
       }
       set
       {
-        this._axisOrg = value;
+        _axisOrg = value;
       }
     }
 
@@ -429,9 +429,9 @@ namespace Altaxo.Graph.Scales.Deprecated
       if (IsLinked)
         return;
 
-      DateTime oldAxisOrg = this._axisOrg;
-      DateTime oldAxisEnd = this._axisEnd;
-      SpanCompound oldAxisSpan = this._majorSpan;
+      DateTime oldAxisOrg = _axisOrg;
+      DateTime oldAxisEnd = _axisEnd;
+      SpanCompound oldAxisSpan = _majorSpan;
 
       CalculateTicks(org, end, out _majorSpan, out _minorTicks);
 
@@ -477,7 +477,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override void ProcessDataBounds()
     {
-      if (null == this._dataBounds || this._dataBounds.IsEmpty)
+      if (null == _dataBounds || _dataBounds.IsEmpty)
         SetDefaultAxisValues();
       else
         ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);
@@ -499,14 +499,14 @@ namespace Altaxo.Graph.Scales.Deprecated
       DateTime dorg;
       DateTime dend;
       if (org.IsType(AltaxoVariant.Content.VDateTime))
-        dorg = (DateTime)org;
+        dorg = org;
       else if (org.CanConvertedToDouble)
         dorg = new DateTime((long)(org.ToDouble() * 1E7));
       else
         throw new ArgumentException("Variant org is not a DateTime nor a numeric value");
 
       if (end.IsType(AltaxoVariant.Content.VDateTime))
-        dend = (DateTime)end;
+        dend = end;
       else if (end.CanConvertedToDouble)
         dend = new DateTime((long)(end.ToDouble() * 1E7));
       else
@@ -681,7 +681,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         int m = (int)_span.Ticks;
         if (!(m > 0 && m <= 12))
           throw new InvalidProgramException();
-        for (DateTime td = new DateTime(d.Year, d.Month, 1); ; td = td.AddMonths(1))
+        for (var td = new DateTime(d.Year, d.Month, 1); ; td = td.AddMonths(1))
         {
           if (td >= d && 0 == ((td.Month - 1) % m))
             return td;
@@ -693,7 +693,7 @@ namespace Altaxo.Graph.Scales.Deprecated
         int m = (int)_span.Ticks;
         if (!(m > 0 && m <= 12))
           throw new InvalidProgramException();
-        for (DateTime td = new DateTime(d.Year, d.Month, 1); ; td = td.AddMonths(-1))
+        for (var td = new DateTime(d.Year, d.Month, 1); ; td = td.AddMonths(-1))
         {
           if (td <= d && 0 == ((td.Month - 1) % m))
             return td;
@@ -758,7 +758,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       else
       {
         int i = _fixedSpan.Length - 1;
-        TimeSpan quarterspan = new TimeSpan(span.Ticks / 4);
+        var quarterspan = new TimeSpan(span.Ticks / 4);
         for (i = _fixedSpan.Length - 1; i >= 0; i--)
         {
           if (_fixedSpan[i] < quarterspan)

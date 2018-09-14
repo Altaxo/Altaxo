@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        NumericLabelFormattingMantissa s = (NumericLabelFormattingMantissa)obj;
+        var s = (NumericLabelFormattingMantissa)obj;
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
       }
 
@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
-        return FormatItem((double)item);
+        return FormatItem(item);
       else
         return item.ToString();
     }

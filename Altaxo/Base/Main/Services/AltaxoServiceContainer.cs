@@ -50,7 +50,7 @@ namespace Altaxo.Main.Services
 
     public void AddFallbackProvider(IServiceProvider provider)
     {
-      this._fallbackServiceProviders.Push(provider);
+      _fallbackServiceProviders.Push(provider);
     }
 
     public object GetService(Type serviceType)
@@ -60,7 +60,7 @@ namespace Altaxo.Main.Services
       {
         if (_services.TryGetValue(serviceType, out instance))
         {
-          ServiceCreatorCallback callback = instance as ServiceCreatorCallback;
+          var callback = instance as ServiceCreatorCallback;
           if (callback != null)
           {
             instance = callback(this, serviceType);
@@ -159,7 +159,7 @@ namespace Altaxo.Main.Services
         if (_services.TryGetValue(serviceType, out object instance))
         {
           _services.Remove(serviceType);
-          IDisposable disposableInstance = instance as IDisposable;
+          var disposableInstance = instance as IDisposable;
           if (disposableInstance != null)
             servicesToDispose.Remove(serviceType);
         }

@@ -57,7 +57,7 @@ namespace Altaxo.Data.Transformations
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         int count = info.OpenArray("Transformations");
-        List<IVariantToVariantTransformation> arr = new List<IVariantToVariantTransformation>(count);
+        var arr = new List<IVariantToVariantTransformation>(count);
         for (int i = 0; i < count; ++i)
         {
           arr.Add((IVariantToVariantTransformation)info.GetValue("e", null));
@@ -233,8 +233,10 @@ namespace Altaxo.Data.Transformations
       if (null == transformation)
         throw new ArgumentNullException(nameof(transformation));
 
-      var result = new CompoundTransformation();
-      result._transformations = new List<IVariantToVariantTransformation>(this._transformations);
+      var result = new CompoundTransformation
+      {
+        _transformations = new List<IVariantToVariantTransformation>(_transformations)
+      };
       if (transformation is CompoundTransformation)
       {
         result._transformations.AddRange(((CompoundTransformation)transformation)._transformations);
@@ -251,8 +253,10 @@ namespace Altaxo.Data.Transformations
       if (null == transformation)
         throw new ArgumentNullException(nameof(transformation));
 
-      var result = new CompoundTransformation();
-      result._transformations = new List<IVariantToVariantTransformation>();
+      var result = new CompoundTransformation
+      {
+        _transformations = new List<IVariantToVariantTransformation>()
+      };
       if (transformation is CompoundTransformation)
       {
         result._transformations.AddRange(((CompoundTransformation)transformation)._transformations);
@@ -262,7 +266,7 @@ namespace Altaxo.Data.Transformations
         result._transformations.Add(transformation);
       }
 
-      result._transformations.AddRange(this._transformations);
+      result._transformations.AddRange(_transformations);
       return result;
     }
 
@@ -278,7 +282,7 @@ namespace Altaxo.Data.Transformations
       if (null == from)
         return false;
 
-      if (this._transformations.Count != from._transformations.Count)
+      if (_transformations.Count != from._transformations.Count)
         return false;
 
       for (int i = 0; i < _transformations.Count; ++i)
@@ -291,7 +295,7 @@ namespace Altaxo.Data.Transformations
     public override int GetHashCode()
     {
       int len = Math.Min(3, _transformations.Count);
-      int result = this.GetType().GetHashCode();
+      int result = GetType().GetHashCode();
       for (int i = 0; i < len; ++i)
         result += _transformations[i].GetHashCode();
 

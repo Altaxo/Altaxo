@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization.Ascii;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {

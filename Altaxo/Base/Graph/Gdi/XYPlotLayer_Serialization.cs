@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Background;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Rescaling;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Altaxo.Graph.Gdi.Background;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Rescaling;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Gdi
       else if (axis is Altaxo.Graph.Scales.Deprecated.Log10Scale)
         transScale = new Log10Scale();
       else if (axis is Altaxo.Graph.Scales.Deprecated.AngularScale)
-        transScale = (axis as Altaxo.Graph.Scales.Deprecated.AngularScale).UseDegrees ? (Scale)new AngularDegreeScale() : (Scale)new AngularRadianScale();
+        transScale = (axis as Altaxo.Graph.Scales.Deprecated.AngularScale).UseDegrees ? new AngularDegreeScale() : (Scale)new AngularRadianScale();
       else if (axis is Altaxo.Graph.Scales.Deprecated.LinearScale)
         transScale = new LinearScale();
       else
@@ -71,7 +71,7 @@ namespace Altaxo.Graph.Gdi
       if (isLinked)
       {
 #pragma warning disable CS0618 // Type or member is obsolete
-        LinkedScale ls = new LinkedScale(transScale, idx);
+        var ls = new LinkedScale(transScale, idx);
 #pragma warning restore CS0618 // Type or member is obsolete
         ls.SetLinkParameter(orgA, orgB, endA, endB);
         transScale = ls;
@@ -177,7 +177,7 @@ namespace Altaxo.Graph.Gdi
         XYPlotLayer s = null != o ? (XYPlotLayer)o : new XYPlotLayer(info);
 
         bool fillLayerArea = info.GetBoolean("FillLayerArea");
-        BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", s);
+        var layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", s);
 
         if (fillLayerArea)
         {
@@ -369,7 +369,7 @@ namespace Altaxo.Graph.Gdi
         int count;
 
         // Background
-        IBackgroundStyle bgs = (IBackgroundStyle)info.GetValue("Background", s);
+        var bgs = (IBackgroundStyle)info.GetValue("Background", s);
         if (null != bgs)
         {
           if (!s.GridPlanes.Contains(CSPlaneID.Front))
@@ -393,8 +393,8 @@ namespace Altaxo.Graph.Gdi
         s.SetupOldAxes(linkedScales);
 
         // Styles
-        G2DScaleStyleCollection ssc = (G2DScaleStyleCollection)info.GetValue("AxisStyles", s);
-        GridPlane gplane = new GridPlane(CSPlaneID.Front);
+        var ssc = (G2DScaleStyleCollection)info.GetValue("AxisStyles", s);
+        var gplane = new GridPlane(CSPlaneID.Front);
         gplane.GridStyle[0] = ssc.ScaleStyle(0).GridStyle;
         gplane.GridStyle[1] = ssc.ScaleStyle(1).GridStyle;
         s.GridPlanes.Add(gplane);
@@ -666,7 +666,7 @@ namespace Altaxo.Graph.Gdi
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        XYPlotLayer s = (XYPlotLayer)obj;
+        var s = (XYPlotLayer)obj;
 
         info.AddBaseValueEmbedded(obj, typeof(HostLayer));
 
@@ -740,10 +740,10 @@ namespace Altaxo.Graph.Gdi
       {
         // after deserialisation the data bounds object of the scale is empty:
         // then we have to rescale the axis
-        if (this.Scales.X.DataBoundsObject.IsEmpty)
-          this.InitializeXScaleDataBounds();
-        if (this.Scales.Y.DataBoundsObject.IsEmpty)
-          this.InitializeYScaleDataBounds();
+        if (Scales.X.DataBoundsObject.IsEmpty)
+          InitializeXScaleDataBounds();
+        if (Scales.Y.DataBoundsObject.IsEmpty)
+          InitializeYScaleDataBounds();
       }
     }
 

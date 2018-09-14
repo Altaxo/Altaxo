@@ -47,13 +47,13 @@ namespace Altaxo.Graph.Gdi
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._background = null == from._background ? null : (IBackgroundStyle)from._background.Clone();
-      this._background.ParentObject = this;
+      _background = null == from._background ? null : (IBackgroundStyle)from._background.Clone();
+      _background.ParentObject = this;
 
-      this._leftPadding = from._leftPadding;
-      this._rightPadding = from._rightPadding;
-      this._topPadding = from._topPadding;
-      this._bottomPadding = from._bottomPadding;
+      _leftPadding = from._leftPadding;
+      _rightPadding = from._rightPadding;
+      _topPadding = from._topPadding;
+      _bottomPadding = from._bottomPadding;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -71,7 +71,7 @@ namespace Altaxo.Graph.Gdi
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LayerBackground s = (LayerBackground)obj;
+        var s = (LayerBackground)obj;
 
         info.AddValue("Background", s._background);
         info.AddValue("LeftPadding", s._leftPadding);

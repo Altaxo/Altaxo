@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Fourier;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc.Fourier;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -73,7 +73,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     #region Serialization

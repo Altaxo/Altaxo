@@ -75,7 +75,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ParameterSetElement s = (ParameterSetElement)obj;
+        var s = (ParameterSetElement)obj;
 
         info.AddValue("Name", s.Name);
         info.AddValue("Value", s.Parameter);
@@ -104,23 +104,23 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public ParameterSetElement(string name)
     {
-      this.Name = name;
-      this.Vary = true;
+      Name = name;
+      Vary = true;
     }
 
     public ParameterSetElement(string name, double value)
     {
-      this.Name = name;
-      this.Parameter = value;
-      this.Vary = true;
+      Name = name;
+      Parameter = value;
+      Vary = true;
     }
 
     public ParameterSetElement(string name, double value, double variance, bool vary)
     {
-      this.Name = name;
-      this.Parameter = value;
-      this.Variance = variance;
-      this.Vary = vary;
+      Name = name;
+      Parameter = value;
+      Variance = variance;
+      Vary = vary;
     }
 
     public ParameterSetElement(ParameterSetElement from)
@@ -133,10 +133,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if (object.ReferenceEquals(this, from))
         return;
 
-      this.Name = from.Name;
-      this.Parameter = from.Parameter;
-      this.Variance = from.Variance;
-      this.Vary = from.Vary;
+      Name = from.Name;
+      Parameter = from.Parameter;
+      Variance = from.Variance;
+      Vary = from.Vary;
     }
 
     #region ICloneable Members

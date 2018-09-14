@@ -97,9 +97,11 @@ namespace Altaxo.Serialization.AutoUpdates
         var eventName = System.Guid.NewGuid().ToString();
         var waitForRemoteStartSignal = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.ManualReset, eventName);
 
-        var processInfo = new System.Diagnostics.ProcessStartInfo();
-        processInfo.FileName = installerFullDestName;
-        StringBuilder stb = new StringBuilder();
+        var processInfo = new System.Diagnostics.ProcessStartInfo
+        {
+          FileName = installerFullDestName
+        };
+        var stb = new StringBuilder();
         stb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
           "\"{0}\"\t\"{1}\"\t{2}\t{3}\t{4}\t\"{5}\"",
           eventName,

@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
+using Altaxo.Data;
 
 namespace Altaxo.Serialization.Galactic
 {
@@ -59,7 +59,7 @@ namespace Altaxo.Serialization.Galactic
       public byte subexp;
 
       /// <summary>subindx :  Integer index number of trace subfile (0=first)</summary>
-      public Int16 subindx;
+      public short subindx;
 
       /// <summary>subtime;  Floating time for trace (Z axis corrdinate)</summary>
       public float subtime;
@@ -71,16 +71,16 @@ namespace Altaxo.Serialization.Galactic
       public float subnois;
 
       /// <summary>subnpts;  Integer number of subfile points for TXYXYS type </summary>
-      public Int32 subnpts;
+      public int subnpts;
 
       /// <summary>subscan; Integer number of co-added scans or 0 (for collect) </summary>
-      public Int32 subscan; //
+      public int subscan; //
 
       /// <summary>subwlevel;  Floating W axis value (if fwplanes non-zero) </summary>
       public float subwlevel;
 
       /// <summary>subresv[4];   Reserved area (must be set to zero) </summary>
-      public Int32 subresv;
+      public int subresv;
     }
 
     /// <summary>
@@ -94,13 +94,13 @@ namespace Altaxo.Serialization.Galactic
     {
       System.IO.Stream stream = null;
 
-      SPCHDR hdr = new SPCHDR();
-      SUBHDR subhdr = new SUBHDR();
+      var hdr = new SPCHDR();
+      var subhdr = new SUBHDR();
 
       try
       {
         stream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
-        System.IO.BinaryReader binreader = new System.IO.BinaryReader(stream);
+        var binreader = new System.IO.BinaryReader(stream);
 
         hdr.ftflgs = binreader.ReadByte(); // ftflgs : not-evenly spaced data
         hdr.fversn = binreader.ReadByte(); // fversn : new version
@@ -226,8 +226,7 @@ namespace Altaxo.Serialization.Galactic
     public static string ImportSpcFiles(string[] filenames, Altaxo.Data.DataTable table)
     {
       Altaxo.Data.DoubleColumn xcol = null;
-      double[] xvalues, yvalues;
-      System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+      var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
 
       if (table.DataColumns.ColumnCount > 0)
@@ -240,7 +239,7 @@ namespace Altaxo.Serialization.Galactic
 
       foreach (string filename in filenames)
       {
-        string error = ToArrays(filename, out xvalues, out yvalues);
+        string error = ToArrays(filename, out var xvalues, out var yvalues);
         if (null != error)
         {
           errorList.Append(error);
@@ -281,7 +280,7 @@ namespace Altaxo.Serialization.Galactic
         }
 
         // now add the y-values
-        Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn();
+        var ycol = new Altaxo.Data.DoubleColumn();
         ycol.CopyDataFrom(yvalues);
         table.DataColumns.Add(ycol,
           table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename)),

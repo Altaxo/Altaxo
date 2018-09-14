@@ -109,7 +109,7 @@ namespace Altaxo.Worksheet
 
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        WorksheetLayout s = (WorksheetLayout)obj;
+        var s = (WorksheetLayout)obj;
 
         info.AddValue("Guid", System.Xml.XmlConvert.ToString(s._guid));
         info.AddValue("Table", Main.AbsoluteDocumentPath.GetAbsolutePath(s._dataTable));
@@ -142,9 +142,11 @@ namespace Altaxo.Worksheet
 
       protected virtual void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-        surr._colStyles = new System.Collections.Hashtable();
-        surr._worksheetLayout = s;
+        var surr = new XmlSerializationSurrogate0
+        {
+          _colStyles = new System.Collections.Hashtable(),
+          _worksheetLayout = s
+        };
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
         s._guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
@@ -171,7 +173,7 @@ namespace Altaxo.Worksheet
           for (int i = 0; i < count; i++)
           {
             info.OpenElement(); // "e"
-            Main.AbsoluteDocumentPath key = (Main.AbsoluteDocumentPath)info.GetValue("Column", s);
+            var key = (Main.AbsoluteDocumentPath)info.GetValue("Column", s);
             object val = info.GetValue("Style", null);
             surr._colStyles[key] = val;
             info.CloseElement();
@@ -182,18 +184,18 @@ namespace Altaxo.Worksheet
 
       public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
-        if (this._pathToTable != null && this._worksheetLayout.DataTable == null)
+        if (_pathToTable != null && _worksheetLayout.DataTable == null)
         {
-          object table = Main.AbsoluteDocumentPath.GetObject(this._pathToTable, this._worksheetLayout, documentRoot);
+          object table = Main.AbsoluteDocumentPath.GetObject(_pathToTable, _worksheetLayout, documentRoot);
           if (table is Altaxo.Data.DataTable)
           {
-            this._worksheetLayout.DataTable = (Altaxo.Data.DataTable)table;
-            this._pathToTable = null;
+            _worksheetLayout.DataTable = (Altaxo.Data.DataTable)table;
+            _pathToTable = null;
           }
         }
 
-        System.Collections.ArrayList resolvedStyles = new System.Collections.ArrayList();
-        foreach (System.Collections.DictionaryEntry entry in this._colStyles)
+        var resolvedStyles = new System.Collections.ArrayList();
+        foreach (System.Collections.DictionaryEntry entry in _colStyles)
         {
           object resolvedobj = Main.AbsoluteDocumentPath.GetObject((Main.AbsoluteDocumentPath)entry.Key, _worksheetLayout, documentRoot);
           if (null != resolvedobj)
@@ -207,8 +209,8 @@ namespace Altaxo.Worksheet
           _colStyles.Remove(resstyle);
 
         // if all columns have resolved, we can close the event link
-        if (_colStyles.Count == 0 && this._pathToTable == null)
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+        if (_colStyles.Count == 0 && _pathToTable == null)
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
       }
     }
 
@@ -219,7 +221,7 @@ namespace Altaxo.Worksheet
       {
         base.Serialize(obj, info);
 
-        WorksheetLayout s = (WorksheetLayout)obj;
+        var s = (WorksheetLayout)obj;
         info.CreateArray("DefaultPropertyColumnStyles", s._propertyColumnStyles.DefaultColumnStyles.Values.Count);
         foreach (object style in s._propertyColumnStyles.DefaultColumnStyles.Values)
           info.AddValue("DefaultPropertyColumnStyle", style);
@@ -330,7 +332,7 @@ namespace Altaxo.Worksheet
       // The style of the property column header. This is the leftmost column in the left of the property columns,
       _propertyColumnHeaderStyle = new ColumnHeaderStyle() { ParentObject = this };
 
-      this._doShowPropertyColumns = true;
+      _doShowPropertyColumns = true;
     }
 
     public WorksheetLayout(Altaxo.Data.DataTable table)
@@ -354,7 +356,7 @@ namespace Altaxo.Worksheet
     /// </summary>
     protected internal void NewGuid()
     {
-      this._guid = System.Guid.NewGuid();
+      _guid = System.Guid.NewGuid();
     }
 
     public Altaxo.Data.DataTable DataTable

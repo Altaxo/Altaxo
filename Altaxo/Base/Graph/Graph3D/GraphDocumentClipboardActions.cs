@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -98,8 +98,10 @@ namespace Altaxo.Graph.Graph3D
 
       bmp.Save(filename, options.ImageFormat);
 
-      System.Collections.Specialized.StringCollection coll = new System.Collections.Specialized.StringCollection();
-      coll.Add(filename);
+      var coll = new System.Collections.Specialized.StringCollection
+      {
+        filename
+      };
       dao.SetFileDropList(coll);
 
       return filename;
@@ -170,7 +172,7 @@ namespace Altaxo.Graph.Graph3D
       object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Graph3D.GraphLayerAsXml");
       if (null == o)
         return;
-      XYZPlotLayer layer = o as XYZPlotLayer;
+      var layer = o as XYZPlotLayer;
       if (null != layer)
       {
         doc.RootLayer.ElementAt(layerNumber).CopyFrom(layer, options);

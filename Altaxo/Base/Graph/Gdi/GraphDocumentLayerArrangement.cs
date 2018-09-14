@@ -71,15 +71,15 @@ namespace Altaxo.Graph.Gdi
       var from = obj as ArrangeLayersDocument;
       if (null != from)
       {
-        this.NumberOfColumns = from.NumberOfColumns;
-        this.NumberOfRows = from.NumberOfRows;
-        this.RowSpacing = from.RowSpacing;
-        this.ColumnSpacing = from.ColumnSpacing;
-        this.LeftMargin = from.LeftMargin;
-        this.TopMargin = from.TopMargin;
-        this.RightMargin = from.RightMargin;
-        this.BottomMargin = from.BottomMargin;
-        this.SuperfluousLayersAction = from.SuperfluousLayersAction;
+        NumberOfColumns = from.NumberOfColumns;
+        NumberOfRows = from.NumberOfRows;
+        RowSpacing = from.RowSpacing;
+        ColumnSpacing = from.ColumnSpacing;
+        LeftMargin = from.LeftMargin;
+        TopMargin = from.TopMargin;
+        RightMargin = from.RightMargin;
+        BottomMargin = from.BottomMargin;
+        SuperfluousLayersAction = from.SuperfluousLayersAction;
         return true;
       }
       return false;
@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="activeLayer">Layer that is currently active.</param>
     public static void ShowLayerArrangementDialog(this GraphDocument graph, HostLayer activeLayer)
     {
-      ArrangeLayersDocument arrangement = new ArrangeLayersDocument();
+      var arrangement = new ArrangeLayersDocument();
       object doco = arrangement;
 
       if (Current.Gui.ShowDialog(ref doco, "Arrange layers"))

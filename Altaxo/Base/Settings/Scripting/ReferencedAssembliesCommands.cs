@@ -41,8 +41,10 @@ namespace Altaxo.Settings.Scripting
     /// </summary>
     public static void ShowAddTemporaryAssemblyDialog()
     {
-      OpenFileOptions options = new OpenFileOptions();
-      options.Title = "Add a temporary assembly to be referenced";
+      var options = new OpenFileOptions
+      {
+        Title = "Add a temporary assembly to be referenced"
+      };
       options.AddFilter("*.dll", "Libary files (*.dll)");
       options.AddFilter("*.*", "All files (*.*)");
       options.FilterIndex = 0;
@@ -50,7 +52,7 @@ namespace Altaxo.Settings.Scripting
       options.InitialDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
       if (Current.Gui.ShowOpenFileDialog(options))
       {
-        StringBuilder stb = new StringBuilder();
+        var stb = new StringBuilder();
         // try to create an assembly out of the filename(s)
         foreach (string filename in options.FileNames)
         {

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Drawing.D3D;
+using Altaxo.Graph;
 
 namespace Altaxo.Drawing.DashPatternManagement
 {

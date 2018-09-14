@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Common;
-using Altaxo.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Gui.Common;
+using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Scripting
 {

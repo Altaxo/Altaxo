@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
@@ -89,8 +89,10 @@ namespace Altaxo.Gui.Graph.Gdi
 
       if (initData)
       {
-        _instances = new Dictionary<Type, IItemLocation>();
-        _instances.Add(_doc.GetType(), _doc);
+        _instances = new Dictionary<Type, IItemLocation>
+        {
+          { _doc.GetType(), _doc }
+        };
 
         if (_layer.ParentLayer == null && !(_doc is ItemLocationDirect))
           _doc = new ItemLocationDirect();

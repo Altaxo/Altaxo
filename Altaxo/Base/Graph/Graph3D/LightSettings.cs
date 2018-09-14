@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Graph3D
       if (null == ambientLight)
         throw new ArgumentNullException(nameof(ambientLight));
 
-      var result = (LightSettings)this.MemberwiseClone();
+      var result = (LightSettings)MemberwiseClone();
       result._ambientLight = ambientLight;
       result.CalculateIsAnyAffixedToCamera();
 
@@ -173,7 +173,7 @@ namespace Altaxo.Graph.Graph3D
     /// <returns>New instance of <see cref="LightSettings"/> with the provided value for the discrete light.</returns>
     public LightSettings WithDiscreteLight(int idx, IDiscreteLight discreteLight)
     {
-      var result = (LightSettings)this.MemberwiseClone();
+      var result = (LightSettings)MemberwiseClone();
       switch (idx)
       {
         case 0:

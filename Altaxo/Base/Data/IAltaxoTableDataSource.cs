@@ -76,6 +76,6 @@ namespace Altaxo.Data
   /// </summary>
   public class TableDataSourceChangedEventArgs : EventArgs
   {
-    public new static readonly TableDataSourceChangedEventArgs Empty = new TableDataSourceChangedEventArgs();
+    public static new readonly TableDataSourceChangedEventArgs Empty = new TableDataSourceChangedEventArgs();
   }
 }

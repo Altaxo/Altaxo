@@ -123,28 +123,25 @@ namespace Altaxo.Serialization.Ascii
 
       if (_containsRepeatingWhiteSpaces || (_containsTabs && _containsSpaces))
       {
-        List<List<int>> listOfStringWordBounds = new List<List<int>>();
+        var listOfStringWordBounds = new List<List<int>>();
         foreach (string s in firstLines)
           listOfStringWordBounds.Add(GetStringWordBounds(s));
 
         if (!_containsTabs)
         {
-          int quality;
-          _fixedBoundaries = FindCommonWordBoundaries(listOfStringWordBounds, out quality);
+          _fixedBoundaries = FindCommonWordBoundaries(listOfStringWordBounds, out var quality);
         }
         else
         {
-          int quality4;
-          int quality8;
-          List<List<int>> listOfTabbedWordBounds = new List<List<int>>();
+          var listOfTabbedWordBounds = new List<List<int>>();
           for (int i = 0; i < firstLines.Count; i++)
             listOfTabbedWordBounds.Add(GetTabbedWordBounds(firstLines[i], listOfStringWordBounds[i], 4));
-          List<int> bounds4 = FindCommonWordBoundaries(listOfTabbedWordBounds, out quality4);
+          List<int> bounds4 = FindCommonWordBoundaries(listOfTabbedWordBounds, out var quality4);
 
           listOfTabbedWordBounds.Clear();
           for (int i = 0; i < firstLines.Count; i++)
             listOfTabbedWordBounds.Add(GetTabbedWordBounds(firstLines[i], listOfStringWordBounds[i], 8));
-          List<int> bounds8 = FindCommonWordBoundaries(listOfTabbedWordBounds, out quality8);
+          List<int> bounds8 = FindCommonWordBoundaries(listOfTabbedWordBounds, out var quality8);
 
           if (quality4 > quality8)
           {
@@ -255,7 +252,7 @@ namespace Altaxo.Serialization.Ascii
       ReportEndOfWords(listOfTabbedWordBounds, endOfWords);
       ReportDeepInsideOfWords(listOfTabbedWordBounds, deepInWords);
 
-      List<int> bounds = new List<int>();
+      var bounds = new List<int>();
       int? lastLeftJustifiedPreliminaryRightBoundary = null;
 
       int unsharpBoundFields = 0;
@@ -442,7 +439,7 @@ namespace Altaxo.Serialization.Ascii
     /// an even number of members. If there is a word, the list starts always with the start position of the word, followed by the position of the first character after this word.</returns>
     public List<int> GetTabbedWordBounds(string sLine, List<int> stringPositions, int tabSize)
     {
-      List<int> result = new List<int>();
+      var result = new List<int>();
 
       int tabPos = 0;
       int listPos = 0;
@@ -480,7 +477,7 @@ namespace Altaxo.Serialization.Ascii
     public List<int> GetStringWordBounds(string sLine)
     {
       // foreach line, we find the end of the words
-      List<int> wordBounds = new List<int>();
+      var wordBounds = new List<int>();
 
       int nLen = sLine.Length;
       if (nLen == 0)

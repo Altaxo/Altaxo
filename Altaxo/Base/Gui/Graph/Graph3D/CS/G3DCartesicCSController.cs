@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D.CS;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Graph3D.CS;
 
 namespace Altaxo.Gui.Graph.Graph3D.CS
 {

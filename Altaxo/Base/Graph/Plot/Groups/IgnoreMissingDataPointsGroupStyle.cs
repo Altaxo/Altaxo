@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot.Styles;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Gdi.Plot.Styles;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -54,7 +54,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        IgnoreMissingDataPointsGroupStyle s = (IgnoreMissingDataPointsGroupStyle)obj;
+        var s = (IgnoreMissingDataPointsGroupStyle)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -74,8 +74,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public IgnoreMissingDataPointsGroupStyle(IgnoreMissingDataPointsGroupStyle from)
     {
-      this._isInitialized = from._isInitialized;
-      this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+      _isInitialized = from._isInitialized;
+      _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
     }
 
     #endregion Constructors
@@ -98,8 +98,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public void TransferFrom(IPlotGroupStyle fromb)
     {
-      IgnoreMissingDataPointsGroupStyle from = (IgnoreMissingDataPointsGroupStyle)fromb;
-      this._isInitialized = from._isInitialized;
+      var from = (IgnoreMissingDataPointsGroupStyle)fromb;
+      _isInitialized = from._isInitialized;
       _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
     }
 

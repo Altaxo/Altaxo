@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Altaxo.Data;
 
 namespace Altaxo.DataConnection
 {
@@ -209,7 +209,7 @@ namespace Altaxo.DataConnection
           using (var token = destinationTable.SuspendGetToken())
           {
             var tableConnector = new AltaxoTableConnector(destinationTable);
-            this._dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
+            _dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
           }
         }
         finally
@@ -268,9 +268,11 @@ namespace Altaxo.DataConnection
 
     private void SwitchOnWatching()
     {
-      _triggerBasedUpdate = new Main.TriggerBasedUpdate(Current.TimerQueue);
-      _triggerBasedUpdate.MinimumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds);
-      _triggerBasedUpdate.MaximumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(Math.Max(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds, _importOptions.MaximumWaitingTimeAfterUpdateInSeconds));
+      _triggerBasedUpdate = new Main.TriggerBasedUpdate(Current.TimerQueue)
+      {
+        MinimumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds),
+        MaximumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(Math.Max(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds, _importOptions.MaximumWaitingTimeAfterUpdateInSeconds))
+      };
       _triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
     }
 

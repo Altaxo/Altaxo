@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Main
 {
@@ -153,7 +153,7 @@ namespace Altaxo.Main
       }
       set
       {
-        throw new InvalidOperationException("The name of this node cannot be set. The node type is: " + this.GetType().FullName);
+        throw new InvalidOperationException("The name of this node cannot be set. The node type is: " + GetType().FullName);
       }
     }
 
@@ -278,8 +278,7 @@ namespace Altaxo.Main
       /// <param name="item">The <see cref="EventArgs"/> instance containing the event data.</param>
       public void SetOrAccumulate(EventArgs item)
       {
-        EventArgs containedItem;
-        if (base.TryGetValue(item, out containedItem))
+        if (base.TryGetValue(item, out var containedItem))
         {
           var containedAsSelf = containedItem as SelfAccumulateableEventArgs;
           if (null != containedAsSelf)
@@ -293,7 +292,7 @@ namespace Altaxo.Main
 
       public void Add(EventArgs item)
       {
-        this.Add(item, item);
+        Add(item, item);
       }
 
       public bool Contains(EventArgs item)
@@ -397,7 +396,7 @@ namespace Altaxo.Main
         _disposeState = DisposeState_Disposed;
         Changed = null;
         TunneledEvent = null;
-        this.ParentObject = null;
+        ParentObject = null;
       }
     }
 

@@ -33,12 +33,12 @@ namespace Altaxo.Data.Transformations
   {
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode();
+      return GetType().GetHashCode();
     }
 
     public override bool Equals(object obj)
     {
-      return this.GetType() == obj?.GetType();
+      return GetType() == obj?.GetType();
     }
 
     public bool IsEditable { get { return false; } }

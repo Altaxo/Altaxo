@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
@@ -52,7 +52,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
     {
       get
       {
-        return this.GetType().FullName;
+        return GetType().FullName;
       }
     }
 

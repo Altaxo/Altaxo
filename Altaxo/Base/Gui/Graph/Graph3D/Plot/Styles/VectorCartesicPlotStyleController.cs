@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Drawing.D3D;
@@ -31,9 +34,6 @@ using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
@@ -204,9 +204,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
         // Errors
 
-        this.InitializeColumnXText();
-        this.InitializeColumnYText();
-        this.InitializeColumnZText();
+        InitializeColumnXText();
+        InitializeColumnYText();
+        InitializeColumnZText();
       }
     }
 
@@ -302,8 +302,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         (column, table, group) =>
         {
           _doc.ColumnX = column;
-          this._supposedParentDataTable = table;
-          this._supposedGroupNumber = group;
+          _supposedParentDataTable = table;
+          _supposedGroupNumber = group;
           InitializeColumnXText();
         }
       );
@@ -315,8 +315,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         (column, table, group) =>
         {
           _doc.ColumnY = column;
-          this._supposedParentDataTable = table;
-          this._supposedGroupNumber = group;
+          _supposedParentDataTable = table;
+          _supposedGroupNumber = group;
           InitializeColumnYText();
         }
       );
@@ -328,8 +328,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         (column, table, group) =>
         {
           _doc.ColumnZ = column;
-          this._supposedParentDataTable = table;
-          this._supposedGroupNumber = group;
+          _supposedParentDataTable = table;
+          _supposedGroupNumber = group;
           InitializeColumnZText();
         }
       );

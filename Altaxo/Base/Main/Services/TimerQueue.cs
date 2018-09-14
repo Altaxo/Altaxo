@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.Collections;
 
 namespace Altaxo.Main.Services
 {
@@ -161,16 +161,12 @@ namespace Altaxo.Main.Services
       {
         _event.WaitOne(); // wait for an enqueue event
 
-        TimeSpan nextTimeOnQueue;
-        while (_items.TryPeekKey(out nextTimeOnQueue))
+        while (_items.TryPeekKey(out var nextTimeOnQueue))
         {
           var currTime = _clock.CurrentTime;
           if (nextTimeOnQueue <= currTime)
           {
-            object token;
-            TimeSpan dueTime;
-            Action<object, TimeSpan> action;
-            if (_items.TryDequeue(out dueTime, out action, out token))
+            if (_items.TryDequeue(out var dueTime, out var action, out var token))
             {
               if (null != action)
                 Task.Factory.StartNew(() => action(token, dueTime)); // Execute the action in a new task

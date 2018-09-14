@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
-using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Data;
+using Altaxo.Graph.Plot.Data;
+using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -158,7 +158,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ErrorBarPlotStyle s = (ErrorBarPlotStyle)obj;
+        var s = (ErrorBarPlotStyle)obj;
 
         info.AddEnum("MeaningOfValues", s._meaningOfValues);
         info.AddValue("UseCommonColumn", s._useCommonErrorColumn);
@@ -199,7 +199,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ErrorBarPlotStyle s = (ErrorBarPlotStyle)o;
+        var s = (ErrorBarPlotStyle)o;
 
         s._meaningOfValues = (ValueInterpretation)info.GetEnum("MeaningOfValues", typeof(ValueInterpretation));
         s._useCommonErrorColumn = info.GetBoolean("UseCommonColumn");
@@ -279,7 +279,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _lineWidth2Offset = penWidth;
       _lineWidth2Factor = 0;
 
-      this._pen = new PenX3D(color, penWidth).WithLineEndCap(new ContourDisc10Min());
+      _pen = new PenX3D(color, penWidth).WithLineEndCap(new ContourDisc10Min());
     }
 
     public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
@@ -294,8 +294,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       var from = obj as ErrorBarPlotStyle;
       if (null != from)
       {
-        this._meaningOfValues = from._meaningOfValues;
-        this._useCommonErrorColumn = from._useCommonErrorColumn;
+        _meaningOfValues = from._meaningOfValues;
+        _useCommonErrorColumn = from._useCommonErrorColumn;
 
         if (copyWithDataReferences)
         {
@@ -304,32 +304,32 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
           ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
         }
 
-        this._independentSkipFrequency = from._independentSkipFrequency;
-        this._skipFrequency = from._skipFrequency;
-        this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+        _independentSkipFrequency = from._independentSkipFrequency;
+        _skipFrequency = from._skipFrequency;
+        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
-        this._independentSymbolSize = from._independentSymbolSize;
-        this._symbolSize = from._symbolSize;
+        _independentSymbolSize = from._independentSymbolSize;
+        _symbolSize = from._symbolSize;
 
         _pen = from._pen;
-        this._independentColor = from._independentColor;
-        this._independentDashPattern = from._independentDashPattern;
+        _independentColor = from._independentColor;
+        _independentDashPattern = from._independentDashPattern;
 
         _lineWidth1Offset = from._lineWidth1Offset;
         _lineWidth1Factor = from._lineWidth1Factor;
         _lineWidth2Offset = from._lineWidth2Offset;
         _lineWidth2Factor = from._lineWidth2Factor;
 
-        this._endCapSizeFactor = from._endCapSizeFactor;
-        this._endCapSizeOffset = from._endCapSizeOffset;
+        _endCapSizeFactor = from._endCapSizeFactor;
+        _endCapSizeOffset = from._endCapSizeOffset;
 
-        this._useSymbolGap = from._useSymbolGap;
-        this._symbolGapFactor = from._symbolGapFactor;
-        this._symbolGapOffset = from._symbolGapOffset;
+        _useSymbolGap = from._useSymbolGap;
+        _symbolGapFactor = from._symbolGapFactor;
+        _symbolGapOffset = from._symbolGapOffset;
 
-        this._cachedLogicalShiftX = from._cachedLogicalShiftX;
-        this._cachedLogicalShiftY = from._cachedLogicalShiftY;
-        this._cachedLogicalShiftZ = from._cachedLogicalShiftZ;
+        _cachedLogicalShiftX = from._cachedLogicalShiftX;
+        _cachedLogicalShiftY = from._cachedLogicalShiftY;
+        _cachedLogicalShiftZ = from._cachedLogicalShiftZ;
 
         EhSelfChanged();
         return true;
@@ -857,7 +857,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._pen.Color; });
+        { return _pen.Color; });
 
       if (!_independentSkipFrequency)
         SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
@@ -884,14 +884,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       if (!_independentSkipFrequency)
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this.SkipFrequency = c; });
+        { SkipFrequency = c; });
 
       // symbol size
       if (!_independentSymbolSize)
       {
-        this._symbolSize = 0;
+        _symbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._symbolSize = size; });
+        { _symbolSize = size; });
 
         // but if there is an symbol size evaluation function, then use this with higher priority.
         _cachedSymbolSizeForIndexFunction = null;
@@ -907,7 +907,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (!_independentDashPattern)
       {
         DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern dashPattern)
-        { this._pen = this._pen.WithDashPattern(dashPattern); });
+        { _pen = _pen.WithDashPattern(dashPattern); });
       }
 
       // Shift the items ?

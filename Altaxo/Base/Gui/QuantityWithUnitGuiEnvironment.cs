@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Units;
 
 namespace Altaxo.Gui
 {
@@ -285,8 +285,7 @@ namespace Altaxo.Gui
 
     public static QuantityWithUnitGuiEnvironment TryGetEnvironment(string name)
     {
-      QuantityWithUnitGuiEnvironment result;
-      if (_registry.TryGetValue(name, out result))
+      if (_registry.TryGetValue(name, out var result))
         return result;
       else
         return null;
@@ -315,7 +314,7 @@ namespace Altaxo.Gui
       }
 
       SIPrefix prefix = null;
-      foreach (IUnit u in this.UnitsSortedByShortcutLengthDescending) // for each unit
+      foreach (IUnit u in UnitsSortedByShortcutLengthDescending) // for each unit
       {
         if (string.IsNullOrEmpty(u.ShortCut) || (!shortCut.EndsWith(u.ShortCut)))
           continue;

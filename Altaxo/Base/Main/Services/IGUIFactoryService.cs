@@ -23,10 +23,10 @@
 #endregion Copyright
 
 using System;
-using Altaxo.Gui;
-using Altaxo.Geometry;
 using System.Threading;
 using System.Windows.Input;
+using Altaxo.Geometry;
+using Altaxo.Gui;
 
 namespace Altaxo.Main.Services
 {

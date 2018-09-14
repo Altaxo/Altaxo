@@ -138,8 +138,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsDateTime(string s)
     {
-      DateTime o;
-      return IsDateTime(s, out o);
+      return IsDateTime(s, out var o);
     }
 
     /// <summary>
@@ -165,8 +164,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a TimeSpan object.</returns>
     public static bool IsTimeSpan(string s)
     {
-      TimeSpan o;
-      return IsTimeSpan(s, out o);
+      return IsTimeSpan(s, out var o);
     }
 
     /// <summary>
@@ -182,7 +180,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(TimeSpan o)
     {
-      return o.ToString(String.Empty, _cultureSettings);
+      return o.ToString(string.Empty, _cultureSettings);
     }
 
     #endregion DateTime
@@ -196,8 +194,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a double.</returns>
     public static bool IsDouble(string s)
     {
-      double o;
-      return IsDouble(s, out o);
+      return IsDouble(s, out var o);
     }
 
     /// <summary>
@@ -220,8 +217,7 @@ namespace Altaxo.Serialization
       }
       else
       {
-        double val1;
-        if (IsDouble(s, out val1))
+        if (IsDouble(s, out var val1))
         {
           val = val1;
           return true;
@@ -243,8 +239,7 @@ namespace Altaxo.Serialization
       }
       else
       {
-        int val1;
-        if (int.TryParse(s, System.Globalization.NumberStyles.Integer, _cultureSettings, out val1))
+        if (int.TryParse(s, System.Globalization.NumberStyles.Integer, _cultureSettings, out var val1))
         {
           val = val1;
           return true;
@@ -295,7 +290,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(ICollection<double> vals)
     {
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
       foreach (int v in vals)
       {
         stb.Append(ToString(v));
@@ -357,7 +352,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(int[] vals)
     {
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
       foreach (int v in vals)
       {
         stb.Append(v.ToString());
@@ -368,7 +363,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(ICollection<int> vals)
     {
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
       foreach (int v in vals)
       {
         stb.Append(v.ToString());
@@ -431,8 +426,7 @@ namespace Altaxo.Serialization
         txt = txt.Substring(0, txt.Length - end.Length).TrimEnd();
       }
 
-      double v;
-      if (IsDouble(txt, out v))
+      if (IsDouble(txt, out var v))
       {
         value = v / 100;
         return true;
@@ -454,7 +448,7 @@ namespace Altaxo.Serialization
     /// <returns>List of all enumeration values. The current value is marked as (Selected is true for this list node).</returns>
     public static Altaxo.Collections.SelectableListNodeList GetListOfChoices(Enum value)
     {
-      Altaxo.Collections.SelectableListNodeList list = new Altaxo.Collections.SelectableListNodeList();
+      var list = new Altaxo.Collections.SelectableListNodeList();
       Type enumtype = value.GetType();
       foreach (Enum v in Enum.GetValues(enumtype))
       {

@@ -165,7 +165,7 @@ namespace Altaxo.Serialization.Ascii
       var from = obj as SingleCharSeparationStrategy;
       if (null != from)
       {
-        this._separatorChar = from._separatorChar;
+        _separatorChar = from._separatorChar;
         return true;
       }
       return false;
@@ -173,7 +173,7 @@ namespace Altaxo.Serialization.Ascii
 
     public object Clone()
     {
-      return new SingleCharSeparationStrategy(this._separatorChar);
+      return new SingleCharSeparationStrategy(_separatorChar);
     }
   }
 
@@ -268,7 +268,7 @@ namespace Altaxo.Serialization.Ascii
       var from = obj as FixedColumnWidthWithoutTabSeparationStrategy;
       if (null != from)
       {
-        this._startPositions = (int[])from._startPositions.Clone();
+        _startPositions = (int[])from._startPositions.Clone();
         return true;
       }
       return false;
@@ -276,7 +276,7 @@ namespace Altaxo.Serialization.Ascii
 
     public object Clone()
     {
-      return new FixedColumnWidthWithoutTabSeparationStrategy(this._startPositions);
+      return new FixedColumnWidthWithoutTabSeparationStrategy(_startPositions);
     }
   }
 
@@ -397,8 +397,8 @@ namespace Altaxo.Serialization.Ascii
       var from = obj as FixedColumnWidthWithTabSeparationStrategy;
       if (null != from)
       {
-        this._startPositions = (int[])from._startPositions.Clone();
-        this._tabSize = from._tabSize;
+        _startPositions = (int[])from._startPositions.Clone();
+        _tabSize = from._tabSize;
         return true;
       }
       return false;
@@ -406,7 +406,7 @@ namespace Altaxo.Serialization.Ascii
 
     public object Clone()
     {
-      return new FixedColumnWidthWithTabSeparationStrategy(this._startPositions, this._tabSize);
+      return new FixedColumnWidthWithTabSeparationStrategy(_startPositions, _tabSize);
     }
   }
 

@@ -142,7 +142,7 @@ namespace Altaxo.Settings
 
     public AutoUpdateSettings(AutoUpdateSettings from)
     {
-      this.CopyFrom(from);
+      CopyFrom(from);
     }
 
     public bool CopyFrom(object obj)

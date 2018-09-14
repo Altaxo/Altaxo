@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
-using System;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
@@ -82,8 +82,8 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         var from = obj as MultiLineLabelFormattingBase;
         if (null != from)
         {
-          this._relativeLineSpacing = from._relativeLineSpacing;
-          this._textBlockAlignment = from._textBlockAlignment;
+          _relativeLineSpacing = from._relativeLineSpacing;
+          _textBlockAlignment = from._textBlockAlignment;
         }
       }
       return isCopied;
@@ -129,7 +129,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
           titems[i] = _prefix + titems[i] + _suffix;
       }
 
-      MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];
+      var litems = new MeasuredLabelItem[titems.Length];
 
       FontX3D localfont = font;
 

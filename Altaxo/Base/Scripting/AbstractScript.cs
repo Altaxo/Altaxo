@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
-using Altaxo.Main.Services.ScriptCompilation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Text;
+using Altaxo.Main.Services;
+using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
 {
@@ -228,14 +228,14 @@ namespace Altaxo.Scripting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AbstractScript s = (AbstractScript)obj;
+        var s = (AbstractScript)obj;
 
         info.AddValue("Text", s._scriptText);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        AbstractScript s = (AbstractScript)o;
+        var s = (AbstractScript)o;
         s._scriptText = info.GetString("Text");
         return s;
       }
@@ -282,16 +282,16 @@ namespace Altaxo.Scripting
         return;
 
       var oldScriptText = _scriptText;
-      this._scriptText = from._scriptText;
-      this._isDirty = from._isDirty;
+      _scriptText = from._scriptText;
+      _isDirty = from._isDirty;
 
-      this._wasTriedToCompile = forModification ? false : from._wasTriedToCompile;
+      _wasTriedToCompile = forModification ? false : from._wasTriedToCompile;
 
-      this._errors = from._errors; // immutable
+      _errors = from._errors; // immutable
 
-      this._compilerResult = forModification ? null : from._compilerResult; // (not cloning is intented here)
+      _compilerResult = forModification ? null : from._compilerResult; // (not cloning is intented here)
 
-      this._scriptObject = CreateNewScriptObject(); // we create a new script object, because we are unable to clone it
+      _scriptObject = CreateNewScriptObject(); // we create a new script object, because we are unable to clone it
 
       if (oldScriptText != _scriptText)
         EhSelfChanged(EventArgs.Empty);
@@ -341,7 +341,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        return this._scriptObject;
+        return _scriptObject;
       }
     }
 
@@ -391,7 +391,7 @@ namespace Altaxo.Scripting
         }
         if (null == _scriptText)
         {
-          _scriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
+          _scriptText = CodeHeader + CodeStart + CodeUserDefault + CodeEnd + CodeTail;
         }
         return _scriptText;
       }
@@ -425,7 +425,7 @@ namespace Altaxo.Scripting
         }
         if (null == _scriptText)
         {
-          _scriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
+          _scriptText = CodeHeader + CodeStart + CodeUserDefault + CodeEnd + CodeTail;
         }
         return ScriptCompilerService.ComputeScriptTextHash(new string[] { _scriptText });
       }
@@ -438,7 +438,7 @@ namespace Altaxo.Scripting
 
     public override int GetHashCode()
     {
-      return this.ScriptText.GetHashCode();
+      return ScriptText.GetHashCode();
     }
 
     /// <summary>
@@ -453,9 +453,9 @@ namespace Altaxo.Scripting
         if (null == ScriptText)
           return 0;
 
-        int pos = ScriptText.IndexOf(this.CodeStart);
+        int pos = ScriptText.IndexOf(CodeStart);
 
-        return pos < 0 ? 0 : pos + this.CodeStart.Length;
+        return pos < 0 ? 0 : pos + CodeStart.Length;
       }
     }
 
@@ -502,7 +502,7 @@ namespace Altaxo.Scripting
 
     public virtual IScriptText CloneForModification()
     {
-      AbstractScript result = (AbstractScript)Clone();
+      var result = (AbstractScript)Clone();
       result._compilerResult = null;
       result._scriptObject = null;
       return result;
@@ -517,7 +517,7 @@ namespace Altaxo.Scripting
     {
       if (null == _scriptObject)
       {
-        if (!this._wasTriedToCompile)
+        if (!_wasTriedToCompile)
           Compile();
       }
     }
@@ -535,11 +535,11 @@ namespace Altaxo.Scripting
       {
         try
         {
-          scriptObject = assembly.CreateInstance(this.ScriptObjectType);
+          scriptObject = assembly.CreateInstance(ScriptObjectType);
 
           if (null == scriptObject)
           {
-            _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n", this.ScriptObjectType)));
+            _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n", ScriptObjectType)));
           }
         }
         catch (Exception ex)
@@ -559,7 +559,7 @@ namespace Altaxo.Scripting
     /// <returns>True if successfully compiles, otherwise false.</returns>
     public virtual bool Compile()
     {
-      this._wasTriedToCompile = true;
+      _wasTriedToCompile = true;
 
       if (_compilerResult != null)
         return true;
@@ -577,7 +577,7 @@ namespace Altaxo.Scripting
 
       if (_compilerResult is IScriptCompilerSuccessfulResult)
       {
-        this._scriptObject = CreateNewScriptObject();
+        _scriptObject = CreateNewScriptObject();
         return true;
       }
       else if (_compilerResult is IScriptCompilerFailedResult failedCompilerResult) // compiler result was not successful

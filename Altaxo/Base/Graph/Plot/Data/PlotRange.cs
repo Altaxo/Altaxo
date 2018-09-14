@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        PlotRange s = (PlotRange)obj;
+        var s = (PlotRange)obj;
         info.AddValue("LowerBound", s._lowerBound);
         info.AddValue("UpperBound", s._upperBound);
       }
@@ -292,7 +292,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>Dictionary that associates the original row indices to the current plot indices.</returns>
     public Dictionary<int, int> GetDictionaryOfOriginalRowIndicesToPlotIndices()
     {
-      Dictionary<int, int> result = new Dictionary<int, int>();
+      var result = new Dictionary<int, int>();
       int plotIndex = 0;
       foreach (int originalIndex in OriginalRowIndices())
       {

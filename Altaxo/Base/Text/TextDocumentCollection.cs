@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Main;
 
 namespace Altaxo.Text
 {

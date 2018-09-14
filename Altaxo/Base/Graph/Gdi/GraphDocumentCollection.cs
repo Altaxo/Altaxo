@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -36,7 +36,7 @@ namespace Altaxo.Graph.Gdi
     public GraphDocumentCollection(AltaxoDocument parent, SortedDictionary<string, IProjectItem> commonDictionaryForGraphs)
       : base(parent)
     {
-      this._itemsByName = commonDictionaryForGraphs ?? throw new ArgumentNullException(nameof(commonDictionaryForGraphs));
+      _itemsByName = commonDictionaryForGraphs ?? throw new ArgumentNullException(nameof(commonDictionaryForGraphs));
     }
 
     public override Main.IDocumentNode ParentObject

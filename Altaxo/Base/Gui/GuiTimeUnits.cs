@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
-using Altaxo.Units.Time;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Units;
+using Altaxo.Units.Time;
 
 namespace Altaxo.Gui
 {
@@ -38,13 +38,14 @@ namespace Altaxo.Gui
 
     static GuiTimeUnits()
     {
-      var instance = new List<IUnit>();
-
-      instance.Add(new UnitWithLimitedPrefixes(Second.Instance, new SIPrefix[] { SIPrefix.Femto, SIPrefix.Pico, SIPrefix.Nano, SIPrefix.Micro, SIPrefix.Milli }));
-      instance.Add(Minute.Instance);
-      instance.Add(Hour.Instance);
-      instance.Add(Day.Instance);
-      instance.Add(Week.Instance);
+      var instance = new List<IUnit>
+      {
+        new UnitWithLimitedPrefixes(Second.Instance, new SIPrefix[] { SIPrefix.Femto, SIPrefix.Pico, SIPrefix.Nano, SIPrefix.Micro, SIPrefix.Milli }),
+        Minute.Instance,
+        Hour.Instance,
+        Day.Instance,
+        Week.Instance
+      };
 
       _instance = instance.AsReadOnly();
     }

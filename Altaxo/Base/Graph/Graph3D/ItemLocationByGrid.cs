@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -170,44 +170,44 @@ namespace Altaxo.Graph.Graph3D
       if (obj is ItemLocationByGrid)
       {
         var from = (ItemLocationByGrid)obj;
-        this._gridPosX = from._gridPosX;
-        this._gridPosY = from._gridPosY;
-        this._gridPosZ = from._gridPosZ;
+        _gridPosX = from._gridPosX;
+        _gridPosY = from._gridPosY;
+        _gridPosZ = from._gridPosZ;
 
-        this._gridSpanX = from._gridSpanX;
-        this._gridSpanY = from._gridSpanY;
-        this._gridSpanZ = from._gridSpanZ;
+        _gridSpanX = from._gridSpanX;
+        _gridSpanY = from._gridSpanY;
+        _gridSpanZ = from._gridSpanZ;
 
-        this._rotationX = from._rotationX;
-        this._rotationY = from._rotationY;
-        this._rotationZ = from._rotationZ;
+        _rotationX = from._rotationX;
+        _rotationY = from._rotationY;
+        _rotationZ = from._rotationZ;
 
-        this._shearX = from._shearX;
-        this._shearY = from._shearY;
-        this._shearZ = from._shearZ;
+        _shearX = from._shearX;
+        _shearY = from._shearY;
+        _shearZ = from._shearZ;
 
-        this._scaleX = from._scaleX;
-        this._scaleY = from._scaleY;
-        this._scaleZ = from._scaleZ;
+        _scaleX = from._scaleX;
+        _scaleY = from._scaleY;
+        _scaleZ = from._scaleZ;
 
-        this._forceFitIntoCell = from._forceFitIntoCell;
+        _forceFitIntoCell = from._forceFitIntoCell;
         EhSelfChanged();
         return true;
       }
       else if (obj is IItemLocation)
       {
         var from = (IItemLocation)obj;
-        this._rotationX = from.RotationX;
-        this._rotationY = from.RotationY;
-        this._rotationZ = from.RotationZ;
+        _rotationX = from.RotationX;
+        _rotationY = from.RotationY;
+        _rotationZ = from.RotationZ;
 
-        this._shearX = from.ShearX;
-        this._shearY = from.ShearY;
-        this._shearZ = from.ShearZ;
+        _shearX = from.ShearX;
+        _shearY = from.ShearY;
+        _shearZ = from.ShearZ;
 
-        this._scaleX = from.ScaleX;
-        this._scaleY = from.ScaleY;
-        this._scaleY = from.ScaleY;
+        _scaleX = from.ScaleX;
+        _scaleY = from.ScaleY;
+        _scaleY = from.ScaleY;
 
         EhSelfChanged();
         return true;

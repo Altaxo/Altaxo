@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -54,8 +54,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        HavriliakNegamiSusceptibility s = new HavriliakNegamiSusceptibility();
-        s._isDielectricData = true;
+        var s = new HavriliakNegamiSusceptibility
+        {
+          _isDielectricData = true
+        };
         return s;
       }
     }
@@ -114,7 +116,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
+        var s = (HavriliakNegamiSusceptibility)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
@@ -141,7 +143,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
+        var s = (HavriliakNegamiSusceptibility)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
@@ -290,10 +292,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
     public static IFitFunction CreateDielectricFunctionOfOmega()
     {
-      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
-      result._useFrequencyInsteadOmega = false;
-      result._isDielectricData = true;
-      result._useFlowTerm = true;
+      var result = new HavriliakNegamiSusceptibility
+      {
+        _useFrequencyInsteadOmega = false,
+        _isDielectricData = true,
+        _useFlowTerm = true
+      };
       return result;
     }
 
@@ -301,10 +305,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
     public static IFitFunction CreateDielectricFunctionOfFrequency()
     {
-      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
-      result._useFrequencyInsteadOmega = true;
-      result._isDielectricData = true;
-      result._useFlowTerm = true;
+      var result = new HavriliakNegamiSusceptibility
+      {
+        _useFrequencyInsteadOmega = true,
+        _isDielectricData = true,
+        _useFlowTerm = true
+      };
       return result;
     }
 
@@ -312,10 +318,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
     public static IFitFunction CreateGeneralFunctionOfOmega()
     {
-      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
-      result._useFrequencyInsteadOmega = false;
-      result._isDielectricData = false;
-      result._useFlowTerm = true;
+      var result = new HavriliakNegamiSusceptibility
+      {
+        _useFrequencyInsteadOmega = false,
+        _isDielectricData = false,
+        _useFlowTerm = true
+      };
       return result;
     }
 
@@ -323,10 +331,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
     public static IFitFunction CreateGeneralFunctionOfFrequency()
     {
-      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
-      result._useFrequencyInsteadOmega = true;
-      result._isDielectricData = false;
-      result._useFlowTerm = true;
+      var result = new HavriliakNegamiSusceptibility
+      {
+        _useFrequencyInsteadOmega = true,
+        _isDielectricData = false,
+        _useFlowTerm = true
+      };
       return result;
     }
 
@@ -344,7 +354,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public string IndependentVariableName(int i)
     {
-      return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
+      return _useFrequencyInsteadOmega ? "Frequency" : "Omega";
     }
 
     #endregion independent variable definition
@@ -446,11 +456,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       // note: because it is a susceptiblity, the imaginary part is still negative
 
-      if (this._useFlowTerm)
+      if (_useFlowTerm)
       {
-        if (this._isDielectricData)
+        if (_isDielectricData)
           result.Im -= P[j] / (x * 8.854187817e-12);
-        else if (this._invertViscosity)
+        else if (_invertViscosity)
           result.Im -= P[j] / (x);
         else
           result.Im -= 1 / (P[j] * x);

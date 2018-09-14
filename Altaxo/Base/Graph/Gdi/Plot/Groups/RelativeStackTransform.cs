@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Data;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RelativeStackTransform s = (RelativeStackTransform)obj;
+        var s = (RelativeStackTransform)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -73,10 +73,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
-      Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList;
-      IPhysicalBoundaries pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
+      var pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
       CoordinateTransformingStyleBase.MergeYBoundsInto(pbclone, coll);
-      if (!CanUseStyle(layer, coll, out plotDataList))
+      if (!CanUseStyle(layer, coll, out var plotDataList))
       {
         pb.Add(pbclone);
         return;
@@ -93,8 +92,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     public void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
     {
-      Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict = null;
-      if (!CanUseStyle(layer, coll, out plotDataDict))
+      if (!CanUseStyle(layer, coll, out var plotDataDict))
       {
         return;
       }
@@ -108,7 +106,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         if (pi is G2DPlotItem)
         {
-          G2DPlotItem gpi = pi as G2DPlotItem;
+          var gpi = pi as G2DPlotItem;
           Processed2DPlotData pdata = plotDataDict[gpi];
           ysumArray = AbsoluteStackTransform.AddUp(ysumArray, pdata);
         }
@@ -121,10 +119,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         if (pi is G2DPlotItem)
         {
-          G2DPlotItem gpi = pi as G2DPlotItem;
+          var gpi = pi as G2DPlotItem;
           Processed2DPlotData pdata = plotDataDict[gpi];
           yArray = AbsoluteStackTransform.AddUp(yArray, pdata);
-          AltaxoVariant[] localArray = new AltaxoVariant[yArray.Length];
+          var localArray = new AltaxoVariant[yArray.Length];
 
           int j = -1;
           foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
@@ -133,12 +131,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
             AltaxoVariant y = 100 * yArray[j] / ysumArray[j];
             localArray[j] = y;
 
-            Logical3D rel = new Logical3D(
+            var rel = new Logical3D(
             layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
             layer.YAxis.PhysicalVariantToNormal(y));
-
-            double xabs, yabs;
-            layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+            layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out var xabs, out var yabs);
             pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
           }
           // we have also to exchange the accessor for the physical y value and replace it by our own one

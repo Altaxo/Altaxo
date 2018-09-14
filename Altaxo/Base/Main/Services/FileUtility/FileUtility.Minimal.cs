@@ -25,7 +25,7 @@ namespace Altaxo.Main.Services
   /// <summary>
   /// A minimal version of FileUtility.
   /// </summary>
-  static partial class FileUtility
+  public static partial class FileUtility
   {
     /// <summary>
     /// Gets the normalized version of fileName.
@@ -54,7 +54,7 @@ namespace Altaxo.Main.Services
       char outputSeparator = isWeb ? '/' : System.IO.Path.DirectorySeparatorChar;
       bool isRelative;
 
-      StringBuilder result = new StringBuilder();
+      var result = new StringBuilder();
       if (isWeb == false && fileName.StartsWith(@"\\", StringComparison.Ordinal) || fileName.StartsWith("//", StringComparison.Ordinal))
       {
         // UNC path

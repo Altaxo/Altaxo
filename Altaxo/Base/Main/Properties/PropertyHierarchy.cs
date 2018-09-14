@@ -57,7 +57,7 @@ namespace Altaxo.Main.Properties
 
     public object Clone()
     {
-      return new PropertyHierarchy(this._propertyBags);
+      return new PropertyHierarchy(_propertyBags);
     }
 
     /// <summary>
@@ -120,9 +120,7 @@ namespace Altaxo.Main.Properties
     /// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
     public bool TryGetValue<T>(PropertyKey<T> p, out T value)
     {
-      IPropertyBag bag;
-      PropertyBagInformation bagInfo;
-      return TryGetValue<T>(p, out value, out bag, out bagInfo);
+      return TryGetValue<T>(p, out value, out var bag, out var bagInfo);
     }
 
     /// <summary>
@@ -134,10 +132,7 @@ namespace Altaxo.Main.Properties
     /// <exception cref="System.Collections.Generic.KeyNotFoundException">Thrown if the property key was not found in this hierarchy.</exception>
     public T GetValue<T>(PropertyKey<T> p)
     {
-      IPropertyBag bag;
-      PropertyBagInformation info;
-      T result;
-      if (TryGetValue(p, out result, out bag, out info))
+      if (TryGetValue(p, out var result, out var bag, out var info))
       {
         return result;
       }
@@ -156,10 +151,7 @@ namespace Altaxo.Main.Properties
     /// <returns>The property value if found in this hierarchy, or the provided default value.</returns>
     public T GetValue<T>(PropertyKey<T> p, T defaultValue)
     {
-      IPropertyBag bag;
-      PropertyBagInformation info;
-      T result;
-      if (TryGetValue(p, out result, out bag, out info))
+      if (TryGetValue(p, out var result, out var bag, out var info))
       {
         return result;
       }
@@ -205,7 +197,7 @@ namespace Altaxo.Main.Properties
     /// <returns>All property names in all bags.</returns>
     public IEnumerable<string> GetAllPropertyNames()
     {
-      HashSet<string> result = new HashSet<string>();
+      var result = new HashSet<string>();
       foreach (var tuple in _propertyBags)
       {
         var bag = tuple.Bag;
@@ -224,10 +216,10 @@ namespace Altaxo.Main.Properties
     {
       var result = new PropertyHierarchy();
 
-      if (this._propertyBags.Count > 0)
-        result._propertyBags.Add(new PropertyBagWithInformation(this._propertyBags[0].BagInformation, (IPropertyBag)this._propertyBags[0].Bag.Clone()));
-      for (int i = 1; i < this._propertyBags.Count; ++i)
-        result._propertyBags.Add(new PropertyBagWithInformation(this._propertyBags[i].BagInformation, this._propertyBags[i].Bag));
+      if (_propertyBags.Count > 0)
+        result._propertyBags.Add(new PropertyBagWithInformation(_propertyBags[0].BagInformation, (IPropertyBag)_propertyBags[0].Bag.Clone()));
+      for (int i = 1; i < _propertyBags.Count; ++i)
+        result._propertyBags.Add(new PropertyBagWithInformation(_propertyBags[i].BagInformation, _propertyBags[i].Bag));
 
       return result;
     }

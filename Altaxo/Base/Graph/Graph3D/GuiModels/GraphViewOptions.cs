@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Graph3D.GuiModels
 {
@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.GuiModels
 
         if (null != _deserializedObject._graphDocument || isFinallyCall)
         {
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
         }
       }
     }

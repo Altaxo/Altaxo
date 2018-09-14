@@ -22,6 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Graph3D;
@@ -35,11 +40,6 @@ using Altaxo.Graph.Plot.Groups;
 using Altaxo.Graph.Scales;
 using Altaxo.Gui.Graph.Graph3D.Viewing;
 using Altaxo.Gui.Worksheet.Viewing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -116,11 +116,11 @@ namespace Altaxo.Worksheet.Commands
         var pa = new XYZColumnPlotData(
             table,
             groupNumber,
-            (IReadableColumn)xcol ?? (IReadableColumn)new IndexerColumn(),
-            (IReadableColumn)ycol ?? (IReadableColumn)new ConstantDoubleColumn(0),
+            xcol ?? (IReadableColumn)new IndexerColumn(),
+            ycol ?? (IReadableColumn)new ConstantDoubleColumn(0),
             vcol);
 
-        var ps = templatePlotStyle != null ? (G3DPlotStyleCollection)templatePlotStyle.Clone() : new G3DPlotStyleCollection();
+        var ps = templatePlotStyle != null ? templatePlotStyle.Clone() : new G3DPlotStyleCollection();
 
         if (null == table)
           continue;
@@ -140,9 +140,11 @@ namespace Altaxo.Worksheet.Commands
               break;
 
             case ColumnKind.Err:
-              var errStyle = new ErrorBarZPlotStyle(context);
-              errStyle.UseCommonErrorColumn = true;
-              errStyle.CommonErrorColumn = col as INumericColumn;
+              var errStyle = new ErrorBarZPlotStyle(context)
+              {
+                UseCommonErrorColumn = true,
+                CommonErrorColumn = col as INumericColumn
+              };
               ps.Add(errStyle);
               break;
 
@@ -194,23 +196,29 @@ namespace Altaxo.Worksheet.Commands
 
     public static G3DPlotStyleCollection PlotStyle_Line(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      var result = new G3DPlotStyleCollection();
-      result.Add(new LinePlotStyle(context));
+      var result = new G3DPlotStyleCollection
+      {
+        new LinePlotStyle(context)
+      };
       return result;
     }
 
     public static G3DPlotStyleCollection PlotStyle_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      var result = new G3DPlotStyleCollection();
-      result.Add(new ScatterPlotStyle(context));
+      var result = new G3DPlotStyleCollection
+      {
+        new ScatterPlotStyle(context)
+      };
       return result;
     }
 
     public static G3DPlotStyleCollection PlotStyle_Line_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      var result = new G3DPlotStyleCollection();
-      result.Add(new ScatterPlotStyle(context));
-      result.Add(new LinePlotStyle(context) { UseSymbolGap = true });
+      var result = new G3DPlotStyleCollection
+      {
+        new ScatterPlotStyle(context),
+        new LinePlotStyle(context) { UseSymbolGap = true }
+      };
       return result;
     }
 
@@ -223,7 +231,7 @@ namespace Altaxo.Worksheet.Commands
     public static G3DPlotStyleCollection PlotStyle_Bar(Altaxo.Main.Properties.IReadOnlyPropertyBag context, bool isStacked)
     {
       var result = new G3DPlotStyleCollection();
-      BarGraphPlotStyle ps1 = new BarGraphPlotStyle(context);
+      var ps1 = new BarGraphPlotStyle(context);
       if (isStacked)
       {
         ps1.StartAtPreviousItem = true;
@@ -388,7 +396,7 @@ namespace Altaxo.Worksheet.Commands
           layer.Scales[2] = new DateTimeScale();
       }
 
-      PlotItemCollection newPlotGroup = new PlotItemCollection(layer.PlotItems);
+      var newPlotGroup = new PlotItemCollection(layer.PlotItems);
       foreach (IGPlotItem pi in pilist)
       {
         newPlotGroup.Add(pi);

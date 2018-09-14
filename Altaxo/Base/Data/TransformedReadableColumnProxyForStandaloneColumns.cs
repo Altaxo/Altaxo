@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Data
 {
@@ -103,7 +103,7 @@ namespace Altaxo.Data
 
     public object Clone()
     {
-      return (TransformedReadableColumnProxyForStandaloneColumns)this.MemberwiseClone();
+      return (TransformedReadableColumnProxyForStandaloneColumns)MemberwiseClone();
     }
 
     public bool IsEmpty

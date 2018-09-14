@@ -125,10 +125,12 @@ namespace Altaxo.Main.Services
     {
       _keepThreadRunning = true;
       _triggeringEvent = new AutoResetEvent(false);
-      _thread = new Thread(EhThreadBody);
-      _thread.IsBackground = true;
-      _thread.Priority = priority;
-      _thread.Name = name;
+      _thread = new Thread(EhThreadBody)
+      {
+        IsBackground = true,
+        Priority = priority,
+        Name = name
+      };
       _thread.Start();
     }
 
@@ -170,8 +172,7 @@ namespace Altaxo.Main.Services
 
     private void ProcessInvokerQueue()
     {
-      InvokeData invokeData;
-      while (_invokerQueue.TryDequeue(out invokeData))
+      while (_invokerQueue.TryDequeue(out var invokeData))
       {
         if (invokeData.Action != null)
         {

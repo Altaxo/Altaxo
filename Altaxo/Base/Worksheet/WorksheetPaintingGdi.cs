@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Graph;
 
 namespace Altaxo.Worksheet
 {
@@ -135,8 +135,7 @@ namespace Altaxo.Worksheet
 
       if (clipRectangle.Bottom >= layout.ColumnHeaderStyle.Height || clipRectangle.Right >= layout.RowHeaderStyle.Width)
       {
-        int numberOfColumnsToDraw;
-        int firstColToDraw = WA.GetFirstAndNumberOfVisibleColumn(clipRectangle.Left, clipRectangle.Right, layout, horzScrollPos, out numberOfColumnsToDraw);
+        int firstColToDraw = WA.GetFirstAndNumberOfVisibleColumn(clipRectangle.Left, clipRectangle.Right, layout, horzScrollPos, out var numberOfColumnsToDraw);
 
         // draw the property columns
         for (int nPropCol = firstPropertyColumnToDraw, nIncPropCol = 0; nIncPropCol < numberOfPropertyColumnsToDraw; nPropCol++, nIncPropCol++)

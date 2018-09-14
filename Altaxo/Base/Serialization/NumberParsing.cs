@@ -38,8 +38,7 @@ namespace Altaxo.Serialization
 
     public static bool IsDouble(string txt)
     {
-      double d;
-      return IsDouble(txt, out d);
+      return IsDouble(txt, out var d);
     }
 
     /// <summary>
@@ -49,8 +48,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string represents a number.</returns>
     public static bool IsNumeric(string txt)
     {
-      double parsedNumber;
-      return double.TryParse(txt, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out parsedNumber);
+      return double.TryParse(txt, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out var parsedNumber);
     }
 
     public static string ToString(double d)

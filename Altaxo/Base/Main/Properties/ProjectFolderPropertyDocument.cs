@@ -87,7 +87,7 @@ namespace Altaxo.Main.Properties
     /// <param name="folderName">Name of the folder.</param>
     public ProjectFolderPropertyDocument(string folderName)
     {
-      this.Name = folderName;
+      Name = folderName;
       _creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
       PropertyBag = new PropertyBag();
     }
@@ -115,14 +115,14 @@ namespace Altaxo.Main.Properties
       var from = (ProjectFolderPropertyDocument)obj;
       if (null != from)
       {
-        this._name = from._name;
-        this._changeTimeUtc = from._changeTimeUtc;
-        this._propertyBag = null;
+        _name = from._name;
+        _changeTimeUtc = from._changeTimeUtc;
+        _propertyBag = null;
         if (null != from._propertyBag)
         {
-          this._propertyBag = this.PropertyBagNotNull;
-          this._propertyBag.Clear();
-          this._propertyBag.CopyFrom(from._propertyBag);
+          _propertyBag = PropertyBagNotNull;
+          _propertyBag.Clear();
+          _propertyBag.CopyFrom(from._propertyBag);
         }
         return true;
       }

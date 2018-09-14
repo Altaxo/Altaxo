@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Graph3D;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Collections;
+using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
@@ -83,8 +83,10 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       if (initData)
       {
-        _listOfUniqueItem = new SelectableListNodeList();
-        _listOfUniqueItem.Add(new SelectableListNode("Common", null, true));
+        _listOfUniqueItem = new SelectableListNodeList
+        {
+          new SelectableListNode("Common", null, true)
+        };
       }
 
       if (null != _view)
@@ -231,7 +233,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public static bool ShowDialog(HostLayer layer, string currentPage)
     {
-      HostLayerController ctrl = new HostLayerController(layer, currentPage);
+      var ctrl = new HostLayerController(layer, currentPage);
       return Current.Gui.ShowDialog(ctrl, layer.Name, true);
     }
 

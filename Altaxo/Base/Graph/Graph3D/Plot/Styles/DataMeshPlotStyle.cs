@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
 using Altaxo.Geometry;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -83,7 +83,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DataMeshPlotStyle s = (DataMeshPlotStyle)obj;
+        var s = (DataMeshPlotStyle)obj;
 
         info.AddValue("ClipToLayer", s._clipToLayer);
         info.AddValue("Colorization", s._colorProvider);
@@ -118,8 +118,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// </summary>
     public DataMeshPlotStyle()
     {
-      this.ColorProvider = new ColorProviderBGRY();
-      this._material = new MaterialWithoutColorOrTexture();
+      ColorProvider = new ColorProviderBGRY();
+      _material = new MaterialWithoutColorOrTexture();
 
       InitializeMembers();
     }
@@ -145,10 +145,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._clipToLayer = from._clipToLayer;
+        _clipToLayer = from._clipToLayer;
         _colorProvider = from._colorProvider;
         ChildCloneToMember(ref _colorScale, from._colorScale);
-        this._material = from._material; // Material is immutable
+        _material = from._material; // Material is immutable
 
         EhSelfChanged();
         suspendToken.Resume();
@@ -287,19 +287,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (!(plotObject is XYZMeshedColumnPlotData))
         return; // we cannot plot any other than a TwoDimMeshDataAssociation now
 
-      XYZMeshedColumnPlotData myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
-
-      IROMatrix<double> matrix;
-      IROVector<double> logicalRowHeaderValues, logicalColumnHeaderValues;
-
+      var myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
       myPlotAssociation.DataTableMatrix.GetWrappers(
           gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
           Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values
           gl.YAxis.PhysicalVariantToNormal, // transformation function for column header values
           Altaxo.Calc.RMath.IsFinite,       // selection functiton for column header values
-          out matrix,
-          out logicalRowHeaderValues,
-          out logicalColumnHeaderValues
+          out var matrix,
+          out var logicalRowHeaderValues,
+          out var logicalColumnHeaderValues
           );
 
       int cols = matrix.ColumnCount;
@@ -389,14 +385,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       var vertexPoints = new PointD3D[lxl, lyl];
       var isValid = new bool[lxl, lyl]; // array which stores for every point[i, j], if it is valid, to speed up calculations
 
-      PointD3D pt;
       var zScale = gl.ZAxis;
       for (int i = 0; i < lx.Count; ++i)
       {
         for (int j = 0; j < ly.Count; ++j)
         {
           double lz = zScale.PhysicalVariantToNormal(matrix[i, j]);
-          gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx[i], ly[j], lz), out pt);
+          gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx[i], ly[j], lz), out var pt);
 
           isValid[i, j] = !pt.IsNaN;
           vertexPoints[i, j] = pt;

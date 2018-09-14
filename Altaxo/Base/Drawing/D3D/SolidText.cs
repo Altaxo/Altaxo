@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Poly2Tri;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
+using Poly2Tri;
 
 namespace Altaxo.Drawing.D3D
 {
@@ -59,7 +59,7 @@ namespace Altaxo.Drawing.D3D
     {
       PolygonPoint pt1 = ptArrayList[0];
       PolygonPoint firstPt = pt1;
-      PolygonPoint lastPt = default(PolygonPoint);
+      var lastPt = default(PolygonPoint);
       double area = 0.0;
       for (int i = 1; i < ptArrayList.Count; ++i)
       {
@@ -106,7 +106,7 @@ namespace Altaxo.Drawing.D3D
       {
         var charGeo = GetCharacterGeometry(_font.Font, textChar);
 
-        double scale = this._fontSize / charGeo.FontSize;
+        double scale = _fontSize / charGeo.FontSize;
 
         if (isFirstChar)
         {

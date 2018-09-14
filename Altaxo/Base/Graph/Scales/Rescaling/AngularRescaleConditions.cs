@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AngularRescaleConditions s = (AngularRescaleConditions)obj;
+        var s = (AngularRescaleConditions)obj;
 
         info.AddValue("ScaleOrigin", s._scaleOrigin);
       }
@@ -85,7 +85,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       if (null == from)
         return false;
 
-      this._scaleOrigin = from._scaleOrigin;
+      _scaleOrigin = from._scaleOrigin;
 
       EhSelfChanged();
 

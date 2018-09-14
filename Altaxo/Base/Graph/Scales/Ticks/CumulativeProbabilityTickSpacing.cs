@@ -22,17 +22,17 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
-  using Altaxo.Graph.Scales.Rescaling;
   using System.Collections;
+  using Altaxo.Graph.Scales.Rescaling;
 
   /// <summary>
   /// Tick settings for a Probability scale.
@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       public object Clone()
       {
-        return this.MemberwiseClone();
+        return MemberwiseClone();
       }
     }
 
@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        CumulativeProbabilityTickSpacing s = (CumulativeProbabilityTickSpacing)obj;
+        var s = (CumulativeProbabilityTickSpacing)obj;
 
         info.AddValue("MinGrace", s._orgGrace);
         info.AddValue("MaxGrace", s._endGrace);
@@ -680,8 +680,8 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <returns>True when org or end are changed. False otherwise.</returns>
     public override bool PreProcessScaleBoundaries(ref AltaxoVariant org, ref AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
     {
-      double dorg = (double)org;
-      double dend = (double)end;
+      double dorg = org;
+      double dend = end;
 
       if (InternalPreProcessScaleBoundaries(ref dorg, ref dend, isOrgExtendable, isEndExtendable))
       {
@@ -703,8 +703,8 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <param name="scale">The underlying scale.</param>
     public override void FinalProcessScaleBoundaries(AltaxoVariant org, AltaxoVariant end, Scale scale)
     {
-      double dorg = (double)org;
-      double dend = (double)end;
+      double dorg = org;
+      double dend = end;
 
       if (_cachedMajorMinor == null || _cachedMajorMinor.Org != dorg || _cachedMajorMinor.End != dend)
       {
@@ -1138,10 +1138,9 @@ namespace Altaxo.Graph.Scales.Ticks
       foreach (var pp in new[] { 0.25, 0.75 })
         list2ndGen.Add(pp);
 
-      int power;
       foreach (var prob in list1stGen)
       {
-        if (IsLowerDecimalProbability(prob, out power) && power < -1)
+        if (IsLowerDecimalProbability(prob, out var power) && power < -1)
         {
           list2ndGen.Add(5 * RMath.Pow(10, power));
         }
@@ -1164,10 +1163,9 @@ namespace Altaxo.Graph.Scales.Ticks
       foreach (var pp in new[] { 0.2, 0.3, 0.4, 0.6, 0.7, 0.8 })
         list3rdGen.Add(pp);
 
-      int power;
       foreach (var prob in list1stGen)
       {
-        if (IsLowerDecimalProbability(prob, out power) && power < -1)
+        if (IsLowerDecimalProbability(prob, out var power) && power < -1)
         {
           list3rdGen.Add(2 * RMath.Pow(10, power));
           list3rdGen.Add(5 * RMath.Pow(10, power));
@@ -1192,10 +1190,9 @@ namespace Altaxo.Graph.Scales.Ticks
       foreach (var pp in new[] { 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85 })
         list4thGen.Add(pp);
 
-      int power;
       foreach (var prob in list1stGen)
       {
-        if (IsLowerDecimalProbability(prob, out power) && power < -1)
+        if (IsLowerDecimalProbability(prob, out var power) && power < -1)
         {
           for (int i = 2; i <= 9; ++i)
             list4thGen.Add(i * RMath.Pow(10, power));
@@ -1254,15 +1251,9 @@ namespace Altaxo.Graph.Scales.Ticks
         xend = h;
         modified = true;
       }
-      // here xorg and xend should both be positive, with xorg < xend
 
-      // try applying Grace and OneLever only ...
-      double xOrgWithGraceAndOneLever, xEndWithGraceAndOneLever;
-      bool modGraceAndOneLever = GetOrgEndWithGrace(xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithGraceAndOneLever, out xEndWithGraceAndOneLever);
-
-      // try applying tick snapping only (without Grace and OneLever)
-      double xOrgWithTickSnapping, xEndWithTickSnapping;
-      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithTickSnapping, out xEndWithTickSnapping);
+      bool modGraceAndOneLever = GetOrgEndWithGrace(xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithGraceAndOneLever, out var xEndWithGraceAndOneLever);
+      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithTickSnapping, out var xEndWithTickSnapping);
 
       // now compare the two
       if (xOrgWithTickSnapping <= xOrgWithGraceAndOneLever && xEndWithTickSnapping >= xEndWithGraceAndOneLever)
@@ -1354,7 +1345,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       if (isOrgExtendable && _snapOrgToTick != BoundaryTickSnapping.SnapToNothing)
       {
-        List<double> list = new List<double>();
+        var list = new List<double>();
 
         switch (_snapOrgToTick)
         {
@@ -1389,7 +1380,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       if (isEndExtendable && _snapEndToTick != BoundaryTickSnapping.SnapToNothing)
       {
-        List<double> list = new List<double>();
+        var list = new List<double>();
         switch (_snapEndToTick)
         {
           case BoundaryTickSnapping.SnapToMajorOnly:

@@ -85,9 +85,9 @@ namespace Altaxo.Main
     /// <param name="eventKind">The kind of the event.</param>
     public ProjectEventArgs(IProject project, string fileName, ProjectEventKind eventKind)
     {
-      this.Project = project;
-      this.NewName = fileName;
-      this.ProjectEventKind = eventKind;
+      Project = project;
+      NewName = fileName;
+      ProjectEventKind = eventKind;
     }
   }
 
@@ -115,7 +115,7 @@ namespace Altaxo.Main
     public ProjectRenamedEventArgs(IProject renamedProject, string oldName, string newName)
         : base(renamedProject, newName, ProjectEventKind.ProjectRenamed)
     {
-      this.OldName = oldName;
+      OldName = oldName;
     }
   }
 

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Lighting
 {
@@ -142,7 +142,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     {
       if (!(isAffixedToCamera == _isAffixedToCamera))
       {
-        var result = (HemisphericAmbientLight)this.MemberwiseClone();
+        var result = (HemisphericAmbientLight)MemberwiseClone();
         result._isAffixedToCamera = isAffixedToCamera;
         return result;
       }
@@ -175,7 +175,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyLightAmplitude(lightAmplitude, nameof(lightAmplitude));
 
-        var result = (HemisphericAmbientLight)this.MemberwiseClone();
+        var result = (HemisphericAmbientLight)MemberwiseClone();
         result._lightAmplitude = lightAmplitude;
         return result;
       }
@@ -215,7 +215,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     {
       if (!(colorBelow == _colorBelow))
       {
-        var result = (HemisphericAmbientLight)this.MemberwiseClone();
+        var result = (HemisphericAmbientLight)MemberwiseClone();
         result._colorBelow = colorBelow;
         return result;
       }
@@ -243,7 +243,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     {
       if (!(colorAbove == _colorAbove))
       {
-        var result = (HemisphericAmbientLight)this.MemberwiseClone();
+        var result = (HemisphericAmbientLight)MemberwiseClone();
         result._colorAbove = colorAbove;
         return result;
       }
@@ -273,7 +273,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         var len = VerifyDirectionBelowToAbove(directionBelowToAbove, nameof(directionBelowToAbove));
 
-        var result = (HemisphericAmbientLight)this.MemberwiseClone();
+        var result = (HemisphericAmbientLight)MemberwiseClone();
         result._directionBelowToAbove = directionBelowToAbove / len;
         return result;
       }

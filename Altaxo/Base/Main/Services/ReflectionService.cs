@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Gui;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using Altaxo.Gui;
 
 namespace Altaxo.Main.Services
 {
@@ -128,7 +128,7 @@ namespace Altaxo.Main.Services
     public static System.Type[] GetSubclassesOf(System.Type[] basetypes)
     {
       SubClassTypeList tlist = _subClassTypeListCollection[basetypes];
-      List<Type> list = new List<Type>();
+      var list = new List<Type>();
       list.AddRange(tlist);
       return list.ToArray();
     }
@@ -154,7 +154,7 @@ namespace Altaxo.Main.Services
     {
       SubClassTypeList tlist = _subClassTypeListCollection[basetypes];
 
-      List<Type> list = new List<Type>();
+      var list = new List<Type>();
 
       foreach (Type definedtype in tlist)
       {
@@ -336,7 +336,7 @@ namespace Altaxo.Main.Services
 
       private void CreateList(Type[] types)
       {
-        SubClassTypeList list = new SubClassTypeList(this, types);
+        var list = new SubClassTypeList(this, types);
         list.Update();
         _list.Add(types, list);
       }
@@ -378,7 +378,7 @@ namespace Altaxo.Main.Services
       }
       else
       {
-        List<Assembly> list = new List<Assembly>();
+        var list = new List<Assembly>();
 
         AssemblyName baseAssemblyName = baseAssembly.GetName();
 
@@ -402,7 +402,7 @@ namespace Altaxo.Main.Services
     /// <returns>All assemblies, that are currently loaded and that references the given base assembly. The base assembly is also in the returned list.</returns>
     public static IEnumerable<Assembly> GetDependendAssemblies(Assembly baseAssembly, IEnumerable<Assembly> assembliesToTest)
     {
-      List<Assembly> list = new List<Assembly>();
+      var list = new List<Assembly>();
 
       AssemblyName baseAssemblyName = baseAssembly.GetName();
 
@@ -431,9 +431,9 @@ namespace Altaxo.Main.Services
       }
       else
       {
-        List<Assembly> list = new List<Assembly>();
+        var list = new List<Assembly>();
 
-        List<AssemblyName> nameList = new List<AssemblyName>();
+        var nameList = new List<AssemblyName>();
         foreach (Type t in types)
         {
           AssemblyName name = Assembly.GetAssembly(t).GetName();
@@ -481,8 +481,8 @@ namespace Altaxo.Main.Services
     {
       public int Compare(KeyValuePair<Attribute, Type> x, KeyValuePair<Attribute, Type> y)
       {
-        IComparable xx = (IComparable)x.Key;
-        IComparable yy = (IComparable)y.Key;
+        var xx = (IComparable)x.Key;
+        var yy = (IComparable)y.Key;
 
         return xx.CompareTo(yy);
       }
@@ -512,7 +512,7 @@ namespace Altaxo.Main.Services
       if (IsSubClassOfOrImplements(attributeType, typeof(IComparable)))
       {
         IEnumerable<Type> types = _classesHavingAttributeCollection[attributeType].GetAllClassesWithMyAttribute();
-        SortedDictionary<Attribute, Type> _sortedList = new SortedDictionary<Attribute, Type>();
+        var _sortedList = new SortedDictionary<Attribute, Type>();
         foreach (Type definedtype in types)
         {
           Attribute.GetCustomAttributes(definedtype, attributeType, inherit);
@@ -668,7 +668,7 @@ namespace Altaxo.Main.Services
         }
       }
 
-      System.Type[][] creationTypes = new Type[trueArgLen + 1][];
+      var creationTypes = new Type[trueArgLen + 1][];
 
       foreach (Type definedType in list.Types)
       {
@@ -754,7 +754,7 @@ namespace Altaxo.Main.Services
       public IEnumerable<Type> GetClassesWithMyAttribute(int startAssembly)
       {
         Update();
-        List<Type> list = new List<Type>();
+        var list = new List<Type>();
         for (int i = startAssembly; i < _classesWithMyAttribute.Count; i++)
         {
           list.AddRange(_classesWithMyAttribute[i]);
@@ -767,7 +767,7 @@ namespace Altaxo.Main.Services
         for (int i = _classesWithMyAttribute.Count; i < _loadedAssemblies.Count; i++)
         {
           Assembly assembly = _loadedAssemblies[i];
-          List<Type> typesWithMyAttribute = new List<Type>();
+          var typesWithMyAttribute = new List<Type>();
           if (IsDependentAssembly(_attributeType.Assembly, assembly))
           {
             Type[] definedtypes = assembly.GetTypes();
@@ -918,7 +918,7 @@ namespace Altaxo.Main.Services
           _attributeForClassListCollection.Add(myTargetType, list);
         }
 
-        if (this._attributeType != list._attributeType)
+        if (_attributeType != list._attributeType)
           throw new ApplicationException("Programming error (attributeType did not match), please inform the author that this exception happened");
         if (list._targetType != myTargetType)
           throw new ApplicationException("Programming error (targetType did not match), please inform the author that this exception happened");
@@ -1000,7 +1000,7 @@ namespace Altaxo.Main.Services
             CreateList(attributetype);
           }
 
-          ClassesHavingClassForClassAttributeList result = (ClassesHavingClassForClassAttributeList)_list[attributetype];
+          var result = (ClassesHavingClassForClassAttributeList)_list[attributetype];
           return result.GetClassesTargeting(myTargetType);
         }
       }

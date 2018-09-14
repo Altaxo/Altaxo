@@ -52,9 +52,9 @@ namespace Poly2Tri
 
     public AdvancingFront(AdvancingFrontNode head, AdvancingFrontNode tail)
     {
-      this.Head = head;
-      this.Tail = tail;
-      this.Search = head;
+      Head = head;
+      Tail = tail;
+      Search = head;
       AddNode(head);
       AddNode(tail);
     }
@@ -69,7 +69,7 @@ namespace Poly2Tri
 
     public override string ToString()
     {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
       AdvancingFrontNode node = Head;
       while (node != Tail)
       {

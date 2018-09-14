@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +29,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph
 {
@@ -134,10 +134,8 @@ namespace Altaxo.Graph
 
     public RectangleD2D GetTileRectangle(double column, double row, double columnSpan, double rowSpan, PointD2D totalSize)
     {
-      double xstart, xsize;
-      double ystart, ysize;
-      _xPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.X, column, columnSpan, out xstart, out xsize);
-      _yPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.Y, row, rowSpan, out ystart, out ysize);
+      _xPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.X, column, columnSpan, out var xstart, out var xsize);
+      _yPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.Y, row, rowSpan, out var ystart, out var ysize);
       return new RectangleD2D(xstart, ystart, xsize, ysize);
     }
   }

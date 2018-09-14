@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        FiniteDateTimeBoundaries s = (FiniteDateTimeBoundaries)obj;
+        var s = (FiniteDateTimeBoundaries)obj;
         info.AddValue("NumberOfItems", s._numberOfItems);
         info.AddValue("MinValue", s._minValue);
         info.AddValue("MaxValue", s._maxValue);
@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// <param name="b">another physical boundary object of the same type as this</param>
     public virtual void Add(FiniteDateTimeBoundaries b)
     {
-      if (this.GetType() == b.GetType())
+      if (GetType() == b.GetType())
       {
         BoundariesChangedData data = 0;
         if (b._numberOfItems > 0)
@@ -120,7 +120,7 @@ namespace Altaxo.Graph.Scales.Boundaries
       }
       else
       {
-        throw new ArgumentException("Argument has not the same type as this, argument type: " + b.GetType().ToString() + ", this type: " + this.GetType().ToString());
+        throw new ArgumentException("Argument has not the same type as this, argument type: " + b.GetType().ToString() + ", this type: " + GetType().ToString());
       }
     }
 
@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     public override bool Add(Altaxo.Data.AltaxoVariant item)
     {
-      return Add((DateTime)item);
+      return Add(item);
     }
 
     public bool Add(DateTime d)
@@ -192,9 +192,9 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     protected override void OnSuspended()
     {
-      this._savedNumberOfItems = this._numberOfItems;
-      this._cachedMinValue = this._minValue;
-      this._cachedMaxValue = this._maxValue;
+      _savedNumberOfItems = _numberOfItems;
+      _cachedMinValue = _minValue;
+      _cachedMaxValue = _maxValue;
 
       base.OnSuspended();
     }
@@ -203,12 +203,12 @@ namespace Altaxo.Graph.Scales.Boundaries
     {
       BoundariesChangedData data = 0;
       // if anything changed in the meantime, fire the event
-      if (this._savedNumberOfItems != this._numberOfItems)
+      if (_savedNumberOfItems != _numberOfItems)
         data |= BoundariesChangedData.NumberOfItemsChanged;
 
-      if (this._cachedMinValue != this._minValue)
+      if (_cachedMinValue != _minValue)
         data |= BoundariesChangedData.LowerBoundChanged;
-      if (this._cachedMaxValue != this._maxValue)
+      if (_cachedMaxValue != _maxValue)
         data |= BoundariesChangedData.UpperBoundChanged;
 
       if (0 != data)

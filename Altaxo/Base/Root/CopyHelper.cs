@@ -52,7 +52,7 @@ namespace Altaxo
     /// <returns></returns>
     public static bool TryCopy<T>(ref T to, T from)
     {
-      ICloneable fromC = from as ICloneable;
+      var fromC = from as ICloneable;
 
       if (object.ReferenceEquals(to, from))
       {

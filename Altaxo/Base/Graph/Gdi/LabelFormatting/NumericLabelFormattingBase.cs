@@ -41,14 +41,14 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        NumericLabelFormattingBase s = (NumericLabelFormattingBase)obj;
+        var s = (NumericLabelFormattingBase)obj;
         info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
         info.AddValue("DecimalPlaces", s._decimalPlaces);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        NumericLabelFormattingBase s = (NumericLabelFormattingBase)o;
+        var s = (NumericLabelFormattingBase)o;
         info.GetBaseValueEmbedded(s, typeof(LabelFormattingBase), parent);
         s._decimalPlaces = info.GetInt32("DecimalPlaces");
         return s;
@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         var from = obj as NumericLabelFormattingBase;
         if (null != from)
         {
-          this._decimalPlaces = from._decimalPlaces;
+          _decimalPlaces = from._decimalPlaces;
         }
       }
       return isCopied;

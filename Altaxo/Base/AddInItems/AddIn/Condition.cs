@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Altaxo;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -73,7 +73,7 @@ namespace Altaxo.AddInItems
 
     public Condition(string name, Properties properties, AddIn addIn)
     {
-      this.AddIn = addIn;
+      AddIn = addIn;
       this.name = name;
       this.properties = properties;
       action = properties.Get("action", ConditionFailedAction.Exclude);
@@ -94,14 +94,14 @@ namespace Altaxo.AddInItems
 
     public static ICondition Read(XmlReader reader, AddIn addIn)
     {
-      Properties properties = Properties.ReadFromAttributes(reader);
+      var properties = Properties.ReadFromAttributes(reader);
       string conditionName = properties["name"];
       return new Condition(conditionName, properties, addIn);
     }
 
     public static ICondition ReadComplexCondition(XmlReader reader, AddIn addIn)
     {
-      Properties properties = Properties.ReadFromAttributes(reader);
+      var properties = Properties.ReadFromAttributes(reader);
       reader.Read();
       ICondition condition = null;
       while (reader.Read())
@@ -138,7 +138,7 @@ exit:
 
     public static ICondition[] ReadConditionList(XmlReader reader, string endElement, AddIn addIn)
     {
-      List<ICondition> conditions = new List<ICondition>();
+      var conditions = new List<ICondition>();
       while (reader.Read())
       {
         switch (reader.NodeType)

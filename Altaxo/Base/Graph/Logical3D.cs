@@ -207,9 +207,9 @@ namespace Altaxo.Graph
     {
       return new Logical3D
         (
-        this.RX + t * (to.RX - this.RX),
-        this.RY + t * (to.RY - this.RY),
-        this.RZ + t * (to.RZ - this.RZ)
+        RX + t * (to.RX - RX),
+        RY + t * (to.RY - RY),
+        RZ + t * (to.RZ - RZ)
         );
     }
 

@@ -17,9 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Altaxo.Main.Services.Implementation;
-
 using System;
+using Altaxo.Main.Services.Implementation;
 
 namespace Altaxo.Main.Services
 {

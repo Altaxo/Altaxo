@@ -43,8 +43,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       public FontInfo GetFontInfo(FontX3D id)
       {
-        FontInfo result;
-        if (!_fontInfoDictionary.TryGetValue(id, out result))
+        if (!_fontInfoDictionary.TryGetValue(id, out var result))
         {
           result = FontManager3D.Instance.GetFontInformation(id);
           _fontInfoDictionary.Add(id, result);
@@ -719,7 +718,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         var mylayer = mc.LinkedObject as HostLayer;
         if (null == mylayer)
           return;
-        XYZPlotLayer layer = mylayer as XYZPlotLayer;
+        var layer = mylayer as XYZPlotLayer;
         if (_layerNumber >= 0 && null != mylayer.SiblingLayers && _layerNumber < mylayer.SiblingLayers.Count)
           layer = mylayer.SiblingLayers[_layerNumber] as XYZPlotLayer;
 
@@ -754,8 +753,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
           var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
           IGPlotItem pa = layer.PlotItems.Flattened[_plotNumber];
 
-          PointD3D symbolpos = new PointD3D(xbase, (ybase + 0.5 * fontInfo.cyDescent - 0.5 * fontInfo.cyAscent), 0);
-          RectangleD3D symbolRect = new RectangleD3D(symbolpos, new VectorD3D(SizeX, 0, 0));
+          var symbolpos = new PointD3D(xbase, (ybase + 0.5 * fontInfo.cyDescent - 0.5 * fontInfo.cyAscent), 0);
+          var symbolRect = new RectangleD3D(symbolpos, new VectorD3D(SizeX, 0, 0));
           symbolRect = symbolRect.WithPadding(0, fontInfo.Size, 0);
           pa.PaintSymbol(g, symbolRect);
 
@@ -802,10 +801,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
           var context = Altaxo.PropertyExtensions.GetPropertyContext(suspObj);
           if (null != context)
           {
-            Altaxo.Main.Properties.IPropertyBag bag;
-            Altaxo.Main.Properties.PropertyBagInformation info;
-            object value;
-            if (context.TryGetValue<object>(_propertyName, out value, out bag, out info))
+            if (context.TryGetValue<object>(_propertyName, out var value, out var bag, out var info))
             {
               if (null != value)
               {

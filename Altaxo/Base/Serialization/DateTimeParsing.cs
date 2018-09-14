@@ -38,8 +38,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsDateTime(string s)
     {
-      DateTime result;
-      return DateTime.TryParse(s, out result);
+      return DateTime.TryParse(s, out var result);
     }
 
     /// <summary>
@@ -60,8 +59,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a TimeSpan object.</returns>
     public static bool IsTimeSpan(string s)
     {
-      TimeSpan result;
-      return TimeSpan.TryParse(s, out result);
+      return TimeSpan.TryParse(s, out var result);
     }
 
     /// <summary>

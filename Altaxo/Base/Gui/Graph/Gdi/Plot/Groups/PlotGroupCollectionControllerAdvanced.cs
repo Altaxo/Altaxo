@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Main.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       public MyListNode(string name, object item, bool isSelected, bool isChecked, bool isCheckBoxVisible)
         : base(name, item, isSelected, isChecked)
       {
-        this.IsCheckBoxVisible = isCheckBoxVisible;
+        IsCheckBoxVisible = isCheckBoxVisible;
       }
 
       public bool IsCheckBoxVisible { get; set; }
@@ -144,8 +144,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
         Type[] types;
         // Transfo-Styles
         _currentTransfoStyle = _doc.CoordinateTransformingStyle == null ? null : (ICoordinateTransformingGroupStyle)_doc.CoordinateTransformingStyle.Clone();
-        _availableTransfoStyles = new SelectableListNodeList();
-        _availableTransfoStyles.Add(new SelectableListNode("None", null, null == _currentTransfoStyle));
+        _availableTransfoStyles = new SelectableListNodeList
+        {
+          new SelectableListNode("None", null, null == _currentTransfoStyle)
+        };
         types = ReflectionService.GetNonAbstractSubclassesOf(typeof(ICoordinateTransformingGroupStyle));
         foreach (Type t in types)
         {
@@ -163,7 +165,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
         _availableNormalStyles = new SelectableListNodeList();
         if (_parent != null) // if possible, collect only those styles that are applicable
         {
-          PlotGroupStyleCollection avstyles = new PlotGroupStyleCollection();
+          var avstyles = new PlotGroupStyleCollection();
           _parent.CollectStyles(avstyles);
           foreach (IPlotGroupStyle style in avstyles)
           {
@@ -224,8 +226,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
         style.IsStepEnabled = node.IsChecked;
       }
 
-      bool inherit, distribute;
-      _view.QueryUpdateMode(out inherit, out distribute);
+      _view.QueryUpdateMode(out var inherit, out var distribute);
       _doc.InheritFromParentGroups = inherit;
       _doc.DistributeToChildGroups = distribute;
       foreach (SelectableListNode node in _availableUpdateModes)
@@ -307,7 +308,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       foreach (var item in _currentNormalStyles)
       {
         int level = _doc.GetTreeLevelOf((Type)item.Tag);
-        StringBuilder stb = new StringBuilder();
+        var stb = new StringBuilder();
         stb.Append(' ', level * 3);
         stb.Append(item.Text.Trim());
         item.Text = stb.ToString();
@@ -402,7 +403,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       {
         _availableNormalStyles.Remove(selected);
 
-        IPlotGroupStyle s = (IPlotGroupStyle)Activator.CreateInstance((Type)selected.Tag);
+        var s = (IPlotGroupStyle)Activator.CreateInstance((Type)selected.Tag);
         _doc.Add(s);
         var node = new MyListNode(
           Current.Gui.GetUserFriendlyClassName(s.GetType()),

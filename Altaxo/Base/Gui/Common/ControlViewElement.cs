@@ -34,19 +34,19 @@ namespace Altaxo.Gui.Common
     public ControlViewElement(ControlViewElement from)
       : base(from)
     {
-      this.Controller = from.Controller;
+      Controller = from.Controller;
     }
 
     public ControlViewElement(string title, IApplyController controller, object view)
       : base(title, view)
     {
-      this.Controller = controller;
+      Controller = controller;
     }
 
     public ControlViewElement(string title, IMVCAController controller)
       : base(title, controller.ViewObject)
     {
-      this.Controller = controller;
+      Controller = controller;
     }
 
     public new ControlViewElement Clone()

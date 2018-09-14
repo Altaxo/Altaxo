@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
@@ -43,10 +43,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       if (object.ReferenceEquals(this, from))
         return;
 
-      this.Clear();
+      Clear();
 
       foreach (GridPlane plane in from)
-        this.Add((GridPlane)plane.Clone());
+        Add(plane.Clone());
     }
 
     #region Serialization
@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GridPlaneCollection s = (GridPlaneCollection)obj;
+        var s = (GridPlaneCollection)obj;
 
         info.CreateArray("GridPlanes", s.Count);
         foreach (GridPlane plane in s)
@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Graph3D.Axis
         int count = info.OpenArray("GridPlanes");
         for (int i = 0; i < count; i++)
         {
-          GridPlane plane = (GridPlane)info.GetValue("e", s);
+          var plane = (GridPlane)info.GetValue("e", s);
           s.Add(plane);
         }
         info.CloseArray(count);

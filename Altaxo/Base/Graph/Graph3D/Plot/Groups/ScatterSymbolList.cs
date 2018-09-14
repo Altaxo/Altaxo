@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph3D.Plot.Styles;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph3D.Plot.Styles;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {

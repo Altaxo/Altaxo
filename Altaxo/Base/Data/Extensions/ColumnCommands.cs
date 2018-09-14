@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Data
 {
@@ -48,8 +48,10 @@ namespace Altaxo.Data
         return false;
       }
 
-      TextValueInputController tvctrl = new TextValueInputController(col.Name, "new column name:");
-      tvctrl.Validator = new ColumnRenameValidator(col, parent);
+      var tvctrl = new TextValueInputController(col.Name, "new column name:")
+      {
+        Validator = new ColumnRenameValidator(col, parent)
+      };
       if (Current.Gui.ShowDialog(tvctrl, "Rename column", false))
       {
         parent.SetColumnName(col, tvctrl.InputText);
@@ -137,8 +139,10 @@ namespace Altaxo.Data
         else if (selectedPropColumns.Count > 0)
           grpNumber = dataTable.PropertyColumns.GetColumnGroup(selectedPropColumns[0]);
 
-        IntegerValueInputController ivictrl = new IntegerValueInputController(grpNumber, "Please enter a group number (>=0):");
-        ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+        var ivictrl = new IntegerValueInputController(grpNumber, "Please enter a group number (>=0):")
+        {
+          Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator()
+        };
         if (Current.Gui.ShowDialog(ivictrl, "Set group number", false))
         {
           SetColumnGroupNumber(dataTable, selectedDataColumns, selectedPropColumns, ivictrl.EnteredContents);

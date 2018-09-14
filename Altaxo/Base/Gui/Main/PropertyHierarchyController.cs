@@ -203,11 +203,8 @@ namespace Altaxo.Gui.Main
 
       foreach (var entry in sortedNames)
       {
-        object value;
-        IPropertyBag bag;
-        PropertyBagInformation bagInfo;
 
-        if (_doc.TryGetValue<object>(entry.Key, !_showAllProperties, out value, out bag, out bagInfo))
+        if (_doc.TryGetValue<object>(entry.Key, !_showAllProperties, out var value, out var bag, out var bagInfo))
         {
           var node = new MyListNode(entry.Value, new Tuple<string, string, IPropertyBag>(entry.Key, entry.Value, bag))
           {
@@ -262,11 +259,7 @@ namespace Altaxo.Gui.Main
       var propertyKey = nodeTag.Item1;
       var propertyName = nodeTag.Item2;
 
-      object value;
-      IPropertyBag bag;
-      PropertyBagInformation bagInfo;
-
-      _doc.TryGetValue(propertyKey, out value, out bag, out bagInfo);
+      _doc.TryGetValue(propertyKey, out object value, out var bag, out var bagInfo);
 
       ShowPropertyValueDialog(propertyKey, propertyName, value);
     }
@@ -295,11 +288,7 @@ namespace Altaxo.Gui.Main
 
       var propertyKey = (PropertyKeyBase)node.Tag;
 
-      object propertyValue;
-      IPropertyBag bag;
-      PropertyBagInformation bagInfo;
-
-      if (!_doc.TryGetValue(propertyKey.GuidString, out propertyValue, out bag, out bagInfo))
+      if (!_doc.TryGetValue(propertyKey.GuidString, out object propertyValue, out var bag, out var bagInfo))
       {
         // Try to create a new value
         try

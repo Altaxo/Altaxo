@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       {
         if (pi is IXBoundsHolder)
         {
-          IXBoundsHolder plotItem = (IXBoundsHolder)pi;
+          var plotItem = (IXBoundsHolder)pi;
           plotItem.MergeXBoundsInto(pb);
         }
       }
@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       {
         if (pi is IYBoundsHolder)
         {
-          IYBoundsHolder plotItem = (IYBoundsHolder)pi;
+          var plotItem = (IYBoundsHolder)pi;
           plotItem.MergeYBoundsInto(pb);
         }
       }
@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
       {
         if (pi is IZBoundsHolder)
         {
-          IZBoundsHolder plotItem = (IZBoundsHolder)pi;
+          var plotItem = (IZBoundsHolder)pi;
           plotItem.MergeZBoundsInto(pb);
         }
       }

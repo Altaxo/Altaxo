@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ColorProviderBGMYR s = (ColorProviderBGMYR)obj;
+        var s = (ColorProviderBGMYR)obj;
         info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
       }
 
@@ -57,17 +57,19 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     public static ColorProviderBGMYR NewFromColorBelowAboveInvalidAndTransparency(NamedColor colorBelow, NamedColor colorAbove, NamedColor colorInvalid, double transparency)
     {
-      var result = new ColorProviderBGMYR();
-      result._colorBelow = colorBelow;
-      result._cachedGdiColorBelow = colorBelow;
+      var result = new ColorProviderBGMYR
+      {
+        _colorBelow = colorBelow,
+        _cachedGdiColorBelow = colorBelow,
 
-      result._colorAbove = colorAbove;
-      result._cachedGdiColorAbove = colorAbove;
+        _colorAbove = colorAbove,
+        _cachedGdiColorAbove = colorAbove,
 
-      result._colorInvalid = colorInvalid;
-      result._cachedGdiColorInvalid = colorInvalid;
+        _colorInvalid = colorInvalid,
+        _cachedGdiColorInvalid = colorInvalid,
 
-      result._alphaChannel = GetAlphaFromTransparency(transparency);
+        _alphaChannel = GetAlphaFromTransparency(transparency)
+      };
 
       return result;
     }

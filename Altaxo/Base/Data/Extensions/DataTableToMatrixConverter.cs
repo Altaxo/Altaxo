@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -448,9 +448,7 @@ namespace Altaxo.Data
     /// <returns>Row spacing value (or <c>null</c> if the row header vector is not uniformly spaced).</returns>
     public double? GetRowSpacing()
     {
-      string msg;
-      double result;
-      return TryGetRowSpacing(out result, out msg) ? (double?)result : null;
+      return TryGetRowSpacing(out var result, out var msg) ? (double?)result : null;
     }
 
     /// <summary>
@@ -459,9 +457,7 @@ namespace Altaxo.Data
     /// <returns>Column spacing value (or <c>null</c> if the column header vector is not uniformly spaced).</returns>
     public double? GetColumnSpacing()
     {
-      string msg;
-      double result;
-      return TryGetColumnSpacing(out result, out msg) ? (double?)result : null;
+      return TryGetColumnSpacing(out var result, out var msg) ? (double?)result : null;
     }
 
     /// <summary>

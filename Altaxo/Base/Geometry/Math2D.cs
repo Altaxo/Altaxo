@@ -139,8 +139,8 @@ namespace Altaxo.Geometry
     public static double PolygonArea(IEnumerable<PointD2D> points)
     {
       bool isFirst = true;
-      PointD2D firstPoint = default(PointD2D);
-      PointD2D prevPoint = default(PointD2D);
+      var firstPoint = default(PointD2D);
+      var prevPoint = default(PointD2D);
       double area = 0;
       foreach (var point in points)
       {

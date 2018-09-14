@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Geometry;
 
 namespace Altaxo.Geometry
 {
@@ -51,7 +51,7 @@ namespace Altaxo.Geometry
     /// the number of points that were provided!</returns>
     public static SharpPolylineD3D FromPointsWithPossibleDublettes(IEnumerable<PointD3D> points)
     {
-      List<PointD3D> mypoints = new List<PointD3D>();
+      var mypoints = new List<PointD3D>();
 
       if (null != points)
       {
@@ -170,8 +170,10 @@ namespace Altaxo.Geometry
 
       if (p0.HasValue && p1.HasValue)
       {
-        var plist = new List<PointD3D>();
-        plist.Add(p0.Value);
+        var plist = new List<PointD3D>
+        {
+          p0.Value
+        };
         for (int i = i0; i <= i1; ++i)
           plist.Add(_points[i]);
         plist.Add(p1.Value);

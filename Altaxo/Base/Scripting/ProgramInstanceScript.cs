@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services.ScriptCompilation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
+using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
 {

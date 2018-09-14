@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Graph.Graph3D
 {

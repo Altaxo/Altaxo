@@ -49,8 +49,7 @@ namespace Altaxo.Drawing.ColorManagement
     /// <returns>The color that is the specified number of steps away of the specified color in the set. The color set is given by the <see cref="NamedColor.ParentColorSet"/> in the given color.</returns>
     public static NamedColor GetNextPlotColor(this NamedColor c, int step)
     {
-      int wraps;
-      return GetNextPlotColor(c, step, out wraps);
+      return GetNextPlotColor(c, step, out var wraps);
     }
 
     /// <summary>

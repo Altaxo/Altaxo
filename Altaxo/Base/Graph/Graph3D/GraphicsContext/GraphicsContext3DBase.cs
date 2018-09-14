@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
@@ -242,7 +242,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
     public virtual void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, Alignment alignmentX, Alignment alignmentY, Alignment alignmentZ)
     {
-      VectorD3D stringSize = new VectorD3D(0, 0, font.Depth); // depth is already known, for this we don't need to call MeasureString
+      var stringSize = new VectorD3D(0, 0, font.Depth); // depth is already known, for this we don't need to call MeasureString
 
       if (alignmentX != Alignment.Near || alignmentY != Alignment.Near)
         stringSize = FontManager3D.Instance.MeasureString(text, font);

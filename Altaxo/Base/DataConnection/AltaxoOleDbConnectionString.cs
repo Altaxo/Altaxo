@@ -47,9 +47,11 @@ namespace Altaxo.DataConnection
 
       if (null != credentials && !credentials.AreEmpty)
       {
-        var connBuilder = new System.Data.OleDb.OleDbConnectionStringBuilder(_originalConnectionString);
-        connBuilder[UserIDKey] = credentials.UserName;
-        connBuilder[PasswordKey] = credentials.Password;
+        var connBuilder = new System.Data.OleDb.OleDbConnectionStringBuilder(_originalConnectionString)
+        {
+          [UserIDKey] = credentials.UserName,
+          [PasswordKey] = credentials.Password
+        };
         _connectionStringWithCredentials = connBuilder.ConnectionString;
       }
       else
@@ -64,7 +66,7 @@ namespace Altaxo.DataConnection
 
     public string OriginalConnectionString { get { return _originalConnectionString; } }
 
-    public string ConnectionStringWithTemporaryCredentials { get { return this._connectionStringWithCredentials; } }
+    public string ConnectionStringWithTemporaryCredentials { get { return _connectionStringWithCredentials; } }
 
     public LoginCredentials GetCredentials()
     {
@@ -73,7 +75,7 @@ namespace Altaxo.DataConnection
       if (connBuilder.ContainsKey(UserIDKey))
         username = connBuilder[UserIDKey] as string;
       if (connBuilder.ContainsKey(PasswordKey))
-        password = connBuilder[PasswordKey] as String;
+        password = connBuilder[PasswordKey] as string;
       return new LoginCredentials(username, password);
     }
 

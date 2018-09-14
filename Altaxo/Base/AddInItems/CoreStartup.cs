@@ -16,12 +16,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
-using Altaxo.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Input;
+using Altaxo.Main.Services;
+using Altaxo.Settings;
 
 namespace Altaxo.AddInItems
 {
@@ -63,7 +63,7 @@ namespace Altaxo.AddInItems
     {
       if (string.IsNullOrEmpty(applicationName))
         throw new ArgumentNullException(nameof(applicationName));
-      this._applicationName = applicationName;
+      _applicationName = applicationName;
     }
 
     /// <summary>
@@ -150,7 +150,7 @@ namespace Altaxo.AddInItems
       _addInTree.Load(_addInFiles, _disabledAddIns);
 
       // perform service registration
-      var container = (System.ComponentModel.Design.IServiceContainer)Altaxo.Current.GetService<System.ComponentModel.Design.IServiceContainer>();
+      var container = Altaxo.Current.GetService<System.ComponentModel.Design.IServiceContainer>();
       if (container != null)
       {
         _addInTree.BuildItems<object>(string.Format("/{0}/Services", _applicationName), container, false);

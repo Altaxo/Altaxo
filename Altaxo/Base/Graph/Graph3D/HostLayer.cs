@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Geometry;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Collections;
+using Altaxo.Geometry;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -212,10 +212,10 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="options">Copy options.</param>
     protected virtual void InternalCopyFrom(HostLayer from, Altaxo.Graph.Gdi.GraphCopyOptions options)
     {
-      if (null == this._parent)
+      if (null == _parent)
       {
         //this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
-        this._cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
+        _cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
       }
 
       ChildCopyToMember(ref _grid, from._grid);
@@ -223,9 +223,9 @@ namespace Altaxo.Graph.Graph3D
       // size, position, rotation and scale
       if (0 != (options & Altaxo.Graph.Gdi.GraphCopyOptions.CopyLayerSizePosition))
       {
-        this._cachedLayerSize = from._cachedLayerSize;
-        this._cachedLayerPosition = from._cachedLayerPosition;
-        this._cachedParentLayerSize = from._cachedParentLayerSize;
+        _cachedLayerSize = from._cachedLayerSize;
+        _cachedLayerPosition = from._cachedLayerPosition;
+        _cachedParentLayerSize = from._cachedParentLayerSize;
         ChildCopyToMember(ref _location, from._location);
       }
 
@@ -235,11 +235,11 @@ namespace Altaxo.Graph.Graph3D
       if (0 != (options & Altaxo.Graph.Gdi.GraphCopyOptions.CopyLayerAll))
       {
         // not all properties of the child layers should be cloned -> just copy the layers one by one
-        int len = Math.Min(this._childLayers.Count, from._childLayers.Count);
+        int len = Math.Min(_childLayers.Count, from._childLayers.Count);
         for (int i = 0; i < len; i++)
         {
-          this._childLayers[i].CopyFrom(from._childLayers[i], options);
-          this._childLayers[i].ParentLayer = this;
+          _childLayers[i].CopyFrom(from._childLayers[i], options);
+          _childLayers[i].ParentLayer = this;
         }
       }
 
@@ -266,7 +266,7 @@ namespace Altaxo.Graph.Graph3D
     {
       var pwThis = _graphObjects.CreatePartialView(x => selectionCriteria(x));
       var pwFrom = from._graphObjects.CreatePartialView(x => selectionCriteria(x));
-      List<HostLayer> layersToRecycle = new List<HostLayer>(this._childLayers);
+      var layersToRecycle = new List<HostLayer>(_childLayers);
 
       // replace existing items
       int i, j;
@@ -347,11 +347,11 @@ namespace Altaxo.Graph.Graph3D
 
       if (null != parentLayer) // this helps to get the real layer size from the beginning
       {
-        this.ParentLayer = parentLayer;
-        this._cachedParentLayerSize = parentLayer.Size;
+        ParentLayer = parentLayer;
+        _cachedParentLayerSize = parentLayer.Size;
       }
 
-      this.Location = location;
+      Location = location;
       InternalInitializeGraphObjectsCollection();
       CalculateMatrix();
     }
@@ -496,11 +496,11 @@ namespace Altaxo.Graph.Graph3D
     /// <returns><c>True</c> if this layer would be able to create a grid; <c>false otherwise.</c></returns>
     public bool CanCreateGridForLocation(ItemLocationDirect itemLocation)
     {
-      if (this.Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid))
+      if (Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid))
         return false;
 
       RectangleD3D enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
-      if (enclosingRect.X < 0 || enclosingRect.Y < 0 || enclosingRect.Z < 0 || enclosingRect.XPlusSizeX > this.Size.X || enclosingRect.YPlusSizeY > this.Size.Y || enclosingRect.ZPlusSizeZ > this.Size.Z)
+      if (enclosingRect.X < 0 || enclosingRect.Y < 0 || enclosingRect.Z < 0 || enclosingRect.XPlusSizeX > Size.X || enclosingRect.YPlusSizeY > Size.Y || enclosingRect.ZPlusSizeZ > Size.Z)
         return false;
 
       return true;
@@ -514,27 +514,27 @@ namespace Altaxo.Graph.Graph3D
     /// <returns>The new grid cell location for useage by the child layer. If no grid could be created, the return value may be <c>null</c>.</returns>
     public ItemLocationByGrid CreateGridForLocation(ItemLocationDirect itemLocation)
     {
-      bool isAnyChildLayerPosByGrid = this.Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid);
+      bool isAnyChildLayerPosByGrid = Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid);
 
       if (!isAnyChildLayerPosByGrid)
       {
         RectangleD3D enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
 
-        if (enclosingRect.X < 0 || enclosingRect.Y < 0 || enclosingRect.Z < 0 || enclosingRect.XPlusSizeX > this.Size.X || enclosingRect.YPlusSizeY > this.Size.Y || enclosingRect.ZPlusSizeZ > this.Size.Z)
+        if (enclosingRect.X < 0 || enclosingRect.Y < 0 || enclosingRect.Z < 0 || enclosingRect.XPlusSizeX > Size.X || enclosingRect.YPlusSizeY > Size.Y || enclosingRect.ZPlusSizeZ > Size.Z)
           return null;
 
         _grid = new GridPartitioning();
-        _grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.X / this.Size.X));
-        _grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.SizeX / this.Size.X));
-        _grid.XPartitioning.Add(RADouble.NewRel(1 - enclosingRect.XPlusSizeX / this.Size.X));
+        _grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.X / Size.X));
+        _grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.SizeX / Size.X));
+        _grid.XPartitioning.Add(RADouble.NewRel(1 - enclosingRect.XPlusSizeX / Size.X));
 
-        _grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Y / this.Size.Y));
-        _grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.SizeY / this.Size.Y));
-        _grid.YPartitioning.Add(RADouble.NewRel(1 - enclosingRect.YPlusSizeY / this.Size.Y));
+        _grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Y / Size.Y));
+        _grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.SizeY / Size.Y));
+        _grid.YPartitioning.Add(RADouble.NewRel(1 - enclosingRect.YPlusSizeY / Size.Y));
 
-        _grid.ZPartitioning.Add(RADouble.NewRel(enclosingRect.Z / this.Size.Z));
-        _grid.ZPartitioning.Add(RADouble.NewRel(enclosingRect.SizeZ / this.Size.Z));
-        _grid.ZPartitioning.Add(RADouble.NewRel(1 - enclosingRect.ZPlusSizeZ / this.Size.Z));
+        _grid.ZPartitioning.Add(RADouble.NewRel(enclosingRect.Z / Size.Z));
+        _grid.ZPartitioning.Add(RADouble.NewRel(enclosingRect.SizeZ / Size.Z));
+        _grid.ZPartitioning.Add(RADouble.NewRel(1 - enclosingRect.ZPlusSizeZ / Size.Z));
 
         _grid.ParentObject = this;
 
@@ -639,7 +639,7 @@ namespace Altaxo.Graph.Graph3D
     {
       CalculateCachedSizeAndPosition();
 
-      var mySize = this.Size;
+      var mySize = Size;
       foreach (var graphObj in _graphObjects)
       {
         graphObj.SetParentSize(mySize, false);
@@ -649,7 +649,7 @@ namespace Altaxo.Graph.Graph3D
 
     public virtual void PaintPreprocessing(Altaxo.Graph.IPaintContext paintcontext)
     {
-      var mySize = this.Size;
+      var mySize = Size;
       foreach (var graphObj in _graphObjects)
       {
         graphObj.PaintPreprocessing(paintcontext);
@@ -766,10 +766,10 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="parentSize">The size of the parent's area.</param>
     public void SizeToDefault(VectorD3D parentSize)
     {
-      this.Size = new VectorD3D(parentSize.X * _xDefSizeLandscape, parentSize.Y * _yDefSizeLandscape, parentSize.Z * _zDefSizeLandscape);
-      this.Position = new PointD3D(parentSize.X * _xDefPositionLandscape, parentSize.Y * _yDefPositionLandscape, parentSize.Z * _zDefPositionLandscape);
+      Size = new VectorD3D(parentSize.X * _xDefSizeLandscape, parentSize.Y * _yDefSizeLandscape, parentSize.Z * _zDefSizeLandscape);
+      Position = new PointD3D(parentSize.X * _xDefPositionLandscape, parentSize.Y * _yDefPositionLandscape, parentSize.Z * _zDefPositionLandscape);
 
-      this.CalculateMatrix();
+      CalculateMatrix();
     }
 
     /// <summary>
@@ -790,7 +790,7 @@ namespace Altaxo.Graph.Graph3D
 
       if (oldParentSize != newParentSize)
       {
-        this.CalculateCachedSizeAndPosition();
+        CalculateCachedSizeAndPosition();
 
         if (isTriggeringChangedEvent)
           EhSelfChanged(EventArgs.Empty);
@@ -799,7 +799,7 @@ namespace Altaxo.Graph.Graph3D
 
     public PointD3D Position
     {
-      get { return this._cachedLayerPosition; }
+      get { return _cachedLayerPosition; }
       set
       {
         var ls = _location as ItemLocationDirect;
@@ -825,7 +825,7 @@ namespace Altaxo.Graph.Graph3D
 
     public VectorD3D Size
     {
-      get { return this._cachedLayerSize; }
+      get { return _cachedLayerSize; }
       set
       {
         var ls = _location as ItemLocationDirect;
@@ -851,15 +851,15 @@ namespace Altaxo.Graph.Graph3D
 
     public double RotationX
     {
-      get { return this._location.RotationX; }
+      get { return _location.RotationX; }
       set
       {
-        var oldValue = this._location.RotationX;
-        this._location.RotationX = value;
+        var oldValue = _location.RotationX;
+        _location.RotationX = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -867,15 +867,15 @@ namespace Altaxo.Graph.Graph3D
 
     public double RotationY
     {
-      get { return this._location.RotationY; }
+      get { return _location.RotationY; }
       set
       {
-        var oldValue = this._location.RotationY;
-        this._location.RotationY = value;
+        var oldValue = _location.RotationY;
+        _location.RotationY = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -883,15 +883,15 @@ namespace Altaxo.Graph.Graph3D
 
     public double RotationZ
     {
-      get { return this._location.RotationZ; }
+      get { return _location.RotationZ; }
       set
       {
-        var oldValue = this._location.RotationZ;
-        this._location.RotationZ = value;
+        var oldValue = _location.RotationZ;
+        _location.RotationZ = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -899,15 +899,15 @@ namespace Altaxo.Graph.Graph3D
 
     public double ShearX
     {
-      get { return this._location.ShearX; }
+      get { return _location.ShearX; }
       set
       {
-        var oldValue = this._location.ShearX;
-        this._location.ShearX = value;
+        var oldValue = _location.ShearX;
+        _location.ShearX = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -915,15 +915,15 @@ namespace Altaxo.Graph.Graph3D
 
     public double ShearY
     {
-      get { return this._location.ShearY; }
+      get { return _location.ShearY; }
       set
       {
-        var oldValue = this._location.ShearY;
-        this._location.ShearY = value;
+        var oldValue = _location.ShearY;
+        _location.ShearY = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -931,15 +931,15 @@ namespace Altaxo.Graph.Graph3D
 
     public double ShearZ
     {
-      get { return this._location.ShearZ; }
+      get { return _location.ShearZ; }
       set
       {
-        var oldValue = this._location.ShearZ;
-        this._location.ShearZ = value;
+        var oldValue = _location.ShearZ;
+        _location.ShearZ = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -947,15 +947,15 @@ namespace Altaxo.Graph.Graph3D
 
     public double ScaleX
     {
-      get { return this._location.ScaleX; }
+      get { return _location.ScaleX; }
       set
       {
-        var oldValue = this._location.ScaleX;
-        this._location.ScaleX = value;
+        var oldValue = _location.ScaleX;
+        _location.ScaleX = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -963,15 +963,15 @@ namespace Altaxo.Graph.Graph3D
 
     public double ScaleY
     {
-      get { return this._location.ScaleY; }
+      get { return _location.ScaleY; }
       set
       {
-        var oldValue = this._location.ScaleY;
-        this._location.ScaleY = value;
+        var oldValue = _location.ScaleY;
+        _location.ScaleY = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -979,15 +979,15 @@ namespace Altaxo.Graph.Graph3D
 
     public double ScaleZ
     {
-      get { return this._location.ScaleZ; }
+      get { return _location.ScaleZ; }
       set
       {
-        var oldValue = this._location.ScaleZ;
-        this._location.ScaleZ = value;
+        var oldValue = _location.ScaleZ;
+        _location.ScaleZ = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -1081,7 +1081,7 @@ namespace Altaxo.Graph.Graph3D
 
       newlocation.SetPositionAndSize(x, y, z, width, height, sizeZ);
 
-      this.Location = newlocation;
+      Location = newlocation;
     }
 
     /// <summary>
@@ -1135,9 +1135,9 @@ namespace Altaxo.Graph.Graph3D
       bool isPositionChanged = newRect.Location != _cachedLayerPosition;
       bool isSizeChanged = newRect.Size != _cachedLayerSize;
 
-      this._cachedLayerSize = newRect.Size;
-      this._cachedLayerPosition = newRect.Location;
-      this.CalculateMatrix();
+      _cachedLayerSize = newRect.Size;
+      _cachedLayerPosition = newRect.Location;
+      CalculateMatrix();
 
       if (isSizeChanged)
         OnCachedResultingSizeChanged();
@@ -1265,10 +1265,10 @@ namespace Altaxo.Graph.Graph3D
       if (null != _childLayers)
         throw new InvalidOperationException("_childLayers was already set!");
 
-      _graphObjects = new GraphicCollection(x => { x.ParentObject = this; x.SetParentSize(this.Size, false); });
+      _graphObjects = new GraphicCollection(x => { x.ParentObject = this; x.SetParentSize(Size, false); });
       _graphObjects.CollectionChanged += EhGraphObjectCollectionChanged;
 
-      _childLayers = _graphObjects.CreatePartialViewOfType<HostLayer>((Action<HostLayer>)EhBeforeInsertChildLayer);
+      _childLayers = _graphObjects.CreatePartialViewOfType<HostLayer>(EhBeforeInsertChildLayer);
       _childLayers.CollectionChanged += EhChildLayers_CollectionChanged;
       OnGraphObjectsCollectionInstanceInitialized();
     }
@@ -1393,7 +1393,7 @@ namespace Altaxo.Graph.Graph3D
     public IHitTestObject HitTest(HitTestPointData parentCoord, bool plotItemsOnly)
     {
       //			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
-      HitTestPointData localCoord = parentCoord.NewFromAdditionalTransformation(this._transformation);
+      HitTestPointData localCoord = parentCoord.NewFromAdditionalTransformation(_transformation);
 
       return HitTestWithLocalCoordinates(localCoord, plotItemsOnly);
     }

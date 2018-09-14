@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph;
 
 namespace Altaxo.Drawing.ColorManagement
 {
@@ -188,9 +188,9 @@ namespace Altaxo.Drawing.ColorManagement
     private Dictionary<string, int> BuildNameToIndexDict()
     {
       var nameToIndexDictionary = new Dictionary<string, int>();
-      for (int i = this._innerList.Length - 1; i >= 0; --i)
+      for (int i = _innerList.Length - 1; i >= 0; --i)
       {
-        nameToIndexDictionary[this._innerList[i].Name] = i;
+        nameToIndexDictionary[_innerList[i].Name] = i;
       }
       return nameToIndexDictionary;
     }
@@ -199,9 +199,9 @@ namespace Altaxo.Drawing.ColorManagement
     {
       var colorToIndexDictionary = new Dictionary<AxoColor, int>();
 
-      for (int i = this._innerList.Length - 1; i >= 0; --i)
+      for (int i = _innerList.Length - 1; i >= 0; --i)
       {
-        colorToIndexDictionary[this._innerList[i].Color] = i;
+        colorToIndexDictionary[_innerList[i].Color] = i;
       }
       return colorToIndexDictionary;
     }
@@ -210,9 +210,9 @@ namespace Altaxo.Drawing.ColorManagement
     {
       var namecolorToIndexDictionary = new Dictionary<ColorNameKey, int>();
 
-      for (int i = this._innerList.Length - 1; i >= 0; --i)
+      for (int i = _innerList.Length - 1; i >= 0; --i)
       {
-        var c = this._innerList[i];
+        var c = _innerList[i];
         namecolorToIndexDictionary[new ColorNameKey(c.Color, c.Name)] = i;
       }
       return namecolorToIndexDictionary;
@@ -265,7 +265,7 @@ namespace Altaxo.Drawing.ColorManagement
     /// <returns>Array with all colors in this set.</returns>
     public NamedColor[] ToArray()
     {
-      return this._innerList.ToArray();
+      return _innerList.ToArray();
     }
 
     /// <summary>
@@ -278,10 +278,9 @@ namespace Altaxo.Drawing.ColorManagement
     /// </returns>
     public bool TryGetValue(string colorName, out NamedColor namedColor)
     {
-      int idx;
-      if (_nameToIndexDictionary.Value.TryGetValue(colorName, out idx))
+      if (_nameToIndexDictionary.Value.TryGetValue(colorName, out var idx))
       {
-        namedColor = this._innerList[idx];
+        namedColor = _innerList[idx];
         return true;
       }
       else
@@ -301,10 +300,9 @@ namespace Altaxo.Drawing.ColorManagement
     /// </returns>
     public bool TryGetValue(AxoColor colorValue, out NamedColor namedColor)
     {
-      int idx;
-      if (_colorToIndexDictionary.Value.TryGetValue(colorValue, out idx))
+      if (_colorToIndexDictionary.Value.TryGetValue(colorValue, out var idx))
       {
-        namedColor = this._innerList[idx];
+        namedColor = _innerList[idx];
         return true;
       }
       else
@@ -325,10 +323,9 @@ namespace Altaxo.Drawing.ColorManagement
     /// </returns>
     public bool TryGetValue(AxoColor colorValue, string colorName, out NamedColor namedColor)
     {
-      int idx;
-      if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(colorValue, colorName), out idx))
+      if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(colorValue, colorName), out var idx))
       {
-        namedColor = this._innerList[idx];
+        namedColor = _innerList[idx];
         return true;
       }
       else
@@ -345,8 +342,7 @@ namespace Altaxo.Drawing.ColorManagement
     /// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
     public virtual int IndexOf(NamedColor color)
     {
-      int idx;
-      if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(color.Color, color.Name), out idx))
+      if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(color.Color, color.Name), out var idx))
       {
         return idx;
       }
@@ -363,8 +359,7 @@ namespace Altaxo.Drawing.ColorManagement
     /// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
     public virtual int IndexOf(AxoColor color)
     {
-      int idx;
-      if (_colorToIndexDictionary.Value.TryGetValue(color, out idx))
+      if (_colorToIndexDictionary.Value.TryGetValue(color, out var idx))
       {
         return idx;
       }
@@ -376,10 +371,10 @@ namespace Altaxo.Drawing.ColorManagement
 
     public IStyleList<NamedColor> WithName(string name)
     {
-      if (this.Name == name)
+      if (Name == name)
         return this;
       else
-        return new ColorSet(name, this._innerList);
+        return new ColorSet(name, _innerList);
     }
 
     public bool IsStructuralEquivalentTo(IEnumerable<NamedColor> l1)

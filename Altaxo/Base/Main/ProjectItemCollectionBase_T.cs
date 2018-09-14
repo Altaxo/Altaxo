@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Serialization;
 
 namespace Altaxo.Main
 {
@@ -70,7 +70,7 @@ namespace Altaxo.Main
 
     public ProjectItemCollectionBase(IDocumentNode parent)
     {
-      this._parent = parent;
+      _parent = parent;
     }
 
     #region ICollection<DataTable> Members
@@ -81,13 +81,13 @@ namespace Altaxo.Main
 
       InternalClear();
 
-      using (var suspendToken = this.SuspendGetToken())
+      using (var suspendToken = SuspendGetToken())
       {
         foreach (var item in items)
         {
           UnwireItem(item);
           item.Dispose();
-          this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(item));
+          EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(item));
         }
         suspendToken.Resume();
       }
@@ -174,7 +174,7 @@ namespace Altaxo.Main
     public string[] GetSortedItemNames()
     {
       string[] arr = new string[_itemsByName.Count];
-      this._itemsByName.Keys.CopyTo(arr, 0);
+      _itemsByName.Keys.CopyTo(arr, 0);
       return arr;
     }
 
@@ -247,7 +247,7 @@ namespace Altaxo.Main
       WireItem(item);
 
       // raise data event to all listeners
-      this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(item));
+      EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(item));
     }
 
     protected virtual void InternalAdd(TItem item)

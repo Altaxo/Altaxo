@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Axis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Axis;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     public static void AddAxis(AxisStyleCollection collection, AxisCreationArguments creationArgs)
     {
       var context = collection.GetPropertyContext();
-      AxisStyle axstyle = new AxisStyle(creationArgs.CurrentStyle, false, false, false, null, context);
+      var axstyle = new AxisStyle(creationArgs.CurrentStyle, false, false, false, null, context);
       if (creationArgs.TemplateStyle != null && collection.Contains(creationArgs.TemplateStyle))
       {
         axstyle.CopyWithoutIdFrom(collection[creationArgs.TemplateStyle]);
@@ -107,8 +107,8 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     public object Clone()
     {
-      var result = (AxisCreationArguments)this.MemberwiseClone();
-      result.AxisStyles = new List<CSAxisInformation>(this.AxisStyles);
+      var result = (AxisCreationArguments)MemberwiseClone();
+      result.AxisStyles = new List<CSAxisInformation>(AxisStyles);
       return result;
     }
   }

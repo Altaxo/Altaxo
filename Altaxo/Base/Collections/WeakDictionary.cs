@@ -25,8 +25,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Collections
         if (obj is WeakReference)
           return object.ReferenceEquals(obj, this);
         else if (obj != null)
-          return obj.Equals(this.Target);
+          return obj.Equals(Target);
         else
           return false;
       }
@@ -154,8 +154,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        Value val;
-        var isH = TryGetValue(key, out val);
+        var isH = TryGetValue(key, out var val);
         if (isH)
           return val;
         else

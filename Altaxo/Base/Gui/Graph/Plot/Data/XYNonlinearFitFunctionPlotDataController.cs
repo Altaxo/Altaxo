@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
@@ -151,12 +151,12 @@ namespace Altaxo.Gui.Graph.Plot.Data
     protected override void AttachView()
     {
       base.AttachView();
-      _view.EditText += this.EhView_EditText;
+      _view.EditText += EhView_EditText;
     }
 
     protected override void DetachView()
     {
-      _view.EditText -= this.EhView_EditText;
+      _view.EditText -= EhView_EditText;
       base.DetachView();
     }
 

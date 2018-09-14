@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D;
 using System;
 using System.Collections.Generic;
+using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
@@ -88,8 +88,10 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       if (initData)
       {
-        _instances = new Dictionary<Type, IItemLocation>();
-        _instances.Add(_doc.GetType(), _doc);
+        _instances = new Dictionary<Type, IItemLocation>
+        {
+          { _doc.GetType(), _doc }
+        };
 
         if (_layer.ParentLayer == null && !(_doc is ItemLocationDirect))
           _doc = new ItemLocationDirect();

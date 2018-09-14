@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
+using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
@@ -169,11 +169,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public override bool Apply(bool disposeController)
     {
-      double sr, dr;
-
-      if (!GUIConversion.IsDouble(_view.SourceDpiResolution, out sr))
+      if (!GUIConversion.IsDouble(_view.SourceDpiResolution, out var sr))
         return false;
-      if (!GUIConversion.IsDouble(_view.DestinationDpiResolution, out dr))
+      if (!GUIConversion.IsDouble(_view.DestinationDpiResolution, out var dr))
         return false;
 
       if (!(sr > 0))

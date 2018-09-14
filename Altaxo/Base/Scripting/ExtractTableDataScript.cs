@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Main.Services.ScriptCompilation;
 using System;
 using System.Collections.Immutable;
+using Altaxo.Data;
+using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
 {
@@ -57,7 +57,7 @@ namespace Altaxo.Scripting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AbstractScript s = (AbstractScript)obj;
+        var s = (AbstractScript)obj;
 
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
@@ -207,16 +207,16 @@ namespace Altaxo.Scripting
         return false;
       }
 
-      DataTable clonedTable = (DataTable)myTable.Clone();
+      var clonedTable = (DataTable)myTable.Clone();
       clonedTable.DataColumns.RemoveRowsAll();
 
-      Altaxo.Collections.AscendingIntegerCollection rowsToCopy = new Altaxo.Collections.AscendingIntegerCollection();
+      var rowsToCopy = new Altaxo.Collections.AscendingIntegerCollection();
 
       int len = myTable.DataRowCount;
 
       try
       {
-        Altaxo.Calc.ExtractTableValuesExeBase scriptObject = (Altaxo.Calc.ExtractTableValuesExeBase)_scriptObject;
+        var scriptObject = (Altaxo.Calc.ExtractTableValuesExeBase)_scriptObject;
         for (int i = 0; i < len; i++)
         {
           if (scriptObject.IsRowIncluded(myTable, i))

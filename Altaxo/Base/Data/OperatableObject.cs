@@ -107,13 +107,13 @@ namespace Altaxo.Data
     { b = null; return false; }
 
     public virtual bool vop_Equal(object a, out bool b)
-    { b = this.Equals(a); return true; }
+    { b = Equals(a); return true; }
 
     public virtual bool vop_Equal_Rev(object a, out bool b)
     { b = a.Equals(this); return true; }
 
     public virtual bool vop_NotEqual(object a, out bool b)
-    { b = !this.Equals(a); return true; }
+    { b = !Equals(a); return true; }
 
     public virtual bool vop_NotEqual_Rev(object a, out bool b)
     { b = !a.Equals(this); return true; }
@@ -170,9 +170,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator +(OperatableObject c1, object c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Addition(c2, out c3))
+      if (c1.vop_Addition(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Addition_Rev(c1, out c3))
         return c3;
@@ -182,9 +181,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator +(object c1, OperatableObject c2)
     {
-      OperatableObject c3;
 
-      if (c2.vop_Addition_Rev(c1, out c3))
+      if (c2.vop_Addition_Rev(c1, out var c3))
         return c3;
       if (c1 is OperatableObject && ((OperatableObject)c1).vop_Addition(c2, out c3))
         return c3;
@@ -194,9 +192,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator -(OperatableObject c1, object c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Subtraction(c2, out c3))
+      if (c1.vop_Subtraction(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Subtraction_Rev(c1, out c3))
         return c3;
@@ -206,9 +203,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator *(OperatableObject c1, object c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Multiplication(c2, out c3))
+      if (c1.vop_Multiplication(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Multiplication_Rev(c1, out c3))
         return c3;
@@ -218,9 +214,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator /(OperatableObject c1, object c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Division(c2, out c3))
+      if (c1.vop_Division(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Division_Rev(c1, out c3))
         return c3;
@@ -230,9 +225,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator %(OperatableObject c1, object c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Modulo(c2, out c3))
+      if (c1.vop_Modulo(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Modulo_Rev(c1, out c3))
         return c3;
@@ -242,9 +236,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator &(OperatableObject c1, object c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_And(c2, out c3))
+      if (c1.vop_And(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_And_Rev(c1, out c3))
         return c3;
@@ -254,9 +247,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator |(OperatableObject c1, object c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Or(c2, out c3))
+      if (c1.vop_Or(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Or_Rev(c1, out c3))
         return c3;
@@ -266,9 +258,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator ^(OperatableObject c1, object c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Xor(c2, out c3))
+      if (c1.vop_Xor(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Xor_Rev(c1, out c3))
         return c3;
@@ -278,18 +269,16 @@ namespace Altaxo.Data
 
     public static OperatableObject operator <<(OperatableObject c1, int c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_ShiftLeft(c2, out c3))
+      if (c1.vop_ShiftLeft(c2, out var c3))
         return c3;
       throw new AltaxoOperatorException("Error: Try to shift left " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
     }
 
     public static OperatableObject operator >>(OperatableObject c1, int c2)
     {
-      OperatableObject c3;
 
-      if (c1.vop_ShiftRight(c2, out c3))
+      if (c1.vop_ShiftRight(c2, out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to shift right " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
@@ -297,10 +286,9 @@ namespace Altaxo.Data
 
     public static bool operator ==(OperatableObject c1, object c2)
     {
-      bool c3;
       if (null == ((object)c1) || null == c2)
         return ((object)c1) == c2;
-      if (c1.vop_Equal(c2, out c3))
+      if (c1.vop_Equal(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Equal_Rev(c1, out c3))
         return c3;
@@ -310,11 +298,10 @@ namespace Altaxo.Data
 
     public static bool operator !=(OperatableObject c1, object c2)
     {
-      bool c3;
 
       if (null == ((object)c1) || c2 == null)
         return ((object)c1) != c2;
-      if (c1.vop_NotEqual(c2, out c3))
+      if (c1.vop_NotEqual(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_NotEqual_Rev(c1, out c3))
         return c3;
@@ -324,9 +311,8 @@ namespace Altaxo.Data
 
     public static bool operator <(OperatableObject c1, object c2)
     {
-      bool c3;
 
-      if (c1.vop_Lesser(c2, out c3))
+      if (c1.vop_Lesser(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Lesser_Rev(c1, out c3))
         return c3;
@@ -336,9 +322,8 @@ namespace Altaxo.Data
 
     public static bool operator >(OperatableObject c1, object c2)
     {
-      bool c3;
 
-      if (c1.vop_Greater(c2, out c3))
+      if (c1.vop_Greater(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_Greater_Rev(c1, out c3))
         return c3;
@@ -348,9 +333,8 @@ namespace Altaxo.Data
 
     public static bool operator <=(OperatableObject c1, object c2)
     {
-      bool c3;
 
-      if (c1.vop_LesserOrEqual(c2, out c3))
+      if (c1.vop_LesserOrEqual(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_LesserOrEqual_Rev(c1, out c3))
         return c3;
@@ -360,9 +344,8 @@ namespace Altaxo.Data
 
     public static bool operator >=(OperatableObject c1, object c2)
     {
-      bool c3;
 
-      if (c1.vop_GreaterOrEqual(c2, out c3))
+      if (c1.vop_GreaterOrEqual(c2, out var c3))
         return c3;
       if (c2 is OperatableObject && ((OperatableObject)c2).vop_GreaterOrEqual_Rev(c1, out c3))
         return c3;
@@ -372,9 +355,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator +(OperatableObject c1)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Plus(out c3))
+      if (c1.vop_Plus(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator plus to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -382,9 +364,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator -(OperatableObject c1)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Minus(out c3))
+      if (c1.vop_Minus(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator minus to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -392,9 +373,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator !(OperatableObject c1)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Not(out c3))
+      if (c1.vop_Not(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator not to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -402,9 +382,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator ~(OperatableObject c1)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Complement(out c3))
+      if (c1.vop_Complement(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator complement to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -412,9 +391,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator ++(OperatableObject c1)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Increment(out c3))
+      if (c1.vop_Increment(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator increment to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -422,9 +400,8 @@ namespace Altaxo.Data
 
     public static OperatableObject operator --(OperatableObject c1)
     {
-      OperatableObject c3;
 
-      if (c1.vop_Decrement(out c3))
+      if (c1.vop_Decrement(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator decrement to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -432,9 +409,8 @@ namespace Altaxo.Data
 
     public static bool operator true(OperatableObject c1)
     {
-      bool c3;
 
-      if (c1.vop_True(out c3))
+      if (c1.vop_True(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator TRUE to " + c1.ToString() + " (" + c1.GetType() + ")");
@@ -442,9 +418,8 @@ namespace Altaxo.Data
 
     public static bool operator false(OperatableObject c1)
     {
-      bool c3;
 
-      if (c1.vop_False(out c3))
+      if (c1.vop_False(out var c3))
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator FALSE to " + c1.ToString() + " (" + c1.GetType() + ")");

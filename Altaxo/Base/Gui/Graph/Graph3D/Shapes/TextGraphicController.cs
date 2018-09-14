@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
@@ -145,7 +145,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
         //this.m_cbFontSize.Text = m_TextObject.Font.Size.ToString();
 
         // fill the color dialog box
-        _view.SelectedFontBrush = this._doc.TextFillBrush;
+        _view.SelectedFontBrush = _doc.TextFillBrush;
 
         _view.LocationView = _locationController.ViewObject;
 
@@ -238,7 +238,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     public void EhView_EditTextChanged()
     {
-      this._doc.Text = _view.EditText;
+      _doc.Text = _view.EditText;
       _view.InvalidatePreviewPanel();
     }
 
@@ -261,32 +261,32 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
       // make sure that regular style is available
       if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
-        this._doc.Font = FontManager3D.Instance.GetFont(ff, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Regular);
+        _doc.Font = FontManager3D.Instance.GetFont(ff, _doc.Font.Size, _doc.Font.Depth, FontXStyle.Regular);
       else if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
-        this._doc.Font = FontManager3D.Instance.GetFont(ff, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Bold);
+        _doc.Font = FontManager3D.Instance.GetFont(ff, _doc.Font.Size, _doc.Font.Depth, FontXStyle.Bold);
       else if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
-        this._doc.Font = FontManager3D.Instance.GetFont(ff, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Italic);
+        _doc.Font = FontManager3D.Instance.GetFont(ff, _doc.Font.Size, _doc.Font.Depth, FontXStyle.Italic);
       else if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
-        this._doc.Font = FontManager3D.Instance.GetFont(ff, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Bold | FontXStyle.Italic);
+        _doc.Font = FontManager3D.Instance.GetFont(ff, _doc.Font.Size, _doc.Font.Depth, FontXStyle.Bold | FontXStyle.Italic);
 
       _view.InvalidatePreviewPanel();
     }
 
     public void EhView_FontSizeChanged()
     {
-      this._doc.Font = this._doc.Font.WithSize(_view.SelectedFont.Size);
+      _doc.Font = _doc.Font.WithSize(_view.SelectedFont.Size);
       _view.InvalidatePreviewPanel();
     }
 
     public void EhView_FontDepthChanged()
     {
-      this._doc.Font = this._doc.Font.WithDepth(_view.SelectedFont.Depth);
+      _doc.Font = _doc.Font.WithDepth(_view.SelectedFont.Depth);
       _view.InvalidatePreviewPanel();
     }
 
     public void EhView_TextFillBrushChanged()
     {
-      this._doc.TextFillBrush = _view.SelectedFontBrush;
+      _doc.TextFillBrush = _view.SelectedFontBrush;
       _view.InvalidatePreviewPanel();
     }
 

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Graph
 {
@@ -70,7 +70,7 @@ namespace Altaxo.Graph
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        CSPlaneID s = (CSPlaneID)obj;
+        var s = (CSPlaneID)obj;
         info.AddValue("Axis", s._perpendicularAxisNumber);
         info.AddValue("Logical", s._logicalValue);
         info.AddValue("UsePhysical", s._usePhysicalValue);
@@ -198,18 +198,18 @@ namespace Altaxo.Graph
     {
       if (!(obj is CSPlaneID))
         return false;
-      CSPlaneID from = (CSPlaneID)obj;
+      var from = (CSPlaneID)obj;
 
       bool result = true;
-      result &= this._perpendicularAxisNumber == from._perpendicularAxisNumber;
-      result &= this._usePhysicalValue == from._usePhysicalValue;
+      result &= _perpendicularAxisNumber == from._perpendicularAxisNumber;
+      result &= _usePhysicalValue == from._usePhysicalValue;
       if (result == false)
         return result;
 
       if (_usePhysicalValue)
-        return this._physicalValue == from._physicalValue;
+        return _physicalValue == from._physicalValue;
       else
-        return this._logicalValue == from._logicalValue;
+        return _logicalValue == from._logicalValue;
     }
 
     public override int GetHashCode()

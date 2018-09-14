@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {

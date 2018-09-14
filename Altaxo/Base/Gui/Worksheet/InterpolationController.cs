@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -91,8 +91,8 @@ namespace Altaxo.Gui.Worksheet
 
     private void SetInterpolationDetailController(IMVCAController ctrl)
     {
-      IMVCAController oldController = this._interpolationDetailController;
-      this._interpolationDetailController = ctrl;
+      IMVCAController oldController = _interpolationDetailController;
+      _interpolationDetailController = ctrl;
 
       if (_view != null)
       {
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Worksheet
           _classListA[0].IsSelected = true;
 
         _view.InitializeClassList(_classListA);
-        this.EhInterpolationClassChanged(); // to make sure the right InterpolationInstance is set
+        EhInterpolationClassChanged(); // to make sure the right InterpolationInstance is set
       }
     }
 
@@ -218,15 +218,14 @@ namespace Altaxo.Gui.Worksheet
     public void EhInterpolationClassChanged()
     {
       var sel = _classListA.FirstSelectedNode;
-      this._interpolationInstance = (Altaxo.Calc.Interpolation.IInterpolationFunction)System.Activator.CreateInstance((System.Type)sel.Tag);
-      SetInterpolationDetailController((IMVCAController)Current.Gui.GetControllerAndControl(new object[] { this._interpolationInstance }, typeof(IMVCAController)));
+      _interpolationInstance = (Altaxo.Calc.Interpolation.IInterpolationFunction)System.Activator.CreateInstance((System.Type)sel.Tag);
+      SetInterpolationDetailController((IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _interpolationInstance }, typeof(IMVCAController)));
     }
 
     public void EhValidatingNumberOfPoints(ValidationEventArgs<string> e)
     {
       _numberOfPoints = null;
-      int var;
-      if (!Altaxo.Serialization.GUIConversion.IsInteger(e.ValueToValidate, out var))
+      if (!Altaxo.Serialization.GUIConversion.IsInteger(e.ValueToValidate, out var var))
       {
         e.AddError("Value has to be an integer!");
         return;
@@ -244,8 +243,7 @@ namespace Altaxo.Gui.Worksheet
     public void EhValidatingXOrg(ValidationEventArgs<string> e)
     {
       _xOrg = null;
-      double var;
-      if (!Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out var))
+      if (!Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out var var))
       {
         e.AddError("Value has to be a number");
         return;
@@ -263,8 +261,7 @@ namespace Altaxo.Gui.Worksheet
     public void EhValidatingXEnd(ValidationEventArgs<string> e)
     {
       _xEnd = null;
-      double var;
-      if (!Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out var))
+      if (!Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out var var))
       {
         e.AddError("Value has to be a number");
         return;

@@ -63,7 +63,7 @@ namespace Altaxo.Main.PegParser
       src = null;
       if (!IsBinaryFile())
         return false;
-      using (BinaryReader brdr = new BinaryReader(File.Open(path_, FileMode.Open, FileAccess.Read)))
+      using (var brdr = new BinaryReader(File.Open(path_, FileMode.Open, FileAccess.Read)))
       {
         src = brdr.ReadBytes((int)brdr.BaseStream.Length);
         return true;
@@ -78,7 +78,7 @@ namespace Altaxo.Main.PegParser
       {
         if (encoding_ == FileEncoding.binary)
           return false;
-        using (StreamReader rd = new StreamReader(path_, true))
+        using (var rd = new StreamReader(path_, true))
         {
           src = rd.ReadToEnd();
           return true;
@@ -88,10 +88,10 @@ namespace Altaxo.Main.PegParser
       {
         if (encoding_ == FileEncoding.utf16be)//UTF16BE
         {
-          using (BinaryReader brdr = new BinaryReader(File.Open(path_, FileMode.Open, FileAccess.Read)))
+          using (var brdr = new BinaryReader(File.Open(path_, FileMode.Open, FileAccess.Read)))
           {
             byte[] bytes = brdr.ReadBytes((int)brdr.BaseStream.Length);
-            StringBuilder s = new StringBuilder();
+            var s = new StringBuilder();
             for (int i = 0; i < bytes.Length; i += 2)
             {
               char c = (char)(bytes[i] << 8 | bytes[i + 1]);
@@ -103,7 +103,7 @@ namespace Altaxo.Main.PegParser
         }
         else
         {
-          using (StreamReader rd = new StreamReader(path_, textEncoding))
+          using (var rd = new StreamReader(path_, textEncoding))
           {
             src = rd.ReadToEnd();
             return true;
@@ -137,7 +137,7 @@ namespace Altaxo.Main.PegParser
 
     private static FileEncoding DetermineUnicodeWhenFirstCharIsAscii(string path)
     {
-      using (BinaryReader br = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read)))
+      using (var br = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read)))
       {
         byte[] startBytes = br.ReadBytes(4);
         if (startBytes.Length == 0)
@@ -307,7 +307,7 @@ namespace Altaxo.Main.PegParser
 
     public virtual PegNode Clone()
     {
-      PegNode clone = new PegNode(parent_, id_, match_);
+      var clone = new PegNode(parent_, id_, match_);
       CloneSubTrees(clone);
       return clone;
     }
@@ -1068,7 +1068,7 @@ namespace Altaxo.Main.PegParser
 
       public bool Matches(byte c)
       {
-        bool bMatches = c < charSet_.Length && charSet_[(int)c];
+        bool bMatches = c < charSet_.Length && charSet_[c];
         if (bNegated_)
           return !bMatches;
         else
@@ -1160,8 +1160,10 @@ namespace Altaxo.Main.PegParser
         src = new byte[0];
       src_ = src;
       srcLen_ = src.Length;
-      errors.lineStarts = new SortedList<int, int>();
-      errors.lineStarts[0] = 1;
+      errors.lineStarts = new SortedList<int, int>
+      {
+        [0] = 1
+      };
     }
 
     public byte[] GetSource()
@@ -1203,9 +1205,8 @@ namespace Altaxo.Main.PegParser
 
     public bool Into(Matcher toMatch, out int into)
     {
-      byte[] s;
       into = 0;
-      if (!Into(toMatch, out s))
+      if (!Into(toMatch, out byte[] s))
         return false;
       into = 0;
       for (int i = 0; i < s.Length; ++i)
@@ -1218,13 +1219,12 @@ namespace Altaxo.Main.PegParser
 
     public bool Into(Matcher toMatch, out double into)
     {
-      byte[] s;
       into = 0.0;
-      if (!Into(toMatch, out s))
+      if (!Into(toMatch, out byte[] s))
         return false;
       System.Text.Encoding encoding = System.Text.Encoding.UTF8;
       string sAsString = encoding.GetString(s);
-      if (!System.Double.TryParse(sAsString, out into))
+      if (!double.TryParse(sAsString, out into))
         return false;
       return true;
     }
@@ -1851,7 +1851,7 @@ namespace Altaxo.Main.PegParser
 
       public bool Matches(char c)
       {
-        bool bMatches = c < charSet_.Length && charSet_[(int)c];
+        bool bMatches = c < charSet_.Length && charSet_[c];
         if (bNegated_)
           return !bMatches;
         else
@@ -1868,7 +1868,7 @@ namespace Altaxo.Main.PegParser
           cThis_ = cThis;
           char cMax = char.MinValue;
           cMin_ = char.MaxValue;
-          HashSet<char> followChars = new HashSet<char>();
+          var followChars = new HashSet<char>();
 
           foreach (string literal in literals)
           {
@@ -1895,7 +1895,7 @@ namespace Altaxo.Main.PegParser
             children_ = new Trie[(cMax - cMin_) + 1];
             foreach (char c in followChars)
             {
-              List<string> subLiterals = new List<string>();
+              var subLiterals = new List<string>();
               foreach (string s in literals)
               {
                 if (nIndex >= s.Length)
@@ -1982,8 +1982,10 @@ namespace Altaxo.Main.PegParser
       src_ = src;
       srcLen_ = src.Length;
       pos_ = 0;
-      errors.lineStarts = new SortedList<int, int>();
-      errors.lineStarts[0] = 1;
+      errors.lineStarts = new SortedList<int, int>
+      {
+        [0] = 1
+      };
     }
 
     public string GetSource()
@@ -2020,22 +2022,20 @@ namespace Altaxo.Main.PegParser
 
     public bool Into(Matcher toMatch, out int into)
     {
-      string s;
       into = 0;
-      if (!Into(toMatch, out s))
+      if (!Into(toMatch, out string s))
         return false;
-      if (!System.Int32.TryParse(s, out into))
+      if (!int.TryParse(s, out into))
         return false;
       return true;
     }
 
     public bool Into(Matcher toMatch, out double into)
     {
-      string s;
       into = 0.0;
-      if (!Into(toMatch, out s))
+      if (!Into(toMatch, out string s))
         return false;
-      if (!System.Double.TryParse(s, out into))
+      if (!double.TryParse(s, out into))
         return false;
       return true;
     }
@@ -2046,8 +2046,7 @@ namespace Altaxo.Main.PegParser
 
     private void LogOutMsg(string sErrKind, string sMsg)
     {
-      int lineNo, colNo;
-      errors.GetLineAndCol(src_, pos_, out lineNo, out colNo);
+      errors.GetLineAndCol(src_, pos_, out var lineNo, out var colNo);
       errOut_.WriteLine("<{0},{1}>{2}:{3}", lineNo, colNo, sErrKind, sMsg);
       errOut_.Flush();
     }
@@ -2195,7 +2194,7 @@ namespace Altaxo.Main.PegParser
 
     public bool IChar(char c1)
     {
-      if (pos_ < srcLen_ && System.Char.ToUpper(src_[pos_]) == c1)
+      if (pos_ < srcLen_ && char.ToUpper(src_[pos_]) == c1)
       { ++pos_; return true; }
       return false;
     }
@@ -2203,8 +2202,8 @@ namespace Altaxo.Main.PegParser
     public bool IChar(char c1, char c2)
     {
       if (pos_ + 1 < srcLen_
-          && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-          && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2))
+          && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+          && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2))
       { pos_ += 2; return true; }
       return false;
     }
@@ -2212,9 +2211,9 @@ namespace Altaxo.Main.PegParser
     public bool IChar(char c1, char c2, char c3)
     {
       if (pos_ + 2 < srcLen_
-          && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-          && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-          && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3))
+          && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+          && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+          && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3))
       { pos_ += 3; return true; }
       return false;
     }
@@ -2222,10 +2221,10 @@ namespace Altaxo.Main.PegParser
     public bool IChar(char c1, char c2, char c3, char c4)
     {
       if (pos_ + 3 < srcLen_
-          && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-          && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-          && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3)
-          && System.Char.ToUpper(src_[pos_ + 3]) == System.Char.ToUpper(c4))
+          && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+          && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+          && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3)
+          && char.ToUpper(src_[pos_ + 3]) == char.ToUpper(c4))
       { pos_ += 4; return true; }
       return false;
     }
@@ -2233,11 +2232,11 @@ namespace Altaxo.Main.PegParser
     public bool IChar(char c1, char c2, char c3, char c4, char c5)
     {
       if (pos_ + 4 < srcLen_
-          && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-          && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-          && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3)
-          && System.Char.ToUpper(src_[pos_ + 3]) == System.Char.ToUpper(c4)
-          && System.Char.ToUpper(src_[pos_ + 4]) == System.Char.ToUpper(c5))
+          && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+          && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+          && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3)
+          && char.ToUpper(src_[pos_ + 3]) == char.ToUpper(c4)
+          && char.ToUpper(src_[pos_ + 4]) == char.ToUpper(c5))
       { pos_ += 5; return true; }
       return false;
     }
@@ -2245,12 +2244,12 @@ namespace Altaxo.Main.PegParser
     public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6)
     {
       if (pos_ + 5 < srcLen_
-          && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-          && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-          && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3)
-          && System.Char.ToUpper(src_[pos_ + 3]) == System.Char.ToUpper(c4)
-          && System.Char.ToUpper(src_[pos_ + 4]) == System.Char.ToUpper(c5)
-          && System.Char.ToUpper(src_[pos_ + 5]) == System.Char.ToUpper(c6))
+          && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+          && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+          && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3)
+          && char.ToUpper(src_[pos_ + 3]) == char.ToUpper(c4)
+          && char.ToUpper(src_[pos_ + 4]) == char.ToUpper(c5)
+          && char.ToUpper(src_[pos_ + 5]) == char.ToUpper(c6))
       { pos_ += 6; return true; }
       return false;
     }
@@ -2258,13 +2257,13 @@ namespace Altaxo.Main.PegParser
     public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6, char c7)
     {
       if (pos_ + 6 < srcLen_
-          && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-          && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-          && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3)
-          && System.Char.ToUpper(src_[pos_ + 3]) == System.Char.ToUpper(c4)
-          && System.Char.ToUpper(src_[pos_ + 4]) == System.Char.ToUpper(c5)
-          && System.Char.ToUpper(src_[pos_ + 5]) == System.Char.ToUpper(c6)
-          && System.Char.ToUpper(src_[pos_ + 6]) == System.Char.ToUpper(c7))
+          && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+          && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+          && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3)
+          && char.ToUpper(src_[pos_ + 3]) == char.ToUpper(c4)
+          && char.ToUpper(src_[pos_ + 4]) == char.ToUpper(c5)
+          && char.ToUpper(src_[pos_ + 5]) == char.ToUpper(c6)
+          && char.ToUpper(src_[pos_ + 6]) == char.ToUpper(c7))
       { pos_ += 7; return true; }
       return false;
     }
@@ -2276,7 +2275,7 @@ namespace Altaxo.Main.PegParser
         return false;
       for (int i = 0; i < sLength; ++i)
       {
-        if (s[i] != System.Char.ToUpper(src_[pos_ + i]))
+        if (s[i] != char.ToUpper(src_[pos_ + i]))
           return false;
       }
       pos_ += sLength;

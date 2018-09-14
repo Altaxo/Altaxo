@@ -24,13 +24,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
-using Altaxo.Main.Services;
-using Altaxo.Gui.Common;
 using System.ComponentModel.Design;
+using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Workbench;
+using Altaxo.Main.Services;
 
 namespace Altaxo
 {

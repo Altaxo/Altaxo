@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
@@ -40,7 +40,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GeneralEffectiveMedium s = (GeneralEffectiveMedium)obj;
+        var s = (GeneralEffectiveMedium)obj;
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -327,7 +327,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GeneralEffectiveMediumLog10 s = (GeneralEffectiveMediumLog10)obj;
+        var s = (GeneralEffectiveMediumLog10)obj;
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

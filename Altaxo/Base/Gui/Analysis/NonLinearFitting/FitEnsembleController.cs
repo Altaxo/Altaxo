@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {

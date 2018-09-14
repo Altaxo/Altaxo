@@ -24,10 +24,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -42,7 +42,7 @@ namespace Altaxo.Collections
     public ObservableCollectionReversingWrapper(ObservableCollection<T> coll)
     {
       _coll = coll;
-      _coll.CollectionChanged += new WeakEventHandler<NotifyCollectionChangedEventArgs>(this.EhOrigjnalCollectionChanged, x => _coll.CollectionChanged -= x.EventSink).EventSink;
+      _coll.CollectionChanged += new WeakEventHandler<NotifyCollectionChangedEventArgs>(EhOrigjnalCollectionChanged, x => _coll.CollectionChanged -= x.EventSink).EventSink;
     }
 
     private void EhOrigjnalCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

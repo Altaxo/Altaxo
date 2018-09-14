@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
-using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Data;
+using Altaxo.Graph.Plot.Data;
+using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -229,7 +229,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ErrorBarPlotStyle s = (ErrorBarPlotStyle)obj;
+        var s = (ErrorBarPlotStyle)obj;
 
         info.AddEnum("MeaningOfValues", s._meaningOfValues);
         info.AddValue("UseCommonColumn", s._useCommonErrorColumn);
@@ -269,7 +269,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ErrorBarPlotStyle s = (ErrorBarPlotStyle)o;
+        var s = (ErrorBarPlotStyle)o;
 
         s._meaningOfValues = (ValueInterpretation)info.GetEnum("MeaningOfValues", typeof(ValueInterpretation));
         s._useCommonErrorColumn = info.GetBoolean("UseCommonColumn");
@@ -347,7 +347,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _lineWidth1Offset = penWidth;
       _lineWidth1Factor = 0;
 
-      this._pen = new PenX(color, penWidth) { EndCap = new Altaxo.Graph.Gdi.LineCaps.SymBarLineCap(), ParentObject = this };
+      _pen = new PenX(color, penWidth) { EndCap = new Altaxo.Graph.Gdi.LineCaps.SymBarLineCap(), ParentObject = this };
     }
 
     public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
@@ -362,8 +362,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var from = obj as ErrorBarPlotStyle;
       if (null != from)
       {
-        this._meaningOfValues = from._meaningOfValues;
-        this._useCommonErrorColumn = from._useCommonErrorColumn;
+        _meaningOfValues = from._meaningOfValues;
+        _useCommonErrorColumn = from._useCommonErrorColumn;
 
         if (copyWithDataReferences)
         {
@@ -372,30 +372,30 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
         }
 
-        this._independentSkipFrequency = from._independentSkipFrequency;
-        this._skipFrequency = from._skipFrequency;
-        this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-        this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+        _independentSkipFrequency = from._independentSkipFrequency;
+        _skipFrequency = from._skipFrequency;
+        _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
-        this._independentSymbolSize = from._independentSymbolSize;
-        this._symbolSize = from._symbolSize;
+        _independentSymbolSize = from._independentSymbolSize;
+        _symbolSize = from._symbolSize;
 
         ChildCopyToMember(ref _pen, from._pen);
-        this._independentColor = from._independentColor;
-        this._independentDashPattern = from._independentDashPattern;
+        _independentColor = from._independentColor;
+        _independentDashPattern = from._independentDashPattern;
 
         _lineWidth1Offset = from._lineWidth1Offset;
         _lineWidth1Factor = from._lineWidth1Factor;
 
-        this._endCapSizeFactor = from._endCapSizeFactor;
-        this._endCapSizeOffset = from._endCapSizeOffset;
+        _endCapSizeFactor = from._endCapSizeFactor;
+        _endCapSizeOffset = from._endCapSizeOffset;
 
-        this._useSymbolGap = from._useSymbolGap;
-        this._symbolGapFactor = from._symbolGapFactor;
-        this._symbolGapOffset = from._symbolGapOffset;
+        _useSymbolGap = from._useSymbolGap;
+        _symbolGapFactor = from._symbolGapFactor;
+        _symbolGapOffset = from._symbolGapOffset;
 
-        this._cachedLogicalShiftX = from._cachedLogicalShiftX;
-        this._cachedLogicalShiftY = from._cachedLogicalShiftY;
+        _cachedLogicalShiftX = from._cachedLogicalShiftX;
+        _cachedLogicalShiftY = from._cachedLogicalShiftY;
 
         EhSelfChanged();
         return true;
@@ -913,7 +913,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._pen.Color; });
+        { return _pen.Color; });
 
       if (!_independentSkipFrequency)
         SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
@@ -929,7 +929,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void ApplyGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
-      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => _ignoreMissingDataPoints = ignoreMissingDataPoints);
 
       _cachedColorForIndexFunction = null;
       _cachedSymbolSizeForIndexFunction = null;
@@ -937,7 +937,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentColor)
       {
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { this._pen.Color = c; });
+        { _pen.Color = c; });
 
         // but if there is a color evaluation function, then use that function with higher priority
         VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)
@@ -946,14 +946,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (!_independentSkipFrequency)
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this.SkipFrequency = c; });
+        { SkipFrequency = c; });
 
       // symbol size
       if (!_independentSymbolSize)
       {
-        this._symbolSize = 0;
+        _symbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._symbolSize = size; });
+        { _symbolSize = size; });
 
         // but if there is an symbol size evaluation function, then use this with higher priority.
         _cachedSymbolSizeForIndexFunction = null;
@@ -969,7 +969,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentDashPattern)
       {
         DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern dashPattern)
-        { this._pen.DashPattern = dashPattern; });
+        { _pen.DashPattern = dashPattern; });
       }
 
       // Shift the items ?
@@ -998,19 +998,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       PlotRangeList rangeList = pdata.RangeList;
 
-      if (this._ignoreMissingDataPoints)
+      if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
         // as one range, i.e. continuously
         // for this, we create the totalRange, which contains all ranges
         var totalRange = new PlotRangeCompound(rangeList);
-        this.PaintOneRange(AxisNumber, g, layer, totalRange, pdata);
+        PaintOneRange(AxisNumber, g, layer, totalRange, pdata);
       }
       else // we not ignore missing points, so plot all ranges separately
       {
         for (int i = 0; i < rangeList.Count; i++)
         {
-          this.PaintOneRange(AxisNumber, g, layer, rangeList[i], pdata);
+          PaintOneRange(AxisNumber, g, layer, rangeList[i], pdata);
         }
       }
     }
@@ -1038,10 +1038,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       var strokePen = _pen.Clone();
 
-      System.Drawing.Drawing2D.GraphicsPath errorBarPath = new System.Drawing.Drawing2D.GraphicsPath();
+      var errorBarPath = new System.Drawing.Drawing2D.GraphicsPath();
 
       Region oldClippingRegion = g.Clip;
-      Region newClip = (Region)oldClippingRegion.Clone();
+      var newClip = oldClippingRegion.Clone();
 
       int lower = range.LowerBound;
       int upper = range.UpperBound;

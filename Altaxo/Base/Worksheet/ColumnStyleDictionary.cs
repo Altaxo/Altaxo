@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
+using Altaxo.Data;
 
 namespace Altaxo.Worksheet
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Worksheet
 
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ColumnStyleDictionary s = (ColumnStyleDictionary)obj;
+        var s = (ColumnStyleDictionary)obj;
 
         info.CreateArray("DefaultColumnStyles", s._defaultColumnStyles.Count);
         foreach (var style in s._defaultColumnStyles)
@@ -81,9 +81,11 @@ namespace Altaxo.Worksheet
 
       protected virtual void Deserialize(ColumnStyleDictionary s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-        surr._unresolvedColumns = new Dictionary<Main.AbsoluteDocumentPath, ColumnStyle>();
-        surr._deserializedInstance = s;
+        var surr = new XmlSerializationSurrogate0
+        {
+          _unresolvedColumns = new Dictionary<Main.AbsoluteDocumentPath, ColumnStyle>(),
+          _deserializedInstance = s
+        };
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
         int count;
@@ -94,7 +96,7 @@ namespace Altaxo.Worksheet
           info.OpenElement(); // "e"
           string typeName = info.GetString("Type");
           //Type t = Type.ReflectionOnlyGetType(typeName, false, false);
-          Type t = Type.GetType(typeName, false, false);
+          var t = Type.GetType(typeName, false, false);
           var style = (ColumnStyle)info.GetValue("Style", s);
           if (null != style)
             style.ParentObject = s;
@@ -111,7 +113,7 @@ namespace Altaxo.Worksheet
           for (int i = 0; i < count; i++)
           {
             info.OpenElement(); // "e"
-            Main.AbsoluteDocumentPath key = (Main.AbsoluteDocumentPath)info.GetValue("Column", s);
+            var key = (Main.AbsoluteDocumentPath)info.GetValue("Column", s);
             var val = (ColumnStyle)info.GetValue("Style", s);
             surr._unresolvedColumns.Add(key, val);
             info.CloseElement();
@@ -122,13 +124,13 @@ namespace Altaxo.Worksheet
 
       public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
       {
-        List<Main.AbsoluteDocumentPath> resolvedStyles = new List<Main.AbsoluteDocumentPath>();
-        foreach (var entry in this._unresolvedColumns)
+        var resolvedStyles = new List<Main.AbsoluteDocumentPath>();
+        foreach (var entry in _unresolvedColumns)
         {
-          object resolvedobj = Main.AbsoluteDocumentPath.GetObject((Main.AbsoluteDocumentPath)entry.Key, _deserializedInstance, documentRoot);
+          object resolvedobj = Main.AbsoluteDocumentPath.GetObject(entry.Key, _deserializedInstance, documentRoot);
           if (null != resolvedobj)
           {
-            _deserializedInstance._columnStyles.Add((DataColumn)resolvedobj, (ColumnStyle)entry.Value);
+            _deserializedInstance._columnStyles.Add((DataColumn)resolvedobj, entry.Value);
             resolvedStyles.Add(entry.Key);
           }
         }
@@ -138,7 +140,7 @@ namespace Altaxo.Worksheet
 
         // if all columns have resolved, we can close the event link
         if (_unresolvedColumns.Count == 0)
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
       }
     }
 
@@ -212,7 +214,7 @@ namespace Altaxo.Worksheet
       {
         var c = source as DataColumn;
         if (c != null)
-          this.Remove(c); // do not use direct remove, as the event handler has to be detached also
+          Remove(c); // do not use direct remove, as the event handler has to be detached also
       }
     }
 
@@ -258,8 +260,7 @@ namespace Altaxo.Worksheet
 
     public bool Remove(DataColumn key)
     {
-      ColumnStyle value;
-      if (TryGetValue(key, out value))
+      if (TryGetValue(key, out var value))
       {
         _columnStyles.Remove(key);
         DetachKey(key);
@@ -286,9 +287,8 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        ColumnStyle colstyle;
         // first look at the column styles hash table, column itself is the key
-        if (_columnStyles.TryGetValue(key, out colstyle))
+        if (_columnStyles.TryGetValue(key, out var colstyle))
           return colstyle;
 
         if (_defaultColumnStyles.TryGetValue(key.GetType(), out colstyle))

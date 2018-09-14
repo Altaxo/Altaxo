@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Serialization
 {
@@ -41,7 +41,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(IEnumerable<AltaxoVariant> vals)
     {
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
       bool first = true;
       foreach (AltaxoVariant v in vals)
       {
@@ -60,17 +60,15 @@ namespace Altaxo.Serialization
       vals = null;
       bool failed = false;
       string[] parts = s.Split(new char[] { '\t', '\r', '\n', ';' }, StringSplitOptions.RemoveEmptyEntries);
-      AltaxoVariant[] result = new AltaxoVariant[parts.Length];
+      var result = new AltaxoVariant[parts.Length];
 
       for (int i = 0; i < result.Length; i++)
       {
-        DateTime dt;
-        double dd;
-        if (IsDouble(parts[i], out dd))
+        if (IsDouble(parts[i], out var dd))
         {
           result[i] = dd;
         }
-        else if (IsDateTime(parts[i], out dt))
+        else if (IsDateTime(parts[i], out var dt))
         {
           result[i] = dt;
         }
@@ -152,8 +150,7 @@ namespace Altaxo.Serialization
         }
       }
 
-      double v;
-      if (IsDouble(txt, out v))
+      if (IsDouble(txt, out var v))
       {
         value = LengthUnit.Point.ConvertFrom(v, tempUnit);
         unit = tempUnit;

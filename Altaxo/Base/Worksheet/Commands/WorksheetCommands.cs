@@ -35,7 +35,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public static void Duplicate(IWorksheetController ctrl)
     {
-      Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)ctrl.DataTable.Clone();
+      var clonedTable = (Altaxo.Data.DataTable)ctrl.DataTable.Clone();
 
       // find a new name for the cloned table and add it to the DataTableCollection
       string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.DataTable.Name, "WKS");
@@ -61,7 +61,7 @@ namespace Altaxo.Worksheet.Commands
     {
       const string NameColumnName = "LongName";
 
-      Altaxo.Data.TextColumn col = (Altaxo.Data.TextColumn)table.PropertyColumns.EnsureExistence(NameColumnName, typeof(Altaxo.Data.TextColumn), Altaxo.Data.ColumnKind.Label, 0);
+      var col = (Altaxo.Data.TextColumn)table.PropertyColumns.EnsureExistence(NameColumnName, typeof(Altaxo.Data.TextColumn), Altaxo.Data.ColumnKind.Label, 0);
 
       using (var suspendToken = col.SuspendGetToken())
       {
@@ -111,19 +111,21 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bAddToPropertyColumns">If true, the columns are added to the property columns instead of the data columns collection.</param>
     public static void ShowAddColumnsDialog(Altaxo.Data.DataTable table, bool bAddToPropertyColumns)
     {
-      var lbitems = new Altaxo.Collections.SelectableListNodeList();
-      lbitems.Add(new Altaxo.Collections.SelectableListNode("Numeric", typeof(Altaxo.Data.DoubleColumn), true));
-      lbitems.Add(new Altaxo.Collections.SelectableListNode("Date/Time", typeof(Altaxo.Data.DateTimeColumn), false));
-      lbitems.Add(new Altaxo.Collections.SelectableListNode("Text", typeof(Altaxo.Data.TextColumn), false));
+      var lbitems = new Altaxo.Collections.SelectableListNodeList
+      {
+        new Altaxo.Collections.SelectableListNode("Numeric", typeof(Altaxo.Data.DoubleColumn), true),
+        new Altaxo.Collections.SelectableListNode("Date/Time", typeof(Altaxo.Data.DateTimeColumn), false),
+        new Altaxo.Collections.SelectableListNode("Text", typeof(Altaxo.Data.TextColumn), false)
+      };
 
-      IntegerAndComboBoxController ct = new IntegerAndComboBoxController(
+      var ct = new IntegerAndComboBoxController(
         "Number of colums to add:", 1, int.MaxValue, 1,
         "Type of columns to add:", lbitems, 0);
       Current.Gui.FindAndAttachControlTo(ct);
 
       if (true == Current.Gui.ShowDialog(ct, "Add new column(s)", false))
       {
-        System.Type columntype = (System.Type)ct.SelectedItem.Tag;
+        var columntype = (System.Type)ct.SelectedItem.Tag;
 
         using (var suspendToken = table.SuspendGetToken())
         {

@@ -123,7 +123,7 @@ namespace Altaxo.Serialization.Ascii
       if (null != _numberFormatsToTest)
       {
         stb.Append("| ");
-        SortedSet<string> cu = new SortedSet<string>(_numberFormatsToTest.Select(x => x.ThreeLetterISOLanguageName));
+        var cu = new SortedSet<string>(_numberFormatsToTest.Select(x => x.ThreeLetterISOLanguageName));
         foreach (var s in cu)
         {
           stb.Append(s);
@@ -173,9 +173,9 @@ namespace Altaxo.Serialization.Ascii
       var from = obj as AsciiDocumentAnalysisOptions;
       if (null != from)
       {
-        this._numberOfLinesToAnalyze = from._numberOfLinesToAnalyze;
-        this._numberFormatsToTest = new HashSet<CultureInfo>(from._numberFormatsToTest);
-        this._dateTimeFormatsToTest = new HashSet<CultureInfo>(from._dateTimeFormatsToTest);
+        _numberOfLinesToAnalyze = from._numberOfLinesToAnalyze;
+        _numberFormatsToTest = new HashSet<CultureInfo>(from._numberFormatsToTest);
+        _dateTimeFormatsToTest = new HashSet<CultureInfo>(from._dateTimeFormatsToTest);
 
         EhSelfChanged(EventArgs.Empty);
 

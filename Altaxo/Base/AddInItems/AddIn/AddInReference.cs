@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -116,7 +116,7 @@ namespace Altaxo.AddInItems
 
     public static AddInReference Create(Properties properties, string hintPath)
     {
-      AddInReference reference = new AddInReference(properties["addin"]);
+      var reference = new AddInReference(properties["addin"]);
       string version = properties["version"];
       if (version != null && version.Length > 0)
       {
@@ -165,7 +165,7 @@ namespace Altaxo.AddInItems
           string fileName = Path.Combine(hintPath, version.Substring(1));
           try
           {
-            FileVersionInfo info = FileVersionInfo.GetVersionInfo(fileName);
+            var info = FileVersionInfo.GetVersionInfo(fileName);
             return new Version(info.FileMajorPart, info.FileMinorPart, info.FileBuildPart, info.FilePrivatePart);
           }
           catch (FileNotFoundException ex)
@@ -191,7 +191,7 @@ namespace Altaxo.AddInItems
 
     public AddInReference(string name, Version minimumVersion, Version maximumVersion)
     {
-      this.Name = name;
+      Name = name;
       if (minimumVersion == null)
         throw new ArgumentNullException("minimumVersion");
       if (maximumVersion == null)
@@ -205,7 +205,7 @@ namespace Altaxo.AddInItems
     {
       if (!(obj is AddInReference))
         return false;
-      AddInReference b = (AddInReference)obj;
+      var b = (AddInReference)obj;
       return name == b.name && minimumVersion == b.minimumVersion && maximumVersion == b.maximumVersion;
     }
 

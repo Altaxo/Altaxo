@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Geometry;
-using Altaxo.Gui.Graph.Gdi;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,6 +30,11 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Geometry;
+using Altaxo.Gui.Graph.Gdi;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -304,7 +304,7 @@ typeof(GraphDocument),
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GraphDocument s = (GraphDocument)obj;
+        var s = (GraphDocument)obj;
 
         info.AddValue("Name", s._name);
         info.AddValue("GraphIdentifier", s._graphIdentifier);
@@ -342,8 +342,8 @@ typeof(GraphDocument),
     /// </summary>
     public GraphDocument()
     {
-      this.RootLayer = new HostLayer() { ParentObject = this };
-      this.RootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) };
+      RootLayer = new HostLayer() { ParentObject = this };
+      RootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) };
     }
 
     private void EhNotesChanged(object sender, PropertyChangedEventArgs e)
@@ -356,7 +356,7 @@ typeof(GraphDocument),
       using (var suppressToken = SuspendGetToken())
       {
         _creationTime = _lastChangeTime = DateTime.UtcNow;
-        this.RootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(814), SizeY = RADouble.NewAbs(567) });
+        RootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(814), SizeY = RADouble.NewAbs(567) });
 
         CopyFrom(from, GraphCopyOptions.All);
 
@@ -385,7 +385,7 @@ typeof(GraphDocument),
           }
           else
           {
-            this._graphProperties = null;
+            _graphProperties = null;
           }
         }
 
@@ -401,7 +401,7 @@ typeof(GraphDocument),
           // don't clone the layers, but copy the style of each each of the souce layers to the destination layers - this has to be done recursively
           newRootLayer.CopyFrom(from._rootLayer, options);
         }
-        this.RootLayer = newRootLayer;
+        RootLayer = newRootLayer;
 
         suspendToken.Resume();
       }
@@ -519,7 +519,7 @@ typeof(GraphDocument),
         try
         {
           // First set the current thread's document culture
-          _paintThread.CurrentCulture = this.GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, null).Culture;
+          _paintThread.CurrentCulture = GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, null).Culture;
 
           try
           {
@@ -537,7 +537,7 @@ typeof(GraphDocument),
 #if DEBUG
                 if (ithRetry == MaxFixupRetries)
                 {
-                  Current.Console.WriteLine("Warning: MaxFixupRetries exceeded during painting of graph {0}.", this.Name);
+                  Current.Console.WriteLine("Warning: MaxFixupRetries exceeded during painting of graph {0}.", Name);
                 }
 #endif
               }

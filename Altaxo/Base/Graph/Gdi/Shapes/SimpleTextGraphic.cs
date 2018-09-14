@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SimpleTextGraphic s = (SimpleTextGraphic)obj;
+        var s = (SimpleTextGraphic)obj;
         info.AddBaseValueEmbedded(s, typeof(SimpleTextGraphic).BaseType);
 
         info.AddValue("Text", s._text);
@@ -91,9 +91,9 @@ namespace Altaxo.Graph.Gdi.Shapes
         var from = obj as SimpleTextGraphic;
         if (null != from)
         {
-          this._font = from._font;
-          this._text = from._text;
-          this._color = from._color;
+          _font = from._font;
+          _text = from._text;
+          _color = from._color;
         }
       }
       return isCopied;
@@ -103,10 +103,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       FontX textFont, Color textColor)
       : base(new ItemLocationDirectAutoSize())
     {
-      this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
-      this.Font = textFont;
-      this.Text = text;
-      this.Color = textColor;
+      SetPosition(graphicPosition, Main.EventFiring.Suppressed);
+      Font = textFont;
+      Text = text;
+      Color = textColor;
     }
 
     public SimpleTextGraphic(double posX, double posY,
@@ -190,7 +190,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       // Modification of StringFormat is necessary to avoid
       // too big spaces between successive words
-      StringFormat strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
+      var strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
       strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
       strfmt.LineAlignment = StringAlignment.Near;
@@ -202,16 +202,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       // leads to "steps" during scaling
       g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
-      if (this.AutoSize)
+      if (AutoSize)
       {
         var mySize = g.MeasureString(_text, GdiFontManager.ToGdi(_font));
-        this.Width = mySize.Width;
-        this.Height = mySize.Height;
+        Width = mySize.Width;
+        Height = mySize.Height;
         g.DrawString(_text, GdiFontManager.ToGdi(_font), new SolidBrush(_color), 0, 0, strfmt);
       }
       else
       {
-        System.Drawing.RectangleF rect = new RectangleF(0, 0, (float)this.Width, (float)this.Height);
+        var rect = new RectangleF(0, 0, (float)Width, (float)Height);
         g.DrawString(_text, GdiFontManager.ToGdi(_font), new SolidBrush(_color), rect, strfmt);
       }
 

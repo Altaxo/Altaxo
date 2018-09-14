@@ -41,7 +41,7 @@ namespace Altaxo.Worksheet
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        TablePlusLayout s = (TablePlusLayout)obj;
+        var s = (TablePlusLayout)obj;
 
         info.AddValue("Table", s._table);
         info.AddValue("Layout", s._layout);

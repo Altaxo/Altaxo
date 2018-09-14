@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D
 {
@@ -210,35 +210,35 @@ namespace Altaxo.Graph.Graph3D
       if (obj is ItemLocationDirect)
       {
         var from = (ItemLocationDirect)obj;
-        this._parentSize = from._parentSize;
+        _parentSize = from._parentSize;
 
-        this._positionX = from._positionX;
-        this._positionY = from._positionY;
-        this._positionZ = from._positionZ;
+        _positionX = from._positionX;
+        _positionY = from._positionY;
+        _positionZ = from._positionZ;
 
-        this._sizeX = from._sizeX;
-        this._sizeY = from._sizeY;
-        this._sizeZ = from._sizeZ;
+        _sizeX = from._sizeX;
+        _sizeY = from._sizeY;
+        _sizeZ = from._sizeZ;
 
-        this._localAnchorX = from._localAnchorX;
-        this._localAnchorY = from._localAnchorY;
-        this._localAnchorZ = from._localAnchorZ;
+        _localAnchorX = from._localAnchorX;
+        _localAnchorY = from._localAnchorY;
+        _localAnchorZ = from._localAnchorZ;
 
-        this._parentAnchorX = from._parentAnchorX;
-        this._parentAnchorY = from._parentAnchorY;
-        this._parentAnchorZ = from._parentAnchorZ;
+        _parentAnchorX = from._parentAnchorX;
+        _parentAnchorY = from._parentAnchorY;
+        _parentAnchorZ = from._parentAnchorZ;
 
-        this._rotationX = from._rotationX;
-        this._rotationY = from._rotationY;
-        this._rotationZ = from._rotationZ;
+        _rotationX = from._rotationX;
+        _rotationY = from._rotationY;
+        _rotationZ = from._rotationZ;
 
-        this._scaleX = from._scaleX;
-        this._scaleY = from._scaleY;
-        this._scaleZ = from._scaleZ;
+        _scaleX = from._scaleX;
+        _scaleY = from._scaleY;
+        _scaleZ = from._scaleZ;
 
-        this._shearX = from._shearX;
-        this._shearY = from._shearY;
-        this._shearZ = from._shearZ;
+        _shearX = from._shearX;
+        _shearY = from._shearY;
+        _shearZ = from._shearZ;
 
         EhSelfChanged();
         return true;
@@ -246,15 +246,15 @@ namespace Altaxo.Graph.Graph3D
       else if (obj is IItemLocation)
       {
         var from = (IItemLocation)obj;
-        this._rotationX = from.RotationX;
-        this._rotationY = from.RotationY;
-        this._rotationZ = from.RotationZ;
-        this._shearX = from.ShearX;
-        this._shearY = from.ShearY;
-        this._shearZ = from.ShearZ;
-        this._scaleX = from.ScaleX;
-        this._scaleY = from.ScaleY;
-        this._scaleY = from.ScaleZ;
+        _rotationX = from.RotationX;
+        _rotationY = from.RotationY;
+        _rotationZ = from.RotationZ;
+        _shearX = from.ShearX;
+        _shearY = from.ShearY;
+        _shearZ = from.ShearZ;
+        _scaleX = from.ScaleX;
+        _scaleY = from.ScaleY;
+        _scaleY = from.ScaleZ;
         EhSelfChanged();
         return true;
       }
@@ -735,7 +735,7 @@ namespace Altaxo.Graph.Graph3D
     /// <returns>The enclosing rectangle in absolute values.</returns>
     public RectangleD3D GetAbsoluteEnclosingRectangle()
     {
-      Matrix4x3 m = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+      var m = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
         ScaleX, ScaleY, ScaleZ,
         ShearX, ShearY, ShearZ,
         RotationX, RotationY, RotationZ,
@@ -743,7 +743,7 @@ namespace Altaxo.Graph.Graph3D
 
       m.TranslatePrepend(AbsoluteVectorPivotToLeftUpper.X, AbsoluteVectorPivotToLeftUpper.Y, AbsoluteVectorPivotToLeftUpper.Z);
 
-      var r = new RectangleD3D(PointD3D.Empty, this.AbsoluteSize);
+      var r = new RectangleD3D(PointD3D.Empty, AbsoluteSize);
       return RectangleD3D.NewRectangleIncludingAllPoints(r.Vertices.Select(p => m.Transform(p)));
     }
 
@@ -1187,7 +1187,7 @@ namespace Altaxo.Graph.Graph3D
 
     public void ChangeRelativePositionValuesToAbsolutePositionValues()
     {
-      if (this._positionX.IsRelative)
+      if (_positionX.IsRelative)
         _positionX = RADouble.NewAbs(AbsolutePositionX);
       if (_positionY.IsRelative)
         _positionY = RADouble.NewAbs(AbsolutePositionY);
@@ -1204,10 +1204,10 @@ namespace Altaxo.Graph.Graph3D
       var newRefY = newParentAnchorY.GetValueRelativeTo(_parentSize.Y);
       var newRefZ = newParentAnchorZ.GetValueRelativeTo(_parentSize.Z);
 
-      var oldPos = this.AbsolutePosition;
-      this.InternalSetAbsolutePositionXSilent(oldPos.X + (oldRefX - newRefX));
-      this.InternalSetAbsolutePositionYSilent(oldPos.Y + (oldRefY - newRefY));
-      this.InternalSetAbsolutePositionZSilent(oldPos.Z + (oldRefZ - newRefZ));
+      var oldPos = AbsolutePosition;
+      InternalSetAbsolutePositionXSilent(oldPos.X + (oldRefX - newRefX));
+      InternalSetAbsolutePositionYSilent(oldPos.Y + (oldRefY - newRefY));
+      InternalSetAbsolutePositionZSilent(oldPos.Z + (oldRefZ - newRefZ));
       _parentAnchorX = newParentAnchorX;
       _parentAnchorY = newParentAnchorY;
       _parentAnchorZ = newParentAnchorZ;

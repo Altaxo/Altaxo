@@ -72,7 +72,7 @@ namespace Altaxo.Scripting
 
     public List<FitFunctionScript> Find(string category, string name)
     {
-      List<FitFunctionScript> result = new List<FitFunctionScript>();
+      var result = new List<FitFunctionScript>();
 
       foreach (FitFunctionScript script in this)
       {

@@ -134,30 +134,30 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._independentSkipFreq = from._independentSkipFreq;
-        this._skipFreq = from._skipFreq;
-        this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-        this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+        _independentSkipFreq = from._independentSkipFreq;
+        _skipFreq = from._skipFreq;
+        _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
-        this._independentScatterSymbol = from._independentScatterSymbol;
-        this._scatterSymbol = from._scatterSymbol;
+        _independentScatterSymbol = from._independentScatterSymbol;
+        _scatterSymbol = from._scatterSymbol;
 
-        this._independentSymbolSize = from._independentSymbolSize;
-        this._symbolSize = from._symbolSize;
+        _independentSymbolSize = from._independentSymbolSize;
+        _symbolSize = from._symbolSize;
 
-        this._independentColor = from._independentColor;
-        this._color = from._color;
+        _independentColor = from._independentColor;
+        _color = from._color;
 
-        this._overrideFrame = from._overrideFrame;
-        this._overriddenFrame = from._overriddenFrame;
-        this._overrideInset = from._overrideInset;
-        this._overriddenInset = from._overriddenInset;
-        this._overrideStructureWidthOffset = from._overrideStructureWidthOffset;
-        this._overrideStructureWidthFactor = from._overrideStructureWidthFactor;
-        this._overridePlotColorInfluence = from._overridePlotColorInfluence;
-        this._overrideFillColor = from._overrideFillColor;
-        this._overrideFrameColor = from._overrideFrameColor;
-        this._overrideInsetColor = from._overrideInsetColor;
+        _overrideFrame = from._overrideFrame;
+        _overriddenFrame = from._overriddenFrame;
+        _overrideInset = from._overrideInset;
+        _overriddenInset = from._overriddenInset;
+        _overrideStructureWidthOffset = from._overrideStructureWidthOffset;
+        _overrideStructureWidthFactor = from._overrideStructureWidthFactor;
+        _overridePlotColorInfluence = from._overridePlotColorInfluence;
+        _overrideFillColor = from._overrideFillColor;
+        _overrideFrameColor = from._overrideFrameColor;
+        _overrideInsetColor = from._overrideInsetColor;
 
         EhSelfChanged(EventArgs.Empty);
 
@@ -209,11 +209,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       double symbolSize = 8;
       var color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
 
-      this._scatterSymbol = ScatterSymbolListManager.Instance.BuiltinDefault[0];
-      this._color = NamedColors.Black;
-      this._independentColor = false;
-      this._symbolSize = symbolSize;
-      this._skipFreq = 1;
+      _scatterSymbol = ScatterSymbolListManager.Instance.BuiltinDefault[0];
+      _color = NamedColors.Black;
+      _independentColor = false;
+      _symbolSize = symbolSize;
+      _skipFreq = 1;
     }
 
     public ScatterPlotStyle(ScatterPlotStyle from)
@@ -227,11 +227,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       double symbolSize = GraphDocument.GetDefaultSymbolSize(context);
       var color = GraphDocument.GetDefaultPlotColor(context);
 
-      this._scatterSymbol = ScatterSymbolListManager.Instance.BuiltinDefault[0];
+      _scatterSymbol = ScatterSymbolListManager.Instance.BuiltinDefault[0];
       _color = color;
-      this._independentColor = false;
-      this._symbolSize = symbolSize;
-      this._skipFreq = 1;
+      _independentColor = false;
+      _symbolSize = symbolSize;
+      _skipFreq = 1;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -257,7 +257,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public IScatterSymbol ScatterSymbol
     {
-      get { return this._scatterSymbol; }
+      get { return _scatterSymbol; }
       set
       {
         if (null == value)
@@ -265,7 +265,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         if (!object.ReferenceEquals(_scatterSymbol, value))
         {
-          this._scatterSymbol = value;
+          _scatterSymbol = value;
 
           EhSelfChanged(EventArgs.Empty); // Fire Changed event
         }
@@ -584,20 +584,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return !this._independentColor;
+        return !_independentColor;
       }
     }
 
     public bool IsColorReceiver
     {
-      get { return !this._independentColor; }
+      get { return !_independentColor; }
     }
 
     public bool IsSymbolSizeProvider
     {
       get
       {
-        return !(this._scatterSymbol is NoSymbol) && !this._independentSymbolSize;
+        return !(_scatterSymbol is NoSymbol) && !_independentSymbolSize;
       }
     }
 
@@ -605,7 +605,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return !(this._scatterSymbol is NoSymbol) && !this._independentSymbolSize;
+        return !(_scatterSymbol is NoSymbol) && !_independentSymbolSize;
       }
     }
 
@@ -709,16 +709,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return true;
       }
 
-      List<List<ClipperLib.IntPoint>> insetPolygon = null;
-      List<List<ClipperLib.IntPoint>> framePolygon = null;
-      List<List<ClipperLib.IntPoint>> fillPolygon = null;
-
       double? overrideRelativeStructureWidth = null;
       if (_overrideStructureWidthOffset.HasValue || _overrideStructureWidthFactor.HasValue)
       {
         overrideRelativeStructureWidth = (_overrideStructureWidthFactor ?? 0) + (_overrideStructureWidthOffset ?? 0) / symbolSize;
       }
-      scatterSymbol.CalculatePolygons(overrideRelativeStructureWidth, out framePolygon, out insetPolygon, out fillPolygon);
+      scatterSymbol.CalculatePolygons(overrideRelativeStructureWidth, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
       // calculate the path only once
       if (null != insetPolygon)
@@ -890,11 +886,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (_skipFreq <= 0)
         _skipFreq = 1;
 
-      if (this._scatterSymbol is NoSymbol)
+      if (_scatterSymbol is NoSymbol)
         return;
 
-      CachedPathData cachedPathData = new CachedPathData();
-      CachedBrushData cachedBrushData = new CachedBrushData();
+      var cachedPathData = new CachedPathData();
+      var cachedBrushData = new CachedBrushData();
 
       PlotRangeList rangeList = pdata.RangeList;
       PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -907,19 +903,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // Calculate current scatterSymbol overridden with frame and inset
       var scatterSymbol = CalculateOverriddenScatterSymbol();
 
-      if (this._ignoreMissingDataPoints)
+      if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
         // as one range, i.e. continuously
         // for this, we create the totalRange, which contains all ranges
         var totalRange = new PlotRangeCompound(rangeList);
-        this.PaintOneRange(g, layer, plotPositions, totalRange, scatterSymbol, ref cachedPathData, ref cachedBrushData);
+        PaintOneRange(g, layer, plotPositions, totalRange, scatterSymbol, ref cachedPathData, ref cachedBrushData);
       }
       else // we not ignore missing points, so plot all ranges separately
       {
         for (int i = 0; i < rangeList.Count; i++)
         {
-          this.PaintOneRange(g, layer, plotPositions, rangeList[i], scatterSymbol, ref cachedPathData, ref cachedBrushData);
+          PaintOneRange(g, layer, plotPositions, rangeList[i], scatterSymbol, ref cachedPathData, ref cachedBrushData);
         }
       }
 
@@ -955,8 +951,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       g.Restore(gs);
 
-      if (this.SymbolSize > bounds.Height)
-        bounds.Inflate(0, (float)(this.SymbolSize - bounds.Height));
+      if (SymbolSize > bounds.Height)
+        bounds.Inflate(0, (float)(SymbolSize - bounds.Height));
 
       return bounds;
     }
@@ -973,10 +969,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.AddExternalGroupStyle(externalGroups);
 
-      if (this.IsSymbolSizeProvider)
+      if (IsSymbolSizeProvider)
         SymbolSizeGroupStyle.AddExternalGroupStyle(externalGroups);
 
       if (!_independentScatterSymbol)
@@ -994,14 +990,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this.Color; });
+        { return Color; });
 
       ScatterSymbolGroupStyle.PrepareStyle(externalGroups, localGroups, delegate
-      { return this._scatterSymbol; });
+      { return _scatterSymbol; });
 
-      if (this.IsSymbolSizeProvider)
+      if (IsSymbolSizeProvider)
         SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return SymbolSize; });
 
@@ -1016,13 +1012,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
-      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => _ignoreMissingDataPoints = ignoreMissingDataPoints);
 
-      if (this.IsColorReceiver)
+      if (IsColorReceiver)
       {
         // try to get a constant color ...
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { this.Color = c; });
+        { Color = c; });
         // but if there is a color evaluation function, then use that function with higher priority
         if (!VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)
         { _cachedColorForIndexFunction = evalFunc; }))
@@ -1032,7 +1028,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (!_independentScatterSymbol)
       {
         ScatterSymbolGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IScatterSymbol c)
-        { this.ScatterSymbol = c; });
+        { ScatterSymbol = c; });
       }
 
       // per Default, set the symbol size evaluation function to null
@@ -1041,7 +1037,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         // try to get a constant symbol size ...
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this.SymbolSize = size; });
+        { SymbolSize = size; });
         // but if there is an symbol size evaluation function, then use this with higher priority.
         if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc)
         { _cachedSymbolSizeForIndexFunction = evalFunc; }))
@@ -1049,9 +1045,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-      if (!this._independentSkipFreq)
+      if (!_independentSkipFreq)
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this.SkipFrequency = c; });
+        { SkipFrequency = c; });
 
       // Shift the items ?
       _cachedLogicalShiftX = 0;

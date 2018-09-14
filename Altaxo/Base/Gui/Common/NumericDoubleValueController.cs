@@ -64,14 +64,13 @@ namespace Altaxo.Gui.Common
 
     public override bool Apply(bool disposeController)
     {
-      this._value1Double = this._value1DoubleTemporary;
+      _value1Double = _value1DoubleTemporary;
       return base.Apply(disposeController);
     }
 
     public override void EhView_ValidatingValue1(ValidationEventArgs<string> e)
     {
-      double vald;
-      if (Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out vald))
+      if (Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out var vald))
       {
         if (vald < _minimumValue || (!_isMinimumValueIncluded && vald == _minimumValue))
         {

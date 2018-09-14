@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AxisStyleCollection s = (AxisStyleCollection)obj;
+        var s = (AxisStyleCollection)obj;
 
         info.CreateArray("AxisStyles", s._axisStyles.Count);
         for (int i = 0; i < s._axisStyles.Count; ++i)
@@ -101,14 +101,14 @@ namespace Altaxo.Graph.Graph3D.Axis
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._axisStyles.Clear();
+      _axisStyles.Clear();
       for (int i = 0; i < from._axisStyles.Count; ++i)
       {
-        this.Add((AxisStyle)from._axisStyles[i].Clone());
+        Add((AxisStyle)from._axisStyles[i].Clone());
       }
 
       //this._parent = from._parent;
-      this._cachedCoordinateSystem = from._cachedCoordinateSystem;
+      _cachedCoordinateSystem = from._cachedCoordinateSystem;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -194,8 +194,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       AxisStyle prop = this[id];
       if (prop == null)
       {
-        prop = new AxisStyle(id, false, false, false, null, null);
-        prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
+        prop = new AxisStyle(id, false, false, false, null, null)
+        {
+          CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id)
+        };
         Add(prop);
       }
       return prop;
@@ -212,8 +214,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       AxisStyle prop = this[id];
       if (prop == null)
       {
-        prop = new AxisStyle(id, true, true, false, null, context);
-        prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
+        prop = new AxisStyle(id, true, true, false, null, context)
+        {
+          CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id)
+        };
         Add(prop);
       }
       return prop;
@@ -230,8 +234,10 @@ namespace Altaxo.Graph.Graph3D.Axis
       AxisStyle prop = this[info.Identifier];
       if (prop == null)
       {
-        prop = new AxisStyle(info, true, info.HasTicksByDefault, false, null, context);
-        prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(info.Identifier);
+        prop = new AxisStyle(info, true, info.HasTicksByDefault, false, null, context)
+        {
+          CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(info.Identifier)
+        };
         Add(prop);
       }
       return prop;
@@ -255,7 +261,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       _cachedCoordinateSystem = cs;
 
-      foreach (AxisStyle style in this._axisStyles)
+      foreach (AxisStyle style in _axisStyles)
         style.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(style.StyleID);
     }
 
@@ -294,7 +300,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public bool Remove(IGraphicBase go)
     {
-      for (int i = 0; i < this._axisStyles.Count; ++i)
+      for (int i = 0; i < _axisStyles.Count; ++i)
         if (_axisStyles[i] != null && _axisStyles[i].Remove(go))
           return true;
 
@@ -329,7 +335,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
     public object Clone()
     {
-      AxisStyleCollection result = new AxisStyleCollection();
+      var result = new AxisStyleCollection();
       result.CopyFrom(this);
       return result;
     }

@@ -26,11 +26,11 @@
 
 #endregion Copyright
 
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Win32;
 
 namespace Altaxo.DataConnection
 {
@@ -55,7 +55,7 @@ namespace Altaxo.DataConnection
       try
       {
         // create objects we'll need
-        Type type = Type.GetTypeFromProgID("DataLinks");
+        var type = Type.GetTypeFromProgID("DataLinks");
         dynamic dlinks = Activator.CreateInstance(type);
 
         dynamic conn = Activator.CreateInstance(Type.GetTypeFromProgID("ADODB.Connection")); // new ADODB.ConnectionClass();

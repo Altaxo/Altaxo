@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Drawing;
 using System;
 using System.Drawing;
+using Altaxo.Data;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {

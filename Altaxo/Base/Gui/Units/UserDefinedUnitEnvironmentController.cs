@@ -32,10 +32,10 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Units
 {
-  using System.ComponentModel;
-  using Altaxo.Units;
-  using System.Windows.Input;
   using System.Collections;
+  using System.ComponentModel;
+  using System.Windows.Input;
+  using Altaxo.Units;
 
   public interface IUserDefinedUnitEnvironmentView : IDataContextAwareView
   {
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Units
       if (initData)
       {
         // ------- Set the environment name --------------
-        this.EnvironmentName = _doc.Name;
+        EnvironmentName = _doc.Name;
 
         // ------- Set available quantities --------------
         _quantities.Clear();

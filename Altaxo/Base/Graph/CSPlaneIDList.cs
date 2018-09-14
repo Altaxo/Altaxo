@@ -42,7 +42,7 @@ namespace Altaxo.Graph
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        CSPlaneIDList s = (CSPlaneIDList)obj;
+        var s = (CSPlaneIDList)obj;
         info.CreateArray("PlaneIDs", s.Count);
         foreach (CSPlaneID plane in s)
           info.AddValue("e", plane);

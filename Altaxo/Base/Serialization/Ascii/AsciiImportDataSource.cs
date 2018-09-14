@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -338,12 +338,14 @@ namespace Altaxo.Serialization.Ascii
 
     private void SwitchOnWatching(string[] validFileNames)
     {
-      _triggerBasedUpdate = new Main.TriggerBasedUpdate(Current.TimerQueue);
-      _triggerBasedUpdate.MinimumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds);
-      _triggerBasedUpdate.MaximumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(Math.Max(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds, _importOptions.MaximumWaitingTimeAfterUpdateInSeconds));
-      _triggerBasedUpdate.MinimumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterFirstTriggerInSeconds);
-      _triggerBasedUpdate.MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterLastTriggerInSeconds);
-      _triggerBasedUpdate.MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(Math.Max(_importOptions.MaximumWaitingTimeAfterFirstTriggerInSeconds, _importOptions.MinimumWaitingTimeAfterFirstTriggerInSeconds));
+      _triggerBasedUpdate = new Main.TriggerBasedUpdate(Current.TimerQueue)
+      {
+        MinimumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds),
+        MaximumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(Math.Max(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds, _importOptions.MaximumWaitingTimeAfterUpdateInSeconds)),
+        MinimumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterFirstTriggerInSeconds),
+        MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterLastTriggerInSeconds),
+        MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(Math.Max(_importOptions.MaximumWaitingTimeAfterFirstTriggerInSeconds, _importOptions.MinimumWaitingTimeAfterFirstTriggerInSeconds))
+      };
 
       _triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
 
@@ -353,8 +355,10 @@ namespace Altaxo.Serialization.Ascii
       {
         try
         {
-          var watcher = new System.IO.FileSystemWatcher(directory);
-          watcher.NotifyFilter = System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.Size;
+          var watcher = new System.IO.FileSystemWatcher(directory)
+          {
+            NotifyFilter = System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.Size
+          };
           watcher.Changed += EhTriggerByFileSystemWatcher;
           watcher.IncludeSubdirectories = false;
           watcher.EnableRaisingEvents = true;

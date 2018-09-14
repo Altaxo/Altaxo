@@ -118,8 +118,10 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
       {
         string localUrl = "../media/" + System.IO.Path.GetFileName(url);
 
-        var attributes = new Dictionary<string, string>();
-        attributes.Add("src", localUrl);
+        var attributes = new Dictionary<string, string>
+        {
+          { "src", localUrl }
+        };
         if (width.HasValue)
           attributes.Add("width", System.Xml.XmlConvert.ToString(Math.Round(width.Value)));
         if (height.HasValue)

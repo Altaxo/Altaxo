@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Scripting;
 using System;
+using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Scripting
 {
@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Scripting
     {
       if (args == null || args.Length == 0)
         return false;
-      IPureScriptText doc = args[0] as IPureScriptText;
+      var doc = args[0] as IPureScriptText;
       if (doc == null)
         return false;
 

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        PlotGroupStyleCollection s = (PlotGroupStyleCollection)obj;
+        var s = (PlotGroupStyleCollection)obj;
         info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 
         info.AddValue("TransformingStyle", s._coordinateTransformingStyle);

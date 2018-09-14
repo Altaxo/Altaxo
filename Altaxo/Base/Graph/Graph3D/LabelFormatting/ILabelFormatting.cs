@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Geometry;
-using System;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {

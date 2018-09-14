@@ -32,18 +32,18 @@ namespace Altaxo.Main
 
     public ParentChangedEventArgs(object oldParent, object newParent)
     {
-      this._oldParent = oldParent;
-      this._newParent = newParent;
+      _oldParent = oldParent;
+      _newParent = newParent;
     }
 
     public object NewParent
     {
-      get { return this._newParent; }
+      get { return _newParent; }
     }
 
     public object OldParent
     {
-      get { return this._oldParent; }
+      get { return _oldParent; }
     }
   }
 

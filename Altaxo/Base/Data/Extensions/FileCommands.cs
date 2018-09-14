@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Serialization.Ascii;
 using System;
 using System.IO;
+using Altaxo.Collections;
+using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Data
 {
@@ -169,9 +169,8 @@ namespace Altaxo.Data
 
       if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
       {
-        AsciiImportOptions importOptions;
         var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null);
-        if (!ShowAsciiImportOptionsDialog(options.FileName, analysisOptions, out importOptions))
+        if (!ShowAsciiImportOptionsDialog(options.FileName, analysisOptions, out var importOptions))
           return;
 
         if (toMultipleWorksheets)
@@ -303,7 +302,7 @@ namespace Altaxo.Data
       {
         using (Stream myStream = new FileStream(options.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-          System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(myStream);
+          var bmp = new System.Drawing.Bitmap(myStream);
 
           int sizex = bmp.Width;
           int sizey = bmp.Height;
@@ -320,7 +319,7 @@ namespace Altaxo.Data
           {
             for (int i = 0; i < sizex; i++)
             {
-              Altaxo.Data.DoubleColumn dblcol = new Altaxo.Data.DoubleColumn();
+              var dblcol = new Altaxo.Data.DoubleColumn();
               for (int j = sizey - 1; j >= 0; j--)
                 dblcol[j] = colorfunc(bmp.GetPixel(i, j));
 

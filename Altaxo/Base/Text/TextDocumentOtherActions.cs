@@ -36,8 +36,10 @@ namespace Altaxo.Text
 
     public static void ShowRenameDialog(this TextDocument doc)
     {
-      var tvctrl = new Altaxo.Gui.Common.TextValueInputController(doc.Name, "Enter a name for the text document:");
-      tvctrl.Validator = new TextDocumentRenameValidator(doc);
+      var tvctrl = new Altaxo.Gui.Common.TextValueInputController(doc.Name, "Enter a name for the text document:")
+      {
+        Validator = new TextDocumentRenameValidator(doc)
+      };
 
       if (Current.Gui.ShowDialog(tvctrl, "Rename text document", false))
         doc.Name = tvctrl.InputText.Trim();

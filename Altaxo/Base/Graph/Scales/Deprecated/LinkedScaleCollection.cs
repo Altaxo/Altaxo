@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinkedScaleCollection s = (LinkedScaleCollection)obj;
+        var s = (LinkedScaleCollection)obj;
 
         info.CreateArray("Properties", s._linkedScales.Length);
         for (int i = 0; i < s._linkedScales.Length; ++i)
@@ -81,8 +81,8 @@ namespace Altaxo.Graph.Scales.Deprecated
     public LinkedScaleCollection()
     {
       _linkedScales = new LinkedScale[2];
-      this.SetLinkedScale(new LinkedScale(), 0);
-      this.SetLinkedScale(new LinkedScale(), 1);
+      SetLinkedScale(new LinkedScale(), 0);
+      SetLinkedScale(new LinkedScale(), 1);
     }
 
     public LinkedScaleCollection(LinkedScaleCollection from)

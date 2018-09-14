@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
@@ -72,12 +72,12 @@ namespace Altaxo.Data.Selections
 
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode();
+      return GetType().GetHashCode();
     }
 
     public override bool Equals(object obj)
     {
-      return this.GetType() == obj?.GetType();
+      return GetType() == obj?.GetType();
     }
 
     /// <inheritdoc/>

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Background;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Graph.Gdi.Background;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -238,9 +238,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s.AlignmentX = GdiExtensionMethods.ToAltaxo((System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment)));
         s.AlignmentY = GdiExtensionMethods.ToAltaxo((System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment)));
         bool attachToAxis = info.GetBoolean("AttachToAxis");
-        EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", s);
+        var attachedAxis = (EdgeType)info.GetValue("AttachedAxis", s);
         bool whiteOut = info.GetBoolean("WhiteOut");
-        BrushX backgroundBrush = (BrushX)info.GetValue("BackgroundBrush", s);
+        var backgroundBrush = (BrushX)info.GetValue("BackgroundBrush", s);
 
         if (attachToAxis)
           s._attachedPlane = GetDirection(attachedAxis);
@@ -276,7 +276,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        LabelPlotStyle s = (LabelPlotStyle)XmlSerializationSurrogate0.SDeserialize(o, info, parent, false);
+        var s = (LabelPlotStyle)XmlSerializationSurrogate0.SDeserialize(o, info, parent, false);
 
         s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", s);
 
@@ -333,7 +333,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s.AlignmentX = GdiExtensionMethods.ToAltaxo((System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment)));
         s.AlignmentY = GdiExtensionMethods.ToAltaxo((System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment)));
         bool attachToAxis = info.GetBoolean("AttachToAxis");
-        EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", s);
+        var attachedAxis = (EdgeType)info.GetValue("AttachedAxis", s);
         s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
         if (null != s._backgroundStyle)
           s._backgroundStyle.ParentObject = s;
@@ -500,7 +500,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LabelPlotStyle s = (LabelPlotStyle)obj;
+        var s = (LabelPlotStyle)obj;
 
         info.AddValue("LabelColumn", s._labelColumnProxy);
         info.AddValue("AttachedAxis", s._attachedPlane);
@@ -603,46 +603,46 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._attachedPlane = from._attachedPlane;
-        this._independentSkipFrequency = from._independentSkipFrequency;
-        this._skipFrequency = from._skipFrequency;
-        this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-        this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
-        this._labelFormatString = from._labelFormatString;
+        _attachedPlane = from._attachedPlane;
+        _independentSkipFrequency = from._independentSkipFrequency;
+        _skipFrequency = from._skipFrequency;
+        _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+        _labelFormatString = from._labelFormatString;
 
-        this._independentSymbolSize = from._independentSymbolSize;
-        this._symbolSize = from._symbolSize;
+        _independentSymbolSize = from._independentSymbolSize;
+        _symbolSize = from._symbolSize;
 
-        this._fontSizeOffset = from._fontSizeOffset;
-        this._fontSizeFactor = from._fontSizeFactor;
+        _fontSizeOffset = from._fontSizeOffset;
+        _fontSizeFactor = from._fontSizeFactor;
 
-        this._font = from._font;
+        _font = from._font;
         ChildCopyToMember(ref _brush, from._brush);
-        this._independentColor = from._independentColor;
+        _independentColor = from._independentColor;
 
-        this._alignmentX = from._alignmentX;
-        this._alignmentY = from._alignmentY;
+        _alignmentX = from._alignmentX;
+        _alignmentY = from._alignmentY;
 
-        this._rotation = from._rotation;
+        _rotation = from._rotation;
 
-        this._offsetX_Points = from._offsetX_Points;
-        this._offsetX_EmUnits = from._offsetX_EmUnits;
-        this._offsetX_SymbolSizeUnits = from._offsetX_SymbolSizeUnits;
+        _offsetX_Points = from._offsetX_Points;
+        _offsetX_EmUnits = from._offsetX_EmUnits;
+        _offsetX_SymbolSizeUnits = from._offsetX_SymbolSizeUnits;
 
-        this._offsetY_Points = from._offsetY_Points;
-        this._offsetY_EmUnits = from._offsetY_EmUnits;
-        this._offsetY_SymbolSizeUnits = from._offsetY_SymbolSizeUnits;
+        _offsetY_Points = from._offsetY_Points;
+        _offsetY_EmUnits = from._offsetY_EmUnits;
+        _offsetY_SymbolSizeUnits = from._offsetY_SymbolSizeUnits;
 
-        this._backgroundColorLinkage = from._backgroundColorLinkage;
+        _backgroundColorLinkage = from._backgroundColorLinkage;
         ChildCopyToMember(ref _backgroundStyle, from._backgroundStyle);
 
-        this._cachedLogicalShiftX = from._cachedLogicalShiftX;
-        this._cachedLogicalShiftY = from._cachedLogicalShiftY;
+        _cachedLogicalShiftX = from._cachedLogicalShiftX;
+        _cachedLogicalShiftY = from._cachedLogicalShiftY;
 
-        this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
+        _cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
 
         if (copyWithDataReferences)
-          this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
+          LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
 
         EhSelfChanged(EventArgs.Empty);
         suspendToken.Resume();
@@ -673,13 +673,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     protected LabelPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      this._backgroundColorLinkage = ColorLinkage.Independent;
+      _backgroundColorLinkage = ColorLinkage.Independent;
 
-      this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
+      _cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
     }
 
     public LabelPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-  : this((Altaxo.Data.IReadableColumn)null, context)
+  : this(null, context)
     {
     }
 
@@ -690,16 +690,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public LabelPlotStyle(Altaxo.Data.IReadableColumn labelColumn, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      this._font = GraphDocument.GetDefaultFont(context);
-      this._fontSizeOffset = _font.Size;
+      _font = GraphDocument.GetDefaultFont(context);
+      _fontSizeOffset = _font.Size;
 
       var color = GraphDocument.GetDefaultPlotColor(context);
-      this._independentColor = false;
-      this._brush = new BrushX(color) { ParentObject = this };
-      this._backgroundColorLinkage = ColorLinkage.Independent;
-      this.LabelColumnProxy = Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn);
+      _independentColor = false;
+      _brush = new BrushX(color) { ParentObject = this };
+      _backgroundColorLinkage = ColorLinkage.Independent;
+      LabelColumnProxy = Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn);
 
-      this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
+      _cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -769,7 +769,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      yield return ("Label", LabelColumn, LabelColumnDataColumnName, (col) => this.LabelColumn = col);
+      yield return ("Label", LabelColumn, LabelColumnDataColumnName, (col) => LabelColumn = col);
     }
 
     public string LabelFormatString
@@ -920,10 +920,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
       set
       {
-        IBackgroundStyle oldValue = this._backgroundStyle;
+        IBackgroundStyle oldValue = _backgroundStyle;
         if (!object.ReferenceEquals(value, oldValue))
         {
-          this._backgroundStyle = value;
+          _backgroundStyle = value;
           EhSelfChanged(EventArgs.Empty); // Fire Changed event
         }
       }
@@ -968,11 +968,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// totalOffset = <see cref="OffsetXPoints"/> +  <see cref="OffsetXEmUnits"/> * emSize + <see cref="OffsetXSymbolSizeUnits"/> * symbolSize</summary>
     public double OffsetXEmUnits
     {
-      get { return this._offsetX_EmUnits; }
+      get { return _offsetX_EmUnits; }
       set
       {
-        double oldValue = this._offsetX_EmUnits;
-        this._offsetX_EmUnits = value;
+        double oldValue = _offsetX_EmUnits;
+        _offsetX_EmUnits = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -1021,11 +1021,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
     public double OffsetYEmUnits
     {
-      get { return this._offsetY_EmUnits; }
+      get { return _offsetY_EmUnits; }
       set
       {
-        double oldValue = this._offsetY_EmUnits;
-        this._offsetY_EmUnits = value;
+        double oldValue = _offsetY_EmUnits;
+        _offsetY_EmUnits = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -1055,11 +1055,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>The angle of the label.</summary>
     public double Rotation
     {
-      get { return this._rotation; }
+      get { return _rotation; }
       set
       {
-        double oldValue = this._rotation;
-        this._rotation = value;
+        double oldValue = _rotation;
+        _rotation = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -1072,7 +1072,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return this._alignmentX;
+        return _alignmentX;
       }
       set
       {
@@ -1089,7 +1089,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return this._alignmentY;
+        return _alignmentY;
       }
       set
       {
@@ -1104,11 +1104,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>Gets/sets the axis this label is attached to. If set to null, the label is positioned normally.</summary>
     public CSPlaneID AttachedAxis
     {
-      get { return this._attachedPlane; }
+      get { return _attachedPlane; }
       set
       {
-        CSPlaneID oldValue = this._attachedPlane;
-        this._attachedPlane = value;
+        CSPlaneID oldValue = _attachedPlane;
+        _attachedPlane = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -1208,26 +1208,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       PlotRangeList rangeList = pdata.RangeList;
 
-      if (this._ignoreMissingDataPoints)
+      if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
         // as one range, i.e. continuously
         // for this, we create the totalRange, which contains all ranges
         var totalRange = new PlotRangeCompound(rangeList);
-        this.PaintOneRange(g, layer, totalRange, pdata);
+        PaintOneRange(g, layer, totalRange, pdata);
       }
       else // we not ignore missing points, so plot all ranges separately
       {
         for (int i = 0; i < rangeList.Count; i++)
         {
-          this.PaintOneRange(g, layer, rangeList[i], pdata);
+          PaintOneRange(g, layer, rangeList[i], pdata);
         }
       }
     }
 
     public void PaintOneRange(Graphics g, IPlotArea layer, IPlotRange range, Processed2DPlotData pdata)
     {
-      if (this._labelColumnProxy.Document == null)
+      if (_labelColumnProxy.Document == null)
         return;
 
       _cachedStringFormat.Alignment = GdiExtensionMethods.ToGdi(_alignmentX);
@@ -1237,7 +1237,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _attachedPlane = layer.UpdateCSPlaneID(_attachedPlane);
 
       var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      Altaxo.Data.IReadableColumn labelColumn = this._labelColumnProxy.Document;
+      Altaxo.Data.IReadableColumn labelColumn = _labelColumnProxy.Document;
 
       bool isUsingVariableColorForLabelText = null != _cachedColorForIndexFunction && IsColorReceiver;
       bool isUsingVariableColorForLabelBackground = null != _cachedColorForIndexFunction &&
@@ -1260,7 +1260,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       bool isFormatStringContainingBraces = _labelFormatString?.IndexOf('{') >= 0;
       var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
 
-      bool mustUseLogicalCoordinates = null != this._attachedPlane || 0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY;
+      bool mustUseLogicalCoordinates = null != _attachedPlane || 0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY;
 
       int lower = range.LowerBound;
       int upper = range.UpperBound;
@@ -1322,9 +1322,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           r3d.RX += _cachedLogicalShiftX;
           r3d.RY += _cachedLogicalShiftY;
 
-          if (null != this._attachedPlane)
+          if (null != _attachedPlane)
           {
-            var pp = layer.CoordinateSystem.GetPointOnPlane(this._attachedPlane, r3d);
+            var pp = layer.CoordinateSystem.GetPointOnPlane(_attachedPlane, r3d);
             xpre = pp.X;
             ypre = pp.Y;
           }
@@ -1344,13 +1344,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         xpos = xpre;
         ypos = ypre;
         g.TranslateTransform((float)xdiff, (float)ydiff);
-        if (this._rotation != 0)
-          g.RotateTransform((float)-this._rotation);
+        if (_rotation != 0)
+          g.RotateTransform((float)-_rotation);
 
-        this.PaintOneItem(g, label, localSymbolSize, clonedTextBrush, clonedBackBrush);
+        PaintOneItem(g, label, localSymbolSize, clonedTextBrush, clonedBackBrush);
 
-        if (this._rotation != 0)
-          g.RotateTransform((float)this._rotation);
+        if (_rotation != 0)
+          g.RotateTransform((float)_rotation);
       }
 
       g.Restore(gs); // Restore the graphics state
@@ -1374,7 +1374,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var gdiFont = GdiFontManager.ToGdi(_font);
       SizeF stringsize = g.MeasureString(label, gdiFont, PointF.Empty, _cachedStringFormat);
 
-      if (this._backgroundStyle != null)
+      if (_backgroundStyle != null)
       {
         var x = xpos;
         var y = ypos;
@@ -1400,11 +1400,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
         if (null == variableBackBrush)
         {
-          this._backgroundStyle.Draw(g, new RectangleF((float)x, (float)y, stringsize.Width, stringsize.Height));
+          _backgroundStyle.Draw(g, new RectangleF((float)x, (float)y, stringsize.Width, stringsize.Height));
         }
         else
         {
-          this._backgroundStyle.Draw(g, variableBackBrush, new RectangleF((float)x, (float)y, stringsize.Width, stringsize.Height));
+          _backgroundStyle.Draw(g, variableBackBrush, new RectangleF((float)x, (float)y, stringsize.Width, stringsize.Height));
         }
       }
 
@@ -1430,12 +1430,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public bool IsColorProvider
     {
-      get { return this._independentColor == false; }
+      get { return _independentColor == false; }
     }
 
     public bool IsColorReceiver
     {
-      get { return this.IndependentColor == false; }
+      get { return IndependentColor == false; }
     }
 
     /// <summary>
@@ -1476,13 +1476,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.AddExternalGroupStyle(externalGroups);
     }
 
     public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 
       SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
@@ -1491,12 +1491,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this.LabelBrush.Color; });
-      else if (this.IsBackgroundColorProvider)
+        { return LabelBrush.Color; });
+      else if (IsBackgroundColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._backgroundStyle.Brush.Color; });
+        { return _backgroundStyle.Brush.Color; });
 
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
       if (!_independentSkipFrequency)
@@ -1510,14 +1510,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
-      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => _ignoreMissingDataPoints = ignoreMissingDataPoints);
 
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
       if (!_independentSkipFrequency)
       {
         _skipFrequency = 1;
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this._skipFrequency = c; });
+        { _skipFrequency = c; });
       }
 
       // Symbol size
@@ -1525,7 +1525,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         _symbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._symbolSize = size; });
+        { _symbolSize = size; });
         // but if there is an symbol size evaluation function, then use this with higher priority.
         if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc)
         { _cachedSymbolSizeForIndexFunction = evalFunc; }))
@@ -1535,24 +1535,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // Color
       _cachedColorForIndexFunction = null;
 
-      if (this.IsColorReceiver)
+      if (IsColorReceiver)
       {
         // try to get a constant color ...
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { this.LabelBrush.Color = c; });
+        { LabelBrush.Color = c; });
       }
 
-      if (this.IsBackgroundColorReceiver)
+      if (IsBackgroundColorReceiver)
       {
-        if (this._backgroundColorLinkage == ColorLinkage.Dependent)
+        if (_backgroundColorLinkage == ColorLinkage.Dependent)
           ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-          { this._backgroundStyle.Brush.Color = c; });
-        else if (this._backgroundColorLinkage == ColorLinkage.PreserveAlpha)
+          { _backgroundStyle.Brush.Color = c; });
+        else if (_backgroundColorLinkage == ColorLinkage.PreserveAlpha)
           ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-          { this._backgroundStyle.Brush.Color = c.NewWithAlphaValue(_backgroundStyle.Brush.Color.Color.A); });
+          { _backgroundStyle.Brush.Color = c.NewWithAlphaValue(_backgroundStyle.Brush.Color.Color.A); });
       }
 
-      if (this.IsColorReceiver || this.IsBackgroundColorReceiver)
+      if (IsColorReceiver || IsBackgroundColorReceiver)
       {
         // but if there is a color evaluation function, then use that function with higher priority
         VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)

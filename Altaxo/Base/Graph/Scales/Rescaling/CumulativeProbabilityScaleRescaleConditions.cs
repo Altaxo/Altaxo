@@ -82,9 +82,9 @@ namespace Altaxo.Graph.Scales.Rescaling
     public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
     {
       if (orgRelativeTo != BoundariesRelativeTo.Absolute)
-        throw new ArgumentException(string.Format("{0} does only support orgRelativeTo={1}", this.GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
+        throw new ArgumentException(string.Format("{0} does only support orgRelativeTo={1}", GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
       if (endRelativeTo != BoundariesRelativeTo.Absolute)
-        throw new ArgumentException(string.Format("{0} does only support endRelativeTo={1}", this.GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
+        throw new ArgumentException(string.Format("{0} does only support endRelativeTo={1}", GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
 
       if (double.IsNaN(orgValue) || !(0 < orgValue && orgValue < 1))
       {
@@ -251,9 +251,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     public double GetOrgValueToShowInDialog(double currentResultingOrg)
     {
-      if (this._orgRescaling == BoundaryRescaling.Auto)
+      if (_orgRescaling == BoundaryRescaling.Auto)
       {
-        switch (this._userProvidedOrgRelativeTo)
+        switch (_userProvidedOrgRelativeTo)
         {
           case BoundariesRelativeTo.Absolute:
             return currentResultingOrg;
@@ -273,15 +273,15 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
       else
       {
-        return this._userProvidedOrgValue;
+        return _userProvidedOrgValue;
       }
     }
 
     public double GetEndValueToShowInDialog(double currentResultingEnd)
     {
-      if (this._endRescaling == BoundaryRescaling.Auto)
+      if (_endRescaling == BoundaryRescaling.Auto)
       {
-        switch (this._userProvidedEndRelativeTo)
+        switch (_userProvidedEndRelativeTo)
         {
           case BoundariesRelativeTo.Absolute:
             return currentResultingEnd;
@@ -301,7 +301,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
       else
       {
-        return this._userProvidedEndValue;
+        return _userProvidedEndValue;
       }
     }
 

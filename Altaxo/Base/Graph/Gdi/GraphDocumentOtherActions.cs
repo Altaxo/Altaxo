@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Gui.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Gui.Graph.Gdi;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -35,8 +35,10 @@ namespace Altaxo.Graph.Gdi
   {
     public static void ShowRenameDialog(this GraphDocument doc)
     {
-      var tvctrl = new Altaxo.Gui.Common.TextValueInputController(doc.Name, "Enter a name for the graph:");
-      tvctrl.Validator = new GraphRenameValidator(doc);
+      var tvctrl = new Altaxo.Gui.Common.TextValueInputController(doc.Name, "Enter a name for the graph:")
+      {
+        Validator = new GraphRenameValidator(doc)
+      };
 
       if (Current.Gui.ShowDialog(tvctrl, "Rename graph", false))
         doc.Name = tvctrl.InputText.Trim();
@@ -99,8 +101,7 @@ namespace Altaxo.Graph.Gdi
 
     public static void ShowLayerDialog(this GraphDocument doc, IList<int> layerNumber)
     {
-      HostLayer layer;
-      if (doc.RootLayer.IsValidIndex(layerNumber, out layer))
+      if (doc.RootLayer.IsValidIndex(layerNumber, out var layer))
       {
         if (layer is XYPlotLayer)
           XYPlotLayerController.ShowDialog((XYPlotLayer)layer);
@@ -117,8 +118,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="withGui">If true, a message box will ask the user for approval.</param>
     public static void DeleteLayer(this GraphDocument doc, IList<int> layerNumber, bool withGui)
     {
-      HostLayer layer;
-      if (!doc.RootLayer.IsValidIndex(layerNumber, out layer))
+      if (!doc.RootLayer.IsValidIndex(layerNumber, out var layer))
         return;
 
       if (withGui && false == Current.Gui.YesNoMessageBox("This will delete the active layer. Are you sure?", "Attention", false))
@@ -157,12 +157,13 @@ namespace Altaxo.Graph.Gdi
     /// <param name="layerNumber">Number of the layer to move.</param>
     public static void ShowMoveLayerToPositionDialog(this GraphDocument doc, IList<int> layerNumber)
     {
-      HostLayer layer;
-      if (!doc.RootLayer.IsValidIndex(layerNumber, out layer))
+      if (!doc.RootLayer.IsValidIndex(layerNumber, out var layer))
         return;
 
-      var ivictrl = new Altaxo.Gui.Common.IntegerValueInputController(0, "Please enter the new position (>=0):");
-      ivictrl.Validator = new Altaxo.Gui.Common.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      var ivictrl = new Altaxo.Gui.Common.IntegerValueInputController(0, "Please enter the new position (>=0):")
+      {
+        Validator = new Altaxo.Gui.Common.IntegerValueInputController.ZeroOrPositiveIntegerValidator()
+      };
       int newposition;
       if (!Current.Gui.ShowDialog(ivictrl, "New position", false))
         return;

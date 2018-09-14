@@ -24,10 +24,10 @@
 
 /* created on 9.9.2009 20:57:49 from peg generator V1.0 using 'Altaxo_LabelV1_PEG.txt' as input*/
 
-using Altaxo.Main.PegParser;
 using System;
 using System.IO;
 using System.Text;
+using Altaxo.Main.PegParser;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
@@ -68,10 +68,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       try
       {
-        EAltaxo_LabelV1 ruleEnum = (EAltaxo_LabelV1)id;
+        var ruleEnum = (EAltaxo_LabelV1)id;
         string s = ruleEnum.ToString();
-        int val;
-        if (int.TryParse(s, out val))
+        if (int.TryParse(s, out var val))
         {
           return base.GetRuleNameFromId(id);
         }

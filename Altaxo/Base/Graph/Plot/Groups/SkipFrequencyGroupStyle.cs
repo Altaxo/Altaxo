@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SkipFrequencyGroupStyle s = (SkipFrequencyGroupStyle)obj;
+        var s = (SkipFrequencyGroupStyle)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -68,8 +68,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public SkipFrequencyGroupStyle(SkipFrequencyGroupStyle from)
     {
-      this._isInitialized = from._isInitialized;
-      this._skipFrequency = from._skipFrequency;
+      _isInitialized = from._isInitialized;
+      _skipFrequency = from._skipFrequency;
     }
 
     #endregion Constructors
@@ -92,8 +92,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public void TransferFrom(IPlotGroupStyle fromb)
     {
-      SkipFrequencyGroupStyle from = (SkipFrequencyGroupStyle)fromb;
-      this._isInitialized = from._isInitialized;
+      var from = (SkipFrequencyGroupStyle)fromb;
+      _isInitialized = from._isInitialized;
       _skipFrequency = from._skipFrequency;
     }
 

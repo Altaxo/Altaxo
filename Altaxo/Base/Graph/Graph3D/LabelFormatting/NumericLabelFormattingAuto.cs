@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        NumericLabelFormattingAuto s = (NumericLabelFormattingAuto)obj;
+        var s = (NumericLabelFormattingAuto)obj;
 
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingAuto).BaseType);
       }
@@ -91,7 +91,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       {
         double[] ditems = new double[items.Length];
         for (int i = 0; i < items.Length; i++)
-          ditems[i] = (double)items[i];
+          ditems[i] = items[i];
 
         return FormatItems(ditems);
       }
@@ -108,7 +108,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     public static string[] FormatItems(double[] majorticks)
     {
       // print the major ticks
-      bool[] bExponentialForm = new Boolean[majorticks.Length];
+      bool[] bExponentialForm = new bool[majorticks.Length];
       // determine the number of trailing decimal digits
       string mtick;
       string[] mticks = new string[majorticks.Length];

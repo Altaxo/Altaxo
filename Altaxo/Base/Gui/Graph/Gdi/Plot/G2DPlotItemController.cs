@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -32,8 +34,6 @@ using Altaxo.Gui.Graph.Gdi.Plot.Groups;
 using Altaxo.Gui.Graph.Gdi.Plot.Styles;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
@@ -295,7 +295,7 @@ end_of_function:
     protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
     {
       if (e.NewInstance != null)
-        this._activeChildControl = e.NewInstance;
+        _activeChildControl = e.NewInstance;
 
       if (_disablerOfActiveChildControlChanged.IsSuspended)
         return;
@@ -326,7 +326,7 @@ end_of_function:
       if (_styleControllerDictionary.ContainsKey(style))
         return _styleControllerDictionary[style];
 
-      IMVCANController ct = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController), UseDocument.Directly);
+      var ct = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController), UseDocument.Directly);
 
       if (ct != null)
         _styleControllerDictionary.Add(style, ct);

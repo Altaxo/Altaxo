@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ColorProviderBGRY s = (ColorProviderBGRY)obj;
+        var s = (ColorProviderBGRY)obj;
         info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
       }
 

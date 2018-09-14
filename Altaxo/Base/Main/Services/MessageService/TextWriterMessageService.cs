@@ -34,7 +34,7 @@ namespace Altaxo.Main.Services.Implementation
       if (writer == null)
         throw new ArgumentNullException("writer");
       this.writer = writer;
-      this.DefaultMessageBoxTitle = this.ProductName = "SharpDevelop";
+      DefaultMessageBoxTitle = ProductName = "SharpDevelop";
     }
 
     public void WriteErrorLine(string caption, string message)

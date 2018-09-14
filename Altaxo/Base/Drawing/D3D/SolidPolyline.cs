@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing.D3D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
 {
@@ -66,10 +66,10 @@ namespace Altaxo.Drawing.D3D
 
         bool startCapForwardAndPositionProvided = false;
         bool startCapNeedsJoinSegment = false;
-        PolylinePointD3DAsClass startCapCOS = new PolylinePointD3DAsClass();
+        var startCapCOS = new PolylinePointD3DAsClass();
         bool endCapForwardAndPositionProvided = false;
         bool endCapNeedsJoinSegment = false;
-        PolylinePointD3DAsClass endCapCOS = new PolylinePointD3DAsClass();
+        var endCapCOS = new PolylinePointD3DAsClass();
 
         double startIndex = 0;
         double endIndex = polylinePoints.Count - 1;

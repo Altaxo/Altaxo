@@ -123,10 +123,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     int IComparable.CompareTo(object obj)
     {
-      FitFunctionCreatorAttribute other = (FitFunctionCreatorAttribute)obj;
-      int result = this._category.CompareTo(other._category);
+      var other = (FitFunctionCreatorAttribute)obj;
+      int result = _category.CompareTo(other._category);
       if (result == 0)
-        result = this._name.CompareTo(other._name);
+        result = _name.CompareTo(other._name);
       return result;
     }
   }

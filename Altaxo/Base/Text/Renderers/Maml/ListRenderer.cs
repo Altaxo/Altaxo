@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Markdig.Syntax;
 using System.Collections.Generic;
+using Markdig.Syntax;
 
 namespace Altaxo.Text.Renderers.Maml
 {

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
@@ -57,8 +57,8 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
     public override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
     {
       int pixelDim = GetPixelDimensions(maxEffectiveResolutionDpi);
-      Bitmap bmp = new Bitmap(pixelDim, pixelDim, PixelFormat.Format32bppArgb);
-      using (Graphics g = Graphics.FromImage(bmp))
+      var bmp = new Bitmap(pixelDim, pixelDim, PixelFormat.Format32bppArgb);
+      using (var g = Graphics.FromImage(bmp))
       {
         using (var brush = new SolidBrush(backColor))
         {
@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
         g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy; // we want the foreground color to be not influenced by the background color if we have a transparent foreground color
 
-        using (Pen pen = new Pen(foreColor, (float)(pixelDim * _structureFactor)))
+        using (var pen = new Pen(foreColor, (float)(pixelDim * _structureFactor)))
         {
           pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Center;
           g.DrawLine(pen, bmp.Width * 0.5f, -bmp.Height * 2, bmp.Width * 0.5f, bmp.Height * 2);

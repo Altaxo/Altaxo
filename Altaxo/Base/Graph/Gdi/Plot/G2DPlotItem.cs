@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public override Main.IDocumentLeafNode StyleObject
     {
       get { return _plotStyles; }
-      set { this.Style = (G2DPlotStyleCollection)value; }
+      set { Style = (G2DPlotStyleCollection)value; }
     }
 
     public G2DPlotStyleCollection Style
@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Gdi.Plot
         if (null == value)
           throw new System.ArgumentNullException();
 
-        if (ChildSetMember(ref _plotStyles, (G2DPlotStyleCollection)value))
+        if (ChildSetMember(ref _plotStyles, value))
         {
           EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
         }
@@ -100,7 +100,7 @@ namespace Altaxo.Graph.Gdi.Plot
         var from = obj as G2DPlotItem;
         if (from != null)
         {
-          this.Style = from.Style.Clone();
+          Style = from.Style.Clone();
         }
       }
       return copied;
@@ -167,8 +167,8 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       if (!(template is G2DPlotItem) || object.ReferenceEquals(this, template))
         return;
-      G2DPlotItem from = (G2DPlotItem)template;
-      this._plotStyles.SetFromTemplate(from._plotStyles, strictness);
+      var from = (G2DPlotItem)template;
+      _plotStyles.SetFromTemplate(from._plotStyles, strictness);
     }
 
     public override void PaintSymbol(Graphics g, RectangleF location)
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       _cachedPlotDataUsedForPainting = plotdata ?? throw new ArgumentNullException(nameof(plotdata));
 
-      if (null != this._plotStyles)
+      if (null != _plotStyles)
       {
         _plotStyles.Paint(g, layer, plotdata, prevPlotData, nextPlotData);
       }
@@ -236,7 +236,7 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         if (GdiExtensionMethods.IsPointIntoDistance((PointF)hitpoint, 2.5, ptArray))
         {
-          GraphicsPath gp = new GraphicsPath();
+          var gp = new GraphicsPath();
           gp.AddLines(ptArray);
           gp.Widen(new Pen(Color.Black, 5));
           return new HitTestObject(gp, this);
@@ -255,7 +255,7 @@ namespace Altaxo.Graph.Gdi.Plot
         }
         if (hitindex < 0)
           return null;
-        GraphicsPath gp = new GraphicsPath();
+        var gp = new GraphicsPath();
         int start = Math.Max(0, hitindex - 2);
         gp.AddLine(ptArray[start], ptArray[start + 1]);
         gp.AddLine(ptArray[start + 1], ptArray[start + 2]);

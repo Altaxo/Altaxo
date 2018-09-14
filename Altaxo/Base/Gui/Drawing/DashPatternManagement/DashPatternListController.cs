@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Drawing.DashPatternManagement;
 using Altaxo.Graph.Graph3D.Plot.Groups;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {

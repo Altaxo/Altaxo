@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
 {
@@ -44,12 +44,12 @@ namespace Altaxo.Drawing.D3D
     private List<TriangleIndices> _geometry_TriangleIndices;
 
     private int _index;
-    private Dictionary<Int64, int> _middlePointIndexCache;
+    private Dictionary<long, int> _middlePointIndexCache;
 
     public SolidIcoSphere(int recursionLevel)
     {
-      this._middlePointIndexCache = new Dictionary<long, int>();
-      this._index = 0;
+      _middlePointIndexCache = new Dictionary<long, int>();
+      _index = 0;
       _geometry_Positions = new List<PointD3D>();
 
       // create 12 vertices of a icosahedron
@@ -71,35 +71,37 @@ namespace Altaxo.Drawing.D3D
       AddVertex(new PointD3D(-t, 0, 1));
 
       // create 20 triangles of the icosahedron
-      var faces = new List<TriangleIndices>();
+      var faces = new List<TriangleIndices>
+      {
 
-      // 5 faces around point 0
-      faces.Add(new TriangleIndices(0, 11, 5));
-      faces.Add(new TriangleIndices(0, 5, 1));
-      faces.Add(new TriangleIndices(0, 1, 7));
-      faces.Add(new TriangleIndices(0, 7, 10));
-      faces.Add(new TriangleIndices(0, 10, 11));
+        // 5 faces around point 0
+        new TriangleIndices(0, 11, 5),
+        new TriangleIndices(0, 5, 1),
+        new TriangleIndices(0, 1, 7),
+        new TriangleIndices(0, 7, 10),
+        new TriangleIndices(0, 10, 11),
 
-      // 5 adjacent faces
-      faces.Add(new TriangleIndices(1, 5, 9));
-      faces.Add(new TriangleIndices(5, 11, 4));
-      faces.Add(new TriangleIndices(11, 10, 2));
-      faces.Add(new TriangleIndices(10, 7, 6));
-      faces.Add(new TriangleIndices(7, 1, 8));
+        // 5 adjacent faces
+        new TriangleIndices(1, 5, 9),
+        new TriangleIndices(5, 11, 4),
+        new TriangleIndices(11, 10, 2),
+        new TriangleIndices(10, 7, 6),
+        new TriangleIndices(7, 1, 8),
 
-      // 5 faces around point 3
-      faces.Add(new TriangleIndices(3, 9, 4));
-      faces.Add(new TriangleIndices(3, 4, 2));
-      faces.Add(new TriangleIndices(3, 2, 6));
-      faces.Add(new TriangleIndices(3, 6, 8));
-      faces.Add(new TriangleIndices(3, 8, 9));
+        // 5 faces around point 3
+        new TriangleIndices(3, 9, 4),
+        new TriangleIndices(3, 4, 2),
+        new TriangleIndices(3, 2, 6),
+        new TriangleIndices(3, 6, 8),
+        new TriangleIndices(3, 8, 9),
 
-      // 5 adjacent faces
-      faces.Add(new TriangleIndices(4, 9, 5));
-      faces.Add(new TriangleIndices(2, 4, 11));
-      faces.Add(new TriangleIndices(6, 2, 10));
-      faces.Add(new TriangleIndices(8, 6, 7));
-      faces.Add(new TriangleIndices(9, 8, 1));
+        // 5 adjacent faces
+        new TriangleIndices(4, 9, 5),
+        new TriangleIndices(2, 4, 11),
+        new TriangleIndices(6, 2, 10),
+        new TriangleIndices(8, 6, 7),
+        new TriangleIndices(9, 8, 1)
+      };
 
       // refine triangles
       for (int i = 0; i < recursionLevel; i++)
@@ -194,20 +196,19 @@ namespace Altaxo.Drawing.D3D
     {
       // first check if we have it already
       bool firstIsSmaller = p1 < p2;
-      Int64 smallerIndex = firstIsSmaller ? p1 : p2;
-      Int64 greaterIndex = firstIsSmaller ? p2 : p1;
+      long smallerIndex = firstIsSmaller ? p1 : p2;
+      long greaterIndex = firstIsSmaller ? p2 : p1;
       Int64 key = (smallerIndex << 32) + greaterIndex;
 
-      int ret;
-      if (this._middlePointIndexCache.TryGetValue(key, out ret))
+      if (_middlePointIndexCache.TryGetValue(key, out var ret))
       {
         return ret;
       }
 
       // not in cache, calculate it
-      PointD3D point1 = this._geometry_Positions[p1];
-      PointD3D point2 = this._geometry_Positions[p2];
-      PointD3D middle = new PointD3D(
+      PointD3D point1 = _geometry_Positions[p1];
+      PointD3D point2 = _geometry_Positions[p2];
+      var middle = new PointD3D(
           (point1.X + point2.X) / 2.0,
           (point1.Y + point2.Y) / 2.0,
           (point1.Z + point2.Z) / 2.0);
@@ -216,7 +217,7 @@ namespace Altaxo.Drawing.D3D
       int i = AddVertex(middle);
 
       // store it, return index
-      this._middlePointIndexCache.Add(key, i);
+      _middlePointIndexCache.Add(key, i);
       return i;
     }
   }

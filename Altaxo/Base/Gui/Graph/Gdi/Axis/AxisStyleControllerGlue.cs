@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Common;
-using System;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
@@ -145,7 +145,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       _context = _doc.GetPropertyContext();
 
       AxisStyleController = new AxisStyleController() { UseDocumentCopy = UseDocument.Directly };
-      AxisStyleController.MadeDirty += this.EhAxisStyleControllerDirty;
+      AxisStyleController.MadeDirty += EhAxisStyleControllerDirty;
 
       MajorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMajorLabel, RemoveMajorLabel) { UseDocumentCopy = UseDocument.Directly };
       MinorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMinorLabel, RemoveMinorLabel) { UseDocumentCopy = UseDocument.Directly };

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Geometry;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -74,10 +74,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       if (!_shapeCtrl.Apply(disposeController))
         return false;
 
-      List<PointD2D> list;
-      double tension;
-
-      if (_splinePointsCtrl.Apply(out list, out tension))
+      if (_splinePointsCtrl.Apply(out var list, out var tension))
       {
         if (!(list.Count >= 3))
         {

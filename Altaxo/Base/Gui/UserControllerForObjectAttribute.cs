@@ -64,8 +64,8 @@ namespace Altaxo.Gui
     public int CompareTo(object obj)
     {
       // Attention - we sort the items so that the item with the highest priority value is the first (!) entry in a sorted list
-      UserControllerForObjectAttribute to = (UserControllerForObjectAttribute)obj;
-      return this._priority == to._priority ? 0 : (this._priority > to._priority ? -1 : 1);
+      var to = (UserControllerForObjectAttribute)obj;
+      return _priority == to._priority ? 0 : (_priority > to._priority ? -1 : 1);
     }
 
     #endregion IComparable Members

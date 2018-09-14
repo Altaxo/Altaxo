@@ -43,7 +43,7 @@ namespace Altaxo.DataConnection
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     public bool AreEmpty

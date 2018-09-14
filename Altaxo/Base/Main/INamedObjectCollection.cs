@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
+using Altaxo.Collections;
 
 namespace Altaxo.Main
 {
@@ -220,36 +220,36 @@ namespace Altaxo.Main
       var other = e as NamedObjectCollectionChangedEventArgs;
       if (other == null)
         throw new ArgumentOutOfRangeException("Argument e should be of type NamedObjectCollectionEventArgs");
-      if (!object.ReferenceEquals(this._item, other._item))
+      if (!object.ReferenceEquals(_item, other._item))
         throw new ArgumentOutOfRangeException("Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.");
 
       // MultipleChanges overrrides everything
-      if (this._operation.HasFlag(NamedObjectCollectionChangeType.MultipleChanges))
+      if (_operation.HasFlag(NamedObjectCollectionChangeType.MultipleChanges))
         return;
       if (other._operation.HasFlag(NamedObjectCollectionChangeType.MultipleChanges))
       {
-        this._operation = NamedObjectCollectionChangeType.MultipleChanges;
-        this._item = MultipleChangesItem;
-        this._newItemName = null;
-        this._oldItemName = null;
+        _operation = NamedObjectCollectionChangeType.MultipleChanges;
+        _item = MultipleChangesItem;
+        _newItemName = null;
+        _oldItemName = null;
         return;
       }
 
       // Normal changes
 
-      this._newItemName = other._newItemName;
-      this._operation |= other._operation;
+      _newItemName = other._newItemName;
+      _operation |= other._operation;
 
       if (other._operation.HasFlag(NamedObjectCollectionChangeType.ItemAdded))
       {
-        this._operation = this._operation.WithClearedFlag(NamedObjectCollectionChangeType.ItemRemoved);
+        _operation = _operation.WithClearedFlag(NamedObjectCollectionChangeType.ItemRemoved);
         if (_oldItemName != _newItemName)
-          this._operation = this._operation.WithSetFlag(NamedObjectCollectionChangeType.ItemRenamed);
+          _operation = _operation.WithSetFlag(NamedObjectCollectionChangeType.ItemRenamed);
       }
       else if (other._operation.HasFlag(NamedObjectCollectionChangeType.ItemRemoved))
       {
-        this._operation = this._operation.WithClearedFlag(NamedObjectCollectionChangeType.ItemAdded);
-        this._operation = this._operation.WithClearedFlag(NamedObjectCollectionChangeType.ItemRenamed);
+        _operation = _operation.WithClearedFlag(NamedObjectCollectionChangeType.ItemAdded);
+        _operation = _operation.WithClearedFlag(NamedObjectCollectionChangeType.ItemRenamed);
       }
     }
 
@@ -261,7 +261,7 @@ namespace Altaxo.Main
     /// </returns>
     public override int GetHashCode()
     {
-      return 17 * this.GetType().GetHashCode() + 31 * this._item.GetHashCode();
+      return 17 * GetType().GetHashCode() + 31 * _item.GetHashCode();
     }
 
     /// <summary>
@@ -273,12 +273,12 @@ namespace Altaxo.Main
     /// </returns>
     public override bool Equals(object obj)
     {
-      if (null == obj || this.GetType() != obj.GetType())
+      if (null == obj || GetType() != obj.GetType())
         return false;
 
       var other = (NamedObjectCollectionChangedEventArgs)obj;
 
-      return object.ReferenceEquals(this._item, other._item);
+      return object.ReferenceEquals(_item, other._item);
     }
   }
 }

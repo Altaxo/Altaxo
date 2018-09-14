@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
@@ -112,7 +112,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AxisLineStyle s = (AxisLineStyle)obj;
+        var s = (AxisLineStyle)obj;
         info.AddValue("AxisPen", s._axisPen);
         info.AddValue("MajorPen", s._majorTickPen);
         info.AddValue("MinorPen", s._minorTickPen);
@@ -142,14 +142,14 @@ namespace Altaxo.Graph.Graph3D.Axis
         s._minorTickLength = info.GetDouble("MinorLength");
         s._axisPosition1 = (RADouble)info.GetValue("AxisPosition1", s);
         s._axisPosition2 = (RADouble)info.GetValue("AxisPosition2", s);
-        s._showFirstUpMajorTicks = (bool)info.GetBoolean("Major1Up");
-        s._showFirstDownMajorTicks = (bool)info.GetBoolean("Major1Dw");
-        s._showSecondUpMajorTicks = (bool)info.GetBoolean("Major2Up");
-        s._showSecondDownMajorTicks = (bool)info.GetBoolean("Major2Dw");
-        s._showFirstUpMinorTicks = (bool)info.GetBoolean("Minor1Up");
-        s._showFirstDownMinorTicks = (bool)info.GetBoolean("Minor1Dw");
-        s._showSecondUpMinorTicks = (bool)info.GetBoolean("Minor2Up");
-        s._showSecondDownMinorTicks = (bool)info.GetBoolean("Minor2Dw");
+        s._showFirstUpMajorTicks = info.GetBoolean("Major1Up");
+        s._showFirstDownMajorTicks = info.GetBoolean("Major1Dw");
+        s._showSecondUpMajorTicks = info.GetBoolean("Major2Up");
+        s._showSecondDownMajorTicks = info.GetBoolean("Major2Dw");
+        s._showFirstUpMinorTicks = info.GetBoolean("Minor1Up");
+        s._showFirstDownMinorTicks = info.GetBoolean("Minor1Dw");
+        s._showSecondUpMinorTicks = info.GetBoolean("Minor2Up");
+        s._showSecondDownMinorTicks = info.GetBoolean("Minor2Dw");
 
         return s;
       }
@@ -238,26 +238,26 @@ namespace Altaxo.Graph.Graph3D.Axis
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._axisPen = from._axisPen;
-        this._axisPosition1 = from._axisPosition1;
-        this._axisPosition2 = from._axisPosition2;
+        _axisPen = from._axisPen;
+        _axisPosition1 = from._axisPosition1;
+        _axisPosition2 = from._axisPosition2;
 
-        this._showFirstDownMajorTicks = from._showFirstDownMajorTicks;
-        this._showFirstDownMinorTicks = from._showFirstDownMinorTicks;
-        this._showFirstUpMajorTicks = from._showFirstUpMajorTicks;
-        this._showFirstUpMinorTicks = from._showFirstUpMinorTicks;
+        _showFirstDownMajorTicks = from._showFirstDownMajorTicks;
+        _showFirstDownMinorTicks = from._showFirstDownMinorTicks;
+        _showFirstUpMajorTicks = from._showFirstUpMajorTicks;
+        _showFirstUpMinorTicks = from._showFirstUpMinorTicks;
 
-        this._showSecondDownMajorTicks = from._showSecondDownMajorTicks;
-        this._showSecondDownMinorTicks = from._showSecondDownMinorTicks;
-        this._showSecondUpMajorTicks = from._showSecondUpMajorTicks;
-        this._showSecondUpMinorTicks = from._showSecondUpMinorTicks;
+        _showSecondDownMajorTicks = from._showSecondDownMajorTicks;
+        _showSecondDownMinorTicks = from._showSecondDownMinorTicks;
+        _showSecondUpMajorTicks = from._showSecondUpMajorTicks;
+        _showSecondUpMinorTicks = from._showSecondUpMinorTicks;
 
-        this._majorTickLength = from._majorTickLength;
-        this._majorTickPen = from._majorTickPen;
-        this._minorTickLength = from._minorTickLength;
-        this._minorTickPen = from._minorTickPen;
+        _majorTickLength = from._majorTickLength;
+        _majorTickPen = from._majorTickPen;
+        _minorTickLength = from._minorTickLength;
+        _minorTickPen = from._minorTickPen;
 
-        this._cachedAxisStyleInfo = from._cachedAxisStyleInfo;
+        _cachedAxisStyleInfo = from._cachedAxisStyleInfo;
 
         EhSelfChanged(EventArgs.Empty);
 
@@ -398,7 +398,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>The major tick length in point units (1/72 inch).</value>
     public double MajorTickLength
     {
-      get { return this._majorTickLength; }
+      get { return _majorTickLength; }
       set
       {
         if (value != _majorTickLength)
@@ -413,7 +413,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>The minor tick length in point units (1/72 inch).</value>
     public double MinorTickLength
     {
-      get { return this._minorTickLength; }
+      get { return _minorTickLength; }
       set
       {
         if (value != _minorTickLength)
@@ -428,12 +428,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>True if outer major ticks are drawn.</value>
     public bool FirstUpMajorTicks
     {
-      get { return this._showFirstUpMajorTicks; }
+      get { return _showFirstUpMajorTicks; }
       set
       {
         if (value != _showFirstUpMajorTicks)
         {
-          this._showFirstUpMajorTicks = value;
+          _showFirstUpMajorTicks = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -443,12 +443,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>True if inner major ticks are drawn.</value>
     public bool FirstDownMajorTicks
     {
-      get { return this._showFirstDownMajorTicks; }
+      get { return _showFirstDownMajorTicks; }
       set
       {
         if (value != _showFirstDownMajorTicks)
         {
-          this._showFirstDownMajorTicks = value;
+          _showFirstDownMajorTicks = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -458,12 +458,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>True if outer major ticks are drawn.</value>
     public bool SecondUpMajorTicks
     {
-      get { return this._showSecondUpMajorTicks; }
+      get { return _showSecondUpMajorTicks; }
       set
       {
         if (value != _showSecondUpMajorTicks)
         {
-          this._showSecondUpMajorTicks = value;
+          _showSecondUpMajorTicks = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -473,12 +473,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>True if inner major ticks are drawn.</value>
     public bool SecondDownMajorTicks
     {
-      get { return this._showSecondDownMajorTicks; }
+      get { return _showSecondDownMajorTicks; }
       set
       {
         if (value != _showSecondDownMajorTicks)
         {
-          this._showSecondDownMajorTicks = value;
+          _showSecondDownMajorTicks = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -488,12 +488,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>True if outer minor ticks are drawn.</value>
     public bool FirstUpMinorTicks
     {
-      get { return this._showFirstUpMinorTicks; }
+      get { return _showFirstUpMinorTicks; }
       set
       {
         if (value != _showFirstUpMinorTicks)
         {
-          this._showFirstUpMinorTicks = value;
+          _showFirstUpMinorTicks = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -503,12 +503,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>True if inner minor ticks are drawn.</value>
     public bool FirstDownMinorTicks
     {
-      get { return this._showFirstDownMinorTicks; }
+      get { return _showFirstDownMinorTicks; }
       set
       {
         if (value != _showFirstDownMinorTicks)
         {
-          this._showFirstDownMinorTicks = value;
+          _showFirstDownMinorTicks = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -518,12 +518,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>True if outer minor ticks are drawn.</value>
     public bool SecondUpMinorTicks
     {
-      get { return this._showSecondUpMinorTicks; }
+      get { return _showSecondUpMinorTicks; }
       set
       {
         if (value != _showSecondUpMinorTicks)
         {
-          this._showSecondUpMinorTicks = value;
+          _showSecondUpMinorTicks = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -533,12 +533,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <value>True if inner minor ticks are drawn.</value>
     public bool SecondDownMinorTicks
     {
-      get { return this._showSecondDownMinorTicks; }
+      get { return _showSecondDownMinorTicks; }
       set
       {
         if (value != _showSecondDownMinorTicks)
         {
-          this._showSecondDownMinorTicks = value;
+          _showSecondDownMinorTicks = value;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -552,7 +552,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// thickness of the minor ticks pen together.</value>
     public double Thickness1
     {
-      get { return this._axisPen.Thickness1; }
+      get { return _axisPen.Thickness1; }
       set
       {
         _axisPen = _axisPen.WithThickness1(value);
@@ -570,7 +570,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// thickness of the minor ticks pen together.</value>
     public double Thickness2
     {
-      get { return this._axisPen.Thickness2; }
+      get { return _axisPen.Thickness2; }
       set
       {
         _axisPen = _axisPen.WithThickness2(value);
@@ -588,7 +588,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// color of the minor ticks pen together.</value>
     public NamedColor Color
     {
-      get { return this._axisPen.Color; }
+      get { return _axisPen.Color; }
       set
       {
         _axisPen = _axisPen.WithColor(value);
@@ -605,7 +605,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// absolute value in point units (1/72 inch), or relative to the corresponding layer dimension (i.e layer width for bottom axis).</value>
     public RADouble Position1
     {
-      get { return this._axisPosition1; }
+      get { return _axisPosition1; }
       set
       {
         if (value != _axisPosition1)
@@ -623,7 +623,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// absolute value in point units (1/72 inch), or relative to the corresponding layer dimension (i.e layer width for bottom axis).</value>
     public RADouble Position2
     {
-      get { return this._axisPosition2; }
+      get { return _axisPosition2; }
       set
       {
         if (value != _axisPosition2)

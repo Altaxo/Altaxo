@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.CS
 {
@@ -60,10 +60,10 @@ namespace Altaxo.Graph.Gdi.CS
       base.CopyFrom(fromb);
       if (fromb is G2DCartesicCoordinateSystem)
       {
-        G2DCartesicCoordinateSystem from = (G2DCartesicCoordinateSystem)fromb;
-        this._isXYInterchanged = from._isXYInterchanged;
-        this._isXreverse = from._isXreverse;
-        this._isYreverse = from._isYreverse;
+        var from = (G2DCartesicCoordinateSystem)fromb;
+        _isXYInterchanged = from._isXYInterchanged;
+        _isXreverse = from._isXreverse;
+        _isYreverse = from._isYreverse;
       }
     }
 
@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Gdi.CS
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        G2DCartesicCoordinateSystem s = (G2DCartesicCoordinateSystem)obj;
+        var s = (G2DCartesicCoordinateSystem)obj;
 
         info.AddValue("XYInterchanged", s.IsXYInterchanged);
         info.AddValue("XReverse", s._isXreverse);
@@ -510,8 +510,7 @@ namespace Altaxo.Graph.Gdi.CS
 
     public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, Logical3D r0, Logical3D r1)
     {
-      double ax0, ax1, ay0, ay1;
-      if (LogicalToLayerCoordinates(r0, out ax0, out ay0) && LogicalToLayerCoordinates(r1, out ax1, out ay1))
+      if (LogicalToLayerCoordinates(r0, out var ax0, out var ay0) && LogicalToLayerCoordinates(r1, out var ax1, out var ay1))
       {
         g.AddLine((float)ax0, (float)ay0, (float)ax1, (float)ay1);
       }
@@ -529,7 +528,7 @@ namespace Altaxo.Graph.Gdi.CS
 
     public override object Clone()
     {
-      G2DCartesicCoordinateSystem result = new G2DCartesicCoordinateSystem();
+      var result = new G2DCartesicCoordinateSystem();
       result.CopyFrom(this);
       return result;
     }

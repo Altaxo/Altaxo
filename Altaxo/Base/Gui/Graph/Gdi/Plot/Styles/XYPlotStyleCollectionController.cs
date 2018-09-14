@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Main;
 using Altaxo.Main.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {

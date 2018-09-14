@@ -56,9 +56,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (!(obj is TypeArray))
           return false;
 
-        TypeArray from = (TypeArray)obj;
+        var from = (TypeArray)obj;
         for (int i = 0; i < _types.Length; i++)
-          if (this._types[i] != from._types[i])
+          if (_types[i] != from._types[i])
             return false;
 
         return true;
@@ -91,7 +91,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     private static TypeArray GetTypeArray(G2DPlotStyleCollection coll)
     {
-      System.Type[] types = new Type[coll.Count];
+      var types = new Type[coll.Count];
       for (int i = 0; i < types.Length; i++)
         types[i] = coll[i].GetType();
 
@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public static G2DPlotStyleCollection GetTemplate(string name, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      CreateCollectionProcedure proc = (CreateCollectionProcedure)_CreationProcByName[name];
+      var proc = (CreateCollectionProcedure)_CreationProcByName[name];
       if (null != proc)
         return proc(context);
       else
@@ -158,39 +158,49 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     private static G2DPlotStyleCollection CreateLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
-      coll.Add(new LinePlotStyle(context));
+      var coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context)
+      {
+        new LinePlotStyle(context)
+      };
       return coll;
     }
 
     private static G2DPlotStyleCollection CreateScatterStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
-      coll.Add(new ScatterPlotStyle(context));
+      var coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context)
+      {
+        new ScatterPlotStyle(context)
+      };
       return coll;
     }
 
     private static G2DPlotStyleCollection CreateScatterAndLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
-      coll.Add(new ScatterPlotStyle(context));
-      coll.Add(new LinePlotStyle(context));
+      var coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context)
+      {
+        new ScatterPlotStyle(context),
+        new LinePlotStyle(context)
+      };
       return coll;
     }
 
     private static G2DPlotStyleCollection CreateLabelAndScatterAndLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
-      coll.Add(new LabelPlotStyle(context));
-      coll.Add(new ScatterPlotStyle(context));
-      coll.Add(new LinePlotStyle(context));
+      var coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context)
+      {
+        new LabelPlotStyle(context),
+        new ScatterPlotStyle(context),
+        new LinePlotStyle(context)
+      };
       return coll;
     }
 
     private static G2DPlotStyleCollection CreateLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
-      coll.Add(new LabelPlotStyle(context));
+      var coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context)
+      {
+        new LabelPlotStyle(context)
+      };
       return coll;
     }
   }

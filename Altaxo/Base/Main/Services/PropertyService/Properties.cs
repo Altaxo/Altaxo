@@ -95,13 +95,13 @@ namespace Altaxo.Main.Services
 
     public Properties()
     {
-      this.syncRoot = new object();
+      syncRoot = new object();
     }
 
     private Properties(Properties parent)
     {
       this.parent = parent;
-      this.syncRoot = parent.syncRoot;
+      syncRoot = parent.syncRoot;
     }
 
     #endregion Constructor
@@ -210,8 +210,7 @@ namespace Altaxo.Main.Services
       {
         lock (syncRoot)
         {
-          object val;
-          dict.TryGetValue(key, out val);
+          dict.TryGetValue(key, out var val);
           return val as string ?? string.Empty;
         }
       }
@@ -230,8 +229,7 @@ namespace Altaxo.Main.Services
     {
       lock (syncRoot)
       {
-        object val;
-        if (dict.TryGetValue(key, out val))
+        if (dict.TryGetValue(key, out var val))
         {
           try
           {
@@ -270,8 +268,7 @@ namespace Altaxo.Main.Services
       }
       lock (syncRoot)
       {
-        object oldValue;
-        if (dict.TryGetValue(key, out oldValue))
+        if (dict.TryGetValue(key, out var oldValue))
         {
           if (object.Equals(serializedValue, oldValue))
             return;
@@ -298,15 +295,14 @@ namespace Altaxo.Main.Services
     {
       lock (syncRoot)
       {
-        object val;
-        if (dict.TryGetValue(key, out val))
+        if (dict.TryGetValue(key, out var val))
         {
           object[] serializedArray = val as object[];
           if (serializedArray != null)
           {
             try
             {
-              T[] array = new T[serializedArray.Length];
+              var array = new T[serializedArray.Length];
               for (int i = 0; i < array.Length; i++)
               {
                 array[i] = (T)Deserialize(serializedArray[i], typeof(T));
@@ -423,7 +419,7 @@ namespace Altaxo.Main.Services
     {
       if (serializedVal == null)
         return null;
-      XElement element = serializedVal as XElement;
+      var element = serializedVal as XElement;
       if (element != null)
       {
         using (var xmlReader = element.Elements().Single().CreateReader())
@@ -453,8 +449,7 @@ namespace Altaxo.Main.Services
       bool removed = false;
       lock (syncRoot)
       {
-        object oldValue;
-        if (dict.TryGetValue(key, out oldValue))
+        if (dict.TryGetValue(key, out var oldValue))
         {
           removed = true;
           HandleOldValue(oldValue);
@@ -509,8 +504,7 @@ namespace Altaxo.Main.Services
       Properties result;
       lock (syncRoot)
       {
-        object oldValue;
-        dict.TryGetValue(key, out oldValue);
+        dict.TryGetValue(key, out var oldValue);
         result = oldValue as Properties;
         if (result == null)
         {
@@ -526,7 +520,7 @@ namespace Altaxo.Main.Services
 
     private void HandleOldValue(object oldValue)
     {
-      Properties p = oldValue as Properties;
+      var p = oldValue as Properties;
       if (p != null)
       {
         Debug.Assert(p.parent == this);
@@ -555,8 +549,7 @@ namespace Altaxo.Main.Services
             throw new InvalidOperationException("Cannot add a properties container to itself.");
         }
 
-        object oldValue;
-        if (dict.TryGetValue(key, out oldValue))
+        if (dict.TryGetValue(key, out var oldValue))
         {
           if (oldValue == properties)
             return;
@@ -577,7 +570,7 @@ namespace Altaxo.Main.Services
 
     private void SetSyncRoot(object newSyncRoot)
     {
-      this.syncRoot = newSyncRoot;
+      syncRoot = newSyncRoot;
       foreach (var properties in dict.Values.OfType<Properties>())
       {
         properties.SetSyncRoot(newSyncRoot);
@@ -604,7 +597,7 @@ namespace Altaxo.Main.Services
       Properties copy = parent != null ? new Properties(parent) : new Properties();
       foreach (var pair in dict)
       {
-        Properties child = pair.Value as Properties;
+        var child = pair.Value as Properties;
         if (child != null)
           copy.dict.Add(pair.Key, child.CloneWithParent(copy));
         else
@@ -624,7 +617,7 @@ namespace Altaxo.Main.Services
 
     internal static Properties ReadFromAttributes(XmlReader reader)
     {
-      Properties properties = new Properties();
+      var properties = new Properties();
       if (reader.HasAttributes)
       {
         for (int i = 0; i < reader.AttributeCount; i++)
@@ -652,7 +645,7 @@ namespace Altaxo.Main.Services
 
     public static Properties Load(XElement element)
     {
-      Properties properties = new Properties();
+      var properties = new Properties();
       properties.LoadContents(element.Elements());
       return properties;
     }
@@ -679,7 +672,7 @@ namespace Altaxo.Main.Services
             break;
 
           case "Properties":
-            Properties child = new Properties(this);
+            var child = new Properties(this);
             child.LoadContents(element.Elements());
             dict[key] = child;
             break;
@@ -689,7 +682,7 @@ namespace Altaxo.Main.Services
 
     private static object[] LoadArray(IEnumerable<XElement> elements)
     {
-      List<object> result = new List<object>();
+      var result = new List<object>();
       foreach (var element in elements)
       {
         switch (element.Name.LocalName)
@@ -725,11 +718,11 @@ namespace Altaxo.Main.Services
 
     private IReadOnlyList<XElement> SaveContents()
     {
-      List<XElement> result = new List<XElement>();
+      var result = new List<XElement>();
       foreach (var pair in dict)
       {
-        XAttribute key = new XAttribute("key", pair.Key);
-        Properties child = pair.Value as Properties;
+        var key = new XAttribute("key", pair.Key);
+        var child = pair.Value as Properties;
         if (child != null)
         {
           var contents = child.SaveContents();
@@ -739,10 +732,10 @@ namespace Altaxo.Main.Services
         else if (pair.Value is object[])
         {
           object[] array = (object[])pair.Value;
-          XElement[] elements = new XElement[array.Length];
+          var elements = new XElement[array.Length];
           for (int i = 0; i < array.Length; i++)
           {
-            XElement obj = array[i] as XElement;
+            var obj = array[i] as XElement;
             if (obj != null)
             {
               elements[i] = new XElement(obj);

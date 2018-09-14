@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
@@ -32,6 +29,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
 {
@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph
           _doc.PrintOptions = new SingleGraphPrintOptions();
         _documentPrintOptionsController.InitializeDocument(_doc.PrintOptions);
         Current.Gui.FindAndAttachControlTo(_documentPrintOptionsController);
-        _doc.PrintOptions.PropertyChanged += new Altaxo.WeakPropertyChangedEventHandler(this.EhDocumentPrintOptionsChanged, x => _doc.PrintOptions.PropertyChanged -= x);
+        _doc.PrintOptions.PropertyChanged += new Altaxo.WeakPropertyChangedEventHandler(EhDocumentPrintOptionsChanged, x => _doc.PrintOptions.PropertyChanged -= x);
 
         InitAvailablePaperSizes(true);
         InitAvailablePaperSources(true);
@@ -298,10 +298,12 @@ namespace Altaxo.Gui.Graph
 
     private PrintDocument GetCloneOfPrintDocument(PrintDocument source)
     {
-      var result = new PrintDocument();
-      result.PrinterSettings = (PrinterSettings)source.PrinterSettings.Clone();
-      result.DefaultPageSettings = (PageSettings)source.DefaultPageSettings.Clone();
-      result.OriginAtMargins = source.OriginAtMargins;
+      var result = new PrintDocument
+      {
+        PrinterSettings = (PrinterSettings)source.PrinterSettings.Clone(),
+        DefaultPageSettings = (PageSettings)source.DefaultPageSettings.Clone(),
+        OriginAtMargins = source.OriginAtMargins
+      };
       return result;
     }
 
@@ -326,7 +328,7 @@ namespace Altaxo.Gui.Graph
       //Console.WriteLine("Begin InitiatePreview");
       //create CancellationTokenSource, so we can use the overload of
       //the Task.Factory that allows us to pass in a SynchronizationContext
-      CancellationTokenSource tokenSource = new CancellationTokenSource();
+      var tokenSource = new CancellationTokenSource();
       CancellationToken token = tokenSource.Token;
 
       _previewTask = Task.Factory.StartNew<PreviewPageInfo[]>(CreatePreviewPageInfo);
@@ -342,9 +344,11 @@ namespace Altaxo.Gui.Graph
       // use not the print document directly, but a clone - since we evaluate the print preview in a separate task
       var printDocument = GetCloneOfPrintDocument(Current.PrintingService.PrintDocument);
 
-      GraphDocumentPrintTask printTask = new GraphDocumentPrintTask(_doc);
-      printTask.IsPrintPreview = true;
-      System.Drawing.Printing.PreviewPrintController _previewController = new System.Drawing.Printing.PreviewPrintController();
+      var printTask = new GraphDocumentPrintTask(_doc)
+      {
+        IsPrintPreview = true
+      };
+      var _previewController = new System.Drawing.Printing.PreviewPrintController();
 
       printDocument.PrintController = _previewController;
       printDocument.PrintPage += printTask.EhPrintPage;
@@ -412,15 +416,15 @@ namespace Altaxo.Gui.Graph
         {
           _view.SelectedPrinterChanged -= EhSelectedPrinterChanged;
           _view.EditPrinterProperties -= EhEditPrinterProperties;
-          _view.PaperOrientationLandscapeChanged -= this.EhPaperOrientationLandscapeChanged;
-          _view.PaperSizeChanged -= this.EhPaperSizeChanged;
-          _view.PaperSourceChanged -= this.EhPaperSourceChanged;
-          _view.MarginLeftChanged -= this.EhMarginLeftChanged;
-          _view.MarginRightChanged -= this.EhMarginRightChanged;
-          _view.MarginTopChanged -= this.EhMarginTopChanged;
-          _view.MarginBottomChanged -= this.EhMarginBottomChanged;
-          _view.NumberOfCopiesChanged -= this.EhNumberOfCopiesChanged;
-          _view.CollateCopiesChanged -= this.EhCollateCopiesChanged;
+          _view.PaperOrientationLandscapeChanged -= EhPaperOrientationLandscapeChanged;
+          _view.PaperSizeChanged -= EhPaperSizeChanged;
+          _view.PaperSourceChanged -= EhPaperSourceChanged;
+          _view.MarginLeftChanged -= EhMarginLeftChanged;
+          _view.MarginRightChanged -= EhMarginRightChanged;
+          _view.MarginTopChanged -= EhMarginTopChanged;
+          _view.MarginBottomChanged -= EhMarginBottomChanged;
+          _view.NumberOfCopiesChanged -= EhNumberOfCopiesChanged;
+          _view.CollateCopiesChanged -= EhCollateCopiesChanged;
         }
 
         _view = value as IPrintingView;
@@ -430,15 +434,15 @@ namespace Altaxo.Gui.Graph
           Initialize(false);
           _view.SelectedPrinterChanged += EhSelectedPrinterChanged;
           _view.EditPrinterProperties += EhEditPrinterProperties;
-          _view.PaperOrientationLandscapeChanged += this.EhPaperOrientationLandscapeChanged;
-          _view.PaperSizeChanged += this.EhPaperSizeChanged;
-          _view.PaperSourceChanged += this.EhPaperSourceChanged;
-          _view.MarginLeftChanged += this.EhMarginLeftChanged;
-          _view.MarginRightChanged += this.EhMarginRightChanged;
-          _view.MarginTopChanged += this.EhMarginTopChanged;
-          _view.MarginBottomChanged += this.EhMarginBottomChanged;
-          _view.NumberOfCopiesChanged += this.EhNumberOfCopiesChanged;
-          _view.CollateCopiesChanged += this.EhCollateCopiesChanged;
+          _view.PaperOrientationLandscapeChanged += EhPaperOrientationLandscapeChanged;
+          _view.PaperSizeChanged += EhPaperSizeChanged;
+          _view.PaperSourceChanged += EhPaperSourceChanged;
+          _view.MarginLeftChanged += EhMarginLeftChanged;
+          _view.MarginRightChanged += EhMarginRightChanged;
+          _view.MarginTopChanged += EhMarginTopChanged;
+          _view.MarginBottomChanged += EhMarginBottomChanged;
+          _view.NumberOfCopiesChanged += EhNumberOfCopiesChanged;
+          _view.CollateCopiesChanged += EhCollateCopiesChanged;
         }
       }
     }

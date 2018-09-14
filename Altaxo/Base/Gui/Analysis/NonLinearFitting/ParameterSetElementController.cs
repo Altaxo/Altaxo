@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -91,8 +91,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       if (Altaxo.Serialization.GUIConversion.IsDouble(value))
       {
-        double t;
-        Altaxo.Serialization.GUIConversion.IsDouble(value, out t);
+        Altaxo.Serialization.GUIConversion.IsDouble(value, out var t);
         _tempdoc.Parameter = t;
       }
       else
@@ -105,8 +104,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       if (Altaxo.Serialization.GUIConversion.IsDouble(value))
       {
-        double t;
-        Altaxo.Serialization.GUIConversion.IsDouble(value, out t);
+        Altaxo.Serialization.GUIConversion.IsDouble(value, out var t);
         _tempdoc.Variance = t;
       }
       else

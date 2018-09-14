@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Graph.Graph3D.Axis;
 using Altaxo.Gui.Graph.Scales.Ticks;
-using System;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
@@ -212,7 +212,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       if (_view.ShowAxisLine && null == _doc.AxisLineStyle)
       {
         _doc.ShowAxisLine(_context);
-        this._axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
+        _axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
         _view.LineStyleView = _axisLineStyleController.ViewObject;
       }
       if (oldValue != _doc.IsAxisLineEnabled)

@@ -92,14 +92,14 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       var from = (ColorProviderARGBGradient)other;
 
       return
-        this._alpha0 == from._alpha0 &&
-        this._alpha1 == from._alpha1 &&
-        this._red0 == from._red0 &&
-        this._red1 == from._red1 &&
-        this._green0 == from._green0 &&
-        this._green1 == from._green1 &&
-        this._blue0 == from._blue0 &&
-        this._blue1 == from._blue1;
+        _alpha0 == from._alpha0 &&
+        _alpha1 == from._alpha1 &&
+        _red0 == from._red0 &&
+        _red1 == from._red1 &&
+        _green0 == from._green0 &&
+        _green1 == from._green1 &&
+        _blue0 == from._blue0 &&
+        _blue1 == from._blue1;
     }
 
     public override int GetHashCode()
@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._red0 = value;
         return result;
       }
@@ -151,7 +151,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._red1 = value;
         return result;
       }
@@ -176,7 +176,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._green0 = value;
         return result;
       }
@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._green1 = value;
         return result;
       }
@@ -226,7 +226,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._blue0 = value;
         return result;
       }
@@ -251,7 +251,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._blue1 = value;
         return result;
       }
@@ -276,7 +276,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._alpha0 = value;
         return result;
       }
@@ -301,7 +301,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._alpha1 = value;
         return result;
       }
@@ -329,7 +329,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._alpha0 = a;
         result._red0 = r;
         result._green0 = g;
@@ -361,7 +361,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+        var result = (ColorProviderARGBGradient)MemberwiseClone();
         result._alpha1 = a;
         result._red1 = r;
         result._green1 = g;

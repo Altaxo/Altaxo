@@ -232,7 +232,7 @@ namespace Altaxo.DataConnection
     public string GetFilterExpression()
     {
       // empty? easy
-      string filter = this.Filter.Trim();
+      string filter = Filter.Trim();
       if (filter.Length == 0)
       {
         return string.Empty;
@@ -243,7 +243,7 @@ namespace Altaxo.DataConnection
       if (m.Success)
       {
         return m.Groups[1].Value.Length == 0
-            ? string.Format("({0} {1})", this.GetFullName(true), filter) // > x
+            ? string.Format("({0} {1})", GetFullName(true), filter) // > x
             : string.Format("({0})", filter); // y > x
       }
 
@@ -252,13 +252,13 @@ namespace Altaxo.DataConnection
       if (m.Success)
       {
         return m.Groups[1].Value.Length == 0
-            ? string.Format("({0} {1})", this.GetFullName(), filter) // between x and y
+            ? string.Format("({0} {1})", GetFullName(), filter) // between x and y
             : string.Format("({0})", filter); // z between x and y
       }
 
       // oops...
       Debug.WriteLine("Warning: failed to parse filter...");
-      return string.Format("({0} {1})", this.GetFullName(true), filter);
+      return string.Format("({0} {1})", GetFullName(true), filter);
     }
 
     #endregion ** object model
@@ -269,7 +269,7 @@ namespace Altaxo.DataConnection
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     #endregion ** ICloneable

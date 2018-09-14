@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph
 {
@@ -205,7 +205,7 @@ namespace Altaxo.Graph
     /// <returns><c>True</c> if this value is equal to the other value.</returns>
     public bool Equals(TextureScaling other)
     {
-      return this._scalingMode == other._scalingMode && this._aspectPreserving == other._aspectPreserving && this._x == other._x && this._y == other._y;
+      return _scalingMode == other._scalingMode && _aspectPreserving == other._aspectPreserving && _x == other._x && _y == other._y;
     }
 
     public override bool Equals(object obj)

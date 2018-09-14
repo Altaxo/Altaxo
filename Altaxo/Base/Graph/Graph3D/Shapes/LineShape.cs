@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
@@ -80,25 +80,25 @@ namespace Altaxo.Graph.Graph3D.Shapes
     public LineShape(PointD3D startPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       : base(new ItemLocationDirect(), context)
     {
-      this.Position = startPosition;
+      Position = startPosition;
     }
 
     public LineShape(PointD3D startPosition, PointD3D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
       :
       this(startPosition, context)
     {
-      this._location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
-      this._location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
-      this._location.SizeZ = RADouble.NewAbs(endPosition.Z - startPosition.Z);
+      _location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
+      _location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
+      _location.SizeZ = RADouble.NewAbs(endPosition.Z - startPosition.Z);
     }
 
     public LineShape(PointD3D startPosition, PointD3D endPosition, double lineWidth, NamedColor lineColor)
       :
       this(startPosition, null)
     {
-      this._location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
-      this._location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
-      this._location.SizeZ = RADouble.NewAbs(endPosition.Z - startPosition.Z);
+      _location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
+      _location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
+      _location.SizeZ = RADouble.NewAbs(endPosition.Z - startPosition.Z);
       _linePen = _linePen.WithUniformThickness(lineWidth).WithColor(lineColor);
     }
 
@@ -245,7 +245,7 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
 
       if ((GripKind.Move & gripKind) != 0)
       {
-        var bounds = this.Bounds;
+        var bounds = Bounds;
         var wn = PolylineMath3D.GetWestNorthVectors(bounds.Size);
         var transformation = Matrix4x3.NewFromBasisVectorsAndLocation(wn.Item1, wn.Item2, bounds.Size.Normalized, PointD3D.Empty);
 
@@ -273,16 +273,16 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
       {
         if (gripLevel <= 1)
         {
-          LineShape ls = (LineShape)_hitobject;
-          PointD3D[] pts = new PointD3D[] { PointD3D.Empty, (PointD3D)ls.Size };
+          var ls = (LineShape)_hitobject;
+          var pts = new PointD3D[] { PointD3D.Empty, (PointD3D)ls.Size };
           for (int i = 0; i < pts.Length; i++)
           {
             var pt = ls._transformation.Transform(pts[i]);
-            pt = this.Transformation.Transform(pt);
+            pt = Transformation.Transform(pt);
             pts[i] = pt;
           }
 
-          IGripManipulationHandle[] grips = new IGripManipulationHandle[gripLevel == 0 ? 1 : 3];
+          var grips = new IGripManipulationHandle[gripLevel == 0 ? 1 : 3];
 
           // Translation grips
           var bounds = ls.Bounds;
@@ -290,7 +290,7 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
           var transformation = Matrix4x3.NewFromBasisVectorsAndLocation(wn.Item1, wn.Item2, bounds.Size.Normalized, PointD3D.Empty);
 
           transformation.AppendTransform(ls._transformation);
-          transformation.AppendTransform(this.Transformation);
+          transformation.AppendTransform(Transformation);
 
           double t1 = 0.55 * ls._linePen.Thickness1;
           double t2 = 0.55 * ls._linePen.Thickness2;

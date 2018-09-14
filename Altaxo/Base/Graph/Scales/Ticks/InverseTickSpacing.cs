@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       public object Clone()
       {
-        return this.MemberwiseClone();
+        return MemberwiseClone();
       }
     }
 
@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        InverseTickSpacing s = (InverseTickSpacing)obj;
+        var s = (InverseTickSpacing)obj;
 
         info.AddValue("MinGrace", s._orgGrace);
         info.AddValue("MaxGrace", s._endGrace);
@@ -786,17 +786,9 @@ namespace Altaxo.Graph.Scales.Ticks
         xend = h;
         modified = true;
       }
-      // here xorg and xend should both be positive, with xorg < xend
 
-      // try applying Grace and OneLever only ...
-      double xOrgWithGrace, xEndWithGrace;
-      bool modGrace = GetOrgEndWithGrace(xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithGrace, out xEndWithGrace);
-
-      // try applying tick snapping only (without Grace and OneLever)
-      double xOrgWithTickSnapping, xEndWithTickSnapping;
-      double majorTickSpan;
-      int minorTicks;
-      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithTickSnapping, out xEndWithTickSnapping, out majorTickSpan, out minorTicks);
+      bool modGrace = GetOrgEndWithGrace(xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithGrace, out var xEndWithGrace);
+      bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out var xOrgWithTickSnapping, out var xEndWithTickSnapping, out var majorTickSpan, out var minorTicks);
 
       // now compare the two
       if (xOrgWithTickSnapping <= xOrgWithGrace && xEndWithTickSnapping >= xEndWithGrace)

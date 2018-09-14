@@ -64,7 +64,7 @@ namespace Altaxo.Main
     /// </returns>
     public override int GetHashCode()
     {
-      return 7 * this.GetType().GetHashCode() + 13 * Originator.GetHashCode();
+      return 7 * GetType().GetHashCode() + 13 * Originator.GetHashCode();
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ namespace Altaxo.Main
       if (null == from)
         return false;
 
-      return object.ReferenceEquals(this.Originator, from.Originator);
+      return object.ReferenceEquals(Originator, from.Originator);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ namespace Altaxo.Main
       var other = e as SimpleCollectionChangedEventArgs;
       if (other == null)
         throw new ArgumentOutOfRangeException("Argument e should be of type SimpleCollectionChangedEventArgs");
-      if (!object.ReferenceEquals(this.Originator, other.Originator))
+      if (!object.ReferenceEquals(Originator, other.Originator))
         throw new ArgumentOutOfRangeException("Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.");
     }
   }

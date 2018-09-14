@@ -134,10 +134,10 @@ namespace Altaxo.Graph.Plot.Data
       var copied = base.CopyFrom(obj);
       if (copied && obj is XYNonlinearFitFunctionPlotData from)
       {
-        this._fitDocumentIdentifier = from._fitDocumentIdentifier;
-        ChildCopyToMember(ref this._fitDocument, from._fitDocument);
-        this._fitElementIndex = from._fitElementIndex;
-        this._dependentVariableIndex = from._dependentVariableIndex;
+        _fitDocumentIdentifier = from._fitDocumentIdentifier;
+        ChildCopyToMember(ref _fitDocument, from._fitDocument);
+        _fitElementIndex = from._fitElementIndex;
+        _dependentVariableIndex = from._dependentVariableIndex;
       }
       return copied;
     }

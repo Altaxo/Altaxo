@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         Clear();
 
-        this._innerList = new List<IG3DPlotStyle>();
+        _innerList = new List<IG3DPlotStyle>();
         for (int i = 0; i < from._innerList.Count; ++i)
           Add((IG3DPlotStyle)from[i].Clone());
 
@@ -126,9 +126,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        var oldInnerList = this._innerList;
+        var oldInnerList = _innerList;
 
-        this._innerList = new List<IG3DPlotStyle>();
+        _innerList = new List<IG3DPlotStyle>();
 
         for (int i = 0; i < from._innerList.Count; ++i)
         {
@@ -214,7 +214,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       _innerList = new List<IG3DPlotStyle>();
       for (int i = 0; i < styles.Length; ++i)
         if (styles[i] != null)
-          this.Add(styles[i], false);
+          Add(styles[i], false);
     }
 
     public G3DPlotStyleCollection(G3DPlotStyleCollection from)
@@ -249,7 +249,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         {
           var indicesFrom = new SortedSet<int>(System.Linq.Enumerable.Range(0, from.Count));
 
-          for (int i = 0; i < this.Count; ++i)
+          for (int i = 0; i < Count; ++i)
           {
             var thisStyleType = this[i].GetType();
 
@@ -294,7 +294,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       if (toadd != null)
       {
-        this._innerList.Add(toadd);
+        _innerList.Add(toadd);
         toadd.ParentObject = this;
 
         if (withReorganizationAndEvents)
@@ -308,7 +308,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       if (ps != null)
       {
-        this._innerList[idx] = ps;
+        _innerList[idx] = ps;
         ps.ParentObject = this;
 
         if (withReorganizationAndEvents)
@@ -324,7 +324,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         for (int i = 0; i < toadd.Length; i++)
         {
-          this._innerList.Add(toadd[i]);
+          _innerList.Add(toadd[i]);
           toadd[i].ParentObject = this;
         }
 
@@ -336,7 +336,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       if (toinsert != null)
       {
-        this._innerList.Insert(whichposition, toinsert);
+        _innerList.Insert(whichposition, toinsert);
         toinsert.ParentObject = this;
 
         EhSelfChanged(EventArgs.Empty);
@@ -347,7 +347,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       if (_innerList != null)
       {
-        this._innerList.Clear();
+        _innerList.Clear();
 
         EhSelfChanged(EventArgs.Empty);
       }
@@ -418,8 +418,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <param name="pdata"></param>
     public void DistributeSubStyleChange(int pivot, IPlotArea layer, Processed3DPlotData pdata)
     {
-      PlotGroupStyleCollection externGroup = new PlotGroupStyleCollection();
-      PlotGroupStyleCollection localGroup = new PlotGroupStyleCollection();
+      var externGroup = new PlotGroupStyleCollection();
+      var localGroup = new PlotGroupStyleCollection();
       // because we don't step, the order is essential only for PrepareStyles
       for (int i = 0; i < _innerList.Count; i++)
         CollectLocalGroupStyles(externGroup, localGroup);
@@ -446,8 +446,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <param name="pdata"></param>
     public void PrepareNewSubStyle(IG3DPlotStyle newSubStyle, IPlotArea layer, Processed3DPlotData pdata)
     {
-      PlotGroupStyleCollection externGroup = new PlotGroupStyleCollection();
-      PlotGroupStyleCollection localGroup = new PlotGroupStyleCollection();
+      var externGroup = new PlotGroupStyleCollection();
+      var localGroup = new PlotGroupStyleCollection();
       // because we don't step, the order is essential only for PrepareStyles
       for (int i = 0; i < _innerList.Count; i++)
         this[i].CollectLocalGroupStyles(externGroup, localGroup);
@@ -542,7 +542,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     string INamedObject.Name
     {
-      get { return this.GetType().Name; }
+      get { return GetType().Name; }
     }
   }
 }

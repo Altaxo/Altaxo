@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Scripting;
 using System;
+using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Scripting
 {
@@ -105,11 +105,11 @@ namespace Altaxo.Gui.Scripting
     {
       if (args == null || args.Length == 0)
         return false;
-      IFitFunctionScriptText doc = args[0] as IFitFunctionScriptText;
+      var doc = args[0] as IFitFunctionScriptText;
       if (doc == null)
         return false;
 
-      this.m_Script = doc;
+      m_Script = doc;
       m_TempScript = (IFitFunctionScriptText)m_Script.CloneForModification();
 
       SetElements(true);
@@ -141,9 +141,9 @@ namespace Altaxo.Gui.Scripting
 
         _tempIsUsingUserDefinedParameters = m_TempScript.IsUsingUserDefinedParameterNames;
         _tempNumberOfParameters = m_TempScript.NumberOfParameters;
-        _tempUserDefinedParameters = this.GetParametersAsLine(_tempIsUsingUserDefinedParameters);
-        _tempIndependentVariables = this.GetIndependentVariablesAsLine();
-        _tempDependentVariables = this.GetDependentVariablesAsLine();
+        _tempUserDefinedParameters = GetParametersAsLine(_tempIsUsingUserDefinedParameters);
+        _tempIndependentVariables = GetIndependentVariablesAsLine();
+        _tempDependentVariables = GetDependentVariablesAsLine();
 
         View.SetCheckUseUserDefinedParameters(_tempIsUsingUserDefinedParameters);
         View.SetNumberOfParameters(_tempNumberOfParameters, !_tempIsUsingUserDefinedParameters);
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Scripting
 
     private string GetDefaultParametersAsLine(int numberOfParameters)
     {
-      System.Text.StringBuilder stb = new System.Text.StringBuilder();
+      var stb = new System.Text.StringBuilder();
       int max = Math.Min(numberOfParameters, 9);
       for (int i = 0; i < max; i++)
       {
@@ -217,7 +217,7 @@ namespace Altaxo.Gui.Scripting
 
     private string GetParametersAsLine(bool isUsingUserDefinedParameters)
     {
-      System.Text.StringBuilder stb = new System.Text.StringBuilder();
+      var stb = new System.Text.StringBuilder();
       int i;
       int numberOfParameters = m_TempScript.NumberOfParameters;
       bool userDef = isUsingUserDefinedParameters;
@@ -240,7 +240,7 @@ namespace Altaxo.Gui.Scripting
 
     public string GetIndependentVariablesAsLine()
     {
-      System.Text.StringBuilder stb = new System.Text.StringBuilder();
+      var stb = new System.Text.StringBuilder();
       for (int i = 0; i < m_TempScript.NumberOfIndependentVariables; ++i)
       {
         stb.Append(m_TempScript.IndependentVariableName(i));
@@ -252,7 +252,7 @@ namespace Altaxo.Gui.Scripting
 
     public string GetDependentVariablesAsLine()
     {
-      System.Text.StringBuilder stb = new System.Text.StringBuilder();
+      var stb = new System.Text.StringBuilder();
       for (int i = 0; i < m_TempScript.NumberOfDependentVariables; ++i)
       {
         stb.Append(m_TempScript.DependentVariableName(i));
@@ -391,9 +391,9 @@ namespace Altaxo.Gui.Scripting
     {
       bool successI = true, successD = true, successP = true;
 
-      string[] independentNames, dependentNames, parameterNames = null;
-      successI = ParseIndependentVariables(this._tempIndependentVariables, out independentNames);
-      successD = ParseDependentVariables(_tempDependentVariables, out dependentNames);
+      string[] parameterNames = null;
+      successI = ParseIndependentVariables(_tempIndependentVariables, out var independentNames);
+      successD = ParseDependentVariables(_tempDependentVariables, out var dependentNames);
       if (_tempIsUsingUserDefinedParameters)
         successP = ParseUserDefinedParameters(_tempUserDefinedParameters, out parameterNames);
 
@@ -452,7 +452,7 @@ namespace Altaxo.Gui.Scripting
 
     public bool Apply(bool disposeController)
     {
-      if (this._scriptController.Apply(disposeController))
+      if (_scriptController.Apply(disposeController))
       {
         m_TempScript = (IFitFunctionScriptText)_scriptController.ModelObject;
 
@@ -484,17 +484,17 @@ namespace Altaxo.Gui.Scripting
 
     public void SetText(string text)
     {
-      this._scriptController.SetText(text);
+      _scriptController.SetText(text);
     }
 
     public void Compile()
     {
-      this._scriptController.Compile();
+      _scriptController.Compile();
     }
 
     public void Update()
     {
-      this._scriptController.Update();
+      _scriptController.Update();
     }
 
     public void Cancel()

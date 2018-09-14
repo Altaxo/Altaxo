@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Scripting;
 using System;
 using System.Collections.Generic;
+using Altaxo.Scripting;
 
 namespace Altaxo.Data
 {
@@ -84,8 +84,7 @@ namespace Altaxo.Data
 
     public bool Remove(DataColumn key)
     {
-      IColumnScriptText oldValue;
-      if (_innerDict.TryGetValue(key, out oldValue))
+      if (_innerDict.TryGetValue(key, out var oldValue))
       {
         _innerDict.Remove(key);
         oldValue.Dispose();
@@ -119,8 +118,7 @@ namespace Altaxo.Data
         if (null == value)
           throw new ArgumentNullException("value");
 
-        IColumnScriptText oldValue;
-        _innerDict.TryGetValue(key, out oldValue);
+        _innerDict.TryGetValue(key, out var oldValue);
 
         if (object.ReferenceEquals(oldValue, value))
           return;

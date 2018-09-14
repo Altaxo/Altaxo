@@ -132,7 +132,7 @@ namespace Altaxo.Data.Transformations
       if (null == from)
         return false;
 
-      if (this._scale != from._scale)
+      if (_scale != from._scale)
         return false;
 
       return true;
@@ -140,7 +140,7 @@ namespace Altaxo.Data.Transformations
 
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode() + 17 * _scale.GetHashCode();
+      return GetType().GetHashCode() + 17 * _scale.GetHashCode();
     }
 
     public bool IsEditable { get { return true; } }

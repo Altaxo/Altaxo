@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
@@ -84,8 +84,10 @@ namespace Altaxo.Gui.Graph.Gdi
 
       if (initData)
       {
-        _listOfUniqueItem = new SelectableListNodeList();
-        _listOfUniqueItem.Add(new SelectableListNode("Common", null, true));
+        _listOfUniqueItem = new SelectableListNodeList
+        {
+          new SelectableListNode("Common", null, true)
+        };
       }
 
       if (null != _view)
@@ -232,7 +234,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public static bool ShowDialog(HostLayer layer, string currentPage)
     {
-      HostLayerController ctrl = new HostLayerController(layer, currentPage);
+      var ctrl = new HostLayerController(layer, currentPage);
       return Current.Gui.ShowDialog(ctrl, layer.Name, true);
     }
 
@@ -249,7 +251,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
-      XYPlotLayer layer = hit.HittedObject as XYPlotLayer;
+      var layer = hit.HittedObject as XYPlotLayer;
       if (layer == null)
         return false;
 

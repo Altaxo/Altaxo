@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -121,7 +121,7 @@ namespace Altaxo.AddInItems
 
           case XmlNodeType.Element:
             string nodeName = reader.LocalName;
-            Properties properties = Properties.ReadFromAttributes(reader);
+            var properties = Properties.ReadFromAttributes(reader);
             switch (nodeName)
             {
               case "Identity":

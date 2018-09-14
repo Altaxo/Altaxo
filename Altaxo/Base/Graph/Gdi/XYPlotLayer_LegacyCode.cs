@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -392,7 +392,7 @@ namespace Altaxo.Graph.Gdi
           int count = info.OpenArray();
           for (int i = 0; i < count; i++)
           {
-            XYPlotLayer l = (XYPlotLayer)info.GetValue("XYPlotLayer", s);
+            var l = (XYPlotLayer)info.GetValue("XYPlotLayer", s);
             s.Add(l);
           }
           info.CloseArray(count);
@@ -428,7 +428,7 @@ namespace Altaxo.Graph.Gdi
           int count = info.OpenArray();
           for (int i = 0; i < count; i++)
           {
-            XYPlotLayer l = (XYPlotLayer)info.GetValue("XYPlotLayer", s);
+            var l = (XYPlotLayer)info.GetValue("XYPlotLayer", s);
             s.Add(l);
           }
           info.CloseArray(count);

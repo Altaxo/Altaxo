@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Background
 {
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.Background
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DarkMarbel s = (DarkMarbel)obj;
+        var s = (DarkMarbel)obj;
         info.AddValue("Brush", s._brush);
         info.AddValue("ShadowLength", s._shadowLength);
       }
@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public DarkMarbel(NamedColor c)
     {
-      this.Brush = new BrushX(c);
+      Brush = new BrushX(c);
     }
 
     public DarkMarbel(DarkMarbel from)
@@ -110,8 +110,8 @@ namespace Altaxo.Graph.Gdi.Background
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._shadowLength = from._shadowLength;
-      this.Brush = from._brush;
+      _shadowLength = from._shadowLength;
+      Brush = from._brush;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -147,9 +147,9 @@ namespace Altaxo.Graph.Gdi.Background
       brush.SetEnvironment(outerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
       g.FillRectangle(brush, (RectangleF)outerArea);
 
-      SolidBrush twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
-      RectangleF oA = (RectangleF)outerArea;
-      RectangleF iA = (RectangleF)innerArea;
+      var twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
+      var oA = (RectangleF)outerArea;
+      var iA = (RectangleF)innerArea;
       g.FillPolygon(twhite, new PointF[] {
                                                       new PointF(oA.Left,oA.Top), // upper left point
                                                       new PointF(oA.Right,oA.Top), // go to the right
@@ -159,7 +159,7 @@ namespace Altaxo.Graph.Gdi.Background
                                                       new PointF(oA.Left,oA.Bottom) // lower left corner
       });
 
-      SolidBrush tblack = new SolidBrush(Color.FromArgb(128, 0, 0, 0));
+      var tblack = new SolidBrush(Color.FromArgb(128, 0, 0, 0));
       g.FillPolygon(tblack, new PointF[] {
                                                       new PointF(oA.Right,oA.Bottom),
                                                       new PointF(oA.Right,oA.Top),

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DropLinePlotStyle s = (DropLinePlotStyle)obj;
+        var s = (DropLinePlotStyle)obj;
 
         info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
         info.AddValue("SkipFreq", s._skipFreq);
@@ -226,17 +226,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._independentSkipFreq = from._independentSkipFreq;
-        this._skipFreq = from._skipFreq;
-        this._dropTargets = from._dropTargets; // immutable
+        _independentSkipFreq = from._independentSkipFreq;
+        _skipFreq = from._skipFreq;
+        _dropTargets = from._dropTargets; // immutable
 
-        this._additionalDropTargetIsEnabled = from._additionalDropTargetIsEnabled;
-        this._additionalDropTargetPerpendicularAxis = from._additionalDropTargetPerpendicularAxis;
-        this._additionalDropTargetUsePhysicalBaseValue = from._additionalDropTargetUsePhysicalBaseValue;
-        this._additionalDropTargetBaseValue = from._additionalDropTargetBaseValue;
+        _additionalDropTargetIsEnabled = from._additionalDropTargetIsEnabled;
+        _additionalDropTargetPerpendicularAxis = from._additionalDropTargetPerpendicularAxis;
+        _additionalDropTargetUsePhysicalBaseValue = from._additionalDropTargetUsePhysicalBaseValue;
+        _additionalDropTargetBaseValue = from._additionalDropTargetBaseValue;
 
-        this._pen = from._pen; // immutable
-        this._independentColor = from._independentColor;
+        _pen = from._pen; // immutable
+        _independentColor = from._independentColor;
 
         _independentSymbolSize = from._independentSymbolSize;
         _symbolSize = from._symbolSize;
@@ -245,10 +245,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         _lineWidth2Offset = from._lineWidth2Offset;
         _lineWidth2Factor = from._lineWidth2Factor;
 
-        this._gapAtStartOffset = from._gapAtStartOffset;
-        this._gapAtStartFactor = from._gapAtStartFactor;
-        this._gapAtEndOffset = from._gapAtEndOffset;
-        this._gapAtEndFactor = from._gapAtEndFactor;
+        _gapAtStartOffset = from._gapAtStartOffset;
+        _gapAtStartFactor = from._gapAtStartFactor;
+        _gapAtEndOffset = from._gapAtEndOffset;
+        _gapAtEndFactor = from._gapAtEndFactor;
 
         EhSelfChanged(EventArgs.Empty);
 
@@ -288,7 +288,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (null == pen)
         throw new ArgumentNullException(nameof(pen));
 
-      this._dropTargets = new CSPlaneIDList(new[] { planeID });
+      _dropTargets = new CSPlaneIDList(new[] { planeID });
 
       // Cached values
       SetCachedValues();
@@ -296,7 +296,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public DropLinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      this._dropTargets = new CSPlaneIDList(new[] { new CSPlaneID(2, 0) });
+      _dropTargets = new CSPlaneIDList(new[] { new CSPlaneID(2, 0) });
 
       var color = GraphDocument.GetDefaultPlotColor(context);
       double penWidth = GraphDocument.GetDefaultPenWidth(context);
@@ -323,13 +323,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public PenX3D Pen
     {
-      get { return this._pen; }
+      get { return _pen; }
       set
       {
         if (null == value)
           throw new ArgumentNullException(nameof(value));
 
-        if (!object.ReferenceEquals(this._pen, value))
+        if (!object.ReferenceEquals(_pen, value))
         {
           _pen = value;
           SetCachedValues();
@@ -340,7 +340,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public NamedColor Color
     {
-      get { return this._pen.Material.Color; }
+      get { return _pen.Material.Color; }
       set
       {
         Pen = _pen.WithColor(value);
@@ -656,13 +656,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return !this._independentColor;
+        return !_independentColor;
       }
     }
 
     public bool IsColorReceiver
     {
-      get { return !this._independentColor; }
+      get { return !_independentColor; }
     }
 
     public bool IsSymbolSizeProvider
@@ -733,8 +733,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
             foreach (CSPlaneID id in dropTargets)
             {
-              IPolylineD3D isoLine;
-              layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
+              layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out var isoLine);
               if (gapStart != 0 || gapEnd != 0)
                 isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
 
@@ -778,8 +777,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
             Logical3D r3d = layer.GetLogical3D(pdata, j + rangeList[r].OffsetToOriginal);
             foreach (CSPlaneID id in _dropTargets)
             {
-              IPolylineD3D isoLine;
-              layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
+              layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out var isoLine);
 
               if (gapStart != 0 || gapEnd != 0)
                 isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
@@ -808,7 +806,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.AddExternalGroupStyle(externalGroups);
 
       ScatterSymbolGroupStyle.AddExternalGroupStyle(externalGroups);
@@ -822,9 +820,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this.Color; });
+        { return Color; });
 
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
       if (!_independentSkipFreq)
@@ -834,11 +832,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
-      if (this.IsColorReceiver)
+      if (IsColorReceiver)
       {
         // try to get a constant color ...
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { this.Color = c; });
+        { Color = c; });
         // but if there is a color evaluation function, then use that function with higher priority
         if (!VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)
         { _cachedColorForIndexFunction = evalFunc; }))
@@ -850,7 +848,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         _cachedSymbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._cachedSymbolSize = size; });
+        { _cachedSymbolSize = size; });
         // but if there is an symbol size evaluation function, then use this with higher priority.
         if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc)
         { _cachedSymbolSizeForIndexFunction = evalFunc; }))
@@ -866,7 +864,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         _skipFreq = 1;
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this._skipFreq = c; });
+        { _skipFreq = c; });
       }
     }
 

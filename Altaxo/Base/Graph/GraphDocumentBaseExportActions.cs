@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui.Common.MultiRename;
-using Altaxo.Main.Commands;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common.MultiRename;
+using Altaxo.Main.Commands;
 
 namespace Altaxo.Graph
 {
@@ -41,7 +41,7 @@ namespace Altaxo.Graph
   {
     private static IList<KeyValuePair<string, string>> GetFileFilterString(ImageFormat fmt)
     {
-      List<KeyValuePair<string, string>> filter = new List<KeyValuePair<string, string>>();
+      var filter = new List<KeyValuePair<string, string>>();
 
       if (fmt == ImageFormat.Bmp)
         filter.Add(new KeyValuePair<string, string>("*.bmp", "Bitmap files (*.bmp)"));
@@ -90,7 +90,7 @@ namespace Altaxo.Graph
     /// <param name="documents">List with graph documents to export.</param>
     public static void ShowExportMultipleGraphsDialog(IEnumerable<Graph.GraphDocumentBase> documents)
     {
-      MultiRenameData mrData = new MultiRenameData();
+      var mrData = new MultiRenameData();
       MultiRenameDocuments.RegisterCommonDocumentShortcuts(mrData);
       mrData.RegisterStringShortcut("E", (o, i) => _graphExportOptionsToFile.GetDefaultFileNameExtension(), "File extension (depends on the image type that was chosen before");
 
@@ -104,7 +104,7 @@ namespace Altaxo.Graph
 
       mrData.DefaultPatternString = "[SN][E]";
 
-      MultiRenameController mrController = new MultiRenameController();
+      var mrController = new MultiRenameController();
       mrController.InitializeDocument(mrData);
       Current.Gui.ShowDialog(mrController, "Export multiple graphs");
     }

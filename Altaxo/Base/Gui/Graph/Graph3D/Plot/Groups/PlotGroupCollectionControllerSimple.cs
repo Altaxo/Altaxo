@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D.Plot.Groups;
-using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Graph3D.Plot.Groups;
+using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
@@ -80,12 +80,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
       if (null != _view)
       {
-        bool bSerial;
-        bool color;
-        bool linestyle;
-        bool symbol;
 
-        IsSimplePlotGrouping(_doc, out bSerial, out color, out linestyle, out symbol);
+        IsSimplePlotGrouping(_doc, out var bSerial, out var color, out var linestyle, out var symbol);
 
         _view.InitializePlotGroupConditions(
           color,
@@ -165,8 +161,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     /// <returns>True if the <see cref="PlotGroupStyleCollection"/> can be presented by a simple controller, otherwise False.</returns>
     public static bool IsSimplePlotGrouping(PlotGroupStyleCollection plotGroupStyles)
     {
-      bool b1, b2, b3, b4;
-      return IsSimplePlotGrouping(plotGroupStyles, out b1, out b2, out b3, out b4);
+      return IsSimplePlotGrouping(plotGroupStyles, out var b1, out var b2, out var b3, out var b4);
     }
 
     /// <summary>

@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Scales
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinkedScaleParameters s = (LinkedScaleParameters)obj;
+        var s = (LinkedScaleParameters)obj;
 
         info.AddValue("OrgA", s._orgA);
         info.AddValue("OrgB", s._orgB);
@@ -143,15 +143,15 @@ namespace Altaxo.Graph.Scales
     public void SetTo(double orgA, double orgB, double endA, double endB)
     {
       if (
-        (orgA != this.OrgA) ||
-        (orgB != this.OrgB) ||
-        (endA != this.EndA) ||
-        (endB != this.EndB))
+        (orgA != OrgA) ||
+        (orgB != OrgB) ||
+        (endA != EndA) ||
+        (endB != EndB))
       {
-        this._orgA = orgA;
-        this._orgB = orgB;
-        this._endA = endA;
-        this._endB = endB;
+        _orgA = orgA;
+        _orgB = orgB;
+        _endA = endA;
+        _endB = endB;
 
         EhSelfChanged(EventArgs.Empty);
       }

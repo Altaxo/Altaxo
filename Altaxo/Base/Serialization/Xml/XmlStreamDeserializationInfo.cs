@@ -138,8 +138,7 @@ namespace Altaxo.Serialization.Xml
     /// <inheritdoc />
     public T GetPropertyOrDefault<T>(string propertyKey)
     {
-      object result;
-      if (_propertyDictionary.TryGetValue(propertyKey, out result))
+      if (_propertyDictionary.TryGetValue(propertyKey, out var result))
       {
         return (T)result;
       }

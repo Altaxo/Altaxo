@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Background
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Gdi.Background
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        FilledRectangle s = (FilledRectangle)obj;
+        var s = (FilledRectangle)obj;
         info.AddValue("Brush", s._brush);
       }
 
@@ -71,13 +71,15 @@ namespace Altaxo.Graph.Gdi.Background
 
     public FilledRectangle(NamedColor c)
     {
-      _brush = new BrushX(c);
-      _brush.ParentObject = this;
+      _brush = new BrushX(c)
+      {
+        ParentObject = this
+      };
     }
 
     public FilledRectangle(BrushX brush)
     {
-      _brush = (BrushX)brush.Clone();
+      _brush = brush.Clone();
       _brush.ParentObject = this;
     }
 
@@ -91,7 +93,7 @@ namespace Altaxo.Graph.Gdi.Background
       if (object.ReferenceEquals(this, from))
         return;
 
-      this.Brush = from._brush;
+      Brush = from._brush;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

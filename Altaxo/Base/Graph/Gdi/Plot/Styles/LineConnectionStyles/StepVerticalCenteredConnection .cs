@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-using Altaxo.Graph.Gdi.Plot.Data;
-using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     {
       numberOfPointsPerOriginalPoint = 3;
 
-      PointF[] subLinePoints = new PointF[numberOfPointsPerOriginalPoint * (range.Length - 1 + (connectCircular ? 1 : 0)) + 1];
+      var subLinePoints = new PointF[numberOfPointsPerOriginalPoint * (range.Length - 1 + (connectCircular ? 1 : 0)) + 1];
       int end = range.UpperBound - 1;
       int i, j;
       for (i = 0, j = range.LowerBound; j < end; i += numberOfPointsPerOriginalPoint, j++)

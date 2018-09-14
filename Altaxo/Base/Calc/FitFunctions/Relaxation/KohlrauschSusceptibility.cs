@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        KohlrauschSusceptibility s = (KohlrauschSusceptibility)obj;
+        var s = (KohlrauschSusceptibility)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        KohlrauschSusceptibility s = (KohlrauschSusceptibility)obj;
+        var s = (KohlrauschSusceptibility)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
@@ -98,7 +98,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        KohlrauschSusceptibility s = (KohlrauschSusceptibility)obj;
+        var s = (KohlrauschSusceptibility)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
@@ -243,10 +243,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.Susceptibility.Introduction;XML.MML.GenericSusceptibility;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.KohlrauschSusceptibility.Part3")]
     public static IFitFunction CreateGeneralFunctionOfOmega()
     {
-      KohlrauschSusceptibility result = new KohlrauschSusceptibility();
-      result._useFrequencyInsteadOmega = false;
-      result._useFlowTerm = true;
-      result._isDielectricData = true;
+      var result = new KohlrauschSusceptibility
+      {
+        _useFrequencyInsteadOmega = false,
+        _useFlowTerm = true,
+        _isDielectricData = true
+      };
       return result;
     }
 
@@ -254,10 +256,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.Susceptibility.Introduction;XML.MML.GenericSusceptibility;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.KohlrauschSusceptibility.Part3")]
     public static IFitFunction CreateGeneralFunctionOfFrequency()
     {
-      KohlrauschSusceptibility result = new KohlrauschSusceptibility();
-      result._useFrequencyInsteadOmega = true;
-      result._useFlowTerm = true;
-      result._isDielectricData = true;
+      var result = new KohlrauschSusceptibility
+      {
+        _useFrequencyInsteadOmega = true,
+        _useFlowTerm = true,
+        _isDielectricData = true
+      };
       return result;
     }
 
@@ -265,10 +269,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.DielectricSusceptibility.Introduction;XML.MML.GenericDielectricSusceptibility;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.KohlrauschDielectricSusceptibility.Part3")]
     public static IFitFunction CreateDielectricFunctionOfOmega()
     {
-      KohlrauschSusceptibility result = new KohlrauschSusceptibility();
-      result._useFrequencyInsteadOmega = false;
-      result._useFlowTerm = true;
-      result._isDielectricData = true;
+      var result = new KohlrauschSusceptibility
+      {
+        _useFrequencyInsteadOmega = false,
+        _useFlowTerm = true,
+        _isDielectricData = true
+      };
       return result;
     }
 
@@ -276,10 +282,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Description("FitFunctions.Relaxation.DielectricSusceptibility.Introduction;XML.MML.GenericDielectricSusceptibility;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.KohlrauschDielectricSusceptibility.Part3")]
     public static IFitFunction CreateDielectricFunctionOfFrequency()
     {
-      KohlrauschSusceptibility result = new KohlrauschSusceptibility();
-      result._useFrequencyInsteadOmega = true;
-      result._useFlowTerm = true;
-      result._isDielectricData = true;
+      var result = new KohlrauschSusceptibility
+      {
+        _useFrequencyInsteadOmega = true,
+        _useFlowTerm = true,
+        _isDielectricData = true
+      };
       return result;
     }
 
@@ -297,7 +305,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public string IndependentVariableName(int i)
     {
-      return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
+      return _useFrequencyInsteadOmega ? "Frequency" : "Omega";
     }
 
     #endregion independent variable definition
@@ -391,11 +399,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       // note: because it is a susceptiblity, the imaginary part is still negative
 
-      if (this._useFlowTerm)
+      if (_useFlowTerm)
       {
-        if (this._isDielectricData)
+        if (_isDielectricData)
           result.Im -= P[iPar] / (x * 8.854187817e-12);
-        else if (this._invertViscosity)
+        else if (_invertViscosity)
           result.Im -= P[iPar] / (x);
         else
           result.Im -= 1 / (P[iPar] * x);

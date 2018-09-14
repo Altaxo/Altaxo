@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Groups;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     public double DesignSize { get { return ClipperSymbolSize; } }
@@ -107,7 +107,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
       else
       {
-        var result = (ClosedSymbolBase)this.MemberwiseClone();
+        var result = (ClosedSymbolBase)MemberwiseClone();
         result._fillColor = value;
         return result;
       }
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
       else
       {
-        var result = (ClosedSymbolBase)this.MemberwiseClone();
+        var result = (ClosedSymbolBase)MemberwiseClone();
         result._plotColorInfluence = value;
         return result;
       }
@@ -153,7 +153,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       else
       {
         {
-          var result = (ClosedSymbolBase)this.MemberwiseClone();
+          var result = (ClosedSymbolBase)MemberwiseClone();
           result._relativeStructureWidth = value;
           return result;
         }
@@ -188,7 +188,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
       else
       {
-        var result = (ClosedSymbolBase)this.MemberwiseClone();
+        var result = (ClosedSymbolBase)MemberwiseClone();
         result._frame = frame;
         if (isInfluencedByPlotColor.HasValue)
           result._plotColorInfluence = result._plotColorInfluence.WithFlag(PlotColorInfluence.FrameColorFull, isInfluencedByPlotColor.Value);
@@ -216,7 +216,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
       else
       {
-        var result = (ClosedSymbolBase)this.MemberwiseClone();
+        var result = (ClosedSymbolBase)MemberwiseClone();
         result._inset = inset;
 
         if (isInfluencedByPlotColor.HasValue)
@@ -300,28 +300,28 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     public override bool Equals(object obj)
     {
-      if (!(this.GetType() == obj?.GetType()))
+      if (!(GetType() == obj?.GetType()))
         return false;
 
       var from = (ClosedSymbolBase)obj;
 
       return
-        this._plotColorInfluence == from._plotColorInfluence &&
-        this._relativeStructureWidth == from._relativeStructureWidth &&
-        this._fillColor == from._fillColor &&
-        Equals(this._frame, from._frame) &&
-        Equals(this._inset, from.Inset);
+        _plotColorInfluence == from._plotColorInfluence &&
+        _relativeStructureWidth == from._relativeStructureWidth &&
+        _fillColor == from._fillColor &&
+        Equals(_frame, from._frame) &&
+        Equals(_inset, from.Inset);
     }
 
     public override int GetHashCode()
     {
       return
-        this.GetType().GetHashCode() +
-        (int)this._plotColorInfluence +
-        this._relativeStructureWidth.GetHashCode() +
-        this._fillColor.GetHashCode() +
-        (this._frame?.GetHashCode() ?? 0) +
-        (this._inset?.GetHashCode() ?? 0);
+        GetType().GetHashCode() +
+        (int)_plotColorInfluence +
+        _relativeStructureWidth.GetHashCode() +
+        _fillColor.GetHashCode() +
+        (_frame?.GetHashCode() ?? 0) +
+        (_inset?.GetHashCode() ?? 0);
     }
   }
 }

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -114,33 +114,33 @@ namespace Altaxo.Graph.Gdi
       if (obj is ItemLocationDirectAspectPreserving)
       {
         var from = (ItemLocationDirectAspectPreserving)obj;
-        this._originalItemSize = from._originalItemSize;
-        this._aspectPreserving = from._aspectPreserving;
+        _originalItemSize = from._originalItemSize;
+        _aspectPreserving = from._aspectPreserving;
       }
 
       if (obj is ItemLocationDirect)
       {
         var from = (ItemLocationDirect)obj;
-        this._parentSize = from.ParentSize;
+        _parentSize = from.ParentSize;
         InternalSetSizeSilent(from.SizeX * from.ScaleX, from.SizeY * from.ScaleY);
-        this._scaleX = this._scaleY = 1;
-        this._positionX = from.PositionX;
-        this._positionY = from.PositionY;
-        this._localAnchorX = from.LocalAnchorX;
-        this._localAnchorY = from.LocalAnchorY;
-        this._parentAnchorX = from.ParentAnchorX;
-        this._parentAnchorY = from.ParentAnchorY;
-        this._rotation = from.Rotation;
-        this._shear = from.ShearX;
+        _scaleX = _scaleY = 1;
+        _positionX = from.PositionX;
+        _positionY = from.PositionY;
+        _localAnchorX = from.LocalAnchorX;
+        _localAnchorY = from.LocalAnchorY;
+        _parentAnchorX = from.ParentAnchorX;
+        _parentAnchorY = from.ParentAnchorY;
+        _rotation = from.Rotation;
+        _shear = from.ShearX;
         EhSelfChanged();
         return true;
       }
       else if (obj is IItemLocation)
       {
         var from = (IItemLocation)obj;
-        this._rotation = from.Rotation;
-        this._shear = from.ShearX;
-        this.InternalSetScaleSilent(new PointD2D(from.ScaleX, from.ScaleY));
+        _rotation = from.Rotation;
+        _shear = from.ShearX;
+        InternalSetScaleSilent(new PointD2D(from.ScaleX, from.ScaleY));
         _scaleX = _scaleY = 1;
         EhSelfChanged();
         return true;

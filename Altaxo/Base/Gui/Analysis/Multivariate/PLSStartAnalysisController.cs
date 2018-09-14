@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Multivariate;
 using System;
+using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Worksheet
     public void InitializeAnalysisMethods()
     {
       _methoddictionary.Clear();
-      System.Collections.ArrayList nameList = new System.Collections.ArrayList();
+      var nameList = new System.Collections.ArrayList();
 
       System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
       foreach (System.Reflection.Assembly assembly in assemblies)
@@ -196,7 +196,7 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        this.View = value as IPLSStartAnalysisView;
+        View = value as IPLSStartAnalysisView;
       }
     }
 

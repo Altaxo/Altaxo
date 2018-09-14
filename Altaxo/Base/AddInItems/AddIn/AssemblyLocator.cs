@@ -46,8 +46,7 @@ namespace Altaxo.AddInItems
     {
       lock (assemblies)
       {
-        Assembly assembly = null;
-        assemblies.TryGetValue(args.Name, out assembly);
+        assemblies.TryGetValue(args.Name, out var assembly);
         return assembly;
       }
     }

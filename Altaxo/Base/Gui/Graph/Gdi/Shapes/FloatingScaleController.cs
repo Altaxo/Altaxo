@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi.Shapes;
-using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -108,7 +108,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TickSpacing));
         for (int i = 0; i < classes.Length; i++)
         {
-          SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _tempTickSpacing.GetType() == classes[i]);
+          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _tempTickSpacing.GetType() == classes[i]);
           _tickSpacingTypes.Add(node);
         }
 
@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       if (null == selNode)
         return;
 
-      Type spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
+      var spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
 
       if (spaceType == _tempTickSpacing.GetType())
         return;

@@ -115,7 +115,7 @@ namespace Altaxo.Geometry
         }
       }
 
-      RectangleD2D innerRect = new RectangleD2D();
+      var innerRect = new RectangleD2D();
       innerRect.ExpandToInclude(new PointD2D(sx * sizeX + rx * sizeY, ry * sizeX + sy * sizeY));
       innerRect.ExpandToInclude(new PointD2D(sx * sizeX, ry * sizeX));
       innerRect.ExpandToInclude(new PointD2D(rx * sizeY, sy * sizeY));

@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph.Graph2D.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using Altaxo.Gui;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 {

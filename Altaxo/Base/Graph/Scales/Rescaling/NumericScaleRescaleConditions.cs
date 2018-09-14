@@ -140,11 +140,11 @@ namespace Altaxo.Graph.Scales.Rescaling
         s._userProvidedEndRelativeTo = BoundariesRelativeTo.Absolute;
 
         var orgRescaling = (BoundaryRescaling)(int)info.GetEnum("OrgRescaling", typeof(BoundaryRescalingV1));
-        var org = (double)info.GetDouble("Org");
+        var org = info.GetDouble("Org");
         var endRescaling = (BoundaryRescaling)(int)info.GetEnum("EndRescaling", typeof(BoundaryRescalingV1));
-        var end = (double)info.GetDouble("End");
+        var end = info.GetDouble("End");
         var spanRescaling = (BoundaryRescaling)(int)info.GetEnum("SpanRescaling", typeof(BoundaryRescalingV1));
-        var span = (double)info.GetDouble("Span");
+        var span = info.GetDouble("Span");
 
         if (4 == (int)orgRescaling)
           orgRescaling = BoundaryRescaling.Auto;
@@ -197,16 +197,16 @@ namespace Altaxo.Graph.Scales.Rescaling
         var s = (NumericScaleRescaleConditions)o;
 
         // Cached values
-        s._dataBoundsOrg = (double)info.GetDouble("DataBoundsOrg");
-        s._dataBoundsEnd = (double)info.GetDouble("DataBoundsEnd");
+        s._dataBoundsOrg = info.GetDouble("DataBoundsOrg");
+        s._dataBoundsEnd = info.GetDouble("DataBoundsEnd");
 
         // User provided values
         s._orgRescaling = (BoundaryRescaling)info.GetEnum("OrgRescaling", typeof(BoundaryRescaling));
         s._endRescaling = (BoundaryRescaling)info.GetEnum("EndRescaling", typeof(BoundaryRescaling));
         s._userProvidedOrgRelativeTo = (BoundariesRelativeTo)info.GetEnum("OrgRelativeTo", typeof(BoundariesRelativeTo));
         s._userProvidedEndRelativeTo = (BoundariesRelativeTo)info.GetEnum("EndRelativeTo", typeof(BoundariesRelativeTo));
-        s._userProvidedOrgValue = (double)info.GetDouble("UserProvidedOrg");
-        s._userProvidedEndValue = (double)info.GetDouble("UserProvidedEnd");
+        s._userProvidedOrgValue = info.GetDouble("UserProvidedOrg");
+        s._userProvidedEndValue = info.GetDouble("UserProvidedEnd");
 
         // Final result
         s._resultingOrg = info.GetDouble("ResultingOrg");
@@ -240,23 +240,23 @@ namespace Altaxo.Graph.Scales.Rescaling
       if (null == from)
         return false;
 
-      this._orgRescaling = from._orgRescaling;
-      this._endRescaling = from._endRescaling;
+      _orgRescaling = from._orgRescaling;
+      _endRescaling = from._endRescaling;
 
-      this._userProvidedOrgRelativeTo = from._userProvidedOrgRelativeTo;
-      this._userProvidedEndRelativeTo = from._userProvidedEndRelativeTo;
+      _userProvidedOrgRelativeTo = from._userProvidedOrgRelativeTo;
+      _userProvidedEndRelativeTo = from._userProvidedEndRelativeTo;
 
-      this._userProvidedOrgValue = from._userProvidedOrgValue;
-      this._userProvidedEndValue = from._userProvidedEndValue;
+      _userProvidedOrgValue = from._userProvidedOrgValue;
+      _userProvidedEndValue = from._userProvidedEndValue;
 
-      this._dataBoundsOrg = from._dataBoundsOrg;
-      this._dataBoundsEnd = from._dataBoundsEnd;
+      _dataBoundsOrg = from._dataBoundsOrg;
+      _dataBoundsEnd = from._dataBoundsEnd;
 
-      this._resultingOrg = from._resultingOrg;
-      this._resultingEnd = from._resultingEnd;
+      _resultingOrg = from._resultingOrg;
+      _resultingEnd = from._resultingEnd;
 
-      this._resultingMinOrg = from._resultingMinOrg;
-      this._resultingMaxEnd = from._resultingMaxEnd;
+      _resultingMinOrg = from._resultingMinOrg;
+      _resultingMaxEnd = from._resultingMaxEnd;
 
       EhSelfChanged(EventArgs.Empty);
 
@@ -913,7 +913,7 @@ namespace Altaxo.Graph.Scales.Rescaling
         throw new InvalidOperationException("Can not convert endValue to a double value.");
       }
 
-      this.SetUserParameters(orgRescaling, orgRelativeTo, orgV, endRescaling, endRelativeTo, endV);
+      SetUserParameters(orgRescaling, orgRelativeTo, orgV, endRescaling, endRelativeTo, endV);
     }
 
     #endregion IScaleRescaleConditions implementation

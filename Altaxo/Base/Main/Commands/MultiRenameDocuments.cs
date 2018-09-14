@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Common.MultiRename;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Gui.Common.MultiRename;
 
 namespace Altaxo.Main.Commands
 {
@@ -67,7 +67,7 @@ namespace Altaxo.Main.Commands
     /// <returns>If the action was successfull, an empty list. If the action was only partially successfull, the returned list contains those objects, for which the rename action failed.</returns>
     public static List<object> RenameDocuments(Altaxo.Gui.Common.MultiRename.MultiRenameData renameData)
     {
-      List<object> renameFailedObjects = new List<object>();
+      var renameFailedObjects = new List<object>();
 
       // first, give all items a new, random name
       for (int i = 0; i < renameData.ObjectsToRenameCount; ++i)

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         var from = obj as ImageGraphic;
         if (from != null)
         {
-          this._isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
+          _isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
         }
       }
       return isCopied;

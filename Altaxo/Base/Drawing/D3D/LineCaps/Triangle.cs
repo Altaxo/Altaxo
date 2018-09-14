@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
@@ -34,7 +34,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
   {
     private class TriangleContour : ILineCapContour
     {
-      private readonly static VectorD2D _vectorSqrt1_2 = new VectorD2D(Math.Sqrt(0.5), Math.Sqrt(0.5));
+      private static readonly VectorD2D _vectorSqrt1_2 = new VectorD2D(Math.Sqrt(0.5), Math.Sqrt(0.5));
 
       public int NumberOfNormals
       {

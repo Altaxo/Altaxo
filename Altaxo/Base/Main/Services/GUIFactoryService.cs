@@ -22,17 +22,17 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing.Printing;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Drawing.Printing;
-using System.Threading;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Altaxo.Main.Services
 {
@@ -102,7 +102,7 @@ namespace Altaxo.Main.Services
       {
         if (typeof(IMVCANController).IsAssignableFrom(definedType) && expectedControllerType.IsAssignableFrom(definedType))
         {
-          IMVCANController mvcan = (IMVCANController)Activator.CreateInstance(definedType);
+          var mvcan = (IMVCANController)Activator.CreateInstance(definedType);
           mvcan.UseDocumentCopy = copyDocument;
           if (mvcan.InitializeDocument(creationArgs))
             result = mvcan;
@@ -177,7 +177,7 @@ namespace Altaxo.Main.Services
     {
       object result = null;
 
-      foreach (var guiControlType in this.RegisteredGuiTechnologies)
+      foreach (var guiControlType in RegisteredGuiTechnologies)
       {
         result = ReflectionService.GetClassForClassInstanceByAttribute(
           typeof(UserControlForControllerAttribute),
@@ -371,7 +371,7 @@ namespace Altaxo.Main.Services
         {
           if (args[0] is System.Enum)
           {
-            System.Enum arge = (System.Enum)args[0];
+            var arge = (System.Enum)args[0];
             return ShowDialog(ref arge, title);
           }
 
@@ -491,7 +491,7 @@ namespace Altaxo.Main.Services
     {
       if (arg is System.Enum)
       {
-        System.Enum arge = (System.Enum)arg;
+        var arge = (System.Enum)arg;
         return ShowDialog(ref arge, title);
       }
 
@@ -656,7 +656,7 @@ namespace Altaxo.Main.Services
         return result;
 
       FieldInfo fi = value.GetType().GetField(value.ToString());
-      System.ComponentModel.DescriptionAttribute[] attributes =
+      var attributes =
         (System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
       return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
     }
@@ -670,7 +670,7 @@ namespace Altaxo.Main.Services
     public static string GetDescription(Enum value)
     {
       FieldInfo fi = value.GetType().GetField(value.ToString());
-      System.ComponentModel.DescriptionAttribute[] attributes =
+      var attributes =
         (System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
       return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
     }
@@ -741,7 +741,7 @@ namespace Altaxo.Main.Services
 
     public virtual bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
     {
-      System.Threading.Thread t = new System.Threading.Thread(threadstart);
+      var t = new System.Threading.Thread(threadstart);
       t.Start();
       return ShowBackgroundCancelDialog(millisecondsDelay, t, monitor);
     }

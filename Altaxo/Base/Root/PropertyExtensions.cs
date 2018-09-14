@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main.Properties;
 
 namespace Altaxo
 {
@@ -286,11 +286,10 @@ namespace Altaxo
     /// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
     public static T GetPropertyValueStartingFromApplicationSettings<T>(PropertyKey<T> p, Func<T> resultCreationIfNotFound)
     {
-      T returnValue;
       ;
       foreach (var bagTuple in GetPropertyBagsStartingFromApplicationSettings())
       {
-        if (bagTuple.Bag.TryGetValue<T>(p, out returnValue))
+        if (bagTuple.Bag.TryGetValue<T>(p, out var returnValue))
           return returnValue;
       }
 
@@ -312,11 +311,10 @@ namespace Altaxo
     /// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
     public static T GetPropertyValue<T>(this IPropertyBagOwner owner, PropertyKey<T> p, Func<T> resultCreationIfNotFound)
     {
-      T returnValue;
       ;
       foreach (var bagTuple in GetPropertyBags(owner))
       {
-        if (bagTuple.Bag.TryGetValue<T>(p, out returnValue))
+        if (bagTuple.Bag.TryGetValue<T>(p, out var returnValue))
           return returnValue;
       }
 
@@ -337,11 +335,10 @@ namespace Altaxo
     /// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
     public static T GetPropertyValue<T>(this IPropertyBagOwner owner, string propertyKeyString, Func<T> resultCreationIfNotFound = null)
     {
-      T returnValue;
       ;
       foreach (var bagTuple in GetPropertyBags(owner))
       {
-        if (bagTuple.Bag.TryGetValue<T>(propertyKeyString, out returnValue))
+        if (bagTuple.Bag.TryGetValue<T>(propertyKeyString, out var returnValue))
           return returnValue;
       }
 

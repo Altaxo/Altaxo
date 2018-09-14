@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
 using Altaxo.Calc;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Serialization;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
@@ -93,10 +93,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     public override bool Apply(bool disposeController)
     {
-      AltaxoVariant[] varVals;
-      int[] intVals;
 
-      if (GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMajorTickValues, out varVals))
+      if (GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMajorTickValues, out var varVals))
       {
         _doc.SuppressedMajorTicks.ByValues.Clear();
         foreach (AltaxoVariant v in varVals)
@@ -118,7 +116,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         return false;
       }
 
-      if (GUIConversion.TryParseMultipleInt32(_view.SuppressMajorTicksByNumber, out intVals))
+      if (GUIConversion.TryParseMultipleInt32(_view.SuppressMajorTicksByNumber, out var intVals))
       {
         _doc.SuppressedMajorTicks.ByNumbers.Clear();
         foreach (int v in intVals)
@@ -199,8 +197,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private void EhMajorSpanValidating(string txt, CancelEventArgs e)
     {
-      double? val;
-      if (GUIConversion.IsDoubleOrNull(txt, out val))
+      if (GUIConversion.IsDoubleOrNull(txt, out var val))
         _doc.MajorTickSpan = val;
       else
         e.Cancel = true;
@@ -208,10 +205,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private void EhDivideByValidating(string txt, CancelEventArgs e)
     {
-      double val;
-      if (GUIConversion.IsDouble(txt, out val))
+      if (GUIConversion.IsDouble(txt, out var val))
       {
-        double val1 = (double)val;
+        double val1 = val;
         if (val == 0 || !val1.IsFinite())
           e.Cancel = true;
         else
@@ -225,8 +221,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private void EhTransformationOffsetValidating(string txt, CancelEventArgs e)
     {
-      double val;
-      if (GUIConversion.IsDouble(txt, out val))
+      if (GUIConversion.IsDouble(txt, out var val))
       {
         if (!val.IsFinite())
           e.Cancel = true;

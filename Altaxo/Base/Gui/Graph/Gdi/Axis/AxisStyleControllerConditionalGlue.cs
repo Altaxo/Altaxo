@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi.Axis;
-using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi.Axis;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {

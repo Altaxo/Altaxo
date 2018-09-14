@@ -120,7 +120,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
+        var s = (BarGraphPlotStyle)obj;
         info.AddValue("InnerGapWidth", s._relInnerGapX);
         info.AddValue("OuterGapWidth", s._relOuterGapX);
         info.AddValue("IndependentColor", s._independentFillColor);
@@ -170,7 +170,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
+        var s = (BarGraphPlotStyle)obj;
         info.AddValue("InnerGapWidth", s._relInnerGapX);
         info.AddValue("OuterGapWidth", s._relOuterGapX);
         info.AddValue("IndependentFillColor", s._independentFillColor);
@@ -223,18 +223,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var from = obj as BarGraphPlotStyle;
       if (null != from)
       {
-        this._relInnerGapX = from._relInnerGapX;
-        this._relOuterGapX = from._relOuterGapX;
-        this._xSizeLogical = from._xSizeLogical;
-        this._xOffsetLogical = from._xOffsetLogical;
-        this._independentFillColor = from._independentFillColor;
+        _relInnerGapX = from._relInnerGapX;
+        _relOuterGapX = from._relOuterGapX;
+        _xSizeLogical = from._xSizeLogical;
+        _xOffsetLogical = from._xOffsetLogical;
+        _independentFillColor = from._independentFillColor;
         ChildCloneToMember(ref _fillBrush, from._fillBrush);
-        this._independentFrameColor = from._independentFrameColor;
+        _independentFrameColor = from._independentFrameColor;
         ChildCloneToMember(ref _framePen, from._framePen);
-        this._startAtPreviousItem = from._startAtPreviousItem;
-        this._previousItemYGap = from._previousItemYGap;
-        this._usePhysicalBaseValue = from._usePhysicalBaseValue;
-        this._baseValue = from._baseValue;
+        _startAtPreviousItem = from._startAtPreviousItem;
+        _previousItemYGap = from._previousItemYGap;
+        _usePhysicalBaseValue = from._usePhysicalBaseValue;
+        _baseValue = from._baseValue;
         EhSelfChanged();
         return true;
       }
@@ -286,7 +286,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return !(this._independentFillColor && this._independentFrameColor);
+        return !(_independentFillColor && _independentFrameColor);
       }
     }
 
@@ -450,10 +450,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (!_independentFillColor && null != _fillBrush)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._fillBrush.Color; });
+        { return _fillBrush.Color; });
       else if (!_independentFrameColor && null != _framePen) // else if is used here because fill color has precedence over frame color
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._framePen.Color; });
+        { return _framePen.Color; });
     }
 
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -469,7 +469,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (null == _fillBrush)
           _fillBrush = new BrushX(Drawing.ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { this._fillBrush.Color = c; });
+        { _fillBrush.Color = c; });
 
         // but if there is a color evaluation function, then use that function with higher priority
         VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)
@@ -481,7 +481,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (null == _framePen)
           _framePen = new PenX(Drawing.ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { this._framePen.Color = c; });
+        { _framePen.Color = c; });
 
         // but if there is a color evaluation function, then use that function with higher priority
         VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)
@@ -496,16 +496,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       PlotRangeList rangeList = pdata.RangeList;
       System.Drawing.PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-
-      // paint the style
-
-      double xleft, xright, ytop, ybottom;
-      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0, 0), out xleft, out ybottom);
-      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(1, 1), out xright, out ytop);
+      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0, 0), out var xleft, out var ybottom);
+      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(1, 1), out var xright, out var ytop);
       float xe = (float)xright;
       float ye = (float)ybottom;
 
-      GraphicsPath path = new GraphicsPath();
+      var path = new GraphicsPath();
 
       double globalBaseValue;
       if (_usePhysicalBaseValue)

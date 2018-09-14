@@ -61,8 +61,8 @@ namespace Altaxo.Gui.Common
 
       if (null != _view)
       {
-        _view.UnitEnvironment = this.UnitEnvironment;
-        _view.SelectedQuantity = new DimensionfulQuantity(_doc, UnitOfValue).AsQuantityIn(this.UnitEnvironment.DefaultUnit);
+        _view.UnitEnvironment = UnitEnvironment;
+        _view.SelectedQuantity = new DimensionfulQuantity(_doc, UnitOfValue).AsQuantityIn(UnitEnvironment.DefaultUnit);
       }
     }
 

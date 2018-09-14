@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
@@ -79,8 +79,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
       :
       this()
     {
-      this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
-      this.Image = startingImage;
+      SetPosition(graphicPosition, Main.EventFiring.Suppressed);
+      Image = startingImage;
     }
 
     public EmbeddedImageGraphic(double posX, double posY, double posZ, ImageProxy startingImage)
@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       :
       this(graphicPosition, startingImage)
     {
-      this.SetSize(graphicSize.X, graphicSize.Y, graphicSize.Z, Main.EventFiring.Suppressed);
+      SetSize(graphicSize.X, graphicSize.Y, graphicSize.Z, Main.EventFiring.Suppressed);
     }
 
     public EmbeddedImageGraphic(double posX, double posY, double posZ, VectorD3D graphicSize, ImageProxy startingImage)
@@ -112,7 +112,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       :
       this(graphicPosition, startingImage)
     {
-      this.RotationZ = Rotation;
+      RotationZ = Rotation;
     }
 
     public EmbeddedImageGraphic(double posX, double posY, double posZ, double Rotation, ImageProxy startingImage)
@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       :
       this(graphicPosition, Rotation, startingImage)
     {
-      this.SetSize(graphicSize.X, graphicSize.Y, graphicSize.Z, Main.EventFiring.Suppressed);
+      SetSize(graphicSize.X, graphicSize.Y, graphicSize.Z, Main.EventFiring.Suppressed);
     }
 
     public EmbeddedImageGraphic(double posX, double posY, double posZ, VectorD3D graphicSize, double Rotation, ImageProxy startingImage)
@@ -154,7 +154,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         var from = obj as EmbeddedImageGraphic;
         if (null != from)
         {
-          this.Image = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
+          Image = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
         }
       }
       return isCopied;
@@ -176,7 +176,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       set
       {
         _imageProxy = value;
-        PointD2D originalItemSize = new PointD2D(10, 10);
+        var originalItemSize = new PointD2D(10, 10);
         if (null != _imageProxy)
         {
           Image img = _imageProxy == null ? null : _imageProxy.GetImage();
@@ -189,12 +189,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     public override PointD2D GetImageSizePt()
     {
-      return this._imageProxy == null ? new PointD2D(1, 1) : _imageProxy.Size;
+      return _imageProxy == null ? new PointD2D(1, 1) : _imageProxy.Size;
     }
 
     public override Image GetImage()
     {
-      return this._imageProxy == null ? null : this._imageProxy.GetImage();
+      return _imageProxy == null ? null : _imageProxy.GetImage();
     }
 
     public override void Paint(IGraphicsContext3D g, IPaintContext context)

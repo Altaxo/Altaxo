@@ -50,16 +50,16 @@ namespace Altaxo.Main.Services.PropertyReflection
     {
       if (instance is ICustomTypeDescriptor)
       {
-        this._instance = ((ICustomTypeDescriptor)instance).GetPropertyOwner(property);
+        _instance = ((ICustomTypeDescriptor)instance).GetPropertyOwner(property);
       }
       else
       {
-        this._instance = instance;
+        _instance = instance;
       }
 
-      this._property = property;
+      _property = property;
 
-      this._property.AddValueChanged(_instance, instance_PropertyChanged);
+      _property.AddValueChanged(_instance, instance_PropertyChanged);
 
       NotifyPropertyChanged("PropertyType");
     }
@@ -198,8 +198,8 @@ namespace Altaxo.Main.Services.PropertyReflection
       }
     }
 
-    public readonly static IComparer<Property> CompareByCategoryThenByName = new ByCategoryThenByNameComparer();
-    public readonly static IComparer<Property> CompareByName = new ByNameComparer();
+    public static readonly IComparer<Property> CompareByCategoryThenByName = new ByCategoryThenByNameComparer();
+    public static readonly IComparer<Property> CompareByName = new ByNameComparer();
 
     #endregion Comparer for Sorting
   }

@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Geometry;
@@ -31,9 +34,6 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
 using Altaxo.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Plot.Data
 {
@@ -183,7 +183,7 @@ namespace Altaxo.Graph.Plot.Data
     public XYZColumnPlotData(XYZColumnPlotData from)
     {
       ChildCopyToMember(ref _dataTable, from._dataTable);
-      this._groupNumber = from._groupNumber;
+      _groupNumber = from._groupNumber;
       ChildCloneToMember(ref _dataRowSelection, from._dataRowSelection);
 
       ChildCopyToMember(ref _xColumn, from._xColumn);
@@ -201,9 +201,9 @@ namespace Altaxo.Graph.Plot.Data
       if (null != from._zBoundaries)
         ChildCopyToMember(ref _zBoundaries, from._zBoundaries);
 
-      this._pointCount = from._pointCount;
-      this._isCachedDataValidX = from._isCachedDataValidX;
-      this._isCachedDataValidY = from._isCachedDataValidY;
+      _pointCount = from._pointCount;
+      _isCachedDataValidX = from._isCachedDataValidX;
+      _isCachedDataValidY = from._isCachedDataValidY;
     }
 
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -310,10 +310,10 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The name of the x-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
     public string GetXName(int level)
     {
-      IReadableColumn col = this._xColumn.Document;
+      IReadableColumn col = _xColumn.Document;
       if (col is Altaxo.Data.DataColumn)
       {
-        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
         string tablename = table == null ? string.Empty : table.Name + "\\";
         string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
@@ -340,10 +340,10 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The name of the y-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
     public string GetYName(int level)
     {
-      IReadableColumn col = this._yColumn.Document;
+      IReadableColumn col = _yColumn.Document;
       if (col is Altaxo.Data.DataColumn)
       {
-        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
         string tablename = table == null ? string.Empty : table.Name + "\\";
         string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
@@ -370,10 +370,10 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The name of the z-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
     public string GetZName(int level)
     {
-      IReadableColumn col = this._zColumn.Document;
+      IReadableColumn col = _zColumn.Document;
       if (col is Altaxo.Data.DataColumn)
       {
-        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
         string tablename = table == null ? string.Empty : table.Name + "\\";
         string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)
@@ -396,13 +396,13 @@ namespace Altaxo.Graph.Plot.Data
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if (null == _xBoundaries || pb.GetType() != _xBoundaries.GetType())
-        this.SetXBoundsFromTemplate(pb);
+        SetXBoundsFromTemplate(pb);
 
-      if (!this._isCachedDataValidX)
+      if (!_isCachedDataValidX)
       {
         using (var suspendToken = SuspendGetToken())
         {
-          this.CalculateCachedData();
+          CalculateCachedData();
         }
       }
       pb.Add(_xBoundaries);
@@ -411,13 +411,13 @@ namespace Altaxo.Graph.Plot.Data
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if (null == _yBoundaries || pb.GetType() != _yBoundaries.GetType())
-        this.SetYBoundsFromTemplate(pb);
+        SetYBoundsFromTemplate(pb);
 
-      if (!this._isCachedDataValidY)
+      if (!_isCachedDataValidY)
       {
         using (var suspendToken = SuspendGetToken())
         {
-          this.CalculateCachedData();
+          CalculateCachedData();
         }
       }
       pb.Add(_yBoundaries);
@@ -426,13 +426,13 @@ namespace Altaxo.Graph.Plot.Data
     public void MergeZBoundsInto(IPhysicalBoundaries pb)
     {
       if (null == _zBoundaries || pb.GetType() != _zBoundaries.GetType())
-        this.SetZBoundsFromTemplate(pb);
+        SetZBoundsFromTemplate(pb);
 
-      if (!this._isCachedDataValidY)
+      if (!_isCachedDataValidY)
       {
         using (var suspendToken = SuspendGetToken())
         {
-          this.CalculateCachedData();
+          CalculateCachedData();
         }
       }
       pb.Add(_zBoundaries);
@@ -554,9 +554,9 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        if (!this._isCachedDataValidX || !_isCachedDataValidY || !_isCachedDataValidZ)
-          this.CalculateCachedData();
-        return this._pointCount;
+        if (!_isCachedDataValidX || !_isCachedDataValidY || !_isCachedDataValidZ)
+          CalculateCachedData();
+        return _pointCount;
       }
     }
 
@@ -643,7 +643,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public override string ToString()
     {
-      return String.Format("{0}(X), {1}(Y), {2}(V)", _xColumn.ToString(), _yColumn.ToString(), _zColumn.ToString());
+      return string.Format("{0}(X), {1}(Y), {2}(V)", _xColumn.ToString(), _yColumn.ToString(), _zColumn.ToString());
     }
 
     /// <summary>
@@ -652,9 +652,9 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>The maximum row index that can be deduced from the data columns.</returns>
     public int GetMaximumRowIndexFromDataColumns()
     {
-      IReadableColumn xColumn = this.XColumn;
-      IReadableColumn yColumn = this.YColumn;
-      IReadableColumn zColumn = this.ZColumn;
+      IReadableColumn xColumn = XColumn;
+      IReadableColumn yColumn = YColumn;
+      IReadableColumn zColumn = ZColumn;
 
       int maxRowIndex;
 
@@ -683,25 +683,25 @@ namespace Altaxo.Graph.Plot.Data
 
     public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds, IPhysicalBoundaries vBounds)
     {
-      if (this.IsDisposeInProgress)
+      if (IsDisposeInProgress)
         return;
 
       if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
       {
         _isCachedDataValidX = false;
-        this.SetXBoundsFromTemplate(xBounds);
+        SetXBoundsFromTemplate(xBounds);
       }
 
       if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
       {
         _isCachedDataValidY = false;
-        this.SetYBoundsFromTemplate(yBounds);
+        SetYBoundsFromTemplate(yBounds);
       }
 
       if (_zBoundaries == null || (vBounds != null && _zBoundaries.GetType() != vBounds.GetType()))
       {
         _isCachedDataValidZ = false;
-        this.SetZBoundsFromTemplate(yBounds);
+        SetZBoundsFromTemplate(yBounds);
       }
 
       if (!_isCachedDataValidX || !_isCachedDataValidY || !_isCachedDataValidZ)
@@ -710,7 +710,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public void CalculateCachedData()
     {
-      if (this.IsDisposeInProgress)
+      if (IsDisposeInProgress)
         return;
 
       // we can calulate the bounds only if they are set before
@@ -721,21 +721,21 @@ namespace Altaxo.Graph.Plot.Data
       ISuspendToken suspendTokenY = null;
       ISuspendToken suspendTokenZ = null;
 
-      suspendTokenX = this._xBoundaries?.SuspendGetToken();
-      suspendTokenY = this._yBoundaries?.SuspendGetToken();
-      suspendTokenZ = this._zBoundaries?.SuspendGetToken();
+      suspendTokenX = _xBoundaries?.SuspendGetToken();
+      suspendTokenY = _yBoundaries?.SuspendGetToken();
+      suspendTokenZ = _zBoundaries?.SuspendGetToken();
 
       try
       {
-        this._xBoundaries?.Reset();
-        this._yBoundaries?.Reset();
-        this._zBoundaries?.Reset();
+        _xBoundaries?.Reset();
+        _yBoundaries?.Reset();
+        _zBoundaries?.Reset();
 
         _pointCount = GetMaximumRowIndexFromDataColumns();
 
-        IReadableColumn xColumn = this.XColumn;
-        IReadableColumn yColumn = this.YColumn;
-        IReadableColumn zColumn = this.ZColumn;
+        IReadableColumn xColumn = XColumn;
+        IReadableColumn yColumn = YColumn;
+        IReadableColumn zColumn = ZColumn;
 
         foreach (var segment in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, _pointCount, _dataTable?.Document?.DataColumns, _pointCount))
         {
@@ -806,15 +806,15 @@ namespace Altaxo.Graph.Plot.Data
     {
       const double MaxRelativeValue = 1E2;
 
-      Altaxo.Data.IReadableColumn xColumn = this.XColumn;
-      Altaxo.Data.IReadableColumn yColumn = this.YColumn;
-      Altaxo.Data.IReadableColumn zColumn = this.ZColumn;
+      Altaxo.Data.IReadableColumn xColumn = XColumn;
+      Altaxo.Data.IReadableColumn yColumn = YColumn;
+      Altaxo.Data.IReadableColumn zColumn = ZColumn;
 
       if (null == xColumn || null == yColumn || null == zColumn)
         return null; // this plotitem is only for x and y double columns
 
       var result = new Processed3DPlotData();
-      MyPlotData myPlotData = new MyPlotData(xColumn, yColumn, zColumn);
+      var myPlotData = new MyPlotData(xColumn, yColumn, zColumn);
       result.XPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetXPhysical);
       result.YPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetYPhysical);
       result.ZPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetZPhysical);
@@ -860,7 +860,6 @@ namespace Altaxo.Graph.Plot.Data
           }
 
           double x_rel, y_rel, z_rel;
-          PointD3D coord;
 
           x_rel = xAxis.PhysicalVariantToNormal(xColumn[dataRowIdx]);
           y_rel = yAxis.PhysicalVariantToNormal(yColumn[dataRowIdx]);
@@ -884,7 +883,7 @@ namespace Altaxo.Graph.Plot.Data
           // that with the choosen axis the point is undefined
           // (for instance negative values on a logarithmic axis)
           // in this case the returned value is NaN
-          if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel, z_rel), out coord))
+          if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel, z_rel), out var coord))
           {
             if (!weAreInsideSegment)
             {

@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Drawing.D3D;
@@ -31,9 +34,6 @@ using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
@@ -208,12 +208,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
         if (_doc.UseCommonErrorColumn)
         {
-          this.InitializeCommonErrorColumnText();
+          InitializeCommonErrorColumnText();
         }
         else
         {
-          this.InitializePositiveErrorColumnText();
-          this.InitializeNegativeErrorColumnText();
+          InitializePositiveErrorColumnText();
+          InitializeNegativeErrorColumnText();
         }
       }
     }
@@ -317,8 +317,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       (column, table, group) =>
       {
         _doc.CommonErrorColumn = column;
-        this._supposedParentDataTable = table;
-        this._supposedGroupNumber = group;
+        _supposedParentDataTable = table;
+        _supposedGroupNumber = group;
         InitializeCommonErrorColumnText();
       }
         );
@@ -332,9 +332,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
           (column, table, group) =>
           {
             _doc.PositiveErrorColumn = column;
-            this._supposedParentDataTable = table;
-            this._supposedGroupNumber = group;
-            this.InitializePositiveErrorColumnText();
+            _supposedParentDataTable = table;
+            _supposedGroupNumber = group;
+            InitializePositiveErrorColumnText();
           }
         );
 
@@ -345,9 +345,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
           (column, table, group) =>
           {
             _doc.NegativeErrorColumn = column;
-            this._supposedParentDataTable = table;
-            this._supposedGroupNumber = group;
-            this.InitializeNegativeErrorColumnText();
+            _supposedParentDataTable = table;
+            _supposedGroupNumber = group;
+            InitializeNegativeErrorColumnText();
           }
         );
       }
@@ -361,12 +361,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
       if (_doc.UseCommonErrorColumn)
       {
-        this.InitializeCommonErrorColumnText();
+        InitializeCommonErrorColumnText();
       }
       else
       {
-        this.InitializePositiveErrorColumnText();
-        this.InitializeNegativeErrorColumnText();
+        InitializePositiveErrorColumnText();
+        InitializeNegativeErrorColumnText();
       }
     }
 

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
-using System;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        TextScale s = (TextScale)obj;
+        var s = (TextScale)obj;
 
         info.AddValue("Bounds", s._dataBounds);
         info.AddValue("Rescaling", s._rescaling);
@@ -90,8 +90,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public TextScale()
     {
-      _dataBounds = new TextBoundaries();
-      _dataBounds.ParentObject = this;
+      _dataBounds = new TextBoundaries
+      {
+        ParentObject = this
+      };
 
       _rescaling = new LinearScaleRescaleConditions();
     }
@@ -120,7 +122,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override object Clone()
     {
-      TextScale result = new TextScale();
+      var result = new TextScale();
       result.CopyFrom(this);
       return result;
     }
@@ -135,18 +137,18 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     protected void InternalSetDataBounds(TextBoundaries bounds)
     {
-      if (this._dataBounds != null)
+      if (_dataBounds != null)
       {
-        this._dataBounds = null;
+        _dataBounds = null;
       }
-      this._dataBounds = bounds;
-      this._dataBounds.ParentObject = this;
+      _dataBounds = bounds;
+      _dataBounds.ParentObject = this;
     }
 
     protected void InternalSetRescaling(NumericScaleRescaleConditions rescaling)
     {
-      this._rescaling = rescaling;
-      this._rescaling.ParentObject = this;
+      _rescaling = rescaling;
+      _rescaling.ParentObject = this;
     }
 
     protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
@@ -178,7 +180,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override Altaxo.Data.AltaxoVariant[] GetMajorTicksAsVariant()
     {
-      AltaxoVariant[] result = new Altaxo.Data.AltaxoVariant[_dataBounds.NumberOfItems];
+      var result = new Altaxo.Data.AltaxoVariant[_dataBounds.NumberOfItems];
       for (int i = 0; i < result.Length; i++)
         result[i] = new AltaxoVariant(_dataBounds.GetItem(i));
 
@@ -198,7 +200,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override Altaxo.Data.AltaxoVariant[] GetMinorTicksAsVariant()
     {
-      AltaxoVariant[] result = new AltaxoVariant[_dataBounds.NumberOfItems + 1];
+      var result = new AltaxoVariant[_dataBounds.NumberOfItems + 1];
       for (int i = 0; i < result.Length; i++)
         result[i] = new Altaxo.Data.AltaxoVariant(i + 0.5);
 
@@ -255,7 +257,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public override void ProcessDataBounds()
     {
-      if (null == this._dataBounds || this._dataBounds.IsEmpty)
+      if (null == _dataBounds || _dataBounds.IsEmpty)
         return;
 
       ProcessDataBounds(1, _dataBounds.NumberOfItems, _rescaling);

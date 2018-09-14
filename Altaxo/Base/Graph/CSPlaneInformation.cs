@@ -48,13 +48,13 @@ namespace Altaxo.Graph
       if (object.ReferenceEquals(this, from))
         return;
 
-      this._identifier = from._identifier;
+      _identifier = from._identifier;
       CopyWithoutIdentifierFrom(from);
     }
 
     public void CopyWithoutIdentifierFrom(CSPlaneInformation from)
     {
-      this._name = from._name;
+      _name = from._name;
     }
 
     public void SetDefaultValues()

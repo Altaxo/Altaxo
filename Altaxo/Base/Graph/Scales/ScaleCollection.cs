@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Scales
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ScaleCollection s = (ScaleCollection)obj;
+        var s = (ScaleCollection)obj;
 
         info.CreateArray("Members", s._scales.Length);
         for (int i = 0; i < s._scales.Length; ++i)
@@ -159,9 +159,9 @@ namespace Altaxo.Graph.Scales
       if (null == from)
         return false;
 
-      using (var suspendToken = this.SuspendGetToken())
+      using (var suspendToken = SuspendGetToken())
       {
-        int len = Math.Min(this._scales.Length, from._scales.Length);
+        int len = Math.Min(_scales.Length, from._scales.Length);
         for (int i = 0; i < len; i++)
         {
           this[i] = (Scale)from._scales[i].Clone();

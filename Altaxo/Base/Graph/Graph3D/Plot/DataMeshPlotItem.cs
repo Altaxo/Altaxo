@@ -22,16 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Main;
-using Altaxo.Serialization;
 using System;
-
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Main;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Graph3D.Plot
 {
@@ -81,7 +80,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         }
         else
         {
-          DataMeshPlotItem s = (DataMeshPlotItem)o;
+          var s = (DataMeshPlotItem)o;
           s.Data = pa;
           s.Style = ps;
           return s;
@@ -101,8 +100,8 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public DataMeshPlotItem(XYZMeshedColumnPlotData pa, DataMeshPlotStyle ps)
     {
-      this.Data = pa;
-      this.Style = ps;
+      Data = pa;
+      Style = ps;
     }
 
     public DataMeshPlotItem(DataMeshPlotItem from)
@@ -121,8 +120,8 @@ namespace Altaxo.Graph.Graph3D.Plot
         var from = obj as DataMeshPlotItem;
         if (null != from)
         {
-          this.Data = from._plotData.Clone();   // also wires the event
-          this.Style = (DataMeshPlotStyle)from.Style.Clone(); // also wires the event
+          Data = from._plotData.Clone();   // also wires the event
+          Style = (DataMeshPlotStyle)from.Style.Clone(); // also wires the event
         }
       }
       return copied;
@@ -155,7 +154,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     public override Main.IDocumentLeafNode StyleObject
     {
       get { return _plotStyle; }
-      set { this.Style = (DataMeshPlotStyle)value; }
+      set { Style = (DataMeshPlotStyle)value; }
     }
 
     public override Main.IDocumentLeafNode DataObject
@@ -170,7 +169,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       {
         if (null == value)
           throw new System.ArgumentNullException();
-        if (ChildSetMember(ref _plotStyle, (DataMeshPlotStyle)value))
+        if (ChildSetMember(ref _plotStyle, value))
         {
           EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
         }
@@ -189,7 +188,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
     {
-      if (null != this._plotStyle)
+      if (null != _plotStyle)
       {
         _plotStyle.Paint(g, layer, _plotData);
       }
@@ -203,7 +202,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != this._plotData)
+      if (null != _plotData)
       {
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject, layer.ZAxis.DataBoundsObject);
 
@@ -217,7 +216,7 @@ namespace Altaxo.Graph.Graph3D.Plot
       if (e is PlotItemDataChangedEventArgs)
       {
         // first inform our AbstractXYPlotStyle of the change, so it can invalidate its cached data
-        if (null != this._plotStyle)
+        if (null != _plotStyle)
           _plotStyle.EhDataChanged(this);
       }
 
@@ -228,12 +227,12 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      this._plotData.SetXBoundsFromTemplate(val);
+      _plotData.SetXBoundsFromTemplate(val);
     }
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      this._plotData.MergeXBoundsInto(pb);
+      _plotData.MergeXBoundsInto(pb);
     }
 
     #endregion IXBoundsHolder Members
@@ -242,12 +241,12 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      this._plotData.SetYBoundsFromTemplate(val);
+      _plotData.SetYBoundsFromTemplate(val);
     }
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      this._plotData.MergeYBoundsInto(pb);
+      _plotData.MergeYBoundsInto(pb);
     }
 
     #endregion IYBoundsHolder Members
@@ -256,12 +255,12 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     public void SetZBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      this._plotData.SetVBoundsFromTemplate(val);
+      _plotData.SetVBoundsFromTemplate(val);
     }
 
     public void MergeZBoundsInto(IPhysicalBoundaries pb)
     {
-      this._plotData.MergeVBoundsInto(pb);
+      _plotData.MergeVBoundsInto(pb);
     }
 
     #endregion IZBoundHolder
@@ -287,7 +286,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     {
       if (!(template is DataMeshPlotItem))
         return;
-      DataMeshPlotItem from = (DataMeshPlotItem)template;
+      var from = (DataMeshPlotItem)template;
       _plotStyle.CopyFrom(from._plotStyle);
     }
 
@@ -313,16 +312,14 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
     public void GetPixelwiseImage(ref Bitmap image)
     {
-      Altaxo.Calc.LinearAlgebra.IROMatrix<double> matrix;
-      Altaxo.Calc.LinearAlgebra.IROVector<double> rowVec, colVec;
       _plotData.DataTableMatrix.GetWrappers(
-        x => (double)x, // transformation function for row header values
+        x => x, // transformation function for row header values
         Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values
-        x => (double)x, // transformation function for column header values
+        x => x, // transformation function for column header values
         Altaxo.Calc.RMath.IsFinite,       // selection functiton for column header values
-        out matrix,
-        out rowVec,
-        out colVec
+        out var matrix,
+        out var rowVec,
+        out var colVec
         );
 
       //_plotStyle.GetPixelwiseImage(matrix, ref image);

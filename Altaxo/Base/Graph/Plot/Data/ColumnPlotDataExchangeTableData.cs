@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Data;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Graph.Plot.Data
 {
@@ -59,7 +59,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <inheritdoc/>
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     /// <summary>
@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="plotItems">The plot items for which to change the underlying data table.</param>
     public void ChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
     {
-      ChangeTableForPlotItems(plotItems, this.NewTable);
+      ChangeTableForPlotItems(plotItems, NewTable);
     }
 
     /// <summary>

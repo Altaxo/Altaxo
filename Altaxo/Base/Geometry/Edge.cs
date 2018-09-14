@@ -72,13 +72,13 @@ namespace Altaxo.Geometry
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Edge s = (Edge)obj;
+        var s = (Edge)obj;
         info.AddValue("EdgeType", s.m_StyleType);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        EdgeType type = (EdgeType)info.GetValue("EdgeType", null);
+        var type = (EdgeType)info.GetValue("EdgeType", null);
         Edge s = null != o ? (Edge)o : new Edge(type);
         return s;
       }

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Calc.Interpolation;
-using Altaxo.Calc.Optimization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
+using Altaxo.Calc.Interpolation;
+using Altaxo.Calc.Optimization;
 
 namespace Altaxo.Data
 {
@@ -447,9 +447,7 @@ namespace Altaxo.Data
               var xCol = (DoubleColumn)table.FindXColumnOf(yCol);
               currentColumns[nColumnGroup].CurrentXCol = xCol;
               currentColumns[nColumnGroup].CurrentYCol = yCol;
-
-              double xmin, xmax;
-              GetMinMaxOfFirstColumnForValidSecondColumn(xCol, yCol, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out xmin, out xmax);
+              GetMinMaxOfFirstColumnForValidSecondColumn(xCol, yCol, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out var xmin, out var xmax);
 
               double localMaxShift;
               double localMinShift;
@@ -494,10 +492,14 @@ namespace Altaxo.Data
                   };
 
                   var optimizationMethod = new StupidLineSearch(new Simple1DCostFunction(optFunc));
-                  var vec = new Calc.LinearAlgebra.DoubleVector(1);
-                  vec[0] = initialShift;
-                  var dir = new Calc.LinearAlgebra.DoubleVector(1);
-                  dir[0] = 1;
+                  var vec = new Calc.LinearAlgebra.DoubleVector(1)
+                  {
+                    [0] = initialShift
+                  };
+                  var dir = new Calc.LinearAlgebra.DoubleVector(1)
+                  {
+                    [0] = 1
+                  };
                   double initialStep = 0.05;
                   var result = optimizationMethod.Search(vec, dir, initialStep);
                   currentShiftFactor = result[0];
@@ -514,10 +516,14 @@ namespace Altaxo.Data
                     return res;
                   };
                   var optimizationMethod = new BruteForceLineSearch(new Simple1DCostFunction(optFunc));
-                  var vec = new Calc.LinearAlgebra.DoubleVector(1);
-                  vec[0] = globalMinShift;
-                  var dir = new Calc.LinearAlgebra.DoubleVector(1);
-                  dir[0] = globalMaxShift - globalMinShift;
+                  var vec = new Calc.LinearAlgebra.DoubleVector(1)
+                  {
+                    [0] = globalMinShift
+                  };
+                  var dir = new Calc.LinearAlgebra.DoubleVector(1)
+                  {
+                    [0] = globalMaxShift - globalMinShift
+                  };
                   double initialStep = 1;
                   var result = optimizationMethod.Search(vec, dir, initialStep);
                   currentShiftFactor = result[0];
@@ -574,15 +580,13 @@ namespace Altaxo.Data
     /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
     private static double GetMeanSignedPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
     {
-      double penalty;
-      int points;
 
       double penaltySum = 0;
       int penaltyPoints = 0;
 
       for (int i = 0; i < interpolations.Length; i++)
       {
-        GetMeanSignedYDifference(interpolations[i].Interpolation, interpolations[i].InterpolationMinimumX, interpolations[i].InterpolationMaximumX, currentColumns[i].CurrentXCol, currentColumns[i].CurrentYCol, shift, options, out penalty, out points);
+        GetMeanSignedYDifference(interpolations[i].Interpolation, interpolations[i].InterpolationMinimumX, interpolations[i].InterpolationMaximumX, currentColumns[i].CurrentXCol, currentColumns[i].CurrentYCol, shift, options, out var penalty, out var points);
 
         if (points > 0)
         {
@@ -606,15 +610,13 @@ namespace Altaxo.Data
     /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
     private static double GetMeanSquaredPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
     {
-      double penalty;
-      int points;
 
       double penaltySum = 0;
       int penaltyPoints = 0;
 
       for (int i = 0; i < interpolations.Length; i++)
       {
-        GetMeanSquaredYDifference(interpolations[i].Interpolation, interpolations[i].InterpolationMinimumX, interpolations[i].InterpolationMaximumX, currentColumns[i].CurrentXCol, currentColumns[i].CurrentYCol, shift, options, out penalty, out points);
+        GetMeanSquaredYDifference(interpolations[i].Interpolation, interpolations[i].InterpolationMinimumX, interpolations[i].InterpolationMaximumX, currentColumns[i].CurrentXCol, currentColumns[i].CurrentYCol, shift, options, out var penalty, out var points);
 
         if (points > 0)
         {

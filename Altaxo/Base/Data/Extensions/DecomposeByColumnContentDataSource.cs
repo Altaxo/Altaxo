@@ -108,9 +108,9 @@ namespace Altaxo.Data
 
       using (var token = SuspendGetToken())
       {
-        this.DecomposeByColumnContentOptions = dataSourceOptions;
-        this.ImportOptions = importOptions;
-        this.InputData = inputData;
+        DecomposeByColumnContentOptions = dataSourceOptions;
+        ImportOptions = importOptions;
+        InputData = inputData;
       }
     }
 
@@ -146,9 +146,9 @@ namespace Altaxo.Data
           CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
           CopyHelper.Copy(ref inputData, from._processData);
 
-          this.DecomposeByColumnContentOptions = dataSourceOptions;
-          this.ImportOptions = importOptions;
-          this.InputData = inputData;
+          DecomposeByColumnContentOptions = dataSourceOptions;
+          ImportOptions = importOptions;
+          InputData = inputData;
 
           return true;
         }
@@ -181,7 +181,7 @@ namespace Altaxo.Data
       }
       catch (Exception ex)
       {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", this.GetType().Name, ex.Message);
+        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
       }
     }
 

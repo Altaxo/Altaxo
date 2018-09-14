@@ -74,8 +74,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public VariableColorGroupStyle(VariableColorGroupStyle from)
     {
-      this._isInitialized = from._isInitialized;
-      this._colorForIndex = from._colorForIndex;
+      _isInitialized = from._isInitialized;
+      _colorForIndex = from._colorForIndex;
     }
 
     #endregion Constructors
@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Plot.Groups
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (VariableColorGroupStyle)fromb;
-      this._isInitialized = from._isInitialized;
+      _isInitialized = from._isInitialized;
       _colorForIndex = from._colorForIndex;
     }
 

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using Altaxo.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {
@@ -91,10 +91,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 
     public static IEnumerable<Tuple<VectorD3D, VectorD3D>> GetVerticesAndNormals()
     {
-      VectorD3D pt0 = new VectorD3D(0, -SinArcCos1By3, MinusOneBy3);
-      VectorD3D pt1 = new VectorD3D(SinArcCos1By3 * Sin120, -SinArcCos1By3 * Cos120, MinusOneBy3);
-      VectorD3D pt2 = new VectorD3D(-SinArcCos1By3 * Sin120, -SinArcCos1By3 * Cos120, MinusOneBy3);
-      VectorD3D pt3 = new VectorD3D(0, 0, 1);
+      var pt0 = new VectorD3D(0, -SinArcCos1By3, MinusOneBy3);
+      var pt1 = new VectorD3D(SinArcCos1By3 * Sin120, -SinArcCos1By3 * Cos120, MinusOneBy3);
+      var pt2 = new VectorD3D(-SinArcCos1By3 * Sin120, -SinArcCos1By3 * Cos120, MinusOneBy3);
+      var pt3 = new VectorD3D(0, 0, 1);
 
       // note: the normals are the negative vectors of the points
 

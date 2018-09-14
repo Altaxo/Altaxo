@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
@@ -30,9 +33,6 @@ using Altaxo.Gui.Data;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -188,8 +188,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         _view.Initialize_MeaningOfValues(_meaningOfValues);
 
-        this.InitializeColumnXText();
-        this.InitializeColumnYText();
+        InitializeColumnXText();
+        InitializeColumnYText();
       }
     }
 
@@ -273,8 +273,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         (column, table, group) =>
         {
           _doc.ColumnX = column;
-          this._supposedParentDataTable = table;
-          this._supposedGroupNumber = group;
+          _supposedParentDataTable = table;
+          _supposedGroupNumber = group;
           InitializeColumnXText();
         }
       );
@@ -286,8 +286,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         (column, table, group) =>
         {
           _doc.ColumnY = column;
-          this._supposedParentDataTable = table;
-          this._supposedGroupNumber = group;
+          _supposedParentDataTable = table;
+          _supposedGroupNumber = group;
           InitializeColumnYText();
         }
       );

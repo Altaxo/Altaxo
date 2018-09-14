@@ -49,7 +49,7 @@ namespace Altaxo.Main.Services.PropertyReflection
 
     public PropertyCollection(object instance, bool noCategory, bool automaticlyExpandObjects, string filter)
     {
-      Dictionary<string, PropertyCategory> groups = new Dictionary<string, PropertyCategory>();
+      var groups = new Dictionary<string, PropertyCategory>();
 
       bool useCustomTypeConverter = false;
 
@@ -73,13 +73,13 @@ namespace Altaxo.Main.Services.PropertyReflection
       else
         properties = new PropertyDescriptorCollection(new PropertyDescriptor[] { });
 
-      List<Property> propertyCollection = new List<Property>();
+      var propertyCollection = new List<Property>();
 
       foreach (PropertyDescriptor propertyDescriptor in properties)
       {
         if (useCustomTypeConverter)
         {
-          Property property = new Property(instance, propertyDescriptor);
+          var property = new Property(instance, propertyDescriptor);
           propertyCollection.Add(property);
         }
         else
@@ -129,7 +129,7 @@ namespace Altaxo.Main.Services.PropertyReflection
     {
       if (descriptor.Attributes[typeof(FlatAttribute)] == null)
       {
-        Property property = new Property(instance, descriptor);
+        var property = new Property(instance, descriptor);
         if (descriptor.IsBrowsable)
         {
           //Add a property with Name: AutomaticlyExpandObjects

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ClosedPathShapeBase s = (ClosedPathShapeBase)obj;
+        var s = (ClosedPathShapeBase)obj;
         info.AddBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType);
 
         info.AddValue("LinePen", s._linePen);
@@ -54,7 +54,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ClosedPathShapeBase s = (ClosedPathShapeBase)o;
+        var s = (ClosedPathShapeBase)o;
         info.GetBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType, parent);
 
         s.Pen = (PenX)info.GetValue("LinePen", s);

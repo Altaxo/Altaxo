@@ -117,7 +117,7 @@ namespace Altaxo.Serialization
     /// </returns>
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     /// <summary>
@@ -285,7 +285,7 @@ namespace Altaxo.Serialization
     {
       var from = obj as AbsoluteAndRelativeFileName;
       if (null != from)
-        return from._absoluteFileName == this._absoluteFileName && from._relativeFileName == this._relativeFileName;
+        return from._absoluteFileName == _absoluteFileName && from._relativeFileName == _relativeFileName;
       else
         return false;
     }

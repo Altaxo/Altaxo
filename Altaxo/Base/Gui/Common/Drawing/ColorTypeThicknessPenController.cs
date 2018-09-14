@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (doc == null)
         throw new ArgumentNullException("doc");
       _doc = doc;
-      _tempDoc = (PenX)doc.Clone();
+      _tempDoc = doc.Clone();
     }
 
     private void Initialize()

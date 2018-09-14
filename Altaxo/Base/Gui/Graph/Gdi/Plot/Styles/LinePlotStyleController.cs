@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
@@ -33,8 +35,6 @@ using Altaxo.Graph.Plot.Groups;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {

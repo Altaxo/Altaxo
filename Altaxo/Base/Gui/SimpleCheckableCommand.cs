@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Gui
 {
@@ -54,7 +54,7 @@ namespace Altaxo.Gui
 
     bool ICheckableMenuCommand.IsChecked(object parameter)
     {
-      return this.IsChecked;
+      return IsChecked;
     }
   }
 }

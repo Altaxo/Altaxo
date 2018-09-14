@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
-using Altaxo.Collections;
 using System;
+using Altaxo.Collections;
+using Altaxo.Main;
 
 namespace Altaxo.Main
 {

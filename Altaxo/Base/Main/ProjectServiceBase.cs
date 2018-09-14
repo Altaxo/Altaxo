@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
-using System.IO;
-using Altaxo.Gui.Workbench;
 using Altaxo.Gui;
+using Altaxo.Gui.Workbench;
+using Altaxo.Main;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Dom
@@ -130,7 +130,7 @@ namespace Altaxo.Dom
 
       if (_currentProject != null)
       {
-        _currentProject.IsDirtyChanged += this.EhProjectDirtyChanged;
+        _currentProject.IsDirtyChanged += EhProjectDirtyChanged;
       }
 
       if (!object.ReferenceEquals(oldProject, _currentProject)) // Project instance has changed
@@ -152,7 +152,7 @@ namespace Altaxo.Dom
 
     private void EhProjectDirtyChanged(object sender, EventArgs e)
     {
-      OnProjectChanged(new Altaxo.Main.ProjectEventArgs(this._currentProject, this._currentProject?.Name, ProjectEventKind.ProjectDirtyChanged));
+      OnProjectChanged(new Altaxo.Main.ProjectEventArgs(_currentProject, _currentProject?.Name, ProjectEventKind.ProjectDirtyChanged));
     }
 
     #endregion Current project and project file name handling
@@ -175,12 +175,12 @@ namespace Altaxo.Dom
       }
       else if (true == dlgresult) // Yes
       {
-        if (this.CurrentProjectFileName != null)
-          this.SaveProject();
+        if (CurrentProjectFileName != null)
+          SaveProject();
         else
-          this.SaveProjectAs();
+          SaveProjectAs();
 
-        if (this.CurrentProject.IsDirty)
+        if (CurrentProject.IsDirty)
           e.Cancel = true; // Cancel if the saving was not successfull
       }
     }
@@ -200,14 +200,14 @@ namespace Altaxo.Dom
     /// <param name="filename">The new project file name.</param>
     public virtual void SaveProject(string filename)
     {
-      string oldFileName = this.CurrentProjectFileName;
-      this._currentProjectFileName = filename; // set file name silently, because
+      string oldFileName = CurrentProjectFileName;
+      _currentProjectFileName = filename; // set file name silently, because
       if (oldFileName != filename)
       {
-        OnProjectChanged(new ProjectRenamedEventArgs(this._currentProject, oldFileName, filename));
+        OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldFileName, filename));
       }
 
-      FileUtility.ObservedSave(new NamedFileOperationDelegate(this.InternalSave),
+      FileUtility.ObservedSave(new NamedFileOperationDelegate(InternalSave),
           FileName.Create(filename),
           Current.ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
           FileErrorPolicy.ProvideAlternative);
@@ -218,7 +218,7 @@ namespace Altaxo.Dom
     /// </summary>
     public void SaveProjectAs()
     {
-      SaveFileOptions options = new SaveFileOptions();
+      var options = new SaveFileOptions();
       var fileExtensions = "*" + string.Join(";*", ProjectFileExtensions);
       options.AddFilter(fileExtensions, string.Format("{0} ({1})", "Project files", fileExtensions));
       options.AddFilter("*.*", StringParser.Parse("${res: Altaxo.FileFilter.AllFiles}"));
@@ -240,7 +240,7 @@ namespace Altaxo.Dom
     /// </summary>
     public void SaveProjectCopyAs()
     {
-      SaveFileOptions options = new SaveFileOptions();
+      var options = new SaveFileOptions();
       var fileExtensions = "*" + string.Join(";*", ProjectFileExtensions);
       options.AddFilter(fileExtensions, string.Format("{0} ({1})", "Project files", fileExtensions));
       options.AddFilter("*.*", StringParser.Parse("${res: Altaxo.FileFilter.AllFiles}"));
@@ -252,7 +252,7 @@ namespace Altaxo.Dom
         string filename = options.FileName;
 
         FileUtility.ObservedSave(
-            new NamedFileOperationDelegate(this.InternalSave),
+            new NamedFileOperationDelegate(InternalSave),
             FileName.Create(filename),
             Current.ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
             FileErrorPolicy.ProvideAlternative);
@@ -300,7 +300,7 @@ namespace Altaxo.Dom
       if (null != savingException)
         throw savingException;
 
-      this._currentProject.IsDirty = false;
+      _currentProject.IsDirty = false;
     }
 
     protected virtual Exception InternalTestIntegrityOfSavedProjectFile(Stream myStream, string fileName)
@@ -343,7 +343,7 @@ namespace Altaxo.Dom
 
       if (CurrentProject != null && CurrentProject.IsDirty && !withoutUserInteraction)
       {
-        System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
+        var e = new System.ComponentModel.CancelEventArgs();
         AskForSavingOfProject(e);
 
         if (e.Cancel == true)
@@ -391,7 +391,7 @@ namespace Altaxo.Dom
     protected virtual void LoadProjectFromFile(string filename)
     {
       string errorText;
-      using (System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read))
+      using (var myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read))
       {
         errorText = InternalLoadProjectFromStream(myStream, filename);
         myStream.Close();
@@ -516,7 +516,7 @@ namespace Altaxo.Dom
       _applicationName = StringParser.Parse("${AppName}");
 
       // embedded mode - ComManager has the title
-      System.Text.StringBuilder title = new System.Text.StringBuilder();
+      var title = new System.Text.StringBuilder();
       // we are in embedded mode
       title.Append(_applicationName);
       title.Append(" ");

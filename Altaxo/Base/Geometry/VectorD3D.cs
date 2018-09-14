@@ -120,7 +120,7 @@ namespace Altaxo.Geometry
 
     public bool Equals(VectorD3D other)
     {
-      return this.X == other.X && this.Y == other.Y && this.Z == other.Z;
+      return X == other.X && Y == other.Y && Z == other.Z;
     }
 
     public static VectorD3D Empty

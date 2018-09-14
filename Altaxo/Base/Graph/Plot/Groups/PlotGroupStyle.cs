@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new T());
       }
 
-      T grpStyle = default(T);
+      var grpStyle = default(T);
       if (externalGroups.ContainsType(typeof(T)))
         grpStyle = (T)externalGroups.GetPlotGroupStyle(typeof(T));
       else if (localGroups != null)
@@ -90,7 +90,7 @@ namespace Altaxo.Graph.Plot.Groups
      IPlotGroupStyleCollection localGroups
      ) where T : IPlotGroupStyle
     {
-      T grpStyle = default(T);
+      var grpStyle = default(T);
       IPlotGroupStyleCollection grpColl = null;
       if (externalGroups.ContainsType(typeof(T)))
         grpColl = externalGroups;

@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot.Data;
-using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
@@ -179,7 +179,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       double logicalShiftY
     )
     {
-      PointF[] circularLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
+      var circularLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
       Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
       if (connectCircular)
         circularLinePoints[circularLinePoints.Length - 1] = circularLinePoints[0];

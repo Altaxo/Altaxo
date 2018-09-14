@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
-using System;
 
 namespace Altaxo.Gui.Graph.Scales
 {
@@ -167,16 +167,16 @@ namespace Altaxo.Gui.Graph.Scales
     {
       base.AttachView();
 
-      _view.ScaleTypeChanged += this.EhView_ScaleTypeChanged;
-      _view.TickSpacingTypeChanged += this.EhView_TickSpacingTypeChanged;
-      _view.LinkTargetChanged += this.EhView_LinkTargetChanged;
+      _view.ScaleTypeChanged += EhView_ScaleTypeChanged;
+      _view.TickSpacingTypeChanged += EhView_TickSpacingTypeChanged;
+      _view.LinkTargetChanged += EhView_LinkTargetChanged;
     }
 
     protected override void DetachView()
     {
-      _view.ScaleTypeChanged -= this.EhView_ScaleTypeChanged;
-      _view.TickSpacingTypeChanged -= this.EhView_TickSpacingTypeChanged;
-      _view.LinkTargetChanged -= this.EhView_LinkTargetChanged;
+      _view.ScaleTypeChanged -= EhView_ScaleTypeChanged;
+      _view.TickSpacingTypeChanged -= EhView_TickSpacingTypeChanged;
+      _view.LinkTargetChanged -= EhView_LinkTargetChanged;
 
       base.DetachView();
     }
@@ -265,8 +265,10 @@ namespace Altaxo.Gui.Graph.Scales
     {
       if (initData)
       {
-        _linkScaleChoices = new SelectableListNodeList();
-        _linkScaleChoices.Add(new SelectableListNode("None", null, false));
+        _linkScaleChoices = new SelectableListNodeList
+        {
+          new SelectableListNode("None", null, false)
+        };
 
         // find the parent layer
         var mylayer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(_doc);
@@ -357,7 +359,7 @@ namespace Altaxo.Gui.Graph.Scales
         {
           if (classes[i] == typeof(LinkedScale))
             continue;
-          SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], ScaleToEdit.GetType() == classes[i]);
+          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], ScaleToEdit.GetType() == classes[i]);
           _scaleTypes.Add(node);
         }
       }
@@ -374,7 +376,7 @@ namespace Altaxo.Gui.Graph.Scales
         Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TickSpacing));
         for (int i = 0; i < classes.Length; i++)
         {
-          SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.TickSpacing.GetType() == classes[i]);
+          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.TickSpacing.GetType() == classes[i]);
           _tickSpacingTypes.Add(node);
         }
       }
@@ -430,7 +432,7 @@ namespace Altaxo.Gui.Graph.Scales
 
     public void EhView_ScaleTypeChanged()
     {
-      Type scaleType = (Type)_scaleTypes.FirstSelectedNode.Tag;
+      var scaleType = (Type)_scaleTypes.FirstSelectedNode.Tag;
 
       try
       {
@@ -438,7 +440,7 @@ namespace Altaxo.Gui.Graph.Scales
         {
           // replace the current scale by a new scale of the type axistype
           Scale oldScale = ScaleToEdit;
-          Scale newScale = (Scale)System.Activator.CreateInstance(scaleType);
+          var newScale = (Scale)System.Activator.CreateInstance(scaleType);
 
           OnDocumentInstanceChanged(oldScale, newScale);
 
@@ -449,7 +451,7 @@ namespace Altaxo.Gui.Graph.Scales
           try
           {
             if (ScaleToEdit.RescalingObject is Altaxo.Main.ICopyFrom)
-              ((Altaxo.Main.ICopyFrom)ScaleToEdit.RescalingObject).CopyFrom(oldScale.RescalingObject);
+              ScaleToEdit.RescalingObject.CopyFrom(oldScale.RescalingObject);
           }
           catch (Exception)
           {
@@ -473,7 +475,7 @@ namespace Altaxo.Gui.Graph.Scales
       if (null == selNode)
         return;
 
-      Type spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
+      var spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
 
       if (spaceType == _doc.TickSpacing.GetType())
         return;

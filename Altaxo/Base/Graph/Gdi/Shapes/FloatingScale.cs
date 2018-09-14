@@ -22,6 +22,10 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using Altaxo.Data;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
@@ -30,10 +34,6 @@ using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Rescaling;
 using Altaxo.Graph.Scales.Ticks;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        FloatingScale s = (FloatingScale)obj;
+        var s = (FloatingScale)obj;
         info.AddBaseValueEmbedded(s, typeof(FloatingScale).BaseType);
 
         info.AddValue("ScaleNumber", s._scaleNumber);
@@ -223,8 +223,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         return;
       }
 
-      Logical3D rBegin;
-      layer.CoordinateSystem.LayerToLogicalCoordinates(X, Y, out rBegin);
+      layer.CoordinateSystem.LayerToLogicalCoordinates(X, Y, out var rBegin);
 
       Logical3D rEnd = rBegin;
       switch (_scaleSpanType)
@@ -235,7 +234,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         case FloatingScaleSpanType.IsPhysicalEndOrgDifference:
           {
-            var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
+            var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[_scaleNumber]);
             physValue += _scaleSpanValue; // to be replaced by the scale span
             var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
             rEnd[_scaleNumber] = logValue;
@@ -244,7 +243,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         case FloatingScaleSpanType.IsPhysicalEndOrgRatio:
           {
-            var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
+            var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[_scaleNumber]);
             physValue *= _scaleSpanValue; // to be replaced by the scale span
             var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
             rEnd[_scaleNumber] = logValue;
@@ -402,7 +401,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected override void SetPosition(PointD2D value, Main.EventFiring eventFiring)
     {
-      var oldPosition = this.GetPosition();
+      var oldPosition = GetPosition();
       base.SetPosition(value, eventFiring);
 
       if (_axisStyle.Title != null)
@@ -414,7 +413,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public override void SilentSetPosition(PointD2D newPosition)
     {
-      var oldPosition = this.GetPosition();
+      var oldPosition = GetPosition();
       base.SilentSetPosition(newPosition);
       if (_axisStyle.Title != null)
       {
@@ -435,7 +434,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected GraphicsPath GetPath(double minWidth)
     {
-      GraphicsPath gp = (GraphicsPath)_cachedPath.Clone();
+      var gp = (GraphicsPath)_cachedPath.Clone();
 
       return gp;
     }
@@ -500,7 +499,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         // the real painting is done later on after painting the background.
         using (var bmp = new Bitmap(4, 4))
         {
-          using (Graphics gg = Graphics.FromImage(bmp))
+          using (var gg = Graphics.FromImage(bmp))
           {
             _axisStyle.Paint(gg, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
           }
@@ -555,11 +554,11 @@ namespace Altaxo.Graph.Gdi.Shapes
         font = GdiFontManager.ToGdi(GdiFontManager.GetFontXGenericSansSerif(font.Size * factor, FontXStyle.Regular));
       }
 
-      g.DrawString(errorMsg, font, Brushes.Red, (PointF)this.Position);
+      g.DrawString(errorMsg, font, Brushes.Red, (PointF)Position);
       size = g.MeasureString(errorMsg, font);
 
       _cachedPath = new GraphicsPath();
-      _cachedPath.AddRectangle(new RectangleF((PointF)this.Position, size));
+      _cachedPath.AddRectangle(new RectangleF((PointF)Position, size));
 
       ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size);
     }
@@ -698,10 +697,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         using (var suspendToken = SuspendGetToken())
         {
-          this._relOrg = from._relOrg;
-          this._relEnd = from._relEnd;
-          this._underlyingScale = from._underlyingScale;
-          this._segmentScaling = from._segmentScaling;
+          _relOrg = from._relOrg;
+          _relEnd = from._relEnd;
+          _underlyingScale = from._underlyingScale;
+          _segmentScaling = from._segmentScaling;
 
           EhSelfChanged(EventArgs.Empty);
           suspendToken.Resume();

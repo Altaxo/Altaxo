@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
@@ -103,28 +103,28 @@ namespace Altaxo.Gui.Common
 
       public void Exclude(MyRange excluded, out MyRange rangeLeft, out MyRange rangeRight)
       {
-        int leftTo = Math.Min(this.To, Math.Max(this.From - 1, excluded.From - 1));
-        int rightFrom = Math.Max(this.From, Math.Min(this.To + 1, excluded.To + 1));
+        int leftTo = Math.Min(To, Math.Max(From - 1, excluded.From - 1));
+        int rightFrom = Math.Max(From, Math.Min(To + 1, excluded.To + 1));
 
         rangeLeft = rangeRight = null;
 
-        if (leftTo >= this.From)
-          rangeLeft = new MyRange { From = this.From, To = leftTo };
-        if (rightFrom <= this.To)
-          rangeRight = new MyRange { From = rightFrom, To = this.To };
+        if (leftTo >= From)
+          rangeLeft = new MyRange { From = From, To = leftTo };
+        if (rightFrom <= To)
+          rangeRight = new MyRange { From = rightFrom, To = To };
       }
 
       public void BeginEdit()
       {
-        _savedRange = new MyRange { From = this.From, To = this.To };
+        _savedRange = new MyRange { From = From, To = To };
       }
 
       public void CancelEdit()
       {
         if (null != _savedRange)
         {
-          this.From = _savedRange.From;
-          this.To = _savedRange.To;
+          From = _savedRange.From;
+          To = _savedRange.To;
           _savedRange = null;
         }
       }
@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Common
         var savedRange = _savedRange;
         _savedRange = null;
 
-        if (null != savedRange && (this.To != savedRange.To || this.From != savedRange.From))
+        if (null != savedRange && (To != savedRange.To || From != savedRange.From))
         {
           Parent.NormalizeRanges();
         }
@@ -176,7 +176,7 @@ namespace Altaxo.Gui.Common
           }
         }
 
-        this.ClearItems();
+        ClearItems();
         this.AddRange(list);
       }
 
@@ -190,7 +190,7 @@ namespace Altaxo.Gui.Common
         if (to < from)
           return;
 
-        this.Add(new MyRange { From = from, To = to });
+        Add(new MyRange { From = from, To = to });
         NormalizeRanges();
       }
 
@@ -201,10 +201,9 @@ namespace Altaxo.Gui.Common
 
         var excludedRange = new MyRange { From = from, To = to };
         var list = new List<MyRange>();
-        MyRange leftRange, rightRange;
         foreach (var range in this)
         {
-          range.Exclude(excludedRange, out leftRange, out rightRange);
+          range.Exclude(excludedRange, out var leftRange, out var rightRange);
           if (null != leftRange)
             list.Add(leftRange);
           if (null != rightRange)

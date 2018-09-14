@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Markdig.Renderers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Markdig.Renderers;
 
 namespace Altaxo.Text.Renderers
 {
@@ -65,7 +65,7 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     public void WriteContentLayoutFile()
     {
-      if (null != this.Writer)
+      if (null != Writer)
       {
         CloseCurrentMamlFile();
       }
@@ -84,7 +84,7 @@ namespace Altaxo.Text.Renderers
         return;
 
       var tw = new System.IO.StreamWriter(ContentLayoutFileName, false, Encoding.UTF8, 1024);
-      this.Writer = tw;
+      Writer = tw;
 
       WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
       WriteLine("<Topics>");
@@ -115,9 +115,9 @@ namespace Altaxo.Text.Renderers
 
       Write("</Topics>");
 
-      this.Writer.Close();
-      this.Writer.Dispose();
-      this.Writer = StreamWriter.Null;
+      Writer.Close();
+      Writer.Dispose();
+      Writer = StreamWriter.Null;
     }
   }
 }

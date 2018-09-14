@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Multivariate;
 using System;
+using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -157,7 +157,7 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        this.View = value as ISpectralPreprocessingView;
+        View = value as ISpectralPreprocessingView;
       }
     }
 

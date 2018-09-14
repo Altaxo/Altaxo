@@ -124,9 +124,9 @@ namespace Altaxo.Drawing.D3D.Material
       {
         return
 
-          this._smoothness == other._smoothness &&
-          this._metalness == other._metalness &&
-          this._indexOfRefraction == other._indexOfRefraction;
+          _smoothness == other._smoothness &&
+          _metalness == other._metalness &&
+          _indexOfRefraction == other._indexOfRefraction;
       }
 
       return false;
@@ -139,9 +139,9 @@ namespace Altaxo.Drawing.D3D.Material
       if (null != other)
       {
         return
-          this._smoothness == other._smoothness &&
-          this._metalness == other._metalness &&
-          this._indexOfRefraction == other._indexOfRefraction;
+          _smoothness == other._smoothness &&
+          _metalness == other._metalness &&
+          _indexOfRefraction == other._indexOfRefraction;
       }
 
       return false;

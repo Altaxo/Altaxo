@@ -61,7 +61,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ConstantVarianceScaling s = (ConstantVarianceScaling)obj;
+        var s = (ConstantVarianceScaling)obj;
 
         info.AddValue("ScalingFactor", s._scaling);
       }
@@ -101,8 +101,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public object Clone()
     {
-      ConstantVarianceScaling result = new ConstantVarianceScaling();
-      result._scaling = this._scaling;
+      var result = new ConstantVarianceScaling
+      {
+        _scaling = _scaling
+      };
       return result;
     }
   }
@@ -122,7 +124,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RelativeVarianceScaling s = (RelativeVarianceScaling)obj;
+        var s = (RelativeVarianceScaling)obj;
 
         info.AddValue("ScalingFactor", s._scaling);
       }
@@ -154,8 +156,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public object Clone()
     {
-      RelativeVarianceScaling result = new RelativeVarianceScaling();
-      result._scaling = this._scaling;
+      var result = new RelativeVarianceScaling
+      {
+        _scaling = _scaling
+      };
       return result;
     }
   }

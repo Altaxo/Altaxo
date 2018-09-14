@@ -22,6 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
@@ -33,11 +38,6 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Graph.Scales;
 using Altaxo.Gui.Worksheet.Viewing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -96,7 +96,7 @@ namespace Altaxo.Worksheet.Commands
         else
           processedColumns.Add(ycol);
 
-        DataColumnCollection table = DataColumnCollection.GetParentDataColumnCollectionOf(ycol);
+        var table = DataColumnCollection.GetParentDataColumnCollectionOf(ycol);
         Altaxo.Data.DataColumn xcol;
         if (!string.IsNullOrEmpty(xColumnName) && null != table && table.ContainsColumn(xColumnName))
           xcol = table[xColumnName];
@@ -112,7 +112,7 @@ namespace Altaxo.Worksheet.Commands
         else
           pa = new XYColumnPlotData(parentTable, groupNumber, new Altaxo.Data.IndexerColumn(), ycol);
 
-        G2DPlotStyleCollection ps = templatePlotStyle != null ? (G2DPlotStyleCollection)templatePlotStyle.Clone() : new G2DPlotStyleCollection();
+        G2DPlotStyleCollection ps = templatePlotStyle != null ? templatePlotStyle.Clone() : new G2DPlotStyleCollection();
 
         if (null == table)
           continue;
@@ -127,13 +127,15 @@ namespace Altaxo.Worksheet.Commands
           switch (table.GetColumnKind(idx))
           {
             case ColumnKind.Label:
-              LabelPlotStyle labelStyle = new LabelPlotStyle(col, context);
+              var labelStyle = new LabelPlotStyle(col, context);
               ps.Insert(0, labelStyle);
               break;
 
             case ColumnKind.Err:
-              ErrorBarPlotStyle errStyle = new ErrorBarYPlotStyle(context);
-              errStyle.CommonErrorColumn = col as INumericColumn;
+              ErrorBarPlotStyle errStyle = new ErrorBarYPlotStyle(context)
+              {
+                CommonErrorColumn = col as INumericColumn
+              };
               ps.Add(errStyle);
               break;
 
@@ -184,29 +186,35 @@ namespace Altaxo.Worksheet.Commands
 
     public static G2DPlotStyleCollection PlotStyle_Line(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      var result = new G2DPlotStyleCollection();
-      result.Add(new LinePlotStyle(context));
+      var result = new G2DPlotStyleCollection
+      {
+        new LinePlotStyle(context)
+      };
       return result;
     }
 
     public static G2DPlotStyleCollection PlotStyle_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      var result = new G2DPlotStyleCollection();
-      result.Add(new ScatterPlotStyle(context));
+      var result = new G2DPlotStyleCollection
+      {
+        new ScatterPlotStyle(context)
+      };
       return result;
     }
 
     public static G2DPlotStyleCollection PlotStyle_Line_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      var result = new G2DPlotStyleCollection();
-      result.Add(new ScatterPlotStyle(context));
-      result.Add(new LinePlotStyle(context) { UseSymbolGap = true });
+      var result = new G2DPlotStyleCollection
+      {
+        new ScatterPlotStyle(context),
+        new LinePlotStyle(context) { UseSymbolGap = true }
+      };
       return result;
     }
 
     public static G2DPlotStyleCollection PlotStyle_LineArea(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+      var result = new G2DPlotStyleCollection();
       var ps1 = new LinePlotStyle(context);
       var ps2 = new DropAreaPlotStyle(context) { FillDirection = Graph.CSPlaneID.Bottom };
       result.Add(ps1);
@@ -217,7 +225,7 @@ namespace Altaxo.Worksheet.Commands
     public static G2DPlotStyleCollection PlotStyle_Bar(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
       var result = new G2DPlotStyleCollection();
-      BarGraphPlotStyle ps1 = new BarGraphPlotStyle(context);
+      var ps1 = new BarGraphPlotStyle(context);
       result.Add(ps1);
       return result;
     }
@@ -371,7 +379,7 @@ namespace Altaxo.Worksheet.Commands
       // Set x and y axes according to the first plot item in the list
       if (pilist.Count > 0 && (pilist[0] is XYColumnPlotItem))
       {
-        XYColumnPlotItem firstitem = (XYColumnPlotItem)pilist[0];
+        var firstitem = (XYColumnPlotItem)pilist[0];
         if (firstitem.Data.XColumn is TextColumn)
           xylayer.Scales[0] = new TextScale();
         else if (firstitem.Data.XColumn is DateTimeColumn)
@@ -383,7 +391,7 @@ namespace Altaxo.Worksheet.Commands
           xylayer.Scales[1] = new DateTimeScale();
       }
 
-      PlotItemCollection newPlotGroup = new PlotItemCollection(xylayer.PlotItems);
+      var newPlotGroup = new PlotItemCollection(xylayer.PlotItems);
       foreach (IGPlotItem pi in pilist)
       {
         newPlotGroup.Add(pi);
@@ -571,9 +579,9 @@ namespace Altaxo.Worksheet.Commands
       var xylayer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
       var context = graph.GetPropertyContext();
 
-      DensityImagePlotStyle plotStyle = new DensityImagePlotStyle();
+      var plotStyle = new DensityImagePlotStyle();
 
-      XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
+      var assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
       if (assoc.DataTableMatrix.RowHeaderColumn == null)
         assoc.DataTableMatrix.RowHeaderColumn = new IndexerColumn();
       if (assoc.DataTableMatrix.ColumnHeaderColumn == null)

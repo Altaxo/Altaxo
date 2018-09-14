@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
@@ -73,14 +73,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GraphicBase s = (GraphicBase)obj;
+        var s = (GraphicBase)obj;
         info.AddValue("Location", s._location);
         info.AddValue("Tag", s._tag);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        GraphicBase s = (GraphicBase)o;
+        var s = (GraphicBase)o;
 
         if (null != s._location)
           throw new InvalidProgramException("_location should be null here. Has the deserialization constructor been used?");
@@ -132,11 +132,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._cachedParentSize = from._cachedParentSize;
-        this._location.CopyFrom(from._location);
-        bool wasUsed = (null != this._parent);
+        _cachedParentSize = from._cachedParentSize;
+        _location.CopyFrom(from._location);
+        bool wasUsed = (null != _parent);
         //this._parent = from._parent;
-        this.UpdateTransformationMatrix();
+        UpdateTransformationMatrix();
 
         if (wasUsed)
         {
@@ -334,7 +334,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <param name="newPosition"></param>
     public virtual void SilentSetPosition(PointD3D newPosition)
     {
-      this.SetPosition(newPosition, Main.EventFiring.Suppressed);
+      SetPosition(newPosition, Main.EventFiring.Suppressed);
     }
 
     /// <summary>
@@ -690,10 +690,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <returns>Null if the object is not hitted. Otherwise data to further process the hitted object.</returns>
     public virtual IHitTestObject HitTest(HitTestPointData parentHitData)
     {
-      var localHitData = parentHitData.NewFromAdditionalTransformation(this._transformation);
+      var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
 
-      double z;
-      if (localHitData.IsHit(Bounds, out z))
+      if (localHitData.IsHit(Bounds, out var z))
       {
         var result = GetNewHitTestObject(parentHitData.WorldTransformation);
         result.DoubleClick = null;
@@ -716,7 +715,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <returns>The absolute parent coordinates of this point (i.e. normally layer coordinates).</returns>
     public PointD3D RelativeLocalToAbsoluteParentCoordinates(VectorD3D relativeObjectCoordinates)
     {
-      var bounds = this.Bounds;
+      var bounds = Bounds;
       return _transformation.Transform(bounds.Location + VectorD3D.MultiplicationElementwise(relativeObjectCoordinates, bounds.Size));
     }
 
@@ -747,7 +746,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         var newSizeY = initialObjectSize.Y + diff.Y / (dy);
         var newSizeZ = initialObjectSize.Z + diff.Z / (dz);
 
-        var size = this.Size;
+        var size = Size;
         if (Math.Abs(dx) == 1 && (newSizeX > 0 || AllowNegativeSize))
           size = size.WithX(newSizeX);
         if (Math.Abs(dy) == 1 && (newSizeY > 0 || AllowNegativeSize))
@@ -755,12 +754,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
         if (Math.Abs(dz) == 1 && (newSizeZ > 0 || AllowNegativeSize))
           size = size.WithZ(newSizeZ);
 
-        this.SetSize(size.X, size.Y, size.Z, Main.EventFiring.Suppressed);
+        SetSize(size.X, size.Y, size.Z, Main.EventFiring.Suppressed);
 
         var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixPointRelativePosition);
 
         var currPos = GetPosition();
-        this.SetPosition(new PointD3D(currPos.X + fixPointAbsolutePosition.X - currFixaPos.X, currPos.Y + fixPointAbsolutePosition.Y - currFixaPos.Y, currPos.Z + fixPointAbsolutePosition.Z - currFixaPos.Z), Main.EventFiring.Suppressed);
+        SetPosition(new PointD3D(currPos.X + fixPointAbsolutePosition.X - currFixaPos.X, currPos.Y + fixPointAbsolutePosition.Y - currFixaPos.Y, currPos.Z + fixPointAbsolutePosition.Z - currFixaPos.Z), Main.EventFiring.Suppressed);
         UpdateTransformationMatrix();
 
         suspendToken.Resume(eventFiring);
@@ -776,7 +775,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
     protected virtual IGripManipulationHandle[] GetGrips(IHitTestObject hitTest, GripKind gripKind)
     {
-      List<IGripManipulationHandle> list = new List<IGripManipulationHandle>();
+      var list = new List<IGripManipulationHandle>();
 
       /*
 
@@ -859,7 +858,7 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
       {
         var transformation = _transformation;
         transformation.AppendTransform(hitTest.Transformation);
-        var objectOutline = new RectangularObjectOutline(this.Bounds, transformation);
+        var objectOutline = new RectangularObjectOutline(Bounds, transformation);
         list.Add(new MovementGripHandle(hitTest, objectOutline, null));
       }
 

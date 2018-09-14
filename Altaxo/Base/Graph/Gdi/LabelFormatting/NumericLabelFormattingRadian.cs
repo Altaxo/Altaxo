@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        NumericLabelFormattingRadian s = (NumericLabelFormattingRadian)obj;
+        var s = (NumericLabelFormattingRadian)obj;
         info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
       }
 
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       if (!item.CanConvertedToDouble)
         return item.ToString();
 
-      double value = (double)item;
+      double value = item;
       double multipvalue = value * denominator / Math.PI;
       double multipround = Math.Round(multipvalue, 0);
 

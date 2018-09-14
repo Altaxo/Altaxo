@@ -16,14 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using Altaxo;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -90,7 +90,7 @@ namespace Altaxo.AddInItems
       {
         if (!isAssemblyLoaded)
         {
-          if (!this.IsActive)
+          if (!IsActive)
             throw new InvalidOperationException("Cannot load inactive AddIn runtime");
 
           isAssemblyLoaded = true;
@@ -148,7 +148,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        if (this.IsActive)
+        if (IsActive)
         {
           Load(); // load the assembly, if not already done
           return loadedAssembly;
@@ -186,8 +186,8 @@ namespace Altaxo.AddInItems
 
     internal static List<Runtime> ReadSection(XmlReader reader, AddIn addIn, string hintPath)
     {
-      List<Runtime> runtimes = new List<Runtime>();
-      Stack<ICondition> conditionStack = new Stack<ICondition>();
+      var runtimes = new List<Runtime>();
+      var conditionStack = new Stack<ICondition>();
       while (reader.Read())
       {
         switch (reader.NodeType)
@@ -241,7 +241,7 @@ namespace Altaxo.AddInItems
       {
         throw new AddInLoadException("Import node requires ONE attribute.");
       }
-      Runtime runtime = new Runtime(addIn.AddInTree, reader.GetAttribute(0), hintPath);
+      var runtime = new Runtime(addIn.AddInTree, reader.GetAttribute(0), hintPath);
       if (conditionStack.Count > 0)
       {
         runtime.conditions = conditionStack.ToArray();
@@ -261,7 +261,7 @@ namespace Altaxo.AddInItems
 
             case XmlNodeType.Element:
               string nodeName = reader.LocalName;
-              Properties properties = Properties.ReadFromAttributes(reader);
+              var properties = Properties.ReadFromAttributes(reader);
               switch (nodeName)
               {
                 case "Doozer":

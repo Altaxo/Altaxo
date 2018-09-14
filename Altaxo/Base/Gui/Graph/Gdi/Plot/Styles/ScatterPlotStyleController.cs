@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -30,8 +32,6 @@ using Altaxo.Graph.Graph2D.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
 using Altaxo.Gui.Graph.Plot.Groups;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -164,8 +164,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         // Frame
         var frameTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolFrame));
-        _symbolFrameChoices = new SelectableListNodeList();
-        _symbolFrameChoices.Add(new SelectableListNode("No frame", null, false));
+        _symbolFrameChoices = new SelectableListNodeList
+        {
+          new SelectableListNode("No frame", null, false)
+        };
         foreach (var ty in frameTypes)
         {
           _symbolFrameChoices.Add(new SelectableListNode(ty.Name, ty, false));
@@ -173,8 +175,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         // Insets
         var insetTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolInset));
-        _symbolInsetChoices = new SelectableListNodeList();
-        _symbolInsetChoices.Add(new SelectableListNode("No inset", null, false));
+        _symbolInsetChoices = new SelectableListNodeList
+        {
+          new SelectableListNode("No inset", null, false)
+        };
         foreach (var ty in insetTypes)
         {
           _symbolInsetChoices.Add(new SelectableListNode(ty.Name, ty, false));
@@ -353,8 +357,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhCreateNewSymbolSetFromOverrides()
     {
-      bool cancellationRequested;
-      var newSymbol = CreateNewSymbolSetFromOverrides(_doc.ScatterSymbol, out cancellationRequested);
+      var newSymbol = CreateNewSymbolSetFromOverrides(_doc.ScatterSymbol, out var cancellationRequested);
       ClearAllOverridesThatAreEqualToScatterSymbol(newSymbol);
       _doc.ScatterSymbol = newSymbol;
       _view.ScatterSymbol = newSymbol;
@@ -527,8 +530,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
       if (createNewSymbolList)
       {
-        string existingListName;
-        if (ScatterSymbolListManager.Instance.TryGetListByMembers(newSymbols, null, out existingListName))
+        if (ScatterSymbolListManager.Instance.TryGetListByMembers(newSymbols, null, out var existingListName))
         {
           Current.Gui.InfoMessageBox("A symbol set with the chosen parameters already exists under the name: " + existingListName, "Symbol set exists");
           return ScatterSymbolListManager.Instance.GetList(existingListName)[originalItemIndex];
@@ -543,17 +545,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
           }
 
           var newScatterSymbolList = new ScatterSymbolList(newName, newSymbols);
-          ScatterSymbolList resultList;
-          ScatterSymbolListManager.Instance.TryRegisterList(newScatterSymbolList, Altaxo.Main.ItemDefinitionLevel.Project, out resultList);
+          ScatterSymbolListManager.Instance.TryRegisterList(newScatterSymbolList, Altaxo.Main.ItemDefinitionLevel.Project, out var resultList);
           // return the item at the original list index.
           return resultList[originalItemIndex];
         }
       }
       else
       {
-        ScatterSymbolList dummyList;
-        IScatterSymbol result;
-        if (ScatterSymbolListManager.Instance.TryFindListContaining(newSymbols[originalItemIndex], out dummyList, out result))
+        if (ScatterSymbolListManager.Instance.TryFindListContaining(newSymbols[originalItemIndex], out var dummyList, out var result))
           return result;
         else
           return newSymbols[originalItemIndex];

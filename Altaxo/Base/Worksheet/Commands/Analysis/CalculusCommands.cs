@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression;
 using Altaxo.Data;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (!Current.Gui.ShowDialog(ref paramobject, "Savitzky-Golay parameters"))
         return;
 
-      SavitzkyGolayParameters parameters = (SavitzkyGolayParameters)paramobject;
+      var parameters = (SavitzkyGolayParameters)paramobject;
 
       Altaxo.Data.DataColumn yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
       Altaxo.Data.DataColumn xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
@@ -67,7 +67,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       double spacing = 1;
       if (xCol is Data.INumericColumn)
       {
-        Calc.LinearAlgebra.VectorSpacingEvaluator calcspace = new Calc.LinearAlgebra.VectorSpacingEvaluator(Calc.LinearAlgebra.DataColumnWrapper.ToROVector(xCol));
+        var calcspace = new Calc.LinearAlgebra.VectorSpacingEvaluator(Calc.LinearAlgebra.DataColumnWrapper.ToROVector(xCol));
         if (!calcspace.HasValidSpaces || calcspace.HasInvalidSpaces)
         {
           Current.Gui.ErrorMessageBox(string.Format("The x-column {0} contains invalid spaces (is not equally spaced)", xCol.Name));
@@ -84,7 +84,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         spacing = calcspace.SpaceMeanValue;
       }
 
-      Calc.Regression.SavitzkyGolay filter = new SavitzkyGolay(parameters);
+      var filter = new SavitzkyGolay(parameters);
 
       using (var suspendToken = yCol.SuspendGetToken())
       {
@@ -113,14 +113,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (!Current.Gui.ShowDialog(ref paramobject, "Interpolation"))
         return;
 
-      InterpolationParameters parameters = (InterpolationParameters)paramobject;
+      var parameters = (InterpolationParameters)paramobject;
 
       Interpolation(ctrl, parameters);
     }
 
     public static void Interpolation(IWorksheetController ctrl, InterpolationParameters parameters)
     {
-      Dictionary<DataColumn, int> _columnToGroupNumber = new Dictionary<DataColumn, int>();
+      var _columnToGroupNumber = new Dictionary<DataColumn, int>();
 
       for (int nSel = 0; nSel < ctrl.SelectedDataColumns.Count; nSel++)
       {
@@ -138,10 +138,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
           return;
         }
 
-        DoubleColumn xRes = new DoubleColumn();
-        DoubleColumn yRes = new DoubleColumn();
-        int newgroup;
-        if (!_columnToGroupNumber.TryGetValue(xCol, out newgroup))
+        var xRes = new DoubleColumn();
+        var yRes = new DoubleColumn();
+        if (!_columnToGroupNumber.TryGetValue(xCol, out var newgroup))
         {
           newgroup = ctrl.DataTable.DataColumns.GetUnusedColumnGroupNumber();
           ctrl.DataTable.DataColumns.Add(xRes, xCol.Name + ".I", ColumnKind.X, newgroup);

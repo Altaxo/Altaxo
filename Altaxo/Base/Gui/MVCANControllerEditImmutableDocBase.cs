@@ -70,7 +70,7 @@ namespace Altaxo.Gui
     public virtual bool InitializeDocument(params object[] args)
     {
       if (IsDisposed)
-        throw new ObjectDisposedException("The controller was already disposed. Type: " + this.GetType().FullName);
+        throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
 
       if (null == args || 0 == args.Length || !(args[0] is TModel))
         return false;
@@ -92,7 +92,7 @@ namespace Altaxo.Gui
       if (null == _doc)
         throw new InvalidOperationException("This controller was not initialized with a document.");
       if (IsDisposed)
-        throw new ObjectDisposedException("The controller was already disposed. Type: " + this.GetType().FullName);
+        throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
     }
 
     /// <summary>
@@ -225,7 +225,7 @@ namespace Altaxo.Gui
     {
       if (!IsDisposed)
       {
-        foreach (var subControllerItem in this.GetSubControllers())
+        foreach (var subControllerItem in GetSubControllers())
         {
           if (null != subControllerItem.Controller)
             subControllerItem.Controller.Dispose();

@@ -32,10 +32,10 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Units
 {
-  using System.ComponentModel;
-  using Altaxo.Units;
-  using System.Windows.Input;
   using System.Collections;
+  using System.ComponentModel;
+  using System.Windows.Input;
+  using Altaxo.Units;
 
   public interface IUnitEnvironmentView : IDataContextAwareView
   {

@@ -16,12 +16,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using Altaxo.Main.Services;
 
 namespace Altaxo.AddInItems
 {
@@ -133,7 +133,7 @@ namespace Altaxo.AddInItems
       // so "bool dependenciesLoaded" must be volatile and set only at the very end of this method.
       if (!dependenciesLoaded)
       {
-        Current.Log.Info("Loading addin " + this.Name);
+        Current.Log.Info("Loading addin " + Name);
 
         AssemblyLocator.Init();
         foreach (AddInReference r in manifest.Dependencies)
@@ -248,7 +248,7 @@ namespace Altaxo.AddInItems
       set
       {
         enabled = value;
-        this.Action = value ? AddInAction.Enable : AddInAction.Disable;
+        Action = value ? AddInAction.Enable : AddInAction.Disable;
       }
     }
 
@@ -300,9 +300,11 @@ namespace Altaxo.AddInItems
                 throw new AddInLoadException("Cannot use include nodes when hintPath was not specified (e.g. when AddInManager reads a .addin file)!");
               }
               string fileName = Path.Combine(hintPath, reader.GetAttribute(0));
-              XmlReaderSettings xrs = new XmlReaderSettings();
-              xrs.NameTable = reader.NameTable; // share the name table
-              xrs.ConformanceLevel = ConformanceLevel.Fragment;
+              var xrs = new XmlReaderSettings
+              {
+                NameTable = reader.NameTable, // share the name table
+                ConformanceLevel = ConformanceLevel.Fragment
+              };
               using (XmlReader includeReader = XmlTextReader.Create(fileName, xrs))
               {
                 SetupAddIn(includeReader, addIn, Path.GetDirectoryName(fileName));
@@ -348,8 +350,8 @@ namespace Altaxo.AddInItems
         nameTable = new NameTable();
       try
       {
-        AddIn addIn = new AddIn(addInTree);
-        using (XmlTextReader reader = new XmlTextReader(textReader, nameTable))
+        var addIn = new AddIn(addInTree);
+        using (var reader = new XmlTextReader(textReader, nameTable))
         {
           while (reader.Read())
           {
@@ -404,9 +406,9 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        if (FileUtility.IsBaseDirectory(FileUtility.ApplicationRootPath, this.FileName))
+        if (FileUtility.IsBaseDirectory(FileUtility.ApplicationRootPath, FileName))
         {
-          string hidden = this.Properties["addInManagerHidden"];
+          string hidden = Properties["addInManagerHidden"];
           return string.Equals(hidden, "true", StringComparison.OrdinalIgnoreCase)
               || string.Equals(hidden, "preinstalled", StringComparison.OrdinalIgnoreCase);
         }

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Background
 {
@@ -131,15 +131,15 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private void InitializeBackgroundStyle()
     {
-      int sel = Array.IndexOf(this._backgroundStyles, this._doc == null ? null : this._doc.GetType());
-      _view.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true), sel + 1);
+      int sel = Array.IndexOf(_backgroundStyles, _doc == null ? null : _doc.GetType());
+      _view.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(_backgroundStyles, true), sel + 1);
 
-      if (this._doc != null && this._doc.SupportsBrush)
-        _view.BackgroundBrush_Initialize(this._doc.Brush);
+      if (_doc != null && _doc.SupportsBrush)
+        _view.BackgroundBrush_Initialize(_doc.Brush);
       else
         _view.BackgroundBrush_Initialize(new BrushX(NamedColors.Transparent));
 
-      _view.BackgroundBrushEnable_Initialize(this._doc != null && this._doc.SupportsBrush);
+      _view.BackgroundBrushEnable_Initialize(_doc != null && _doc.SupportsBrush);
     }
 
     public object TemporaryModelObject
@@ -154,9 +154,9 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     public void EhView_BackgroundBrushChanged(BrushX brush)
     {
-      if (this._doc != null && this._doc.SupportsBrush)
+      if (_doc != null && _doc.SupportsBrush)
       {
-        this._doc.Brush = brush;
+        _doc.Brush = brush;
         OnMadeDirty();
       }
     }
@@ -167,11 +167,11 @@ namespace Altaxo.Gui.Graph.Gdi.Background
     /// <param name="newValue">The new index of the style.</param>
     public void EhView_BackgroundStyleChanged(int newValue)
     {
-      BrushX backgroundColor = new BrushX(NamedColors.Transparent);
+      var backgroundColor = new BrushX(NamedColors.Transparent);
 
       if (newValue != 0)
       {
-        _doc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue - 1]);
+        _doc = (IBackgroundStyle)Activator.CreateInstance(_backgroundStyles[newValue - 1]);
         backgroundColor = _doc.Brush;
       }
       else // is null

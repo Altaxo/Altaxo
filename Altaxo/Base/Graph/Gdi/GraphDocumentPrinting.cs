@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi
     {
       try
       {
-        Altaxo.Gui.Graph.PrintingController ctrl = new Gui.Graph.PrintingController();
+        var ctrl = new Gui.Graph.PrintingController();
         ctrl.InitializeDocument(doc);
         Current.Gui.FindAndAttachControlTo(ctrl);
 
@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="doc">The graph document to print.</param>
     public static void Print(this GraphDocument doc)
     {
-      GraphDocumentPrintTask printTask = new GraphDocumentPrintTask(doc);
+      var printTask = new GraphDocumentPrintTask(doc);
       Exception ex = null;
       try
       {
@@ -173,15 +173,11 @@ namespace Altaxo.Graph.Gdi
       var savedGraphics = g.Save();
       float hx = e.PageSettings.HardMarginX; // in hundreths of inch
       float hy = e.PageSettings.HardMarginY; // in hundreths of inch
-                                             //g.TranslateTransform(-hx,-hy);
-
-      float zoom;
-      PointF startLocationOnPage;
-      SizeF graphSize = (SizeF)_layers.Size;
-      _printOptions.GetZoomAndStartLocation(e.PageBounds, e.MarginBounds, graphSize, out zoom, out startLocationOnPage, true);
+      var graphSize = (SizeF)_layers.Size;
+      _printOptions.GetZoomAndStartLocation(e.PageBounds, e.MarginBounds, graphSize, out var zoom, out var startLocationOnPage, true);
       graphSize = graphSize.Scale(zoom);
 
-      PointF startLocationInGraph = new PointF(0, 0);
+      var startLocationInGraph = new PointF(0, 0);
       if (_printOptions.TilePages)
       {
         startLocationOnPage = e.MarginBounds.Location; // when tiling pages start always from margin bounds

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Altaxo.Collections;
+using Altaxo.Data;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -572,7 +572,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>An horizontal oriented <see cref="IROMatrix{Double}" /> wrapping the <see cref="DoubleColumn" />.</returns>
     public static IROMatrix<double> ToHorzROMatrix(this INumericColumn col, int nRows)
     {
-      return new NumericColumnToROHorzMatrixWrapper((INumericColumn)col, nRows);
+      return new NumericColumnToROHorzMatrixWrapper(col, nRows);
     }
 
     /// <summary>
@@ -583,7 +583,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>An vertical oriented <see cref="IROMatrix{Double}" /> wrapping the <see cref="DoubleColumn" />.</returns>
     public static IROMatrix<double> ToVertROMatrix(this INumericColumn col, int nRows)
     {
-      return new NumericColumnToROVertMatrixWrapper((INumericColumn)col, nRows);
+      return new NumericColumnToROVertMatrixWrapper(col, nRows);
     }
 
     #endregion ToMatrices
@@ -658,7 +658,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (!(col is INumericColumn))
         throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a numeric column");
 
-      INumericColumn ncol = col as INumericColumn;
+      var ncol = col as INumericColumn;
 
       double[] vec = new double[col.Count];
       for (int i = col.Count - 1; i >= 0; i--)

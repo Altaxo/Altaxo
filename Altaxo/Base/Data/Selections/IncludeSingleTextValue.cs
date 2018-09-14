@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
@@ -233,7 +233,7 @@ namespace Altaxo.Data.Selections
       Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      yield return (this.GetType().Name, Column, ColumnName, (c) => Column = c);
+      yield return (GetType().Name, Column, ColumnName, (c) => Column = c);
     }
 
     /// <summary>
@@ -243,7 +243,7 @@ namespace Altaxo.Data.Selections
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
-      Report(this._columnProxy, this, nameof(Column));
+      Report(_columnProxy, this, nameof(Column));
     }
   }
 }

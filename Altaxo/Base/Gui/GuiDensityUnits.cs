@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
-using Altaxo.Units.VolumetricMassDensity;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Units;
+using Altaxo.Units.VolumetricMassDensity;
 
 namespace Altaxo.Gui
 {

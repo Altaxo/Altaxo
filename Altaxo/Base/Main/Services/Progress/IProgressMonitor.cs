@@ -42,8 +42,8 @@ namespace Altaxo.Main.Services
     /// </summary>
     string GetReportText();
 
-    /// <summary>Gets the progress as fraction. If you are not able to calculate the progress, this function should return <see cref="System.Double.NaN"/>.</summary>
-    /// <returns>The progress as fraction value [0..1], or <see cref="System.Double.NaN"/>.</returns>
+    /// <summary>Gets the progress as fraction. If you are not able to calculate the progress, this function should return <see cref="double.NaN"/>.</summary>
+    /// <returns>The progress as fraction value [0..1], or <see cref="double.NaN"/>.</returns>
     double GetProgressFraction();
   }
 }

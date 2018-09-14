@@ -131,7 +131,7 @@ namespace Altaxo.Gui.Common
 
     public virtual bool Apply(bool disposeController)
     {
-      this._value1Bool = this._value1BoolTemporary;
+      _value1Bool = _value1BoolTemporary;
       return true;
     }
 

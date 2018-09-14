@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         if (pi is IXBoundsHolder)
         {
-          IXBoundsHolder plotItem = (IXBoundsHolder)pi;
+          var plotItem = (IXBoundsHolder)pi;
           plotItem.MergeXBoundsInto(pb);
         }
       }
@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         if (pi is IYBoundsHolder)
         {
-          IYBoundsHolder plotItem = (IYBoundsHolder)pi;
+          var plotItem = (IYBoundsHolder)pi;
           plotItem.MergeYBoundsInto(pb);
         }
       }

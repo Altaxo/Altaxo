@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AdditionalTicks s = (AdditionalTicks)obj;
+        var s = (AdditionalTicks)obj;
 
         info.CreateArray("ByValues", s._additionalTicks.Count);
         foreach (AltaxoVariant v in s._additionalTicks)

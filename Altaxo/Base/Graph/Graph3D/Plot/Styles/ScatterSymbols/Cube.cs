@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {

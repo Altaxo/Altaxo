@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
-using Altaxo.Units.Length;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Units;
+using Altaxo.Units.Length;
 
 namespace Altaxo.Gui
 {
@@ -38,11 +38,12 @@ namespace Altaxo.Gui
 
     static GuiLengthUnits()
     {
-      var instance = new List<IUnit>();
-
-      instance.Add(Point.Instance);
-      instance.Add(new UnitWithLimitedPrefixes(Meter.Instance, new SIPrefix[] { SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci }));
-      instance.Add(Inch.Instance);
+      var instance = new List<IUnit>
+      {
+        Point.Instance,
+        new UnitWithLimitedPrefixes(Meter.Instance, new SIPrefix[] { SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci }),
+        Inch.Instance
+      };
       _instance = instance.AsReadOnly();
     }
 

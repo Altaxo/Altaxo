@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Analysis.Statistics.Histograms;
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Analysis.Statistics.Histograms;
+using Altaxo.Data;
 
 namespace Altaxo.Gui.Analysis.Statistics
 {

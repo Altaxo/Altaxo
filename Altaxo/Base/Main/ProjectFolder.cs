@@ -69,11 +69,11 @@ namespace Altaxo.Main
     {
       var a = obj as ProjectFolder;
       if (null != a)
-        return a.Name == this.Name;
+        return a.Name == Name;
 
       var b = obj as string;
       if (null != b)
-        return b == this.Name;
+        return b == Name;
 
       return false;
     }
@@ -491,9 +491,9 @@ namespace Altaxo.Main
 
       int rootIndex = -1;
       var len = Math.Min(startPathParts.Length, endPathParts.Length);
-      for(int i=0;i<len;++i)
+      for (int i = 0; i < len; ++i)
       {
-        if(startPathParts[i]==endPathParts[i])
+        if (startPathParts[i] == endPathParts[i])
         {
           rootIndex = i;
         }
@@ -505,12 +505,12 @@ namespace Altaxo.Main
 
       var stb = new StringBuilder();
 
-      for(var i= startPathParts.Length-1;i>rootIndex;--i)
+      for (var i = startPathParts.Length - 1; i > rootIndex; --i)
       {
         stb.Append("..");
         stb.Append(DirectorySeparatorString);
       }
-      for(var i=rootIndex+1;i<endPathParts.Length;++i)
+      for (var i = rootIndex + 1; i < endPathParts.Length; ++i)
       {
         stb.Append(endPathParts[i]);
         stb.Append(DirectorySeparatorString);

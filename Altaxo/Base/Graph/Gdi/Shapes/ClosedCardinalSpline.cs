@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -113,8 +113,8 @@ namespace Altaxo.Graph.Gdi.Shapes
         var from = obj as ClosedCardinalSpline;
         if (null != from)
         {
-          this._tension = from._tension;
-          this._curvePoints.Clear();
+          _tension = from._tension;
+          _curvePoints.Clear();
           _curvePoints.AddRange(from._curvePoints);
         }
       }
@@ -197,7 +197,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       using (var token = SuspendGetToken())
       {
-        this.ShiftPosition(bounds.Location);
+        ShiftPosition(bounds.Location);
         ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds.Size);
 
         token.Resume();
@@ -229,9 +229,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     private GraphicsPath InternalGetPath(PointD2D offset)
     {
-      GraphicsPath gp = new GraphicsPath();
+      var gp = new GraphicsPath();
 
-      PointF[] pt = new PointF[_curvePoints.Count];
+      var pt = new PointF[_curvePoints.Count];
       for (int i = 0; i < _curvePoints.Count; i++)
         pt[i] = new PointF((float)(_curvePoints[i].X + offset.X), (float)(_curvePoints[i].Y + offset.Y));
       gp.AddClosedCurve(pt, (float)_tension);
@@ -252,11 +252,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       HitTestObjectBase result = null;
       GraphicsPath gp = GetPath();
 
-      if (this._fillBrush.IsVisible && gp.IsVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation)))
+      if (_fillBrush.IsVisible && gp.IsVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation)))
       {
         result = new ClosedCardinalSplineHitTestObject(this);
       }
-      else if (this._linePen.IsVisible && gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
+      else if (_linePen.IsVisible && gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
       {
         result = new ClosedCardinalSplineHitTestObject(this);
       }
@@ -275,7 +275,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
-    private new static bool EhHitDoubleClick(IHitTestObject o)
+    private static new bool EhHitDoubleClick(IHitTestObject o)
     {
       object hitted = o.HittedObject;
       Current.Gui.ShowDialog(ref hitted, "Line properties", true);
@@ -317,21 +317,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         if (gripLevel <= 1)
         {
-          ClosedCardinalSpline ls = (ClosedCardinalSpline)_hitobject;
-          PointF[] pts = new PointF[ls._curvePoints.Count];
+          var ls = (ClosedCardinalSpline)_hitobject;
+          var pts = new PointF[ls._curvePoints.Count];
           var offset = ls.Location.AbsoluteVectorPivotToLeftUpper;
           for (int i = 0; i < pts.Length; i++)
           {
             pts[i] = (PointF)(ls._curvePoints[i] + offset);
             var pt = ls._transformation.TransformPoint(pts[i]);
-            pt = this.Transformation.TransformPoint(pt);
+            pt = Transformation.TransformPoint(pt);
             pts[i] = pt;
           }
 
-          IGripManipulationHandle[] grips = new IGripManipulationHandle[gripLevel == 0 ? 1 : 1 + ls._curvePoints.Count];
+          var grips = new IGripManipulationHandle[gripLevel == 0 ? 1 : 1 + ls._curvePoints.Count];
 
           // Translation grips
-          GraphicsPath path = new GraphicsPath();
+          var path = new GraphicsPath();
           path.AddClosedCurve(pts, (float)ls._tension);
           path.Widen(new Pen(Color.Black, (float)(6 / pageScale)));
           grips[grips.Length - 1] = new MovementGripHandle(this, path, null);

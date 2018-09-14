@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         //this.m_cbFontSize.Text = m_TextObject.Font.Size.ToString();
 
         // fill the color dialog box
-        _view.SelectedFontBrush = this._doc.TextFillBrush;
+        _view.SelectedFontBrush = _doc.TextFillBrush;
 
         _view.LocationView = _locationController.ViewObject;
 
@@ -245,7 +245,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     public void EhView_EditTextChanged()
     {
-      this._doc.Text = _view.EditText;
+      _doc.Text = _view.EditText;
       _view.InvalidatePreviewPanel();
     }
 
@@ -267,26 +267,26 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       // make sure that regular style is available
       if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
-        this._doc.Font = GdiFontManager.GetFontX(ff, this._doc.Font.Size, FontXStyle.Regular);
+        _doc.Font = GdiFontManager.GetFontX(ff, _doc.Font.Size, FontXStyle.Regular);
       else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
-        this._doc.Font = GdiFontManager.GetFontX(ff, this._doc.Font.Size, FontXStyle.Bold);
+        _doc.Font = GdiFontManager.GetFontX(ff, _doc.Font.Size, FontXStyle.Bold);
       else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
-        this._doc.Font = GdiFontManager.GetFontX(ff, this._doc.Font.Size, FontXStyle.Italic);
+        _doc.Font = GdiFontManager.GetFontX(ff, _doc.Font.Size, FontXStyle.Italic);
       else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
-        this._doc.Font = GdiFontManager.GetFontX(ff, this._doc.Font.Size, FontXStyle.Bold | FontXStyle.Italic);
+        _doc.Font = GdiFontManager.GetFontX(ff, _doc.Font.Size, FontXStyle.Bold | FontXStyle.Italic);
 
       _view.InvalidatePreviewPanel();
     }
 
     public void EhView_FontSizeChanged()
     {
-      this._doc.Font = this._doc.Font.WithSize(_view.SelectedFont.Size);
+      _doc.Font = _doc.Font.WithSize(_view.SelectedFont.Size);
       _view.InvalidatePreviewPanel();
     }
 
     public void EhView_TextFillBrushChanged()
     {
-      this._doc.TextFillBrush = _view.SelectedFontBrush;
+      _doc.TextFillBrush = _view.SelectedFontBrush;
       _view.InvalidatePreviewPanel();
     }
 

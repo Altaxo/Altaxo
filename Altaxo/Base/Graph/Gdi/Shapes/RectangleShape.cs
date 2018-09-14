@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        RectangleShape s = (RectangleShape)obj;
+        var s = (RectangleShape)obj;
         info.AddBaseValueEmbedded(s, typeof(RectangleShape).BaseType);
       }
 
@@ -116,7 +116,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       TransformGraphics(g);
 
-      var bounds = this.Bounds;
+      var bounds = Bounds;
       var boundsF = (RectangleF)bounds;
       if (Brush.IsVisible)
       {

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {

@@ -42,8 +42,10 @@ namespace Altaxo.Data
     /// <param name="table">The table to rename.</param>
     public static void ShowRenameDialog(this DataTable table)
     {
-      TextValueInputController tvctrl = new TextValueInputController(table.Name, "Enter a name for the worksheet:");
-      tvctrl.Validator = new WorksheetRenameValidator(table);
+      var tvctrl = new TextValueInputController(table.Name, "Enter a name for the worksheet:")
+      {
+        Validator = new WorksheetRenameValidator(table)
+      };
       if (Current.Gui.ShowDialog(tvctrl, "Rename worksheet", false))
         table.Name = tvctrl.InputText.Trim();
     }

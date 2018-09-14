@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Common
 {
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Common
 
     protected ControlViewElement Tab(int i)
     {
-      return (ControlViewElement)_tabs[i];
+      return _tabs[i];
     }
 
     public void BringTabToFront(int i)
@@ -200,11 +200,11 @@ namespace Altaxo.Gui.Common
         View.ClearTabs();
         for (int i = 0; i < _tabs.Count; i++)
         {
-          ControlViewElement tab = (ControlViewElement)_tabs[i];
+          var tab = _tabs[i];
           View.AddTab(tab.Title, tab.View);
         }
 
-        this._frontTabIndex = Math.Min(this._frontTabIndex, _tabs.Count - 1);
+        _frontTabIndex = Math.Min(_frontTabIndex, _tabs.Count - 1);
         View.BringTabToFront(_frontTabIndex);
       }
     }

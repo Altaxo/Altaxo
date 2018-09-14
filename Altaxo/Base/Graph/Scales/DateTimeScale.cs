@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales
 {
@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Scales
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DateTimeScale s = (DateTimeScale)obj;
+        var s = (DateTimeScale)obj;
 
         info.AddValue("Org", s._axisOrg);
         info.AddValue("End", s._axisEnd);
@@ -132,8 +132,8 @@ namespace Altaxo.Graph.Scales
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._axisOrg = from._axisOrg;
-        this._axisEnd = from._axisEnd;
+        _axisOrg = from._axisOrg;
+        _axisEnd = from._axisEnd;
 
         ChildCopyToMember(ref _dataBounds, from._dataBounds);
         ChildCopyToMember(ref _rescaling, from._rescaling);
@@ -226,7 +226,7 @@ namespace Altaxo.Graph.Scales
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
     {
       if (x.IsType(AltaxoVariant.Content.VDateTime))
-        return PhysicalToNormal((DateTime)x);
+        return PhysicalToNormal(x);
       else if (x.CanConvertedToDouble)
         return PhysicalToNormal(new DateTime((long)(x.ToDouble() * 10000000)));
       else
@@ -263,8 +263,8 @@ namespace Altaxo.Graph.Scales
 
     protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
     {
-      DateTime o = (DateTime)org;
-      DateTime e = (DateTime)end;
+      var o = (DateTime)org;
+      var e = (DateTime)end;
 
       if (!(o < e))
         return "org is not less than end";
@@ -293,7 +293,7 @@ namespace Altaxo.Graph.Scales
     {
       get
       {
-        return this._rescaling;
+        return _rescaling;
       }
     }
 
@@ -304,7 +304,7 @@ namespace Altaxo.Graph.Scales
     {
       get
       {
-        return this._rescaling;
+        return _rescaling;
       }
     }
 
@@ -333,7 +333,7 @@ namespace Altaxo.Graph.Scales
     {
       get
       {
-        return this._dataBounds;
+        return _dataBounds;
       }
     } // return a PhysicalBoundarie object that is associated with that axis
 
@@ -344,7 +344,7 @@ namespace Altaxo.Graph.Scales
     {
       get
       {
-        return this._dataBounds;
+        return _dataBounds;
       }
     } // return a PhysicalBoundarie object that is associated with that axis
 
@@ -373,7 +373,7 @@ namespace Altaxo.Graph.Scales
 
     public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
     {
-      _rescaling.OnUserZoomed((DateTime)newZoomOrg, (DateTime)newZoomEnd);
+      _rescaling.OnUserZoomed(newZoomOrg, newZoomEnd);
     }
 
     protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)

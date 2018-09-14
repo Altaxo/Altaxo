@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Units;
 
 namespace Altaxo.Gui
 {
@@ -39,11 +39,12 @@ namespace Altaxo.Gui
 
     static GuiAngleUnits()
     {
-      var instance = new List<IUnit>();
-
-      instance.Add(Radian.Instance);
-      instance.Add(Degree.Instance);
-      instance.Add(Pi.Instance);
+      var instance = new List<IUnit>
+      {
+        Radian.Instance,
+        Degree.Instance,
+        Pi.Instance
+      };
       _instance = instance.AsReadOnly();
     }
 

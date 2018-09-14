@@ -60,8 +60,7 @@ namespace Altaxo.Serialization.Ascii
 
       foreach (AsciiLineAnalysisOption separation in separationStrategies)
       {
-        List<string> tokens;
-        if (!tokenDictionary.TryGetValue(separation.SeparationStrategy, out tokens))
+        if (!tokenDictionary.TryGetValue(separation.SeparationStrategy, out var tokens))
         {
           tokens = new List<string>(separation.SeparationStrategy.GetTokens(sLine));
           tokenDictionary.Add(separation.SeparationStrategy, tokens);
@@ -81,7 +80,7 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>The resulting structure.</returns>
     public static AsciiLineStructure GetStructure(int nLine, IEnumerable<string> tokens, System.Globalization.CultureInfo numberFormat, System.Globalization.CultureInfo dateTimeFormat)
     {
-      AsciiLineStructure tabStruc = new AsciiLineStructure();
+      var tabStruc = new AsciiLineStructure();
 
       foreach (string substring in tokens)
       {
@@ -135,8 +134,7 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>True if the string can be parsed to a date/time value.</returns>
     public static bool IsDateTime(string s, System.Globalization.CultureInfo dateTimeFormat)
     {
-      DateTime result;
-      return DateTime.TryParse(s, dateTimeFormat.DateTimeFormat, System.Globalization.DateTimeStyles.None, out result) && !_dateTimeExclusingPattern.Match(s).Success;
+      return DateTime.TryParse(s, dateTimeFormat.DateTimeFormat, System.Globalization.DateTimeStyles.None, out var result) && !_dateTimeExclusingPattern.Match(s).Success;
     }
 
     /// <summary>
@@ -148,8 +146,7 @@ namespace Altaxo.Serialization.Ascii
     /// <returns></returns>
     public static bool IsNumeric(string s, System.Globalization.CultureInfo numberFormat)
     {
-      double result;
-      return double.TryParse(s, System.Globalization.NumberStyles.Any, numberFormat.NumberFormat, out result);
+      return double.TryParse(s, System.Globalization.NumberStyles.Any, numberFormat.NumberFormat, out var result);
     }
 
     /// <summary>
@@ -160,8 +157,7 @@ namespace Altaxo.Serialization.Ascii
     /// <returns></returns>
     public static bool IsIntegral(string s, System.Globalization.CultureInfo numberFormat)
     {
-      long result;
-      return long.TryParse(s, System.Globalization.NumberStyles.Integer, numberFormat.NumberFormat, out result);
+      return long.TryParse(s, System.Globalization.NumberStyles.Integer, numberFormat.NumberFormat, out var result);
     }
 
     /// <summary>
@@ -172,8 +168,7 @@ namespace Altaxo.Serialization.Ascii
     /// <returns></returns>
     public static bool IsFloat(string s, System.Globalization.CultureInfo numberFormat)
     {
-      double result;
-      return double.TryParse(s, System.Globalization.NumberStyles.Float, numberFormat.NumberFormat, out result);
+      return double.TryParse(s, System.Globalization.NumberStyles.Float, numberFormat.NumberFormat, out var result);
     }
   } // end class
 }

@@ -73,8 +73,8 @@ namespace Altaxo.Graph.Plot.Groups
 
     public VariableSymbolSizeGroupStyle(VariableSymbolSizeGroupStyle from)
     {
-      this._isInitialized = from._isInitialized;
-      this._symbolSizeForIndex = from._symbolSizeForIndex;
+      _isInitialized = from._isInitialized;
+      _symbolSizeForIndex = from._symbolSizeForIndex;
     }
 
     #endregion Constructors
@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Plot.Groups
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       var from = (VariableSymbolSizeGroupStyle)fromb;
-      this._isInitialized = from._isInitialized;
+      _isInitialized = from._isInitialized;
       _symbolSizeForIndex = from._symbolSizeForIndex;
     }
 

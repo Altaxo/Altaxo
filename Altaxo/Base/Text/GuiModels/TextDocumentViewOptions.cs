@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Main;
 
 namespace Altaxo.Text.GuiModels
 {
@@ -114,7 +114,7 @@ namespace Altaxo.Text.GuiModels
         s.IsFoldingEnabled = info.GetNullableBoolean("IsFoldingEnabled");
         s.HighlightingStyle = info.GetString("HighlightingStyle");
 
-        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0
+        var surr = new XmlSerializationSurrogate0
         {
           _deserializedInstance = s,
           _pathToDocument = pathToDocument,
@@ -131,7 +131,7 @@ namespace Altaxo.Text.GuiModels
         if (o is TextDocument textDoc)
         {
           _deserializedInstance.Document = textDoc;
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
         }
       }
     }
@@ -149,7 +149,7 @@ namespace Altaxo.Text.GuiModels
 
     public object Clone()
     {
-      var result = (TextDocumentViewOptions)this.MemberwiseClone();
+      var result = (TextDocumentViewOptions)MemberwiseClone();
       return result;
     }
 

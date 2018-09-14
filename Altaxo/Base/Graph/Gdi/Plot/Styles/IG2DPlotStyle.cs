@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot.Data;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {

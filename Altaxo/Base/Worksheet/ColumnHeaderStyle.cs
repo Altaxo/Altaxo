@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph.Gdi;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Graph.Gdi;
+using Altaxo.Serialization;
 
 namespace Altaxo.Worksheet
 {
@@ -46,7 +46,7 @@ namespace Altaxo.Worksheet
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ColumnHeaderStyle s = (ColumnHeaderStyle)obj;
+        var s = (ColumnHeaderStyle)obj;
         info.AddBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType);
       }
 
@@ -99,7 +99,7 @@ namespace Altaxo.Worksheet
     {
       PaintBackground(dc, cellRectangle, bSelected);
 
-      Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
+      var dataColCol = (Altaxo.Data.DataColumnCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
       string columnnumber = dataColCol.GetColumnNumber(data).ToString();
       string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(), dataColCol.GetColumnGroup(data));
 
@@ -130,8 +130,7 @@ namespace Altaxo.Worksheet
 
     public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
-      Action<ColumnHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool> action;
-      if (RegisteredPaintMethods.TryGetValue(dctype, out action))
+      if (RegisteredPaintMethods.TryGetValue(dctype, out var action))
         action(this, dc, cellRectangle, nRow, data, bSelected);
       else
         throw new NotImplementedException("Paint method is not implemented for context type " + dctype.ToString());

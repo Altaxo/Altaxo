@@ -89,8 +89,8 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       var from = (VisibleLightSpectrum)other;
 
       return
-        this._gamma == from._gamma &&
-        this._brightness == from._brightness;
+        _gamma == from._gamma &&
+        _brightness == from._brightness;
     }
 
     public override int GetHashCode()
@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (VisibleLightSpectrum)this.MemberwiseClone();
+        var result = (VisibleLightSpectrum)MemberwiseClone();
         result._gamma = gamma;
         return result;
       }
@@ -151,7 +151,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
       }
       else
       {
-        var result = (VisibleLightSpectrum)this.MemberwiseClone();
+        var result = (VisibleLightSpectrum)MemberwiseClone();
         result._brightness = brightness;
         return result;
       }

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot.ColorProvider;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Graph.Gdi.Plot.ColorProvider;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {

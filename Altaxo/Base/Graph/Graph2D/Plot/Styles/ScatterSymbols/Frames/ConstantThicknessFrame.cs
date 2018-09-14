@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using ClipperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using ClipperLib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 {

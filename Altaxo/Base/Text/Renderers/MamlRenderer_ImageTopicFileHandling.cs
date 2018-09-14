@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Text.Renderers.Maml;
-using Markdig.Renderers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,6 +29,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Altaxo.Collections;
+using Altaxo.Text.Renderers.Maml;
+using Markdig.Renderers;
 
 namespace Altaxo.Text.Renderers
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Text.Renderers
     {
       var fileName = AmlBaseFileName + "_Images.aml";
       var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
-      this.Writer = tw;
+      Writer = tw;
 
       Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", ImageTopicFileGuid), new KeyValuePair<string, string>("revisionNumber", "1") });
       Push(MamlElements.developerConceptualDocument, new[] { new KeyValuePair<string, string>("xmlns", "http://ddue.schemas.microsoft.com/authoring/2003/5"), new KeyValuePair<string, string>("xmlns:xlink", "http://www.w3.org/1999/xlink") });
@@ -102,9 +102,9 @@ namespace Altaxo.Text.Renderers
 
       PopAll();
 
-      this.Writer.Close();
-      this.Writer.Dispose();
-      this.Writer = StreamWriter.Null;
+      Writer.Close();
+      Writer.Dispose();
+      Writer = StreamWriter.Null;
 
       return (fileName, ImageTopicFileGuid);
     }

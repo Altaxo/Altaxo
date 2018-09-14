@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
@@ -105,7 +105,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AxisLabelStyle s = (AxisLabelStyle)obj;
+        var s = (AxisLabelStyle)obj;
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._brush);
         info.AddValue("Background", s._backgroundStyle);
@@ -308,7 +308,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>The brush color. If you set this, the font brush will be set to a solid brush.</summary>
     public NamedColor Color
     {
-      get { return this._brush.Color; }
+      get { return _brush.Color; }
       set
       {
         var oldValue = _brush;
@@ -324,13 +324,13 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
-        return this._brush;
+        return _brush;
         ;
       }
       set
       {
         var oldValue = _brush;
-        this._brush = value;
+        _brush = value;
 
         if (!object.ReferenceEquals(oldValue, _brush))
           EhSelfChanged(EventArgs.Empty);
@@ -365,7 +365,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
-        return this._labelFormatting;
+        return _labelFormatting;
       }
       set
       {
@@ -429,11 +429,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
     public double OffsetX
     {
-      get { return this._offsetX; }
+      get { return _offsetX; }
       set
       {
-        double oldValue = this._offsetX;
-        this._offsetX = value;
+        double oldValue = _offsetX;
+        _offsetX = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -444,11 +444,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
     public double OffsetY
     {
-      get { return this._offsetY; }
+      get { return _offsetY; }
       set
       {
-        double oldValue = this._offsetY;
-        this._offsetY = value;
+        double oldValue = _offsetY;
+        _offsetY = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -459,11 +459,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>The z offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
     public double OffsetZ
     {
-      get { return this._offsetZ; }
+      get { return _offsetZ; }
       set
       {
-        double oldValue = this._offsetZ;
-        this._offsetZ = value;
+        double oldValue = _offsetZ;
+        _offsetZ = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -474,11 +474,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>The angle of the label.</summary>
     public double RotationX
     {
-      get { return this._rotationX; }
+      get { return _rotationX; }
       set
       {
-        double oldValue = this._rotationX;
-        this._rotationX = value;
+        double oldValue = _rotationX;
+        _rotationX = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -489,11 +489,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>The angle of the label.</summary>
     public double RotationY
     {
-      get { return this._rotationY; }
+      get { return _rotationY; }
       set
       {
-        double oldValue = this._rotationY;
-        this._rotationY = value;
+        double oldValue = _rotationY;
+        _rotationY = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -504,11 +504,11 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// <summary>The angle of the label.</summary>
     public double RotationZ
     {
-      get { return this._rotationZ; }
+      get { return _rotationZ; }
       set
       {
-        double oldValue = this._rotationZ;
-        this._rotationZ = value;
+        double oldValue = _rotationZ;
+        _rotationZ = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -520,12 +520,12 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
-        return this._automaticRotationShift;
+        return _automaticRotationShift;
       }
       set
       {
-        bool oldValue = this.AutomaticAlignment;
-        this._automaticRotationShift = value;
+        bool oldValue = AutomaticAlignment;
+        _automaticRotationShift = value;
         if (value != oldValue)
         {
           EhSelfChanged(EventArgs.Empty);
@@ -538,7 +538,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
-        return this._alignmentX;
+        return _alignmentX;
       }
       set
       {
@@ -555,7 +555,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
-        return this._alignmentY;
+        return _alignmentY;
       }
       set
       {
@@ -572,7 +572,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     {
       get
       {
-        return this._alignmentZ;
+        return _alignmentZ;
       }
       set
       {
@@ -685,7 +685,6 @@ namespace Altaxo.Graph.Graph3D.Axis
       Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
       Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
 
-      VectorD3D outVector;
       Logical3D outer;
 
       double[] relpositions;
@@ -703,8 +702,8 @@ namespace Altaxo.Graph.Graph3D.Axis
 
       if (!_suppressedLabels.IsEmpty)
       {
-        List<AltaxoVariant> filteredTicks = new List<AltaxoVariant>();
-        List<double> filteredRelPositions = new List<double>();
+        var filteredTicks = new List<AltaxoVariant>();
+        var filteredRelPositions = new List<double>();
 
         for (int i = 0; i < ticks.Length; i++)
         {
@@ -735,7 +734,7 @@ namespace Altaxo.Graph.Graph3D.Axis
           continue;
 
         outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, labelSide);
-        PointD3D tickorg = coordSyst.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
+        PointD3D tickorg = coordSyst.GetPositionAndNormalizedDirection(r0, r1, r, outer, out var outVector);
         PointD3D tickend = tickorg + outVector * outerDistance;
 
         var msize = labels[i].Size;
@@ -780,19 +779,19 @@ namespace Altaxo.Graph.Graph3D.Axis
         math = Matrix4x3.Identity;
         math.TranslatePrepend(morg.X, morg.Y, morg.Z);
 
-        if (this._rotationZ != 0)
-          math.RotationZDegreePrepend(this._rotationZ);
-        if (this._rotationY != 0)
-          math.RotationYDegreePrepend(this._rotationY);
-        if (this._rotationX != 0)
-          math.RotationXDegreePrepend(this._rotationX);
+        if (_rotationZ != 0)
+          math.RotationZDegreePrepend(_rotationZ);
+        if (_rotationY != 0)
+          math.RotationYDegreePrepend(_rotationY);
+        if (_rotationX != 0)
+          math.RotationXDegreePrepend(_rotationX);
 
         math.TranslatePrepend((mrect.X - morg.X + emSize * _offsetX), (mrect.Y - morg.Y + emSize * _offsetY), (mrect.Z - morg.Z + emSize * _offsetZ));
 
         var gs = g.SaveGraphicsState();
         g.PrependTransform(math);
 
-        if (this._backgroundStyle != null)
+        if (_backgroundStyle != null)
         {
           var itemRectangle = new RectangleD3D(PointD3D.Empty, msize);
           _backgroundStyle.Measure(itemRectangle);

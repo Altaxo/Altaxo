@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -91,7 +91,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ScatterPlotStyle s = (ScatterPlotStyle)obj;
+        var s = (ScatterPlotStyle)obj;
         info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
         info.AddValue("SkipFreq", s._skipFreq);
 
@@ -161,14 +161,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._independentSkipFreq = from._independentSkipFreq;
-        this._skipFreq = from._skipFreq;
-        this._symbolShape = from._symbolShape; // immutable
-        this._independentSymbolSize = from._independentSymbolSize;
-        this._symbolSize = from._symbolSize;
+        _independentSkipFreq = from._independentSkipFreq;
+        _skipFreq = from._skipFreq;
+        _symbolShape = from._symbolShape; // immutable
+        _independentSymbolSize = from._independentSymbolSize;
+        _symbolSize = from._symbolSize;
 
-        this._material = from._material; // immutable
-        this._independentColor = from._independentColor;
+        _material = from._material; // immutable
+        _independentColor = from._independentColor;
 
         EhSelfChanged(EventArgs.Empty);
 
@@ -225,13 +225,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       double symbolSize = GraphDocument.GetDefaultSymbolSize(context);
       var color = GraphDocument.GetDefaultPlotColor(context);
 
-      this._symbolShape = ScatterSymbolListManager.Instance.BuiltinDefault[0];
-      this._material = new MaterialWithUniformColor(color);
-      this._independentColor = false;
+      _symbolShape = ScatterSymbolListManager.Instance.BuiltinDefault[0];
+      _material = new MaterialWithUniformColor(color);
+      _independentColor = false;
 
-      this._symbolSize = symbolSize;
+      _symbolSize = symbolSize;
 
-      this._skipFreq = 1;
+      _skipFreq = 1;
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -241,15 +241,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public IScatterSymbol Shape
     {
-      get { return this._symbolShape; }
+      get { return _symbolShape; }
       set
       {
         if (null == value)
           throw new ArgumentNullException(nameof(value));
 
-        if (!object.ReferenceEquals(this._symbolShape, value))
+        if (!object.ReferenceEquals(_symbolShape, value))
         {
-          this._symbolShape = value;
+          _symbolShape = value;
 
           SetCachedValues();
 
@@ -268,13 +268,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public IMaterial Material
     {
-      get { return this._material; }
+      get { return _material; }
       set
       {
         if (null == value)
           throw new ArgumentNullException(nameof(value));
 
-        if (!object.ReferenceEquals(this._material, value))
+        if (!object.ReferenceEquals(_material, value))
         {
           _material = value;
           SetCachedValues();
@@ -285,7 +285,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public NamedColor Color
     {
-      get { return this._material.Color; }
+      get { return _material.Color; }
       set
       {
         Material = _material.WithColor(value);
@@ -373,20 +373,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return !this._independentColor;
+        return !_independentColor;
       }
     }
 
     public bool IsColorReceiver
     {
-      get { return !this._independentColor; }
+      get { return !_independentColor; }
     }
 
     public bool IsSymbolSizeProvider
     {
       get
       {
-        return !this._independentSymbolSize && !ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape);
+        return !_independentSymbolSize && !ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape);
       }
     }
 
@@ -394,7 +394,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return !this._independentSymbolSize && !ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape);
+        return !_independentSymbolSize && !ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape);
       }
     }
 
@@ -458,7 +458,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (!ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape))
       {
         _symbolShape.Paint(g, _material, bounds.Center, _symbolSize);
-        bounds = bounds.WithPadding(0, Math.Max(0, this.SymbolSize - bounds.SizeY), Math.Max(0, this.SymbolSize - bounds.SizeZ));
+        bounds = bounds.WithPadding(0, Math.Max(0, SymbolSize - bounds.SizeY), Math.Max(0, SymbolSize - bounds.SizeZ));
       }
 
       return bounds;
@@ -476,9 +476,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.AddExternalGroupStyle(externalGroups);
-      if (this.IsSymbolSizeProvider)
+      if (IsSymbolSizeProvider)
         SymbolSizeGroupStyle.AddExternalGroupStyle(externalGroups);
 
       ScatterSymbolGroupStyle.AddExternalGroupStyle(externalGroups);
@@ -494,30 +494,30 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this.Color; });
+        { return Color; });
 
       ScatterSymbolGroupStyle.PrepareStyle(externalGroups, localGroups, delegate
-      { return this._symbolShape; });
+      { return _symbolShape; });
 
-      if (this.IsSymbolSizeProvider)
+      if (IsSymbolSizeProvider)
         SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return SymbolSize; });
 
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-      if (!this._independentSkipFreq)
+      if (!_independentSkipFreq)
         SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return SkipFrequency; });
     }
 
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
-      if (this.IsColorReceiver)
+      if (IsColorReceiver)
       {
         // try to get a constant color ...
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { this.Color = c; });
+        { Color = c; });
         // but if there is a color evaluation function, then use that function with higher priority
         if (!VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)
         { _cachedColorForIndexFunction = evalFunc; }))
@@ -525,7 +525,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
 
       ScatterSymbolGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IScatterSymbol c)
-      { this.Shape = c; });
+      { Shape = c; });
 
       // per Default, set the symbol size evaluation function to null
       _cachedSymbolSizeForIndexFunction = null;
@@ -533,7 +533,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         // try to get a constant symbol size ...
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this.SymbolSize = size; });
+        { SymbolSize = size; });
         // but if there is an symbol size evaluation function, then use this with higher priority.
         if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc)
         { _cachedSymbolSizeForIndexFunction = evalFunc; }))
@@ -541,9 +541,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
 
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-      if (!this._independentSkipFreq)
+      if (!_independentSkipFreq)
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this.SkipFrequency = c; });
+        { SkipFrequency = c; });
     }
 
     #endregion IPlotStyle Members

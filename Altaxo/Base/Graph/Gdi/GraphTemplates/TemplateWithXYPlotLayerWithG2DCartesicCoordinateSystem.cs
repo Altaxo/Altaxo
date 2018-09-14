@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Gui.Graph.Gdi;
-using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Gui.Graph.Gdi;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Graph.Gdi.GraphTemplates
 {
@@ -66,7 +66,7 @@ typeof(object),
 
       // apply the default location from the property in the path
       graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));
-      Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer);
+      var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer);
       layer.CreateDefaultAxes(propertyContext);
       layer.AxisStyles[CSLineID.X0].AxisLineStyle.FirstUpMajorTicks = false;
       layer.AxisStyles[CSLineID.X0].AxisLineStyle.FirstUpMinorTicks = false;

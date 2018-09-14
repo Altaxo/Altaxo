@@ -40,7 +40,7 @@ namespace Poly2Tri
 
     public static List<TriangulationPoint> UniformDistribution(int n, double scale)
     {
-      List<TriangulationPoint> points = new List<TriangulationPoint>();
+      var points = new List<TriangulationPoint>();
       for (int i = 0; i < n; i++)
         points.Add(new TriangulationPoint(scale * (0.5 - RNG.NextDouble()), scale * (0.5 - RNG.NextDouble())));
       return points;
@@ -52,7 +52,7 @@ namespace Poly2Tri
       double size = scale / n;
       double halfScale = 0.5 * scale;
 
-      List<TriangulationPoint> points = new List<TriangulationPoint>();
+      var points = new List<TriangulationPoint>();
       for (int i = 0; i < n + 1; i++)
       {
         x = halfScale - i * size;

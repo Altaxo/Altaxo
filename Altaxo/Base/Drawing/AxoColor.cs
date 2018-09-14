@@ -224,7 +224,7 @@ namespace Altaxo.Drawing
 
     public override int GetHashCode()
     {
-      if (this._isFromArgb)
+      if (_isFromArgb)
         return _a << 24 + _b << 16 + _g << 8 + _r;
       else
         return (_scA * 4294967296.0 + _scB * 16777216.0 + _scG * 65536.0 + _scR * 256.0).GetHashCode();
@@ -232,28 +232,28 @@ namespace Altaxo.Drawing
 
     public bool Equals(AxoColor from)
     {
-      if (this._isFromArgb && from._isFromArgb)
+      if (_isFromArgb && from._isFromArgb)
         return
-          this._a == from._a &&
-          this._b == from._b &&
-          this._g == from._g &&
-          this._r == from._r;
-      else if (!this._isFromArgb && !from._isFromArgb)
+          _a == from._a &&
+          _b == from._b &&
+          _g == from._g &&
+          _r == from._r;
+      else if (!_isFromArgb && !from._isFromArgb)
         return
-          this._scA == from._scA &&
-          this._scB == from._scB &&
-          this._scG == from._scG &&
-          this._scR == from._scR;
+          _scA == from._scA &&
+          _scB == from._scB &&
+          _scG == from._scG &&
+          _scR == from._scR;
       else
         return
-          this._a == from._a &&
-          this._b == from._b &&
-          this._g == from._g &&
-          this._r == from._r &&
-          this._scA == from._scA &&
-          this._scB == from._scB &&
-          this._scG == from._scG &&
-          this._scR == from._scR;
+          _a == from._a &&
+          _b == from._b &&
+          _g == from._g &&
+          _r == from._r &&
+          _scA == from._scA &&
+          _scB == from._scB &&
+          _scG == from._scG &&
+          _scR == from._scR;
     }
 
     public override bool Equals(object obj)
@@ -321,7 +321,7 @@ namespace Altaxo.Drawing
       }
       else if (val.StartsWith("{#"))
       {
-        var u = UInt32.Parse(val.Substring(2, 8), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture);
+        var u = uint.Parse(val.Substring(2, 8), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture);
         return AxoColor.FromArgb((byte)(u >> 24), (byte)(u >> 16), (byte)(u >> 8), (byte)u);
       }
       else
@@ -457,8 +457,8 @@ namespace Altaxo.Drawing
     /// <exception cref="System.InvalidProgramException"></exception>
     public (float alpha, float hue, float saturation, float brightness) ToAhsb()
     {
-      var (h, s, b) = HsbFromLinearRgb(this.ScR, this.ScG, this.ScB);
-      return (this.ScA, h, s, b);
+      var (h, s, b) = HsbFromLinearRgb(ScR, ScG, ScB);
+      return (ScA, h, s, b);
     }
 
     /// <summary>
@@ -589,9 +589,9 @@ namespace Altaxo.Drawing
     public float GetHue()
     {
       float hue = 0;
-      var r = this.ScR;
-      var g = this.ScG;
-      var b = this.ScB;
+      var r = ScR;
+      var g = ScG;
+      var b = ScB;
 
       var max = Math.Max(Math.Max(r, g), b);
       var min = Math.Min(Math.Min(r, g), b);
@@ -710,9 +710,9 @@ namespace Altaxo.Drawing
     /// <returns>The components for alpha, C, M, Y and K. All components are in the range [0, 1].</returns>
     public (float alpha, float c, float m, float y, float k) ToAcmyk()
     {
-      var c = 1 - this.ScR;
-      var m = 1 - this.ScG;
-      var y = 1 - this.ScB;
+      var c = 1 - ScR;
+      var m = 1 - ScG;
+      var y = 1 - ScB;
       var min = Math.Min(c, Math.Min(m, y));
 
       float cc, mm, yy, kk;
@@ -729,7 +729,7 @@ namespace Altaxo.Drawing
         yy = ((y - min) / (1f - min));
         kk = min;
       }
-      return (this.ScA, cc, mm, yy, kk);
+      return (ScA, cc, mm, yy, kk);
     }
 
     #endregion CMYK

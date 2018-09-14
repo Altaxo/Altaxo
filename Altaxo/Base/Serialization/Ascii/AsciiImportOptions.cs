@@ -219,23 +219,23 @@ namespace Altaxo.Serialization.Ascii
       {
         using (var suspendToken = SuspendGetToken())
         {
-          this.RenameColumns = from.RenameColumns;
-          this.RenameWorksheet = from.RenameWorksheet;
-          this.HeaderLinesDestination = from.HeaderLinesDestination;
+          RenameColumns = from.RenameColumns;
+          RenameWorksheet = from.RenameWorksheet;
+          HeaderLinesDestination = from.HeaderLinesDestination;
 
-          this.NumberOfMainHeaderLines = from.NumberOfMainHeaderLines;
+          NumberOfMainHeaderLines = from.NumberOfMainHeaderLines;
 
-          this.IndexOfCaptionLine = from.IndexOfCaptionLine;
+          IndexOfCaptionLine = from.IndexOfCaptionLine;
 
-          this.SeparationStrategy = null == from.SeparationStrategy ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
+          SeparationStrategy = null == from.SeparationStrategy ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
 
-          this.NumberFormatCulture = null == from.NumberFormatCulture ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
+          NumberFormatCulture = null == from.NumberFormatCulture ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
 
-          this.DateTimeFormatCulture = null == from.DateTimeFormatCulture ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
+          DateTimeFormatCulture = null == from.DateTimeFormatCulture ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
 
-          this.RecognizedStructure = from.RecognizedStructure == null ? null : from.RecognizedStructure;
+          RecognizedStructure = from.RecognizedStructure == null ? null : from.RecognizedStructure;
 
-          this.ImportMultipleStreamsVertically = from.ImportMultipleStreamsVertically;
+          ImportMultipleStreamsVertically = from.ImportMultipleStreamsVertically;
 
           suspendToken.Resume();
         }

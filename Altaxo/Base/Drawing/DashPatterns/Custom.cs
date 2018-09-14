@@ -140,11 +140,11 @@ namespace Altaxo.Drawing.DashPatterns
       if (null == from)
         return false;
 
-      if (this._customDashPattern.Length != from._customDashPattern.Length)
+      if (_customDashPattern.Length != from._customDashPattern.Length)
         return false;
 
       for (int i = 0; i < _customDashPattern.Length; ++i)
-        if (this._customDashPattern[i] != from._customDashPattern[i])
+        if (_customDashPattern[i] != from._customDashPattern[i])
           return false;
 
       return true;

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Collections;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -134,7 +134,7 @@ namespace Altaxo.Data
 
       public string FullName
       {
-        get { return this.GetType().ToString(); }
+        get { return GetType().ToString(); }
       }
 
       public object Clone()
@@ -263,9 +263,9 @@ namespace Altaxo.Data
       InternalSetDataColumnsWithCloning(from._dataColumns);
       InternalSetRowHeaderColumn((IReadableColumnProxy)from._rowHeaderColumn.Clone());
       InternalSetColumnHeaderColumn((IReadableColumnProxy)from._columnHeaderColumn.Clone());
-      this._groupNumber = from._groupNumber;
-      this._useAllAvailableColumnsOfGroup = from._useAllAvailableColumnsOfGroup;
-      this._useAllAvailableDataRows = from._useAllAvailableDataRows;
+      _groupNumber = from._groupNumber;
+      _useAllAvailableColumnsOfGroup = from._useAllAvailableColumnsOfGroup;
+      _useAllAvailableDataRows = from._useAllAvailableDataRows;
       _participatingDataRows = (AscendingIntegerCollection)from._participatingDataRows.Clone();
       _participatingDataColumns = (AscendingIntegerCollection)from._participatingDataColumns.Clone();
       _isDirty = from._isDirty;
@@ -418,8 +418,10 @@ namespace Altaxo.Data
       if (null == table)
         throw new ArgumentNullException("table");
 
-      _dataTable = new DataTableProxy(table);
-      _dataTable.ParentObject = this;
+      _dataTable = new DataTableProxy(table)
+      {
+        ParentObject = this
+      };
 
       var converter = new DataTableToMatrixConverter(table)
       {
@@ -459,14 +461,16 @@ namespace Altaxo.Data
     [Obsolete("This is intended for legacy deserialization (of XYZMeshedColumnPlotData) only.")]
     public static DataTableMatrixProxy CreateEmptyInstance()
     {
-      var result = new DataTableMatrixProxy();
-      result._participatingDataColumns = new AscendingIntegerCollection();
-      result._participatingDataRows = new AscendingIntegerCollection();
-      result._dataColumns = new List<IReadableColumnProxy>();
+      var result = new DataTableMatrixProxy
+      {
+        _participatingDataColumns = new AscendingIntegerCollection(),
+        _participatingDataRows = new AscendingIntegerCollection(),
+        _dataColumns = new List<IReadableColumnProxy>(),
 
-      result._dataTable = null;
-      result.InternalSetRowHeaderColumn(ReadableColumnProxyBase.FromColumn((IReadableColumn)null));
-      result.InternalSetColumnHeaderColumn(ReadableColumnProxyBase.FromColumn((IReadableColumn)null));
+        _dataTable = null
+      };
+      result.InternalSetRowHeaderColumn(ReadableColumnProxyBase.FromColumn(null));
+      result.InternalSetColumnHeaderColumn(ReadableColumnProxyBase.FromColumn(null));
 
       return result;
     }
@@ -516,12 +520,12 @@ namespace Altaxo.Data
 
     private void InternalSetRowHeaderColumn(IReadableColumnProxy proxy)
     {
-      ChildSetMember(ref _rowHeaderColumn, proxy ?? ReadableColumnProxyBase.FromColumn((IReadableColumn)null)); // always ensure to have a proxy != null
+      ChildSetMember(ref _rowHeaderColumn, proxy ?? ReadableColumnProxyBase.FromColumn(null)); // always ensure to have a proxy != null
     }
 
     private void InternalSetColumnHeaderColumn(IReadableColumnProxy proxy)
     {
-      ChildSetMember(ref _columnHeaderColumn, proxy ?? ReadableColumnProxyBase.FromColumn((IReadableColumn)null));
+      ChildSetMember(ref _columnHeaderColumn, proxy ?? ReadableColumnProxyBase.FromColumn(null));
     }
 
     /// <summary>
@@ -978,7 +982,7 @@ namespace Altaxo.Data
       if (!_isDirty)
         return;
 
-      if (this.IsDisposeInProgress)
+      if (IsDisposeInProgress)
         return;
 
       if (null == _dataTable)

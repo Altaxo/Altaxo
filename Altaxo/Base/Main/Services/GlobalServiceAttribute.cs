@@ -46,7 +46,7 @@ namespace Altaxo.Main.Services
     /// </param>
     public GlobalServiceAttribute(string staticPropertyPath)
     {
-      this.StaticPropertyPath = staticPropertyPath;
+      StaticPropertyPath = staticPropertyPath;
     }
 
     /// <summary>

@@ -58,7 +58,7 @@ namespace Altaxo.Graph.Gdi.LineCaps.Foo
       if (scale <= 0)
         scale = 1e-3f;
 
-      GraphicsPath hPath = new GraphicsPath();
+      var hPath = new GraphicsPath();
       hPath.AddPolygon(new PointF[]{
       new PointF(0, 0),
       new PointF(-1, -1),
@@ -66,8 +66,10 @@ namespace Altaxo.Graph.Gdi.LineCaps.Foo
     });
 
       // Construct the hook-shaped end cap.
-      CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 1);
-      clone.WidthScale = scale;
+      var clone = new CustomLineCap(hPath, null, LineCap.Flat, 1)
+      {
+        WidthScale = scale
+      };
       return clone;
     }
 

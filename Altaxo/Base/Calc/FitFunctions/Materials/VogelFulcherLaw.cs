@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Science;
 using System;
 using System.ComponentModel;
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Science;
 
 namespace Altaxo.Calc.FitFunctions.Materials
 {
@@ -77,7 +77,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        VogelFulcherLaw s = (VogelFulcherLaw)obj;
+        var s = (VogelFulcherLaw)obj;
         info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
         info.AddEnum("DependentVariableTransform", s._dependentVariableTransform);
         info.AddEnum("ParamBUnit", s._temperatureUnitOfB);

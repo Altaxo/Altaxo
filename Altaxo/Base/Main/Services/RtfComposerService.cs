@@ -49,10 +49,12 @@ namespace Altaxo.Main.Services
 
     public static string GetRtfText(string rawtext, Graphics gr, Color backcolor, int fontsize)
     {
-      MathML.Rendering.WinGraphicsRenderer _mmlRendering = new MathML.Rendering.WinGraphicsRenderer();
-      _mmlRendering.BackColor = backcolor;
-      _mmlRendering.FontSize = fontsize;
-      StringBuilder stb = new StringBuilder();
+      var _mmlRendering = new MathML.Rendering.WinGraphicsRenderer
+      {
+        BackColor = backcolor,
+        FontSize = fontsize
+      };
+      var stb = new StringBuilder();
       ComposeText(stb, rawtext, _mmlRendering, gr);
       stb.Append(texttrailer);
       return stb.ToString();
@@ -78,8 +80,8 @@ namespace Altaxo.Main.Services
         stb.Append(rawtext, currpos, startidx - currpos);
 
         // all text from startidx to endidx-1 must be loaded into the control and rendered
-        System.IO.StringReader rd = new StringReader(rawtext.Substring(startidx, endidx - startidx));
-        MathML.MathMLDocument doc = new MathML.MathMLDocument();
+        var rd = new StringReader(rawtext.Substring(startidx, endidx - startidx));
+        var doc = new MathML.MathMLDocument();
         doc.Load(rd);
         rd.Close();
         _mmlRendering.SetMathElement((MathML.MathMLMathElement)doc.DocumentElement);
@@ -177,7 +179,7 @@ namespace Altaxo.Main.Services
         rtf = new StringBuilder();
         stream = new MemoryStream();
 
-        using (Graphics gr = Graphics.FromImage(image))
+        using (var gr = Graphics.FromImage(image))
         {
           // Get the device context from the graphics context
           hdc = gr.GetHdc();
@@ -188,7 +190,7 @@ namespace Altaxo.Main.Services
         }
 
         // Get a graphics context from the Enhanced Metafile
-        using (Graphics gr = Graphics.FromImage(metaFile))
+        using (var gr = Graphics.FromImage(metaFile))
         {
           // Draw the image on the Enhanced Metafile
           gr.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height));
@@ -214,7 +216,7 @@ namespace Altaxo.Main.Services
         // Append the bits to the RTF string
         for (int i = 0; i < buffer.Length; ++i)
         {
-          rtf.Append(String.Format("{0:X2}", buffer[i]));
+          rtf.Append(string.Format("{0:X2}", buffer[i]));
         }
 
         return rtf.ToString();

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Scripting;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Collections;
+using Altaxo.Scripting;
+using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -113,7 +113,7 @@ namespace Altaxo.Data
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+        var s = (Altaxo.Data.DataTable)obj;
         info.AddValue("Name", s._name); // name of the Table
         info.AddValue("DataCols", s._dataColumns);
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
@@ -141,7 +141,7 @@ namespace Altaxo.Data
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+        var s = (Altaxo.Data.DataTable)obj;
         info.AddValue("Name", s._name); // name of the Table
         info.AddValue("DataCols", s._dataColumns);
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
@@ -249,7 +249,7 @@ namespace Altaxo.Data
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         base.Serialize(obj, info);
-        DataTable s = (DataTable)obj;
+        var s = (DataTable)obj;
         info.AddValue("Notes", s._notes.Text);
         info.AddValue("CreationTime", s._creationTime.ToLocalTime());
         info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
@@ -272,7 +272,7 @@ namespace Altaxo.Data
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+        var s = (Altaxo.Data.DataTable)obj;
         info.AddValue("Name", s._name); // name of the Table
 
         string originalSaveAsTemplateOption = null;
@@ -368,11 +368,11 @@ namespace Altaxo.Data
         IAscendingIntegerCollection selectedPropertyRows
         )
       {
-        this._table = table;
-        this._selectedDataColumns = selectedDataColumns;
-        this._selectedDataRows = selectedDataRows;
-        this._selectedPropertyColumns = selectedPropertyColumns;
-        this._selectedPropertyRows = selectedPropertyRows;
+        _table = table;
+        _selectedDataColumns = selectedDataColumns;
+        _selectedDataRows = selectedDataRows;
+        _selectedPropertyColumns = selectedPropertyColumns;
+        _selectedPropertyRows = selectedPropertyRows;
       }
 
       #region Serialization
@@ -405,11 +405,13 @@ namespace Altaxo.Data
           var s = (Altaxo.Data.DataTable.ClipboardMemento)o ?? new Altaxo.Data.DataTable.ClipboardMemento(info);
 
           var tableName = info.GetString("Name");
-          DataColumnCollection.ClipboardMemento datacolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("DataColumns", typeof(DataColumnCollection.ClipboardMemento));
-          DataColumnCollection.ClipboardMemento propcolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("PropertyColumns", typeof(DataColumnCollection.ClipboardMemento));
+          var datacolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("DataColumns", typeof(DataColumnCollection.ClipboardMemento));
+          var propcolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("PropertyColumns", typeof(DataColumnCollection.ClipboardMemento));
 
-          s._table = new DataTable(datacolMemento.Collection, propcolMemento.Collection);
-          s._table.Name = tableName;
+          s._table = new DataTable(datacolMemento.Collection, propcolMemento.Collection)
+          {
+            Name = tableName
+          };
 
           return s;
         }
@@ -449,7 +451,7 @@ namespace Altaxo.Data
     public DataTable(string name)
       : this()
     {
-      this._name = name;
+      _name = name;
     }
 
     /// <summary>
@@ -459,7 +461,7 @@ namespace Altaxo.Data
     public DataTable(Altaxo.Data.DataTableCollection parent)
       : this()
     {
-      this._parent = parent;
+      _parent = parent;
     }
 
     /// <summary>
@@ -470,7 +472,7 @@ namespace Altaxo.Data
     public DataTable(Altaxo.Data.DataTableCollection parent, string name)
       : this(name)
     {
-      this._parent = parent;
+      _parent = parent;
     }
 
     /// <summary>
@@ -480,10 +482,10 @@ namespace Altaxo.Data
     public DataTable(DataTable from)
       : this((DataColumnCollection)from._dataColumns.Clone(), (DataColumnCollection)from._propertyColumns.Clone())
     {
-      this._parent = null; // do not clone the parent
-      this._name = from._name;
-      this._tableScript = null == from._tableScript ? null : (TableScript)from._tableScript.Clone();
-      this._creationTime = this._lastChangeTime = DateTime.UtcNow;
+      _parent = null; // do not clone the parent
+      _name = from._name;
+      _tableScript = null == from._tableScript ? null : (TableScript)from._tableScript.Clone();
+      _creationTime = _lastChangeTime = DateTime.UtcNow;
       ChildCopyToMember(ref _notes, from._notes);
 
       // Clone also the table properties (deep copy)
@@ -493,7 +495,7 @@ namespace Altaxo.Data
       }
       else
       {
-        this._tableProperties = null;
+        _tableProperties = null;
       }
 
       ChildCopyToMember(ref _tableDataSource, from._tableDataSource);
@@ -760,14 +762,14 @@ namespace Altaxo.Data
           }
           catch (Exception ex)
           {
-            this.Notes.WriteLine("Exception during execution of the table script (after execution of the data source). Details follow:");
-            this.Notes.WriteLine(ex.ToString());
+            Notes.WriteLine("Exception during execution of the table script (after execution of the data source). Details follow:");
+            Notes.WriteLine(ex.ToString());
           }
         }
         catch (Exception ex)
         {
-          this.Notes.WriteLine("Exception during execution of the data source. Details follow:");
-          this.Notes.WriteLine(ex.ToString());
+          Notes.WriteLine("Exception during execution of the data source. Details follow:");
+          Notes.WriteLine(ex.ToString());
         }
       }
     }
@@ -814,28 +816,28 @@ namespace Altaxo.Data
     /// <value>The number of data columns in the table.</value>
     public int DataColumnCount
     {
-      get { return this._dataColumns.ColumnCount; }
+      get { return _dataColumns.ColumnCount; }
     }
 
     /// <summary>Returns the number of property rows. This is the same as <see cref="DataColumnCount" /> and is only provided for completness.</summary>
     /// <value>The number of property rows = number of data columns in the table.</value>
     public int PropertyRowCount
     {
-      get { return this._dataColumns.ColumnCount; }
+      get { return _dataColumns.ColumnCount; }
     }
 
     /// <summary>Returns the number of property columns.</summary>
     /// <value>The number of property columns in the table.</value>
     public int PropertyColumnCount
     {
-      get { return this._propertyColumns.ColumnCount; }
+      get { return _propertyColumns.ColumnCount; }
     }
 
     /// <summary>Returns the number of data rows.</summary>
     /// <value>The number of data rows in the table.</value>
     public int DataRowCount
     {
-      get { return this._dataColumns.RowCount; }
+      get { return _dataColumns.RowCount; }
     }
 
     public TableScript TableScript
@@ -1040,8 +1042,8 @@ namespace Altaxo.Data
     /// <param name="newPosition">The index of the new position where the columns are moved to.</param>
     public void ChangeColumnPosition(Altaxo.Collections.IAscendingIntegerCollection selectedIndices, int newPosition)
     {
-      this._dataColumns.ChangeColumnPosition(selectedIndices, newPosition);
-      this._propertyColumns.ChangeRowPosition(selectedIndices, newPosition);
+      _dataColumns.ChangeColumnPosition(selectedIndices, newPosition);
+      _propertyColumns.ChangeRowPosition(selectedIndices, newPosition);
     }
 
     /// <summary>
@@ -1150,7 +1152,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return Main.ProjectFolder.GetFolderPart(this.Name);
+        return Main.ProjectFolder.GetFolderPart(Name);
       }
     }
 
@@ -1228,9 +1230,9 @@ namespace Altaxo.Data
     /// <param name="ProxyProcessing">Function that processes  the found <see cref="T:Altaxo.Main.DocNodeProxy" /> instances.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ProxyProcessing)
     {
-      if (this._tableDataSource != null)
+      if (_tableDataSource != null)
       {
-        this._tableDataSource.VisitDocumentReferences(ProxyProcessing);
+        _tableDataSource.VisitDocumentReferences(ProxyProcessing);
       }
     }
   } // end class Altaxo.Data.DataTable

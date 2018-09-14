@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Lighting
 {
@@ -138,7 +138,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     {
       if (!(isAffixedToCamera == _isAffixedToCamera))
       {
-        var result = (PointLight)this.MemberwiseClone();
+        var result = (PointLight)MemberwiseClone();
         result._isAffixedToCamera = isAffixedToCamera;
         return result;
       }
@@ -171,7 +171,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyLightAmplitude(lightAmplitude, nameof(lightAmplitude));
 
-        var result = (PointLight)this.MemberwiseClone();
+        var result = (PointLight)MemberwiseClone();
         result._lightAmplitude = lightAmplitude;
         return result;
       }
@@ -211,7 +211,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     {
       if (!(color == _color))
       {
-        var result = (PointLight)this.MemberwiseClone();
+        var result = (PointLight)MemberwiseClone();
         result._color = color;
         return result;
       }
@@ -241,7 +241,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyPosition(position, nameof(position));
 
-        var result = (PointLight)this.MemberwiseClone();
+        var result = (PointLight)MemberwiseClone();
         result._position = position;
         return result;
       }
@@ -287,7 +287,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyRange(range, nameof(range));
 
-        var result = (PointLight)this.MemberwiseClone();
+        var result = (PointLight)MemberwiseClone();
         result._range = range;
         return result;
       }

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SuppressedTicks s = (SuppressedTicks)obj;
+        var s = (SuppressedTicks)obj;
 
         info.CreateArray("ByValues", s._suppressedTickValues.Count);
         foreach (AltaxoVariant v in s._suppressedTickValues)
@@ -191,7 +191,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <returns>A list of suppressed tick numbers (all positive) in descending order.</returns>
     public ICollection<int> GetValidTickNumbersDecendingWithNegativeNumbersTransformed(int totalNumberOfTicks)
     {
-      SortedSet<int> result = new SortedSet<int>(new DescendingIntComparer());
+      var result = new SortedSet<int>(new DescendingIntComparer());
       foreach (int idx in _suppressedTicksByNumber)
       {
         if (idx >= 0 && idx < totalNumberOfTicks)

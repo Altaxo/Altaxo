@@ -23,8 +23,8 @@
 #endregion Copyright
 
 using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Altaxo.Graph.Plot.Data
@@ -316,22 +316,22 @@ namespace Altaxo.Graph.Plot.Data
 
       if (obj is XYNonlinearFitFunctionConfidenceBandPlotData from)
       {
-        this._fitDocumentIdentifier = from._fitDocumentIdentifier;
-        ChildCopyToMember(ref this._fitDocument, from._fitDocument);
-        this._fitElementIndex = from._fitElementIndex;
-        this._independentVariableIndex = from._independentVariableIndex;
-        this._independentVariableTransformation = from._independentVariableTransformation;
-        this._dependentVariableIndex = from._dependentVariableIndex;
-        this._dependentVariableTransformation = from._dependentVariableTransformation;
-        this._numberOfFitPoints = from._numberOfFitPoints;
-        this._sigmaSquare = from._sigmaSquare;
+        _fitDocumentIdentifier = from._fitDocumentIdentifier;
+        ChildCopyToMember(ref _fitDocument, from._fitDocument);
+        _fitElementIndex = from._fitElementIndex;
+        _independentVariableIndex = from._independentVariableIndex;
+        _independentVariableTransformation = from._independentVariableTransformation;
+        _dependentVariableIndex = from._dependentVariableIndex;
+        _dependentVariableTransformation = from._dependentVariableTransformation;
+        _numberOfFitPoints = from._numberOfFitPoints;
+        _sigmaSquare = from._sigmaSquare;
 
-        this.IsLowerBand = from.IsLowerBand;
-        this.IsPredictionBand = from.IsPredictionBand;
-        this._confidenceLevel = from._confidenceLevel;
-        this.CreateCachedMembers();
+        IsLowerBand = from.IsLowerBand;
+        IsPredictionBand = from.IsPredictionBand;
+        _confidenceLevel = from._confidenceLevel;
+        CreateCachedMembers();
         // covariance matrix must be cloned after CreateCachedMembers, because it's allocated there
-        this._covarianceMatrix = (double[,])from._covarianceMatrix.Clone();
+        _covarianceMatrix = (double[,])from._covarianceMatrix.Clone();
         return true;
       }
       return false;

@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -485,8 +485,7 @@ namespace Altaxo.Graph.Gdi
     protected virtual Font InternalToGdi(FontX fontX)
     {
       string fontID = fontX.InvariantDescriptionString;
-      Font result;
-      if (!_dictDescriptionStringToGdiFont.TryGetValue(fontID, out result))
+      if (!_dictDescriptionStringToGdiFont.TryGetValue(fontID, out var result))
       {
         result = _dictDescriptionStringToGdiFont.AddOrUpdate(fontID,
           x => InternalGetGdiFontFromInvariantString(x),

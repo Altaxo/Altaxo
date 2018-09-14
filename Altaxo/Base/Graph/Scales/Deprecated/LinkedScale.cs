@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinkedScale s = (LinkedScale)obj;
+        var s = (LinkedScale)obj;
 
         info.AddValue("Axis", s._scale);
         info.AddValue("Link", s._isLinked);
@@ -115,16 +115,16 @@ namespace Altaxo.Graph.Scales.Deprecated
       if (object.ReferenceEquals(this, from))
         return;
 
-      this.Scale = from._scale == null ? null : (Scale)from._scale.Clone();
-      this._linkOrgA = from._linkOrgA;
-      this._linkOrgB = from._linkOrgB;
-      this._linkEndA = from._linkEndA;
-      this._linkEndB = from._linkEndB;
+      Scale = from._scale == null ? null : (Scale)from._scale.Clone();
+      _linkOrgA = from._linkOrgA;
+      _linkOrgB = from._linkOrgB;
+      _linkEndA = from._linkEndA;
+      _linkEndB = from._linkEndB;
     }
 
     public LinkedScale Clone()
     {
-      LinkedScale result = new LinkedScale();
+      var result = new LinkedScale();
       result.CopyFrom(this);
       return result;
     }
@@ -179,15 +179,15 @@ namespace Altaxo.Graph.Scales.Deprecated
       }
 
       if (
-        (orgA != this.LinkOrgA) ||
-        (orgB != this.LinkOrgB) ||
-        (endA != this.LinkEndA) ||
-        (endB != this.LinkEndB))
+        (orgA != LinkOrgA) ||
+        (orgB != LinkOrgB) ||
+        (endA != LinkEndA) ||
+        (endB != LinkEndB))
       {
-        this._linkOrgA = orgA;
-        this._linkOrgB = orgB;
-        this._linkEndA = endA;
-        this._linkEndB = endB;
+        _linkOrgA = orgA;
+        _linkOrgB = orgB;
+        _linkEndA = endA;
+        _linkEndB = endB;
 
         OnScaleInstanceChanged();
       }
@@ -251,12 +251,12 @@ namespace Altaxo.Graph.Scales.Deprecated
         {
           if (null != oldvalue)
           {
-            oldvalue.Changed -= new EventHandler(this.EhScaleChanged);
+            oldvalue.Changed -= new EventHandler(EhScaleChanged);
             oldvalue.IsLinked = false;
           }
           if (null != value)
           {
-            value.Changed += new EventHandler(this.EhScaleChanged);
+            value.Changed += new EventHandler(EhScaleChanged);
           }
 
           OnScaleInstanceChanged();
@@ -284,7 +284,7 @@ namespace Altaxo.Graph.Scales.Deprecated
           LinkEndA + LinkEndB * linkedAxis.EndAsVariant, true);
         _scale.IsLinked = true; // restore the linked state of the axis
 
-        this.OnLinkPropertiesChanged(); // indicate that the axes boundaries have changed
+        OnLinkPropertiesChanged(); // indicate that the axes boundaries have changed
       }
     }
 

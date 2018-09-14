@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Text.Renderers.Maml;
-using Markdig.Renderers;
-using Markdig.Syntax;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Collections;
+using Altaxo.Text.Renderers.Maml;
+using Markdig.Renderers;
+using Markdig.Syntax;
 
 namespace Altaxo.Text.Renderers
 {
@@ -50,7 +50,7 @@ namespace Altaxo.Text.Renderers
       _indexOfAmlFile = -1;
 
       // the header titles, entry 0 is the current title for level1, entry [1] is the current title for level 2 and so on
-      List<string> headerTitles = new List<string>(Enumerable.Repeat(string.Empty, 7)); // first header might not be a level 1 header, thus we fill all subtitles with empty string
+      var headerTitles = new List<string>(Enumerable.Repeat(string.Empty, 7)); // first header might not be a level 1 header, thus we fill all subtitles with empty string
 
       if (!(markdownDocument[0] is HeadingBlock hbStart))
         throw new ArgumentException("The first block of the markdown document should be a heading block! Please add a header on top of your markdown document!");
@@ -100,11 +100,11 @@ namespace Altaxo.Text.Renderers
       }
     }
 
-    
 
-   
 
-  
+
+
+
 
 
     /// <summary>
@@ -116,7 +116,7 @@ namespace Altaxo.Text.Renderers
     {
       if (_indexOfAmlFile < 0 || (_indexOfAmlFile + 1 < _amlFileList.Count && _amlFileList[_indexOfAmlFile + 1].spanStart == headingBlock.Span.Start))
       {
-        if (null != this.Writer)
+        if (null != Writer)
         {
           CloseCurrentMamlFile();
         }
@@ -127,7 +127,7 @@ namespace Altaxo.Text.Renderers
 
         System.IO.Directory.CreateDirectory(Path.GetDirectoryName(mamlFile.fileName));
         var tw = new System.IO.StreamWriter(mamlFile.fileName, false, Encoding.UTF8, 1024);
-        this.Writer = tw;
+        Writer = tw;
 
         Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", mamlFile.guid), new KeyValuePair<string, string>("revisionNumber", "1") });
         Push(MamlElements.developerConceptualDocument, new[] { new KeyValuePair<string, string>("xmlns", "http://ddue.schemas.microsoft.com/authoring/2003/5"), new KeyValuePair<string, string>("xmlns:xlink", "http://www.w3.org/1999/xlink") });
@@ -172,7 +172,7 @@ namespace Altaxo.Text.Renderers
 
     public void CloseCurrentMamlFile()
     {
-      if (null != this.Writer && _currentElementStack.Count > 0)
+      if (null != Writer && _currentElementStack.Count > 0)
       {
         if (EnableLinkToNextSection && (_indexOfAmlFile + 1) < _amlFileList.Count)
         {
@@ -213,9 +213,9 @@ namespace Altaxo.Text.Renderers
 
         PopAll();
 
-        this.Writer.Close();
-        this.Writer.Dispose();
-        this.Writer = TextWriter.Null;
+        Writer.Close();
+        Writer.Dispose();
+        Writer = TextWriter.Null;
       }
     }
 

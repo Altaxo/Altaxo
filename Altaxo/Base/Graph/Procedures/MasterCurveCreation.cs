@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Procedures
     public static void ShowMasterCurveCreationDialog(GraphDocument doc)
     {
       string error;
-      Altaxo.Data.MasterCurveCreation.Options opt = new Data.MasterCurveCreation.Options();
+      var opt = new Data.MasterCurveCreation.Options();
       if (null != (error = FillDataListFromGraphDocument(doc, opt.ColumnGroups)))
       {
         Current.Gui.ErrorMessageBox(error);
@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Procedures
     private static List<DoubleColumn> GetColumnListFromPlotItemCollection(Altaxo.Graph.Gdi.Plot.PlotItemCollection plotItemCollection)
     {
       var flattenedContent = plotItemCollection.Flattened;
-      List<DoubleColumn> columnList = new List<DoubleColumn>();
+      var columnList = new List<DoubleColumn>();
       foreach (var item in flattenedContent)
       {
         if (item is Gdi.Plot.XYColumnPlotItem)

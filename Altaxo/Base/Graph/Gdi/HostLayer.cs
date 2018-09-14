@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Gdi
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        HostLayer s = (HostLayer)obj;
+        var s = (HostLayer)obj;
 
         // size, position, rotation and scale
         info.AddValue("CachedParentSize", s._cachedParentLayerSize);
@@ -209,10 +209,10 @@ namespace Altaxo.Graph.Gdi
     /// <param name="options">Copy options.</param>
     protected virtual void InternalCopyFrom(HostLayer from, GraphCopyOptions options)
     {
-      if (null == this._parent)
+      if (null == _parent)
       {
         //this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
-        this._cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
+        _cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
       }
 
       ChildCopyToMember(ref _grid, from._grid);
@@ -220,9 +220,9 @@ namespace Altaxo.Graph.Gdi
       // size, position, rotation and scale
       if (0 != (options & GraphCopyOptions.CopyLayerSizePosition))
       {
-        this._cachedLayerSize = from._cachedLayerSize;
-        this._cachedLayerPosition = from._cachedLayerPosition;
-        this._cachedParentLayerSize = from._cachedParentLayerSize;
+        _cachedLayerSize = from._cachedLayerSize;
+        _cachedLayerPosition = from._cachedLayerPosition;
+        _cachedParentLayerSize = from._cachedParentLayerSize;
         ChildCopyToMember(ref _location, from._location);
       }
 
@@ -232,11 +232,11 @@ namespace Altaxo.Graph.Gdi
       if (0 != (options & GraphCopyOptions.CopyLayerAll))
       {
         // not all properties of the child layers should be cloned -> just copy the layers one by one
-        int len = Math.Min(this._childLayers.Count, from._childLayers.Count);
+        int len = Math.Min(_childLayers.Count, from._childLayers.Count);
         for (int i = 0; i < len; i++)
         {
-          this._childLayers[i].CopyFrom(from._childLayers[i], options);
-          this._childLayers[i].ParentLayer = this;
+          _childLayers[i].CopyFrom(from._childLayers[i], options);
+          _childLayers[i].ParentLayer = this;
         }
       }
 
@@ -264,7 +264,7 @@ namespace Altaxo.Graph.Gdi
     {
       var pwThis = _graphObjects.CreatePartialView(x => selectionCriteria(x));
       var pwFrom = from._graphObjects.CreatePartialView(x => selectionCriteria(x));
-      List<HostLayer> layersToRecycle = new List<HostLayer>(this._childLayers);
+      var layersToRecycle = new List<HostLayer>(_childLayers);
 
       // replace existing items
       int i, j;
@@ -345,11 +345,11 @@ namespace Altaxo.Graph.Gdi
 
       if (null != parentLayer) // this helps to get the real layer size from the beginning
       {
-        this.ParentLayer = parentLayer;
-        this._cachedParentLayerSize = parentLayer.Size;
+        ParentLayer = parentLayer;
+        _cachedParentLayerSize = parentLayer.Size;
       }
 
-      this.Location = location;
+      Location = location;
       InternalInitializeGraphObjectsCollection();
       CalculateMatrix();
     }
@@ -435,15 +435,15 @@ namespace Altaxo.Graph.Gdi
     {
       if (parentSize.X > parentSize.Y)
       {
-        this.Size = new PointD2D(parentSize.X * _xDefSizeLandscape, parentSize.Y * _yDefSizeLandscape);
-        this.Position = new PointD2D(parentSize.X * _xDefPositionLandscape, parentSize.Y * _yDefPositionLandscape);
+        Size = new PointD2D(parentSize.X * _xDefSizeLandscape, parentSize.Y * _yDefSizeLandscape);
+        Position = new PointD2D(parentSize.X * _xDefPositionLandscape, parentSize.Y * _yDefPositionLandscape);
       }
       else // Portrait
       {
-        this.Size = new PointD2D(parentSize.X * _xDefSizePortrait, parentSize.Y * _yDefSizePortrait);
-        this.Position = new PointD2D(parentSize.X * _xDefPositionPortrait, parentSize.Y * _yDefPositionPortrait);
+        Size = new PointD2D(parentSize.X * _xDefSizePortrait, parentSize.Y * _yDefSizePortrait);
+        Position = new PointD2D(parentSize.X * _xDefPositionPortrait, parentSize.Y * _yDefPositionPortrait);
       }
-      this.CalculateMatrix();
+      CalculateMatrix();
     }
 
     /// <summary>
@@ -464,7 +464,7 @@ namespace Altaxo.Graph.Gdi
 
       if (oldParentSize != newParentSize)
       {
-        this.CalculateCachedSizeAndPosition();
+        CalculateCachedSizeAndPosition();
 
         if (isTriggeringChangedEvent)
           EhSelfChanged(EventArgs.Empty);
@@ -473,7 +473,7 @@ namespace Altaxo.Graph.Gdi
 
     public PointD2D Position
     {
-      get { return this._cachedLayerPosition; }
+      get { return _cachedLayerPosition; }
       set
       {
         var ls = _location as ItemLocationDirect;
@@ -494,7 +494,7 @@ namespace Altaxo.Graph.Gdi
 
     public PointD2D Size
     {
-      get { return this._cachedLayerSize; }
+      get { return _cachedLayerSize; }
       set
       {
         var ls = _location as ItemLocationDirect;
@@ -515,15 +515,15 @@ namespace Altaxo.Graph.Gdi
 
     public double Rotation
     {
-      get { return this._location.Rotation; }
+      get { return _location.Rotation; }
       set
       {
-        var oldValue = this._location.Rotation;
-        this._location.Rotation = value;
+        var oldValue = _location.Rotation;
+        _location.Rotation = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -531,15 +531,15 @@ namespace Altaxo.Graph.Gdi
 
     public double ShearX
     {
-      get { return this._location.ShearX; }
+      get { return _location.ShearX; }
       set
       {
-        var oldValue = this._location.ShearX;
-        this._location.ShearX = value;
+        var oldValue = _location.ShearX;
+        _location.ShearX = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -547,15 +547,15 @@ namespace Altaxo.Graph.Gdi
 
     public double ScaleX
     {
-      get { return this._location.ScaleX; }
+      get { return _location.ScaleX; }
       set
       {
-        var oldValue = this._location.ScaleX;
-        this._location.ScaleX = value;
+        var oldValue = _location.ScaleX;
+        _location.ScaleX = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -563,15 +563,15 @@ namespace Altaxo.Graph.Gdi
 
     public double ScaleY
     {
-      get { return this._location.ScaleY; }
+      get { return _location.ScaleY; }
       set
       {
-        var oldValue = this._location.ScaleY;
-        this._location.ScaleY = value;
+        var oldValue = _location.ScaleY;
+        _location.ScaleY = value;
 
         if (value != oldValue)
         {
-          this.CalculateMatrix();
+          CalculateMatrix();
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -606,7 +606,7 @@ namespace Altaxo.Graph.Gdi
 
     public MatrixD2D TransformationFromRootToHere()
     {
-      MatrixD2D result = new MatrixD2D();
+      var result = new MatrixD2D();
       foreach (var layer in this.TakeFromRootToHere())
         result.PrependTransform(layer._transformation);
       return result;
@@ -691,7 +691,7 @@ namespace Altaxo.Graph.Gdi
 
       newlocation.SetPositionAndSize(x, y, width, height);
 
-      this.Location = newlocation;
+      Location = newlocation;
     }
 
     /// <summary>
@@ -722,7 +722,7 @@ namespace Altaxo.Graph.Gdi
           if (gps.ForceFitIntoCell)
           {
             var t = new MatrixD2D();
-            t.SetTranslationRotationShearxScale(0, 0, -this.Rotation, this.ShearX, this.ScaleX, this.ScaleY);
+            t.SetTranslationRotationShearxScale(0, 0, -Rotation, ShearX, ScaleX, ScaleY);
             var ele = t.Elements;
             newRect = RectangleD2DExtensions.GetIncludedTransformedRectangle(gridRect, t.SX, t.RX, t.RY, t.SY);
           }
@@ -740,9 +740,9 @@ namespace Altaxo.Graph.Gdi
       bool isPositionChanged = newRect.LeftTop != _cachedLayerPosition;
       bool isSizeChanged = newRect.Size != _cachedLayerSize;
 
-      this._cachedLayerSize = newRect.Size;
-      this._cachedLayerPosition = newRect.LeftTop;
-      this.CalculateMatrix();
+      _cachedLayerSize = newRect.Size;
+      _cachedLayerPosition = newRect.LeftTop;
+      CalculateMatrix();
 
       if (isSizeChanged)
         OnCachedResultingSizeChanged();
@@ -868,11 +868,11 @@ namespace Altaxo.Graph.Gdi
     /// <returns><c>True</c> if this layer would be able to create a grid; <c>false otherwise.</c></returns>
     public bool CanCreateGridForLocation(ItemLocationDirect itemLocation)
     {
-      if (this.Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid))
+      if (Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid))
         return false;
 
       RectangleD2D enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
-      if (enclosingRect.Left < 0 || enclosingRect.Top < 0 || enclosingRect.Right > this.Size.X || enclosingRect.Bottom > this.Size.Y)
+      if (enclosingRect.Left < 0 || enclosingRect.Top < 0 || enclosingRect.Right > Size.X || enclosingRect.Bottom > Size.Y)
         return false;
 
       return true;
@@ -886,23 +886,23 @@ namespace Altaxo.Graph.Gdi
     /// <returns>The new grid cell location for useage by the child layer. If no grid could be created, the return value may be <c>null</c>.</returns>
     public ItemLocationByGrid CreateGridForLocation(ItemLocationDirect itemLocation)
     {
-      bool isAnyChildLayerPosByGrid = this.Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid);
+      bool isAnyChildLayerPosByGrid = Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid);
 
       if (!isAnyChildLayerPosByGrid)
       {
         RectangleD2D enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
 
-        if (enclosingRect.Left < 0 || enclosingRect.Top < 0 || enclosingRect.Right > this.Size.X || enclosingRect.Bottom > this.Size.Y)
+        if (enclosingRect.Left < 0 || enclosingRect.Top < 0 || enclosingRect.Right > Size.X || enclosingRect.Bottom > Size.Y)
           return null;
 
         _grid = new GridPartitioning();
-        _grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.Left / this.Size.X));
-        _grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.Width / this.Size.X));
-        _grid.XPartitioning.Add(RADouble.NewRel(1 - enclosingRect.Right / this.Size.X));
+        _grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.Left / Size.X));
+        _grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.Width / Size.X));
+        _grid.XPartitioning.Add(RADouble.NewRel(1 - enclosingRect.Right / Size.X));
 
-        _grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Top / this.Size.Y));
-        _grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Height / this.Size.Y));
-        _grid.YPartitioning.Add(RADouble.NewRel(1 - enclosingRect.Bottom / this.Size.Y));
+        _grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Top / Size.Y));
+        _grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Height / Size.Y));
+        _grid.YPartitioning.Add(RADouble.NewRel(1 - enclosingRect.Bottom / Size.Y));
         _grid.ParentObject = this;
 
         var result = new ItemLocationByGrid();
@@ -997,10 +997,10 @@ namespace Altaxo.Graph.Gdi
       if (null != _childLayers)
         throw new InvalidOperationException("_childLayers was already set!");
 
-      _graphObjects = new GraphicCollection(x => { x.ParentObject = this; x.SetParentSize(this.Size, false); });
+      _graphObjects = new GraphicCollection(x => { x.ParentObject = this; x.SetParentSize(Size, false); });
       _graphObjects.CollectionChanged += EhGraphObjectCollectionChanged;
 
-      _childLayers = _graphObjects.CreatePartialViewOfType<HostLayer>((Action<HostLayer>)EhBeforeInsertChildLayer);
+      _childLayers = _graphObjects.CreatePartialViewOfType<HostLayer>(EhBeforeInsertChildLayer);
       _childLayers.CollectionChanged += EhChildLayers_CollectionChanged;
       OnGraphObjectsCollectionInstanceInitialized();
     }
@@ -1099,7 +1099,7 @@ namespace Altaxo.Graph.Gdi
     {
       CalculateCachedSizeAndPosition();
 
-      var mySize = this.Size;
+      var mySize = Size;
       foreach (var graphObj in _graphObjects)
       {
         graphObj.SetParentSize(mySize, false);
@@ -1113,7 +1113,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="context">The paint context.</param>
     public virtual void PaintPreprocessing(IPaintContext context)
     {
-      var mySize = this.Size;
+      var mySize = Size;
       foreach (var graphObj in _graphObjects)
       {
         graphObj.PaintPreprocessing(context);
@@ -1171,7 +1171,7 @@ namespace Altaxo.Graph.Gdi
       IHitTestObject hit;
 
       //			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
-      HitTestPointData localCoord = parentCoord.NewFromAdditionalTransformation(this._transformation);
+      HitTestPointData localCoord = parentCoord.NewFromAdditionalTransformation(_transformation);
 
       if (!plotItemsOnly)
       {
@@ -1191,7 +1191,7 @@ namespace Altaxo.Graph.Gdi
         }
 
         // first hit testing all four corners of the layer
-        GraphicsPath layercorners = new GraphicsPath();
+        var layercorners = new GraphicsPath();
         float catchrange = 6;
         layercorners.AddEllipse(-catchrange, -catchrange, 2 * catchrange, 2 * catchrange);
         layercorners.AddEllipse((float)(_cachedLayerSize.X - catchrange), 0 - catchrange, 2 * catchrange, 2 * catchrange);
@@ -1202,8 +1202,10 @@ namespace Altaxo.Graph.Gdi
         var layerC = localCoord.GetHittedPointInWorldCoord();
         if (layercorners.IsVisible((PointF)layerC))
         {
-          hit = new HitTestObject(layercorners, this);
-          hit.DoubleClick = LayerPositionEditorMethod;
+          hit = new HitTestObject(layercorners, this)
+          {
+            DoubleClick = LayerPositionEditorMethod
+          };
           return ForwardTransform(hit);
         }
       }
@@ -1333,12 +1335,12 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return this._parent;
+        return _parent;
       }
       set
       {
         var oldValue = _parent;
-        this._parent = value;
+        _parent = value;
         if (!object.ReferenceEquals(oldValue, value))
         {
           CalculateCachedSizeAndPosition();

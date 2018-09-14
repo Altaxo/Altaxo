@@ -114,7 +114,7 @@ namespace Altaxo.Main.Properties
     /// <param name="o">The property value that should be applied.</param>
     protected override void ApplyProperty(object o)
     {
-      T prop = (T)o;
+      var prop = (T)o;
       ApplyProperty(prop);
     }
 

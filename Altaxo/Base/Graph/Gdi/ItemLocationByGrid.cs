@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -135,26 +135,26 @@ namespace Altaxo.Graph.Gdi
       if (obj is ItemLocationByGrid)
       {
         var from = (ItemLocationByGrid)obj;
-        this._gridColumn = from._gridColumn;
-        this._gridRow = from._gridRow;
-        this._gridColumnSpan = from._gridColumnSpan;
-        this._gridRowSpan = from._gridRowSpan;
+        _gridColumn = from._gridColumn;
+        _gridRow = from._gridRow;
+        _gridColumnSpan = from._gridColumnSpan;
+        _gridRowSpan = from._gridRowSpan;
 
-        this._rotation = from._rotation;
-        this._shear = from._shear;
-        this._scaleX = from._scaleX;
-        this._scaleY = from._scaleY;
-        this._forceFitIntoCell = from._forceFitIntoCell;
+        _rotation = from._rotation;
+        _shear = from._shear;
+        _scaleX = from._scaleX;
+        _scaleY = from._scaleY;
+        _forceFitIntoCell = from._forceFitIntoCell;
         EhSelfChanged();
         return true;
       }
       else if (obj is IItemLocation)
       {
         var from = (IItemLocation)obj;
-        this._rotation = from.Rotation;
-        this._shear = from.ShearX;
-        this._scaleX = from.ScaleX;
-        this._scaleY = from.ScaleY;
+        _rotation = from.Rotation;
+        _shear = from.ShearX;
+        _scaleX = from.ScaleX;
+        _scaleY = from.ScaleY;
         EhSelfChanged();
         return true;
       }

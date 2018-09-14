@@ -169,12 +169,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var kind = LineScatterPlotStyleKind.LineAndScatter;
 
       if (0 != (kind & LineScatterPlotStyleKind.Line))
-        this.m_LineStyle = new LinePlotStyle(info, oldDeserializationRequiresFullConstruction: true);
+        m_LineStyle = new LinePlotStyle(info, oldDeserializationRequiresFullConstruction: true);
 
       if (0 != (kind & LineScatterPlotStyleKind.Scatter))
-        this.m_ScatterStyle = new ScatterPlotStyle(info, oldDeserializationRequiresFullConstruction: true);
+        m_ScatterStyle = new ScatterPlotStyle(info, oldDeserializationRequiresFullConstruction: true);
 
-      this.m_LineSymbolGap = kind == LineScatterPlotStyleKind.LineAndScatter;
+      m_LineSymbolGap = kind == LineScatterPlotStyleKind.LineAndScatter;
     }
 
     /*
@@ -192,18 +192,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get
       {
         if (m_LineStyle != null)
-          return this.m_LineStyle.LinePen.Color;
+          return m_LineStyle.LinePen.Color;
         if (m_ScatterStyle != null)
-          return this.m_ScatterStyle.Color;
+          return m_ScatterStyle.Color;
         else
           return NamedColors.Black;
       }
       set
       {
         if (m_LineStyle != null)
-          this.m_LineStyle.LinePen.Color = value;
+          m_LineStyle.LinePen.Color = value;
         if (m_ScatterStyle != null)
-          this.m_ScatterStyle.Color = value;
+          m_ScatterStyle.Color = value;
       }
     }
 

@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        FiniteNumericalBoundaries s = (FiniteNumericalBoundaries)obj;
+        var s = (FiniteNumericalBoundaries)obj;
         info.AddBaseValueEmbedded(s, typeof(FiniteNumericalBoundaries).BaseType);
       }
 

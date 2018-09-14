@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
+using Altaxo.Main;
 
 namespace Altaxo.Data
 {
@@ -190,7 +190,7 @@ namespace Altaxo.Data
       IReadableColumn col = Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
       if (col is Data.DataColumn)
       {
-        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
         string tablename = table == null ? string.Empty : table.Name + "\\";
         string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
         if (level <= 0)

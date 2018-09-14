@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-using Altaxo.Graph.Gdi.Plot.Data;
-using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 {
@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       if (null != symbolGap) // circular with symbol gap
       {
         var realSkipFrequency = skipFrequency % 3 == 0 ? skipFrequency : skipFrequency * 3; // least common multiple of skipFrequency and 3
-        PointF[] skipLinePoints = new PointF[0];
+        var skipLinePoints = new PointF[0];
         foreach (var segmentRange in GetSegmentRanges(range, symbolGap, realSkipFrequency, connectCircular))
         {
           if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return

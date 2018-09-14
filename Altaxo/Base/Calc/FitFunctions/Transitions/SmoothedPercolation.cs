@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
@@ -40,7 +40,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SmoothedPercolation s = (SmoothedPercolation)obj;
+        var s = (SmoothedPercolation)obj;
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -225,9 +225,8 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     private static double CalculateLgSigma(double p, double sigmam, double sigmat, double pc, double s, double t)
     {
-      P1Var var = new P1Var(sigmam, sigmat, pc, s, t);
-      double p1;
-      if (!_sp1Hash.TryGetValue(var, out p1))
+      var var = new P1Var(sigmam, sigmat, pc, s, t);
+      if (!_sp1Hash.TryGetValue(var, out var p1))
       {
         p1 = CalculateP1(sigmam, sigmat, pc, s, t);
         _sp1Hash.Add(var, p1);

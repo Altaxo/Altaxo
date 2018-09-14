@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinkedImageGraphic s = (LinkedImageGraphic)obj;
+        var s = (LinkedImageGraphic)obj;
         info.AddBaseValueEmbedded(s, typeof(LinkedImageGraphic).BaseType);
         info.AddValue("ImagePath", s._imagePath);
       }
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this()
     {
-      this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
+      SetPosition(graphicPosition, Main.EventFiring.Suppressed);
       this.ImagePath = ImagePath;
     }
 
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(graphicPosition, ImagePath)
     {
-      this.SetSize(graphicSize.X, graphicSize.X, Main.EventFiring.Suppressed);
+      SetSize(graphicSize.X, graphicSize.X, Main.EventFiring.Suppressed);
     }
 
     public LinkedImageGraphic(double posX, double posY, PointD2D graphicSize, string ImagePath)
@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(graphicPosition, Rotation, ImagePath)
     {
-      this.SetSize(graphicSize.X, graphicSize.X, Main.EventFiring.Suppressed);
+      SetSize(graphicSize.X, graphicSize.X, Main.EventFiring.Suppressed);
     }
 
     public LinkedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, string ImagePath)
@@ -148,8 +148,8 @@ namespace Altaxo.Graph.Gdi.Shapes
         var from = obj as LinkedImageGraphic;
         if (from != null)
         {
-          this._imagePath = from._imagePath;
-          this._cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
+          _imagePath = from._imagePath;
+          _cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
         }
       }
       return isCopied;
@@ -207,11 +207,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       TransformGraphics(g);
 
-      Image myImage = this.GetImage();
+      Image myImage = GetImage();
 
       if (null != myImage)
       {
-        var bounds = this.Bounds;
+        var bounds = Bounds;
         g.DrawImage(myImage, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
       }
 

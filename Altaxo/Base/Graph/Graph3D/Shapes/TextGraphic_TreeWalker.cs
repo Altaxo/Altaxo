@@ -114,13 +114,17 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       public StructuralGlyph VisitTree(PegNode root, StyleContext context, double lineSpacingFactor, bool isFixedLineSpacing)
       {
-        var rootGlyph = new VerticalStack();
-        rootGlyph.Style = context;
-        rootGlyph.LineSpacingFactor = lineSpacingFactor;
-        rootGlyph.FixedLineSpacing = isFixedLineSpacing;
+        var rootGlyph = new VerticalStack
+        {
+          Style = context,
+          LineSpacingFactor = lineSpacingFactor,
+          FixedLineSpacing = isFixedLineSpacing
+        };
 
-        var line = new GlyphLine();
-        line.Style = context;
+        var line = new GlyphLine
+        {
+          Style = context
+        };
 
         rootGlyph.Add(line);
 
@@ -224,8 +228,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
         {
           if (parent.Parent is VerticalStack)
           {
-            newcontext = new GlyphLine();
-            newcontext.Style = context;
+            newcontext = new GlyphLine
+            {
+              Style = context
+            };
             parent.Parent.Add(newcontext);
           }
           else // parent.Parent is not a VerticalStack
@@ -233,8 +239,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
             var vertStack = new VerticalStack();
             parent.Parent.Exchange(parent, vertStack);
             vertStack.Add(parent);
-            newcontext = new GlyphLine();
-            newcontext.Style = context;
+            newcontext = new GlyphLine
+            {
+              Style = context
+            };
             vertStack.Add(newcontext);
           }
         }
@@ -334,8 +342,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
           case @"\+(":
             {
-              var newParent = new Superscript();
-              newParent.Style = context;
+              var newParent = new Superscript
+              {
+                Style = context
+              };
               parent.Add(newParent);
 
               var newContext = context.Clone();
@@ -346,8 +356,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
           case @"\-(":
             {
-              var newParent = new Subscript();
-              newParent.Style = context;
+              var newParent = new Subscript
+              {
+                Style = context
+              };
               parent.Add(newParent);
 
               var newContext = context.Clone();
@@ -359,8 +371,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
           case @"\l(":
             {
               string s = GetText(childNode);
-              int plotNumber;
-              if (int.TryParse(s, out plotNumber))
+              if (int.TryParse(s, out var plotNumber))
               {
                 parent.Add(new PlotSymbol(context, plotNumber));
               }
@@ -370,8 +381,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
           case @"\%(":
             {
               string s = GetText(childNode);
-              int plotNumber;
-              if (int.TryParse(s, out plotNumber))
+              if (int.TryParse(s, out var plotNumber))
               {
                 parent.Add(new PlotName(context, plotNumber));
               }
@@ -380,8 +390,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
           case @"\ad(":
             {
-              var newParent = new DotOverGlyph();
-              newParent.Style = context;
+              var newParent = new DotOverGlyph
+              {
+                Style = context
+              };
               parent.Add(newParent);
               VisitNode(childNode, context, newParent);
             }
@@ -389,8 +401,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
           case @"\ab(":
             {
-              var newParent = new BarOverGlyph();
-              newParent.Style = context;
+              var newParent = new BarOverGlyph
+              {
+                Style = context
+              };
               parent.Add(newParent);
               VisitNode(childNode, context, newParent);
             }
@@ -412,8 +426,10 @@ namespace Altaxo.Graph.Graph3D.Shapes
         {
           case @"\=(":
             {
-              var newParent = new SubSuperScript();
-              newParent.Style = context;
+              var newParent = new SubSuperScript
+              {
+                Style = context
+              };
               parent.Add(newParent);
 
               var newContext = context.Clone();
@@ -428,7 +444,6 @@ namespace Altaxo.Graph.Graph3D.Shapes
               string s1 = GetText(childNode).Trim();
               var newContext = context.Clone();
               string numberString;
-              Altaxo.Serialization.LengthUnit lengthUnit;
 
               if (s1.EndsWith("%"))
               {
@@ -439,7 +454,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
                   newContext.ScaleFont(val / 100);
                 }
               }
-              else if (Altaxo.Serialization.LengthUnit.TryParse(s1, out lengthUnit, out numberString) &&
+              else if (Altaxo.Serialization.LengthUnit.TryParse(s1, out var lengthUnit, out numberString) &&
                 double.TryParse(numberString, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out val)
                 )
               {
@@ -481,8 +496,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
             {
               string s1 = GetText(childNode);
               string s2 = GetText(childNode.next_);
-              int plotNumber, plotLayer;
-              if (int.TryParse(s1, out plotLayer) && int.TryParse(s2, out plotNumber))
+              if (int.TryParse(s1, out var plotLayer) && int.TryParse(s2, out var plotNumber))
               {
                 parent.Add(new PlotSymbol(context, plotNumber, plotLayer));
               }
@@ -493,8 +507,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
             {
               string s1 = GetText(childNode);
               string s2 = GetText(childNode.next_);
-              int plotNumber, plotLayer;
-              if (int.TryParse(s1, out plotLayer) && int.TryParse(s2, out plotNumber))
+              if (int.TryParse(s1, out var plotLayer) && int.TryParse(s2, out var plotNumber))
               {
                 parent.Add(new PlotName(context, plotNumber, plotLayer));
               }
@@ -526,8 +539,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
               string s1 = GetText(childNode);
               string s2 = GetText(childNode.next_);
               string s3 = GetText(childNode.next_.next_);
-              int plotNumber, plotLayer;
-              if (int.TryParse(s1, out plotLayer) && int.TryParse(s2, out plotNumber))
+              if (int.TryParse(s1, out var plotLayer) && int.TryParse(s2, out var plotNumber))
               {
                 var label = new PlotName(context, plotNumber, plotLayer);
                 label.SetPropertyColumnName(s3);

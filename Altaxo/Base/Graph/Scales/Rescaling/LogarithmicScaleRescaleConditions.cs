@@ -70,7 +70,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LogarithmicScaleRescaleConditions s = (LogarithmicScaleRescaleConditions)obj;
+        var s = (LogarithmicScaleRescaleConditions)obj;
 
         info.AddBaseValueEmbedded(s, s.GetType().BaseType);
       }
@@ -265,9 +265,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     public double GetOrgValueToShowInDialog(double currentResultingOrg)
     {
-      if (this._orgRescaling == BoundaryRescaling.Auto)
+      if (_orgRescaling == BoundaryRescaling.Auto)
       {
-        switch (this._userProvidedOrgRelativeTo)
+        switch (_userProvidedOrgRelativeTo)
         {
           case BoundariesRelativeTo.Absolute:
             return currentResultingOrg;
@@ -287,15 +287,15 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
       else
       {
-        return this._userProvidedOrgValue;
+        return _userProvidedOrgValue;
       }
     }
 
     public double GetEndValueToShowInDialog(double currentResultingEnd)
     {
-      if (this._endRescaling == BoundaryRescaling.Auto)
+      if (_endRescaling == BoundaryRescaling.Auto)
       {
-        switch (this._userProvidedEndRelativeTo)
+        switch (_userProvidedEndRelativeTo)
         {
           case BoundariesRelativeTo.Absolute:
             return currentResultingEnd;
@@ -315,7 +315,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
       else
       {
-        return this._userProvidedEndValue;
+        return _userProvidedEndValue;
       }
     }
 

@@ -266,9 +266,11 @@ namespace Poly2Tri
       triangle.MarkNeighbor(node.Triangle);
       tcx.Triangles.Add(triangle);
 
-      newNode = new AdvancingFrontNode(point);
-      newNode.Next = node.Next;
-      newNode.Prev = node;
+      newNode = new AdvancingFrontNode(point)
+      {
+        Next = node.Next,
+        Prev = node
+      };
       node.Next.Prev = newNode;
       node.Next = newNode;
 
@@ -942,7 +944,7 @@ namespace Poly2Tri
     /// <param name="node">middle node, that is the bottom of the hole</param>
     private static void Fill(DTSweepContext tcx, AdvancingFrontNode node)
     {
-      DelaunayTriangle triangle = new DelaunayTriangle(node.Prev.Point, node.Point, node.Next.Point);
+      var triangle = new DelaunayTriangle(node.Prev.Point, node.Point, node.Next.Point);
       // TODO: should copy the cEdge value from neighbor triangles
       //       for now cEdge values are copied during the legalize
       triangle.MarkNeighbor(node.Prev.Triangle);

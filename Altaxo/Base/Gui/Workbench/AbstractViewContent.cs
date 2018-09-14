@@ -267,7 +267,7 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        var model = this.ModelObject;
+        var model = ModelObject;
         if (model != null)
           return "ContentHash:" + RuntimeHelpers.GetHashCode(model).ToString(System.Globalization.CultureInfo.InvariantCulture);
         else

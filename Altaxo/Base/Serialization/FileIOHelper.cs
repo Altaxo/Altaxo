@@ -60,7 +60,7 @@ namespace Altaxo.Serialization
     /// <returns></returns>
     public static string GetValidFileName(string name)
     {
-      StringBuilder stb = new StringBuilder(name);
+      var stb = new StringBuilder(name);
       for (int i = 0; i < name.Length; ++i)
       {
         char c = stb[i];

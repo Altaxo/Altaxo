@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {

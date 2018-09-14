@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Graph
 {
@@ -87,7 +87,7 @@ namespace Altaxo.Graph
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        CSLineID s = (CSLineID)obj;
+        var s = (CSLineID)obj;
 
         info.AddValue("Axis", s._parallelAxisNumber);
 
@@ -110,11 +110,13 @@ namespace Altaxo.Graph
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        var s = new CSLineID();
-        s._parallelAxisNumber = info.GetInt32("Axis");
+        var s = new CSLineID
+        {
+          _parallelAxisNumber = info.GetInt32("Axis"),
 
-        s._logicalValueFirstOther = info.GetDouble("Logical1");
-        s._usePhysicalValueFirstOther = info.GetBoolean("UsePhysical1");
+          _logicalValueFirstOther = info.GetDouble("Logical1"),
+          _usePhysicalValueFirstOther = info.GetBoolean("UsePhysical1")
+        };
         if (s._usePhysicalValueFirstOther)
           s._physicalValueFirstOther = (AltaxoVariant)info.GetValue("Physical1", s);
 
@@ -330,7 +332,7 @@ namespace Altaxo.Graph
         if (!_usePhysicalValueFirstOther)
           throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true");
 
-        var result = (CSLineID)this.MemberwiseClone();
+        var result = (CSLineID)MemberwiseClone();
         result._logicalValueFirstOther = logicalValueOtherFirst;
         return result;
       }
@@ -361,7 +363,7 @@ namespace Altaxo.Graph
         if (!_usePhysicalValueSecondOther)
           throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true");
 
-        var result = (CSLineID)this.MemberwiseClone();
+        var result = (CSLineID)MemberwiseClone();
         result._logicalValueSecondOther = logicalValueOtherSecond;
         return result;
       }
@@ -443,32 +445,32 @@ namespace Altaxo.Graph
     {
       if (!(obj is CSLineID))
         return false;
-      CSLineID from = (CSLineID)obj;
+      var from = (CSLineID)obj;
 
-      if (this.Is3DIdentifier != from.Is3DIdentifier)
+      if (Is3DIdentifier != from.Is3DIdentifier)
         return false;
 
       bool result = true;
-      result &= this._parallelAxisNumber == from._parallelAxisNumber;
-      result &= this._usePhysicalValueFirstOther == from._usePhysicalValueFirstOther;
+      result &= _parallelAxisNumber == from._parallelAxisNumber;
+      result &= _usePhysicalValueFirstOther == from._usePhysicalValueFirstOther;
       if (result == false)
         return false;
 
       if (_usePhysicalValueFirstOther)
-        result &= (this._physicalValueFirstOther == from._physicalValueFirstOther);
+        result &= (_physicalValueFirstOther == from._physicalValueFirstOther);
       else
-        result &= (this._logicalValueFirstOther == from._logicalValueFirstOther);
+        result &= (_logicalValueFirstOther == from._logicalValueFirstOther);
       if (result == false)
         return false;
 
-      if (this.Is3DIdentifier)
+      if (Is3DIdentifier)
       {
-        if (this._usePhysicalValueSecondOther != from._usePhysicalValueSecondOther)
+        if (_usePhysicalValueSecondOther != from._usePhysicalValueSecondOther)
           return false;
         if (_usePhysicalValueSecondOther)
-          result &= (this._physicalValueSecondOther == from._physicalValueSecondOther);
+          result &= (_physicalValueSecondOther == from._physicalValueSecondOther);
         else
-          result &= (this._logicalValueSecondOther == from._logicalValueSecondOther);
+          result &= (_logicalValueSecondOther == from._logicalValueSecondOther);
       }
 
       return result;

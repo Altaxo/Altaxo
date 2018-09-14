@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
@@ -118,7 +118,7 @@ namespace Altaxo.Gui.Common
 
     public int IntegerValue
     {
-      get { return this._integerValue; }
+      get { return _integerValue; }
     }
 
     #region IMVCController Members
@@ -147,7 +147,7 @@ namespace Altaxo.Gui.Common
 
     public object ModelObject
     {
-      get { return this._integerValue; }
+      get { return _integerValue; }
     }
 
     public void Dispose()

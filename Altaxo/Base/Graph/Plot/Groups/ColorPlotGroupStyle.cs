@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ColorGroupStyle s = (ColorGroupStyle)obj;
+        var s = (ColorGroupStyle)obj;
         info.AddValue("StepEnabled", s._isStepEnabled);
       }
 
@@ -94,7 +94,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ColorGroupStyle s = (ColorGroupStyle)obj;
+        var s = (ColorGroupStyle)obj;
         info.AddValue("StepEnabled", s._isStepEnabled);
         info.AddValue("ColorSet", s._listOfValues);
       }
@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ColorGroupStyle s = (ColorGroupStyle)obj;
+        var s = (ColorGroupStyle)obj;
         info.AddValue("StepEnabled", s._isStepEnabled);
         info.AddValue("ColorSet", s._listOfValues);
         info.AddValue("ColorIndex", s._colorIndex);
@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Plot.Groups
       {
         ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
-        IColorSet listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
+        var listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
         if (null != listOfValues)
         {
           ColorSetManager.Instance.TryRegisterList(info, listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
@@ -193,12 +193,12 @@ namespace Altaxo.Graph.Plot.Groups
 
     public ColorGroupStyle(ColorGroupStyle from)
     {
-      this._isStepEnabled = from._isStepEnabled;
-      this._isInitialized = from._isInitialized;
-      this._listOfValues = from._listOfValues;
-      this._colorIndex = from._colorIndex;
-      this._cachedColor = from._cachedColor;
-      this._isLocalGroupStyle = from._isLocalGroupStyle;
+      _isStepEnabled = from._isStepEnabled;
+      _isInitialized = from._isInitialized;
+      _listOfValues = from._listOfValues;
+      _colorIndex = from._colorIndex;
+      _cachedColor = from._cachedColor;
+      _isLocalGroupStyle = from._isLocalGroupStyle;
     }
 
     #endregion Constructors
@@ -221,12 +221,12 @@ namespace Altaxo.Graph.Plot.Groups
 
     public void TransferFrom(IPlotGroupStyle fromb)
     {
-      ColorGroupStyle from = (ColorGroupStyle)fromb;
+      var from = (ColorGroupStyle)fromb;
       //System.Diagnostics.Debug.WriteLine(string.Format("ColorTransfer: myIni={0}, myCol={1}, fromI={2}, fromC={3}", _isInitialized, _color.Color.ToString(), from._isInitialized, from._color.Color.ToString()));
-      this._isInitialized = from._isInitialized;
-      this._listOfValues = from._listOfValues;
-      this._colorIndex = from._colorIndex;
-      this._cachedColor = from._cachedColor;
+      _isInitialized = from._isInitialized;
+      _listOfValues = from._listOfValues;
+      _colorIndex = from._colorIndex;
+      _cachedColor = from._cachedColor;
     }
 
     public void BeginPrepare()
@@ -262,12 +262,11 @@ namespace Altaxo.Graph.Plot.Groups
 
     public int Step(int step)
     {
-      if (this._listOfValues == null)
+      if (_listOfValues == null)
         return 0;
 
-      int wraps;
-      this._colorIndex = ColorSetExtensions.GetNextPlotColorIndex(_listOfValues, _colorIndex, step, out wraps);
-      this._cachedColor = InternalGetColorFromColorSetAndIndex();
+      _colorIndex = ColorSetExtensions.GetNextPlotColorIndex(_listOfValues, _colorIndex, step, out var wraps);
+      _cachedColor = InternalGetColorFromColorSetAndIndex();
       return wraps;
     }
 
@@ -389,7 +388,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(ColorGroupStyle)))
       {
-        ColorGroupStyle gstyle = ColorGroupStyle.NewExternalGroupStyle();
+        var gstyle = ColorGroupStyle.NewExternalGroupStyle();
         externalGroups.Add(gstyle);
       }
     }

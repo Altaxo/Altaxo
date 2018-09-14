@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Serialization.Galactic;
-using Altaxo.Serialization.Galactic.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Serialization.Galactic;
+using Altaxo.Serialization.Galactic.Options;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -127,13 +127,13 @@ namespace Altaxo.Gui.Worksheet
     {
       if (null != _view)
       {
-        this.m_CreateSpectrumFrom = CreateSpectrumFrom.Row;
+        m_CreateSpectrumFrom = CreateSpectrumFrom.Row;
         _view.CreateSpectrumFromRow = true;
 
-        this.m_XValuesFrom = XValuesFrom.ContinuousNumber;
+        m_XValuesFrom = XValuesFrom.ContinuousNumber;
         _view.XValuesContinuousNumber = true;
 
-        this.m_ExtendFileNameWith = ExtendFileNameWith.ContinuousNumber;
+        m_ExtendFileNameWith = ExtendFileNameWith.ContinuousNumber;
         _view.ExtendFileName_ContinuousNumber = true;
         _view.BasicFileName = "";
       }
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Worksheet
     public void FillXValuesColumnBox()
     {
       Altaxo.Data.DataColumnCollection colcol;
-      if (this.m_CreateSpectrumFrom == CreateSpectrumFrom.Row)
+      if (m_CreateSpectrumFrom == CreateSpectrumFrom.Row)
         colcol = m_Table.PropCols;
       else
         colcol = m_Table.DataColumns;
@@ -172,7 +172,7 @@ namespace Altaxo.Gui.Worksheet
     public void FillExtFileNameColumnBox()
     {
       Altaxo.Data.DataColumnCollection colcol;
-      if (this.m_CreateSpectrumFrom == CreateSpectrumFrom.Row)
+      if (m_CreateSpectrumFrom == CreateSpectrumFrom.Row)
         colcol = m_Table.DataColumns;
       else
         colcol = m_Table.PropCols;
@@ -217,11 +217,11 @@ namespace Altaxo.Gui.Worksheet
 
       if (m_CreateSpectrumFrom != oldValue)
       {
-        if (this.m_XValuesFrom == XValuesFrom.Column)
-          this.FillXValuesColumnBox();
+        if (m_XValuesFrom == XValuesFrom.Column)
+          FillXValuesColumnBox();
 
-        if (this.m_ExtendFileNameWith == ExtendFileNameWith.Column)
-          this.FillExtFileNameColumnBox();
+        if (m_ExtendFileNameWith == ExtendFileNameWith.Column)
+          FillExtFileNameColumnBox();
       }
     }
 
@@ -241,7 +241,7 @@ namespace Altaxo.Gui.Worksheet
       {
         if (m_XValuesFrom == XValuesFrom.Column)
         {
-          this.FillXValuesColumnBox();
+          FillXValuesColumnBox();
         }
         else
         {
@@ -255,19 +255,19 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     public void EhChange_ExtendFileNameOptions()
     {
-      ExtendFileNameWith oldValue = this.m_ExtendFileNameWith;
+      ExtendFileNameWith oldValue = m_ExtendFileNameWith;
 
       if (_view.ExtendFileName_ContinuousNumber)
-        this.m_ExtendFileNameWith = ExtendFileNameWith.ContinuousNumber;
+        m_ExtendFileNameWith = ExtendFileNameWith.ContinuousNumber;
       else if (_view.ExtendFileName_ByColumn)
-        this.m_ExtendFileNameWith = ExtendFileNameWith.Column;
+        m_ExtendFileNameWith = ExtendFileNameWith.Column;
 
-      if (this.m_ExtendFileNameWith != oldValue)
+      if (m_ExtendFileNameWith != oldValue)
       {
-        if (this.m_ExtendFileNameWith == ExtendFileNameWith.Column)
+        if (m_ExtendFileNameWith == ExtendFileNameWith.Column)
         {
           // now set the contents of the combo box
-          this.FillExtFileNameColumnBox();
+          FillExtFileNameColumnBox();
         }
         else
         {
@@ -281,11 +281,11 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     public bool Apply(bool disposeController)
     {
-      if (this.m_CreateSpectrumFrom == CreateSpectrumFrom.Row)
+      if (m_CreateSpectrumFrom == CreateSpectrumFrom.Row)
       {
         Altaxo.Data.INumericColumn xcol;
 
-        if (this.m_XValuesFrom == XValuesFrom.Column)
+        if (m_XValuesFrom == XValuesFrom.Column)
         {
           string colname = _view.XValuesColumnName;
           if (null == colname)
@@ -294,7 +294,7 @@ namespace Altaxo.Gui.Worksheet
             return false;
           }
 
-          xcol = this.m_Table.PropCols[colname] as Altaxo.Data.INumericColumn;
+          xcol = m_Table.PropCols[colname] as Altaxo.Data.INumericColumn;
         }
         else // xvalues are continuous number
         {
@@ -302,11 +302,11 @@ namespace Altaxo.Gui.Worksheet
         }
 
         Altaxo.Data.DataColumn extFileNameCol = null;
-        if (this.m_ExtendFileNameWith == ExtendFileNameWith.Column)
+        if (m_ExtendFileNameWith == ExtendFileNameWith.Column)
           extFileNameCol = m_Table[_view.ExtFileNameColumnName];
 
         int i, j;
-        bool bUseRowSel = (null != m_SelectedRows && this.m_SelectedRows.Count > 0);
+        bool bUseRowSel = (null != m_SelectedRows && m_SelectedRows.Count > 0);
         int numOfSpectra = bUseRowSel ? m_SelectedRows.Count : m_Table.DataColumns.RowCount;
 
         for (j = 0; j < numOfSpectra; j++)
@@ -320,7 +320,7 @@ namespace Altaxo.Gui.Worksheet
           else
             filename += "_" + j.ToString();
 
-          string error = Export.FromRow(filename, this.m_Table, i, xcol, this.m_SelectedColumns);
+          string error = Export.FromRow(filename, m_Table, i, xcol, m_SelectedColumns);
 
           if (null != error)
           {
@@ -330,11 +330,11 @@ namespace Altaxo.Gui.Worksheet
         }
         Current.Gui.InfoMessageBox(string.Format("Export of {0} spectra successfull.", numOfSpectra));
       }
-      else if (this.m_CreateSpectrumFrom == CreateSpectrumFrom.Column)
+      else if (m_CreateSpectrumFrom == CreateSpectrumFrom.Column)
       {
         Altaxo.Data.INumericColumn xcol;
 
-        if (this.m_XValuesFrom == XValuesFrom.Column)
+        if (m_XValuesFrom == XValuesFrom.Column)
         {
           string colname = _view.XValuesColumnName;
           if (null == colname)
@@ -343,7 +343,7 @@ namespace Altaxo.Gui.Worksheet
             return false;
           }
 
-          xcol = this.m_Table.DataColumns[colname] as Altaxo.Data.INumericColumn;
+          xcol = m_Table.DataColumns[colname] as Altaxo.Data.INumericColumn;
         }
         else // xvalues are continuous number
         {
@@ -351,11 +351,11 @@ namespace Altaxo.Gui.Worksheet
         }
 
         Altaxo.Data.DataColumn extFileNameCol = null;
-        if (this.m_ExtendFileNameWith == ExtendFileNameWith.Column)
+        if (m_ExtendFileNameWith == ExtendFileNameWith.Column)
           extFileNameCol = m_Table.PropCols[_view.ExtFileNameColumnName];
 
         int i, j;
-        bool bUseColSel = (null != m_SelectedColumns && this.m_SelectedColumns.Count > 0);
+        bool bUseColSel = (null != m_SelectedColumns && m_SelectedColumns.Count > 0);
         int numOfSpectra = bUseColSel ? m_SelectedColumns.Count : m_Table.DataColumns.ColumnCount;
 
         for (j = 0; j < numOfSpectra; j++)
@@ -369,7 +369,7 @@ namespace Altaxo.Gui.Worksheet
           else
             filename += j.ToString() + ".spc";
 
-          string error = Export.FromColumn(filename, this.m_Table, i, xcol, this.m_SelectedRows);
+          string error = Export.FromColumn(filename, m_Table, i, xcol, m_SelectedRows);
 
           if (null != error)
           {
@@ -407,10 +407,10 @@ namespace Altaxo.Gui.Worksheet
       {
         if (null != _view)
         {
-          _view.BasicFileNameAndPathChoose -= this.ChooseBasicFileNameAndPath;
-          _view.Change_ExtendFileNameOptions -= this.EhChange_ExtendFileNameOptions;
-          _view.Change_CreateSpectrumFrom -= this.EhChange_CreateSpectrumFrom;
-          _view.Change__XValuesFromOption -= this.EhChange_XValuesFromOptions;
+          _view.BasicFileNameAndPathChoose -= ChooseBasicFileNameAndPath;
+          _view.Change_ExtendFileNameOptions -= EhChange_ExtendFileNameOptions;
+          _view.Change_CreateSpectrumFrom -= EhChange_CreateSpectrumFrom;
+          _view.Change__XValuesFromOption -= EhChange_XValuesFromOptions;
         }
 
         _view = value as IExportGalacticSpcFileView;
@@ -419,10 +419,10 @@ namespace Altaxo.Gui.Worksheet
         {
           InitializeElements();
 
-          _view.BasicFileNameAndPathChoose += this.ChooseBasicFileNameAndPath;
-          _view.Change_ExtendFileNameOptions += this.EhChange_ExtendFileNameOptions;
-          _view.Change_CreateSpectrumFrom += this.EhChange_CreateSpectrumFrom;
-          _view.Change__XValuesFromOption += this.EhChange_XValuesFromOptions;
+          _view.BasicFileNameAndPathChoose += ChooseBasicFileNameAndPath;
+          _view.Change_ExtendFileNameOptions += EhChange_ExtendFileNameOptions;
+          _view.Change_CreateSpectrumFrom += EhChange_CreateSpectrumFrom;
+          _view.Change__XValuesFromOption += EhChange_XValuesFromOptions;
         }
       }
     }

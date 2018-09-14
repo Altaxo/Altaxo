@@ -109,7 +109,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinePlotStyle s = (LinePlotStyle)obj;
+        var s = (LinePlotStyle)obj;
 
         info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
         info.AddValue("SkipFreq", s._skipFreq);
@@ -174,24 +174,24 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._independentSkipFreq = from._independentSkipFreq;
-        this._skipFreq = from._skipFreq;
+        _independentSkipFreq = from._independentSkipFreq;
+        _skipFreq = from._skipFreq;
 
-        this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-        this._connectCircular = from._connectCircular;
-        this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
+        _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+        _connectCircular = from._connectCircular;
+        Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
 
-        this._linePen = from._linePen; // immutable
-        this._independentDashStyle = from._independentDashStyle;
-        this._independentColor = from._independentColor;
+        _linePen = from._linePen; // immutable
+        _independentDashStyle = from._independentDashStyle;
+        _independentColor = from._independentColor;
 
-        this._independentSymbolSize = from._independentSymbolSize;
-        this._symbolSize = from._symbolSize;
+        _independentSymbolSize = from._independentSymbolSize;
+        _symbolSize = from._symbolSize;
 
-        this._useSymbolGap = from._useSymbolGap;
-        this._symbolGapOffset = from._symbolGapOffset;
-        this._symbolGapFactor = from._symbolGapFactor;
-        this._keepWestNorthThroughSymbolGap = from._keepWestNorthThroughSymbolGap;
+        _useSymbolGap = from._useSymbolGap;
+        _symbolGapOffset = from._symbolGapOffset;
+        _symbolGapFactor = from._symbolGapFactor;
+        _keepWestNorthThroughSymbolGap = from._keepWestNorthThroughSymbolGap;
 
         EhSelfChanged();
         suspendToken.Resume(eventFiring);
@@ -543,12 +543,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         }
       }
 
-      if (this._ignoreMissingDataPoints)
+      if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
         // as one range, i.e. continuously
         // for this, we create the totalRange, which contains all ranges
-        PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+        var totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
         _connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, symbolGapFunction, _skipFreq, _connectCircular);
       }
       else // we not ignore missing points, so plot all ranges separately
@@ -572,24 +572,24 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public bool IsColorProvider
     {
-      get { return !this._independentColor; }
+      get { return !_independentColor; }
     }
 
     public NamedColor Color
     {
       get
       {
-        return this._linePen.Color;
+        return _linePen.Color;
       }
       set
       {
-        this._linePen = this._linePen.WithColor(value);
+        _linePen = _linePen.WithColor(value);
       }
     }
 
     public bool IsColorReceiver
     {
-      get { return !this._independentColor; }
+      get { return !_independentColor; }
     }
 
     #region IG3DPlotStyle Members
@@ -606,13 +606,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
     {
-      if (this.IsColorProvider)
+      if (IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this.Color; });
+        { return Color; });
 
       if (!_independentDashStyle)
         DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate
-        { return this.LinePen.DashPattern ?? DashPatternListManager.Instance.BuiltinDefaultSolid; });
+        { return LinePen.DashPattern ?? DashPatternListManager.Instance.BuiltinDefaultSolid; });
     }
 
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -622,30 +622,30 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       {
         _skipFreq = 1;
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this._skipFreq = c; });
+        { _skipFreq = c; });
       }
 
-      if (this.IsColorReceiver)
+      if (IsColorReceiver)
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
-        { this.Color = c; });
+        { Color = c; });
 
       if (!_independentDashStyle)
         DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c)
-        { this._linePen = this.LinePen.WithDashPattern(c); });
+        { _linePen = LinePen.WithDashPattern(c); });
 
       if (!_independentSymbolSize)
       {
         _symbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._symbolSize = size; });
+        { _symbolSize = size; });
       }
 
       // symbol size
       if (!_independentSymbolSize)
       {
-        this._symbolSize = 0;
+        _symbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._symbolSize = size; });
+        { _symbolSize = size; });
 
         // but if there is an symbol size evaluation function, then use this with higher priority.
         _cachedSymbolSizeForIndexFunction = null;

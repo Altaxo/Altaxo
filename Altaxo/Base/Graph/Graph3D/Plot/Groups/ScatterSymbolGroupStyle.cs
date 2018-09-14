@@ -59,7 +59,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ScatterSymbolGroupStyle s = (ScatterSymbolGroupStyle)obj;
+        var s = (ScatterSymbolGroupStyle)obj;
         info.AddValue("StepEnabled", s._isStepEnabled);
 
         info.AddValue("Value", s._value);
@@ -75,8 +75,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
         var value = (IScatterSymbol)info.GetValue("Value", s);
 
         var listOfValues = (ScatterSymbolList)info.GetValue("ListOfValues", s);
-        ScatterSymbolList registeredList;
-        ScatterSymbolListManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out registeredList);
+        ScatterSymbolListManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out var registeredList);
         s._listOfValues = registeredList;
 
         s.SetValueCoercedToGroup(value);
@@ -97,9 +96,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     public ScatterSymbolGroupStyle(ScatterSymbolGroupStyle from)
     {
-      this._isStepEnabled = from._isStepEnabled;
-      this._value = from._value;
-      this._listOfValues = from._listOfValues;
+      _isStepEnabled = from._isStepEnabled;
+      _value = from._value;
+      _listOfValues = from._listOfValues;
     }
 
     #endregion Constructors
@@ -122,9 +121,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
     public void TransferFrom(IPlotGroupStyle fromb)
     {
-      ScatterSymbolGroupStyle from = (ScatterSymbolGroupStyle)fromb;
-      this._value = from._value;
-      this._listOfValues = from._listOfValues;
+      var from = (ScatterSymbolGroupStyle)fromb;
+      _value = from._value;
+      _listOfValues = from._listOfValues;
     }
 
     public void BeginPrepare()
@@ -277,8 +276,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(ScatterSymbolGroupStyle)))
       {
-        ScatterSymbolGroupStyle gstyle = new ScatterSymbolGroupStyle();
-        gstyle.IsStepEnabled = true;
+        var gstyle = new ScatterSymbolGroupStyle
+        {
+          IsStepEnabled = true
+        };
         externalGroups.Add(gstyle);
       }
     }

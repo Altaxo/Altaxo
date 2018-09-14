@@ -37,7 +37,7 @@ namespace Altaxo.Main.Properties
 
     public override Main.IDocumentNode ParentObject
     {
-      get { return this._parent; }
+      get { return _parent; }
       set
       {
         if (null != value)

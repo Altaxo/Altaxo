@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Main;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -142,8 +142,10 @@ namespace Altaxo.Gui.Worksheet
     public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
     {
       // Create a dictionary of folders to TreeNodes relation
-      var folderDict = new Dictionary<string, NGTreeNode>();
-      folderDict.Add(ProjectFolder.RootFolderName, tableCollectionNode); // add the root folder node to the dictionary
+      var folderDict = new Dictionary<string, NGTreeNode>
+      {
+        { ProjectFolder.RootFolderName, tableCollectionNode } // add the root folder node to the dictionary
+      };
 
       tableCollectionNode.Nodes.Clear();
       foreach (var table in Current.Project.DataTableCollection)
@@ -204,7 +206,7 @@ namespace Altaxo.Gui.Worksheet
       {
         if (_view != null)
         {
-          _view.SelectionChanged -= this.EhSelectionChanged;
+          _view.SelectionChanged -= EhSelectionChanged;
         }
 
         _view = value as ISingleTreeViewItemChoiceView;
@@ -213,7 +215,7 @@ namespace Altaxo.Gui.Worksheet
         {
           Initialize(false);
 
-          _view.SelectionChanged += this.EhSelectionChanged;
+          _view.SelectionChanged += EhSelectionChanged;
         }
       }
     }

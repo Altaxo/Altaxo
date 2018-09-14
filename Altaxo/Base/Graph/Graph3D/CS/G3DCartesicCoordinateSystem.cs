@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.CS
 {
@@ -164,7 +164,7 @@ namespace Altaxo.Graph.Graph3D.CS
       }
       else
       {
-        var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+        var result = (G3DCartesicCoordinateSystem)MemberwiseClone();
         result._isXYInterchanged = isXYInterchanged;
         result._isXreversed = isXReversed;
         result._isYreversed = isYReversed;
@@ -189,7 +189,7 @@ namespace Altaxo.Graph.Graph3D.CS
       }
       else
       {
-        var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+        var result = (G3DCartesicCoordinateSystem)MemberwiseClone();
         result._isXYInterchanged = isXYInterchanged;
         return result;
       }
@@ -211,7 +211,7 @@ namespace Altaxo.Graph.Graph3D.CS
       }
       else
       {
-        var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+        var result = (G3DCartesicCoordinateSystem)MemberwiseClone();
         result._isXreversed = isXreversed;
         return result;
       }
@@ -233,7 +233,7 @@ namespace Altaxo.Graph.Graph3D.CS
       }
       else
       {
-        var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+        var result = (G3DCartesicCoordinateSystem)MemberwiseClone();
         result._isYreversed = isYreversed;
         return result;
       }
@@ -255,7 +255,7 @@ namespace Altaxo.Graph.Graph3D.CS
       }
       else
       {
-        var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+        var result = (G3DCartesicCoordinateSystem)MemberwiseClone();
         result._isZreversed = isZreversed;
         return result;
       }
@@ -267,9 +267,8 @@ namespace Altaxo.Graph.Graph3D.CS
 
     public override IPolylineD3D GetIsoline(Logical3D r0, Logical3D r1)
     {
-      PointD3D pt0, pt1;
-      LogicalToLayerCoordinates(r0, out pt0);
-      LogicalToLayerCoordinates(r1, out pt1);
+      LogicalToLayerCoordinates(r0, out var pt0);
+      LogicalToLayerCoordinates(r1, out var pt1);
       return new StraightLineAsPolylineD3D(pt0, pt1);
     }
 
@@ -311,9 +310,8 @@ namespace Altaxo.Graph.Graph3D.CS
 
     public override bool LogicalToLayerCoordinatesAndDirection(Logical3D r0, Logical3D r1, double t, out PointD3D position, out VectorD3D direction)
     {
-      PointD3D pt0, pt1;
-      LogicalToLayerCoordinates(r0, out pt0);
-      LogicalToLayerCoordinates(r1, out pt1);
+      LogicalToLayerCoordinates(r0, out var pt0);
+      LogicalToLayerCoordinates(r1, out var pt1);
       LogicalToLayerCoordinates(r0.InterpolateTo(r1, t), out position);
       direction = (pt1 - pt0).Normalized;
       return true;
@@ -327,13 +325,12 @@ namespace Altaxo.Graph.Graph3D.CS
     {
       get
       {
-        IList<CSAxisInformation> result;
-        if (!_axisInformationLists.TryGetValue(this, out result))
+        if (!_axisInformationLists.TryGetValue(this, out var result))
         {
           result = GetAxisStyleInformations();
           lock (this)
           {
-            _axisInformationLists[(G3DCartesicCoordinateSystem)this.WithLayerSize(VectorD3D.Empty)] = result;
+            _axisInformationLists[(G3DCartesicCoordinateSystem)WithLayerSize(VectorD3D.Empty)] = result;
           }
         }
         return result;
@@ -344,13 +341,12 @@ namespace Altaxo.Graph.Graph3D.CS
     {
       get
       {
-        IList<CSPlaneInformation> result;
-        if (!_planeInformationLists.TryGetValue(this, out result))
+        if (!_planeInformationLists.TryGetValue(this, out var result))
         {
           result = GetPlaneStyleInformations();
           lock (this)
           {
-            _planeInformationLists[(G3DCartesicCoordinateSystem)this.WithLayerSize(VectorD3D.Empty)] = result;
+            _planeInformationLists[(G3DCartesicCoordinateSystem)WithLayerSize(VectorD3D.Empty)] = result;
           }
         }
         return result;
@@ -520,7 +516,7 @@ namespace Altaxo.Graph.Graph3D.CS
     /// </exception>
     private VectorD3D GetTransformedAxisSideVector(CSLineID id, CSAxisSide side)
     {
-      return this.VectorTransformation.Transform(GetUntransformedAxisSideVector(id, side));
+      return VectorTransformation.Transform(GetUntransformedAxisSideVector(id, side));
     }
 
     /// <summary>

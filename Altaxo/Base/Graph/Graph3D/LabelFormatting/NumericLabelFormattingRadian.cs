@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
       if (!item.CanConvertedToDouble)
         return item.ToString();
 
-      double value = (double)item;
+      double value = item;
       double multipvalue = value * denominator / Math.PI;
       double multipround = Math.Round(multipvalue, 0);
 

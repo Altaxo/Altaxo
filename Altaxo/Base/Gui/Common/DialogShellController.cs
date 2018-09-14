@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Common
     private IDialogShellView _view;
     private IApplyController _hostedController;
 
-    private string _title = String.Empty;
+    private string _title = string.Empty;
     private bool _isApplyVisible = true;
 
     /// <summary>

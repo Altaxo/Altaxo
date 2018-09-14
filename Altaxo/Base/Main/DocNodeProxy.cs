@@ -159,7 +159,7 @@ namespace Altaxo.Main
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DocNodeProxy s = (DocNodeProxy)obj;
+        var s = (DocNodeProxy)obj;
 
         var node = s.InternalDocumentNode;
 
@@ -230,11 +230,11 @@ namespace Altaxo.Main
 
       if (null != from.InternalDocumentNode)
       {
-        this.SetDocNode(from.InternalDocumentNode); // than the new Proxy refers to the same document node
+        SetDocNode(from.InternalDocumentNode); // than the new Proxy refers to the same document node
       }
       else
       {
-        this.InternalDocumentPath = from._docNodePath.Clone(); // if no current document available, clone only the path
+        InternalDocumentPath = from._docNodePath.Clone(); // if no current document available, clone only the path
         InternalCheckAbsolutePath();
       }
     }
@@ -336,7 +336,7 @@ namespace Altaxo.Main
         return;
 
       if (!IsValidDocument(value))
-        throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
+        throw new ArgumentException("This type of document is not allowed for the proxy of type " + GetType().ToString());
 
 #if DOCNODEPROXY_CONCURRENTDEBUG
 			_debug.Enqueue("START SetDocNode");
@@ -410,8 +410,7 @@ namespace Altaxo.Main
       if (null == rootNode)
         throw new ArgumentNullException(nameof(rootNode));
 
-      AbsoluteDocumentPath newPath;
-      var success = _docNodePath.ReplacePathParts(partToReplace, newPart, out newPath);
+      var success = _docNodePath.ReplacePathParts(partToReplace, newPart, out var newPath);
       if (success)
       {
         _docNodePath = newPath;
@@ -501,8 +500,7 @@ namespace Altaxo.Main
           // note Dispose is designed to let the hierarchy from child to parent (root) valid, but not from root to child!
           // thus trying to get an actual document path here is in must cases unsuccessfull. We have to rely on our stored path, and that it was always updated!
           // the only case were it is successfull if a new node immediately replaces an old document node
-          bool wasResolvedCompletely;
-          var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out wasResolvedCompletely);
+          var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out var wasResolvedCompletely);
           if (wasResolvedCompletely)
           {
             SetDocNode(node);
@@ -613,7 +611,7 @@ namespace Altaxo.Main
         var docNode = InternalDocumentNode;
         if (null != docNode)
         {
-          InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)docNode);
+          InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(docNode);
         }
 
         return InternalDocumentPath;
@@ -639,8 +637,7 @@ namespace Altaxo.Main
 				_debug.Enqueue("START ResolveDocumentObject");
 #endif
 
-        bool wasCompletelyResolved;
-        var node = Main.AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, startnode, out wasCompletelyResolved);
+        var node = Main.AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, startnode, out var wasCompletelyResolved);
         if (null == node)
           throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
@@ -720,9 +717,8 @@ namespace Altaxo.Main
       if (!(senderAsDocNode != null))
         throw new InvalidProgramException();
 
-      bool wasResolvedCompletely;
 
-      var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out wasResolvedCompletely);
+      var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out var wasResolvedCompletely);
       if (null == node)
         throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
@@ -780,8 +776,7 @@ namespace Altaxo.Main
 				Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_TunneledEvent");
 #endif
 
-        bool wasResolvedCompletely;
-        var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);
+        var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out var wasResolvedCompletely);
         if (null == node)
           throw new InvalidProgramException(nameof(node) + " should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
@@ -803,8 +798,8 @@ namespace Altaxo.Main
 
     protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
     {
-      if (null != this.ResolveDocumentObject(documentRoot) || isFinallyCall)
-        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
+      if (null != ResolveDocumentObject(documentRoot) || isFinallyCall)
+        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhXmlDeserializationFinished);
     }
 
     #region ICloneable Members

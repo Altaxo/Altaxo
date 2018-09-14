@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Serialization.Jcamp
 {
@@ -150,8 +150,8 @@ namespace Altaxo.Serialization.Jcamp
 
         if (line.StartsWith(XYBlockHeader))
         {
-          DoubleColumn xCol = new DoubleColumn();
-          DoubleColumn yCol = new DoubleColumn();
+          var xCol = new DoubleColumn();
+          var yCol = new DoubleColumn();
           table.DataColumns.Add(xCol, xLabel == null ? "X" : xLabel, ColumnKind.X);
           table.DataColumns.Add(yCol, yLabel == null ? "Y" : yLabel, ColumnKind.V);
 
@@ -177,7 +177,6 @@ namespace Altaxo.Serialization.Jcamp
 
           for (; ; )
           {
-            double xValue, yValue;
             line = tr.ReadLine();
             lineCounter++;
 
@@ -188,12 +187,12 @@ namespace Altaxo.Serialization.Jcamp
               continue;
 
             // all tokens must contain numeric values, and the first token is the actual x value
-            if (!double.TryParse(tokens[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out xValue))
+            if (!double.TryParse(tokens[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out var xValue))
               throw new FormatException("Non numeric value found in line " + lineCounter.ToString());
 
             for (int i = 1; i < tokens.Length; i++)
             {
-              if (!double.TryParse(tokens[i], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out yValue))
+              if (!double.TryParse(tokens[i], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out var yValue))
                 throw new FormatException("Non numeric value found in line" + lineCounter.ToString());
 
               xCol[xCol.Count] = xValue * xScale;
@@ -241,7 +240,7 @@ namespace Altaxo.Serialization.Jcamp
     {
       DoubleColumn xcol = null;
       DoubleColumn xvalues, yvalues;
-      System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+      var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
 
       if (table.DataColumns.ColumnCount > 0)
@@ -254,9 +253,8 @@ namespace Altaxo.Serialization.Jcamp
 
       foreach (string filename in filenames)
       {
-        DataTable localTable;
-        System.IO.FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-        string error = ToDataTable(stream, out localTable);
+        var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+        string error = ToDataTable(stream, out var localTable);
         stream.Close();
 
         if (null != error)
@@ -313,7 +311,7 @@ namespace Altaxo.Serialization.Jcamp
         }
 
         // now add the y-values
-        Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn();
+        var ycol = new Altaxo.Data.DoubleColumn();
         ycol.CopyDataFrom(yvalues);
         table.DataColumns.Add(ycol,
           table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename)),

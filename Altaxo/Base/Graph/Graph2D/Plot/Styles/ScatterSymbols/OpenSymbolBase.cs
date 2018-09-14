@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Groups;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -81,7 +81,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
 
     public double DesignSize { get { return ClipperSymbolSize; } }
@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       }
       else
       {
-        var result = (OpenSymbolBase)this.MemberwiseClone();
+        var result = (OpenSymbolBase)MemberwiseClone();
         result._fillColor = value;
         return result;
       }
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       else
       {
         {
-          var result = (OpenSymbolBase)this.MemberwiseClone();
+          var result = (OpenSymbolBase)MemberwiseClone();
           result._relativeStructureWidth = value;
           return result;
         }
@@ -171,22 +171,22 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     public override bool Equals(object obj)
     {
-      if (!(this.GetType() == obj?.GetType()))
+      if (!(GetType() == obj?.GetType()))
         return false;
 
       var from = (OpenSymbolBase)obj;
 
       return
-        this._relativeStructureWidth == from._relativeStructureWidth &&
-        this._fillColor == from._fillColor;
+        _relativeStructureWidth == from._relativeStructureWidth &&
+        _fillColor == from._fillColor;
     }
 
     public override int GetHashCode()
     {
       return
-        this.GetType().GetHashCode() +
-        this._relativeStructureWidth.GetHashCode() +
-        this._fillColor.GetHashCode();
+        GetType().GetHashCode() +
+        _relativeStructureWidth.GetHashCode() +
+        _fillColor.GetHashCode();
     }
   }
 }

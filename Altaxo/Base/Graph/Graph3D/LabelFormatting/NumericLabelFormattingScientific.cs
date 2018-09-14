@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Data;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
@@ -82,7 +82,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         var from = obj as NumericLabelFormattingScientific;
         if (null != from)
         {
-          this._showExponentAlways = from._showExponentAlways;
+          _showExponentAlways = from._showExponentAlways;
         }
       }
       return isCopied;
@@ -172,9 +172,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     public override VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
     {
-      string firstpart, middelpart, exponent;
-      double mant;
-      SplitInFirstPartAndExponent((double)mtick, out firstpart, out mant, out middelpart, out exponent);
+      SplitInFirstPartAndExponent(mtick, out var firstpart, out var mant, out var middelpart, out var exponent);
 
       var size1 = g.MeasureString(_prefix + firstpart + middelpart, font, PointD3D.Empty);
       var size2 = g.MeasureString(exponent, font, PointD3D.Empty);
@@ -185,9 +183,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     public override void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, Altaxo.Data.AltaxoVariant item, PointD3D morg)
     {
-      string firstpart, middelpart, exponent;
-      double mant;
-      SplitInFirstPartAndExponent((double)item, out firstpart, out mant, out middelpart, out exponent);
+      SplitInFirstPartAndExponent(item, out var firstpart, out var mant, out var middelpart, out var exponent);
 
       var size1 = g.MeasureString(_prefix + firstpart + middelpart, font, morg);
       g.DrawString(_prefix + firstpart + middelpart, font, brush, morg);
@@ -209,7 +205,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
     public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items)
     {
-      MeasuredLabelItem[] litems = new MeasuredLabelItem[items.Length];
+      var litems = new MeasuredLabelItem[items.Length];
 
       var localfont1 = font;
       var localfont2 = font.WithSize(font.Size * 2 / 3);
@@ -227,7 +223,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
         string firstpart, exponent;
         if (items[i].IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
         {
-          SplitInFirstPartAndExponent((double)items[i], out firstpart, out mants[i], out middel[i], out exponent);
+          SplitInFirstPartAndExponent(items[i], out firstpart, out mants[i], out middel[i], out exponent);
           if (exponent.Length > 0)
           {
             firstpartmin = Math.Min(firstpartmin, firstpart.Length);

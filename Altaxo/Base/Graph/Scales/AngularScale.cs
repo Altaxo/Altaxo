@@ -97,8 +97,8 @@ namespace Altaxo.Graph.Scales
       {
         var s = (AngularScale)o;
 
-        s._cachedAxisOrg = (double)info.GetDouble("Org");
-        s._cachedOneByAxisSpan = (double)info.GetDouble("OneBySpan");
+        s._cachedAxisOrg = info.GetDouble("Org");
+        s._cachedOneByAxisSpan = info.GetDouble("OneBySpan");
 
         s._dataBounds = (Boundaries.NumericalBoundaries)info.GetValue("Bounds", s);
         s._dataBounds.ParentObject = s;
@@ -155,9 +155,9 @@ namespace Altaxo.Graph.Scales
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._cachedAxisOrg = from._cachedAxisOrg;
-        this._cachedAxisSpan = from._cachedAxisSpan;
-        this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+        _cachedAxisOrg = from._cachedAxisOrg;
+        _cachedAxisSpan = from._cachedAxisSpan;
+        _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
         ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
         ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new AngularRescaleConditions());

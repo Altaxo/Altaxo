@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Lighting
 {
@@ -162,7 +162,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     {
       if (!(isAffixedToCamera == _isAffixedToCamera))
       {
-        var result = (SpotLight)this.MemberwiseClone();
+        var result = (SpotLight)MemberwiseClone();
         result._isAffixedToCamera = isAffixedToCamera;
         return result;
       }
@@ -195,7 +195,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyLightAmplitude(lightAmplitude, nameof(lightAmplitude));
 
-        var result = (SpotLight)this.MemberwiseClone();
+        var result = (SpotLight)MemberwiseClone();
         result._lightAmplitude = lightAmplitude;
         return result;
       }
@@ -235,7 +235,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     {
       if (!(color == _color))
       {
-        var result = (SpotLight)this.MemberwiseClone();
+        var result = (SpotLight)MemberwiseClone();
         result._color = color;
         return result;
       }
@@ -265,7 +265,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyPosition(position, nameof(position));
 
-        var result = (SpotLight)this.MemberwiseClone();
+        var result = (SpotLight)MemberwiseClone();
         result._position = position;
         return result;
       }
@@ -308,7 +308,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         var len = VerifyDirection(directionToLight, nameof(directionToLight));
 
-        var result = (SpotLight)this.MemberwiseClone();
+        var result = (SpotLight)MemberwiseClone();
         result._directionToLight = directionToLight / len;
         return result;
       }
@@ -360,7 +360,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyRange(range, nameof(range));
 
-        var result = (SpotLight)this.MemberwiseClone();
+        var result = (SpotLight)MemberwiseClone();
         result._range = range;
         return result;
       }
@@ -405,7 +405,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyAngle(outerAngle, nameof(outerAngle));
 
-        var result = (SpotLight)this.MemberwiseClone();
+        var result = (SpotLight)MemberwiseClone();
         result._outerConeAngle = outerAngle;
         return result;
       }
@@ -450,7 +450,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
       {
         VerifyAngle(innerAngle, nameof(innerAngle));
 
-        var result = (SpotLight)this.MemberwiseClone();
+        var result = (SpotLight)MemberwiseClone();
         result._innerConeAngle = innerAngle;
         return result;
       }

@@ -152,7 +152,7 @@ namespace Altaxo.Main.Services
     private void EhTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       _shouldReport = true;
-      this.Elapsed?.Invoke(sender, e);
+      Elapsed?.Invoke(sender, e);
     }
 
     public IProgressReporter CreateSubTask(double workAmount)

@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
-using System;
 
 namespace Altaxo.Graph.Scales
 {
@@ -76,10 +76,10 @@ namespace Altaxo.Graph.Scales
       {
         Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale(info);
 
-        s._log10Org = (double)info.GetDouble("Log10Org");
+        s._log10Org = info.GetDouble("Log10Org");
         s._cachedOrg = Math.Pow(10, s._log10Org);
 
-        s._log10End = (double)info.GetDouble("Log10End");
+        s._log10End = info.GetDouble("Log10End");
         s._cachedEnd = Math.Pow(10, s._log10End);
         s._rescaling = (LogarithmicScaleRescaleConditions)info.GetValue("Rescaling", s);
         s._rescaling.ParentObject = s;
@@ -87,8 +87,10 @@ namespace Altaxo.Graph.Scales
         s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", s);
         s._dataBounds.ParentObject = s;
 
-        s._tickSpacing = new Ticks.Log10TickSpacing();
-        s._tickSpacing.ParentObject = s;
+        s._tickSpacing = new Ticks.Log10TickSpacing
+        {
+          ParentObject = s
+        };
 
         s.EhChildChanged(s._dataBounds, EventArgs.Empty); // for this old version, rescaling is not fully serialized, thus we have to simulate a DataBoundChanged event to get _rescaling updated, and finally _tickSpacing updated
 
@@ -104,7 +106,7 @@ namespace Altaxo.Graph.Scales
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Log10Scale s = (Log10Scale)obj;
+        var s = (Log10Scale)obj;
         info.AddValue("Log10Org", s._log10Org);
 
         info.AddValue("Log10End", s._log10End);
@@ -120,10 +122,10 @@ namespace Altaxo.Graph.Scales
       {
         Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale(info);
 
-        s._log10Org = (double)info.GetDouble("Log10Org");
+        s._log10Org = info.GetDouble("Log10Org");
         s._cachedOrg = Math.Pow(10, s._log10Org);
 
-        s._log10End = (double)info.GetDouble("Log10End");
+        s._log10End = info.GetDouble("Log10End");
         s._cachedEnd = Math.Pow(10, s._log10End);
 
         s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", s);
@@ -181,14 +183,14 @@ namespace Altaxo.Graph.Scales
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._log10Org = from._log10Org;
-        this._cachedOrg = from._cachedOrg;
-        this._log10End = from._log10End;
-        this._cachedEnd = from._cachedEnd;
+        _log10Org = from._log10Org;
+        _cachedOrg = from._cachedOrg;
+        _log10End = from._log10End;
+        _cachedEnd = from._cachedEnd;
 
-        this.ChildCopyToMember(ref _dataBounds, from._dataBounds);
-        this.ChildCopyToMember(ref _rescaling, from._rescaling);
-        this.ChildCopyToMember(ref _tickSpacing, from._tickSpacing);
+        ChildCopyToMember(ref _dataBounds, from._dataBounds);
+        ChildCopyToMember(ref _rescaling, from._rescaling);
+        ChildCopyToMember(ref _tickSpacing, from._tickSpacing);
 
         EhSelfChanged(EventArgs.Empty);
         suspendToken.Resume();
@@ -257,7 +259,7 @@ namespace Altaxo.Graph.Scales
     public override double PhysicalToNormal(double x)
     {
       if (x <= 0)
-        return Double.NaN;
+        return double.NaN;
 
       double log10x = Math.Log10(x);
       return (log10x - _log10Org) / (_log10End - _log10Org);
@@ -305,7 +307,7 @@ namespace Altaxo.Graph.Scales
 
     public override NumericalBoundaries DataBounds
     {
-      get { return this._dataBounds; }
+      get { return _dataBounds; }
     } // return a PhysicalBoundarie object that is associated with that axis
 
     public override double Org

@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public static FontInfo Create(Graphics g, FontX font)
       {
-        FontInfo result = new FontInfo();
+        var result = new FontInfo();
         InternalGetInformation(g, result, font);
         return result;
       }
@@ -82,8 +82,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public FontInfo GetFontInfo(Graphics g, FontX id)
       {
-        FontInfo result;
-        if (!_fontInfoDictionary.TryGetValue(id, out result))
+        if (!_fontInfoDictionary.TryGetValue(id, out var result))
         {
           result = FontInfo.Create(g, id);
           _fontInfoDictionary.Add(id, result);
@@ -474,8 +473,8 @@ namespace Altaxo.Graph.Gdi.Shapes
           _child.Draw(g, dc, xbase, ybase);
           FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
           var gdiFont = GdiFontManager.ToGdi(Style.FontId);
-          double psize = g.MeasureString(".", gdiFont, PointF.Empty, this.StringFormat).Width;
-          g.DrawString(".", gdiFont, Style.brush, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
+          double psize = g.MeasureString(".", gdiFont, PointF.Empty, StringFormat).Width;
+          g.DrawString(".", gdiFont, Style.brush, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), StringFormat);
         }
       }
     }
@@ -502,7 +501,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         {
           _child.Draw(g, dc, xbase, ybase);
           FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-          g.DrawString("_", GdiFontManager.ToGdi(Style.FontId), Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
+          g.DrawString("_", GdiFontManager.ToGdi(Style.FontId), Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), StringFormat);
         }
       }
     }
@@ -684,7 +683,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (null == mylayer)
           return result;
 
-        XYPlotLayer layer = mylayer as XYPlotLayer;
+        var layer = mylayer as XYPlotLayer;
         if (_layerNumber >= 0 && mylayer.SiblingLayers != null && _layerNumber < mylayer.SiblingLayers.Count)
           layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
         if (null == layer)
@@ -731,7 +730,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       // Modification of StringFormat is necessary to avoid
       // too big spaces between successive words
-      protected new static StringFormat _stringFormat;
+      protected static new StringFormat _stringFormat;
 
       private int _layerNumber = -1;
       private int _plotNumber;
@@ -765,7 +764,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var mylayer = mc.LinkedObject as HostLayer;
         if (null == mylayer)
           return;
-        XYPlotLayer layer = mylayer as XYPlotLayer;
+        var layer = mylayer as XYPlotLayer;
         if (_layerNumber >= 0 && null != mylayer.SiblingLayers && _layerNumber < mylayer.SiblingLayers.Count)
           layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
 
@@ -785,7 +784,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         var mylayer = (HostLayer)dc.LinkedObject;
 
-        XYPlotLayer layer = mylayer as XYPlotLayer;
+        var layer = mylayer as XYPlotLayer;
 
         if (_layerNumber >= 0 && mylayer.SiblingLayers != null && _layerNumber < mylayer.SiblingLayers.Count)
           layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
@@ -798,15 +797,15 @@ namespace Altaxo.Graph.Gdi.Shapes
           var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
           IGPlotItem pa = layer.PlotItems.Flattened[_plotNumber];
 
-          PointF symbolpos = new PointF((float)xbase, (float)(ybase + 0.5 * fontInfo.cyDescent - 0.5 * fontInfo.cyAscent));
-          RectangleF symbolRect = new RectangleF(symbolpos, new SizeF((float)Width, 0));
+          var symbolpos = new PointF((float)xbase, (float)(ybase + 0.5 * fontInfo.cyDescent - 0.5 * fontInfo.cyAscent));
+          var symbolRect = new RectangleF(symbolpos, new SizeF((float)Width, 0));
           symbolRect.Inflate(0, (float)(fontInfo.Size));
           pa.PaintSymbol(g, symbolRect);
 
           if (!dc.bForPreview)
           {
-            GraphicsPath gp = new GraphicsPath();
-            gp.AddRectangle(new RectangleF((float)(symbolpos.X), (float)(symbolpos.Y - 0.5 * fontInfo.cyLineSpace), (float)Width, (float)(fontInfo.cyLineSpace)));
+            var gp = new GraphicsPath();
+            gp.AddRectangle(new RectangleF(symbolpos.X, (float)(symbolpos.Y - 0.5 * fontInfo.cyLineSpace), (float)Width, (float)(fontInfo.cyLineSpace)));
             gp.Transform(dc.transformMatrix);
             dc._cachedSymbolPositions.Add(gp, pa);
           }
@@ -847,10 +846,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           var context = Altaxo.PropertyExtensions.GetPropertyContext(suspObj);
           if (null != context)
           {
-            Altaxo.Main.Properties.IPropertyBag bag;
-            Altaxo.Main.Properties.PropertyBagInformation info;
-            object value;
-            if (context.TryGetValue<object>(_propertyName, out value, out bag, out info))
+            if (context.TryGetValue<object>(_propertyName, out var value, out var bag, out var info))
             {
               if (null != value)
               {

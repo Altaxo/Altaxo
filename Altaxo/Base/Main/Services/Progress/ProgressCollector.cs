@@ -51,8 +51,8 @@ namespace Altaxo.Main.Services
 
     public ProgressCollector(ISynchronizeInvoke eventThread, CancellationToken cancellationToken)
     {
-      this._eventThread = eventThread ?? throw new ArgumentNullException(nameof(eventThread));
-      this._rootReporter = new ReporterImpl(this, null, 1, cancellationToken);
+      _eventThread = eventThread ?? throw new ArgumentNullException(nameof(eventThread));
+      _rootReporter = new ReporterImpl(this, null, 1, cancellationToken);
     }
 
     private void OnPropertyChanged(string propertyName)
@@ -94,8 +94,8 @@ namespace Altaxo.Main.Services
       return string.Empty;
     }
 
-    /// <summary>Gets the progress as fraction. If you are not able to calculate the progress, this function should return <see cref="System.Double.NaN"/>.</summary>
-    /// <returns>The progress as fraction value [0..1], or <see cref="System.Double.NaN"/>.</returns>
+    /// <summary>Gets the progress as fraction. If you are not able to calculate the progress, this function should return <see cref="double.NaN"/>.</summary>
+    /// <returns>The progress as fraction value [0..1], or <see cref="double.NaN"/>.</returns>
     public double GetProgressFraction()
     {
       return _progressValue;
@@ -182,8 +182,8 @@ namespace Altaxo.Main.Services
             {
               lock (_updateLock)
               {
-                this.Progress = _storedNewProgressValue;
-                this.Status = _storedNewStatusValue;
+                Progress = _storedNewProgressValue;
+                Status = _storedNewStatusValue;
                 _hasUpdateScheduled = false;
               }
             },
@@ -205,7 +205,7 @@ namespace Altaxo.Main.Services
     {
       _eventThread.BeginInvoke(
           (Action)delegate
-          { this.ShowingDialog = newValue; },
+          { ShowingDialog = newValue; },
           null
       );
     }
@@ -230,7 +230,7 @@ namespace Altaxo.Main.Services
     {
       _eventThread.BeginInvoke(
           (Action)delegate
-          { this.TaskName = newName; },
+          { TaskName = newName; },
           null);
     }
 
@@ -284,10 +284,10 @@ namespace Altaxo.Main.Services
 
       public ReporterImpl(ProgressCollector collector, ReporterImpl parent, double scaleFactor, CancellationToken cancellationToken)
       {
-        this._progressCollector = collector;
-        this._parentReporter = parent;
-        this._scaleFactor = scaleFactor;
-        this._cancellationToken = cancellationToken;
+        _progressCollector = collector;
+        _parentReporter = parent;
+        _scaleFactor = scaleFactor;
+        _cancellationToken = cancellationToken;
       }
 
       public bool ShowingDialog
@@ -347,16 +347,16 @@ namespace Altaxo.Main.Services
 
       void IProgress<double>.Report(double value)
       {
-        this.Progress = value;
+        Progress = value;
       }
 
       private void UpdateProgress(double progress)
       {
         if (_parentReporter != null)
-          _parentReporter.UpdateProgress(_parentReporter._currentProgressValue + (progress - this._currentProgressValue) * _scaleFactor);
+          _parentReporter.UpdateProgress(_parentReporter._currentProgressValue + (progress - _currentProgressValue) * _scaleFactor);
         else
           _progressCollector.SetProgress(progress);
-        this._currentProgressValue = progress;
+        _currentProgressValue = progress;
       }
 
       public OperationStatus Status
@@ -429,7 +429,7 @@ namespace Altaxo.Main.Services
 
       public void Dispose()
       {
-        this.TaskName = null;
+        TaskName = null;
         if (_parentReporter == null)
           _progressCollector.OnRootMonitorDisposed();
       }

@@ -329,7 +329,7 @@ namespace Altaxo.Serialization.Ascii
     public bool IsCompatibleWith(AsciiLineStructure ano)
     {
       // our structure can have more columns, but not lesser than ano
-      if (this.Count < ano.Count)
+      if (Count < ano.Count)
         return false;
 
       for (int i = 0; i < ano.Count; i++)

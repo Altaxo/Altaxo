@@ -116,15 +116,13 @@ namespace Altaxo.Drawing.D3D
     {
       var typefaceName = font.InvariantDescriptionStringWithoutSizeInformation;
 
-      Dictionary<char, CharacterGeometry> cachedCharacters;
-      if (!_cachedCharacterOutlines.TryGetValue(typefaceName, out cachedCharacters))
+      if (!_cachedCharacterOutlines.TryGetValue(typefaceName, out var cachedCharacters))
       {
         cachedCharacters = new Dictionary<char, CharacterGeometry>();
         _cachedCharacterOutlines.Add(typefaceName, cachedCharacters);
       }
 
-      CharacterGeometry cachedChar;
-      if (!cachedCharacters.TryGetValue(textChar, out cachedChar))
+      if (!cachedCharacters.TryGetValue(textChar, out var cachedChar))
       {
         cachedChar = InternalGetCharacterGeometryForCaching(textChar, font);
         cachedCharacters.Add(textChar, cachedChar);
@@ -170,22 +168,19 @@ namespace Altaxo.Drawing.D3D
           var p0 = new PointD2D(triangle.Points[0].X, triangle.Points[0].Y);
           var p1 = new PointD2D(triangle.Points[1].X, triangle.Points[1].Y);
           var p2 = new PointD2D(triangle.Points[2].X, triangle.Points[2].Y);
-
-          int i0, i1, i2;
-
-          if (!pointToIndex.TryGetValue(p0, out i0))
+          if (!pointToIndex.TryGetValue(p0, out var i0))
           {
             i0 = pointList.Count;
             pointToIndex.Add(p0, i0);
             pointList.Add(p0);
           }
-          if (!pointToIndex.TryGetValue(p1, out i1))
+          if (!pointToIndex.TryGetValue(p1, out var i1))
           {
             i1 = pointList.Count;
             pointToIndex.Add(p1, i1);
             pointList.Add(p1);
           }
-          if (!pointToIndex.TryGetValue(p2, out i2))
+          if (!pointToIndex.TryGetValue(p2, out var i2))
           {
             i2 = pointList.Count;
             pointToIndex.Add(p2, i2);
@@ -208,7 +203,7 @@ namespace Altaxo.Drawing.D3D
 
       var rawOutline = GetRawCharacterOutline(textChar, font, FontSizeForCaching);
 
-      List<List<ClipperLib.IntPoint>> clipperPolygonsInput = new List<List<ClipperLib.IntPoint>>();
+      var clipperPolygonsInput = new List<List<ClipperLib.IntPoint>>();
 
       var sharpPoints = new HashSet<ClipperLib.IntPoint>();
       var allPoints = new HashSet<ClipperLib.IntPoint>(); // allPoints to determine whether after the simplification new points were added
@@ -230,8 +225,10 @@ namespace Altaxo.Drawing.D3D
       //clipperPolygons = ClipperLib.Clipper.SimplifyPolygons(clipperPolygons, ClipperLib.PolyFillType.pftEvenOdd);
 
       var clipperPolygons = new ClipperLib.PolyTree();
-      ClipperLib.Clipper clipper = new ClipperLib.Clipper();
-      clipper.StrictlySimple = true;
+      var clipper = new ClipperLib.Clipper
+      {
+        StrictlySimple = true
+      };
       clipper.AddPaths(clipperPolygonsInput, ClipperLib.PolyType.ptSubject, true);
       clipper.Execute(ClipperLib.ClipType.ctUnion, clipperPolygons, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNegative);
 
@@ -252,8 +249,10 @@ namespace Altaxo.Drawing.D3D
         var pointsInThisPolygon = node.Contour.Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
         var sharpPointsInThisPolygon = node.Contour.Where(clipperPt => sharpPoints.Contains(clipperPt)).Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
 
-        var polygon = new PolygonClosedD2D(pointsInThisPolygon.ToArray(), new HashSet<PointD2D>(sharpPointsInThisPolygon));
-        polygon.IsHole = node.IsHole;
+        var polygon = new PolygonClosedD2D(pointsInThisPolygon.ToArray(), new HashSet<PointD2D>(sharpPointsInThisPolygon))
+        {
+          IsHole = node.IsHole
+        };
         polygonList.Add(polygon);
 
         if (node.IsHole)

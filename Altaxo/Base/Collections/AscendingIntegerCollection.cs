@@ -41,12 +41,11 @@ namespace Altaxo.Collections
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AscendingIntegerCollection s = (AscendingIntegerCollection)obj;
+        var s = (AscendingIntegerCollection)obj;
         int count = s.GetRangeCount();
         info.CreateArray("Ranges", count);
         int currentpos = 0;
-        ContiguousIntegerRange range;
-        while (s.GetNextRangeAscending(ref currentpos, out range))
+        while (s.GetNextRangeAscending(ref currentpos, out var range))
         {
           info.CreateElement("e");
           info.AddValue("Start", range.Start);
@@ -100,7 +99,7 @@ namespace Altaxo.Collections
     public AscendingIntegerCollection(IAscendingIntegerCollection from)
     {
       for (int i = 0; i < from.Count; i++)
-        this.Add(from[i]);
+        Add(from[i]);
     }
 
     /// <summary>
@@ -122,8 +121,7 @@ namespace Altaxo.Collections
     {
       int result = 0;
       int currentpos = 0;
-      ContiguousIntegerRange range;
-      while (GetNextRangeAscending(ref currentpos, out range))
+      while (GetNextRangeAscending(ref currentpos, out var range))
         result++;
 
       return result;
@@ -235,8 +233,7 @@ namespace Altaxo.Collections
       get
       {
         int start = 0;
-        ContiguousIntegerRange result;
-        while (GetNextRangeAscending(ref start, out result))
+        while (GetNextRangeAscending(ref start, out var result))
           yield return result;
       }
     }
@@ -246,8 +243,7 @@ namespace Altaxo.Collections
       get
       {
         int start = Count - 1;
-        ContiguousIntegerRange result;
-        while (GetNextRangeDescending(ref start, out result))
+        while (GetNextRangeDescending(ref start, out var result))
           yield return result;
       }
     }

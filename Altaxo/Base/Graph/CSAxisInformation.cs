@@ -134,7 +134,7 @@ namespace Altaxo.Graph
         if (null == identifier)
           throw new ArgumentNullException(nameof(identifier));
 
-        var result = (CSAxisInformation)this.MemberwiseClone();
+        var result = (CSAxisInformation)MemberwiseClone();
         result._identifier = identifier;
         return result;
       }

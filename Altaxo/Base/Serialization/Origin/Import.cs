@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Data;
 
 namespace Altaxo.Serialization.Origin
 {
@@ -41,7 +41,7 @@ namespace Altaxo.Serialization.Origin
     /// <returns>Null if the import was successfull, or a error message.</returns>
     public static string Import(string filename)
     {
-      OpjFile opj = new OpjFile(filename);
+      var opj = new OpjFile(filename);
       opj.Parse();
 
       // now create corresponding tables in Altaxo
@@ -50,7 +50,7 @@ namespace Altaxo.Serialization.Origin
       {
         // Create a new table
         string tablename = Current.Project.DataTableCollection.FindNewItemName(opj.spreadName(nspread));
-        DataTable table = new DataTable(tablename);
+        var table = new DataTable(tablename);
 
         int numberOfColumns = opj.numCols(nspread);
         for (int ncol = 0; ncol < numberOfColumns; ncol++)
@@ -60,7 +60,7 @@ namespace Altaxo.Serialization.Origin
           int numberOfRows = opj.numRows(nspread, ncol);
           ColumnKind kind = coltype == "X" ? ColumnKind.X : ColumnKind.V;
 
-          DoubleColumn column = new DoubleColumn(numberOfRows);
+          var column = new DoubleColumn(numberOfRows);
           column.CopyDataFrom(opj.Data(nspread, ncol), numberOfRows);
 
           colname = table.DataColumns.FindUniqueColumnName(colname);

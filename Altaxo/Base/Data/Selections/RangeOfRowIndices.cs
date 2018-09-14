@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
@@ -136,7 +136,7 @@ namespace Altaxo.Data.Selections
 
     public object Clone()
     {
-      return new RangeOfRowIndices { _firstRowIndexInclusive = this._firstRowIndexInclusive, _lastRowIndexInclusive = this._lastRowIndexInclusive };
+      return new RangeOfRowIndices { _firstRowIndexInclusive = _firstRowIndexInclusive, _lastRowIndexInclusive = _lastRowIndexInclusive };
     }
 
     /// <inheritdoc/>
@@ -166,7 +166,7 @@ namespace Altaxo.Data.Selections
     {
       var from = obj as RangeOfRowIndices;
       if (null != from)
-        return this._firstRowIndexInclusive == from._firstRowIndexInclusive && this._lastRowIndexInclusive == from._lastRowIndexInclusive;
+        return _firstRowIndexInclusive == from._firstRowIndexInclusive && _lastRowIndexInclusive == from._lastRowIndexInclusive;
       else
         return false;
     }

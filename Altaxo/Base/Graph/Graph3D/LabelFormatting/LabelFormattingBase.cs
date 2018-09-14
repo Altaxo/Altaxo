@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Geometry;
-using System;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
@@ -52,14 +52,14 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LabelFormattingBase s = (LabelFormattingBase)obj;
+        var s = (LabelFormattingBase)obj;
         info.AddValue("Prefix", s._prefix);
         info.AddValue("Suffix", s._suffix);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        LabelFormattingBase s = (LabelFormattingBase)o;
+        var s = (LabelFormattingBase)o;
         s.PrefixText = info.GetString("Prefix");
         s.SuffixText = info.GetString("Suffix");
         return s;
@@ -196,7 +196,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
           titems[i] = _prefix + titems[i] + _suffix;
       }
 
-      MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];
+      var litems = new MeasuredLabelItem[titems.Length];
 
       FontX3D localfont = font;
 

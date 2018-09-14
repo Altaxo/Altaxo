@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.ProjectBrowser
 {
@@ -43,8 +43,8 @@ namespace Altaxo.Gui.ProjectBrowser
 
     public object Clone()
     {
-      var result = (CopyItemsToMultipleFolderData)this.MemberwiseClone();
-      result._foldersToCopyTo = new List<string>(this.FoldersToCopyTo);
+      var result = (CopyItemsToMultipleFolderData)MemberwiseClone();
+      result._foldersToCopyTo = new List<string>(FoldersToCopyTo);
       return result;
     }
   }

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -62,7 +62,7 @@ namespace Altaxo.Data
     /// <returns>The type of column which is most appropriate for replacement of a data row. This is the type which has the topmost non-empty cells.</returns>
     public static System.Type GetTypeOfColumnForRowReplacement(this DataColumnCollection table, int rowIdx, IAscendingIntegerCollection selectedColumns)
     {
-      Dictionary<System.Type, int> typesToCount = new Dictionary<Type, int>();
+      var typesToCount = new Dictionary<Type, int>();
       if (null == selectedColumns || 0 == selectedColumns.Count)
         selectedColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, table.ColumnCount);
 

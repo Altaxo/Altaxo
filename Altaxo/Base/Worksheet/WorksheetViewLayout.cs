@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Worksheet
 {
@@ -61,8 +61,10 @@ namespace Altaxo.Worksheet
       {
         var s = null != o ? (WorksheetViewLayout)o : new WorksheetViewLayout();
 
-        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-        surr._TableController = s;
+        var surr = new XmlSerializationSurrogate0
+        {
+          _TableController = s
+        };
         if (info.CurrentElementName == "Controller")
         {
           info.OpenElement();
@@ -98,7 +100,7 @@ namespace Altaxo.Worksheet
 
         if (null == _PathToLayout)
         {
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(EhDeserializationFinished);
         }
       }
     }

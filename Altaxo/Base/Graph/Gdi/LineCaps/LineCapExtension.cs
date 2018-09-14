@@ -91,7 +91,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
       }
       else
       {
-        var result = (LineCapExtension)this.MemberwiseClone();
+        var result = (LineCapExtension)MemberwiseClone();
         result._minimumAbsoluteSizePt = absoluteSizePt;
         result._minimumRelativeSize = relativeSize;
         return result;
@@ -106,9 +106,9 @@ namespace Altaxo.Graph.Gdi.LineCaps
     {
       var from = obj as LineCapExtension;
       return ((null != from)
-        && (this._minimumAbsoluteSizePt == from._minimumAbsoluteSizePt)
-        && (this._minimumRelativeSize == from._minimumRelativeSize)
-        && (this.GetType() == from.GetType())
+        && (_minimumAbsoluteSizePt == from._minimumAbsoluteSizePt)
+        && (_minimumRelativeSize == from._minimumRelativeSize)
+        && (GetType() == from.GetType())
         );
     }
 
@@ -160,9 +160,8 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
     public static LineCapExtension FromName(string name)
     {
-      LineCapExtension currentStyle;
 
-      if (_registeredStyles.TryGetValue(name, out currentStyle))
+      if (_registeredStyles.TryGetValue(name, out var currentStyle))
       {
         return currentStyle;
       }
@@ -176,9 +175,8 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
     public static LineCapExtension FromNameAndAbsSize(string name, double sizePt)
     {
-      LineCapExtension currentStyle;
 
-      if (_registeredStyles.TryGetValue(name, out currentStyle))
+      if (_registeredStyles.TryGetValue(name, out var currentStyle))
       {
         return currentStyle.Clone(sizePt, currentStyle.DefaultMinimumRelativeSize);
       }
@@ -192,9 +190,8 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
     public static LineCapExtension FromNameAndAbsAndRelSize(string name, double sizePt, double relSize)
     {
-      LineCapExtension currentStyle;
 
-      if (_registeredStyles.TryGetValue(name, out currentStyle))
+      if (_registeredStyles.TryGetValue(name, out var currentStyle))
       {
         return currentStyle.Clone(sizePt, relSize);
       }
@@ -269,7 +266,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
       }
 
       // now sort them by name
-      List<string> nameList = new List<string>(_registeredStyles.Keys);
+      var nameList = new List<string>(_registeredStyles.Keys);
       nameList.Remove(_defaultStyle.Name);
       nameList.Sort();
       nameList.Insert(0, _defaultStyle.Name);

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Linq;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
-using System;
-using System.Linq;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -224,7 +224,7 @@ namespace Altaxo.Graph.Procedures
 
       if (localdoc.FitEnsemble.Count == 0) // if there was no fit before
       {
-        Calc.Regression.Nonlinear.FitElement fitele = new Altaxo.Calc.Regression.Nonlinear.FitElement(
+        var fitele = new Altaxo.Calc.Regression.Nonlinear.FitElement(
           xyPlotItem.Data.DataTable,
           xyPlotItem.Data.GroupNumber,
           xyPlotItem.Data.DataRowSelection,

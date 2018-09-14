@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {

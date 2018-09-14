@@ -70,7 +70,7 @@ info.CommitArray();
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         int count = info.OpenArray();
-        IG2DPlotStyle[] array = new IG2DPlotStyle[count];
+        var array = new IG2DPlotStyle[count];
         for (int i = 0; i < count; i++)
           array[i] = (IG2DPlotStyle)info.GetValue("e", null);
         info.CloseArray(count);
@@ -81,7 +81,7 @@ info.CommitArray();
         }
         else
         {
-          G2DPlotStyleCollection s = (G2DPlotStyleCollection)o;
+          var s = (G2DPlotStyleCollection)o;
           for (int i = count - 1; i >= 0; i--)
             s.Add(array[i]);
           return s;
@@ -97,7 +97,7 @@ info.CommitArray();
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        G2DPlotStyleCollection s = (G2DPlotStyleCollection)obj;
+        var s = (G2DPlotStyleCollection)obj;
 
         info.CreateArray("Styles", s._innerList.Count);
         for (int i = 0; i < s._innerList.Count; i++)
@@ -142,7 +142,7 @@ info.CommitArray();
       {
         Clear();
 
-        this._innerList = new List<IG2DPlotStyle>();
+        _innerList = new List<IG2DPlotStyle>();
         for (int i = 0; i < from._innerList.Count; ++i)
           Add((IG2DPlotStyle)from[i].Clone());
 
@@ -165,9 +165,9 @@ info.CommitArray();
 
       using (var suspendToken = SuspendGetToken())
       {
-        var oldInnerList = this._innerList;
+        var oldInnerList = _innerList;
 
-        this._innerList = new List<IG2DPlotStyle>();
+        _innerList = new List<IG2DPlotStyle>();
 
         for (int i = 0; i < from._innerList.Count; ++i)
         {
@@ -257,7 +257,7 @@ info.CommitArray();
       _innerList = new List<IG2DPlotStyle>();
       for (int i = 0; i < styles.Length; ++i)
         if (styles[i] != null)
-          this.Add(styles[i], false);
+          Add(styles[i], false);
     }
 
     public G2DPlotStyleCollection(G2DPlotStyleCollection from)
@@ -299,7 +299,7 @@ info.CommitArray();
         {
           var indicesFrom = new SortedSet<int>(System.Linq.Enumerable.Range(0, from.Count));
 
-          for (int i = 0; i < this.Count; ++i)
+          for (int i = 0; i < Count; ++i)
           {
             var thisStyleType = this[i].GetType();
 
@@ -374,7 +374,7 @@ info.CommitArray();
     {
       if (toadd != null)
       {
-        this._innerList.Add(toadd);
+        _innerList.Add(toadd);
         toadd.ParentObject = this;
 
         if (withReorganizationAndEvents)
@@ -388,7 +388,7 @@ info.CommitArray();
     {
       if (ps != null)
       {
-        this._innerList[idx] = ps;
+        _innerList[idx] = ps;
         ps.ParentObject = this;
 
         if (withReorganizationAndEvents)
@@ -404,7 +404,7 @@ info.CommitArray();
       {
         for (int i = 0; i < toadd.Length; i++)
         {
-          this._innerList.Add(toadd[i]);
+          _innerList.Add(toadd[i]);
           toadd[i].ParentObject = this;
         }
 
@@ -416,7 +416,7 @@ info.CommitArray();
     {
       if (toinsert != null)
       {
-        this._innerList.Insert(whichposition, toinsert);
+        _innerList.Insert(whichposition, toinsert);
         toinsert.ParentObject = this;
 
         EhSelfChanged(EventArgs.Empty);
@@ -427,7 +427,7 @@ info.CommitArray();
     {
       if (_innerList != null)
       {
-        this._innerList.Clear();
+        _innerList.Clear();
 
         EhSelfChanged(EventArgs.Empty);
       }
@@ -492,8 +492,8 @@ info.CommitArray();
     /// <param name="pdata"></param>
     public void DistributeSubStyleChange(int pivot, IPlotArea layer, Processed2DPlotData pdata)
     {
-      PlotGroupStyleCollection externGroup = new PlotGroupStyleCollection();
-      PlotGroupStyleCollection localGroup = new PlotGroupStyleCollection();
+      var externGroup = new PlotGroupStyleCollection();
+      var localGroup = new PlotGroupStyleCollection();
       // because we don't step, the order is essential only for PrepareStyles
       for (int i = 0; i < _innerList.Count; i++)
         CollectLocalGroupStyles(externGroup, localGroup);
@@ -520,8 +520,8 @@ info.CommitArray();
     /// <param name="pdata"></param>
     public void PrepareNewSubStyle(IG2DPlotStyle newSubStyle, IPlotArea layer, Processed2DPlotData pdata)
     {
-      PlotGroupStyleCollection externGroup = new PlotGroupStyleCollection();
-      PlotGroupStyleCollection localGroup = new PlotGroupStyleCollection();
+      var externGroup = new PlotGroupStyleCollection();
+      var localGroup = new PlotGroupStyleCollection();
       // because we don't step, the order is essential only for PrepareStyles
       for (int i = 0; i < _innerList.Count; i++)
         this[i].CollectLocalGroupStyles(externGroup, localGroup);
@@ -601,7 +601,7 @@ info.CommitArray();
 
     string INamedObject.Name
     {
-      get { return this.GetType().Name; }
+      get { return GetType().Name; }
     }
   }
 }

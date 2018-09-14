@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services.ScriptCompilation;
-using Altaxo.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using Altaxo.Main.Services.ScriptCompilation;
+using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Scripting
 {
@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Scripting
     {
       if (args == null || args.Length == 0)
         return false;
-      IScriptText doc = args[0] as IScriptText;
+      var doc = args[0] as IScriptText;
       if (doc == null)
         return false;
 

@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-using Altaxo.Gui.Common.MultiRename;
-using Altaxo.Main.Commands;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -33,7 +29,11 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
+using Altaxo.Gui.Common.MultiRename;
 using Altaxo.Main;
+using Altaxo.Main.Commands;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -82,12 +82,12 @@ namespace Altaxo.Graph.Gdi
       // round the pixels to multiples of 4, many programs rely on this
       int bmpWidth = (int)(4 * Math.Ceiling(0.25 * doc.Size.X * sourceDpiResolution / 72));
       int bmpHeight = (int)(4 * Math.Ceiling(0.25 * doc.Size.Y * sourceDpiResolution / 72));
-      System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(bmpWidth, bmpHeight, pixelformat);
+      var bitmap = new System.Drawing.Bitmap(bmpWidth, bmpHeight, pixelformat);
 
       double outputScaling = sourceDpiResolution / destinationDpiResolution;
       bitmap.SetResolution((float)(bmpWidth / (outputScaling * doc.Size.X / 72)), (float)(bmpHeight / (outputScaling * doc.Size.Y / 72)));
 
-      using (Graphics grfx = Graphics.FromImage(bitmap))
+      using (var grfx = Graphics.FromImage(bitmap))
       {
         // Set everything to high quality
         grfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
@@ -405,7 +405,7 @@ namespace Altaxo.Graph.Gdi
       Metafile metafile;
       using (var helperbitmap = new System.Drawing.Bitmap(4, 4, PixelFormat.Format32bppArgb))
       {
-        using (Graphics grfxReference = Graphics.FromImage(helperbitmap))
+        using (var grfxReference = Graphics.FromImage(helperbitmap))
         {
           IntPtr deviceContextHandle = grfxReference.GetHdc();
 
@@ -420,7 +420,7 @@ namespace Altaxo.Graph.Gdi
         }
       }
 
-      using (Graphics grfxMetafile = Graphics.FromImage(metafile))
+      using (var grfxMetafile = Graphics.FromImage(metafile))
       {
         // Set everything to high quality
         grfxMetafile.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;

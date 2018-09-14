@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Scripting;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Collections;
+using Altaxo.Scripting;
+using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -73,8 +73,8 @@ namespace Altaxo.Data
       /// <param name="number">The position of the column in the collection.</param>
       public DataColumnInfo(string name, int number)
       {
-        this.Name = name;
-        this.Number = number;
+        Name = name;
+        Number = number;
       }
 
       /// <summary>
@@ -83,7 +83,7 @@ namespace Altaxo.Data
       /// <param name="name">The name of the column.</param>
       public DataColumnInfo(string name)
       {
-        this.Name = name;
+        Name = name;
       }
 
       /// <summary>
@@ -93,8 +93,8 @@ namespace Altaxo.Data
       /// <param name="kind">The kind of the column.</param>
       public DataColumnInfo(string name, ColumnKind kind)
       {
-        this.Name = name;
-        this.Kind = kind;
+        Name = name;
+        Kind = kind;
       }
 
       /// <summary>
@@ -105,9 +105,9 @@ namespace Altaxo.Data
       /// <param name="groupNumber">The group number of the column.</param>
       public DataColumnInfo(string name, ColumnKind kind, int groupNumber)
       {
-        this.Name = name;
-        this.Kind = kind;
-        this.Group = groupNumber;
+        Name = name;
+        Kind = kind;
+        Group = groupNumber;
       }
 
       /// <summary>
@@ -116,10 +116,10 @@ namespace Altaxo.Data
       /// <param name="from">Another object to copy from.</param>
       public DataColumnInfo(DataColumnInfo from)
       {
-        this.Name = from.Name;
-        this.Number = from.Number;
-        this.Group = from.Group;
-        this.Kind = from.Kind;
+        Name = from.Name;
+        Number = from.Number;
+        Group = from.Group;
+        Kind = from.Kind;
       }
 
       public bool IsIndependentVariable
@@ -202,7 +202,7 @@ namespace Altaxo.Data
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.DataColumnCollection s = (Altaxo.Data.DataColumnCollection)obj;
+        var s = (Altaxo.Data.DataColumnCollection)obj;
 
         info.CreateArray("ColumnArray", s._columnsByNumber.Count);
         for (int i = 0; i < s._columnsByNumber.Count; i++)
@@ -242,7 +242,7 @@ namespace Altaxo.Data
           info.OpenElement(); // Column
 
           string name = info.GetString("Name");
-          ColumnKind kind = (ColumnKind)info.GetInt32("Kind");
+          var kind = (ColumnKind)info.GetInt32("Kind");
           int group = info.GetInt32("Group");
           var col = (DataColumn)info.GetValue("Data", s);
           if (col != null)
@@ -258,7 +258,7 @@ namespace Altaxo.Data
         {
           info.OpenElement();
           string name = info.GetString();
-          IColumnScriptText script = (IColumnScriptText)info.GetValue("e", s);
+          var script = (IColumnScriptText)info.GetValue("e", s);
           info.CloseElement();
           s.ColumnScripts.Add(s[name], script);
         }
@@ -294,10 +294,10 @@ namespace Altaxo.Data
         IAscendingIntegerCollection selectedRows,
         bool useOnlySelections)
       {
-        this._collection = collection;
-        this._selectedColumns = selectedColumns;
-        this._selectedRows = selectedRows;
-        this._useOnlySelections = useOnlySelections;
+        _collection = collection;
+        _selectedColumns = selectedColumns;
+        _selectedRows = selectedRows;
+        _useOnlySelections = useOnlySelections;
       }
 
       /// <summary>
@@ -362,7 +362,7 @@ namespace Altaxo.Data
 
             // now create an instance of this column and copy the data
             DataColumn column = s._collection[colidx];
-            DataColumn newcolumn = (DataColumn)Activator.CreateInstance(s._collection[colidx].GetType());
+            var newcolumn = (DataColumn)Activator.CreateInstance(s._collection[colidx].GetType());
             for (int nRow = 0; nRow < numberOfRows; nRow++)
             {
               int rowidx = useRowSelection ? s._selectedRows[nRow] : nRow;
@@ -383,9 +383,9 @@ namespace Altaxo.Data
           {
             string name = info.GetString("ColumnName_" + nCol.ToString());
             int group = info.GetInt32("ColumnGroup_" + nCol.ToString());
-            ColumnKind kind = (ColumnKind)info.GetInt32("ColumnKind_" + nCol.ToString());
+            var kind = (ColumnKind)info.GetInt32("ColumnKind_" + nCol.ToString());
 
-            DataColumn column = (DataColumn)info.GetValue("Column_" + nCol.ToString(), typeof(DataColumn));
+            var column = (DataColumn)info.GetValue("Column_" + nCol.ToString(), typeof(DataColumn));
 
             s._collection.Add(column, name, kind, group);
           }
@@ -410,7 +410,7 @@ namespace Altaxo.Data
     /// </summary>
     public DataColumnCollection()
     {
-      this._parent = null;
+      _parent = null;
     }
 
     /// <summary>
@@ -419,15 +419,15 @@ namespace Altaxo.Data
     /// <param name="from">The column collection to copy this data column collection from.</param>
     public DataColumnCollection(DataColumnCollection from)
     {
-      this._nameOfLastColumnAdded = from._nameOfLastColumnAdded;
-      this._lastColumnNameGenerated = from._lastColumnNameGenerated;
+      _nameOfLastColumnAdded = from._nameOfLastColumnAdded;
+      _lastColumnNameGenerated = from._lastColumnNameGenerated;
 
       // Copy all Columns
       for (int i = 0; i < from.ColumnCount; i++)
       {
-        DataColumn newCol = (DataColumn)from[i].Clone();
-        DataColumnInfo newInfo = (DataColumnInfo)from.GetColumnInfo(from[i]).Clone();
-        this.Add(newCol, newInfo);
+        var newCol = (DataColumn)from[i].Clone();
+        var newInfo = (DataColumnInfo)from.GetColumnInfo(from[i]).Clone();
+        Add(newCol, newInfo);
       }
       // Copy all Column scripts
       foreach (KeyValuePair<DataColumn, IColumnScriptText> d in from.ColumnScripts)
@@ -437,9 +437,9 @@ namespace Altaxo.Data
         var destscript = (IColumnScriptText)d.Value.Clone(); // the cloned script
 
         // add the cloned script to the own collection
-        this.ColumnScripts.Add(destcol, destscript);
+        ColumnScripts.Add(destcol, destscript);
         if (destscript is Main.IDocumentLeafNode)
-          ((Main.IDocumentLeafNode)destscript).ParentObject = this;
+          destscript.ParentObject = this;
       }
     }
 
@@ -464,13 +464,13 @@ namespace Altaxo.Data
         _columnScripts = null;
 
         // release all owned Data columns
-        this._columnsByName.Clear();
-        this._columnInfoByColumn.Clear();
+        _columnsByName.Clear();
+        _columnInfoByColumn.Clear();
         for (int i = _columnsByNumber.Count - 1; i >= 0; --i) // iterate downwards, because the dispose action can trigger the column to be removed from the collection
           this[i].Dispose();
 
         _columnsByNumber.Clear();
-        this._numberOfRows = 0;
+        _numberOfRows = 0;
       }
 
       base.Dispose(isDisposing);
@@ -535,9 +535,9 @@ namespace Altaxo.Data
     public void Add(Altaxo.Data.DataColumn datac, string name, ColumnKind kind, int groupNumber)
     {
       if (name == null)
-        name = this.FindNewColumnName();
+        name = FindNewColumnName();
       else if (_columnsByName.ContainsKey(name))
-        name = this.FindUniqueColumnName(name);
+        name = FindUniqueColumnName(name);
 
       Add(datac, new DataColumnInfo(name, kind, groupNumber));
     }
@@ -549,29 +549,29 @@ namespace Altaxo.Data
     /// <param name="info">The DataColumnInfo object for the column to add.</param>
     private void Add(Altaxo.Data.DataColumn datac, DataColumnInfo info)
     {
-      if (!(this.ContainsColumn(datac) == false))
+      if (!(ContainsColumn(datac) == false))
         throw new ArgumentException(nameof(datac) + " is already contained in this collection");
 
       if (!(datac.ParentObject == null))
         throw new ArgumentException(nameof(datac) + " already has a parent. This private function should be only called with fresh DataColumns, if not, alter the behaviour of the calling function");
 
-      if (!(false == this._columnsByName.ContainsKey(info.Name)))
+      if (!(false == _columnsByName.ContainsKey(info.Name)))
         throw new InvalidOperationException("Trying to add a column with a name that is already present (this error must be fixed in the calling function)");
 
       if (!(datac.IsSomeoneListeningToChanges == false))
         throw new InvalidOperationException("Trying to add a column that was used before because either ParentObject is set or someone is listening to change events");
 
-      info.Number = this._columnsByNumber.Count;
+      info.Number = _columnsByNumber.Count;
 
-      this._columnsByNumber.Add(datac);
-      this._columnsByName[info.Name] = datac;
-      this._columnInfoByColumn[datac] = info;
+      _columnsByNumber.Add(datac);
+      _columnsByName[info.Name] = datac;
+      _columnInfoByColumn[datac] = info;
       datac.ParentObject = this;
 
       if (info.IsIndependentVariable)
-        this.EnsureUniqueColumnKindsForIndependentVariables(info.Group, datac);
+        EnsureUniqueColumnKindsForIndependentVariables(info.Group, datac);
 
-      this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnAddArgs(info.Number, datac.Count));
+      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnAddArgs(info.Number, datac.Count));
     }
 
     /// <summary>
@@ -668,7 +668,7 @@ namespace Altaxo.Data
           throw new InvalidOperationException("The type you provided is not compatible with DataColumn, provided type: " + expectedColumnType.GetType().ToString());
 
         col = (DataColumn)o;
-        this.Replace(columnNumber, col);
+        Replace(columnNumber, col);
       }
 
       // now we can be sure that we have the right column type
@@ -678,7 +678,7 @@ namespace Altaxo.Data
 
       if (GetColumnName(columnNumber) != columnName)
       {
-        if (!this.ContainsColumn(columnName)) // Fine, the name doesn't exist, thus we can set it straightforward
+        if (!ContainsColumn(columnName)) // Fine, the name doesn't exist, thus we can set it straightforward
         {
           SetColumnName(columnNumber, columnName);
         }
@@ -792,8 +792,7 @@ namespace Altaxo.Data
       if (object.ReferenceEquals(oldCol, newCol))
         return;
 
-      IColumnScriptText oldColumnScript;
-      _columnScripts.TryGetValue(oldCol, out oldColumnScript);
+      _columnScripts.TryGetValue(oldCol, out var oldColumnScript);
 
       int oldRowCount = oldCol.Count;
       DataColumnInfo info = GetColumnInfo(index);
@@ -811,7 +810,7 @@ namespace Altaxo.Data
       newCol.ParentObject = this;
       oldCol.Dispose();
 
-      this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnCopyOrReplaceArgs(index, oldRowCount, newCol.Count));
+      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnCopyOrReplaceArgs(index, oldRowCount, newCol.Count));
     }
 
     /// <summary>
@@ -836,22 +835,22 @@ namespace Altaxo.Data
     /// an exception is thrown if a column with the same name is already be present in the destination table.</param>
     protected void Insert(DataColumn[] columns, DataColumnInfo[] info, int nDestinationIndex, bool renameColumnsIfNecessary)
     {
-      using (var suspendToken = this.SuspendGetToken())
+      using (var suspendToken = SuspendGetToken())
       {
-        int indexOfAddedColumns = this.ColumnCount;
+        int indexOfAddedColumns = ColumnCount;
         int numberToAdd = columns.Length;
 
         // first add the columns to the collection
         for (int i = 0; i < numberToAdd; i++)
         {
-          if (renameColumnsIfNecessary && this.ContainsColumn(info[i].Name))
-            info[i].Name = this.FindUniqueColumnNameWithBase(info[i].Name);
+          if (renameColumnsIfNecessary && ContainsColumn(info[i].Name))
+            info[i].Name = FindUniqueColumnNameWithBase(info[i].Name);
 
-          this.Add(columns[i], info[i]);
+          Add(columns[i], info[i]);
         }
 
         // then move the columns to the desired position
-        this.ChangeColumnPosition(Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(indexOfAddedColumns, numberToAdd), nDestinationIndex);
+        ChangeColumnPosition(Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(indexOfAddedColumns, numberToAdd), nDestinationIndex);
 
         suspendToken.Dispose();
       }
@@ -863,12 +862,12 @@ namespace Altaxo.Data
     /// <param name="src">The source collection to copy the columns from.</param>
     public void CopyAllColumnsFrom(DataColumnCollection src)
     {
-      using (var suspendToken = this.SuspendGetToken())
+      using (var suspendToken = SuspendGetToken())
       {
-        this.RemoveColumnsAll();
+        RemoveColumnsAll();
         for (int i = 0; i < src.ColumnCount; i++)
         {
-          this.Add((DataColumn)src[i].Clone(), src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
+          Add((DataColumn)src[i].Clone(), src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
         }
         suspendToken.Dispose();
       }
@@ -880,13 +879,13 @@ namespace Altaxo.Data
     /// <param name="src">The source collection to copy the columns from.</param>
     public void CopyAllColumnsWithoutDataFrom(DataColumnCollection src)
     {
-      using (var suspendToken = this.SuspendGetToken())
+      using (var suspendToken = SuspendGetToken())
       {
-        this.RemoveColumnsAll();
+        RemoveColumnsAll();
         for (int i = 0; i < src.ColumnCount; i++)
         {
           var newCol = (DataColumn)Activator.CreateInstance(src[i].GetType());
-          this.Add(newCol, src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
+          Add(newCol, src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
         }
         suspendToken.Dispose();
       }
@@ -924,11 +923,11 @@ namespace Altaxo.Data
     /// <param name="appendPosition">Row number of first row where the new data is copied to.</param>
     public void AppendAllColumnsToPosition(DataColumnCollection src, bool ignoreNames, int appendPosition)
     {
-      using (var suspendToken = this.SuspendGetToken())
+      using (var suspendToken = SuspendGetToken())
       {
         // test structure
         if (!IsColumnStructureCompatible(this, src, ignoreNames))
-          throw new ArgumentException(string.Format("DataColumnCollection {0} has another structure than {1}. Append is not possible", src.Name, this.Name));
+          throw new ArgumentException(string.Format("DataColumnCollection {0} has another structure than {1}. Append is not possible", src.Name, Name));
 
         if (ignoreNames)
         {
@@ -1000,7 +999,7 @@ namespace Altaxo.Data
     /// </summary>
     public virtual void RemoveColumnsAll()
     {
-      RemoveColumns(ContiguousIntegerRange.FromStartAndCount(0, this.ColumnCount));
+      RemoveColumns(ContiguousIntegerRange.FromStartAndCount(0, ColumnCount));
     }
 
     /// <summary>
@@ -1018,7 +1017,7 @@ namespace Altaxo.Data
     /// <param name="datac">The column to remove.</param>
     public void RemoveColumn(DataColumn datac)
     {
-      RemoveColumns(this.GetColumnNumber(datac), 1);
+      RemoveColumns(GetColumnNumber(datac), 1);
     }
 
     public void RemoveColumns(IAscendingIntegerCollection selectedColumns)
@@ -1041,13 +1040,13 @@ namespace Altaxo.Data
           _columnsByName.Remove(columnName);
           colsToDispose.Add(colToRemove); // dont dispose column here directly, because it may trigger some events, and the handlers want to access this DataColumnCollection, which is now in an undefined state
         }
-        this._columnsByNumber.RemoveRange(range.Start, range.Count);
+        _columnsByNumber.RemoveRange(range.Start, range.Count);
         lastRangeStart = range.Start;
       }
 
       // renumber the remaining columns
       for (int i = _columnsByNumber.Count - 1; i >= lastRangeStart; i--)
-        ((DataColumnInfo)_columnInfoByColumn[_columnsByNumber[i]]).Number = i;
+        _columnInfoByColumn[_columnsByNumber[i]].Number = i;
 
       // first, before we dispose the columns, set all columns to DisposeInProgress
       // to prevent access e.g. to parent properties
@@ -1059,10 +1058,10 @@ namespace Altaxo.Data
         col.Dispose();
 
       // raise datachange event that some columns have changed
-      this.EhSelfChanged(DataColumnCollectionChangedEventArgs.CreateColumnRemoveArgs(lastRangeStart, nOriginalColumnCount, this._numberOfRows));
+      EhSelfChanged(DataColumnCollectionChangedEventArgs.CreateColumnRemoveArgs(lastRangeStart, nOriginalColumnCount, _numberOfRows));
 
       // reset the TriedOutRegularNaming flag, maybe one of the regular column names is now free again
-      this._triedOutRegularNaming = false;
+      _triedOutRegularNaming = false;
     }
 
     /// <summary>
@@ -1077,23 +1076,22 @@ namespace Altaxo.Data
 
       int numberMoved = selectedColumns.Count;
 
-      DataColumn[] tmpColumn = new DataColumn[numberMoved];
-      DataColumnInfo[] tmpInfo = new DataColumnInfo[numberMoved];
-      IColumnScriptText[] tmpScript = new IColumnScriptText[numberMoved];
+      var tmpColumn = new DataColumn[numberMoved];
+      var tmpInfo = new DataColumnInfo[numberMoved];
+      var tmpScript = new IColumnScriptText[numberMoved];
 
       for (int i = 0; i < numberMoved; i++)
       {
         tmpColumn[i] = (DataColumn)this[selectedColumns[i]].Clone(); // clone the column before moving it! This is essential in order to help DocNodeProxies preserve their target!
-        tmpInfo[i] = (DataColumnInfo)this._columnInfoByColumn[_columnsByNumber[i]];
+        tmpInfo[i] = _columnInfoByColumn[_columnsByNumber[i]];
 
-        IColumnScriptText script;
-        if (this._columnScripts.TryGetValue(tmpColumn[i], out script))
+        if (_columnScripts.TryGetValue(tmpColumn[i], out var script))
         {
           tmpScript[i] = (IColumnScriptText)script.Clone(); // clone the script also
         }
       }
 
-      this.RemoveColumns(selectedColumns);
+      RemoveColumns(selectedColumns);
 
       destination.Insert(tmpColumn, tmpInfo, 0, true);
 
@@ -1116,22 +1114,21 @@ namespace Altaxo.Data
     public int AppendCopiedColumnFrom(DataColumnCollection from, int idx, bool doCopyData, bool doCopyProperties)
     {
       string name = from.GetColumnName(idx);
-      DataColumn newCol = (DataColumn)from[idx].Clone();
+      var newCol = (DataColumn)from[idx].Clone();
 
       if (!doCopyData)
       {
         newCol.Clear();
       }
 
-      int newIdx = this.ColumnCount;
-      this.Add(newCol, name, from.GetColumnKind(idx), from.GetColumnGroup(idx));
+      int newIdx = ColumnCount;
+      Add(newCol, name, from.GetColumnKind(idx), from.GetColumnGroup(idx));
 
       if (doCopyProperties)
       {
-        IColumnScriptText script = null;
-        from.ColumnScripts.TryGetValue(from[idx], out script);
+        from.ColumnScripts.TryGetValue(from[idx], out var script);
         if (null != script)
-          this.ColumnScripts.Add(newCol, (IColumnScriptText)script.Clone());
+          ColumnScripts.Add(newCol, (IColumnScriptText)script.Clone());
       }
 
       return newIdx;
@@ -1144,8 +1141,8 @@ namespace Altaxo.Data
     /// <param name="srcRow">Index of the row of the source table.</param>
     public void AppendRowFrom(DataColumnCollection src, int srcRow)
     {
-      int cols = Math.Min(this.ColumnCount, src.ColumnCount);
-      int destRow = this.RowCount;
+      int cols = Math.Min(ColumnCount, src.ColumnCount);
+      int destRow = RowCount;
       for (int i = 0; i < cols; i++)
       {
         var destCol = this[i];
@@ -1162,17 +1159,17 @@ namespace Altaxo.Data
     /// <returns></returns>
     public IAscendingIntegerCollection MergeColumnTypesFrom(DataColumnCollection from)
     {
-      AscendingIntegerCollection coll = new AscendingIntegerCollection();
+      var coll = new AscendingIntegerCollection();
 
       for (int i = 0; i < from.ColumnCount; i++)
       {
         string name = from.GetColumnName(i);
         System.Type coltype = from[i].GetType();
 
-        if (this.ContainsColumn(name) && (this[name].GetType() == from[i].GetType()))
+        if (ContainsColumn(name) && (this[name].GetType() == from[i].GetType()))
         {
           // then the column is already present with the right name and can be used
-          coll.Add(this.GetColumnNumber(this[name]));
+          coll.Add(GetColumnNumber(this[name]));
         }
         else // name is there - but type is different, or name is not here at all
         {
@@ -1248,8 +1245,7 @@ namespace Altaxo.Data
     /// <returns>The position of the column, or -1 if the column is not contained.</returns>
     public int GetColumnNumber(Altaxo.Data.DataColumn datac)
     {
-      DataColumnInfo info;
-      if (_columnInfoByColumn.TryGetValue(datac, out info))
+      if (_columnInfoByColumn.TryGetValue(datac, out var info))
         return info.Number;
       else
         return -1;
@@ -1262,8 +1258,7 @@ namespace Altaxo.Data
     /// <returns>The name of the column.</returns>
     public string GetColumnName(DataColumn datac)
     {
-      DataColumnInfo info;
-      if (_columnInfoByColumn.TryGetValue(datac, out info))
+      if (_columnInfoByColumn.TryGetValue(datac, out var info))
         return info.Name;
       else
         return null;
@@ -1292,7 +1287,7 @@ namespace Altaxo.Data
       string oldName = GetColumnInfo(datac).Name;
       if (oldName != newName)
       {
-        if (this.ContainsColumn(newName))
+        if (ContainsColumn(newName))
         {
           throw new System.ApplicationException("Try to set column name to the name of a already present column: " + newName);
         }
@@ -1302,13 +1297,13 @@ namespace Altaxo.Data
           _columnsByName.Remove(oldName);
           _columnsByName.Add(newName, datac);
 
-          this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnRenameArgs(this.GetColumnNumber(datac)));
+          EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnRenameArgs(GetColumnNumber(datac)));
 
           // Inform also the data column itself that the name has changed
           datac.EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
 
           // reset the TriedOutRegularNames flag, maybe one of the regular columns has been renamed
-          this._triedOutRegularNaming = false;
+          _triedOutRegularNaming = false;
         }
       }
     }
@@ -1359,10 +1354,10 @@ namespace Altaxo.Data
     /// <returns>The smallest unused group number (starting at 0).</returns>
     public int GetUnusedColumnGroupNumber()
     {
-      System.Collections.SortedList groupNums = new System.Collections.SortedList();
+      var groupNums = new System.Collections.SortedList();
       for (int i = 0; i < ColumnCount; i++)
       {
-        int group = this.GetColumnGroup(i);
+        int group = GetColumnGroup(i);
         if (!groupNums.ContainsKey(group))
           groupNums.Add(group, null);
       }
@@ -1383,9 +1378,9 @@ namespace Altaxo.Data
     {
       if (ColumnCount <= 1)
         return false;
-      int firstgroup = this.GetColumnGroup(0);
+      int firstgroup = GetColumnGroup(0);
       for (int i = 1; i < ColumnCount; i++)
-        if (firstgroup != this.GetColumnGroup(i))
+        if (firstgroup != GetColumnGroup(i))
           return true;
 
       return false;
@@ -1484,7 +1479,7 @@ namespace Altaxo.Data
         }
       }
 
-      foreach (KeyValuePair<DataColumn, DataColumnInfo> entry in this._columnInfoByColumn)
+      foreach (KeyValuePair<DataColumn, DataColumnInfo> entry in _columnInfoByColumn)
       {
         if ((entry.Value).Group == groupNumber && !entry.Key.Equals(exceptThisColumn))
         {
@@ -1523,11 +1518,11 @@ namespace Altaxo.Data
     /// <param name="exceptThisColumn">If not null, this column is treated with priority, it can keep its kind.</param>
     public void DeleteXProperty(int nGroup, DataColumn exceptThisColumn)
     {
-      int len = this.ColumnCount;
+      int len = ColumnCount;
       for (int i = len - 1; i >= 0; i--)
       {
-        DataColumn dc = (DataColumn)_columnsByNumber[i];
-        DataColumnInfo info = (DataColumnInfo)this._columnInfoByColumn[dc];
+        var dc = _columnsByNumber[i];
+        var info = _columnInfoByColumn[dc];
         if (info.Group == nGroup && info.Kind == ColumnKind.X && !dc.Equals(exceptThisColumn))
         {
           info.Kind = ColumnKind.V;
@@ -1552,11 +1547,11 @@ namespace Altaxo.Data
     /// <returns>The X column of the provided group, or null if it is not found.</returns>
     public Altaxo.Data.DataColumn FindXColumnOfGroup(int nGroup)
     {
-      int len = this.ColumnCount;
+      int len = ColumnCount;
       for (int i = len - 1; i >= 0; i--)
       {
-        DataColumn dc = (DataColumn)_columnsByNumber[i];
-        DataColumnInfo info = (DataColumnInfo)this._columnInfoByColumn[dc];
+        var dc = _columnsByNumber[i];
+        var info = _columnInfoByColumn[dc];
         if (info.Group == nGroup && info.Kind == ColumnKind.X)
         {
           return dc;
@@ -1582,11 +1577,11 @@ namespace Altaxo.Data
     /// <returns>The Y column of the provided group, or null if it is not found.</returns>
     public Altaxo.Data.DataColumn FindYColumnOfGroup(int nGroup)
     {
-      int len = this.ColumnCount;
+      int len = ColumnCount;
       for (int i = len - 1; i >= 0; i--)
       {
-        DataColumn dc = (DataColumn)_columnsByNumber[i];
-        DataColumnInfo info = (DataColumnInfo)this._columnInfoByColumn[dc];
+        var dc = _columnsByNumber[i];
+        var info = _columnInfoByColumn[dc];
         if (info.Group == nGroup && info.Kind == ColumnKind.Y)
         {
           return dc;
@@ -1602,7 +1597,7 @@ namespace Altaxo.Data
     /// <returns>The column information of the provided column.</returns>
     private DataColumnInfo GetColumnInfo(DataColumn datac)
     {
-      return (DataColumnInfo)_columnInfoByColumn[datac];
+      return _columnInfoByColumn[datac];
     }
 
     /// <summary>
@@ -1612,7 +1607,7 @@ namespace Altaxo.Data
     /// <returns>The column information of the column.</returns>
     private DataColumnInfo GetColumnInfo(int idx)
     {
-      return (DataColumnInfo)_columnInfoByColumn[_columnsByNumber[idx]];
+      return _columnInfoByColumn[_columnsByNumber[idx]];
     }
 
     /// <summary>
@@ -1622,7 +1617,7 @@ namespace Altaxo.Data
     /// <returns>The column information of the column.</returns>
     private DataColumnInfo GetColumnInfo(string columnName)
     {
-      return (DataColumnInfo)_columnInfoByColumn[_columnsByName[columnName]];
+      return _columnInfoByColumn[_columnsByName[columnName]];
     }
 
     #endregion Column Information getting/setting
@@ -1645,7 +1640,7 @@ namespace Altaxo.Data
     /// <param name="nRowsToInsert">The number of rows to insert.</param>
     public void InsertRows(int nBeforeRow, int nRowsToInsert)
     {
-      using (var suspendToken = this.SuspendGetToken())
+      using (var suspendToken = SuspendGetToken())
       {
         for (int i = 0; i < ColumnCount; i++)
           this[i].InsertRows(nBeforeRow, nRowsToInsert);
@@ -1678,7 +1673,7 @@ namespace Altaxo.Data
     /// </summary>
     public void RemoveRowsAll()
     {
-      RemoveRows(0, this.RowCount);
+      RemoveRows(0, RowCount);
     }
 
     /// <summary>
@@ -1697,7 +1692,7 @@ namespace Altaxo.Data
     public void RemoveRowsInColumns(IAscendingIntegerCollection selectedColumns, IAscendingIntegerCollection selectedRows)
     {
       // if we remove rows, we have to do that in reverse order
-      using (var suspendToken = this.SuspendGetToken())
+      using (var suspendToken = SuspendGetToken())
       {
         for (int selcol = 0; selcol < selectedColumns.Count; selcol++)
         {
@@ -1735,15 +1730,15 @@ namespace Altaxo.Data
       if (j < 0 || j >= ColumnCount)
         throw new ArgumentOutOfRangeException("Index j is out of rage");
 
-      DataColumn coli = (DataColumn)_columnsByNumber[i];
-      DataColumn colj = (DataColumn)_columnsByNumber[j];
+      var coli = _columnsByNumber[i];
+      var colj = _columnsByNumber[j];
 
       _columnsByNumber[i] = colj;
       _columnsByNumber[j] = coli;
-      ((DataColumnInfo)_columnInfoByColumn[coli]).Number = j;
-      ((DataColumnInfo)_columnInfoByColumn[colj]).Number = i;
+      _columnInfoByColumn[coli].Number = j;
+      _columnInfoByColumn[colj].Number = i;
 
-      this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnMoveArgs(Math.Min(i, j), Math.Max(i, j)));
+      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnMoveArgs(Math.Min(i, j), Math.Max(i, j)));
     }
 
     /// <summary>
@@ -1769,7 +1764,7 @@ namespace Altaxo.Data
         throw new ArgumentException(string.Format("New column position too high: ColsToMove({0})+NewPosition({1})>ColumnCount({2})", numberSelected, newPosition, ColumnCount));
 
       // Allocated tempory storage for the datacolumns
-      Altaxo.Data.DataColumn[] columnsMoved = new Altaxo.Data.DataColumn[selectedColumns.Count];
+      var columnsMoved = new Altaxo.Data.DataColumn[selectedColumns.Count];
       // fill temporary storage
       for (int i = 0; i < selectedColumns.Count; i++)
         columnsMoved[i] = this[selectedColumns[i]];
@@ -1807,7 +1802,7 @@ namespace Altaxo.Data
         _columnsByNumber[newPosition + i] = columnsMoved[i];
 
       RefreshColumnIndices();
-      this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnMoveArgs(firstAffectedColumn, maxAffectedColumn));
+      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnMoveArgs(firstAffectedColumn, maxAffectedColumn));
     }
 
     /// <summary>
@@ -1830,7 +1825,7 @@ namespace Altaxo.Data
         throw new ArgumentException("New row position is negative!");
 
       // Allocated tempory storage for the datacolumns
-      Altaxo.Data.AltaxoVariant[] tempMoved = new Altaxo.Data.AltaxoVariant[numberSelected];
+      var tempMoved = new Altaxo.Data.AltaxoVariant[numberSelected];
 
       int firstAffected;
       int maxAffected;
@@ -1878,7 +1873,7 @@ namespace Altaxo.Data
         for (int i = 0; i < numberSelected; i++)
           thiscolumn[newPosition + i] = tempMoved[i];
       }
-      this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateRowMoveArgs(ColumnCount, firstAffected, maxAffected));
+      EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateRowMoveArgs(ColumnCount, firstAffected, maxAffected));
     }
 
     /// <summary>
@@ -1888,7 +1883,7 @@ namespace Altaxo.Data
     {
       for (int i = ColumnCount - 1; i >= 0; i--)
       {
-        ((DataColumnInfo)_columnInfoByColumn[_columnsByNumber[i]]).Number = i;
+        _columnInfoByColumn[_columnsByNumber[i]].Number = i;
       }
     }
 
@@ -1904,8 +1899,7 @@ namespace Altaxo.Data
     {
       get
       {
-        DataColumn result;
-        if (_columnsByName.TryGetValue(s, out result))
+        if (_columnsByName.TryGetValue(s, out var result))
           return result;
         else
           throw new ArgumentOutOfRangeException(string.Format("The column \"{0}\" in \"{1}\" does not exist.", s, Main.AbsoluteDocumentPath.GetPathString(this, 2)));
@@ -1914,8 +1908,7 @@ namespace Altaxo.Data
       {
         // setting a column should not change its name nor its other properties
         // only the data array and the related parameters should be changed
-        Altaxo.Data.DataColumn c;
-        if (_columnsByName.TryGetValue(s, out c))
+        if (_columnsByName.TryGetValue(s, out var c))
           c.CopyDataFrom(value);
         else
           throw new ArgumentOutOfRangeException(string.Format("The column \"{0}\" in \"{1}\" does not exist.", s, Main.AbsoluteDocumentPath.GetPathString(this, 2)));
@@ -1930,8 +1923,7 @@ namespace Altaxo.Data
     /// <returns>Either the column with the given name, or Null if such a column don't exist.</returns>
     public Altaxo.Data.DataColumn TryGetColumn(string s)
     {
-      DataColumn result;
-      if (_columnsByName.TryGetValue(s, out result))
+      if (_columnsByName.TryGetValue(s, out var result))
         return result;
       else
         return null;
@@ -1947,7 +1939,7 @@ namespace Altaxo.Data
       {
         try
         {
-          return (Altaxo.Data.DataColumn)_columnsByNumber[idx];
+          return _columnsByNumber[idx];
         }
         catch (Exception)
         {
@@ -1961,7 +1953,7 @@ namespace Altaxo.Data
 
         if (idx < _columnsByNumber.Count)
         {
-          Altaxo.Data.DataColumn c = (Altaxo.Data.DataColumn)_columnsByNumber[idx];
+          var c = _columnsByNumber[idx];
           c.CopyDataFrom(value);
         }
         else
@@ -1982,8 +1974,8 @@ namespace Altaxo.Data
     {
       get
       {
-        if (this._hasNumberOfRowsDecreased)
-          this.RefreshRowCount(true);
+        if (_hasNumberOfRowsDecreased)
+          RefreshRowCount(true);
 
         return _numberOfRows;
       }
@@ -1996,7 +1988,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return this._columnsByNumber.Count;
+        return _columnsByNumber.Count;
       }
     }
 
@@ -2005,7 +1997,7 @@ namespace Altaxo.Data
     /// </summary>
     public ColumnScriptCollection ColumnScripts
     {
-      get { return this._columnScripts; }
+      get { return _columnScripts; }
     }
 
     /// <summary>
@@ -2014,7 +2006,7 @@ namespace Altaxo.Data
     /// <returns>An array containing all column names that are contained in this collection.</returns>
     public string[] GetColumnNames()
     {
-      string[] arr = new string[this.ColumnCount];
+      string[] arr = new string[ColumnCount];
       for (int i = 0; i < arr.Length; i++)
         arr[i] = GetColumnName(i);
 
@@ -2030,12 +2022,12 @@ namespace Altaxo.Data
     {
       firstdifferentcolumnindex = 0;
 
-      if (0 == this.ColumnCount)
+      if (0 == ColumnCount)
         return true;
 
       System.Type t1st = this[0].GetType();
 
-      int len = this.ColumnCount;
+      int len = ColumnCount;
       for (int i = 0; i < len; i++)
       {
         if (this[i].GetType() != t1st)
@@ -2113,7 +2105,7 @@ namespace Altaxo.Data
     /// <param name="accumulatedEventData">The instance were the event arg e is accumulated. If this parameter is <c>null</c>, a new instance of <see cref="DataColumnCollectionChangedEventArgs"/> is created and returned into this parameter.</param>
     protected void AccumulateChangeData(object sender, EventArgs e, ref DataColumnCollectionChangedEventArgs accumulatedEventData)
     {
-      DataColumnChangedEventArgs dataColumnChangeEventArgs = e as DataColumnChangedEventArgs;
+      var dataColumnChangeEventArgs = e as DataColumnChangedEventArgs;
       DataColumnCollectionChangedEventArgs dataColumnCollectionChangeEventArgs;
       DataColumn senderAsDataColumn;
 
@@ -2128,9 +2120,9 @@ namespace Altaxo.Data
           accumulatedEventData.Accumulate(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
 
         // update the row count
-        if (this._numberOfRows < rowCountOfSender)
+        if (_numberOfRows < rowCountOfSender)
           _numberOfRows = rowCountOfSender;
-        this._hasNumberOfRowsDecreased |= dataColumnChangeEventArgs.HasRowCountDecreased;
+        _hasNumberOfRowsDecreased |= dataColumnChangeEventArgs.HasRowCountDecreased;
       }
       else if (null != (dataColumnCollectionChangeEventArgs = e as DataColumnCollectionChangedEventArgs)) // ChangeEventArgs from a DataColumnCollection, i.e. from myself
       {
@@ -2140,9 +2132,9 @@ namespace Altaxo.Data
           accumulatedEventData.Accumulate(dataColumnCollectionChangeEventArgs);
 
         // update the row count
-        if (this._numberOfRows < dataColumnCollectionChangeEventArgs.MaxRowChanged)
-          this._numberOfRows = dataColumnCollectionChangeEventArgs.MaxRowChanged;
-        this._hasNumberOfRowsDecreased |= dataColumnCollectionChangeEventArgs.HasRowCountDecreased;
+        if (_numberOfRows < dataColumnCollectionChangeEventArgs.MaxRowChanged)
+          _numberOfRows = dataColumnCollectionChangeEventArgs.MaxRowChanged;
+        _hasNumberOfRowsDecreased |= dataColumnCollectionChangeEventArgs.HasRowCountDecreased;
       }
     }
 
@@ -2161,9 +2153,9 @@ namespace Altaxo.Data
       Main.ParentChangedEventArgs parentChangedEventArgs;
       if (null != (parentChangedEventArgs = e as Main.ParentChangedEventArgs))
       {
-        if (object.ReferenceEquals(this, parentChangedEventArgs.OldParent) && this.ContainsColumn((DataColumn)sender))
-          this.RemoveColumn((DataColumn)sender);
-        else if (object.ReferenceEquals(this, parentChangedEventArgs.NewParent) && !this.ContainsColumn((DataColumn)sender))
+        if (object.ReferenceEquals(this, parentChangedEventArgs.OldParent) && ContainsColumn((DataColumn)sender))
+          RemoveColumn((DataColumn)sender);
+        else if (object.ReferenceEquals(this, parentChangedEventArgs.NewParent) && !ContainsColumn((DataColumn)sender))
           throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
 
         return true;
@@ -2213,7 +2205,7 @@ namespace Altaxo.Data
 
       if (bSearchOnlyUntilOldRowCountReached)
       {
-        foreach (DataColumn c in this._columnsByNumber)
+        foreach (DataColumn c in _columnsByNumber)
         {
           rowCount = System.Math.Max(rowCount, c.Count);
           if (rowCount >= _numberOfRows)
@@ -2222,13 +2214,13 @@ namespace Altaxo.Data
       }
       else
       {
-        foreach (DataColumn c in this._columnsByNumber)
+        foreach (DataColumn c in _columnsByNumber)
           rowCount = System.Math.Max(rowCount, c.Count);
       }
 
       // now take over the new row count
-      this._numberOfRows = rowCount;
-      this._hasNumberOfRowsDecreased = false; // row count is now actual
+      _numberOfRows = rowCount;
+      _hasNumberOfRowsDecreased = false; // row count is now actual
     }
 
     #region Automatic column naming
@@ -2373,8 +2365,7 @@ namespace Altaxo.Data
     /// <returns>The column with name <code>name</code>, or null if not found.</returns>
     public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
     {
-      DataColumn col;
-      if (_columnsByName.TryGetValue(name, out col))
+      if (_columnsByName.TryGetValue(name, out var col))
         return col;
       else
         return null;
@@ -2387,8 +2378,7 @@ namespace Altaxo.Data
     /// <returns>The name of the column.</returns>
     public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
-      DataColumnInfo info;
-      if ((o is DataColumn) && this._columnInfoByColumn.TryGetValue((DataColumn)o, out info))
+      if ((o is DataColumn) && _columnInfoByColumn.TryGetValue((DataColumn)o, out var info))
         return info.Name;
       else
         return null;
@@ -2399,8 +2389,7 @@ namespace Altaxo.Data
       for (int i = _columnsByNumber.Count - 1; i >= 0; --i)
       {
         var col = _columnsByNumber[i];
-        DataColumnInfo info;
-        if (_columnInfoByColumn.TryGetValue(col, out info))
+        if (_columnInfoByColumn.TryGetValue(col, out var info))
           yield return new Main.DocumentNodeAndName(col, info.Name);
       }
     }
@@ -2461,7 +2450,7 @@ namespace Altaxo.Data
       }
       set
       {
-        int nCols = Math.Min(this.ColumnCount, value.ColumnCollection.ColumnCount);
+        int nCols = Math.Min(ColumnCount, value.ColumnCollection.ColumnCount);
         for (int i = nCols - 1; i >= 0; i--)
           this[i][index] = value[i];
       }
@@ -2473,8 +2462,8 @@ namespace Altaxo.Data
 
     void ICollection<DataRow>.Add(DataRow item)
     {
-      int nCols = Math.Min(this.ColumnCount, item.ColumnCollection.ColumnCount);
-      int index = this.RowCount;
+      int nCols = Math.Min(ColumnCount, item.ColumnCollection.ColumnCount);
+      int index = RowCount;
       for (int i = nCols - 1; i >= 0; i--)
         this[i][index] = item[i];
     }
@@ -2491,7 +2480,7 @@ namespace Altaxo.Data
 
     void ICollection<DataRow>.CopyTo(DataRow[] array, int arrayIndex)
     {
-      for (int i = 0; i < this.RowCount; i++)
+      for (int i = 0; i < RowCount; i++)
         array[i + arrayIndex] = new DataRow(this, i);
     }
 

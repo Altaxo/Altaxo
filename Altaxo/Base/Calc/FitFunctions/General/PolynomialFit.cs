@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
 using System;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.General
 {
@@ -42,7 +42,7 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        PolynomialFit s = (PolynomialFit)obj;
+        var s = (PolynomialFit)obj;
         info.AddValue("Order", s._order);
       }
 

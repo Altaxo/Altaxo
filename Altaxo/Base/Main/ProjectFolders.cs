@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Main
 {
@@ -133,8 +133,7 @@ namespace Altaxo.Main
     /// <param name="result">List that is filled with the subfolders of the provied folder.</param>
     private void InternalGetSubfoldersAsStringList(string parentFolder, bool recurseSubdirectories, List<string> result)
     {
-      HashSet<object> items;
-      if (!_directories.TryGetValue(parentFolder, out items))
+      if (!_directories.TryGetValue(parentFolder, out var items))
         throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", parentFolder));
 
       foreach (var v in items)
@@ -159,8 +158,7 @@ namespace Altaxo.Main
 
       var result = new List<ProjectFolder>();
 
-      HashSet<object> items;
-      if (!_directories.TryGetValue(parentFolder, out items))
+      if (!_directories.TryGetValue(parentFolder, out var items))
         throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", parentFolder));
 
       foreach (var v in items)
@@ -209,8 +207,7 @@ namespace Altaxo.Main
     /// <param name="list">List where to add the items to.</param>
     public void AddItemsInFolder(string folderName, ICollection<IProjectItem> list)
     {
-      HashSet<object> items;
-      if (!_directories.TryGetValue(folderName, out items))
+      if (!_directories.TryGetValue(folderName, out var items))
       {
         ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
         throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
@@ -229,8 +226,7 @@ namespace Altaxo.Main
     /// <param name="list">List where to add the items to.</param>
     public void AddItemsInFolderAndSubfolders(string folderName, ICollection<IProjectItem> list)
     {
-      HashSet<object> items;
-      if (!_directories.TryGetValue(folderName, out items))
+      if (!_directories.TryGetValue(folderName, out var items))
       {
         ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
         throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
@@ -424,7 +420,7 @@ namespace Altaxo.Main
         return;
       }
 
-      IProjectItem item = e.Item as IProjectItem;
+      var item = e.Item as IProjectItem;
       if (null == item)
         throw new InvalidProgramException(string.Format("Item should be a project item, since we bind to the CollectionChanged events. But current item is {0}", e.Item));
 
@@ -781,9 +777,9 @@ namespace Altaxo.Main
       {
         var orgName = projFolder.Name;
         string destName = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetFoldersLastFolderPart(orgName));
-        foreach (var subitem in this.GetItemsInFolderAndSubfolders(orgName))
+        foreach (var subitem in GetItemsInFolderAndSubfolders(orgName))
         {
-          var oldItemFolder = ProjectFolder.GetFolderPart(((INameOwner)subitem).Name);
+          var oldItemFolder = ProjectFolder.GetFolderPart(subitem.Name);
           var newItemFolder = oldItemFolder.Replace(orgName, destName);
           CopyItemToFolder(subitem, newItemFolder, ReportProxies, overwriteExistingItemsOfSameType);
         }
@@ -845,8 +841,7 @@ namespace Altaxo.Main
     /// <returns>The tree node corresponding to the provided folder name.</returns>
     public static NGTreeNode AddFolderNodeRecursively(string folderName, Dictionary<string, NGTreeNode> folderDictionary)
     {
-      NGTreeNode folderNode;
-      if (!folderDictionary.TryGetValue(folderName, out folderNode))
+      if (!folderDictionary.TryGetValue(folderName, out var folderNode))
       {
         var parentNode = AddFolderNodeRecursively(Main.ProjectFolder.GetFoldersParentFolder(folderName), folderDictionary);
 
@@ -868,8 +863,7 @@ namespace Altaxo.Main
     /// <returns>The tree node corresponding to the provided folder name.</returns>
     public static NGTreeNode AddFolderNodeRecursively<T>(string folderName, Dictionary<string, NGTreeNode> folderDictionary) where T : NGTreeNode, new()
     {
-      NGTreeNode folderNode;
-      if (!folderDictionary.TryGetValue(folderName, out folderNode))
+      if (!folderDictionary.TryGetValue(folderName, out var folderNode))
       {
         var parentNode = AddFolderNodeRecursively<T>(Main.ProjectFolder.GetFoldersParentFolder(folderName), folderDictionary);
 

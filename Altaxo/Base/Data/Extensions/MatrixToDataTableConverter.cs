@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Data
 {
@@ -61,15 +61,19 @@ namespace Altaxo.Data
 
     public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix, string columnBaseName)
     {
-      var c = new MatrixToDataTableConverter(matrix, destinationTable);
-      c.ColumnBaseName = columnBaseName;
+      var c = new MatrixToDataTableConverter(matrix, destinationTable)
+      {
+        ColumnBaseName = columnBaseName
+      };
       c.Execute();
     }
 
     public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix, string columnBaseName, IReadOnlyList<double> rowHeaderColumn, string rowHeaderColumnName, IReadOnlyList<double> colHeaderColumn, string colHeaderColumnName)
     {
-      var c = new MatrixToDataTableConverter(matrix, destinationTable);
-      c.ColumnBaseName = columnBaseName;
+      var c = new MatrixToDataTableConverter(matrix, destinationTable)
+      {
+        ColumnBaseName = columnBaseName
+      };
       c.AddMatrixColumnHeaderData(rowHeaderColumn, rowHeaderColumnName);
       c.AddMatrixColumnHeaderData(colHeaderColumn, colHeaderColumnName);
       c.Execute();

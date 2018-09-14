@@ -82,7 +82,7 @@ namespace Altaxo.Main.Services
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
     public IReadOnlyDictionary<string, object> GetCurrentApplicationStateInfo()
     {
-      Dictionary<string, object> state = new Dictionary<string, object>(stateGetters.Count, stateGetters.Comparer);
+      var state = new Dictionary<string, object>(stateGetters.Count, stateGetters.Comparer);
       lock (stateGetters)
       {
         foreach (var entry in stateGetters)
@@ -119,7 +119,7 @@ namespace Altaxo.Main.Services
         }
         else
         {
-          IFormattable f = entry.Value as IFormattable;
+          var f = entry.Value as IFormattable;
           if (f != null)
           {
             try

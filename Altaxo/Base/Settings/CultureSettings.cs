@@ -30,8 +30,8 @@ using System.Text;
 
 namespace Altaxo.Settings
 {
-  using Altaxo.Main.Properties;
   using System.ComponentModel;
+  using Altaxo.Main.Properties;
 
   /// <summary>
   /// Manages the settings for a culture, i.e. number and DateTime formats etc.
@@ -140,11 +140,11 @@ namespace Altaxo.Settings
       var from = obj as CultureSettings;
       if (null != from)
       {
-        this._cultureID = from._cultureID;
-        this._cultureName = from._cultureName;
-        this._numberDecimalSeparator = from._numberDecimalSeparator;
-        this._numberGroupSeparator = from._numberGroupSeparator;
-        this._cachedCultureAsReadOnly = from._cachedCultureAsReadOnly;
+        _cultureID = from._cultureID;
+        _cultureName = from._cultureName;
+        _numberDecimalSeparator = from._numberDecimalSeparator;
+        _numberGroupSeparator = from._numberGroupSeparator;
+        _cachedCultureAsReadOnly = from._cachedCultureAsReadOnly;
         return true;
       }
       return false;

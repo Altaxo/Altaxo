@@ -16,13 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Gui;
-using Altaxo.Gui.Workbench;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
+using Altaxo.Gui;
+using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Main.Services
 {
@@ -43,7 +43,7 @@ namespace Altaxo.Main.Services
 
     public StatusBarService(IStatusBarView statusBar)
     {
-      this._statusBarView = statusBar ?? throw new ArgumentNullException(nameof(statusBar));
+      _statusBarView = statusBar ?? throw new ArgumentNullException(nameof(statusBar));
     }
 
     public bool IsVisible
@@ -68,9 +68,9 @@ namespace Altaxo.Main.Services
     {
       _statusBarView.CursorStatusBarPanelContent = StringParser.Parse(
           "${res:StatusBarService.CursorStatusBarPanelText}",
-          new StringTagPair("Line", String.Format("{0,-10}", y)),
-          new StringTagPair("Column", String.Format("{0,-5}", x)),
-          new StringTagPair("Character", String.Format("{0,-5}", charOffset))
+          new StringTagPair("Line", string.Format("{0,-10}", y)),
+          new StringTagPair("Column", string.Format("{0,-5}", x)),
+          new StringTagPair("Character", string.Format("{0,-5}", charOffset))
       );
     }
 
@@ -80,7 +80,7 @@ namespace Altaxo.Main.Services
       {
         _statusBarView.SelectionStatusBarPanelContent = StringParser.Parse(
             "${res:StatusBarService.SelectionStatusBarPanelTextSingle}",
-            new StringTagPair("Length", String.Format("{0,-10}", length)));
+            new StringTagPair("Length", string.Format("{0,-10}", length)));
       }
       else
       {
@@ -94,9 +94,9 @@ namespace Altaxo.Main.Services
       {
         _statusBarView.SelectionStatusBarPanelContent = StringParser.Parse(
             "${res:StatusBarService.SelectionStatusBarPanelTextMulti}",
-            new StringTagPair("Rows", String.Format("{0}", rows)),
-            new StringTagPair("Cols", String.Format("{0}", cols)),
-            new StringTagPair("Total", String.Format("{0}", rows * cols)));
+            new StringTagPair("Rows", string.Format("{0}", rows)),
+            new StringTagPair("Cols", string.Format("{0}", cols)),
+            new StringTagPair("Total", string.Format("{0}", rows * cols)));
       }
       else
       {
@@ -121,7 +121,7 @@ namespace Altaxo.Main.Services
 
     public IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken))
     {
-      ProgressCollector progress = new ProgressCollector(Current.Dispatcher.SynchronizingObject, cancellationToken);
+      var progress = new ProgressCollector(Current.Dispatcher.SynchronizingObject, cancellationToken);
       AddProgress(progress);
       return progress.ProgressReporter;
     }

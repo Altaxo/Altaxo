@@ -93,10 +93,12 @@ namespace Altaxo.Serialization.Ascii
       ExportPropertyColumns = true;
       FormatProvider = System.Globalization.CultureInfo.CurrentCulture;
 
-      _typeConverters = new Dictionary<Type, Func<Altaxo.Data.AltaxoVariant, string>>();
-      _typeConverters.Add(typeof(DoubleColumn), GetDefaultConverter(typeof(DoubleColumn)));
-      _typeConverters.Add(typeof(DateTimeColumn), GetDefaultConverter(typeof(DateTimeColumn)));
-      _typeConverters.Add(typeof(TextColumn), GetDefaultConverter(typeof(TextColumn)));
+      _typeConverters = new Dictionary<Type, Func<Altaxo.Data.AltaxoVariant, string>>
+      {
+        { typeof(DoubleColumn), GetDefaultConverter(typeof(DoubleColumn)) },
+        { typeof(DateTimeColumn), GetDefaultConverter(typeof(DateTimeColumn)) },
+        { typeof(TextColumn), GetDefaultConverter(typeof(TextColumn)) }
+      };
     }
 
     /// <summary>
@@ -143,8 +145,7 @@ namespace Altaxo.Serialization.Ascii
 
     public Func<Altaxo.Data.AltaxoVariant, string> GetConverter(System.Type columnType)
     {
-      Func<Altaxo.Data.AltaxoVariant, string> result;
-      if (_typeConverters.TryGetValue(columnType, out result))
+      if (_typeConverters.TryGetValue(columnType, out var result))
         return result;
       else
         return null;
@@ -164,8 +165,7 @@ namespace Altaxo.Serialization.Ascii
         return string.Empty;
 
       string result;
-      Func<Altaxo.Data.AltaxoVariant, string> func = null;
-      if (_typeConverters.TryGetValue(col.GetType(), out func))
+      if (_typeConverters.TryGetValue(col.GetType(), out var func))
         result = func(col[index]);
       else
         result = DefaultTextConverter(col[index]);

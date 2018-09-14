@@ -60,7 +60,7 @@ namespace Altaxo.Serialization.Ascii
       }
 
       var from = (AsciiLineAnalysisOption)obj;
-      return this._separationStrategy.Equals(from._separationStrategy) && this._numberFormat.Equals(from._numberFormat) && this._dateTimeFormat.Equals(from._dateTimeFormat);
+      return _separationStrategy.Equals(from._separationStrategy) && _numberFormat.Equals(from._numberFormat) && _dateTimeFormat.Equals(from._dateTimeFormat);
     }
 
     public override int GetHashCode()

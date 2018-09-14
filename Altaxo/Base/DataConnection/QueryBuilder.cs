@@ -231,7 +231,7 @@ namespace Altaxo.DataConnection
       }
 
       // prepare to build sql statement
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
 
       // select
       sb.Append("SELECT ");
@@ -290,7 +290,7 @@ namespace Altaxo.DataConnection
     // build the SELECT clause
     private string BuildSelectClause()
     {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
       foreach (QueryField field in QueryFields)
       {
         if (field.Output)
@@ -354,8 +354,8 @@ namespace Altaxo.DataConnection
       for (int index = 0; index < qTables.Count - 1; index++)
       {
         // get relation
-        DataTable dt1 = (DataTable)qTables[index];
-        DataTable dt2 = (DataTable)qTables[index + 1];
+        var dt1 = qTables[index];
+        var dt2 = qTables[index + 1];
         DataRelation dr = GetRelation(dt1, dt2);
 
         // build join statement
@@ -367,10 +367,10 @@ namespace Altaxo.DataConnection
       }
 
       // build from statement
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
       for (int i = 0; i < qTables.Count - 1; i++)
       {
-        DataTable dt = qTables[i] as DataTable;
+        var dt = qTables[i] as DataTable;
         if (sb.Length > 0)
         {
           sb.Append("\r\n\t");
@@ -425,10 +425,10 @@ namespace Altaxo.DataConnection
       for (int index = 0; index <= list.Count; index++)
       {
         // related to table before?
-        bool before = index == 0 || GetRelation(dt, (DataTable)list[index - 1]) != null;
+        bool before = index == 0 || GetRelation(dt, list[index - 1]) != null;
 
         // related to table after?
-        bool after = index == list.Count || GetRelation(dt, (DataTable)list[index]) != null;
+        bool after = index == list.Count || GetRelation(dt, list[index]) != null;
 
         // found a good insertion point, move on
         if (before && after)
@@ -459,7 +459,7 @@ namespace Altaxo.DataConnection
     // build the WHERE clause
     private string BuildWhereClause()
     {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
       foreach (QueryField field in QueryFields)
       {
         if (field.Filter.Length > 0)
@@ -485,7 +485,7 @@ namespace Altaxo.DataConnection
     // build the GROUPBY clause
     private string BuildGroupByClause()
     {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
       if (GroupBy)
       {
         // GROUPBY fields
@@ -528,7 +528,7 @@ namespace Altaxo.DataConnection
     // build the ORDERBY clause
     private string BuildOrderByClause()
     {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
       foreach (QueryField field in QueryFields)
       {
         if (field.Sort != Sort.NoSort)

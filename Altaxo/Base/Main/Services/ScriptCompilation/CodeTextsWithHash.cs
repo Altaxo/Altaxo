@@ -78,9 +78,9 @@ namespace Altaxo.Main.Services.ScriptCompilation
 
       byte[] hash = null;
 
-      using (System.IO.MemoryStream stream = new System.IO.MemoryStream(len))
+      using (var stream = new System.IO.MemoryStream(len))
       {
-        using (System.IO.StreamWriter sw = new System.IO.StreamWriter(stream, System.Text.Encoding.Unicode))
+        using (var sw = new System.IO.StreamWriter(stream, System.Text.Encoding.Unicode))
         {
           for (int i = 0; i < scripts.Count; i++)
           {
@@ -89,7 +89,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
           sw.Flush();
 
           sw.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
-          System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+          var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
           hash = md5.ComputeHash(sw.BaseStream);
           sw.Close();
         }

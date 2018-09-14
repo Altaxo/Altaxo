@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
+using Altaxo.Collections;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        MultivariateContentMemento s = (MultivariateContentMemento)obj;
+        var s = (MultivariateContentMemento)obj;
         info.AddValue("TableName", s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow", s.SpectrumIsRow);
         info.AddValue("SpectralIndices", s.SpectralIndices);
@@ -149,7 +149,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        MultivariateContentMemento s = (MultivariateContentMemento)obj;
+        var s = (MultivariateContentMemento)obj;
         info.AddValue("TableName", s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow", s.SpectrumIsRow);
         info.AddValue("SpectralIndices", s.SpectralIndices);
@@ -178,8 +178,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         // new in version 1
         if (info.CurrentElementName == "SpectralPreprocessingRegions")
         {
-          int[] regions;
-          info.GetArray("SpectralPreprocessingRegions", out regions);
+          info.GetArray("SpectralPreprocessingRegions", out int[] regions);
           s._spectralPreprocessing.Regions = regions;
           s._spectralPreprocessing.Method = (SpectralPreprocessingMethod)info.GetEnum("SpectralPreprocessingMethod", typeof(SpectralPreprocessingMethod));
           s._spectralPreprocessing.DetrendingOrder = info.GetInt32("SpectralPreprocessingDetrending");
@@ -198,7 +197,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        MultivariateContentMemento s = (MultivariateContentMemento)obj;
+        var s = (MultivariateContentMemento)obj;
         info.AddValue("TableName", s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow", s.SpectrumIsRow);
         info.AddValue("SpectralIndices", s.SpectralIndices);
@@ -231,8 +230,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
 
         // new in version 1
-        int[] regions;
-        info.GetArray("SpectralPreprocessingRegions", out regions);
+        info.GetArray("SpectralPreprocessingRegions", out int[] regions);
         s._spectralPreprocessing.Regions = regions;
         s._spectralPreprocessing.Method = (SpectralPreprocessingMethod)info.GetEnum("SpectralPreprocessingMethod", typeof(SpectralPreprocessingMethod));
         s._spectralPreprocessing.DetrendingOrder = info.GetInt32("SpectralPreprocessingDetrending");
@@ -306,8 +304,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public CrossPRESSCalculationType CrossValidationType
     {
-      get { return this._crossPRESSCalculationType; }
-      set { this._crossPRESSCalculationType = value; }
+      get { return _crossPRESSCalculationType; }
+      set { _crossPRESSCalculationType = value; }
     }
 
     /// <summary>
@@ -330,7 +328,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           return _InstanceOfAnalysisClass;
         else if (_ClassNameOfAnalysisClass != null)
         {
-          System.Type clstype = System.Type.GetType(_ClassNameOfAnalysisClass);
+          var clstype = System.Type.GetType(_ClassNameOfAnalysisClass);
           if (clstype == null)
             throw new ApplicationException("Can not found the class used to analyse the data, the class type is: " + _ClassNameOfAnalysisClass);
 

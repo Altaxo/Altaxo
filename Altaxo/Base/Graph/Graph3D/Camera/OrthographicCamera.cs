@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Camera
 {
@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Graph3D.Camera
       if (!(zNear < zFar))
         throw new ArgumentOutOfRangeException(nameof(zFar) + " has to be > " + nameof(zNear));
 
-      var result = (OrthographicCamera)this.MemberwiseClone();
+      var result = (OrthographicCamera)MemberwiseClone();
       result._zNear = zNear;
       result._zFar = zFar;
       return result;
@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <returns>New camera with the provided parameters.</returns>
     public OrthographicCamera WithEyeTargetWidth(PointD3D eyePosition, PointD3D targetPosition, double widthAtZNear)
     {
-      var result = (OrthographicCamera)this.MemberwiseClone();
+      var result = (OrthographicCamera)MemberwiseClone();
       result._eyePosition = eyePosition;
       result._targetPosition = targetPosition;
       result._widthAtZNear = widthAtZNear;

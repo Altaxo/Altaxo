@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Graph.Gdi.Axis;
 using Altaxo.Gui.Graph.Scales;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
@@ -137,8 +137,10 @@ namespace Altaxo.Gui.Graph.Gdi
       {
         SetCoordinateSystemDependentObjects(_currentAxisID);
 
-        _listOfUniqueItem = new SelectableListNodeList();
-        _listOfUniqueItem.Add(new SelectableListNode("Common", null, true));
+        _listOfUniqueItem = new SelectableListNodeList
+        {
+          new SelectableListNode("Common", null, true)
+        };
       }
 
       if (null != _view)
@@ -342,14 +344,14 @@ namespace Altaxo.Gui.Graph.Gdi
             _view.SelectTab(_currentPageName);
             SetSecondaryChoiceToUnique();
           }
-          if (null == this._coordinateController)
+          if (null == _coordinateController)
           {
-            this._coordinateController = new Altaxo.Gui.Graph.Gdi.CoordinateSystemController() { UseDocumentCopy = UseDocument.Directly };
+            _coordinateController = new Altaxo.Gui.Graph.Gdi.CoordinateSystemController() { UseDocumentCopy = UseDocument.Directly };
             _coordinateController.InitializeDocument(_doc.CoordinateSystem);
-            Current.Gui.FindAndAttachControlTo(this._coordinateController);
+            Current.Gui.FindAndAttachControlTo(_coordinateController);
           }
-          _currentController = this._coordinateController;
-          _view.CurrentContent = this._coordinateController.ViewObject;
+          _currentController = _coordinateController;
+          _view.CurrentContent = _coordinateController.ViewObject;
           break;
 
         case "GridStyle":
@@ -362,13 +364,13 @@ namespace Altaxo.Gui.Graph.Gdi
           if (!_GridStyleController.ContainsKey(_currentPlaneID))
           {
             GridPlane p = _doc.GridPlanes.Contains(_currentPlaneID) ? _doc.GridPlanes[_currentPlaneID] : new GridPlane(_currentPlaneID);
-            GridPlaneController ctrl = new GridPlaneController() { UseDocumentCopy = UseDocument.Directly };
+            var ctrl = new GridPlaneController() { UseDocumentCopy = UseDocument.Directly };
             ctrl.InitializeDocument(p);
             Current.Gui.FindAndAttachControlTo(ctrl);
             _GridStyleController.Add(_currentPlaneID, ctrl);
           }
           _currentController = _GridStyleController[_currentPlaneID];
-          _view.CurrentContent = this._currentController.ViewObject;
+          _view.CurrentContent = _currentController.ViewObject;
 
           break;
 
@@ -412,8 +414,8 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private void SetSecondaryChoiceToUnique()
     {
-      this._primaryChoice = LayerControllerTabType.Unique;
-      _view.InitializeSecondaryChoice(_listOfUniqueItem, this._primaryChoice);
+      _primaryChoice = LayerControllerTabType.Unique;
+      _view.InitializeSecondaryChoice(_listOfUniqueItem, _primaryChoice);
     }
 
     private void SetSecondaryChoiceToScales()
@@ -421,8 +423,8 @@ namespace Altaxo.Gui.Graph.Gdi
       _listOfScales.ClearSelectionsAll();
       _listOfScales[_currentScale].IsSelected = true;
 
-      this._primaryChoice = LayerControllerTabType.Scales;
-      _view.InitializeSecondaryChoice(_listOfScales, this._primaryChoice);
+      _primaryChoice = LayerControllerTabType.Scales;
+      _view.InitializeSecondaryChoice(_listOfScales, _primaryChoice);
     }
 
     private void SetSecondaryChoiceToAxes()
@@ -430,14 +432,14 @@ namespace Altaxo.Gui.Graph.Gdi
       foreach (var item in _listOfAxes)
         item.IsSelected = ((CSLineID)item.Tag) == _currentAxisID;
 
-      this._primaryChoice = LayerControllerTabType.Axes;
-      _view.InitializeSecondaryChoice(_listOfAxes, this._primaryChoice);
+      _primaryChoice = LayerControllerTabType.Axes;
+      _view.InitializeSecondaryChoice(_listOfAxes, _primaryChoice);
     }
 
     private void SetSecondaryChoiceToPlanes()
     {
-      this._primaryChoice = LayerControllerTabType.Planes;
-      _view.InitializeSecondaryChoice(_listOfPlanes, this._primaryChoice);
+      _primaryChoice = LayerControllerTabType.Planes;
+      _view.InitializeSecondaryChoice(_listOfPlanes, _primaryChoice);
     }
 
     public void EhView_PageChanged(string firstChoice)
@@ -570,8 +572,8 @@ namespace Altaxo.Gui.Graph.Gdi
       }
       else if (_currentPageName == "GridStyle")
       {
-        GridPlane gp = (GridPlane)_currentController.ModelObject;
-        this._doc.GridPlanes[_currentPlaneID] = gp.IsUsed ? gp : null;
+        var gp = (GridPlane)_currentController.ModelObject;
+        _doc.GridPlanes[_currentPlaneID] = gp.IsUsed ? gp : null;
       }
 
       return true;
@@ -591,7 +593,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public static bool ShowDialog(XYPlotLayer layer, string currentPage, CSLineID currentEdge)
     {
-      XYPlotLayerController ctrl = new XYPlotLayerController(layer, currentPage, currentEdge, UseDocument.Copy);
+      var ctrl = new XYPlotLayerController(layer, currentPage, currentEdge, UseDocument.Copy);
       return Current.Gui.ShowDialog(ctrl, layer.Name, true);
     }
 
@@ -612,7 +614,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public static bool EhLayerPositionEdit(IHitTestObject hit)
     {
-      XYPlotLayer layer = hit.HittedObject as XYPlotLayer;
+      var layer = hit.HittedObject as XYPlotLayer;
       if (layer == null)
         return false;
 
@@ -623,7 +625,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public static bool EhAxisScaleEdit(IHitTestObject hit)
     {
-      AxisLineStyle style = hit.HittedObject as AxisLineStyle;
+      var style = hit.HittedObject as AxisLineStyle;
       if (style == null || hit.ParentLayer == null)
         return false;
 
@@ -636,7 +638,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public static bool EhAxisStyleEdit(IHitTestObject hit)
     {
-      AxisLineStyle style = hit.HittedObject as AxisLineStyle;
+      var style = hit.HittedObject as AxisLineStyle;
       if (style == null || hit.ParentLayer == null)
         return false;
 
@@ -649,7 +651,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public static bool EhAxisLabelMajorStyleEdit(IHitTestObject hit)
     {
-      AxisLabelStyle style = hit.HittedObject as AxisLabelStyle;
+      var style = hit.HittedObject as AxisLabelStyle;
       if (style == null || hit.ParentLayer == null)
         return false;
 
@@ -662,7 +664,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public static bool EhAxisLabelMinorStyleEdit(IHitTestObject hit)
     {
-      AxisLabelStyle style = hit.HittedObject as AxisLabelStyle;
+      var style = hit.HittedObject as AxisLabelStyle;
       if (style == null || hit.ParentLayer == null)
         return false;
 

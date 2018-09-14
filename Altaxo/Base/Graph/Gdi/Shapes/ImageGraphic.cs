@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ImageGraphic s = (ImageGraphic)o;
+        var s = (ImageGraphic)o;
         info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
 
         s._isSizeCalculationBasedOnSourceSize = false;
@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ImageGraphic s = (ImageGraphic)o;
+        var s = (ImageGraphic)o;
         info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
 
         s._isSizeCalculationBasedOnSourceSize = info.GetBoolean("SizeBasedOnSourceSize");
@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ImageGraphic s = (ImageGraphic)obj;
+        var s = (ImageGraphic)obj;
         info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
 
         info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ImageGraphic s = (ImageGraphic)o;
+        var s = (ImageGraphic)o;
         info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
 
         s._isSizeCalculationBasedOnSourceSize = info.GetBoolean("SizeBasedOnSourceSize");
@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var from = obj as ImageGraphic;
         if (from != null)
         {
-          this._isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
+          _isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
         }
       }
       return isCopied;

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Gui.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {

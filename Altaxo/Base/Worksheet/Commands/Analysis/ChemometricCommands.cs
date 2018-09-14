@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Collections;
@@ -37,7 +38,6 @@ using Altaxo.Gui;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
-using System;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -116,7 +116,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       var firstMat = new MatrixMath.TopSpineJaggedArrayMatrix<double>(rowsfirsthalf, halfselect);
       for (int i = 0; i < halfselect; i++)
       {
-        Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i]];
+        var col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i]];
         for (int j = 0; j < rowsfirsthalf; j++)
           firstMat[j, i] = col[j];
       }
@@ -124,7 +124,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       var secondMat = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(halfselect, rowssecondhalf);
       for (int i = 0; i < halfselect; i++)
       {
-        Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i + halfselect]];
+        var col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i + halfselect]];
         for (int j = 0; j < rowssecondhalf; j++)
           secondMat[i, j] = col[j];
       }
@@ -134,13 +134,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
       MatrixMath.Multiply(firstMat, secondMat, resultMat);
 
       // and store the result in a new worksheet
-      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("ResultMatrix of " + srctable.Name);
+      var table = new Altaxo.Data.DataTable("ResultMatrix of " + srctable.Name);
       using (var suspendToken = table.SuspendGetToken())
       {
         // first store the factors
         for (int i = 0; i < resultMat.ColumnCount; i++)
         {
-          Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+          var col = new Altaxo.Data.DoubleColumn();
           for (int j = 0; j < resultMat.RowCount; j++)
             col[j] = resultMat[j, i];
 
@@ -163,9 +163,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PCAOnRows(IWorksheetController ctrl)
     {
       int maxFactors = 3;
-      IntegerValueInputController ivictrl = new IntegerValueInputController(maxFactors, "Please enter the maximum number of factors to calculate:");
-
-      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      var ivictrl = new IntegerValueInputController(maxFactors, "Please enter the maximum number of factors to calculate:")
+      {
+        Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator()
+      };
       if (Current.Gui.ShowDialog(ivictrl, "Set maximum number of factors", false))
       {
         string err = PrincipalComponentAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, true, ivictrl.EnteredContents);
@@ -177,9 +178,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PCAOnColumns(IWorksheetController ctrl)
     {
       int maxFactors = 3;
-      IntegerValueInputController ivictrl = new IntegerValueInputController(maxFactors, "Please enter the maximum number of factors to calculate:");
-
-      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      var ivictrl = new IntegerValueInputController(maxFactors, "Please enter the maximum number of factors to calculate:")
+      {
+        Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator()
+      };
       if (Current.Gui.ShowDialog(ivictrl, "Set maximum number of factors", false))
       {
         string err = PrincipalComponentAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, false, ivictrl.EnteredContents);
@@ -251,7 +253,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         for (int i = 0; i < prenumcols; i++)
         {
           int colidx = bUseSelectedColumns ? selectedColumns[i] : i;
-          Altaxo.Data.INumericColumn col = srctable[colidx] as Altaxo.Data.INumericColumn;
+          var col = srctable[colidx] as Altaxo.Data.INumericColumn;
           if (null != col)
           {
             for (int j = 0; j < numrows; j++)
@@ -270,7 +272,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         for (int i = 0; i < prenumcols; i++)
         {
           int colidx = bUseSelectedColumns ? selectedColumns[i] : i;
-          Altaxo.Data.INumericColumn col = srctable[colidx] as Altaxo.Data.INumericColumn;
+          var col = srctable[colidx] as Altaxo.Data.INumericColumn;
           if (null != col)
           {
             for (int j = 0; j < numrows; j++)
@@ -295,7 +297,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       // now we have to create a new table where to place the calculated factors and loads
       // we will do that in a vertical oriented manner, i.e. even if the loads are
       // here in horizontal vectors: in our table they are stored in (vertical) columns
-      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PCA of " + srctable.Name);
+      var table = new Altaxo.Data.DataTable("PCA of " + srctable.Name);
 
       // Fill the Table
       using (var suspendToken = table.SuspendGetToken())
@@ -305,7 +307,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
           double meanScore = MatrixMath.LengthOf(meanX);
           MatrixMath.NormalizeRows(meanX);
 
-          Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+          var col = new Altaxo.Data.DoubleColumn();
           for (int i = 0; i < factors.RowCount; i++)
             col[i] = meanScore;
           table.DataColumns.Add(col, "MeanFactor", Altaxo.Data.ColumnKind.V, 0);
@@ -314,7 +316,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         // first store the factors
         for (int i = 0; i < factors.ColumnCount; i++)
         {
-          Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+          var col = new Altaxo.Data.DoubleColumn();
           for (int j = 0; j < factors.RowCount; j++)
             col[j] = factors[j, i];
 
@@ -323,7 +325,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
         // now store the mean of the matrix
         {
-          Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+          var col = new Altaxo.Data.DoubleColumn();
 
           for (int j = 0; j < meanX.ColumnCount; j++)
             col[j] = meanX[0, j];
@@ -333,7 +335,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         // now store the loads - careful - they are horizontal in the matrix
         for (int i = 0; i < loads.RowCount; i++)
         {
-          Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+          var col = new Altaxo.Data.DoubleColumn();
 
           for (int j = 0; j < loads.ColumnCount; j++)
             col[j] = loads[i, j];
@@ -343,7 +345,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
         // now store the residual variances, they are vertical in the vector
         {
-          Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+          var col = new Altaxo.Data.DoubleColumn();
 
           for (int i = 0; i < residualVariances.RowCount; i++)
             col[i] = residualVariances[i, 0];
@@ -366,9 +368,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void PLSOnRows(IWorksheetController ctrl)
     {
-      MultivariateAnalysisOptions options;
-      SpectralPreprocessingOptions preprocessOptions;
-      if (!QuestPLSAnalysisOptions(out options, out preprocessOptions))
+      if (!QuestPLSAnalysisOptions(out var options, out var preprocessOptions))
         return;
 
       WorksheetAnalysis analysis = new PLS2WorksheetAnalysis();
@@ -380,12 +380,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void PLSOnColumns(IWorksheetController ctrl)
     {
-      MultivariateAnalysisOptions options;
-      SpectralPreprocessingOptions preprocessOptions;
-      if (!QuestPLSAnalysisOptions(out options, out preprocessOptions))
+      if (!QuestPLSAnalysisOptions(out var options, out var preprocessOptions))
         return;
 
-      WorksheetAnalysis analysis = (WorksheetAnalysis)System.Activator.CreateInstance(options.AnalysisMethod);
+      var analysis = (WorksheetAnalysis)System.Activator.CreateInstance(options.AnalysisMethod);
 
       string err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, false, options, preprocessOptions);
       if (null != err)
@@ -420,8 +418,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
     public static void PredictValues(IWorksheetController ctrl, bool spectrumIsRow)
     {
-      string modelName, destName;
-      if (false == QuestCalibrationModelAndDestinationTable(out modelName, out destName) || null == modelName)
+      if (false == QuestCalibrationModelAndDestinationTable(out var modelName, out var destName) || null == modelName)
         return; // Cancelled by user
 
       Altaxo.Data.DataTable modelTable = Current.Project.DataTableCollection[modelName];
@@ -432,7 +429,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       int numberOfFactors = 0;
 
-      MultivariateContentMemento memento = modelTable.GetTableProperty("Content") as MultivariateContentMemento;
+      var memento = modelTable.GetTableProperty("Content") as MultivariateContentMemento;
 
       if (memento != null)
         numberOfFactors = memento.PreferredNumberOfFactors;
@@ -469,19 +466,21 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void ExportPLSCalibration(Altaxo.Data.DataTable table)
     {
       // quest the number of factors to export
-      IntegerValueInputController ivictrl = new IntegerValueInputController(1, "Please choose number of factors to export (>0):");
-      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      var ivictrl = new IntegerValueInputController(1, "Please choose number of factors to export (>0):")
+      {
+        Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator()
+      };
       if (!Current.Gui.ShowDialog(ivictrl, "Number of factors", false))
         return;
 
       // quest the filename
-      SaveFileOptions options = new SaveFileOptions();
+      var options = new SaveFileOptions();
       options.AddFilter("*.xml", "Xml files (*.xml)");
       options.FilterIndex = 0;
       if (!Current.Gui.ShowSaveFileDialog(options))
         return;
 
-      PredictionModelExporter exporter = new PredictionModelExporter(table, ivictrl.EnteredContents);
+      var exporter = new PredictionModelExporter(table, ivictrl.EnteredContents);
       exporter.Export(options.FileName);
     }
 
@@ -491,7 +490,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static string[] GetAvailablePLSCalibrationTables()
     {
-      System.Collections.ArrayList result = new System.Collections.ArrayList();
+      var result = new System.Collections.ArrayList();
       foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
       {
         if (table.GetTableProperty("Content") is MultivariateContentMemento)
@@ -507,7 +506,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static WorksheetAnalysis GetAnalysis(DataTable table)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
 
       if (plsMemo == null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
@@ -523,18 +522,20 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <returns>True if the user has made his choice, false if the user pressed the Cancel button.</returns>
     public static bool QuestPLSAnalysisOptions(out MultivariateAnalysisOptions options, out SpectralPreprocessingOptions preprocessOptions)
     {
-      options = new MultivariateAnalysisOptions();
-      options.MaxNumberOfFactors = 20;
-      options.CrossPRESSCalculation = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements;
+      options = new MultivariateAnalysisOptions
+      {
+        MaxNumberOfFactors = 20,
+        CrossPRESSCalculation = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements
+      };
 
-      PLSStartAnalysisController ctrlAA = new PLSStartAnalysisController(options);
+      var ctrlAA = new PLSStartAnalysisController(options);
       Current.Gui.FindAndAttachControlTo(ctrlAA);
 
       preprocessOptions = new SpectralPreprocessingOptions();
-      SpectralPreprocessingController ctrlBB = new SpectralPreprocessingController(preprocessOptions);
+      var ctrlBB = new SpectralPreprocessingController(preprocessOptions);
       Current.Gui.FindAndAttachControlTo(ctrlBB);
 
-      TabbedElementController tabController = new TabbedElementController();
+      var tabController = new TabbedElementController();
       tabController.AddTab("Factors", ctrlAA, ctrlAA.ViewObject);
       tabController.AddTab("Preprocessing", ctrlBB, ctrlBB.ViewObject);
       if (Current.Gui.ShowDialog(tabController, "Enter analysis parameters", false))
@@ -553,7 +554,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <returns>True if OK, false if the users pressed Cancel.</returns>
     public static bool QuestCalibrationModelAndDestinationTable(out string modelTableName, out string destinationTableName)
     {
-      PLSPredictValueController ctrl = new PLSPredictValueController();
+      var ctrl = new PLSPredictValueController();
 
       if (Current.Gui.ShowDialog(ctrl, "Select model and calibration table"))
       {
@@ -582,11 +583,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
       var context = layer.GetPropertyContext();
 
       var groupNumber = table.DataColumns.GetColumnGroup(ycol);
-      XYColumnPlotData pa = new XYColumnPlotData(table, groupNumber, xcol, ycol);
+      var pa = new XYColumnPlotData(table, groupNumber, xcol, ycol);
 
-      G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, layer.GetPropertyContext());
-      LabelPlotStyle labelStyle = new LabelPlotStyle(labelcol, context);
-      labelStyle.BackgroundStyle = new FilledRectangle(NamedColors.LightCyan);
+      var ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, layer.GetPropertyContext());
+      var labelStyle = new LabelPlotStyle(labelcol, context)
+      {
+        BackgroundStyle = new FilledRectangle(NamedColors.LightCyan)
+      };
       ps.Add(labelStyle);
 
       layer.PlotItems.Add(new XYColumnPlotItem(pa, ps));
@@ -646,8 +649,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table of PLS output data.</param>
     public static void PlotPreprocessedSpectra(Altaxo.Data.DataTable table)
     {
-      DataTable desttable = new DataTable();
-      desttable.Name = table.Name + ".PS";
+      var desttable = new DataTable
+      {
+        Name = table.Name + ".PS"
+      };
       GetAnalysis(table).CalculatePreprocessedSpectra(table, desttable);
       Current.Project.DataTableCollection.Add(desttable);
 
@@ -663,7 +668,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table of PLS output data.</param>
     public static void PlotPredictionScores(Altaxo.Data.DataTable table)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo == null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
@@ -671,7 +676,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       GetAnalysis(table).CalculateAndStorePredictionScores(table, plsMemo.PreferredNumberOfFactors);
 
-      AscendingIntegerCollection sel = new AscendingIntegerCollection();
+      var sel = new AscendingIntegerCollection();
 
       for (int i = 0; i < plsMemo.NumberOfConcentrationData; i++)
       {
@@ -782,7 +787,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table which contains the PLS model.</param>
     public static void QuestPreferredNumberOfFactors(Altaxo.Data.DataTable table)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo == null)
         return;
 
@@ -792,9 +797,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void QuestPreferredNumberOfFactors(MultivariateContentMemento plsMemo)
     {
       // quest the number of factors to export
-      IntegerValueInputController ivictrl = new IntegerValueInputController(1, "Please choose preferred number of factors(>0):");
-
-      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      var ivictrl = new IntegerValueInputController(1, "Please choose preferred number of factors(>0):")
+      {
+        Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator()
+      };
       if (!Current.Gui.ShowDialog(ivictrl, "Number of factors", false))
         return;
 
@@ -807,7 +813,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotYResiduals(Altaxo.Data.DataTable table)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo == null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
@@ -827,7 +833,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotYCrossResiduals(Altaxo.Data.DataTable table)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo == null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
@@ -847,7 +853,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotPredictedVersusActualY(Altaxo.Data.DataTable table)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo == null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
@@ -877,7 +883,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="allowGuiForMessages">If <see langword="true"/> and an error occurs, an error message box is presented to the user.</param>
     public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, bool allowGuiForMessages)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo == null)
       {
         string msg = string.Format("The table <<{0}>> does not seem to contain multivariate analysis data (content memento is missing)", table.Name);
@@ -919,7 +925,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotXResiduals(Altaxo.Data.DataTable table)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo == null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
@@ -939,7 +945,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotXCrossResiduals(Altaxo.Data.DataTable table)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo == null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)
@@ -964,8 +970,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
       var groupNumber = table.DataColumns.GetColumnGroup(ycol);
 
-      XYColumnPlotData pa = new XYColumnPlotData(table, groupNumber, xcol, ycol);
-      G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, layer.GetPropertyContext());
+      var pa = new XYColumnPlotData(table, groupNumber, xcol, ycol);
+      var ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, layer.GetPropertyContext());
       layer.PlotItems.Add(new XYColumnPlotItem(pa, ps));
 
       layer.DefaultXAxisTitleString = "Number of factors";
@@ -994,8 +1000,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
       var groupNumber = table.DataColumns.GetColumnGroup(ycol);
 
-      XYColumnPlotData pa = new XYColumnPlotData(table, groupNumber, xcol, ycol);
-      G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, layer.GetPropertyContext());
+      var pa = new XYColumnPlotData(table, groupNumber, xcol, ycol);
+      var ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, layer.GetPropertyContext());
       layer.PlotItems.Add(new XYColumnPlotItem(pa, ps));
 
       layer.DefaultXAxisTitleString = "Number of factors";
@@ -1053,7 +1059,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotXLeverage(Altaxo.Data.DataTable table)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if (plsMemo == null)
         return;
       if (plsMemo.PreferredNumberOfFactors <= 0)

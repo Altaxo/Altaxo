@@ -61,10 +61,10 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
       endPoint = pen.Width == 0 ? 1 : size / pen.Width;
 
-      GraphicsPath hPath = new GraphicsPath();
+      var hPath = new GraphicsPath();
       // Create the outline for our custom end cap.
       hPath.AddLine(new PointF(-endPoint / 2, 0), new PointF(endPoint / 2, 0));
-      CustomLineCap clone = new CustomLineCap(null, hPath); // we set the stroke path only
+      var clone = new CustomLineCap(null, hPath); // we set the stroke path only
       clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
       return clone;
     }

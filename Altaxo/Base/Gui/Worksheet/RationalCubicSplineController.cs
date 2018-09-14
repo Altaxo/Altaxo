@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Gui.Common;
-using System;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Worksheet
     {
       if (base.Apply(disposeController))
       {
-        this._spline.Smoothing = base._value1Double;
+        _spline.Smoothing = base._value1Double;
         return true;
       }
       else

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph
 {
@@ -666,7 +666,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>Searches for common substrings in the selected table names. The character entity here is not a character from a string, but a name part, as created by <see cref="SplitNameIntoParts"/>.</summary>
     private void UpdateListOfCommonSubstringsSubfolderWise()
     {
-      List<string[]> words = new List<string[]>();
+      var words = new List<string[]>();
 
       foreach (var tableName in _listOfSelectedTableNames)
       {
@@ -793,9 +793,9 @@ namespace Altaxo.Gui.Graph
       {
         if (null != _view)
         {
-          _view.ChooseTableForSelectedItems -= this.EhChooseTableForSelectedItems;
-          _view.ChooseFolderForSelectedItems -= this.EhChooseFolderForSelectedItems;
-          _view.TableSelectionChanged -= this.EhTableSelectionChanged;
+          _view.ChooseTableForSelectedItems -= EhChooseTableForSelectedItems;
+          _view.ChooseFolderForSelectedItems -= EhChooseFolderForSelectedItems;
+          _view.TableSelectionChanged -= EhTableSelectionChanged;
           _view.ListOfCommonSubstringsSelectionChanged -= EhListOfCommonSubstringsSelectionChanged;
           _view.ListOfSubstringReplacementCandidatesSelectionChanged -= EhListOfSubstringReplacementCandidatesSelectionChanged;
           _view.SearchCommonSubstringsCharacterWiseChanged -= EhSearchCommonSubstringsCharacterWiseChanged;
@@ -810,9 +810,9 @@ namespace Altaxo.Gui.Graph
         {
           Initialize(false);
 
-          _view.ChooseTableForSelectedItems += this.EhChooseTableForSelectedItems;
-          _view.ChooseFolderForSelectedItems += this.EhChooseFolderForSelectedItems;
-          _view.TableSelectionChanged += this.EhTableSelectionChanged;
+          _view.ChooseTableForSelectedItems += EhChooseTableForSelectedItems;
+          _view.ChooseFolderForSelectedItems += EhChooseFolderForSelectedItems;
+          _view.TableSelectionChanged += EhTableSelectionChanged;
           _view.ListOfCommonSubstringsSelectionChanged += EhListOfCommonSubstringsSelectionChanged;
           _view.ListOfSubstringReplacementCandidatesSelectionChanged += EhListOfSubstringReplacementCandidatesSelectionChanged;
           _view.SearchCommonSubstringsCharacterWiseChanged += EhSearchCommonSubstringsCharacterWiseChanged;

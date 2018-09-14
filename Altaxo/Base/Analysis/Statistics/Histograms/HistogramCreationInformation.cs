@@ -137,10 +137,10 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <inheritdoc />
     public object Clone()
     {
-      var result = (HistogramCreationInformation)this.MemberwiseClone();
+      var result = (HistogramCreationInformation)MemberwiseClone();
       result._warnings = new System.Collections.ObjectModel.ObservableCollection<string>(_warnings);
       result._errors = new System.Collections.ObjectModel.ObservableCollection<string>(_errors);
-      result._creationOptions = (HistogramCreationOptions)this.CreationOptions.Clone();
+      result._creationOptions = (HistogramCreationOptions)CreationOptions.Clone();
       return result;
     }
   }

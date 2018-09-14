@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {
@@ -58,8 +58,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
       if (info.CurrentElementName == "Set")
       {
         var originalSet = (ScatterSymbolList)info.GetValue("Set", parent);
-        ScatterSymbolList registeredSet;
-        ScatterSymbolListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out registeredSet);
+        ScatterSymbolListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out var registeredSet);
         return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, originalSet.Name); // Note: here we use the name of the original set, not of the registered set. Because the original name is translated during registering into the registered name
       }
       else if (info.CurrentElementName == "SetName")
@@ -86,17 +85,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 
     public override int GetHashCode()
     {
-      return this.GetType().GetHashCode();
+      return GetType().GetHashCode();
     }
 
     public override bool Equals(object obj)
     {
-      return this.GetType() == obj?.GetType();
+      return GetType() == obj?.GetType();
     }
 
     public object Clone()
     {
-      return this.MemberwiseClone();
+      return MemberwiseClone();
     }
   }
 }

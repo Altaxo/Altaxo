@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services.ScriptCompilation;
 using System;
 using System.Collections.Immutable;
+using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
 {
@@ -53,7 +53,7 @@ namespace Altaxo.Scripting
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AbstractScript s = (AbstractScript)obj;
+        var s = (AbstractScript)obj;
 
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }

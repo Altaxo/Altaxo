@@ -22,23 +22,23 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
-using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Data;
+using Altaxo.Graph.Plot.Data;
+using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+  using System.Drawing;
+  using System.Drawing.Drawing2D;
   using Altaxo.Graph;
   using Altaxo.Main;
   using Data;
   using Drawing;
   using Geometry;
   using Groups;
-  using System.Drawing;
-  using System.Drawing.Drawing2D;
 
   public class VectorCartesicPlotStyle
     :
@@ -147,7 +147,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        VectorCartesicPlotStyle s = (VectorCartesicPlotStyle)obj;
+        var s = (VectorCartesicPlotStyle)obj;
 
         info.AddEnum("MeaningOfValues", s._meaningOfValues);
         info.AddValue("ColumnX", s._columnX);
@@ -264,36 +264,36 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var from = obj as VectorCartesicPlotStyle;
       if (null != from)
       {
-        this._meaningOfValues = from._meaningOfValues;
-        this._independentSkipFrequency = from._independentSkipFrequency;
-        this._skipFrequency = from._skipFrequency;
-        this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-        this._useManualVectorLength = from._useManualVectorLength;
-        this._vectorLengthOffset = from._vectorLengthOffset;
-        this._vectorLengthFactor = from._vectorLengthFactor;
+        _meaningOfValues = from._meaningOfValues;
+        _independentSkipFrequency = from._independentSkipFrequency;
+        _skipFrequency = from._skipFrequency;
+        _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+        _useManualVectorLength = from._useManualVectorLength;
+        _vectorLengthOffset = from._vectorLengthOffset;
+        _vectorLengthFactor = from._vectorLengthFactor;
 
-        this._independentSymbolSize = from._independentSymbolSize;
-        this._symbolSize = from._symbolSize;
+        _independentSymbolSize = from._independentSymbolSize;
+        _symbolSize = from._symbolSize;
 
-        this._strokePen = from._strokePen;
-        this._independentColor = from._independentColor;
+        _strokePen = from._strokePen;
+        _independentColor = from._independentColor;
 
         _lineWidth1Offset = from._lineWidth1Offset;
         _lineWidth1Factor = from._lineWidth1Factor;
 
-        this._endCapSizeFactor = from._endCapSizeFactor;
-        this._endCapSizeOffset = from._endCapSizeOffset;
+        _endCapSizeFactor = from._endCapSizeFactor;
+        _endCapSizeOffset = from._endCapSizeOffset;
 
-        this._useSymbolGap = from._useSymbolGap;
-        this._symbolGapFactor = from._symbolGapFactor;
-        this._symbolGapOffset = from._symbolGapOffset;
+        _useSymbolGap = from._useSymbolGap;
+        _symbolGapFactor = from._symbolGapFactor;
+        _symbolGapOffset = from._symbolGapOffset;
 
-        this._independentSkipFrequency = from._independentSkipFrequency;
-        this._skipFrequency = from._skipFrequency;
-        this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+        _independentSkipFrequency = from._independentSkipFrequency;
+        _skipFrequency = from._skipFrequency;
+        _independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
-        this._cachedLogicalShiftX = from._cachedLogicalShiftX;
-        this._cachedLogicalShiftY = from._cachedLogicalShiftY;
+        _cachedLogicalShiftX = from._cachedLogicalShiftX;
+        _cachedLogicalShiftY = from._cachedLogicalShiftY;
 
         if (copyWithDataReferences)
         {
@@ -744,7 +744,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
-        { return this._strokePen.Color; });
+        { return _strokePen.Color; });
 
       if (!_independentSkipFrequency)
         SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
@@ -760,7 +760,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       // IgnoreMissingDataPoints is the same for all sub plot styles
-      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+      IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => _ignoreMissingDataPoints = ignoreMissingDataPoints);
 
       _cachedColorForIndexFunction = null;
       _cachedSymbolSizeForIndexFunction = null;
@@ -777,14 +777,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (!_independentSkipFrequency)
         SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c)
-        { this.SkipFrequency = c; });
+        { SkipFrequency = c; });
 
       // symbol size
       if (!_independentSymbolSize)
       {
-        this._symbolSize = 0;
+        _symbolSize = 0;
         SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size)
-        { this._symbolSize = size; });
+        { _symbolSize = size; });
 
         // but if there is an symbol size evaluation function, then use this with higher priority.
         _cachedSymbolSizeForIndexFunction = null;
@@ -822,19 +822,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       PlotRangeList rangeList = pdata.RangeList;
 
-      if (this._ignoreMissingDataPoints)
+      if (_ignoreMissingDataPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
         // as one range, i.e. continuously
         // for this, we create the totalRange, which contains all ranges
         var totalRange = new PlotRangeCompound(rangeList);
-        this.PaintOneRange(g, layer, totalRange, pdata);
+        PaintOneRange(g, layer, totalRange, pdata);
       }
       else // we not ignore missing points, so plot all ranges separately
       {
         for (int i = 0; i < rangeList.Count; i++)
         {
-          this.PaintOneRange(g, layer, rangeList[i], pdata);
+          PaintOneRange(g, layer, rangeList[i], pdata);
         }
       }
     }
@@ -856,7 +856,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       var strokePen = _strokePen.Clone();
 
-      using (GraphicsPath isoLine = new GraphicsPath())
+      using (var isoLine = new GraphicsPath())
       {
         int lower = range.LowerBound;
         int upper = range.UpperBound;

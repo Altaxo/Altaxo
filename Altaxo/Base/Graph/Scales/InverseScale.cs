@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.Scales.Rescaling;
 using System;
 using System.Collections.Generic;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.Scales.Rescaling;
 
 namespace Altaxo.Graph.Scales
 {
@@ -82,8 +82,8 @@ namespace Altaxo.Graph.Scales
       {
         var s = null != o ? (InverseScale)o : new InverseScale(info);
 
-        s._cachedAxisOrgInv = (double)info.GetDouble("InvOrg");
-        s._cachedAxisEndInv = (double)info.GetDouble("InvEnd");
+        s._cachedAxisOrgInv = info.GetDouble("InvOrg");
+        s._cachedAxisEndInv = info.GetDouble("InvEnd");
         s._cachedAxisSpanInv = s._cachedAxisEndInv - s._cachedAxisOrgInv;
         s._cachedOneByAxisSpanInv = 1 / s._cachedAxisSpanInv;
 
@@ -93,8 +93,10 @@ namespace Altaxo.Graph.Scales
         s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
         s._dataBounds.ParentObject = s; // restore the event chain
 
-        s._tickSpacing = new Ticks.InverseTickSpacing();
-        s._tickSpacing.ParentObject = s;
+        s._tickSpacing = new Ticks.InverseTickSpacing
+        {
+          ParentObject = s
+        };
 
         s.EhChildChanged(s._dataBounds, EventArgs.Empty); // for this old version, rescaling is not fully serialized, thus we have to simulate a DataBoundChanged event to get _rescaling updated, and finally _tickSpacing updated
 
@@ -122,8 +124,8 @@ namespace Altaxo.Graph.Scales
       {
         var s = null != o ? (InverseScale)o : new InverseScale(info);
 
-        s._cachedAxisOrgInv = (double)info.GetDouble("InvOrg");
-        s._cachedAxisEndInv = (double)info.GetDouble("InvEnd");
+        s._cachedAxisOrgInv = info.GetDouble("InvOrg");
+        s._cachedAxisEndInv = info.GetDouble("InvEnd");
         s._cachedAxisSpanInv = s._cachedAxisEndInv - s._cachedAxisOrgInv;
         s._cachedOneByAxisSpanInv = 1 / s._cachedAxisSpanInv;
 
@@ -182,10 +184,10 @@ namespace Altaxo.Graph.Scales
 
       using (var suspendToken = SuspendGetToken())
       {
-        this._cachedAxisEndInv = from._cachedAxisEndInv;
-        this._cachedAxisOrgInv = from._cachedAxisOrgInv;
-        this._cachedAxisSpanInv = from._cachedAxisSpanInv;
-        this._cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
+        _cachedAxisEndInv = from._cachedAxisEndInv;
+        _cachedAxisOrgInv = from._cachedAxisOrgInv;
+        _cachedAxisSpanInv = from._cachedAxisSpanInv;
+        _cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
 
         ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
         ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new InverseScaleRescaleConditions());

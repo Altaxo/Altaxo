@@ -22,6 +22,12 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Altaxo.Text.Renderers.Maml;
 using Altaxo.Text.Renderers.Maml.Extensions;
 using Altaxo.Text.Renderers.Maml.Inlines;
@@ -29,12 +35,6 @@ using Markdig.Helpers;
 using Markdig.Renderers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Text.Renderers
 {
@@ -341,7 +341,7 @@ namespace Altaxo.Text.Renderers
       // afterwards: change the shfbproj to include i) all images and ii) all aml files that where created
       if (Path.GetExtension(ProjectOrContentFileName).ToLowerInvariant() == ".shfbproj")
       {
-        UpdateShfbproj(ProjectOrContentFileName, GetContentLayoutFileName(), this.AmlFileNames, this._imageFileNames);
+        UpdateShfbproj(ProjectOrContentFileName, GetContentLayoutFileName(), AmlFileNames, _imageFileNames);
       }
 
       return result;

@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
       if (endPoint < 0)
         endPoint = 1e-3f;
 
-      GraphicsPath hPath = new GraphicsPath();
+      var hPath = new GraphicsPath();
       // Create the outline for our custom end cap.
       hPath.AddPolygon(new PointF[]{
         new PointF(endPoint,-endPoint),
@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
         new PointF(-endPoint, endPoint),
         new PointF(-endPoint,-endPoint),
       });
-      CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint); // we set the stroke path only
+      var clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint); // we set the stroke path only
       clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
       return clone;
     }
@@ -122,7 +122,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
       if (scale <= 0)
         scale = 1e-3f;
 
-      GraphicsPath hPath = new GraphicsPath();
+      var hPath = new GraphicsPath();
       // Create the outline for our custom end cap.
       hPath.AddPolygon(new PointF[]{
         new PointF(1,-1),
@@ -130,8 +130,10 @@ namespace Altaxo.Graph.Gdi.LineCaps
         new PointF(-1, 1),
         new PointF(-1,-1),
       });
-      CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 0); // we set the stroke path only
-      clone.WidthScale = scale;
+      var clone = new CustomLineCap(hPath, null, LineCap.Flat, 0)
+      {
+        WidthScale = scale
+      }; // we set the stroke path only
       return clone;
     }
 

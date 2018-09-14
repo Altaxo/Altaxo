@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
+using Altaxo.Collections;
+using Altaxo.Data;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -69,7 +69,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         _columns = new Altaxo.Data.INumericColumn[selectedColumns.Count];
         for (int i = selectedColumns.Count - 1; i >= 0; i--)
-          _columns[i] = (Altaxo.Data.INumericColumn)collection[selectedColumns[i]];
+          _columns[i] = collection[selectedColumns[i]];
         _rows = selectedRows;
       }
 
@@ -528,7 +528,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < selectedCols.Count; i++)
       {
-        INumericColumn col = (INumericColumn)table[selectedCols[i]];
+        var col = (INumericColumn)table[selectedCols[i]];
         for (int j = 0; j < rowCount; j++)
         {
           if (double.IsNaN(col[j]))
@@ -556,7 +556,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 0; i < selectedCols.Count; i++)
       {
-        INumericColumn col = (INumericColumn)table[selectedCols[i]];
+        var col = table[selectedCols[i]];
         for (int j = 0; j < rowCount; j++)
         {
           if (double.IsNaN(col[j]))
@@ -618,7 +618,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>An collection of ascending integer values. These values are the indizes of valid numeric rows, i.e. the number of elements in the array which have the value of true.</returns>
     public static AscendingIntegerCollection GetCollectionOfValidNumericRows(bool[] array)
     {
-      AscendingIntegerCollection result = new AscendingIntegerCollection();
+      var result = new AscendingIntegerCollection();
       for (int i = 0; i < array.Length; i++)
       {
         if (array[i])

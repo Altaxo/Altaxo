@@ -56,9 +56,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         if (!(obj is TypeArray))
           return false;
 
-        TypeArray from = (TypeArray)obj;
+        var from = (TypeArray)obj;
         for (int i = 0; i < _types.Length; i++)
-          if (this._types[i] != from._types[i])
+          if (_types[i] != from._types[i])
             return false;
 
         return true;
@@ -91,7 +91,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     private static TypeArray GetTypeArray(G3DPlotStyleCollection coll)
     {
-      System.Type[] types = new Type[coll.Count];
+      var types = new Type[coll.Count];
       for (int i = 0; i < types.Length; i++)
         types[i] = coll[i].GetType();
 
@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public static G3DPlotStyleCollection GetTemplate(string name, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      CreateCollectionProcedure proc = (CreateCollectionProcedure)_CreationProcByName[name];
+      var proc = (CreateCollectionProcedure)_CreationProcByName[name];
       if (null != proc)
         return proc(context);
       else
@@ -158,8 +158,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     private static G3DPlotStyleCollection CreateScatterStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
     {
-      var coll = new G3DPlotStyleCollection();
-      coll.Add(new ScatterPlotStyle(context));
+      var coll = new G3DPlotStyleCollection
+      {
+        new ScatterPlotStyle(context)
+      };
       return coll;
     }
 
