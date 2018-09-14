@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -55,7 +55,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 3. delta*AlphaR_delta
       // 4. Isochoric heat capacity (J/mol K)
       // 5. Phasetype (1: liquid, 2: gas)
-      _testData_001_999 = new(double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
+      _testData_001_999 = new (double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
       {
       ( 150, 12412.9674059527, 1000000.00059268, -0.935405067162578, 83.8510655281952, 1 ),
       ( 150, 12482.1130322016, 10000000.0000076, -0.357628957963927, 84.3364406505992, 1 ),
@@ -104,7 +104,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 3. delta*AlphaR_delta
       // 4. Isochoric heat capacity (J/mol K)
       // 5. Phasetype (1: liquid, 2: gas)
-      _testData_500_500 = new(double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
+      _testData_500_500 = new (double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
       {
       ( 200, 0.601851686404332, 999.999998910856, -0.000815133965886701, 57.9421834450056, 2 ),
       ( 200, 12693.0806556876, 1000000.00002211, -0.952622920093343, 73.0658175590535, 1 ),
@@ -148,7 +148,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 3. delta*AlphaR_delta
       // 4. Isochoric heat capacity (J/mol K)
       // 5. Phasetype (1: liquid, 2: gas)
-      _testData_999_001 = new(double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
+      _testData_999_001 = new (double temperature, double moleDensity, double pressure, double deltaPhiR_delta, double cv, int phase)[]
       {
       ( 150, 15145.0013359926, 1000000.00085494, -0.947057462831939, 59.0433837770978, 1 ),
       ( 150, 15247.093840822, 10000000.0000002, -0.474119590327994, 59.4321087756025, 1 ),

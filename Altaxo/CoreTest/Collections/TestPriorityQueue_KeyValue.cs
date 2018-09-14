@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Altaxo.Collections;
+using NUnit.Framework;
 
 namespace AltaxoTest.Collections
 {
@@ -67,10 +67,9 @@ namespace AltaxoTest.Collections
       var rnd = new System.Random();
 
       var queue = new ConcurrentTokenizedPriorityQueue<int, int, int>(1, x => x + 1);
-      int token;
 
       for (int i = 0; i < numberOfElements; ++i)
-        queue.Enqueue(100 + rnd.Next(numberOfElements), 23, out token);
+        queue.Enqueue(100 + rnd.Next(numberOfElements), 23, out var token);
 
       Assert.AreEqual(numberOfElements, queue.Count);
 
@@ -104,25 +103,24 @@ namespace AltaxoTest.Collections
 				// Enqueue
  				() =>
         {
-          int item, token;
-          while (sourceItems.TryDequeue(out item))
+         int item, token;
+         while (sourceItems.TryDequeue(out item))
             queueToTest.Enqueue(item, item + 13, out token);
         },
 				// Enqueue
 				() =>
         {
-          int item, token;
-          while (sourceItems.TryDequeue(out item))
+           int item, token;
+         while (sourceItems.TryDequeue(out item))
             queueToTest.Enqueue(item, item + 13, out token);
         },
 				// Dequeue
 				()=>
           {
-            int key, value, toke;
             int counter = 0;
             while(counter<100)
             {
-            while(queueToTest.TryDequeue(out key, out value, out toke))
+            while(queueToTest.TryDequeue(out var key, out var value, out var toke))
             {
               Assert.AreEqual(key + 13, value);
               destinationItems.Add(key);
@@ -135,11 +133,10 @@ namespace AltaxoTest.Collections
 				// Dequeue
 					()=>
           {
-            int key, value, toke;
             int counter = 0;
             while(counter<100)
             {
-            while(queueToTest.TryDequeue(out key, out value, out toke))
+            while(queueToTest.TryDequeue(out var key, out var value, out var toke))
             {
               Assert.AreEqual(key + 13, value);
               destinationItems.Add(key);

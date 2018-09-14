@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -82,7 +82,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 6. Isochoric heat capacity (J/(mol K))
       // 7. Isobaric heat capacity (J/(mol K))
       // 8. Speed of sound (m/s)
-      _testDataEquationOfState = new(double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
+      _testDataEquationOfState = new (double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
       {
       ( 240, 0.501419152581175, 1000.00000000004, 35861.156566969, 37855.4960229956, 210.116171831772, 71.549703231507, 79.8951477494003, 149.157833411354 ),
       ( 250, 0.481319183821619, 1000.00000000002, 36586.9872955942, 38664.6106973048, 213.418857656479, 73.583821043736, 81.9233417672637, 152.021760679941 ),
@@ -180,7 +180,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 1. Pressure (Pa)
       // 2. Saturated liquid density (mol/m³
       // 3. Saturated vapor density (mol/m³)
-      _testDataSaturatedProperties = new(double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
+      _testDataSaturatedProperties = new (double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
       {
       ( 257.240125, 140078.004706543, 12148.5775162466, 69.7944868340856 ),
       ( 274.48025, 268986.580385921, 11655.3365378823, 130.18772246295 ),

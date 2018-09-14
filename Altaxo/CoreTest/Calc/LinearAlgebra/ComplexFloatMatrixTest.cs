@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -38,7 +38,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorDimensions()
     {
-      ComplexFloatMatrix test = new ComplexFloatMatrix(2, 2);
+      var test = new ComplexFloatMatrix(2, 2);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -52,11 +52,11 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorInitialValues()
     {
-      ComplexFloatMatrix test = new ComplexFloatMatrix(2, 2, new ComplexFloat(1, 1));
+      var test = new ComplexFloatMatrix(2, 2, new ComplexFloat(1, 1));
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 2);
-      ComplexFloat value = new ComplexFloat(1, 1);
+      var value = new ComplexFloat(1, 1);
       Assert.AreEqual(test[0, 0], value);
       Assert.AreEqual(test[0, 1], value);
       Assert.AreEqual(test[1, 0], value);
@@ -67,13 +67,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorCopy()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(1, 1);
-      a[0, 1] = new ComplexFloat(2, 2);
-      a[1, 0] = new ComplexFloat(3, 3);
-      a[1, 1] = new ComplexFloat(4, 4);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(1, 1),
+        [0, 1] = new ComplexFloat(2, 2),
+        [1, 0] = new ComplexFloat(3, 3),
+        [1, 1] = new ComplexFloat(4, 4)
+      };
 
-      ComplexFloatMatrix b = new ComplexFloatMatrix(a);
+      var b = new ComplexFloatMatrix(a);
 
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
@@ -90,7 +92,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatMatrix b = new ComplexFloatMatrix(a);
+        var b = new ComplexFloatMatrix(a);
       });
     }
 
@@ -98,13 +100,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorCopyComplexFloat()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(1, 1);
-      a[0, 1] = new ComplexFloat(2, 2);
-      a[1, 0] = new ComplexFloat(3, 3);
-      a[1, 1] = new ComplexFloat(4, 4);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(1, 1),
+        [0, 1] = new ComplexFloat(2, 2),
+        [1, 0] = new ComplexFloat(3, 3),
+        [1, 1] = new ComplexFloat(4, 4)
+      };
 
-      ComplexFloatMatrix b = new ComplexFloatMatrix(a);
+      var b = new ComplexFloatMatrix(a);
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(a[0, 0].Real, b[0, 0].Real);
@@ -124,7 +128,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        ComplexFloatMatrix b = new ComplexFloatMatrix(a);
+        var b = new ComplexFloatMatrix(a);
       });
     }
 
@@ -132,13 +136,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorCopyFloat()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      ComplexFloatMatrix b = new ComplexFloatMatrix(a);
+      var b = new ComplexFloatMatrix(a);
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0].Real);
@@ -158,7 +164,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        ComplexFloatMatrix b = new ComplexFloatMatrix(a);
+        var b = new ComplexFloatMatrix(a);
       });
     }
 
@@ -166,13 +172,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorCopyDouble()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      ComplexFloatMatrix b = new ComplexFloatMatrix(a);
+      var b = new ComplexFloatMatrix(a);
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0].Real);
@@ -192,7 +200,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        ComplexFloatMatrix b = new ComplexFloatMatrix(a);
+        var b = new ComplexFloatMatrix(a);
       });
     }
 
@@ -200,14 +208,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorMultDimComplexFloatSquare()
     {
-      ComplexFloat[,] values = new ComplexFloat[2, 2];
+      var values = new ComplexFloat[2, 2];
 
       values[0, 0] = new ComplexFloat(1, 1);
       values[0, 1] = new ComplexFloat(2, 2);
       values[1, 0] = new ComplexFloat(3, 3);
       values[1, 1] = new ComplexFloat(4, 4);
 
-      ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+      var test = new ComplexFloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -221,7 +229,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorMultDimComplexFloatWide()
     {
-      ComplexFloat[,] values = new ComplexFloat[2, 3];
+      var values = new ComplexFloat[2, 3];
 
       values[0, 0] = new ComplexFloat(0, 0);
       values[0, 1] = new ComplexFloat(1, 1);
@@ -230,7 +238,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[1, 1] = new ComplexFloat(4, 4);
       values[1, 2] = new ComplexFloat(5, 5);
 
-      ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+      var test = new ComplexFloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 3);
@@ -246,7 +254,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorMultDimComplexFloatLong()
     {
-      ComplexFloat[,] values = new ComplexFloat[3, 2];
+      var values = new ComplexFloat[3, 2];
 
       values[0, 0] = new ComplexFloat(0, 0);
       values[0, 1] = new ComplexFloat(1, 1);
@@ -255,7 +263,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[2, 0] = new ComplexFloat(5, 5);
       values[2, 1] = new ComplexFloat(6, 6);
 
-      ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+      var test = new ComplexFloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 3);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -274,7 +282,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         float[,] values = null;
-        ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+        var test = new ComplexFloatMatrix(values);
       });
     }
 
@@ -289,7 +297,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[1, 0] = 3;
       values[1, 1] = 4;
 
-      ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+      var test = new ComplexFloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -312,7 +320,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[1, 1] = 4;
       values[1, 2] = 5;
 
-      ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+      var test = new ComplexFloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 3);
@@ -337,7 +345,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[2, 0] = 4;
       values[2, 1] = 5;
 
-      ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+      var test = new ComplexFloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 3);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -356,7 +364,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         float[,] values = null;
-        ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+        var test = new ComplexFloatMatrix(values);
       });
     }
 
@@ -371,7 +379,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[1, 0] = 2;
       values[1, 1] = 3;
 
-      ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+      var test = new ComplexFloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -394,7 +402,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[1, 1] = 4;
       values[1, 2] = 5;
 
-      ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+      var test = new ComplexFloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 3);
@@ -419,7 +427,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[2, 0] = 4;
       values[2, 1] = 5;
 
-      ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+      var test = new ComplexFloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 3);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -438,7 +446,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         float[,] values = null;
-        ComplexFloatMatrix test = new ComplexFloatMatrix(values);
+        var test = new ComplexFloatMatrix(values);
       });
     }
 
@@ -446,11 +454,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictComplexFloatMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(1, 1);
-      a[0, 1] = new ComplexFloat(2, 2);
-      a[1, 0] = new ComplexFloat(3, 3);
-      a[1, 1] = new ComplexFloat(4, 4);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(1, 1),
+        [0, 1] = new ComplexFloat(2, 2),
+        [1, 0] = new ComplexFloat(3, 3),
+        [1, 1] = new ComplexFloat(4, 4)
+      };
 
       ComplexFloatMatrix b = a;
       Assert.AreEqual(a.RowLength, b.RowLength);
@@ -474,13 +484,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictToComplexFloatMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(1, 1);
-      a[0, 1] = new ComplexFloat(2, 2);
-      a[1, 0] = new ComplexFloat(3, 3);
-      a[1, 1] = new ComplexFloat(4, 4);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(1, 1),
+        [0, 1] = new ComplexFloat(2, 2),
+        [1, 0] = new ComplexFloat(3, 3),
+        [1, 1] = new ComplexFloat(4, 4)
+      };
 
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0]);
@@ -494,7 +506,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ImplictToComplexFloatMatrixNull()
     {
       ComplexFloatMatrix a = null;
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -502,11 +514,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictDoubleMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
       ComplexFloatMatrix b = a;
       Assert.AreEqual(a.RowLength, b.RowLength);
@@ -530,13 +544,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictToDoubleMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0].Real);
@@ -550,7 +566,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ImplictToDoubleMatrixMatrixNull()
     {
       FloatMatrix a = null;
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -558,11 +574,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictFloatMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
       ComplexFloatMatrix b = a;
       Assert.AreEqual(a.RowLength, b.RowLength);
@@ -586,13 +604,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictToFloatMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0].Real);
@@ -606,7 +626,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ImplictToFloatMatrixNull()
     {
       FloatMatrix a = null;
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -614,7 +634,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictComplexFloatMultArray()
     {
-      ComplexFloat[,] a = new ComplexFloat[2, 2];
+      var a = new ComplexFloat[2, 2];
       a[0, 0] = new ComplexFloat(1, 1);
       a[0, 1] = new ComplexFloat(2, 2);
       a[1, 0] = new ComplexFloat(3, 3);
@@ -631,13 +651,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictToComplexFloatMultArray()
     {
-      ComplexFloat[,] a = new ComplexFloat[2, 2];
+      var a = new ComplexFloat[2, 2];
       a[0, 0] = new ComplexFloat(1, 1);
       a[0, 1] = new ComplexFloat(2, 2);
       a[1, 0] = new ComplexFloat(3, 3);
       a[1, 1] = new ComplexFloat(4, 4);
 
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.AreEqual(a[0, 0], b[0, 0]);
       Assert.AreEqual(a[0, 1], b[0, 1]);
       Assert.AreEqual(a[1, 0], b[1, 0]);
@@ -649,7 +669,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ImplictToComplexFloatMultArrayNull()
     {
       ComplexFloat[,] a = null;
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -663,7 +683,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       a[1, 0] = 3;
       a[1, 1] = 4;
 
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.AreEqual(a[0, 0], b[0, 0].Real);
       Assert.AreEqual(a[0, 1], b[0, 1].Real);
       Assert.AreEqual(a[1, 0], b[1, 0].Real);
@@ -675,7 +695,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ImplictToDoubleMultArrayNull()
     {
       float[,] a = null;
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -689,7 +709,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       a[1, 0] = 3;
       a[1, 1] = 4;
 
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.AreEqual(a[0, 0], b[0, 0].Real);
       Assert.AreEqual(a[0, 1], b[0, 1].Real);
       Assert.AreEqual(a[1, 0], b[1, 0].Real);
@@ -701,7 +721,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ImplictToFloatMultArrayNull()
     {
       float[,] a = null;
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -709,13 +729,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ExplicitComplexDoubleMatrix()
     {
-      ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new ComplexDoubleMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      ComplexFloatMatrix b = (ComplexFloatMatrix)a;
+      var b = (ComplexFloatMatrix)a;
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(b[0, 0], a[0, 0]);
@@ -729,7 +751,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ExplicitComplexDoubleMatrixNull()
     {
       ComplexDoubleMatrix a = null;
-      ComplexFloatMatrix b = (ComplexFloatMatrix)a;
+      var b = (ComplexFloatMatrix)a;
       Assert.IsTrue(b == null);
     }
 
@@ -737,13 +759,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ExplicitToComplexDoubleMatrix()
     {
-      ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new ComplexDoubleMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(b[0, 0], a[0, 0]);
@@ -757,7 +781,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ExplicitToComplexDoubleMatrixNull()
     {
       DoubleMatrix a = null;
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -765,13 +789,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ExplicitComplexDoubleMultArray()
     {
-      Complex[,] a = new Complex[2, 2];
+      var a = new Complex[2, 2];
       a[0, 0] = 1;
       a[0, 1] = 2;
       a[1, 0] = 3;
       a[1, 1] = 4;
 
-      ComplexFloatMatrix b = (ComplexFloatMatrix)a;
+      var b = (ComplexFloatMatrix)a;
       Assert.AreEqual(2, b.RowLength);
       Assert.AreEqual(2, b.ColumnLength);
       Assert.AreEqual(b[0, 0], a[0, 0]);
@@ -785,7 +809,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ExplicitComplexDoubleMultArrayNull()
     {
       Complex[,] a = null;
-      ComplexFloatMatrix b = (ComplexFloatMatrix)a;
+      var b = (ComplexFloatMatrix)a;
       Assert.IsTrue(b == null);
     }
 
@@ -793,13 +817,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ExplicitToComplexDoubleMultArray()
     {
-      Complex[,] a = new Complex[2, 2];
+      var a = new Complex[2, 2];
       a[0, 0] = 1;
       a[0, 1] = 2;
       a[1, 0] = 3;
       a[1, 1] = 4;
 
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.AreEqual(2, b.RowLength);
       Assert.AreEqual(2, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0]);
@@ -813,7 +837,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ExplicitToComplexDoubleMultArrayNull()
     {
       Complex[,] a = null;
-      ComplexFloatMatrix b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
+      var b = ComplexFloatMatrix.ToComplexFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -822,7 +846,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ExplicitComplexDoubleJaggedArrayNull()
     {
       Complex[,] a = null;
-      ComplexFloatMatrix b = (ComplexFloatMatrix)a;
+      var b = (ComplexFloatMatrix)a;
       Assert.IsTrue(b == null);
     }
 
@@ -830,17 +854,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Equals()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2, new ComplexFloat(4, 4));
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2, 2, new ComplexFloat(4, 4));
-      ComplexFloatMatrix c = new ComplexFloatMatrix(2, 2);
-      c[0, 0] = new ComplexFloat(4, 4);
-      c[0, 1] = new ComplexFloat(4, 4);
-      c[1, 0] = new ComplexFloat(4, 4);
-      c[1, 1] = new ComplexFloat(4, 4);
+      var a = new ComplexFloatMatrix(2, 2, new ComplexFloat(4, 4));
+      var b = new ComplexFloatMatrix(2, 2, new ComplexFloat(4, 4));
+      var c = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(4, 4),
+        [0, 1] = new ComplexFloat(4, 4),
+        [1, 0] = new ComplexFloat(4, 4),
+        [1, 1] = new ComplexFloat(4, 4)
+      };
 
-      ComplexFloatMatrix d = new ComplexFloatMatrix(2, 2, 5);
+      var d = new ComplexFloatMatrix(2, 2, 5);
       ComplexFloatMatrix e = null;
-      FloatMatrix f = new FloatMatrix(2, 2, 4);
+      var f = new FloatMatrix(2, 2, 4);
       Assert.IsTrue(a.Equals(b));
       Assert.IsTrue(b.Equals(a));
       Assert.IsTrue(a.Equals(c));
@@ -857,11 +883,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void TestHashCode()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1, 1);
-      a[0, 1] = new ComplexFloat(2, 2);
-      a[1, 0] = new ComplexFloat(3, 3);
-      a[1, 1] = new ComplexFloat(4, 4);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1, 1),
+        [0, 1] = new ComplexFloat(2, 2),
+        [1, 0] = new ComplexFloat(3, 3),
+        [1, 1] = new ComplexFloat(4, 4)
+      };
 
       int hash = a.GetHashCode();
       Assert.AreEqual(hash, 7);
@@ -871,11 +899,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ToArray()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1, 1);
-      a[0, 1] = new ComplexFloat(2, 2);
-      a[1, 0] = new ComplexFloat(3, 3);
-      a[1, 1] = new ComplexFloat(4, 4);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1, 1),
+        [0, 1] = new ComplexFloat(2, 2),
+        [1, 0] = new ComplexFloat(3, 3),
+        [1, 1] = new ComplexFloat(4, 4)
+      };
 
       ComplexFloat[,] b = a.ToArray();
 
@@ -889,11 +919,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void TransposeSquare()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
       a.Transpose();
       Assert.AreEqual(a[0, 0], new ComplexFloat(1));
       Assert.AreEqual(a[0, 1], new ComplexFloat(3));
@@ -905,13 +937,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void TransposeWide()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
+      var a = new ComplexFloatMatrix(2, 3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6)
+      };
       a.Transpose();
       Assert.AreEqual(a[0, 0], new ComplexFloat(1));
       Assert.AreEqual(a[0, 1], new ComplexFloat(4));
@@ -927,13 +961,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void TransposeLong()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      a[2, 0] = new ComplexFloat(5);
-      a[2, 1] = new ComplexFloat(6);
+      var a = new ComplexFloatMatrix(3, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4),
+        [2, 0] = new ComplexFloat(5),
+        [2, 1] = new ComplexFloat(6)
+      };
       a.Transpose();
       Assert.AreEqual(a[0, 0], new ComplexFloat(1));
       Assert.AreEqual(a[0, 1], new ComplexFloat(3));
@@ -949,11 +985,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetTransposeSquare()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
       ComplexFloatMatrix b = a.GetTranspose();
       Assert.AreEqual(b[0, 0], a[0, 0]);
       Assert.AreEqual(b[0, 1], a[1, 0]);
@@ -965,13 +1003,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetTransposeWide()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
+      var a = new ComplexFloatMatrix(2, 3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6)
+      };
       ComplexFloatMatrix b = a.GetTranspose();
       Assert.AreEqual(b[0, 0], a[0, 0]);
       Assert.AreEqual(b[0, 1], a[1, 0]);
@@ -987,13 +1027,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetTransposeLong()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      a[2, 0] = new ComplexFloat(5);
-      a[2, 1] = new ComplexFloat(6);
+      var a = new ComplexFloatMatrix(3, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4),
+        [2, 0] = new ComplexFloat(5),
+        [2, 1] = new ComplexFloat(6)
+      };
       ComplexFloatMatrix b = a.GetTranspose();
       Assert.AreEqual(b[0, 0], a[0, 0]);
       Assert.AreEqual(b[0, 1], a[1, 0]);
@@ -1009,11 +1051,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Invert()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(2);
-      a[0, 1] = new ComplexFloat(4);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(7);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(2),
+        [0, 1] = new ComplexFloat(4),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(7)
+      };
       a.Invert();
       Assert.AreEqual(a[0, 0].Real, 3.500, TOLERENCE);
       Assert.AreEqual(a[0, 1].Real, -2.000, TOLERENCE);
@@ -1027,7 +1071,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
+        var a = new ComplexFloatMatrix(2, 2);
         a.Invert();
       });
     }
@@ -1038,13 +1082,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-        a[0, 0] = new ComplexFloat(2);
-        a[0, 1] = new ComplexFloat(4);
-        a[1, 0] = new ComplexFloat(3);
-        a[1, 1] = new ComplexFloat(7);
-        a[2, 0] = new ComplexFloat(5);
-        a[2, 1] = new ComplexFloat(5);
+        var a = new ComplexFloatMatrix(3, 2)
+        {
+          [0, 0] = new ComplexFloat(2),
+          [0, 1] = new ComplexFloat(4),
+          [1, 0] = new ComplexFloat(3),
+          [1, 1] = new ComplexFloat(7),
+          [2, 0] = new ComplexFloat(5),
+          [2, 1] = new ComplexFloat(5)
+        };
         a.Invert();
       });
     }
@@ -1055,7 +1101,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
+        var a = new ComplexFloatMatrix(2, 2);
         ComplexFloatMatrix b = a.GetInverse();
       });
     }
@@ -1066,13 +1112,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-        a[0, 0] = new ComplexFloat(2);
-        a[0, 1] = new ComplexFloat(4);
-        a[1, 0] = new ComplexFloat(3);
-        a[1, 1] = new ComplexFloat(7);
-        a[2, 0] = new ComplexFloat(5);
-        a[2, 1] = new ComplexFloat(5);
+        var a = new ComplexFloatMatrix(3, 2)
+        {
+          [0, 0] = new ComplexFloat(2),
+          [0, 1] = new ComplexFloat(4),
+          [1, 0] = new ComplexFloat(3),
+          [1, 1] = new ComplexFloat(7),
+          [2, 0] = new ComplexFloat(5),
+          [2, 1] = new ComplexFloat(5)
+        };
         ComplexFloatMatrix b = a.GetInverse();
       });
     }
@@ -1081,11 +1129,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetInverse()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(2);
-      a[0, 1] = new ComplexFloat(4);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(7);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(2),
+        [0, 1] = new ComplexFloat(4),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(7)
+      };
       ComplexFloatMatrix b = a.GetInverse();
       Assert.AreEqual(b[0, 0].Real, 3.500, TOLERENCE);
       Assert.AreEqual(b[0, 1].Real, -2.000, TOLERENCE);
@@ -1097,13 +1147,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetDeterminant()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(2);
-      a[0, 1] = new ComplexFloat(4);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(7);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(2),
+        [0, 1] = new ComplexFloat(4),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(7)
+      };
       ComplexFloat b = a.GetDeterminant();
-      Complex test = new Complex(2);
+      var test = new Complex(2);
       Assert.AreEqual(b.Real, test.Real, 4);
       Assert.AreEqual(b.Imag, test.Imag, 4);
     }
@@ -1114,13 +1166,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-        a[0, 0] = new ComplexFloat(2);
-        a[0, 1] = new ComplexFloat(4);
-        a[1, 0] = new ComplexFloat(3);
-        a[1, 1] = new ComplexFloat(7);
-        a[2, 0] = new ComplexFloat(5);
-        a[2, 1] = new ComplexFloat(5);
+        var a = new ComplexFloatMatrix(3, 2)
+        {
+          [0, 0] = new ComplexFloat(2),
+          [0, 1] = new ComplexFloat(4),
+          [1, 0] = new ComplexFloat(3),
+          [1, 1] = new ComplexFloat(7),
+          [2, 0] = new ComplexFloat(5),
+          [2, 1] = new ComplexFloat(5)
+        };
         ComplexFloat b = a.GetDeterminant();
       });
     }
@@ -1129,11 +1183,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetRow()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
       ComplexFloatVector b = a.GetRow(0);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[0, 1]);
@@ -1145,7 +1201,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
+        var a = new ComplexFloatMatrix(2, 2);
         ComplexFloatVector b = a.GetRow(3);
       });
     }
@@ -1154,11 +1210,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetColumn()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
       ComplexFloatVector b = a.GetColumn(0);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[1, 0]);
@@ -1170,7 +1228,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
+        var a = new ComplexFloatMatrix(2, 2);
         ComplexFloatVector b = a.GetColumn(3);
       });
     }
@@ -1179,11 +1237,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetDiagonal()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
       ComplexFloatVector b = a.GetDiagonal();
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[1, 1]);
@@ -1193,10 +1253,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetRow()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      ComplexFloatVector b = new ComplexFloatVector(2);
-      b[0] = new ComplexFloat(1, 1);
-      b[1] = new ComplexFloat(2, 2);
+      var a = new ComplexFloatMatrix(2, 2);
+      var b = new ComplexFloatVector(2)
+      {
+        [0] = new ComplexFloat(1, 1),
+        [1] = new ComplexFloat(2, 2)
+      };
       a.SetRow(0, b);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[0, 1]);
@@ -1208,8 +1270,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-        ComplexFloatVector b = new ComplexFloatVector(2);
+        var a = new ComplexFloatMatrix(2, 2);
+        var b = new ComplexFloatVector(2);
         a.SetRow(2, b);
       });
     }
@@ -1220,8 +1282,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-        ComplexFloatVector b = new ComplexFloatVector(3);
+        var a = new ComplexFloatMatrix(2, 2);
+        var b = new ComplexFloatVector(3);
         a.SetRow(1, b);
       });
     }
@@ -1230,8 +1292,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetRowArray()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      ComplexFloat[] b = new ComplexFloat[2];
+      var a = new ComplexFloatMatrix(2, 2);
+      var b = new ComplexFloat[2];
       b[0] = new ComplexFloat(1, 1);
       b[1] = new ComplexFloat(2, 2);
 
@@ -1246,8 +1308,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-        ComplexFloat[] b = new ComplexFloat[2];
+        var a = new ComplexFloatMatrix(2, 2);
+        var b = new ComplexFloat[2];
         a.SetRow(2, b);
       });
     }
@@ -1258,8 +1320,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-        ComplexFloat[] b = new ComplexFloat[3];
+        var a = new ComplexFloatMatrix(2, 2);
+        var b = new ComplexFloat[3];
         a.SetRow(1, b);
       });
     }
@@ -1268,10 +1330,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetColumn()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      ComplexFloatVector b = new ComplexFloatVector(2);
-      b[0] = 1;
-      b[1] = 2;
+      var a = new ComplexFloatMatrix(2, 2);
+      var b = new ComplexFloatVector(2)
+      {
+        [0] = 1,
+        [1] = 2
+      };
       a.SetColumn(0, b);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[1, 0]);
@@ -1283,8 +1347,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-        ComplexFloatVector b = new ComplexFloatVector(2);
+        var a = new ComplexFloatMatrix(2, 2);
+        var b = new ComplexFloatVector(2);
         a.SetColumn(2, b);
       });
     }
@@ -1295,8 +1359,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-        ComplexFloatVector b = new ComplexFloatVector(3);
+        var a = new ComplexFloatMatrix(2, 2);
+        var b = new ComplexFloatVector(3);
         a.SetColumn(1, b);
       });
     }
@@ -1305,8 +1369,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetColumnArray()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      ComplexFloat[] b = new ComplexFloat[2];
+      var a = new ComplexFloatMatrix(2, 2);
+      var b = new ComplexFloat[2];
       b[0] = new ComplexFloat(1, 1);
       b[1] = new ComplexFloat(2, 2);
       a.SetColumn(0, b);
@@ -1320,8 +1384,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-        ComplexFloat[] b = new ComplexFloat[2];
+        var a = new ComplexFloatMatrix(2, 2);
+        var b = new ComplexFloat[2];
         a.SetColumn(2, b);
       });
     }
@@ -1332,8 +1396,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-        ComplexFloat[] b = new ComplexFloat[3];
+        var a = new ComplexFloatMatrix(2, 2);
+        var b = new ComplexFloat[3];
         a.SetColumn(1, b);
       });
     }
@@ -1342,10 +1406,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetDiagonal()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2);
-      ComplexFloatVector b = new ComplexFloatVector(2);
-      b[0] = new ComplexFloat(1);
-      b[1] = new ComplexFloat(2);
+      var a = new ComplexFloatMatrix(2, 2);
+      var b = new ComplexFloatVector(2)
+      {
+        [0] = new ComplexFloat(1),
+        [1] = new ComplexFloat(2)
+      };
       a.SetDiagonal(b);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[1, 1]);
@@ -1355,23 +1421,25 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetSubMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(4);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[0, 3] = new ComplexFloat(4);
-      a[1, 0] = new ComplexFloat(5);
-      a[1, 1] = new ComplexFloat(6);
-      a[1, 2] = new ComplexFloat(7);
-      a[1, 3] = new ComplexFloat(8);
-      a[2, 0] = new ComplexFloat(9);
-      a[2, 1] = new ComplexFloat(10);
-      a[2, 2] = new ComplexFloat(11);
-      a[2, 3] = new ComplexFloat(12);
-      a[3, 0] = new ComplexFloat(13);
-      a[3, 1] = new ComplexFloat(14);
-      a[3, 2] = new ComplexFloat(15);
-      a[3, 3] = new ComplexFloat(16);
+      var a = new ComplexFloatMatrix(4)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [0, 3] = new ComplexFloat(4),
+        [1, 0] = new ComplexFloat(5),
+        [1, 1] = new ComplexFloat(6),
+        [1, 2] = new ComplexFloat(7),
+        [1, 3] = new ComplexFloat(8),
+        [2, 0] = new ComplexFloat(9),
+        [2, 1] = new ComplexFloat(10),
+        [2, 2] = new ComplexFloat(11),
+        [2, 3] = new ComplexFloat(12),
+        [3, 0] = new ComplexFloat(13),
+        [3, 1] = new ComplexFloat(14),
+        [3, 2] = new ComplexFloat(15),
+        [3, 3] = new ComplexFloat(16)
+      };
       ComplexFloatMatrix b = a.GetSubMatrix(2, 2);
       ComplexFloatMatrix c = a.GetSubMatrix(0, 1, 2, 2);
       Assert.AreEqual(b.RowLength, 2);
@@ -1396,7 +1464,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(4);
+        var a = new ComplexFloatMatrix(4);
         ComplexFloatMatrix b = a.GetSubMatrix(-1, 2);
       });
     }
@@ -1407,7 +1475,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(4);
+        var a = new ComplexFloatMatrix(4);
         ComplexFloatMatrix b = a.GetSubMatrix(2, 4);
       });
     }
@@ -1418,7 +1486,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(4);
+        var a = new ComplexFloatMatrix(4);
         ComplexFloatMatrix b = a.GetSubMatrix(0, 0, 4, 2);
       });
     }
@@ -1429,7 +1497,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(4);
+        var a = new ComplexFloatMatrix(4);
         ComplexFloatMatrix b = a.GetSubMatrix(0, 0, 2, 4);
       });
     }
@@ -1440,7 +1508,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(4);
+        var a = new ComplexFloatMatrix(4);
         ComplexFloatMatrix b = a.GetSubMatrix(0, 3, 2, 2);
       });
     }
@@ -1449,16 +1517,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetUpperTriangleSquare()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
-      a[2, 0] = new ComplexFloat(7);
-      a[2, 1] = new ComplexFloat(8);
-      a[2, 2] = new ComplexFloat(9);
+      var a = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6),
+        [2, 0] = new ComplexFloat(7),
+        [2, 1] = new ComplexFloat(8),
+        [2, 2] = new ComplexFloat(9)
+      };
       ComplexFloatMatrix b = a.GetUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1478,13 +1548,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetUpperTriangleLong()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[2, 0] = new ComplexFloat(7);
-      a[2, 1] = new ComplexFloat(8);
+      var a = new ComplexFloatMatrix(3, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [2, 0] = new ComplexFloat(7),
+        [2, 1] = new ComplexFloat(8)
+      };
       ComplexFloatMatrix b = a.GetUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1501,13 +1573,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetUpperTriangleWide()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
+      var a = new ComplexFloatMatrix(2, 3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6)
+      };
       ComplexFloatMatrix b = a.GetUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1524,16 +1598,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyUpperTriangleSquare()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
-      a[2, 0] = new ComplexFloat(7);
-      a[2, 1] = new ComplexFloat(8);
-      a[2, 2] = new ComplexFloat(9);
+      var a = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6),
+        [2, 0] = new ComplexFloat(7),
+        [2, 1] = new ComplexFloat(8),
+        [2, 2] = new ComplexFloat(9)
+      };
       ComplexFloatMatrix b = a.GetStrictlyUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1553,13 +1629,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyUpperTriangleLong()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[2, 0] = new ComplexFloat(7);
-      a[2, 1] = new ComplexFloat(8);
+      var a = new ComplexFloatMatrix(3, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [2, 0] = new ComplexFloat(7),
+        [2, 1] = new ComplexFloat(8)
+      };
       ComplexFloatMatrix b = a.GetStrictlyUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1576,13 +1654,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyUpperTriangleWide()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
+      var a = new ComplexFloatMatrix(2, 3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6)
+      };
       ComplexFloatMatrix b = a.GetStrictlyUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1599,16 +1679,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetLowerTriangleSquare()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
-      a[2, 0] = new ComplexFloat(7);
-      a[2, 1] = new ComplexFloat(8);
-      a[2, 2] = new ComplexFloat(9);
+      var a = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6),
+        [2, 0] = new ComplexFloat(7),
+        [2, 1] = new ComplexFloat(8),
+        [2, 2] = new ComplexFloat(9)
+      };
       ComplexFloatMatrix b = a.GetLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1628,13 +1710,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetLowerTriangleLong()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[2, 0] = new ComplexFloat(7);
-      a[2, 1] = new ComplexFloat(8);
+      var a = new ComplexFloatMatrix(3, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [2, 0] = new ComplexFloat(7),
+        [2, 1] = new ComplexFloat(8)
+      };
       ComplexFloatMatrix b = a.GetLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1651,13 +1735,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetLowerTriangleWide()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
+      var a = new ComplexFloatMatrix(2, 3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6)
+      };
       ComplexFloatMatrix b = a.GetLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1674,16 +1760,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyLowerTriangleSquare()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
-      a[2, 0] = new ComplexFloat(7);
-      a[2, 1] = new ComplexFloat(8);
-      a[2, 2] = new ComplexFloat(9);
+      var a = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6),
+        [2, 0] = new ComplexFloat(7),
+        [2, 1] = new ComplexFloat(8),
+        [2, 2] = new ComplexFloat(9)
+      };
       ComplexFloatMatrix b = a.GetStrictlyLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1703,13 +1791,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyLowerTriangleLong()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[2, 0] = new ComplexFloat(7);
-      a[2, 1] = new ComplexFloat(8);
+      var a = new ComplexFloatMatrix(3, 2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [2, 0] = new ComplexFloat(7),
+        [2, 1] = new ComplexFloat(8)
+      };
       ComplexFloatMatrix b = a.GetStrictlyLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1726,13 +1816,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyLowerTriangleWide()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[0, 2] = new ComplexFloat(3);
-      a[1, 0] = new ComplexFloat(4);
-      a[1, 1] = new ComplexFloat(5);
-      a[1, 2] = new ComplexFloat(6);
+      var a = new ComplexFloatMatrix(2, 3)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [0, 2] = new ComplexFloat(3),
+        [1, 0] = new ComplexFloat(4),
+        [1, 1] = new ComplexFloat(5),
+        [1, 2] = new ComplexFloat(6)
+      };
       ComplexFloatMatrix b = a.GetStrictlyLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1749,13 +1841,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Negate()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
 
-      ComplexFloatMatrix b = ComplexFloatMatrix.Negate(a);
+      var b = ComplexFloatMatrix.Negate(a);
       Assert.AreEqual(b[0, 0], new ComplexFloat(-1));
       Assert.AreEqual(b[0, 1], new ComplexFloat(-2));
       Assert.AreEqual(b[1, 0], new ComplexFloat(-3));
@@ -1769,7 +1863,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatMatrix b = ComplexFloatMatrix.Negate(a);
+        var b = ComplexFloatMatrix.Negate(a);
       });
     }
 
@@ -1777,11 +1871,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMinus()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
 
       ComplexFloatMatrix b = -a;
       Assert.AreEqual(b[0, 0], new ComplexFloat(-1));
@@ -1805,13 +1901,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticSubtract()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2);
+      var a = new ComplexFloatMatrix(2);
+      var b = new ComplexFloatMatrix(2);
       a[0, 0] = b[0, 0] = new ComplexFloat(1);
       a[0, 1] = b[0, 1] = new ComplexFloat(2);
       a[1, 0] = b[1, 0] = new ComplexFloat(3);
       a[1, 1] = b[1, 1] = new ComplexFloat(4);
-      ComplexFloatMatrix c = ComplexFloatMatrix.Subtract(a, b);
+      var c = ComplexFloatMatrix.Subtract(a, b);
       Assert.AreEqual(c[0, 0], ComplexFloat.Zero);
       Assert.AreEqual(c[0, 1], ComplexFloat.Zero);
       Assert.AreEqual(c[1, 0], ComplexFloat.Zero);
@@ -1822,8 +1918,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorSubtract()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2);
+      var a = new ComplexFloatMatrix(2);
+      var b = new ComplexFloatMatrix(2);
       a[0, 0] = b[0, 0] = new ComplexFloat(1);
       a[0, 1] = b[0, 1] = new ComplexFloat(2);
       a[1, 0] = b[1, 0] = new ComplexFloat(3);
@@ -1839,8 +1935,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberSubtract()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2);
+      var a = new ComplexFloatMatrix(2);
+      var b = new ComplexFloatMatrix(2);
       a[0, 0] = b[0, 0] = new ComplexFloat(1);
       a[0, 1] = b[0, 1] = new ComplexFloat(2);
       a[1, 0] = b[1, 0] = new ComplexFloat(3);
@@ -1858,9 +1954,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
+        var a = new ComplexFloatMatrix(2);
         ComplexFloatMatrix b = null;
-        ComplexFloatMatrix c = ComplexFloatMatrix.Subtract(a, b);
+        var c = ComplexFloatMatrix.Subtract(a, b);
       });
     }
 
@@ -1870,7 +1966,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
+        var a = new ComplexFloatMatrix(2);
         ComplexFloatMatrix b = null;
         ComplexFloatMatrix c = a - b;
       });
@@ -1882,7 +1978,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
+        var a = new ComplexFloatMatrix(2);
         ComplexFloatMatrix b = null;
         a.Subtract(b);
       });
@@ -1894,9 +1990,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatMatrix b = new ComplexFloatMatrix(3);
-        ComplexFloatMatrix c = ComplexFloatMatrix.Subtract(a, b);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(3);
+        var c = ComplexFloatMatrix.Subtract(a, b);
       });
     }
 
@@ -1906,8 +2002,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatMatrix b = new ComplexFloatMatrix(3);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(3);
         ComplexFloatMatrix c = a - b;
       });
     }
@@ -1918,8 +2014,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatMatrix b = new ComplexFloatMatrix(3);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(3);
         a.Subtract(b);
       });
     }
@@ -1928,13 +2024,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticAdd()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2);
+      var a = new ComplexFloatMatrix(2);
+      var b = new ComplexFloatMatrix(2);
       a[0, 0] = b[0, 0] = new ComplexFloat(1);
       a[0, 1] = b[0, 1] = new ComplexFloat(2);
       a[1, 0] = b[1, 0] = new ComplexFloat(3);
       a[1, 1] = b[1, 1] = new ComplexFloat(4);
-      ComplexFloatMatrix c = ComplexFloatMatrix.Add(a, b);
+      var c = ComplexFloatMatrix.Add(a, b);
       Assert.AreEqual(c[0, 0], new ComplexFloat(2));
       Assert.AreEqual(c[0, 1], new ComplexFloat(4));
       Assert.AreEqual(c[1, 0], new ComplexFloat(6));
@@ -1945,8 +2041,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorAdd()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2);
+      var a = new ComplexFloatMatrix(2);
+      var b = new ComplexFloatMatrix(2);
       a[0, 0] = b[0, 0] = new ComplexFloat(1);
       a[0, 1] = b[0, 1] = new ComplexFloat(2);
       a[1, 0] = b[1, 0] = new ComplexFloat(3);
@@ -1962,8 +2058,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberAdd()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2);
+      var a = new ComplexFloatMatrix(2);
+      var b = new ComplexFloatMatrix(2);
       a[0, 0] = b[0, 0] = new ComplexFloat(1);
       a[0, 1] = b[0, 1] = new ComplexFloat(2);
       a[1, 0] = b[1, 0] = new ComplexFloat(3);
@@ -1981,9 +2077,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
+        var a = new ComplexFloatMatrix(2);
         ComplexFloatMatrix b = null;
-        ComplexFloatMatrix c = ComplexFloatMatrix.Add(a, b);
+        var c = ComplexFloatMatrix.Add(a, b);
       });
     }
 
@@ -1993,7 +2089,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
+        var a = new ComplexFloatMatrix(2);
         ComplexFloatMatrix b = null;
         ComplexFloatMatrix c = a + b;
       });
@@ -2005,7 +2101,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
+        var a = new ComplexFloatMatrix(2);
         ComplexFloatMatrix b = null;
         a.Add(b);
       });
@@ -2017,9 +2113,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatMatrix b = new ComplexFloatMatrix(3);
-        ComplexFloatMatrix c = ComplexFloatMatrix.Add(a, b);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(3);
+        var c = ComplexFloatMatrix.Add(a, b);
       });
     }
 
@@ -2029,8 +2125,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatMatrix b = new ComplexFloatMatrix(3);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(3);
         ComplexFloatMatrix c = a + b;
       });
     }
@@ -2041,8 +2137,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatMatrix b = new ComplexFloatMatrix(3);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(3);
         a.Add(b);
       });
     }
@@ -2051,12 +2147,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticDivide()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(2);
-      a[0, 1] = new ComplexFloat(4);
-      a[1, 0] = new ComplexFloat(6);
-      a[1, 1] = new ComplexFloat(8);
-      ComplexFloatMatrix b = ComplexFloatMatrix.Divide(a, 2);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(2),
+        [0, 1] = new ComplexFloat(4),
+        [1, 0] = new ComplexFloat(6),
+        [1, 1] = new ComplexFloat(8)
+      };
+      var b = ComplexFloatMatrix.Divide(a, 2);
       Assert.AreEqual(b[0, 0], new ComplexFloat(1));
       Assert.AreEqual(b[0, 1], new ComplexFloat(2));
       Assert.AreEqual(b[1, 0], new ComplexFloat(3));
@@ -2067,11 +2165,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorDivide()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(2);
-      a[0, 1] = new ComplexFloat(4);
-      a[1, 0] = new ComplexFloat(6);
-      a[1, 1] = new ComplexFloat(8);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(2),
+        [0, 1] = new ComplexFloat(4),
+        [1, 0] = new ComplexFloat(6),
+        [1, 1] = new ComplexFloat(8)
+      };
       ComplexFloatMatrix b = a / 2;
       Assert.AreEqual(b[0, 0], new ComplexFloat(1));
       Assert.AreEqual(b[0, 1], new ComplexFloat(2));
@@ -2083,11 +2183,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberDivide()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(2);
-      a[0, 1] = new ComplexFloat(4);
-      a[1, 0] = new ComplexFloat(6);
-      a[1, 1] = new ComplexFloat(8);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(2),
+        [0, 1] = new ComplexFloat(4),
+        [1, 0] = new ComplexFloat(6),
+        [1, 1] = new ComplexFloat(8)
+      };
       a.Divide(2);
       Assert.AreEqual(a[0, 0], new ComplexFloat(1));
       Assert.AreEqual(a[0, 1], new ComplexFloat(2));
@@ -2102,7 +2204,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatMatrix b = ComplexFloatMatrix.Divide(a, 2);
+        var b = ComplexFloatMatrix.Divide(a, 2);
       });
     }
 
@@ -2121,12 +2223,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Copy()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = new ComplexFloatMatrix(2);
       b.Copy(a);
       Assert.AreEqual(a[0, 0], a[0, 0]);
       Assert.AreEqual(a[0, 1], b[0, 1]);
@@ -2138,11 +2242,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyComplexFloatMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
       ComplexFloatMatrix b = 2.0f * a;
       Assert.AreEqual(b[0, 0], new ComplexFloat(2));
       Assert.AreEqual(b[0, 1], new ComplexFloat(4));
@@ -2165,11 +2271,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyMatrixComplexFloat()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
       ComplexFloatMatrix b = a * 2.0f;
       Assert.AreEqual(b[0, 0], new ComplexFloat(2));
       Assert.AreEqual(b[0, 1], new ComplexFloat(4));
@@ -2192,12 +2300,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyComplexFloatMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatMatrix b = ComplexFloatMatrix.Multiply(2.0f, a);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = ComplexFloatMatrix.Multiply(2.0f, a);
       Assert.AreEqual(b[0, 0], new ComplexFloat(2));
       Assert.AreEqual(b[0, 1], new ComplexFloat(4));
       Assert.AreEqual(b[1, 0], new ComplexFloat(6));
@@ -2211,7 +2321,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatMatrix b = ComplexFloatMatrix.Multiply(2.0f, a);
+        var b = ComplexFloatMatrix.Multiply(2.0f, a);
       });
     }
 
@@ -2219,12 +2329,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyMatrixComplexFloat()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatMatrix b = ComplexFloatMatrix.Multiply(a, 2.0f);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = ComplexFloatMatrix.Multiply(a, 2.0f);
 
       Assert.AreEqual(b[0, 0], new ComplexFloat(2));
       Assert.AreEqual(b[0, 1], new ComplexFloat(4));
@@ -2239,7 +2351,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatMatrix b = ComplexFloatMatrix.Multiply(a, 2.0f);
+        var b = ComplexFloatMatrix.Multiply(a, 2.0f);
       });
     }
 
@@ -2247,11 +2359,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyComplexFloat()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
       a.Multiply(2.0f);
       Assert.AreEqual(a[0, 0], new ComplexFloat(2));
       Assert.AreEqual(a[0, 1], new ComplexFloat(4));
@@ -2263,12 +2377,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyMatrixVector()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatVector b = new ComplexFloatVector(2, 2.0f);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = new ComplexFloatVector(2, 2.0f);
       ComplexFloatVector c = a * b;
       Assert.AreEqual(c[0], new ComplexFloat(6));
       Assert.AreEqual(c[1], new ComplexFloat(14));
@@ -2280,8 +2396,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatVector b = new ComplexFloatVector(3, 2.0f);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatVector(3, 2.0f);
         ComplexFloatVector c = a * b;
       });
     }
@@ -2293,7 +2409,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatVector b = new ComplexFloatVector(2, 2.0f);
+        var b = new ComplexFloatVector(2, 2.0f);
         ComplexFloatVector c = a * b;
       });
     }
@@ -2304,7 +2420,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
+        var a = new ComplexFloatMatrix(2);
         ComplexFloatVector b = null;
         ComplexFloatVector c = a * b;
       });
@@ -2314,12 +2430,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyMatrixVector()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatVector b = new ComplexFloatVector(2, 2.0f);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = new ComplexFloatVector(2, 2.0f);
       ComplexFloatVector c = ComplexFloatMatrix.Multiply(a, b);
       Assert.AreEqual(c[0], new ComplexFloat(6));
       Assert.AreEqual(c[1], new ComplexFloat(14));
@@ -2331,8 +2449,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatVector b = new ComplexFloatVector(3, 2.0f);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatVector(3, 2.0f);
         ComplexFloatVector c = a * b;
       });
     }
@@ -2344,7 +2462,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatVector b = new ComplexFloatVector(2, 2.0f);
+        var b = new ComplexFloatVector(2, 2.0f);
         ComplexFloatVector c = ComplexFloatMatrix.Multiply(a, b);
       });
     }
@@ -2355,7 +2473,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
+        var a = new ComplexFloatMatrix(2);
         ComplexFloatVector b = null;
         ComplexFloatVector c = ComplexFloatMatrix.Multiply(a, b);
       });
@@ -2365,12 +2483,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyVector()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatVector b = new ComplexFloatVector(2, 2.0f);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = new ComplexFloatVector(2, 2.0f);
       a.Multiply(b);
       Assert.AreEqual(a[0, 0], new ComplexFloat(6));
       Assert.AreEqual(a[1, 0], new ComplexFloat(14));
@@ -2384,8 +2504,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatVector b = new ComplexFloatVector(3, 2.0f);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatVector(3, 2.0f);
         a.Multiply(b);
       });
     }
@@ -2396,7 +2516,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
+        var a = new ComplexFloatMatrix(2);
         ComplexFloatVector b = null;
         a.Multiply(b);
       });
@@ -2406,12 +2526,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyMatrixMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2, 2.0f);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = new ComplexFloatMatrix(2, 2.0f);
       ComplexFloatMatrix c = a * b;
       Assert.AreEqual(c[0, 0], new ComplexFloat(6));
       Assert.AreEqual(c[0, 1], new ComplexFloat(6));
@@ -2425,8 +2547,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatMatrix b = new ComplexFloatMatrix(3, 2, 2.0f);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(3, 2, 2.0f);
         ComplexFloatMatrix c = a * b;
       });
     }
@@ -2435,8 +2557,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyLongMatrixWideMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2, 1);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2, 3, 2);
+      var a = new ComplexFloatMatrix(3, 2, 1);
+      var b = new ComplexFloatMatrix(2, 3, 2);
       ComplexFloatMatrix c = a * b;
       Assert.AreEqual(c[0, 0], new ComplexFloat(4));
       Assert.AreEqual(c[0, 1], new ComplexFloat(4));
@@ -2453,8 +2575,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyWideMatrixLongMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3, 1);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(3, 2, 2);
+      var a = new ComplexFloatMatrix(2, 3, 1);
+      var b = new ComplexFloatMatrix(3, 2, 2);
       ComplexFloatMatrix c = a * b;
       Assert.AreEqual(c[0, 0], new ComplexFloat(6));
       Assert.AreEqual(c[0, 1], new ComplexFloat(6));
@@ -2469,7 +2591,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatMatrix b = new ComplexFloatMatrix(2, 2.0f);
+        var b = new ComplexFloatMatrix(2, 2.0f);
         ComplexFloatMatrix c = a * b;
       });
     }
@@ -2480,7 +2602,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2.0f);
+        var a = new ComplexFloatMatrix(2, 2.0f);
         ComplexFloatMatrix b = null;
         ComplexFloatMatrix c = a * b;
       });
@@ -2490,13 +2612,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyMatrixMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2, 2, 2.0f);
-      ComplexFloatMatrix c = ComplexFloatMatrix.Multiply(a, b);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = new ComplexFloatMatrix(2, 2, 2.0f);
+      var c = ComplexFloatMatrix.Multiply(a, b);
       Assert.AreEqual(c[0, 0], new ComplexFloat(6));
       Assert.AreEqual(c[0, 1], new ComplexFloat(6));
       Assert.AreEqual(c[1, 0], new ComplexFloat(14));
@@ -2509,9 +2633,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatMatrix b = new ComplexFloatMatrix(3, 2, 2.0f);
-        ComplexFloatMatrix c = ComplexFloatMatrix.Multiply(a, b);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(3, 2, 2.0f);
+        var c = ComplexFloatMatrix.Multiply(a, b);
       });
     }
 
@@ -2519,9 +2643,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyLongMatrixWideMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2, 1);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2, 3, 2);
-      ComplexFloatMatrix c = ComplexFloatMatrix.Multiply(a, b);
+      var a = new ComplexFloatMatrix(3, 2, 1);
+      var b = new ComplexFloatMatrix(2, 3, 2);
+      var c = ComplexFloatMatrix.Multiply(a, b);
       Assert.AreEqual(c[0, 0], new ComplexFloat(4));
       Assert.AreEqual(c[0, 1], new ComplexFloat(4));
       Assert.AreEqual(c[0, 1], new ComplexFloat(4));
@@ -2537,9 +2661,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyWideMatrixLongMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3, 1);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(3, 2, 2);
-      ComplexFloatMatrix c = ComplexFloatMatrix.Multiply(a, b);
+      var a = new ComplexFloatMatrix(2, 3, 1);
+      var b = new ComplexFloatMatrix(3, 2, 2);
+      var c = ComplexFloatMatrix.Multiply(a, b);
       Assert.AreEqual(c[0, 0], new ComplexFloat(6));
       Assert.AreEqual(c[0, 1], new ComplexFloat(6));
       Assert.AreEqual(c[1, 0], new ComplexFloat(6));
@@ -2553,8 +2677,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatMatrix b = new ComplexFloatMatrix(2, 2.0f);
-        ComplexFloatMatrix c = ComplexFloatMatrix.Multiply(a, b);
+        var b = new ComplexFloatMatrix(2, 2.0f);
+        var c = ComplexFloatMatrix.Multiply(a, b);
       });
     }
 
@@ -2564,9 +2688,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2.0f);
+        var a = new ComplexFloatMatrix(2, 2.0f);
         ComplexFloatMatrix b = null;
-        ComplexFloatMatrix c = ComplexFloatMatrix.Multiply(a, b);
+        var c = ComplexFloatMatrix.Multiply(a, b);
       });
     }
 
@@ -2574,12 +2698,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyMatrixMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2, 2, 2.0f);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = new ComplexFloatMatrix(2, 2, 2.0f);
       a.Multiply(b);
       Assert.AreEqual(a[0, 0], new ComplexFloat(6));
       Assert.AreEqual(a[0, 1], new ComplexFloat(6));
@@ -2593,8 +2719,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-        ComplexFloatMatrix b = new ComplexFloatMatrix(3, 2, 2.0f);
+        var a = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(3, 2, 2.0f);
         a.Multiply(b);
       });
     }
@@ -2603,8 +2729,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyLongMatrixWideMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2, 1);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(2, 3, 2);
+      var a = new ComplexFloatMatrix(3, 2, 1);
+      var b = new ComplexFloatMatrix(2, 3, 2);
       a.Multiply(b);
       Assert.AreEqual(a[0, 0], new ComplexFloat(4));
       Assert.AreEqual(a[0, 1], new ComplexFloat(4));
@@ -2621,8 +2747,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyWideMatrixLongMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3, 1);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(3, 2, 2);
+      var a = new ComplexFloatMatrix(2, 3, 1);
+      var b = new ComplexFloatMatrix(3, 2, 2);
       a.Multiply(b);
       Assert.AreEqual(a[0, 0], new ComplexFloat(6));
       Assert.AreEqual(a[0, 1], new ComplexFloat(6));
@@ -2636,7 +2762,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 2.0f);
+        var a = new ComplexFloatMatrix(2, 2.0f);
         ComplexFloatMatrix b = null;
         a.Multiply(b);
       });
@@ -2649,7 +2775,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         ComplexFloatMatrix a = null;
-        ComplexFloatMatrix b = new ComplexFloatMatrix(2);
+        var b = new ComplexFloatMatrix(2);
         b.Copy(a);
       });
     }
@@ -2658,11 +2784,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Norms()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[1, 0] = new ComplexFloat(3.3f, 3.3f);
-      a[1, 1] = new ComplexFloat(4.4f, -4.4f);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [1, 0] = new ComplexFloat(3.3f, 3.3f),
+        [1, 1] = new ComplexFloat(4.4f, -4.4f)
+      };
       Assert.AreEqual(a.GetL1Norm(), 9.334, TOLERENCE);
       Assert.AreEqual(a.GetL2Norm(), 8.502, TOLERENCE);
       Assert.AreEqual(a.GetInfinityNorm(), 10.889, TOLERENCE);
@@ -2673,13 +2801,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void WideNorms()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[0, 2] = new ComplexFloat(3.3f, 3.3f);
-      a[1, 0] = new ComplexFloat(4.4f, -4.4f);
-      a[1, 1] = new ComplexFloat(5.5f, 5.5f);
-      a[1, 2] = new ComplexFloat(6.6f, -6.6f);
+      var a = new ComplexFloatMatrix(2, 3)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [0, 2] = new ComplexFloat(3.3f, 3.3f),
+        [1, 0] = new ComplexFloat(4.4f, -4.4f),
+        [1, 1] = new ComplexFloat(5.5f, 5.5f),
+        [1, 2] = new ComplexFloat(6.6f, -6.6f)
+      };
       Assert.AreEqual(a.GetL1Norm(), 14.001, TOLERENCE);
       Assert.AreEqual(a.GetL2Norm(), 13.845, TOLERENCE);
       Assert.AreEqual(a.GetInfinityNorm(), 23.335, TOLERENCE);
@@ -2690,13 +2820,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void LongNorms()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[1, 0] = new ComplexFloat(3.3f, 3.3f);
-      a[1, 1] = new ComplexFloat(4.4f, -4.4f);
-      a[2, 0] = new ComplexFloat(5.5f, 5.5f);
-      a[2, 1] = new ComplexFloat(6.6f, -6.6f);
+      var a = new ComplexFloatMatrix(3, 2)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [1, 0] = new ComplexFloat(3.3f, 3.3f),
+        [1, 1] = new ComplexFloat(4.4f, -4.4f),
+        [2, 0] = new ComplexFloat(5.5f, 5.5f),
+        [2, 1] = new ComplexFloat(6.6f, -6.6f)
+      };
       Assert.AreEqual(a.GetL1Norm(), 18.668, TOLERENCE);
       Assert.AreEqual(a.GetL2Norm(), 14.818, TOLERENCE);
       Assert.AreEqual(a.GetInfinityNorm(), 17.112, TOLERENCE);
@@ -2707,11 +2839,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Condition()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[1, 0] = new ComplexFloat(3.3f, 3.3f);
-      a[1, 1] = new ComplexFloat(4.4f, -4.4f);
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [1, 0] = new ComplexFloat(3.3f, 3.3f),
+        [1, 1] = new ComplexFloat(4.4f, -4.4f)
+      };
       Assert.AreEqual(a.GetConditionNumber(), 14.933, TOLERENCE);
     }
 
@@ -2721,7 +2855,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(2, 3);
+        var a = new ComplexFloatMatrix(2, 3);
         a.GetConditionNumber();
       });
     }
@@ -2732,7 +2866,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(3, 2);
+        var a = new ComplexFloatMatrix(3, 2);
         a.GetConditionNumber();
       });
     }
@@ -2741,12 +2875,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Clone()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2);
-      a[0, 0] = new ComplexFloat(1);
-      a[0, 1] = new ComplexFloat(2);
-      a[1, 0] = new ComplexFloat(3);
-      a[1, 1] = new ComplexFloat(4);
-      ComplexFloatMatrix b = (ComplexFloatMatrix)a.Clone();
+      var a = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(1),
+        [0, 1] = new ComplexFloat(2),
+        [1, 0] = new ComplexFloat(3),
+        [1, 1] = new ComplexFloat(4)
+      };
+      var b = a.Clone();
       Assert.AreEqual(a[0, 0], a[0, 0]);
       Assert.AreEqual(a[0, 1], b[0, 1]);
       Assert.AreEqual(a[1, 0], b[1, 0]);

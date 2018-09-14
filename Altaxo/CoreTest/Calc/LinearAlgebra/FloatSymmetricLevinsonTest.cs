@@ -24,9 +24,9 @@
 
 #region Using Directive
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 #endregion Using Directive
 
@@ -114,454 +114,526 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       // unit testing values - order 1
 
-      T1 = new FloatVector(1);
-      T1[0] = +3.0000000E+000f;
+      T1 = new FloatVector(1)
+      {
+        [0] = +3.0000000E+000f
+      };
 
-      A1 = new FloatMatrix(1);
-      A1[0, 0] = +1.0000000E+000f;
+      A1 = new FloatMatrix(1)
+      {
+        [0, 0] = +1.0000000E+000f
+      };
 
-      D1 = new FloatVector(1);
-      D1[0] = +3.3333334E-001f;
+      D1 = new FloatVector(1)
+      {
+        [0] = +3.3333334E-001f
+      };
 
       Det1 = +3.0000000E+000f;
 
-      I1 = new FloatMatrix(1);
-      I1[0, 0] = +3.3333334E-001f;
+      I1 = new FloatMatrix(1)
+      {
+        [0, 0] = +3.3333334E-001f
+      };
 
-      X1 = new FloatVector(1);
-      X1[0] = +1.0000000E+000f;
+      X1 = new FloatVector(1)
+      {
+        [0] = +1.0000000E+000f
+      };
 
-      Y1 = new FloatVector(1);
-      Y1[0] = +3.0000000E+000f;
+      Y1 = new FloatVector(1)
+      {
+        [0] = +3.0000000E+000f
+      };
 
       Tolerance1 = 1.0E-006f;
 
       // unit testing values - order 2
 
-      T2 = new FloatVector(2);
-      T2[0] = +1.0000000E+001f;
-      T2[1] = +4.5000000E+000f;
+      T2 = new FloatVector(2)
+      {
+        [0] = +1.0000000E+001f,
+        [1] = +4.5000000E+000f
+      };
 
-      A2 = new FloatMatrix(2);
-      A2[0, 0] = +1.0000000E+000f;
-      A2[1, 0] = -4.4999999E-001f;
-      A2[1, 1] = +1.0000000E+000f;
+      A2 = new FloatMatrix(2)
+      {
+        [0, 0] = +1.0000000E+000f,
+        [1, 0] = -4.4999999E-001f,
+        [1, 1] = +1.0000000E+000f
+      };
 
-      D2 = new FloatVector(2);
-      D2[0] = +1.0000000E-001f;
-      D2[1] = +1.2539186E-001f;
+      D2 = new FloatVector(2)
+      {
+        [0] = +1.0000000E-001f,
+        [1] = +1.2539186E-001f
+      };
 
       Det2 = +7.9750000E+001f;
 
-      I2 = new FloatMatrix(2);
-      I2[0, 0] = +1.2539186E-001f;
-      I2[0, 1] = -5.6426331E-002f;
-      I2[1, 0] = -5.6426331E-002f;
-      I2[1, 1] = +1.2539186E-001f;
+      I2 = new FloatMatrix(2)
+      {
+        [0, 0] = +1.2539186E-001f,
+        [0, 1] = -5.6426331E-002f,
+        [1, 0] = -5.6426331E-002f,
+        [1, 1] = +1.2539186E-001f
+      };
 
-      X2 = new FloatVector(2);
-      X2[0] = +1.0000000E+000f;
-      X2[1] = +2.0000000E+000f;
+      X2 = new FloatVector(2)
+      {
+        [0] = +1.0000000E+000f,
+        [1] = +2.0000000E+000f
+      };
 
-      Y2 = new FloatVector(2);
-      Y2[0] = +1.9000000E+001f;
-      Y2[1] = +2.4500000E+001f;
+      Y2 = new FloatVector(2)
+      {
+        [0] = +1.9000000E+001f,
+        [1] = +2.4500000E+001f
+      };
 
       Tolerance2 = 1.0E-006f;
 
       // unit testing values - order 3
 
-      T3 = new FloatVector(3);
-      T3[0] = +4.0000000E+000f;
-      T3[1] = +1.5000000E+000f;
-      T3[2] = +6.6666669E-001f;
+      T3 = new FloatVector(3)
+      {
+        [0] = +4.0000000E+000f,
+        [1] = +1.5000000E+000f,
+        [2] = +6.6666669E-001f
+      };
 
-      A3 = new FloatMatrix(3);
-      A3[0, 0] = +1.0000000E+000f;
-      A3[1, 0] = -3.7500000E-001f;
-      A3[1, 1] = +1.0000000E+000f;
-      A3[2, 0] = -3.0303031E-002f;
-      A3[2, 1] = -3.6363637E-001f;
-      A3[2, 2] = +1.0000000E+000f;
+      A3 = new FloatMatrix(3)
+      {
+        [0, 0] = +1.0000000E+000f,
+        [1, 0] = -3.7500000E-001f,
+        [1, 1] = +1.0000000E+000f,
+        [2, 0] = -3.0303031E-002f,
+        [2, 1] = -3.6363637E-001f,
+        [2, 2] = +1.0000000E+000f
+      };
 
-      D3 = new FloatVector(3);
-      D3[0] = +2.5000000E-001f;
-      D3[1] = +2.9090908E-001f;
-      D3[2] = +2.9117647E-001f;
+      D3 = new FloatVector(3)
+      {
+        [0] = +2.5000000E-001f,
+        [1] = +2.9090908E-001f,
+        [2] = +2.9117647E-001f
+      };
 
       Det3 = +4.7222221E+001f;
 
-      I3 = new FloatMatrix(3);
-      I3[0, 0] = +2.9117647E-001f;
-      I3[0, 1] = -1.0588235E-001f;
-      I3[0, 2] = -8.8235298E-003f;
-      I3[1, 0] = -1.0588235E-001f;
-      I3[1, 1] = +3.2941177E-001f;
-      I3[1, 2] = -1.0588235E-001f;
-      I3[2, 0] = -8.8235298E-003f;
-      I3[2, 1] = -1.0588235E-001f;
-      I3[2, 2] = +2.9117647E-001f;
+      I3 = new FloatMatrix(3)
+      {
+        [0, 0] = +2.9117647E-001f,
+        [0, 1] = -1.0588235E-001f,
+        [0, 2] = -8.8235298E-003f,
+        [1, 0] = -1.0588235E-001f,
+        [1, 1] = +3.2941177E-001f,
+        [1, 2] = -1.0588235E-001f,
+        [2, 0] = -8.8235298E-003f,
+        [2, 1] = -1.0588235E-001f,
+        [2, 2] = +2.9117647E-001f
+      };
 
-      X3 = new FloatVector(3);
-      X3[0] = +1.0000000E+000f;
-      X3[1] = +2.0000000E+000f;
-      X3[2] = +3.0000000E+000f;
+      X3 = new FloatVector(3)
+      {
+        [0] = +1.0000000E+000f,
+        [1] = +2.0000000E+000f,
+        [2] = +3.0000000E+000f
+      };
 
-      Y3 = new FloatVector(3);
-      Y3[0] = +9.0000000E+000f;
-      Y3[1] = +1.4000000E+001f;
-      Y3[2] = +1.5666667E+001f;
+      Y3 = new FloatVector(3)
+      {
+        [0] = +9.0000000E+000f,
+        [1] = +1.4000000E+001f,
+        [2] = +1.5666667E+001f
+      };
 
       Tolerance3 = 1.5E-006f;
 
       // unit testing values - order 4
 
-      T4 = new FloatVector(4);
-      T4[0] = +4.0000000E+000f;
-      T4[1] = +1.5000000E+000f;
-      T4[2] = +6.6666669E-001f;
-      T4[3] = +2.5000000E-001f;
+      T4 = new FloatVector(4)
+      {
+        [0] = +4.0000000E+000f,
+        [1] = +1.5000000E+000f,
+        [2] = +6.6666669E-001f,
+        [3] = +2.5000000E-001f
+      };
 
-      A4 = new FloatMatrix(4);
-      A4[0, 0] = +1.0000000E+000f;
-      A4[1, 0] = -3.7500000E-001f;
-      A4[1, 1] = +1.0000000E+000f;
-      A4[2, 0] = -3.0303031E-002f;
-      A4[2, 1] = -3.6363637E-001f;
-      A4[2, 2] = +1.0000000E+000f;
-      A4[3, 0] = +1.1029412E-002f;
-      A4[3, 1] = -3.4313727E-002f;
-      A4[3, 2] = -3.6397058E-001f;
-      A4[3, 3] = +1.0000000E+000f;
+      A4 = new FloatMatrix(4)
+      {
+        [0, 0] = +1.0000000E+000f,
+        [1, 0] = -3.7500000E-001f,
+        [1, 1] = +1.0000000E+000f,
+        [2, 0] = -3.0303031E-002f,
+        [2, 1] = -3.6363637E-001f,
+        [2, 2] = +1.0000000E+000f,
+        [3, 0] = +1.1029412E-002f,
+        [3, 1] = -3.4313727E-002f,
+        [3, 2] = -3.6397058E-001f,
+        [3, 3] = +1.0000000E+000f
+      };
 
-      D4 = new FloatVector(4);
-      D4[0] = +2.5000000E-001f;
-      D4[1] = +2.9090908E-001f;
-      D4[2] = +2.9117647E-001f;
-      D4[3] = +2.9121190E-001f;
+      D4 = new FloatVector(4)
+      {
+        [0] = +2.5000000E-001f,
+        [1] = +2.9090908E-001f,
+        [2] = +2.9117647E-001f,
+        [3] = +2.9121190E-001f
+      };
 
       Det4 = +1.6215759E+002f;
 
-      I4 = new FloatMatrix(4);
-      I4[0, 0] = +2.9121190E-001f;
-      I4[0, 1] = -1.0599256E-001f;
-      I4[0, 2] = -9.9925650E-003f;
-      I4[0, 3] = +3.2118959E-003f;
-      I4[1, 0] = -1.0599256E-001f;
-      I4[1, 1] = +3.2975465E-001f;
-      I4[1, 2] = -1.0224535E-001f;
-      I4[1, 3] = -9.9925650E-003f;
-      I4[2, 0] = -9.9925650E-003f;
-      I4[2, 1] = -1.0224535E-001f;
-      I4[2, 2] = +3.2975465E-001f;
-      I4[2, 3] = -1.0599256E-001f;
-      I4[3, 0] = +3.2118959E-003f;
-      I4[3, 1] = -9.9925650E-003f;
-      I4[3, 2] = -1.0599256E-001f;
-      I4[3, 3] = +2.9121190E-001f;
+      I4 = new FloatMatrix(4)
+      {
+        [0, 0] = +2.9121190E-001f,
+        [0, 1] = -1.0599256E-001f,
+        [0, 2] = -9.9925650E-003f,
+        [0, 3] = +3.2118959E-003f,
+        [1, 0] = -1.0599256E-001f,
+        [1, 1] = +3.2975465E-001f,
+        [1, 2] = -1.0224535E-001f,
+        [1, 3] = -9.9925650E-003f,
+        [2, 0] = -9.9925650E-003f,
+        [2, 1] = -1.0224535E-001f,
+        [2, 2] = +3.2975465E-001f,
+        [2, 3] = -1.0599256E-001f,
+        [3, 0] = +3.2118959E-003f,
+        [3, 1] = -9.9925650E-003f,
+        [3, 2] = -1.0599256E-001f,
+        [3, 3] = +2.9121190E-001f
+      };
 
-      X4 = new FloatVector(4);
-      X4[0] = +1.0000000E+000f;
-      X4[1] = +2.0000000E+000f;
-      X4[2] = +3.0000000E+000f;
-      X4[3] = +4.0000000E+000f;
+      X4 = new FloatVector(4)
+      {
+        [0] = +1.0000000E+000f,
+        [1] = +2.0000000E+000f,
+        [2] = +3.0000000E+000f,
+        [3] = +4.0000000E+000f
+      };
 
-      Y4 = new FloatVector(4);
-      Y4[0] = +1.0000000E+001f;
-      Y4[1] = +1.6666666E+001f;
-      Y4[2] = +2.1666666E+001f;
-      Y4[3] = +2.2083334E+001f;
+      Y4 = new FloatVector(4)
+      {
+        [0] = +1.0000000E+001f,
+        [1] = +1.6666666E+001f,
+        [2] = +2.1666666E+001f,
+        [3] = +2.2083334E+001f
+      };
 
       Tolerance4 = 2.5E-006f;
 
       // unit testing values - order 5
 
-      T5 = new FloatVector(5);
-      T5[0] = +1.0000000E+000f;
-      T5[1] = +5.0000000E-001f;
-      T5[2] = +3.3333334E-001f;
-      T5[3] = +2.5000000E-001f;
-      T5[4] = +2.0000000E-001f;
+      T5 = new FloatVector(5)
+      {
+        [0] = +1.0000000E+000f,
+        [1] = +5.0000000E-001f,
+        [2] = +3.3333334E-001f,
+        [3] = +2.5000000E-001f,
+        [4] = +2.0000000E-001f
+      };
 
-      A5 = new FloatMatrix(5);
-      A5[0, 0] = +1.0000000E+000f;
-      A5[1, 0] = -5.0000000E-001f;
-      A5[1, 1] = +1.0000000E+000f;
-      A5[2, 0] = -1.1111111E-001f;
-      A5[2, 1] = -4.4444445E-001f;
-      A5[2, 2] = +1.0000000E+000f;
-      A5[3, 0] = -6.2500000E-002f;
-      A5[3, 1] = -8.3333336E-002f;
-      A5[3, 2] = -4.3750000E-001f;
-      A5[3, 3] = +1.0000000E+000f;
-      A5[4, 0] = -4.2823531E-002f;
-      A5[4, 1] = -4.3764707E-002f;
-      A5[4, 2] = -7.9764709E-002f;
-      A5[4, 3] = -4.3482354E-001f;
-      A5[4, 4] = +1.0000000E+000f;
+      A5 = new FloatMatrix(5)
+      {
+        [0, 0] = +1.0000000E+000f,
+        [1, 0] = -5.0000000E-001f,
+        [1, 1] = +1.0000000E+000f,
+        [2, 0] = -1.1111111E-001f,
+        [2, 1] = -4.4444445E-001f,
+        [2, 2] = +1.0000000E+000f,
+        [3, 0] = -6.2500000E-002f,
+        [3, 1] = -8.3333336E-002f,
+        [3, 2] = -4.3750000E-001f,
+        [3, 3] = +1.0000000E+000f,
+        [4, 0] = -4.2823531E-002f,
+        [4, 1] = -4.3764707E-002f,
+        [4, 2] = -7.9764709E-002f,
+        [4, 3] = -4.3482354E-001f,
+        [4, 4] = +1.0000000E+000f
+      };
 
-      D5 = new FloatVector(5);
-      D5[0] = +1.0000000E+000f;
-      D5[1] = +1.3333334E+000f;
-      D5[2] = +1.3500000E+000f;
-      D5[3] = +1.3552941E+000f;
-      D5[4] = +1.3577842E+000f;
+      D5 = new FloatVector(5)
+      {
+        [0] = +1.0000000E+000f,
+        [1] = +1.3333334E+000f,
+        [2] = +1.3500000E+000f,
+        [3] = +1.3552941E+000f,
+        [4] = +1.3577842E+000f
+      };
 
       Det5 = +3.0190009E-001f;
 
-      I5 = new FloatMatrix(5);
-      I5[0, 0] = +1.3577842E+000f;
-      I5[0, 1] = -5.9039646E-001f;
-      I5[0, 2] = -1.0830325E-001f;
-      I5[0, 3] = -5.9423022E-002f;
-      I5[0, 4] = -5.8145106E-002f;
-      I5[1, 0] = -5.9039646E-001f;
-      I5[1, 1] = +1.6120124E+000f;
-      I5[1, 2] = -5.4584837E-001f;
-      I5[1, 3] = -8.7102652E-002f;
-      I5[1, 4] = -5.9423022E-002f;
-      I5[2, 0] = -1.0830325E-001f;
-      I5[2, 1] = -5.4584837E-001f;
-      I5[2, 2] = +1.6180506E+000f;
-      I5[2, 3] = -5.4584837E-001f;
-      I5[2, 4] = -1.0830325E-001f;
-      I5[3, 0] = -5.9423022E-002f;
-      I5[3, 1] = -8.7102652E-002f;
-      I5[3, 2] = -5.4584837E-001f;
-      I5[3, 3] = +1.6120124E+000f;
-      I5[3, 4] = -5.9039646E-001f;
-      I5[4, 0] = -5.8145106E-002f;
-      I5[4, 1] = -5.9423022E-002f;
-      I5[4, 2] = -1.0830325E-001f;
-      I5[4, 3] = -5.9039646E-001f;
-      I5[4, 4] = +1.3577842E+000f;
+      I5 = new FloatMatrix(5)
+      {
+        [0, 0] = +1.3577842E+000f,
+        [0, 1] = -5.9039646E-001f,
+        [0, 2] = -1.0830325E-001f,
+        [0, 3] = -5.9423022E-002f,
+        [0, 4] = -5.8145106E-002f,
+        [1, 0] = -5.9039646E-001f,
+        [1, 1] = +1.6120124E+000f,
+        [1, 2] = -5.4584837E-001f,
+        [1, 3] = -8.7102652E-002f,
+        [1, 4] = -5.9423022E-002f,
+        [2, 0] = -1.0830325E-001f,
+        [2, 1] = -5.4584837E-001f,
+        [2, 2] = +1.6180506E+000f,
+        [2, 3] = -5.4584837E-001f,
+        [2, 4] = -1.0830325E-001f,
+        [3, 0] = -5.9423022E-002f,
+        [3, 1] = -8.7102652E-002f,
+        [3, 2] = -5.4584837E-001f,
+        [3, 3] = +1.6120124E+000f,
+        [3, 4] = -5.9039646E-001f,
+        [4, 0] = -5.8145106E-002f,
+        [4, 1] = -5.9423022E-002f,
+        [4, 2] = -1.0830325E-001f,
+        [4, 3] = -5.9039646E-001f,
+        [4, 4] = +1.3577842E+000f
+      };
 
-      X5 = new FloatVector(5);
-      X5[0] = +1.0000000E+000f;
-      X5[1] = +2.0000000E+000f;
-      X5[2] = +3.0000000E+000f;
-      X5[3] = +4.0000000E+000f;
-      X5[4] = +5.0000000E+000f;
+      X5 = new FloatVector(5)
+      {
+        [0] = +1.0000000E+000f,
+        [1] = +2.0000000E+000f,
+        [2] = +3.0000000E+000f,
+        [3] = +4.0000000E+000f,
+        [4] = +5.0000000E+000f
+      };
 
-      Y5 = new FloatVector(5);
-      Y5[0] = +5.0000000E+000f;
-      Y5[1] = +6.5833335E+000f;
-      Y5[2] = +8.0000000E+000f;
-      Y5[3] = +8.9166670E+000f;
-      Y5[4] = +8.6999998E+000f;
+      Y5 = new FloatVector(5)
+      {
+        [0] = +5.0000000E+000f,
+        [1] = +6.5833335E+000f,
+        [2] = +8.0000000E+000f,
+        [3] = +8.9166670E+000f,
+        [4] = +8.6999998E+000f
+      };
 
       Tolerance5 = 2.5E-006f;
 
       // unit testing values - order 10
 
-      T10 = new FloatVector(10);
-      T10[0] = +1.0000000E+001f;
-      T10[1] = +5.0000000E+000f;
-      T10[2] = +3.3333333E+000f;
-      T10[3] = +2.5000000E+000f;
-      T10[4] = +2.0000000E+000f;
-      T10[5] = +1.6666666E+000f;
-      T10[6] = +1.4285715E+000f;
-      T10[7] = +1.2500000E+000f;
-      T10[8] = +1.1111112E+000f;
-      T10[9] = +1.0000000E+000f;
+      T10 = new FloatVector(10)
+      {
+        [0] = +1.0000000E+001f,
+        [1] = +5.0000000E+000f,
+        [2] = +3.3333333E+000f,
+        [3] = +2.5000000E+000f,
+        [4] = +2.0000000E+000f,
+        [5] = +1.6666666E+000f,
+        [6] = +1.4285715E+000f,
+        [7] = +1.2500000E+000f,
+        [8] = +1.1111112E+000f,
+        [9] = +1.0000000E+000f
+      };
 
-      A10 = new FloatMatrix(10);
-      A10[0, 0] = +1.0000000E+000f;
-      A10[1, 0] = -5.0000000E-001f;
-      A10[1, 1] = +1.0000000E+000f;
-      A10[2, 0] = -1.1111111E-001f;
-      A10[2, 1] = -4.4444445E-001f;
-      A10[2, 2] = +1.0000000E+000f;
-      A10[3, 0] = -6.2500000E-002f;
-      A10[3, 1] = -8.3333336E-002f;
-      A10[3, 2] = -4.3750000E-001f;
-      A10[3, 3] = +1.0000000E+000f;
-      A10[4, 0] = -4.2823531E-002f;
-      A10[4, 1] = -4.3764707E-002f;
-      A10[4, 2] = -7.9764709E-002f;
-      A10[4, 3] = -4.3482354E-001f;
-      A10[4, 4] = +1.0000000E+000f;
-      A10[5, 0] = -3.2262016E-002f;
-      A10[5, 1] = -2.8795246E-002f;
-      A10[5, 2] = -4.1191336E-002f;
-      A10[5, 3] = -7.8352772E-002f;
-      A10[5, 4] = -4.3344197E-001f;
-      A10[5, 5] = +1.0000000E+000f;
-      A10[6, 0] = -2.5714690E-002f;
-      A10[6, 1] = -2.1116190E-002f;
-      A10[6, 2] = -2.6780428E-002f;
-      A10[6, 3] = -4.0132113E-002f;
-      A10[6, 4] = -7.7612311E-002f;
-      A10[6, 5] = -4.3261236E-001f;
-      A10[6, 6] = +1.0000000E+000f;
-      A10[7, 0] = -2.1279071E-002f;
-      A10[7, 1] = -1.6509103E-002f;
-      A10[7, 2] = -1.9464672E-002f;
-      A10[7, 3] = -2.5926454E-002f;
-      A10[7, 4] = -3.9562251E-002f;
-      A10[7, 5] = -7.7162974E-002f;
-      A10[7, 6] = -4.3206516E-001f;
-      A10[7, 7] = +1.0000000E+000f;
-      A10[8, 0] = -1.8086541E-002f;
-      A10[8, 1] = -1.3464506E-002f;
-      A10[8, 2] = -1.5113491E-002f;
-      A10[8, 3] = -1.8749127E-002f;
-      A10[8, 4] = -2.5457535E-002f;
-      A10[8, 5] = -3.9210200E-002f;
-      A10[8, 6] = -7.6864384E-002f;
-      A10[8, 7] = -4.3168029E-001f;
-      A10[8, 8] = +1.0000000E+000f;
-      A10[9, 0] = -1.5685264E-002f;
-      A10[9, 1] = -1.1315523E-002f;
-      A10[9, 2] = -1.2258868E-002f;
-      A10[9, 3] = -1.4498468E-002f;
-      A10[9, 4] = -1.8349819E-002f;
-      A10[9, 5] = -2.5163449E-002f;
-      A10[9, 6] = -3.8973141E-002f;
-      A10[9, 7] = -7.6653190E-002f;
-      A10[9, 8] = -4.3139660E-001f;
-      A10[9, 9] = +1.0000000E+000f;
+      A10 = new FloatMatrix(10)
+      {
+        [0, 0] = +1.0000000E+000f,
+        [1, 0] = -5.0000000E-001f,
+        [1, 1] = +1.0000000E+000f,
+        [2, 0] = -1.1111111E-001f,
+        [2, 1] = -4.4444445E-001f,
+        [2, 2] = +1.0000000E+000f,
+        [3, 0] = -6.2500000E-002f,
+        [3, 1] = -8.3333336E-002f,
+        [3, 2] = -4.3750000E-001f,
+        [3, 3] = +1.0000000E+000f,
+        [4, 0] = -4.2823531E-002f,
+        [4, 1] = -4.3764707E-002f,
+        [4, 2] = -7.9764709E-002f,
+        [4, 3] = -4.3482354E-001f,
+        [4, 4] = +1.0000000E+000f,
+        [5, 0] = -3.2262016E-002f,
+        [5, 1] = -2.8795246E-002f,
+        [5, 2] = -4.1191336E-002f,
+        [5, 3] = -7.8352772E-002f,
+        [5, 4] = -4.3344197E-001f,
+        [5, 5] = +1.0000000E+000f,
+        [6, 0] = -2.5714690E-002f,
+        [6, 1] = -2.1116190E-002f,
+        [6, 2] = -2.6780428E-002f,
+        [6, 3] = -4.0132113E-002f,
+        [6, 4] = -7.7612311E-002f,
+        [6, 5] = -4.3261236E-001f,
+        [6, 6] = +1.0000000E+000f,
+        [7, 0] = -2.1279071E-002f,
+        [7, 1] = -1.6509103E-002f,
+        [7, 2] = -1.9464672E-002f,
+        [7, 3] = -2.5926454E-002f,
+        [7, 4] = -3.9562251E-002f,
+        [7, 5] = -7.7162974E-002f,
+        [7, 6] = -4.3206516E-001f,
+        [7, 7] = +1.0000000E+000f,
+        [8, 0] = -1.8086541E-002f,
+        [8, 1] = -1.3464506E-002f,
+        [8, 2] = -1.5113491E-002f,
+        [8, 3] = -1.8749127E-002f,
+        [8, 4] = -2.5457535E-002f,
+        [8, 5] = -3.9210200E-002f,
+        [8, 6] = -7.6864384E-002f,
+        [8, 7] = -4.3168029E-001f,
+        [8, 8] = +1.0000000E+000f,
+        [9, 0] = -1.5685264E-002f,
+        [9, 1] = -1.1315523E-002f,
+        [9, 2] = -1.2258868E-002f,
+        [9, 3] = -1.4498468E-002f,
+        [9, 4] = -1.8349819E-002f,
+        [9, 5] = -2.5163449E-002f,
+        [9, 6] = -3.8973141E-002f,
+        [9, 7] = -7.6653190E-002f,
+        [9, 8] = -4.3139660E-001f,
+        [9, 9] = +1.0000000E+000f
+      };
 
-      D10 = new FloatVector(10);
-      D10[0] = +1.0000000E-001f;
-      D10[1] = +1.3333334E-001f;
-      D10[2] = +1.3500001E-001f;
-      D10[3] = +1.3552941E-001f;
-      D10[4] = +1.3577841E-001f;
-      D10[5] = +1.3591988E-001f;
-      D10[6] = +1.3600981E-001f;
-      D10[7] = +1.3607143E-001f;
-      D10[8] = +1.3611595E-001f;
-      D10[9] = +1.3614945E-001f;
+      D10 = new FloatVector(10)
+      {
+        [0] = +1.0000000E-001f,
+        [1] = +1.3333334E-001f,
+        [2] = +1.3500001E-001f,
+        [3] = +1.3552941E-001f,
+        [4] = +1.3577841E-001f,
+        [5] = +1.3591988E-001f,
+        [6] = +1.3600981E-001f,
+        [7] = +1.3607143E-001f,
+        [8] = +1.3611595E-001f,
+        [9] = +1.3614945E-001f
+      };
 
       Det10 = +6.4761683E+008f;
 
-      I10 = new FloatMatrix(10);
-      I10[0, 0] = +1.3614945E-001f;
-      I10[0, 1] = -5.8734413E-002f;
-      I10[0, 2] = -1.0436290E-002f;
-      I10[0, 3] = -5.3061722E-003f;
-      I10[0, 4] = -3.4259900E-003f;
-      I10[0, 5] = -2.4983177E-003f;
-      I10[0, 6] = -1.9739585E-003f;
-      I10[0, 7] = -1.6690382E-003f;
-      I10[0, 8] = -1.5406023E-003f;
-      I10[0, 9] = -2.1355401E-003f;
-      I10[1, 0] = -5.8734413E-002f;
-      I10[1, 1] = +1.6145378E-001f;
-      I10[1, 2] = -5.4256398E-002f;
-      I10[1, 3] = -8.1734043E-003f;
-      I10[1, 4] = -3.8591737E-003f;
-      I10[1, 5] = -2.3874110E-003f;
-      I10[1, 6] = -1.7004963E-003f;
-      I10[1, 7] = -1.3371698E-003f;
-      I10[1, 8] = -1.1681236E-003f;
-      I10[1, 9] = -1.5406023E-003f;
-      I10[2, 0] = -1.0436290E-002f;
-      I10[2, 1] = -5.4256398E-002f;
-      I10[2, 2] = +1.6223632E-001f;
-      I10[2, 3] = -5.3868547E-002f;
-      I10[2, 4] = -7.9331277E-003f;
-      I10[2, 5] = -3.6959394E-003f;
-      I10[2, 6] = -2.2748676E-003f;
-      I10[2, 7] = -1.6326014E-003f;
-      I10[2, 8] = -1.3371698E-003f;
-      I10[2, 9] = -1.6690382E-003f;
-      I10[3, 0] = -5.3061722E-003f;
-      I10[3, 1] = -8.1734043E-003f;
-      I10[3, 2] = -5.3868547E-002f;
-      I10[3, 3] = +1.6242266E-001f;
-      I10[3, 4] = -5.3759225E-002f;
-      I10[3, 5] = -7.8663863E-003f;
-      I10[3, 6] = -3.6610069E-003f;
-      I10[3, 7] = -2.2748676E-003f;
-      I10[3, 8] = -1.7004963E-003f;
-      I10[3, 9] = -1.9739585E-003f;
-      I10[4, 0] = -3.4259900E-003f;
-      I10[4, 1] = -3.8591737E-003f;
-      I10[4, 2] = -7.9331277E-003f;
-      I10[4, 3] = -5.3759225E-002f;
-      I10[4, 4] = +1.6248025E-001f;
-      I10[4, 5] = -5.3732581E-002f;
-      I10[4, 6] = -7.8663863E-003f;
-      I10[4, 7] = -3.6959394E-003f;
-      I10[4, 8] = -2.3874110E-003f;
-      I10[4, 9] = -2.4983177E-003f;
-      I10[5, 0] = -2.4983177E-003f;
-      I10[5, 1] = -2.3874110E-003f;
-      I10[5, 2] = -3.6959394E-003f;
-      I10[5, 3] = -7.8663863E-003f;
-      I10[5, 4] = -5.3732581E-002f;
-      I10[5, 5] = +1.6248025E-001f;
-      I10[5, 6] = -5.3759225E-002f;
-      I10[5, 7] = -7.9331277E-003f;
-      I10[5, 8] = -3.8591737E-003f;
-      I10[5, 9] = -3.4259900E-003f;
-      I10[6, 0] = -1.9739585E-003f;
-      I10[6, 1] = -1.7004963E-003f;
-      I10[6, 2] = -2.2748676E-003f;
-      I10[6, 3] = -3.6610069E-003f;
-      I10[6, 4] = -7.8663863E-003f;
-      I10[6, 5] = -5.3759225E-002f;
-      I10[6, 6] = +1.6242266E-001f;
-      I10[6, 7] = -5.3868547E-002f;
-      I10[6, 8] = -8.1734043E-003f;
-      I10[6, 9] = -5.3061722E-003f;
-      I10[7, 0] = -1.6690382E-003f;
-      I10[7, 1] = -1.3371698E-003f;
-      I10[7, 2] = -1.6326014E-003f;
-      I10[7, 3] = -2.2748676E-003f;
-      I10[7, 4] = -3.6959394E-003f;
-      I10[7, 5] = -7.9331277E-003f;
-      I10[7, 6] = -5.3868547E-002f;
-      I10[7, 7] = +1.6223632E-001f;
-      I10[7, 8] = -5.4256398E-002f;
-      I10[7, 9] = -1.0436290E-002f;
-      I10[8, 0] = -1.5406023E-003f;
-      I10[8, 1] = -1.1681236E-003f;
-      I10[8, 2] = -1.3371698E-003f;
-      I10[8, 3] = -1.7004963E-003f;
-      I10[8, 4] = -2.3874110E-003f;
-      I10[8, 5] = -3.8591737E-003f;
-      I10[8, 6] = -8.1734043E-003f;
-      I10[8, 7] = -5.4256398E-002f;
-      I10[8, 8] = +1.6145378E-001f;
-      I10[8, 9] = -5.8734413E-002f;
-      I10[9, 0] = -2.1355401E-003f;
-      I10[9, 1] = -1.5406023E-003f;
-      I10[9, 2] = -1.6690382E-003f;
-      I10[9, 3] = -1.9739585E-003f;
-      I10[9, 4] = -2.4983177E-003f;
-      I10[9, 5] = -3.4259900E-003f;
-      I10[9, 6] = -5.3061722E-003f;
-      I10[9, 7] = -1.0436290E-002f;
-      I10[9, 8] = -5.8734413E-002f;
-      I10[9, 9] = +1.3614945E-001f;
+      I10 = new FloatMatrix(10)
+      {
+        [0, 0] = +1.3614945E-001f,
+        [0, 1] = -5.8734413E-002f,
+        [0, 2] = -1.0436290E-002f,
+        [0, 3] = -5.3061722E-003f,
+        [0, 4] = -3.4259900E-003f,
+        [0, 5] = -2.4983177E-003f,
+        [0, 6] = -1.9739585E-003f,
+        [0, 7] = -1.6690382E-003f,
+        [0, 8] = -1.5406023E-003f,
+        [0, 9] = -2.1355401E-003f,
+        [1, 0] = -5.8734413E-002f,
+        [1, 1] = +1.6145378E-001f,
+        [1, 2] = -5.4256398E-002f,
+        [1, 3] = -8.1734043E-003f,
+        [1, 4] = -3.8591737E-003f,
+        [1, 5] = -2.3874110E-003f,
+        [1, 6] = -1.7004963E-003f,
+        [1, 7] = -1.3371698E-003f,
+        [1, 8] = -1.1681236E-003f,
+        [1, 9] = -1.5406023E-003f,
+        [2, 0] = -1.0436290E-002f,
+        [2, 1] = -5.4256398E-002f,
+        [2, 2] = +1.6223632E-001f,
+        [2, 3] = -5.3868547E-002f,
+        [2, 4] = -7.9331277E-003f,
+        [2, 5] = -3.6959394E-003f,
+        [2, 6] = -2.2748676E-003f,
+        [2, 7] = -1.6326014E-003f,
+        [2, 8] = -1.3371698E-003f,
+        [2, 9] = -1.6690382E-003f,
+        [3, 0] = -5.3061722E-003f,
+        [3, 1] = -8.1734043E-003f,
+        [3, 2] = -5.3868547E-002f,
+        [3, 3] = +1.6242266E-001f,
+        [3, 4] = -5.3759225E-002f,
+        [3, 5] = -7.8663863E-003f,
+        [3, 6] = -3.6610069E-003f,
+        [3, 7] = -2.2748676E-003f,
+        [3, 8] = -1.7004963E-003f,
+        [3, 9] = -1.9739585E-003f,
+        [4, 0] = -3.4259900E-003f,
+        [4, 1] = -3.8591737E-003f,
+        [4, 2] = -7.9331277E-003f,
+        [4, 3] = -5.3759225E-002f,
+        [4, 4] = +1.6248025E-001f,
+        [4, 5] = -5.3732581E-002f,
+        [4, 6] = -7.8663863E-003f,
+        [4, 7] = -3.6959394E-003f,
+        [4, 8] = -2.3874110E-003f,
+        [4, 9] = -2.4983177E-003f,
+        [5, 0] = -2.4983177E-003f,
+        [5, 1] = -2.3874110E-003f,
+        [5, 2] = -3.6959394E-003f,
+        [5, 3] = -7.8663863E-003f,
+        [5, 4] = -5.3732581E-002f,
+        [5, 5] = +1.6248025E-001f,
+        [5, 6] = -5.3759225E-002f,
+        [5, 7] = -7.9331277E-003f,
+        [5, 8] = -3.8591737E-003f,
+        [5, 9] = -3.4259900E-003f,
+        [6, 0] = -1.9739585E-003f,
+        [6, 1] = -1.7004963E-003f,
+        [6, 2] = -2.2748676E-003f,
+        [6, 3] = -3.6610069E-003f,
+        [6, 4] = -7.8663863E-003f,
+        [6, 5] = -5.3759225E-002f,
+        [6, 6] = +1.6242266E-001f,
+        [6, 7] = -5.3868547E-002f,
+        [6, 8] = -8.1734043E-003f,
+        [6, 9] = -5.3061722E-003f,
+        [7, 0] = -1.6690382E-003f,
+        [7, 1] = -1.3371698E-003f,
+        [7, 2] = -1.6326014E-003f,
+        [7, 3] = -2.2748676E-003f,
+        [7, 4] = -3.6959394E-003f,
+        [7, 5] = -7.9331277E-003f,
+        [7, 6] = -5.3868547E-002f,
+        [7, 7] = +1.6223632E-001f,
+        [7, 8] = -5.4256398E-002f,
+        [7, 9] = -1.0436290E-002f,
+        [8, 0] = -1.5406023E-003f,
+        [8, 1] = -1.1681236E-003f,
+        [8, 2] = -1.3371698E-003f,
+        [8, 3] = -1.7004963E-003f,
+        [8, 4] = -2.3874110E-003f,
+        [8, 5] = -3.8591737E-003f,
+        [8, 6] = -8.1734043E-003f,
+        [8, 7] = -5.4256398E-002f,
+        [8, 8] = +1.6145378E-001f,
+        [8, 9] = -5.8734413E-002f,
+        [9, 0] = -2.1355401E-003f,
+        [9, 1] = -1.5406023E-003f,
+        [9, 2] = -1.6690382E-003f,
+        [9, 3] = -1.9739585E-003f,
+        [9, 4] = -2.4983177E-003f,
+        [9, 5] = -3.4259900E-003f,
+        [9, 6] = -5.3061722E-003f,
+        [9, 7] = -1.0436290E-002f,
+        [9, 8] = -5.8734413E-002f,
+        [9, 9] = +1.3614945E-001f
+      };
 
-      X10 = new FloatVector(10);
-      X10[0] = +1.0000000E+000f;
-      X10[1] = +2.0000000E+000f;
-      X10[2] = +3.0000000E+000f;
-      X10[3] = +4.0000000E+000f;
-      X10[4] = +5.0000000E+000f;
-      X10[5] = +6.0000000E+000f;
-      X10[6] = +7.0000000E+000f;
-      X10[7] = +8.0000000E+000f;
-      X10[8] = +9.0000000E+000f;
-      X10[9] = +1.0000000E+001f;
+      X10 = new FloatVector(10)
+      {
+        [0] = +1.0000000E+000f,
+        [1] = +2.0000000E+000f,
+        [2] = +3.0000000E+000f,
+        [3] = +4.0000000E+000f,
+        [4] = +5.0000000E+000f,
+        [5] = +6.0000000E+000f,
+        [6] = +7.0000000E+000f,
+        [7] = +8.0000000E+000f,
+        [8] = +9.0000000E+000f,
+        [9] = +1.0000000E+001f
+      };
 
-      Y10 = new FloatVector(10);
-      Y10[0] = +1.0000000E+002f;
-      Y10[1] = +1.2328968E+002f;
-      Y10[2] = +1.4769048E+002f;
-      Y10[3] = +1.7195238E+002f;
-      Y10[4] = +1.9500000E+002f;
-      Y10[5] = +2.1566667E+002f;
-      Y10[6] = +2.3242857E+002f;
-      Y10[7] = +2.4294048E+002f;
-      Y10[8] = +2.4289682E+002f;
-      Y10[9] = +2.2218651E+002f;
+      Y10 = new FloatVector(10)
+      {
+        [0] = +1.0000000E+002f,
+        [1] = +1.2328968E+002f,
+        [2] = +1.4769048E+002f,
+        [3] = +1.7195238E+002f,
+        [4] = +1.9500000E+002f,
+        [5] = +2.1566667E+002f,
+        [6] = +2.3242857E+002f,
+        [7] = +2.4294048E+002f,
+        [8] = +2.4289682E+002f,
+        [9] = +2.2218651E+002f
+      };
 
       Tolerance10 = 1.0E-005f;
     }
@@ -576,7 +648,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(null as FloatVector);
+        var fsl = new FloatSymmetricLevinson(null as FloatVector);
       });
     }
 
@@ -586,7 +658,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(null as float[]);
+        var fsl = new FloatSymmetricLevinson(null as float[]);
       });
     }
 
@@ -600,8 +672,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.RankException), () =>
       {
-        FloatVector dv = new FloatVector();
-        FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(dv);
+        var dv = new FloatVector();
+        var fsl = new FloatSymmetricLevinson(dv);
       });
     }
 
@@ -611,7 +683,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(System.RankException), () =>
       {
         float[] dv = new float[0];
-        FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(dv);
+        var fsl = new FloatSymmetricLevinson(dv);
       });
     }
 
@@ -623,7 +695,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetVectorMemberTest()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
       FloatVector TT = fsl.GetVector();
       Assert.IsTrue(T5.Equals(TT));
     }
@@ -636,7 +708,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetMatrixMemberTest()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
       FloatMatrix fsldm = fsl.GetMatrix();
       for (int row = 0; row < T5.Length; row++)
       {
@@ -662,7 +734,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OrderPropertyTest()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
       Assert.IsTrue(fsl.Order == 5);
     }
 
@@ -676,7 +748,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T1);
+      var fsl = new FloatSymmetricLevinson(T1);
       FloatMatrix U = fsl.U;
       FloatMatrix D = fsl.D;
       FloatMatrix L = fsl.L;
@@ -723,7 +795,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T2);
+      var fsl = new FloatSymmetricLevinson(T2);
       FloatMatrix U = fsl.U;
       FloatMatrix D = fsl.D;
       FloatMatrix L = fsl.L;
@@ -770,7 +842,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T3);
+      var fsl = new FloatSymmetricLevinson(T3);
       FloatMatrix U = fsl.U;
       FloatMatrix D = fsl.D;
       FloatMatrix L = fsl.L;
@@ -817,7 +889,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T4);
+      var fsl = new FloatSymmetricLevinson(T4);
       FloatMatrix U = fsl.U;
       FloatMatrix D = fsl.D;
       FloatMatrix L = fsl.L;
@@ -864,7 +936,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
       FloatMatrix U = fsl.U;
       FloatMatrix D = fsl.D;
       FloatMatrix L = fsl.L;
@@ -910,7 +982,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+      var fsl = new FloatSymmetricLevinson(T10);
       FloatMatrix U = fsl.U;
       FloatMatrix D = fsl.D;
       FloatMatrix L = fsl.L;
@@ -954,7 +1026,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PositveDefinitePropertyTest1()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T1);
+      var fsl = new FloatSymmetricLevinson(T1);
       Assert.IsTrue(fsl.IsPositiveDefinite);
     }
 
@@ -966,7 +1038,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PositveDefinitePropertyTest2()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T2);
+      var fsl = new FloatSymmetricLevinson(T2);
       Assert.IsTrue(fsl.IsPositiveDefinite);
     }
 
@@ -978,7 +1050,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PositveDefinitePropertyTest3()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T3);
+      var fsl = new FloatSymmetricLevinson(T3);
       Assert.IsTrue(fsl.IsPositiveDefinite);
     }
 
@@ -990,7 +1062,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PositveDefinitePropertyTest4()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T4);
+      var fsl = new FloatSymmetricLevinson(T4);
       Assert.IsTrue(fsl.IsPositiveDefinite);
     }
 
@@ -1002,7 +1074,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PositveDefinitePropertyTest5()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
       Assert.IsTrue(fsl.IsPositiveDefinite);
     }
 
@@ -1014,7 +1086,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PositveDefinitePropertyTest10()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+      var fsl = new FloatSymmetricLevinson(T10);
       Assert.IsTrue(fsl.IsPositiveDefinite);
     }
 
@@ -1026,7 +1098,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PositveDefinitePropertyTest()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
+      var fsl = new FloatSymmetricLevinson(1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
       Assert.IsFalse(fsl.IsPositiveDefinite);
     }
 
@@ -1038,7 +1110,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest1()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T1);
+      var fsl = new FloatSymmetricLevinson(T1);
       Assert.IsFalse(fsl.IsSingular);
     }
 
@@ -1050,7 +1122,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest2()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T2);
+      var fsl = new FloatSymmetricLevinson(T2);
       Assert.IsFalse(fsl.IsSingular);
     }
 
@@ -1062,7 +1134,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest3()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T3);
+      var fsl = new FloatSymmetricLevinson(T3);
       Assert.IsFalse(fsl.IsSingular);
     }
 
@@ -1074,7 +1146,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest4()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T4);
+      var fsl = new FloatSymmetricLevinson(T4);
       Assert.IsFalse(fsl.IsSingular);
     }
 
@@ -1086,7 +1158,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest5()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
       Assert.IsFalse(fsl.IsSingular);
     }
 
@@ -1098,7 +1170,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest10()
     {
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+      var fsl = new FloatSymmetricLevinson(T10);
       Assert.IsFalse(fsl.IsSingular);
     }
 
@@ -1110,14 +1182,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest()
     {
-      FloatVector T = new FloatVector(10);
+      var T = new FloatVector(10);
       for (int i = 1; i < 10; i++)
       {
-        T[i] = (float)(i + 1);
+        T[i] = i + 1;
       }
       T[0] = -2.0f;
 
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T);
+      var fsl = new FloatSymmetricLevinson(T);
       Assert.IsTrue(fsl.IsSingular);
     }
 
@@ -1130,7 +1202,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest1()
     {
       // calculate determinant from diagonal
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T1);
+      var fsl = new FloatSymmetricLevinson(T1);
 
       // check results match
       float e = System.Math.Abs((fsl.GetDeterminant() - Det1) / Det1);
@@ -1146,7 +1218,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest2()
     {
       // calculate determinant from diagonal
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T2);
+      var fsl = new FloatSymmetricLevinson(T2);
 
       // check results match
       float e = System.Math.Abs((fsl.GetDeterminant() - Det2) / Det2);
@@ -1162,7 +1234,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest3()
     {
       // calculate determinant from diagonal
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T3);
+      var fsl = new FloatSymmetricLevinson(T3);
 
       // check results match
       float e = System.Math.Abs((fsl.GetDeterminant() - Det3) / Det3);
@@ -1178,7 +1250,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest4()
     {
       // calculate determinant from diagonal
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T4);
+      var fsl = new FloatSymmetricLevinson(T4);
 
       // check results match
       float e = System.Math.Abs((fsl.GetDeterminant() - Det4) / Det4);
@@ -1194,7 +1266,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest5()
     {
       // calculate determinant from diagonal
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
 
       // check results match
       float e = System.Math.Abs((fsl.GetDeterminant() - Det5) / Det5);
@@ -1210,7 +1282,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest10()
     {
       // calculate determinant from diagonal
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+      var fsl = new FloatSymmetricLevinson(T10);
 
       // check results match
       float e = System.Math.Abs((fsl.GetDeterminant() - Det10) / Det10);
@@ -1226,7 +1298,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+        var fsl = new FloatSymmetricLevinson(T10);
         FloatVector X = fsl.Solve(null as FloatVector);
       });
     }
@@ -1240,7 +1312,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.RankException), () =>
       {
-        FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+        var fsl = new FloatSymmetricLevinson(T10);
         FloatVector X = fsl.Solve(X5);
       });
     }
@@ -1255,7 +1327,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T1);
+      var fsl = new FloatSymmetricLevinson(T1);
       FloatVector X = fsl.Solve(Y1);
 
       // determine the maximum error
@@ -1281,7 +1353,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T2);
+      var fsl = new FloatSymmetricLevinson(T2);
       FloatVector X = fsl.Solve(Y2);
 
       // determine the maximum error
@@ -1307,7 +1379,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T3);
+      var fsl = new FloatSymmetricLevinson(T3);
       FloatVector X = fsl.Solve(Y3);
 
       // determine the maximum error
@@ -1333,7 +1405,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T4);
+      var fsl = new FloatSymmetricLevinson(T4);
       FloatVector X = fsl.Solve(Y4);
 
       // determine the maximum error
@@ -1359,7 +1431,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
       FloatVector X = fsl.Solve(Y5);
 
       // determine the maximum error
@@ -1385,7 +1457,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+      var fsl = new FloatSymmetricLevinson(T10);
       FloatVector X = fsl.Solve(Y10);
 
       // determine the maximum error
@@ -1410,7 +1482,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+        var fsl = new FloatSymmetricLevinson(T10);
         FloatMatrix X = fsl.Solve(null as FloatMatrix);
       });
     }
@@ -1424,7 +1496,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.RankException), () =>
       {
-        FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+        var fsl = new FloatSymmetricLevinson(T10);
         FloatMatrix X = fsl.Solve(I5);
       });
     }
@@ -1439,7 +1511,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T1);
+      var fsl = new FloatSymmetricLevinson(T1);
 
       // check inverse
       FloatMatrix I = fsl.Solve(FloatMatrix.CreateIdentity(1));
@@ -1468,7 +1540,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T2);
+      var fsl = new FloatSymmetricLevinson(T2);
 
       // check inverse
       FloatMatrix I = fsl.Solve(FloatMatrix.CreateIdentity(2));
@@ -1497,7 +1569,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T3);
+      var fsl = new FloatSymmetricLevinson(T3);
 
       // check inverse
       FloatMatrix I = fsl.Solve(FloatMatrix.CreateIdentity(3));
@@ -1526,7 +1598,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T4);
+      var fsl = new FloatSymmetricLevinson(T4);
 
       // check inverse
       FloatMatrix I = fsl.Solve(FloatMatrix.CreateIdentity(4));
@@ -1555,7 +1627,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
 
       // check inverse
       FloatMatrix I = fsl.Solve(FloatMatrix.CreateIdentity(5));
@@ -1584,7 +1656,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+      var fsl = new FloatSymmetricLevinson(T10);
 
       // check inverse
       FloatMatrix I = fsl.Solve(FloatMatrix.CreateIdentity(10));
@@ -1613,7 +1685,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T1);
+      var fsl = new FloatSymmetricLevinson(T1);
 
       // check inverse
       FloatMatrix I = fsl.GetInverse();
@@ -1642,7 +1714,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T2);
+      var fsl = new FloatSymmetricLevinson(T2);
 
       // check inverse
       FloatMatrix I = fsl.GetInverse();
@@ -1671,7 +1743,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T3);
+      var fsl = new FloatSymmetricLevinson(T3);
 
       // check inverse
       FloatMatrix I = fsl.GetInverse();
@@ -1700,7 +1772,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T4);
+      var fsl = new FloatSymmetricLevinson(T4);
 
       // check inverse
       FloatMatrix I = fsl.GetInverse();
@@ -1729,7 +1801,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T5);
+      var fsl = new FloatSymmetricLevinson(T5);
 
       // check inverse
       FloatMatrix I = fsl.GetInverse();
@@ -1758,7 +1830,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+      var fsl = new FloatSymmetricLevinson(T10);
 
       // check inverse
       FloatMatrix I = fsl.GetInverse();
@@ -1987,7 +2059,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix Y = new FloatMatrix(2);
+        var Y = new FloatMatrix(2);
         Y[0, 0] = Y[1, 1] = 2.0f;
         Y[0, 1] = Y[1, 0] = 1.0f;
         FloatMatrix X = FloatSymmetricLevinson.Solve(null, Y);
@@ -2018,7 +2090,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(RankException), () =>
       {
-        FloatMatrix Y = new FloatMatrix(2);
+        var Y = new FloatMatrix(2);
         Y[0, 0] = Y[1, 1] = 2.0f;
         Y[0, 1] = Y[1, 0] = 1.0f;
 
@@ -2410,10 +2482,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
         // setup an ill-conditioned system (second order principal submatrix is singular)
-        FloatVector T = new FloatVector(3);
-        T[0] = 1.0f;
-        T[1] = 1.0f;
-        T[2] = 1.0f;
+        var T = new FloatVector(3)
+        {
+          [0] = 1.0f,
+          [1] = 1.0f,
+          [2] = 1.0f
+        };
 
         FloatMatrix Y = FloatSymmetricLevinson.Inverse(T);
       });

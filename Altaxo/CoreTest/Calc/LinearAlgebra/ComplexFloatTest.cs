@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -36,8 +36,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void EqualsTest()
     {
-      ComplexFloat cf1 = new ComplexFloat(-1.1f, 2.2f);
-      ComplexFloat cf2 = new ComplexFloat(-1.1f, 2.2f);
+      var cf1 = new ComplexFloat(-1.1f, 2.2f);
+      var cf2 = new ComplexFloat(-1.1f, 2.2f);
       Assert.IsTrue(cf1 == cf2);
       Assert.IsTrue(cf1.Equals(cf2));
     }
@@ -53,8 +53,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorsTest()
     {
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(-3.3f, 4.4f);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(-3.3f, 4.4f);
       ComplexFloat test = cf1 * cf2;
       Assert.AreEqual(test.Real, 6.05f);
       Assert.AreEqual(test.Imag, 12.1f);
@@ -75,9 +75,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void NaNTest()
     {
-      ComplexFloat cf = new ComplexFloat(Single.NaN, 1.1f);
+      var cf = new ComplexFloat(float.NaN, 1.1f);
       Assert.IsTrue(cf.IsNaN());
-      cf = new ComplexFloat(1.1f, Single.NaN);
+      cf = new ComplexFloat(1.1f, float.NaN);
       Assert.IsTrue(cf.IsNaN());
       cf = new ComplexFloat(1.1f, 2.2f);
       Assert.IsFalse(cf.IsNaN());
@@ -86,13 +86,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void InfinityTest()
     {
-      ComplexFloat cf = new ComplexFloat(Single.NegativeInfinity, 1.1f);
+      var cf = new ComplexFloat(float.NegativeInfinity, 1.1f);
       Assert.IsTrue(cf.IsInfinity());
-      cf = new ComplexFloat(1.1f, Single.NegativeInfinity);
+      cf = new ComplexFloat(1.1f, float.NegativeInfinity);
       Assert.IsTrue(cf.IsInfinity());
-      cf = new ComplexFloat(Single.PositiveInfinity, 1.1f);
+      cf = new ComplexFloat(float.PositiveInfinity, 1.1f);
       Assert.IsTrue(cf.IsInfinity());
-      cf = new ComplexFloat(1.1f, Single.PositiveInfinity);
+      cf = new ComplexFloat(1.1f, float.PositiveInfinity);
       Assert.IsTrue(cf.IsInfinity());
       cf = new ComplexFloat(1.1f, 2.2f);
       Assert.IsFalse(cf.IsInfinity());
@@ -101,17 +101,17 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CloneTest()
     {
-      ComplexFloat cf1 = new ComplexFloat(1.1f, 2.2f);
-      ComplexFloat cf2 = (ComplexFloat)((ICloneable)cf1).Clone();
+      var cf1 = new ComplexFloat(1.1f, 2.2f);
+      var cf2 = (ComplexFloat)((ICloneable)cf1).Clone();
       Assert.AreEqual(cf1, cf2);
     }
 
     [Test]
     public void HashTest()
     {
-      ComplexFloat cd1 = new ComplexFloat(1.1f, 2.2f);
-      ComplexFloat cd2 = new ComplexFloat(1.1f, 3.3f);
-      ComplexFloat cd3 = new ComplexFloat(0.1f, 2.2f);
+      var cd1 = new ComplexFloat(1.1f, 2.2f);
+      var cd2 = new ComplexFloat(1.1f, 3.3f);
+      var cd3 = new ComplexFloat(0.1f, 2.2f);
       Assert.AreNotEqual(cd1.GetHashCode(), cd2.GetHashCode());
       Assert.AreNotEqual(cd1.GetHashCode(), cd3.GetHashCode());
       Assert.AreNotEqual(cd2.GetHashCode(), cd3.GetHashCode());
@@ -123,7 +123,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         string s = null;
-        ComplexFloat cf = new ComplexFloat(s);
+        var cf = new ComplexFloat(s);
       });
     }
 
@@ -133,7 +133,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(FormatException), () =>
       {
         string s = "";
-        ComplexFloat cf = new ComplexFloat(s);
+        var cf = new ComplexFloat(s);
       });
     }
 
@@ -143,7 +143,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(FormatException), () =>
       {
         string s = "+";
-        ComplexFloat cf = new ComplexFloat(s);
+        var cf = new ComplexFloat(s);
       });
     }
 
@@ -153,7 +153,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(FormatException), () =>
       {
         string s = "1i+2";
-        ComplexFloat cf = new ComplexFloat(s);
+        var cf = new ComplexFloat(s);
       });
     }
 
@@ -161,7 +161,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ParseTest()
     {
       string s = "1";
-      ComplexFloat cf = new ComplexFloat(s);
+      var cf = new ComplexFloat(s);
       Assert.AreEqual(cf.Real, 1);
       Assert.AreEqual(cf.Imag, 0);
 

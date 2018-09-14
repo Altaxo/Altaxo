@@ -6,9 +6,9 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Diagnostics;
+using NUnit.Framework;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -21,15 +21,15 @@ namespace Altaxo.Calc.LinearAlgebra
     public void plusTest()
     {
       const int N = 50;
-      SparseDoubleMatrix A = SparseDoubleMatrix.Identity(N, N);
+      var A = SparseDoubleMatrix.Identity(N, N);
       for (int i = 0; i < N; i++)
         A[i, i] = i % 5 == 0 ? 1.0 : 0.0;
       var A1 = A.Clone();
-      SparseDoubleMatrix Zeros = SparseDoubleMatrix.Identity(N, N);
+      var Zeros = SparseDoubleMatrix.Identity(N, N);
       for (int i = 0; i < N; i++)
         Zeros[i, i] = 0.0;
 
-      SparseDoubleMatrix B = SparseDoubleMatrix.Identity(N, N);
+      var B = SparseDoubleMatrix.Identity(N, N);
       for (int i = 0; i < N; i++)
         B[i, i] = i % 5 == 0 ? -1.0 : 0.0;
 
@@ -43,15 +43,15 @@ namespace Altaxo.Calc.LinearAlgebra
     public void minusTest()
     {
       const int N = 50;
-      SparseDoubleMatrix A = SparseDoubleMatrix.Identity(N, N);
+      var A = SparseDoubleMatrix.Identity(N, N);
       for (int i = 0; i < N; i++)
         A[i, i] = i % 5 == 0 ? 1.0 : 0.0;
       var A1 = A.Clone();
-      SparseDoubleMatrix Zeros = SparseDoubleMatrix.Identity(N, N);
+      var Zeros = SparseDoubleMatrix.Identity(N, N);
       for (int i = 0; i < N; i++)
         Zeros[i, i] = 0.0;
 
-      SparseDoubleMatrix B = SparseDoubleMatrix.Identity(N, N);
+      var B = SparseDoubleMatrix.Identity(N, N);
       for (int i = 0; i < N; i++)
         B[i, i] = i % 5 == 0 ? 1.0 : 0.0;
 
@@ -65,7 +65,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public void isLowerTriangularTest()
     {
       const int N = 50;
-      SparseDoubleMatrix A = SparseDoubleMatrix.Identity(N, N);
+      var A = SparseDoubleMatrix.Identity(N, N);
       for (int i = 0; i < N; i++)
         A[i, i] = i % 5 == 0 ? 1.0 : 0.0;
 
@@ -80,7 +80,7 @@ namespace Altaxo.Calc.LinearAlgebra
     public void TimesEqualsTest()
     {
       const int N = 50;
-      SparseDoubleMatrix A = SparseDoubleMatrix.Identity(N, N);
+      var A = SparseDoubleMatrix.Identity(N, N);
       for (int i = 0; i < N; i++)
         A[i, i] = i % 5 == 0 ? 1.0 : 0.0;
 
@@ -99,7 +99,7 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       const int N = 50;
       const int M = 30;
-      SparseDoubleMatrix A = SparseDoubleMatrix.Identity(M, N);
+      var A = SparseDoubleMatrix.Identity(M, N);
       for (int i = 0; i < M; i++)
         if (i < N)
           A[i, i] = i % 5 == 0 ? 1.0 : 0.0;
@@ -120,16 +120,16 @@ namespace Altaxo.Calc.LinearAlgebra
     public void SolveGETest()
     {
       const int N = 50;
-      SparseDoubleMatrix a = new SparseDoubleMatrix(N, N);
+      var a = new SparseDoubleMatrix(N, N);
       for (int i = 0; i < N; i++)
         a[i, i] = 1;
       // Apply random rotations around each pair of axes. This will keep det(A) ~ 1
-      Random rand = new Random();
+      var rand = new Random();
       for (int i = 0; i < N; i++)
         for (int j = i + 1; j < N; j++)
         {
           double angle = rand.NextDouble() * 2 * Math.PI;
-          SparseDoubleMatrix r = new SparseDoubleMatrix(N, N);
+          var r = new SparseDoubleMatrix(N, N);
           for (int k = 0; k < N; k++)
             r[k, k] = 1;
           r[i, i] = r[j, j] = Math.Cos(angle);
@@ -147,7 +147,7 @@ namespace Altaxo.Calc.LinearAlgebra
       var binit = b.Clone();
       // Solve system
       var solver = new GaussianEliminationSolver();
-      Stopwatch sw = new Stopwatch();
+      var sw = new Stopwatch();
       sw.Start();
       var x = solver.SolveDestructive(a, b.GetInternalData());
       sw.Stop();

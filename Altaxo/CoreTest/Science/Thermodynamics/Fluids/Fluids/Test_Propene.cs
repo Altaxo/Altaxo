@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -82,7 +82,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 6. Isochoric heat capacity (J/(mol K))
       // 7. Isobaric heat capacity (J/(mol K))
       // 8. Speed of sound (m/s)
-      _testDataEquationOfState = new(double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
+      _testDataEquationOfState = new (double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
       {
       ( 100, 1.34783063254694E-06, 0.00112065000010795, 15880.941762485, 16712.3889584804, 221.950334232476, 30.8482975267174, 39.1627696767489, 158.380573181525 ),
       ( 150, 8.98553751919029E-07, 0.00112065000003184, 17548.7592847557, 18795.9300829839, 238.777249891025, 35.9460139583927, 44.2604860092484, 191.033337190275 ),
@@ -239,7 +239,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 1. Pressure (Pa)
       // 2. Saturated liquid density (mol/m³
       // 3. Saturated vapor density (mol/m³)
-      _testDataSaturatedProperties = new(double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
+      _testDataSaturatedProperties = new (double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
       {
       ( 122.48525, 7.35531186596443, 17309.7360153303, 0.00722254408434695 ),
       ( 157.0175, 889.751278516523, 16391.9878826027, 0.682198106560621 ),
@@ -253,7 +253,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // TestData contains:
       // 0. Temperature (Kelvin)
       // 1. Pressure (Pa
-      _testDataMeltingLine = new(double temperature, double pressure)[]
+      _testDataMeltingLine = new (double temperature, double pressure)[]
      {
       ( 87.9530000000383, 0.0630957344480193 ),
       ( 87.953000000135, 0.1 ),

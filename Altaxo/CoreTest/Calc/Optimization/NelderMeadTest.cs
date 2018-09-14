@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Optimization
 {
@@ -44,9 +44,9 @@ namespace AltaxoTest.Calc.Optimization
     [Test]
     public void TestInitializeMethod()
     {
-      Rosenbrock cf = new Rosenbrock();
-      NelderMead optim = new NelderMead(cf);
-      DoubleVector x0 = new DoubleVector(new double[4] { 0, 1, 2, 3 });
+      var cf = new Rosenbrock();
+      var optim = new NelderMead(cf);
+      var x0 = new DoubleVector(new double[4] { 0, 1, 2, 3 });
 
       optim.SimplexDelta = 0.1;
       optim.SimplexZeroDelta = 0.0001;
@@ -71,10 +71,10 @@ namespace AltaxoTest.Calc.Optimization
     [Test]
     public void TestReflection()
     {
-      Poly cf = new Poly();
-      NelderMead optim = new NelderMead(cf);
+      var cf = new Poly();
+      var optim = new NelderMead(cf);
 
-      DoubleVector[] simplex = new DoubleVector[3];
+      var simplex = new DoubleVector[3];
       simplex[0] = new DoubleVector(new double[2] { 1, 1 });
       simplex[1] = new DoubleVector(new double[2] { 1, -1 });
       simplex[2] = new DoubleVector(new double[2] { 2, 0 });
@@ -94,10 +94,10 @@ namespace AltaxoTest.Calc.Optimization
     [Test]
     public void TestExpansion()
     {
-      Poly cf = new Poly();
-      NelderMead optim = new NelderMead(cf);
+      var cf = new Poly();
+      var optim = new NelderMead(cf);
 
-      DoubleVector[] simplex = new DoubleVector[3];
+      var simplex = new DoubleVector[3];
       simplex[0] = new DoubleVector(new double[2] { 1, 1 });
       simplex[1] = new DoubleVector(new double[2] { 1, -1 });
       simplex[2] = new DoubleVector(new double[2] { 2, 0 });
@@ -118,10 +118,10 @@ namespace AltaxoTest.Calc.Optimization
     [Test]
     public void TestOutsideContraction()
     {
-      Poly cf = new Poly();
-      NelderMead optim = new NelderMead(cf);
+      var cf = new Poly();
+      var optim = new NelderMead(cf);
 
-      DoubleVector[] simplex = new DoubleVector[3];
+      var simplex = new DoubleVector[3];
       simplex[0] = new DoubleVector(new double[2] { 1, 1 });
       simplex[1] = new DoubleVector(new double[2] { 1, -1 });
       simplex[2] = new DoubleVector(new double[2] { 2, 0 });
@@ -142,10 +142,10 @@ namespace AltaxoTest.Calc.Optimization
     [Test]
     public void TestInsideContraction()
     {
-      Poly cf = new Poly();
-      NelderMead optim = new NelderMead(cf);
+      var cf = new Poly();
+      var optim = new NelderMead(cf);
 
-      DoubleVector[] simplex = new DoubleVector[3];
+      var simplex = new DoubleVector[3];
       simplex[0] = new DoubleVector(new double[2] { 1, 1 });
       simplex[1] = new DoubleVector(new double[2] { 1, -1 });
       simplex[2] = new DoubleVector(new double[2] { 2, 0 });
@@ -166,10 +166,10 @@ namespace AltaxoTest.Calc.Optimization
     [Test]
     public void TestShrink()
     {
-      Poly cf = new Poly();
-      NelderMead optim = new NelderMead(cf);
+      var cf = new Poly();
+      var optim = new NelderMead(cf);
 
-      DoubleVector[] simplex = new DoubleVector[3];
+      var simplex = new DoubleVector[3];
       simplex[0] = new DoubleVector(new double[2] { 1, 1 });
       simplex[1] = new DoubleVector(new double[2] { 1, -1 });
       simplex[2] = new DoubleVector(new double[2] { 2, 0 });
@@ -186,10 +186,10 @@ namespace AltaxoTest.Calc.Optimization
     [Test]
     public void TestRosenbrock()
     {
-      Rosenbrock cf = new Rosenbrock();
-      NelderMead optim = new NelderMead(cf);
+      var cf = new Rosenbrock();
+      var optim = new NelderMead(cf);
 
-      DoubleVector x0 = new DoubleVector(new double[5] { 1.3, 0.7, 0.8, 1.9, 1.2 });
+      var x0 = new DoubleVector(new double[5] { 1.3, 0.7, 0.8, 1.9, 1.2 });
 
       optim.Minimize(x0);
 

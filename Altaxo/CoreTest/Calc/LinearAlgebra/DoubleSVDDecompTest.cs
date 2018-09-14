@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -43,38 +43,44 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [OneTimeSetUp]
     public void SetupTestCases()
     {
-      a = new DoubleMatrix(3);
-      a[0, 0] = 1.91;
-      a[0, 1] = 9.82;
-      a[0, 2] = 2.73;
-      a[1, 0] = 8.64;
-      a[1, 1] = 3.55;
-      a[1, 2] = 7.46;
-      a[2, 0] = 4.37;
-      a[2, 1] = 6.28;
-      a[2, 2] = 5.19;
+      a = new DoubleMatrix(3)
+      {
+        [0, 0] = 1.91,
+        [0, 1] = 9.82,
+        [0, 2] = 2.73,
+        [1, 0] = 8.64,
+        [1, 1] = 3.55,
+        [1, 2] = 7.46,
+        [2, 0] = 4.37,
+        [2, 1] = 6.28,
+        [2, 2] = 5.19
+      };
       svd = new DoubleSVDDecomp(a, true);
 
-      wa = new DoubleMatrix(2, 4);
-      wa[0, 0] = 1.91;
-      wa[0, 1] = 9.82;
-      wa[0, 2] = 2.73;
-      wa[0, 3] = 8.64;
-      wa[1, 0] = 3.55;
-      wa[1, 1] = 7.46;
-      wa[1, 2] = 4.37;
-      wa[1, 3] = 6.28;
+      wa = new DoubleMatrix(2, 4)
+      {
+        [0, 0] = 1.91,
+        [0, 1] = 9.82,
+        [0, 2] = 2.73,
+        [0, 3] = 8.64,
+        [1, 0] = 3.55,
+        [1, 1] = 7.46,
+        [1, 2] = 4.37,
+        [1, 3] = 6.28
+      };
       wsvd = new DoubleSVDDecomp(wa, true);
 
-      la = new DoubleMatrix(4, 2);
-      la[0, 0] = 1.91;
-      la[0, 1] = 9.82;
-      la[1, 0] = 2.73;
-      la[1, 1] = 8.64;
-      la[2, 0] = 3.55;
-      la[2, 1] = 7.46;
-      la[3, 0] = 4.37;
-      la[3, 1] = 6.28;
+      la = new DoubleMatrix(4, 2)
+      {
+        [0, 0] = 1.91,
+        [0, 1] = 9.82,
+        [1, 0] = 2.73,
+        [1, 1] = 8.64,
+        [2, 0] = 3.55,
+        [2, 1] = 7.46,
+        [3, 0] = 4.37,
+        [3, 1] = 6.28
+      };
       lsvd = new DoubleSVDDecomp(la, true);
     }
 

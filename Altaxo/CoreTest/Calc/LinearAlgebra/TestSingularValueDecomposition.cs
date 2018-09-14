@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {

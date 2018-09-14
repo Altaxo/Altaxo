@@ -6,10 +6,10 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.Threading;
+using NUnit.Framework;
 
 namespace Altaxo.Calc.Ode
 {
@@ -21,8 +21,8 @@ namespace Altaxo.Calc.Ode
     [Test]
     public void MulAddTest()
     {
-      Vector x = new Vector(1.0, 0.0, 1.0);
-      Vector y = new Vector(2.0, 2.0, -2.0);
+      var x = new Vector(1.0, 0.0, 1.0);
+      var y = new Vector(2.0, 2.0, -2.0);
       x.MulAdd(y, 0.5);
       AssertVectorEqualsEps(x, new Vector(2.0, 1.0, 0.0));
     }
@@ -30,8 +30,8 @@ namespace Altaxo.Calc.Ode
     [Test]
     public void LerpTest()
     {
-      Vector v0 = new Vector(-1);
-      Vector v1 = new Vector(1);
+      var v0 = new Vector(-1);
+      var v1 = new Vector(1);
       Assert.AreEqual(Vector.Lerp(0, 0, v0, 1, v1)[0], -1, Eps);
       Assert.AreEqual(Vector.Lerp(1 / 3.0, 0, v0, 1, v1)[0], -1 / 3.0, Eps);
       Assert.AreEqual(Vector.Lerp(2 / 3.0, 0, v0, 1, v1)[0], 1 / 3.0, Eps);
@@ -124,8 +124,8 @@ namespace Altaxo.Calc.Ode
     [Test]
     public void VectorMatrixMultiplyTest()
     {
-      Vector v = new Vector(-1, 1);
-      Matrix m = new Matrix(new double[,] { // 3x2 matrix
+      var v = new Vector(-1, 1);
+      var m = new Matrix(new double[,] { // 3x2 matrix
                 { -2,3 },
                 { 3,-4 },
                 {1, 2 }

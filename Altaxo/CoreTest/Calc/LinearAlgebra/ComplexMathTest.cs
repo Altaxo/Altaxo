@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -36,14 +36,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Absolute()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
       Assert.AreEqual(ComplexMath.Absolute(cd1), 2.460, TOLERENCE);
       Assert.AreEqual(ComplexMath.Absolute(cd2), 2.2, TOLERENCE);
       Assert.AreEqual(ComplexMath.Absolute(cd3), 1.1, TOLERENCE);
@@ -57,14 +57,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Argument()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
       Assert.AreEqual(ComplexMath.Argument(cd1), -1.107, TOLERENCE);
       Assert.AreEqual(ComplexMath.Argument(cd2), -1.571, TOLERENCE);
       Assert.AreEqual(ComplexMath.Argument(cd3), 0, TOLERENCE);
@@ -78,14 +78,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Argument2()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
       Assert.AreEqual(ComplexMath.Argument2(cd1), -1.107, TOLERENCE);
       Assert.AreEqual(ComplexMath.Argument2(cd2), -1.571, TOLERENCE);
       Assert.AreEqual(ComplexMath.Argument2(cd3), 0, TOLERENCE);
@@ -99,14 +99,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Conjugate()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
       Assert.AreEqual(ComplexMath.Conjugate(cd1), new Complex(1.1, 2.2));
       Assert.AreEqual(ComplexMath.Conjugate(cd2), new Complex(0, 2.2));
       Assert.AreEqual(ComplexMath.Conjugate(cd3), new Complex(1.1, 0));
@@ -120,14 +120,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Cos()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Cos(cd1);
       Assert.AreEqual(cdt.Real, 2.072, TOLERENCE);
@@ -165,14 +165,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Cosh()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Cosh(cd1);
       Assert.AreEqual(cdt.Real, -.982, TOLERENCE);
@@ -210,14 +210,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Exp()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Exp(cd1);
       Assert.AreEqual(cdt.Real, -1.768, TOLERENCE);
@@ -255,14 +255,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Log()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Log(cd1);
       Assert.AreEqual(cdt.Real, 0.900, TOLERENCE);
@@ -300,10 +300,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Max()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
 
       Complex cdt = ComplexMath.Max(cd1, cd2);
       Assert.AreEqual(cd1, cdt);
@@ -315,14 +315,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Norm()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
       Assert.AreEqual(ComplexMath.Norm(cd1), 2.460, TOLERENCE);
       Assert.AreEqual(ComplexMath.Norm(cd2), 2.2, TOLERENCE);
       Assert.AreEqual(ComplexMath.Norm(cd3), 1.1, TOLERENCE);
@@ -336,14 +336,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Polar()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Polar(cd1);
       Assert.AreEqual(cdt.Real, 2.460, TOLERENCE);
@@ -381,14 +381,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Sin()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Sin(cd1);
       Assert.AreEqual(cdt.Real, 4.071, TOLERENCE);
@@ -426,14 +426,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Sinh()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Sinh(cd1);
       Assert.AreEqual(cdt.Real, -0.786, TOLERENCE);
@@ -471,14 +471,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Sqrt()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Sqrt(cd1);
       Assert.AreEqual(cdt.Real, 1.334, TOLERENCE);
@@ -516,14 +516,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Tan()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Tan(cd1);
       Assert.AreEqual(cdt.Real, 0.020, TOLERENCE);
@@ -561,14 +561,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Tanh()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Tanh(cd1);
       Assert.AreEqual(cdt.Real, 1.046, TOLERENCE);
@@ -606,14 +606,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Asin()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Asin(cd1);
       Assert.AreEqual(cdt.Real, 0.433, TOLERENCE);
@@ -651,14 +651,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Acos()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Acos(cd1);
       Assert.AreEqual(cdt.Real, 1.1388414556, TOLERENCE);
@@ -696,14 +696,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Atan()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Atan(cd1);
       Assert.AreEqual(cdt.Real, 1.365, TOLERENCE);
@@ -741,14 +741,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Asinh()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Asinh(cd1);
       Assert.AreEqual(cdt.Real, 1.569, TOLERENCE);
@@ -786,14 +786,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Acosh()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Acosh(cd1);
       Assert.AreEqual(cdt.Real, 1.618, TOLERENCE);
@@ -831,14 +831,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Atanh()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(0, -2.2);
-      Complex cd3 = new Complex(1.1, 0);
-      Complex cd4 = new Complex(-1.1, 2.2);
-      ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
-      ComplexFloat cf2 = new ComplexFloat(0, -2.2f);
-      ComplexFloat cf3 = new ComplexFloat(1.1f, 0);
-      ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(0, -2.2);
+      var cd3 = new Complex(1.1, 0);
+      var cd4 = new Complex(-1.1, 2.2);
+      var cf1 = new ComplexFloat(1.1f, -2.2f);
+      var cf2 = new ComplexFloat(0, -2.2f);
+      var cf3 = new ComplexFloat(1.1f, 0);
+      var cf4 = new ComplexFloat(-1.1f, 2.2f);
 
       Complex cdt = ComplexMath.Atanh(cd1);
       Assert.AreEqual(cdt.Real, 0.161, TOLERENCE);

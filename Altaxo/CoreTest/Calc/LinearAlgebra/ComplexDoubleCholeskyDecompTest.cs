@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -37,16 +37,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     static ComplexDoubleCholeskyDecompTest()
     {
-      ComplexDoubleMatrix a = new ComplexDoubleMatrix(3);
-      a[0, 0] = 2;
-      a[0, 1] = new Complex(1, -1);
-      a[0, 2] = 0;
-      a[1, 0] = new Complex(1, -1);
-      a[1, 1] = 2;
-      a[1, 2] = 0;
-      a[2, 0] = 0;
-      a[2, 1] = 0;
-      a[2, 2] = 3;
+      var a = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = new Complex(1, -1),
+        [0, 2] = 0,
+        [1, 0] = new Complex(1, -1),
+        [1, 1] = 2,
+        [1, 2] = 0,
+        [2, 0] = 0,
+        [2, 1] = 0,
+        [2, 2] = 3
+      };
       cd = new ComplexDoubleCholeskyDecomp(a);
     }
 
@@ -55,8 +57,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexDoubleMatrix wm = new ComplexDoubleMatrix(2, 3);
-        ComplexDoubleCholeskyDecomp wcd = new ComplexDoubleCholeskyDecomp(wm);
+        var wm = new ComplexDoubleMatrix(2, 3);
+        var wcd = new ComplexDoubleCholeskyDecomp(wm);
       });
     }
 
@@ -65,8 +67,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexDoubleMatrix lm = new ComplexDoubleMatrix(3, 2);
-        ComplexDoubleCholeskyDecomp lcd = new ComplexDoubleCholeskyDecomp(lm);
+        var lm = new ComplexDoubleMatrix(3, 2);
+        var lcd = new ComplexDoubleCholeskyDecomp(lm);
       });
     }
 
@@ -88,17 +90,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void NonSymmFactorTest()
     {
-      ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-      b[0, 0] = 2;
-      b[0, 1] = 1;
-      b[0, 2] = 1;
-      b[1, 0] = 1;
-      b[1, 1] = 2;
-      b[1, 2] = 0;
-      b[2, 0] = 0;
-      b[2, 1] = 0;
-      b[2, 2] = 3;
-      ComplexDoubleCholeskyDecomp dcd = new ComplexDoubleCholeskyDecomp(b);
+      var b = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 1,
+        [0, 2] = 1,
+        [1, 0] = 1,
+        [1, 1] = 2,
+        [1, 2] = 0,
+        [2, 0] = 0,
+        [2, 1] = 0,
+        [2, 2] = 3
+      };
+      var dcd = new ComplexDoubleCholeskyDecomp(b);
       Assert.AreEqual(dcd.Factor[0, 0].Real, 1.414, TOLERENCE);
       Assert.AreEqual(dcd.Factor[0, 1].Real, 0.000, TOLERENCE);
       Assert.AreEqual(dcd.Factor[0, 2].Real, 0.000, TOLERENCE);
@@ -114,17 +118,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void IsPositiveDefiniteTest()
     {
       Assert.IsTrue(cd.IsPositiveDefinite);
-      ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-      b[0, 0] = -2;
-      b[0, 1] = 1;
-      b[0, 2] = 0;
-      b[1, 0] = 1;
-      b[1, 1] = 2;
-      b[1, 2] = 0;
-      b[2, 0] = 0;
-      b[2, 1] = 0;
-      b[2, 2] = 3;
-      ComplexDoubleCholeskyDecomp dcd = new ComplexDoubleCholeskyDecomp(b);
+      var b = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = -2,
+        [0, 1] = 1,
+        [0, 2] = 0,
+        [1, 0] = 1,
+        [1, 1] = 2,
+        [1, 2] = 0,
+        [2, 0] = 0,
+        [2, 1] = 0,
+        [2, 2] = 3
+      };
+      var dcd = new ComplexDoubleCholeskyDecomp(b);
       Assert.IsFalse(dcd.IsPositiveDefinite);
     }
 
@@ -139,16 +145,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveMatrix()
     {
-      ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
+      var b = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25
+      };
       ComplexDoubleMatrix x = cd.Solve(b);
       Assert.AreEqual(x[0, 0].Real, -4.500, TOLERENCE);
       Assert.AreEqual(x[0, 1].Real, -4.500, TOLERENCE);
@@ -169,13 +177,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 1].Imag, 0.000, TOLERENCE);
       Assert.AreEqual(x[2, 2].Imag, 0.000, TOLERENCE);
 
-      b = new ComplexDoubleMatrix(3, 2);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
+      b = new ComplexDoubleMatrix(3, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25
+      };
       x = cd.Solve(b);
       Assert.AreEqual(x[0, 0].Real, -4.500, TOLERENCE);
       Assert.AreEqual(x[0, 1].Real, -4.500, TOLERENCE);
@@ -190,19 +200,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 0].Imag, 0.000, TOLERENCE);
       Assert.AreEqual(x[2, 1].Imag, 0.000, TOLERENCE);
 
-      b = new ComplexDoubleMatrix(3, 4);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[0, 3] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[1, 3] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
-      b[2, 3] = 25;
+      b = new ComplexDoubleMatrix(3, 4)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [0, 3] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [1, 3] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25,
+        [2, 3] = 25
+      };
       x = cd.Solve(b);
       Assert.AreEqual(x[0, 0].Real, -4.500, TOLERENCE);
       Assert.AreEqual(x[0, 1].Real, -4.500, TOLERENCE);
@@ -233,10 +245,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveVector()
     {
-      ComplexDoubleVector b = new ComplexDoubleVector(3);
-      b[0] = 2;
-      b[1] = 13;
-      b[2] = 25;
+      var b = new ComplexDoubleVector(3)
+      {
+        [0] = 2,
+        [1] = 13,
+        [2] = 25
+      };
       ComplexDoubleVector x = cd.Solve(b);
       Assert.AreEqual(x[0].Real, -4.500, TOLERENCE);
       Assert.AreEqual(x[1].Real, 12.000, TOLERENCE);
@@ -276,8 +290,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotPositiveDefiniteException), () =>
       {
-        ComplexDoubleMatrix a = new ComplexDoubleMatrix(3);
-        ComplexDoubleCholeskyDecomp dcd = new ComplexDoubleCholeskyDecomp(a);
+        var a = new ComplexDoubleMatrix(3);
+        var dcd = new ComplexDoubleCholeskyDecomp(a);
         dcd.GetInverse();
       });
     }

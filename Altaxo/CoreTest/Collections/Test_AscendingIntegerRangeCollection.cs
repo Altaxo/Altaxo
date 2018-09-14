@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Collections;
+using NUnit.Framework;
 
 namespace AltaxoTest.Collections
 {
@@ -952,8 +952,8 @@ namespace AltaxoTest.Collections
       var rnd = new System.Random();
       var coll = new AscendingIntegerRangeCollection();
       var hashSet = new HashSet<int>();
-      List<int> addList = new List<int>();
-      List<int> rmvList = new List<int>();
+      var addList = new List<int>();
+      var rmvList = new List<int>();
       string error = null;
 
       int indexThatWentWrong = -1;

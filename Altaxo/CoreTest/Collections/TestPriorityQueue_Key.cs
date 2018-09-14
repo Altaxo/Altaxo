@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Collections;
+using NUnit.Framework;
 
 namespace AltaxoTest.Collections
 {

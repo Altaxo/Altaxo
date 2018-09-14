@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Probability;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Probability
 {
@@ -34,9 +34,9 @@ namespace AltaxoTest.Calc.Probability
     [Test]
     public void TestSystemRandom()
     {
-      System.Random rand = new System.Random();
+      var rand = new System.Random();
 
-      EntCalc calc = new EntCalc(false);
+      var calc = new EntCalc(false);
 
       for (int i = 0; i < 100000; ++i)
       {
@@ -52,7 +52,7 @@ namespace AltaxoTest.Calc.Probability
     {
       var rand = new MT19937Generator();
 
-      EntCalc calc = new EntCalc(false);
+      var calc = new EntCalc(false);
 
       for (int i = 0; i < 100000; ++i)
       {
@@ -158,7 +158,7 @@ namespace AltaxoTest.Calc.Probability
       sccfirst = true;        /* Mark first time for serial correlation */
       scct1 = scct2 = scct3 = 0.0;  /* Clear serial correlation terms */
 
-      incirc = Math.Pow(Math.Pow(256.0, (double)(MONTEN / 2)) - 1, 2.0);
+      incirc = Math.Pow(Math.Pow(256.0, MONTEN / 2) - 1, 2.0);
 
       for (i = 0; i < 256; i++)
       {
@@ -321,18 +321,20 @@ namespace AltaxoTest.Calc.Probability
       double compReductionPct = ((binary ? 1 : 8) - ent) / (binary ? 1.0 : 8.0);
 
       /* Return results */
-      EntCalcResult result = new EntCalcResult();
-      result.Entropy = ent;
-      result.ChiSquare = chisq;
-      result.ChiProbability = chip;
-      result.Mean = datasum / totalc;
-      result.ExpectedMeanForRandom = binary ? 0.5 : 127.5;
-      result.MonteCarloPiCalc = montepi;
-      result.MonteCarloErrorPct = (Math.Abs(Math.PI - montepi) / Math.PI);
-      result.SerialCorrelation = scc;
-      result.OptimumCompressionReductionPct = compReductionPct;
-      result.OccuranceCount = this.ccount;
-      result.NumberOfSamples = this.totalc;
+      var result = new EntCalcResult
+      {
+        Entropy = ent,
+        ChiSquare = chisq,
+        ChiProbability = chip,
+        Mean = datasum / totalc,
+        ExpectedMeanForRandom = binary ? 0.5 : 127.5,
+        MonteCarloPiCalc = montepi,
+        MonteCarloErrorPct = (Math.Abs(Math.PI - montepi) / Math.PI),
+        SerialCorrelation = scc,
+        OptimumCompressionReductionPct = compReductionPct,
+        OccuranceCount = ccount,
+        NumberOfSamples = totalc
+      };
       return result;
     }
 
@@ -348,7 +350,7 @@ namespace AltaxoTest.Calc.Probability
   {
     public static EntCalc.EntCalcResult CalculateFile(ref System.IO.FileStream inStream)
     {
-      EntCalc entCalc = new EntCalc(false);
+      var entCalc = new EntCalc(false);
       while (inStream.Position < inStream.Length)
       {
         entCalc.AddSample((byte)inStream.ReadByte(), false);
@@ -359,9 +361,10 @@ namespace AltaxoTest.Calc.Probability
 
     public static EntCalc.EntCalcResult CalculateFile(string inFileName)
     {
-      System.IO.FileStream instream = new System.IO.FileStream(inFileName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None);
-
-      instream.Position = 0;
+      var instream = new System.IO.FileStream(inFileName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None)
+      {
+        Position = 0
+      };
 
       EntCalc.EntCalcResult tmpRes = CalculateFile(ref instream);
 

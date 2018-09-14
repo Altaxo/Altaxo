@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
 using System;
 using System.Collections;
+using Altaxo.Calc.LinearAlgebra;
+using NUnit.Framework;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -38,7 +38,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Current()
     {
-      FloatMatrix test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
+      var test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
       IEnumerator enumerator = test.GetEnumerator();
       bool movenextresult;
 
@@ -66,7 +66,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ForEach()
     {
-      FloatMatrix test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
+      var test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
       foreach (float f in test)
         Assert.IsTrue(test.Contains(f));
     }
@@ -77,7 +77,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(InvalidOperationException), () =>
       {
-        FloatMatrix test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
+        var test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
         IEnumerator enumerator = test.GetEnumerator();
         object value = enumerator.Current;
       });
@@ -89,7 +89,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(InvalidOperationException), () =>
       {
-        FloatMatrix test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
+        var test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
         IEnumerator enumerator = test.GetEnumerator();
         enumerator.MoveNext();
         enumerator.MoveNext();

@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Fourier;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Fourier
 {
@@ -45,7 +45,7 @@ namespace AltaxoTest.Calc.Fourier
 
     private void MyConvolution(double[] re1, double[] re2, double[] re, int n)
     {
-      Pfa235Convolution conv = new Pfa235Convolution(n);
+      var conv = new Pfa235Convolution(n);
       conv.Convolute(re1, re2, re, null, FourierDirection.Forward);
     }
 
@@ -108,7 +108,7 @@ namespace AltaxoTest.Calc.Fourier
 
     private void MyConvolution(double[] re1, double[] im1, double[] re2, double[] im2, double[] re, double[] im, int n)
     {
-      Pfa235Convolution conv = new Pfa235Convolution(n);
+      var conv = new Pfa235Convolution(n);
       conv.Convolute(re1, im1, re2, im2, re, im, null, null, FourierDirection.Forward);
     }
 

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.Probability;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Probability
 {
@@ -1257,9 +1257,7 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
         double expaga = _dataS0ToFeller[i][4];
         double expsigmaf = _dataS0ToFeller[i][5];
         double expmuf = _dataS0ToFeller[i][6];
-
-        double gamma, aga, sigmaf, muf;
-        StableDistributionBase.ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
+        StableDistributionBase.ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out var gamma, out var aga, out var sigmaf, out var muf);
 
         t = Tolerance(expgamma, gamma);
         if (t > maxtolgamma)
@@ -1306,13 +1304,13 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
 
       string msg;
 
-      msg = String.Format("Gamma, i={0}", maxtolgammai);
+      msg = string.Format("Gamma, i={0}", maxtolgammai);
       Assert.Less(1, maxtolgamma / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Aga, i={0}", maxtolagai);
+      msg = string.Format("Aga, i={0}", maxtolagai);
       Assert.Less(1, maxtolaga / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Sigmaf, i={0}", maxtolsigmafi);
+      msg = string.Format("Sigmaf, i={0}", maxtolsigmafi);
       Assert.Less(1, maxtolsigmaf / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Muf, i={0}", maxtolmufi);
+      msg = string.Format("Muf, i={0}", maxtolmufi);
       Assert.Less(1, maxtolmuf / DoubleConstants.DBL_EPSILON, msg);
     }
 
@@ -1326,7 +1324,7 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
       double precision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
       object temp = null;
 
-      StableDistributionS0.Aeq1D dec = new StableDistributionS0.Aeq1D(x, beta, abe);
+      var dec = new StableDistributionS0.Aeq1D(x, beta, abe);
       double ycore = dec.PDFCore(1.0 / 3.0);
 
       double y1 = StableDistributionS0.PDF(x, alpha, beta, abe, ref temp, precision);
@@ -1357,8 +1355,8 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
         if (alpha == 2)
           continue;
 
-        double beta, abe, sigma0, mu0, expsigma0 = 1, expmu0 = 0;
-        StableDistributionBase.ParameterConversionFellerToS0(alpha, gamma, aga, sigmaf, muf, out beta, out abe, out sigma0, out mu0);
+        double expsigma0 = 1, expmu0 = 0;
+        StableDistributionBase.ParameterConversionFellerToS0(alpha, gamma, aga, sigmaf, muf, out var beta, out var abe, out var sigma0, out var mu0);
 
         t = Tolerance(expbeta, beta);
         if (t > maxtolbeta)
@@ -1391,13 +1389,13 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
 
       string msg;
 
-      msg = String.Format("beta, i={0}", maxtolbetai);
+      msg = string.Format("beta, i={0}", maxtolbetai);
       Assert.Less(1, maxtolbeta / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("abe, i={0}", maxtolabei);
+      msg = string.Format("abe, i={0}", maxtolabei);
       Assert.Less(1, maxtolabe / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Sigma0, i={0}", maxtolsigma0i);
+      msg = string.Format("Sigma0, i={0}", maxtolsigma0i);
       Assert.Less(1, maxtolsigma0 / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Mu0, i={0}", maxtolmu0i);
+      msg = string.Format("Mu0, i={0}", maxtolmu0i);
       Assert.Less(1, maxtolmu0 / DoubleConstants.DBL_EPSILON, msg);
     }
 
@@ -1467,7 +1465,7 @@ new double[]{50.0,-5.184705528587072464086453e21}
 
       string msg;
 
-      msg = String.Format("i={0}", maxtoli);
+      msg = string.Format("i={0}", maxtoli);
       Assert.Less(maxtol, 1, msg);
     }
 

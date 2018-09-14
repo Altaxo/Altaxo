@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Calc;
 using Altaxo.Calc.RootFinding;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 
 namespace Calc.RootFinding
 {
@@ -65,7 +65,7 @@ namespace Calc.RootFinding
     [Test]
     public void Test10DegreeComplexPolynomial()
     {
-      Complex[] ccoeffs = new Complex[realCoefficients1.Length];
+      var ccoeffs = new Complex[realCoefficients1.Length];
       for (int i = 0; i < realCoefficients1.Length; ++i)
         ccoeffs[i] = realCoefficients1[i];
 

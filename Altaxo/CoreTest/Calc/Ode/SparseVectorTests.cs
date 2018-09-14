@@ -6,8 +6,8 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
+using NUnit.Framework;
 
 namespace Altaxo.Calc.Ode
 {
@@ -19,7 +19,7 @@ namespace Altaxo.Calc.Ode
     [Test]
     public void ElementAccessorTest()
     {
-      SparseVector sv = new SparseVector(1000);
+      var sv = new SparseVector(1000);
       for (var i = 0; i < sv.Length / 2; i++)
       {
         sv[i] = i * i;

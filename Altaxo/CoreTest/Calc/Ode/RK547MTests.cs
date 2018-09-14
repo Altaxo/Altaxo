@@ -6,10 +6,10 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Net;
+using NUnit.Framework;
 
 namespace Altaxo.Calc.Ode
 {

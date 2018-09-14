@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -37,28 +37,30 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexFloatQRDecomp test = new ComplexFloatQRDecomp(null);
+        var test = new ComplexFloatQRDecomp(null);
       });
     }
 
     [Test]
     public void SquareDecomp()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[0, 2] = new ComplexFloat(3.3f, 3.3f);
-      a[1, 0] = new ComplexFloat(4.4f, -4.4f);
-      a[1, 1] = new ComplexFloat(5.5f, 5.5f);
-      a[1, 2] = new ComplexFloat(6.6f, -6.6f);
-      a[2, 0] = new ComplexFloat(7.7f, 7.7f);
-      a[2, 1] = new ComplexFloat(8.8f, -8.8f);
-      a[2, 2] = new ComplexFloat(9.9f, 9.9f);
+      var a = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [0, 2] = new ComplexFloat(3.3f, 3.3f),
+        [1, 0] = new ComplexFloat(4.4f, -4.4f),
+        [1, 1] = new ComplexFloat(5.5f, 5.5f),
+        [1, 2] = new ComplexFloat(6.6f, -6.6f),
+        [2, 0] = new ComplexFloat(7.7f, 7.7f),
+        [2, 1] = new ComplexFloat(8.8f, -8.8f),
+        [2, 2] = new ComplexFloat(9.9f, 9.9f)
+      };
 
-      ComplexFloatQRDecomp qrd = new ComplexFloatQRDecomp(a);
+      var qrd = new ComplexFloatQRDecomp(a);
       ComplexFloatMatrix qq = qrd.Q.GetConjugateTranspose() * qrd.Q;
       ComplexFloatMatrix qr = qrd.Q * qrd.R;
-      ComplexFloatMatrix I = ComplexFloatMatrix.CreateIdentity(3);
+      var I = ComplexFloatMatrix.CreateIdentity(3);
 
       // determine the maximum relative error
       double MaxError = 0.0;
@@ -95,20 +97,22 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void WideDecomp()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(2, 4);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[0, 2] = new ComplexFloat(3.3f, 3.3f);
-      a[0, 3] = new ComplexFloat(4.4f, -4.4f);
-      a[1, 0] = new ComplexFloat(5.5f, 5.5f);
-      a[1, 1] = new ComplexFloat(6.6f, -6.6f);
-      a[1, 2] = new ComplexFloat(7.7f, 7.7f);
-      a[1, 3] = new ComplexFloat(8.8f, -8.8f);
+      var a = new ComplexFloatMatrix(2, 4)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [0, 2] = new ComplexFloat(3.3f, 3.3f),
+        [0, 3] = new ComplexFloat(4.4f, -4.4f),
+        [1, 0] = new ComplexFloat(5.5f, 5.5f),
+        [1, 1] = new ComplexFloat(6.6f, -6.6f),
+        [1, 2] = new ComplexFloat(7.7f, 7.7f),
+        [1, 3] = new ComplexFloat(8.8f, -8.8f)
+      };
 
-      ComplexFloatQRDecomp qrd = new ComplexFloatQRDecomp(a);
+      var qrd = new ComplexFloatQRDecomp(a);
       ComplexFloatMatrix qq = qrd.Q.GetConjugateTranspose() * qrd.Q;
       ComplexFloatMatrix qr = qrd.Q * qrd.R;
-      ComplexFloatMatrix I = ComplexFloatMatrix.CreateIdentity(2);
+      var I = ComplexFloatMatrix.CreateIdentity(2);
 
       // determine the maximum relative error
       double MaxError = 0.0;
@@ -143,20 +147,22 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void LongDecomp()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(4, 2);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[1, 0] = new ComplexFloat(3.3f, 3.3f);
-      a[1, 1] = new ComplexFloat(4.4f, -4.4f);
-      a[2, 0] = new ComplexFloat(5.5f, 5.5f);
-      a[2, 1] = new ComplexFloat(6.6f, -6.6f);
-      a[3, 0] = new ComplexFloat(7.7f, 7.7f);
-      a[3, 1] = new ComplexFloat(8.8f, -8.8f);
+      var a = new ComplexFloatMatrix(4, 2)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [1, 0] = new ComplexFloat(3.3f, 3.3f),
+        [1, 1] = new ComplexFloat(4.4f, -4.4f),
+        [2, 0] = new ComplexFloat(5.5f, 5.5f),
+        [2, 1] = new ComplexFloat(6.6f, -6.6f),
+        [3, 0] = new ComplexFloat(7.7f, 7.7f),
+        [3, 1] = new ComplexFloat(8.8f, -8.8f)
+      };
 
-      ComplexFloatQRDecomp qrd = new ComplexFloatQRDecomp(a);
+      var qrd = new ComplexFloatQRDecomp(a);
       ComplexFloatMatrix qq = qrd.Q.GetConjugateTranspose() * qrd.Q;
       ComplexFloatMatrix qr = qrd.Q * qrd.R;
-      ComplexFloatMatrix I = ComplexFloatMatrix.CreateIdentity(4);
+      var I = ComplexFloatMatrix.CreateIdentity(4);
 
       // determine the maximum relative error
       double MaxError = 0.0;
@@ -190,28 +196,32 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveMatrix()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[0, 2] = new ComplexFloat(3.3f, 3.3f);
-      a[1, 0] = new ComplexFloat(4.4f, -4.4f);
-      a[1, 1] = new ComplexFloat(5.5f, 5.5f);
-      a[1, 2] = new ComplexFloat(6.6f, -6.6f);
-      a[2, 0] = new ComplexFloat(7.7f, 7.7f);
-      a[2, 1] = new ComplexFloat(8.8f, -8.8f);
-      a[2, 2] = new ComplexFloat(9.9f, 9.9f);
-      ComplexFloatQRDecomp qr = new ComplexFloatQRDecomp(a);
+      var a = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [0, 2] = new ComplexFloat(3.3f, 3.3f),
+        [1, 0] = new ComplexFloat(4.4f, -4.4f),
+        [1, 1] = new ComplexFloat(5.5f, 5.5f),
+        [1, 2] = new ComplexFloat(6.6f, -6.6f),
+        [2, 0] = new ComplexFloat(7.7f, 7.7f),
+        [2, 1] = new ComplexFloat(8.8f, -8.8f),
+        [2, 2] = new ComplexFloat(9.9f, 9.9f)
+      };
+      var qr = new ComplexFloatQRDecomp(a);
 
-      ComplexFloatMatrix b = new ComplexFloatMatrix(3);
-      b[0, 0] = new ComplexFloat(2.3f, -3.2f);
-      b[0, 1] = new ComplexFloat(2.3f, -3.2f);
-      b[0, 2] = new ComplexFloat(2.3f, -3.2f);
-      b[1, 0] = new ComplexFloat(6.7f, 7.8f);
-      b[1, 1] = new ComplexFloat(6.7f, 7.8f);
-      b[1, 2] = new ComplexFloat(6.7f, 7.8f);
-      b[2, 0] = new ComplexFloat(1.3f, -9.7f);
-      b[2, 1] = new ComplexFloat(1.3f, -9.7f);
-      b[2, 2] = new ComplexFloat(1.3f, -9.7f);
+      var b = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(2.3f, -3.2f),
+        [0, 1] = new ComplexFloat(2.3f, -3.2f),
+        [0, 2] = new ComplexFloat(2.3f, -3.2f),
+        [1, 0] = new ComplexFloat(6.7f, 7.8f),
+        [1, 1] = new ComplexFloat(6.7f, 7.8f),
+        [1, 2] = new ComplexFloat(6.7f, 7.8f),
+        [2, 0] = new ComplexFloat(1.3f, -9.7f),
+        [2, 1] = new ComplexFloat(1.3f, -9.7f),
+        [2, 2] = new ComplexFloat(1.3f, -9.7f)
+      };
 
       ComplexFloatMatrix X = qr.Solve(b);
 
@@ -225,25 +235,29 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.IsTrue(Comparer.AreEqual(X[2, 1], new ComplexFloat(0.16f, -0.52f), .01));
       Assert.IsTrue(Comparer.AreEqual(X[2, 2], new ComplexFloat(0.16f, -0.52f), .01));
 
-      a = new ComplexFloatMatrix(3, 2);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[1, 0] = new ComplexFloat(4.4f, -4.4f);
-      a[1, 1] = new ComplexFloat(5.5f, 5.5f);
-      a[2, 0] = new ComplexFloat(7.7f, 7.7f);
-      a[2, 1] = new ComplexFloat(8.8f, -8.8f);
+      a = new ComplexFloatMatrix(3, 2)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [1, 0] = new ComplexFloat(4.4f, -4.4f),
+        [1, 1] = new ComplexFloat(5.5f, 5.5f),
+        [2, 0] = new ComplexFloat(7.7f, 7.7f),
+        [2, 1] = new ComplexFloat(8.8f, -8.8f)
+      };
       qr = new ComplexFloatQRDecomp(a);
 
-      b = new ComplexFloatMatrix(3);
-      b[0, 0] = new ComplexFloat(2.3f, -3.2f);
-      b[0, 1] = new ComplexFloat(2.3f, -3.2f);
-      b[0, 2] = new ComplexFloat(2.3f, -3.2f);
-      b[1, 0] = new ComplexFloat(6.7f, 7.8f);
-      b[1, 1] = new ComplexFloat(6.7f, 7.8f);
-      b[1, 2] = new ComplexFloat(6.7f, 7.8f);
-      b[2, 0] = new ComplexFloat(1.3f, -9.7f);
-      b[2, 1] = new ComplexFloat(1.3f, -9.7f);
-      b[2, 2] = new ComplexFloat(1.3f, -9.7f);
+      b = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(2.3f, -3.2f),
+        [0, 1] = new ComplexFloat(2.3f, -3.2f),
+        [0, 2] = new ComplexFloat(2.3f, -3.2f),
+        [1, 0] = new ComplexFloat(6.7f, 7.8f),
+        [1, 1] = new ComplexFloat(6.7f, 7.8f),
+        [1, 2] = new ComplexFloat(6.7f, 7.8f),
+        [2, 0] = new ComplexFloat(1.3f, -9.7f),
+        [2, 1] = new ComplexFloat(1.3f, -9.7f),
+        [2, 2] = new ComplexFloat(1.3f, -9.7f)
+      };
 
       X = qr.Solve(b);
 

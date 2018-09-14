@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -38,34 +38,40 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     static DoubleQRDecompTest()
     {
-      DoubleMatrix a = new DoubleMatrix(3);
-      a[0, 0] = -1.0;
-      a[0, 1] = 5.0;
-      a[0, 2] = 6.0;
-      a[1, 0] = 3.0;
-      a[1, 1] = -6.0;
-      a[1, 2] = 1.0;
-      a[2, 0] = 6.0;
-      a[2, 1] = 8.0;
-      a[2, 2] = 9.0;
+      var a = new DoubleMatrix(3)
+      {
+        [0, 0] = -1.0,
+        [0, 1] = 5.0,
+        [0, 2] = 6.0,
+        [1, 0] = 3.0,
+        [1, 1] = -6.0,
+        [1, 2] = 1.0,
+        [2, 0] = 6.0,
+        [2, 1] = 8.0,
+        [2, 2] = 9.0
+      };
       qr = new DoubleQRDecomp(a);
 
-      a = new DoubleMatrix(2, 3);
-      a[0, 0] = -1.0;
-      a[0, 1] = 5.0;
-      a[0, 2] = 6.0;
-      a[1, 0] = 3.0;
-      a[1, 1] = -6.0;
-      a[1, 2] = 1.0;
+      a = new DoubleMatrix(2, 3)
+      {
+        [0, 0] = -1.0,
+        [0, 1] = 5.0,
+        [0, 2] = 6.0,
+        [1, 0] = 3.0,
+        [1, 1] = -6.0,
+        [1, 2] = 1.0
+      };
       wqr = new DoubleQRDecomp(a);
 
-      a = new DoubleMatrix(3, 2);
-      a[0, 0] = -1.0;
-      a[0, 1] = 5.0;
-      a[1, 0] = 3.0;
-      a[1, 1] = -6.0;
-      a[2, 0] = 6.0;
-      a[2, 1] = 8.0;
+      a = new DoubleMatrix(3, 2)
+      {
+        [0, 0] = -1.0,
+        [0, 1] = 5.0,
+        [1, 0] = 3.0,
+        [1, 1] = -6.0,
+        [2, 0] = 6.0,
+        [2, 1] = 8.0
+      };
       lqr = new DoubleQRDecomp(a);
     }
 
@@ -74,7 +80,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        DoubleQRDecomp test = new DoubleQRDecomp(null);
+        var test = new DoubleQRDecomp(null);
       });
     }
 
@@ -160,16 +166,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveMatrix()
     {
-      DoubleMatrix b = new DoubleMatrix(3);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
+      var b = new DoubleMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25
+      };
       DoubleMatrix x = qr.Solve(b);
       Assert.AreEqual(x[0, 0], 2.965, TOLERENCE);
       Assert.AreEqual(x[0, 1], 2.965, TOLERENCE);
@@ -181,13 +189,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 1], 1.227, TOLERENCE);
       Assert.AreEqual(x[2, 2], 1.227, TOLERENCE);
 
-      b = new DoubleMatrix(3, 2);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
+      b = new DoubleMatrix(3, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25
+      };
       x = qr.Solve(b);
       Assert.AreEqual(x[0, 0], 2.965, TOLERENCE);
       Assert.AreEqual(x[0, 1], 2.965, TOLERENCE);
@@ -196,19 +206,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 0], 1.227, TOLERENCE);
       Assert.AreEqual(x[2, 1], 1.227, TOLERENCE);
 
-      b = new DoubleMatrix(3, 4);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[0, 3] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[1, 3] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
-      b[2, 3] = 25;
+      b = new DoubleMatrix(3, 4)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [0, 3] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [1, 3] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25,
+        [2, 3] = 25
+      };
       x = qr.Solve(b);
       Assert.AreEqual(x[0, 0], 2.965, TOLERENCE);
       Assert.AreEqual(x[0, 1], 2.965, TOLERENCE);
@@ -223,45 +235,51 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 2], 1.227, TOLERENCE);
       Assert.AreEqual(x[2, 3], 1.227, TOLERENCE);
 
-      DoubleMatrix A = new DoubleMatrix(4, 3);
-      A[0, 0] = -4.18;
-      A[0, 1] = -5.011;
-      A[0, 2] = -5.841;
-      A[1, 0] = 4.986;
-      A[1, 1] = 5.805;
-      A[1, 2] = 6.624;
-      A[2, 0] = 3.695;
-      A[2, 1] = 3.687;
-      A[2, 2] = 3.679;
-      A[3, 0] = -5.489;
-      A[3, 1] = -7.024;
-      A[3, 2] = 8.56;
+      var A = new DoubleMatrix(4, 3)
+      {
+        [0, 0] = -4.18,
+        [0, 1] = -5.011,
+        [0, 2] = -5.841,
+        [1, 0] = 4.986,
+        [1, 1] = 5.805,
+        [1, 2] = 6.624,
+        [2, 0] = 3.695,
+        [2, 1] = 3.687,
+        [2, 2] = 3.679,
+        [3, 0] = -5.489,
+        [3, 1] = -7.024,
+        [3, 2] = 8.56
+      };
 
-      DoubleQRDecomp qrd = new DoubleQRDecomp(A);
-      DoubleMatrix B = new DoubleMatrix(4, 1);
-      B[0, 0] = 1;
-      B[1, 0] = 4;
-      B[2, 0] = 2;
-      B[3, 0] = 1;
+      var qrd = new DoubleQRDecomp(A);
+      var B = new DoubleMatrix(4, 1)
+      {
+        [0, 0] = 1,
+        [1, 0] = 4,
+        [2, 0] = 2,
+        [3, 0] = 1
+      };
 
       x = qrd.Solve(B);
       Assert.AreEqual(x[0, 0], 2.73529, TOLERENCE);
       Assert.AreEqual(x[1, 0], -2.15822, TOLERENCE);
       Assert.AreEqual(x[2, 0], 0.0998564, TOLERENCE);
 
-      B = new DoubleMatrix(4, 3);
-      B[0, 0] = 1;
-      B[1, 0] = 4;
-      B[2, 0] = 2;
-      B[3, 0] = 1;
-      B[0, 1] = 1;
-      B[1, 1] = 4;
-      B[2, 1] = 2;
-      B[3, 1] = 1;
-      B[0, 2] = 1;
-      B[1, 2] = 4;
-      B[2, 2] = 2;
-      B[3, 2] = 1;
+      B = new DoubleMatrix(4, 3)
+      {
+        [0, 0] = 1,
+        [1, 0] = 4,
+        [2, 0] = 2,
+        [3, 0] = 1,
+        [0, 1] = 1,
+        [1, 1] = 4,
+        [2, 1] = 2,
+        [3, 1] = 1,
+        [0, 2] = 1,
+        [1, 2] = 4,
+        [2, 2] = 2,
+        [3, 2] = 1
+      };
 
       x = qrd.Solve(B);
       Assert.AreEqual(x[0, 0], 2.73529, TOLERENCE);

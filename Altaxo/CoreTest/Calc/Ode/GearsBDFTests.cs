@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
+using NUnit.Framework;
 
 namespace Altaxo.Calc.Ode
 {
@@ -331,11 +331,10 @@ namespace Altaxo.Calc.Ode
       new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
       var sp = new double[1];
-      double tres;
 
       foreach (var spulse in pulse.SolveTo(32))
       {
-        ode.Evaluate(out tres, sp);
+        ode.Evaluate(out var tres, sp);
         Assert.AreEqual(spulse.T, tres);
         Assert.AreEqual(spulse.X[0], sp[0]);
 

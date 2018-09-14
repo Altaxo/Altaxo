@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Fourier;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Fourier
 {
@@ -41,7 +41,7 @@ namespace AltaxoTest.Calc.Fourier
 
     private void MyFFT(double[] real, double[] imag, FourierDirection direction)
     {
-      Pfa235FFT fft = new Pfa235FFT(real.Length);
+      var fft = new Pfa235FFT(real.Length);
       fft.FFT(real, imag, direction);
     }
 
@@ -163,7 +163,7 @@ namespace AltaxoTest.Calc.Fourier
       double[] re = new double[n];
       double[] im = new double[n];
 
-      Pfa235FFT fft = new Pfa235FFT(u, v);
+      var fft = new Pfa235FFT(u, v);
 
       fft.FFT(re, im, FourierDirection.Inverse);
 
@@ -194,7 +194,7 @@ namespace AltaxoTest.Calc.Fourier
 
       re[1] = 1;
 
-      Pfa235FFT fft = new Pfa235FFT(u, v);
+      var fft = new Pfa235FFT(u, v);
 
       fft.FFT(re, im, FourierDirection.Inverse);
 
@@ -228,7 +228,7 @@ namespace AltaxoTest.Calc.Fourier
 
       re[1 * v] = 1;
 
-      Pfa235FFT fft = new Pfa235FFT(u, v);
+      var fft = new Pfa235FFT(u, v);
 
       fft.FFT(re, im, FourierDirection.Inverse);
 
@@ -262,7 +262,7 @@ namespace AltaxoTest.Calc.Fourier
 
       re[1 * v + 1] = 1;
 
-      Pfa235FFT fft = new Pfa235FFT(u, v);
+      var fft = new Pfa235FFT(u, v);
 
       fft.FFT(re, im, FourierDirection.Inverse);
 
@@ -299,7 +299,7 @@ namespace AltaxoTest.Calc.Fourier
 
       re[upos * v + vpos] = 1;
 
-      Pfa235FFT fft = new Pfa235FFT(u, v);
+      var fft = new Pfa235FFT(u, v);
 
       fft.FFT(re, im, FourierDirection.Inverse);
 
@@ -336,7 +336,7 @@ namespace AltaxoTest.Calc.Fourier
 
       im[upos * v + vpos] = 1;
 
-      Pfa235FFT fft = new Pfa235FFT(u, v);
+      var fft = new Pfa235FFT(u, v);
 
       fft.FFT(re, im, FourierDirection.Inverse);
 
@@ -372,24 +372,24 @@ namespace AltaxoTest.Calc.Fourier
     private void MyRoutine1(double[] real1, FourierDirection dir)
     {
       int n = real1.Length;
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
       double[] real2 = new double[n];
       for (int i = 0; i < n; i++)
         real2[i] = rnd.NextDouble() / n;
 
-      Pfa235FFT fft = new Pfa235FFT(n);
+      var fft = new Pfa235FFT(n);
       fft.RealFFT(real1, real2, dir);
     }
 
     private void MyRoutine2(double[] real1, FourierDirection dir)
     {
       int n = real1.Length;
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
       double[] real2 = new double[n];
       for (int i = 0; i < n; i++)
         real2[i] = rnd.NextDouble() / n;
 
-      Pfa235FFT fft = new Pfa235FFT(n);
+      var fft = new Pfa235FFT(n);
       fft.RealFFT(real2, real1, dir);
     }
 

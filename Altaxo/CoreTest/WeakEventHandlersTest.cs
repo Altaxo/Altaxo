@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Altaxo;
+using NUnit.Framework;
 
 namespace Altaxo
 {
@@ -69,8 +69,7 @@ namespace Altaxo
       private readonly InstanceCounter _counter;
 
       public WeakEventHandler StoreTheWeakEventHandler;
-
-      EventSource _src;
+      private EventSource _src;
 
       public void EhChanged(object o, EventArgs e)
       {

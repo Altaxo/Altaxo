@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -43,38 +43,44 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [OneTimeSetUp]
     public void SetupTestCases()
     {
-      a = new ComplexDoubleMatrix(3);
-      a[0, 0] = new Complex(1.1, 1.1);
-      a[0, 1] = new Complex(2.2, -2.2);
-      a[0, 2] = new Complex(3.3, 3.3);
-      a[1, 0] = new Complex(4.4, -4.4);
-      a[1, 1] = new Complex(5.5, 5.5);
-      a[1, 2] = new Complex(6.6, -6.6);
-      a[2, 0] = new Complex(7.7, 7.7);
-      a[2, 1] = new Complex(8.8, -8.8);
-      a[2, 2] = new Complex(9.9, 9.9);
+      a = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = new Complex(1.1, 1.1),
+        [0, 1] = new Complex(2.2, -2.2),
+        [0, 2] = new Complex(3.3, 3.3),
+        [1, 0] = new Complex(4.4, -4.4),
+        [1, 1] = new Complex(5.5, 5.5),
+        [1, 2] = new Complex(6.6, -6.6),
+        [2, 0] = new Complex(7.7, 7.7),
+        [2, 1] = new Complex(8.8, -8.8),
+        [2, 2] = new Complex(9.9, 9.9)
+      };
       svd = new ComplexDoubleSVDDecomp(a, true);
 
-      wa = new ComplexDoubleMatrix(2, 4);
-      wa[0, 0] = new Complex(1.1, 1.1);
-      wa[0, 1] = new Complex(2.2, -2.2);
-      wa[0, 2] = new Complex(3.3, 3.3);
-      wa[0, 3] = new Complex(4.4, -4.4);
-      wa[1, 0] = new Complex(5.5, 5.5);
-      wa[1, 1] = new Complex(6.6, -6.6);
-      wa[1, 2] = new Complex(7.7, 7.7);
-      wa[1, 3] = new Complex(8.8, -8.8);
+      wa = new ComplexDoubleMatrix(2, 4)
+      {
+        [0, 0] = new Complex(1.1, 1.1),
+        [0, 1] = new Complex(2.2, -2.2),
+        [0, 2] = new Complex(3.3, 3.3),
+        [0, 3] = new Complex(4.4, -4.4),
+        [1, 0] = new Complex(5.5, 5.5),
+        [1, 1] = new Complex(6.6, -6.6),
+        [1, 2] = new Complex(7.7, 7.7),
+        [1, 3] = new Complex(8.8, -8.8)
+      };
       wsvd = new ComplexDoubleSVDDecomp(wa, true);
 
-      la = new ComplexDoubleMatrix(4, 2);
-      la[0, 0] = new Complex(1.1, 1.1);
-      la[0, 1] = new Complex(2.2, -2.2);
-      la[1, 0] = new Complex(3.3, 3.3);
-      la[1, 1] = new Complex(4.4, -4.4);
-      la[2, 0] = new Complex(5.5, 5.5);
-      la[2, 1] = new Complex(6.6, -6.6);
-      la[3, 0] = new Complex(7.7, 7.7);
-      la[3, 1] = new Complex(8.8, -8.8);
+      la = new ComplexDoubleMatrix(4, 2)
+      {
+        [0, 0] = new Complex(1.1, 1.1),
+        [0, 1] = new Complex(2.2, -2.2),
+        [1, 0] = new Complex(3.3, 3.3),
+        [1, 1] = new Complex(4.4, -4.4),
+        [2, 0] = new Complex(5.5, 5.5),
+        [2, 1] = new Complex(6.6, -6.6),
+        [3, 0] = new Complex(7.7, 7.7),
+        [3, 1] = new Complex(8.8, -8.8)
+      };
       lsvd = new ComplexDoubleSVDDecomp(la, true);
     }
 

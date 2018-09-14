@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Interpolation
 {
@@ -298,8 +298,10 @@ new double[]{2.15004016,9.55497549,-124.455187}
         dy[i] = 1;
       }
 
-      CrossValidatedCubicSpline spline = new CrossValidatedCubicSpline();
-      spline.CalculateErrorEstimates = true;
+      var spline = new CrossValidatedCubicSpline
+      {
+        CalculateErrorEstimates = true
+      };
 
       spline.SetErrorVariance(VectorMath.ToROVector(dy), -1);
       spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(y));

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc;
+using NUnit.Framework;
 
 namespace AltaxoTest.Calc
 {

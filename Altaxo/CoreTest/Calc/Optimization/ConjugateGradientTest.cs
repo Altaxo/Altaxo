@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Optimization
 {
@@ -36,12 +36,12 @@ namespace AltaxoTest.Calc.Optimization
     [Test]
     public void TestRosenbrock()
     {
-      Rosenbrock cf = new Rosenbrock();
-      EndCriteria ec = new EndCriteria();
-      ConjugateGradient optim = new ConjugateGradient(cf, ec);
+      var cf = new Rosenbrock();
+      var ec = new EndCriteria();
+      var optim = new ConjugateGradient(cf, ec);
       //  new SecantLineSearch(cf,ec));
 
-      DoubleVector x0 = new DoubleVector(new double[5] { 1.3, 0.7, 0.8, 1.9, 1.2 });
+      var x0 = new DoubleVector(new double[5] { 1.3, 0.7, 0.8, 1.9, 1.2 });
 
       optim.Minimize(x0);
 

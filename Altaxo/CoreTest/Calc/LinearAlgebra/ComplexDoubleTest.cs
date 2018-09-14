@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -37,10 +37,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void EqualsTest()
     {
-      Complex cd1 = new Complex(-1.1, 2.2);
-      Complex cd2 = new Complex(-1.1, 2.2);
-      Complex cd3 = new Complex(-1, 2);
-      ComplexFloat cf = new ComplexFloat(-1, 2);
+      var cd1 = new Complex(-1.1, 2.2);
+      var cd2 = new Complex(-1.1, 2.2);
+      var cd3 = new Complex(-1, 2);
+      var cf = new ComplexFloat(-1, 2);
       Assert.IsTrue(cd1 == cd2);
       Assert.IsTrue(cd1.Equals(cd2));
       Assert.IsTrue(cd3 == cf);
@@ -51,7 +51,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ConversionTest()
     {
       Complex cd1 = 2.2;
-      ComplexFloat cf = new ComplexFloat(-1.1f, 2.2f);
+      var cf = new ComplexFloat(-1.1f, 2.2f);
       Complex cd2 = cf;
       Assert.AreEqual(cd1.Real, 2.2);
       Assert.AreEqual(cd1.Imag, 0);
@@ -62,8 +62,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorsTest()
     {
-      Complex cd1 = new Complex(1.1, -2.2);
-      Complex cd2 = new Complex(-3.3, 4.4);
+      var cd1 = new Complex(1.1, -2.2);
+      var cd2 = new Complex(-3.3, 4.4);
       Complex test = cd1 * cd2;
       Assert.AreEqual(test.Real, 6.05, 20 * DBL_EPSILON);
       Assert.AreEqual(test.Imag, 12.1, 25 * DBL_EPSILON);
@@ -88,9 +88,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void NaNTest()
     {
-      Complex cd = new Complex(Double.NaN, 1.1);
+      var cd = new Complex(double.NaN, 1.1);
       Assert.IsTrue(cd.IsNaN());
-      cd = new Complex(1.1, Double.NaN);
+      cd = new Complex(1.1, double.NaN);
       Assert.IsTrue(cd.IsNaN());
       cd = new Complex(1.1, 2.2);
       Assert.IsFalse(cd.IsNaN());
@@ -99,13 +99,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void InfinityTest()
     {
-      Complex cd = new Complex(Double.NegativeInfinity, 1.1);
+      var cd = new Complex(double.NegativeInfinity, 1.1);
       Assert.IsTrue(cd.IsInfinity());
-      cd = new Complex(1.1, Double.NegativeInfinity);
+      cd = new Complex(1.1, double.NegativeInfinity);
       Assert.IsTrue(cd.IsInfinity());
-      cd = new Complex(Double.PositiveInfinity, 1.1);
+      cd = new Complex(double.PositiveInfinity, 1.1);
       Assert.IsTrue(cd.IsInfinity());
-      cd = new Complex(1.1, Double.PositiveInfinity);
+      cd = new Complex(1.1, double.PositiveInfinity);
       Assert.IsTrue(cd.IsInfinity());
       cd = new Complex(1.1, 2.2);
       Assert.IsFalse(cd.IsInfinity());
@@ -114,17 +114,17 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CloneTest()
     {
-      Complex cd1 = new Complex(1.1, 2.2);
-      Complex cd2 = (Complex)((ICloneable)cd1).Clone();
+      var cd1 = new Complex(1.1, 2.2);
+      var cd2 = (Complex)((ICloneable)cd1).Clone();
       Assert.AreEqual(cd1, cd2);
     }
 
     [Test]
     public void HashTest()
     {
-      Complex cd1 = new Complex(1.1, 2.2);
-      Complex cd2 = new Complex(1.1, 3.3);
-      Complex cd3 = new Complex(0.1, 2.2);
+      var cd1 = new Complex(1.1, 2.2);
+      var cd2 = new Complex(1.1, 3.3);
+      var cd3 = new Complex(0.1, 2.2);
       Assert.AreNotEqual(cd1.GetHashCode(), cd2.GetHashCode());
       Assert.AreNotEqual(cd1.GetHashCode(), cd3.GetHashCode());
       Assert.AreNotEqual(cd2.GetHashCode(), cd3.GetHashCode());
@@ -136,7 +136,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         string s = null;
-        Complex cd = new Complex(s);
+        var cd = new Complex(s);
       });
     }
 
@@ -146,7 +146,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(FormatException), () =>
       {
         string s = "";
-        Complex cd = new Complex(s);
+        var cd = new Complex(s);
       });
     }
 
@@ -156,7 +156,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(FormatException), () =>
       {
         string s = "+";
-        Complex cd = new Complex(s);
+        var cd = new Complex(s);
       });
     }
 
@@ -166,7 +166,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(FormatException), () =>
       {
         string s = "1i+2";
-        Complex cd = new Complex(s);
+        var cd = new Complex(s);
       });
     }
 
@@ -174,7 +174,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ParseTest()
     {
       string s = "1";
-      Complex cd = new Complex(s);
+      var cd = new Complex(s);
       Assert.AreEqual(cd.Real, 1);
       Assert.AreEqual(cd.Imag, 0);
 

@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc
 {
@@ -63,7 +63,7 @@ namespace AltaxoTest.Calc
     public void TestIsPowerOfTwoOrZero()
     {
       // 32 bit, signed
-      Assert.AreEqual(true, BinaryMath.IsPowerOfTwoOrZero((int)0));
+      Assert.AreEqual(true, BinaryMath.IsPowerOfTwoOrZero(0));
       for (int i = 0; i < 32; ++i)
       {
         uint x = 1u << i;
@@ -80,11 +80,11 @@ namespace AltaxoTest.Calc
       for (int i = 0; i < 32; ++i)
       {
         uint x = 1u << i;
-        Assert.AreEqual(true, BinaryMath.IsPowerOfTwoOrZero((uint)x));
+        Assert.AreEqual(true, BinaryMath.IsPowerOfTwoOrZero(x));
         if (i > 0)
         {
           x += x - 1;
-          Assert.AreEqual(false, BinaryMath.IsPowerOfTwoOrZero((uint)x));
+          Assert.AreEqual(false, BinaryMath.IsPowerOfTwoOrZero(x));
         }
       }
 
@@ -106,11 +106,11 @@ namespace AltaxoTest.Calc
       for (int i = 0; i < 64; ++i)
       {
         ulong x = 1ul << i;
-        Assert.AreEqual(true, BinaryMath.IsPowerOfTwoOrZero((ulong)x));
+        Assert.AreEqual(true, BinaryMath.IsPowerOfTwoOrZero(x));
         if (i > 0)
         {
           x += x - 1;
-          Assert.AreEqual(false, BinaryMath.IsPowerOfTwoOrZero((ulong)x));
+          Assert.AreEqual(false, BinaryMath.IsPowerOfTwoOrZero(x));
         }
       }
     }
@@ -119,7 +119,7 @@ namespace AltaxoTest.Calc
     public void TestIsNonzeroPowerOfTwo()
     {
       // 32 bit, signed
-      Assert.AreEqual(false, BinaryMath.IsNonzeroPowerOfTwo((int)0));
+      Assert.AreEqual(false, BinaryMath.IsNonzeroPowerOfTwo(0));
       for (int i = 0; i < 32; ++i)
       {
         uint x = 1u << i;
@@ -136,11 +136,11 @@ namespace AltaxoTest.Calc
       for (int i = 0; i < 32; ++i)
       {
         uint x = 1u << i;
-        Assert.AreEqual(true, BinaryMath.IsNonzeroPowerOfTwo((uint)x));
+        Assert.AreEqual(true, BinaryMath.IsNonzeroPowerOfTwo(x));
         if (i > 0)
         {
           x += x - 1;
-          Assert.AreEqual(false, BinaryMath.IsNonzeroPowerOfTwo((uint)x));
+          Assert.AreEqual(false, BinaryMath.IsNonzeroPowerOfTwo(x));
         }
       }
 
@@ -162,11 +162,11 @@ namespace AltaxoTest.Calc
       for (int i = 0; i < 64; ++i)
       {
         ulong x = 1ul << i;
-        Assert.AreEqual(true, BinaryMath.IsNonzeroPowerOfTwo((ulong)x));
+        Assert.AreEqual(true, BinaryMath.IsNonzeroPowerOfTwo(x));
         if (i > 0)
         {
           x += x - 1;
-          Assert.AreEqual(false, BinaryMath.IsNonzeroPowerOfTwo((ulong)x));
+          Assert.AreEqual(false, BinaryMath.IsNonzeroPowerOfTwo(x));
         }
       }
     }
@@ -175,7 +175,7 @@ namespace AltaxoTest.Calc
     public void TestNextPowerOfTwoGreaterOrEqual()
     {
       // 32 bit, signed
-      Assert.AreEqual(1, BinaryMath.NextPowerOfTwoGreaterOrEqualThan((int)0));
+      Assert.AreEqual(1, BinaryMath.NextPowerOfTwoGreaterOrEqualThan(0));
       for (int i = 0; i < 31; ++i)
       {
         uint x = 1u << i;
@@ -191,10 +191,10 @@ namespace AltaxoTest.Calc
       for (int i = 0; i < 32; ++i)
       {
         uint x = 1u << i;
-        Assert.AreEqual(x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan((uint)x));
+        Assert.AreEqual(x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan(x));
         if (i < 31)
         {
-          Assert.AreEqual(x + x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan((uint)(x + 1)));
+          Assert.AreEqual(x + x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan(x + 1));
         }
       }
 
@@ -215,10 +215,10 @@ namespace AltaxoTest.Calc
       for (int i = 0; i < 64; ++i)
       {
         ulong x = 1UL << i;
-        Assert.AreEqual(x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan((ulong)x));
+        Assert.AreEqual(x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan(x));
         if (i < 63)
         {
-          Assert.AreEqual(x + x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan((ulong)(x + 1)));
+          Assert.AreEqual(x + x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan(x + 1));
         }
       }
     }

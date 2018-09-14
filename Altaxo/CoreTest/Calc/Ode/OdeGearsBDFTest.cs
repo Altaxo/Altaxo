@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 
 namespace Altaxo.Calc.Ode
 {
@@ -62,8 +62,8 @@ namespace Altaxo.Calc.Ode
       y[0] = C1 + C2;
       y[1] = C1 - C2;
 
-      OdeFunction YDot = new OdeFunction(RateEquations);
-      OdeGearsBDF bdf = new OdeGearsBDF(YDot, 2);
+      var YDot = new OdeFunction(RateEquations);
+      var bdf = new OdeGearsBDF(YDot, 2);
       bdf.SetInitialValues(0, y);
 
       bdf.RelTolArray[0] = 1.0E-4;
@@ -94,8 +94,8 @@ namespace Altaxo.Calc.Ode
       y[0] = C1 + C2;
       y[1] = C1 - C2;
 
-      OdeFunction YDot = new OdeFunction(RateEquations);
-      OdeGearsBDF bdf = new OdeGearsBDF(YDot, 2);
+      var YDot = new OdeFunction(RateEquations);
+      var bdf = new OdeGearsBDF(YDot, 2);
       bdf.SetInitialValues(0, y);
 
       bdf.RelTolArray[0] = 1.0E-5;

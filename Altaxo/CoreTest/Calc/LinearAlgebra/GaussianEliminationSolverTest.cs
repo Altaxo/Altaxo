@@ -6,12 +6,12 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -59,7 +59,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < N; i++)
         a[i, i] = 1;
       // Apply random rotations around each pair of axes. This will keep det(A) ~ 1
-      Random rand = new Random();
+      var rand = new Random();
       for (int i = 0; i < N; i++)
         for (int j = i + 1; j < N; j++)
         {
@@ -79,7 +79,7 @@ namespace Altaxo.Calc.LinearAlgebra
         b[i] = rand.NextDouble();
 
       // Solve system
-      Stopwatch sw = new Stopwatch();
+      var sw = new Stopwatch();
       sw.Start();
       var x = solver.Solve(a, b, (len) => new DoubleVector(len));
       sw.Stop();

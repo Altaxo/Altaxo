@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc
 {

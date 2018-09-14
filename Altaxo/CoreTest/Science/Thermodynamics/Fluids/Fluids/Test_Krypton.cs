@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -82,7 +82,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 6. Isochoric heat capacity (J/(mol K))
       // 7. Isobaric heat capacity (J/(mol K))
       // 8. Speed of sound (m/s)
-      _testDataEquationOfState = new(double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
+      _testDataEquationOfState = new (double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[]
       {
       ( 115.775, 1.0392041524526, 1000, 8026.54788772863, 8988.82271855945, 113.195316025001, 12.4813363577222, 20.8079781563446, 138.338142652213 ),
       ( 125, 0.962440853333177, 1000, 8141.72311902651, 9180.74800719159, 114.79032897472, 12.4784696964045, 20.8022305447214, 143.751058939617 ),
@@ -264,7 +264,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // 1. Pressure (Pa)
       // 2. Saturated liquid density (mol/m³
       // 3. Saturated vapor density (mol/m³)
-      _testDataSaturatedProperties = new(double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
+      _testDataSaturatedProperties = new (double temperature, double pressure, double saturatedLiquidMoleDensity, double saturatedVaporMoleDensity)[]
       {
       ( 127.488125, 178535.78527824, 28119.2541408766, 177.021786591872 ),
       ( 139.20125, 370643.444399691, 26977.2382579503, 348.074234529781 ),
@@ -278,7 +278,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // TestData contains:
       // 0. Temperature (Kelvin)
       // 1. Pressure (Pa
-      _testDataMeltingLine = new(double temperature, double pressure)[]
+      _testDataMeltingLine = new (double temperature, double pressure)[]
      {
       ( 115.777967354213, 100000 ),
       ( 115.795578762478, 158489.319246111 ),
@@ -302,7 +302,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // TestData contains:
       // 0. Temperature (Kelvin)
       // 1. Pressure (Pa
-      _testDataSublimationLine = new(double temperature, double pressure)[]
+      _testDataSublimationLine = new (double temperature, double pressure)[]
      {
       ( 115, 67710.3674353056 ),
       ( 112.125, 50238.9287950217 ),

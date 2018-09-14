@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Probability;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Probability
 {
@@ -109,9 +109,9 @@ new double[]{2.5, 3.5, 0.2739037303169420423172000, 1.749247541974141744140178, 
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          BetaDistribution ret = new BetaDistribution(a, b);
+          var ret = new BetaDistribution(a, b);
           return ret;
         }
           );
@@ -131,11 +131,13 @@ new double[]{5, 8, -3.000000000000000000000000, 0.01989436788648691697111047, 55
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          CauchyDistribution ret = new CauchyDistribution();
-          ret.Alpha = a;
-          ret.Gamma = b;
+          var ret = new CauchyDistribution
+          {
+            Alpha = a,
+            Gamma = b
+          };
           return ret;
         }
           );
@@ -155,10 +157,12 @@ new double[]{7, 0, 2.062729304476599455816607, 0.488171949494276922953910, 3.750
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          ChiDistribution ret = new ChiDistribution();
-          ret.N = (int)a;
+          var ret = new ChiDistribution
+          {
+            N = (int)a
+          };
           return ret;
         }
           );
@@ -178,10 +182,12 @@ new double[]{7, 0, 4.254852183546515743793886, 0.1183315591713442321707384, 14.0
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          ChiSquareDistribution ret = new ChiSquareDistribution();
-          ret.Alpha = (int)a;
+          var ret = new ChiSquareDistribution
+          {
+            Alpha = (int)a
+          };
           return ret;
         }
           );
@@ -201,9 +207,9 @@ new double[]{3, 5, 3.500000000000000000000000, 0.5000000000000000000000000, 4.90
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          ContinuousUniformDistribution ret = new ContinuousUniformDistribution(a, b);
+          var ret = new ContinuousUniformDistribution(a, b);
           return ret;
         }
           );
@@ -223,9 +229,9 @@ new double[]{3.0, 0.5, 0.8636497089302596965312208, 0.530369629973745149272610, 
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          ErlangDistribution ret = new ErlangDistribution((int)a, b);
+          var ret = new ErlangDistribution((int)a, b);
           return ret;
         }
           );
@@ -245,10 +251,12 @@ new double[]{3.5, 0, 0.08219487784336597926834829, 2.625000000000000000000000, 0
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          ExponentialDistribution ret = new ExponentialDistribution();
-          ret.Lambda = a;
+          var ret = new ExponentialDistribution
+          {
+            Lambda = a
+          };
           return ret;
         }
           );
@@ -268,11 +276,13 @@ new double[]{ 3, 4, 0.4183909951315492730074144, 0.6061355268760950491423940, 6.
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          FDistribution ret = new FDistribution();
-          ret.Alpha = (int)a;
-          ret.Beta = (int)b;
+          var ret = new FDistribution
+          {
+            Alpha = (int)a,
+            Beta = (int)b
+          };
           return ret;
         }
           );
@@ -292,11 +302,13 @@ new double[]{3.5, 1.8, 2.912058332039094231671373, 0.1925408834888736970603423, 
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          FisherTippettDistribution ret = new FisherTippettDistribution();
-          ret.Mu = a;
-          ret.Alpha = b;
+          var ret = new FisherTippettDistribution
+          {
+            Mu = a,
+            Alpha = b
+          };
           return ret;
         }
           );
@@ -316,9 +328,9 @@ new double[]{1.375, 0.5, 0.2611286278084653847745789, 1.046077103945108021281691
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          GammaDistribution ret = new GammaDistribution(a, b);
+          var ret = new GammaDistribution(a, b);
 
           return ret;
         }
@@ -339,11 +351,13 @@ new double[]{1.375, 0.5, 1.028426409720027345291384, 0.500000000000000000000000,
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          LaplaceDistribution ret = new LaplaceDistribution();
-          ret.Mu = a;
-          ret.Alpha = b;
+          var ret = new LaplaceDistribution
+          {
+            Mu = a,
+            Alpha = b
+          };
           return ret;
         }
           );
@@ -363,11 +377,13 @@ new double[]{1.5, 1.75, 1.376636130958281216854024, 0.1319060344841768348662210,
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          LognormalDistribution ret = new LognormalDistribution();
-          ret.Mu = a;
-          ret.Sigma = b;
+          var ret = new LognormalDistribution
+          {
+            Mu = a,
+            Sigma = b
+          };
           return ret;
         }
           );
@@ -387,11 +403,13 @@ new double[]{1.5, 1.75, 0.319642937156856949396103, 0.1815866129623468194217694,
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          NormalDistribution ret = new NormalDistribution();
-          ret.Mu = a;
-          ret.Sigma = b;
+          var ret = new NormalDistribution
+          {
+            Mu = a,
+            Sigma = b
+          };
           return ret;
         }
           );
@@ -411,11 +429,13 @@ new double[]{1.5, 1.75, 1.768010430487225851453548, 0.742359873769694378113828, 
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          ParetoDistribution ret = new ParetoDistribution();
-          ret.Alpha = a;
-          ret.Beta = b;
+          var ret = new ParetoDistribution
+          {
+            Alpha = a,
+            Beta = b
+          };
           return ret;
         }
           );
@@ -435,11 +455,13 @@ new double[]{}
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          PowerDistribution ret = new PowerDistribution();
-          ret.Alpha = a;
-          ret.Beta = b;
+          var ret = new PowerDistribution
+          {
+            Alpha = a,
+            Beta = b
+          };
           return ret;
         }
           );
@@ -459,10 +481,12 @@ new double[]{1.5, 0, 1.137791424661398198866648, 0.379263808220466066288883, 3.6
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          RayleighDistribution ret = new RayleighDistribution();
-          ret.Sigma = a;
+          var ret = new RayleighDistribution
+          {
+            Sigma = a
+          };
 
           return ret;
         }
@@ -492,10 +516,12 @@ new double[]{1.5, 0, 1.137791424661398198866648, 0.379263808220466066288883, 3.6
 
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          StudentTDistribution ret = new StudentTDistribution();
-          ret.Nu = (int)a;
+          var ret = new StudentTDistribution
+          {
+            Nu = (int)a
+          };
           return ret;
         }
           );
@@ -560,9 +586,9 @@ new double[]{}
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          TriangularDistribution ret = new TriangularDistribution(a, 0.5 * (a + b), b);
+          var ret = new TriangularDistribution(a, 0.5 * (a + b), b);
           return ret;
         }
           );
@@ -582,11 +608,13 @@ new double[]{1.5, 1.75, 0.762628880480291575561159, 0.424377229596168368465272, 
       };
       for (int i = 0; i < para.Length; i++)
       {
-        ContDistTester tester = new ContDistTester(para[i], delegate (double a, double b)
+        var tester = new ContDistTester(para[i], delegate (double a, double b)
         {
-          WeibullDistribution ret = new WeibullDistribution();
-          ret.Alpha = a;
-          ret.Lambda = b;
+          var ret = new WeibullDistribution
+          {
+            Alpha = a,
+            Lambda = b
+          };
 
           return ret;
         }
@@ -667,10 +695,12 @@ new double[]{0.75, 0, 0, 0.2500000000000000000000000, 0.250000000000000000000000
       };
       for (int i = 0; i < para.Length; i++)
       {
-        DiscDistTester tester = new DiscDistTester(para[i], delegate (double a, double b)
+        var tester = new DiscDistTester(para[i], delegate (double a, double b)
         {
-          BernoulliDistribution ret = new BernoulliDistribution();
-          ret.Probability = a;
+          var ret = new BernoulliDistribution
+          {
+            Probability = a
+          };
           return ret;
         }
           );
@@ -691,9 +721,9 @@ new double[]{100, 0.375, 40, 0.7339137587545079200156959, 0.07115992585884902329
       };
       for (int i = 0; i < para.Length; i++)
       {
-        DiscDistTester tester = new DiscDistTester(para[i], delegate (double a, double b)
+        var tester = new DiscDistTester(para[i], delegate (double a, double b)
         {
-          BinomialDistribution ret = new BinomialDistribution((int)a, b);
+          var ret = new BinomialDistribution((int)a, b);
           return ret;
         }
           );
@@ -713,9 +743,9 @@ new double[]{1, 11, 5, 0.4545454545454545454545455, 0.09090909090909090909090909
       };
       for (int i = 0; i < para.Length; i++)
       {
-        DiscDistTester tester = new DiscDistTester(para[i], delegate (double a, double b)
+        var tester = new DiscDistTester(para[i], delegate (double a, double b)
         {
-          DiscreteUniformDistribution ret = new DiscreteUniformDistribution((int)a, (int)b);
+          var ret = new DiscreteUniformDistribution((int)a, (int)b);
           return ret;
         }
           );
@@ -736,10 +766,12 @@ new double[]{0.125, 0, 5, 0.4870910644531250000000000, 0.07327270507812500000000
       };
       for (int i = 0; i < para.Length; i++)
       {
-        DiscDistTester tester = new DiscDistTester(para[i], delegate (double a, double b)
+        var tester = new DiscDistTester(para[i], delegate (double a, double b)
         {
-          GeometricDistribution ret = new GeometricDistribution();
-          ret.Probability = a;
+          var ret = new GeometricDistribution
+          {
+            Probability = a
+          };
           return ret;
         }
           );
@@ -759,9 +791,9 @@ new double[]{11, 0, 9, 0.3405106424656610472811084, 0.1085255092982049925567724}
       };
       for (int i = 0; i < para.Length; i++)
       {
-        DiscDistTester tester = new DiscDistTester(para[i], delegate (double a, double b)
+        var tester = new DiscDistTester(para[i], delegate (double a, double b)
         {
-          PoissonDistribution ret = new PoissonDistribution(a);
+          var ret = new PoissonDistribution(a);
           return ret;
         }
           );

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -44,9 +44,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       var XtX = X.GetTranspose() * X;
       var Xty = X.GetTranspose() * y;
-
-      IMatrix<double> x, w;
-      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out w);
+      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var w);
 
       Assert.AreEqual(0.65, x[0, 0], 0.01);
       Assert.AreEqual(0, x[1, 0], 0.01);
@@ -68,9 +66,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       var XtX = X.GetTranspose() * X;
       var Xty = X.GetTranspose() * y;
-
-      IMatrix<double> x, w;
-      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out w);
+      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var w);
 
       Assert.AreEqual(0, x[0, 0], 1e-4);
       Assert.AreEqual(0, x[1, 0], 1e-4);
@@ -94,9 +90,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       var XtX = X.GetTranspose() * X;
       var Xty = X.GetTranspose() * y;
-
-      IMatrix<double> x, w;
-      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out w);
+      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var w);
 
       Assert.AreEqual(0, x[0, 0], 1e-4);
       Assert.AreEqual(0.90443, x[1, 0], 1e-4);
@@ -120,9 +114,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       var XtX = X.GetTranspose() * X;
       var Xty = X.GetTranspose() * y;
-
-      IMatrix<double> x, w;
-      FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => i != 0, null, out x, out w);
+      FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => i != 0, null, out var x, out var w);
 
       Assert.AreEqual(-0.07097, x[0, 0], 1e-4);
       Assert.AreEqual(0.91034, x[1, 0], 1e-4);
@@ -146,9 +138,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       var XtX = X.GetTranspose() * X;
       var Xty = X.GetTranspose() * y;
-
-      IMatrix<double> x, w;
-      FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => i != 3, null, out x, out w);
+      FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => i != 3, null, out var x, out var w);
 
       Assert.AreEqual(0.37911, x[0, 0], 1e-4);
       Assert.AreEqual(0, x[1, 0], 1e-4);
@@ -175,9 +165,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       var solver = new DoubleLUDecomp(XtX);
       var expected = solver.Solve(Xty);
-
-      IMatrix<double> x, w;
-      FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => false, null, out x, out w);
+      FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => false, null, out var x, out var w);
 
       Assert.AreEqual(expected[0, 0], x[0, 0], 1e-4);
       Assert.AreEqual(expected[1, 0], x[1, 0], 1e-4);
@@ -225,9 +213,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       var Xty = new DoubleMatrix(5, 1);
       MatrixMath.MultiplyFirstTransposed(X, y, Xty);
-
-      IMatrix<double> x, w;
-      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out w);
+      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var w);
 
       Assert.AreEqual(0.2, x[0, 0], 1e-6);
       Assert.AreEqual(0.6, x[1, 0], 1e-6);

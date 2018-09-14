@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Fourier;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Fourier
 {
@@ -56,12 +56,12 @@ namespace AltaxoTest.Calc.Fourier
 
     private double max_fft_error(int n)
     {
-      return (double)n * maxTolerableEpsPerN;
+      return n * maxTolerableEpsPerN;
     }
 
     private double max_ifft_error(int n)
     {
-      return (double)n * (double)n * maxTolerableEpsPerN;
+      return n * (double)n * maxTolerableEpsPerN;
     }
 
     /// <summary>
@@ -239,7 +239,7 @@ namespace AltaxoTest.Calc.Fourier
       double[] re = new double[n];
       double[] im = new double[n];
 
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
 
       for (; repeats >= 0; --repeats)
       {
@@ -249,8 +249,8 @@ namespace AltaxoTest.Calc.Fourier
           im[i] = 0;
         }
 
-        int repos = rnd.Next((int)n);
-        int impos = rnd.Next((int)n);
+        int repos = rnd.Next(n);
+        int impos = rnd.Next(n);
 
         re[repos] = 1;
         im[impos] = 1;
@@ -260,10 +260,10 @@ namespace AltaxoTest.Calc.Fourier
         for (int i = 0; i < n; i++)
         {
           Assert.AreEqual(
-            Math.Cos((2 * Math.PI * i * (double)repos) / n) - Math.Sin((2 * Math.PI * i * (double)impos) / n),
+            Math.Cos((2 * Math.PI * i * repos) / n) - Math.Sin((2 * Math.PI * i * impos) / n),
             re[i], max_fft_error(n), string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) re[{3}]", n, repos, impos, i));
           Assert.AreEqual(
-            Math.Sin((2 * Math.PI * i * (double)repos) / n) + Math.Cos((2 * Math.PI * i * (double)impos) / n),
+            Math.Sin((2 * Math.PI * i * repos) / n) + Math.Cos((2 * Math.PI * i * impos) / n),
             im[i], max_fft_error(n), string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) arb im[{3}]", n, repos, impos, i));
         }
 
@@ -292,7 +292,7 @@ namespace AltaxoTest.Calc.Fourier
       double[] re1 = new double[n];
       double[] im1 = new double[n];
 
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
 
       // fill re and im with random values
       for (int i = 0; i < n; i++)
@@ -305,7 +305,7 @@ namespace AltaxoTest.Calc.Fourier
       Array.Copy(im, 0, im1, 0, n);
 
       _fft(re, im, FourierDirection.Forward);
-      NativeFourierMethods.FourierTransformation(re1, im1, re1, im1, (int)n, FourierDirection.Forward);
+      NativeFourierMethods.FourierTransformation(re1, im1, re1, im1, n, FourierDirection.Forward);
 
       for (uint i = 0; i < n; i++)
       {
@@ -329,7 +329,7 @@ namespace AltaxoTest.Calc.Fourier
       Array.Copy(im, 0, im1, 0, n);
 
       _fft(re, im, FourierDirection.Inverse);
-      NativeFourierMethods.FourierTransformation(re1, im1, re1, im1, (int)n, FourierDirection.Inverse);
+      NativeFourierMethods.FourierTransformation(re1, im1, re1, im1, n, FourierDirection.Inverse);
 
       for (uint i = 0; i < n; i++)
       {
@@ -373,12 +373,12 @@ namespace AltaxoTest.Calc.Fourier
 
     private double max_fft_error(int n)
     {
-      return (double)n * maxTolerableEpsPerN;
+      return n * maxTolerableEpsPerN;
     }
 
     private double max_ifft_error(int n)
     {
-      return (double)n * (double)n * maxTolerableEpsPerN;
+      return n * (double)n * maxTolerableEpsPerN;
     }
 
     /// <summary>
@@ -483,7 +483,7 @@ namespace AltaxoTest.Calc.Fourier
     {
       double[] re = new double[n];
 
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
 
       for (; repeats >= 0; --repeats)
       {
@@ -492,7 +492,7 @@ namespace AltaxoTest.Calc.Fourier
           re[i] = 0;
         }
 
-        int repos = rnd.Next((int)n);
+        int repos = rnd.Next(n);
 
         re[repos] = 1;
 
@@ -502,11 +502,11 @@ namespace AltaxoTest.Calc.Fourier
         for (int i = 1, j = n - 1; i <= j; i++, j--)
         {
           Assert.AreEqual(
-            Math.Cos((2 * Math.PI * i * (double)repos) / n),
+            Math.Cos((2 * Math.PI * i * repos) / n),
             re[i], max_fft_error(n), string.Format("FFT({0}) of im 1 at pos(re={1}) re[{2}]", n, repos, i));
           if (i < j)
             Assert.AreEqual(
-              Math.Sin((2 * Math.PI * i * (double)repos) / n),
+              Math.Sin((2 * Math.PI * i * repos) / n),
               re[n - i], max_fft_error(n), string.Format("FFT({0}) of im 1 at pos(re={1}) arb im[{2}]", n, repos, i));
         }
 
@@ -528,7 +528,7 @@ namespace AltaxoTest.Calc.Fourier
 
       double[] re1 = new double[n];
 
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
 
       // fill re and im with random values
       for (int i = 0; i < n; i++)
@@ -539,7 +539,7 @@ namespace AltaxoTest.Calc.Fourier
       Array.Copy(re, 0, re1, 0, n);
 
       _fft(re, FourierDirection.Forward);
-      NativeFourierMethods.FourierTransformation(re1, re1, (int)n, FourierDirection.Forward);
+      NativeFourierMethods.FourierTransformation(re1, re1, n, FourierDirection.Forward);
 
       for (uint i = 0; i < n; i++)
       {
@@ -558,7 +558,7 @@ namespace AltaxoTest.Calc.Fourier
       Array.Copy(re, 0, re1, 0, n);
 
       _fft(re, FourierDirection.Inverse);
-      NativeFourierMethods.FourierTransformation(re1, re1, (int)n, FourierDirection.Inverse);
+      NativeFourierMethods.FourierTransformation(re1, re1, n, FourierDirection.Inverse);
 
       for (uint i = 0; i < n; i++)
       {

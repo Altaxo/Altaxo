@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
+using NUnit.Framework;
 
 namespace AltaxoTest.Calc.Regression
 {

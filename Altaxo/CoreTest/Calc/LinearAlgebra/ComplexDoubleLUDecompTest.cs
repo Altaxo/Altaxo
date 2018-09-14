@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -37,16 +37,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     static ComplexDoubleLUDecompTest()
     {
-      ComplexDoubleMatrix a = new ComplexDoubleMatrix(3);
-      a[0, 0] = new Complex(-1, 1);
-      a[0, 1] = 5;
-      a[0, 2] = 6;
-      a[1, 0] = 3;
-      a[1, 1] = -6;
-      a[1, 2] = 1;
-      a[2, 0] = 6;
-      a[2, 1] = 8;
-      a[2, 2] = 9;
+      var a = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = new Complex(-1, 1),
+        [0, 1] = 5,
+        [0, 2] = 6,
+        [1, 0] = 3,
+        [1, 1] = -6,
+        [1, 2] = 1,
+        [2, 0] = 6,
+        [2, 1] = 8,
+        [2, 2] = 9
+      };
       lu = new ComplexDoubleLUDecomp(a);
     }
 
@@ -55,8 +57,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexDoubleMatrix wm = new ComplexDoubleMatrix(2, 3);
-        ComplexDoubleLUDecomp wlu = new ComplexDoubleLUDecomp(wm);
+        var wm = new ComplexDoubleMatrix(2, 3);
+        var wlu = new ComplexDoubleLUDecomp(wm);
       });
     }
 
@@ -65,8 +67,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexDoubleMatrix lm = new ComplexDoubleMatrix(3, 2);
-        ComplexDoubleLUDecomp llu = new ComplexDoubleLUDecomp(lm);
+        var lm = new ComplexDoubleMatrix(3, 2);
+        var llu = new ComplexDoubleLUDecomp(lm);
       });
     }
 
@@ -113,8 +115,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void IsSingularTest()
     {
       Assert.IsFalse(lu.IsSingular);
-      ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-      ComplexDoubleLUDecomp dlu = new ComplexDoubleLUDecomp(b);
+      var b = new ComplexDoubleMatrix(3);
+      var dlu = new ComplexDoubleLUDecomp(b);
       Assert.IsTrue(dlu.IsSingular);
     }
 
@@ -147,8 +149,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        ComplexDoubleMatrix a = new ComplexDoubleMatrix(3, 3);
-        ComplexDoubleLUDecomp dlu = new ComplexDoubleLUDecomp(a);
+        var a = new ComplexDoubleMatrix(3, 3);
+        var dlu = new ComplexDoubleLUDecomp(a);
         dlu.GetInverse();
       });
     }
@@ -156,16 +158,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveMatrix()
     {
-      ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
+      var b = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25
+      };
       ComplexDoubleMatrix x = lu.Solve(b);
       Assert.AreEqual(x[0, 0].Real, 2.856, TOLERENCE);
       Assert.AreEqual(x[0, 1].Real, 2.856, TOLERENCE);
@@ -186,13 +190,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 1].Imag, -0.541, TOLERENCE);
       Assert.AreEqual(x[2, 2].Imag, -0.541, TOLERENCE);
 
-      b = new ComplexDoubleMatrix(3, 2);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
+      b = new ComplexDoubleMatrix(3, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25
+      };
       x = lu.Solve(b);
       Assert.AreEqual(x[0, 0].Real, 2.856, TOLERENCE);
       Assert.AreEqual(x[0, 1].Real, 2.856, TOLERENCE);
@@ -207,19 +213,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 0].Imag, -0.541, TOLERENCE);
       Assert.AreEqual(x[2, 1].Imag, -0.541, TOLERENCE);
 
-      b = new ComplexDoubleMatrix(3, 4);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[0, 3] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[1, 3] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
-      b[2, 3] = 25;
+      b = new ComplexDoubleMatrix(3, 4)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [0, 3] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [1, 3] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25,
+        [2, 3] = 25
+      };
       x = lu.Solve(b);
       Assert.AreEqual(x[0, 0].Real, 2.856, TOLERENCE);
       Assert.AreEqual(x[0, 1].Real, 2.856, TOLERENCE);
@@ -250,10 +258,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveVector()
     {
-      ComplexDoubleVector b = new ComplexDoubleVector(3);
-      b[0] = 2;
-      b[1] = 13;
-      b[2] = 25;
+      var b = new ComplexDoubleVector(3)
+      {
+        [0] = 2,
+        [1] = 13,
+        [2] = 25
+      };
       ComplexDoubleVector x = lu.Solve(b);
       Assert.AreEqual(x[0].Real, 2.856, TOLERENCE);
       Assert.AreEqual(x[1].Real, -0.517, TOLERENCE);

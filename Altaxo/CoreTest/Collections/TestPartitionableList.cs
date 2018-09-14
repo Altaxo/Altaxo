@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Collections;
+using NUnit.Framework;
 
 namespace AltaxoTest.Collections
 {
@@ -37,7 +37,7 @@ namespace AltaxoTest.Collections
     public void TestList()
     {
       const int max = 10;
-      PartitionableList<int> list = new PartitionableList<int>();
+      var list = new PartitionableList<int>();
 
       for (int i = 0; i < max; ++i)
         list.Add(i);
@@ -55,7 +55,7 @@ namespace AltaxoTest.Collections
     public void TestPartialViewDelayed()
     {
       const int max = 10;
-      PartitionableList<int> list = new PartitionableList<int>();
+      var list = new PartitionableList<int>();
       for (int i = 0; i < max; ++i)
         list.Add(i);
       Assert.AreEqual(list.Count, max, "Count of the list unexpected");
@@ -71,14 +71,13 @@ namespace AltaxoTest.Collections
     [Test]
     public void TestPartitionCreation()
     {
-      IList<int> mainList, oddList, evenList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
     }
 
     public void PartitionCreation(out IList<int> mainList, out IList<int> evenList, out IList<int> oddList)
     {
       const int max = 10;
-      PartitionableList<int> list = new PartitionableList<int>();
+      var list = new PartitionableList<int>();
       mainList = list;
 
       oddList = list.CreatePartialView(x => 0 != (x % 2));
@@ -108,9 +107,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 6, 7, 8, 9 };
       double[] r2 = new double[] { 0, 2, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       mainList.RemoveAt(5); // list contain all elements but not 5
 
@@ -123,9 +120,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
       double[] r2 = new double[] { 2, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       mainList.RemoveAt(0); // list contain all elements but not 0
 
@@ -138,9 +133,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
       double[] r2 = new double[] { 0, 2, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 5, 7 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       mainList.RemoveAt(9); // list contain all elements but not 9
 
@@ -153,9 +146,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 7, 8, 9 };
       double[] r2 = new double[] { 0, 2, 4, 8 };
       double[] r3 = new double[] { 1, 3, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       mainList.RemoveAt(5); // list contain all elements but not 5
       mainList.RemoveAt(5); // list contain all elements but not 6
@@ -169,9 +160,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 6, 7, 8, 9 };
       double[] r2 = new double[] { 0, 2, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       oddList.RemoveAt(2); // list contain all elements but not 5
 
@@ -184,9 +173,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 2, 3, 4, 5, 6, 7, 8, 9 };
       double[] r2 = new double[] { 0, 2, 4, 6, 8 };
       double[] r3 = new double[] { 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       oddList.RemoveAt(0); // list contain all elements but not 1
 
@@ -199,9 +186,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
       double[] r2 = new double[] { 2, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       evenList.RemoveAt(0); // list contain all elements but not 0
 
@@ -214,9 +199,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
       double[] r2 = new double[] { 0, 2, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 5, 7 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       oddList.RemoveAt(oddList.Count - 1); // list contain all elements but not 9
 
@@ -229,9 +212,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 9 };
       double[] r2 = new double[] { 0, 2, 4, 6 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       evenList.RemoveAt(evenList.Count - 1); // list contain all elements but not 8
 
@@ -244,9 +225,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 2, 4, 6, 8 };
       double[] r2 = new double[] { 0, 2, 4, 6, 8 };
       double[] r3 = new double[] { };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       oddList.Clear(); // list contain all elements but not odd elements
 
@@ -259,9 +238,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 1, 3, 5, 7, 9 };
       double[] r2 = new double[] { };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       evenList.Clear(); // list contain all elements but not even elements
 
@@ -274,9 +251,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 100, 5, 6, 7, 8, 9 };
       double[] r2 = new double[] { 0, 2, 4, 100, 6, 8 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       mainList.Insert(5, 100);
 
@@ -289,9 +264,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 100, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
       double[] r2 = new double[] { 100, 0, 2, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       mainList.Insert(0, 100);
 
@@ -304,9 +277,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 100 };
       double[] r2 = new double[] { 0, 2, 4, 6, 8, 100 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       mainList.Insert(10, 100);
 
@@ -319,9 +290,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 100, 4, 5, 6, 7, 8, 9 };
       double[] r2 = new double[] { 0, 2, 100, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       evenList.Insert(2, 100);
 
@@ -334,9 +303,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 100, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
       double[] r2 = new double[] { 100, 0, 2, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       evenList.Insert(0, 100);
 
@@ -349,9 +316,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 100, 9 };
       double[] r2 = new double[] { 0, 2, 4, 6, 8, 100 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       evenList.Insert(evenList.Count, 100);
 
@@ -364,9 +329,7 @@ namespace AltaxoTest.Collections
       double[] r1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
       double[] r2 = new double[] { 0, 2, 4, 6, 8 };
       double[] r3 = new double[] { 1, 3, 5, 7, 9 };
-
-      IList<int> mainList, evenList, oddList;
-      PartitionCreation(out mainList, out evenList, out oddList);
+      PartitionCreation(out var mainList, out var evenList, out var oddList);
 
       try
       {
@@ -585,8 +548,8 @@ namespace AltaxoTest.Collections
     public void TestRandomActions1()
     {
       var actionGenerator = new ActionGenerator();
-      System.Random rndIndex = new System.Random();
-      System.Random rndNewNumber = new System.Random();
+      var rndIndex = new System.Random();
+      var rndNewNumber = new System.Random();
 
       var list = new PartitionableList<int>();
 
@@ -709,8 +672,8 @@ namespace AltaxoTest.Collections
     public void TestRandomActions2()
     {
       var actionGenerator = new ActionGenerator();
-      System.Random rndIndex = new System.Random();
-      System.Random rndNewNumber = new System.Random();
+      var rndIndex = new System.Random();
+      var rndNewNumber = new System.Random();
 
       var list = new PartitionableList<int>();
 

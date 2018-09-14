@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -37,28 +37,30 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        ComplexDoubleQRDecomp test = new ComplexDoubleQRDecomp(null);
+        var test = new ComplexDoubleQRDecomp(null);
       });
     }
 
     [Test]
     public void SquareDecomp()
     {
-      ComplexDoubleMatrix a = new ComplexDoubleMatrix(3);
-      a[0, 0] = new Complex(1.1, 1.1);
-      a[0, 1] = new Complex(2.2, -2.2);
-      a[0, 2] = new Complex(3.3, 3.3);
-      a[1, 0] = new Complex(4.4, -4.4);
-      a[1, 1] = new Complex(5.5, 5.5);
-      a[1, 2] = new Complex(6.6, -6.6);
-      a[2, 0] = new Complex(7.7, 7.7);
-      a[2, 1] = new Complex(8.8, -8.8);
-      a[2, 2] = new Complex(9.9, 9.9);
+      var a = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = new Complex(1.1, 1.1),
+        [0, 1] = new Complex(2.2, -2.2),
+        [0, 2] = new Complex(3.3, 3.3),
+        [1, 0] = new Complex(4.4, -4.4),
+        [1, 1] = new Complex(5.5, 5.5),
+        [1, 2] = new Complex(6.6, -6.6),
+        [2, 0] = new Complex(7.7, 7.7),
+        [2, 1] = new Complex(8.8, -8.8),
+        [2, 2] = new Complex(9.9, 9.9)
+      };
 
-      ComplexDoubleQRDecomp qrd = new ComplexDoubleQRDecomp(a);
+      var qrd = new ComplexDoubleQRDecomp(a);
       ComplexDoubleMatrix qq = qrd.Q.GetConjugateTranspose() * qrd.Q;
       ComplexDoubleMatrix qr = qrd.Q * qrd.R;
-      ComplexDoubleMatrix I = ComplexDoubleMatrix.CreateIdentity(3);
+      var I = ComplexDoubleMatrix.CreateIdentity(3);
 
       // determine the maximum relative error
       double MaxError = 0.0;
@@ -93,20 +95,22 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void WideDecomp()
     {
-      ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 4);
-      a[0, 0] = new Complex(1.1, 1.1);
-      a[0, 1] = new Complex(2.2, -2.2);
-      a[0, 2] = new Complex(3.3, 3.3);
-      a[0, 3] = new Complex(4.4, -4.4);
-      a[1, 0] = new Complex(5.5, 5.5);
-      a[1, 1] = new Complex(6.6, -6.6);
-      a[1, 2] = new Complex(7.7, 7.7);
-      a[1, 3] = new Complex(8.8, -8.8);
+      var a = new ComplexDoubleMatrix(2, 4)
+      {
+        [0, 0] = new Complex(1.1, 1.1),
+        [0, 1] = new Complex(2.2, -2.2),
+        [0, 2] = new Complex(3.3, 3.3),
+        [0, 3] = new Complex(4.4, -4.4),
+        [1, 0] = new Complex(5.5, 5.5),
+        [1, 1] = new Complex(6.6, -6.6),
+        [1, 2] = new Complex(7.7, 7.7),
+        [1, 3] = new Complex(8.8, -8.8)
+      };
 
-      ComplexDoubleQRDecomp qrd = new ComplexDoubleQRDecomp(a);
+      var qrd = new ComplexDoubleQRDecomp(a);
       ComplexDoubleMatrix qq = qrd.Q.GetConjugateTranspose() * qrd.Q;
       ComplexDoubleMatrix qr = qrd.Q * qrd.R;
-      ComplexDoubleMatrix I = ComplexDoubleMatrix.CreateIdentity(2);
+      var I = ComplexDoubleMatrix.CreateIdentity(2);
 
       // determine the maximum relative error
       double MaxError = 0.0;
@@ -141,20 +145,22 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void LongDecomp()
     {
-      ComplexDoubleMatrix a = new ComplexDoubleMatrix(4, 2);
-      a[0, 0] = new Complex(1.1, 1.1);
-      a[0, 1] = new Complex(2.2, -2.2);
-      a[1, 0] = new Complex(3.3, 3.3);
-      a[1, 1] = new Complex(4.4, -4.4);
-      a[2, 0] = new Complex(5.5, 5.5);
-      a[2, 1] = new Complex(6.6, -6.6);
-      a[3, 0] = new Complex(7.7, 7.7);
-      a[3, 1] = new Complex(8.8, -8.8);
+      var a = new ComplexDoubleMatrix(4, 2)
+      {
+        [0, 0] = new Complex(1.1, 1.1),
+        [0, 1] = new Complex(2.2, -2.2),
+        [1, 0] = new Complex(3.3, 3.3),
+        [1, 1] = new Complex(4.4, -4.4),
+        [2, 0] = new Complex(5.5, 5.5),
+        [2, 1] = new Complex(6.6, -6.6),
+        [3, 0] = new Complex(7.7, 7.7),
+        [3, 1] = new Complex(8.8, -8.8)
+      };
 
-      ComplexDoubleQRDecomp qrd = new ComplexDoubleQRDecomp(a);
+      var qrd = new ComplexDoubleQRDecomp(a);
       ComplexDoubleMatrix qq = qrd.Q.GetConjugateTranspose() * qrd.Q;
       ComplexDoubleMatrix qr = qrd.Q * qrd.R;
-      ComplexDoubleMatrix I = ComplexDoubleMatrix.CreateIdentity(4);
+      var I = ComplexDoubleMatrix.CreateIdentity(4);
 
       // determine the maximum relative error
       double MaxError = 0.0;
@@ -188,28 +194,32 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveMatrix()
     {
-      ComplexDoubleMatrix a = new ComplexDoubleMatrix(3);
-      a[0, 0] = new Complex(1.1, 1.1);
-      a[0, 1] = new Complex(2.2, -2.2);
-      a[0, 2] = new Complex(3.3, 3.3);
-      a[1, 0] = new Complex(4.4, -4.4);
-      a[1, 1] = new Complex(5.5, 5.5);
-      a[1, 2] = new Complex(6.6, -6.6);
-      a[2, 0] = new Complex(7.7, 7.7);
-      a[2, 1] = new Complex(8.8, -8.8);
-      a[2, 2] = new Complex(9.9, 9.9);
-      ComplexDoubleQRDecomp qr = new ComplexDoubleQRDecomp(a);
+      var a = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = new Complex(1.1, 1.1),
+        [0, 1] = new Complex(2.2, -2.2),
+        [0, 2] = new Complex(3.3, 3.3),
+        [1, 0] = new Complex(4.4, -4.4),
+        [1, 1] = new Complex(5.5, 5.5),
+        [1, 2] = new Complex(6.6, -6.6),
+        [2, 0] = new Complex(7.7, 7.7),
+        [2, 1] = new Complex(8.8, -8.8),
+        [2, 2] = new Complex(9.9, 9.9)
+      };
+      var qr = new ComplexDoubleQRDecomp(a);
 
-      ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-      b[0, 0] = new Complex(2.3, -3.2);
-      b[0, 1] = new Complex(2.3, -3.2);
-      b[0, 2] = new Complex(2.3, -3.2);
-      b[1, 0] = new Complex(6.7, 7.8);
-      b[1, 1] = new Complex(6.7, 7.8);
-      b[1, 2] = new Complex(6.7, 7.8);
-      b[2, 0] = new Complex(1.3, -9.7);
-      b[2, 1] = new Complex(1.3, -9.7);
-      b[2, 2] = new Complex(1.3, -9.7);
+      var b = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = new Complex(2.3, -3.2),
+        [0, 1] = new Complex(2.3, -3.2),
+        [0, 2] = new Complex(2.3, -3.2),
+        [1, 0] = new Complex(6.7, 7.8),
+        [1, 1] = new Complex(6.7, 7.8),
+        [1, 2] = new Complex(6.7, 7.8),
+        [2, 0] = new Complex(1.3, -9.7),
+        [2, 1] = new Complex(1.3, -9.7),
+        [2, 2] = new Complex(1.3, -9.7)
+      };
 
       ComplexDoubleMatrix X = qr.Solve(b);
 
@@ -223,25 +233,29 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.IsTrue(Comparer.AreEqual(X[2, 1], new Complex(0.16, -0.52), .01));
       Assert.IsTrue(Comparer.AreEqual(X[2, 2], new Complex(0.16, -0.52), .01));
 
-      a = new ComplexDoubleMatrix(3, 2);
-      a[0, 0] = new Complex(1.1, 1.1);
-      a[0, 1] = new Complex(2.2, -2.2);
-      a[1, 0] = new Complex(4.4, -4.4);
-      a[1, 1] = new Complex(5.5, 5.5);
-      a[2, 0] = new Complex(7.7, 7.7);
-      a[2, 1] = new Complex(8.8, -8.8);
+      a = new ComplexDoubleMatrix(3, 2)
+      {
+        [0, 0] = new Complex(1.1, 1.1),
+        [0, 1] = new Complex(2.2, -2.2),
+        [1, 0] = new Complex(4.4, -4.4),
+        [1, 1] = new Complex(5.5, 5.5),
+        [2, 0] = new Complex(7.7, 7.7),
+        [2, 1] = new Complex(8.8, -8.8)
+      };
       qr = new ComplexDoubleQRDecomp(a);
 
-      b = new ComplexDoubleMatrix(3);
-      b[0, 0] = new Complex(2.3, -3.2);
-      b[0, 1] = new Complex(2.3, -3.2);
-      b[0, 2] = new Complex(2.3, -3.2);
-      b[1, 0] = new Complex(6.7, 7.8);
-      b[1, 1] = new Complex(6.7, 7.8);
-      b[1, 2] = new Complex(6.7, 7.8);
-      b[2, 0] = new Complex(1.3, -9.7);
-      b[2, 1] = new Complex(1.3, -9.7);
-      b[2, 2] = new Complex(1.3, -9.7);
+      b = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = new Complex(2.3, -3.2),
+        [0, 1] = new Complex(2.3, -3.2),
+        [0, 2] = new Complex(2.3, -3.2),
+        [1, 0] = new Complex(6.7, 7.8),
+        [1, 1] = new Complex(6.7, 7.8),
+        [1, 2] = new Complex(6.7, 7.8),
+        [2, 0] = new Complex(1.3, -9.7),
+        [2, 1] = new Complex(1.3, -9.7),
+        [2, 2] = new Complex(1.3, -9.7)
+      };
 
       X = qr.Solve(b);
 

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -43,38 +43,44 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [OneTimeSetUp]
     public void SetupTestCases()
     {
-      a = new ComplexFloatMatrix(3);
-      a[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      a[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      a[0, 2] = new ComplexFloat(3.3f, 3.3f);
-      a[1, 0] = new ComplexFloat(4.4f, -4.4f);
-      a[1, 1] = new ComplexFloat(5.5f, 5.5f);
-      a[1, 2] = new ComplexFloat(6.6f, -6.6f);
-      a[2, 0] = new ComplexFloat(7.7f, 7.7f);
-      a[2, 1] = new ComplexFloat(8.8f, -8.8f);
-      a[2, 2] = new ComplexFloat(9.9f, 9.9f);
+      a = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [0, 2] = new ComplexFloat(3.3f, 3.3f),
+        [1, 0] = new ComplexFloat(4.4f, -4.4f),
+        [1, 1] = new ComplexFloat(5.5f, 5.5f),
+        [1, 2] = new ComplexFloat(6.6f, -6.6f),
+        [2, 0] = new ComplexFloat(7.7f, 7.7f),
+        [2, 1] = new ComplexFloat(8.8f, -8.8f),
+        [2, 2] = new ComplexFloat(9.9f, 9.9f)
+      };
       svd = new ComplexFloatSVDDecomp(a, true);
 
-      wa = new ComplexFloatMatrix(2, 4);
-      wa[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      wa[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      wa[0, 2] = new ComplexFloat(3.3f, 3.3f);
-      wa[0, 3] = new ComplexFloat(4.4f, -4.4f);
-      wa[1, 0] = new ComplexFloat(5.5f, 5.5f);
-      wa[1, 1] = new ComplexFloat(6.6f, -6.6f);
-      wa[1, 2] = new ComplexFloat(7.7f, 7.7f);
-      wa[1, 3] = new ComplexFloat(8.8f, -8.8f);
+      wa = new ComplexFloatMatrix(2, 4)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [0, 2] = new ComplexFloat(3.3f, 3.3f),
+        [0, 3] = new ComplexFloat(4.4f, -4.4f),
+        [1, 0] = new ComplexFloat(5.5f, 5.5f),
+        [1, 1] = new ComplexFloat(6.6f, -6.6f),
+        [1, 2] = new ComplexFloat(7.7f, 7.7f),
+        [1, 3] = new ComplexFloat(8.8f, -8.8f)
+      };
       wsvd = new ComplexFloatSVDDecomp(wa, true);
 
-      la = new ComplexFloatMatrix(4, 2);
-      la[0, 0] = new ComplexFloat(1.1f, 1.1f);
-      la[0, 1] = new ComplexFloat(2.2f, -2.2f);
-      la[1, 0] = new ComplexFloat(3.3f, 3.3f);
-      la[1, 1] = new ComplexFloat(4.4f, -4.4f);
-      la[2, 0] = new ComplexFloat(5.5f, 5.5f);
-      la[2, 1] = new ComplexFloat(6.6f, -6.6f);
-      la[3, 0] = new ComplexFloat(7.7f, 7.7f);
-      la[3, 1] = new ComplexFloat(8.8f, -8.8f);
+      la = new ComplexFloatMatrix(4, 2)
+      {
+        [0, 0] = new ComplexFloat(1.1f, 1.1f),
+        [0, 1] = new ComplexFloat(2.2f, -2.2f),
+        [1, 0] = new ComplexFloat(3.3f, 3.3f),
+        [1, 1] = new ComplexFloat(4.4f, -4.4f),
+        [2, 0] = new ComplexFloat(5.5f, 5.5f),
+        [2, 1] = new ComplexFloat(6.6f, -6.6f),
+        [3, 0] = new ComplexFloat(7.7f, 7.7f),
+        [3, 1] = new ComplexFloat(8.8f, -8.8f)
+      };
       lsvd = new ComplexFloatSVDDecomp(la, true);
     }
 

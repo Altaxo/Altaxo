@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -36,16 +36,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     static FloatCholeskyDecompTest()
     {
-      FloatMatrix a = new FloatMatrix(3);
-      a[0, 0] = 2;
-      a[0, 1] = 1;
-      a[0, 2] = 0;
-      a[1, 0] = 1;
-      a[1, 1] = 2;
-      a[1, 2] = 0;
-      a[2, 0] = 0;
-      a[2, 1] = 0;
-      a[2, 2] = 3;
+      var a = new FloatMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 1,
+        [0, 2] = 0,
+        [1, 0] = 1,
+        [1, 1] = 2,
+        [1, 2] = 0,
+        [2, 0] = 0,
+        [2, 1] = 0,
+        [2, 2] = 3
+      };
       cd = new FloatCholeskyDecomp(a);
     }
 
@@ -54,8 +56,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        FloatMatrix wm = new FloatMatrix(2, 3);
-        FloatCholeskyDecomp wcd = new FloatCholeskyDecomp(wm);
+        var wm = new FloatMatrix(2, 3);
+        var wcd = new FloatCholeskyDecomp(wm);
       });
     }
 
@@ -64,8 +66,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        FloatMatrix lm = new FloatMatrix(3, 2);
-        FloatCholeskyDecomp lcd = new FloatCholeskyDecomp(lm);
+        var lm = new FloatMatrix(3, 2);
+        var lcd = new FloatCholeskyDecomp(lm);
       });
     }
 
@@ -86,17 +88,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void NonSymmFactorTest()
     {
-      FloatMatrix b = new FloatMatrix(3);
-      b[0, 0] = 2;
-      b[0, 1] = 1;
-      b[0, 2] = 1;
-      b[1, 0] = 1;
-      b[1, 1] = 2;
-      b[1, 2] = 0;
-      b[2, 0] = 0;
-      b[2, 1] = 0;
-      b[2, 2] = 3;
-      FloatCholeskyDecomp dcd = new FloatCholeskyDecomp(b);
+      var b = new FloatMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 1,
+        [0, 2] = 1,
+        [1, 0] = 1,
+        [1, 1] = 2,
+        [1, 2] = 0,
+        [2, 0] = 0,
+        [2, 1] = 0,
+        [2, 2] = 3
+      };
+      var dcd = new FloatCholeskyDecomp(b);
       Assert.AreEqual(dcd.Factor[0, 0], 1.414, TOLERENCE);
       Assert.AreEqual(dcd.Factor[0, 1], 0.000, TOLERENCE);
       Assert.AreEqual(dcd.Factor[0, 2], 0.000, TOLERENCE);
@@ -112,17 +116,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void IsPositiveDefiniteTest()
     {
       Assert.IsTrue(cd.IsPositiveDefinite);
-      FloatMatrix b = new FloatMatrix(3);
-      b[0, 0] = -2;
-      b[0, 1] = 1;
-      b[0, 2] = 0;
-      b[1, 0] = 1;
-      b[1, 1] = 2;
-      b[1, 2] = 0;
-      b[2, 0] = 0;
-      b[2, 1] = 0;
-      b[2, 2] = 3;
-      FloatCholeskyDecomp dcd = new FloatCholeskyDecomp(b);
+      var b = new FloatMatrix(3)
+      {
+        [0, 0] = -2,
+        [0, 1] = 1,
+        [0, 2] = 0,
+        [1, 0] = 1,
+        [1, 1] = 2,
+        [1, 2] = 0,
+        [2, 0] = 0,
+        [2, 1] = 0,
+        [2, 2] = 3
+      };
+      var dcd = new FloatCholeskyDecomp(b);
       Assert.IsFalse(dcd.IsPositiveDefinite);
     }
 
@@ -136,16 +142,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveMatrix()
     {
-      FloatMatrix b = new FloatMatrix(3);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
+      var b = new FloatMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25
+      };
       FloatMatrix x = cd.Solve(b);
       Assert.AreEqual(x[0, 0], -3.000, TOLERENCE);
       Assert.AreEqual(x[0, 1], -3.000, TOLERENCE);
@@ -157,13 +165,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 1], 8.333, TOLERENCE);
       Assert.AreEqual(x[2, 2], 8.333, TOLERENCE);
 
-      b = new FloatMatrix(3, 2);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
+      b = new FloatMatrix(3, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25
+      };
       x = cd.Solve(b);
       Assert.AreEqual(x[0, 0], -3.000, TOLERENCE);
       Assert.AreEqual(x[0, 1], -3.000, TOLERENCE);
@@ -172,19 +182,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 0], 8.333, TOLERENCE);
       Assert.AreEqual(x[2, 1], 8.333, TOLERENCE);
 
-      b = new FloatMatrix(3, 4);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[0, 3] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[1, 3] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
-      b[2, 3] = 25;
+      b = new FloatMatrix(3, 4)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [0, 3] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [1, 3] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25,
+        [2, 3] = 25
+      };
       x = cd.Solve(b);
       Assert.AreEqual(x[0, 0], -3, TOLERENCE);
       Assert.AreEqual(x[0, 1], -3, TOLERENCE);
@@ -203,10 +215,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveVector()
     {
-      FloatVector b = new FloatVector(3);
-      b[0] = 2;
-      b[1] = 13;
-      b[2] = 25;
+      var b = new FloatVector(3)
+      {
+        [0] = 2,
+        [1] = 13,
+        [2] = 25
+      };
       FloatVector x = cd.Solve(b);
       Assert.AreEqual(x[0], -3, TOLERENCE);
       Assert.AreEqual(x[1], 8, TOLERENCE);
@@ -233,8 +247,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotPositiveDefiniteException), () =>
       {
-        FloatMatrix a = new FloatMatrix(3, 3);
-        FloatCholeskyDecomp dcd = new FloatCholeskyDecomp(a);
+        var a = new FloatMatrix(3, 3);
+        var dcd = new FloatCholeskyDecomp(a);
         dcd.GetInverse();
       });
     }

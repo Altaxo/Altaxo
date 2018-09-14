@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Fourier;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Fourier
 {
@@ -54,7 +54,7 @@ namespace AltaxoTest.Calc.Fourier
 
     private double max_corr_error(int n)
     {
-      return (double)n * maxTolerableEpsPerN;
+      return n * maxTolerableEpsPerN;
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ namespace AltaxoTest.Calc.Fourier
       double[] re2 = new double[n];
       double[] re = new double[n];
 
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
 
       for (int i = 0; i < n; i++)
       {
@@ -153,7 +153,7 @@ namespace AltaxoTest.Calc.Fourier
       double[] re2 = new double[n];
       double[] re = new double[n];
 
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
 
       for (int i = 0; i < n; i++)
       {
@@ -231,7 +231,7 @@ namespace AltaxoTest.Calc.Fourier
       double[] re2 = new double[n];
       double[] re = new double[n];
 
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
 
       for (int i = 0; i < n; i++)
       {
@@ -273,7 +273,7 @@ namespace AltaxoTest.Calc.Fourier
       double[] recmp = new double[n];
       double[] imcmp = new double[n];
 
-      System.Random rnd = new System.Random();
+      var rnd = new System.Random();
 
       for (int i = 0; i < n; i++)
       {

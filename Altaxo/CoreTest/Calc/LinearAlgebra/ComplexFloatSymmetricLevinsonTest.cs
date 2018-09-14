@@ -24,10 +24,10 @@
 
 #region Using Directives
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 #endregion Using Directives
 
@@ -103,241 +103,301 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       // unit testing values - order 1
 
-      T1 = new ComplexFloatVector(1);
-      T1[0] = new ComplexFloat(+1.0000000E+000f, +1.0000000E+000f);
+      T1 = new ComplexFloatVector(1)
+      {
+        [0] = new ComplexFloat(+1.0000000E+000f, +1.0000000E+000f)
+      };
 
-      L1 = new ComplexFloatMatrix(1);
-      L1[0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
+      L1 = new ComplexFloatMatrix(1)
+      {
+        [0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f)
+      };
 
-      D1 = new ComplexFloatVector(1);
-      D1[0] = new ComplexFloat(+5.0000000E-001f, -5.0000000E-001f);
+      D1 = new ComplexFloatVector(1)
+      {
+        [0] = new ComplexFloat(+5.0000000E-001f, -5.0000000E-001f)
+      };
 
       Det1 = new ComplexFloat(+1.0000000E+000f, +1.0000000E+000f);
 
-      I1 = new ComplexFloatMatrix(1);
-      I1[0, 0] = new ComplexFloat(+5.0000000E-001f, -5.0000000E-001f);
+      I1 = new ComplexFloatMatrix(1)
+      {
+        [0, 0] = new ComplexFloat(+5.0000000E-001f, -5.0000000E-001f)
+      };
 
-      X1 = new ComplexFloatVector(1);
-      X1[0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f);
+      X1 = new ComplexFloatVector(1)
+      {
+        [0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f)
+      };
 
-      Y1 = new ComplexFloatVector(1);
-      Y1[0] = new ComplexFloat(+2.0000000E+000f, +0.0000000E+000f);
+      Y1 = new ComplexFloatVector(1)
+      {
+        [0] = new ComplexFloat(+2.0000000E+000f, +0.0000000E+000f)
+      };
 
       Tolerance1 = 5.0e-7F;
 
       // unit testing values - order 2
 
-      T2 = new ComplexFloatVector(2);
-      T2[0] = new ComplexFloat(+1.0000000E+000f, +1.0000000E+000f);
-      T2[1] = new ComplexFloat(+5.0000000E-001f, +5.0000000E-001f);
+      T2 = new ComplexFloatVector(2)
+      {
+        [0] = new ComplexFloat(+1.0000000E+000f, +1.0000000E+000f),
+        [1] = new ComplexFloat(+5.0000000E-001f, +5.0000000E-001f)
+      };
 
-      L2 = new ComplexFloatMatrix(2);
-      L2[0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L2[1, 0] = new ComplexFloat(-5.0000000E-001f, +0.0000000E+000f);
-      L2[1, 1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
+      L2 = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [1, 0] = new ComplexFloat(-5.0000000E-001f, +0.0000000E+000f),
+        [1, 1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f)
+      };
 
-      D2 = new ComplexFloatVector(2);
-      D2[0] = new ComplexFloat(+5.0000000E-001f, -5.0000000E-001f);
-      D2[1] = new ComplexFloat(+6.6666669E-001f, -6.6666669E-001f);
+      D2 = new ComplexFloatVector(2)
+      {
+        [0] = new ComplexFloat(+5.0000000E-001f, -5.0000000E-001f),
+        [1] = new ComplexFloat(+6.6666669E-001f, -6.6666669E-001f)
+      };
 
       Det2 = new ComplexFloat(+0.0000000E+000f, +1.5000000E+000f);
 
-      I2 = new ComplexFloatMatrix(2);
-      I2[0, 0] = new ComplexFloat(+6.6666669E-001f, -6.6666669E-001f);
-      I2[0, 1] = new ComplexFloat(-3.3333334E-001f, +3.3333334E-001f);
-      I2[1, 0] = new ComplexFloat(-3.3333334E-001f, +3.3333334E-001f);
-      I2[1, 1] = new ComplexFloat(+6.6666669E-001f, -6.6666669E-001f);
+      I2 = new ComplexFloatMatrix(2)
+      {
+        [0, 0] = new ComplexFloat(+6.6666669E-001f, -6.6666669E-001f),
+        [0, 1] = new ComplexFloat(-3.3333334E-001f, +3.3333334E-001f),
+        [1, 0] = new ComplexFloat(-3.3333334E-001f, +3.3333334E-001f),
+        [1, 1] = new ComplexFloat(+6.6666669E-001f, -6.6666669E-001f)
+      };
 
-      X2 = new ComplexFloatVector(2);
-      X2[0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f);
-      X2[1] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f);
+      X2 = new ComplexFloatVector(2)
+      {
+        [0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f),
+        [1] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f)
+      };
 
-      Y2 = new ComplexFloatVector(2);
-      Y2[0] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f);
-      Y2[1] = new ComplexFloat(+1.0000000E+000f, +4.0000000E+000f);
+      Y2 = new ComplexFloatVector(2)
+      {
+        [0] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f),
+        [1] = new ComplexFloat(+1.0000000E+000f, +4.0000000E+000f)
+      };
 
       Tolerance2 = 5.0e-7F;
 
       // unit testing values - order 3
 
-      T3 = new ComplexFloatVector(3);
-      T3[0] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f);
-      T3[1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      T3[2] = new ComplexFloat(+5.0000000E-001f, +0.0000000E+000f);
+      T3 = new ComplexFloatVector(3)
+      {
+        [0] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f),
+        [1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [2] = new ComplexFloat(+5.0000000E-001f, +0.0000000E+000f)
+      };
 
-      L3 = new ComplexFloatMatrix(3);
-      L3[0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L3[1, 0] = new ComplexFloat(-2.5000000E-001f, +2.5000000E-001f);
-      L3[1, 1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L3[2, 0] = new ComplexFloat(-1.2307692E-001f, +1.5384615E-002f);
-      L3[2, 1] = new ComplexFloat(-2.2307692E-001f, +2.1538462E-001f);
-      L3[2, 2] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
+      L3 = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [1, 0] = new ComplexFloat(-2.5000000E-001f, +2.5000000E-001f),
+        [1, 1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [2, 0] = new ComplexFloat(-1.2307692E-001f, +1.5384615E-002f),
+        [2, 1] = new ComplexFloat(-2.2307692E-001f, +2.1538462E-001f),
+        [2, 2] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f)
+      };
 
-      D3 = new ComplexFloatVector(3);
-      D3[0] = new ComplexFloat(+2.5000000E-001f, -2.5000000E-001f);
-      D3[1] = new ComplexFloat(+2.1538462E-001f, -2.7692309E-001f);
-      D3[2] = new ComplexFloat(+2.1756098E-001f, -2.8195122E-001f);
+      D3 = new ComplexFloatVector(3)
+      {
+        [0] = new ComplexFloat(+2.5000000E-001f, -2.5000000E-001f),
+        [1] = new ComplexFloat(+2.1538462E-001f, -2.7692309E-001f),
+        [2] = new ComplexFloat(+2.1756098E-001f, -2.8195122E-001f)
+      };
 
       Det3 = new ComplexFloat(-1.9500000E+001f, +1.1500000E+001f);
 
-      I3 = new ComplexFloatMatrix(3);
-      I3[0, 0] = new ComplexFloat(+2.1756098E-001f, -2.8195122E-001f);
-      I3[0, 1] = new ComplexFloat(+1.2195121E-002f, +1.0975610E-001f);
-      I3[0, 2] = new ComplexFloat(-2.2439023E-002f, +3.8048781E-002f);
-      I3[1, 0] = new ComplexFloat(+1.2195121E-002f, +1.0975610E-001f);
-      I3[1, 1] = new ComplexFloat(+1.8902439E-001f, -2.9878050E-001f);
-      I3[1, 2] = new ComplexFloat(+1.2195121E-002f, +1.0975610E-001f);
-      I3[2, 0] = new ComplexFloat(-2.2439023E-002f, +3.8048781E-002f);
-      I3[2, 1] = new ComplexFloat(+1.2195121E-002f, +1.0975610E-001f);
-      I3[2, 2] = new ComplexFloat(+2.1756098E-001f, -2.8195122E-001f);
+      I3 = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = new ComplexFloat(+2.1756098E-001f, -2.8195122E-001f),
+        [0, 1] = new ComplexFloat(+1.2195121E-002f, +1.0975610E-001f),
+        [0, 2] = new ComplexFloat(-2.2439023E-002f, +3.8048781E-002f),
+        [1, 0] = new ComplexFloat(+1.2195121E-002f, +1.0975610E-001f),
+        [1, 1] = new ComplexFloat(+1.8902439E-001f, -2.9878050E-001f),
+        [1, 2] = new ComplexFloat(+1.2195121E-002f, +1.0975610E-001f),
+        [2, 0] = new ComplexFloat(-2.2439023E-002f, +3.8048781E-002f),
+        [2, 1] = new ComplexFloat(+1.2195121E-002f, +1.0975610E-001f),
+        [2, 2] = new ComplexFloat(+2.1756098E-001f, -2.8195122E-001f)
+      };
 
-      X3 = new ComplexFloatVector(3);
-      X3[0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f);
-      X3[1] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f);
-      X3[2] = new ComplexFloat(+3.0000000E+000f, -3.0000000E+000f);
+      X3 = new ComplexFloatVector(3)
+      {
+        [0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f),
+        [1] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f),
+        [2] = new ComplexFloat(+3.0000000E+000f, -3.0000000E+000f)
+      };
 
-      Y3 = new ComplexFloatVector(3);
-      Y3[0] = new ComplexFloat(+7.5000000E+000f, +5.0000000E-001f);
-      Y3[1] = new ComplexFloat(+4.0000000E+000f, +4.0000000E+000f);
-      Y3[2] = new ComplexFloat(+1.4500000E+001f, +1.5000000E+000f);
+      Y3 = new ComplexFloatVector(3)
+      {
+        [0] = new ComplexFloat(+7.5000000E+000f, +5.0000000E-001f),
+        [1] = new ComplexFloat(+4.0000000E+000f, +4.0000000E+000f),
+        [2] = new ComplexFloat(+1.4500000E+001f, +1.5000000E+000f)
+      };
 
       Tolerance3 = 5.0e-7F;
 
       // unit testing values - order 4
 
-      T4 = new ComplexFloatVector(4);
-      T4[0] = new ComplexFloat(+4.0000000E+000f, +0.0000000E+000f);
-      T4[1] = new ComplexFloat(+1.2000000E+001f, -1.3333334E+000f);
-      T4[2] = new ComplexFloat(+2.6666666E+001f, +2.1333334E+001f);
-      T4[3] = new ComplexFloat(+4.8000000E+001f, -5.3333335E+000f);
+      T4 = new ComplexFloatVector(4)
+      {
+        [0] = new ComplexFloat(+4.0000000E+000f, +0.0000000E+000f),
+        [1] = new ComplexFloat(+1.2000000E+001f, -1.3333334E+000f),
+        [2] = new ComplexFloat(+2.6666666E+001f, +2.1333334E+001f),
+        [3] = new ComplexFloat(+4.8000000E+001f, -5.3333335E+000f)
+      };
 
-      L4 = new ComplexFloatMatrix(4);
-      L4[0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L4[1, 0] = new ComplexFloat(-3.0000000E+000f, +3.3333334E-001f);
-      L4[1, 1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L4[2, 0] = new ComplexFloat(-4.8611370E-001f, +8.0633736E-001f);
-      L4[2, 1] = new ComplexFloat(-1.8104380E+000f, -2.2477167E+000f);
-      L4[2, 2] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L4[3, 0] = new ComplexFloat(+3.3484605E-001f, -1.9271448E+000f);
-      L4[3, 1] = new ComplexFloat(-5.4240074E+000f, +3.5426745E+000f);
-      L4[3, 2] = new ComplexFloat(-4.1928238E-001f, -1.0409063E+000f);
-      L4[3, 3] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
+      L4 = new ComplexFloatMatrix(4)
+      {
+        [0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [1, 0] = new ComplexFloat(-3.0000000E+000f, +3.3333334E-001f),
+        [1, 1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [2, 0] = new ComplexFloat(-4.8611370E-001f, +8.0633736E-001f),
+        [2, 1] = new ComplexFloat(-1.8104380E+000f, -2.2477167E+000f),
+        [2, 2] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [3, 0] = new ComplexFloat(+3.3484605E-001f, -1.9271448E+000f),
+        [3, 1] = new ComplexFloat(-5.4240074E+000f, +3.5426745E+000f),
+        [3, 2] = new ComplexFloat(-4.1928238E-001f, -1.0409063E+000f),
+        [3, 3] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f)
+      };
 
-      D4 = new ComplexFloatVector(4);
-      D4[0] = new ComplexFloat(+2.5000000E-001f, +0.0000000E+000f);
-      D4[1] = new ComplexFloat(-2.9776327E-002f, -7.5489283E-003f);
-      D4[2] = new ComplexFloat(-1.8372282E-002f, +4.8476043E-003f);
-      D4[3] = new ComplexFloat(-3.4274173E-003f, +2.0146633E-003f);
+      D4 = new ComplexFloatVector(4)
+      {
+        [0] = new ComplexFloat(+2.5000000E-001f, +0.0000000E+000f),
+        [1] = new ComplexFloat(-2.9776327E-002f, -7.5489283E-003f),
+        [2] = new ComplexFloat(-1.8372282E-002f, +4.8476043E-003f),
+        [3] = new ComplexFloat(-3.4274173E-003f, +2.0146633E-003f)
+      };
 
       Det4 = new ComplexFloat(-1.4775024E+006f, -8.8785225E+005f);
 
-      I4 = new ComplexFloatMatrix(4);
-      I4[0, 0] = new ComplexFloat(-3.4274173E-003f, +2.0146633E-003f);
-      I4[0, 1] = new ComplexFloat(+3.5341315E-003f, +2.7229076E-003f);
-      I4[0, 2] = new ComplexFloat(+1.1453041E-002f, -2.3069773E-002f);
-      I4[0, 3] = new ComplexFloat(+2.7348907E-003f, +7.2797318E-003f);
-      I4[1, 0] = new ComplexFloat(+3.5341315E-003f, +2.7229076E-003f);
-      I4[1, 1] = new ComplexFloat(-1.7019790E-002f, +2.7237507E-005f);
-      I4[1, 2] = new ComplexFloat(+1.5342389E-002f, +3.0270604E-002f);
-      I4[1, 3] = new ComplexFloat(+1.1453041E-002f, -2.3069773E-002f);
-      I4[2, 0] = new ComplexFloat(+1.1453041E-002f, -2.3069773E-002f);
-      I4[2, 1] = new ComplexFloat(+1.5342389E-002f, +3.0270604E-002f);
-      I4[2, 2] = new ComplexFloat(-1.7019790E-002f, +2.7237507E-005f);
-      I4[2, 3] = new ComplexFloat(+3.5341315E-003f, +2.7229076E-003f);
-      I4[3, 0] = new ComplexFloat(+2.7348907E-003f, +7.2797318E-003f);
-      I4[3, 1] = new ComplexFloat(+1.1453041E-002f, -2.3069773E-002f);
-      I4[3, 2] = new ComplexFloat(+3.5341315E-003f, +2.7229076E-003f);
-      I4[3, 3] = new ComplexFloat(-3.4274173E-003f, +2.0146633E-003f);
+      I4 = new ComplexFloatMatrix(4)
+      {
+        [0, 0] = new ComplexFloat(-3.4274173E-003f, +2.0146633E-003f),
+        [0, 1] = new ComplexFloat(+3.5341315E-003f, +2.7229076E-003f),
+        [0, 2] = new ComplexFloat(+1.1453041E-002f, -2.3069773E-002f),
+        [0, 3] = new ComplexFloat(+2.7348907E-003f, +7.2797318E-003f),
+        [1, 0] = new ComplexFloat(+3.5341315E-003f, +2.7229076E-003f),
+        [1, 1] = new ComplexFloat(-1.7019790E-002f, +2.7237507E-005f),
+        [1, 2] = new ComplexFloat(+1.5342389E-002f, +3.0270604E-002f),
+        [1, 3] = new ComplexFloat(+1.1453041E-002f, -2.3069773E-002f),
+        [2, 0] = new ComplexFloat(+1.1453041E-002f, -2.3069773E-002f),
+        [2, 1] = new ComplexFloat(+1.5342389E-002f, +3.0270604E-002f),
+        [2, 2] = new ComplexFloat(-1.7019790E-002f, +2.7237507E-005f),
+        [2, 3] = new ComplexFloat(+3.5341315E-003f, +2.7229076E-003f),
+        [3, 0] = new ComplexFloat(+2.7348907E-003f, +7.2797318E-003f),
+        [3, 1] = new ComplexFloat(+1.1453041E-002f, -2.3069773E-002f),
+        [3, 2] = new ComplexFloat(+3.5341315E-003f, +2.7229076E-003f),
+        [3, 3] = new ComplexFloat(-3.4274173E-003f, +2.0146633E-003f)
+      };
 
-      X4 = new ComplexFloatVector(4);
-      X4[0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f);
-      X4[1] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f);
-      X4[2] = new ComplexFloat(+3.0000000E+000f, -3.0000000E+000f);
-      X4[3] = new ComplexFloat(+4.0000000E+000f, -4.0000000E+000f);
+      X4 = new ComplexFloatVector(4)
+      {
+        [0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f),
+        [1] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f),
+        [2] = new ComplexFloat(+3.0000000E+000f, -3.0000000E+000f),
+        [3] = new ComplexFloat(+4.0000000E+000f, -4.0000000E+000f)
+      };
 
-      Y4 = new ComplexFloatVector(4);
-      Y4[0] = new ComplexFloat(+3.4533334E+002f, -2.1200000E+002f);
-      Y4[1] = new ComplexFloat(+2.4266667E+002f, -6.6666664E+001f);
-      Y4[2] = new ComplexFloat(+1.2933333E+002f, -4.9333332E+001f);
-      Y4[3] = new ComplexFloat(+1.0133334E+002f, -1.3333333E+001f);
+      Y4 = new ComplexFloatVector(4)
+      {
+        [0] = new ComplexFloat(+3.4533334E+002f, -2.1200000E+002f),
+        [1] = new ComplexFloat(+2.4266667E+002f, -6.6666664E+001f),
+        [2] = new ComplexFloat(+1.2933333E+002f, -4.9333332E+001f),
+        [3] = new ComplexFloat(+1.0133334E+002f, -1.3333333E+001f)
+      };
 
       Tolerance4 = 8.0E-06f;
 
       // unit testing values - order 5
 
-      T5 = new ComplexFloatVector(5);
-      T5[0] = new ComplexFloat(+5.0000000E+000f, +0.0000000E+000f);
-      T5[1] = new ComplexFloat(+0.0000000E+000f, +4.0000000E+000f);
-      T5[2] = new ComplexFloat(+3.0000000E+000f, +0.0000000E+000f);
-      T5[3] = new ComplexFloat(+0.0000000E+000f, +2.0000000E+000f);
-      T5[4] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
+      T5 = new ComplexFloatVector(5)
+      {
+        [0] = new ComplexFloat(+5.0000000E+000f, +0.0000000E+000f),
+        [1] = new ComplexFloat(+0.0000000E+000f, +4.0000000E+000f),
+        [2] = new ComplexFloat(+3.0000000E+000f, +0.0000000E+000f),
+        [3] = new ComplexFloat(+0.0000000E+000f, +2.0000000E+000f),
+        [4] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f)
+      };
 
-      L5 = new ComplexFloatMatrix(5);
-      L5[0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L5[1, 0] = new ComplexFloat(+0.0000000E+000f, -8.0000001E-001f);
-      L5[1, 1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L5[2, 0] = new ComplexFloat(-7.5609756E-001f, +0.0000000E+000f);
-      L5[2, 1] = new ComplexFloat(+0.0000000E+000f, -1.9512194E-001f);
-      L5[2, 2] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L5[3, 0] = new ComplexFloat(+0.0000000E+000f, +4.5833334E-001f);
-      L5[3, 1] = new ComplexFloat(-6.6666669E-001f, +0.0000000E+000f);
-      L5[3, 2] = new ComplexFloat(+0.0000000E+000f, -5.4166669E-001f);
-      L5[3, 3] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
-      L5[4, 0] = new ComplexFloat(+4.1176471E-001f, +0.0000000E+000f);
-      L5[4, 1] = new ComplexFloat(+0.0000000E+000f, +2.3529412E-001f);
-      L5[4, 2] = new ComplexFloat(-9.4117647E-001f, +0.0000000E+000f);
-      L5[4, 3] = new ComplexFloat(+0.0000000E+000f, -3.5294119E-001f);
-      L5[4, 4] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f);
+      L5 = new ComplexFloatMatrix(5)
+      {
+        [0, 0] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [1, 0] = new ComplexFloat(+0.0000000E+000f, -8.0000001E-001f),
+        [1, 1] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [2, 0] = new ComplexFloat(-7.5609756E-001f, +0.0000000E+000f),
+        [2, 1] = new ComplexFloat(+0.0000000E+000f, -1.9512194E-001f),
+        [2, 2] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [3, 0] = new ComplexFloat(+0.0000000E+000f, +4.5833334E-001f),
+        [3, 1] = new ComplexFloat(-6.6666669E-001f, +0.0000000E+000f),
+        [3, 2] = new ComplexFloat(+0.0000000E+000f, -5.4166669E-001f),
+        [3, 3] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f),
+        [4, 0] = new ComplexFloat(+4.1176471E-001f, +0.0000000E+000f),
+        [4, 1] = new ComplexFloat(+0.0000000E+000f, +2.3529412E-001f),
+        [4, 2] = new ComplexFloat(-9.4117647E-001f, +0.0000000E+000f),
+        [4, 3] = new ComplexFloat(+0.0000000E+000f, -3.5294119E-001f),
+        [4, 4] = new ComplexFloat(+1.0000000E+000f, +0.0000000E+000f)
+      };
 
-      D5 = new ComplexFloatVector(5);
-      D5[0] = new ComplexFloat(+2.0000000E-001f, +0.0000000E+000f);
-      D5[1] = new ComplexFloat(+1.2195122E-001f, +0.0000000E+000f);
-      D5[2] = new ComplexFloat(+2.8472221E-001f, +0.0000000E+000f);
-      D5[3] = new ComplexFloat(+2.3529412E-001f, +0.0000000E+000f);
-      D5[4] = new ComplexFloat(+2.8333333E-001f, +0.0000000E+000f);
+      D5 = new ComplexFloatVector(5)
+      {
+        [0] = new ComplexFloat(+2.0000000E-001f, +0.0000000E+000f),
+        [1] = new ComplexFloat(+1.2195122E-001f, +0.0000000E+000f),
+        [2] = new ComplexFloat(+2.8472221E-001f, +0.0000000E+000f),
+        [3] = new ComplexFloat(+2.3529412E-001f, +0.0000000E+000f),
+        [4] = new ComplexFloat(+2.8333333E-001f, +0.0000000E+000f)
+      };
 
       Det5 = new ComplexFloat(+2.1600000E+003f, +0.0000000E+000f);
 
-      I5 = new ComplexFloatMatrix(5);
-      I5[0, 0] = new ComplexFloat(+2.8333333E-001f, +0.0000000E+000f);
-      I5[0, 1] = new ComplexFloat(+0.0000000E+000f, -1.0000000E-001f);
-      I5[0, 2] = new ComplexFloat(-2.6666668E-001f, +0.0000000E+000f);
-      I5[0, 3] = new ComplexFloat(+0.0000000E+000f, +6.6666670E-002f);
-      I5[0, 4] = new ComplexFloat(+1.1666667E-001f, +0.0000000E+000f);
-      I5[1, 0] = new ComplexFloat(+0.0000000E+000f, -1.0000000E-001f);
-      I5[1, 1] = new ComplexFloat(+2.0000000E-001f, +0.0000000E+000f);
-      I5[1, 2] = new ComplexFloat(+0.0000000E+000f, -3.3333335E-002f);
-      I5[1, 3] = new ComplexFloat(-1.3333334E-001f, +0.0000000E+000f);
-      I5[1, 4] = new ComplexFloat(+0.0000000E+000f, +6.6666670E-002f);
-      I5[2, 0] = new ComplexFloat(-2.6666668E-001f, +0.0000000E+000f);
-      I5[2, 1] = new ComplexFloat(+0.0000000E+000f, -3.3333335E-002f);
-      I5[2, 2] = new ComplexFloat(+4.6666667E-001f, +0.0000000E+000f);
-      I5[2, 3] = new ComplexFloat(+0.0000000E+000f, -3.3333335E-002f);
-      I5[2, 4] = new ComplexFloat(-2.6666668E-001f, +0.0000000E+000f);
-      I5[3, 0] = new ComplexFloat(+0.0000000E+000f, +6.6666670E-002f);
-      I5[3, 1] = new ComplexFloat(-1.3333334E-001f, +0.0000000E+000f);
-      I5[3, 2] = new ComplexFloat(+0.0000000E+000f, -3.3333335E-002f);
-      I5[3, 3] = new ComplexFloat(+2.0000000E-001f, +0.0000000E+000f);
-      I5[3, 4] = new ComplexFloat(+0.0000000E+000f, -1.0000000E-001f);
-      I5[4, 0] = new ComplexFloat(+1.1666667E-001f, +0.0000000E+000f);
-      I5[4, 1] = new ComplexFloat(+0.0000000E+000f, +6.6666670E-002f);
-      I5[4, 2] = new ComplexFloat(-2.6666668E-001f, +0.0000000E+000f);
-      I5[4, 3] = new ComplexFloat(+0.0000000E+000f, -1.0000000E-001f);
-      I5[4, 4] = new ComplexFloat(+2.8333333E-001f, +0.0000000E+000f);
+      I5 = new ComplexFloatMatrix(5)
+      {
+        [0, 0] = new ComplexFloat(+2.8333333E-001f, +0.0000000E+000f),
+        [0, 1] = new ComplexFloat(+0.0000000E+000f, -1.0000000E-001f),
+        [0, 2] = new ComplexFloat(-2.6666668E-001f, +0.0000000E+000f),
+        [0, 3] = new ComplexFloat(+0.0000000E+000f, +6.6666670E-002f),
+        [0, 4] = new ComplexFloat(+1.1666667E-001f, +0.0000000E+000f),
+        [1, 0] = new ComplexFloat(+0.0000000E+000f, -1.0000000E-001f),
+        [1, 1] = new ComplexFloat(+2.0000000E-001f, +0.0000000E+000f),
+        [1, 2] = new ComplexFloat(+0.0000000E+000f, -3.3333335E-002f),
+        [1, 3] = new ComplexFloat(-1.3333334E-001f, +0.0000000E+000f),
+        [1, 4] = new ComplexFloat(+0.0000000E+000f, +6.6666670E-002f),
+        [2, 0] = new ComplexFloat(-2.6666668E-001f, +0.0000000E+000f),
+        [2, 1] = new ComplexFloat(+0.0000000E+000f, -3.3333335E-002f),
+        [2, 2] = new ComplexFloat(+4.6666667E-001f, +0.0000000E+000f),
+        [2, 3] = new ComplexFloat(+0.0000000E+000f, -3.3333335E-002f),
+        [2, 4] = new ComplexFloat(-2.6666668E-001f, +0.0000000E+000f),
+        [3, 0] = new ComplexFloat(+0.0000000E+000f, +6.6666670E-002f),
+        [3, 1] = new ComplexFloat(-1.3333334E-001f, +0.0000000E+000f),
+        [3, 2] = new ComplexFloat(+0.0000000E+000f, -3.3333335E-002f),
+        [3, 3] = new ComplexFloat(+2.0000000E-001f, +0.0000000E+000f),
+        [3, 4] = new ComplexFloat(+0.0000000E+000f, -1.0000000E-001f),
+        [4, 0] = new ComplexFloat(+1.1666667E-001f, +0.0000000E+000f),
+        [4, 1] = new ComplexFloat(+0.0000000E+000f, +6.6666670E-002f),
+        [4, 2] = new ComplexFloat(-2.6666668E-001f, +0.0000000E+000f),
+        [4, 3] = new ComplexFloat(+0.0000000E+000f, -1.0000000E-001f),
+        [4, 4] = new ComplexFloat(+2.8333333E-001f, +0.0000000E+000f)
+      };
 
-      X5 = new ComplexFloatVector(5);
-      X5[0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f);
-      X5[1] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f);
-      X5[2] = new ComplexFloat(+3.0000000E+000f, -3.0000000E+000f);
-      X5[3] = new ComplexFloat(+4.0000000E+000f, -4.0000000E+000f);
-      X5[4] = new ComplexFloat(+5.0000000E+000f, +5.0000000E+000f);
+      X5 = new ComplexFloatVector(5)
+      {
+        [0] = new ComplexFloat(+1.0000000E+000f, -1.0000000E+000f),
+        [1] = new ComplexFloat(+2.0000000E+000f, +2.0000000E+000f),
+        [2] = new ComplexFloat(+3.0000000E+000f, -3.0000000E+000f),
+        [3] = new ComplexFloat(+4.0000000E+000f, -4.0000000E+000f),
+        [4] = new ComplexFloat(+5.0000000E+000f, +5.0000000E+000f)
+      };
 
-      Y5 = new ComplexFloatVector(5);
-      Y5[0] = new ComplexFloat(+1.9000000E+001f, +7.0000000E+000f);
-      Y5[1] = new ComplexFloat(+2.8000000E+001f, +2.4000000E+001f);
-      Y5[2] = new ComplexFloat(+4.1000000E+001f, +2.1000000E+001f);
-      Y5[3] = new ComplexFloat(+2.0000000E+001f, +2.0000000E+001f);
-      Y5[4] = new ComplexFloat(+4.7000000E+001f, +3.5000000E+001f);
+      Y5 = new ComplexFloatVector(5)
+      {
+        [0] = new ComplexFloat(+1.9000000E+001f, +7.0000000E+000f),
+        [1] = new ComplexFloat(+2.8000000E+001f, +2.4000000E+001f),
+        [2] = new ComplexFloat(+4.1000000E+001f, +2.1000000E+001f),
+        [3] = new ComplexFloat(+2.0000000E+001f, +2.0000000E+001f),
+        [4] = new ComplexFloat(+4.7000000E+001f, +3.5000000E+001f)
+      };
 
       Tolerance5 = 8.0E-06f;
     }
@@ -352,7 +412,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(null as ComplexFloatVector);
+        var cdsl = new ComplexFloatSymmetricLevinson(null as ComplexFloatVector);
       });
     }
 
@@ -366,9 +426,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.RankException), () =>
       {
-        ComplexFloatVector cdv = new ComplexFloatVector(1, 0.0f);
+        var cdv = new ComplexFloatVector(1, 0.0f);
         cdv.RemoveAt(0);
-        ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(cdv);
+        var cdsl = new ComplexFloatSymmetricLevinson(cdv);
       });
     }
 
@@ -380,7 +440,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetVectorMemberTest()
     {
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+      var cdsl = new ComplexFloatSymmetricLevinson(T5);
       ComplexFloatVector TT = cdsl.GetVector();
       Assert.IsTrue(T5.Equals(TT));
     }
@@ -393,7 +453,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetMatrixMemberTest()
     {
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+      var cdsl = new ComplexFloatSymmetricLevinson(T5);
       ComplexFloatMatrix cdsldm = cdsl.GetMatrix();
       for (int row = 0; row < T5.Length; row++)
       {
@@ -419,7 +479,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OrderPropertyTest()
     {
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+      var cdsl = new ComplexFloatSymmetricLevinson(T5);
       Assert.IsTrue(cdsl.Order == 5);
     }
 
@@ -433,7 +493,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T1);
+      var cdsl = new ComplexFloatSymmetricLevinson(T1);
       ComplexFloatMatrix U = cdsl.U;
       ComplexFloatMatrix D = cdsl.D;
       ComplexFloatMatrix L = cdsl.L;
@@ -480,7 +540,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T2);
+      var cdsl = new ComplexFloatSymmetricLevinson(T2);
       ComplexFloatMatrix U = cdsl.U;
       ComplexFloatMatrix D = cdsl.D;
       ComplexFloatMatrix L = cdsl.L;
@@ -527,7 +587,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T3);
+      var cdsl = new ComplexFloatSymmetricLevinson(T3);
       ComplexFloatMatrix U = cdsl.U;
       ComplexFloatMatrix D = cdsl.D;
       ComplexFloatMatrix L = cdsl.L;
@@ -574,7 +634,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+      var cdsl = new ComplexFloatSymmetricLevinson(T4);
       ComplexFloatMatrix U = cdsl.U;
       ComplexFloatMatrix D = cdsl.D;
       ComplexFloatMatrix L = cdsl.L;
@@ -621,7 +681,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+      var cdsl = new ComplexFloatSymmetricLevinson(T5);
       ComplexFloatMatrix U = cdsl.U;
       ComplexFloatMatrix D = cdsl.D;
       ComplexFloatMatrix L = cdsl.L;
@@ -666,7 +726,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest1()
     {
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T1);
+      var cdsl = new ComplexFloatSymmetricLevinson(T1);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -678,7 +738,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest2()
     {
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T2);
+      var cdsl = new ComplexFloatSymmetricLevinson(T2);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -690,7 +750,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest3()
     {
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T3);
+      var cdsl = new ComplexFloatSymmetricLevinson(T3);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -702,7 +762,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest4()
     {
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+      var cdsl = new ComplexFloatSymmetricLevinson(T4);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -714,7 +774,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest5()
     {
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+      var cdsl = new ComplexFloatSymmetricLevinson(T5);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -726,14 +786,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest()
     {
-      ComplexFloatVector T = new ComplexFloatVector(10);
+      var T = new ComplexFloatVector(10);
       for (int i = 1; i < 10; i++)
       {
-        T[i] = new ComplexFloat((float)(i + 1), (float)(i + 1));
+        T[i] = new ComplexFloat(i + 1, i + 1);
       }
       T[0] = new ComplexFloat(2.0f, 2.0f);
 
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T);
+      var cdsl = new ComplexFloatSymmetricLevinson(T);
       Assert.IsTrue(cdsl.IsSingular);
     }
 
@@ -746,7 +806,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest1()
     {
       // calculate determinant from diagonal
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T1);
+      var cdsl = new ComplexFloatSymmetricLevinson(T1);
 
       // check results match
       float e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det1) / Det1);
@@ -762,7 +822,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest2()
     {
       // calculate determinant from diagonal
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T2);
+      var cdsl = new ComplexFloatSymmetricLevinson(T2);
 
       // check results match
       float e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det2) / Det2);
@@ -778,7 +838,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest3()
     {
       // calculate determinant from diagonal
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T3);
+      var cdsl = new ComplexFloatSymmetricLevinson(T3);
 
       // check results match
       float e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det3) / Det3);
@@ -794,7 +854,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest4()
     {
       // calculate determinant from diagonal
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+      var cdsl = new ComplexFloatSymmetricLevinson(T4);
 
       // check results match
       float e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det4) / Det4);
@@ -810,7 +870,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest5()
     {
       // calculate determinant from diagonal
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+      var cdsl = new ComplexFloatSymmetricLevinson(T5);
 
       // check results match
       float e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det5) / Det5);
@@ -826,7 +886,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+        var cdsl = new ComplexFloatSymmetricLevinson(T5);
         ComplexFloatVector X = cdsl.Solve(null as ComplexFloatVector);
       });
     }
@@ -840,7 +900,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.RankException), () =>
       {
-        ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+        var cdsl = new ComplexFloatSymmetricLevinson(T4);
         ComplexFloatVector X = cdsl.Solve(X5);
       });
     }
@@ -855,7 +915,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T1);
+      var cdsl = new ComplexFloatSymmetricLevinson(T1);
       ComplexFloatVector X = cdsl.Solve(Y1);
 
       // determine the maximum error
@@ -881,7 +941,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T2);
+      var cdsl = new ComplexFloatSymmetricLevinson(T2);
       ComplexFloatVector X = cdsl.Solve(Y2);
 
       // determine the maximum error
@@ -907,7 +967,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T3);
+      var cdsl = new ComplexFloatSymmetricLevinson(T3);
       ComplexFloatVector X = cdsl.Solve(Y3);
 
       // determine the maximum error
@@ -933,7 +993,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+      var cdsl = new ComplexFloatSymmetricLevinson(T4);
       ComplexFloatVector X = cdsl.Solve(Y4);
 
       // determine the maximum error
@@ -959,7 +1019,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+      var cdsl = new ComplexFloatSymmetricLevinson(T5);
       ComplexFloatVector X = cdsl.Solve(Y5);
 
       // determine the maximum error
@@ -984,7 +1044,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+        var cdsl = new ComplexFloatSymmetricLevinson(T5);
         ComplexFloatMatrix X = cdsl.Solve(null as ComplexFloatMatrix);
       });
     }
@@ -998,7 +1058,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.RankException), () =>
       {
-        ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+        var cdsl = new ComplexFloatSymmetricLevinson(T4);
         ComplexFloatMatrix X = cdsl.Solve(I5);
       });
     }
@@ -1013,7 +1073,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T1);
+      var cdsl = new ComplexFloatSymmetricLevinson(T1);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.Solve(ComplexFloatMatrix.CreateIdentity(1));
@@ -1042,7 +1102,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T2);
+      var cdsl = new ComplexFloatSymmetricLevinson(T2);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.Solve(ComplexFloatMatrix.CreateIdentity(2));
@@ -1071,7 +1131,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T3);
+      var cdsl = new ComplexFloatSymmetricLevinson(T3);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.Solve(ComplexFloatMatrix.CreateIdentity(3));
@@ -1100,7 +1160,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+      var cdsl = new ComplexFloatSymmetricLevinson(T4);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.Solve(ComplexFloatMatrix.CreateIdentity(4));
@@ -1129,7 +1189,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+      var cdsl = new ComplexFloatSymmetricLevinson(T5);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.Solve(ComplexFloatMatrix.CreateIdentity(5));
@@ -1158,7 +1218,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T1);
+      var cdsl = new ComplexFloatSymmetricLevinson(T1);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.GetInverse();
@@ -1187,7 +1247,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T2);
+      var cdsl = new ComplexFloatSymmetricLevinson(T2);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.GetInverse();
@@ -1216,7 +1276,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T3);
+      var cdsl = new ComplexFloatSymmetricLevinson(T3);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.GetInverse();
@@ -1245,7 +1305,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+      var cdsl = new ComplexFloatSymmetricLevinson(T4);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.GetInverse();
@@ -1274,7 +1334,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       float e, me;
-      ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+      var cdsl = new ComplexFloatSymmetricLevinson(T5);
 
       // check inverse
       ComplexFloatMatrix I = cdsl.GetInverse();
@@ -1345,7 +1405,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        ComplexFloatVector T = new ComplexFloatVector(3);
+        var T = new ComplexFloatVector(3);
         T[2] = T[1] = T[0] = new ComplexFloat(1.0f, 1.0f);
         ComplexFloatVector X = ComplexFloatSymmetricLevinson.Solve(T, T);
       });
@@ -1523,7 +1583,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        ComplexFloatVector T = new ComplexFloatVector(3);
+        var T = new ComplexFloatVector(3);
         T[2] = T[1] = T[0] = new ComplexFloat(1.0f, 1.0f);
         ComplexFloatMatrix X = ComplexFloatSymmetricLevinson.Solve(T, ComplexFloatMatrix.CreateIdentity(3));
       });
@@ -1703,8 +1763,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexFloatVector T = new ComplexFloatVector(1);
-        T[0] = new ComplexFloat(1.0f, 1.0f);
+        var T = new ComplexFloatVector(1)
+        {
+          [0] = new ComplexFloat(1.0f, 1.0f)
+        };
         ComplexFloatVector Y = ComplexFloatSymmetricLevinson.YuleWalker(T);
       });
     }
@@ -1719,7 +1781,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        ComplexFloatVector T = new ComplexFloatVector(3);
+        var T = new ComplexFloatVector(3);
         T[2] = T[1] = T[0] = new ComplexFloat(1.0f, 1.0f);
         ComplexFloatVector Y = ComplexFloatSymmetricLevinson.YuleWalker(T);
       });
@@ -1848,10 +1910,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
         // setup an ill-conditioned system (second order principal submatrix is singular)
-        ComplexFloatVector T = new ComplexFloatVector(3);
-        T[0] = ComplexFloat.One;
-        T[1] = ComplexFloat.One;
-        T[2] = ComplexFloat.One;
+        var T = new ComplexFloatVector(3)
+        {
+          [0] = ComplexFloat.One,
+          [1] = ComplexFloat.One,
+          [2] = ComplexFloat.One
+        };
 
         ComplexFloatMatrix Y = ComplexFloatSymmetricLevinson.Inverse(T);
       });

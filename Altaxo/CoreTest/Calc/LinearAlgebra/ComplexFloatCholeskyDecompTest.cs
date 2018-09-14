@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -37,16 +37,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     static ComplexFloatCholeskyDecompTest()
     {
-      ComplexFloatMatrix a = new ComplexFloatMatrix(3);
-      a[0, 0] = 2;
-      a[0, 1] = new ComplexFloat(1, -1);
-      a[0, 2] = 0;
-      a[1, 0] = new ComplexFloat(1, -1);
-      a[1, 1] = 2;
-      a[1, 2] = 0;
-      a[2, 0] = 0;
-      a[2, 1] = 0;
-      a[2, 2] = 3;
+      var a = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = new ComplexFloat(1, -1),
+        [0, 2] = 0,
+        [1, 0] = new ComplexFloat(1, -1),
+        [1, 1] = 2,
+        [1, 2] = 0,
+        [2, 0] = 0,
+        [2, 1] = 0,
+        [2, 2] = 3
+      };
       cd = new ComplexFloatCholeskyDecomp(a);
     }
 
@@ -55,8 +57,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexFloatMatrix wm = new ComplexFloatMatrix(2, 3);
-        ComplexFloatCholeskyDecomp wcd = new ComplexFloatCholeskyDecomp(wm);
+        var wm = new ComplexFloatMatrix(2, 3);
+        var wcd = new ComplexFloatCholeskyDecomp(wm);
       });
     }
 
@@ -65,8 +67,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        ComplexFloatMatrix lm = new ComplexFloatMatrix(3, 2);
-        ComplexFloatCholeskyDecomp lcd = new ComplexFloatCholeskyDecomp(lm);
+        var lm = new ComplexFloatMatrix(3, 2);
+        var lcd = new ComplexFloatCholeskyDecomp(lm);
       });
     }
 
@@ -88,17 +90,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void NonSymmFactorTest()
     {
-      ComplexFloatMatrix b = new ComplexFloatMatrix(3);
-      b[0, 0] = 2;
-      b[0, 1] = 1;
-      b[0, 2] = 1;
-      b[1, 0] = 1;
-      b[1, 1] = 2;
-      b[1, 2] = 0;
-      b[2, 0] = 0;
-      b[2, 1] = 0;
-      b[2, 2] = 3;
-      ComplexFloatCholeskyDecomp dcd = new ComplexFloatCholeskyDecomp(b);
+      var b = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 1,
+        [0, 2] = 1,
+        [1, 0] = 1,
+        [1, 1] = 2,
+        [1, 2] = 0,
+        [2, 0] = 0,
+        [2, 1] = 0,
+        [2, 2] = 3
+      };
+      var dcd = new ComplexFloatCholeskyDecomp(b);
       Assert.AreEqual(dcd.Factor[0, 0].Real, 1.414, TOLERENCE);
       Assert.AreEqual(dcd.Factor[0, 1].Real, 0.000, TOLERENCE);
       Assert.AreEqual(dcd.Factor[0, 2].Real, 0.000, TOLERENCE);
@@ -114,17 +118,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void IsPositiveDefiniteTest()
     {
       Assert.IsTrue(cd.IsPositiveDefinite);
-      ComplexFloatMatrix b = new ComplexFloatMatrix(3);
-      b[0, 0] = -2;
-      b[0, 1] = 1;
-      b[0, 2] = 0;
-      b[1, 0] = 1;
-      b[1, 1] = 2;
-      b[1, 2] = 0;
-      b[2, 0] = 0;
-      b[2, 1] = 0;
-      b[2, 2] = 3;
-      ComplexFloatCholeskyDecomp dcd = new ComplexFloatCholeskyDecomp(b);
+      var b = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = -2,
+        [0, 1] = 1,
+        [0, 2] = 0,
+        [1, 0] = 1,
+        [1, 1] = 2,
+        [1, 2] = 0,
+        [2, 0] = 0,
+        [2, 1] = 0,
+        [2, 2] = 3
+      };
+      var dcd = new ComplexFloatCholeskyDecomp(b);
       Assert.IsFalse(dcd.IsPositiveDefinite);
     }
 
@@ -139,16 +145,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveMatrix()
     {
-      ComplexFloatMatrix b = new ComplexFloatMatrix(3);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
+      var b = new ComplexFloatMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25
+      };
       ComplexFloatMatrix x = cd.Solve(b);
       Assert.AreEqual(x[0, 0].Real, -4.500, TOLERENCE);
       Assert.AreEqual(x[0, 1].Real, -4.500, TOLERENCE);
@@ -169,13 +177,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 1].Imag, 0.000, TOLERENCE);
       Assert.AreEqual(x[2, 2].Imag, 0.000, TOLERENCE);
 
-      b = new ComplexFloatMatrix(3, 2);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
+      b = new ComplexFloatMatrix(3, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25
+      };
       x = cd.Solve(b);
       Assert.AreEqual(x[0, 0].Real, -4.500, TOLERENCE);
       Assert.AreEqual(x[0, 1].Real, -4.500, TOLERENCE);
@@ -190,19 +200,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 0].Imag, 0.000, TOLERENCE);
       Assert.AreEqual(x[2, 1].Imag, 0.000, TOLERENCE);
 
-      b = new ComplexFloatMatrix(3, 4);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[0, 3] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[1, 3] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
-      b[2, 3] = 25;
+      b = new ComplexFloatMatrix(3, 4)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [0, 3] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [1, 3] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25,
+        [2, 3] = 25
+      };
       x = cd.Solve(b);
       Assert.AreEqual(x[0, 0].Real, -4.500, TOLERENCE);
       Assert.AreEqual(x[0, 1].Real, -4.500, TOLERENCE);
@@ -233,10 +245,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveVector()
     {
-      ComplexFloatVector b = new ComplexFloatVector(3);
-      b[0] = 2;
-      b[1] = 13;
-      b[2] = 25;
+      var b = new ComplexFloatVector(3)
+      {
+        [0] = 2,
+        [1] = 13,
+        [2] = 25
+      };
       ComplexFloatVector x = cd.Solve(b);
       Assert.AreEqual(x[0].Real, -4.500, TOLERENCE);
       Assert.AreEqual(x[1].Real, 12.000, TOLERENCE);
@@ -276,8 +290,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotPositiveDefiniteException), () =>
       {
-        ComplexFloatMatrix a = new ComplexFloatMatrix(3, 3);
-        ComplexFloatCholeskyDecomp dcd = new ComplexFloatCholeskyDecomp(a);
+        var a = new ComplexFloatMatrix(3, 3);
+        var dcd = new ComplexFloatCholeskyDecomp(a);
         dcd.GetInverse();
       });
     }

@@ -24,9 +24,9 @@
 
 #region Using directives
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-using System;
 
 #endregion Using directives
 

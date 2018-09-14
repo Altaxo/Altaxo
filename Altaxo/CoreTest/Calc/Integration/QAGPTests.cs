@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Integration;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Integration
 {
@@ -34,8 +34,7 @@ namespace AltaxoTest.Calc.Integration
     [Test]
     public void TestSin()
     {
-      double result, abserr;
-      QagpIntegration.Integration(Math.Sin, new double[] { 0, Math.PI }, 2, 0, 1E-6, 100, out result, out abserr);
+      QagpIntegration.Integration(Math.Sin, new double[] { 0, Math.PI }, 2, 0, 1E-6, 100, out var result, out var abserr);
 
       NUnit.Framework.Assert.AreEqual(2.0, result, 2.0 * 1E-6);
     }
@@ -43,9 +42,8 @@ namespace AltaxoTest.Calc.Integration
     [Test]
     public void TestOneBySqrtX()
     {
-      double result, abserr;
       QagpIntegration.Integration(delegate (double x)
-      { return 1 / Math.Sqrt(Math.Abs(x)); }, new double[] { -1, 0, 1 }, 3, 0, 1E-6, 100, out result, out abserr);
+      { return 1 / Math.Sqrt(Math.Abs(x)); }, new double[] { -1, 0, 1 }, 3, 0, 1E-6, 100, out var result, out var abserr);
 
       NUnit.Framework.Assert.AreEqual(4.0, result, 4.0 * 1E-6);
     }

@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Optimization;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Optimization
 {
@@ -36,7 +36,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestIterationCounter()
     {
       int maxiter = 2;
-      EndCriteria ec = new EndCriteria(maxiter, 1e-8, 100, 100);
+      var ec = new EndCriteria(maxiter, 1e-8, 100, 100);
       Assert.AreEqual(ec.maxIteration, maxiter);
 
       ec.iterationCounter++;
@@ -60,7 +60,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestFunctionEvaluationCounter()
     {
       int maxeval = 2;
-      EndCriteria ec = new EndCriteria(100, 1e-8, maxeval, 100);
+      var ec = new EndCriteria(100, 1e-8, maxeval, 100);
       Assert.AreEqual(ec.maxFunctionEvaluation, maxeval);
 
       ec.functionEvaluationCounter++;
@@ -84,7 +84,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestGradientEvaluationCounter()
     {
       int maxeval = 2;
-      EndCriteria ec = new EndCriteria(100, 1e-8, maxeval, 100);
+      var ec = new EndCriteria(100, 1e-8, maxeval, 100);
       Assert.AreEqual(ec.maxGradientEvaluation, maxeval);
 
       ec.gradientEvaluationCounter++;
@@ -108,7 +108,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestHessianEvaluationCounter()
     {
       int maxeval = 2;
-      EndCriteria ec = new EndCriteria(100, 1e-8, maxeval, 100);
+      var ec = new EndCriteria(100, 1e-8, maxeval, 100);
       Assert.AreEqual(ec.maxHessianEvaluation, maxeval);
 
       ec.hessianEvaluationCounter++;
@@ -132,7 +132,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestStationaryPointCounter()
     {
       int maxstationarypoint = 1;
-      EndCriteria ec = new EndCriteria(100, 1e-8, 100, maxstationarypoint);
+      var ec = new EndCriteria(100, 1e-8, 100, maxstationarypoint);
       Assert.AreEqual(ec.maxStationaryPointIterations, maxstationarypoint);
 
       Assert.IsTrue(!ec.CheckStationaryPoint(1.0, 1.0));
@@ -152,7 +152,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestStationaryGradientCounter()
     {
       int maxstationarypoint = 1;
-      EndCriteria ec = new EndCriteria(100, 1e-8, 100, maxstationarypoint);
+      var ec = new EndCriteria(100, 1e-8, 100, maxstationarypoint);
       Assert.AreEqual(ec.maxStationaryGradientIterations, maxstationarypoint);
 
       Assert.IsTrue(!ec.CheckStationaryGradient(1.0, 1.0));
@@ -172,7 +172,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestStationaryHessianCounter()
     {
       int maxstationarypoint = 1;
-      EndCriteria ec = new EndCriteria(100, 1e-8, 100, maxstationarypoint);
+      var ec = new EndCriteria(100, 1e-8, 100, maxstationarypoint);
       Assert.AreEqual(ec.maxStationaryHessianIterations, maxstationarypoint);
 
       Assert.IsTrue(!ec.CheckStationaryHessian(1.0, 1.0));
@@ -192,7 +192,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestFunctionEpsilon()
     {
       double functionepsilon = 1e-8;
-      EndCriteria ec = new EndCriteria(100, functionepsilon, 100, 100);
+      var ec = new EndCriteria(100, functionepsilon, 100, 100);
       Assert.AreEqual(ec.minFunctionEpsilon, functionepsilon);
 
       Assert.IsTrue(!ec.CheckFunctionEpsilon(functionepsilon * 2));
@@ -210,7 +210,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestGradientEpsilon()
     {
       double functionepsilon = 1e-8;
-      EndCriteria ec = new EndCriteria(100, functionepsilon, 100, 100);
+      var ec = new EndCriteria(100, functionepsilon, 100, 100);
       Assert.AreEqual(ec.minGradientEpsilon, functionepsilon);
 
       Assert.IsTrue(!ec.CheckGradientEpsilon(functionepsilon * 2));
@@ -228,7 +228,7 @@ namespace AltaxoTest.Calc.Optimization
     public void TestHessianEpsilon()
     {
       double functionepsilon = 1e-8;
-      EndCriteria ec = new EndCriteria(100, functionepsilon, 100, 100);
+      var ec = new EndCriteria(100, functionepsilon, 100, 100);
       Assert.AreEqual(ec.minHessianEpsilon, functionepsilon);
 
       Assert.IsTrue(!ec.CheckHessianEpsilon(functionepsilon * 2));

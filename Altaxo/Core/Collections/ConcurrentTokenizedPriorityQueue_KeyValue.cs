@@ -493,8 +493,10 @@ namespace Altaxo.Collections
 
     public bool TryPeekKey(out TKey key)
     {
+      TToken token;
+      KeyValuePair<TKey, TValue> item;
 
-      var result = TryPeek(out var item, out var token);
+      var result = TryPeek(out item, out token);
       if (result)
       {
         key = item.Key;
@@ -514,7 +516,10 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">Queue is empty</exception>
     public KeyValuePair<TKey, TValue> Peek()
     {
-      if (TryPeek(out var result, out var token))
+      KeyValuePair<TKey, TValue> result;
+      TToken token;
+
+      if (TryPeek(out result, out token))
         return result;
       else
         throw new InvalidOperationException("Queue is empty");

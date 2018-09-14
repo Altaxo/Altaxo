@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
-using System.Collections;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -39,7 +39,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Current()
     {
-      ComplexDoubleVector test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
+      var test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
       IEnumerator enumerator = test.GetEnumerator();
       bool movenextresult;
 
@@ -59,7 +59,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ForEach()
     {
-      ComplexDoubleVector test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
+      var test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
       foreach (Complex f in test)
         Assert.IsTrue(test.Contains(f));
     }
@@ -70,7 +70,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(InvalidOperationException), () =>
       {
-        ComplexDoubleVector test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
+        var test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
         IEnumerator enumerator = test.GetEnumerator();
         object value = enumerator.Current;
       });
@@ -82,7 +82,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(InvalidOperationException), () =>
       {
-        ComplexDoubleVector test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
+        var test = new ComplexDoubleVector(new Complex[2] { 1, 2 });
         IEnumerator enumerator = test.GetEnumerator();
         enumerator.MoveNext();
         enumerator.MoveNext();

@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
-using NUnit.Framework;
 using System;
 using System.Collections;
+using Altaxo.Calc.LinearAlgebra;
+using NUnit.Framework;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -38,7 +38,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Current()
     {
-      DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
+      var test = new DoubleVector(new double[2] { 1, 2 });
       IEnumerator enumerator = test.GetEnumerator();
       bool movenextresult;
 
@@ -58,7 +58,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ForEach()
     {
-      DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
+      var test = new DoubleVector(new double[2] { 1, 2 });
       foreach (double f in test)
         Assert.IsTrue(test.Contains(f));
     }
@@ -67,7 +67,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CurrentException2()
     {
-      DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
+      var test = new DoubleVector(new double[2] { 1, 2 });
       IEnumerator enumerator = test.GetEnumerator();
       Assert.IsTrue(enumerator.MoveNext());
       Assert.IsTrue(enumerator.MoveNext());

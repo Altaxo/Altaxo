@@ -24,10 +24,10 @@
 
 #region Using Directives
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 #endregion Using Directives
 
@@ -103,241 +103,301 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       // unit testing values - order 1
 
-      T1 = new ComplexDoubleVector(1);
-      T1[0] = new Complex(+1.0000000000000000E+000, +1.0000000000000000E+000);
+      T1 = new ComplexDoubleVector(1)
+      {
+        [0] = new Complex(+1.0000000000000000E+000, +1.0000000000000000E+000)
+      };
 
-      L1 = new ComplexDoubleMatrix(1);
-      L1[0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
+      L1 = new ComplexDoubleMatrix(1)
+      {
+        [0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000)
+      };
 
-      D1 = new ComplexDoubleVector(1);
-      D1[0] = new Complex(+5.0000000000000000E-001, -5.0000000000000000E-001);
+      D1 = new ComplexDoubleVector(1)
+      {
+        [0] = new Complex(+5.0000000000000000E-001, -5.0000000000000000E-001)
+      };
 
       Det1 = new Complex(+1.0000000000000000E+000, +1.0000000000000000E+000);
 
-      I1 = new ComplexDoubleMatrix(1);
-      I1[0, 0] = new Complex(+5.0000000000000000E-001, -5.0000000000000000E-001);
+      I1 = new ComplexDoubleMatrix(1)
+      {
+        [0, 0] = new Complex(+5.0000000000000000E-001, -5.0000000000000000E-001)
+      };
 
-      X1 = new ComplexDoubleVector(1);
-      X1[0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000);
+      X1 = new ComplexDoubleVector(1)
+      {
+        [0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000)
+      };
 
-      Y1 = new ComplexDoubleVector(1);
-      Y1[0] = new Complex(+2.0000000000000000E+000, +0.0000000000000000E+000);
+      Y1 = new ComplexDoubleVector(1)
+      {
+        [0] = new Complex(+2.0000000000000000E+000, +0.0000000000000000E+000)
+      };
 
       Tolerance1 = +3.000E-016;
 
       // unit testing values - order 2
 
-      T2 = new ComplexDoubleVector(2);
-      T2[0] = new Complex(+1.0000000000000000E+000, +1.0000000000000000E+000);
-      T2[1] = new Complex(+5.0000000000000000E-001, +5.0000000000000000E-001);
+      T2 = new ComplexDoubleVector(2)
+      {
+        [0] = new Complex(+1.0000000000000000E+000, +1.0000000000000000E+000),
+        [1] = new Complex(+5.0000000000000000E-001, +5.0000000000000000E-001)
+      };
 
-      L2 = new ComplexDoubleMatrix(2);
-      L2[0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L2[1, 0] = new Complex(-5.0000000000000000E-001, +0.0000000000000000E+000);
-      L2[1, 1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
+      L2 = new ComplexDoubleMatrix(2)
+      {
+        [0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [1, 0] = new Complex(-5.0000000000000000E-001, +0.0000000000000000E+000),
+        [1, 1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000)
+      };
 
-      D2 = new ComplexDoubleVector(2);
-      D2[0] = new Complex(+5.0000000000000000E-001, -5.0000000000000000E-001);
-      D2[1] = new Complex(+6.6666666666666663E-001, -6.6666666666666663E-001);
+      D2 = new ComplexDoubleVector(2)
+      {
+        [0] = new Complex(+5.0000000000000000E-001, -5.0000000000000000E-001),
+        [1] = new Complex(+6.6666666666666663E-001, -6.6666666666666663E-001)
+      };
 
       Det2 = new Complex(+0.0000000000000000E+000, +1.5000000000000000E+000);
 
-      I2 = new ComplexDoubleMatrix(2);
-      I2[0, 0] = new Complex(+6.6666666666666663E-001, -6.6666666666666663E-001);
-      I2[0, 1] = new Complex(-3.3333333333333331E-001, +3.3333333333333331E-001);
-      I2[1, 0] = new Complex(-3.3333333333333331E-001, +3.3333333333333331E-001);
-      I2[1, 1] = new Complex(+6.6666666666666663E-001, -6.6666666666666663E-001);
+      I2 = new ComplexDoubleMatrix(2)
+      {
+        [0, 0] = new Complex(+6.6666666666666663E-001, -6.6666666666666663E-001),
+        [0, 1] = new Complex(-3.3333333333333331E-001, +3.3333333333333331E-001),
+        [1, 0] = new Complex(-3.3333333333333331E-001, +3.3333333333333331E-001),
+        [1, 1] = new Complex(+6.6666666666666663E-001, -6.6666666666666663E-001)
+      };
 
-      X2 = new ComplexDoubleVector(2);
-      X2[0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000);
-      X2[1] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000);
+      X2 = new ComplexDoubleVector(2)
+      {
+        [0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000),
+        [1] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000)
+      };
 
-      Y2 = new ComplexDoubleVector(2);
-      Y2[0] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000);
-      Y2[1] = new Complex(+1.0000000000000000E+000, +4.0000000000000000E+000);
+      Y2 = new ComplexDoubleVector(2)
+      {
+        [0] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000),
+        [1] = new Complex(+1.0000000000000000E+000, +4.0000000000000000E+000)
+      };
 
       Tolerance2 = +3.000E-016;
 
       // unit testing values - order 3
 
-      T3 = new ComplexDoubleVector(3);
-      T3[0] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000);
-      T3[1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      T3[2] = new Complex(+5.0000000000000000E-001, +0.0000000000000000E+000);
+      T3 = new ComplexDoubleVector(3)
+      {
+        [0] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000),
+        [1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [2] = new Complex(+5.0000000000000000E-001, +0.0000000000000000E+000)
+      };
 
-      L3 = new ComplexDoubleMatrix(3);
-      L3[0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L3[1, 0] = new Complex(-2.5000000000000000E-001, +2.5000000000000000E-001);
-      L3[1, 1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L3[2, 0] = new Complex(-1.2307692307692308E-001, +1.5384615384615385E-002);
-      L3[2, 1] = new Complex(-2.2307692307692309E-001, +2.1538461538461540E-001);
-      L3[2, 2] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
+      L3 = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [1, 0] = new Complex(-2.5000000000000000E-001, +2.5000000000000000E-001),
+        [1, 1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [2, 0] = new Complex(-1.2307692307692308E-001, +1.5384615384615385E-002),
+        [2, 1] = new Complex(-2.2307692307692309E-001, +2.1538461538461540E-001),
+        [2, 2] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000)
+      };
 
-      D3 = new ComplexDoubleVector(3);
-      D3[0] = new Complex(+2.5000000000000000E-001, -2.5000000000000000E-001);
-      D3[1] = new Complex(+2.1538461538461540E-001, -2.7692307692307694E-001);
-      D3[2] = new Complex(+2.1756097560975610E-001, -2.8195121951219509E-001);
+      D3 = new ComplexDoubleVector(3)
+      {
+        [0] = new Complex(+2.5000000000000000E-001, -2.5000000000000000E-001),
+        [1] = new Complex(+2.1538461538461540E-001, -2.7692307692307694E-001),
+        [2] = new Complex(+2.1756097560975610E-001, -2.8195121951219509E-001)
+      };
 
       Det3 = new Complex(-1.9500000000000000E+001, +1.1500000000000000E+001);
 
-      I3 = new ComplexDoubleMatrix(3);
-      I3[0, 0] = new Complex(+2.1756097560975610E-001, -2.8195121951219509E-001);
-      I3[0, 1] = new Complex(+1.2195121951219513E-002, +1.0975609756097561E-001);
-      I3[0, 2] = new Complex(-2.2439024390243902E-002, +3.8048780487804877E-002);
-      I3[1, 0] = new Complex(+1.2195121951219513E-002, +1.0975609756097561E-001);
-      I3[1, 1] = new Complex(+1.8902439024390244E-001, -2.9878048780487804E-001);
-      I3[1, 2] = new Complex(+1.2195121951219513E-002, +1.0975609756097561E-001);
-      I3[2, 0] = new Complex(-2.2439024390243902E-002, +3.8048780487804877E-002);
-      I3[2, 1] = new Complex(+1.2195121951219513E-002, +1.0975609756097561E-001);
-      I3[2, 2] = new Complex(+2.1756097560975610E-001, -2.8195121951219509E-001);
+      I3 = new ComplexDoubleMatrix(3)
+      {
+        [0, 0] = new Complex(+2.1756097560975610E-001, -2.8195121951219509E-001),
+        [0, 1] = new Complex(+1.2195121951219513E-002, +1.0975609756097561E-001),
+        [0, 2] = new Complex(-2.2439024390243902E-002, +3.8048780487804877E-002),
+        [1, 0] = new Complex(+1.2195121951219513E-002, +1.0975609756097561E-001),
+        [1, 1] = new Complex(+1.8902439024390244E-001, -2.9878048780487804E-001),
+        [1, 2] = new Complex(+1.2195121951219513E-002, +1.0975609756097561E-001),
+        [2, 0] = new Complex(-2.2439024390243902E-002, +3.8048780487804877E-002),
+        [2, 1] = new Complex(+1.2195121951219513E-002, +1.0975609756097561E-001),
+        [2, 2] = new Complex(+2.1756097560975610E-001, -2.8195121951219509E-001)
+      };
 
-      X3 = new ComplexDoubleVector(3);
-      X3[0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000);
-      X3[1] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000);
-      X3[2] = new Complex(+3.0000000000000000E+000, -3.0000000000000000E+000);
+      X3 = new ComplexDoubleVector(3)
+      {
+        [0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000),
+        [1] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000),
+        [2] = new Complex(+3.0000000000000000E+000, -3.0000000000000000E+000)
+      };
 
-      Y3 = new ComplexDoubleVector(3);
-      Y3[0] = new Complex(+7.5000000000000000E+000, +5.0000000000000000E-001);
-      Y3[1] = new Complex(+4.0000000000000000E+000, +4.0000000000000000E+000);
-      Y3[2] = new Complex(+1.4500000000000000E+001, +1.5000000000000000E+000);
+      Y3 = new ComplexDoubleVector(3)
+      {
+        [0] = new Complex(+7.5000000000000000E+000, +5.0000000000000000E-001),
+        [1] = new Complex(+4.0000000000000000E+000, +4.0000000000000000E+000),
+        [2] = new Complex(+1.4500000000000000E+001, +1.5000000000000000E+000)
+      };
 
       Tolerance3 = +1.000E-015;
 
       // unit testing values - order 4
 
-      T4 = new ComplexDoubleVector(4);
-      T4[0] = new Complex(+4.0000000000000000E+000, +0.0000000000000000E+000);
-      T4[1] = new Complex(+1.2000000000000000E+001, -1.3333333333333333E+000);
-      T4[2] = new Complex(+2.6666666666666668E+001, +2.1333333333333332E+001);
-      T4[3] = new Complex(+4.8000000000000000E+001, -5.3333333333333330E+000);
+      T4 = new ComplexDoubleVector(4)
+      {
+        [0] = new Complex(+4.0000000000000000E+000, +0.0000000000000000E+000),
+        [1] = new Complex(+1.2000000000000000E+001, -1.3333333333333333E+000),
+        [2] = new Complex(+2.6666666666666668E+001, +2.1333333333333332E+001),
+        [3] = new Complex(+4.8000000000000000E+001, -5.3333333333333330E+000)
+      };
 
-      L4 = new ComplexDoubleMatrix(4);
-      L4[0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L4[1, 0] = new Complex(-3.0000000000000000E+000, +3.3333333333333331E-001);
-      L4[1, 1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L4[2, 0] = new Complex(-4.8611369990680336E-001, +8.0633737185461318E-001);
-      L4[2, 1] = new Complex(-1.8104380242311278E+000, -2.2477166821994410E+000);
-      L4[2, 2] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L4[3, 0] = new Complex(+3.3484605496212611E-001, -1.9271448251604772E+000);
-      L4[3, 1] = new Complex(-5.4240073026015514E+000, +3.5426745778183477E+000);
-      L4[3, 2] = new Complex(-4.1928238540484636E-001, -1.0409062930503854E+000);
-      L4[3, 3] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
+      L4 = new ComplexDoubleMatrix(4)
+      {
+        [0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [1, 0] = new Complex(-3.0000000000000000E+000, +3.3333333333333331E-001),
+        [1, 1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [2, 0] = new Complex(-4.8611369990680336E-001, +8.0633737185461318E-001),
+        [2, 1] = new Complex(-1.8104380242311278E+000, -2.2477166821994410E+000),
+        [2, 2] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [3, 0] = new Complex(+3.3484605496212611E-001, -1.9271448251604772E+000),
+        [3, 1] = new Complex(-5.4240073026015514E+000, +3.5426745778183477E+000),
+        [3, 2] = new Complex(-4.1928238540484636E-001, -1.0409062930503854E+000),
+        [3, 3] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000)
+      };
 
-      D4 = new ComplexDoubleVector(4);
-      D4[0] = new Complex(+2.5000000000000000E-001, +0.0000000000000000E+000);
-      D4[1] = new Complex(-2.9776328052190121E-002, -7.5489282385834107E-003);
-      D4[2] = new Complex(-1.8372281937366793E-002, +4.8476042525929675E-003);
-      D4[3] = new Complex(-3.4274173601848597E-003, +2.0146632548174214E-003);
+      D4 = new ComplexDoubleVector(4)
+      {
+        [0] = new Complex(+2.5000000000000000E-001, +0.0000000000000000E+000),
+        [1] = new Complex(-2.9776328052190121E-002, -7.5489282385834107E-003),
+        [2] = new Complex(-1.8372281937366793E-002, +4.8476042525929675E-003),
+        [3] = new Complex(-3.4274173601848597E-003, +2.0146632548174214E-003)
+      };
 
       Det4 = new Complex(-1.4775024197530865E+006, -8.8785224691358022E+005);
 
-      I4 = new ComplexDoubleMatrix(4);
-      I4[0, 0] = new Complex(-3.4274173601848597E-003, +2.0146632548174214E-003);
-      I4[0, 1] = new Complex(+3.5341313868731158E-003, +2.7229074838592197E-003);
-      I4[0, 2] = new Complex(+1.1453040494999565E-002, -2.3069772555912881E-002);
-      I4[0, 3] = new Complex(+2.7348906841957528E-003, +7.2797316722982060E-003);
-      I4[1, 0] = new Complex(+3.5341313868731158E-003, +2.7229074838592197E-003);
-      I4[1, 1] = new Complex(-1.7019789440246038E-002, +2.7237506460653452E-005);
-      I4[1, 2] = new Complex(+1.5342389186985224E-002, +3.0270604877556437E-002);
-      I4[1, 3] = new Complex(+1.1453040494999565E-002, -2.3069772555912881E-002);
-      I4[2, 0] = new Complex(+1.1453040494999565E-002, -2.3069772555912881E-002);
-      I4[2, 1] = new Complex(+1.5342389186985224E-002, +3.0270604877556437E-002);
-      I4[2, 2] = new Complex(-1.7019789440246038E-002, +2.7237506460653452E-005);
-      I4[2, 3] = new Complex(+3.5341313868731158E-003, +2.7229074838592197E-003);
-      I4[3, 0] = new Complex(+2.7348906841957528E-003, +7.2797316722982060E-003);
-      I4[3, 1] = new Complex(+1.1453040494999565E-002, -2.3069772555912881E-002);
-      I4[3, 2] = new Complex(+3.5341313868731158E-003, +2.7229074838592197E-003);
-      I4[3, 3] = new Complex(-3.4274173601848597E-003, +2.0146632548174214E-003);
+      I4 = new ComplexDoubleMatrix(4)
+      {
+        [0, 0] = new Complex(-3.4274173601848597E-003, +2.0146632548174214E-003),
+        [0, 1] = new Complex(+3.5341313868731158E-003, +2.7229074838592197E-003),
+        [0, 2] = new Complex(+1.1453040494999565E-002, -2.3069772555912881E-002),
+        [0, 3] = new Complex(+2.7348906841957528E-003, +7.2797316722982060E-003),
+        [1, 0] = new Complex(+3.5341313868731158E-003, +2.7229074838592197E-003),
+        [1, 1] = new Complex(-1.7019789440246038E-002, +2.7237506460653452E-005),
+        [1, 2] = new Complex(+1.5342389186985224E-002, +3.0270604877556437E-002),
+        [1, 3] = new Complex(+1.1453040494999565E-002, -2.3069772555912881E-002),
+        [2, 0] = new Complex(+1.1453040494999565E-002, -2.3069772555912881E-002),
+        [2, 1] = new Complex(+1.5342389186985224E-002, +3.0270604877556437E-002),
+        [2, 2] = new Complex(-1.7019789440246038E-002, +2.7237506460653452E-005),
+        [2, 3] = new Complex(+3.5341313868731158E-003, +2.7229074838592197E-003),
+        [3, 0] = new Complex(+2.7348906841957528E-003, +7.2797316722982060E-003),
+        [3, 1] = new Complex(+1.1453040494999565E-002, -2.3069772555912881E-002),
+        [3, 2] = new Complex(+3.5341313868731158E-003, +2.7229074838592197E-003),
+        [3, 3] = new Complex(-3.4274173601848597E-003, +2.0146632548174214E-003)
+      };
 
-      X4 = new ComplexDoubleVector(4);
-      X4[0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000);
-      X4[1] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000);
-      X4[2] = new Complex(+3.0000000000000000E+000, -3.0000000000000000E+000);
-      X4[3] = new Complex(+4.0000000000000000E+000, -4.0000000000000000E+000);
+      X4 = new ComplexDoubleVector(4)
+      {
+        [0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000),
+        [1] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000),
+        [2] = new Complex(+3.0000000000000000E+000, -3.0000000000000000E+000),
+        [3] = new Complex(+4.0000000000000000E+000, -4.0000000000000000E+000)
+      };
 
-      Y4 = new ComplexDoubleVector(4);
-      Y4[0] = new Complex(+3.4533333333333331E+002, -2.1200000000000000E+002);
-      Y4[1] = new Complex(+2.4266666666666666E+002, -6.6666666666666671E+001);
-      Y4[2] = new Complex(+1.2933333333333334E+002, -4.9333333333333336E+001);
-      Y4[3] = new Complex(+1.0133333333333333E+002, -1.3333333333333334E+001);
+      Y4 = new ComplexDoubleVector(4)
+      {
+        [0] = new Complex(+3.4533333333333331E+002, -2.1200000000000000E+002),
+        [1] = new Complex(+2.4266666666666666E+002, -6.6666666666666671E+001),
+        [2] = new Complex(+1.2933333333333334E+002, -4.9333333333333336E+001),
+        [3] = new Complex(+1.0133333333333333E+002, -1.3333333333333334E+001)
+      };
 
       Tolerance4 = +3.000E-014;
 
       // unit testing values - order 5
 
-      T5 = new ComplexDoubleVector(5);
-      T5[0] = new Complex(+5.0000000000000000E+000, +0.0000000000000000E+000);
-      T5[1] = new Complex(+0.0000000000000000E+000, +4.0000000000000000E+000);
-      T5[2] = new Complex(+3.0000000000000000E+000, +0.0000000000000000E+000);
-      T5[3] = new Complex(+0.0000000000000000E+000, +2.0000000000000000E+000);
-      T5[4] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
+      T5 = new ComplexDoubleVector(5)
+      {
+        [0] = new Complex(+5.0000000000000000E+000, +0.0000000000000000E+000),
+        [1] = new Complex(+0.0000000000000000E+000, +4.0000000000000000E+000),
+        [2] = new Complex(+3.0000000000000000E+000, +0.0000000000000000E+000),
+        [3] = new Complex(+0.0000000000000000E+000, +2.0000000000000000E+000),
+        [4] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000)
+      };
 
-      L5 = new ComplexDoubleMatrix(5);
-      L5[0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L5[1, 0] = new Complex(+0.0000000000000000E+000, -8.0000000000000004E-001);
-      L5[1, 1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L5[2, 0] = new Complex(-7.5609756097560976E-001, +0.0000000000000000E+000);
-      L5[2, 1] = new Complex(+0.0000000000000000E+000, -1.9512195121951220E-001);
-      L5[2, 2] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L5[3, 0] = new Complex(+0.0000000000000000E+000, +4.5833333333333331E-001);
-      L5[3, 1] = new Complex(-6.6666666666666663E-001, +0.0000000000000000E+000);
-      L5[3, 2] = new Complex(+0.0000000000000000E+000, -5.4166666666666663E-001);
-      L5[3, 3] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
-      L5[4, 0] = new Complex(+4.1176470588235292E-001, +0.0000000000000000E+000);
-      L5[4, 1] = new Complex(+0.0000000000000000E+000, +2.3529411764705882E-001);
-      L5[4, 2] = new Complex(-9.4117647058823528E-001, +0.0000000000000000E+000);
-      L5[4, 3] = new Complex(+0.0000000000000000E+000, -3.5294117647058826E-001);
-      L5[4, 4] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000);
+      L5 = new ComplexDoubleMatrix(5)
+      {
+        [0, 0] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [1, 0] = new Complex(+0.0000000000000000E+000, -8.0000000000000004E-001),
+        [1, 1] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [2, 0] = new Complex(-7.5609756097560976E-001, +0.0000000000000000E+000),
+        [2, 1] = new Complex(+0.0000000000000000E+000, -1.9512195121951220E-001),
+        [2, 2] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [3, 0] = new Complex(+0.0000000000000000E+000, +4.5833333333333331E-001),
+        [3, 1] = new Complex(-6.6666666666666663E-001, +0.0000000000000000E+000),
+        [3, 2] = new Complex(+0.0000000000000000E+000, -5.4166666666666663E-001),
+        [3, 3] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000),
+        [4, 0] = new Complex(+4.1176470588235292E-001, +0.0000000000000000E+000),
+        [4, 1] = new Complex(+0.0000000000000000E+000, +2.3529411764705882E-001),
+        [4, 2] = new Complex(-9.4117647058823528E-001, +0.0000000000000000E+000),
+        [4, 3] = new Complex(+0.0000000000000000E+000, -3.5294117647058826E-001),
+        [4, 4] = new Complex(+1.0000000000000000E+000, +0.0000000000000000E+000)
+      };
 
-      D5 = new ComplexDoubleVector(5);
-      D5[0] = new Complex(+2.0000000000000001E-001, +0.0000000000000000E+000);
-      D5[1] = new Complex(+1.2195121951219512E-001, +0.0000000000000000E+000);
-      D5[2] = new Complex(+2.8472222222222221E-001, +0.0000000000000000E+000);
-      D5[3] = new Complex(+2.3529411764705882E-001, +0.0000000000000000E+000);
-      D5[4] = new Complex(+2.8333333333333333E-001, +0.0000000000000000E+000);
+      D5 = new ComplexDoubleVector(5)
+      {
+        [0] = new Complex(+2.0000000000000001E-001, +0.0000000000000000E+000),
+        [1] = new Complex(+1.2195121951219512E-001, +0.0000000000000000E+000),
+        [2] = new Complex(+2.8472222222222221E-001, +0.0000000000000000E+000),
+        [3] = new Complex(+2.3529411764705882E-001, +0.0000000000000000E+000),
+        [4] = new Complex(+2.8333333333333333E-001, +0.0000000000000000E+000)
+      };
 
       Det5 = new Complex(+2.1600000000000000E+003, +0.0000000000000000E+000);
 
-      I5 = new ComplexDoubleMatrix(5);
-      I5[0, 0] = new Complex(+2.8333333333333333E-001, +0.0000000000000000E+000);
-      I5[0, 1] = new Complex(+0.0000000000000000E+000, -1.0000000000000001E-001);
-      I5[0, 2] = new Complex(-2.6666666666666666E-001, +0.0000000000000000E+000);
-      I5[0, 3] = new Complex(+0.0000000000000000E+000, +6.6666666666666666E-002);
-      I5[0, 4] = new Complex(+1.1666666666666667E-001, +0.0000000000000000E+000);
-      I5[1, 0] = new Complex(+0.0000000000000000E+000, -1.0000000000000001E-001);
-      I5[1, 1] = new Complex(+2.0000000000000001E-001, +0.0000000000000000E+000);
-      I5[1, 2] = new Complex(+0.0000000000000000E+000, -3.3333333333333333E-002);
-      I5[1, 3] = new Complex(-1.3333333333333333E-001, +0.0000000000000000E+000);
-      I5[1, 4] = new Complex(+0.0000000000000000E+000, +6.6666666666666666E-002);
-      I5[2, 0] = new Complex(-2.6666666666666666E-001, +0.0000000000000000E+000);
-      I5[2, 1] = new Complex(+0.0000000000000000E+000, -3.3333333333333333E-002);
-      I5[2, 2] = new Complex(+4.6666666666666667E-001, +0.0000000000000000E+000);
-      I5[2, 3] = new Complex(+0.0000000000000000E+000, -3.3333333333333333E-002);
-      I5[2, 4] = new Complex(-2.6666666666666666E-001, +0.0000000000000000E+000);
-      I5[3, 0] = new Complex(+0.0000000000000000E+000, +6.6666666666666666E-002);
-      I5[3, 1] = new Complex(-1.3333333333333333E-001, +0.0000000000000000E+000);
-      I5[3, 2] = new Complex(+0.0000000000000000E+000, -3.3333333333333333E-002);
-      I5[3, 3] = new Complex(+2.0000000000000001E-001, +0.0000000000000000E+000);
-      I5[3, 4] = new Complex(+0.0000000000000000E+000, -1.0000000000000001E-001);
-      I5[4, 0] = new Complex(+1.1666666666666667E-001, +0.0000000000000000E+000);
-      I5[4, 1] = new Complex(+0.0000000000000000E+000, +6.6666666666666666E-002);
-      I5[4, 2] = new Complex(-2.6666666666666666E-001, +0.0000000000000000E+000);
-      I5[4, 3] = new Complex(+0.0000000000000000E+000, -1.0000000000000001E-001);
-      I5[4, 4] = new Complex(+2.8333333333333333E-001, +0.0000000000000000E+000);
+      I5 = new ComplexDoubleMatrix(5)
+      {
+        [0, 0] = new Complex(+2.8333333333333333E-001, +0.0000000000000000E+000),
+        [0, 1] = new Complex(+0.0000000000000000E+000, -1.0000000000000001E-001),
+        [0, 2] = new Complex(-2.6666666666666666E-001, +0.0000000000000000E+000),
+        [0, 3] = new Complex(+0.0000000000000000E+000, +6.6666666666666666E-002),
+        [0, 4] = new Complex(+1.1666666666666667E-001, +0.0000000000000000E+000),
+        [1, 0] = new Complex(+0.0000000000000000E+000, -1.0000000000000001E-001),
+        [1, 1] = new Complex(+2.0000000000000001E-001, +0.0000000000000000E+000),
+        [1, 2] = new Complex(+0.0000000000000000E+000, -3.3333333333333333E-002),
+        [1, 3] = new Complex(-1.3333333333333333E-001, +0.0000000000000000E+000),
+        [1, 4] = new Complex(+0.0000000000000000E+000, +6.6666666666666666E-002),
+        [2, 0] = new Complex(-2.6666666666666666E-001, +0.0000000000000000E+000),
+        [2, 1] = new Complex(+0.0000000000000000E+000, -3.3333333333333333E-002),
+        [2, 2] = new Complex(+4.6666666666666667E-001, +0.0000000000000000E+000),
+        [2, 3] = new Complex(+0.0000000000000000E+000, -3.3333333333333333E-002),
+        [2, 4] = new Complex(-2.6666666666666666E-001, +0.0000000000000000E+000),
+        [3, 0] = new Complex(+0.0000000000000000E+000, +6.6666666666666666E-002),
+        [3, 1] = new Complex(-1.3333333333333333E-001, +0.0000000000000000E+000),
+        [3, 2] = new Complex(+0.0000000000000000E+000, -3.3333333333333333E-002),
+        [3, 3] = new Complex(+2.0000000000000001E-001, +0.0000000000000000E+000),
+        [3, 4] = new Complex(+0.0000000000000000E+000, -1.0000000000000001E-001),
+        [4, 0] = new Complex(+1.1666666666666667E-001, +0.0000000000000000E+000),
+        [4, 1] = new Complex(+0.0000000000000000E+000, +6.6666666666666666E-002),
+        [4, 2] = new Complex(-2.6666666666666666E-001, +0.0000000000000000E+000),
+        [4, 3] = new Complex(+0.0000000000000000E+000, -1.0000000000000001E-001),
+        [4, 4] = new Complex(+2.8333333333333333E-001, +0.0000000000000000E+000)
+      };
 
-      X5 = new ComplexDoubleVector(5);
-      X5[0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000);
-      X5[1] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000);
-      X5[2] = new Complex(+3.0000000000000000E+000, -3.0000000000000000E+000);
-      X5[3] = new Complex(+4.0000000000000000E+000, -4.0000000000000000E+000);
-      X5[4] = new Complex(+5.0000000000000000E+000, +5.0000000000000000E+000);
+      X5 = new ComplexDoubleVector(5)
+      {
+        [0] = new Complex(+1.0000000000000000E+000, -1.0000000000000000E+000),
+        [1] = new Complex(+2.0000000000000000E+000, +2.0000000000000000E+000),
+        [2] = new Complex(+3.0000000000000000E+000, -3.0000000000000000E+000),
+        [3] = new Complex(+4.0000000000000000E+000, -4.0000000000000000E+000),
+        [4] = new Complex(+5.0000000000000000E+000, +5.0000000000000000E+000)
+      };
 
-      Y5 = new ComplexDoubleVector(5);
-      Y5[0] = new Complex(+1.9000000000000000E+001, +7.0000000000000000E+000);
-      Y5[1] = new Complex(+2.8000000000000000E+001, +2.4000000000000000E+001);
-      Y5[2] = new Complex(+4.1000000000000000E+001, +2.1000000000000000E+001);
-      Y5[3] = new Complex(+2.0000000000000000E+001, +2.0000000000000000E+001);
-      Y5[4] = new Complex(+4.7000000000000000E+001, +3.5000000000000000E+001);
+      Y5 = new ComplexDoubleVector(5)
+      {
+        [0] = new Complex(+1.9000000000000000E+001, +7.0000000000000000E+000),
+        [1] = new Complex(+2.8000000000000000E+001, +2.4000000000000000E+001),
+        [2] = new Complex(+4.1000000000000000E+001, +2.1000000000000000E+001),
+        [3] = new Complex(+2.0000000000000000E+001, +2.0000000000000000E+001),
+        [4] = new Complex(+4.7000000000000000E+001, +3.5000000000000000E+001)
+      };
 
       Tolerance5 = +5.000E-015;
     }
@@ -352,7 +412,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(null as ComplexDoubleVector);
+        var cdsl = new ComplexDoubleSymmetricLevinson(null as ComplexDoubleVector);
       });
     }
 
@@ -366,9 +426,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.RankException), () =>
       {
-        ComplexDoubleVector cdv = new ComplexDoubleVector(1, 0.0);
+        var cdv = new ComplexDoubleVector(1, 0.0);
         cdv.RemoveAt(0);
-        ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(cdv);
+        var cdsl = new ComplexDoubleSymmetricLevinson(cdv);
       });
     }
 
@@ -380,7 +440,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetVectorMemberTest()
     {
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T5);
       ComplexDoubleVector TT = cdsl.GetVector();
       Assert.IsTrue(T5.Equals(TT));
     }
@@ -393,7 +453,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetMatrixMemberTest()
     {
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T5);
       ComplexDoubleMatrix cdsldm = cdsl.GetMatrix();
       for (int row = 0; row < T5.Length; row++)
       {
@@ -419,7 +479,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OrderPropertyTest()
     {
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T5);
       Assert.IsTrue(cdsl.Order == 5);
     }
 
@@ -433,7 +493,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T1);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T1);
       ComplexDoubleMatrix U = cdsl.U;
       ComplexDoubleMatrix D = cdsl.D;
       ComplexDoubleMatrix L = cdsl.L;
@@ -480,7 +540,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T2);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T2);
       ComplexDoubleMatrix U = cdsl.U;
       ComplexDoubleMatrix D = cdsl.D;
       ComplexDoubleMatrix L = cdsl.L;
@@ -527,7 +587,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T3);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T3);
       ComplexDoubleMatrix U = cdsl.U;
       ComplexDoubleMatrix D = cdsl.D;
       ComplexDoubleMatrix L = cdsl.L;
@@ -574,7 +634,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T4);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T4);
       ComplexDoubleMatrix U = cdsl.U;
       ComplexDoubleMatrix D = cdsl.D;
       ComplexDoubleMatrix L = cdsl.L;
@@ -621,7 +681,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T5);
       ComplexDoubleMatrix U = cdsl.U;
       ComplexDoubleMatrix D = cdsl.D;
       ComplexDoubleMatrix L = cdsl.L;
@@ -666,7 +726,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest1()
     {
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T1);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T1);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -678,7 +738,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest2()
     {
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T2);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T2);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -690,7 +750,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest3()
     {
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T3);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T3);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -702,7 +762,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest4()
     {
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T4);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T4);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -714,7 +774,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest5()
     {
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T5);
       Assert.IsFalse(cdsl.IsSingular);
     }
 
@@ -726,14 +786,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SingularityPropertyTest()
     {
-      ComplexDoubleVector T = new ComplexDoubleVector(10);
+      var T = new ComplexDoubleVector(10);
       for (int i = 1; i < 10; i++)
       {
-        T[i] = new Complex((double)(i + 1), (double)(i + 1));
+        T[i] = new Complex(i + 1, i + 1);
       }
       T[0] = new Complex(2.0, 2.0);
 
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T);
       Assert.IsTrue(cdsl.IsSingular);
     }
 
@@ -746,7 +806,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest1()
     {
       // calculate determinant from diagonal
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T1);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T1);
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det1) / Det1);
@@ -762,7 +822,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest2()
     {
       // calculate determinant from diagonal
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T2);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T2);
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det2) / Det2);
@@ -778,7 +838,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest3()
     {
       // calculate determinant from diagonal
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T3);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T3);
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det3) / Det3);
@@ -794,7 +854,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest4()
     {
       // calculate determinant from diagonal
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T4);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T4);
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det4) / Det4);
@@ -810,7 +870,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void GetDeterminantMethodTest5()
     {
       // calculate determinant from diagonal
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T5);
 
       // check results match
       double e = ComplexMath.Absolute((cdsl.GetDeterminant() - Det5) / Det5);
@@ -826,7 +886,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+        var cdsl = new ComplexDoubleSymmetricLevinson(T5);
         ComplexDoubleVector X = cdsl.Solve(null as ComplexDoubleVector);
       });
     }
@@ -840,7 +900,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.RankException), () =>
       {
-        ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T4);
+        var cdsl = new ComplexDoubleSymmetricLevinson(T4);
         ComplexDoubleVector X = cdsl.Solve(X5);
       });
     }
@@ -855,7 +915,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T1);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T1);
       ComplexDoubleVector X = cdsl.Solve(Y1);
 
       // determine the maximum error
@@ -881,7 +941,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T2);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T2);
       ComplexDoubleVector X = cdsl.Solve(Y2);
 
       // determine the maximum error
@@ -907,7 +967,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T3);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T3);
       ComplexDoubleVector X = cdsl.Solve(Y3);
 
       // determine the maximum error
@@ -933,7 +993,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T4);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T4);
       ComplexDoubleVector X = cdsl.Solve(Y4);
 
       // determine the maximum error
@@ -959,7 +1019,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T5);
       ComplexDoubleVector X = cdsl.Solve(Y5);
 
       // determine the maximum error
@@ -984,7 +1044,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+        var cdsl = new ComplexDoubleSymmetricLevinson(T5);
         ComplexDoubleMatrix X = cdsl.Solve(null as ComplexDoubleMatrix);
       });
     }
@@ -998,7 +1058,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.RankException), () =>
       {
-        ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T4);
+        var cdsl = new ComplexDoubleSymmetricLevinson(T4);
         ComplexDoubleMatrix X = cdsl.Solve(I5);
       });
     }
@@ -1013,7 +1073,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T1);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T1);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.Solve(ComplexDoubleMatrix.CreateIdentity(1));
@@ -1042,7 +1102,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T2);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T2);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.Solve(ComplexDoubleMatrix.CreateIdentity(2));
@@ -1071,7 +1131,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T3);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T3);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.Solve(ComplexDoubleMatrix.CreateIdentity(3));
@@ -1100,7 +1160,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T4);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T4);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.Solve(ComplexDoubleMatrix.CreateIdentity(4));
@@ -1129,7 +1189,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T5);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.Solve(ComplexDoubleMatrix.CreateIdentity(5));
@@ -1158,7 +1218,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T1);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T1);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.GetInverse();
@@ -1187,7 +1247,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T2);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T2);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.GetInverse();
@@ -1216,7 +1276,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T3);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T3);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.GetInverse();
@@ -1245,7 +1305,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T4);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T4);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.GetInverse();
@@ -1274,7 +1334,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       int i, j;
       double e, me;
-      ComplexDoubleSymmetricLevinson cdsl = new ComplexDoubleSymmetricLevinson(T5);
+      var cdsl = new ComplexDoubleSymmetricLevinson(T5);
 
       // check inverse
       ComplexDoubleMatrix I = cdsl.GetInverse();
@@ -1345,7 +1405,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        ComplexDoubleVector T = new ComplexDoubleVector(3);
+        var T = new ComplexDoubleVector(3);
         T[2] = T[1] = T[0] = new Complex(1.0, 1.0);
         ComplexDoubleVector X = ComplexDoubleSymmetricLevinson.Solve(T, T);
       });
@@ -1523,7 +1583,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        ComplexDoubleVector T = new ComplexDoubleVector(3);
+        var T = new ComplexDoubleVector(3);
         T[2] = T[1] = T[0] = new Complex(1.0, 1.0);
         ComplexDoubleMatrix X = ComplexDoubleSymmetricLevinson.Solve(T, ComplexDoubleMatrix.CreateIdentity(3));
       });
@@ -1703,8 +1763,10 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        ComplexDoubleVector T = new ComplexDoubleVector(1);
-        T[0] = new Complex(1.0, 1.0);
+        var T = new ComplexDoubleVector(1)
+        {
+          [0] = new Complex(1.0, 1.0)
+        };
         ComplexDoubleVector Y = ComplexDoubleSymmetricLevinson.YuleWalker(T);
       });
     }
@@ -1719,7 +1781,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        ComplexDoubleVector T = new ComplexDoubleVector(3);
+        var T = new ComplexDoubleVector(3);
         T[2] = T[1] = T[0] = new Complex(1.0, 1.0);
         ComplexDoubleVector Y = ComplexDoubleSymmetricLevinson.YuleWalker(T);
       });
@@ -1848,10 +1910,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
         // setup an ill-conditioned system (second order principal submatrix is singular)
-        ComplexDoubleVector T = new ComplexDoubleVector(3);
-        T[0] = Complex.One;
-        T[1] = Complex.One;
-        T[2] = Complex.One;
+        var T = new ComplexDoubleVector(3)
+        {
+          [0] = Complex.One,
+          [1] = Complex.One,
+          [2] = Complex.One
+        };
 
         ComplexDoubleMatrix Y = ComplexDoubleSymmetricLevinson.Inverse(T);
       });

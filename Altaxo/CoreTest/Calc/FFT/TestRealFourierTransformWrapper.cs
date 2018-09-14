@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Fourier;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.Fourier
 {
@@ -47,9 +47,9 @@ namespace AltaxoTest.Calc.Fourier
         double tol2 = arr.Length * 1E-14;
 
         // We transform the array
-        RealFourierTransform rft = new RealFourierTransform(arr.Length);
+        var rft = new RealFourierTransform(arr.Length);
         rft.Transform(arr, FourierDirection.Forward);
-        RealFFTResultWrapper wrapper = new RealFFTResultWrapper(arr);
+        var wrapper = new RealFFTResultWrapper(arr);
 
         // we transform the re and im
         NativeFourierMethods.FourierTransformation(re, im, FourierDirection.Forward);
@@ -128,7 +128,7 @@ namespace AltaxoTest.Calc.Fourier
 
       public void TestReOne_RandomPos(int len, int tests)
       {
-        System.Random rnd = new Random();
+        var rnd = new Random();
         for (int i = 0; i < tests; i++)
         {
           int pos = rnd.Next(len);
@@ -140,7 +140,7 @@ namespace AltaxoTest.Calc.Fourier
 
       public void TestReOne_RandomValues(int len)
       {
-        System.Random rnd = new Random();
+        var rnd = new Random();
         double[] arr = new double[len];
         for (int i = 0; i < arr.Length; i++)
           arr[i] = rnd.NextDouble();

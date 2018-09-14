@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -38,11 +38,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PseudoInverse2x2Test()
     {
-      DoubleMatrix ma = new DoubleMatrix(2, 2);
-      ma[0, 0] = 2;
-      ma[0, 1] = 1;
-      ma[1, 0] = 2;
-      ma[1, 1] = 1;
+      var ma = new DoubleMatrix(2, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 1,
+        [1, 0] = 2,
+        [1, 1] = 1
+      };
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -55,13 +57,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PseudoInverse3x2Test()
     {
-      DoubleMatrix ma = new DoubleMatrix(3, 2);
-      ma[0, 0] = 2;
-      ma[0, 1] = 1;
-      ma[1, 0] = 2;
-      ma[1, 1] = 1;
-      ma[2, 0] = 1;
-      ma[2, 1] = 2;
+      var ma = new DoubleMatrix(3, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 1,
+        [1, 0] = 2,
+        [1, 1] = 1,
+        [2, 0] = 1,
+        [2, 1] = 2
+      };
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -79,13 +83,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PseudoInverse2x3Test()
     {
-      DoubleMatrix ma = new DoubleMatrix(2, 3);
-      ma[0, 0] = 1;
-      ma[0, 1] = 2;
-      ma[0, 2] = 4;
-      ma[1, 0] = 1;
-      ma[1, 1] = 2;
-      ma[1, 2] = 4;
+      var ma = new DoubleMatrix(2, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 4,
+        [1, 0] = 1,
+        [1, 1] = 2,
+        [1, 2] = 4
+      };
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -103,16 +109,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PseudoInverse3x3Rank3Test()
     {
-      DoubleMatrix ma = new DoubleMatrix(3, 3);
-      ma[0, 0] = 1;
-      ma[0, 1] = 2;
-      ma[0, 2] = 4;
-      ma[1, 0] = 1;
-      ma[1, 1] = 4;
-      ma[1, 2] = 2;
-      ma[2, 0] = 4;
-      ma[2, 1] = 1;
-      ma[2, 2] = 2;
+      var ma = new DoubleMatrix(3, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 4,
+        [1, 0] = 1,
+        [1, 1] = 4,
+        [1, 2] = 2,
+        [2, 0] = 4,
+        [2, 1] = 1,
+        [2, 2] = 2
+      };
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -133,16 +141,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PseudoInverse3x3RankNearly2Test()
     {
-      DoubleMatrix ma = new DoubleMatrix(3, 3);
-      ma[0, 0] = 1 + RMath.Pow(2, -40);
-      ma[0, 1] = 2;
-      ma[0, 2] = 4;
-      ma[1, 0] = 1;
-      ma[1, 1] = 4;
-      ma[1, 2] = 2;
-      ma[2, 0] = 1;
-      ma[2, 1] = 2;
-      ma[2, 2] = 4;
+      var ma = new DoubleMatrix(3, 3)
+      {
+        [0, 0] = 1 + RMath.Pow(2, -40),
+        [0, 1] = 2,
+        [0, 2] = 4,
+        [1, 0] = 1,
+        [1, 1] = 4,
+        [1, 2] = 2,
+        [2, 0] = 1,
+        [2, 1] = 2,
+        [2, 2] = 4
+      };
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -163,16 +173,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PseudoInverse3x3Rank2Test()
     {
-      DoubleMatrix ma = new DoubleMatrix(3, 3);
-      ma[0, 0] = 1;
-      ma[0, 1] = 2;
-      ma[0, 2] = 4;
-      ma[1, 0] = 1;
-      ma[1, 1] = 4;
-      ma[1, 2] = 2;
-      ma[2, 0] = 1;
-      ma[2, 1] = 2;
-      ma[2, 2] = 4;
+      var ma = new DoubleMatrix(3, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 4,
+        [1, 0] = 1,
+        [1, 1] = 4,
+        [1, 2] = 2,
+        [2, 0] = 1,
+        [2, 1] = 2,
+        [2, 2] = 4
+      };
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -193,16 +205,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void PseudoInverse3x3Rank1Test()
     {
-      DoubleMatrix ma = new DoubleMatrix(3, 3);
-      ma[0, 0] = 1;
-      ma[0, 1] = 2;
-      ma[0, 2] = 4;
-      ma[1, 0] = 1;
-      ma[1, 1] = 2;
-      ma[1, 2] = 4;
-      ma[2, 0] = 1;
-      ma[2, 1] = 2;
-      ma[2, 2] = 4;
+      var ma = new DoubleMatrix(3, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 4,
+        [1, 0] = 1,
+        [1, 1] = 2,
+        [1, 2] = 4,
+        [2, 0] = 1,
+        [2, 1] = 2,
+        [2, 2] = 4
+      };
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 

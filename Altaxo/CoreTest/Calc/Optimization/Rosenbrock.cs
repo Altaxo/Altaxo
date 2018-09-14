@@ -28,9 +28,9 @@
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
 */
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
-using System;
 
 namespace AltaxoTest.Calc.Optimization
 {
@@ -51,9 +51,11 @@ namespace AltaxoTest.Calc.Optimization
 
     public override DoubleVector Gradient(DoubleVector x)
     {
-      DoubleVector retvalue = new DoubleVector(x.Length, 0.0);
-      retvalue[0] = -400 * x[0] * (x[1] - System.Math.Pow(x[0], 2)) - 2 * (1 - x[0]);
-      retvalue[x.Length - 1] = 200 * (x[x.Length - 1] - System.Math.Pow(x[x.Length - 2], 2));
+      var retvalue = new DoubleVector(x.Length, 0.0)
+      {
+        [0] = -400 * x[0] * (x[1] - System.Math.Pow(x[0], 2)) - 2 * (1 - x[0]),
+        [x.Length - 1] = 200 * (x[x.Length - 1] - System.Math.Pow(x[x.Length - 2], 2))
+      };
       if (x.Length > 2)
       {
         for (int i = 1; i < x.Length - 1; i++)
@@ -64,7 +66,7 @@ namespace AltaxoTest.Calc.Optimization
 
     public override DoubleMatrix Hessian(DoubleVector x)
     {
-      DoubleMatrix ret = new DoubleMatrix(x.Length, x.Length, 0.0);
+      var ret = new DoubleMatrix(x.Length, x.Length, 0.0);
 
       for (int i = 0; i < x.Length - 1; i++)
       {

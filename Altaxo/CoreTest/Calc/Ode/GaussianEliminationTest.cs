@@ -6,12 +6,12 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 
 namespace Altaxo.Calc.Ode
 {
@@ -49,17 +49,17 @@ namespace Altaxo.Calc.Ode
     public void SolverCoreTestMatrixNd()
     {
       const int N = 50;
-      Matrix a = new Matrix(N, N);
+      var a = new Matrix(N, N);
       // Make matrix diagonal
       for (int i = 0; i < N; i++)
         a[i, i] = 1;
       // Apply random rotations around each pair of axes. This will keep det(A) ~ 1
-      Random rand = new Random();
+      var rand = new Random();
       for (int i = 0; i < N; i++)
         for (int j = i + 1; j < N; j++)
         {
           double angle = rand.NextDouble() * 2 * Math.PI;
-          Matrix r = new Matrix(N, N);
+          var r = new Matrix(N, N);
           for (int k = 0; k < N; k++)
             r[k, k] = 1;
           r[i, i] = r[j, j] = Math.Cos(angle);
@@ -69,12 +69,12 @@ namespace Altaxo.Calc.Ode
         }
 
       // Generate random vector
-      Vector b = Vector.Zeros(N);
+      var b = Vector.Zeros(N);
       for (int i = 0; i < N; i++)
         b[i] = rand.NextDouble();
 
       // Solve system
-      Stopwatch sw = new Stopwatch();
+      var sw = new Stopwatch();
       sw.Start();
       Vector x = Gauss.Solve(a, b);
       sw.Stop();
@@ -99,17 +99,17 @@ namespace Altaxo.Calc.Ode
     public void SolverCoreTestSparseMatrixNd()
     {
       const int N = 50;
-      SparseMatrix a = new SparseMatrix(N, N);
+      var a = new SparseMatrix(N, N);
       // Make matrix diagonal
       for (int i = 0; i < N; i++)
         a[i, i] = 1;
       // Apply random rotations around each pair of axes. This will keep det(A) ~ 1
-      Random rand = new Random();
+      var rand = new Random();
       for (int i = 0; i < N; i++)
         for (int j = i + 1; j < N; j++)
         {
           double angle = rand.NextDouble() * 2 * Math.PI;
-          SparseMatrix r = new SparseMatrix(N, N);
+          var r = new SparseMatrix(N, N);
           for (int k = 0; k < N; k++)
             r[k, k] = 1;
           r[i, i] = r[j, j] = Math.Cos(angle);
@@ -120,15 +120,15 @@ namespace Altaxo.Calc.Ode
 
       var ainit = a.Copy();
       // Generate random vector
-      Vector b = Vector.Zeros(N);
+      var b = Vector.Zeros(N);
       for (int i = 0; i < N; i++)
         b[i] = rand.NextDouble();
 
       var binit = b.Clone();
       // Solve system
-      Stopwatch sw = new Stopwatch();
+      var sw = new Stopwatch();
       sw.Start();
-      Vector x = new Vector(Gauss.Solve(a, b));
+      var x = new Vector(Gauss.Solve(a, b));
       sw.Stop();
       Trace.WriteLine("Gaussian elimination took: " + sw.ElapsedTicks);
       // Put solution into system

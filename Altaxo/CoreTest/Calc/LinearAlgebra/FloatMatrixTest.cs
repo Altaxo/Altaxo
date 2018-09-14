@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -37,7 +37,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorDimensions()
     {
-      FloatMatrix test = new FloatMatrix(2, 2);
+      var test = new FloatMatrix(2, 2);
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 2);
       Assert.AreEqual(test[0, 0], 0);
@@ -50,7 +50,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorInitialValues()
     {
-      FloatMatrix test = new FloatMatrix(2, 2, 1);
+      var test = new FloatMatrix(2, 2, 1);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -64,13 +64,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void CtorCopy()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      FloatMatrix b = new FloatMatrix(a);
+      var b = new FloatMatrix(a);
 
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
@@ -87,7 +89,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatMatrix b = new FloatMatrix(a);
+        var b = new FloatMatrix(a);
       });
     }
 
@@ -102,7 +104,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[1, 0] = 3;
       values[1, 1] = 4;
 
-      FloatMatrix test = new FloatMatrix(values);
+      var test = new FloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -125,7 +127,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[1, 1] = 4;
       values[1, 2] = 5;
 
-      FloatMatrix test = new FloatMatrix(values);
+      var test = new FloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 2);
       Assert.AreEqual(test.ColumnLength, 3);
@@ -150,7 +152,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       values[2, 0] = 6;
       values[2, 1] = 7;
 
-      FloatMatrix test = new FloatMatrix(values);
+      var test = new FloatMatrix(values);
 
       Assert.AreEqual(test.RowLength, 3);
       Assert.AreEqual(test.ColumnLength, 2);
@@ -169,7 +171,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         float[,] values = null;
-        FloatMatrix test = new FloatMatrix(values);
+        var test = new FloatMatrix(values);
       });
     }
 
@@ -180,7 +182,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         float[,] values = null;
-        FloatMatrix test = new FloatMatrix(values);
+        var test = new FloatMatrix(values);
       });
     }
 
@@ -188,13 +190,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ExplicitDoubleMatrix()
     {
-      DoubleMatrix a = new DoubleMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new DoubleMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      FloatMatrix b = (FloatMatrix)a;
+      var b = (FloatMatrix)a;
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0]);
@@ -208,7 +212,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ExplicitDoubleMatrixNull()
     {
       DoubleMatrix a = null;
-      FloatMatrix b = (FloatMatrix)a;
+      var b = (FloatMatrix)a;
       Assert.IsTrue(b == null);
     }
 
@@ -216,13 +220,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ExplicitToDoubleMatrix()
     {
-      DoubleMatrix a = new DoubleMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new DoubleMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      FloatMatrix b = FloatMatrix.ToFloatMatrix(a);
+      var b = FloatMatrix.ToFloatMatrix(a);
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0]);
@@ -236,7 +242,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ExplicitToDoubleMatrixNull()
     {
       DoubleMatrix a = null;
-      FloatMatrix b = FloatMatrix.ToFloatMatrix(a);
+      var b = FloatMatrix.ToFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -250,7 +256,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       a[1, 0] = 3;
       a[1, 1] = 4;
 
-      FloatMatrix b = (FloatMatrix)a;
+      var b = (FloatMatrix)a;
       Assert.AreEqual(2, b.RowLength);
       Assert.AreEqual(2, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0]);
@@ -264,7 +270,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ExplicitDoubleMultArrayNull()
     {
       double[,] a = null;
-      FloatMatrix b = (FloatMatrix)a;
+      var b = (FloatMatrix)a;
       Assert.IsTrue(b == null);
     }
 
@@ -278,7 +284,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       a[1, 0] = 3;
       a[1, 1] = 4;
 
-      FloatMatrix b = FloatMatrix.ToFloatMatrix(a);
+      var b = FloatMatrix.ToFloatMatrix(a);
       Assert.AreEqual(2, b.RowLength);
       Assert.AreEqual(2, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0]);
@@ -292,7 +298,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ExplicitToDoubleMultArrayNull()
     {
       double[,] a = null;
-      FloatMatrix b = FloatMatrix.ToFloatMatrix(a);
+      var b = FloatMatrix.ToFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -300,11 +306,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictFloatMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
       FloatMatrix b = a;
       Assert.AreEqual(a.RowLength, b.RowLength);
@@ -328,13 +336,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ImplictToFloatMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      FloatMatrix b = FloatMatrix.ToFloatMatrix(a);
+      var b = FloatMatrix.ToFloatMatrix(a);
       Assert.AreEqual(a.RowLength, b.RowLength);
       Assert.AreEqual(a.ColumnLength, b.ColumnLength);
       Assert.AreEqual(a[0, 0], b[0, 0]);
@@ -348,7 +358,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ImplictToFloatMatrixNull()
     {
       FloatMatrix a = null;
-      FloatMatrix b = FloatMatrix.ToFloatMatrix(a);
+      var b = FloatMatrix.ToFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -388,7 +398,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       a[1, 0] = 3;
       a[1, 1] = 4;
 
-      FloatMatrix b = FloatMatrix.ToFloatMatrix(a);
+      var b = FloatMatrix.ToFloatMatrix(a);
       Assert.AreEqual(a[0, 0], b[0, 0]);
       Assert.AreEqual(a[0, 1], b[0, 1]);
       Assert.AreEqual(a[1, 0], b[1, 0]);
@@ -400,7 +410,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ImplictToFloatMultArrayNull()
     {
       float[,] a = null;
-      FloatMatrix b = FloatMatrix.ToFloatMatrix(a);
+      var b = FloatMatrix.ToFloatMatrix(a);
       Assert.IsTrue(b == null);
     }
 
@@ -408,17 +418,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Equals()
     {
-      FloatMatrix a = new FloatMatrix(2, 2, 4);
-      FloatMatrix b = new FloatMatrix(2, 2, 4);
-      FloatMatrix c = new FloatMatrix(2, 2);
-      c[0, 0] = 4;
-      c[0, 1] = 4;
-      c[1, 0] = 4;
-      c[1, 1] = 4;
+      var a = new FloatMatrix(2, 2, 4);
+      var b = new FloatMatrix(2, 2, 4);
+      var c = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 4,
+        [0, 1] = 4,
+        [1, 0] = 4,
+        [1, 1] = 4
+      };
 
-      FloatMatrix d = new FloatMatrix(2, 2, 5);
+      var d = new FloatMatrix(2, 2, 5);
       FloatMatrix e = null;
-      DoubleMatrix f = new DoubleMatrix(2, 2, 4);
+      var f = new DoubleMatrix(2, 2, 4);
       Assert.IsTrue(a.Equals(b));
       Assert.IsTrue(b.Equals(a));
       Assert.IsTrue(a.Equals(c));
@@ -435,11 +447,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void TestHashCode()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
       int hash = a.GetHashCode();
       Assert.AreEqual(hash, 5);
@@ -449,11 +463,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void ToArray()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
       float[,] b = a.ToArray();
 
@@ -467,11 +483,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void TransposeSquare()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
       a.Transpose();
       Assert.AreEqual(a[0, 0], 1);
       Assert.AreEqual(a[0, 1], 3);
@@ -483,13 +501,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void TransposeWide()
     {
-      FloatMatrix a = new FloatMatrix(2, 3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
+      var a = new FloatMatrix(2, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6
+      };
       a.Transpose();
       Assert.AreEqual(a[0, 0], 1);
       Assert.AreEqual(a[0, 1], 4);
@@ -505,13 +525,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void TransposeLong()
     {
-      FloatMatrix a = new FloatMatrix(3, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      a[2, 0] = 5;
-      a[2, 1] = 6;
+      var a = new FloatMatrix(3, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4,
+        [2, 0] = 5,
+        [2, 1] = 6
+      };
       a.Transpose();
       Assert.AreEqual(a[0, 0], 1);
       Assert.AreEqual(a[0, 1], 3);
@@ -527,11 +549,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetTransposeSquare()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
       FloatMatrix b = a.GetTranspose();
       Assert.AreEqual(b[0, 0], 1);
       Assert.AreEqual(b[0, 1], 3);
@@ -543,13 +567,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetTransposeWide()
     {
-      FloatMatrix a = new FloatMatrix(2, 3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
+      var a = new FloatMatrix(2, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6
+      };
       FloatMatrix b = a.GetTranspose();
       Assert.AreEqual(b[0, 0], 1);
       Assert.AreEqual(b[0, 1], 4);
@@ -565,13 +591,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetTransposeLong()
     {
-      FloatMatrix a = new FloatMatrix(3, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      a[2, 0] = 5;
-      a[2, 1] = 6;
+      var a = new FloatMatrix(3, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4,
+        [2, 0] = 5,
+        [2, 1] = 6
+      };
       FloatMatrix b = a.GetTranspose();
       Assert.AreEqual(b[0, 0], 1);
       Assert.AreEqual(b[0, 1], 3);
@@ -587,11 +615,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Invert()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[1, 0] = 3;
-      a[1, 1] = 7;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [1, 0] = 3,
+        [1, 1] = 7
+      };
       a.Invert();
       Assert.AreEqual(a[0, 0], 3.500, TOLERENCE);
       Assert.AreEqual(a[0, 1], -2.00, TOLERENCE);
@@ -605,7 +635,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         a.Invert();
       });
     }
@@ -616,13 +646,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        FloatMatrix a = new FloatMatrix(3, 2);
-        a[0, 0] = 1;
-        a[0, 1] = 2;
-        a[1, 0] = 3;
-        a[1, 1] = 4;
-        a[2, 0] = 5;
-        a[2, 1] = 6;
+        var a = new FloatMatrix(3, 2)
+        {
+          [0, 0] = 1,
+          [0, 1] = 2,
+          [1, 0] = 3,
+          [1, 1] = 4,
+          [2, 0] = 5,
+          [2, 1] = 6
+        };
         a.Invert();
       });
     }
@@ -633,7 +665,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         FloatMatrix b = a.GetInverse();
       });
     }
@@ -644,13 +676,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        FloatMatrix a = new FloatMatrix(3, 2);
-        a[0, 0] = 1;
-        a[0, 1] = 2;
-        a[1, 0] = 3;
-        a[1, 1] = 4;
-        a[2, 0] = 5;
-        a[2, 1] = 6;
+        var a = new FloatMatrix(3, 2)
+        {
+          [0, 0] = 1,
+          [0, 1] = 2,
+          [1, 0] = 3,
+          [1, 1] = 4,
+          [2, 0] = 5,
+          [2, 1] = 6
+        };
         FloatMatrix b = a.GetInverse();
       });
     }
@@ -659,11 +693,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetInverse()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[1, 0] = 3;
-      a[1, 1] = 7;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [1, 0] = 3,
+        [1, 1] = 7
+      };
       FloatMatrix b = a.GetInverse();
       Assert.AreEqual(b[0, 0], 3.500, TOLERENCE);
       Assert.AreEqual(b[0, 1], -2.000, TOLERENCE);
@@ -675,11 +711,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetDeterminant()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[1, 0] = 3;
-      a[1, 1] = 7;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [1, 0] = 3,
+        [1, 1] = 7
+      };
       float b = a.GetDeterminant();
       Assert.AreEqual(b, 2.000, TOLERENCE);
     }
@@ -690,13 +728,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        FloatMatrix a = new FloatMatrix(3, 2);
-        a[0, 0] = 1;
-        a[0, 1] = 2;
-        a[1, 0] = 3;
-        a[1, 1] = 4;
-        a[2, 0] = 5;
-        a[2, 1] = 6;
+        var a = new FloatMatrix(3, 2)
+        {
+          [0, 0] = 1,
+          [0, 1] = 2,
+          [1, 0] = 3,
+          [1, 1] = 4,
+          [2, 0] = 5,
+          [2, 1] = 6
+        };
         float b = a.GetDeterminant();
       });
     }
@@ -705,11 +745,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetRow()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
       FloatVector b = a.GetRow(0);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[0, 1]);
@@ -721,7 +763,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         FloatVector b = a.GetRow(3);
       });
     }
@@ -730,11 +772,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetColumn()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
       FloatVector b = a.GetColumn(0);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[1, 0]);
@@ -746,7 +790,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         FloatVector b = a.GetColumn(3);
       });
     }
@@ -755,11 +799,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetDiagonal()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
       FloatVector b = a.GetDiagonal();
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[1, 1]);
@@ -769,10 +815,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetRow()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      FloatVector b = new FloatVector(2);
-      b[0] = 1;
-      b[1] = 2;
+      var a = new FloatMatrix(2, 2);
+      var b = new FloatVector(2)
+      {
+        [0] = 1,
+        [1] = 2
+      };
       a.SetRow(0, b);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[0, 1]);
@@ -784,8 +832,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
-        FloatVector b = new FloatVector(2);
+        var a = new FloatMatrix(2, 2);
+        var b = new FloatVector(2);
         a.SetRow(2, b);
       });
     }
@@ -796,8 +844,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
-        FloatVector b = new FloatVector(3);
+        var a = new FloatMatrix(2, 2);
+        var b = new FloatVector(3);
         a.SetRow(1, b);
       });
     }
@@ -806,7 +854,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetRowArray()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
+      var a = new FloatMatrix(2, 2);
       float[] b = { 1, 2 };
       a.SetRow(0, b);
       Assert.AreEqual(b[0], a[0, 0]);
@@ -819,7 +867,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         float[] b = { 1, 2 };
         a.SetRow(2, b);
       });
@@ -831,7 +879,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         float[] b = { 1, 2, 3 };
         a.SetRow(1, b);
       });
@@ -841,10 +889,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetColumn()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      FloatVector b = new FloatVector(2);
-      b[0] = 1;
-      b[1] = 2;
+      var a = new FloatMatrix(2, 2);
+      var b = new FloatVector(2)
+      {
+        [0] = 1,
+        [1] = 2
+      };
       a.SetColumn(0, b);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[1, 0]);
@@ -856,8 +906,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
-        FloatVector b = new FloatVector(2);
+        var a = new FloatMatrix(2, 2);
+        var b = new FloatVector(2);
         a.SetColumn(2, b);
       });
     }
@@ -868,8 +918,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
-        FloatVector b = new FloatVector(3);
+        var a = new FloatMatrix(2, 2);
+        var b = new FloatVector(3);
         a.SetColumn(1, b);
       });
     }
@@ -878,7 +928,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetColumnArray()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
+      var a = new FloatMatrix(2, 2);
       float[] b = { 1, 2 };
       a.SetColumn(0, b);
       Assert.AreEqual(b[0], a[0, 0]);
@@ -891,7 +941,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         float[] b = { 1, 2 };
         a.SetColumn(2, b);
       });
@@ -903,7 +953,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         float[] b = { 1, 2, 3 };
         a.SetColumn(1, b);
       });
@@ -913,10 +963,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SetDiagonal()
     {
-      FloatMatrix a = new FloatMatrix(2, 2);
-      FloatVector b = new FloatVector(2);
-      b[0] = 1;
-      b[1] = 2;
+      var a = new FloatMatrix(2, 2);
+      var b = new FloatVector(2)
+      {
+        [0] = 1,
+        [1] = 2
+      };
       a.SetDiagonal(b);
       Assert.AreEqual(b[0], a[0, 0]);
       Assert.AreEqual(b[1], a[1, 1]);
@@ -926,23 +978,25 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetSubMatrix()
     {
-      FloatMatrix a = new FloatMatrix(4);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[0, 3] = 4;
-      a[1, 0] = 5;
-      a[1, 1] = 6;
-      a[1, 2] = 7;
-      a[1, 3] = 8;
-      a[2, 0] = 9;
-      a[2, 1] = 10;
-      a[2, 2] = 11;
-      a[2, 3] = 12;
-      a[3, 0] = 13;
-      a[3, 1] = 14;
-      a[3, 2] = 15;
-      a[3, 3] = 16;
+      var a = new FloatMatrix(4)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [0, 3] = 4,
+        [1, 0] = 5,
+        [1, 1] = 6,
+        [1, 2] = 7,
+        [1, 3] = 8,
+        [2, 0] = 9,
+        [2, 1] = 10,
+        [2, 2] = 11,
+        [2, 3] = 12,
+        [3, 0] = 13,
+        [3, 1] = 14,
+        [3, 2] = 15,
+        [3, 3] = 16
+      };
       FloatMatrix b = a.GetSubMatrix(2, 2);
       FloatMatrix c = a.GetSubMatrix(0, 1, 2, 2);
       Assert.AreEqual(b.RowLength, 2);
@@ -967,7 +1021,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(4);
+        var a = new FloatMatrix(4);
         FloatMatrix b = a.GetSubMatrix(-1, 2);
       });
     }
@@ -978,7 +1032,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(4);
+        var a = new FloatMatrix(4);
         FloatMatrix b = a.GetSubMatrix(2, 4);
       });
     }
@@ -989,7 +1043,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(4);
+        var a = new FloatMatrix(4);
         FloatMatrix b = a.GetSubMatrix(0, 0, 4, 2);
       });
     }
@@ -1000,7 +1054,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(4);
+        var a = new FloatMatrix(4);
         FloatMatrix b = a.GetSubMatrix(0, 0, 2, 4);
       });
     }
@@ -1011,7 +1065,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
       {
-        FloatMatrix a = new FloatMatrix(4);
+        var a = new FloatMatrix(4);
         FloatMatrix b = a.GetSubMatrix(0, 3, 2, 2);
       });
     }
@@ -1020,16 +1074,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetUpperTriangleSquare()
     {
-      FloatMatrix a = new FloatMatrix(3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
-      a[2, 0] = 7;
-      a[2, 1] = 8;
-      a[2, 2] = 9;
+      var a = new FloatMatrix(3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6,
+        [2, 0] = 7,
+        [2, 1] = 8,
+        [2, 2] = 9
+      };
       FloatMatrix b = a.GetUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1049,13 +1105,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetUpperTriangleLong()
     {
-      FloatMatrix a = new FloatMatrix(3, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[2, 0] = 7;
-      a[2, 1] = 8;
+      var a = new FloatMatrix(3, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [2, 0] = 7,
+        [2, 1] = 8
+      };
       FloatMatrix b = a.GetUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1072,13 +1130,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetUpperTriangleWide()
     {
-      FloatMatrix a = new FloatMatrix(2, 3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
+      var a = new FloatMatrix(2, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6
+      };
       FloatMatrix b = a.GetUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1095,16 +1155,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyUpperTriangleSquare()
     {
-      FloatMatrix a = new FloatMatrix(3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
-      a[2, 0] = 7;
-      a[2, 1] = 8;
-      a[2, 2] = 9;
+      var a = new FloatMatrix(3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6,
+        [2, 0] = 7,
+        [2, 1] = 8,
+        [2, 2] = 9
+      };
       FloatMatrix b = a.GetStrictlyUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1124,13 +1186,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyUpperTriangleLong()
     {
-      FloatMatrix a = new FloatMatrix(3, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[2, 0] = 7;
-      a[2, 1] = 8;
+      var a = new FloatMatrix(3, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [2, 0] = 7,
+        [2, 1] = 8
+      };
       FloatMatrix b = a.GetStrictlyUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1147,13 +1211,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyUpperTriangleWide()
     {
-      FloatMatrix a = new FloatMatrix(2, 3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
+      var a = new FloatMatrix(2, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6
+      };
       FloatMatrix b = a.GetStrictlyUpperTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1170,16 +1236,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetLowerTriangleSquare()
     {
-      FloatMatrix a = new FloatMatrix(3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
-      a[2, 0] = 7;
-      a[2, 1] = 8;
-      a[2, 2] = 9;
+      var a = new FloatMatrix(3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6,
+        [2, 0] = 7,
+        [2, 1] = 8,
+        [2, 2] = 9
+      };
       FloatMatrix b = a.GetLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1199,13 +1267,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetLowerTriangleLong()
     {
-      FloatMatrix a = new FloatMatrix(3, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[2, 0] = 7;
-      a[2, 1] = 8;
+      var a = new FloatMatrix(3, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [2, 0] = 7,
+        [2, 1] = 8
+      };
       FloatMatrix b = a.GetLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1222,13 +1292,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetLowerTriangleWide()
     {
-      FloatMatrix a = new FloatMatrix(2, 3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
+      var a = new FloatMatrix(2, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6
+      };
       FloatMatrix b = a.GetLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1245,16 +1317,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyLowerTriangleSquare()
     {
-      FloatMatrix a = new FloatMatrix(3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
-      a[2, 0] = 7;
-      a[2, 1] = 8;
-      a[2, 2] = 9;
+      var a = new FloatMatrix(3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6,
+        [2, 0] = 7,
+        [2, 1] = 8,
+        [2, 2] = 9
+      };
       FloatMatrix b = a.GetStrictlyLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1274,13 +1348,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyLowerTriangleLong()
     {
-      FloatMatrix a = new FloatMatrix(3, 2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[2, 0] = 7;
-      a[2, 1] = 8;
+      var a = new FloatMatrix(3, 2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [2, 0] = 7,
+        [2, 1] = 8
+      };
       FloatMatrix b = a.GetStrictlyLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1297,13 +1373,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void GetStrictlyLowerTriangleWide()
     {
-      FloatMatrix a = new FloatMatrix(2, 3);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[0, 2] = 3;
-      a[1, 0] = 4;
-      a[1, 1] = 5;
-      a[1, 2] = 6;
+      var a = new FloatMatrix(2, 3)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [0, 2] = 3,
+        [1, 0] = 4,
+        [1, 1] = 5,
+        [1, 2] = 6
+      };
       FloatMatrix b = a.GetStrictlyLowerTriangle();
 
       Assert.AreEqual(b.RowLength, a.RowLength);
@@ -1320,13 +1398,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Negate()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
-      FloatMatrix b = FloatMatrix.Negate(a);
+      var b = FloatMatrix.Negate(a);
       Assert.AreEqual(b[0, 0], -1);
       Assert.AreEqual(b[0, 1], -2);
       Assert.AreEqual(b[1, 0], -3);
@@ -1340,7 +1420,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatMatrix b = FloatMatrix.Negate(a);
+        var b = FloatMatrix.Negate(a);
       });
     }
 
@@ -1348,11 +1428,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMinus()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
 
       FloatMatrix b = -a;
       Assert.AreEqual(b[0, 0], -1);
@@ -1376,13 +1458,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticSubtract()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      FloatMatrix b = new FloatMatrix(2);
+      var a = new FloatMatrix(2);
+      var b = new FloatMatrix(2);
       a[0, 0] = b[0, 0] = 1;
       a[0, 1] = b[0, 1] = 2;
       a[1, 0] = b[1, 0] = 3;
       a[1, 1] = b[1, 1] = 4;
-      FloatMatrix c = FloatMatrix.Subtract(a, b);
+      var c = FloatMatrix.Subtract(a, b);
       Assert.AreEqual(c[0, 0], 0);
       Assert.AreEqual(c[0, 1], 0);
       Assert.AreEqual(c[1, 0], 0);
@@ -1393,8 +1475,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorSubtract()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      FloatMatrix b = new FloatMatrix(2);
+      var a = new FloatMatrix(2);
+      var b = new FloatMatrix(2);
       a[0, 0] = b[0, 0] = 1;
       a[0, 1] = b[0, 1] = 2;
       a[1, 0] = b[1, 0] = 3;
@@ -1410,8 +1492,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberSubtract()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      FloatMatrix b = new FloatMatrix(2);
+      var a = new FloatMatrix(2);
+      var b = new FloatMatrix(2);
       a[0, 0] = b[0, 0] = 1;
       a[0, 1] = b[0, 1] = 2;
       a[1, 0] = b[1, 0] = 3;
@@ -1429,9 +1511,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
+        var a = new FloatMatrix(2);
         FloatMatrix b = null;
-        FloatMatrix c = FloatMatrix.Subtract(a, b);
+        var c = FloatMatrix.Subtract(a, b);
       });
     }
 
@@ -1441,7 +1523,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
+        var a = new FloatMatrix(2);
         FloatMatrix b = null;
         FloatMatrix c = a - b;
       });
@@ -1453,7 +1535,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
+        var a = new FloatMatrix(2);
         FloatMatrix b = null;
         a.Subtract(b);
       });
@@ -1465,9 +1547,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatMatrix b = new FloatMatrix(3);
-        FloatMatrix c = FloatMatrix.Subtract(a, b);
+        var a = new FloatMatrix(2);
+        var b = new FloatMatrix(3);
+        var c = FloatMatrix.Subtract(a, b);
       });
     }
 
@@ -1477,8 +1559,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatMatrix b = new FloatMatrix(3);
+        var a = new FloatMatrix(2);
+        var b = new FloatMatrix(3);
         FloatMatrix c = a - b;
       });
     }
@@ -1489,8 +1571,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatMatrix b = new FloatMatrix(3);
+        var a = new FloatMatrix(2);
+        var b = new FloatMatrix(3);
         a.Subtract(b);
       });
     }
@@ -1499,13 +1581,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticAdd()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      FloatMatrix b = new FloatMatrix(2);
+      var a = new FloatMatrix(2);
+      var b = new FloatMatrix(2);
       a[0, 0] = b[0, 0] = 1;
       a[0, 1] = b[0, 1] = 2;
       a[1, 0] = b[1, 0] = 3;
       a[1, 1] = b[1, 1] = 4;
-      FloatMatrix c = FloatMatrix.Add(a, b);
+      var c = FloatMatrix.Add(a, b);
       Assert.AreEqual(c[0, 0], 2);
       Assert.AreEqual(c[0, 1], 4);
       Assert.AreEqual(c[1, 0], 6);
@@ -1516,8 +1598,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorAdd()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      FloatMatrix b = new FloatMatrix(2);
+      var a = new FloatMatrix(2);
+      var b = new FloatMatrix(2);
       a[0, 0] = b[0, 0] = 1;
       a[0, 1] = b[0, 1] = 2;
       a[1, 0] = b[1, 0] = 3;
@@ -1533,8 +1615,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberAdd()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      FloatMatrix b = new FloatMatrix(2);
+      var a = new FloatMatrix(2);
+      var b = new FloatMatrix(2);
       a[0, 0] = b[0, 0] = 1;
       a[0, 1] = b[0, 1] = 2;
       a[1, 0] = b[1, 0] = 3;
@@ -1552,9 +1634,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
+        var a = new FloatMatrix(2);
         FloatMatrix b = null;
-        FloatMatrix c = FloatMatrix.Add(a, b);
+        var c = FloatMatrix.Add(a, b);
       });
     }
 
@@ -1564,7 +1646,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
+        var a = new FloatMatrix(2);
         FloatMatrix b = null;
         FloatMatrix c = a + b;
       });
@@ -1576,7 +1658,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
+        var a = new FloatMatrix(2);
         FloatMatrix b = null;
         a.Add(b);
       });
@@ -1588,9 +1670,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatMatrix b = new FloatMatrix(3);
-        FloatMatrix c = FloatMatrix.Add(a, b);
+        var a = new FloatMatrix(2);
+        var b = new FloatMatrix(3);
+        var c = FloatMatrix.Add(a, b);
       });
     }
 
@@ -1600,8 +1682,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatMatrix b = new FloatMatrix(3);
+        var a = new FloatMatrix(2);
+        var b = new FloatMatrix(3);
         FloatMatrix c = a + b;
       });
     }
@@ -1612,8 +1694,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatMatrix b = new FloatMatrix(3);
+        var a = new FloatMatrix(2);
+        var b = new FloatMatrix(3);
         a.Add(b);
       });
     }
@@ -1622,12 +1704,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticDivide()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[1, 0] = 6;
-      a[1, 1] = 8;
-      FloatMatrix b = FloatMatrix.Divide(a, 2);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [1, 0] = 6,
+        [1, 1] = 8
+      };
+      var b = FloatMatrix.Divide(a, 2);
       Assert.AreEqual(b[0, 0], 1);
       Assert.AreEqual(b[0, 1], 2);
       Assert.AreEqual(b[1, 0], 3);
@@ -1638,11 +1722,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorDivide()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[1, 0] = 6;
-      a[1, 1] = 8;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [1, 0] = 6,
+        [1, 1] = 8
+      };
       FloatMatrix b = a / 2;
       Assert.AreEqual(b[0, 0], 1);
       Assert.AreEqual(b[0, 1], 2);
@@ -1654,11 +1740,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberDivide()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[1, 0] = 6;
-      a[1, 1] = 8;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [1, 0] = 6,
+        [1, 1] = 8
+      };
       a.Divide(2);
       Assert.AreEqual(a[0, 0], 1);
       Assert.AreEqual(a[0, 1], 2);
@@ -1673,7 +1761,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatMatrix b = FloatMatrix.Divide(a, 2);
+        var b = FloatMatrix.Divide(a, 2);
       });
     }
 
@@ -1692,12 +1780,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Copy()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatMatrix b = new FloatMatrix(2);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = new FloatMatrix(2);
       b.Copy(a);
       Assert.AreEqual(a[0, 0], a[0, 0]);
       Assert.AreEqual(a[0, 1], b[0, 1]);
@@ -1709,11 +1799,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyFloatMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
       FloatMatrix b = 2.0f * a;
       Assert.AreEqual(b[0, 0], 2);
       Assert.AreEqual(b[0, 1], 4);
@@ -1736,11 +1828,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyMatrixFloat()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
       FloatMatrix b = a * 2.0f;
       Assert.AreEqual(b[0, 0], 2);
       Assert.AreEqual(b[0, 1], 4);
@@ -1763,12 +1857,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyFloatMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatMatrix b = FloatMatrix.Multiply(2.0f, a);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = FloatMatrix.Multiply(2.0f, a);
       Assert.AreEqual(b[0, 0], 2);
       Assert.AreEqual(b[0, 1], 4);
       Assert.AreEqual(b[1, 0], 6);
@@ -1782,7 +1878,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatMatrix b = FloatMatrix.Multiply(2.0f, a);
+        var b = FloatMatrix.Multiply(2.0f, a);
       });
     }
 
@@ -1790,12 +1886,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyMatrixFloat()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatMatrix b = FloatMatrix.Multiply(a, 2.0f);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = FloatMatrix.Multiply(a, 2.0f);
 
       Assert.AreEqual(b[0, 0], 2);
       Assert.AreEqual(b[0, 1], 4);
@@ -1810,7 +1908,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatMatrix b = FloatMatrix.Multiply(a, 2.0f);
+        var b = FloatMatrix.Multiply(a, 2.0f);
       });
     }
 
@@ -1818,11 +1916,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyFloat()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
       a.Multiply(2.0f);
       Assert.AreEqual(a[0, 0], 2);
       Assert.AreEqual(a[0, 1], 4);
@@ -1834,12 +1934,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyMatrixVector()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatVector b = new FloatVector(2, 2.0f);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = new FloatVector(2, 2.0f);
       FloatVector c = a * b;
       Assert.AreEqual(c[0], 6);
       Assert.AreEqual(c[1], 14);
@@ -1851,8 +1953,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatVector b = new FloatVector(3, 2.0f);
+        var a = new FloatMatrix(2);
+        var b = new FloatVector(3, 2.0f);
         FloatVector c = a * b;
       });
     }
@@ -1864,7 +1966,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatVector b = new FloatVector(2, 2.0f);
+        var b = new FloatVector(2, 2.0f);
         FloatVector c = a * b;
       });
     }
@@ -1875,7 +1977,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
+        var a = new FloatMatrix(2);
         FloatVector b = null;
         FloatVector c = a * b;
       });
@@ -1885,12 +1987,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyMatrixVector()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatVector b = new FloatVector(2, 2.0f);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = new FloatVector(2, 2.0f);
       FloatVector c = FloatMatrix.Multiply(a, b);
       Assert.AreEqual(c[0], 6);
       Assert.AreEqual(c[1], 14);
@@ -1902,8 +2006,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatVector b = new FloatVector(3, 2.0f);
+        var a = new FloatMatrix(2);
+        var b = new FloatVector(3, 2.0f);
         FloatVector c = a * b;
       });
     }
@@ -1915,7 +2019,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatVector b = new FloatVector(2, 2.0f);
+        var b = new FloatVector(2, 2.0f);
         FloatVector c = FloatMatrix.Multiply(a, b);
       });
     }
@@ -1926,7 +2030,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
+        var a = new FloatMatrix(2);
         FloatVector b = null;
         FloatVector c = FloatMatrix.Multiply(a, b);
       });
@@ -1936,12 +2040,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyVector()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatVector b = new FloatVector(2, 2.0f);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = new FloatVector(2, 2.0f);
       a.Multiply(b);
       Assert.AreEqual(a[0, 0], 6);
       Assert.AreEqual(a[1, 0], 14);
@@ -1955,8 +2061,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatVector b = new FloatVector(3, 2.0f);
+        var a = new FloatMatrix(2);
+        var b = new FloatVector(3, 2.0f);
         a.Multiply(b);
       });
     }
@@ -1967,7 +2073,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
+        var a = new FloatMatrix(2);
         FloatVector b = null;
         a.Multiply(b);
       });
@@ -1977,12 +2083,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyMatrixMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatMatrix b = new FloatMatrix(2, 2.0f);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = new FloatMatrix(2, 2.0f);
       FloatMatrix c = a * b;
       Assert.AreEqual(c[0, 0], 6);
       Assert.AreEqual(c[0, 1], 6);
@@ -1996,8 +2104,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatMatrix b = new FloatMatrix(3, 2, 2.0f);
+        var a = new FloatMatrix(2);
+        var b = new FloatMatrix(3, 2, 2.0f);
         FloatMatrix c = a * b;
       });
     }
@@ -2006,8 +2114,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyLongMatrixWideMatrix()
     {
-      FloatMatrix a = new FloatMatrix(3, 2, 1);
-      FloatMatrix b = new FloatMatrix(2, 3, 2);
+      var a = new FloatMatrix(3, 2, 1);
+      var b = new FloatMatrix(2, 3, 2);
       FloatMatrix c = a * b;
       Assert.AreEqual(c[0, 0], 4);
       Assert.AreEqual(c[0, 1], 4);
@@ -2024,8 +2132,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void OperatorMultiplyWideMatrixLongMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2, 3, 1);
-      FloatMatrix b = new FloatMatrix(3, 2, 2);
+      var a = new FloatMatrix(2, 3, 1);
+      var b = new FloatMatrix(3, 2, 2);
       FloatMatrix c = a * b;
       Assert.AreEqual(c[0, 0], 6);
       Assert.AreEqual(c[0, 1], 6);
@@ -2040,7 +2148,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatMatrix b = new FloatMatrix(2, 2);
+        var b = new FloatMatrix(2, 2);
         FloatMatrix c = a * b;
       });
     }
@@ -2051,7 +2159,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         FloatMatrix b = null;
         FloatMatrix c = a * b;
       });
@@ -2061,13 +2169,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyMatrixMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatMatrix b = new FloatMatrix(2, 2, 2.0f);
-      FloatMatrix c = FloatMatrix.Multiply(a, b);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = new FloatMatrix(2, 2, 2.0f);
+      var c = FloatMatrix.Multiply(a, b);
       Assert.AreEqual(c[0, 0], 6);
       Assert.AreEqual(c[0, 1], 6);
       Assert.AreEqual(c[1, 0], 14);
@@ -2080,9 +2190,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatMatrix b = new FloatMatrix(3, 2, 2.0f);
-        FloatMatrix c = FloatMatrix.Multiply(a, b);
+        var a = new FloatMatrix(2);
+        var b = new FloatMatrix(3, 2, 2.0f);
+        var c = FloatMatrix.Multiply(a, b);
       });
     }
 
@@ -2090,9 +2200,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyLongMatrixWideMatrix()
     {
-      FloatMatrix a = new FloatMatrix(3, 2, 1);
-      FloatMatrix b = new FloatMatrix(2, 3, 2);
-      FloatMatrix c = FloatMatrix.Multiply(a, b);
+      var a = new FloatMatrix(3, 2, 1);
+      var b = new FloatMatrix(2, 3, 2);
+      var c = FloatMatrix.Multiply(a, b);
       Assert.AreEqual(c[0, 0], 4);
       Assert.AreEqual(c[0, 1], 4);
       Assert.AreEqual(c[0, 1], 4);
@@ -2108,9 +2218,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void StaticMultiplyWideMatrixLongMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2, 3, 1);
-      FloatMatrix b = new FloatMatrix(3, 2, 2);
-      FloatMatrix c = FloatMatrix.Multiply(a, b);
+      var a = new FloatMatrix(2, 3, 1);
+      var b = new FloatMatrix(3, 2, 2);
+      var c = FloatMatrix.Multiply(a, b);
       Assert.AreEqual(c[0, 0], 6);
       Assert.AreEqual(c[0, 1], 6);
       Assert.AreEqual(c[1, 0], 6);
@@ -2124,8 +2234,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatMatrix b = new FloatMatrix(2, 2);
-        FloatMatrix c = FloatMatrix.Multiply(a, b);
+        var b = new FloatMatrix(2, 2);
+        var c = FloatMatrix.Multiply(a, b);
       });
     }
 
@@ -2135,9 +2245,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         FloatMatrix b = null;
-        FloatMatrix c = FloatMatrix.Multiply(a, b);
+        var c = FloatMatrix.Multiply(a, b);
       });
     }
 
@@ -2145,12 +2255,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyMatrixMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatMatrix b = new FloatMatrix(2, 2, 2.0f);
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = new FloatMatrix(2, 2, 2.0f);
       a.Multiply(b);
       Assert.AreEqual(a[0, 0], 6);
       Assert.AreEqual(a[0, 1], 6);
@@ -2164,8 +2276,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2);
-        FloatMatrix b = new FloatMatrix(3, 2, 2.0f);
+        var a = new FloatMatrix(2);
+        var b = new FloatMatrix(3, 2, 2.0f);
         a.Multiply(b);
       });
     }
@@ -2174,8 +2286,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyLongMatrixWideMatrix()
     {
-      FloatMatrix a = new FloatMatrix(3, 2, 1);
-      FloatMatrix b = new FloatMatrix(2, 3, 2);
+      var a = new FloatMatrix(3, 2, 1);
+      var b = new FloatMatrix(2, 3, 2);
       a.Multiply(b);
       Assert.AreEqual(a[0, 0], 4);
       Assert.AreEqual(a[0, 1], 4);
@@ -2192,8 +2304,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void MemberMultiplyWideMatrixLongMatrix()
     {
-      FloatMatrix a = new FloatMatrix(2, 3, 1);
-      FloatMatrix b = new FloatMatrix(3, 2, 2);
+      var a = new FloatMatrix(2, 3, 1);
+      var b = new FloatMatrix(3, 2, 2);
       a.Multiply(b);
       Assert.AreEqual(a[0, 0], 6);
       Assert.AreEqual(a[0, 1], 6);
@@ -2207,7 +2319,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 2);
+        var a = new FloatMatrix(2, 2);
         FloatMatrix b = null;
         a.Multiply(b);
       });
@@ -2220,7 +2332,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
         FloatMatrix a = null;
-        FloatMatrix b = new FloatMatrix(2);
+        var b = new FloatMatrix(2);
         b.Copy(a);
       });
     }
@@ -2229,12 +2341,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Clone()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 1;
-      a[0, 1] = 2;
-      a[1, 0] = 3;
-      a[1, 1] = 4;
-      FloatMatrix b = (FloatMatrix)a.Clone();
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 1,
+        [0, 1] = 2,
+        [1, 0] = 3,
+        [1, 1] = 4
+      };
+      var b = a.Clone();
       Assert.AreEqual(a[0, 0], a[0, 0]);
       Assert.AreEqual(a[0, 1], b[0, 1]);
       Assert.AreEqual(a[1, 0], b[1, 0]);
@@ -2245,11 +2359,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Norms()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[1, 0] = 3;
-      a[1, 1] = 1;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [1, 0] = 3,
+        [1, 1] = 1
+      };
       Assert.AreEqual(a.GetL1Norm(), 5.000, TOLERENCE);
       Assert.AreEqual(a.GetL2Norm(), 5.117, TOLERENCE);
       Assert.AreEqual(a.GetInfinityNorm(), 6.000, TOLERENCE);
@@ -2260,13 +2376,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void WideNorms()
     {
-      FloatMatrix a = new FloatMatrix(2, 3);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[0, 2] = 5;
-      a[1, 0] = 3;
-      a[1, 1] = 1;
-      a[1, 2] = 6;
+      var a = new FloatMatrix(2, 3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [0, 2] = 5,
+        [1, 0] = 3,
+        [1, 1] = 1,
+        [1, 2] = 6
+      };
       Assert.AreEqual(a.GetL1Norm(), 11.000, TOLERENCE);
       Assert.AreEqual(a.GetL2Norm(), 9.247, TOLERENCE);
       Assert.AreEqual(a.GetInfinityNorm(), 11.000, TOLERENCE);
@@ -2277,13 +2395,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void LongNorms()
     {
-      FloatMatrix a = new FloatMatrix(3, 2);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[1, 0] = 3;
-      a[1, 1] = 1;
-      a[2, 0] = 5;
-      a[2, 1] = 6;
+      var a = new FloatMatrix(3, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [1, 0] = 3,
+        [1, 1] = 1,
+        [2, 0] = 5,
+        [2, 1] = 6
+      };
       Assert.AreEqual(a.GetL1Norm(), 11.000, TOLERENCE);
       Assert.AreEqual(a.GetL2Norm(), 9.337, TOLERENCE);
       Assert.AreEqual(a.GetInfinityNorm(), 11.000, TOLERENCE);
@@ -2294,11 +2414,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void Condition()
     {
-      FloatMatrix a = new FloatMatrix(2);
-      a[0, 0] = 2;
-      a[0, 1] = 4;
-      a[1, 0] = 3;
-      a[1, 1] = 1;
+      var a = new FloatMatrix(2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 4,
+        [1, 0] = 3,
+        [1, 1] = 1
+      };
       Assert.AreEqual(a.GetConditionNumber(), 2.618, TOLERENCE);
     }
 
@@ -2308,7 +2430,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        FloatMatrix a = new FloatMatrix(2, 3);
+        var a = new FloatMatrix(2, 3);
         a.GetConditionNumber();
       });
     }
@@ -2319,7 +2441,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        FloatMatrix a = new FloatMatrix(3, 2);
+        var a = new FloatMatrix(3, 2);
         a.GetConditionNumber();
       });
     }

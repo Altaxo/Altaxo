@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -36,16 +36,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
     static FloatLUDecompTest()
     {
-      FloatMatrix a = new FloatMatrix(3);
-      a[0, 0] = -1;
-      a[0, 1] = 5;
-      a[0, 2] = 6;
-      a[1, 0] = 3;
-      a[1, 1] = -6;
-      a[1, 2] = 1;
-      a[2, 0] = 6;
-      a[2, 1] = 8;
-      a[2, 2] = 9;
+      var a = new FloatMatrix(3)
+      {
+        [0, 0] = -1,
+        [0, 1] = 5,
+        [0, 2] = 6,
+        [1, 0] = 3,
+        [1, 1] = -6,
+        [1, 2] = 1,
+        [2, 0] = 6,
+        [2, 1] = 8,
+        [2, 2] = 9
+      };
       lu = new FloatLUDecomp(a);
     }
 
@@ -54,8 +56,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        FloatMatrix wm = new FloatMatrix(2, 3);
-        FloatLUDecomp wlu = new FloatLUDecomp(wm);
+        var wm = new FloatMatrix(2, 3);
+        var wlu = new FloatLUDecomp(wm);
       });
     }
 
@@ -64,8 +66,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(NotSquareMatrixException), () =>
       {
-        FloatMatrix lm = new FloatMatrix(3, 2);
-        FloatLUDecomp llu = new FloatLUDecomp(lm);
+        var lm = new FloatMatrix(3, 2);
+        var llu = new FloatLUDecomp(lm);
       });
     }
 
@@ -108,8 +110,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void IsSingularTest()
     {
       Assert.IsFalse(lu.IsSingular);
-      FloatMatrix b = new FloatMatrix(3);
-      FloatLUDecomp dlu = new FloatLUDecomp(b);
+      var b = new FloatMatrix(3);
+      var dlu = new FloatLUDecomp(b);
       Assert.IsTrue(dlu.IsSingular);
     }
 
@@ -133,8 +135,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(SingularMatrixException), () =>
       {
-        FloatMatrix a = new FloatMatrix(3, 3);
-        FloatLUDecomp dlu = new FloatLUDecomp(a);
+        var a = new FloatMatrix(3, 3);
+        var dlu = new FloatLUDecomp(a);
         dlu.GetInverse();
       });
     }
@@ -142,16 +144,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveMatrix()
     {
-      FloatMatrix b = new FloatMatrix(3);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
+      var b = new FloatMatrix(3)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25
+      };
       FloatMatrix x = lu.Solve(b);
       Assert.AreEqual(x[0, 0], 2.965, TOLERENCE);
       Assert.AreEqual(x[0, 1], 2.965, TOLERENCE);
@@ -163,13 +167,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 1], 1.227, TOLERENCE);
       Assert.AreEqual(x[2, 2], 1.227, TOLERENCE);
 
-      b = new FloatMatrix(3, 2);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
+      b = new FloatMatrix(3, 2)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25
+      };
       x = lu.Solve(b);
       Assert.AreEqual(x[0, 0], 2.965, TOLERENCE);
       Assert.AreEqual(x[0, 1], 2.965, TOLERENCE);
@@ -178,19 +184,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.AreEqual(x[2, 0], 1.227, TOLERENCE);
       Assert.AreEqual(x[2, 1], 1.227, TOLERENCE);
 
-      b = new FloatMatrix(3, 4);
-      b[0, 0] = 2;
-      b[0, 1] = 2;
-      b[0, 2] = 2;
-      b[0, 3] = 2;
-      b[1, 0] = 13;
-      b[1, 1] = 13;
-      b[1, 2] = 13;
-      b[1, 3] = 13;
-      b[2, 0] = 25;
-      b[2, 1] = 25;
-      b[2, 2] = 25;
-      b[2, 3] = 25;
+      b = new FloatMatrix(3, 4)
+      {
+        [0, 0] = 2,
+        [0, 1] = 2,
+        [0, 2] = 2,
+        [0, 3] = 2,
+        [1, 0] = 13,
+        [1, 1] = 13,
+        [1, 2] = 13,
+        [1, 3] = 13,
+        [2, 0] = 25,
+        [2, 1] = 25,
+        [2, 2] = 25,
+        [2, 3] = 25
+      };
       x = lu.Solve(b);
       Assert.AreEqual(x[0, 0], 2.965, TOLERENCE);
       Assert.AreEqual(x[0, 1], 2.965, TOLERENCE);
@@ -209,10 +217,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [Test]
     public void SolveVector()
     {
-      FloatVector b = new FloatVector(3);
-      b[0] = 2;
-      b[1] = 13;
-      b[2] = 25;
+      var b = new FloatVector(3)
+      {
+        [0] = 2,
+        [1] = 13,
+        [2] = 25
+      };
       FloatVector x = lu.Solve(b);
       Assert.AreEqual(x[0], 2.965, TOLERENCE);
       Assert.AreEqual(x[1], -0.479, TOLERENCE);

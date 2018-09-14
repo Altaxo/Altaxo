@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -43,38 +43,44 @@ namespace AltaxoTest.Calc.LinearAlgebra
     [OneTimeSetUp]
     public void SetupTestCases()
     {
-      a = new FloatMatrix(3);
-      a[0, 0] = 1.91f;
-      a[0, 1] = 9.82f;
-      a[0, 2] = 2.73f;
-      a[1, 0] = 8.64f;
-      a[1, 1] = 3.55f;
-      a[1, 2] = 7.46f;
-      a[2, 0] = 4.37f;
-      a[2, 1] = 6.28f;
-      a[2, 2] = 5.19f;
+      a = new FloatMatrix(3)
+      {
+        [0, 0] = 1.91f,
+        [0, 1] = 9.82f,
+        [0, 2] = 2.73f,
+        [1, 0] = 8.64f,
+        [1, 1] = 3.55f,
+        [1, 2] = 7.46f,
+        [2, 0] = 4.37f,
+        [2, 1] = 6.28f,
+        [2, 2] = 5.19f
+      };
       svd = new FloatSVDDecomp(a, true);
 
-      wa = new FloatMatrix(2, 4);
-      wa[0, 0] = 1.91f;
-      wa[0, 1] = 9.82f;
-      wa[0, 2] = 2.73f;
-      wa[0, 3] = 8.64f;
-      wa[1, 0] = 3.55f;
-      wa[1, 1] = 7.46f;
-      wa[1, 2] = 4.37f;
-      wa[1, 3] = 6.28f;
+      wa = new FloatMatrix(2, 4)
+      {
+        [0, 0] = 1.91f,
+        [0, 1] = 9.82f,
+        [0, 2] = 2.73f,
+        [0, 3] = 8.64f,
+        [1, 0] = 3.55f,
+        [1, 1] = 7.46f,
+        [1, 2] = 4.37f,
+        [1, 3] = 6.28f
+      };
       wsvd = new FloatSVDDecomp(wa, true);
 
-      la = new FloatMatrix(4, 2);
-      la[0, 0] = 1.91f;
-      la[0, 1] = 9.82f;
-      la[1, 0] = 2.73f;
-      la[1, 1] = 8.64f;
-      la[2, 0] = 3.55f;
-      la[2, 1] = 7.46f;
-      la[3, 0] = 4.37f;
-      la[3, 1] = 6.28f;
+      la = new FloatMatrix(4, 2)
+      {
+        [0, 0] = 1.91f,
+        [0, 1] = 9.82f,
+        [1, 0] = 2.73f,
+        [1, 1] = 8.64f,
+        [2, 0] = 3.55f,
+        [2, 1] = 7.46f,
+        [3, 0] = 4.37f,
+        [3, 1] = 6.28f
+      };
       lsvd = new FloatSVDDecomp(la, true);
     }
 

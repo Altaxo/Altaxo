@@ -22,14 +22,13 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
-
-using Altaxo.Science.Thermodynamics.Fluids;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Science.Thermodynamics.Fluids;
+using NUnit.Framework;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -420,7 +419,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
       var material = _fluid;
 
-      var methods = new(string colName, Func<double, double, double> call, int index, double relTol, double absTol)[]
+      var methods = new (string colName, Func<double, double, double> call, int index, double relTol, double absTol)[]
       {
                 ("Pressure", material.Pressure_FromMoleDensityAndTemperature, 0, 1E-6, 1E-3),
                 ("Cv", material.MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature, 4, 1E-7, 1E-7),
