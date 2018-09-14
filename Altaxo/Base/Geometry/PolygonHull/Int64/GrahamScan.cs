@@ -41,7 +41,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     private const int TURN_NONE = 0;
 
 
-    private static int Turn(in IntPoint p, in IntPoint q, in IntPoint r)
+    private static int KindOfTurn(in IntPoint p, in IntPoint q, in IntPoint r)
     {
       var d1 = Int128.Int128Mul((q.X - p.X), (r.Y - p.Y));
       var d2 = Int128.Int128Mul((r.X - p.X), (q.Y - p.Y));
@@ -50,7 +50,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
 
     private static void KeepLeft(List<(IntPoint point, int index)> hull, in (IntPoint point, int index) r)
     {
-      while (hull.Count > 1 && Turn(hull[hull.Count - 2].point, hull[hull.Count - 1].point, r.point) != TURN_LEFT)
+      while (hull.Count > 1 && KindOfTurn(hull[hull.Count - 2].point, hull[hull.Count - 1].point, r.point) != TURN_LEFT)
       {
         hull.RemoveAt(hull.Count - 1);
       }
@@ -87,7 +87,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
           leftptr++;
         }
         // else if (GetAngle(p0, leftArray[leftptr].point) < GetAngle(p0, rightArray[rightptr].point))
-        else if (TURN_LEFT == Turn(p0, leftArray[leftptr].point, rightArray[rightptr].point))
+        else if (TURN_LEFT == KindOfTurn(p0, leftArray[leftptr].point, rightArray[rightptr].point))
         {
           arrSortedInt.Add(leftArray[leftptr]);
           leftptr++;
@@ -109,6 +109,16 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     /// <returns>The ordered set of points that forms the hull.</returns>
     public static IReadOnlyList<(IntPoint point, int index)> GetConvexHull(IReadOnlyList<IntPoint> points)
     {
+      if (null == points)
+      {
+        throw new ArgumentNullException(nameof(points));
+      }
+
+      if (!(points.Count >= 3))
+      {
+        throw new ArgumentException("Points list must at least contain 3 points", nameof(points));
+      }
+
       var index0 = 0;
       var point0 = points[index0];
       for (var i = 1; i < points.Count; ++i)
