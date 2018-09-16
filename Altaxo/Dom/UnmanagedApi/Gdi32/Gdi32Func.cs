@@ -53,7 +53,7 @@ namespace Altaxo.UnmanagedApi.Gdi32
     public static extern bool GdiFlush();
 
     [DllImport("gdi32.dll", SetLastError = true)]
-    public static extern Int32 GetDeviceCaps(IntPtr hdc, Int32 capindex);
+    public static extern int GetDeviceCaps(IntPtr hdc, int capindex);
 
     [DllImport("gdi32.dll")]
     public static extern bool TextOut(IntPtr hdc, int nXStart, int nYStart,

@@ -33,11 +33,11 @@ namespace Altaxo.UnmanagedApi.Gdi32
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
   public struct BITMAPFILEHEADER
   {
-    public UInt16 Type;
-    public UInt32 Size;
-    public UInt16 Reserved1;
-    public UInt16 Reserved2;
-    public UInt32 OffBits;
+    public ushort Type;
+    public uint Size;
+    public ushort Reserved1;
+    public ushort Reserved2;
+    public uint OffBits;
   }
 
   [StructLayout(LayoutKind.Sequential)]
@@ -97,11 +97,13 @@ namespace Altaxo.UnmanagedApi.Gdi32
 
     public static implicit operator RECT(System.Drawing.Rectangle r)
     {
-      RECT rect = new RECT();
-      rect.Left = r.Left;
-      rect.Top = r.Top;
-      rect.Right = r.Right;
-      rect.Bottom = r.Bottom;
+      var rect = new RECT
+      {
+        Left = r.Left,
+        Top = r.Top,
+        Right = r.Right,
+        Bottom = r.Bottom
+      };
       return rect;
     }
   }
@@ -116,10 +118,10 @@ namespace Altaxo.UnmanagedApi.Gdi32
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
   public struct DROPFILES
   {
-    public Int32 pFiles;
+    public int pFiles;
     public System.Drawing.Point pt;
-    public UInt32 fNC;
-    public UInt32 fWide;
+    public uint fNC;
+    public uint fWide;
   }
 
   #region BitmapV5

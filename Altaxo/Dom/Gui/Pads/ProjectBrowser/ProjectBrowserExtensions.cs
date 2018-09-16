@@ -66,8 +66,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       var list = ctrl.GetSelectedListItems();
 
-      string originalFolderName = null;
-      bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected(out originalFolderName);
+      bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected(out var originalFolderName);
 
       CopyDocuments(list, areDocumentsFromOneFolder, originalFolderName);
     }
@@ -80,11 +79,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       var list = ctrl.GetSelectedListItems();
 
-      string originalFolderName = null;
-      bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected(out originalFolderName);
+      bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected(out var originalFolderName);
 
-      var dlgDoc = new Altaxo.Gui.ProjectBrowser.CopyItemsToMultipleFolderData();
-      dlgDoc.RelocateReferences = true;
+      var dlgDoc = new Altaxo.Gui.ProjectBrowser.CopyItemsToMultipleFolderData
+      {
+        RelocateReferences = true
+      };
       if (!Current.Gui.ShowDialog(ref dlgDoc, "Select folders to copy to", false))
         return;
 
@@ -267,8 +267,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       var selItems = ctrl.GetSelectedListItems();
 
       // if the items are from the same folder, but are selected from the AllItems, AllWorksheet or AllGraphs nodes, we invalidate the folderName (because then we consider the items to be rooted)
-      string folderName;
-      if (!ctrl.IsProjectFolderSelected(out folderName))
+      if (!ctrl.IsProjectFolderSelected(out var folderName))
         folderName = null;
 
       var list = Current.Project.Folders.GetExpandedProjectItemSet(selItems); // Expand the list to get rid of the ProjectFolder items
@@ -282,8 +281,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     public static void PasteItemsFromClipboard(this ProjectBrowseController ctrl)
     {
-      string folderName;
-      if (!ctrl.IsProjectFolderSelected(out folderName))
+      if (!ctrl.IsProjectFolderSelected(out var folderName))
         folderName = string.Empty;
 
       Altaxo.Main.Commands.ProjectItemCommands.PasteItemsFromClipboard(folderName);
@@ -301,8 +299,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <param name="ctrl">Project browse controller.</param>
     public static void RenameTreeNode(this ProjectBrowseController ctrl)
     {
-      string folderName;
-      if (!ctrl.IsProjectFolderSelected(out folderName))
+      if (!ctrl.IsProjectFolderSelected(out var folderName))
         return;
 
       ctrl.Project.Folders.ShowFolderRenameDialog(folderName);
@@ -319,8 +316,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <returns>The worksheet used to show the newly created table.</returns>
     public static Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewEmptyWorksheet(this ProjectBrowseController ctrl)
     {
-      string folderName;
-      if (!ctrl.IsProjectFolderSelected(out folderName))
+      if (!ctrl.IsProjectFolderSelected(out var folderName))
         folderName = ProjectFolder.RootFolderName;
       return Current.ProjectService.CreateNewWorksheetInFolder(folderName);
     }
@@ -344,8 +340,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <returns>The graph controller used to show the newly created graph.</returns>
     public static Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraph(this ProjectBrowseController ctrl)
     {
-      string folderName;
-      if (!ctrl.IsProjectFolderSelected(out folderName))
+      if (!ctrl.IsProjectFolderSelected(out var folderName))
         folderName = ProjectFolder.RootFolderName;
       return Current.ProjectService.CreateNewGraphInFolder(folderName);
     }
@@ -392,12 +387,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <returns>The property bag.</returns>
     public static Altaxo.Main.Properties.ProjectFolderPropertyDocument CreateNewPropertyBag(this ProjectBrowseController ctrl)
     {
-      string folderName;
-      if (!ctrl.IsProjectFolderSelected(out folderName))
+      if (!ctrl.IsProjectFolderSelected(out var folderName))
         folderName = ProjectFolder.RootFolderName;
 
-      Altaxo.Main.Properties.ProjectFolderPropertyDocument bag;
-      if (!Current.Project.ProjectFolderProperties.TryGetValue(folderName, out bag))
+      if (!Current.Project.ProjectFolderProperties.TryGetValue(folderName, out var bag))
       {
         bag = new Altaxo.Main.Properties.ProjectFolderPropertyDocument(folderName);
         Current.Project.ProjectFolderProperties.Add(bag);

@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -128,10 +128,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       string newShortName = name;
       var oldFolderFullName = Tag as string;
-
-      string oldParentFolder, oldLastPart;
-
-      Altaxo.Main.ProjectFolder.SplitFolderIntoParentFolderAndLastFolderPart(oldFolderFullName, out oldParentFolder, out oldLastPart);
+      Altaxo.Main.ProjectFolder.SplitFolderIntoParentFolderAndLastFolderPart(oldFolderFullName, out var oldParentFolder, out var oldLastPart);
 
       string newFolderFullName = oldParentFolder + newShortName + Altaxo.Main.ProjectFolder.DirectorySeparatorString;
 
@@ -276,7 +273,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     public static void Sort(SelectableListNodeList list, IComparer<SelectableListNode> comparer)
     {
-      SortedSet<SelectableListNode> sset = new SortedSet<SelectableListNode>(list, comparer);
+      var sset = new SortedSet<SelectableListNode>(list, comparer);
       list.Clear();
       foreach (var item in sset)
         list.Add(item);

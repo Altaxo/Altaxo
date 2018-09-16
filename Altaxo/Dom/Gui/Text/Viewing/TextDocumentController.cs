@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
-using Altaxo.Gui.Workbench;
-using Altaxo.Main;
-using Altaxo.Text;
-using Altaxo.Text.GuiModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Graph;
+using Altaxo.Gui.Workbench;
+using Altaxo.Main;
+using Altaxo.Text;
+using Altaxo.Text.GuiModels;
 
 namespace Altaxo.Gui.Text.Viewing
 {
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Text.Viewing
       if (newOptions.Document == null)
         throw new InvalidProgramException("The provided options do not contain any document");
 
-      if (_options?.Document != null && !object.ReferenceEquals(this.TextDocument, _options.Document))
+      if (_options?.Document != null && !object.ReferenceEquals(TextDocument, _options.Document))
       {
         throw new InvalidProgramException("The already initialized document and the document in the option class are not identical");
       }
@@ -104,7 +104,7 @@ namespace Altaxo.Gui.Text.Viewing
 
       _options = options;
 
-      this.Title = GetTitleFromDocumentName(TextDocument);
+      Title = GetTitleFromDocumentName(TextDocument);
 
       TextDocument.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, (handler) => TextDocument.TunneledEvent -= handler);
     }
@@ -114,7 +114,7 @@ namespace Altaxo.Gui.Text.Viewing
       if (e is Altaxo.Main.DocumentPathChangedEventArgs && _view != null)
       {
         _view.SetDocumentNameAndLocalImages(TextDocument.Name, TextDocument.Images);
-        this.Title = GetTitleFromDocumentName(TextDocument);
+        Title = GetTitleFromDocumentName(TextDocument);
       }
     }
 
@@ -248,7 +248,7 @@ namespace Altaxo.Gui.Text.Viewing
 
     public void EhReferencedImageUrlsChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedImageUrls)
     {
-      this.TextDocument.ReferencedImageUrls = referencedImageUrls;
+      TextDocument.ReferencedImageUrls = referencedImageUrls;
     }
 
     /// <summary>
@@ -345,7 +345,7 @@ namespace Altaxo.Gui.Text.Viewing
       {
         var textDocument = Altaxo.Serialization.Clipboard.ClipboardSerialization.GetObjectFromClipboard<Altaxo.Text.TextDocument>("Altaxo.Text.TextDocument");
         TextDocument.AddImagesFrom(textDocument);
-        this.InsertSourceTextAtCaretPosition(textDocument.SourceText);
+        InsertSourceTextAtCaretPosition(textDocument.SourceText);
         return true;
       }
 

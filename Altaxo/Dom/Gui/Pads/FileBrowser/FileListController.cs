@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
       private void InternalUpdate(bool triggerEvents)
       {
-        FileInfo info = new FileInfo(FullName);
+        var info = new FileInfo(FullName);
 
         try
         {
@@ -138,10 +138,12 @@ namespace Altaxo.Gui.Pads.FileBrowser
     {
       if (initData)
       {
-        _columnNames = new List<string>();
-        _columnNames.Add(Current.ResourceService.GetString("CompilerResultView.FileText"));
-        _columnNames.Add(Current.ResourceService.GetString("MainWindow.Windows.FileScout.Size"));
-        _columnNames.Add(Current.ResourceService.GetString("MainWindow.Windows.FileScout.LastModified"));
+        _columnNames = new List<string>
+        {
+          Current.ResourceService.GetString("CompilerResultView.FileText"),
+          Current.ResourceService.GetString("MainWindow.Windows.FileScout.Size"),
+          Current.ResourceService.GetString("MainWindow.Windows.FileScout.LastModified")
+        };
 
         try
         {
@@ -208,7 +210,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
     {
       Action method = delegate
       {
-        FileInfo info = new FileInfo(e.FullPath);
+        var info = new FileInfo(e.FullPath);
         _fileList.Add(new FileListItem(e.FullPath));
       };
 
@@ -315,7 +317,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       {
         if (null != _view)
         {
-          _view.SelectedItemsActivated -= this.EhView_ActivateSelectedItems;
+          _view.SelectedItemsActivated -= EhView_ActivateSelectedItems;
         }
 
         _view = value as IFileListView;
@@ -323,7 +325,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
         if (null != _view)
         {
           Initialize(false);
-          _view.SelectedItemsActivated += this.EhView_ActivateSelectedItems;
+          _view.SelectedItemsActivated += EhView_ActivateSelectedItems;
         }
       }
     }

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Gui.Workbench;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Gui.Workbench;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -129,7 +129,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       _directoryNodesByName.Add((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
       _allItemsNode.Nodes.Add(_projectDirectoryRoot);
 
-      Current.IProjectService.ProjectChanged += this.EhProjectChanged;
+      Current.IProjectService.ProjectChanged += EhProjectChanged;
 
       Initialize(true);
     }
@@ -177,14 +177,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       if (null != _doc && null != _doc.Folders)
       {
-        _doc.Folders.CollectionChanged -= this.EhProjectDirectoryItemChanged;
+        _doc.Folders.CollectionChanged -= EhProjectDirectoryItemChanged;
       }
 
       _doc = e.Project as AltaxoDocument;
 
       if (null != _doc)
       {
-        _doc.Folders.CollectionChanged += this.EhProjectDirectoryItemChanged;
+        _doc.Folders.CollectionChanged += EhProjectDirectoryItemChanged;
       }
 
       RecreateDirectoryNodes();
@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       if (null != _doc)
       {
-        _doc.Folders.CollectionChanged -= this.EhProjectDirectoryItemChanged;
+        _doc.Folders.CollectionChanged -= EhProjectDirectoryItemChanged;
         _doc = null;
         SetItemListHandler(null);
       }
@@ -482,7 +482,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// </summary>
     public void EhListViewDoubleClick()
     {
-      foreach (var node in this._listViewItems)
+      foreach (var node in _listViewItems)
       {
         if (!node.IsSelected)
           continue;
@@ -522,8 +522,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     public void EhNavigateBackward()
     {
-      NavigationPoint p;
-      if (_navigationPoints.TryNavigateBackward(out p, IsNavigationPointValid, true))
+      if (_navigationPoints.TryNavigateBackward(out var p, IsNavigationPointValid, true))
       {
         NavigateTo(p);
       }
@@ -531,8 +530,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     public void EhNavigateForward()
     {
-      NavigationPoint p;
-      if (_navigationPoints.TryNavigateForward(out p, IsNavigationPointValid, true))
+      if (_navigationPoints.TryNavigateForward(out var p, IsNavigationPointValid, true))
       {
         NavigateTo(p);
       }
@@ -889,15 +887,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
 
       // if the items are from the same folder, but are selected from the AllItems, AllWorksheet or AllGraphs nodes, we invalidate the folderName (because then we consider the items to be rooted)
-      string folderName;
-      if (!IsProjectFolderSelected(out folderName))
+      if (!IsProjectFolderSelected(out var folderName))
         folderName = null;
 
-      _listViewDataObject = new ListViewDragDropDataObject();
+      _listViewDataObject = new ListViewDragDropDataObject
+      {
+        FolderName = folderName,
 
-      _listViewDataObject.FolderName = folderName;
-
-      _listViewDataObject.ItemList = new List<IProjectItem>(Current.Project.Folders.GetExpandedProjectItemSet(list));
+        ItemList = new List<IProjectItem>(Current.Project.Folders.GetExpandedProjectItemSet(list))
+      };
 
       dao = _listViewDataObject;
       canCopy = canMove = true;
@@ -1045,8 +1043,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     public void ListView_DropCanAcceptData(object data, bool isCtrlPressed, bool isShiftPressed, out bool isCopy, out bool isMove)
     {
       // if the items are from the same folder, but are selected from the AllItems, AllWorksheet or AllGraphs nodes, we invalidate the folderName (because then we consider the items to be rooted)
-      string targetFolder;
-      if (!IsProjectFolderSelected(out targetFolder))
+      if (!IsProjectFolderSelected(out var targetFolder))
         targetFolder = null;
 
       Both_FolderTreeAndItemList_DropCanAcceptData(data, targetFolder, isCtrlPressed, isShiftPressed, out isCopy, out isMove);
@@ -1105,8 +1102,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       // 1. We have different applications
       // 2. We have the same app but different folders
 
-      bool isSameApp;
-      GetResultingEffect(dao, isCtrlPressed, isShiftPressed, out isSameApp, out isCopy, out isMove);
+      GetResultingEffect(dao, isCtrlPressed, isShiftPressed, out var isSameApp, out isCopy, out isMove);
 
       if (isSameApp)
       {
@@ -1136,8 +1132,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <param name="isMove">Return value. If true, the resulting drop operation is a move operation.</param>
     public void ListView_Drop(object data, bool isCtrlPressed, bool isShiftPressed, out bool isCopy, out bool isMove)
     {
-      string targetFolder;
-      if (!IsProjectFolderSelected(out targetFolder))
+      if (!IsProjectFolderSelected(out var targetFolder))
         targetFolder = null;
 
       BothFolderTreeAndItemList_Drop(data, targetFolder, isCtrlPressed, isShiftPressed, out isCopy, out isMove);
@@ -1179,8 +1174,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       if (dao != null)
       {
-        bool isSameApp;
-        GetResultingEffect(dao, isCtrlPressed, isShiftPressed, out isSameApp, out isCopy, out isMove);
+        GetResultingEffect(dao, isCtrlPressed, isShiftPressed, out var isSameApp, out isCopy, out isMove);
 
         if (isSameApp && dao.GetDataPresent(ListViewDragDropDataObject.Format_ItemReferenceList))
         {

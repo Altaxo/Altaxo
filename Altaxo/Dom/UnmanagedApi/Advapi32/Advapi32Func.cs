@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 namespace Altaxo.UnmanagedApi.Advapi32
 {
@@ -46,9 +46,9 @@ namespace Altaxo.UnmanagedApi.Advapi32
                 [Out] out RegResult lpdwDisposition);
 
     [DllImport("advapi32.dll", CharSet = CharSet.Auto, BestFitMapping = false)]
-    internal static extern int RegDeleteKey(SafeRegistryHandle hKey, String lpSubKey);
+    internal static extern int RegDeleteKey(SafeRegistryHandle hKey, string lpSubKey);
 
     [DllImport("advapi32.dll", CharSet = CharSet.Auto, BestFitMapping = false)]
-    internal static extern int RegDeleteValue(SafeRegistryHandle hKey, String lpValueName);
+    internal static extern int RegDeleteValue(SafeRegistryHandle hKey, string lpValueName);
   }
 }

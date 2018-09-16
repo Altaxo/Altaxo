@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -72,8 +72,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         if (cond.Length <= 1)
           return false;
 
-        int condNumber;
-        if (!int.TryParse(cond.Substring(1), out condNumber))
+        if (!int.TryParse(cond.Substring(1), out var condNumber))
           return false;
 
         int currItems = projectBrowseController.GetNumberOfSelectedListItems();

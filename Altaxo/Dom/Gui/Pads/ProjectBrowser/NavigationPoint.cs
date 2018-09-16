@@ -49,10 +49,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     public bool Equals(NavigationPoint other)
     {
-      if (this.Kind != other.Kind)
+      if (Kind != other.Kind)
         return false;
 
-      if (this.Kind == KindOfNavigationPoint.ProjectFolder && this.Folder != other.Folder)
+      if (Kind == KindOfNavigationPoint.ProjectFolder && Folder != other.Folder)
         return false;
 
       return true;

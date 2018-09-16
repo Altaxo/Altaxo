@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Workbench;
-using Altaxo.Main;
 using System;
 using System.ComponentModel;
+using Altaxo.Gui.Workbench;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Pads.Notes
 {
@@ -96,8 +96,8 @@ namespace Altaxo.Gui.Pads.Notes
       {
         var activeContent = Current.Workbench.ActiveContent;
 
-        this.IsActive = true;
-        this.IsSelected = true;
+        IsActive = true;
+        IsSelected = true;
 
         // now focus back to the formerly active workbench window.
         if (null != activeContent)
@@ -153,7 +153,7 @@ namespace Altaxo.Gui.Pads.Notes
     {
       get
       {
-        return this._view;
+        return _view;
       }
       set
       {

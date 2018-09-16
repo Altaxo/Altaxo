@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Altaxo.AddInItems;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Autostart
 {
@@ -48,8 +48,7 @@ namespace Altaxo.Gui.Autostart
       var colorSets = AddInTree.GetTreeNode("/Altaxo/ApplicationColorSets").BuildChildItems<Tuple<IColorSet, bool>>(this);
       foreach (var entry in colorSets)
       {
-        IColorSet storedList;
-        ColorSetManager.Instance.TryRegisterList(entry.Item1, ItemDefinitionLevel.Application, out storedList);
+        ColorSetManager.Instance.TryRegisterList(entry.Item1, ItemDefinitionLevel.Application, out var storedList);
         if (entry.Item2)
           ColorSetManager.Instance.DeclareAsPlotColorList(storedList);
       }

@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -56,7 +56,7 @@ namespace Altaxo.UnmanagedApi.Ole32
 
     public override string ToString()
     {
-      return string.Concat(new object[] { "Left = ", this.left, " Top ", this.top, " Right = ", this.right, " Bottom = ", this.bottom });
+      return string.Concat(new object[] { "Left = ", left, " Top ", top, " Right = ", right, " Bottom = ", bottom });
     }
   }
 
@@ -111,8 +111,8 @@ namespace Altaxo.UnmanagedApi.Ole32
 
     public tagSIZEL(tagSIZEL o)
     {
-      this.cx = o.cx;
-      this.cy = o.cy;
+      cx = o.cx;
+      cy = o.cy;
     }
   }
 }

@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Workbench;
 using System;
+using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.Pads.DataDisplay
 {
@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Pads.DataDisplay
     {
       get
       {
-        return this._view;
+        return _view;
       }
       set
       {
@@ -97,9 +97,9 @@ namespace Altaxo.Gui.Pads.DataDisplay
         var ww = Current.Workbench.ActiveContent;
 
         // bring this pad to front
-        this.IsActive = true;
-        this.IsSelected = true;
-        this.IsVisible = true;
+        IsActive = true;
+        IsSelected = true;
+        IsVisible = true;
 
         // afterwards, bring originally view content to view
         if (ww is IViewContent)

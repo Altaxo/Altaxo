@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Workbench;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
