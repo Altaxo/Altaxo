@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Addins.OriginConnector;
-using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Addins.OriginConnector;
+using Altaxo.Gui;
+using Altaxo.Gui.AddInItems;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -83,8 +83,10 @@ namespace Altaxo.Worksheet.Commands
         string name = page.Name;
         string lname = page.LongName;
 
-        var newTable = new Altaxo.Data.DataTable();
-        newTable.Name = path + (string.IsNullOrEmpty(lname) ? name : lname);
+        var newTable = new Altaxo.Data.DataTable
+        {
+          Name = path + (string.IsNullOrEmpty(lname) ? name : lname)
+        };
         string err = WorksheetActions.GetTable(page, newTable);
         if (null == err)
         {

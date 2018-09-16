@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Origin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Data;
+using Origin;
 
 namespace Altaxo.Addins.OriginConnector
 {
@@ -344,7 +344,7 @@ namespace Altaxo.Addins.OriginConnector
 
       // for every group in our worksheet, make a separate origin worksheet
 
-      Origin.Worksheet wks = wbk.Layers[0] as Origin.Worksheet;
+      var wks = wbk.Layers[0] as Origin.Worksheet;
       wks.ClearData();
       wks.Cols = 0;
       wks.set_LabelVisible(Origin.LABELTYPEVALS.LT_LONG_NAME, true);
@@ -546,7 +546,7 @@ namespace Altaxo.Addins.OriginConnector
 
       int nCols = wks.Cols;
 
-      Altaxo.Data.DataColumnCollection result = new Altaxo.Data.DataColumnCollection();
+      var result = new Altaxo.Data.DataColumnCollection();
 
       for (int c = 0; c < nCols; c++)
       {
@@ -570,7 +570,7 @@ namespace Altaxo.Addins.OriginConnector
         {
           var data = (double[])srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_NUMERIC, 0, -1, 0);
           const double refDateAsDouble = 2451910; // this is the number of days in julian calendar belonging to the date below...
-          DateTime refDate = DateTime.Parse("2001-01-01", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal);
+          var refDate = DateTime.Parse("2001-01-01", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal);
           for (int i = data.Length - 1; i >= 0; --i)
           {
             destCol[i] = refDate.AddDays(data[i] - refDateAsDouble);
@@ -644,15 +644,15 @@ namespace Altaxo.Addins.OriginConnector
       if (null == wks)
         throw new ArgumentNullException("wks");
 
-      DataColumnCollection result = new DataColumnCollection();
+      var result = new DataColumnCollection();
 
       // I found no way to ask, if a label column is used or not
       // therefore, we have to try all cells inside the longname, the units and the comments label column
 
-      Dictionary<string, Altaxo.Data.TextColumn> labelCols = new Dictionary<string, Altaxo.Data.TextColumn>();
+      var labelCols = new Dictionary<string, Altaxo.Data.TextColumn>();
 
       DataColumn destLongNameCol = null, destUnitCol = null, destCommentCol = null;
-      DataColumn[] paraCol = new DataColumn[20];
+      var paraCol = new DataColumn[20];
 
       var srcDataCols = wks.Cols;
 
@@ -713,7 +713,7 @@ namespace Altaxo.Addins.OriginConnector
 
     public static string GetTable(Origin.WorksheetPage wbk, Altaxo.Data.DataTable destTable)
     {
-      Origin.Worksheet wks = wbk.Layers[0] as Origin.Worksheet;
+      var wks = wbk.Layers[0] as Origin.Worksheet;
 
       var dataTemplate = GetDataColumns(wks);
       var propCols = GetPropertyColumns(wks);

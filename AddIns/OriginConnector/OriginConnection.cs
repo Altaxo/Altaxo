@@ -126,9 +126,9 @@ namespace Altaxo.Addins.OriginConnector
       return _originApp.get_LTVar(variableName);
     }
 
-    public Int32 GetInt32(string variableName)
+    public int GetInt32(string variableName)
     {
-      return (Int32)_originApp.get_LTVar(variableName);
+      return (int)_originApp.get_LTVar(variableName);
     }
 
     public string GetString(string variableName)
@@ -171,7 +171,7 @@ namespace Altaxo.Addins.OriginConnector
     /// <returns></returns>
     public List<string> GetExistingWorksheetNames()
     {
-      List<string> result = new List<string>();
+      var result = new List<string>();
       int cnt = _originApp.WorksheetPages.Count;
       for (int i = 0; i < cnt; i++)
         result.Add(_originApp.WorksheetPages[i].Name);
