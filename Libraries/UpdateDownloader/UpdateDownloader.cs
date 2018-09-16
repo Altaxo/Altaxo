@@ -79,7 +79,7 @@ namespace Altaxo.Serialization.AutoUpdates
       }
 
       var versionFileFullName = Path.Combine(_storagePath, PackageInfo.VersionFileName);
-      using (FileStream fs = new FileStream(versionFileFullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+      using (var fs = new FileStream(versionFileFullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
       {
         fs.Seek(0, SeekOrigin.Begin);
         var alreadyDownloadedVersion = PackageInfo.GetPresentDownloadedPackage(fs, _storagePath);
@@ -97,7 +97,7 @@ namespace Altaxo.Serialization.AutoUpdates
           fs.Flush(); // write the new version to disc in order to change the write date
 
           // from all parsed versions, choose that one that matches the requirements
-          PackageInfo parsedVersion = PackageInfo.GetHighestVersion(parsedVersions);
+          var parsedVersion = PackageInfo.GetHighestVersion(parsedVersions);
 
           if (null != parsedVersion)
           {

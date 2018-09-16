@@ -52,8 +52,7 @@ namespace Altaxo.Serialization.AutoUpdates
         Console.WriteLine("Configured to look for {0} versions; current Altaxo version: {1}", args[0].ToLower(), args[1]);
         Console.WriteLine();
 
-        bool loadUnstableVersion;
-        if (!PackageInfo.IsValidStableIdentifier(args[0], out loadUnstableVersion))
+        if (!PackageInfo.IsValidStableIdentifier(args[0], out var loadUnstableVersion))
           throw new ArgumentException("First argument is not a valid stable identifier (is neither 'stable' nor 'unstable')");
 
         var currentProgramVersion = new Version(args[1]);
