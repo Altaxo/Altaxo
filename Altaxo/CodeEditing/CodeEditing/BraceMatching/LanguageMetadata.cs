@@ -29,12 +29,12 @@ namespace Altaxo.CodeEditing.BraceMatching
 
     public LanguageMetadata(IDictionary<string, object> data)
     {
-      this.Language = (string)data["Language"];
+      Language = (string)data["Language"];
     }
 
     public LanguageMetadata(string language)
     {
-      this.Language = language;
+      Language = language;
     }
   }
 }

@@ -1,10 +1,10 @@
-﻿using Altaxo.CodeEditing.Completion;
-using Microsoft.CodeAnalysis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.Completion;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.Renaming
 {

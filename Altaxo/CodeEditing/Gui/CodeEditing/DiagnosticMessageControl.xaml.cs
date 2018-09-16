@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.CodeEditing.CompilationHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +36,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.CodeEditing.CompilationHandling;
 
 namespace Altaxo.Gui.CodeEditing
 {
@@ -76,7 +76,7 @@ namespace Altaxo.Gui.CodeEditing
 
     public ListViewItem GetListViewItemFromMouseEvent(MouseButtonEventArgs e)
     {
-      DependencyObject obj = (DependencyObject)e.OriginalSource;
+      var obj = (DependencyObject)e.OriginalSource;
 
       while (obj != null && obj != _guiMessageList)
       {

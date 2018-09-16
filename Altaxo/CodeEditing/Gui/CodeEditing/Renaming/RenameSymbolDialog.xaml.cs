@@ -1,5 +1,4 @@
-﻿using Altaxo.CodeEditing.Renaming;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -16,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Altaxo.CodeEditing.Renaming;
 
 namespace Altaxo.Gui.CodeEditing.Renaming
 {
@@ -36,7 +36,7 @@ namespace Altaxo.Gui.CodeEditing.Renaming
 
     public void Show(object topLevelWindow)
     {
-      this.ShowDialog();
+      ShowDialog();
     }
 
     public void Initialize(string symbolName)

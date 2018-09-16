@@ -18,12 +18,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
-using Altaxo.CodeEditing.Diagnostics;
 
 namespace Altaxo.CodeEditing
 {
@@ -123,8 +123,7 @@ namespace Altaxo.CodeEditing
       var name = Path.GetFileName(path);
       if (name?.StartsWith("v", StringComparison.OrdinalIgnoreCase) == true)
       {
-        Version version;
-        if (Version.TryParse(name.Substring(1), out version))
+        if (Version.TryParse(name.Substring(1), out var version))
         {
           return version;
         }

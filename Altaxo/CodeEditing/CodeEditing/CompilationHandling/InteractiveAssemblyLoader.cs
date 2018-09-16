@@ -208,8 +208,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
       var identity = AssemblyIdentity.FromAssemblyDefinition(assembly);
       var info = new LoadedAssemblyInfo(assembly, identity, locationOpt);
 
-      List<LoadedAssemblyInfo> existingInfos;
-      if (_loadedAssembliesBySimpleName.TryGetValue(identity.Name, out existingInfos))
+      if (_loadedAssembliesBySimpleName.TryGetValue(identity.Name, out var existingInfos))
       {
         existingInfos.Add(info);
       }
@@ -221,9 +220,8 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
     private void RegisterDependencyNoLock(AssemblyIdentityAndLocation dependency)
     {
-      List<AssemblyIdentityAndLocation> sameSimpleNameAssemblyIdentities;
       string simpleName = dependency.Identity.Name;
-      if (_dependenciesWithLocationBySimpleName.TryGetValue(simpleName, out sameSimpleNameAssemblyIdentities))
+      if (_dependenciesWithLocationBySimpleName.TryGetValue(simpleName, out var sameSimpleNameAssemblyIdentities))
       {
         sameSimpleNameAssemblyIdentities.Add(dependency);
       }
@@ -235,8 +233,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
     internal Assembly ResolveAssembly(string assemblyDisplayName, Assembly requestingAssemblyOpt)
     {
-      AssemblyIdentity identity;
-      if (!AssemblyIdentity.TryParseDisplayName(assemblyDisplayName, out identity))
+      if (!AssemblyIdentity.TryParseDisplayName(assemblyDisplayName, out var identity))
       {
         return null;
       }
@@ -244,9 +241,8 @@ namespace Altaxo.CodeEditing.CompilationHandling
       string loadDirectoryOpt;
       lock (_referencesLock)
       {
-        LoadedAssembly loadedAssembly;
         if (requestingAssemblyOpt != null &&
-            _assembliesLoadedFromLocation.TryGetValue(requestingAssemblyOpt, out loadedAssembly))
+            _assembliesLoadedFromLocation.TryGetValue(requestingAssemblyOpt, out var loadedAssembly))
         {
           loadDirectoryOpt = Path.GetDirectoryName(loadedAssembly.OriginalPath);
         }
@@ -278,8 +274,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
           }
 
           // Has an assembly with the same name and version been loaded (possibly from a different directory)?
-          List<LoadedAssemblyInfo> loadedInfos;
-          if (_loadedAssembliesBySimpleName.TryGetValue(identity.Name, out loadedInfos))
+          if (_loadedAssembliesBySimpleName.TryGetValue(identity.Name, out var loadedInfos))
           {
             // Desktop FX: A weak-named assembly conflicts with another weak-named assembly of the same simple name,
             // unless we find an assembly whose identity matches exactly and whose content is exactly the same.
@@ -302,8 +297,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
           // TODO: Stop using reflection once ModuleVersionId property once is available in Core contract.
           if (!loadedAssemblyWithEqualNameAndVersionOpt.IsDefault)
           {
-            Guid mvid;
-            if (TryReadMvid(assemblyFilePathOpt, out mvid) &&
+            if (TryReadMvid(assemblyFilePathOpt, out var mvid) &&
                 CorLightup.Desktop.GetModuleVersionId(loadedAssemblyWithEqualNameAndVersionOpt.Assembly.ManifestModule) == mvid)
             {
               return loadedAssemblyWithEqualNameAndVersionOpt.Assembly;
@@ -358,8 +352,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
       foreach (var extension in RuntimeMetadataReferenceResolver.AssemblyExtensions)
       {
-        AssemblyAndLocation assemblyAndLocation;
-        if (_assembliesLoadedFromLocationByFullPath.TryGetValue(pathWithoutExtension + extension, out assemblyAndLocation) &&
+        if (_assembliesLoadedFromLocationByFullPath.TryGetValue(pathWithoutExtension + extension, out var assemblyAndLocation) &&
             identity.Equals(AssemblyIdentity.FromAssemblyDefinition(assemblyAndLocation.Assembly)))
         {
           return assemblyAndLocation.Assembly;
@@ -404,8 +397,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
       lock (_referencesLock)
       {
         // already loaded assemblies:
-        List<LoadedAssemblyInfo> infos;
-        if (_loadedAssembliesBySimpleName.TryGetValue(identity.Name, out infos))
+        if (_loadedAssembliesBySimpleName.TryGetValue(identity.Name, out var infos))
         {
           assembly = FindHighestVersionOrFirstMatchingIdentity(identity, infos);
           if (assembly != null)
@@ -415,15 +407,13 @@ namespace Altaxo.CodeEditing.CompilationHandling
         }
 
         // names:
-        List<AssemblyIdentityAndLocation> sameSimpleNameIdentities;
-        if (_dependenciesWithLocationBySimpleName.TryGetValue(identity.Name, out sameSimpleNameIdentities))
+        if (_dependenciesWithLocationBySimpleName.TryGetValue(identity.Name, out var sameSimpleNameIdentities))
         {
           var identityAndLocation = FindHighestVersionOrFirstMatchingIdentity(identity, sameSimpleNameIdentities);
           if (identityAndLocation.Identity != null)
           {
             assemblyFileToLoad = identityAndLocation.Location;
-            AssemblyAndLocation assemblyAndLocation;
-            if (_assembliesLoadedFromLocationByFullPath.TryGetValue(assemblyFileToLoad, out assemblyAndLocation))
+            if (_assembliesLoadedFromLocationByFullPath.TryGetValue(assemblyFileToLoad, out var assemblyAndLocation))
             {
               return assemblyAndLocation.Assembly;
             }
@@ -452,8 +442,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
         // Always remember the path. The assembly might have been loaded from another path or not loaded yet.
         _assembliesLoadedFromLocationByFullPath[originalPath] = assemblyAndLocation;
 
-        LoadedAssembly loadedAssembly;
-        if (_assembliesLoadedFromLocation.TryGetValue(assemblyAndLocation.Assembly, out loadedAssembly))
+        if (_assembliesLoadedFromLocation.TryGetValue(assemblyAndLocation.Assembly, out var loadedAssembly))
         {
           return assemblyAndLocation;
         }

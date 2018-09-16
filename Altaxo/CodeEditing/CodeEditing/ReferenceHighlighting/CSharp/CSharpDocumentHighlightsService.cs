@@ -2,9 +2,9 @@
 
 // Originated from: Roslyn, CSharpEditorFeatures, HighlightReferences\CSharpDocumentHighlightsService.cs
 
+using System.Composition;
 using Altaxo.CodeEditing.LanguageService;
 using Microsoft.CodeAnalysis;
-using System.Composition;
 
 namespace Altaxo.CodeEditing.ReferenceHighlighting.CSharp
 {

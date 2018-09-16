@@ -26,14 +26,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.Gui.CodeEditing.SemanticHighlighting;
+using Altaxo.Gui.CodeEditing.SemanticHighlighting;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
-using Altaxo.Gui.CodeEditing.SemanticHighlighting;
-
-using Altaxo.Gui.CodeEditing.SemanticHighlighting;
 
 namespace Altaxo.CodeEditing.SemanticHighlighting
 {

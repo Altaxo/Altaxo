@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Editing;
-using ICSharpCode.AvalonEdit.Folding;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Editing;
+using ICSharpCode.AvalonEdit.Folding;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Syntax;
 
 namespace Altaxo.CodeEditing.Folding
 {

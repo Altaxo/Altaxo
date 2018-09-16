@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.CodeEditing;
-using Altaxo.CodeEditing.Completion;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +36,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.CodeEditing;
+using Altaxo.CodeEditing.Completion;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.Gui.CodeEditing
 {
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.CodeEditing
 
       public int CompareTo(ClassItem other)
       {
-        return string.Compare(this.Text, other.Text);
+        return string.Compare(Text, other.Text);
       }
     }
 
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.CodeEditing
 
         int modifierIndex = 0;
 
-        SyntaxTokenList modifiers = new SyntaxTokenList();
+        var modifiers = new SyntaxTokenList();
 
         if (syntax is BaseTypeDeclarationSyntax dtds)
           modifiers = dtds.Modifiers;

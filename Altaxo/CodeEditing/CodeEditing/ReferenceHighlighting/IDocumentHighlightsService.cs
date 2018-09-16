@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.ReferenceHighlighting
 {
@@ -27,8 +27,8 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
 
     public HighlightSpan(TextSpan textSpan, HighlightSpanKind kind) : this()
     {
-      this.TextSpan = textSpan;
-      this.Kind = kind;
+      TextSpan = textSpan;
+      Kind = kind;
     }
   }
 
@@ -39,8 +39,8 @@ namespace Altaxo.CodeEditing.ReferenceHighlighting
 
     public DocumentHighlights(Document document, ImmutableArray<HighlightSpan> highlightSpans)
     {
-      this.Document = document;
-      this.HighlightSpans = highlightSpans;
+      Document = document;
+      HighlightSpans = highlightSpans;
     }
   }
 

@@ -32,8 +32,8 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.Completion
 {
-  using SnippetHandling;
   using SignatureHelp;
+  using SnippetHandling;
 
   internal sealed class CodeEditorCompletionProvider : ICodeEditorCompletionProvider
   {
@@ -119,8 +119,7 @@ namespace Altaxo.CodeEditing.Completion
     private static string GetFilterText(CompletionItem item, SourceText text, Dictionary<TextSpan, string> textSpanToText)
     {
       var textSpan = item.Span;
-      string filterText;
-      if (!textSpanToText.TryGetValue(textSpan, out filterText))
+      if (!textSpanToText.TryGetValue(textSpan, out var filterText))
       {
         filterText = text.GetSubText(textSpan).ToString();
         textSpanToText[textSpan] = filterText;

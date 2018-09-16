@@ -159,8 +159,7 @@ namespace Altaxo.CodeEditing.SnippetHandling
 
     public CodeSnippet FindSnippet(string name)
     {
-      CodeSnippet snippet;
-      DefaultSnippets.TryGetValue(name, out snippet);
+      DefaultSnippets.TryGetValue(name, out var snippet);
       return snippet;
     }
   }

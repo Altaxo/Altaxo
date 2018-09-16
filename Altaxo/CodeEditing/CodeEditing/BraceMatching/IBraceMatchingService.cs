@@ -4,8 +4,8 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.BraceMatching
 {
@@ -22,8 +22,8 @@ namespace Altaxo.CodeEditing.BraceMatching
     public BraceMatchingResult(TextSpan leftSpan, TextSpan rightSpan)
         : this()
     {
-      this.LeftSpan = leftSpan;
-      this.RightSpan = rightSpan;
+      LeftSpan = leftSpan;
+      RightSpan = rightSpan;
     }
   }
 }

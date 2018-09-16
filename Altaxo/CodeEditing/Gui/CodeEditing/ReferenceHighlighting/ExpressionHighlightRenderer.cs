@@ -4,14 +4,13 @@
 // Originated from: SharpDevelop, AvalonEdit.Addin, Src/BracketHighlightRenderer.cs
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Windows.Media;
-using System.Collections.Generic;
-
+using Altaxo.CodeEditing.ReferenceHighlighting;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
-using System.Collections.Immutable;
-using Altaxo.CodeEditing.ReferenceHighlighting;
 
 namespace Altaxo.Gui.CodeEditing.ReferenceHightlighting
 {
@@ -34,13 +33,13 @@ namespace Altaxo.Gui.CodeEditing.ReferenceHightlighting
       if (this.renderedReferences != renderedReferences)
       {
         this.renderedReferences = renderedReferences;
-        textView.InvalidateLayer(this.Layer);
+        textView.InvalidateLayer(Layer);
       }
     }
 
     public void ClearHighlight()
     {
-      this.SetHighlight(ImmutableArray<DocumentHighlights>.Empty);
+      SetHighlight(ImmutableArray<DocumentHighlights>.Empty);
     }
 
     public ExpressionHighlightRenderer(TextView textView)
@@ -48,10 +47,10 @@ namespace Altaxo.Gui.CodeEditing.ReferenceHightlighting
       if (textView == null)
         throw new ArgumentNullException(nameof(textView));
       this.textView = textView;
-      this.borderPen = new Pen(new SolidColorBrush(borderColor), borderThickness);
-      this.backgroundBrush = new SolidColorBrush(fillColor);
-      this.borderPen.Freeze();
-      this.backgroundBrush.Freeze();
+      borderPen = new Pen(new SolidColorBrush(borderColor), borderThickness);
+      backgroundBrush = new SolidColorBrush(fillColor);
+      borderPen.Freeze();
+      backgroundBrush.Freeze();
       this.textView.BackgroundRenderers.Add(this);
     }
 
@@ -65,12 +64,14 @@ namespace Altaxo.Gui.CodeEditing.ReferenceHightlighting
 
     public void Draw(TextView textView, DrawingContext drawingContext)
     {
-      if (this.renderedReferences == null)
+      if (renderedReferences == null)
         return;
-      BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
-      builder.CornerRadius = cornerRadius;
-      builder.AlignToMiddleOfPixels = true;
-      foreach (var reference in this.renderedReferences)
+      var builder = new BackgroundGeometryBuilder
+      {
+        CornerRadius = cornerRadius,
+        AlignToMiddleOfPixels = true
+      };
+      foreach (var reference in renderedReferences)
       {
         foreach (var span in reference.HighlightSpans)
         {

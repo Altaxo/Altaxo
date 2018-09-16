@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.CodeEditing.CompilationHandling;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -31,6 +30,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.CodeEditing.CompilationHandling;
 
 namespace Altaxo.Gui.CodeEditing
 {
@@ -45,10 +45,10 @@ namespace Altaxo.Gui.CodeEditing
 
     public CodeEditorWithDiagnostics() : base()
     {
-      if (this.RowDefinitions.Count < 3)
-        this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0, GridUnitType.Star) });
-      if (this.RowDefinitions.Count < 4)
-        this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0.33, GridUnitType.Star), MinHeight = MinHeightDiagnosticWindow });
+      if (RowDefinitions.Count < 3)
+        RowDefinitions.Add(new RowDefinition { Height = new GridLength(0, GridUnitType.Star) });
+      if (RowDefinitions.Count < 4)
+        RowDefinitions.Add(new RowDefinition { Height = new GridLength(0.33, GridUnitType.Star), MinHeight = MinHeightDiagnosticWindow });
 
       var gridSplitter = new GridSplitter
       {
@@ -57,13 +57,15 @@ namespace Altaxo.Gui.CodeEditing
         VerticalAlignment = VerticalAlignment.Top
       };
       SetRow(gridSplitter, 3);
-      this.Children.Add(gridSplitter);
+      Children.Add(gridSplitter);
 
-      _messageControl = new DiagnosticMessageControl();
-      _messageControl.Margin = new Thickness(0, 4, 0, 0);
+      _messageControl = new DiagnosticMessageControl
+      {
+        Margin = new Thickness(0, 4, 0, 0)
+      };
       _messageControl.SetValue(Grid.RowProperty, 3);
       _messageControl.DiagnosticClicked += EhDiagnosticClicked;
-      this.Children.Add(_messageControl);
+      Children.Add(_messageControl);
     }
 
     protected override void OnUnloaded()
@@ -78,13 +80,13 @@ namespace Altaxo.Gui.CodeEditing
     {
       if (diag.Line.HasValue)
       {
-        this.ActiveTextEditor.JumpTo(diag.Line.Value, diag.Column ?? 1);
+        ActiveTextEditor.JumpTo(diag.Line.Value, diag.Column ?? 1);
       }
     }
 
     public AltaxoCompilationResultWithAssembly Compile(Func<IEnumerable<string>, string> GetAssemblyNameFromCodeText, IEnumerable<System.Reflection.Assembly> references)
     {
-      var scriptTexts = new string[] { this.Document.Text };
+      var scriptTexts = new string[] { Document.Text };
       var assemblyName = GetAssemblyNameFromCodeText(scriptTexts);
       var result = Altaxo.CodeEditing.CompilationHandling.CompilationServiceStatic.GetCompilation(scriptTexts, assemblyName, references);
 

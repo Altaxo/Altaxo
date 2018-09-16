@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.CodeEditing;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -34,6 +30,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.Gui.CodeEditing;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace Altaxo.CodeEditing.CompilationHandling
 {

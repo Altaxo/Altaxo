@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.CompilationHandling
 {
@@ -79,12 +79,12 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
     public AltaxoDiagnostic(int? line, int? column, int? caretPosition, int severity, string severityText, string messageText)
     {
-      this.Line = line;
-      this.Column = column;
-      this.CaretPosition = caretPosition;
-      this.Severity = severity;
-      this.SeverityText = severityText;
-      this.MessageText = messageText;
+      Line = line;
+      Column = column;
+      CaretPosition = caretPosition;
+      Severity = severity;
+      SeverityText = severityText;
+      MessageText = messageText;
     }
 
     public static AltaxoDiagnostic CreateInfoMessage(string message)

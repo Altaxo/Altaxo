@@ -22,17 +22,17 @@
 
 #endregion Copyright
 
-using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Shared.Extensions;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.LanguageServices;
-using Roslyn.Utilities;
+using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Shared.Utilities;
+using Roslyn.Utilities;
 
 namespace Altaxo.CodeEditing.ExternalHelp
 {
@@ -62,7 +62,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
       if (desc.DeclaredAccessibility != Accessibility.NotApplicable && desc.DeclaredAccessibility < Accessibility.Protected)
         return null; // only types that are at least protected should be reported
 
-      var assemblySymbol = (IAssemblySymbol)desc.ContainingAssembly;
+      var assemblySymbol = desc.ContainingAssembly;
       var assemblyIdentity = assemblySymbol.Identity;
 
       var namespaceName = desc.ContainingNamespace.GetNameParts();
@@ -79,7 +79,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
       {
         typeName = lsymb.Type.GetNameParts();
         memberName = null;
-        assemblySymbol = (IAssemblySymbol)lsymb.Type.ContainingAssembly;
+        assemblySymbol = lsymb.Type.ContainingAssembly;
         assemblyIdentity = assemblySymbol.Identity;
       }
 

@@ -22,28 +22,28 @@
 
 #endregion Copyright
 
-using Altaxo.CodeEditing.Folding;
-using ICSharpCode.AvalonEdit;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.QuickInfo;
-using ICSharpCode.AvalonEdit.Folding;
 using Altaxo.CodeEditing.BraceMatching;
+using Altaxo.CodeEditing.Completion;
 using Altaxo.CodeEditing.Diagnostics;
-using System.Collections.Immutable;
+using Altaxo.CodeEditing.Folding;
+using Altaxo.CodeEditing.LiveDocumentFormatting;
+using Altaxo.CodeEditing.QuickInfo;
 using Altaxo.CodeEditing.ReferenceHighlighting;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Formatting;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
-using Altaxo.CodeEditing.Completion;
-using Altaxo.CodeEditing.LiveDocumentFormatting;
 
 namespace Altaxo.CodeEditing
 {
@@ -383,7 +383,7 @@ namespace Altaxo.CodeEditing
 
     public async Task FormatDocument()
     {
-      var document = Workspace.CurrentSolution.GetDocument(this.DocumentId);
+      var document = Workspace.CurrentSolution.GetDocument(DocumentId);
 
       var syntaxTree = await document.GetSyntaxRootAsync();
       var textChanges = await Formatter.GetFormattedTextChangesAsync(syntaxTree, Workspace);

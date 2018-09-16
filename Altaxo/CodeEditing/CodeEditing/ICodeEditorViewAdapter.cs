@@ -22,12 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.CodeEditing.BraceMatching;
-using Altaxo.CodeEditing.Diagnostics;
-using Altaxo.CodeEditing.ReferenceHighlighting;
-using ICSharpCode.AvalonEdit.Folding;
-using ICSharpCode.AvalonEdit.Indentation;
-using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -35,6 +29,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.BraceMatching;
+using Altaxo.CodeEditing.Diagnostics;
+using Altaxo.CodeEditing.ReferenceHighlighting;
+using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Indentation;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing
 {

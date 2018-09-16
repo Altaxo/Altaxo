@@ -20,10 +20,6 @@
 
 // Modifications (C) Dr. D. Lellinger
 
-using Altaxo.CodeEditing;
-using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Editing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -35,6 +31,10 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Altaxo.CodeEditing;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Editing;
 
 namespace Altaxo.Gui.CodeEditing
 {
@@ -61,8 +61,8 @@ namespace Altaxo.Gui.CodeEditing
       //CustomizedHighlightingColor.ActiveColorsChanged += CustomizedHighlightingColor_ActiveColorsChanged;
       //ParserService.ParseInformationUpdated += ParserServiceParseInformationUpdated;
 
-      this.FlowDirection = FlowDirection.LeftToRight; // code editing is always left-to-right
-      this.CommandBindings.Add(new CommandBinding(RoutedCommands.SplitView, OnSplitView));
+      FlowDirection = FlowDirection.LeftToRight; // code editing is always left-to-right
+      CommandBindings.Add(new CommandBinding(RoutedCommands.SplitView, OnSplitView));
 
       //textMarkerService = new TextMarkerService(this);
       //iconBarManager = new IconBarManager();
@@ -75,36 +75,36 @@ namespace Altaxo.Gui.CodeEditing
       //Debug.Assert(primaryTextEditorAdapter != null);
       activeTextEditor = primaryTextEditor;
 
-      this.Document = primaryTextEditor.Document;
+      Document = primaryTextEditor.Document;
       primaryTextEditor.SetBinding(TextEditor.DocumentProperty, new Binding("Document") { Source = this });
 
-      this.ColumnDefinitions.Add(new ColumnDefinition());
-      this.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-      this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star), MinHeight = minRowHeight });
+      ColumnDefinitions.Add(new ColumnDefinition());
+      RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+      RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star), MinHeight = minRowHeight });
       SetRow(primaryTextEditor, 1);
 
       quickClassBrowser = new QuickClassBrowser();
-      quickClassBrowser.JumpAction += this.EhQuickClassBrowser_JumpTo;
-      this.Children.Add(quickClassBrowser);
+      quickClassBrowser.JumpAction += EhQuickClassBrowser_JumpTo;
+      Children.Add(quickClassBrowser);
 
-      this.Children.Add(primaryTextEditor);
+      Children.Add(primaryTextEditor);
 
-      this.Unloaded += (s, e) => OnUnloaded();
+      Unloaded += (s, e) => OnUnloaded();
     }
 
     protected virtual void OnUnloaded()
     {
       DocumentChanged = null;
       CaretPositionChanged = null;
-      quickClassBrowser.JumpAction -= this.EhQuickClassBrowser_JumpTo;
-      this.Adapter = null;
-      this.Document = null;
+      quickClassBrowser.JumpAction -= EhQuickClassBrowser_JumpTo;
+      Adapter = null;
+      Document = null;
 
       primaryTextEditor = null;
       secondaryTextEditor = null;
       activeTextEditor = null;
       quickClassBrowser = null;
-      this.Children.Clear();
+      Children.Clear();
     }
 
     public CodeEditorView ActiveTextEditor
@@ -222,7 +222,7 @@ namespace Altaxo.Gui.CodeEditing
     /// </summary>
     protected virtual CodeEditorView CreateTextEditor()
     {
-      CodeEditorView codeEditorView = new CodeEditorView();
+      var codeEditorView = new CodeEditorView();
 
       //CodeEditorAdapter adapter = new CodeEditorAdapter(this, codeEditorView);
       //codeEditorView.Adapter = adapter;
@@ -318,7 +318,7 @@ namespace Altaxo.Gui.CodeEditing
     {
       Debug.Assert(sender is Caret);
       Debug.Assert(!document.IsInUpdate);
-      if (sender == this.ActiveTextEditor.TextArea.Caret)
+      if (sender == ActiveTextEditor.TextArea.Caret)
       {
         HandleCaretPositionChange();
       }
@@ -328,7 +328,7 @@ namespace Altaxo.Gui.CodeEditing
     {
       if (quickClassBrowser != null)
       {
-        quickClassBrowser.SelectItemAtCaretPosition(this.ActiveTextEditor.CaretOffset);
+        quickClassBrowser.SelectItemAtCaretPosition(ActiveTextEditor.CaretOffset);
       }
 
       CaretPositionChanged?.Invoke(this, EventArgs.Empty);
@@ -359,13 +359,13 @@ namespace Altaxo.Gui.CodeEditing
     private void textEditor_GotFocus(object sender, RoutedEventArgs e)
     {
       Debug.Assert(sender is CodeEditorView);
-      this.ActiveTextEditor = (CodeEditorView)sender;
+      ActiveTextEditor = (CodeEditorView)sender;
     }
 
     private CodeEditorView GetTextEditorFromSender(object sender)
     {
-      ITextEditorComponent textArea = (ITextEditorComponent)sender;
-      CodeEditorView textEditor = (CodeEditorView)textArea.GetService(typeof(TextEditor));
+      var textArea = (ITextEditorComponent)sender;
+      var textEditor = (CodeEditorView)textArea.GetService(typeof(TextEditor));
       if (textEditor == null)
         throw new InvalidOperationException("could not find TextEditor service");
       return textEditor;
@@ -384,10 +384,10 @@ namespace Altaxo.Gui.CodeEditing
       {
         // create secondary editor
         var rowDefinition = new RowDefinition { Height = new GridLength(1, GridUnitType.Star), MinHeight = minRowHeight };
-        if (this.RowDefinitions.Count < 3)
-          this.RowDefinitions.Add(rowDefinition);
+        if (RowDefinitions.Count < 3)
+          RowDefinitions.Add(rowDefinition);
         else
-          this.RowDefinitions[2] = rowDefinition;
+          RowDefinitions[2] = rowDefinition;
 
         secondaryTextEditor = CreateTextEditor();
         //secondaryTextEditorAdapter = (CodeEditorAdapter)secondaryTextEditor.TextArea.GetService(typeof(ITextEditor));
@@ -407,11 +407,11 @@ namespace Altaxo.Gui.CodeEditing
           VerticalAlignment = VerticalAlignment.Top
         };
         SetRow(gridSplitter, 2);
-        this.Children.Add(gridSplitter);
+        Children.Add(gridSplitter);
 
         secondaryTextEditor.Margin = new Thickness(0, 4, 0, 0);
         SetRow(secondaryTextEditor, 2);
-        this.Children.Add(secondaryTextEditor);
+        Children.Add(secondaryTextEditor);
 
         //secondaryTextEditorAdapter.FileNameChanged();
         //FetchParseInformation();
@@ -419,15 +419,15 @@ namespace Altaxo.Gui.CodeEditing
       else
       {
         // remove secondary editor
-        this.Children.Remove(secondaryTextEditor);
-        this.Children.Remove(gridSplitter);
+        Children.Remove(secondaryTextEditor);
+        Children.Remove(gridSplitter);
         //secondaryTextEditorAdapter.Language.Detach();
         DisposeTextEditor(secondaryTextEditor);
         secondaryTextEditor = null;
         //secondaryTextEditorAdapter = null;
         gridSplitter = null;
-        this.RowDefinitions.RemoveAt(this.RowDefinitions.Count - 1);
-        this.ActiveTextEditor = primaryTextEditor;
+        RowDefinitions.RemoveAt(RowDefinitions.Count - 1);
+        ActiveTextEditor = primaryTextEditor;
       }
     }
 

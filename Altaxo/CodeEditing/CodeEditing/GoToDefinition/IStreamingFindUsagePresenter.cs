@@ -2,12 +2,12 @@
 
 // Originated from: Roslyn, EditorFeatures, Host/IStreamingFindReferencesPresenter.cs
 
+using System;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.FindUsages;
-using System;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.FindUsages;
 
 namespace Altaxo.CodeEditing.GoToDefinition
 {

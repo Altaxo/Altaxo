@@ -2,9 +2,9 @@
 
 // Originated from: Roslyn, EditorFeatures, Extensibility\BraceMatching\IBraceMatcher.cs
 
-using Microsoft.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.BraceMatching
 {

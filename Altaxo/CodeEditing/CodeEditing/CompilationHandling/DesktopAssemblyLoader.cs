@@ -3,11 +3,11 @@
 // Originated from: Roslyn, Scripting, Hosting\AssemblyLoader\DesktopAssemblyLoaderImpl.cs
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Roslyn.Utilities;
-using System.Diagnostics;
 
 namespace Altaxo.CodeEditing.CompilationHandling
 {

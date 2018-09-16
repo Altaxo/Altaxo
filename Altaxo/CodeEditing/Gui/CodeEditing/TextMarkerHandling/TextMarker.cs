@@ -3,7 +3,6 @@
 
 // Originated from: SharpDevelop, AvalonEdit.Addin, src/TextMarkerService.cs
 
-using ICSharpCode.AvalonEdit.Document;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace Altaxo.Gui.CodeEditing.TextMarkerHandling
 {

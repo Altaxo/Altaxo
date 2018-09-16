@@ -2,15 +2,15 @@
 
 // Originated from: RoslynPad, RoslynPad.Editor.Windows, RoslynHighlightingColorizer.cs
 
-using Altaxo.Gui.CodeEditing.SemanticHighlighting;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Rendering;
-using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Gui.CodeEditing.SemanticHighlighting;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Rendering;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.SemanticHighlighting
 {

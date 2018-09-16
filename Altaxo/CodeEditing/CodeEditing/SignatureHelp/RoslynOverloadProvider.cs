@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.CodeAnalysis;
 using Altaxo.CodeEditing.Utilities;
 using Altaxo.Gui.CodeEditing;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {

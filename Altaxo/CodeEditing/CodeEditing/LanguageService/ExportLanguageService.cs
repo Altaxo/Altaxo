@@ -2,13 +2,13 @@
 
 // Originated from: Roslyn, Workspaces, Workspace\Host\Mef\ExportLanguageServiceAttribute.cs
 
-using Microsoft.CodeAnalysis.Host;
 using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Host;
 
 namespace Altaxo.CodeEditing.LanguageService
 {
@@ -21,7 +21,7 @@ namespace Altaxo.CodeEditing.LanguageService
     public ExportLanguageServiceAttribute(Type serviceType, string language)
         : base(serviceType)
     {
-      this.Language = language ?? throw new ArgumentNullException(nameof(language));
+      Language = language ?? throw new ArgumentNullException(nameof(language));
     }
   }
 }

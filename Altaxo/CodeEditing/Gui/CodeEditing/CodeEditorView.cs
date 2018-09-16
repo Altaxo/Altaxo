@@ -21,29 +21,29 @@
 // Modifications (C) Dr. D. Lellinger
 
 using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
+using Altaxo.CodeEditing;
+using Altaxo.CodeEditing.Diagnostics;
+using Altaxo.CodeEditing.ReferenceHighlighting;
+using Altaxo.Gui.CodeEditing.BraceMatching;
+using Altaxo.Gui.CodeEditing.ReferenceHightlighting;
+using Altaxo.Gui.CodeEditing.TextMarkerHandling;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using System.Threading;
-using Microsoft.CodeAnalysis;
 using ICSharpCode.AvalonEdit.Folding;
-using System.Windows.Threading;
-using System.Collections.Immutable;
-using Altaxo.CodeEditing;
-using Altaxo.Gui.CodeEditing.BraceMatching;
-using Altaxo.Gui.CodeEditing.ReferenceHightlighting;
-using Altaxo.Gui.CodeEditing.TextMarkerHandling;
-using Altaxo.CodeEditing.Diagnostics;
-using Altaxo.CodeEditing.ReferenceHighlighting;
-using System.Windows.Documents;
+using Microsoft.CodeAnalysis;
 
 /// <summary>
 ///
@@ -99,8 +99,8 @@ namespace Altaxo.Gui.CodeEditing
         if (null != _adapter)
         {
           // SyntaxHighlighting = null;
-          this.TextArea.TextView.LineTransformers.Remove(_adapter.HighlightingColorizer);
-          this.TextArea.IndentationStrategy = null;
+          TextArea.TextView.LineTransformers.Remove(_adapter.HighlightingColorizer);
+          TextArea.IndentationStrategy = null;
 
           _adapter.DiagnosticsUpdated -= EhDiagnosticsUpdated;
           _adapter.SourceTextChanged += EhSourceTextChanged;
@@ -109,10 +109,10 @@ namespace Altaxo.Gui.CodeEditing
 
         if (null != _adapter)
         {
-          this.TextArea.TextView.LineTransformers.Insert(0, _adapter.HighlightingColorizer);
+          TextArea.TextView.LineTransformers.Insert(0, _adapter.HighlightingColorizer);
           //SyntaxHighlighting = _adapter.HighlightingService;
 
-          this.TextArea.IndentationStrategy = _adapter.IndentationStrategy;
+          TextArea.IndentationStrategy = _adapter.IndentationStrategy;
 
           _adapter.DiagnosticsUpdated += EhDiagnosticsUpdated;
           _adapter.SourceTextChanged += EhSourceTextChanged;
@@ -161,20 +161,20 @@ namespace Altaxo.Gui.CodeEditing
         commandBindings.Remove(deleteLineCommand);
       }
 
-      _foldingManager = FoldingManager.Install(this.TextArea);
+      _foldingManager = FoldingManager.Install(TextArea);
 
-      this.AsyncToolTipRequest = this.AsyncToolTipRequestDefaultImpl;
+      AsyncToolTipRequest = AsyncToolTipRequestDefaultImpl;
 
       {
         // responsible for rendering brace matches
-        this._bracketHighlightRenderer = new BracketHighlightRenderer(this.TextArea.TextView);
-        this.TextArea.Caret.PositionChanged += HighlightBrackets;
+        _bracketHighlightRenderer = new BracketHighlightRenderer(TextArea.TextView);
+        TextArea.Caret.PositionChanged += HighlightBrackets;
       }
 
       _textMarkerService = new TextMarkerService(this);
       // _errorMargin = new ErrorMargin { Visibility = Visibility.Collapsed, MarkerBrush = TryFindResource("ExceptionMarker") as Brush, Width = 10 };
-      this.TextArea.TextView.BackgroundRenderers.Add(_textMarkerService);
-      this.TextArea.TextView.LineTransformers.Add(_textMarkerService);
+      TextArea.TextView.BackgroundRenderers.Add(_textMarkerService);
+      TextArea.TextView.LineTransformers.Add(_textMarkerService);
       //this.TextArea.LeftMargins.Insert(0, _errorMargin);
       //this.PreviewMouseWheel += EditorOnPreviewMouseWheel;
       //this.TextArea.Caret.PositionChanged += CaretOnPositionChanged;
@@ -190,7 +190,7 @@ namespace Altaxo.Gui.CodeEditing
     /// <returns>The context menu for the text area (can be used to chain the building).</returns>
     protected virtual ContextMenu BuildTextAreaContextMenu()
     {
-      var contextMenu = this.TextArea.ContextMenu ?? (this.TextArea.ContextMenu = new ContextMenu());
+      var contextMenu = TextArea.ContextMenu ?? (TextArea.ContextMenu = new ContextMenu());
 
       MenuItem menuItem;
       menuItem = new MenuItem { Header = "Format all" };
@@ -205,7 +205,7 @@ namespace Altaxo.Gui.CodeEditing
     {
       if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
       {
-        this.TextArea.FontSize *= Math.Exp(0.0002 * e.Delta);
+        TextArea.FontSize *= Math.Exp(0.0002 * e.Delta);
         e.Handled = true;
       }
     }
@@ -304,8 +304,8 @@ namespace Altaxo.Gui.CodeEditing
     {
       if (null != _adapter)
       {
-        var result = await _adapter?.GetMatchingBracesAsync(Math.Max(0, this.TextArea.Caret.Offset - 1));
-        this._bracketHighlightRenderer.SetHighlight(result);
+        var result = await _adapter?.GetMatchingBracesAsync(Math.Max(0, TextArea.Caret.Offset - 1));
+        _bracketHighlightRenderer.SetHighlight(result);
       }
     }
 
@@ -342,24 +342,24 @@ namespace Altaxo.Gui.CodeEditing
     /// </summary>
     public void ReferencesHighlightRenderer_Initialize()
     {
-      this._referencesHighlightRenderer = new ExpressionHighlightRenderer(this.TextArea.TextView);
-      this._referenceHighlightRenderer_DelayTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(_referenceHighlightRenderer_DelayInMilliseconds) };
-      this._referenceHighlightRenderer_DelayTimer.Stop();
-      this._referenceHighlightRenderer_DelayTimer.Tick += ReferencesHighlightRenderer_TimerTick;
-      this._referenceHighlightRenderer_DelayMoveTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(_referenceHighlightRenderer_DelayMoveInMilliseconds) };
-      this._referenceHighlightRenderer_DelayMoveTimer.Stop();
-      this._referenceHighlightRenderer_DelayMoveTimer.Tick += ReferencesHighlightRenderer_TimerMoveTick;
-      this.TextArea.Caret.PositionChanged += CaretPositionChanged;
+      _referencesHighlightRenderer = new ExpressionHighlightRenderer(TextArea.TextView);
+      _referenceHighlightRenderer_DelayTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(_referenceHighlightRenderer_DelayInMilliseconds) };
+      _referenceHighlightRenderer_DelayTimer.Stop();
+      _referenceHighlightRenderer_DelayTimer.Tick += ReferencesHighlightRenderer_TimerTick;
+      _referenceHighlightRenderer_DelayMoveTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(_referenceHighlightRenderer_DelayMoveInMilliseconds) };
+      _referenceHighlightRenderer_DelayMoveTimer.Stop();
+      _referenceHighlightRenderer_DelayMoveTimer.Tick += ReferencesHighlightRenderer_TimerMoveTick;
+      TextArea.Caret.PositionChanged += CaretPositionChanged;
       // fixes SD-1873 - Unhandled WPF Exception when deleting text in text editor
       // clear highlights to avoid exceptions when trying to draw highlights in
       // locations that have been deleted already.
-      this.Document.Changed += delegate
+      Document.Changed += delegate
       { _referencesHighlightRenderer_LastResolveResult = ImmutableArray<DocumentHighlights>.Empty; ReferencesHighlightRenderer_ClearHighlight(); };
     }
 
     public void ReferencesHighlightRenderer_ClearHighlight()
     {
-      this._referencesHighlightRenderer.ClearHighlight();
+      _referencesHighlightRenderer.ClearHighlight();
     }
 
     /// <summary>
@@ -369,7 +369,7 @@ namespace Altaxo.Gui.CodeEditing
     /// </summary>
     private void CaretPositionChanged(object sender, EventArgs e)
     {
-      ReferencesHighlightRenderer_Restart(this._referenceHighlightRenderer_DelayMoveTimer);
+      ReferencesHighlightRenderer_Restart(_referenceHighlightRenderer_DelayMoveTimer);
     }
 
     private async void ReferencesHighlightRenderer_TimerTick(object sender, EventArgs e)
@@ -377,29 +377,29 @@ namespace Altaxo.Gui.CodeEditing
       var adapter = _adapter;
       if (null != adapter)
       {
-        this._referenceHighlightRenderer_DelayTimer.Stop();
-        var referencesToBeHighlighted = await adapter.FindReferencesInCurrentFile(this.TextArea.Caret.Offset);
-        this._referencesHighlightRenderer.SetHighlight(referencesToBeHighlighted);
+        _referenceHighlightRenderer_DelayTimer.Stop();
+        var referencesToBeHighlighted = await adapter.FindReferencesInCurrentFile(TextArea.Caret.Offset);
+        _referencesHighlightRenderer.SetHighlight(referencesToBeHighlighted);
       }
     }
 
     private async void ReferencesHighlightRenderer_TimerMoveTick(object sender, EventArgs e)
     {
-      this._referenceHighlightRenderer_DelayMoveTimer.Stop();
-      this._referenceHighlightRenderer_DelayTimer.Stop();
-      var resolveResult = await _adapter?.FindReferencesInCurrentFile(this.TextArea.Caret.Offset);
+      _referenceHighlightRenderer_DelayMoveTimer.Stop();
+      _referenceHighlightRenderer_DelayTimer.Stop();
+      var resolveResult = await _adapter?.FindReferencesInCurrentFile(TextArea.Caret.Offset);
       if (resolveResult == null)
       {
-        this._referencesHighlightRenderer_LastResolveResult = ImmutableArray<DocumentHighlights>.Empty;
-        this._referencesHighlightRenderer.ClearHighlight();
+        _referencesHighlightRenderer_LastResolveResult = ImmutableArray<DocumentHighlights>.Empty;
+        _referencesHighlightRenderer.ClearHighlight();
         return;
       }
       // caret is over symbol and that symbol is different from the last time
       if (!AreSameResolveResults(resolveResult, _referencesHighlightRenderer_LastResolveResult))
       {
-        this._referencesHighlightRenderer_LastResolveResult = resolveResult;
-        this._referencesHighlightRenderer.ClearHighlight();
-        this._referenceHighlightRenderer_DelayTimer.Start();
+        _referencesHighlightRenderer_LastResolveResult = resolveResult;
+        _referencesHighlightRenderer.ClearHighlight();
+        _referenceHighlightRenderer_DelayTimer.Start();
       }
       else
       {
@@ -491,7 +491,7 @@ namespace Altaxo.Gui.CodeEditing
       else if (e.Key == Key.F2 && null != _adapter)
       {
         var topLevelWindow = GetTopLevelWindow(this);
-        _adapter.RenameSymbol(CaretOffset, topLevelWindow, () => this.Focus());
+        _adapter.RenameSymbol(CaretOffset, topLevelWindow, () => Focus());
       }
       // F12 - GoToDefinitiion
       else if (e.Key == Key.F12 && null != _adapter)
@@ -687,8 +687,7 @@ namespace Altaxo.Gui.CodeEditing
         return;
       }
 
-      int offset;
-      GetCompletionDocument(out offset);
+      GetCompletionDocument(out var offset);
       var completionChar = triggerMode == TriggerMode.Text ? Document.GetCharAt(offset - 1) : (char?)null;
       var results = await adapter.GetCompletionData(offset, completionChar,
                   triggerMode == TriggerMode.SignatureHelp).ConfigureAwait(true);
@@ -804,7 +803,7 @@ namespace Altaxo.Gui.CodeEditing
 
     public void JumpTo(int caretOffset)
     {
-      var location = this.TextArea.Document.GetLocation(caretOffset);
+      var location = TextArea.Document.GetLocation(caretOffset);
       JumpTo(location.Line, location.Column);
     }
 
@@ -813,25 +812,25 @@ namespace Altaxo.Gui.CodeEditing
       // closes Debugger popup on debugger step
       TryCloseExistingPopups(true);
 
-      this.TextArea.ClearSelection();
-      this.TextArea.Caret.Position = new TextViewPosition(line, column);
+      TextArea.ClearSelection();
+      TextArea.Caret.Position = new TextViewPosition(line, column);
       // might have jumped to a different location if column was outside the valid range
-      TextLocation actualLocation = this.TextArea.Caret.Location;
-      if (this.ActualHeight > 0)
+      TextLocation actualLocation = TextArea.Caret.Location;
+      if (ActualHeight > 0)
       {
-        this.ScrollTo(actualLocation.Line, actualLocation.Column);
+        ScrollTo(actualLocation.Line, actualLocation.Column);
       }
       else
       {
         // we have to delay the scrolling if the text editor is not yet loaded
-        this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(
+        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(
           delegate
           {
-            this.ScrollTo(actualLocation.Line, actualLocation.Column);
+            ScrollTo(actualLocation.Line, actualLocation.Column);
           }));
       }
 
-      this.Focus();
+      Focus();
 
       Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)DisplayCaretHighlightAnimation);
     }
@@ -841,14 +840,14 @@ namespace Altaxo.Gui.CodeEditing
     /// </summary>
     private async void DisplayCaretHighlightAnimation()
     {
-      TextArea textArea = this.TextArea;
+      TextArea textArea = TextArea;
 
-      AdornerLayer layer = AdornerLayer.GetAdornerLayer(textArea.TextView);
+      var layer = AdornerLayer.GetAdornerLayer(textArea.TextView);
 
       if (layer == null)
         return;
 
-      CaretHighlightAdorner adorner = new CaretHighlightAdorner(textArea);
+      var adorner = new CaretHighlightAdorner(textArea);
       layer.Add(adorner);
 
       await Task.Delay(1000).ConfigureAwait(true);

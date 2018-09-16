@@ -24,19 +24,19 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.Diagnostics;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis.CSharp;
-using Altaxo.CodeEditing.Diagnostics;
 
 namespace Altaxo.CodeEditing
 {
@@ -112,7 +112,7 @@ namespace Altaxo.CodeEditing
         metadataReferences: StaticReferences
         );
 
-      var newSolution = this.CurrentSolution.AddProject(projectInfo);
+      var newSolution = CurrentSolution.AddProject(projectInfo);
       base.SetCurrentSolution(newSolution);
 
       return projectId;
@@ -136,7 +136,7 @@ namespace Altaxo.CodeEditing
 
     public override Compilation GetCompilation(string assemblyName)
     {
-      var project = this.CurrentSolution.GetProject(ProjectId);
+      var project = CurrentSolution.GetProject(ProjectId);
 
       var parseOptions = CreateParseOptions();
       var trees = project.Documents.Select(document => SyntaxFactory.ParseSyntaxTree(document.GetTextAsync().Result, parseOptions, string.Empty));
@@ -180,7 +180,7 @@ namespace Altaxo.CodeEditing
     {
       get
       {
-        return this.StaticReferences.Concat(
+        return StaticReferences.Concat(
           _referencesDirectives
             .Where(x => x.Value.IsActive)
             .Select(x => x.Value.MetadataReference)
@@ -217,8 +217,7 @@ namespace Altaxo.CodeEditing
 
       foreach (var directive in directives)
       {
-        DirectiveInfo referenceDirective;
-        if (_referencesDirectives.TryGetValue(directive, out referenceDirective))
+        if (_referencesDirectives.TryGetValue(directive, out var referenceDirective))
         {
           if (!referenceDirective.IsActive)
           {
@@ -246,7 +245,7 @@ namespace Altaxo.CodeEditing
                 .Select(x => x.Value.MetadataReference)
                 .WhereNotNull();
         var newSolution = solution.WithProjectMetadataReferences(project.Id,
-            this.StaticReferences.Concat(references));
+            StaticReferences.Concat(references));
 
         SetCurrentSolution(newSolution);
       }
@@ -276,8 +275,7 @@ namespace Altaxo.CodeEditing
 
     public virtual bool HasReference(string text)
     {
-      DirectiveInfo info;
-      if (_referencesDirectives.TryGetValue(text, out info))
+      if (_referencesDirectives.TryGetValue(text, out var info))
       {
         return info.IsActive;
       }

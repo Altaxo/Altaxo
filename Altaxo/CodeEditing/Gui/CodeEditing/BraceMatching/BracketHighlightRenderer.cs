@@ -7,10 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Media;
-
+using Altaxo.CodeEditing.BraceMatching;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
-using Altaxo.CodeEditing.BraceMatching;
 
 namespace Altaxo.Gui.CodeEditing.BraceMatching
 {
@@ -31,7 +30,7 @@ namespace Altaxo.Gui.CodeEditing.BraceMatching
       if (!object.Equals(this.result, result))
       {
         this.result = result;
-        textView.InvalidateLayer(this.Layer);
+        textView.InvalidateLayer(Layer);
       }
     }
 
@@ -44,11 +43,11 @@ namespace Altaxo.Gui.CodeEditing.BraceMatching
 
     private void UpdateColors(Color background, Color foreground)
     {
-      this.borderPen = new Pen(new SolidColorBrush(foreground), 1);
-      this.borderPen.Freeze();
+      borderPen = new Pen(new SolidColorBrush(foreground), 1);
+      borderPen.Freeze();
 
-      this.backgroundBrush = new SolidColorBrush(background);
-      this.backgroundBrush.Freeze();
+      backgroundBrush = new SolidColorBrush(background);
+      backgroundBrush.Freeze();
     }
 
     public KnownLayer Layer
@@ -61,14 +60,15 @@ namespace Altaxo.Gui.CodeEditing.BraceMatching
 
     public void Draw(TextView textView, DrawingContext drawingContext)
     {
-      if (this.result.HasValue)
+      if (result.HasValue)
       {
         var match = result.Value;
 
-        BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
-
-        builder.CornerRadius = 1;
-        builder.AlignToMiddleOfPixels = true;
+        var builder = new BackgroundGeometryBuilder
+        {
+          CornerRadius = 1,
+          AlignToMiddleOfPixels = true
+        };
 
         builder.AddSegment(textView, new TextSegment() { StartOffset = match.LeftSpan.Start, Length = match.LeftSpan.Length });
         builder.CloseFigure(); // prevent connecting the two segments

@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.CodeEditing.CompilationHandling;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -34,6 +31,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.CompilationHandling;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Altaxo.CodeEditing.CompilationHandling
 {

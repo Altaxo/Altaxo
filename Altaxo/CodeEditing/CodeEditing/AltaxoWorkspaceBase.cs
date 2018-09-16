@@ -24,19 +24,19 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.Diagnostics;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis.CSharp;
-using Altaxo.CodeEditing.Diagnostics;
 
 namespace Altaxo.CodeEditing
 {
@@ -140,11 +140,11 @@ namespace Altaxo.CodeEditing
 
     public virtual Document CreateAndOpenDocument(SourceTextContainer textContainer, Action<SourceText> onTextUpdated)
     {
-      var project = this.CurrentSolution.GetProject(ProjectId);
+      var project = CurrentSolution.GetProject(ProjectId);
       var documentId = DocumentId.CreateNewId(ProjectId);
       var newSolution = project.Solution.AddDocument(documentId, project.Name, textContainer.CurrentText);
-      this.SetCurrentSolution(newSolution);
-      this.OpenDocument(documentId, textContainer);
+      SetCurrentSolution(newSolution);
+      OpenDocument(documentId, textContainer);
 
       if (null != onTextUpdated)
       {
@@ -160,7 +160,7 @@ namespace Altaxo.CodeEditing
     /// <param name="document">The updated document.</param>
     public virtual void UpdateDocument(Document document)
     {
-      this.TryApplyChanges(document.Project.Solution);
+      TryApplyChanges(document.Project.Solution);
     }
 
     public new void SetCurrentSolution(Solution solution)
@@ -277,7 +277,7 @@ namespace Altaxo.CodeEditing
     {
       get
       {
-        return this.StaticReferences;
+        return StaticReferences;
       }
     }
   }

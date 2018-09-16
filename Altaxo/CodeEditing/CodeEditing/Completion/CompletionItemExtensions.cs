@@ -4,10 +4,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Completion;
 
 namespace Altaxo.CodeEditing.Completion
@@ -48,8 +48,7 @@ namespace Altaxo.CodeEditing.Completion
         var inner = Dictionary.GetValueOrDefault(tag);
         if (inner != null)
         {
-          Glyph glyph;
-          if (inner.TryGetValue(string.Empty, out glyph) ||
+          if (inner.TryGetValue(string.Empty, out var glyph) ||
               (index + 1 < tags.Length && inner.TryGetValue(tags[index + 1], out glyph)))
           {
             return glyph;

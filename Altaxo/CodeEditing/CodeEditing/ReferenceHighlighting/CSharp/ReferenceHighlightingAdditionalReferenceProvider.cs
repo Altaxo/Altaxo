@@ -7,10 +7,10 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.LanguageService;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Roslyn.Utilities;
-using Microsoft.CodeAnalysis;
-using Altaxo.CodeEditing.LanguageService;
 
 namespace Altaxo.CodeEditing.ReferenceHighlighting.CSharp
 {

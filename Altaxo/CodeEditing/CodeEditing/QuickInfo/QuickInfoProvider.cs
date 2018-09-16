@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.DocumentationComments;
+using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Shared.Utilities;
 using Roslyn.Utilities;
-using Microsoft.CodeAnalysis.FindSymbols;
 
 namespace Altaxo.CodeEditing.QuickInfo
 {
@@ -119,8 +119,10 @@ namespace Altaxo.CodeEditing.QuickInfo
       var candidateProjects = new List<ProjectId> { document.Project.Id };
       var invalidProjects = new List<ProjectId>();
 
-      var candidateResults = new List<Tuple<DocumentId, SemanticModel, ImmutableArray<ISymbol>>>();
-      candidateResults.Add(Tuple.Create(document.Id, modelAndSymbols.Item1, modelAndSymbols.Item2));
+      var candidateResults = new List<Tuple<DocumentId, SemanticModel, ImmutableArray<ISymbol>>>
+      {
+        Tuple.Create(document.Id, modelAndSymbols.Item1, modelAndSymbols.Item2)
+      };
 
       foreach (var link in linkedDocumentIds)
       {
@@ -131,7 +133,7 @@ namespace Altaxo.CodeEditing.QuickInfo
         {
           // Not in an inactive region, so this file is a candidate.
           candidateProjects.Add(link.ProjectId);
-          var linkedModelAndSymbols = await this.BindTokenAsync(linkedDocument, linkedToken, cancellationToken).ConfigureAwait(false);
+          var linkedModelAndSymbols = await BindTokenAsync(linkedDocument, linkedToken, cancellationToken).ConfigureAwait(false);
           candidateResults.Add(Tuple.Create(link, linkedModelAndSymbols.Item1, linkedModelAndSymbols.Item2));
         }
       }

@@ -2,10 +2,10 @@
 
 // Originated from: Roslyn, EditorFeatures, Implementation/BraceMatching/AbstractBraceMatcher.cs
 
-using Microsoft.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.BraceMatching
 {
@@ -62,22 +62,20 @@ namespace Altaxo.CodeEditing.BraceMatching
       var token = root.FindToken(position);
 
       var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-      if (position < text.Length && this.IsBrace(text[position]))
+      if (position < text.Length && IsBrace(text[position]))
       {
         if (token.RawKind == _openBrace.Kind && AllowedForToken(token))
         {
           var leftToken = token;
-          SyntaxToken rightToken;
-          if (TryFindMatchingToken(leftToken, out rightToken))
+          if (TryFindMatchingToken(leftToken, out var rightToken))
           {
             return new BraceMatchingResult(leftToken.Span, rightToken.Span);
           }
         }
         else if (token.RawKind == _closeBrace.Kind && AllowedForToken(token))
         {
-          SyntaxToken leftToken;
           var rightToken = token;
-          if (TryFindMatchingToken(rightToken, out leftToken))
+          if (TryFindMatchingToken(rightToken, out var leftToken))
           {
             return new BraceMatchingResult(leftToken.Span, rightToken.Span);
           }
