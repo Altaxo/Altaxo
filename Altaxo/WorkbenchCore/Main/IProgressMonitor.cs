@@ -106,7 +106,7 @@ namespace Altaxo.Main
 
     public IProgressMonitor CreateSubTask(double workAmount)
     {
-      return new DummyProgressMonitor() { CancellationToken = this.CancellationToken };
+      return new DummyProgressMonitor() { CancellationToken = CancellationToken };
     }
 
     public IProgressMonitor CreateSubTask(double workAmount, CancellationToken cancellationToken)
@@ -116,7 +116,7 @@ namespace Altaxo.Main
 
     void IProgress<double>.Report(double value)
     {
-      this.Progress = value;
+      Progress = value;
     }
 
     public void Dispose()

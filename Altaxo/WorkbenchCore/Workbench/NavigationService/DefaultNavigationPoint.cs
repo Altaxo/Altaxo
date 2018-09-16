@@ -16,9 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Gui.Workbench;
 using System;
 using System.Globalization;
+using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Workbench
 {
@@ -33,7 +33,7 @@ namespace Altaxo.Workbench
 
     #region constructor
 
-    public DefaultNavigationPoint() : this(String.Empty, null)
+    public DefaultNavigationPoint() : this(string.Empty, null)
     {
     }
 
@@ -43,7 +43,7 @@ namespace Altaxo.Workbench
 
     public DefaultNavigationPoint(string fileName, object data)
     {
-      this.fileName = fileName == null ? String.Empty : fileName;
+      this.fileName = fileName == null ? string.Empty : fileName;
       this.data = data;
     }
 
@@ -53,10 +53,10 @@ namespace Altaxo.Workbench
 
     public override string ToString()
     {
-      return String.Format(CultureInfo.CurrentCulture,
+      return string.Format(CultureInfo.CurrentCulture,
                            "[{0}: {1}]",
-                           this.GetType().Name,
-                           this.Description);
+                           GetType().Name,
+                           Description);
     }
 
     #endregion overrides
@@ -75,7 +75,7 @@ namespace Altaxo.Workbench
     {
       get
       {
-        return String.Format(CultureInfo.CurrentCulture,
+        return string.Format(CultureInfo.CurrentCulture,
                              "{0}: {1}", fileName, data);
       }
     }
@@ -124,12 +124,12 @@ namespace Altaxo.Workbench
 
     public virtual void JumpTo()
     {
-      Altaxo.Current.GetRequiredService<IFileService>().JumpToFilePosition(new Altaxo.Main.Services.FileName(this.FileName), 0, 0);
+      Altaxo.Current.GetRequiredService<IFileService>().JumpToFilePosition(new Altaxo.Main.Services.FileName(FileName), 0, 0);
     }
 
     public void FileNameChanged(string newName)
     {
-      fileName = newName == null ? String.Empty : newName;
+      fileName = newName == null ? string.Empty : newName;
     }
 
     public virtual void ContentChanging(object sender, EventArgs e)
@@ -143,15 +143,15 @@ namespace Altaxo.Workbench
 
     public override bool Equals(object obj)
     {
-      DefaultNavigationPoint b = obj as DefaultNavigationPoint;
+      var b = obj as DefaultNavigationPoint;
       if (object.ReferenceEquals(b, null))
         return false;
-      return this.FileName == b.FileName;
+      return FileName == b.FileName;
     }
 
     public override int GetHashCode()
     {
-      return this.FileName.GetHashCode();
+      return FileName.GetHashCode();
     }
 
     #endregion Equality
@@ -162,13 +162,13 @@ namespace Altaxo.Workbench
     {
       if (obj == null)
         return 1;
-      if (this.GetType() != obj.GetType())
+      if (GetType() != obj.GetType())
       {
         // if of different types, sort the types by name
-        return this.GetType().Name.CompareTo(obj.GetType().Name);
+        return GetType().Name.CompareTo(obj.GetType().Name);
       }
-      DefaultNavigationPoint b = obj as DefaultNavigationPoint;
-      return this.FileName.CompareTo(b.FileName);
+      var b = obj as DefaultNavigationPoint;
+      return FileName.CompareTo(b.FileName);
     }
 
     // Omitting any of the following operator overloads

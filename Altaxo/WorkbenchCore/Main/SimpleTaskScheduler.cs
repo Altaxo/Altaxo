@@ -70,8 +70,7 @@ namespace Altaxo.Main
 
     public bool TryRunNextTask()
     {
-      Task task;
-      if (queue.TryTake(out task))
+      if (queue.TryTake(out var task))
       {
         RunTask(task);
         return true;

@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using Altaxo.Main.Services;
 using Altaxo.Main;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Workbench
     {
       if (!inLoadOperation)
       {
-        this.IsDirty = true;
+        IsDirty = true;
       }
     }
 
@@ -130,8 +130,8 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public void SaveToDisk(FileName newFileName)
     {
-      this.FileName = newFileName;
-      this.IsUntitled = false;
+      FileName = newFileName;
+      IsUntitled = false;
       SaveToDisk();
     }
 
@@ -258,7 +258,7 @@ namespace Altaxo.Gui.Workbench
       Current.Log.Debug("Save " + FileName);
       bool safeSaving = Altaxo.Current.GetRequiredService<IFileService>().SaveUsingTemporaryFile && File.Exists(FileName);
       string saveAs = safeSaving ? FileName + ".bak" : FileName;
-      using (FileStream fs = new FileStream(saveAs, FileMode.Create, FileAccess.Write))
+      using (var fs = new FileStream(saveAs, FileMode.Create, FileAccess.Write))
       {
         if (safeSaving)
         {
@@ -326,7 +326,7 @@ namespace Altaxo.Gui.Workbench
 
     protected void SaveCurrentView()
     {
-      using (MemoryStream memoryStream = new MemoryStream())
+      using (var memoryStream = new MemoryStream())
       {
         SaveCurrentViewToStream(memoryStream);
         fileData = memoryStream.ToArray();
@@ -365,7 +365,7 @@ namespace Altaxo.Gui.Workbench
           {
             currentView = newView;
             // don't reset fileData if the file is untitled, because OpenRead() wouldn't be able to read it otherwise
-            if (this.IsUntitled == false)
+            if (IsUntitled == false)
               fileData = null;
             newView.Load(this, sourceStream);
             success = true;

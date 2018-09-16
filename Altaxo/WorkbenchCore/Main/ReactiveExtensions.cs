@@ -113,7 +113,7 @@ namespace Altaxo.Main
       {
         this.observer = observer;
         this.progressMonitor = progressMonitor;
-        this.childProgressMonitor = progressMonitor.CreateSubTask(1, cts.Token);
+        childProgressMonitor = progressMonitor.CreateSubTask(1, cts.Token);
         func(childProgressMonitor, Callback).ContinueWith(TaskCompleted).FireAndForget();
       }
 
@@ -187,8 +187,8 @@ namespace Altaxo.Main
 
     private static async Task<T> SingleInternalAsync<T>(IObservable<T> source, CancellationToken cancellationToken, bool throwIfEmpty)
     {
-      SemaphoreSlim gate = new SemaphoreSlim(0);
-      T value = default(T);
+      var gate = new SemaphoreSlim(0);
+      var value = default(T);
       bool isEmpty = true;
       Exception ex = null;
       using (source.Subscribe(
@@ -236,8 +236,8 @@ namespace Altaxo.Main
 
     private static async Task<T> LastInternalAsync<T>(IObservable<T> source, CancellationToken cancellationToken, bool throwIfEmpty)
     {
-      SemaphoreSlim gate = new SemaphoreSlim(0);
-      T value = default(T);
+      var gate = new SemaphoreSlim(0);
+      var value = default(T);
       bool isEmpty = true;
       Exception ex = null;
       using (source.Subscribe(
@@ -275,7 +275,7 @@ namespace Altaxo.Main
     public static async Task<List<T>> ToListAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       var tcs = new TaskCompletionSource<List<T>>();
-      List<T> results = new List<T>();
+      var results = new List<T>();
       using (source.Subscribe(item => results.Add(item),
                               exception => tcs.TrySetException(exception),
                               () => tcs.TrySetResult(results)))
@@ -296,7 +296,7 @@ namespace Altaxo.Main
     /// </summary>
     public static async Task ForEachAsync<T>(this IObservable<T> source, Action<T> action)
     {
-      TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+      var tcs = new TaskCompletionSource<object>();
       using (source.Subscribe(delegate (T item)
       {
         try

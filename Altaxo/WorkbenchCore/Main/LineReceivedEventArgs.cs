@@ -25,7 +25,7 @@ namespace Altaxo.Main
   /// </summary>
   public class LineReceivedEventArgs : EventArgs
   {
-    private string line = String.Empty;
+    private string line = string.Empty;
 
     public LineReceivedEventArgs(string line)
     {

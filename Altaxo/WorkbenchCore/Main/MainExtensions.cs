@@ -23,8 +23,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Altaxo.Main.Services;
 using Altaxo.Collections;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Main
 {
@@ -161,8 +161,7 @@ namespace Altaxo.Main
 
     public static V GetOrDefault<K, V>(this IReadOnlyDictionary<K, V> dict, K key)
     {
-      V ret;
-      dict.TryGetValue(key, out ret);
+      dict.TryGetValue(key, out var ret);
       return ret;
     }
 
@@ -271,7 +270,7 @@ namespace Altaxo.Main
         throw new ArgumentOutOfRangeException("startIndex", startIndex, "Value must be between 0 and " + array.Length);
       if (length < 0 || length > array.Length - startIndex)
         throw new ArgumentOutOfRangeException("length", length, "Value must be between 0 and " + (array.Length - startIndex));
-      T[] result = new T[length];
+      var result = new T[length];
       Array.Copy(array, startIndex, result, 0, length);
       return result;
     }
@@ -525,7 +524,7 @@ namespace Altaxo.Main
       if (comparisonType != StringComparison.Ordinal && comparisonType != StringComparison.OrdinalIgnoreCase)
         throw new NotSupportedException("Currently only ordinal comparisons are implemented.");
 
-      StringBuilder result = new StringBuilder(original.Length);
+      var result = new StringBuilder(original.Length);
       int currentPos = 0;
       int nextMatch = original.IndexOf(pattern, comparisonType);
       while (nextMatch >= 0)

@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Workbench
 
       if (!condition.Properties.Contains("activewindowuntitled"))
         return viewContent.PrimaryFile.IsUntitled;
-      bool activewindowuntitled = Boolean.Parse(condition.Properties["activewindowuntitled"]);
+      bool activewindowuntitled = bool.Parse(condition.Properties["activewindowuntitled"]);
       return viewContent.PrimaryFile.IsUntitled == activewindowuntitled;
     }
   }

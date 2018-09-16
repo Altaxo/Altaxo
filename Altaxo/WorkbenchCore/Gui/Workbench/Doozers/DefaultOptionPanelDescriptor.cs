@@ -16,17 +16,17 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Collections.Generic;
 using Altaxo.AddInItems;
 using Altaxo.Gui;
 using Altaxo.Gui.Settings;
-using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Gui.Workbench
 {
   public class DefaultOptionPanelDescriptor : IOptionPanelDescriptor
   {
-    private string id = String.Empty;
+    private string id = string.Empty;
     private List<IOptionPanelDescriptor> optionPanelDescriptors = null;
     private IOptionPanel optionPanel = null;
 
@@ -84,13 +84,13 @@ namespace Altaxo.Gui.Workbench
     public DefaultOptionPanelDescriptor(string id, string label)
     {
       this.id = id;
-      this.Label = label;
+      Label = label;
     }
 
     public DefaultOptionPanelDescriptor(string id, string label, List<IOptionPanelDescriptor> dialogPanelDescriptors)
       : this(id, label)
     {
-      this.optionPanelDescriptors = dialogPanelDescriptors;
+      optionPanelDescriptors = dialogPanelDescriptors;
     }
 
     public DefaultOptionPanelDescriptor(string id, string label, AddIn addin, object owner, string optionPanelPath)

@@ -17,10 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Microsoft.Win32.SafeHandles;
-
 using System;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,9 +29,10 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.Main.Services;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
+using Altaxo.Main.Services;
+using Microsoft.Win32.SafeHandles;
 
 namespace Altaxo.Workbench
 {
@@ -208,7 +206,7 @@ namespace Altaxo.Workbench
     {
       if (arguments == null)
         return null;
-      StringBuilder b = new StringBuilder();
+      var b = new StringBuilder();
       for (int i = 0; i < arguments.Length; i++)
       {
         if (i > 0)
@@ -263,7 +261,7 @@ namespace Altaxo.Workbench
     {
       RedirectStandardOutputAndErrorToSingleStream = true;
       Start(program, arguments);
-      StringBuilder printedCommandLine = new StringBuilder();
+      var printedCommandLine = new StringBuilder();
       if (WorkingDirectory != null)
       {
         printedCommandLine.Append(WorkingDirectory);
@@ -278,8 +276,8 @@ namespace Altaxo.Workbench
         //await reader.CopyToAsync(new MessageViewCategoryTextWriter(outputCategory));
       }
       await WaitForExitAsync();
-      outputCategory.AppendLine(StringParser.Parse("${res:XML.MainMenu.ToolMenu.ExternalTools.ExitedWithCode} " + this.ExitCode));
-      return this.ExitCode;
+      outputCategory.AppendLine(StringParser.Parse("${res:XML.MainMenu.ToolMenu.ExternalTools.ExitedWithCode} " + ExitCode));
+      return ExitCode;
     }
 
     #endregion RunInOutputPad
@@ -336,7 +334,7 @@ namespace Altaxo.Workbench
 
     public void Start(string program, params string[] arguments)
     {
-      StringBuilder commandLine = new StringBuilder();
+      var commandLine = new StringBuilder();
       AppendArgument(commandLine, program);
       if (arguments != null)
       {
@@ -361,7 +359,7 @@ namespace Altaxo.Workbench
 
     protected virtual void DoStart(string commandLine)
     {
-      this.CommandLine = commandLine;
+      CommandLine = commandLine;
 
       const uint STARTF_USESTDHANDLES = 0x00000100;
 
@@ -371,12 +369,14 @@ namespace Altaxo.Workbench
 
       const int CREATE_UNICODE_ENVIRONMENT = 0x00000400;
 
-      STARTUPINFO startupInfo = new STARTUPINFO();
-      startupInfo.cb = (uint)Marshal.SizeOf(typeof(STARTUPINFO));
-      startupInfo.dwFlags = STARTF_USESTDHANDLES;
+      var startupInfo = new STARTUPINFO
+      {
+        cb = (uint)Marshal.SizeOf(typeof(STARTUPINFO)),
+        dwFlags = STARTF_USESTDHANDLES,
 
-      // Create pipes
-      startupInfo.hStdInput = new SafePipeHandle(GetStdHandle(STD_INPUT_HANDLE), ownsHandle: false);
+        // Create pipes
+        hStdInput = new SafePipeHandle(GetStdHandle(STD_INPUT_HANDLE), ownsHandle: false)
+      };
       if (RedirectStandardOutput || RedirectStandardOutputAndErrorToSingleStream)
       {
         standardOutput = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable);
@@ -401,7 +401,7 @@ namespace Altaxo.Workbench
         startupInfo.hStdError = new SafePipeHandle(GetStdHandle(STD_ERROR_HANDLE), ownsHandle: false);
       }
 
-      uint flags = (uint)this.CreationFlags;
+      uint flags = (uint)CreationFlags;
 
       string environmentBlock = null;
       if (environmentVariables != null)
@@ -410,7 +410,7 @@ namespace Altaxo.Workbench
         flags |= CREATE_UNICODE_ENVIRONMENT;
       }
 
-      PROCESS_INFORMATION processInfo = new PROCESS_INFORMATION();
+      var processInfo = new PROCESS_INFORMATION();
       try
       {
         CreateProcess(null, new StringBuilder(commandLine), IntPtr.Zero, IntPtr.Zero, true, flags, environmentBlock, WorkingDirectory, ref startupInfo, out processInfo);
@@ -451,7 +451,7 @@ namespace Altaxo.Workbench
 
     private static string BuildEnvironmentBlock(IEnumerable<KeyValuePair<string, string>> environment)
     {
-      StringBuilder b = new StringBuilder();
+      var b = new StringBuilder();
       foreach (var pair in environment.OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase))
       {
         b.Append(pair.Key);
@@ -539,8 +539,7 @@ namespace Altaxo.Workbench
       public ProcessWaitHandle(SafeProcessHandle processHandle)
       {
         var currentProcess = new HandleRef(this, NativeMethods.GetCurrentProcess());
-        SafeWaitHandle safeWaitHandle;
-        if (!NativeMethods.DuplicateHandle(currentProcess, processHandle, currentProcess, out safeWaitHandle, 0, false, NativeMethods.DUPLICATE_SAME_ACCESS))
+        if (!NativeMethods.DuplicateHandle(currentProcess, processHandle, currentProcess, out var safeWaitHandle, 0, false, NativeMethods.DUPLICATE_SAME_ACCESS))
         {
           throw new Win32Exception();
         }
@@ -655,7 +654,7 @@ namespace Altaxo.Workbench
     /// </summary>
     public StreamReader OpenStandardOutputReader()
     {
-      return new StreamReader(this.StandardOutput, OemEncoding);
+      return new StreamReader(StandardOutput, OemEncoding);
     }
 
     /// <summary>
@@ -663,7 +662,7 @@ namespace Altaxo.Workbench
     /// </summary>
     public StreamReader OpenStandardErrorReader()
     {
-      return new StreamReader(this.StandardError, OemEncoding);
+      return new StreamReader(StandardError, OemEncoding);
     }
 
     #endregion StandardOutput/StandardError

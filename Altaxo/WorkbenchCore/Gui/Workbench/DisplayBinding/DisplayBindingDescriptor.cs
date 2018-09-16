@@ -84,15 +84,15 @@ namespace Altaxo.Gui.Workbench
         MessageService.ShowWarning("Unknown display binding type: " + codon.Properties["type"]);
 
       this.codon = codon;
-      this.Id = codon.Id;
+      Id = codon.Id;
 
       string title = codon.Properties["title"];
       if (string.IsNullOrEmpty(title))
-        this.Title = codon.Id;
+        Title = codon.Id;
       else
-        this.Title = title;
+        Title = title;
 
-      this.FileNameRegex = codon.Properties["fileNamePattern"];
+      FileNameRegex = codon.Properties["fileNamePattern"];
     }
 
     public DisplayBindingDescriptor(IDisplayBinding binding)
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Workbench
       if (binding == null)
         throw new ArgumentNullException("binding");
 
-      this.isSecondary = false;
+      isSecondary = false;
       this.binding = binding;
     }
 
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Workbench
       if (binding == null)
         throw new ArgumentNullException("binding");
 
-      this.isSecondary = true;
+      isSecondary = true;
       this.binding = binding;
     }
 
@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Workbench
     /// </remarks>
     public bool CanOpenFile(string fileName)
     {
-      string fileNameRegex = StringParser.Parse(this.FileNameRegex);
+      string fileNameRegex = StringParser.Parse(FileNameRegex);
       if (fileNameRegex == null || fileNameRegex.Length == 0) // no regex specified
         return true;
       if (fileName == null) // regex specified but file has no name

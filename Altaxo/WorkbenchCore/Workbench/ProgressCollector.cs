@@ -16,12 +16,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
+using Altaxo.Main;
 
 namespace Altaxo.Workbench
 {
@@ -46,7 +46,7 @@ namespace Altaxo.Workbench
       if (eventThread == null)
         throw new ArgumentNullException("eventThread");
       this.eventThread = eventThread;
-      this.root = new MonitorImpl(this, null, 1, cancellationToken);
+      root = new MonitorImpl(this, null, 1, cancellationToken);
     }
 
     public event EventHandler ProgressMonitorDisposed;
@@ -163,8 +163,8 @@ namespace Altaxo.Workbench
           {
             lock (updateLock)
             {
-              this.Progress = storedNewProgress;
-              this.Status = storedNewStatus;
+              Progress = storedNewProgress;
+              Status = storedNewStatus;
               hasUpdateScheduled = false;
             }
           },
@@ -186,7 +186,7 @@ namespace Altaxo.Workbench
     {
       eventThread.BeginInvoke(
         (Action)delegate
-        { this.ShowingDialog = newValue; },
+        { ShowingDialog = newValue; },
         null
       );
     }
@@ -211,7 +211,7 @@ namespace Altaxo.Workbench
     {
       eventThread.BeginInvoke(
         (Action)delegate
-        { this.TaskName = newName; },
+        { TaskName = newName; },
         null);
     }
 
@@ -328,16 +328,16 @@ namespace Altaxo.Workbench
 
       void IProgress<double>.Report(double value)
       {
-        this.Progress = value;
+        Progress = value;
       }
 
       private void UpdateProgress(double progress)
       {
         if (parent != null)
-          parent.UpdateProgress(parent.currentProgress + (progress - this.currentProgress) * scaleFactor);
+          parent.UpdateProgress(parent.currentProgress + (progress - currentProgress) * scaleFactor);
         else
           collector.SetProgress(progress);
-        this.currentProgress = progress;
+        currentProgress = progress;
       }
 
       public OperationStatus Status
@@ -400,7 +400,7 @@ namespace Altaxo.Workbench
 
       public void Dispose()
       {
-        this.TaskName = null;
+        TaskName = null;
         if (parent == null)
           collector.OnRootMonitorDisposed();
       }

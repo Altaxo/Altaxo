@@ -53,8 +53,10 @@ namespace Altaxo.Main
 
     protected virtual void StartThread(ThreadStart start)
     {
-      var t = new Thread(start);
-      t.IsBackground = true;
+      var t = new Thread(start)
+      {
+        IsBackground = true
+      };
       t.Start();
     }
 

@@ -66,13 +66,13 @@ namespace Altaxo.Main
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-      return this.Value.GetHashCode();
+      return Value.GetHashCode();
     }
 
     /// <inheritdoc/>
     public override bool Equals(object obj)
     {
-      return (obj is AtomicBoolean) && this.Value == ((AtomicBoolean)obj).Value;
+      return (obj is AtomicBoolean) && Value == ((AtomicBoolean)obj).Value;
     }
   }
 }

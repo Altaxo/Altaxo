@@ -17,8 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Altaxo.AddInItems;
 using System.Linq;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.Workbench
 {

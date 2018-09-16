@@ -16,17 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Text;
 using System;
-using Microsoft.Win32.SafeHandles;
-
 using System;
-
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
-
 using System.Text;
+using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 namespace Altaxo.Main
 {
@@ -121,12 +118,14 @@ namespace Altaxo.Main
     {
       if (!File.Exists(fileName) && !Directory.Exists(fileName))
         throw new FileNotFoundException("File not found.", fileName);
-      SHFILEOPSTRUCT info = new SHFILEOPSTRUCT();
-      info.hwnd = Altaxo.Current.Gui.MainWindowHandle;
-      info.wFunc = FO_FUNC.FO_DELETE;
-      info.fFlags = FILEOP_FLAGS.FOF_ALLOWUNDO | FILEOP_FLAGS.FOF_NOCONFIRMATION;
-      info.lpszProgressTitle = "Delete " + Path.GetFileName(fileName);
-      info.pFrom = fileName + "\0"; // pFrom is double-null-terminated
+      var info = new SHFILEOPSTRUCT
+      {
+        hwnd = Altaxo.Current.Gui.MainWindowHandle,
+        wFunc = FO_FUNC.FO_DELETE,
+        fFlags = FILEOP_FLAGS.FOF_ALLOWUNDO | FILEOP_FLAGS.FOF_NOCONFIRMATION,
+        lpszProgressTitle = "Delete " + Path.GetFileName(fileName),
+        pFrom = fileName + "\0" // pFrom is double-null-terminated
+      };
       int result = SHFileOperation(ref info);
       if (result != 0)
         throw new IOException("Could not delete file " + fileName + ". Error " + result, result);
@@ -146,8 +145,8 @@ namespace Altaxo.Main
       {
         unchecked
         {
-          this.ftTimeLow = (uint)fileTime;
-          this.ftTimeHigh = (uint)(fileTime >> 32);
+          ftTimeLow = (uint)fileTime;
+          ftTimeHigh = (uint)(fileTime >> 32);
         }
       }
     }

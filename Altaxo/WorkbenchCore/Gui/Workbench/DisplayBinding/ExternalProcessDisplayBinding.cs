@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Workbench
       cmd = cmd.Trim();
       if (cmd.Length == 0)
         return;
-      ProcessStartInfo info = new ProcessStartInfo();
+      var info = new ProcessStartInfo();
       if (cmd[0] == '"')
       {
         int pos = cmd.IndexOf('"', 1);
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Workbench
     {
       if (destinationType == typeof(string))
       {
-        ExternalProcessDisplayBinding binding = (ExternalProcessDisplayBinding)value;
+        var binding = (ExternalProcessDisplayBinding)value;
         return binding.Id + "|" + binding.FileExtension + "|" + binding.Title + "|" + binding.CommandLine;
       }
       else

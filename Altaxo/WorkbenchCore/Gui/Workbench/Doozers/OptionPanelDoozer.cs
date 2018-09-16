@@ -18,10 +18,9 @@
 
 using System;
 using System.Collections.Generic;
-
 using Altaxo.AddInItems;
-using Altaxo.Main.Services;
 using Altaxo.Gui.Settings;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
