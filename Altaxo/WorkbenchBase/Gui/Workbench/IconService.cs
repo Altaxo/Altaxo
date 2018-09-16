@@ -16,17 +16,15 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
 using System;
-
 using System.Collections.Generic;
-
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using Altaxo.AddInItems;
-using Altaxo.Main.Services;
 using Altaxo.Main;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -55,7 +53,7 @@ namespace Altaxo.Gui.Workbench
 
     public static Bitmap GetGhostBitmap(Bitmap bitmap)
     {
-      ColorMatrix clrMatrix = new ColorMatrix(new float[][] {
+      var clrMatrix = new ColorMatrix(new float[][] {
                                                 new float[] {1, 0, 0, 0, 0},
                                                 new float[] {0, 1, 0, 0, 0},
                                                 new float[] {0, 0, 1, 0, 0},
@@ -63,14 +61,14 @@ namespace Altaxo.Gui.Workbench
                                                 new float[] {0, 0, 0, 0, 1}
                                               });
 
-      ImageAttributes imgAttributes = new ImageAttributes();
+      var imgAttributes = new ImageAttributes();
       imgAttributes.SetColorMatrix(clrMatrix,
                                    ColorMatrixFlag.Default,
                                    ColorAdjustType.Bitmap);
 
-      Bitmap ghostBitmap = new Bitmap(bitmap.Width, bitmap.Height, PixelFormat.Format32bppArgb);
+      var ghostBitmap = new Bitmap(bitmap.Width, bitmap.Height, PixelFormat.Format32bppArgb);
 
-      using (Graphics g = Graphics.FromImage(ghostBitmap))
+      using (var g = Graphics.FromImage(ghostBitmap))
       {
         g.FillRectangle(SystemBrushes.Window, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
         g.DrawImage(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height), 0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel, imgAttributes);

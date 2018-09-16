@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Workbench
     {
       if (element == null)
         throw new ArgumentNullException("element");
-      WeakReference r = (WeakReference)element.GetValue(FocusedChildProperty);
+      var r = (WeakReference)element.GetValue(FocusedChildProperty);
       if (r != null)
         return (IInputElement)r.Target;
       else
@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Workbench
 
     private static void OnRememberFocusedChildChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-      UIElement element = d as UIElement;
+      var element = d as UIElement;
       if (element != null)
       {
         if ((bool)e.OldValue)
@@ -89,9 +89,9 @@ namespace Altaxo.Gui.Workbench
 
     private static void OnGotFocus(object sender, RoutedEventArgs e)
     {
-      UIElement element = (UIElement)sender;
-      IInputElement focusedElement = e.OriginalSource as IInputElement;
-      WeakReference r = (WeakReference)element.GetValue(FocusedChildProperty);
+      var element = (UIElement)sender;
+      var focusedElement = e.OriginalSource as IInputElement;
+      var r = (WeakReference)element.GetValue(FocusedChildProperty);
       if (r != null)
       {
         r.Target = focusedElement;

@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Workbench
 
     public SimpleViewContent(object view)
     {
-      this._view = view ?? throw new ArgumentNullException(nameof(view));
+      _view = view ?? throw new ArgumentNullException(nameof(view));
     }
 
     // make this method public

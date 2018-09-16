@@ -16,15 +16,15 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Altaxo.Main.Services;
-using Altaxo.Main;
 using Altaxo.Gui.Settings;
+using Altaxo.Main;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Workbench
         {
           if (descriptor.HasOptionPanel)
           {
-            this.Items.Add(new OptionTabPage(this, descriptor));
+            Items.Add(new OptionTabPage(this, descriptor));
           }
           AddOptionPanels(descriptor.ChildOptionPanelDescriptors);
         }
@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Workbench
       bool isDirty = false;
       foreach (IOptionPanel op in OptionPanels)
       {
-        ICanBeDirty dirty = op as ICanBeDirty;
+        var dirty = op as ICanBeDirty;
         if (dirty != null && dirty.IsDirty)
         {
           isDirty = true;
@@ -106,10 +106,10 @@ namespace Altaxo.Gui.Workbench
         this.options = options;
         this.descriptor = descriptor;
         string title = StringParser.Parse(descriptor.Label);
-        this.Header = title;
+        Header = title;
         placeholder = new TextBlock { Text = title };
         placeholder.IsVisibleChanged += placeholder_IsVisibleChanged;
-        this.Content = placeholder;
+        Content = placeholder;
       }
 
       private void placeholder_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -129,7 +129,7 @@ namespace Altaxo.Gui.Workbench
             // so we need to load the options before attaching event handlers
             //optionPanel.LoadOptions(); // TODO LelliD 2017-11-20 reimplement this
 
-            ICanBeDirty dirty = optionPanel as ICanBeDirty;
+            var dirty = optionPanel as ICanBeDirty;
             if (dirty != null)
               dirty.IsDirtyChanged += options.OnIsDirtyChanged;
             Altaxo.Current.GetRequiredService<IWinFormsService>().SetContent(this, optionPanel.ViewObject);

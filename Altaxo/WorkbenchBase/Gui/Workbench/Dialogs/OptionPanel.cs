@@ -16,14 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
 using System;
-using Altaxo.Gui.Common;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Settings;
 
 namespace Altaxo.Gui.Workbench
@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Workbench
 
     public OptionPanel()
     {
-      this.Resources.Add(
+      Resources.Add(
         typeof(GroupBox),
         new Style(typeof(GroupBox))
         {
@@ -51,8 +51,8 @@ namespace Altaxo.Gui.Workbench
             new Setter(GroupBox.PaddingProperty, new Thickness(3, 3, 3, 7))
           }
         });
-      this.Resources.Add(typeof(CheckBox), GlobalStyles.WordWrapCheckBoxStyle);
-      this.Resources.Add(typeof(RadioButton), GlobalStyles.WordWrapCheckBoxStyle);
+      Resources.Add(typeof(CheckBox), GlobalStyles.WordWrapCheckBoxStyle);
+      Resources.Add(typeof(RadioButton), GlobalStyles.WordWrapCheckBoxStyle);
     }
 
     public virtual object Owner { get; set; }
@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Workbench
 
     void IOptionBindingContainer.AddBinding(OptionBinding binding)
     {
-      this.bindings.Add(binding);
+      bindings.Add(binding);
     }
 
     public virtual object ViewObject
@@ -102,14 +102,14 @@ namespace Altaxo.Gui.Workbench
 
     private void RaiseInternal(string propertyName)
     {
-      var handler = this.PropertyChanged;
+      var handler = PropertyChanged;
       if (handler != null)
       {
         handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
       }
     }
 
-    private static String ExtractPropertyName<T>(Expression<Func<T>> propertyExpresssion)
+    private static string ExtractPropertyName<T>(Expression<Func<T>> propertyExpresssion)
     {
       if (propertyExpresssion == null)
       {

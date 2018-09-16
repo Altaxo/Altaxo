@@ -19,9 +19,9 @@
 using System;
 using System.Drawing;
 using System.Windows.Media;
-using Altaxo.Main.Services;
 using Altaxo.Gui;
 using Altaxo.Gui.Workbench;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
 {
@@ -99,10 +99,10 @@ namespace Altaxo.Gui
 
     public override bool Equals(object obj)
     {
-      ResourceServiceImage other = obj as ResourceServiceImage;
+      var other = obj as ResourceServiceImage;
       if (other == null)
         return false;
-      return this.resourceName == other.resourceName;
+      return resourceName == other.resourceName;
     }
 
     public override int GetHashCode()

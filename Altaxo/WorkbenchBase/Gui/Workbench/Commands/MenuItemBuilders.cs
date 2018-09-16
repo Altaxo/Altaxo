@@ -21,10 +21,10 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.AddInItems;
-using Altaxo.Main.Services;
+using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Workbench;
-using Altaxo.Gui;
+using Altaxo.Main.Services;
 using Altaxo.Workbench;
 
 namespace Altaxo.Gui.Workbench.Commands
@@ -56,10 +56,10 @@ namespace Altaxo.Gui.Workbench.Commands
 
     private List<FrameworkElement> BuildMenuByFile(ICollection<INavigationPoint> points)
     {
-      List<FrameworkElement> items = new List<FrameworkElement>();
-      Dictionary<string, List<INavigationPoint>> files =
+      var items = new List<FrameworkElement>();
+      var files =
           new Dictionary<string, List<INavigationPoint>>();
-      List<string> fileNames = new List<string>();
+      var fileNames = new List<string>();
 
       foreach (INavigationPoint p in points)
       {
@@ -86,16 +86,20 @@ namespace Altaxo.Gui.Workbench.Commands
       foreach (string fname in fileNames)
       {
         // create a menu bucket
-        containerItem = new MenuItem();
-        containerItem.Header = System.IO.Path.GetFileName(fname);
-        containerItem.ToolTip = fname;
+        containerItem = new MenuItem
+        {
+          Header = System.IO.Path.GetFileName(fname),
+          ToolTip = fname
+        };
 
         // sort and populate the bucket's contents
         //				files[fname].Sort();
         foreach (INavigationPoint p in files[fname])
         {
-          cmd = new MenuItem();
-          cmd.Header = p.Description;
+          cmd = new MenuItem
+          {
+            Header = p.Description
+          };
           cmd.Click += NavigateTo;
           cmd.Tag = p;
           containerItem.Items.Add(cmd);
@@ -131,8 +135,10 @@ namespace Altaxo.Gui.Workbench.Commands
         result.Add(new Separator());
 
         // additional item 2
-        MenuItem clearHistory = new MenuItem();
-        clearHistory.Header = StringParser.Parse("${res:XML.MainMenu.Navigation.ClearHistory}");
+        var clearHistory = new MenuItem
+        {
+          Header = StringParser.Parse("${res:XML.MainMenu.Navigation.ClearHistory}")
+        };
         clearHistory.Click += delegate
         { NavigationService.ClearHistory(); };
         result.Add(clearHistory);
@@ -146,7 +152,7 @@ namespace Altaxo.Gui.Workbench.Commands
 
     public void NavigateTo(object sender, EventArgs e)
     {
-      MenuItem item = (MenuItem)sender;
+      var item = (MenuItem)sender;
       NavigationService.Go((INavigationPoint)item.Tag);
     }
   }
@@ -337,13 +343,15 @@ namespace Altaxo.Gui.Workbench.Commands
     {
       var workbench = Altaxo.Current.GetService<IWorkbench>();
 
-      List<object> list = new List<object>();
+      var list = new List<object>();
       foreach (IPadContent padContent in workbench.PadContentCollection)
       {
         if (padContent.Category == Category && null != padContent.PadDescriptor)
         {
-          var item = new System.Windows.Controls.MenuItem();
-          item.Header = MenuService.ConvertLabel(StringParser.Parse(padContent.Title));
+          var item = new System.Windows.Controls.MenuItem
+          {
+            Header = MenuService.ConvertLabel(StringParser.Parse(padContent.Title))
+          };
           if (!string.IsNullOrEmpty(padContent.IconSource))
           {
             item.Icon = Altaxo.Current.ResourceService.GetImage(padContent.IconSource).CreateImage();

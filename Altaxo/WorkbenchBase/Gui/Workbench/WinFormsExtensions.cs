@@ -16,16 +16,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
-
 using System.Collections.Generic;
-
+using System.Collections.Generic;
 using System.Drawing;
-
 using System.Linq;
-
+using System.Linq;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench

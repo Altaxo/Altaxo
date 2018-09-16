@@ -19,9 +19,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Altaxo.Main.Services;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Workbench;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench.Commands
 {

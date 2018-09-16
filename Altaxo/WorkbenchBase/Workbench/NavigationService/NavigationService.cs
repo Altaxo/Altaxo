@@ -16,15 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
 using System;
-
 using System;
 using System.Collections.Generic;
-
+using System.Collections.Generic;
 using System.Windows.Input;
-using Altaxo.Main.Services;
 using Altaxo.Gui.Workbench;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Workbench
 {
@@ -145,7 +143,7 @@ namespace Altaxo.Workbench
     {
       get
       {
-        return currentNode == null ? (INavigationPoint)null : currentNode.Value;
+        return currentNode == null ? null : currentNode.Value;
       }
       set
       {
@@ -224,7 +222,7 @@ namespace Altaxo.Workbench
     private static void LogInternal(INavigationPoint p)
     {
       if (p == null
-              || String.IsNullOrEmpty(p.FileName)
+              || string.IsNullOrEmpty(p.FileName)
            )
       {
         return;
