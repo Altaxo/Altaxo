@@ -82,8 +82,7 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_ISTREAM))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_ISTREAM");
 
-      IStream strm;
-      int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out strm);
+      int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out var strm);
       if (!(hr == ComReturnValue.S_OK))
         throw new InvalidOperationException();
 
@@ -96,8 +95,7 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_ISTREAM))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_ISTREAM");
 
-      IStream strm;
-      int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out strm);
+      int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out var strm);
       if (!(hr == ComReturnValue.S_OK))
         throw new InvalidOperationException("The COM operation was not successful");
       using (var strmWrapper = new ComStreamWrapper(strm, true))
@@ -118,8 +116,7 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_ISTREAM))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_ISTREAM");
 
-      IStream strm;
-      int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out strm);
+      int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out var strm);
       if (!(hr == ComReturnValue.S_OK))
         throw new InvalidOperationException("The COM operation was not successful");
       SaveMonikerToStream(moniker, strm);
@@ -136,17 +133,15 @@ namespace Altaxo.Com
 
     public static string GetDisplayName(IMoniker m)
     {
-      string s;
       IBindCtx bc = CreateBindCtx();
-      m.GetDisplayName(bc, null, out s);
+      m.GetDisplayName(bc, null, out var s);
       Marshal.ReleaseComObject(bc);  // seems to be recommended
       return s;
     }
 
     public static IBindCtx CreateBindCtx()
     {
-      IBindCtx bc;
-      int rc = Ole32Func.CreateBindCtx(0, out bc);
+      int rc = Ole32Func.CreateBindCtx(0, out var bc);
       if (!(rc == ComReturnValue.S_OK))
         throw new InvalidOperationException("The COM operation was not successful");
       return bc;
@@ -228,10 +223,10 @@ namespace Altaxo.Com
 
     public static string FormatEtcToString(FORMATETC format)
     {
-      return String.Format("({0}, {1}, {2})",
+      return string.Format("({0}, {1}, {2})",
                            ClipboardFormatName(format.cfFormat),
-                           (DVASPECT)format.dwAspect,
-                           (TYMED)format.tymed);
+                           format.dwAspect,
+                           format.tymed);
     }
 
     public static string ClipboardFormatName(short format)
@@ -306,11 +301,11 @@ namespace Altaxo.Com
 
         default:
           {
-            StringBuilder formatName = new StringBuilder(100);
+            var formatName = new StringBuilder(100);
             if (User32Func.GetClipboardFormatName((uint)format, formatName, 100) != 0)
               return formatName.ToString();
             else
-              return String.Format("unknown ({0})", format);
+              return string.Format("unknown ({0})", format);
           }
       }
     }
@@ -377,7 +372,7 @@ namespace Altaxo.Com
       int bufferLen = (Marshal.SizeOf(typeof(BITMAPV5HEADER)) + bmData.Height * bmData.Stride);
       IntPtr hMem = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, bufferLen);
       IntPtr packedDIBV5 = Kernel32Func.GlobalLock(hMem);
-      BITMAPV5HEADER bmi = (BITMAPV5HEADER)Marshal.PtrToStructure(packedDIBV5, typeof(BITMAPV5HEADER));
+      var bmi = (BITMAPV5HEADER)Marshal.PtrToStructure(packedDIBV5, typeof(BITMAPV5HEADER));
 
       bmi.bV5Size = (uint)Marshal.SizeOf(typeof(BITMAPV5HEADER));
       bmi.bV5Width = bmData.Width;
@@ -410,7 +405,7 @@ namespace Altaxo.Com
       Marshal.StructureToPtr(bmi, packedDIBV5, false);
 
       int offsetBits = (int)bmi.bV5Size;
-      IntPtr bits = IntPtr.Add(packedDIBV5, offsetBits);
+      var bits = IntPtr.Add(packedDIBV5, offsetBits);
 
       Kernel32Func.CopyMemory(bits, bmData.Scan0, (uint)(bmData.Height * bmData.Stride));
 
@@ -486,7 +481,7 @@ namespace Altaxo.Com
     /// <returns>The windows metafile placeable header as byte array.</returns>
     public static byte[] GetWmfPlaceableHeaderBytes(PointD2D docSize)
     {
-      WmfPlaceableFileHeader header = new WmfPlaceableFileHeader();
+      var header = new WmfPlaceableFileHeader();
       const ushort twips_per_inch = 1440;
       header.key = 0x9aC6CDD7;  // magic number
       header.hmf = 0;
@@ -564,7 +559,7 @@ namespace Altaxo.Com
       var byteData = str.ToArray();
 
       // Allocate and get pointer to global memory
-      DROPFILES dropFiles = new DROPFILES();
+      var dropFiles = new DROPFILES();
       int totalLength = Marshal.SizeOf(dropFiles) + byteData.Length;
       var ipGlobal = Marshal.AllocHGlobal(totalLength);
       if (ipGlobal != IntPtr.Zero)
@@ -573,7 +568,7 @@ namespace Altaxo.Com
         dropFiles.pFiles = Marshal.SizeOf(dropFiles);
         dropFiles.fWide = 1; // for unicode-encoding
         Marshal.StructureToPtr(dropFiles, ipGlobal, true);
-        IntPtr ipNew = new IntPtr(ipGlobal.ToInt64() + Marshal.SizeOf(dropFiles));
+        var ipNew = new IntPtr(ipGlobal.ToInt64() + Marshal.SizeOf(dropFiles));
         Marshal.Copy(byteData, 0, ipNew, byteData.Length);
       }
       return ipGlobal;

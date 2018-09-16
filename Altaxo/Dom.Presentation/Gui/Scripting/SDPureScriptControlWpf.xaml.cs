@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
-using Altaxo.CodeEditing.CompilationHandling;
-using Altaxo.CodeEditing.ExternalHelp;
-using Altaxo.Main.Services;
-using Altaxo.Main.Services.ScriptCompilation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -37,6 +32,11 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.AddInItems;
+using Altaxo.CodeEditing.CompilationHandling;
+using Altaxo.CodeEditing.ExternalHelp;
+using Altaxo.Main.Services;
+using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Gui.Scripting
 {
@@ -77,19 +77,19 @@ namespace Altaxo.Gui.Scripting
 
     private void InitializeEditor(string initialText, string scriptName)
     {
-      this._codeView = _factory.NewCodeEditorWithDiagnostics(initialText, GetReferencedAssemblies());
-      this._codeView.Name = "edFormula";
-      this._codeView.Adapter.ExternalHelpRequired += EhExternalHelpRequired;
-      this.Content = _codeView;
+      _codeView = _factory.NewCodeEditorWithDiagnostics(initialText, GetReferencedAssemblies());
+      _codeView.Name = "edFormula";
+      _codeView.Adapter.ExternalHelpRequired += EhExternalHelpRequired;
+      Content = _codeView;
     }
 
     private void UninitializeEditor()
     {
-      this._codeView.Adapter.ExternalHelpRequired -= EhExternalHelpRequired;
-      _factory?.Uninitialize(this._codeView);
+      _codeView.Adapter.ExternalHelpRequired -= EhExternalHelpRequired;
+      _factory?.Uninitialize(_codeView);
       _codeView = null;
       CompilerMessageClicked = null;
-      this.Content = null;
+      Content = null;
     }
 
     private static void EhExternalHelpRequired(ExternalHelpItem helpItem)
@@ -172,18 +172,18 @@ namespace Altaxo.Gui.Scripting
     {
       get
       {
-        return this._codeView.DocumentText;
+        return _codeView.DocumentText;
       }
       set
       {
-        if (this._codeView == null)
+        if (_codeView == null)
         {
           string scriptName = System.Guid.NewGuid().ToString() + ".cs";
           InitializeEditor(value, scriptName);
         }
-        else if (this._codeView.DocumentText != value)
+        else if (_codeView.DocumentText != value)
         {
-          this._codeView.DocumentText = value;
+          _codeView.DocumentText = value;
         }
       }
     }
@@ -225,7 +225,7 @@ namespace Altaxo.Gui.Scripting
 
     public static byte[] StringToByte(string fileContent)
     {
-      MemoryStream memoryStream = new MemoryStream();
+      var memoryStream = new MemoryStream();
       TextWriter tw = new StreamWriter(memoryStream);
       tw.Write(fileContent);
       tw.Flush();

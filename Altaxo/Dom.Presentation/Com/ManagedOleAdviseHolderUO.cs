@@ -49,7 +49,7 @@ namespace Altaxo.Com
     {
       _invokeableThread = new InvokeableThread("OleAdviseThread", Current.Dispatcher);
 
-      this.Invoke("Creation of IOleAdviseHolder", () =>
+      Invoke("Creation of IOleAdviseHolder", () =>
         {
           int res = Ole32Func.CreateOleAdviseHolder(out _oleAdviseHolder);
           if (!(res == ComReturnValue.S_OK))

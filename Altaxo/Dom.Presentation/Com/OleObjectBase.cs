@@ -104,12 +104,12 @@ namespace Altaxo.Com
     {
       if (_isDocumentDirty && null != _clientSite)
       {
-        ComDebug.ReportInfo("{0}.SendAdvise.SaveObject -> calling IOleClientSite.SaveObject()", this.GetType().Name);
+        ComDebug.ReportInfo("{0}.SendAdvise.SaveObject -> calling IOleClientSite.SaveObject()", GetType().Name);
         _clientSite.SaveObject();
       }
       else
       {
-        ComDebug.ReportInfo("{0}.SendAdvise.SaveObject -> NOT DONE! isDirty={1}, isClientSiteNull={2} )", this.GetType().Name, _isDocumentDirty, null == _clientSite);
+        ComDebug.ReportInfo("{0}.SendAdvise.SaveObject -> NOT DONE! isDirty={1}, isClientSiteNull={2} )", GetType().Name, _isDocumentDirty, null == _clientSite);
       }
     }
 
@@ -122,7 +122,7 @@ namespace Altaxo.Com
       var rotCookie = _documentMonikerRotCookie;
       if (rotCookie != 0)
       {
-        System.Runtime.InteropServices.ComTypes.FILETIME ft = new System.Runtime.InteropServices.ComTypes.FILETIME();
+        var ft = new System.Runtime.InteropServices.ComTypes.FILETIME();
         Ole32Func.CoFileTimeNow(out ft);
         RunningObjectTableHelper.GetROT().NoteChangeTime(rotCookie, ref ft);
       }
@@ -135,7 +135,7 @@ namespace Altaxo.Com
     /// </summary>
     public virtual void SendAdvise_ShowWindow()
     {
-      ComDebug.ReportInfo("{0}.SendAdvise.ShowWindow -> Calling IOleClientSite.OnShowWindow(true)", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.SendAdvise.ShowWindow -> Calling IOleClientSite.OnShowWindow(true)", GetType().Name);
       if (null != _clientSite)
       {
         _clientSite.OnShowWindow(true);
@@ -148,7 +148,7 @@ namespace Altaxo.Com
     /// </summary>
     public virtual void SendAdvise_HideWindow()
     {
-      ComDebug.ReportInfo("{0}.SendAdvise.HideWindow -> Calling IOleClientSite.OnShowWindow(false)", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.SendAdvise.HideWindow -> Calling IOleClientSite.OnShowWindow(false)", GetType().Name);
       try
       {
         if (null != _clientSite)
@@ -158,7 +158,7 @@ namespace Altaxo.Com
       }
       catch (Exception ex)
       {
-        ComDebug.ReportError("{0}.SendAdvise.HideWindow -> Exception while calling _clientSite.OnShowWindow(false), Details: {0}", this.GetType().Name, ex.Message);
+        ComDebug.ReportError("{0}.SendAdvise.HideWindow -> Exception while calling _clientSite.OnShowWindow(false), Details: {0}", GetType().Name, ex.Message);
       }
     }
 
@@ -175,7 +175,7 @@ namespace Altaxo.Com
     /// </remarks>
     public virtual void SendAdvise_ShowObject()
     {
-      ComDebug.ReportInfo("{0}.SendAdvise.ShowObject -> Calling IOleClientSite.ShowObject()", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.SendAdvise.ShowObject -> Calling IOleClientSite.ShowObject()", GetType().Name);
       if (null != _clientSite)
         _clientSite.ShowObject();
     }
@@ -186,14 +186,14 @@ namespace Altaxo.Com
 
     public int SetClientSite(IOleClientSite pClientSite)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.SetClientSite", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.SetClientSite", GetType().Name);
       _clientSite = pClientSite;
       return ComReturnValue.NOERROR;
     }
 
     public IOleClientSite GetClientSite()
     {
-      ComDebug.ReportInfo("{0}.IOleObject.GetClientSite", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.GetClientSite", GetType().Name);
 
       return _clientSite;
     }
@@ -204,7 +204,7 @@ namespace Altaxo.Com
       // calling SetHostNames is the only sign that our object is embedded (and thus not linked)
       // this means that we have to switch the user interface from within this function
 
-      ComDebug.ReportInfo("{0}.IOleObject.SetHostNames ContainerAppName={1}, ContainerDocName={2}", this.GetType().Name, containerApplicationName, containerDocumentName);
+      ComDebug.ReportInfo("{0}.IOleObject.SetHostNames ContainerAppName={1}, ContainerDocName={2}", GetType().Name, containerApplicationName, containerDocumentName);
 
       _comManager.SetHostNames(containerApplicationName, containerDocumentName);
       return ComReturnValue.NOERROR;
@@ -213,7 +213,7 @@ namespace Altaxo.Com
     public int GetMoniker(int dwAssign, int dwWhichMoniker, out object moniker)
     {
       // Brockschmidt Inside Ole 2nd ed. page 994
-      ComDebug.ReportInfo("{0}.IOleObject.GetMoniker", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.GetMoniker", GetType().Name);
       if (null != _documentMoniker)
       {
         moniker = _documentMoniker;
@@ -228,59 +228,59 @@ namespace Altaxo.Com
     {
       // Brockschmidt Inside Ole 2nd ed. page 993
       // see there if you want to support linking to embedding
-      ComDebug.ReportWarning("{0}.IOleObject.SetMoniker => not implemented!", this.GetType().Name);
+      ComDebug.ReportWarning("{0}.IOleObject.SetMoniker => not implemented!", GetType().Name);
       return ComReturnValue.E_NOTIMPL;
     }
 
     public int InitFromData(System.Runtime.InteropServices.ComTypes.IDataObject pDataObject, int fCreation, int dwReserved)
     {
-      ComDebug.ReportWarning("{0}.IOleObject.InitFromData => not implemented!", this.GetType().Name);
+      ComDebug.ReportWarning("{0}.IOleObject.InitFromData => not implemented!", GetType().Name);
       return ComReturnValue.E_NOTIMPL;
     }
 
     public int GetClipboardData(int dwReserved, out System.Runtime.InteropServices.ComTypes.IDataObject data)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.GetClipboardData => not implemented!", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.GetClipboardData => not implemented!", GetType().Name);
       data = null;
       return ComReturnValue.E_NOTIMPL;
     }
 
     public int EnumVerbs(out IEnumOLEVERB e)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.EnumVerbs -> use registry", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.EnumVerbs -> use registry", GetType().Name);
       e = null;
       return ComReturnValue.OLE_S_USEREG;
     }
 
     public int OleUpdate()
     {
-      ComDebug.ReportInfo("{0}.IOleObject.OleUpdate", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.OleUpdate", GetType().Name);
       return ComReturnValue.NOERROR;
     }
 
     public int IsUpToDate()
     {
-      ComDebug.ReportInfo("{0}.IOleObject.IsUpToDate", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.IsUpToDate", GetType().Name);
       return ComReturnValue.NOERROR;
     }
 
     public int GetUserClassID(ref Guid pClsid)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.GetUserClassID", this.GetType().Name);
-      pClsid = this.GetType().GUID;
+      ComDebug.ReportInfo("{0}.IOleObject.GetUserClassID", GetType().Name);
+      pClsid = GetType().GUID;
       return ComReturnValue.NOERROR;
     }
 
     public int GetUserType(int dwFormOfType, out string userType)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.GetUserType -> use registry.", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.GetUserType -> use registry.", GetType().Name);
       userType = null;
       return ComReturnValue.OLE_S_USEREG;
     }
 
     public int Advise(System.Runtime.InteropServices.ComTypes.IAdviseSink pAdvSink, out int cookie)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.Advise", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.Advise", GetType().Name);
       try
       {
         _oleAdviseHolder.Advise(pAdvSink, out cookie);
@@ -288,14 +288,14 @@ namespace Altaxo.Com
       }
       catch (Exception e)
       {
-        ComDebug.ReportError("{0}.IOleObject.Advise caused an exception: {1}", this.GetType().Name, e);
+        ComDebug.ReportError("{0}.IOleObject.Advise caused an exception: {1}", GetType().Name, e);
         throw;
       }
     }
 
     public int Unadvise(int dwConnection)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.Unadvise", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.Unadvise", GetType().Name);
       try
       {
         _oleAdviseHolder.Unadvise(dwConnection);
@@ -303,14 +303,14 @@ namespace Altaxo.Com
       }
       catch (Exception e)
       {
-        ComDebug.ReportError("{0}.IOleObject.Unadvise threw an exception: {0}", this.GetType().Name, e);
+        ComDebug.ReportError("{0}.IOleObject.Unadvise threw an exception: {0}", GetType().Name, e);
         throw;
       }
     }
 
     public int EnumAdvise(out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA e)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.EnumAdvise", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.EnumAdvise", GetType().Name);
 
       e = _oleAdviseHolder.EnumAdvise();
       return ComReturnValue.NOERROR;
@@ -318,7 +318,7 @@ namespace Altaxo.Com
 
     public int SetColorScheme(tagLOGPALETTE pLogpal)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.SetColorScheme (not implemented)", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.SetColorScheme (not implemented)", GetType().Name);
       return ComReturnValue.E_NOTIMPL;
     }
 

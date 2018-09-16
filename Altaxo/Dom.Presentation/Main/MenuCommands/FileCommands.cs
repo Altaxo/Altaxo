@@ -26,12 +26,12 @@ using System;
 
 namespace Altaxo.Main.Commands
 {
+  using System.Collections.Generic;
   using Altaxo.AddInItems;
   using Altaxo.Data;
   using Altaxo.Gui;
   using Altaxo.Gui.AddInItems;
   using Altaxo.Main.Services;
-  using System.Collections.Generic;
 
   public class CreateNewWorksheet : SimpleCommand
   {
@@ -109,7 +109,7 @@ namespace Altaxo.Main.Commands
     {
       if (Current.Project.IsDirty)
       {
-        System.ComponentModel.CancelEventArgs cancelargs = new System.ComponentModel.CancelEventArgs();
+        var cancelargs = new System.ComponentModel.CancelEventArgs();
         Current.IProjectService.AskForSavingOfProject(cancelargs);
         if (cancelargs.Cancel)
           return;
@@ -118,11 +118,12 @@ namespace Altaxo.Main.Commands
       bool saveDirtyState = Current.Project.IsDirty; // save the dirty state of the project in case the user cancels the open file dialog
       Current.Project.IsDirty = false; // set document to non-dirty
 
-      var openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
-
-      openFileDialog1.Filter = "Altaxo project files (*.axoprj)|*.axoprj|All files (*.*)|*.*";
-      openFileDialog1.FilterIndex = 1;
-      openFileDialog1.RestoreDirectory = true;
+      var openFileDialog1 = new Microsoft.Win32.OpenFileDialog
+      {
+        Filter = "Altaxo project files (*.axoprj)|*.axoprj|All files (*.*)|*.*",
+        FilterIndex = 1,
+        RestoreDirectory = true
+      };
 
       if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
       {
@@ -305,22 +306,23 @@ namespace Altaxo.Main.Commands
 
       if (script == null)
         script = new Altaxo.Scripting.ProgramInstanceScript();
-      var options = new Altaxo.Gui.OpenFileOptions();
-      options.Title = "Open a script or press Cancel to create a new script";
+      var options = new Altaxo.Gui.OpenFileOptions
+      {
+        Title = "Open a script or press Cancel to create a new script"
+      };
       options.AddFilter("*.cs", "C# files (*.cs)");
       options.AddFilter("*.*", "All files (*.*)");
       options.FilterIndex = 0;
       if (Current.Gui.ShowOpenFileDialog(options))
       {
-        string scripttext;
-        string err = OpenScriptText(options.FileName, out scripttext);
+        string err = OpenScriptText(options.FileName, out var scripttext);
         if (null != err)
           Current.Gui.ErrorMessageBox(err);
         else
           script.ScriptText = scripttext;
       }
 
-      object[] args = new object[] { script, new Altaxo.Gui.Scripting.ScriptExecutionHandler(this.EhScriptExecution) };
+      object[] args = new object[] { script, new Altaxo.Gui.Scripting.ScriptExecutionHandler(EhScriptExecution) };
       if (Current.Gui.ShowDialog(args, "New instance script"))
       {
         string errors = null;
@@ -328,8 +330,10 @@ namespace Altaxo.Main.Commands
         {
           errors = null;
           // store the script somewhere m_Table.TableScript = (TableScript)args[0];
-          var saveOptions = new Altaxo.Gui.SaveFileOptions();
-          saveOptions.Title = "Save your script";
+          var saveOptions = new Altaxo.Gui.SaveFileOptions
+          {
+            Title = "Save your script"
+          };
           saveOptions.AddFilter("*.cs", "C# files (*.cs)");
           saveOptions.AddFilter("*.*", "All files (*.*)");
           saveOptions.FilterIndex = 0;
@@ -352,9 +356,9 @@ namespace Altaxo.Main.Commands
     {
       try
       {
-        using (System.IO.FileStream stream = new System.IO.FileStream(filename, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.Read))
+        using (var stream = new System.IO.FileStream(filename, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.Read))
         {
-          System.IO.StreamWriter wr = new System.IO.StreamWriter(stream);
+          var wr = new System.IO.StreamWriter(stream);
           wr.Write(text);
           wr.Close();
           stream.Close();
@@ -372,9 +376,9 @@ namespace Altaxo.Main.Commands
       scripttext = null;
       try
       {
-        using (System.IO.FileStream stream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
+        using (var stream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
         {
-          System.IO.StreamReader sr = new System.IO.StreamReader(stream);
+          var sr = new System.IO.StreamReader(stream);
           scripttext = sr.ReadToEnd();
           sr.Close();
           stream.Close();

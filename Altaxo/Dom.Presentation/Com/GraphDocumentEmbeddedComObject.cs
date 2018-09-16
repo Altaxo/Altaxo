@@ -62,7 +62,7 @@ namespace Altaxo.Com
     public GraphDocumentEmbeddedComObject(ComManager comManager)
       : base(comManager)
     {
-      ComDebug.ReportInfo("{0} constructor.", this.GetType().Name);
+      ComDebug.ReportInfo("{0} constructor.", GetType().Name);
 
       _dataAdviseHolder = new ManagedDataAdviseHolder();
       _oleAdviseHolder = new ManagedOleAdviseHolderFM();
@@ -72,19 +72,19 @@ namespace Altaxo.Com
     {
       if (_isDocumentDirty)
       {
-        ComDebug.ReportInfo("{0}.Dispose Step 0 : Document is dirty -> Advise DataChanged", this.GetType().Name);
+        ComDebug.ReportInfo("{0}.Dispose Step 0 : Document is dirty -> Advise DataChanged", GetType().Name);
         SendAdvise_DataChanged(); // update the image of the graph before we close
       }
 
-      ComDebug.ReportInfo("{0}.Dispose Step 1 : SaveObject", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.Dispose Step 1 : SaveObject", GetType().Name);
 
       SendAdvise_SaveObject(); // make an advise to save the mini-project into the container application
 
-      ComDebug.ReportInfo("{0}.Dispose Step 2 : Calling SendAdvise.HideWindow", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.Dispose Step 2 : Calling SendAdvise.HideWindow", GetType().Name);
 
       SendAdvise_HideWindow();
 
-      ComDebug.ReportInfo("{0}.Dispose Step 3 : Calling SendAdvise.Closed", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.Dispose Step 3 : Calling SendAdvise.Closed", GetType().Name);
 
       SendAdvise_Closed();
 
@@ -92,11 +92,11 @@ namespace Altaxo.Com
       // but since this is an embedded object,we have no document moniker
 
       // Disconnect the container.
-      ComDebug.ReportInfo("{0}.Dispose Step 4 : Disconnecting this object", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.Dispose Step 4 : Disconnecting this object", GetType().Name);
 
       Ole32Func.CoDisconnectObject(this, 0);
 
-      ComDebug.ReportInfo("{0}.Dispose completed.", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.Dispose completed.", GetType().Name);
     }
 
     #region Document management
@@ -131,7 +131,7 @@ namespace Altaxo.Com
 
     private void EhDocumentChanged(object sender, EventArgs e)
     {
-      ComDebug.ReportInfo("{0}.EhDocumentChanged", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.EhDocumentChanged", GetType().Name);
       _isDocumentDirty = true;
 
       // see Brockschmidt Inside Ole 2nd edition, page 909
@@ -156,37 +156,39 @@ namespace Altaxo.Com
     {
       get
       {
-        List<Rendering> renderings = new List<Rendering>();
+        var renderings = new List<Rendering>
+        {
 
-        // Renderings are in the order of preference.
-        // First the Embedding format
-        // then the enhanced metafile format for visual representation
+          // Renderings are in the order of preference.
+          // First the Embedding format
+          // then the enhanced metafile format for visual representation
 
-        // Allows us to be embedded with an OLE container.
-        // No callback because this should go via GetDataHere.
-        // EMBEDSOURCE and OBJECTDESCRIPTOR should be placed after private data,
-        // but before the presentations (Brockschmidt, Inside Ole 2nd ed. page 911)
-        renderings.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
-        renderings.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderEmbeddedObjectDescriptor));
+          // Allows us to be embedded with an OLE container.
+          // No callback because this should go via GetDataHere.
+          // EMBEDSOURCE and OBJECTDESCRIPTOR should be placed after private data,
+          // but before the presentations (Brockschmidt, Inside Ole 2nd ed. page 911)
+          new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null),
+          new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderEmbeddedObjectDescriptor)
+        };
 
         var renderingOptions = EmbeddedGraphDocumentRenderingHelper.GetRenderingOptions(_document);
 
         // Enhanced metafile is sometimes problematic because not all programs can interpret the scale and unit options
         if (renderingOptions.RenderEnhancedMetafile)
         {
-          renderings.Add(new Rendering((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhancedMetafile));
+          renderings.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhancedMetafile));
         }
 
         // some applications - even PowerPoint 2010 - seems to require old fashioned Windows metafile
         if (renderingOptions.RenderWindowsMetafile)
         {
-          renderings.Add(new Rendering((short)CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderWindowsMetafilePict));
+          renderings.Add(new Rendering(CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderWindowsMetafilePict));
         }
 
         if (renderingOptions.RenderBitmap)
         {
-          renderings.Add(new Rendering((short)CF.CF_BITMAP, TYMED.TYMED_GDI, RenderAsGdiBitmap));
-          renderings.Add(new Rendering((short)CF.CF_DIB, TYMED.TYMED_HGLOBAL, RenderAsDIBBitmap));
+          renderings.Add(new Rendering(CF.CF_BITMAP, TYMED.TYMED_GDI, RenderAsGdiBitmap));
+          renderings.Add(new Rendering(CF.CF_DIB, TYMED.TYMED_HGLOBAL, RenderAsDIBBitmap));
         }
 
         return renderings;
@@ -195,13 +197,13 @@ namespace Altaxo.Com
 
     private IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed)
     {
-      ComDebug.ReportInfo("{0}.RenderEmbeddedObjectDescriptor", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.RenderEmbeddedObjectDescriptor", GetType().Name);
       return GraphDocumentDataObject.RenderEmbeddedObjectDescriptor(tymed, _document.Size);
     }
 
     private IntPtr RenderEnhancedMetafile(TYMED tymed)
     {
-      ComDebug.ReportInfo("{0}.RenderEnhancedMetafile", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.RenderEnhancedMetafile", GetType().Name);
 
       if (!(tymed == TYMED.TYMED_ENHMF))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_TYMED_ENHMF");
@@ -211,7 +213,7 @@ namespace Altaxo.Com
 
     private IntPtr RenderWindowsMetafilePict(TYMED tymed)
     {
-      ComDebug.ReportInfo("{0}.RenderWindowsMetafilePict", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.RenderWindowsMetafilePict", GetType().Name);
 
       if (!(tymed == TYMED.TYMED_MFPICT))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_MFPICT");
@@ -221,7 +223,7 @@ namespace Altaxo.Com
 
     private IntPtr RenderAsGdiBitmap(TYMED tymed)
     {
-      ComDebug.ReportInfo("{0}.RenderAsGdiBitmap", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.RenderAsGdiBitmap", GetType().Name);
 
       if (!(tymed == TYMED.TYMED_GDI))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_GDI");
@@ -231,7 +233,7 @@ namespace Altaxo.Com
 
     private IntPtr RenderAsDIBBitmap(TYMED tymed)
     {
-      ComDebug.ReportInfo("{0}.RenderAsDIBBitmap", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.RenderAsDIBBitmap", GetType().Name);
       if (!(tymed == TYMED.TYMED_HGLOBAL))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 
@@ -264,7 +266,7 @@ namespace Altaxo.Com
 
     public int Close(tagOLECLOSE dwSaveOption)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.Close {1}", this.GetType().Name, dwSaveOption);
+      ComDebug.ReportInfo("{0}.IOleObject.Close {1}", GetType().Name, dwSaveOption);
       try
       {
         bool save = false, cancelled = false;
@@ -300,13 +302,13 @@ namespace Altaxo.Com
             break;
 
           default:
-            ComDebug.ReportError("{0}.IOleObject.Close called with unknown parameter: {1}", this.GetType().Name, dwSaveOption);
+            ComDebug.ReportError("{0}.IOleObject.Close called with unknown parameter: {1}", GetType().Name, dwSaveOption);
             break;
         }
 
         if (cancelled)
         {
-          ComDebug.ReportInfo("{0}.IOleObject.Close -> OLE_E_PROMPTSAVECANCELLED", this.GetType().Name);
+          ComDebug.ReportInfo("{0}.IOleObject.Close -> OLE_E_PROMPTSAVECANCELLED", GetType().Name);
           return ComReturnValue.OLE_E_PROMPTSAVECANCELLED;
         }
 
@@ -317,13 +319,13 @@ namespace Altaxo.Com
         }
 
         // Begin shutdown of the application
-        ComDebug.ReportInfo("{0}.IOleObject.Close -> BeginInvoke MainWindow.Close", this.GetType().Name);
+        ComDebug.ReportInfo("{0}.IOleObject.Close -> BeginInvoke MainWindow.Close", GetType().Name);
         _comManager.ApplicationAdapter.BeginClosingApplication();
         return ComReturnValue.NOERROR;
       }
       catch (Exception e)
       {
-        ComDebug.ReportError("{0}.IOleObject.Close threw an exception: {1}", this.GetType().Name, e);
+        ComDebug.ReportError("{0}.IOleObject.Close threw an exception: {1}", GetType().Name, e);
         throw;
       }
       // }
@@ -331,14 +333,14 @@ namespace Altaxo.Com
 
     public int DoVerb(int iVerb, IntPtr lpmsg, IOleClientSite pActiveSite, int lindex, IntPtr hwndParent, COMRECT lprcPosRect)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.DoVerb {1}", this.GetType().Name, iVerb);
+      ComDebug.ReportInfo("{0}.IOleObject.DoVerb {1}", GetType().Name, iVerb);
       try
       {
         _lastVerb = iVerb;
         switch (iVerb)
         {
           case (int)OLEIVERB.OLEIVERB_HIDE:
-            ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_HIDE", this.GetType().Name);
+            ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_HIDE", GetType().Name);
             _comManager.ApplicationAdapter.HideMainWindow();
             SendAdvise_HideWindow();
             break;
@@ -348,22 +350,22 @@ namespace Altaxo.Com
           case (int)OLEIVERB.OLEIVERB_OPEN:
 
             if ((int)OLEIVERB.OLEIVERB_PRIMARY == iVerb)
-              ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_PRIMARY", this.GetType().Name);
+              ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_PRIMARY", GetType().Name);
             if ((int)OLEIVERB.OLEIVERB_SHOW == iVerb)
-              ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_SHOW", this.GetType().Name);
+              ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_SHOW", GetType().Name);
             if ((int)OLEIVERB.OLEIVERB_OPEN == iVerb)
-              ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_OPEN", this.GetType().Name);
+              ComDebug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_OPEN", GetType().Name);
             _comManager.ApplicationAdapter.ShowMainWindow();
             if (pActiveSite != null)
             {
-              ComDebug.ReportInfo("{0}.IOleObject.DoVerb -> calling ClientSite.ShowObject()", this.GetType().Name);
+              ComDebug.ReportInfo("{0}.IOleObject.DoVerb -> calling ClientSite.ShowObject()", GetType().Name);
               try
               {
                 pActiveSite.ShowObject();
               }
               catch (Exception ex)
               {
-                ComDebug.ReportInfo("{0}.IOleObject.DoVerb pActiveSite.ShowObject caused an exception: {1}", this.GetType().Name, ex);
+                ComDebug.ReportInfo("{0}.IOleObject.DoVerb pActiveSite.ShowObject caused an exception: {1}", GetType().Name, ex);
               }
 
               SendAdvise_ShowWindow();
@@ -372,22 +374,22 @@ namespace Altaxo.Com
             return ComReturnValue.NOERROR;
 
           default:
-            ComDebug.ReportError("{0}.IOleObject.DoVerb Unexpected verb: {1}", this.GetType().Name, iVerb);
+            ComDebug.ReportError("{0}.IOleObject.DoVerb Unexpected verb: {1}", GetType().Name, iVerb);
             return ComReturnValue.OLEOBJ_S_INVALIDVERB;
         }
-        ComDebug.ReportInfo("{0}.IOleObject.DoVerb -> returning NOERROR", this.GetType().Name);
+        ComDebug.ReportInfo("{0}.IOleObject.DoVerb -> returning NOERROR", GetType().Name);
         return ComReturnValue.NOERROR;
       }
       catch (Exception e)
       {
-        ComDebug.ReportError("{0}.IOleObject.DoVerb throw an exception. Details: {1}", this.GetType().Name, e);
+        ComDebug.ReportError("{0}.IOleObject.DoVerb throw an exception. Details: {1}", GetType().Name, e);
         throw;
       }
     }
 
     public int SetExtent(int dwDrawAspect, tagSIZEL pSizel)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.SetExtent({1}x{2}) -> not supported.", this.GetType().Name, pSizel.cx, pSizel.cy);
+      ComDebug.ReportInfo("{0}.IOleObject.SetExtent({1}x{2}) -> not supported.", GetType().Name, pSizel.cx, pSizel.cy);
 
       /*
 			if ((dwDrawAspect & (int)DVASPECT.DVASPECT_CONTENT) != 0)
@@ -408,7 +410,7 @@ namespace Altaxo.Com
 
     public int GetExtent(int dwDrawAspect, tagSIZEL pSizel)
     {
-      ComDebug.ReportInfo("{0}.IOleObject.GetExtent", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IOleObject.GetExtent", GetType().Name);
       if ((dwDrawAspect & (int)DVASPECT.DVASPECT_CONTENT) == 0)
         return ComReturnValue.E_FAIL;
 
@@ -425,7 +427,7 @@ namespace Altaxo.Com
     {
       misc = GraphDocumentDataObject.MiscStatus(dwAspect);
 
-      ComDebug.ReportInfo("{0}.IOleObject.GetMiscStatus -> returning 0x{1:X}", this.GetType().Name, misc);
+      ComDebug.ReportInfo("{0}.IOleObject.GetMiscStatus -> returning 0x{1:X}", GetType().Name, misc);
 
       return ComReturnValue.S_OK;
     }
@@ -436,13 +438,13 @@ namespace Altaxo.Com
 
     public void GetClassID(out Guid pClassID)
     {
-      ComDebug.ReportInfo("{0}.IPersistStorage.GetClassID", this.GetType().Name);
-      pClassID = this.GetType().GUID;
+      ComDebug.ReportInfo("{0}.IPersistStorage.GetClassID", GetType().Name);
+      pClassID = GetType().GUID;
     }
 
     public int IsDirty()
     {
-      ComDebug.ReportInfo("{0}.IPersistStorage.IsDirty returning {1}", this.GetType().Name, _isDocumentDirty);
+      ComDebug.ReportInfo("{0}.IPersistStorage.IsDirty returning {1}", GetType().Name, _isDocumentDirty);
 
       if (_isDocumentDirty)
         return ComReturnValue.S_OK;
@@ -452,7 +454,7 @@ namespace Altaxo.Com
 
     public void InitNew(IStorage pstg)
     {
-      ComDebug.ReportInfo("{0}.IPersistStorage.InitNew", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IPersistStorage.InitNew", GetType().Name);
 
       Document = Current.ProjectService.CreateNewGraph().Doc;
 
@@ -467,7 +469,7 @@ namespace Altaxo.Com
 
       string documentName = null;
       Version altaxoVersion;
-      ComDebug.ReportInfo("{0}.IPersistStorage.Load", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IPersistStorage.Load", GetType().Name);
 
       try
       {
@@ -478,11 +480,11 @@ namespace Altaxo.Com
           var versionString = System.Text.Encoding.UTF8.GetString(bytes);
           altaxoVersion = Version.Parse(versionString);
         }
-        ComDebug.ReportInfo("{0}.IPersistStorage.Load -> Version: {1}", this.GetType().Name, altaxoVersion);
+        ComDebug.ReportInfo("{0}.IPersistStorage.Load -> Version: {1}", GetType().Name, altaxoVersion);
       }
       catch (Exception ex)
       {
-        ComDebug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoVersion, exception: {1}", this.GetType().Name, ex);
+        ComDebug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoVersion, exception: {1}", GetType().Name, ex);
       }
 
       try
@@ -493,11 +495,11 @@ namespace Altaxo.Com
           stream.Read(bytes, 0, bytes.Length);
           documentName = System.Text.Encoding.UTF8.GetString(bytes);
         }
-        ComDebug.ReportInfo("{0}.IPersistStorage.Load -> Name of GraphDocument: {1}", this.GetType().Name, documentName);
+        ComDebug.ReportInfo("{0}.IPersistStorage.Load -> Name of GraphDocument: {1}", GetType().Name, documentName);
       }
       catch (Exception ex)
       {
-        ComDebug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoGraphName, exception: {1}", this.GetType().Name, ex);
+        ComDebug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoGraphName, exception: {1}", GetType().Name, ex);
       }
 
       try
@@ -524,13 +526,13 @@ namespace Altaxo.Com
           throw exInner;
 
         if (!string.IsNullOrEmpty(loadErrors))
-          ComDebug.ReportInfo("{0}.IPersistStorage.Load Project loaded with errors: {1}", this.GetType().Name, loadErrors);
+          ComDebug.ReportInfo("{0}.IPersistStorage.Load Project loaded with errors: {1}", GetType().Name, loadErrors);
         else
-          ComDebug.ReportInfo("{0}.IPersistStorage.Load Project loaded successfully", this.GetType().Name);
+          ComDebug.ReportInfo("{0}.IPersistStorage.Load Project loaded successfully", GetType().Name);
       }
       catch (Exception ex)
       {
-        ComDebug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoProjectZip, exception: {1}", this.GetType().Name, ex);
+        ComDebug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoProjectZip, exception: {1}", GetType().Name, ex);
       }
 
       Marshal.ReleaseComObject(pstg);
@@ -539,12 +541,10 @@ namespace Altaxo.Com
 
       if (null != documentName)
       {
-        Altaxo.Graph.Gdi.GraphDocument newDocGdi;
-        Altaxo.Graph.Graph3D.GraphDocument newDoc3D;
 
-        if (Current.Project.GraphDocumentCollection.TryGetValue(documentName, out newDocGdi))
+        if (Current.Project.GraphDocumentCollection.TryGetValue(documentName, out var newDocGdi))
           newDocument = newDocGdi;
-        else if (Current.Project.Graph3DDocumentCollection.TryGetValue(documentName, out newDoc3D))
+        else if (Current.Project.Graph3DDocumentCollection.TryGetValue(documentName, out var newDoc3D))
           newDocument = newDoc3D;
       }
 
@@ -560,12 +560,12 @@ namespace Altaxo.Com
       {
         Document = newDocument;
         _comManager.InvokeGuiThread(() => Current.IProjectService.ShowDocumentView(Document));
-        ComDebug.ReportInfo("{0}.IPersistStorage.Load ShowDocumentView for {1}", this.GetType().Name, Document.Name);
+        ComDebug.ReportInfo("{0}.IPersistStorage.Load ShowDocumentView for {1}", GetType().Name, Document.Name);
       }
 
       if (null == Document)
       {
-        ComDebug.ReportError("{0}.IPersistStorage.Load Document is null, have to throw an exception now!!", this.GetType().Name);
+        ComDebug.ReportError("{0}.IPersistStorage.Load Document is null, have to throw an exception now!!", GetType().Name);
         throw new InvalidOperationException();
       }
 
@@ -575,12 +575,12 @@ namespace Altaxo.Com
 
     public void Save(IStorage pStgSave, bool fSameAsLoad)
     {
-      ComDebug.ReportInfo("{0}.IPersistStorage.Save fSameAsLoad={1}", this.GetType().Name, fSameAsLoad);
+      ComDebug.ReportInfo("{0}.IPersistStorage.Save fSameAsLoad={1}", GetType().Name, fSameAsLoad);
 
       try
       {
         Exception saveEx = null;
-        Ole32Func.WriteClassStg(pStgSave, this.GetType().GUID);
+        Ole32Func.WriteClassStg(pStgSave, GetType().GUID);
 
         // Store the version of this assembly
         {
@@ -618,7 +618,7 @@ namespace Altaxo.Com
       }
       catch (Exception ex)
       {
-        ComDebug.ReportError("{0}.IPersistStorage:Save threw an exception: {1}", this.GetType().Name, ex);
+        ComDebug.ReportError("{0}.IPersistStorage:Save threw an exception: {1}", GetType().Name, ex);
       }
       finally
       {
@@ -628,14 +628,14 @@ namespace Altaxo.Com
 
     public void SaveCompleted(IStorage pStgNew)
     {
-      ComDebug.ReportInfo("{0}.IPersistStorage.SaveCompleted", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IPersistStorage.SaveCompleted", GetType().Name);
 
       SendAdvise_Saved();
     }
 
     public int HandsOffStorage()
     {
-      ComDebug.ReportInfo("{0}.IPersistStorage.HandsOffStorage", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IPersistStorage.HandsOffStorage", GetType().Name);
       return ComReturnValue.S_OK;
     }
 

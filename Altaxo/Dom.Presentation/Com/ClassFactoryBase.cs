@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.UnmanagedApi.Ole32;
 using System;
+using Altaxo.UnmanagedApi.Ole32;
 
 namespace Altaxo.Com
 {
@@ -31,7 +31,7 @@ namespace Altaxo.Com
   {
     protected ComManager _comManager;
 
-    protected UInt32 _locked = 0;
+    protected uint _locked = 0;
     protected uint _classContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
     protected Guid _classId;
     protected uint _flags;
@@ -44,7 +44,7 @@ namespace Altaxo.Com
 
     public virtual void InternalCreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
     {
-      IntPtr nullPtr = new IntPtr(0);
+      var nullPtr = new IntPtr(0);
       ppvObject = nullPtr;
     }
 
@@ -100,7 +100,7 @@ namespace Altaxo.Com
         out _cookie
         );
 
-      ComDebug.ReportInfo("{0}.RegisterClassObject, i={1}, _cookie={2}", this.GetType().Name, i, _cookie);
+      ComDebug.ReportInfo("{0}.RegisterClassObject, i={1}, _cookie={2}", GetType().Name, i, _cookie);
 
       if (i == 0)
       {

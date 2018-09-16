@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
 using System;
 using System.Collections;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Main
 {
@@ -90,14 +90,14 @@ namespace Altaxo.Main
         if (!Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(graphicalExporterType, typeof(Altaxo.Main.IProjectItemImageExporter)))
           throw new Exception(string.Format("Error in codon {0}: the provided type in argument {1} is not of type {2}", codon, nameof(graphicalExporterType), typeof(Altaxo.Main.IProjectItemImageExporter)));
 
-        this._codon = codon;
-        this.Id = codon.Id;
+        _codon = codon;
+        Id = codon.Id;
 
         string title = codon.Properties["title"];
         if (string.IsNullOrEmpty(title))
-          this.Title = codon.Id;
+          Title = codon.Id;
         else
-          this.Title = title;
+          Title = title;
 
         _projectItemType = projectItemType;
         _graphicalExporterType = graphicalExporterType;

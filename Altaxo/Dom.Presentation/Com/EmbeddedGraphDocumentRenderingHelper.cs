@@ -22,15 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 // For use of the GuidAttribute, ProgIdAttribute and ClassInterfaceAttribute.
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Com
 {

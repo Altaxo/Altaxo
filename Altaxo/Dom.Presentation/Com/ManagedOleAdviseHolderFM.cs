@@ -42,12 +42,12 @@ namespace Altaxo.Com
     {
       pdwConnection = _advises.Count + 1; // this is the cookie: Attention: cookies with a value of 0 will not be accepted, so we increment count by 1 to have always a cookie > 0
       _advises.Add(pAdvise);
-      ComDebug.ReportInfo("{0}.Advise giving out cookie={1}", this.GetType().Name, pdwConnection);
+      ComDebug.ReportInfo("{0}.Advise giving out cookie={1}", GetType().Name, pdwConnection);
     }
 
     public void Unadvise(int dwConnection)
     {
-      ComDebug.ReportInfo("{0}.Unadvise cookie={1}", this.GetType().Name, dwConnection);
+      ComDebug.ReportInfo("{0}.Unadvise cookie={1}", GetType().Name, dwConnection);
       int idx = dwConnection - 1; // we have to reverse incrementation, see Advise function
       if (!(_advises[idx] != null))
         throw new InvalidOperationException(nameof(_advises) + "[idx] should be != null");
@@ -57,20 +57,20 @@ namespace Altaxo.Com
 
     public IEnumSTATDATA EnumAdvise()
     {
-      ComDebug.ReportInfo("{0}.EnumAdvise", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.EnumAdvise", GetType().Name);
       return new EnumSTATDATA(_advises);
     }
 
     public void SendOnRename(IMoniker pmk)
     {
-      ComDebug.ReportInfo("{0}.SendOnRename calling (for all sinks) IAdviseSink.OnRename(Moniker)", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.SendOnRename calling (for all sinks) IAdviseSink.OnRename(Moniker)", GetType().Name);
       foreach (IAdviseSink sink in new List<IAdviseSink>(_advises.Where(x => null != x))) // new List is neccessary because the original list might be modified during the operation
         sink.OnRename(pmk);
     }
 
     public void SendOnSave()
     {
-      ComDebug.ReportInfo("{0}.SendOnSave calling (for all sinks) IAdviseSink.OnSave()", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.SendOnSave calling (for all sinks) IAdviseSink.OnSave()", GetType().Name);
       // note we don't have an IOleAdviseHolder for this, we use a list of sinks
       foreach (var sink in _advises.Where(x => null != x))
         sink.OnSave();
@@ -78,7 +78,7 @@ namespace Altaxo.Com
 
     public void SendOnClose()
     {
-      ComDebug.ReportInfo("{0}.SendOnClose calling (for all sinks) IAdviseSink.OnClose()", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.SendOnClose calling (for all sinks) IAdviseSink.OnClose()", GetType().Name);
       foreach (var sink in new List<IAdviseSink>(_advises.Where(x => null != x))) // new List is neccessary because the original list might be modified during the operation
         sink.OnClose();
     }

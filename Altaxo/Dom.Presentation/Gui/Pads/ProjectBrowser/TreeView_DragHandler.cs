@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using GongSolutions.Wpf.DragDrop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using GongSolutions.Wpf.DragDrop;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -45,9 +45,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       public void StartDrag(IDragInfo dragInfo)
       {
-        Altaxo.Serialization.Clipboard.IDataObject dao;
-        bool canCopy, canMove;
-        _projectBrowseControl._controller.FolderTree_StartDrag(out dao, out canCopy, out canMove);
+        _projectBrowseControl._controller.FolderTree_StartDrag(out var dao, out var canCopy, out var canMove);
 
         dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
 
@@ -62,8 +60,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
-        bool isCopy, isMove;
-        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
 
         _projectBrowseControl._controller.FolderTree_DragEnded(isCopy, isMove);
       }

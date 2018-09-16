@@ -22,6 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.ComponentModel;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
@@ -39,11 +44,6 @@ using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Main.Services;
 using Altaxo.Scripting;
-using System;
-using System.ComponentModel;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Windows.Input;
 
 namespace Altaxo.Graph.Commands
 {
@@ -61,8 +61,8 @@ namespace Altaxo.Graph.Commands
       _graphToolType = toolType;
       if (null != Current.Workbench)
       {
-        Current.Workbench.PropertyChanged += this.EhWorkbenchContentChanged;
-        this.EhWorkbenchContentChanged(this, new PropertyChangedEventArgs(nameof(Current.Workbench.ActiveViewContent)));
+        Current.Workbench.PropertyChanged += EhWorkbenchContentChanged;
+        EhWorkbenchContentChanged(this, new PropertyChangedEventArgs(nameof(Current.Workbench.ActiveViewContent)));
       }
     }
 
@@ -77,16 +77,16 @@ namespace Altaxo.Graph.Commands
         {
           lock (this)
           {
-            this.myCurrentGraphController.CurrentGraphToolChanged -= new EventHandler(this.EhGraphToolChanged);
-            this.myCurrentGraphController = null;
+            myCurrentGraphController.CurrentGraphToolChanged -= new EventHandler(EhGraphToolChanged);
+            myCurrentGraphController = null;
           }
         }
         if (Controller != null)
         {
           lock (this)
           {
-            this.myCurrentGraphController = this.Controller;
-            this.myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(this.EhGraphToolChanged);
+            myCurrentGraphController = Controller;
+            myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(EhGraphToolChanged);
           }
         }
         OnPropertyChanged("IsChecked");

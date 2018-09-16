@@ -75,11 +75,10 @@ namespace Altaxo.Com
         return;
       }
 
-      InvokeData data;
       System.Threading.AutoResetEvent myEvent = null;
       lock (_syncObject)
       {
-        if (_invokerQueue.TryPeek(out data))
+        if (_invokerQueue.TryPeek(out var data))
         {
           lock (data)
           {
@@ -111,7 +110,7 @@ namespace Altaxo.Com
       if (_isInvokeRequiredForGuiThread())
         throw new InvalidOperationException("This procedure must be called from the Gui thread only.");
 
-      InvokeData data = new InvokeData() { Task = new Task(action) };
+      var data = new InvokeData() { Task = new Task(action) };
       _invokerQueue.Push(data);
       data.Task.Start();
 

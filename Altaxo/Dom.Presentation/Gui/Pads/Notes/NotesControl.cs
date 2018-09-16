@@ -41,17 +41,17 @@ namespace Altaxo.Gui.Pads.Notes
 
     public NotesControl()
     {
-      this.TextWrapping = System.Windows.TextWrapping.NoWrap;
-      this.AcceptsReturn = true;
-      this.AcceptsTab = true;
-      this.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
-      this.HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
-      this.FontFamily = new System.Windows.Media.FontFamily("Global Monospace");
+      TextWrapping = System.Windows.TextWrapping.NoWrap;
+      AcceptsReturn = true;
+      AcceptsTab = true;
+      VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+      HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+      FontFamily = new System.Windows.Media.FontFamily("Global Monospace");
 
-      this.LostFocus += new System.Windows.RoutedEventHandler(EhLostFocus);
-      this.LostKeyboardFocus += new System.Windows.Input.KeyboardFocusChangedEventHandler(EhLostKeyboardFocus);
-      this.TextChanged += new System.Windows.Controls.TextChangedEventHandler(EhTextChanged);
-      this.IsEnabled = false;
+      LostFocus += new System.Windows.RoutedEventHandler(EhLostFocus);
+      LostKeyboardFocus += new System.Windows.Input.KeyboardFocusChangedEventHandler(EhLostKeyboardFocus);
+      TextChanged += new System.Windows.Controls.TextChangedEventHandler(EhTextChanged);
+      IsEnabled = false;
     }
 
     public void ClearBinding()
@@ -63,15 +63,15 @@ namespace Altaxo.Gui.Pads.Notes
 
     public void SetTextFromNotesAndSetBinding(Altaxo.Main.ITextBackedConsole con)
     {
-      this.Text = con.Text;
+      Text = con.Text;
 
       var binding = new System.Windows.Data.Binding
       {
         Source = con,
-        Path = new System.Windows.PropertyPath(nameof(this.Text)),
+        Path = new System.Windows.PropertyPath(nameof(Text)),
         Mode = System.Windows.Data.BindingMode.TwoWay
       };
-      _textBinding = this.SetBinding(System.Windows.Controls.TextBox.TextProperty, binding);
+      _textBinding = SetBinding(System.Windows.Controls.TextBox.TextProperty, binding);
     }
 
     private void EhTextChanged(object sender, TextChangedEventArgs e)

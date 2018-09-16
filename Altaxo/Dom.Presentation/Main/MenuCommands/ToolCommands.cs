@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
-using Altaxo.Gui.Graph.Gdi.Viewing;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Gui;
+using Altaxo.Gui.AddInItems;
+using Altaxo.Gui.Graph.Gdi.Viewing;
 
 namespace Altaxo.Main.Commands
 {

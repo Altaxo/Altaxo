@@ -63,8 +63,8 @@ namespace Altaxo.Gui.Markdown
         int iEmHeight = gdiFont.FontFamily.GetEmHeight(gdiFont.Style);
         int iCellAscent = gdiFont.FontFamily.GetCellAscent(gdiFont.Style);
         int iCellDescent = gdiFont.FontFamily.GetCellDescent(gdiFont.Style);
-        cyAscent = fontSize * iCellAscent / (double)iEmHeight;
-        cyDescent = fontSize * iCellDescent / (double)iEmHeight;
+        cyAscent = fontSize * iCellAscent / iEmHeight;
+        cyDescent = fontSize * iCellDescent / iEmHeight;
         cyMiddle = cyAscent / 3; // is only a first guess, details coming from the Wpf font
         gdiFont.Dispose();
         var ff = new FontFamily(fontFamily);

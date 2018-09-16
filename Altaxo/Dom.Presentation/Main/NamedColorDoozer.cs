@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.AddInItems;
+using Altaxo.Drawing;
 
 namespace Altaxo.Main
 {
@@ -59,7 +59,7 @@ namespace Altaxo.Main
       string value = args.Codon.Properties["Value"];
       if (!string.IsNullOrEmpty(value))
       {
-        AxoColor c = AxoColor.FromInvariantString(value);
+        var c = AxoColor.FromInvariantString(value);
         return new NamedColor(c, id);
       }
       return null;

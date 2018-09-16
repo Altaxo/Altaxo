@@ -38,8 +38,7 @@ namespace Altaxo.Com
 
     public static IRunningObjectTable GetROT()
     {
-      IRunningObjectTable rot;
-      Int32 hr = Ole32Func.GetRunningObjectTable(0, out rot);
+      Int32 hr = Ole32Func.GetRunningObjectTable(0, out var rot);
       if (!(hr == ComReturnValue.NOERROR))
         throw new InvalidOperationException("The COM operation was not successful");
       return rot;

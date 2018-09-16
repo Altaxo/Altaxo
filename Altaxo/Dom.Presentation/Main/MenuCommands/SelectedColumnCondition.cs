@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
 using System;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Worksheet.Commands
 {

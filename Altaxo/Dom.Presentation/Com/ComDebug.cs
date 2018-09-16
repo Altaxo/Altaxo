@@ -59,7 +59,7 @@ namespace Altaxo.Com
     [Conditional("COMLOGGING")]
     public static void Report(string level, string format, params object[] args)
     {
-      StringBuilder stb = new StringBuilder(128);
+      var stb = new StringBuilder(128);
 
       stb.Append(level);
       stb.Append('\t');

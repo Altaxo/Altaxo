@@ -45,7 +45,7 @@ namespace Altaxo.Com
     {
       _dataAdviseThread = new InvokeableThread("DataAdviseThread", Current.Dispatcher);
 
-      this.Invoke("Creation of IDataAdviseHolder", () =>
+      Invoke("Creation of IDataAdviseHolder", () =>
         {
           int res = Ole32Func.CreateDataAdviseHolder(out _dataAdviseHolder);
           if (!(res == ComReturnValue.S_OK))

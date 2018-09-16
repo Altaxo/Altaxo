@@ -22,16 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
-
 using System.Windows;
+using Altaxo.Graph.Gdi;
+using Microsoft.Win32;
 
 namespace Altaxo.Com
 {
@@ -100,7 +99,7 @@ namespace Altaxo.Com
       if (null == doc)
         throw new ArgumentNullException();
 
-      ComDebug.ReportInfo("{0}.GetDocumentsComObjectForGraphDocument Name={1}", this.GetType().Name, doc.Name);
+      ComDebug.ReportInfo("{0}.GetDocumentsComObjectForGraphDocument Name={1}", GetType().Name, doc.Name);
 
       if (null != doc && _linkedDocumentsComObjects.ContainsKey(doc))
         return _linkedDocumentsComObjects[doc];
@@ -276,7 +275,7 @@ namespace Altaxo.Com
 
         {
           // Print out these info for debug purposes.
-          StringBuilder sb = new StringBuilder("");
+          var sb = new StringBuilder("");
           sb.AppendFormat("NumberOfObjectsInUse : {0}. NumberOfServerLocks : {1}", iObjsInUse, iServerLocks);
           ComDebug.ReportInfo(sb.ToString());
         }
@@ -287,8 +286,8 @@ namespace Altaxo.Com
         }
         else
         {
-          UIntPtr wParam = new UIntPtr(0);
-          IntPtr lParam = new IntPtr(0);
+          var wParam = new UIntPtr(0);
+          var lParam = new IntPtr(0);
 
           // Stop the program now
 
@@ -570,7 +569,7 @@ namespace Altaxo.Com
         }
       }
 
-      ComDebug.ReportInfo("{0}.ProcessArguments Embedding={1} IsRunning64bit={2}", this.GetType().Name, ApplicationWasStartedWithEmbeddingArg, System.Environment.Is64BitProcess);
+      ComDebug.ReportInfo("{0}.ProcessArguments Embedding={1} IsRunning64bit={2}", GetType().Name, ApplicationWasStartedWithEmbeddingArg, System.Environment.Is64BitProcess);
 
       return bRet;
     }
@@ -585,30 +584,34 @@ namespace Altaxo.Com
 
       {
         // Register the FileComObject
-        _classFactoryOfFileComObject = new ClassFactory_ProjectFileComObject(this);
-        _classFactoryOfFileComObject.ClassContext = (uint)(CLSCTX.CLSCTX_LOCAL_SERVER);
-        _classFactoryOfFileComObject.ClassId = Marshal.GenerateGuidForType(typeof(ProjectFileComObject));
-        _classFactoryOfFileComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
+        _classFactoryOfFileComObject = new ClassFactory_ProjectFileComObject(this)
+        {
+          ClassContext = (uint)(CLSCTX.CLSCTX_LOCAL_SERVER),
+          ClassId = Marshal.GenerateGuidForType(typeof(ProjectFileComObject)),
+          Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED
+        };
         _classFactoryOfFileComObject.RegisterClassObject();
-        ComDebug.ReportInfo("{0}.StartLocalServer Registered: {1}", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
+        ComDebug.ReportInfo("{0}.StartLocalServer Registered: {1}", GetType().Name, _classFactoryOfFileComObject.GetType().Name);
       }
 
       if (ApplicationWasStartedWithEmbeddingArg)
       {
         // Register the SimpleCOMObjectClassFactory.
-        _classFactoryOfDocumentComObject = new ClassFactory_GraphDocumentEmbeddedComObject(this);
-        _classFactoryOfDocumentComObject.ClassContext = (uint)(CLSCTX.CLSCTX_LOCAL_SERVER);
-        _classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject));
-        _classFactoryOfDocumentComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
+        _classFactoryOfDocumentComObject = new ClassFactory_GraphDocumentEmbeddedComObject(this)
+        {
+          ClassContext = (uint)(CLSCTX.CLSCTX_LOCAL_SERVER),
+          ClassId = Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject)),
+          Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED
+        };
         _classFactoryOfDocumentComObject.RegisterClassObject();
-        ComDebug.ReportInfo("{0}.StartLocalServer Registered: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
+        ComDebug.ReportInfo("{0}.StartLocalServer Registered: {1}", GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
       }
 
       ClassFactoryBase.ResumeClassObjects();
 
       // Start up the garbage collection thread.
       _garbageCollector = new GarbageCollector(1000);
-      Thread GarbageCollectionThread = new Thread(new ThreadStart(_garbageCollector.GCWatch))
+      var GarbageCollectionThread = new Thread(new ThreadStart(_garbageCollector.GCWatch))
       {
         // Set the name of the thread object.
         Name = "GarbCollThread",
@@ -649,7 +652,7 @@ namespace Altaxo.Com
       if (null != _classFactoryOfDocumentComObject)
       {
         _classFactoryOfDocumentComObject.RevokeClassObject();
-        ComDebug.ReportInfo("{0}.EnterLinkedObjectMode Revoked: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
+        ComDebug.ReportInfo("{0}.EnterLinkedObjectMode Revoked: {1}", GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
         _classFactoryOfDocumentComObject = null;
       }
     }
@@ -659,7 +662,7 @@ namespace Altaxo.Com
       if (null != _classFactoryOfFileComObject)
       {
         _classFactoryOfFileComObject.RevokeClassObject();
-        ComDebug.ReportInfo("{0}.EnterEmbeddedObjectMode Revoked: {1}", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
+        ComDebug.ReportInfo("{0}.EnterEmbeddedObjectMode Revoked: {1}", GetType().Name, _classFactoryOfFileComObject.GetType().Name);
         _classFactoryOfFileComObject = null;
       }
     }
@@ -715,14 +718,14 @@ namespace Altaxo.Com
       if (null != _classFactoryOfDocumentComObject)
       {
         _classFactoryOfDocumentComObject.RevokeClassObject();
-        ComDebug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
+        ComDebug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
         _classFactoryOfDocumentComObject = null;
       }
 
       if (null != _classFactoryOfFileComObject)
       {
         _classFactoryOfFileComObject.RevokeClassObject();
-        ComDebug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
+        ComDebug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", GetType().Name, _classFactoryOfFileComObject.GetType().Name);
         _classFactoryOfFileComObject = null;
       }
 

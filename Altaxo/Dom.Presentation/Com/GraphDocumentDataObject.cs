@@ -51,7 +51,7 @@ namespace Altaxo.Com
     public GraphDocumentDataObject(GraphDocumentBase graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
       : base(comManager)
     {
-      ComDebug.ReportInfo("{0} constructor.", this.GetType().Name);
+      ComDebug.ReportInfo("{0} constructor.", GetType().Name);
       _dataAdviseHolder = new ManagedDataAdviseHolder();
 
       _graphDocumentName = graphDocument.Name;
@@ -97,7 +97,7 @@ namespace Altaxo.Com
 
     ~GraphDocumentDataObject()
     {
-      ComDebug.ReportInfo("{0} destructor.", this.GetType().Name);
+      ComDebug.ReportInfo("{0} destructor.", GetType().Name);
 
       if (null != _dataAdviseHolder)
       {
@@ -261,7 +261,7 @@ namespace Altaxo.Com
         {
           medium.tymed = TYMED.TYMED_ISTREAM;
           medium.pUnkForRelease = null;
-          IStream strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
+          var strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
           DataObjectHelper.SaveMonikerToStream(documentMoniker, strm);
           return true;
         }
@@ -398,7 +398,7 @@ namespace Altaxo.Com
 
     private IntPtr RenderMoniker(TYMED tymed)
     {
-      ComDebug.ReportInfo("{0}.RenderMoniker", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.RenderMoniker", GetType().Name);
 
       if (!(tymed == TYMED.TYMED_ISTREAM))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_ISTREAM");
@@ -430,14 +430,16 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_HGLOBAL))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
       // Fill in the basic information.
-      OBJECTDESCRIPTOR od = new OBJECTDESCRIPTOR();
-      // According to the documentation this is used just to find an icon.
-      od.clsid = typeof(GraphDocumentEmbeddedComObject).GUID;
-      od.dwDrawAspect = DVASPECT.DVASPECT_CONTENT;
-      od.sizelcx = 0;  // zero in imitation of Word/Excel, but could be (int)(graphDocumentSize.X * 2540 / 72.0)
-      od.sizelcy = 0;  // zero in imitation of Word/Excel, but could be (int)(graphDocumentSize.Y * 2540 / 72.0);
-      od.pointlx = 0;
-      od.pointly = 0;
+      var od = new OBJECTDESCRIPTOR
+      {
+        // According to the documentation this is used just to find an icon.
+        clsid = typeof(GraphDocumentEmbeddedComObject).GUID,
+        dwDrawAspect = DVASPECT.DVASPECT_CONTENT,
+        sizelcx = 0,  // zero in imitation of Word/Excel, but could be (int)(graphDocumentSize.X * 2540 / 72.0)
+        sizelcy = 0,  // zero in imitation of Word/Excel, but could be (int)(graphDocumentSize.Y * 2540 / 72.0);
+        pointlx = 0,
+        pointly = 0
+      };
       od.dwStatus = MiscStatus((int)od.dwDrawAspect);
 
       // Descriptive strings to tack on after the struct.
@@ -477,14 +479,16 @@ namespace Altaxo.Com
       if (!(tymed == TYMED.TYMED_HGLOBAL))
         throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
       // Fill in the basic information.
-      OBJECTDESCRIPTOR od = new OBJECTDESCRIPTOR();
-      // According to the documentation this is used just to find an icon.
-      od.clsid = typeof(GraphDocumentLinkedComObject).GUID;
-      od.dwDrawAspect = DVASPECT.DVASPECT_CONTENT;
-      od.sizelcx = 0; // zero in imitation of Word/Excel, but could be box.Extent.cx;
-      od.sizelcy = 0; // zero in imitation of Word/Excel, but could be box.Extent.cy;
-      od.pointlx = 0;
-      od.pointly = 0;
+      var od = new OBJECTDESCRIPTOR
+      {
+        // According to the documentation this is used just to find an icon.
+        clsid = typeof(GraphDocumentLinkedComObject).GUID,
+        dwDrawAspect = DVASPECT.DVASPECT_CONTENT,
+        sizelcx = 0, // zero in imitation of Word/Excel, but could be box.Extent.cx;
+        sizelcy = 0, // zero in imitation of Word/Excel, but could be box.Extent.cy;
+        pointlx = 0,
+        pointly = 0
+      };
       od.dwStatus = MiscStatus((int)od.dwDrawAspect);
 
       // Descriptive strings to tack on after the struct.
@@ -529,8 +533,7 @@ namespace Altaxo.Com
 
       if (null != fileMoniker)
       {
-        IMoniker itemMoniker;
-        Ole32Func.CreateItemMoniker("!", DataObjectHelper.NormalStringToMonikerNameString(_graphDocumentName), out itemMoniker);
+        Ole32Func.CreateItemMoniker("!", DataObjectHelper.NormalStringToMonikerNameString(_graphDocumentName), out var itemMoniker);
         if (null != itemMoniker)
         {
           fileMoniker.ComposeWith(itemMoniker, false, out documentMoniker);

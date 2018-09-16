@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.IO;
 using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Workbench;
-using System;
-using System.IO;
 
 namespace Altaxo.Worksheet.Commands
 {

@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Markdown;
-using Altaxo.Text.GuiModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +36,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Gui.Markdown;
+using Altaxo.Text.GuiModels;
 
 namespace Altaxo.Gui.Text.Viewing
 {
@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Text.Viewing
     {
       get
       {
-        return this._guiEditor.IsViewerSelected;
+        return _guiEditor.IsViewerSelected;
       }
       set
       {
@@ -165,7 +165,7 @@ namespace Altaxo.Gui.Text.Viewing
 
     private void EhEditor_ViewingConfigurationChanged(object arg1, ViewingConfiguration arg2)
     {
-      _controller?.EhViewerConfigurationChanged(this.WindowConfiguration);
+      _controller?.EhViewerConfigurationChanged(WindowConfiguration);
     }
 
     public double FractionOfEditorWindow
@@ -252,7 +252,7 @@ namespace Altaxo.Gui.Text.Viewing
 
     private void EhEditor_FractionOfEditorChanged(object sender, EventArgs e)
     {
-      _controller?.EhFractionOfEditorWindowChanged(this.FractionOfEditorWindow);
+      _controller?.EhFractionOfEditorWindowChanged(FractionOfEditorWindow);
     }
 
     private void EhPreviewKeyDown(object sender, KeyEventArgs e)

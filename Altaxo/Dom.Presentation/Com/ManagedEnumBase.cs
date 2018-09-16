@@ -54,8 +54,8 @@ namespace Altaxo.Com
 
     protected virtual void CopyFrom(ManagedEnumBase<T> from)
     {
-      this._enumeration = from._enumeration;
-      this._enumerator = this._enumeration.GetEnumerator();
+      _enumeration = from._enumeration;
+      _enumerator = _enumeration.GetEnumerator();
     }
 
     /// <summary>

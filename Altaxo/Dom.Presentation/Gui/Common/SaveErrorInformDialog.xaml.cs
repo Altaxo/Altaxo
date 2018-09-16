@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Common
 {
@@ -44,20 +44,20 @@ namespace Altaxo.Gui.Common
     {
       InitializeComponent();
 
-      this.descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
-      this.exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
-      this.okButton.Content = StringParser.Parse("${res:Global.OKButtonText}");
+      descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
+      exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
+      okButton.Content = StringParser.Parse("${res:Global.OKButtonText}");
     }
 
     public SaveErrorInformDialog(string fileName, string message, string dialogName, Exception exceptionGot)
     {
       //  Must be called for initialization
-      this.InitializeComponent();
+      InitializeComponent();
 
-      this.descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
-      this.exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
-      this.okButton.Content = StringParser.Parse("${res:Global.OKButtonText}");
-      this.Title = StringParser.Parse(dialogName);
+      descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
+      exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
+      okButton.Content = StringParser.Parse("${res:Global.OKButtonText}");
+      Title = StringParser.Parse(dialogName);
 
       displayMessage = StringParser.Parse(
         message,
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Common
         new StringTagPair("FileNameWithoutPath", System.IO.Path.GetFileName(fileName)),
         new StringTagPair("Exception", exceptionGot.GetType().FullName)
       );
-      descriptionTextBox.Text = this.displayMessage;
+      descriptionTextBox.Text = displayMessage;
 
       this.exceptionGot = exceptionGot;
     }

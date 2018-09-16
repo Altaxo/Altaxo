@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Microsoft.Win32;
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Win32;
+using Microsoft.Win32.SafeHandles;
 
 namespace Altaxo.Com
 {
@@ -44,9 +44,7 @@ namespace Altaxo.Com
   {
     public static RegistryKey CreateSubKey(this RegistryKey mainKey, string name, WOW_Mode mode)
     {
-      SafeRegistryHandle resultingKey;
 
-      RegResult regResult;
 
       RegSAM sam = RegSAM.Write | RegSAM.Read | RegSAM.QueryValue;
       if (mode == WOW_Mode.Reg32)
@@ -62,8 +60,8 @@ namespace Altaxo.Com
                 RegOption.NonVolatile,
                 sam,
                 IntPtr.Zero,
-                out resultingKey,
-                out regResult);
+                out var resultingKey,
+                out var regResult);
 
       return RegistryKey.FromHandle(resultingKey);
     }

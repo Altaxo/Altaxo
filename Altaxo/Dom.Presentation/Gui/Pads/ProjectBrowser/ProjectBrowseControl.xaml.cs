@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.AddInItems;
-using GongSolutions.Wpf.DragDrop;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,6 +32,8 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Altaxo.Gui.AddInItems;
+using GongSolutions.Wpf.DragDrop;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -62,13 +62,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
           if (null != _controller)
           {
-            ContextMenu mnu1 = MenuService.CreateContextMenu(this._controller, "/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu");
+            ContextMenu mnu1 = MenuService.CreateContextMenu(_controller, "/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu");
             _listView.ContextMenu = mnu1;
 
-            ContextMenu mnu2 = MenuService.CreateContextMenu(this._controller, "/Altaxo/Pads/ProjectBrowser/TreeView/ContextMenu");
+            ContextMenu mnu2 = MenuService.CreateContextMenu(_controller, "/Altaxo/Pads/ProjectBrowser/TreeView/ContextMenu");
             _treeView.ContextMenu = mnu2;
 
-            _treeNodeContextMenu = MenuService.CreateContextMenu(this._controller, "/Altaxo/Pads/ProjectBrowser/TreeNode/ContextMenu");
+            _treeNodeContextMenu = MenuService.CreateContextMenu(_controller, "/Altaxo/Pads/ProjectBrowser/TreeNode/ContextMenu");
           }
         }
       }
@@ -296,8 +296,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// </remarks>
     private void EhListViewSort(object sender, RoutedEventArgs e)
     {
-      GridViewColumnHeader columnHeaderClicked = sender as GridViewColumnHeader;
-      String sortPropertyName = columnHeaderClicked.Tag as String;
+      var columnHeaderClicked = sender as GridViewColumnHeader;
+      String sortPropertyName = columnHeaderClicked.Tag as string;
 
       bool clickedOnPrimarySortColumn = columnHeaderClicked.Equals(_currentPrimarySortedColumnHeader);
       bool clickedOnSecondarySortColumn = columnHeaderClicked.Equals(_currentSecondarySortedColumnHeader);

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.IO;
+using System.Windows.Forms;
 using Altaxo.Drawing;
 using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Main.Services;
-using System;
-using System.IO;
-using System.Windows.Forms;
 
 namespace Altaxo.Main.Commands
 {
@@ -143,10 +143,11 @@ namespace Altaxo.Main.Commands
 
       string args = "/e," + dir;
 
-      var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args);
-
-      processInfo.CreateNoWindow = false;
-      processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+      var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args)
+      {
+        CreateNoWindow = false,
+        WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
+      };
 
       try
       {
@@ -166,10 +167,11 @@ namespace Altaxo.Main.Commands
 
       string args = "/e," + dir;
 
-      var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args);
-
-      processInfo.CreateNoWindow = false;
-      processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+      var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args)
+      {
+        CreateNoWindow = false,
+        WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
+      };
 
       try
       {
@@ -198,10 +200,11 @@ namespace Altaxo.Main.Commands
 
       string args = "/e," + dir;
 
-      var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args);
-
-      processInfo.CreateNoWindow = false;
-      processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+      var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args)
+      {
+        CreateNoWindow = false,
+        WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
+      };
 
       try
       {

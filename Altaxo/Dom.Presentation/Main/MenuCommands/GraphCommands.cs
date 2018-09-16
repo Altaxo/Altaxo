@@ -22,6 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Windows.Input;
 using Altaxo.AddInItems;
 using Altaxo.Collections;
 using Altaxo.Drawing;
@@ -40,13 +47,6 @@ using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Main.Services;
 using Altaxo.Scripting;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Windows.Input;
 
 namespace Altaxo.Graph.Commands
 {
@@ -197,17 +197,18 @@ namespace Altaxo.Graph.Commands
     public override void Run(GraphController ctrl)
     {
       System.IO.Stream myStream;
-      var saveFileDialog1 = new Microsoft.Win32.SaveFileDialog();
-
-      saveFileDialog1.Filter = "Altaxo graph files (*.axogrp)|*.axogrp|All files (*.*)|*.*";
-      saveFileDialog1.FilterIndex = 1;
-      saveFileDialog1.RestoreDirectory = true;
+      var saveFileDialog1 = new Microsoft.Win32.SaveFileDialog
+      {
+        Filter = "Altaxo graph files (*.axogrp)|*.axogrp|All files (*.*)|*.*",
+        FilterIndex = 1,
+        RestoreDirectory = true
+      };
 
       if (true == saveFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
       {
         if ((myStream = saveFileDialog1.OpenFile()) != null)
         {
-          Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+          var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
           info.BeginWriting(myStream);
           info.AddValue("Graph", ctrl.Doc);
           info.EndWriting();
@@ -623,7 +624,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(GraphController ctrl)
     {
-      GraphDocument newDoc = new GraphDocument(ctrl.Doc);
+      var newDoc = new GraphDocument(ctrl.Doc);
       string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.Doc.Name, "GRAPH");
       newDoc.Name = Current.Project.GraphDocumentCollection.FindNewItemName(newnamebase);
       Current.Project.GraphDocumentCollection.Add(newDoc);
@@ -669,8 +670,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(GraphController ctrl)
     {
-      HostLayer l;
-      ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out l);
+      ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out var l);
 
       if (l is XYPlotLayer)
         ((XYPlotLayer)l).CreateNewLayerLegend();
@@ -684,8 +684,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(GraphController ctrl)
     {
-      HostLayer l;
-      ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out l);
+      ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out var l);
 
       if (l is XYPlotLayer)
       {
@@ -701,7 +700,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(GraphController ctrl)
     {
-      FitPolynomialDialogController dlg = new FitPolynomialDialogController(2, double.NegativeInfinity, double.PositiveInfinity, false);
+      var dlg = new FitPolynomialDialogController(2, double.NegativeInfinity, double.PositiveInfinity, false);
       if (Current.Gui.ShowDialog(dlg, "Polynomial fit", false))
       {
         Altaxo.Graph.Procedures.PolynomialFitting.Fit(ctrl, dlg.Order, dlg.FitCurveXmin, dlg.FitCurveXmax, dlg.ShowFormulaOnGraph);
@@ -741,8 +740,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(GraphController ctrl)
     {
-      HostLayer activeLayer;
-      ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out activeLayer);
+      ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out var activeLayer);
 
       if (!(activeLayer is XYPlotLayer))
         return;
@@ -752,13 +750,13 @@ namespace Altaxo.Graph.Commands
       if (script == null)
         script = new FunctionEvaluationScript();
 
-      object[] args = new object[] { script, new ScriptExecutionHandler(this.EhScriptExecution) };
+      object[] args = new object[] { script, new ScriptExecutionHandler(EhScriptExecution) };
       if (Current.Gui.ShowDialog(args, "Function script"))
       {
         ctrl.EnsureValidityOfCurrentLayerNumber();
 
         script = (FunctionEvaluationScript)args[0];
-        XYFunctionPlotItem functItem = new XYFunctionPlotItem(new XYFunctionPlotData(script), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, activeLayer.GetPropertyContext()));
+        var functItem = new XYFunctionPlotItem(new XYFunctionPlotData(script), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, activeLayer.GetPropertyContext()));
         ((XYPlotLayer)activeLayer).PlotItems.Add(functItem);
       }
     }
@@ -896,16 +894,16 @@ namespace Altaxo.Graph.Commands
 
     public override void InitializeContent()
     {
-      this.IsEditable = true;
-      this.Items.Add("8 pt");
-      this.Items.Add("10 pt");
-      this.Items.Add("12 pt");
-      this.Items.Add("24 pt");
+      IsEditable = true;
+      Items.Add("8 pt");
+      Items.Add("10 pt");
+      Items.Add("12 pt");
+      Items.Add("24 pt");
     }
 
     public override void Execute(object parameter)
     {
-      if (string.IsNullOrEmpty(this.Text))
+      if (string.IsNullOrEmpty(Text))
         return;
 
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;
@@ -914,10 +912,8 @@ namespace Altaxo.Graph.Commands
         return;
 
       Altaxo.Serialization.LengthUnit unit = Altaxo.Serialization.LengthUnit.Point;
-      string number;
-      double value;
-      if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out value) ||
-        (Altaxo.Serialization.LengthUnit.TryParse(this.Text, out unit, out number) &&
+      if (Altaxo.Serialization.GUIConversion.IsDouble(Text, out var value) ||
+        (Altaxo.Serialization.LengthUnit.TryParse(Text, out unit, out var number) &&
           Altaxo.Serialization.GUIConversion.IsDouble(number, out value)))
       {
         if (unit != null)
@@ -927,8 +923,8 @@ namespace Altaxo.Graph.Commands
 
         ctrl.SetSelectedObjectsProperty(new RoutedSetterProperty<double>("FontSize", value));
 
-        if (!this.Items.Contains(normalizedEntry))
-          this.Items.Add(normalizedEntry);
+        if (!Items.Contains(normalizedEntry))
+          Items.Add(normalizedEntry);
       }
     }
   }
@@ -951,7 +947,7 @@ namespace Altaxo.Graph.Commands
 
     public override void Execute(object parameter)
     {
-      if (string.IsNullOrEmpty(this.Text))
+      if (string.IsNullOrEmpty(Text))
         return;
 
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;
@@ -960,10 +956,8 @@ namespace Altaxo.Graph.Commands
         return;
 
       Altaxo.Serialization.LengthUnit unit = Altaxo.Serialization.LengthUnit.Point;
-      string number;
-      double value;
-      if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out value) ||
-        (Altaxo.Serialization.LengthUnit.TryParse(this.Text, out unit, out number) &&
+      if (Altaxo.Serialization.GUIConversion.IsDouble(Text, out var value) ||
+        (Altaxo.Serialization.LengthUnit.TryParse(Text, out unit, out var number) &&
           Altaxo.Serialization.GUIConversion.IsDouble(number, out value)))
       {
         if (unit != null)
@@ -973,8 +967,8 @@ namespace Altaxo.Graph.Commands
 
         ctrl.SetSelectedObjectsProperty(new RoutedSetterProperty<double>("StrokeWidth", value));
 
-        if (!this.Items.Contains(normalizedEntry))
-          this.Items.Add(normalizedEntry);
+        if (!Items.Contains(normalizedEntry))
+          Items.Add(normalizedEntry);
       }
     }
   }
@@ -994,14 +988,14 @@ namespace Altaxo.Graph.Commands
 
     public override void Execute(object parameter)
     {
-      if (string.IsNullOrEmpty(this.Text))
+      if (string.IsNullOrEmpty(Text))
         return;
 
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;
       if (null == ctrl)
         return;
 
-      ctrl.SetSelectedObjectsProperty(new RoutedSetterProperty<string>("FontFamily", this.Text));
+      ctrl.SetSelectedObjectsProperty(new RoutedSetterProperty<string>("FontFamily", Text));
     }
   }
 }

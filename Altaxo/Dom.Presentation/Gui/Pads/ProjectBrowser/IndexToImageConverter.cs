@@ -37,15 +37,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     private static void Initialize()
     {
-      _imageList = new List<ImageSource>();
-
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Desktop"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.ClosedFolderBitmap"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.StandardWorksheet"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PlotLineScatter"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PropertyBag"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Editor"));
+      _imageList = new List<ImageSource>
+      {
+        PresentationResourceService.GetBitmapSource("Icons.16x16.Desktop"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.ClosedFolderBitmap"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.StandardWorksheet"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.PlotLineScatter"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.PropertyBag"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.Editor")
+      };
     }
 
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

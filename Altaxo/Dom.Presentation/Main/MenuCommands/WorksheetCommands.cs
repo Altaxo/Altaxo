@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Scripting;
 using Altaxo.Gui.Workbench;
 using Altaxo.Scripting;
-using System;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -457,18 +457,18 @@ namespace Altaxo.Worksheet.Commands
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       m_Table = ctrl.DataTable;
-      ExtractTableDataScript script = ctrl.DataTable.GetTableProperty(ExtractTableDataScriptPropertyName) as ExtractTableDataScript;
+      var script = ctrl.DataTable.GetTableProperty(ExtractTableDataScriptPropertyName) as ExtractTableDataScript;
 
       if (script == null)
         script = new ExtractTableDataScript();
 
-      object[] args = new object[] { script, new ScriptExecutionHandler(this.EhScriptExecution) };
+      object[] args = new object[] { script, new ScriptExecutionHandler(EhScriptExecution) };
       if (Current.Gui.ShowDialog(args, "WorksheetScript of " + m_Table.Name))
       {
         m_Table.SetTableProperty(ExtractTableDataScriptPropertyName, args[0]);
       }
 
-      this.m_Table = null;
+      m_Table = null;
     }
 
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
@@ -486,14 +486,14 @@ namespace Altaxo.Worksheet.Commands
       _table = ctrl.DataTable;
 
       var script = _table.TableScript ?? new TableScript();
-      object[] args = new object[] { script, new Altaxo.Gui.Scripting.ScriptExecutionHandler(this.EhScriptExecution) };
+      object[] args = new object[] { script, new Altaxo.Gui.Scripting.ScriptExecutionHandler(EhScriptExecution) };
 
       if (Current.Gui.ShowDialog(args, "WorksheetScript of " + _table.Name))
       {
         _table.TableScript = (TableScript)args[0];
       }
 
-      this._table = null;
+      _table = null;
     }
 
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
@@ -528,17 +528,16 @@ namespace Altaxo.Worksheet.Commands
         return;
       m_Column = dataTable.DataColumns[ctrl.SelectedDataColumns[0]];
 
-      IColumnScriptText script = null;
-      dataTable.DataColumns.ColumnScripts.TryGetValue(m_Column, out script);
+      dataTable.DataColumns.ColumnScripts.TryGetValue(m_Column, out var script);
       if (script == null)
         script = new DataColumnScript();
 
-      object[] args = new object[] { script, new ScriptExecutionHandler(this.EhScriptExecution) };
+      object[] args = new object[] { script, new ScriptExecutionHandler(EhScriptExecution) };
       if (Current.Gui.ShowDialog(args, "DataColumnScript of " + m_Column.Name))
       {
         dataTable.DataColumns.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
       }
-      this.m_Column = null;
+      m_Column = null;
     }
 
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
@@ -558,17 +557,16 @@ namespace Altaxo.Worksheet.Commands
         return;
       m_Column = dataTable.PropertyColumns[ctrl.SelectedPropertyColumns[0]];
 
-      IColumnScriptText script;
-      dataTable.PropertyColumns.ColumnScripts.TryGetValue(m_Column, out script);
+      dataTable.PropertyColumns.ColumnScripts.TryGetValue(m_Column, out var script);
       if (script == null)
         script = new PropertyColumnScript();
 
-      object[] args = new object[] { script, new ScriptExecutionHandler(this.EhScriptExecution) };
+      object[] args = new object[] { script, new ScriptExecutionHandler(EhScriptExecution) };
       if (Current.Gui.ShowDialog(args, "PropertyColumnScript of " + m_Column.Name))
       {
         dataTable.PropCols.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
       }
-      this.m_Column = null;
+      m_Column = null;
     }
 
     public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)

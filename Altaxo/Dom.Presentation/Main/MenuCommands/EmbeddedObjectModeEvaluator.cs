@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
 using System;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Main.Commands
 {
@@ -48,7 +48,7 @@ namespace Altaxo.Main.Commands
           break;
 
         default:
-          throw new ArgumentException(string.Format("In {0}: property 'value' should be either 'false' or 'true', but is here: '{1}'", this.GetType().Name, expectedValueS));
+          throw new ArgumentException(string.Format("In {0}: property 'value' should be either 'false' or 'true', but is here: '{1}'", GetType().Name, expectedValueS));
       }
 
       bool currentValue = Current.ComManager != null && Current.ComManager.IsInEmbeddedMode;

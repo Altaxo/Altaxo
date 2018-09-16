@@ -88,7 +88,7 @@ namespace Altaxo.Com
     {
       if (null != DataAdviseHolder)
       {
-        ComDebug.ReportInfo("{0}.SendAdvise.DataChanged -> Calling _dataAdviseHolder.SendOnDataChange()", this.GetType().Name);
+        ComDebug.ReportInfo("{0}.SendAdvise.DataChanged -> Calling _dataAdviseHolder.SendOnDataChange()", GetType().Name);
         DataAdviseHolder.SendOnDataChange((IDataObject)this, 0, 0);
       }
     }
@@ -101,13 +101,13 @@ namespace Altaxo.Com
     {
       if (null == DataAdviseHolder)
       {
-        ComDebug.ReportInfo("{0}.IDataObject.DAdvise -> not implemented!", this.GetType().Name);
+        ComDebug.ReportInfo("{0}.IDataObject.DAdvise -> not implemented!", GetType().Name);
         connection = 0;
         return ComReturnValue.E_NOTIMPL;
       }
       else
       {
-        ComDebug.ReportInfo("{0}.IDataObject.DAdvise {1}, {2}", this.GetType().Name, DataObjectHelper.FormatEtcToString(pFormatetc), advf);
+        ComDebug.ReportInfo("{0}.IDataObject.DAdvise {1}, {2}", GetType().Name, DataObjectHelper.FormatEtcToString(pFormatetc), advf);
 
         try
         {
@@ -121,14 +121,13 @@ namespace Altaxo.Com
             }
           }
           FORMATETC etc = pFormatetc;
-          int conn = 0;
-          DataAdviseHolder.Advise((IDataObject)this, ref etc, advf, adviseSink, out conn);
+          DataAdviseHolder.Advise((IDataObject)this, ref etc, advf, adviseSink, out var conn);
           connection = conn;
           return ComReturnValue.NOERROR;
         }
         catch (Exception e)
         {
-          ComDebug.ReportError("{0}.IDataObject.DAdvise exception: {1}", this.GetType().Name, e);
+          ComDebug.ReportError("{0}.IDataObject.DAdvise exception: {1}", GetType().Name, e);
           throw;
         }
       }
@@ -138,19 +137,19 @@ namespace Altaxo.Com
     {
       if (null == DataAdviseHolder)
       {
-        ComDebug.ReportInfo("{0}.IDataObject.DUnadvise connection={1} -> not implemented!", this.GetType().Name, connection);
+        ComDebug.ReportInfo("{0}.IDataObject.DUnadvise connection={1} -> not implemented!", GetType().Name, connection);
         return;
       }
       else
       {
-        ComDebug.ReportInfo("{0}.IDataObject.DUnadvise connection={1}", this.GetType().Name, connection);
+        ComDebug.ReportInfo("{0}.IDataObject.DUnadvise connection={1}", GetType().Name, connection);
         try
         {
           DataAdviseHolder.Unadvise(connection);
         }
         catch (Exception e)
         {
-          ComDebug.ReportError("{0}.IDataObject.DUnadvise exception {1}", this.GetType().Name, e);
+          ComDebug.ReportError("{0}.IDataObject.DUnadvise exception {1}", GetType().Name, e);
           throw;
         }
       }
@@ -160,13 +159,13 @@ namespace Altaxo.Com
     {
       if (null == DataAdviseHolder)
       {
-        ComDebug.ReportInfo("{0}.IDataObject.EnumAdvise -> not implemented!", this.GetType().Name);
+        ComDebug.ReportInfo("{0}.IDataObject.EnumAdvise -> not implemented!", GetType().Name);
         enumAdvise = null;
         return ComReturnValue.E_NOTIMPL;
       }
       else
       {
-        ComDebug.ReportInfo("{0}.IDataObject.EnumAdvise", this.GetType().Name);
+        ComDebug.ReportInfo("{0}.IDataObject.EnumAdvise", GetType().Name);
         enumAdvise = DataAdviseHolder.EnumAdvise();
         return ComReturnValue.S_OK;
       }
@@ -174,7 +173,7 @@ namespace Altaxo.Com
 
     public IEnumFORMATETC EnumFormatEtc(DATADIR direction)
     {
-      ComDebug.ReportInfo("{0}.IDataObject.EnumFormatEtc", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IDataObject.EnumFormatEtc", GetType().Name);
       try
       {
         // We only support GET
@@ -183,7 +182,7 @@ namespace Altaxo.Com
       }
       catch (Exception e)
       {
-        ComDebug.ReportError("{0}.IDataObject.EnumFormatEtc exception: {1}", this.GetType().Name, e);
+        ComDebug.ReportError("{0}.IDataObject.EnumFormatEtc exception: {1}", GetType().Name, e);
         throw;
       }
 
@@ -192,7 +191,7 @@ namespace Altaxo.Com
 
     public int GetCanonicalFormatEtc(ref FORMATETC formatIn, out FORMATETC formatOut)
     {
-      ComDebug.ReportInfo("{0}.IDataObject.GetCanonicalFormatEtc {1}", this.GetType().Name, DataObjectHelper.FormatEtcToString(formatIn));
+      ComDebug.ReportInfo("{0}.IDataObject.GetCanonicalFormatEtc {1}", GetType().Name, DataObjectHelper.FormatEtcToString(formatIn));
 
       formatOut = default(FORMATETC);
 
@@ -201,7 +200,7 @@ namespace Altaxo.Com
 
     public void GetData(ref FORMATETC format, out STGMEDIUM medium)
     {
-      ComDebug.ReportInfo("{0}.IDataObject.GetData({1})", this.GetType().Name, DataObjectHelper.FormatEtcToString(format));
+      ComDebug.ReportInfo("{0}.IDataObject.GetData({1})", GetType().Name, DataObjectHelper.FormatEtcToString(format));
 
       try
       {
@@ -215,8 +214,10 @@ namespace Altaxo.Com
           {
             // Found it. Return a copy of the data.
 
-            medium = new STGMEDIUM();
-            medium.tymed = rendering.format.tymed & format.tymed;
+            medium = new STGMEDIUM
+            {
+              tymed = rendering.format.tymed & format.tymed
+            };
             medium.unionmember = rendering.renderer(medium.tymed);
             if (medium.tymed == TYMED.TYMED_ISTORAGE || medium.tymed == TYMED.TYMED_ISTREAM)
               medium.pUnkForRelease = Marshal.GetObjectForIUnknown(medium.unionmember);
@@ -228,18 +229,18 @@ namespace Altaxo.Com
       }
       catch (Exception e)
       {
-        ComDebug.ReportError("{0}.IDataObject.GetData threw an exception {1}", this.GetType().Name, e);
+        ComDebug.ReportError("{0}.IDataObject.GetData threw an exception {1}", GetType().Name, e);
         throw;
       }
 
-      ComDebug.ReportInfo("{0}.IDataObject.GetData, no data delivered!", this.GetType().Name);
+      ComDebug.ReportInfo("{0}.IDataObject.GetData, no data delivered!", GetType().Name);
       medium = new STGMEDIUM();
       // Marshal.ThrowExceptionForHR(ComReturnValue.DV_E_FORMATETC);
     }
 
     public void GetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
     {
-      ComDebug.ReportInfo("{0}.IDataObject.GetDataHere({1})", this.GetType().Name, DataObjectHelper.ClipboardFormatName(format.cfFormat));
+      ComDebug.ReportInfo("{0}.IDataObject.GetDataHere({1})", GetType().Name, DataObjectHelper.ClipboardFormatName(format.cfFormat));
       // Allows containers to duplicate this into their own storage.
       try
       {
@@ -248,7 +249,7 @@ namespace Altaxo.Com
       }
       catch (Exception e)
       {
-        ComDebug.ReportError("{0}.IDataObject.GetDataHere threw an exception: {1}", this.GetType().Name, e);
+        ComDebug.ReportError("{0}.IDataObject.GetDataHere threw an exception: {1}", GetType().Name, e);
         throw;
       }
       Marshal.ThrowExceptionForHR(ComReturnValue.DATA_E_FORMATETC);
@@ -256,7 +257,7 @@ namespace Altaxo.Com
 
     public int QueryGetData(ref FORMATETC format)
     {
-      ComDebug.ReportInfo("{0}.IDataObject.QueryGetData, tymed={1}, aspect={2}", this.GetType().Name, format.tymed, format.dwAspect);
+      ComDebug.ReportInfo("{0}.IDataObject.QueryGetData, tymed={1}, aspect={2}", GetType().Name, format.tymed, format.dwAspect);
 
       int ret;
 
@@ -295,13 +296,13 @@ namespace Altaxo.Com
         }
       }
 
-      ComDebug.ReportInfo("{0}.IDataObject.QueryGetData is returning 0x{1:X}", this.GetType().Name, ret);
+      ComDebug.ReportInfo("{0}.IDataObject.QueryGetData is returning 0x{1:X}", GetType().Name, ret);
       return ret;
     }
 
     public void SetData(ref FORMATETC formatIn, ref STGMEDIUM medium, bool release)
     {
-      ComDebug.ReportError("{0}.IDataObject.SetData - NOT SUPPORTED!", this.GetType().Name);
+      ComDebug.ReportError("{0}.IDataObject.SetData - NOT SUPPORTED!", GetType().Name);
       if (!System.Diagnostics.Debugger.IsAttached)
         throw new NotSupportedException();
     }

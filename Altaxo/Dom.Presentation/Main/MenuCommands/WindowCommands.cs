@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Gui;
+using Altaxo.Gui.AddInItems;
 
 namespace Altaxo.Main.Commands
 {
@@ -165,7 +165,7 @@ namespace Altaxo.Main.Commands
 
     public static void OpenNonOpenGraphsAndTables(bool bGraphs, bool bTables, IComparer comparer)
     {
-      ArrayList arr = new ArrayList();
+      var arr = new ArrayList();
       if (bGraphs)
         WindowCommands.GetNonOpenGraphDocuments(arr);
       if (bTables)

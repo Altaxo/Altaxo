@@ -22,18 +22,18 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui;
-using Altaxo.Gui.Graph.Gdi.Viewing;
-using Altaxo.Gui.Workbench;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Windows.Forms;
+using Altaxo.AddInItems;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui;
+using Altaxo.Gui.Graph.Gdi.Viewing;
+using Altaxo.Gui.Workbench;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Main
 {
@@ -89,7 +89,7 @@ namespace Altaxo.Main
         var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
         using (var zippedStream = new ZipArchive(myStream, ZipArchiveMode.Create))
         {
-          this.CurrentOpenProject.SaveToZippedFile(zippedStream, info);
+          CurrentOpenProject.SaveToZippedFile(zippedStream, info);
 
           if (!Current.Dispatcher.InvokeRequired)
             SaveWindowStateToZippedFile(zippedStream, info);
@@ -113,7 +113,7 @@ namespace Altaxo.Main
     /// <param name="info">The serialization info used to serialize the state of the main window.</param>
     public void SaveWindowStateToZippedFile(ZipArchive zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
     {
-      System.Text.StringBuilder errorText = new System.Text.StringBuilder();
+      var errorText = new System.Text.StringBuilder();
 
       {
         // first, we save our own state
@@ -212,7 +212,7 @@ namespace Altaxo.Main
 
       try
       {
-        this.SetCurrentProject(null, string.Empty);
+        SetCurrentProject(null, string.Empty);
       }
       catch (Exception exc)
       {
@@ -260,16 +260,16 @@ namespace Altaxo.Main
 
       try
       {
-        this.SetCurrentProject(newdocument, filename);
+        SetCurrentProject(newdocument, filename);
 
         RestoreWindowStateFromZippedFile(zipFile, info, newdocument);
         info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
 
-        this.CurrentOpenProject.IsDirty = false;
+        CurrentOpenProject.IsDirty = false;
 
         info.AnnounceDeserializationHasCompletelyFinished(); // Annonce completly finished deserialization, activate data sources of the Altaxo document
 
-        OnProjectChanged(new ProjectEventArgs(this.CurrentOpenProject, filename, ProjectEventKind.ProjectOpened));
+        OnProjectChanged(new ProjectEventArgs(CurrentOpenProject, filename, ProjectEventKind.ProjectOpened));
       }
       catch (Exception exc)
       {
@@ -460,7 +460,7 @@ namespace Altaxo.Main
 
       if (_currentProject != null)
       {
-        _currentProject.IsDirtyChanged += this.EhProjectDirtyChanged;
+        _currentProject.IsDirtyChanged += EhProjectDirtyChanged;
       }
 
       if (!object.ReferenceEquals(oldProject, _currentProject)) // Project instance has changed
@@ -643,7 +643,7 @@ namespace Altaxo.Main
     /// <returns>The view content for the provided table.</returns>
     public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
     {
-      Altaxo.Data.DataTable dt1 = this.CurrentOpenProject.CreateNewTable(worksheetName, bCreateDefaultColumns);
+      Altaxo.Data.DataTable dt1 = CurrentOpenProject.CreateNewTable(worksheetName, bCreateDefaultColumns);
       return CreateNewWorksheet(dt1);
     }
 
@@ -654,7 +654,7 @@ namespace Altaxo.Main
     /// <returns>The view content for the provided table.</returns>
     public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(bool bCreateDefaultColumns)
     {
-      return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewItemName(), bCreateDefaultColumns);
+      return CreateNewWorksheet(CurrentOpenProject.DataTableCollection.FindNewItemName(), bCreateDefaultColumns);
     }
 
     /// <summary>
@@ -672,7 +672,7 @@ namespace Altaxo.Main
     /// <returns>The content controller for that table.</returns>
     public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheetInFolder(string folder)
     {
-      return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewItemNameInFolder(folder), false);
+      return CreateNewWorksheet(CurrentOpenProject.DataTableCollection.FindNewItemNameInFolder(folder), false);
     }
 
     /// <summary>
@@ -688,9 +688,9 @@ namespace Altaxo.Main
     private Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet_Unsynchronized(Altaxo.Data.DataTable table)
     {
       if (table.ParentObject == null)
-        this.CurrentOpenProject.DataTableCollection.Add(table);
+        CurrentOpenProject.DataTableCollection.Add(table);
 
-      return CreateNewWorksheet(table, this.CurrentOpenProject.CreateNewTableLayout(table));
+      return CreateNewWorksheet(table, CurrentOpenProject.CreateNewTableLayout(table));
     }
 
     /// <summary>
@@ -999,7 +999,7 @@ namespace Altaxo.Main
 
     private void EhProjectDirtyChanged(object sender, EventArgs e)
     {
-      OnProjectChanged(new Altaxo.Main.ProjectEventArgs(this._currentProject, this._currentProject?.Name, ProjectEventKind.ProjectDirtyChanged));
+      OnProjectChanged(new Altaxo.Main.ProjectEventArgs(_currentProject, _currentProject?.Name, ProjectEventKind.ProjectDirtyChanged));
     }
 
     //********* own events

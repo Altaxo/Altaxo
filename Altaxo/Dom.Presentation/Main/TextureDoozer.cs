@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.AddInItems;
+using Altaxo.Graph;
 
 namespace Altaxo.Main
 {
@@ -68,7 +68,7 @@ namespace Altaxo.Main
       string classname = args.Codon.Properties["class"];
       if (!string.IsNullOrEmpty(classname))
       {
-        ImageProxy proxy = (ImageProxy)System.Activator.CreateInstance("AltaxoBase", classname).Unwrap();
+        var proxy = (ImageProxy)System.Activator.CreateInstance("AltaxoBase", classname).Unwrap();
         TextureManager.BuiltinTextures.Add(proxy);
         return proxy;
       }

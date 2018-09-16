@@ -35,12 +35,12 @@ namespace Altaxo.Gui.Pads.Output
   {
     public OutputWindowControl()
     {
-      this.TextWrapping = System.Windows.TextWrapping.NoWrap;
-      this.AcceptsReturn = true;
-      this.AcceptsTab = true;
-      this.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
-      this.HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
-      this.FontFamily = new System.Windows.Media.FontFamily("Global Monospace");
+      TextWrapping = System.Windows.TextWrapping.NoWrap;
+      AcceptsReturn = true;
+      AcceptsTab = true;
+      VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+      HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+      FontFamily = new System.Windows.Media.FontFamily("Global Monospace");
     }
   }
 }
