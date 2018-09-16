@@ -9,14 +9,14 @@
 
 #endregion Copyright
 
-using Markdig;
-using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Gui.Markdown
 {

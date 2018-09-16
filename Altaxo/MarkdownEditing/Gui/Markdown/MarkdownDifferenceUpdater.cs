@@ -9,10 +9,6 @@
 
 #endregion Copyright
 
-using Markdig;
-using Markdig.Renderers;
-using Markdig.Syntax;
-using Markdig.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +17,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Threading;
+using Markdig;
+using Markdig.Renderers;
+using Markdig.Syntax;
+using Markdig.Wpf;
 
 namespace Altaxo.Gui.Markdown
 {
@@ -531,7 +531,7 @@ namespace Altaxo.Gui.Markdown
     {
       public void AddChild(object value)
       {
-        this.Add((TextElement)value);
+        Add((TextElement)value);
       }
 
       public void AddText(string text)

@@ -9,9 +9,6 @@
 
 #endregion Copyright
 
-using Markdig;
-using Markdig.Renderers;
-using Markdig.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,6 +26,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Markdig;
+using Markdig.Renderers;
+using Markdig.Wpf;
 
 namespace Altaxo.Gui.Markdown
 {
@@ -355,7 +355,7 @@ namespace Altaxo.Gui.Markdown
           BeforeCompleteRendering?.Invoke(this, EventArgs.Empty);
 
           var markdownDocument = Markdig.Markdown.Parse(_sourceText, pipeline);
-          LinkReferenceTrackerPostProcessor.TrackLinks(markdownDocument, _sourceTextUsn, this.ImageProvider); // track links in the markdown document
+          LinkReferenceTrackerPostProcessor.TrackLinks(markdownDocument, _sourceTextUsn, ImageProvider); // track links in the markdown document
 
           // We override the renderer with our own writer
           var flowDocument = new FlowDocument
@@ -366,7 +366,7 @@ namespace Altaxo.Gui.Markdown
 
           var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, _currentStyle)
           {
-            ImageProvider = this.ImageProvider
+            ImageProvider = ImageProvider
           };
 
           pipeline.Setup(renderer);
@@ -390,7 +390,7 @@ namespace Altaxo.Gui.Markdown
             _sourceText,  // new source
             _sourceTextUsn, // new source update sequence number
             _guiViewer.Document, // the flow document to edit
-            this.Dispatcher,
+            Dispatcher,
             (newText, newDocument) =>
             {
               _lastSourceTextProcessed = newText;
@@ -936,9 +936,9 @@ namespace Altaxo.Gui.Markdown
         if (!(_isViewerSelected == value))
         {
           if (value)
-            this._guiViewer.Focus();
+            _guiViewer.Focus();
           else
-            this._guiEditor.Focus();
+            _guiEditor.Focus();
         }
       }
     }
