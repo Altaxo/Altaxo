@@ -16,9 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Main.Services;
 using System;
 using System.Windows;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
 {
@@ -48,7 +48,7 @@ namespace Altaxo.Gui
     {
       get
       {
-        LanguageChangeWeakEventManager manager = (LanguageChangeWeakEventManager)GetCurrentManager(typeof(LanguageChangeWeakEventManager));
+        var manager = (LanguageChangeWeakEventManager)GetCurrentManager(typeof(LanguageChangeWeakEventManager));
         if (manager == null)
         {
           manager = new LanguageChangeWeakEventManager();

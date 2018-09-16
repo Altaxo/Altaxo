@@ -34,8 +34,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   using Altaxo.Graph.Gdi.Shapes;
   using Altaxo.Gui.Common;
   using Altaxo.Units;
-  using AUL = Altaxo.Units.Length;
   using Gdi.Background;
+  using AUL = Altaxo.Units.Length;
 
   /// <summary>
   /// Interaction logic for FloatingScaleControl.xaml
@@ -50,9 +50,11 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       InitializeComponent();
 
-      _backgroundGlue = new BackgroundControlsGlue();
-      _backgroundGlue.CbStyle = _guiBackgroundStyle;
-      _backgroundGlue.CbBrush = _guiBackgroundBrush;
+      _backgroundGlue = new BackgroundControlsGlue
+      {
+        CbStyle = _guiBackgroundStyle,
+        CbBrush = _guiBackgroundBrush
+      };
     }
 
     public PointD2D DocPosition
@@ -181,7 +183,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       e.Handled = true;
       if (null != TickSpacingTypeChanged)
       {
-        ComboBox _cbTickSpacingType = (ComboBox)sender;
+        var _cbTickSpacingType = (ComboBox)sender;
         GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
         TickSpacingTypeChanged();
       }
@@ -232,11 +234,13 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       get
       {
-        var result = new Margin2D();
-        result.Left = _guiMarginLeft.SelectedQuantity.AsValueIn(AUL.Point.Instance);
-        result.Top = _guiMarginTop.SelectedQuantity.AsValueIn(AUL.Point.Instance);
-        result.Right = _guiMarginRight.SelectedQuantity.AsValueIn(AUL.Point.Instance);
-        result.Bottom = _guiMarginBottom.SelectedQuantity.AsValueIn(AUL.Point.Instance);
+        var result = new Margin2D
+        {
+          Left = _guiMarginLeft.SelectedQuantity.AsValueIn(AUL.Point.Instance),
+          Top = _guiMarginTop.SelectedQuantity.AsValueIn(AUL.Point.Instance),
+          Right = _guiMarginRight.SelectedQuantity.AsValueIn(AUL.Point.Instance),
+          Bottom = _guiMarginBottom.SelectedQuantity.AsValueIn(AUL.Point.Instance)
+        };
         return result;
       }
       set

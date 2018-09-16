@@ -22,17 +22,17 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui.Common.Drawing;
-using Altaxo.Gui.Graph.Graph3D.Plot.Data;
-using Altaxo.Gui.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common.Drawing;
+using Altaxo.Gui.Graph.Graph3D.Plot.Data;
+using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -49,9 +49,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       InitializeComponent();
 
-      _strokePenGlue = new PenControlsGlue();
-      _strokePenGlue.CbBrush = _guiPenColor;
-      _strokePenGlue.CbEndCap = _guiLineEndCap;
+      _strokePenGlue = new PenControlsGlue
+      {
+        CbBrush = _guiPenColor,
+        CbEndCap = _guiLineEndCap
+      };
     }
 
     #region IErrorBarPlotStyleView Members
@@ -83,7 +85,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public bool IgnoreMissingDataPoints
     {
       get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
-      set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+      set { _guiIgnoreMissingDataPoints.IsChecked = value; }
     }
 
     public bool IndependentOnShiftingGroupStyles
@@ -293,43 +295,43 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Initialize_ColumnX(string boxText, string toolTip, int status)
     {
-      this._guiColumnX.Text = boxText;
-      this._guiColumnX.ToolTip = toolTip;
-      this._guiColumnX.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+      _guiColumnX.Text = boxText;
+      _guiColumnX.ToolTip = toolTip;
+      _guiColumnX.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
     }
 
     public void Initialize_ColumnXTransformation(string transformationTextToShow, string transformationToolTip)
     {
       if (null == transformationTextToShow)
       {
-        this._guiColumnXTransformation.Visibility = Visibility.Collapsed;
+        _guiColumnXTransformation.Visibility = Visibility.Collapsed;
       }
       else
       {
-        this._guiColumnXTransformation.Text = transformationTextToShow;
-        this._guiColumnXTransformation.ToolTip = transformationToolTip;
-        this._guiColumnXTransformation.Visibility = Visibility.Visible;
+        _guiColumnXTransformation.Text = transformationTextToShow;
+        _guiColumnXTransformation.ToolTip = transformationToolTip;
+        _guiColumnXTransformation.Visibility = Visibility.Visible;
       }
     }
 
     public void Initialize_ColumnY(string boxText, string toolTip, int status)
     {
-      this._guiColumnY.Text = boxText;
-      this._guiColumnY.ToolTip = toolTip;
-      this._guiColumnY.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+      _guiColumnY.Text = boxText;
+      _guiColumnY.ToolTip = toolTip;
+      _guiColumnY.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
     }
 
     public void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip)
     {
       if (null == transformationTextToShow)
       {
-        this._guiColumnYTransformation.Visibility = Visibility.Collapsed;
+        _guiColumnYTransformation.Visibility = Visibility.Collapsed;
       }
       else
       {
-        this._guiColumnYTransformation.Text = transformationTextToShow;
-        this._guiColumnYTransformation.ToolTip = transformationToolTip;
-        this._guiColumnYTransformation.Visibility = Visibility.Visible;
+        _guiColumnYTransformation.Text = transformationTextToShow;
+        _guiColumnYTransformation.ToolTip = transformationToolTip;
+        _guiColumnYTransformation.Visibility = Visibility.Visible;
       }
     }
 

@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -82,8 +82,7 @@ namespace Altaxo.Gui.Common.Drawing
           if (string.IsNullOrEmpty(parttrimmed))
             continue;
 
-          double val;
-          if (!Altaxo.Serialization.GUIConversion.IsDouble(parttrimmed, out val))
+          if (!Altaxo.Serialization.GUIConversion.IsDouble(parttrimmed, out var val))
             error = "Provided string can not be converted to a numeric value";
           else if (!(val > 0 && val < double.MaxValue))
             error = "One of the provided values is not a valid positive number";
@@ -100,8 +99,7 @@ namespace Altaxo.Gui.Common.Drawing
       public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
         string text = (string)value;
-        string error;
-        var result = ConvertFromText(text, out error);
+        var result = ConvertFromText(text, out var error);
 
         if (error == null)
           return result;
@@ -112,8 +110,7 @@ namespace Altaxo.Gui.Common.Drawing
       public string EhValidateText(object obj, System.Globalization.CultureInfo info)
       {
         string text = (string)obj;
-        string error;
-        var result = ConvertFromText(text, out error);
+        var result = ConvertFromText(text, out var error);
 
         if (null != error)
         {
@@ -152,13 +149,15 @@ namespace Altaxo.Gui.Common.Drawing
       foreach (var e in _knownStylesList)
         Items.Add(new ImageComboBoxItem(this, e));
 
-      var _valueBinding = new Binding();
-      _valueBinding.Source = this;
-      _valueBinding.Path = new PropertyPath(_nameOfValueProp);
+      var _valueBinding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath(_nameOfValueProp)
+      };
       _valueConverter = new CC(this);
       _valueBinding.Converter = _valueConverter;
       _valueBinding.ValidationRules.Add(new ValidationWithErrorString(_valueConverter.EhValidateText));
-      this.SetBinding(ComboBox.TextProperty, _valueBinding);
+      SetBinding(ComboBox.TextProperty, _valueBinding);
 
       _img.Source = GetImage(SelectedDashStyle);
     }
@@ -196,8 +195,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       var val = (DashStyleEx)item;
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -241,9 +239,11 @@ namespace Altaxo.Gui.Common.Drawing
       // draws a transparent outline to fix the borders
       var drawingGroup = new DrawingGroup();
 
-      var geometryDrawing = new GeometryDrawing();
-      geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
-      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      var geometryDrawing = new GeometryDrawing
+      {
+        Geometry = new RectangleGeometry(new Rect(0, 0, width, height)),
+        Pen = new Pen(Brushes.Transparent, 0)
+      };
       drawingGroup.Children.Add(geometryDrawing);
 
       geometryDrawing = new GeometryDrawing() { Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)) };

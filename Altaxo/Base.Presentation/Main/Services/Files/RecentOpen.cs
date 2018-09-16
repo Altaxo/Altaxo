@@ -16,18 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Linq;
-using System.Collections.Generic;
-
-using System.Collections.Generic;
-
 using System;
+using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Shell;
 using Altaxo.Main;
 using Altaxo.Main.Services;
-
-using System.Collections.Generic;
-
-using System.Windows.Shell;
 
 namespace Altaxo.Main.Services
 {

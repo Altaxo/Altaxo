@@ -38,7 +38,7 @@ namespace Altaxo.Gui
 
     public GetBitmapExtension(string key)
     {
-      this._key = key;
+      _key = key;
     }
 
     public override object ProvideValue(IServiceProvider serviceProvider)

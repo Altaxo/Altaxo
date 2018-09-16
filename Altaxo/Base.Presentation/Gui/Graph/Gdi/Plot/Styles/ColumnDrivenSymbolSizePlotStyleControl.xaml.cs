@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph.Plot.Data;
-using Altaxo.Gui.Graph.Scales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Gui.Graph.Plot.Data;
+using Altaxo.Gui.Graph.Scales;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -45,22 +45,22 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Init_DataColumn(string boxText, string toolTip, int status)
     {
-      this._guiDataColumn.Text = boxText;
-      this._guiDataColumn.ToolTip = toolTip;
-      this._guiDataColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+      _guiDataColumn.Text = boxText;
+      _guiDataColumn.ToolTip = toolTip;
+      _guiDataColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
     }
 
     public void Init_DataColumnTransformation(string boxText, string toolTip)
     {
       if (null == boxText)
       {
-        this._guiDataColumnTransformation.Visibility = Visibility.Collapsed;
+        _guiDataColumnTransformation.Visibility = Visibility.Collapsed;
       }
       else
       {
-        this._guiDataColumnTransformation.Text = boxText;
-        this._guiDataColumnTransformation.ToolTip = toolTip;
-        this._guiDataColumnTransformation.Visibility = Visibility.Visible;
+        _guiDataColumnTransformation.Text = boxText;
+        _guiDataColumnTransformation.ToolTip = toolTip;
+        _guiDataColumnTransformation.Visibility = Visibility.Visible;
       }
     }
 
@@ -135,7 +135,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return (int)_edNumberOfSteps.Value;
+        return _edNumberOfSteps.Value;
       }
       set
       {

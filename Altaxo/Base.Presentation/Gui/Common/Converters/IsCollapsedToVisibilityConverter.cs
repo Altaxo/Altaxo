@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common.Converters
     /// <inheritdoc/>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      if (value is Boolean isCollapsed)
+      if (value is bool isCollapsed)
       {
         return isCollapsed ? Visibility.Collapsed : Visibility.Visible;
       }

@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +36,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
@@ -170,7 +170,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         Height = _rectangleWidthHeight * 1.5,
         Fill = Brushes.Transparent
       };
-      _pivotEllipse.PreviewMouseDown += this.EhRectangle_MouseDown;
+      _pivotEllipse.PreviewMouseDown += EhRectangle_MouseDown;
       _guiCanvas.Children.Add(_pivotEllipse);
 
       int numberOfButtons = _colorCircleModel.NumberOfHueValues;
@@ -199,8 +199,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
           Fill = Brushes.Transparent
         };
 
-        ra.PreviewMouseDown += this.EhRectangle_MouseDown;
-        rb.PreviewMouseDown += this.EhRectangle_MouseDown;
+        ra.PreviewMouseDown += EhRectangle_MouseDown;
+        rb.PreviewMouseDown += EhRectangle_MouseDown;
 
         _rectanglesA[i] = ra;
         _rectanglesB[i] = rb;
@@ -284,7 +284,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       float r2max = mid * mid;
       float r2min = r2max * innerRadiusRatio2;
 
-      WriteableBitmap wbitmap = new WriteableBitmap(widthheight, widthheight, 96, 96, PixelFormats.Bgra32, null);
+      var wbitmap = new WriteableBitmap(widthheight, widthheight, 96, 96, PixelFormats.Bgra32, null);
       byte[] pixels = new byte[widthheight * widthheight * 4];
 
       // The bitmap is already by default transparent
@@ -315,7 +315,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
 
       // Update writeable bitmap with the colorArray to the image.
-      Int32Rect rect = new Int32Rect(0, 0, widthheight, widthheight);
+      var rect = new Int32Rect(0, 0, widthheight, widthheight);
       int stride = 4 * widthheight;
       wbitmap.WritePixels(rect, pixels, stride, 0);
 

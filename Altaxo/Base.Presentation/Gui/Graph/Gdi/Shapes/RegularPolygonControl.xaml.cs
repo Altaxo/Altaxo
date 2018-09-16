@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {

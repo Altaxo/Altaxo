@@ -32,7 +32,7 @@ namespace GongSolutions.Wpf.DragDrop
 
     protected override void OnRender(DrawingContext drawingContext)
     {
-      var itemsControl = this.DropInfo.VisualTarget as ItemsControl;
+      var itemsControl = DropInfo.VisualTarget as ItemsControl;
 
       if (itemsControl != null)
       {
@@ -41,22 +41,22 @@ namespace GongSolutions.Wpf.DragDrop
         // offset later to draw it at the end of the list.
         ItemsControl itemParent;
 
-        if (this.DropInfo.VisualTargetItem != null)
+        if (DropInfo.VisualTargetItem != null)
         {
-          itemParent = ItemsControl.ItemsControlFromItemContainer(this.DropInfo.VisualTargetItem);
+          itemParent = ItemsControl.ItemsControlFromItemContainer(DropInfo.VisualTargetItem);
         }
         else
         {
           itemParent = itemsControl;
         }
 
-        var index = Math.Min(this.DropInfo.InsertIndex, itemParent.Items.Count - 1);
+        var index = Math.Min(DropInfo.InsertIndex, itemParent.Items.Count - 1);
 
         var lastItemInGroup = false;
-        var targetGroup = this.DropInfo.TargetGroup;
-        if (targetGroup != null && targetGroup.IsBottomLevel && this.DropInfo.InsertPosition.HasFlag(RelativeInsertPosition.AfterTargetItem))
+        var targetGroup = DropInfo.TargetGroup;
+        if (targetGroup != null && targetGroup.IsBottomLevel && DropInfo.InsertPosition.HasFlag(RelativeInsertPosition.AfterTargetItem))
         {
-          var indexOf = targetGroup.Items.IndexOf(this.DropInfo.TargetItem);
+          var indexOf = targetGroup.Items.IndexOf(DropInfo.TargetItem);
           lastItemInGroup = indexOf == targetGroup.ItemCount - 1;
           if (lastItemInGroup)
           {
@@ -68,13 +68,13 @@ namespace GongSolutions.Wpf.DragDrop
 
         if (itemContainer != null)
         {
-          var itemRect = new Rect(itemContainer.TranslatePoint(new Point(), this.AdornedElement), itemContainer.RenderSize);
+          var itemRect = new Rect(itemContainer.TranslatePoint(new Point(), AdornedElement), itemContainer.RenderSize);
           Point point1, point2;
           double rotation = 0;
 
-          if (this.DropInfo.VisualTargetOrientation == Orientation.Vertical)
+          if (DropInfo.VisualTargetOrientation == Orientation.Vertical)
           {
-            if (this.DropInfo.InsertIndex == itemParent.Items.Count || lastItemInGroup)
+            if (DropInfo.InsertIndex == itemParent.Items.Count || lastItemInGroup)
             {
               itemRect.Y += itemContainer.RenderSize.Height;
             }
@@ -86,11 +86,11 @@ namespace GongSolutions.Wpf.DragDrop
           {
             var itemRectX = itemRect.X;
 
-            if (this.DropInfo.VisualTargetFlowDirection == FlowDirection.LeftToRight && this.DropInfo.InsertIndex == itemParent.Items.Count)
+            if (DropInfo.VisualTargetFlowDirection == FlowDirection.LeftToRight && DropInfo.InsertIndex == itemParent.Items.Count)
             {
               itemRectX += itemContainer.RenderSize.Width;
             }
-            else if (this.DropInfo.VisualTargetFlowDirection == FlowDirection.RightToLeft && this.DropInfo.InsertIndex != itemParent.Items.Count)
+            else if (DropInfo.VisualTargetFlowDirection == FlowDirection.RightToLeft && DropInfo.InsertIndex != itemParent.Items.Count)
             {
               itemRectX += itemContainer.RenderSize.Width;
             }
@@ -101,8 +101,8 @@ namespace GongSolutions.Wpf.DragDrop
           }
 
           drawingContext.DrawLine(m_Pen, point1, point2);
-          this.DrawTriangle(drawingContext, point1, rotation);
-          this.DrawTriangle(drawingContext, point2, 180 + rotation);
+          DrawTriangle(drawingContext, point1, rotation);
+          DrawTriangle(drawingContext, point2, 180 + rotation);
         }
       }
     }

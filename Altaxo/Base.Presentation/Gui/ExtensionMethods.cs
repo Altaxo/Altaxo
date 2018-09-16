@@ -53,7 +53,7 @@ namespace Altaxo.Gui
       public SetValueToExtensionServiceProvider(DependencyObject targetObject, DependencyProperty property)
       {
         this.targetObject = targetObject;
-        this.targetProperty = property;
+        targetProperty = property;
       }
 
       public object GetService(Type serviceType)

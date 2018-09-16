@@ -44,7 +44,7 @@ namespace Altaxo.Gui
   {
     protected LanguageDependentExtension()
     {
-      this.UpdateOnLanguageChange = true;
+      UpdateOnLanguageChange = true;
     }
 
     public abstract string Value { get; }
@@ -62,12 +62,12 @@ namespace Altaxo.Gui
     {
       if (UpdateOnLanguageChange)
       {
-        Binding binding = new Binding("Value") { Source = this, Mode = BindingMode.OneWay };
+        var binding = new Binding("Value") { Source = this, Mode = BindingMode.OneWay };
         return binding.ProvideValue(serviceProvider);
       }
       else
       {
-        return this.Value;
+        return Value;
       }
     }
 

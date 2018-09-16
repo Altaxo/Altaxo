@@ -69,8 +69,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       double val = ((DimensionfulQuantity)item).AsValueIn(AUL.Point.Instance);
 
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -91,13 +90,17 @@ namespace Altaxo.Gui.Common.Drawing
       // draws a transparent outline to fix the borders
       var drawingGroup = new DrawingGroup();
 
-      var geometryDrawing = new GeometryDrawing();
-      geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
-      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      var geometryDrawing = new GeometryDrawing
+      {
+        Geometry = new RectangleGeometry(new Rect(0, 0, width, height)),
+        Pen = new Pen(Brushes.Transparent, 0)
+      };
       drawingGroup.Children.Add(geometryDrawing);
 
-      var pathFigure = new PathFigure();
-      pathFigure.StartPoint = new Point(width / 6, height / 2);
+      var pathFigure = new PathFigure
+      {
+        StartPoint = new Point(width / 6, height / 2)
+      };
       pathFigure.Segments.Add(new PolyLineSegment(new Point[] { new Point(width / 2, height / 2 + val / 2), new Point(width - width / 6, height / 2), new Point(width / 2, height / 2 - val / 2) }, false));
       pathFigure.IsClosed = true;
       pathFigure.IsFilled = true;

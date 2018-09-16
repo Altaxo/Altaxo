@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Drawing;
+using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     protected override void FinishDrawing()
     {
       var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
-      EllipseShape go = new EllipseShape(_grac.Doc.GetPropertyContext());
+      var go = new EllipseShape(_grac.Doc.GetPropertyContext());
       go.SetParentSize(_grac.ActiveLayer.Size, false);
       go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
 

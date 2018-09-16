@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common.Drawing;
 using sd = System.Drawing;
 
 namespace Altaxo.Gui.Drawing.D3D

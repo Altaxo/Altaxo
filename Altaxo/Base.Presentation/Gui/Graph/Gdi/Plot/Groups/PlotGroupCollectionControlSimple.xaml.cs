@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
@@ -45,22 +45,22 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict)
     {
-      this._rbtConcurrently.IsChecked = bConcurrently;
-      this._rbtSequential.IsChecked = !bConcurrently;
+      _rbtConcurrently.IsChecked = bConcurrently;
+      _rbtSequential.IsChecked = !bConcurrently;
 
-      this.m_chkPlotGroupColor.IsChecked = bColor;
-      this.m_chkPlotGroupLineType.IsChecked = bLineType;
-      this.m_chkPlotGroupSymbol.IsChecked = bSymbol;
+      m_chkPlotGroupColor.IsChecked = bColor;
+      m_chkPlotGroupLineType.IsChecked = bLineType;
+      m_chkPlotGroupSymbol.IsChecked = bSymbol;
 
-      this._cbStrict.ItemsSource = new object[] { "Normal", "Exact", "Strict" };
-      this._cbStrict.SelectedIndex = (int)bStrict;
+      _cbStrict.ItemsSource = new object[] { "Normal", "Exact", "Strict" };
+      _cbStrict.SelectedIndex = (int)bStrict;
     }
 
     public Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict
     {
       get
       {
-        return (PlotGroupStrictness)(System.Enum.GetValues(typeof(PlotGroupStrictness))).GetValue(this._cbStrict.SelectedIndex);
+        return (PlotGroupStrictness)(System.Enum.GetValues(typeof(PlotGroupStrictness))).GetValue(_cbStrict.SelectedIndex);
       }
     }
 

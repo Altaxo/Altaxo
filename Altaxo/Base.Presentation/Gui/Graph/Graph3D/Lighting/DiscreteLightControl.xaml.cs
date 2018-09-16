@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D.Lighting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +35,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Graph.Graph3D.Lighting;
 
 namespace Altaxo.Gui.Graph.Graph3D.Lighting
 {
@@ -120,20 +120,26 @@ namespace Altaxo.Gui.Graph.Graph3D.Lighting
       }
       else if (newLightValue is DirectionalLight)
       {
-        var ctrl = new DirectionalLightControl();
-        ctrl.SelectedValue = newLightValue as DirectionalLight;
+        var ctrl = new DirectionalLightControl
+        {
+          SelectedValue = newLightValue as DirectionalLight
+        };
         ChangeHostControl(ctrl);
       }
       else if (newLightValue is PointLight)
       {
-        var ctrl = new PointLightControl();
-        ctrl.SelectedValue = newLightValue as PointLight;
+        var ctrl = new PointLightControl
+        {
+          SelectedValue = newLightValue as PointLight
+        };
         ChangeHostControl(ctrl);
       }
       else if (newLightValue is SpotLight)
       {
-        var ctrl = new SpotLightControl();
-        ctrl.SelectedValue = newLightValue as SpotLight;
+        var ctrl = new SpotLightControl
+        {
+          SelectedValue = newLightValue as SpotLight
+        };
         ChangeHostControl(ctrl);
       }
       else

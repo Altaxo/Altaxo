@@ -53,12 +53,12 @@ namespace Altaxo.Gui.Common
 
     public bool CanExecute(object parameter)
     {
-      return this.canExecute == null || this.canExecute(parameter);
+      return canExecute == null || canExecute(parameter);
     }
 
     public void Execute(object parameter)
     {
-      this.execute(parameter);
+      execute(parameter);
     }
   }
 
@@ -85,12 +85,12 @@ namespace Altaxo.Gui.Common
 
     public bool CanExecute(TArg parameter)
     {
-      return this.canExecute == null || this.canExecute(parameter);
+      return canExecute == null || canExecute(parameter);
     }
 
     public void Execute(TArg parameter)
     {
-      this.execute(parameter);
+      execute(parameter);
     }
 
     void ICommand.Execute(object parameter)

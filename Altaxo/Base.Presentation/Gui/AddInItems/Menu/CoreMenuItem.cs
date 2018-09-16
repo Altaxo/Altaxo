@@ -16,12 +16,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.AddInItems;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.AddInItems;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.AddInItems
 {
@@ -45,9 +45,9 @@ namespace Altaxo.Gui.AddInItems
 
     public CoreMenuItem(Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
     {
-      this._codon = codon;
-      this._caller = caller;
-      this._conditions = conditions;
+      _codon = codon;
+      _caller = caller;
+      _conditions = conditions;
 
       if (codon.Properties.Contains("icon"))
       {
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.AddInItems
             Source = PresentationResourceService.GetBitmapSource(codon.Properties["icon"]),
             Height = 16
           };
-          this.Icon = image;
+          Icon = image;
         }
         catch (ResourceNotFoundException) { }
       }
@@ -75,13 +75,13 @@ namespace Altaxo.Gui.AddInItems
 
     public virtual void UpdateStatus()
     {
-      ConditionFailedAction result = Altaxo.AddInItems.Condition.GetFailedAction(_conditions, _useDataContext ? (this.DataContext ?? _caller) : _caller);
+      ConditionFailedAction result = Altaxo.AddInItems.Condition.GetFailedAction(_conditions, _useDataContext ? (DataContext ?? _caller) : _caller);
       if (result == ConditionFailedAction.Exclude)
-        this.Visibility = Visibility.Collapsed;
+        Visibility = Visibility.Collapsed;
       else
-        this.Visibility = Visibility.Visible;
+        Visibility = Visibility.Visible;
       if (_setEnabled)
-        this.IsEnabled = result == ConditionFailedAction.Nothing;
+        IsEnabled = result == ConditionFailedAction.Nothing;
     }
   }
 }

@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph;
-using Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;
-using Altaxo.Gui.Graph.Scales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Altaxo.Gui.Graph;
+using Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;
+using Altaxo.Gui.Graph.Scales;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {

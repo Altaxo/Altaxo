@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing.D3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {

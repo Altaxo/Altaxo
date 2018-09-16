@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph2D.Plot.Groups;
-using Altaxo.Graph.Graph2D.Plot.Styles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +30,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Altaxo.Graph.Graph2D.Plot.Groups;
+using Altaxo.Graph.Graph2D.Plot.Styles;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {

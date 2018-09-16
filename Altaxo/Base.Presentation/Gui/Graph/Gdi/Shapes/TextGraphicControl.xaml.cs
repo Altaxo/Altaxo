@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Gui.Graph.Gdi.Background;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing;
+using Altaxo.Gui.Graph.Gdi.Background;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -45,9 +45,11 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       InitializeComponent();
 
-      _backgroundGlue = new BackgroundControlsGlue();
-      _backgroundGlue.CbStyle = _cbBackgroundStyle;
-      _backgroundGlue.CbBrush = _cbBackgroundBrush;
+      _backgroundGlue = new BackgroundControlsGlue
+      {
+        CbStyle = _cbBackgroundStyle,
+        CbBrush = _cbBackgroundBrush
+      };
       _backgroundGlue.BackgroundStyleChanged += new EventHandler(EhBackgroundStyleChanged);
       _backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
 
@@ -223,7 +225,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     public void InsertBeforeAndAfterSelectedText(string insbefore, string insafter)
     {
-      if (0 != this._guiText.SelectionLength)
+      if (0 != _guiText.SelectionLength)
       {
         // insert \b( at beginning of selection and ) at the end of the selection
         int len = _guiText.Text.Length;
@@ -240,7 +242,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     public void RevertToNormal()
     {
       // remove a backslash x ( at the beginning and the closing brace at the end of the selection
-      if (this._guiText.SelectionLength >= 4)
+      if (_guiText.SelectionLength >= 4)
       {
         int len = _guiText.Text.Length;
         int start = _guiText.SelectionStart;
@@ -275,7 +277,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void EhLoaded(object sender, RoutedEventArgs e)
     {
-      this._guiText.Focus();
+      _guiText.Focus();
     }
 
     private void EhMoreModifiersClicked(object sender, RoutedEventArgs e)

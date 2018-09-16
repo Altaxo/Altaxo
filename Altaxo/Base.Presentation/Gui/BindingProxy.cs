@@ -68,8 +68,8 @@ namespace Altaxo.Gui
     /// </summary>
     public object Data
     {
-      get { return (object)this.GetValue(DataProperty); }
-      set { this.SetValue(DataProperty, value); }
+      get { return GetValue(DataProperty); }
+      set { SetValue(DataProperty, value); }
     }
 
     /// <summary>

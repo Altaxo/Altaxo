@@ -12,12 +12,12 @@
 
 #endregion Copyright
 
-using GongSolutions.Wpf.DragDrop.Utilities;
 using System;
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using GongSolutions.Wpf.DragDrop.Utilities;
 
 namespace GongSolutions.Wpf.DragDrop
 {
@@ -51,41 +51,41 @@ namespace GongSolutions.Wpf.DragDrop
     {
       var dataFormat = DragDrop.DataFormat.Name;
 
-      this.Data = (e.Data.GetDataPresent(dataFormat)) ? e.Data.GetData(dataFormat) : e.Data;
-      this.DragInfo = dragInfo;
-      this.KeyStates = e.KeyStates;
+      Data = (e.Data.GetDataPresent(dataFormat)) ? e.Data.GetData(dataFormat) : e.Data;
+      DragInfo = dragInfo;
+      KeyStates = e.KeyStates;
 
-      this.VisualTarget = sender as UIElement;
+      VisualTarget = sender as UIElement;
       // if drop target isn't a ItemsControl
-      if (!(this.VisualTarget is ItemsControl))
+      if (!(VisualTarget is ItemsControl))
       {
         // try to find next ItemsControl
-        var itemsControl = VisualTreeExtensions.GetVisualAncestor<ItemsControl>(this.VisualTarget);
+        var itemsControl = VisualTreeExtensions.GetVisualAncestor<ItemsControl>(VisualTarget);
         if (itemsControl != null)
         {
           // now check if this ItemsControl is a drop target
           if (DragDrop.GetIsDropTarget(itemsControl))
           {
-            this.VisualTarget = itemsControl;
+            VisualTarget = itemsControl;
           }
         }
       }
       // visual target can be null, so give us a point...
-      this.DropPosition = this.VisualTarget != null ? e.GetPosition(this.VisualTarget) : new Point();
+      DropPosition = VisualTarget != null ? e.GetPosition(VisualTarget) : new Point();
 
-      if (this.VisualTarget is ItemsControl)
+      if (VisualTarget is ItemsControl)
       {
-        var itemsControl = (ItemsControl)this.VisualTarget;
-        var item = itemsControl.GetItemContainerAt(this.DropPosition);
+        var itemsControl = (ItemsControl)VisualTarget;
+        var item = itemsControl.GetItemContainerAt(DropPosition);
         var directlyOverItem = item != null;
 
-        this.TargetGroup = itemsControl.FindGroup(this.DropPosition);
-        this.VisualTargetOrientation = itemsControl.GetItemsPanelOrientation();
-        this.VisualTargetFlowDirection = itemsControl.GetItemsPanelFlowDirection();
+        TargetGroup = itemsControl.FindGroup(DropPosition);
+        VisualTargetOrientation = itemsControl.GetItemsPanelOrientation();
+        VisualTargetFlowDirection = itemsControl.GetItemsPanelFlowDirection();
 
         if (item == null)
         {
-          item = itemsControl.GetItemContainerAt(this.DropPosition, this.VisualTargetOrientation);
+          item = itemsControl.GetItemContainerAt(DropPosition, VisualTargetOrientation);
           directlyOverItem = false;
         }
 
@@ -93,35 +93,35 @@ namespace GongSolutions.Wpf.DragDrop
         {
           var itemParent = ItemsControl.ItemsControlFromItemContainer(item);
 
-          this.InsertIndex = itemParent.ItemContainerGenerator.IndexFromContainer(item);
-          this.TargetCollection = itemParent.ItemsSource ?? itemParent.Items;
+          InsertIndex = itemParent.ItemContainerGenerator.IndexFromContainer(item);
+          TargetCollection = itemParent.ItemsSource ?? itemParent.Items;
 
           if (directlyOverItem || typeof(TreeViewItem).IsAssignableFrom(item.GetType()))
           {
-            this.TargetItem = itemParent.ItemContainerGenerator.ItemFromContainer(item);
-            this.VisualTargetItem = item;
+            TargetItem = itemParent.ItemContainerGenerator.ItemFromContainer(item);
+            VisualTargetItem = item;
           }
 
           var itemRenderSize = item.RenderSize;
 
-          if (this.VisualTargetOrientation == Orientation.Vertical)
+          if (VisualTargetOrientation == Orientation.Vertical)
           {
             var currentYPos = e.GetPosition(item).Y;
             var targetHeight = itemRenderSize.Height;
 
             if (currentYPos > targetHeight / 2)
             {
-              this.InsertIndex++;
-              this.InsertPosition = RelativeInsertPosition.AfterTargetItem;
+              InsertIndex++;
+              InsertPosition = RelativeInsertPosition.AfterTargetItem;
             }
             else
             {
-              this.InsertPosition = RelativeInsertPosition.BeforeTargetItem;
+              InsertPosition = RelativeInsertPosition.BeforeTargetItem;
             }
 
             if (currentYPos > targetHeight * 0.25 && currentYPos < targetHeight * 0.75)
             {
-              this.InsertPosition |= RelativeInsertPosition.TargetItemCenter;
+              InsertPosition |= RelativeInsertPosition.TargetItemCenter;
             }
           }
           else
@@ -129,30 +129,30 @@ namespace GongSolutions.Wpf.DragDrop
             var currentXPos = e.GetPosition(item).X;
             var targetWidth = itemRenderSize.Width;
 
-            if ((this.VisualTargetFlowDirection == FlowDirection.RightToLeft && currentXPos < targetWidth / 2)
-                || (this.VisualTargetFlowDirection == FlowDirection.LeftToRight && currentXPos > targetWidth / 2))
+            if ((VisualTargetFlowDirection == FlowDirection.RightToLeft && currentXPos < targetWidth / 2)
+                || (VisualTargetFlowDirection == FlowDirection.LeftToRight && currentXPos > targetWidth / 2))
             {
-              this.InsertIndex++;
-              this.InsertPosition = RelativeInsertPosition.AfterTargetItem;
+              InsertIndex++;
+              InsertPosition = RelativeInsertPosition.AfterTargetItem;
             }
             else
             {
-              this.InsertPosition = RelativeInsertPosition.BeforeTargetItem;
+              InsertPosition = RelativeInsertPosition.BeforeTargetItem;
             }
 
             if (currentXPos > targetWidth * 0.25 && currentXPos < targetWidth * 0.75)
             {
-              this.InsertPosition |= RelativeInsertPosition.TargetItemCenter;
+              InsertPosition |= RelativeInsertPosition.TargetItemCenter;
             }
 #if DEBUG
-            Console.WriteLine("==> DropInfo: {0}, {1}, {2}, X={3}", this.InsertPosition, item, this.InsertIndex, currentXPos);
+            Console.WriteLine("==> DropInfo: {0}, {1}, {2}, X={3}", InsertPosition, item, InsertIndex, currentXPos);
 #endif
           }
         }
         else
         {
-          this.TargetCollection = itemsControl.ItemsSource ?? itemsControl.Items;
-          this.InsertIndex = itemsControl.Items.Count;
+          TargetCollection = itemsControl.ItemsSource ?? itemsControl.Items;
+          InsertIndex = itemsControl.Items.Count;
         }
       }
     }

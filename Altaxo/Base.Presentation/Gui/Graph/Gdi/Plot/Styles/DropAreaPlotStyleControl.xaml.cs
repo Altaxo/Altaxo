@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public bool IndependentOnShiftingGroupStyles
     {
       get { return true == _guiIndependentOnShiftingGroupStyles.IsChecked; }
-      set { this._guiIndependentOnShiftingGroupStyles.IsChecked = value; }
+      set { _guiIndependentOnShiftingGroupStyles.IsChecked = value; }
     }
 
     public void InitializeFillDirection(SelectableListNodeList list)
@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return this._guiFillBrush.SelectedBrush;
+        return _guiFillBrush.SelectedBrush;
       }
       set
       {

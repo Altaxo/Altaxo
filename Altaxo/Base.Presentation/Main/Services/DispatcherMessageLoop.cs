@@ -31,8 +31,8 @@ namespace Altaxo.Main.Services
 
     public DispatcherMessageLoop(Dispatcher dispatcher, SynchronizationContext synchronizationContext)
     {
-      this._dispatcher = dispatcher;
-      this._synchronizationContext = synchronizationContext;
+      _dispatcher = dispatcher;
+      _synchronizationContext = synchronizationContext;
     }
 
     /// <inheritdoc/>
@@ -98,7 +98,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         action(arg);
       else
-        _dispatcher.Invoke((Delegate)action, new object[] { arg });
+        _dispatcher.Invoke(action, new object[] { arg });
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         action(arg1, arg2);
       else
-        _dispatcher.Invoke((Delegate)action, new object[] { arg1, arg2 });
+        _dispatcher.Invoke(action, new object[] { arg1, arg2 });
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         action(arg1, arg2, arg3);
       else
-        _dispatcher.Invoke((Delegate)action, new object[] { arg1, arg2, arg3 });
+        _dispatcher.Invoke(action, new object[] { arg1, arg2, arg3 });
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         action(arg1, arg2, arg3, arg4);
       else
-        _dispatcher.Invoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4 });
+        _dispatcher.Invoke(action, new object[] { arg1, arg2, arg3, arg4 });
     }
 
     /// <summary>
@@ -160,7 +160,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         action(arg1, arg2, arg3, arg4, arg5);
       else
-        _dispatcher.Invoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4, arg5 });
+        _dispatcher.Invoke(action, new object[] { arg1, arg2, arg3, arg4, arg5 });
     }
 
     /// <inheritdoc/>
@@ -207,7 +207,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         return function(arg);
       else
-        return (TResult)_dispatcher.Invoke((Delegate)function, new object[] { arg });
+        return (TResult)_dispatcher.Invoke(function, new object[] { arg });
     }
 
     /// <inheritdoc/>
@@ -216,7 +216,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         return function(arg1, arg2);
       else
-        return (TResult)_dispatcher.Invoke((Delegate)function, new object[] { arg1, arg2 });
+        return (TResult)_dispatcher.Invoke(function, new object[] { arg1, arg2 });
     }
 
     /// <inheritdoc/>
@@ -225,7 +225,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         return function(arg1, arg2, arg3);
       else
-        return (TResult)_dispatcher.Invoke((Delegate)function, new object[] { arg1, arg2, arg3 });
+        return (TResult)_dispatcher.Invoke(function, new object[] { arg1, arg2, arg3 });
     }
 
     /// <inheritdoc/>
@@ -234,7 +234,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         return function(arg1, arg2, arg3, arg4);
       else
-        return (TResult)_dispatcher.Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4 });
+        return (TResult)_dispatcher.Invoke(function, new object[] { arg1, arg2, arg3, arg4 });
     }
 
     /// <inheritdoc/>
@@ -243,7 +243,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         return function(arg1, arg2, arg3, arg4, arg5);
       else
-        return (TResult)_dispatcher.Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4, arg5 });
+        return (TResult)_dispatcher.Invoke(function, new object[] { arg1, arg2, arg3, arg4, arg5 });
     }
 
     /// <inheritdoc/>
@@ -252,7 +252,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         return function(arg1, arg2, arg3, arg4, arg5, arg6);
       else
-        return (TResult)_dispatcher.Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
+        return (TResult)_dispatcher.Invoke(function, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
     }
 
     /// <inheritdoc/>
@@ -261,7 +261,7 @@ namespace Altaxo.Main.Services
       if (_dispatcher.CheckAccess())
         return function(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
       else
-        return (TResult)_dispatcher.Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
+        return (TResult)_dispatcher.Invoke(function, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
     }
 
     /// <inheritdoc/>
@@ -299,7 +299,7 @@ namespace Altaxo.Main.Services
     /// <param name="arg">The argument of the action.</param>
     public void InvokeAndForget<T>(Action<T> action, T arg)
     {
-      _dispatcher.BeginInvoke((Delegate)action, new object[] { arg });
+      _dispatcher.BeginInvoke(action, new object[] { arg });
     }
 
     /// <summary>
@@ -310,7 +310,7 @@ namespace Altaxo.Main.Services
     /// <param name="arg2">The second argument of the action.</param>
     public void InvokeAndForget<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2)
     {
-      _dispatcher.BeginInvoke((Delegate)action, new object[] { arg1, arg2 });
+      _dispatcher.BeginInvoke(action, new object[] { arg1, arg2 });
     }
 
     /// <summary>
@@ -322,7 +322,7 @@ namespace Altaxo.Main.Services
     /// <param name="arg3">The 3rd argument of the action.</param>
     public void InvokeAndForget<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3)
     {
-      _dispatcher.BeginInvoke((Delegate)action, new object[] { arg1, arg2, arg3 });
+      _dispatcher.BeginInvoke(action, new object[] { arg1, arg2, arg3 });
     }
 
     /// <summary>
@@ -335,7 +335,7 @@ namespace Altaxo.Main.Services
     /// <param name="arg4">The 4th argument of the action.</param>
     public void InvokeAndForget<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
-      _dispatcher.BeginInvoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4 });
+      _dispatcher.BeginInvoke(action, new object[] { arg1, arg2, arg3, arg4 });
     }
 
     /// <summary>
@@ -349,7 +349,7 @@ namespace Altaxo.Main.Services
     /// <param name="arg5">The 5th argument of the action.</param>
     public void InvokeAndForget<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
     {
-      _dispatcher.BeginInvoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4, arg5 });
+      _dispatcher.BeginInvoke(action, new object[] { arg1, arg2, arg3, arg4, arg5 });
     }
 
     /// <inheritdoc/>

@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Common
 
     private static void OnAutoTooltipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-      TextBlock textBlock = d as TextBlock;
+      var textBlock = d as TextBlock;
       if (textBlock == null)
         return;
 
@@ -77,13 +77,13 @@ namespace Altaxo.Gui.Common
 
     private static void EhTextBlockSizeChanged(object sender, EventArgs e)
     {
-      TextBlock textBlock = sender as TextBlock;
+      var textBlock = sender as TextBlock;
       ComputeAutoTooltip(textBlock);
     }
 
     private static void EhTextBlockTextChanged(object sender, EventArgs e)
     {
-      TextBlock textBlock = sender as TextBlock;
+      var textBlock = sender as TextBlock;
       ComputeAutoTooltip(textBlock);
     }
 
@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     private static void ComputeAutoTooltip(TextBlock textBlock)
     {
-      textBlock.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+      textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
       var width = textBlock.DesiredSize.Width;
 
       if (textBlock.ActualWidth < width)

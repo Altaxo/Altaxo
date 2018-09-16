@@ -55,10 +55,12 @@ namespace Altaxo.Gui.Common
 
     public void AddTab(string title, object view)
     {
-      var item = new TabItem();
-      item.Header = title;
+      var item = new TabItem
+      {
+        Header = title,
 
-      item.Content = (UIElement)view;
+        Content = (UIElement)view
+      };
 
       item.LostFocus += item_LostFocus;
       item.GotFocus += item_GotFocus;

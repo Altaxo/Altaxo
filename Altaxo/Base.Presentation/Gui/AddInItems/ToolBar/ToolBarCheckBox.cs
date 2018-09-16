@@ -16,14 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.AddInItems;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
+using Altaxo.AddInItems;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.AddInItems
 {
@@ -41,18 +41,18 @@ namespace Altaxo.Gui.AddInItems
       this.codon = codon;
       this.caller = caller;
       this.conditions = conditions;
-      this.Command = CommandWrapper.CreateCommand(codon, conditions);
-      this.CommandParameter = caller;
-      ICheckableMenuCommand cmd = CommandWrapper.Unwrap(this.Command) as ICheckableMenuCommand;
+      Command = CommandWrapper.CreateCommand(codon, conditions);
+      CommandParameter = caller;
+      var cmd = CommandWrapper.Unwrap(Command) as ICheckableMenuCommand;
       if (cmd != null)
       {
         isCheckedBinding = SetBinding(IsCheckedProperty, new Binding("IsChecked") { Source = cmd, Mode = BindingMode.OneWay });
       }
 
-      this.Content = ToolBarService.CreateToolBarItemContent(codon);
+      Content = ToolBarService.CreateToolBarItemContent(codon);
       if (codon.Properties.Contains("name"))
       {
-        this.Name = codon.Properties["name"];
+        Name = codon.Properties["name"];
       }
       UpdateText();
 
@@ -63,20 +63,20 @@ namespace Altaxo.Gui.AddInItems
     {
       if (codon.Properties.Contains("tooltip"))
       {
-        this.ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
+        ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
       }
       if (codon.Properties.Contains("label"))
       {
-        this.Content = ToolBarService.CreateToolBarItemContent(codon);
+        Content = ToolBarService.CreateToolBarItemContent(codon);
       }
     }
 
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-        this.Visibility = Visibility.Collapsed;
+        Visibility = Visibility.Collapsed;
       else
-        this.Visibility = Visibility.Visible;
+        Visibility = Visibility.Visible;
       if (isCheckedBinding != null)
         isCheckedBinding.UpdateTarget();
     }

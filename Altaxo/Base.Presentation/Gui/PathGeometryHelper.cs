@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui
 {
@@ -51,13 +51,9 @@ namespace Altaxo.Gui
 
       var sharpPoints = new HashSet<PointD2D>();
 
-      Point prevEndPoint;
-      Vector prevEndVector;
+      Vector endVector;
 
-      Vector startVector, endVector;
-      Point endPoint;
-
-      GetStartAndEndVector(figure.StartPoint, figure.Segments[0], out prevEndPoint, out startVector, out prevEndVector);
+      GetStartAndEndVector(figure.StartPoint, figure.Segments[0], out var prevEndPoint, out var startVector, out var prevEndVector);
       for (int i = 1; i <= figure.Segments.Count; ++i)
       {
         if (i == figure.Segments.Count && prevEndPoint != figure.StartPoint) // if the end point of the very last segment is not the same than the start point of the figure
@@ -71,7 +67,7 @@ namespace Altaxo.Gui
         }
 
         PathSegment seg = figure.Segments[i % figure.Segments.Count];
-        GetStartAndEndVector(prevEndPoint, seg, out endPoint, out startVector, out endVector);
+        GetStartAndEndVector(prevEndPoint, seg, out var endPoint, out startVector, out endVector);
 
         if (!IsSmoothJoint(startVector, prevEndVector))
           sharpPoints.Add(ToAltaxo(prevEndPoint, reverseY));

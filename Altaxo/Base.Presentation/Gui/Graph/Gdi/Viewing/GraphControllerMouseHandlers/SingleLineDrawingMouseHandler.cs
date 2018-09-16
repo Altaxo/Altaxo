@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Input;
+using Altaxo.Geometry;
+using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     public SingleLineDrawingMouseHandler(GraphController view)
     {
-      this._grac = view;
+      _grac = view;
 
       if (_grac != null)
         _grac.SetPanelCursor(Cursors.Pen);
@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         _cachedActiveLayer = _grac.ActiveLayer;
         _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-        _cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+        _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation;
       }
 
       // get the page coordinates (in Point (1/72") units)
@@ -143,7 +143,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     {
       base.AfterPaint(g);
 
-      for (int i = 1; i < this._currentPoint; i++)
+      for (int i = 1; i < _currentPoint; i++)
         g.DrawLine(Pens.Blue, (PointF)_Points[i - 1].RootLayerCoordinates, (PointF)_Points[i].RootLayerCoordinates);
 
       if (_currentPoint > 0)
@@ -152,7 +152,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     protected virtual void FinishDrawing()
     {
-      LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, _grac.Doc.GetPropertyContext());
+      var go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, _grac.Doc.GetPropertyContext());
 
       // deselect the text tool
       _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);

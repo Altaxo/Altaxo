@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Shapes;
 using System;
+using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     protected override void FinishDrawing()
     {
       var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
-      RectangleShape go = new RectangleShape(_grac.Doc.GetPropertyContext());
+      var go = new RectangleShape(_grac.Doc.GetPropertyContext());
       go.SetParentSize(_grac.ActiveLayer.Size, false);
       go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
       // deselect the text tool

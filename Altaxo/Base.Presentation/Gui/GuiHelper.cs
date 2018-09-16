@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,6 +35,8 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Xml;
+using Altaxo.Collections;
+using Altaxo.Geometry;
 
 namespace Altaxo.Gui
 {
@@ -96,9 +96,11 @@ namespace Altaxo.Gui
       panel.Children.Clear();
       foreach (var choice in choices)
       {
-        var rb = new TChoiceGuiElement();
-        rb.Content = choice.Text;
-        rb.Tag = choice;
+        var rb = new TChoiceGuiElement
+        {
+          Content = choice.Text,
+          Tag = choice
+        };
         rb.SetBinding(ToggleButton.IsCheckedProperty, new System.Windows.Data.Binding("IsSelected") { Source = choice, Mode = System.Windows.Data.BindingMode.TwoWay });
         panel.Children.Add(rb);
       }

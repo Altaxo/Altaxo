@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Workbench
 
     #region IStatusBarView
 
-    public bool IsStatusBarVisible { set { this.Visibility = value ? Visibility.Visible : Visibility.Collapsed; } }
+    public bool IsStatusBarVisible { set { Visibility = value ? Visibility.Visible : Visibility.Collapsed; } }
     public object CursorStatusBarPanelContent { set { _cursorStatusBarPanel.Content = value; } }
     public object SelectionStatusBarPanelContent { set { _selectionStatusBarPanel.Content = value; } }
     public object ModeStatusBarPanelContent { set { _modeStatusBarPanel.Content = value; } }
@@ -172,7 +172,7 @@ namespace Altaxo.Gui.Workbench
       {
         if (_progressForegroundBrush == null)
         {
-          SolidColorBrush defaultForeground = _statusProgressBar.Foreground as SolidColorBrush;
+          var defaultForeground = _statusProgressBar.Foreground as SolidColorBrush;
           _progressForegroundBrush = new SolidColorBrush(defaultForeground != null ? defaultForeground.Color : Colors.Blue);
         }
 
@@ -221,7 +221,7 @@ namespace Altaxo.Gui.Workbench
       {
         // make stuff look nice and delay it a little more by using an animation
         // on the progress bar
-        TimeSpan timeSpan = TimeSpan.FromSeconds(0.25);
+        var timeSpan = TimeSpan.FromSeconds(0.25);
         var animation = new DoubleAnimation(0, new Duration(timeSpan), FillBehavior.HoldEnd);
         _statusProgressBarItem.BeginAnimation(OpacityProperty, animation);
         _jobNamePanel.BeginAnimation(OpacityProperty, animation);

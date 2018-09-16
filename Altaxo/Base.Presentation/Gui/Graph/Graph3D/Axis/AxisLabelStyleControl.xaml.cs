@@ -48,14 +48,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     public AxisLabelStyleControl()
     {
       InitializeComponent();
-      _backgroundGlue = new BackgroundControlsGlue();
-      _backgroundGlue.CbBrush = _guiBackgroundBrush;
-      _backgroundGlue.CbStyle = _guiBackgroundStyle;
+      _backgroundGlue = new BackgroundControlsGlue
+      {
+        CbBrush = _guiBackgroundBrush,
+        CbStyle = _guiBackgroundStyle
+      };
 
-      _fontGlue = new FontX3DGlue();
-      _fontGlue.GuiFontFamily = _guiFontFamily;
-      _fontGlue.GuiFontStyle = _guiFontStyle;
-      _fontGlue.GuiFontSize = _guiFontSize;
+      _fontGlue = new FontX3DGlue
+      {
+        GuiFontFamily = _guiFontFamily,
+        GuiFontStyle = _guiFontStyle,
+        GuiFontSize = _guiFontSize
+      };
     }
 
     public event Action LabelStyleChanged;
@@ -130,8 +134,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       set
       {
         _guiAutomaticAlignment.IsChecked = value;
-        this._guiAlignmentX.IsEnabled = false == _guiAutomaticAlignment.IsChecked;
-        this._guiAlignmentY.IsEnabled = false == _guiAutomaticAlignment.IsChecked;
+        _guiAlignmentX.IsEnabled = false == _guiAutomaticAlignment.IsChecked;
+        _guiAlignmentY.IsEnabled = false == _guiAutomaticAlignment.IsChecked;
       }
     }
 
@@ -139,11 +143,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       get
       {
-        return this._guiRotationX.SelectedQuantityAsValueInDegrees;
+        return _guiRotationX.SelectedQuantityAsValueInDegrees;
       }
       set
       {
-        this._guiRotationX.SelectedQuantityAsValueInDegrees = value;
+        _guiRotationX.SelectedQuantityAsValueInDegrees = value;
       }
     }
 
@@ -151,11 +155,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       get
       {
-        return this._guiRotationY.SelectedQuantityAsValueInDegrees;
+        return _guiRotationY.SelectedQuantityAsValueInDegrees;
       }
       set
       {
-        this._guiRotationY.SelectedQuantityAsValueInDegrees = value;
+        _guiRotationY.SelectedQuantityAsValueInDegrees = value;
       }
     }
 
@@ -163,11 +167,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       get
       {
-        return this._guiRotationZ.SelectedQuantityAsValueInDegrees;
+        return _guiRotationZ.SelectedQuantityAsValueInDegrees;
       }
       set
       {
-        this._guiRotationZ.SelectedQuantityAsValueInDegrees = value;
+        _guiRotationZ.SelectedQuantityAsValueInDegrees = value;
       }
     }
 
@@ -175,11 +179,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       get
       {
-        return this._guiOffsetX.SelectedQuantityAsValueInSIUnits;
+        return _guiOffsetX.SelectedQuantityAsValueInSIUnits;
       }
       set
       {
-        this._guiOffsetX.SelectedQuantityAsValueInSIUnits = value;
+        _guiOffsetX.SelectedQuantityAsValueInSIUnits = value;
       }
     }
 
@@ -191,7 +195,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
       set
       {
-        this._guiOffsetY.SelectedQuantityAsValueInSIUnits = value;
+        _guiOffsetY.SelectedQuantityAsValueInSIUnits = value;
       }
     }
 
@@ -203,13 +207,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
       set
       {
-        this._guiOffsetZ.SelectedQuantityAsValueInSIUnits = value;
+        _guiOffsetZ.SelectedQuantityAsValueInSIUnits = value;
       }
     }
 
     public void LabelStyle_Initialize(Collections.SelectableListNodeList items)
     {
-      GuiHelper.Initialize(this._guiLabelStyle, items);
+      GuiHelper.Initialize(_guiLabelStyle, items);
     }
 
     public string SuppressedLabelsByValue

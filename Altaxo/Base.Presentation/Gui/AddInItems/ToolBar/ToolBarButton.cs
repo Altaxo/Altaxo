@@ -43,21 +43,21 @@ namespace Altaxo.Gui.AddInItems
 
       this.codon = codon;
       this.caller = caller;
-      this.Command = CommandWrapper.CreateLazyCommand(codon, conditions);
-      this.CommandParameter = caller;
-      this.Content = ToolBarService.CreateToolBarItemContent(codon);
+      Command = CommandWrapper.CreateLazyCommand(codon, conditions);
+      CommandParameter = caller;
+      Content = ToolBarService.CreateToolBarItemContent(codon);
       this.conditions = conditions;
 
       if (codon.Properties.Contains("name"))
       {
-        this.Name = codon.Properties["name"];
+        Name = codon.Properties["name"];
       }
 
       if (!string.IsNullOrEmpty(codon.Properties["shortcut"]))
       {
         KeyGesture kg = MenuService.ParseShortcut(codon.Properties["shortcut"]);
-        MenuCommand.AddGestureToInputBindingOwner(inputBindingOwner, kg, this.Command, GetFeatureName());
-        this.inputGestureText = MenuService.GetDisplayStringForShortcut(kg);
+        MenuCommand.AddGestureToInputBindingOwner(inputBindingOwner, kg, Command, GetFeatureName());
+        inputGestureText = MenuService.GetDisplayStringForShortcut(kg);
       }
       UpdateText();
 
@@ -84,7 +84,7 @@ namespace Altaxo.Gui.AddInItems
         string toolTip = StringParser.Parse(codon.Properties["tooltip"]);
         if (!string.IsNullOrEmpty(inputGestureText))
           toolTip = toolTip + " (" + inputGestureText + ")";
-        this.ToolTip = toolTip;
+        ToolTip = toolTip;
       }
     }
 
@@ -96,9 +96,9 @@ namespace Altaxo.Gui.AddInItems
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-        this.Visibility = Visibility.Collapsed;
+        Visibility = Visibility.Collapsed;
       else
-        this.Visibility = Visibility.Visible;
+        Visibility = Visibility.Visible;
     }
   }
 }

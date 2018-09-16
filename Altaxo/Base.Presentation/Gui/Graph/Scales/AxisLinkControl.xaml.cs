@@ -43,21 +43,21 @@ namespace Altaxo.Gui.Graph.Scales
 
     private void EnableCustom(bool bEnab)
     {
-      this._guiLinkAxisOrgA.IsEnabled = bEnab;
-      this._guiLinkAxisOrgB.IsEnabled = bEnab;
-      this._guiLinkAxisEndA.IsEnabled = bEnab;
-      this._guiLinkAxisEndB.IsEnabled = bEnab;
+      _guiLinkAxisOrgA.IsEnabled = bEnab;
+      _guiLinkAxisOrgB.IsEnabled = bEnab;
+      _guiLinkAxisEndA.IsEnabled = bEnab;
+      _guiLinkAxisEndB.IsEnabled = bEnab;
     }
 
     private void EhLinkStraight_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (this._guiLinkAxisStraight.IsChecked == true)
+      if (_guiLinkAxisStraight.IsChecked == true)
         EnableCustom(false);
     }
 
     private void EhLinkCustom_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      if (this._guiLinkAxisCustom.IsChecked == true)
+      if (_guiLinkAxisCustom.IsChecked == true)
         EnableCustom(true);
     }
 
@@ -73,12 +73,12 @@ namespace Altaxo.Gui.Graph.Scales
       {
         if (value)
         {
-          this._guiLinkAxisStraight.IsChecked = true;
+          _guiLinkAxisStraight.IsChecked = true;
           EnableCustom(false);
         }
         else
         {
-          this._guiLinkAxisCustom.IsChecked = true;
+          _guiLinkAxisCustom.IsChecked = true;
           EnableCustom(true);
         }
       }

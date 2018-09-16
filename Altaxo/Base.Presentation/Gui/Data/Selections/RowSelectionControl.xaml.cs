@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data.Selections;
-using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +35,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Collections;
+using Altaxo.Data.Selections;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Data.Selections
 {
@@ -138,9 +138,9 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (this._addNewSelectionCommand == null)
-          this._addNewSelectionCommand = new RelayCommand<int>(EhAddNewSelectionCommand);
-        return this._addNewSelectionCommand;
+        if (_addNewSelectionCommand == null)
+          _addNewSelectionCommand = new RelayCommand<int>(EhAddNewSelectionCommand);
+        return _addNewSelectionCommand;
       }
     }
 
@@ -159,9 +159,9 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (this._removeSelectionCommand == null)
-          this._removeSelectionCommand = new RelayCommand<int>(EhRemoveSelectionCommand);
-        return this._removeSelectionCommand;
+        if (_removeSelectionCommand == null)
+          _removeSelectionCommand = new RelayCommand<int>(EhRemoveSelectionCommand);
+        return _removeSelectionCommand;
       }
     }
 
@@ -180,9 +180,9 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (this._indentSelectionCommand == null)
-          this._indentSelectionCommand = new RelayCommand<int>(EhIndentSelectionCommand);
-        return this._indentSelectionCommand;
+        if (_indentSelectionCommand == null)
+          _indentSelectionCommand = new RelayCommand<int>(EhIndentSelectionCommand);
+        return _indentSelectionCommand;
       }
     }
 
@@ -201,9 +201,9 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (this._unindentSelectionCommand == null)
-          this._unindentSelectionCommand = new RelayCommand<int>(EhUnindentSelectionCommand);
-        return this._unindentSelectionCommand;
+        if (_unindentSelectionCommand == null)
+          _unindentSelectionCommand = new RelayCommand<int>(EhUnindentSelectionCommand);
+        return _unindentSelectionCommand;
       }
     }
 
@@ -222,9 +222,9 @@ namespace Altaxo.Gui.Data.Selections
     {
       get
       {
-        if (this._selectionChangedCommand == null)
-          this._selectionChangedCommand = new RelayCommand<int>(EhSelectionChanged);
-        return this._selectionChangedCommand;
+        if (_selectionChangedCommand == null)
+          _selectionChangedCommand = new RelayCommand<int>(EhSelectionChanged);
+        return _selectionChangedCommand;
       }
     }
 

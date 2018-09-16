@@ -22,6 +22,13 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
@@ -30,13 +37,6 @@ using Altaxo.Gui.Drawing;
 using Altaxo.Gui.Graph.Gdi.Background;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Units;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       _fontControlsGlue = new FontXControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle };
       _backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
       _backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
-      _backgroundGlue.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
+      _backgroundGlue.BackgroundBrushChanged += EhBackgroundBrushChanged;
     }
 
     private void EhSelectLabelColumn_Click(object sender, RoutedEventArgs e)
@@ -87,29 +87,29 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhAttachToAxis_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      this._guiAttachedAxis.IsEnabled = true == _guiAttachToAxis.IsChecked;
+      _guiAttachedAxis.IsEnabled = true == _guiAttachToAxis.IsChecked;
     }
 
     #region IXYPlotLabelStyleView
 
     public void Init_LabelColumn(string boxText, string toolTip, int status)
     {
-      this._guiLabelColumn.Text = boxText;
-      this._guiLabelColumn.ToolTip = toolTip;
-      this._guiLabelColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+      _guiLabelColumn.Text = boxText;
+      _guiLabelColumn.ToolTip = toolTip;
+      _guiLabelColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
     }
 
     public void Init_Transformation(string boxText, string toolTip)
     {
       if (null == boxText)
       {
-        this._guiLabelTransformation.Visibility = Visibility.Collapsed;
+        _guiLabelTransformation.Visibility = Visibility.Collapsed;
       }
       else
       {
-        this._guiLabelTransformation.Text = boxText;
-        this._guiLabelTransformation.ToolTip = toolTip;
-        this._guiLabelTransformation.Visibility = Visibility.Visible;
+        _guiLabelTransformation.Text = boxText;
+        _guiLabelTransformation.ToolTip = toolTip;
+        _guiLabelTransformation.Visibility = Visibility.Visible;
       }
     }
 
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public bool IgnoreMissingDataPoints
     {
       get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
-      set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+      set { _guiIgnoreMissingDataPoints.IsChecked = value; }
     }
 
     public bool IndependentOnShiftingGroupStyles
@@ -209,11 +209,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return this._guiRotation.SelectedQuantityAsValueInDegrees;
+        return _guiRotation.SelectedQuantityAsValueInDegrees;
       }
       set
       {
-        this._guiRotation.SelectedQuantityAsValueInDegrees = value;
+        _guiRotation.SelectedQuantityAsValueInDegrees = value;
       }
     }
 

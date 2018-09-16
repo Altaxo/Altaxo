@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +29,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using Altaxo.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
@@ -191,7 +191,7 @@ namespace Altaxo.Gui.Drawing.D3D
         material = Materials.GetMaterialWithNewColor(material, coercedColor);
       }
 
-      if (this.ShowPlotColorsOnly && (material.Color.ParentColorSet == null || false == ColorSetManager.Instance.IsPlotColorSet(material.Color.ParentColorSet)))
+      if (ShowPlotColorsOnly && (material.Color.ParentColorSet == null || false == ColorSetManager.Instance.IsPlotColorSet(material.Color.ParentColorSet)))
       {
         material = Materials.GetMaterialWithNewColor(material, ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
       }
@@ -222,10 +222,10 @@ namespace Altaxo.Gui.Drawing.D3D
       }
 
       if (!newMaterial.Equals(_guiComboBox.SelectedValue))
-        this.UpdateComboBoxSourceSelection(newMaterial);
+        UpdateComboBoxSourceSelection(newMaterial);
 
       if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
-        this.UpdateTreeViewSelection();
+        UpdateTreeViewSelection();
 
       if (null != SelectedMaterialChanged)
         SelectedMaterialChanged(obj, args);
@@ -343,9 +343,9 @@ namespace Altaxo.Gui.Drawing.D3D
       else
       {
         if (_guiComboBox.SelectedValue is IMaterial)
-          this.InternalSelectedMaterial = (IMaterial)_guiComboBox.SelectedValue;
+          InternalSelectedMaterial = (IMaterial)_guiComboBox.SelectedValue;
         else
-          this.InternalSelectedMaterial = Materials.GetSolidMaterial((NamedColor)_guiComboBox.SelectedValue);
+          InternalSelectedMaterial = Materials.GetSolidMaterial((NamedColor)_guiComboBox.SelectedValue);
       }
     }
 
@@ -357,7 +357,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private void EhShowCustomMaterialDialog(object sender, RoutedEventArgs e)
     {
-      var localMaterial = this.SelectedMaterial;
+      var localMaterial = SelectedMaterial;
 
       var ctrl = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { localMaterial }, typeof(IMVCANController), UseDocument.Copy);
       //ctrl.RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly;
@@ -370,20 +370,18 @@ namespace Altaxo.Gui.Drawing.D3D
 
     protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
     {
-      NamedColor newColor;
-      if (base.InternalShowCustomColorDialog(sender, out newColor))
+      if (base.InternalShowCustomColorDialog(sender, out var newColor))
       {
-        var newMat = Materials.GetMaterialWithNewColor((IMaterial)InternalSelectedMaterial, newColor);
+        var newMat = Materials.GetMaterialWithNewColor(InternalSelectedMaterial, newColor);
         InternalSelectedMaterial = newMat;
       }
     }
 
     protected void EhChooseOpacityFromContextMenu(object sender, RoutedEventArgs e)
     {
-      NamedColor newColor;
-      if (base.InternalChooseOpacityFromContextMenu(sender, out newColor))
+      if (base.InternalChooseOpacityFromContextMenu(sender, out var newColor))
       {
-        var newMat = Materials.GetMaterialWithNewColor((IMaterial)InternalSelectedMaterial, newColor);
+        var newMat = Materials.GetMaterialWithNewColor(InternalSelectedMaterial, newColor);
         InternalSelectedMaterial = newMat;
       }
     }

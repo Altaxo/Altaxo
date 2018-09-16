@@ -22,6 +22,12 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
@@ -32,12 +38,6 @@ using Altaxo.Gui.Graph.Graph3D.Background;
 using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Units;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       _fontControlsGlue = new FontX3DControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontDepth = _cbFontDepth };
       _backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
       _backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
-      _backgroundGlue.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
+      _backgroundGlue.BackgroundBrushChanged += EhBackgroundBrushChanged;
     }
 
     private void EhSelectLabelColumn_Click(object sender, RoutedEventArgs e)
@@ -88,29 +88,29 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhAttachToAxis_CheckedChanged(object sender, RoutedEventArgs e)
     {
-      this._guiAttachedAxis.IsEnabled = true == _guiAttachToAxis.IsChecked;
+      _guiAttachedAxis.IsEnabled = true == _guiAttachToAxis.IsChecked;
     }
 
     #region IXYPlotLabelStyleView
 
     public void Init_LabelColumn(string boxText, string toolTip, int status)
     {
-      this._guiLabelColumn.Text = boxText;
-      this._guiLabelColumn.ToolTip = toolTip;
-      this._guiLabelColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+      _guiLabelColumn.Text = boxText;
+      _guiLabelColumn.ToolTip = toolTip;
+      _guiLabelColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
     }
 
     public void Init_Transformation(string boxText, string toolTip)
     {
       if (null == boxText)
       {
-        this._guiLabelTransformation.Visibility = Visibility.Collapsed;
+        _guiLabelTransformation.Visibility = Visibility.Collapsed;
       }
       else
       {
-        this._guiLabelTransformation.Text = boxText;
-        this._guiLabelTransformation.ToolTip = toolTip;
-        this._guiLabelTransformation.Visibility = Visibility.Visible;
+        _guiLabelTransformation.Text = boxText;
+        _guiLabelTransformation.ToolTip = toolTip;
+        _guiLabelTransformation.Visibility = Visibility.Visible;
       }
     }
 
@@ -204,11 +204,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return this._guiRotationX.SelectedQuantityAsValueInDegrees;
+        return _guiRotationX.SelectedQuantityAsValueInDegrees;
       }
       set
       {
-        this._guiRotationX.SelectedQuantityAsValueInDegrees = value;
+        _guiRotationX.SelectedQuantityAsValueInDegrees = value;
       }
     }
 
@@ -216,11 +216,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return this._guiRotationY.SelectedQuantityAsValueInDegrees;
+        return _guiRotationY.SelectedQuantityAsValueInDegrees;
       }
       set
       {
-        this._guiRotationY.SelectedQuantityAsValueInDegrees = value;
+        _guiRotationY.SelectedQuantityAsValueInDegrees = value;
       }
     }
 
@@ -228,11 +228,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return this._guiRotationZ.SelectedQuantityAsValueInDegrees;
+        return _guiRotationZ.SelectedQuantityAsValueInDegrees;
       }
       set
       {
-        this._guiRotationZ.SelectedQuantityAsValueInDegrees = value;
+        _guiRotationZ.SelectedQuantityAsValueInDegrees = value;
       }
     }
 

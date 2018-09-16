@@ -118,7 +118,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
     public void InitializeAvailableCoordinateTransformingGroupStyles(Collections.SelectableListNodeList list)
     {
-      GuiHelper.Initialize(this._cbCoordTransfoStyle, list);
+      GuiHelper.Initialize(_cbCoordTransfoStyle, list);
     }
 
     public void InitializeAvailableNormalGroupStyles(Collections.SelectableListNodeList list)

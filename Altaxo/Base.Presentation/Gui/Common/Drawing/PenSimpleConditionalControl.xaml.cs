@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -43,10 +43,12 @@ namespace Altaxo.Gui.Common.Drawing
     {
       InitializeComponent();
 
-      _glue = new PenControlsGlue(false);
-      _glue.CbBrush = _cbBrush;
-      _glue.CbDashPattern = _cbDashStyle;
-      _glue.CbLineThickness = _cbThickness;
+      _glue = new PenControlsGlue(false)
+      {
+        CbBrush = _cbBrush,
+        CbDashPattern = _cbDashStyle,
+        CbLineThickness = _cbThickness
+      };
     }
 
     public Altaxo.Graph.Gdi.PenX SelectedPen

@@ -16,14 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo;
-using Altaxo.AddInItems;
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
+using Altaxo;
+using Altaxo.AddInItems;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.AddInItems
 {
@@ -154,16 +154,16 @@ namespace Altaxo.Gui.AddInItems
 
     private CommandWrapper(Codon codon, IReadOnlyCollection<ICondition> conditions)
     {
-      this._codon = codon;
-      this._conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
-      this._canExecuteChangedHandlersToRegisterOnCommand = new WeakCollection<EventHandler>();
+      _codon = codon;
+      _conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
+      _canExecuteChangedHandlersToRegisterOnCommand = new WeakCollection<EventHandler>();
     }
 
     private CommandWrapper(ICommand command, IReadOnlyCollection<ICondition> conditions)
     {
-      this._addInCommand = command;
-      this._conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
-      this._commandCreated = true;
+      _addInCommand = command;
+      _conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
+      _commandCreated = true;
     }
 
     private void EnsureCommandCreated()

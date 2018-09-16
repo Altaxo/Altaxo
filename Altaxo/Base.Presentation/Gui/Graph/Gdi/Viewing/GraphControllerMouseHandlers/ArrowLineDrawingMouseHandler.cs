@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Windows.Input;
+using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     protected override void FinishDrawing()
     {
       var context = _grac.Doc.GetPropertyContext();
-      LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, context);
+      var go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, context);
 
       var absArrowSize = go.Pen.Width * 8;
       go.Pen.EndCap = new Altaxo.Graph.Gdi.LineCaps.ArrowF10LineCap(absArrowSize, 4);

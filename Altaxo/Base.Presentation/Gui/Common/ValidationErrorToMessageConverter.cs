@@ -51,10 +51,10 @@ namespace Altaxo.Gui.Common
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      ReadOnlyObservableCollection<ValidationError> errors =
+      var errors =
           value as ReadOnlyObservableCollection<ValidationError>;
 
-      StringBuilder result = new StringBuilder();
+      var result = new StringBuilder();
       if (null != errors)
       {
         for (int i = 0; i < errors.Count; i++)

@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +29,10 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Common.Drawing
         brush.Color = coercedColor;
       }
 
-      if (this.ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(brush.Color.ParentColorSet)))
+      if (ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(brush.Color.ParentColorSet)))
       {
         brush = brush.Clone();
         brush.Color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
@@ -187,10 +187,10 @@ namespace Altaxo.Gui.Common.Drawing
       }
 
       if (!newBrush.Equals(_guiComboBox.SelectedValue))
-        this.UpdateComboBoxSourceSelection(newBrush);
+        UpdateComboBoxSourceSelection(newBrush);
 
       if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
-        this.UpdateTreeViewSelection();
+        UpdateTreeViewSelection();
 
       if (null != SelectedBrushChanged)
         SelectedBrushChanged(obj, args);
@@ -304,9 +304,9 @@ namespace Altaxo.Gui.Common.Drawing
       else
       {
         if (_guiComboBox.SelectedValue is BrushX)
-          this.InternalSelectedBrush = (BrushX)_guiComboBox.SelectedValue;
+          InternalSelectedBrush = (BrushX)_guiComboBox.SelectedValue;
         else
-          this.InternalSelectedBrush = new BrushX((NamedColor)_guiComboBox.SelectedValue);
+          InternalSelectedBrush = new BrushX((NamedColor)_guiComboBox.SelectedValue);
       }
     }
 
@@ -318,18 +318,19 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhShowCustomBrushDialog(object sender, RoutedEventArgs e)
     {
-      var localBrush = this.InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-      var ctrl = new BrushControllerAdvanced();
-      ctrl.RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly;
+      var localBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
+      var ctrl = new BrushControllerAdvanced
+      {
+        RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly
+      };
       ctrl.InitializeDocument(localBrush);
       if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
-        this.InternalSelectedBrush = (BrushX)ctrl.ModelObject;
+        InternalSelectedBrush = (BrushX)ctrl.ModelObject;
     }
 
     protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
     {
-      NamedColor newColor;
-      if (base.InternalShowCustomColorDialog(sender, out newColor))
+      if (base.InternalShowCustomColorDialog(sender, out var newColor))
       {
         var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
         newBrush.Color = newColor;
@@ -339,8 +340,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected void EhChooseOpacityFromContextMenu(object sender, RoutedEventArgs e)
     {
-      NamedColor newColor;
-      if (base.InternalChooseOpacityFromContextMenu(sender, out newColor))
+      if (base.InternalChooseOpacityFromContextMenu(sender, out var newColor))
       {
         var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
         newBrush.Color = newColor;

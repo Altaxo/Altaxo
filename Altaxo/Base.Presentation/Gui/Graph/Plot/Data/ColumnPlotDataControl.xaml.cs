@@ -31,10 +31,6 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-  using Altaxo.Collections;
-  using Common;
-  using GongSolutions.Wpf.DragDrop;
-  using Graph.Plot.Data;
   using System.Collections;
   using System.IO;
   using System.Windows.Data;
@@ -42,6 +38,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
   using System.Windows.Markup;
   using System.Windows.Media;
   using System.Xml;
+  using Altaxo.Collections;
+  using Common;
+  using GongSolutions.Wpf.DragDrop;
+  using Graph.Plot.Data;
 
   /// <summary>
   /// Interaction logic for ColumnPlotDataControl.xaml
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       if (null != SelectedTableChanged)
       {
-        GuiHelper.SynchronizeSelectionFromGui(this._cbTables);
+        GuiHelper.SynchronizeSelectionFromGui(_cbTables);
         SelectedTableChanged?.Invoke();
       }
     }
@@ -290,8 +290,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
-        bool isCopy, isMove;
-        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
         _parentControl.AvailableTableColumns_DragEnded?.Invoke(isCopy, isMove);
       }
 
@@ -345,8 +344,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
-        bool isCopy, isMove;
-        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
         _parentControl.OtherAvailableItems_DragEnded?.Invoke(isCopy, isMove);
       }
 
@@ -400,8 +398,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
-        bool isCopy, isMove;
-        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
         _parentControl.AvailableTransformations_DragEnded?.Invoke(isCopy, isMove);
       }
 
@@ -438,9 +435,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       public void DragOver(IDropInfo dropInfo)
       {
-        DragDropEffects resultingEffect;
-        Type adornerType;
-        if (CanAcceptData(dropInfo, out resultingEffect, out adornerType))
+        if (CanAcceptData(dropInfo, out var resultingEffect, out var adornerType))
         {
           dropInfo.Effects = resultingEffect;
           dropInfo.DropTargetAdorner = adornerType;
@@ -500,9 +495,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._columnAddToCommand == null)
-          this._columnAddToCommand = new RelayCommand(EhColumn_AddToCommand);
-        return this._columnAddToCommand;
+        if (_columnAddToCommand == null)
+          _columnAddToCommand = new RelayCommand(EhColumn_AddToCommand);
+        return _columnAddToCommand;
       }
     }
 
@@ -540,9 +535,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._columnEditCommand == null)
-          this._columnEditCommand = new RelayCommand(EhColumn_EditCommand);
-        return this._columnEditCommand;
+        if (_columnEditCommand == null)
+          _columnEditCommand = new RelayCommand(EhColumn_EditCommand);
+        return _columnEditCommand;
       }
     }
 
@@ -561,9 +556,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._columnEraseCommand == null)
-          this._columnEraseCommand = new RelayCommand(EhColumn_EraseCommand);
-        return this._columnEraseCommand;
+        if (_columnEraseCommand == null)
+          _columnEraseCommand = new RelayCommand(EhColumn_EraseCommand);
+        return _columnEraseCommand;
       }
     }
 
@@ -582,9 +577,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._transformationEditCommand == null)
-          this._transformationEditCommand = new RelayCommand(EhTransformation_EditCommand);
-        return this._transformationEditCommand;
+        if (_transformationEditCommand == null)
+          _transformationEditCommand = new RelayCommand(EhTransformation_EditCommand);
+        return _transformationEditCommand;
       }
     }
 
@@ -603,9 +598,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._transformationEraseCommand == null)
-          this._transformationEraseCommand = new RelayCommand(EhTransformation_EraseCommand);
-        return this._transformationEraseCommand;
+        if (_transformationEraseCommand == null)
+          _transformationEraseCommand = new RelayCommand(EhTransformation_EraseCommand);
+        return _transformationEraseCommand;
       }
     }
 
@@ -624,8 +619,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._transformationAddAsSingleCommand == null)
-          this._transformationAddAsSingleCommand = new RelayCommand(EhTransformationAddAsSingleCommand);
+        if (_transformationAddAsSingleCommand == null)
+          _transformationAddAsSingleCommand = new RelayCommand(EhTransformationAddAsSingleCommand);
         return _transformationAddAsSingleCommand;
       }
     }
@@ -649,8 +644,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._transformationAddAsPrependingCommand == null)
-          this._transformationAddAsPrependingCommand = new RelayCommand(EhTransformationAddAsPrependingCommand);
+        if (_transformationAddAsPrependingCommand == null)
+          _transformationAddAsPrependingCommand = new RelayCommand(EhTransformationAddAsPrependingCommand);
         return _transformationAddAsPrependingCommand;
       }
     }
@@ -674,8 +669,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._transformationAddAsAppendingCommand == null)
-          this._transformationAddAsAppendingCommand = new RelayCommand(EhTransformationAddAsAppendingCommand);
+        if (_transformationAddAsAppendingCommand == null)
+          _transformationAddAsAppendingCommand = new RelayCommand(EhTransformationAddAsAppendingCommand);
         return _transformationAddAsAppendingCommand;
       }
     }

@@ -43,9 +43,11 @@ namespace Altaxo.Gui.Common
     {
       InitializeComponent();
 
-      var binding = new Binding();
-      binding.Source = this;
-      binding.Path = new PropertyPath("ValidatedText");
+      var binding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath("ValidatedText")
+      };
       var validator = new MyValidationRule(this);
       binding.ValidationRules.Add(validator);
       binding.Mode = BindingMode.TwoWay;
@@ -90,7 +92,7 @@ namespace Altaxo.Gui.Common
       {
         if (null != _parent.TextValidating)
         {
-          System.ComponentModel.CancelEventArgs cea = new System.ComponentModel.CancelEventArgs();
+          var cea = new System.ComponentModel.CancelEventArgs();
           _parent.TextValidating((string)value, cea);
           if (cea.Cancel)
             return new ValidationResult(false, "The entered text is not valid");

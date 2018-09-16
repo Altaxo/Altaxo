@@ -57,16 +57,18 @@ namespace Altaxo.Gui.Common.Drawing
       _editBox.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Right;
 
       // Create a template-binding in code
-      Binding binding = new Binding("ContextMenu");
-      binding.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
+      var binding = new Binding("ContextMenu")
+      {
+        RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent)
+      };
       BindingOperations.SetBinding(_editBox, FrameworkElement.ContextMenuProperty, binding);
     }
 
     public EditableImageComboBox()
     {
       _img = new Image();
-      this.IsEditable = true;
-      var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ComboBox.TextProperty, this.GetType());
+      IsEditable = true;
+      var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ComboBox.TextProperty, GetType());
       dpd.AddValueChanged(this, EhTextChanged);
     }
 
@@ -94,8 +96,10 @@ namespace Altaxo.Gui.Common.Drawing
 
       var parent = _editBox.Parent;
 
-      var stackPanel = new StackPanel();
-      stackPanel.Orientation = Orientation.Horizontal;
+      var stackPanel = new StackPanel
+      {
+        Orientation = Orientation.Horizontal
+      };
       stackPanel.Children.Add(_img);
       // stackPanel.Children.Add(_editBox); // this must be postponed here, since _editBox is still into the hierarchy
 
@@ -119,7 +123,7 @@ namespace Altaxo.Gui.Common.Drawing
       else
       {
         var stb = new StringBuilder();
-        stb.AppendFormat("Unexpected location of the EditBox within {0}", this.ToString());
+        stb.AppendFormat("Unexpected location of the EditBox within {0}", ToString());
         stb.AppendLine();
         stb.AppendFormat("The parent of the editbox is {0}", _editBox.Parent.ToString());
         stb.AppendLine();

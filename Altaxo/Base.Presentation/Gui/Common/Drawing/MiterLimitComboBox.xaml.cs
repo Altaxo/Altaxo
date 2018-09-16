@@ -74,8 +74,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueIn(Unity.Instance);
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -94,14 +93,18 @@ namespace Altaxo.Gui.Common.Drawing
       var drawingGroup = new DrawingGroup();
       GeometryDrawing geometryDrawing;
 
-      geometryDrawing = new GeometryDrawing();
-      geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
-      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      geometryDrawing = new GeometryDrawing
+      {
+        Geometry = new RectangleGeometry(new Rect(0, 0, width, height)),
+        Pen = new Pen(Brushes.Transparent, 0)
+      };
       drawingGroup.Children.Add(geometryDrawing);
 
       geometryDrawing = new GeometryDrawing();
-      var figure = new PathFigure();
-      figure.StartPoint = new Point(width, height * 0.875);
+      var figure = new PathFigure
+      {
+        StartPoint = new Point(width, height * 0.875)
+      };
       figure.Segments.Add(new PolyLineSegment(new Point[]
       {
         new Point(width / 2, height / 2),
@@ -112,7 +115,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
 
-      DrawingImage geometryImage = new DrawingImage(drawingGroup);
+      var geometryImage = new DrawingImage(drawingGroup);
 
       geometryImage.Freeze();
       return geometryImage;

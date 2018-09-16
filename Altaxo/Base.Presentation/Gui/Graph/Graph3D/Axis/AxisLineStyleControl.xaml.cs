@@ -49,17 +49,23 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       InitializeComponent();
 
-      _linePenGlue = new PenControlsGlue(false);
-      _linePenGlue.CbBrush = _lineBrushColor;
-      _linePenGlue.CbLineThickness1 = _lineLineThickness;
+      _linePenGlue = new PenControlsGlue(false)
+      {
+        CbBrush = _lineBrushColor,
+        CbLineThickness1 = _lineLineThickness
+      };
 
-      _majorPenGlue = new PenControlsGlue(false);
-      _majorPenGlue.CbBrush = _majorLineColor;
-      _majorPenGlue.CbLineThickness1 = _lineMajorThickness;
+      _majorPenGlue = new PenControlsGlue(false)
+      {
+        CbBrush = _majorLineColor,
+        CbLineThickness1 = _lineMajorThickness
+      };
 
-      _minorPenGlue = new PenControlsGlue(false);
-      _minorPenGlue.CbBrush = _minorLineColor;
-      _minorPenGlue.CbLineThickness1 = _lineMinorThickness;
+      _minorPenGlue = new PenControlsGlue(false)
+      {
+        CbBrush = _minorLineColor,
+        CbLineThickness1 = _lineMinorThickness
+      };
 
       _linePenGlue.PenChanged += new EventHandler(EhLinePen_Changed);
     }
@@ -68,13 +74,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       if (false == _chkCustomMajorColor.IsChecked)
       {
-        if (this._majorPenGlue.Pen != null)
-          this._majorPenGlue.Pen = _majorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
+        if (_majorPenGlue.Pen != null)
+          _majorPenGlue.Pen = _majorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
       }
       if (false == _chkCustomMinorColor.IsChecked)
       {
-        if (this._minorPenGlue.Pen != null)
-          this._minorPenGlue.Pen = _minorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
+        if (_minorPenGlue.Pen != null)
+          _minorPenGlue.Pen = _minorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
       }
 
       if (false == _chkCustomMajorThickness.IsChecked)
@@ -135,8 +141,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       set
       {
-        this._chkCustomMajorColor.IsChecked = value;
-        this._majorLineColor.IsEnabled = value;
+        _chkCustomMajorColor.IsChecked = value;
+        _majorLineColor.IsEnabled = value;
       }
     }
 
@@ -144,8 +150,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
       set
       {
-        this._chkCustomMinorColor.IsChecked = value;
-        this._minorLineColor.IsEnabled = value;
+        _chkCustomMinorColor.IsChecked = value;
+        _minorLineColor.IsEnabled = value;
       }
     }
 

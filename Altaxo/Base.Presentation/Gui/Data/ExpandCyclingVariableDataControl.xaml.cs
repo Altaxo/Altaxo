@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Data
 
     private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
     {
-      GuiHelper.SynchronizeSelectionFromGui(this._guiAvailableTables);
+      GuiHelper.SynchronizeSelectionFromGui(_guiAvailableTables);
       if (null != SelectedTableChanged)
         SelectedTableChanged();
     }

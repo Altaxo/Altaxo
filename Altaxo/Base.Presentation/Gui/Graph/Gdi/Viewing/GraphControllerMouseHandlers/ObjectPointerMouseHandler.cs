@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,6 +29,10 @@ using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Altaxo.Collections;
+using Altaxo.Geometry;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -198,7 +198,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     public int NumberOfSelectedObjects
     {
-      get { return this._selectedObjects.Count; }
+      get { return _selectedObjects.Count; }
     }
 
     public IList<IHitTestObject> SelectedObjects
@@ -319,9 +319,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
       {
         var superGrip = ActiveGrip as SuperGrip;
-        IHitTestObject hitTestObj;
-        IGripManipulationHandle gripHandle;
-        if (superGrip.GetHittedElement(rootLayerCoord, out gripHandle, out hitTestObj))
+        if (superGrip.GetHittedElement(rootLayerCoord, out var gripHandle, out var hitTestObj))
         {
           _selectedObjects.Remove(hitTestObj);
           superGrip.Remove(gripHandle);
@@ -333,11 +331,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         ActiveGrip.Activate(rootLayerCoord, false);
         return;
       }
-
-      // search for a object first
-      IHitTestObject clickedObject;
-      int[] clickedLayerNumber = null;
-      _grac.FindGraphObjectAtPixelPosition(mousePixelCoord, false, out clickedObject, out clickedLayerNumber);
+      _grac.FindGraphObjectAtPixelPosition(mousePixelCoord, false, out var clickedObject, out var clickedLayerNumber);
 
       if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
         ClearSelections();
@@ -457,8 +451,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       if (e.LeftButton == MouseButtonState.Released && null != _rectangleSelectionArea_GraphCoordinates)
       {
-        List<IHitTestObject> foundObjects;
-        _grac.FindGraphObjectInRootLayerRectangle(_rectangleSelectionArea_GraphCoordinates.Value, out foundObjects);
+        _grac.FindGraphObjectInRootLayerRectangle(_rectangleSelectionArea_GraphCoordinates.Value, out var foundObjects);
         AddSelectedObjectsFromRectangularSelection(foundObjects);
         (_grac.ViewObject as IGraphView).ReleaseCaptureMouseOnCanvas();
         _rectangleSelectionArea_GraphCoordinates = null;
@@ -499,7 +492,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         IEnumerator graphEnum = _selectedObjects.GetEnumerator(); // get the enumerator
         graphEnum.MoveNext(); // set the enumerator to the first item
-        IHitTestObject graphObject = (IHitTestObject)graphEnum.Current;
+        var graphObject = (IHitTestObject)graphEnum.Current;
 
         // Set the currently active layer to the layer the clicked object is belonging to.
         if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))

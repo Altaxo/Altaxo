@@ -59,10 +59,10 @@ namespace Altaxo.Gui.Main.Services
 
     public void SetText(string text)
     {
-      if (this.Dispatcher.CheckAccess())
+      if (Dispatcher.CheckAccess())
         _view.Text = text;
       else
-        this.Dispatcher.BeginInvoke((Action)delegate ()
+        Dispatcher.BeginInvoke((Action)delegate ()
         { InternalSetText(text); }, System.Windows.Threading.DispatcherPriority.Normal, null);
     }
 

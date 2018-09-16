@@ -22,17 +22,17 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Groups;
-using Altaxo.Graph.Graph2D.Plot.Styles;
-using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
-using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Media;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Groups;
+using Altaxo.Graph.Graph2D.Plot.Styles;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {

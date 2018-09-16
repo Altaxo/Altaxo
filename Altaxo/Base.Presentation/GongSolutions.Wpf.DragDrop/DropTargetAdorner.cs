@@ -26,14 +26,14 @@ namespace GongSolutions.Wpf.DragDrop
     public DropTargetAdorner(UIElement adornedElement)
       : base(adornedElement)
     {
-      this.m_AdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-      this.m_AdornerLayer.Add(this);
-      this.IsHitTestVisible = false;
+      m_AdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
+      m_AdornerLayer.Add(this);
+      IsHitTestVisible = false;
     }
 
     public void Detatch()
     {
-      this.m_AdornerLayer.Remove(this);
+      m_AdornerLayer.Remove(this);
     }
 
     public DropInfo DropInfo { get; set; }

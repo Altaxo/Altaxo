@@ -51,9 +51,9 @@ namespace Altaxo.Gui.Scripting
     public void InitializeNumberOfParameters()
     {
       _suppressEvents++;
-      this._cbNumberOfParameters.Items.Clear();
+      _cbNumberOfParameters.Items.Clear();
       for (int i = 0; i < 100; i++)
-        this._cbNumberOfParameters.Items.Add(i.ToString());
+        _cbNumberOfParameters.Items.Add(i.ToString());
       _suppressEvents--;
     }
 
@@ -72,19 +72,19 @@ namespace Altaxo.Gui.Scripting
     private void _edParameterNames_TextChanged(object sender, TextChangedEventArgs e)
     {
       if (null != Controller && 0 == _suppressEvents)
-        Controller.EhView_UserDefinedParameterTextChanged(this._edParameterNames.Text);
+        Controller.EhView_UserDefinedParameterTextChanged(_edParameterNames.Text);
     }
 
     private void _edDependentVariables_TextChanged(object sender, TextChangedEventArgs e)
     {
       if (null != Controller && 0 == _suppressEvents)
-        Controller.EhView_DependentVariableTextChanged(this._edDependentVariables.Text);
+        Controller.EhView_DependentVariableTextChanged(_edDependentVariables.Text);
     }
 
     private void _edIndependentVariables_TextChanged(object sender, TextChangedEventArgs e)
     {
       if (null != Controller && 0 == _suppressEvents)
-        Controller.EhView_IndependentVariableTextChanged(this._edIndependentVariables.Text);
+        Controller.EhView_IndependentVariableTextChanged(_edIndependentVariables.Text);
     }
 
     private void _chkUserDefinedParameters_CheckedChanged(object sender, RoutedEventArgs e)
@@ -92,15 +92,15 @@ namespace Altaxo.Gui.Scripting
       if (null != Controller && 0 == _suppressEvents)
         Controller.EhView_UserDefinedParameterCheckChanged(true == _chkUserDefinedParameters.IsChecked);
 
-      this._cbNumberOfParameters.IsEnabled = true != _chkUserDefinedParameters.IsChecked;
-      this._edParameterNames.IsEnabled = true == _chkUserDefinedParameters.IsChecked;
+      _cbNumberOfParameters.IsEnabled = true != _chkUserDefinedParameters.IsChecked;
+      _edParameterNames.IsEnabled = true == _chkUserDefinedParameters.IsChecked;
     }
 
     private void _cbNumberOfParameters_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       e.Handled = true;
       if (null != Controller && 0 == _suppressEvents)
-        Controller.EhView_NumberOfParameterChanged(this._cbNumberOfParameters.SelectedIndex);
+        Controller.EhView_NumberOfParameterChanged(_cbNumberOfParameters.SelectedIndex);
     }
 
     public IFitFunctionScriptViewEventSink Controller
@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Scripting
 
       if (null != _scriptView)
       {
-        this._mainGrid.Children.Remove(_scriptView);
+        _mainGrid.Children.Remove(_scriptView);
       }
 
       _scriptView = (UserControl)viewAsObject;
@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Scripting
         _scriptView.SetValue(Grid.ColumnProperty, 0);
         _scriptView.SetValue(Grid.ColumnSpanProperty, 5);
         _scriptView.SetValue(Grid.RowProperty, 3);
-        this._mainGrid.Children.Add(_scriptView);
+        _mainGrid.Children.Add(_scriptView);
       }
     }
 
@@ -143,7 +143,7 @@ namespace Altaxo.Gui.Scripting
       IFitFunctionScriptViewEventSink tempcontroller = m_Controller; // trick to suppress changed event
       m_Controller = null;
 
-      this._chkUserDefinedParameters.IsChecked = useUserDefParameters;
+      _chkUserDefinedParameters.IsChecked = useUserDefParameters;
       m_Controller = tempcontroller;
       _suppressEvents--;
     }
@@ -151,30 +151,30 @@ namespace Altaxo.Gui.Scripting
     public void SetParameterText(string text, bool enable)
     {
       _suppressEvents++;
-      this._edParameterNames.Text = text;
-      this._edParameterNames.IsEnabled = enable;
+      _edParameterNames.Text = text;
+      _edParameterNames.IsEnabled = enable;
       _suppressEvents--;
     }
 
     public void SetIndependentVariableText(string text)
     {
       _suppressEvents++;
-      this._edIndependentVariables.Text = text;
+      _edIndependentVariables.Text = text;
       _suppressEvents--;
     }
 
     public void SetDependentVariableText(string text)
     {
       _suppressEvents++;
-      this._edDependentVariables.Text = text;
+      _edDependentVariables.Text = text;
       _suppressEvents--;
     }
 
     public void SetNumberOfParameters(int numberOfParameters, bool enable)
     {
       _suppressEvents++;
-      this._cbNumberOfParameters.SelectedIndex = numberOfParameters;
-      this._cbNumberOfParameters.IsEnabled = enable;
+      _cbNumberOfParameters.SelectedIndex = numberOfParameters;
+      _cbNumberOfParameters.IsEnabled = enable;
       _suppressEvents--;
     }
 

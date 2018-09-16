@@ -22,6 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Media;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Drawing.D3D;
@@ -32,15 +41,6 @@ using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.Drawing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Media;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
@@ -62,10 +62,12 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       UpdateComboBoxSourceSelection(SelectedItem);
       UpdateTreeViewSelection();
 
-      var valueBinding = new Binding();
-      valueBinding.Source = this;
-      valueBinding.Path = new PropertyPath("SelectedItem");
-      valueBinding.Converter = _itemToItemNameConverter;
+      var valueBinding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath("SelectedItem"),
+        Converter = _itemToItemNameConverter
+      };
       //valueBinding.ValidationRules.Add(new ValidationWithErrorString(_itemToItemNameConverter.EhValidateText));
       GuiComboBox.SetBinding(ComboBox.TextProperty, valueBinding);
     }

@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +35,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Data.Selections
 {
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Data.Selections
       {
         if (null != _selectionDetailControl)
         {
-          this.Children.Remove(_selectionDetailControl);
+          Children.Remove(_selectionDetailControl);
         }
 
         _selectionDetailControl = value as FrameworkElement;
@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Data.Selections
         if (null != _selectionDetailControl)
         {
           _selectionDetailControl.SetValue(Grid.ColumnProperty, 1);
-          this.Children.Add(_selectionDetailControl);
+          Children.Add(_selectionDetailControl);
         }
       }
     }
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Data.Selections
     {
       set
       {
-        this.Margin = new Thickness(value * 10, 0, 0, 0);
+        Margin = new Thickness(value * 10, 0, 0, 0);
       }
     }
 

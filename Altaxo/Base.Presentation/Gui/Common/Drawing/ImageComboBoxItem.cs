@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public ImageComboBoxItem(ImageComboBox parent, object item)
     {
-      this.Parent = parent;
+      Parent = parent;
       Value = item;
     }
 
@@ -50,13 +50,13 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-        return null != Parent ? Parent.GetItemText(this.Value) : string.Empty;
+        return null != Parent ? Parent.GetItemText(Value) : string.Empty;
       }
     }
 
     public override string ToString()
     {
-      return this.Text;
+      return Text;
     }
 
     public virtual ImageSource Image
@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Common.Drawing
       get
       {
         if (null != Parent)
-          return Parent.GetItemImage(this.Value);
+          return Parent.GetItemImage(Value);
         else
           return null;
       }

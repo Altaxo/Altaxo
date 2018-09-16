@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
 using System.Windows;
 using System.Windows.Media;
+using Altaxo.Collections;
+using Altaxo.Data;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
@@ -137,8 +137,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       if (clipRectangle.Bottom >= layout.ColumnHeaderStyle.Height || clipRectangle.Right >= layout.RowHeaderStyle.Width)
       {
-        int numberOfColumnsToDraw;
-        int firstColToDraw = WA.GetFirstAndNumberOfVisibleColumn(clipRectangle.Left, clipRectangle.Right, layout, horzScrollPos, out numberOfColumnsToDraw);
+        int firstColToDraw = WA.GetFirstAndNumberOfVisibleColumn(clipRectangle.Left, clipRectangle.Right, layout, horzScrollPos, out var numberOfColumnsToDraw);
 
         // draw the property columns
         for (int nPropCol = firstPropertyColumnToDraw, nIncPropCol = 0; nIncPropCol < numberOfPropertyColumnsToDraw; nPropCol++, nIncPropCol++)

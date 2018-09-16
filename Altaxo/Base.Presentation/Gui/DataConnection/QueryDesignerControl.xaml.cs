@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.DataConnection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +30,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Altaxo.Collections;
+using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
@@ -315,7 +315,7 @@ namespace Altaxo.Gui.DataConnection
 
         foreach (string tableName in list)
         {
-          MenuItem toAdd = new MenuItem() { Header = tableName, Tag = tableName };
+          var toAdd = new MenuItem() { Header = tableName, Tag = tableName };
           toAdd.Click += EhMenuRelatedTablesClicked;
 
           _contextMenuRelatedTables.Items.Add(toAdd);

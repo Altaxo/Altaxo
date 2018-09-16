@@ -85,14 +85,16 @@ namespace Altaxo.Gui.Common
     /// </summary>
     protected virtual void SetupBindings()
     {
-      _textBox = this.Template.FindName("_textBox", this) as TextBox;
+      _textBox = Template.FindName("_textBox", this) as TextBox;
       if (null != _textBox)
       {
-        var binding = new Binding();
-        binding.Source = this;
-        binding.Path = new PropertyPath("Value");
+        var binding = new Binding
+        {
+          Source = this,
+          Path = new PropertyPath("Value"),
 
-        binding.Converter = (IValueConverter)_validationRuleAndConverter;
+          Converter = (IValueConverter)_validationRuleAndConverter
+        };
         binding.ValidationRules.Add((ValidationRule)_validationRuleAndConverter);
         _textBox.SetBinding(TextBox.TextProperty, binding);
 
@@ -285,7 +287,7 @@ namespace Altaxo.Gui.Common
     /// <param name="e">Event args.</param>
     private static void OnIncreaseCommand(object sender, ExecutedRoutedEventArgs e)
     {
-      NumericUpDownBase control = sender as NumericUpDownBase;
+      var control = sender as NumericUpDownBase;
       if (control != null)
       {
         control.OnIncrease();
@@ -299,7 +301,7 @@ namespace Altaxo.Gui.Common
     /// <param name="e">Event args.</param>
     private static void OnDecreaseCommand(object sender, ExecutedRoutedEventArgs e)
     {
-      NumericUpDownBase control = sender as NumericUpDownBase;
+      var control = sender as NumericUpDownBase;
       if (control != null)
       {
         control.OnDecrease();
@@ -313,7 +315,7 @@ namespace Altaxo.Gui.Common
     /// <param name="e">Event args.</param>
     private static void OnGotoMinimumCommand(object sender, ExecutedRoutedEventArgs e)
     {
-      NumericUpDownBase control = sender as NumericUpDownBase;
+      var control = sender as NumericUpDownBase;
       if (control != null)
       {
         control.OnGotoMinimum();
@@ -327,7 +329,7 @@ namespace Altaxo.Gui.Common
     /// <param name="e">Event args.</param>
     private static void OnGotoMaximumCommand(object sender, ExecutedRoutedEventArgs e)
     {
-      NumericUpDownBase control = sender as NumericUpDownBase;
+      var control = sender as NumericUpDownBase;
       if (control != null)
       {
         control.OnGotoMaximum();
@@ -379,7 +381,7 @@ namespace Altaxo.Gui.Common
     /// <param name="e">Mouse event args.</param>
     private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-      NumericUpDownBase control = (NumericUpDownBase)sender;
+      var control = (NumericUpDownBase)sender;
 
       // When someone click on a part in the NumericUpDownBase and it's not focusable
       // NumericUpDownBase needs to take the focus in order to process keyboard correctly

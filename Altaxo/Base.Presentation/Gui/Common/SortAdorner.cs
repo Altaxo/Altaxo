@@ -34,10 +34,10 @@ namespace Altaxo.Gui.Common
 
   public class SortAdorner : Adorner
   {
-    private readonly static swm.Geometry _AscGeometry =
+    private static readonly swm.Geometry _AscGeometry =
        swm.Geometry.Parse("M 0,0 L 10,0 L 5,5 Z");
 
-    private readonly static swm.Geometry _DescGeometry =
+    private static readonly swm.Geometry _DescGeometry =
         swm.Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
 
     public ListSortDirection Direction { get; private set; }

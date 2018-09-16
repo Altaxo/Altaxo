@@ -31,10 +31,6 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-  using Altaxo.Collections;
-  using Common;
-  using GongSolutions.Wpf.DragDrop;
-  using Graph.Plot.Data;
   using System.Collections;
   using System.IO;
   using System.Windows.Data;
@@ -42,6 +38,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
   using System.Windows.Markup;
   using System.Windows.Media;
   using System.Xml;
+  using Altaxo.Collections;
+  using Common;
+  using GongSolutions.Wpf.DragDrop;
+  using Graph.Plot.Data;
 
   /// <summary>
   /// Interaction logic for ColumnPlotDataControl.xaml
@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       if (null != SelectedTableChanged)
       {
-        GuiHelper.SynchronizeSelectionFromGui(this._cbTables);
+        GuiHelper.SynchronizeSelectionFromGui(_cbTables);
         SelectedTableChanged?.Invoke();
       }
     }

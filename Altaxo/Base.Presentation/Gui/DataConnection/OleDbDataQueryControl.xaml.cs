@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.DataConnection
 {
@@ -130,12 +130,12 @@ namespace Altaxo.Gui.DataConnection
 
     public void SetWaitCursor()
     {
-      this.Cursor = Cursors.Wait;
+      Cursor = Cursors.Wait;
     }
 
     public void SetNormalCursor()
     {
-      this.Cursor = Cursors.Arrow;
+      Cursor = Cursors.Arrow;
     }
 
     public void SetTabItemsSource(SelectableListNodeList tabItems)

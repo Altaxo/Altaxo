@@ -79,11 +79,13 @@ namespace Altaxo.Gui.Common.Drawing
         Items.Add(_cachedItems[e]);
       }
 
-      var binding = new Binding();
-      binding.Source = this;
-      binding.Path = new PropertyPath(_nameOfValueProp);
-      binding.Converter = new Converter(this);
-      this.SetBinding(ComboBox.SelectedItemProperty, binding);
+      var binding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath(_nameOfValueProp),
+        Converter = new Converter(this)
+      };
+      SetBinding(ComboBox.SelectedItemProperty, binding);
     }
 
     #region Dependency property
@@ -115,8 +117,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       var val = (sdd.DashCap)item;
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -155,7 +156,7 @@ namespace Altaxo.Gui.Common.Drawing
       geometryDrawing.Pen = new Pen(Brushes.Black, height / 5) { DashCap = dashCap, DashStyle = DashStyles.Dash };
       drawingGroup.Children.Add(geometryDrawing);
 
-      DrawingImage geometryImage = new DrawingImage(drawingGroup);
+      var geometryImage = new DrawingImage(drawingGroup);
 
       // Freeze the DrawingImage for performance benefits.
       geometryImage.Freeze();

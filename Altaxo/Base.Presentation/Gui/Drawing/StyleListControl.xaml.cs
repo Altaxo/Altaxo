@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using GongSolutions.Wpf.DragDrop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +35,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Collections;
+using GongSolutions.Wpf.DragDrop;
 
 namespace Altaxo.Gui.Drawing
 {
@@ -163,8 +163,7 @@ namespace Altaxo.Gui.Drawing
 
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
-        bool isCopy, isMove;
-        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
         _parentControl.AvailableItems_DragEnded?.Invoke(isCopy, isMove);
       }
 
@@ -203,9 +202,7 @@ namespace Altaxo.Gui.Drawing
 
       public void DragOver(IDropInfo dropInfo)
       {
-        DragDropEffects resultingEffect;
-        Type adornerType;
-        if (CanAcceptData(dropInfo, out resultingEffect, out adornerType))
+        if (CanAcceptData(dropInfo, out var resultingEffect, out var adornerType))
         {
           dropInfo.Effects = resultingEffect;
           dropInfo.DropTargetAdorner = adornerType;
@@ -297,8 +294,7 @@ namespace Altaxo.Gui.Drawing
 
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
-        bool isCopy, isMove;
-        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
         _parentControl.CurrentItems_DragEnded?.Invoke(isCopy, isMove);
       }
 
@@ -335,9 +331,7 @@ namespace Altaxo.Gui.Drawing
 
       public void DragOver(IDropInfo dropInfo)
       {
-        DragDropEffects resultingEffect;
-        Type adornerType;
-        if (CanAcceptData(dropInfo, out resultingEffect, out adornerType))
+        if (CanAcceptData(dropInfo, out var resultingEffect, out var adornerType))
         {
           dropInfo.Effects = resultingEffect;
           dropInfo.DropTargetAdorner = adornerType;
@@ -452,7 +446,7 @@ namespace Altaxo.Gui.Drawing
       get
       {
         if (null == _currentItemsTemplate)
-          _currentItemsTemplate = this.FindResource("CurrentItemsTemplateResource") as DataTemplate;
+          _currentItemsTemplate = FindResource("CurrentItemsTemplateResource") as DataTemplate;
         return _currentItemsTemplate;
       }
       set
@@ -474,7 +468,7 @@ namespace Altaxo.Gui.Drawing
       get
       {
         if (null == _availableItemsTemplate)
-          _currentItemsTemplate = this.FindResource("AvailableItemsTemplateResource") as HierarchicalDataTemplate;
+          _currentItemsTemplate = FindResource("AvailableItemsTemplateResource") as HierarchicalDataTemplate;
         return _availableItemsTemplate;
       }
       set

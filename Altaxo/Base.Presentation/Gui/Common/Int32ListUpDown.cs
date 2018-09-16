@@ -86,14 +86,12 @@ namespace Altaxo.Gui.Common
 
       public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
       {
-        ValidationResult validationResult;
-        return ConvertBack(obj, targetType, parameter, out validationResult);
+        return ConvertBack(obj, targetType, parameter, out var validationResult);
       }
 
       public override ValidationResult Validate(object obj, CultureInfo cultureInfoBuggyDontUse)
       {
-        ValidationResult validationResult;
-        ConvertBack(obj, null, null, out validationResult);
+        ConvertBack(obj, null, null, out var validationResult);
         return validationResult;
       }
 
@@ -116,8 +114,7 @@ namespace Altaxo.Gui.Common
             return _parent.ValueIfTextIsEmpty;
         }
 
-        int result;
-        if (int.TryParse(s, NumberStyles.Integer, _conversionCulture, out result))
+        if (int.TryParse(s, NumberStyles.Integer, _conversionCulture, out var result))
         {
           return result;
         }
@@ -178,14 +175,14 @@ namespace Altaxo.Gui.Common
 
     private static void OnValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      Int32ListUpDown control = (Int32ListUpDown)obj;
+      var control = (Int32ListUpDown)obj;
 
       int oldValue = (int)args.OldValue;
       int newValue = (int)args.NewValue;
 
       #region Fire Automation events
 
-      Int32ListUpDownAutomationPeer peer = UIElementAutomationPeer.FromElement(control) as Int32ListUpDownAutomationPeer;
+      var peer = UIElementAutomationPeer.FromElement(control) as Int32ListUpDownAutomationPeer;
       if (peer != null)
       {
         peer.RaiseValueChangedEvent(oldValue, newValue);
@@ -193,7 +190,7 @@ namespace Altaxo.Gui.Common
 
       #endregion Fire Automation events
 
-      RoutedPropertyChangedEventArgs<int> e = new RoutedPropertyChangedEventArgs<int>(
+      var e = new RoutedPropertyChangedEventArgs<int>(
           oldValue, newValue, ValueChangedEvent);
 
       control.OnValueChanged(e);
@@ -211,7 +208,7 @@ namespace Altaxo.Gui.Common
     private static object CoerceValue(DependencyObject element, object value)
     {
       int newValue = (int)value;
-      Int32ListUpDown control = (Int32ListUpDown)element;
+      var control = (Int32ListUpDown)element;
 
       newValue = Math.Max(control.Minimum, Math.Min(control.Maximum, newValue));
 
@@ -282,7 +279,7 @@ namespace Altaxo.Gui.Common
     private static object CoerceMinimum(DependencyObject element, object value)
     {
       int minimum = (int)value;
-      Int32ListUpDown control = (Int32ListUpDown)element;
+      var control = (Int32ListUpDown)element;
 
       return Math.Max(control._availableValues[0], minimum);
     }
@@ -313,7 +310,7 @@ namespace Altaxo.Gui.Common
 
     private static object CoerceMaximum(DependencyObject element, object value)
     {
-      Int32ListUpDown control = (Int32ListUpDown)element;
+      var control = (Int32ListUpDown)element;
       int newMaximum = (int)value;
       return Math.Min(control._availableValues[control._availableValues.Count - 1], Math.Max(newMaximum, control.Minimum));
     }
@@ -346,12 +343,12 @@ namespace Altaxo.Gui.Common
 
     protected override void OnIncrease()
     {
-      var val = this.Value;
+      var val = Value;
       for (int i = 0; i < _availableValues.Count; ++i)
       {
         if (_availableValues[i] > val)
         {
-          this.Value = _availableValues[i];
+          Value = _availableValues[i];
           break;
         }
       }
@@ -359,12 +356,12 @@ namespace Altaxo.Gui.Common
 
     protected override void OnDecrease()
     {
-      var val = this.Value;
+      var val = Value;
       for (int i = _availableValues.Count - 1; i >= 0; --i)
       {
         if (_availableValues[i] < val)
         {
-          this.Value = _availableValues[i];
+          Value = _availableValues[i];
           break;
         }
       }
@@ -372,12 +369,12 @@ namespace Altaxo.Gui.Common
 
     protected override void OnGotoMinimum()
     {
-      this.Value = _availableValues[0];
+      Value = _availableValues[0];
     }
 
     protected override void OnGotoMaximum()
     {
-      this.Value = _availableValues[_availableValues.Count - 1];
+      Value = _availableValues[_availableValues.Count - 1];
     }
 
     #endregion Commands

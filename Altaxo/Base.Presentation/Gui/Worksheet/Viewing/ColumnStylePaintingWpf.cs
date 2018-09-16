@@ -75,9 +75,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       FormattedText t;
 
-      t = new FormattedText(text, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush);
-      t.MaxTextWidth = cellRectangle.Width;
-      t.TextAlignment = TextAlignment.Center;
+      t = new FormattedText(text, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      {
+        MaxTextWidth = cellRectangle.Width,
+        TextAlignment = TextAlignment.Center
+      };
       dc.DrawText(t, cellRectangle.Location); // ("[" + nRow + "]", _textFont, _textBrush, cellRectangle, _textFormat);
     }
 
@@ -88,7 +90,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       thiss.PaintBackground(dc, cellRect, bSelected);
 
-      Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
+      var dataColCol = (Altaxo.Data.DataColumnCollection)AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
       string columnnumber = dataColCol.GetColumnNumber(data).ToString();
       string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(), dataColCol.GetColumnGroup(data));
       var font = WpfFontManager.ToWpf(thiss.TextFont);
@@ -104,19 +106,25 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       FormattedText t;
 
-      t = new FormattedText(columnnumber, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush);
-      t.MaxTextWidth = numRectangle.Width;
-      t.TextAlignment = TextAlignment.Left;
+      t = new FormattedText(columnnumber, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      {
+        MaxTextWidth = numRectangle.Width,
+        TextAlignment = TextAlignment.Left
+      };
       dc.DrawText(t, numRectangle.Location);
 
-      t = new FormattedText(kindandgroup, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush);
-      t.MaxTextWidth = numRectangle.Width;
-      t.TextAlignment = TextAlignment.Right;
+      t = new FormattedText(kindandgroup, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      {
+        MaxTextWidth = numRectangle.Width,
+        TextAlignment = TextAlignment.Right
+      };
       dc.DrawText(t, numRectangle.Location);
 
-      t = new FormattedText(data.Name, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush);
-      t.MaxTextWidth = nameRectangle.Width;
-      t.TextAlignment = TextAlignment.Center;
+      t = new FormattedText(data.Name, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      {
+        MaxTextWidth = nameRectangle.Width,
+        TextAlignment = TextAlignment.Center
+      };
       dc.DrawText(t, nameRectangle.Location);
     }
 
@@ -155,10 +163,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
       var txtBrush = bSelected ? thiss.DefaultSelectedTextBrush.ToWpf() : thiss.TextBrush.ToWpf();
 
       FormattedText t;
-      t = new FormattedText(textToDraw, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush);
-      t.MaxTextWidth = cellRect.Width;
-      t.TextAlignment = alignment;
-      t.Trimming = TextTrimming.CharacterEllipsis;
+      t = new FormattedText(textToDraw, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush)
+      {
+        MaxTextWidth = cellRect.Width,
+        TextAlignment = alignment,
+        Trimming = TextTrimming.CharacterEllipsis
+      };
       dc.DrawText(t, cellRectangle.Location);
     }
 

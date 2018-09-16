@@ -85,9 +85,11 @@ namespace Altaxo.Gui.Common
 
         if (!string.IsNullOrEmpty(child.Title))
         {
-          var gbox = new GroupBox();
-          gbox.Header = child.Title;
-          gbox.Content = uiEle;
+          var gbox = new GroupBox
+          {
+            Header = child.Title,
+            Content = uiEle
+          };
           uiEle = gbox;
         }
 

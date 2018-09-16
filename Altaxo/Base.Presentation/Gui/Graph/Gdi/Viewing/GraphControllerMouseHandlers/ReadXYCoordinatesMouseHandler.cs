@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Input;
+using Altaxo.Data;
+using Altaxo.Geometry;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         _cachedActiveLayer = _grac.ActiveLayer;
         _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-        _cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+        _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation;
 
         _positionOfCrossInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
         DisplayCrossCoordinates();
@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     private bool CalculateCrossCoordinates(PointD2D crossRootLayerCoord, out Altaxo.Data.AltaxoVariant x, out Altaxo.Data.AltaxoVariant y)
     {
-      XYPlotLayer layer = _cachedActiveLayer as XYPlotLayer;
+      var layer = _cachedActiveLayer as XYPlotLayer;
       if (layer == null)
       {
         x = new AltaxoVariant();
@@ -107,8 +107,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(crossRootLayerCoord);
 
-      Logical3D r;
-      layer.CoordinateSystem.LayerToLogicalCoordinates(layerCoord.X, layerCoord.Y, out r);
+      layer.CoordinateSystem.LayerToLogicalCoordinates(layerCoord.X, layerCoord.Y, out var r);
       x = layer.XAxis.NormalToPhysicalVariant(r.RX);
       y = layer.YAxis.NormalToPhysicalVariant(r.RY);
       return true;
@@ -127,8 +126,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
       else
       {
-        AltaxoVariant xphys, yphys;
-        if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out xphys, out yphys))
+        if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out var xphys, out var yphys))
           Current.DataDisplay.WriteOneLine(string.Format(
          "Layer({0}) X={1}, Y={2}",
          _cachedActiveLayer.Name,
@@ -150,9 +148,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
       else
       {
-        AltaxoVariant xphys, yphys;
-        AltaxoVariant xphys2, yphys2;
-        if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out xphys, out yphys) && CalculateCrossCoordinates(rootLayerCoord, out xphys2, out yphys2))
+        if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out var xphys, out var yphys) && CalculateCrossCoordinates(rootLayerCoord, out var xphys2, out var yphys2))
         {
           double distance = double.NaN;
           AltaxoVariant dx = double.NaN, dy = double.NaN;
@@ -209,9 +205,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       // draw a red cross onto the selected data point
       double startLine = 1 / _grac.ZoomFactor;
       double endLine = 10 / _grac.ZoomFactor;
-      using (HatchBrush brush = new HatchBrush(HatchStyle.Percent50, Color.Red, Color.Yellow))
+      using (var brush = new HatchBrush(HatchStyle.Percent50, Color.Red, Color.Yellow))
       {
-        using (Pen pen = new Pen(brush, (float)(2 / _grac.ZoomFactor)))
+        using (var pen = new Pen(brush, (float)(2 / _grac.ZoomFactor)))
         {
           g.DrawLine(pen, (float)(_positionOfCrossInRootLayerCoordinates.X + startLine), (float)_positionOfCrossInRootLayerCoordinates.Y, (float)(_positionOfCrossInRootLayerCoordinates.X + endLine), (float)_positionOfCrossInRootLayerCoordinates.Y);
           g.DrawLine(pen, (float)(_positionOfCrossInRootLayerCoordinates.X - startLine), (float)_positionOfCrossInRootLayerCoordinates.Y, (float)(_positionOfCrossInRootLayerCoordinates.X - endLine), (float)_positionOfCrossInRootLayerCoordinates.Y);
@@ -279,8 +275,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         }
         else
         {
-          AltaxoVariant xphys, yphys;
-          if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out xphys, out yphys))
+          if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out var xphys, out var yphys))
             Current.Console.WriteLine("{0}\t{1}", xphys, yphys);
         }
         return true;

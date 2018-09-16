@@ -35,12 +35,12 @@ namespace Altaxo.Gui.Common
   {
     public void InitializeDescription(string value)
     {
-      this.Content = value;
+      Content = value;
     }
 
     public void InitializeBool1(bool value)
     {
-      this.IsChecked = value;
+      IsChecked = value;
     }
 
     public event Action<bool> Bool1Changed;
@@ -48,13 +48,13 @@ namespace Altaxo.Gui.Common
     protected override void OnChecked(System.Windows.RoutedEventArgs e)
     {
       base.OnChecked(e);
-      Bool1Changed?.Invoke(this.IsChecked == true);
+      Bool1Changed?.Invoke(IsChecked == true);
     }
 
     protected override void OnUnchecked(System.Windows.RoutedEventArgs e)
     {
       base.OnUnchecked(e);
-      Bool1Changed?.Invoke(this.IsChecked == true);
+      Bool1Changed?.Invoke(IsChecked == true);
     }
   }
 }

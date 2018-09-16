@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -47,17 +47,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       InitializeComponent();
 
-      _penGlue = new PenControlsGlue();
-      _penGlue.CbBrush = _guiPenMaterial;
-      _penGlue.CbDashPattern = _guiPenDashStyle;
+      _penGlue = new PenControlsGlue
+      {
+        CbBrush = _guiPenMaterial,
+        CbDashPattern = _guiPenDashStyle,
 
-      _penGlue.CbStartCap = _cbLineStartCap;
-      _penGlue.CbStartCapAbsSize = _cbLineStartCapSize;
-      _penGlue.CbStartCapRelSize = _edLineStartCapRelSize;
+        CbStartCap = _cbLineStartCap,
+        CbStartCapAbsSize = _cbLineStartCapSize,
+        CbStartCapRelSize = _edLineStartCapRelSize,
 
-      _penGlue.CbEndCap = _cbLineEndCap;
-      _penGlue.CbEndCapAbsSize = _cbLineEndCapSize;
-      _penGlue.CbEndCapRelSize = _edLineEndCapRelSize;
+        CbEndCap = _cbLineEndCap,
+        CbEndCapAbsSize = _cbLineEndCapSize,
+        CbEndCapRelSize = _edLineEndCapRelSize
+      };
     }
 
     public bool AdditionalDropTargetIsEnabled
@@ -127,7 +129,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       set
       {
-        this._guiIndependentColor.IsChecked = value;
+        _guiIndependentColor.IsChecked = value;
       }
     }
 
@@ -145,7 +147,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       set
       {
-        this._guiSkipFrequency.Value = value;
+        _guiSkipFrequency.Value = value;
       }
     }
 
@@ -165,13 +167,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public bool IgnoreMissingDataPoints
     {
       get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
-      set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+      set { _guiIgnoreMissingDataPoints.IsChecked = value; }
     }
 
     public bool IndependentOnShiftingGroupStyles
     {
       get { return true == _guiIndependentOnShiftingGroupStyles.IsChecked; }
-      set { this._guiIndependentOnShiftingGroupStyles.IsChecked = value; }
+      set { _guiIndependentOnShiftingGroupStyles.IsChecked = value; }
     }
 
     public bool IndependentSymbolSize

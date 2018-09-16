@@ -16,13 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.AddInItems;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.AddInItems
 {
@@ -32,8 +32,8 @@ namespace Altaxo.Gui.AddInItems
 
     public MenuCommand(UIElement inputBindingOwner, Codon codon, object caller, string activationMethod, IReadOnlyCollection<ICondition> conditions) : base(codon, caller, conditions)
     {
-      this.ActivationMethod = activationMethod;
-      this.Command = CommandWrapper.CreateLazyCommand(codon, conditions);
+      ActivationMethod = activationMethod;
+      Command = CommandWrapper.CreateLazyCommand(codon, conditions);
       //this.CommandParameter = caller;
 
       if ("true" == codon.Properties["usedatacontext"]?.ToLowerInvariant())
@@ -44,19 +44,19 @@ namespace Altaxo.Gui.AddInItems
         {
           Source = this
         };
-        this.SetBinding(System.Windows.Controls.MenuItem.CommandParameterProperty, myBinding);
+        SetBinding(System.Windows.Controls.MenuItem.CommandParameterProperty, myBinding);
         // this.DataContextChanged += (s,e) => UpdateStatus(); // we can abstain from using this as long as the workbench calls UpdateStatus for all menus (especially the workbench's context menu)
       }
       else
       {
-        this.CommandParameter = caller;
+        CommandParameter = caller;
       }
 
       if (!string.IsNullOrEmpty(codon.Properties["shortcut"]))
       {
         KeyGesture kg = MenuService.ParseShortcut(codon.Properties["shortcut"]);
-        AddGestureToInputBindingOwner(inputBindingOwner, kg, this.Command, GetFeatureName());
-        this.InputGestureText = MenuService.GetDisplayStringForShortcut(kg);
+        AddGestureToInputBindingOwner(inputBindingOwner, kg, Command, GetFeatureName());
+        InputGestureText = MenuService.GetDisplayStringForShortcut(kg);
       }
     }
 

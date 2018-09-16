@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Common.Converters
     {
       if (destinationType == typeof(MarkupExtension))
       {
-        BindingExpression bindingExpression = value as BindingExpression;
+        var bindingExpression = value as BindingExpression;
         if (bindingExpression == null)
           throw new Exception();
         return bindingExpression.ParentBinding;

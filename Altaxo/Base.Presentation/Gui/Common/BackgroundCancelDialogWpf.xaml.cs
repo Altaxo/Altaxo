@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Common
 {
@@ -116,13 +116,13 @@ namespace Altaxo.Gui.Common
       _timerCounter++;
 
       if (_timerCounter == 50)
-        this.Visibility = System.Windows.Visibility.Visible;
+        Visibility = System.Windows.Visibility.Visible;
 
       if (_monitor != null)
       {
         if (_monitor.HasReportText)
         {
-          this._guiProgressText.Text = _monitor.GetReportText();
+          _guiProgressText.Text = _monitor.GetReportText();
           double frac = _monitor.GetProgressFraction();
           if (!double.IsNaN(frac))
           {
@@ -135,7 +135,7 @@ namespace Altaxo.Gui.Common
       if (!_thread.IsAlive)
       {
         _timer.Stop();
-        this.DialogResult = _wasCancelledByUser ? true : false;
+        DialogResult = _wasCancelledByUser ? true : false;
       }
     }
 
@@ -152,7 +152,7 @@ namespace Altaxo.Gui.Common
 
     private void EhCancelClicked(object sender, RoutedEventArgs e)
     {
-      this._wasCancelledByUser = true;
+      _wasCancelledByUser = true;
       if (_monitor != null)
       {
         _monitor.SetCancellationPending();
@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Common
 
     private void EhDialogLoaded(object sender, RoutedEventArgs e)
     {
-      _timer = new System.Windows.Threading.DispatcherTimer(new TimeSpan(0, 0, 0, 0, 100), System.Windows.Threading.DispatcherPriority.Normal, EhTimer, this.Dispatcher);
+      _timer = new System.Windows.Threading.DispatcherTimer(new TimeSpan(0, 0, 0, 0, 100), System.Windows.Threading.DispatcherPriority.Normal, EhTimer, Dispatcher);
       _timer.Start();
     }
   }

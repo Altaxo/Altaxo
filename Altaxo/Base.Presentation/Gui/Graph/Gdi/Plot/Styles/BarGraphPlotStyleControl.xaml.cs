@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return this._guiFillBrush.SelectedBrush;
+        return _guiFillBrush.SelectedBrush;
       }
       set
       {

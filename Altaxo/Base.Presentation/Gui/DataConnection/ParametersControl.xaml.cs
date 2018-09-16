@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.DataConnection;
 using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
@@ -30,6 +29,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Altaxo.DataConnection;
 
 namespace Altaxo.Gui.DataConnection
 {
@@ -57,8 +57,10 @@ namespace Altaxo.Gui.DataConnection
         ++nRow;
 
         // create label
-        var lbl = new Label();
-        lbl.Content = CleanupName(p.ParameterName);
+        var lbl = new Label
+        {
+          Content = CleanupName(p.ParameterName)
+        };
         lbl.SetValue(Grid.RowProperty, nRow);
         _grid.Children.Add(lbl);
 
@@ -82,19 +84,19 @@ namespace Altaxo.Gui.DataConnection
         var p = ctl.Tag as OleDbParameter;
         if (p != null)
         {
-          CheckBox chk = ctl as CheckBox;
+          var chk = ctl as CheckBox;
           if (chk != null)
           {
             p.Value = chk.IsChecked.ToString();
             continue;
           }
-          DatePicker dtp = ctl as DatePicker;
+          var dtp = ctl as DatePicker;
           if (dtp != null)
           {
             p.Value = dtp.SelectedDate.Value.ToString(_invariant);
             continue;
           }
-          TextBox textBox = ctl as TextBox;
+          var textBox = ctl as TextBox;
           if (null != textBox)
           {
             p.Value = textBox.Text;
@@ -129,9 +131,11 @@ namespace Altaxo.Gui.DataConnection
       var type = OleDbSchema.GetType(p.OleDbType);
       if (OleDbSchema.IsNumeric(type))
       {
-        var num = new Altaxo.Gui.Common.DecimalUpDown();
-        num.Minimum = decimal.MinValue;
-        num.Maximum = decimal.MaxValue;
+        var num = new Altaxo.Gui.Common.DecimalUpDown
+        {
+          Minimum = decimal.MinValue,
+          Maximum = decimal.MaxValue
+        };
         decimal dec = 0;
         if (!string.IsNullOrEmpty(value))
         {
@@ -142,10 +146,12 @@ namespace Altaxo.Gui.DataConnection
       }
       if (type == typeof(DateTime))
       {
-        var dtp = new DatePicker();
-        dtp.SelectedDateFormat = p.OleDbType == OleDbType.Filetime
+        var dtp = new DatePicker
+        {
+          SelectedDateFormat = p.OleDbType == OleDbType.Filetime
             ? DatePickerFormat.Long
-            : DatePickerFormat.Short;
+            : DatePickerFormat.Short
+        };
         DateTime dt = DateTime.Now;
         if (!string.IsNullOrEmpty(value))
         {
@@ -167,8 +173,10 @@ namespace Altaxo.Gui.DataConnection
       }
 
       // default: textbox
-      var tb = new TextBox();
-      tb.Text = value;
+      var tb = new TextBox
+      {
+        Text = value
+      };
       return tb;
     }
   }

@@ -63,9 +63,9 @@ namespace Altaxo.Gui
     public void InvalidateDrawing()
     {
       // Only this three commands: visibility=false, InvalidateVisual() and visibility=true will result in invalidating the VisualHost and thus a redrawing
-      this.Visibility = Visibility.Hidden;
-      this.InvalidateVisual();
-      this.Visibility = Visibility.Visible;
+      Visibility = Visibility.Hidden;
+      InvalidateVisual();
+      Visibility = Visibility.Visible;
     }
 
     // Provide a required override for the VisualChildrenCount property.

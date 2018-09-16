@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Background;
-using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Background;
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Background
 {
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
     private void EhStyle_SelectionChangeCommitted(object sender, EventArgs e)
     {
       if (_cbStyle.SelectedIndex > 0)
-        _doc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[_cbStyle.SelectedIndex - 1]);
+        _doc = (IBackgroundStyle)Activator.CreateInstance(_backgroundStyles[_cbStyle.SelectedIndex - 1]);
       else
         _doc = null;
 
@@ -112,8 +112,8 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
     private void InitializeBackgroundStyle()
     {
-      int sel = Array.IndexOf(this._backgroundStyles, this._doc == null ? null : this._doc.GetType());
-      string[] names = Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true);
+      int sel = Array.IndexOf(_backgroundStyles, _doc == null ? null : _doc.GetType());
+      string[] names = Current.Gui.GetUserFriendlyClassName(_backgroundStyles, true);
       _cbStyle.Items.Clear();
       //_cbStyle.Items.Add("<none>");
       foreach (string name in names)

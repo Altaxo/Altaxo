@@ -68,8 +68,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueIn(AUL.Point.Instance);
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -97,7 +96,7 @@ namespace Altaxo.Gui.Common.Drawing
       drawingGroup.Children.Add(geometryDrawing);
       drawingGroup.ClipGeometry = new RectangleGeometry(bounds);
 
-      DrawingImage geometryImage = new DrawingImage(drawingGroup);
+      var geometryImage = new DrawingImage(drawingGroup);
 
       // Freeze the DrawingImage for performance benefits.
       geometryImage.Freeze();

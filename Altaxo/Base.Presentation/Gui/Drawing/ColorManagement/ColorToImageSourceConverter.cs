@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
+using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
@@ -57,9 +57,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
       var fill = new RectangleGeometry(new System.Windows.Rect(0, 0, SymbolSize, SymbolSize));
 
-      var geometryDrawing = new GeometryDrawing();
-      geometryDrawing.Geometry = fill;
-      geometryDrawing.Brush = new SolidColorBrush(GuiHelper.ToWpf(color));
+      var geometryDrawing = new GeometryDrawing
+      {
+        Geometry = fill,
+        Brush = new SolidColorBrush(GuiHelper.ToWpf(color))
+      };
       drawingGroup.Children.Add(geometryDrawing);
 
       var geometryImage = new DrawingImage(drawingGroup);

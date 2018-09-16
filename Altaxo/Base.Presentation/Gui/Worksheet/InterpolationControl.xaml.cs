@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -57,17 +57,17 @@ namespace Altaxo.Gui.Worksheet
 
     public void InitializeNumberOfPoints(string val)
     {
-      this._edNumberOfPoints.Text = val;
+      _edNumberOfPoints.Text = val;
     }
 
     public void InitializeXOrg(string val)
     {
-      this._edFrom.Text = val;
+      _edFrom.Text = val;
     }
 
     public void InitializeXEnd(string val)
     {
-      this._edTo.Text = val;
+      _edTo.Text = val;
     }
 
     private UIElement _detailControl;

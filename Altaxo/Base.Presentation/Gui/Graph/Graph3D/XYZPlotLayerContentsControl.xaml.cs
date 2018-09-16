@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using GongSolutions.Wpf.DragDrop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +29,8 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Altaxo.Collections;
+using GongSolutions.Wpf.DragDrop;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
@@ -124,7 +124,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (null != Controller)
       {
         Controller.AvailableItems_PutDataToPlotItems();
-        this._guiPlotItemsTree.Focus();
+        _guiPlotItemsTree.Focus();
       }
     }
 
@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (null != Controller)
       {
         Controller.PlotItems_MoveUpSelected();
-        this._guiPlotItemsTree.Focus();
+        _guiPlotItemsTree.Focus();
       }
     }
 
@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (null != Controller)
       {
         Controller.PlotItems_MoveDownSelected();
-        this._guiPlotItemsTree.Focus();
+        _guiPlotItemsTree.Focus();
       }
     }
 
@@ -159,7 +159,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (null != Controller)
       {
         Controller.PlotItem_Open();
-        this._guiPlotItemsTree.Focus();
+        _guiPlotItemsTree.Focus();
       }
     }
 
@@ -168,7 +168,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (null != Controller)
       {
         Controller.PlotItems_GroupClick();
-        this._guiPlotItemsTree.Focus();
+        _guiPlotItemsTree.Focus();
       }
     }
 
@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (null != Controller)
       {
         Controller.PlotItems_UngroupClick();
-        this._guiPlotItemsTree.Focus();
+        _guiPlotItemsTree.Focus();
       }
     }
 
@@ -186,7 +186,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (null != Controller)
       {
         Controller.PlotItems_EditRangeClick();
-        this._guiPlotItemsTree.Focus();
+        _guiPlotItemsTree.Focus();
       }
     }
 
@@ -252,11 +252,11 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       if (null != Controller)
       {
-        if (this._guiPlotItemsTree.SelectedItems.Count == 1)
+        if (_guiPlotItemsTree.SelectedItems.Count == 1)
         {
           Controller.EhView_ContentsDoubleClick(_guiPlotItemsTree.SelectedItems.First() as NGTreeNode);
         }
-        this._guiPlotItemsTree.Focus();
+        _guiPlotItemsTree.Focus();
       }
     }
 
@@ -290,9 +290,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       public void StartDrag(IDragInfo dragInfo)
       {
-        object data;
-        bool canCopy, canMove;
-        _projectBrowseControl._controller.PlotItems_StartDrag(dragInfo.SourceItems, out data, out canCopy, out canMove);
+        _projectBrowseControl._controller.PlotItems_StartDrag(dragInfo.SourceItems, out var data, out var canCopy, out var canMove);
 
         dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
         dragInfo.Data = data;
@@ -300,8 +298,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
-        bool isCopy, isMove;
-        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
 
         _projectBrowseControl._controller.PlotItems_DragEnded(isCopy, isMove);
       }
@@ -335,9 +332,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       public void DragOver(IDropInfo dropInfo)
       {
-        DragDropEffects resultingEffect;
-        Type adornerType;
-        if (CanAcceptData(dropInfo, out resultingEffect, out adornerType))
+        if (CanAcceptData(dropInfo, out var resultingEffect, out var adornerType))
         {
           dropInfo.Effects = resultingEffect;
           dropInfo.DropTargetAdorner = adornerType;
@@ -346,14 +341,13 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       protected bool CanAcceptData(IDropInfo dropInfo, out System.Windows.DragDropEffects resultingEffect, out Type adornerType)
       {
-        bool canCopy, canMove, itemIsSwallowingData;
         _projectBrowseControl._controller.PlotItems_DropCanAcceptData(
           dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
           dropInfo.TargetItem as Altaxo.Collections.NGTreeNode,
           GuiHelper.ToAltaxo(dropInfo.InsertPosition),
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
-          out canCopy, out canMove, out itemIsSwallowingData);
+          out var canCopy, out var canMove, out var itemIsSwallowingData);
 
         resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
         adornerType = itemIsSwallowingData ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
@@ -363,14 +357,13 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       public void Drop(IDropInfo dropInfo)
       {
-        bool isCopy, isMove;
         _projectBrowseControl._controller.PlotItems_Drop(
           dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
           dropInfo.TargetItem as Altaxo.Collections.NGTreeNode,
           GuiHelper.ToAltaxo(dropInfo.InsertPosition),
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
           dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
-          out isCopy, out isMove);
+          out var isCopy, out var isMove);
 
         dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(isCopy, isMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
       }
@@ -408,9 +401,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       public void StartDrag(IDragInfo dragInfo)
       {
-        object data;
-        bool canCopy, canMove;
-        _projectBrowseControl._controller.AvailableItems_StartDrag(dragInfo.SourceItems, out data, out canCopy, out canMove);
+        _projectBrowseControl._controller.AvailableItems_StartDrag(dragInfo.SourceItems, out var data, out var canCopy, out var canMove);
 
         dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
         dragInfo.Data = data;
@@ -418,8 +409,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
-        bool isCopy, isMove;
-        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
 
         _projectBrowseControl._controller.AvailableItems_DragEnded(isCopy, isMove);
       }

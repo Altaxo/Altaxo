@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +30,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Graph;
 
 namespace Altaxo.Gui.Drawing
 {
@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Drawing
 
       public override DataTemplate SelectTemplate(object item, DependencyObject container)
       {
-        NGTreeNode node = item as NGTreeNode;
+        var node = item as NGTreeNode;
         if (node != null)
         {
           if (node.Tag is TItem)
@@ -222,10 +222,10 @@ namespace Altaxo.Gui.Drawing
       }
 
       if (!object.ReferenceEquals(newItem, GuiComboBoxSelectedValue))
-        this.UpdateComboBoxSourceSelection(newItem);
+        UpdateComboBoxSourceSelection(newItem);
 
       if (!object.ReferenceEquals(_styleListManager.GetParentList(oldItem), _styleListManager.GetParentList(newItem)) && !object.ReferenceEquals(_styleListManager.GetParentList(newItem), GuiTreeView.SelectedValue))
-        this.UpdateTreeViewSelection();
+        UpdateTreeViewSelection();
 
       SelectedItemChanged?.Invoke(obj, args);
       _viewEvent_SelectedItemChanged?.Invoke();
@@ -418,7 +418,7 @@ namespace Altaxo.Gui.Drawing
     /// </summary>
     protected virtual void UpdateTreeViewSelection()
     {
-      var selectedItem = this.InternalSelectedItem;
+      var selectedItem = InternalSelectedItem;
 
       GuiTreeView.ItemsSource = null;
       _treeRootNode.FromHereToLeavesDo(node => { node.IsExpanded = false; node.IsSelected = false; }); // deselect and collapse all nodes
@@ -489,7 +489,7 @@ namespace Altaxo.Gui.Drawing
     {
       List<object> lastUsed;
 
-      List<object> separator = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Item list" } };
+      var separator = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Item list" } };
 
       lastUsed = GetFilteredList(_lastLocalUsedItems, filterString);
 
@@ -578,7 +578,7 @@ namespace Altaxo.Gui.Drawing
       if (GuiComboBoxSelectedValue == null)
         GuiComboBoxSelectedValue = SelectedItem;
       else
-        this.SelectedItem = GuiComboBoxSelectedValue;
+        SelectedItem = GuiComboBoxSelectedValue;
     }
 
     #endregion ComboBox event handling
@@ -591,7 +591,7 @@ namespace Altaxo.Gui.Drawing
     /// <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs"/> that contains the event data.</param>
     protected override void OnKeyDown(KeyEventArgs e)
     {
-      if (this.GuiComboBox.IsDropDownOpen)
+      if (GuiComboBox.IsDropDownOpen)
       {
         Key pressedKey = e.Key;
         string pressedString = new KeyConverter().ConvertToInvariantString(pressedKey);
@@ -677,7 +677,7 @@ namespace Altaxo.Gui.Drawing
     protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
     {
       base.OnIsKeyboardFocusWithinChanged(e);
-      if (this.IsTreeDropDownOpen && !base.IsKeyboardFocusWithin && !GuiTreeView.IsKeyboardFocusWithin)
+      if (IsTreeDropDownOpen && !base.IsKeyboardFocusWithin && !GuiTreeView.IsKeyboardFocusWithin)
       {
         IsTreeDropDownOpen = false;
       }

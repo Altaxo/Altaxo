@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +29,10 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common
 {
@@ -92,9 +92,8 @@ namespace Altaxo.Gui.Common
       {
         var c = (NamedColor)value;
 
-        ColorSetManagerEntryValue colorSetEntry;
 
-        if (c.ParentColorSet != null && ColorSetManager.Instance.TryGetList(c.ParentColorSet.Name, out colorSetEntry))
+        if (c.ParentColorSet != null && ColorSetManager.Instance.TryGetList(c.ParentColorSet.Name, out var colorSetEntry))
           return string.Format("{0}/{1}", GetLevelString(colorSetEntry.Level), c.ParentColorSet.Name);
         else
           return "<<no color set>>";
@@ -148,7 +147,7 @@ namespace Altaxo.Gui.Common
       var innerRect = new Rect(0, 0, width, height);
       var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
       geometryDrawing.Brush = new SolidColorBrush(GuiHelper.ToWpf(axoColor));
-      DrawingImage geometryImage = new DrawingImage(geometryDrawing);
+      var geometryImage = new DrawingImage(geometryDrawing);
       geometryImage.Freeze(); // Freeze the DrawingImage for performance benefits.
       return geometryImage;
     }

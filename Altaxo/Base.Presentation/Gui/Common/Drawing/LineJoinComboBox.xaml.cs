@@ -78,11 +78,13 @@ namespace Altaxo.Gui.Common.Drawing
       Items.Add(_cachedItems[sdd.LineJoin.Miter]);
       Items.Add(_cachedItems[sdd.LineJoin.Round]);
 
-      var _valueBinding = new Binding();
-      _valueBinding.Source = this;
-      _valueBinding.Path = new PropertyPath(_nameOfValueProp);
-      _valueBinding.Converter = new CC(this);
-      this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
+      var _valueBinding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath(_nameOfValueProp),
+        Converter = new CC(this)
+      };
+      SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
     }
 
     #region Dependency property
@@ -119,8 +121,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       var val = (sdd.LineJoin)item;
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -155,14 +156,18 @@ namespace Altaxo.Gui.Common.Drawing
       var drawingGroup = new DrawingGroup();
       GeometryDrawing geometryDrawing;
 
-      geometryDrawing = new GeometryDrawing();
-      geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
-      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      geometryDrawing = new GeometryDrawing
+      {
+        Geometry = new RectangleGeometry(new Rect(0, 0, width, height)),
+        Pen = new Pen(Brushes.Transparent, 0)
+      };
       drawingGroup.Children.Add(geometryDrawing);
 
       geometryDrawing = new GeometryDrawing();
-      var figure = new PathFigure();
-      figure.StartPoint = new Point(width, height * 0.875);
+      var figure = new PathFigure
+      {
+        StartPoint = new Point(width, height * 0.875)
+      };
       figure.Segments.Add(new PolyLineSegment(new Point[]
       {
         new Point(width / 2, height / 2),
@@ -173,7 +178,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
 
-      DrawingImage geometryImage = new DrawingImage(drawingGroup);
+      var geometryImage = new DrawingImage(drawingGroup);
 
       geometryImage.Freeze();
       return geometryImage;

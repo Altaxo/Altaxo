@@ -47,9 +47,11 @@ namespace GongSolutions.Wpf.DragDrop.Icons
     private static BitmapImage GetImage(string iconName, int size)
     {
       var uri = new Uri(string.Format(@"pack://application:,,,/AltaxoBase.Presentation;component/GongSolutions.Wpf.DragDrop/Icons/{0}", iconName), UriKind.RelativeOrAbsolute);
-      var icon = new BitmapImage(uri);
-      icon.DecodePixelHeight = size;
-      icon.DecodePixelWidth = size;
+      var icon = new BitmapImage(uri)
+      {
+        DecodePixelHeight = size,
+        DecodePixelWidth = size
+      };
 
       return icon;
     }
@@ -78,9 +80,9 @@ namespace GongSolutions.Wpf.DragDrop.Icons
         using (var ms = new MemoryStream())
         {
           {//ICONDIR Structure
-            ms.Write(BitConverter.GetBytes((Int16)0), 0, 2);//Reserved must be zero; 2 bytes
-            ms.Write(BitConverter.GetBytes((Int16)2), 0, 2);//image type 1 = ico 2 = cur; 2 bytes
-            ms.Write(BitConverter.GetBytes((Int16)1), 0, 2);//number of images; 2 bytes
+            ms.Write(BitConverter.GetBytes((short)0), 0, 2);//Reserved must be zero; 2 bytes
+            ms.Write(BitConverter.GetBytes((short)2), 0, 2);//image type 1 = ico 2 = cur; 2 bytes
+            ms.Write(BitConverter.GetBytes((short)1), 0, 2);//number of images; 2 bytes
           }
 
           {//ICONDIRENTRY structure
@@ -90,11 +92,11 @@ namespace GongSolutions.Wpf.DragDrop.Icons
             ms.WriteByte(0); //Number of Colors in the color palette. Should be 0 if the image doesn't use a color palette
             ms.WriteByte(0); //reserved must be 0
 
-            ms.Write(BitConverter.GetBytes((Int16)(rx / 2.0)), 0, 2);//2 bytes. In CUR format: Specifies the horizontal coordinates of the hotspot in number of pixels from the left.
-            ms.Write(BitConverter.GetBytes((Int16)(ry / 2.0)), 0, 2);//2 bytes. In CUR format: Specifies the vertical coordinates of the hotspot in number of pixels from the top.
+            ms.Write(BitConverter.GetBytes((short)(rx / 2.0)), 0, 2);//2 bytes. In CUR format: Specifies the horizontal coordinates of the hotspot in number of pixels from the left.
+            ms.Write(BitConverter.GetBytes((short)(ry / 2.0)), 0, 2);//2 bytes. In CUR format: Specifies the vertical coordinates of the hotspot in number of pixels from the top.
 
             ms.Write(BitConverter.GetBytes(size), 0, 4);//Specifies the size of the image's data in bytes
-            ms.Write(BitConverter.GetBytes((Int32)22), 0, 4);//Specifies the offset of BMP or PNG data from the beginning of the ICO/CUR file
+            ms.Write(BitConverter.GetBytes(22), 0, 4);//Specifies the offset of BMP or PNG data from the beginning of the ICO/CUR file
           }
 
           ms.Write(pngBytes, 0, size);//write the png data.

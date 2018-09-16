@@ -71,18 +71,18 @@ namespace Altaxo.Gui.Common
       if (child == null)
         return null;
 
-      ContentElement contentElement = child as ContentElement;
+      var contentElement = child as ContentElement;
       if (contentElement != null)
       {
         DependencyObject parent = ContentOperations.GetParent(contentElement);
         if (parent != null)
           return parent;
 
-        FrameworkContentElement fce = contentElement as FrameworkContentElement;
+        var fce = contentElement as FrameworkContentElement;
         return fce != null ? fce.Parent : null;
       }
 
-      FrameworkElement frameworkElement = child as FrameworkElement;
+      var frameworkElement = child as FrameworkElement;
       if (frameworkElement != null)
       {
         DependencyObject parent = frameworkElement.Parent;

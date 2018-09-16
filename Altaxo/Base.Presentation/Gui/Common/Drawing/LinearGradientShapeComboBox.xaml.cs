@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -78,11 +78,13 @@ namespace Altaxo.Gui.Common.Drawing
         Items.Add(_cachedItems[e]);
       }
 
-      var _valueBinding = new Binding();
-      _valueBinding.Source = this;
-      _valueBinding.Path = new PropertyPath(_nameOfValueProp);
-      _valueBinding.Converter = new CC(this);
-      this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
+      var _valueBinding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath(_nameOfValueProp),
+        Converter = new CC(this)
+      };
+      SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
     }
 
     #region Dependency property
@@ -119,8 +121,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       var val = (LinearGradientShape)item;
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -133,7 +134,7 @@ namespace Altaxo.Gui.Common.Drawing
       //
       // Create the Geometry to draw.
       //
-      GeometryGroup geometryGroup = new GeometryGroup();
+      var geometryGroup = new GeometryGroup();
       geometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, width, height)));
 
       var geometryDrawing = new GeometryDrawing() { Geometry = geometryGroup };
@@ -146,22 +147,26 @@ namespace Altaxo.Gui.Common.Drawing
 
         case LinearGradientShape.SigmaBell:
           {
-            var gradStop = new GradientStopCollection();
-            gradStop.Add(new GradientStop(Colors.Black, 0));
-            gradStop.Add(new GradientStop(Colors.Gray, 0.1));
-            gradStop.Add(new GradientStop(Colors.White, 0.5));
-            gradStop.Add(new GradientStop(Colors.Gray, 0.9));
-            gradStop.Add(new GradientStop(Colors.Black, 1));
+            var gradStop = new GradientStopCollection
+            {
+              new GradientStop(Colors.Black, 0),
+              new GradientStop(Colors.Gray, 0.1),
+              new GradientStop(Colors.White, 0.5),
+              new GradientStop(Colors.Gray, 0.9),
+              new GradientStop(Colors.Black, 1)
+            };
             geometryDrawing.Brush = new System.Windows.Media.LinearGradientBrush(gradStop, 0);
           }
           break;
 
         case LinearGradientShape.Triangular:
           {
-            var gradStop = new GradientStopCollection();
-            gradStop.Add(new GradientStop(Colors.Black, 0));
-            gradStop.Add(new GradientStop(Colors.White, 0.5));
-            gradStop.Add(new GradientStop(Colors.Black, 1));
+            var gradStop = new GradientStopCollection
+            {
+              new GradientStop(Colors.Black, 0),
+              new GradientStop(Colors.White, 0.5),
+              new GradientStop(Colors.Black, 1)
+            };
             geometryDrawing.Brush = new System.Windows.Media.LinearGradientBrush(gradStop, 0);
           }
           break;
@@ -170,7 +175,7 @@ namespace Altaxo.Gui.Common.Drawing
           break;
       }
 
-      DrawingImage geometryImage = new DrawingImage(geometryDrawing);
+      var geometryImage = new DrawingImage(geometryDrawing);
 
       // Freeze the DrawingImage for performance benefits.
       geometryImage.Freeze();

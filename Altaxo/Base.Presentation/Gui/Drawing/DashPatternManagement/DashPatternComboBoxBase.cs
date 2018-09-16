@@ -22,15 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Drawing.D3D;
-using Altaxo.Drawing.DashPatternManagement;
-using Altaxo.Drawing.DashPatterns;
-using Altaxo.Graph;
-using Altaxo.Graph.Graph3D.Plot.Groups;
-using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +31,15 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Drawing.D3D;
+using Altaxo.Drawing.DashPatternManagement;
+using Altaxo.Drawing.DashPatterns;
+using Altaxo.Graph;
+using Altaxo.Graph.Graph3D.Plot.Groups;
+using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {

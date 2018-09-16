@@ -12,7 +12,6 @@
 
 #endregion Copyright
 
-using GongSolutions.Wpf.DragDrop.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using GongSolutions.Wpf.DragDrop.Utilities;
 
 namespace GongSolutions.Wpf.DragDrop
 {

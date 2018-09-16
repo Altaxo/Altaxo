@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,6 +31,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
@@ -57,13 +57,15 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private void InitializeCellEditControl()
     {
-      _cellEditControl = new TextBox();
-      _cellEditControl.AcceptsTab = true;
-      _cellEditControl.BorderThickness = new Thickness(0);
-      _cellEditControl.AcceptsReturn = true;
-      _cellEditControl.Name = "_cellEditControl";
-      _cellEditControl.TabIndex = 0;
-      _cellEditControl.Text = "";
+      _cellEditControl = new TextBox
+      {
+        AcceptsTab = true,
+        BorderThickness = new Thickness(0),
+        AcceptsReturn = true,
+        Name = "_cellEditControl",
+        TabIndex = 0,
+        Text = ""
+      };
       _cellEditControl.PreviewKeyDown += (s, e) => { var ee = new HandledEventArgs(false); CellEdit_PreviewKeyPressed?.Invoke(GuiHelper.ToAltaxo(e.Key), ee); e.Handled = ee.Handled; };
       _cellEditControl.TextChanged += (s, e) => CellEdit_TextChanged?.Invoke();
       _cellEditControl.LostKeyboardFocus += (s, e) => CellEdit_LostFocus?.Invoke();
@@ -71,8 +73,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       _visualHost = new VisualHost(EhView_TableAreaPaint);
 
-      this.LowerCanvas.Children.Add(_visualHost);
-      this.Canvas.Children.Add(_cellEditControl);
+      LowerCanvas.Children.Add(_visualHost);
+      Canvas.Children.Add(_cellEditControl);
     }
 
     public int CellEdit_SelectionStart
@@ -135,13 +137,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       _cellEditControl.Visibility = Visibility.Hidden;
       _cellEdit_IsArmed = false;
-      this.Canvas.Focus();
+      Canvas.Focus();
     }
 
     public void CellEdit_Show()
     {
-      if (!this.Canvas.Children.Contains(_cellEditControl))
-        this.Canvas.Children.Add(_cellEditControl);
+      if (!Canvas.Children.Contains(_cellEditControl))
+        Canvas.Children.Add(_cellEditControl);
       _cellEditControl.Visibility = Visibility.Visible;
       _cellEditControl.Focus();
       _cellEdit_IsArmed = true;
@@ -170,12 +172,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void Cursor_SetToArrow()
     {
-      this.TableAreaCursor = Cursors.Arrow;
+      TableAreaCursor = Cursors.Arrow;
     }
 
     public void Cursor_SetToResizeWestEast()
     {
-      this.TableAreaCursor = Cursors.SizeWE;
+      TableAreaCursor = Cursors.SizeWE;
     }
 
     #endregion Cursor
@@ -309,23 +311,23 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public bool TableArea_IsCaptured
     {
-      get { return this._worksheetPanel.IsMouseCaptured; }
+      get { return _worksheetPanel.IsMouseCaptured; }
       set
       {
         if (_worksheetPanel.IsMouseCaptured == value)
           return;
 
         if (value == true)
-          this._worksheetPanel.CaptureMouse();
+          _worksheetPanel.CaptureMouse();
         else
-          this._worksheetPanel.ReleaseMouseCapture();
+          _worksheetPanel.ReleaseMouseCapture();
       }
     }
 
     public Cursor TableAreaCursor
     {
-      get { return this._worksheetPanel.Cursor; }
-      set { this._worksheetPanel.Cursor = value; }
+      get { return _worksheetPanel.Cursor; }
+      set { _worksheetPanel.Cursor = value; }
     }
 
     #endregion Functions called from GuiController
@@ -353,7 +355,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       using (var dc = _visualHost.OpenDrawingContext())
       {
-        Rect clipRect = new Rect(0, 0, this.Canvas.ActualWidth, this.Canvas.ActualHeight);
+        var clipRect = new Rect(0, 0, Canvas.ActualWidth, Canvas.ActualHeight);
 
         WorksheetPaintingWpf.PaintTableArea(dc, _guiController.WorksheetLayout, clipRect.Size, clipRect,
             _guiController.SelectedDataColumns, _guiController.SelectedDataRows, _guiController.SelectedPropertyColumns, _guiController.SelectedPropertyRows,

@@ -31,10 +31,6 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-  using Altaxo.Collections;
-  using Common;
-  using GongSolutions.Wpf.DragDrop;
-  using Graph.Plot.Data;
   using System.Collections;
   using System.IO;
   using System.Windows.Data;
@@ -42,6 +38,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
   using System.Windows.Markup;
   using System.Windows.Media;
   using System.Xml;
+  using Altaxo.Collections;
+  using Common;
+  using GongSolutions.Wpf.DragDrop;
+  using Graph.Plot.Data;
 
   /// <summary>
   /// Interaction logic for ColumnPlotDataControl.xaml
@@ -255,8 +255,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
       {
-        bool isCopy, isMove;
-        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+        GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
         _parentControl.AvailableTableColumns_DragEnded?.Invoke(isCopy, isMove);
       }
 
@@ -293,9 +292,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       public void DragOver(IDropInfo dropInfo)
       {
-        DragDropEffects resultingEffect;
-        Type adornerType;
-        if (CanAcceptData(dropInfo, out resultingEffect, out adornerType))
+        if (CanAcceptData(dropInfo, out var resultingEffect, out var adornerType))
         {
           dropInfo.Effects = resultingEffect;
           dropInfo.DropTargetAdorner = adornerType;
@@ -355,9 +352,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._columnAddToCommand == null)
-          this._columnAddToCommand = new RelayCommand(EhColumn_AddToCommand);
-        return this._columnAddToCommand;
+        if (_columnAddToCommand == null)
+          _columnAddToCommand = new RelayCommand(EhColumn_AddToCommand);
+        return _columnAddToCommand;
       }
     }
 
@@ -385,9 +382,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._columnEditCommand == null)
-          this._columnEditCommand = new RelayCommand(EhColumn_EditCommand);
-        return this._columnEditCommand;
+        if (_columnEditCommand == null)
+          _columnEditCommand = new RelayCommand(EhColumn_EditCommand);
+        return _columnEditCommand;
       }
     }
 
@@ -406,9 +403,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       get
       {
-        if (this._columnEraseCommand == null)
-          this._columnEraseCommand = new RelayCommand(EhColumn_EraseCommand);
-        return this._columnEraseCommand;
+        if (_columnEraseCommand == null)
+          _columnEraseCommand = new RelayCommand(EhColumn_EraseCommand);
+        return _columnEraseCommand;
       }
     }
 

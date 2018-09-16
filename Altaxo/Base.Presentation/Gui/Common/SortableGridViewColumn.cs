@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Common
 
     private static void OnSortDirectionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
-      ListView grid = sender as ListView;
+      var grid = sender as ListView;
       if (grid != null)
       {
         SortableGridViewColumn col = GetCurrentSortColumn(grid);
@@ -105,13 +105,13 @@ namespace Altaxo.Gui.Common
 
     private static void OnCurrentSortColumnChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
-      ListView grid = sender as ListView;
+      var grid = sender as ListView;
       if (grid != null)
       {
-        SortableGridViewColumn oldColumn = (SortableGridViewColumn)args.OldValue;
+        var oldColumn = (SortableGridViewColumn)args.OldValue;
         if (oldColumn != null)
           oldColumn.SortDirection = ColumnSortDirection.None;
-        SortableGridViewColumn newColumn = (SortableGridViewColumn)args.NewValue;
+        var newColumn = (SortableGridViewColumn)args.NewValue;
         if (newColumn != null)
         {
           newColumn.SortDirection = GetSortDirection(grid);
@@ -140,7 +140,7 @@ namespace Altaxo.Gui.Common
 
     private static void OnSortModeChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
-      ListView grid = sender as ListView;
+      var grid = sender as ListView;
       if (grid != null)
       {
         if ((ListViewSortMode)args.NewValue != ListViewSortMode.None)
@@ -152,8 +152,8 @@ namespace Altaxo.Gui.Common
 
     private static void GridViewColumnHeaderClickHandler(object sender, RoutedEventArgs e)
     {
-      ListView grid = sender as ListView;
-      GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
+      var grid = sender as ListView;
+      var headerClicked = e.OriginalSource as GridViewColumnHeader;
       if (grid != null && headerClicked != null && headerClicked.Role != GridViewColumnHeaderRole.Padding)
       {
         if (headerClicked.Column == GetCurrentSortColumn(grid))
@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Common
         string sortBy = column.SortBy;
         if (sortBy == null)
         {
-          Binding binding = column.DisplayMemberBinding as Binding;
+          var binding = column.DisplayMemberBinding as Binding;
           if (binding != null && binding.Path != null)
           {
             sortBy = binding.Path.Path;

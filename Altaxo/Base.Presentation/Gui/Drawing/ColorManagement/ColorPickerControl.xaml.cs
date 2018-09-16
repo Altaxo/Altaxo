@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
@@ -119,15 +119,15 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       Color c = GuiHelper.ToWpf(_newColor);
 
       // Update LGB for brightnessSlider
-      Border sb1 = brightnessSlider.Parent as Border;
-      LinearGradientBrush lgb1 = sb1.Background as LinearGradientBrush;
+      var sb1 = brightnessSlider.Parent as Border;
+      var lgb1 = sb1.Background as LinearGradientBrush;
       lgb1.GradientStops[1].Color = colorComb.SelectedColor;
 
       // Update LGB for opacitySlider
-      Color c2a = Color.FromScRgb(0f, c.ScR, c.ScG, c.ScB);
-      Color c2b = Color.FromScRgb(1f, c.ScR, c.ScG, c.ScB);
-      Border sb2 = opacitySlider.Parent as Border;
-      LinearGradientBrush lgb2 = sb2.Background as LinearGradientBrush;
+      var c2a = Color.FromScRgb(0f, c.ScR, c.ScG, c.ScB);
+      var c2b = Color.FromScRgb(1f, c.ScR, c.ScG, c.ScB);
+      var sb2 = opacitySlider.Parent as Border;
+      var lgb2 = sb2.Background as LinearGradientBrush;
       lgb2.GradientStops[0].Color = c2a;
       lgb2.GradientStops[1].Color = c2b;
     }

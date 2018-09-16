@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +29,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Common
 {
@@ -57,16 +57,18 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public QuantityWithUnitTextBox()
     {
-      var binding = new Binding();
-      binding.Source = this;
-      binding.Path = new PropertyPath(nameof(SelectedQuantity));
-      binding.Mode = BindingMode.TwoWay;
-      binding.UpdateSourceTrigger = UpdateSourceTrigger.LostFocus;
+      var binding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath(nameof(SelectedQuantity)),
+        Mode = BindingMode.TwoWay,
+        UpdateSourceTrigger = UpdateSourceTrigger.LostFocus
+      };
       _converter = new QuantityWithUnitConverter(this, SelectedQuantityProperty);
       binding.Converter = _converter;
       binding.ValidationRules.Add(_converter);
-      _converter.BindingExpression = this.SetBinding(TextBox.TextProperty, binding);
-      this.TextChanged += new TextChangedEventHandler(QuantityWithUnitTextBox_TextChanged);
+      _converter.BindingExpression = SetBinding(TextBox.TextProperty, binding);
+      TextChanged += new TextChangedEventHandler(QuantityWithUnitTextBox_TextChanged);
     }
 
     public bool AllowNaNValues { get { return _converter.AllowNaNValues; } set { _converter.AllowNaNValues = value; } }
@@ -112,7 +114,7 @@ namespace Altaxo.Gui.Common
         {
           _converter.ClearIntermediateConversionResults(); // clear the previous conversion, so that a full new conversion from quantity to string is done when UpdateTarget is called
           _converter.BindingExpression.UpdateTarget(); // update the text with the full quanity including the unit
-          this.SelectAll(); // select all text so that the user can easily change it
+          SelectAll(); // select all text so that the user can easily change it
         }
       }
 

@@ -22,17 +22,17 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Collections;
+using Altaxo.Drawing.D3D;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
@@ -53,12 +53,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public void EnableDisableMain(bool bEnable)
     {
-      this._chkIndependentColor.IsEnabled = bEnable;
-      this._chkIndependentSize.IsEnabled = bEnable;
+      _chkIndependentColor.IsEnabled = bEnable;
+      _chkIndependentSize.IsEnabled = bEnable;
 
-      this._cbColor.IsEnabled = bEnable;
-      this._cbSymbolSize.IsEnabled = bEnable;
-      this._edSymbolSkipFrequency.IsEnabled = bEnable;
+      _cbColor.IsEnabled = bEnable;
+      _cbSymbolSize.IsEnabled = bEnable;
+      _edSymbolSkipFrequency.IsEnabled = bEnable;
     }
 
     #region IXYPlotScatterStyleView
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        this._chkIndependentColor.IsChecked = value;
+        _chkIndependentColor.IsChecked = value;
       }
     }
 
@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     public bool IndependentSymbolSize
     {
       get { return true == _chkIndependentSize.IsChecked; }
-      set { this._chkIndependentSize.IsChecked = value; }
+      set { _chkIndependentSize.IsChecked = value; }
     }
 
     public double SymbolSize
@@ -116,14 +116,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        this._edSymbolSkipFrequency.Value = value;
+        _edSymbolSkipFrequency.Value = value;
       }
     }
 
     public bool IndependentSkipFrequency
     {
       get { return true == _chkIndependentSkipFreq.IsChecked; }
-      set { this._chkIndependentSkipFreq.IsChecked = value; }
+      set { _chkIndependentSkipFreq.IsChecked = value; }
     }
 
     #endregion IXYPlotScatterStyleView

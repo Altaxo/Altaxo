@@ -16,14 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.AddInItems;
-using Altaxo.Main.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.AddInItems;
 using Altaxo.Gui.Common;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.AddInItems
 {
@@ -44,12 +44,12 @@ namespace Altaxo.Gui.AddInItems
       this.caller = caller;
       this.conditions = conditions;
 
-      this.Content = ToolBarService.CreateToolBarItemContent(codon);
+      Content = ToolBarService.CreateToolBarItemContent(codon);
       if (codon.Properties.Contains("name"))
       {
-        this.Name = codon.Properties["name"];
+        Name = codon.Properties["name"];
       }
-      this.DropDownMenu = MenuService.CreateContextMenu(subMenu);
+      DropDownMenu = MenuService.CreateContextMenu(subMenu);
       UpdateText();
     }
 
@@ -57,16 +57,16 @@ namespace Altaxo.Gui.AddInItems
     {
       if (codon.Properties.Contains("tooltip"))
       {
-        this.ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
+        ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
       }
     }
 
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-        this.Visibility = Visibility.Collapsed;
+        Visibility = Visibility.Collapsed;
       else
-        this.Visibility = Visibility.Visible;
+        Visibility = Visibility.Visible;
     }
   }
 }

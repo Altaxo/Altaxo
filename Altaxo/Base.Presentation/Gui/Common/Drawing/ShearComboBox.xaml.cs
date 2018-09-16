@@ -85,8 +85,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueInSIUnits;
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -104,9 +103,11 @@ namespace Altaxo.Gui.Common.Drawing
       const double lwHalf = lineWidth / 2;
 
       // draws a transparent outline to fix the borders
-      var outlineDrawing = new GeometryDrawing();
-      outlineDrawing.Geometry = new RectangleGeometry(new Rect(-lineWidth, -lineWidth, width + lineWidth, height + lineWidth));
-      outlineDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      var outlineDrawing = new GeometryDrawing
+      {
+        Geometry = new RectangleGeometry(new Rect(-lineWidth, -lineWidth, width + lineWidth, height + lineWidth)),
+        Pen = new Pen(Brushes.Transparent, 0)
+      };
       //	outlineDrawing.Brush = new SolidColorBrush(Colors.LightBlue);
 
       //
@@ -128,14 +129,16 @@ namespace Altaxo.Gui.Common.Drawing
       else if (shear > 0)
       {
         double phi = Math.PI / 2 - Math.Atan(shear);
-        Point start = new Point(width * Math.Cos(phi), height - height * Math.Sin(phi));
+        var start = new Point(width * Math.Cos(phi), height - height * Math.Sin(phi));
         figure1.StartPoint = start;
         figure1.Segments.Add(new LineSegment(new Point(0, height), true));
         figure1.Segments.Add(new LineSegment(new Point(width, height), true));
         figure1.Segments.Add(new ArcSegment(start, new Size(width, height), 180 * phi / Math.PI, false, SweepDirection.Counterclockwise, true));
 
-        var figure2 = new PathFigure();
-        figure2.StartPoint = new Point(0, 0);
+        var figure2 = new PathFigure
+        {
+          StartPoint = new Point(0, 0)
+        };
         figure2.Segments.Add(new ArcSegment(start, new Size(width, height), 180 - 180 * phi / Math.PI, false, SweepDirection.Clockwise, true));
         figure2.IsFilled = false;
 
@@ -144,31 +147,35 @@ namespace Altaxo.Gui.Common.Drawing
       else if (shear < 0)
       {
         double phi = Math.PI / 2 - Math.Atan(-shear);
-        Point start = new Point(width - width * Math.Cos(phi), height - height * Math.Sin(phi));
+        var start = new Point(width - width * Math.Cos(phi), height - height * Math.Sin(phi));
         figure1.StartPoint = start;
         figure1.Segments.Add(new LineSegment(new Point(width, height), true));
         figure1.Segments.Add(new LineSegment(new Point(0, height), true));
         figure1.Segments.Add(new ArcSegment(start, new Size(width, height), 180 * phi / Math.PI, false, SweepDirection.Clockwise, true));
 
-        var figure2 = new PathFigure();
-        figure2.StartPoint = new Point(width, 0);
+        var figure2 = new PathFigure
+        {
+          StartPoint = new Point(width, 0)
+        };
         figure2.Segments.Add(new ArcSegment(start, new Size(width, height), 180 - 180 * phi / Math.PI, false, SweepDirection.Counterclockwise, true));
         figure2.IsFilled = false;
 
         geometryGroup.Children.Add(new PathGeometry(new PathFigure[] { figure1, figure2 }));
       }
 
-      var geometryDrawing = new GeometryDrawing();
-      geometryDrawing.Geometry = geometryGroup;
+      var geometryDrawing = new GeometryDrawing
+      {
+        Geometry = geometryGroup,
 
-      // Outline the drawing with a solid color.
-      geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = PenLineJoin.Round };
-      geometryDrawing.Brush =
+        // Outline the drawing with a solid color.
+        Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = PenLineJoin.Round },
+        Brush =
           new LinearGradientBrush(
               Color.FromRgb(100, 100, 255),
               Color.FromRgb(204, 204, 255),
               new Point(0, 0),
-              new Point(1, 1));
+              new Point(1, 1))
+      };
 
       var group = new DrawingGroup();
       group.Children.Add(outlineDrawing);

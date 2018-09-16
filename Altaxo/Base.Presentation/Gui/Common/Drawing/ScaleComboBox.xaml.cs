@@ -130,16 +130,20 @@ namespace Altaxo.Gui.Common.Drawing
       var group = new DrawingGroup();
 
       // draws a transparent outline to fix the borders
-      var outlineDrawing = new GeometryDrawing();
-      outlineDrawing.Geometry = new RectangleGeometry(new Rect(-lineWidth, -lineWidth, width + lineWidth, height + lineWidth));
-      outlineDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      var outlineDrawing = new GeometryDrawing
+      {
+        Geometry = new RectangleGeometry(new Rect(-lineWidth, -lineWidth, width + lineWidth, height + lineWidth)),
+        Pen = new Pen(Brushes.Transparent, 0)
+      };
       group.Children.Add(outlineDrawing);
 
       var absscale = Math.Abs(scale);
       if (absscale == 1)
       {
-        var drawing1 = new GeometryDrawing();
-        drawing1.Geometry = new EllipseGeometry(new Point(width / 2, height / 2), width / 4, height / 4);
+        var drawing1 = new GeometryDrawing
+        {
+          Geometry = new EllipseGeometry(new Point(width / 2, height / 2), width / 4, height / 4)
+        };
         if (scale > 0)
           drawing1.Brush = new RadialGradientBrush(Color.FromRgb(204, 204, 255), Color.FromRgb(100, 100, 255));
         else
@@ -147,14 +151,18 @@ namespace Altaxo.Gui.Common.Drawing
 
         group.Children.Add(drawing1);
 
-        drawing1 = new GeometryDrawing();
-        drawing1.Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2));
-        drawing1.Pen = new Pen(Brushes.Black, lineWidth);
+        drawing1 = new GeometryDrawing
+        {
+          Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)),
+          Pen = new Pen(Brushes.Black, lineWidth)
+        };
         group.Children.Add(drawing1);
 
-        drawing1 = new GeometryDrawing();
-        drawing1.Geometry = new LineGeometry(new Point(width / 2, 0), new Point(width / 2, height));
-        drawing1.Pen = new Pen(Brushes.Black, lineWidth);
+        drawing1 = new GeometryDrawing
+        {
+          Geometry = new LineGeometry(new Point(width / 2, 0), new Point(width / 2, height)),
+          Pen = new Pen(Brushes.Black, lineWidth)
+        };
         group.Children.Add(drawing1);
       }
       else
@@ -177,9 +185,11 @@ namespace Altaxo.Gui.Common.Drawing
 
         group.Children.Add(drawing1);
 
-        drawing1 = new GeometryDrawing();
-        drawing1.Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2));
-        drawing1.Pen = new Pen(Brushes.Black, lineWidth);
+        drawing1 = new GeometryDrawing
+        {
+          Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)),
+          Pen = new Pen(Brushes.Black, lineWidth)
+        };
         group.Children.Add(drawing1);
 
         Point d11, d12, d13;
@@ -241,9 +251,11 @@ namespace Altaxo.Gui.Common.Drawing
         var fig1 = new PathFigure(d11, new PathSegment[] { new LineSegment(d12, false), new LineSegment(d13, false) }, true);
         var fig2 = new PathFigure(d21, new PathSegment[] { new LineSegment(d22, false), new LineSegment(d23, false) }, true);
 
-        drawing1 = new GeometryDrawing();
-        drawing1.Geometry = new PathGeometry(new PathFigure[] { fig1, fig2 });
-        drawing1.Brush = Brushes.Black;
+        drawing1 = new GeometryDrawing
+        {
+          Geometry = new PathGeometry(new PathFigure[] { fig1, fig2 }),
+          Brush = Brushes.Black
+        };
         group.Children.Add(drawing1);
       }
 

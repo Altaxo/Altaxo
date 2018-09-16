@@ -41,14 +41,16 @@ namespace Altaxo.Gui.Common
 
     public ValidatingComboBox()
     {
-      var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBox.TextProperty, this.GetType());
+      var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBox.TextProperty, GetType());
       dpd.AddValueChanged(this, EhTextChanged);
 
-      var binding = new Binding();
-      binding.Source = this;
-      binding.Path = new PropertyPath("ValidatedText");
-      binding.ValidationRules.Add(new ValidationWithErrorString(this.EhValidateText));
-      this.SetBinding(TextBox.TextProperty, binding);
+      var binding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath("ValidatedText")
+      };
+      binding.ValidationRules.Add(new ValidationWithErrorString(EhValidateText));
+      SetBinding(TextBox.TextProperty, binding);
     }
 
     #region Dependency property
@@ -110,7 +112,7 @@ namespace Altaxo.Gui.Common
       var evt = Validating;
       if (null != evt)
       {
-        var e = new ValidationEventArgs<string>((string)this.GetValue(TextBox.TextProperty), info);
+        var e = new ValidationEventArgs<string>((string)GetValue(TextBox.TextProperty), info);
         evt(this, e);
         return e.ErrorText;
       }

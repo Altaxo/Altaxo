@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       e.Handled = true;
       if (null != TickSpacingTypeChanged)
       {
-        ComboBox _cbTickSpacingType = (ComboBox)sender;
+        var _cbTickSpacingType = (ComboBox)sender;
         GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
         TickSpacingTypeChanged();
       }

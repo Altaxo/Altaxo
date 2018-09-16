@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +35,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
@@ -51,8 +51,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       InitializeComponent();
 
       // set the item template of current items to a more appropriate template
-      _guiSL.CurrentItemsTemplate = this.FindResource("CurrentItemsTemplateResource") as DataTemplate;
-      _guiSL.AvailableItemsTemplate = this.FindResource("AvailableItemsTemplateResource") as HierarchicalDataTemplate;
+      _guiSL.CurrentItemsTemplate = FindResource("CurrentItemsTemplateResource") as DataTemplate;
+      _guiSL.AvailableItemsTemplate = FindResource("AvailableItemsTemplateResource") as HierarchicalDataTemplate;
     }
 
     #region Interface forwarding
@@ -365,7 +365,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       get
       {
-        return this.FindResource("CurrentItemsTemplateResource") as DataTemplate;
+        return FindResource("CurrentItemsTemplateResource") as DataTemplate;
       }
     }
 

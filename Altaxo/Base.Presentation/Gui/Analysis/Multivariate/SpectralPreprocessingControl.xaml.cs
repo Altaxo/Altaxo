@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Multivariate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -109,23 +109,23 @@ namespace Altaxo.Gui.Worksheet
       switch (method)
       {
         case SpectralPreprocessingMethod.None:
-          this._rbMethodNone.IsChecked = true;
+          _rbMethodNone.IsChecked = true;
           break;
 
         case SpectralPreprocessingMethod.MultiplicativeScatteringCorrection:
-          this._rbMethodMSC.IsChecked = true;
+          _rbMethodMSC.IsChecked = true;
           break;
 
         case SpectralPreprocessingMethod.StandardNormalVariate:
-          this._rbMethodSNV.IsChecked = true;
+          _rbMethodSNV.IsChecked = true;
           break;
 
         case SpectralPreprocessingMethod.FirstDerivative:
-          this._rbMethod1stDer.IsChecked = true;
+          _rbMethod1stDer.IsChecked = true;
           break;
 
         case SpectralPreprocessingMethod.SecondDerivative:
-          this._rbMethod2ndDer.IsChecked = true;
+          _rbMethod2ndDer.IsChecked = true;
           break;
       }
     }
@@ -135,26 +135,26 @@ namespace Altaxo.Gui.Worksheet
       switch (detrending)
       {
         case 0:
-          this._rbDetrendingZero.IsChecked = true;
+          _rbDetrendingZero.IsChecked = true;
           break;
 
         case 1:
-          this._rbDetrending1st.IsChecked = true;
+          _rbDetrending1st.IsChecked = true;
           break;
 
         case 2:
-          this._rbDetrending2nd.IsChecked = true;
+          _rbDetrending2nd.IsChecked = true;
           break;
 
         default:
-          this._rbDetrendingNone.IsChecked = true;
+          _rbDetrendingNone.IsChecked = true;
           break;
       }
     }
 
     public void InitializeEnsembleScale(bool ensScale)
     {
-      this._chkEnsembleScale.IsChecked = ensScale;
+      _chkEnsembleScale.IsChecked = ensScale;
     }
 
     public event Action<SpectralPreprocessingMethod> MethodChanged;

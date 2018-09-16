@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph.Scales
       e.Handled = true;
       if (null != ScaleTypeChanged)
       {
-        GuiHelper.SynchronizeSelectionFromGui(this.m_Scale_cbType);
+        GuiHelper.SynchronizeSelectionFromGui(m_Scale_cbType);
         ScaleTypeChanged();
       }
     }
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Graph.Scales
       e.Handled = true;
       if (null != LinkTargetChanged)
       {
-        GuiHelper.SynchronizeSelectionFromGui(this._cbLinkTarget);
+        GuiHelper.SynchronizeSelectionFromGui(_cbLinkTarget);
         LinkTargetChanged();
       }
     }
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Graph.Scales
       e.Handled = true;
       if (null != TickSpacingTypeChanged)
       {
-        ComboBox _cbTickSpacingType = (ComboBox)sender;
+        var _cbTickSpacingType = (ComboBox)sender;
         GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
         TickSpacingTypeChanged();
       }
@@ -76,18 +76,18 @@ namespace Altaxo.Gui.Graph.Scales
 
     public void InitializeAxisType(Collections.SelectableListNodeList names)
     {
-      GuiHelper.Initialize(this.m_Scale_cbType, names);
+      GuiHelper.Initialize(m_Scale_cbType, names);
     }
 
     public void InitializeTickSpacingType(Collections.SelectableListNodeList names)
     {
-      ComboBox _cbTickSpacingType = (ComboBox)LogicalTreeHelper.FindLogicalNode((DependencyObject)_tickSpacingGroupBox.Header, "_cbTickSpacingType");
+      var _cbTickSpacingType = (ComboBox)LogicalTreeHelper.FindLogicalNode((DependencyObject)_tickSpacingGroupBox.Header, "_cbTickSpacingType");
       GuiHelper.Initialize(_cbTickSpacingType, names);
     }
 
     public void InitializeLinkTargets(Collections.SelectableListNodeList names)
     {
-      GuiHelper.Initialize(this._cbLinkTarget, names);
+      GuiHelper.Initialize(_cbLinkTarget, names);
     }
 
     public void SetRescalingView(object guiobject)

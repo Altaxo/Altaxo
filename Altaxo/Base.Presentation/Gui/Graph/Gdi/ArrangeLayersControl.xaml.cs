@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
@@ -137,22 +137,22 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public void InitializeRowsColumns(int numRows, int numColumns)
     {
-      this._edNumberOfRows.Value = numRows;
-      this._edNumberOfColumns.Value = numColumns;
+      _edNumberOfRows.Value = numRows;
+      _edNumberOfColumns.Value = numColumns;
     }
 
     public void InitializeSpacing(double rowSpacing, double columnSpacing)
     {
-      this._edRowSpacing.Text = GUIConversion.ToString(columnSpacing);
-      this._edColumnSpacing.Text = GUIConversion.ToString(rowSpacing);
+      _edRowSpacing.Text = GUIConversion.ToString(columnSpacing);
+      _edColumnSpacing.Text = GUIConversion.ToString(rowSpacing);
     }
 
     public void InitializeMargins(double top, double left, double bottom, double right)
     {
-      this._edTopMargin.Text = GUIConversion.ToString(top);
-      this._edBottomMargin.Text = GUIConversion.ToString(bottom);
-      this._edRightMargin.Text = GUIConversion.ToString(right);
-      this._edLeftMargin.Text = GUIConversion.ToString(left);
+      _edTopMargin.Text = GUIConversion.ToString(top);
+      _edBottomMargin.Text = GUIConversion.ToString(bottom);
+      _edRightMargin.Text = GUIConversion.ToString(right);
+      _edLeftMargin.Text = GUIConversion.ToString(left);
     }
 
     public void InitializeSuperfluosLayersQuestion(Collections.SelectableListNodeList list)

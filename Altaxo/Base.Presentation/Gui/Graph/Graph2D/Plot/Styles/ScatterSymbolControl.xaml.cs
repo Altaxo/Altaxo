@@ -22,12 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Styles;
-using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
-using Altaxo.Gui.Graph.Gdi.Plot.Styles;
-using Altaxo.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +35,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Styles;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
+using Altaxo.Gui.Graph.Gdi.Plot.Styles;
+using Altaxo.Settings;
 
 namespace Altaxo.Gui.Graph.Graph2D.Plot.Styles
 {

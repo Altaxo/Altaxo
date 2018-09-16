@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
-using Altaxo.Drawing.D3D.Material;
-using Altaxo.Graph;
-using Altaxo.Graph.Graph3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +29,11 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using Altaxo.Drawing;
+using Altaxo.Drawing.D3D;
+using Altaxo.Drawing.D3D.Material;
+using Altaxo.Graph;
+using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Drawing.D3D
       var innerRect = new Rect(0, 0, width, height);
       var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
       geometryDrawing.Brush = new SolidColorBrush(GuiHelper.ToWpf(axoColor));
-      DrawingImage geometryImage = new DrawingImage(geometryDrawing);
+      var geometryImage = new DrawingImage(geometryDrawing);
       geometryImage.Freeze(); // Freeze the DrawingImage for performance benefits.
       return geometryImage;
     }

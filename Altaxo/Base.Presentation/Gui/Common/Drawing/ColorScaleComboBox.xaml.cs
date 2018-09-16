@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +29,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -96,8 +96,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueInSIUnits;
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -114,14 +113,18 @@ namespace Altaxo.Gui.Common.Drawing
       const double lineWidth = 0;
 
       // draws a transparent outline to fix the borders
-      var geometryDrawing = new GeometryDrawing();
-      geometryDrawing.Geometry = new RectangleGeometry(new Rect(-lineWidth, -lineWidth, width + lineWidth, height + lineWidth));
-      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      var geometryDrawing = new GeometryDrawing
+      {
+        Geometry = new RectangleGeometry(new Rect(-lineWidth, -lineWidth, width + lineWidth, height + lineWidth)),
+        Pen = new Pen(Brushes.Transparent, 0)
+      };
 
-      var gradStops = new GradientStopCollection();
-      gradStops.Add(new GradientStop(Colors.Black, 0));
-      gradStops.Add(new GradientStop(Colors.White, val));
-      gradStops.Add(new GradientStop(Colors.Black, 1));
+      var gradStops = new GradientStopCollection
+      {
+        new GradientStop(Colors.Black, 0),
+        new GradientStop(Colors.White, val),
+        new GradientStop(Colors.Black, 1)
+      };
 
       geometryDrawing.Brush = new LinearGradientBrush(gradStops, 0);
       var geometryImage = new DrawingImage(geometryDrawing);

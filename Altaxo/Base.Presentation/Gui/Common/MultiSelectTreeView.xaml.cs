@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common
       InitializeComponent();
 
       var ib = new KeyBinding(ApplicationCommands.Copy, Key.C, ModifierKeys.Control);
-      this.InputBindings.Add(ib);
+      InputBindings.Add(ib);
     }
 
     public enum SelectionModalities
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Common
     {
       if (item != null)
       {
-        switch (this.SelectionMode)
+        switch (SelectionMode)
         {
           case SelectionModalities.MultipleSelectionOnly:
             ManageCtrlSelection(item);

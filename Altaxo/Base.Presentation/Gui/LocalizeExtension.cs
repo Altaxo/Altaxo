@@ -16,13 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Gui.AddInItems;
-using Altaxo.Main.Services;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using Altaxo.Gui.AddInItems;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
 {
@@ -45,14 +45,14 @@ namespace Altaxo.Gui
     public LocalizeExtension(string key)
     {
       this.key = key;
-      this.UsesAccessors = true;
-      this.UpdateOnLanguageChange = true;
+      UsesAccessors = true;
+      UpdateOnLanguageChange = true;
     }
 
     public LocalizeExtension()
     {
-      this.UsesAccessors = true;
-      this.UpdateOnLanguageChange = true;
+      UsesAccessors = true;
+      UpdateOnLanguageChange = true;
     }
 
     private string key;

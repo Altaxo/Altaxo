@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common
       if (_lvItems.View == null)
         _lvItems.View = new GridView();
 
-      GridView gv = (GridView)_lvItems.View;
+      var gv = (GridView)_lvItems.View;
 
       gv.Columns.Clear();
 

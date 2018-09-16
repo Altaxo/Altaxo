@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Common.Drawing
 
         drawingGroup.ClipGeometry = outerGeometry;
 
-        DrawingImage geometryImage = new DrawingImage(drawingGroup);
+        var geometryImage = new DrawingImage(drawingGroup);
 
         // Freeze the DrawingImage for performance benefits.
         geometryImage.Freeze();
@@ -220,13 +220,15 @@ namespace Altaxo.Gui.Common.Drawing
     {
       InitializeComponent();
 
-      this.ItemsSource = _allItems;
+      ItemsSource = _allItems;
 
-      var binding = new Binding();
-      binding.Source = this;
-      binding.Path = new PropertyPath(nameof(SelectedFontFamilyName));
-      binding.Converter = new Converter(this);
-      this.SetBinding(ComboBox.SelectedItemProperty, binding);
+      var binding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath(nameof(SelectedFontFamilyName)),
+        Converter = new Converter(this)
+      };
+      SetBinding(ComboBox.SelectedItemProperty, binding);
     }
 
     #region Dependency property

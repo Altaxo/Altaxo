@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing.D3D;
-using Altaxo.Gui.Drawing.D3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Collections;
+using Altaxo.Drawing.D3D;
+using Altaxo.Gui.Drawing.D3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
@@ -48,9 +48,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     public BarGraphPlotStyleControl()
     {
       InitializeComponent();
-      _penGlue = new PenControlsGlue(false);
-      _penGlue.CbBrush = _guiPenMaterial;
-      _penGlue.CbCrossSection = _guiPenCrossSection;
+      _penGlue = new PenControlsGlue(false)
+      {
+        CbBrush = _guiPenMaterial,
+        CbCrossSection = _guiPenCrossSection
+      };
     }
 
     private void EhIndependentColorChanged(object sender, RoutedEventArgs e)

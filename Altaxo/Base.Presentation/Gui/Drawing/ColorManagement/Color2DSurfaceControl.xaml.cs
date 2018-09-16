@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +36,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
@@ -68,12 +68,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       InitializeComponent();
 
-      this.Loaded += EhLoaded;
+      Loaded += EhLoaded;
     }
 
     private void EhLoaded(object sender, RoutedEventArgs e)
     {
-      this.Loaded -= EhLoaded;
+      Loaded -= EhLoaded;
       SetRectanglesLeftBottomOnCanvas();
     }
 
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       if (e.LeftButton == MouseButtonState.Pressed)
       {
-        _initialRectanglePosition = new Point(this.SelectionRectangleRelativePosition.X * _guiCanvas.ActualWidth, this.SelectionRectangleRelativePosition.Y * _guiCanvas.ActualHeight);
+        _initialRectanglePosition = new Point(SelectionRectangleRelativePosition.X * _guiCanvas.ActualWidth, SelectionRectangleRelativePosition.Y * _guiCanvas.ActualHeight);
         _initialMousePosition = e.GetPosition(_guiCanvas);
         _guiCanvas.CaptureMouse();
         e.Handled = true;
@@ -163,13 +163,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       else if (currentRectanglePositionY > _guiCanvas.ActualHeight)
         currentRectanglePositionY = _guiCanvas.ActualHeight;
 
-      this.SelectionRectangleRelativePosition = new PointD2D(currentRectanglePositionX / _guiCanvas.ActualWidth, currentRectanglePositionY / _guiCanvas.ActualHeight);
+      SelectionRectangleRelativePosition = new PointD2D(currentRectanglePositionX / _guiCanvas.ActualWidth, currentRectanglePositionY / _guiCanvas.ActualHeight);
     }
 
     private void SetRectanglesLeftBottomOnCanvas()
     {
-      double currentRectanglePositionX = this.SelectionRectangleRelativePosition.X * _guiCanvas.ActualWidth;
-      double currentRectanglePositionY = this.SelectionRectangleRelativePosition.Y * _guiCanvas.ActualHeight;
+      double currentRectanglePositionX = SelectionRectangleRelativePosition.X * _guiCanvas.ActualWidth;
+      double currentRectanglePositionY = SelectionRectangleRelativePosition.Y * _guiCanvas.ActualHeight;
 
       Canvas.SetLeft(_guiSelectionRectangle1, currentRectanglePositionX - 0.5 * _guiSelectionRectangle1.ActualWidth);
       Canvas.SetBottom(_guiSelectionRectangle1, currentRectanglePositionY - 0.5 * _guiSelectionRectangle1.ActualHeight);

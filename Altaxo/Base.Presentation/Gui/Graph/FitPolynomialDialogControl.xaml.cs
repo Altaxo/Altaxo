@@ -58,8 +58,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        double result;
-        if (Altaxo.Serialization.NumberConversion.IsDouble(_edFitCurveXmin.Text, out result))
+        if (Altaxo.Serialization.NumberConversion.IsDouble(_edFitCurveXmin.Text, out var result))
           return result;
         else
           return double.MinValue;
@@ -74,8 +73,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        double result;
-        if (Altaxo.Serialization.NumberConversion.IsDouble(_edFitCurveXmax.Text, out result))
+        if (Altaxo.Serialization.NumberConversion.IsDouble(_edFitCurveXmax.Text, out var result))
           return result;
         else
           return double.MaxValue;

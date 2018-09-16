@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Common
       {
         _Minimum = value;
         _edNumber.Minimum = value;
-        this.Value = _Value;
+        Value = _Value;
       }
     }
 
@@ -120,7 +120,7 @@ namespace Altaxo.Gui.Common
       {
         _Maximum = value;
         _edNumber.Maximum = value;
-        this.Value = _Value;
+        Value = _Value;
       }
     }
 
@@ -150,14 +150,14 @@ namespace Altaxo.Gui.Common
 
     private void EhNumber_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
     {
-      _Value = _StartValue = (int)_edNumber.Value;
+      _Value = _StartValue = _edNumber.Value;
     }
 
     private void EhNumber_LostFocus(object sender, RoutedEventArgs e)
     {
       if (true == _rbEnterNumber.IsChecked)
       {
-        _Value = _StartValue = (int)_edNumber.Value;
+        _Value = _StartValue = _edNumber.Value;
       }
     }
 

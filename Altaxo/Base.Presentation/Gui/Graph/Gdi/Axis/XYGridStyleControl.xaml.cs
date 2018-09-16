@@ -80,35 +80,35 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     public void InitializeMajorGridStyle(Common.Drawing.IColorTypeThicknessPenController controller)
     {
-      controller.ViewObject = this._majorStyle;
+      controller.ViewObject = _majorStyle;
     }
 
     public void InitializeMinorGridStyle(Common.Drawing.IColorTypeThicknessPenController controller)
     {
-      controller.ViewObject = this._minorStyle;
+      controller.ViewObject = _minorStyle;
     }
 
     public void InitializeShowGrid(bool value)
     {
-      this._chkEnable.IsChecked = value;
+      _chkEnable.IsChecked = value;
     }
 
     public void InitializeShowMinorGrid(bool value)
     {
-      this._chkShowMinor.IsChecked = value;
+      _chkShowMinor.IsChecked = value;
     }
 
     public void InitializeShowZeroOnly(bool value)
     {
-      this._chkShowZeroOnly.IsChecked = value;
+      _chkShowZeroOnly.IsChecked = value;
     }
 
     public void InitializeElementEnabling(bool majorstyle, bool minorstyle, bool showminor, bool showzeroonly)
     {
-      this._majorStyle.IsEnabled = majorstyle;
-      this._minorStyle.IsEnabled = minorstyle;
-      this._chkShowMinor.IsEnabled = showminor;
-      this._chkShowZeroOnly.IsEnabled = showzeroonly;
+      _majorStyle.IsEnabled = majorstyle;
+      _minorStyle.IsEnabled = minorstyle;
+      _chkShowMinor.IsEnabled = showminor;
+      _chkShowZeroOnly.IsEnabled = showzeroonly;
     }
 
     #endregion IXYGridStyleView

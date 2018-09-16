@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Common;
-using Altaxo.Gui.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +35,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Data.Selections
 {
@@ -52,22 +52,22 @@ namespace Altaxo.Gui.Data.Selections
 
     public void Init_Column(string boxText, string toolTip, int status)
     {
-      this._guiColumn.Text = boxText;
-      this._guiColumn.ToolTip = toolTip;
-      this._guiColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+      _guiColumn.Text = boxText;
+      _guiColumn.ToolTip = toolTip;
+      _guiColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
     }
 
     public void Init_ColumnTransformation(string boxText, string toolTip)
     {
       if (null == boxText)
       {
-        this._guiColumnTransformation.Visibility = Visibility.Collapsed;
+        _guiColumnTransformation.Visibility = Visibility.Collapsed;
       }
       else
       {
-        this._guiColumnTransformation.Text = boxText;
-        this._guiColumnTransformation.ToolTip = toolTip;
-        this._guiColumnTransformation.Visibility = Visibility.Visible;
+        _guiColumnTransformation.Text = boxText;
+        _guiColumnTransformation.ToolTip = toolTip;
+        _guiColumnTransformation.Visibility = Visibility.Visible;
       }
     }
 

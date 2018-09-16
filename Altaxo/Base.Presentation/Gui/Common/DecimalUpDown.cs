@@ -79,14 +79,12 @@ namespace Altaxo.Gui.Common
 
       public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
       {
-        ValidationResult validationResult;
-        return ConvertBack(obj, targetType, parameter, out validationResult);
+        return ConvertBack(obj, targetType, parameter, out var validationResult);
       }
 
       public override ValidationResult Validate(object obj, CultureInfo cultureInfoBuggyDontUse)
       {
-        ValidationResult validationResult;
-        ConvertBack(obj, null, null, out validationResult);
+        ConvertBack(obj, null, null, out var validationResult);
         return validationResult;
       }
 
@@ -109,8 +107,7 @@ namespace Altaxo.Gui.Common
             return _parent.ValueIfTextIsEmpty;
         }
 
-        decimal result;
-        if (decimal.TryParse(s, System.Globalization.NumberStyles.Number, _conversionCulture, out result))
+        if (decimal.TryParse(s, System.Globalization.NumberStyles.Number, _conversionCulture, out var result))
           return result;
         else
         {
@@ -152,14 +149,14 @@ namespace Altaxo.Gui.Common
 
     private static void OnValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      DecimalUpDown control = (DecimalUpDown)obj;
+      var control = (DecimalUpDown)obj;
 
       decimal oldValue = (decimal)args.OldValue;
       decimal newValue = (decimal)args.NewValue;
 
       #region Fire Automation events
 
-      DecimalUpDownAutomationPeer peer = UIElementAutomationPeer.FromElement(control) as DecimalUpDownAutomationPeer;
+      var peer = UIElementAutomationPeer.FromElement(control) as DecimalUpDownAutomationPeer;
       if (peer != null)
       {
         peer.RaiseValueChangedEvent(oldValue, newValue);
@@ -167,7 +164,7 @@ namespace Altaxo.Gui.Common
 
       #endregion Fire Automation events
 
-      RoutedPropertyChangedEventArgs<decimal> e = new RoutedPropertyChangedEventArgs<decimal>(
+      var e = new RoutedPropertyChangedEventArgs<decimal>(
           oldValue, newValue, ValueChangedEvent);
 
       control.OnValueChanged(e);
@@ -185,10 +182,10 @@ namespace Altaxo.Gui.Common
     private static object CoerceValue(DependencyObject element, object value)
     {
       decimal newValue = (decimal)value;
-      DecimalUpDown control = (DecimalUpDown)element;
+      var control = (DecimalUpDown)element;
 
       newValue = Math.Max(control.Minimum, Math.Min(control.Maximum, newValue));
-      newValue = Decimal.Round(newValue, control.DecimalPlaces);
+      newValue = decimal.Round(newValue, control.DecimalPlaces);
 
       return newValue;
     }
@@ -255,8 +252,8 @@ namespace Altaxo.Gui.Common
     private static object CoerceMinimum(DependencyObject element, object value)
     {
       decimal minimum = (decimal)value;
-      DecimalUpDown control = (DecimalUpDown)element;
-      return Decimal.Round(minimum, control.DecimalPlaces);
+      var control = (DecimalUpDown)element;
+      return decimal.Round(minimum, control.DecimalPlaces);
     }
 
     #endregion Minimum
@@ -285,9 +282,9 @@ namespace Altaxo.Gui.Common
 
     private static object CoerceMaximum(DependencyObject element, object value)
     {
-      DecimalUpDown control = (DecimalUpDown)element;
+      var control = (DecimalUpDown)element;
       decimal newMaximum = (decimal)value;
-      return Decimal.Round(Math.Max(newMaximum, control.Minimum), control.DecimalPlaces);
+      return decimal.Round(Math.Max(newMaximum, control.Minimum), control.DecimalPlaces);
     }
 
     #endregion Maximum
@@ -320,9 +317,9 @@ namespace Altaxo.Gui.Common
     private static object CoerceChange(DependencyObject element, object value)
     {
       decimal newChange = (decimal)value;
-      DecimalUpDown control = (DecimalUpDown)element;
+      var control = (DecimalUpDown)element;
 
-      decimal coercedNewChange = Decimal.Round(newChange, control.DecimalPlaces);
+      decimal coercedNewChange = decimal.Round(newChange, control.DecimalPlaces);
 
       //If Change is .1 and DecimalPlaces is changed from 1 to 0, we want Change to go to 1, not 0.
       //Put another way, Change should always be rounded to DecimalPlaces, but never smaller than the
@@ -372,7 +369,7 @@ namespace Altaxo.Gui.Common
 
     private static void OnDecimalPlacesChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
     {
-      DecimalUpDown control = (DecimalUpDown)element;
+      var control = (DecimalUpDown)element;
       control.CoerceValue(ChangeProperty);
       control.CoerceValue(MinimumProperty);
       control.CoerceValue(MaximumProperty);
@@ -414,30 +411,30 @@ namespace Altaxo.Gui.Common
     protected override void OnIncrease()
     {
       // avoid an overflow before coerce of the value
-      var val = this.Value;
-      if (this.Value <= (decimal.MaxValue - Change))
-        this.Value += Change;
+      var val = Value;
+      if (Value <= (decimal.MaxValue - Change))
+        Value += Change;
       else
-        this.Value = decimal.MaxValue;
+        Value = decimal.MaxValue;
     }
 
     protected override void OnDecrease()
     {
       // avoid an underflow before coerce of the value
-      if (this.Value >= (decimal.MinValue + Change))
-        this.Value -= Change;
+      if (Value >= (decimal.MinValue + Change))
+        Value -= Change;
       else
-        this.Value = decimal.MinValue;
+        Value = decimal.MinValue;
     }
 
     protected override void OnGotoMinimum()
     {
-      this.Value = this.Minimum;
+      Value = Minimum;
     }
 
     protected override void OnGotoMaximum()
     {
-      this.Value = this.Maximum;
+      Value = Maximum;
     }
 
     #endregion Commands

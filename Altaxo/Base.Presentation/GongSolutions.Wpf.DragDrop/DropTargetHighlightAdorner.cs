@@ -27,7 +27,7 @@ namespace GongSolutions.Wpf.DragDrop
 
     protected override void OnRender(DrawingContext drawingContext)
     {
-      var visualTargetItem = this.DropInfo.VisualTargetItem;
+      var visualTargetItem = DropInfo.VisualTargetItem;
       if (visualTargetItem != null)
       {
         var rect = Rect.Empty;
@@ -36,11 +36,11 @@ namespace GongSolutions.Wpf.DragDrop
         if (tvItem != null && VisualTreeHelper.GetChildrenCount(tvItem) > 0)
         {
           var descendant = VisualTreeHelper.GetDescendantBounds(tvItem);
-          rect = new Rect(tvItem.TranslatePoint(new Point(), this.AdornedElement), new Size(descendant.Width + 4, tvItem.ActualHeight));
+          rect = new Rect(tvItem.TranslatePoint(new Point(), AdornedElement), new Size(descendant.Width + 4, tvItem.ActualHeight));
         }
         if (rect.IsEmpty)
         {
-          rect = new Rect(visualTargetItem.TranslatePoint(new Point(), this.AdornedElement), VisualTreeHelper.GetDescendantBounds(visualTargetItem).Size);
+          rect = new Rect(visualTargetItem.TranslatePoint(new Point(), AdornedElement), VisualTreeHelper.GetDescendantBounds(visualTargetItem).Size);
         }
         drawingContext.DrawRoundedRectangle(null, new Pen(Brushes.Gray, 2), rect, 2, 2);
       }

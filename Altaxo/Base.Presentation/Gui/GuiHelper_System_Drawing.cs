@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,6 +35,8 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Xml;
+using Altaxo.Collections;
+using Altaxo.Geometry;
 
 namespace Altaxo.Gui
 {

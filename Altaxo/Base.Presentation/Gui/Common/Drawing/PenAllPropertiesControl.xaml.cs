@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -42,20 +42,22 @@ namespace Altaxo.Gui.Common.Drawing
     {
       InitializeComponent();
 
-      _glue = new PenControlsGlue(true);
-      _glue.CbBrush = _cbBrush;
-      _glue.CbLineThickness = _cbThickness;
-      _glue.CbDashPattern = _cbDashStyle;
-      _glue.CbDashCap = _cbDashCap;
-      _glue.CbStartCap = _cbStartCap;
-      _glue.CbStartCapAbsSize = _cbStartCapSize;
-      _glue.CbStartCapRelSize = _edStartCapRelSize;
-      _glue.CbEndCap = _cbEndCap;
-      _glue.CbEndCapAbsSize = _cbEndCapSize;
-      _glue.CbEndCapRelSize = _edEndCapRelSize;
-      _glue.CbLineJoin = _cbLineJoin;
-      _glue.CbMiterLimit = _cbMiterLimit;
-      _glue.PreviewPanel = _previewPanel;
+      _glue = new PenControlsGlue(true)
+      {
+        CbBrush = _cbBrush,
+        CbLineThickness = _cbThickness,
+        CbDashPattern = _cbDashStyle,
+        CbDashCap = _cbDashCap,
+        CbStartCap = _cbStartCap,
+        CbStartCapAbsSize = _cbStartCapSize,
+        CbStartCapRelSize = _edStartCapRelSize,
+        CbEndCap = _cbEndCap,
+        CbEndCapAbsSize = _cbEndCapSize,
+        CbEndCapRelSize = _edEndCapRelSize,
+        CbLineJoin = _cbLineJoin,
+        CbMiterLimit = _cbMiterLimit,
+        PreviewPanel = _previewPanel
+      };
     }
 
     public PenX Pen

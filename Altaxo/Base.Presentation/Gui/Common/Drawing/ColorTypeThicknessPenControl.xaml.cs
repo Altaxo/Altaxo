@@ -41,10 +41,12 @@ namespace Altaxo.Gui.Common.Drawing
     {
       InitializeComponent();
 
-      _glue = new PenControlsGlue(false);
-      _glue.CbBrush = _cbColor;
-      _glue.CbDashPattern = _cbLineType;
-      _glue.CbLineThickness = _cbThickness;
+      _glue = new PenControlsGlue(false)
+      {
+        CbBrush = _cbColor,
+        CbDashPattern = _cbLineType,
+        CbLineThickness = _cbThickness
+      };
     }
 
     #region IColorTypeThicknessPenView

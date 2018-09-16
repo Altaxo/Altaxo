@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Multivariate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -45,13 +45,13 @@ namespace Altaxo.Gui.Worksheet
     private void cbAnalysisMethod_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
     {
       if (null != AnalysisMethodChanged)
-        AnalysisMethodChanged(this.cbAnalysisMethod.SelectedIndex);
+        AnalysisMethodChanged(cbAnalysisMethod.SelectedIndex);
     }
 
     private void edMaxNumFactors_ValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
       if (MaxNumberOfFactorsChanged != null)
-        MaxNumberOfFactorsChanged(this.edMaxNumFactors.Value);
+        MaxNumberOfFactorsChanged(edMaxNumFactors.Value);
     }
 
     private void rbCrossValidationNone_CheckedChanged(object sender, RoutedEventArgs e)
@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Worksheet
           break;
 
         case CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements:
-          this.rbCrossValidationHalfEnsemble.IsChecked = true;
+          rbCrossValidationHalfEnsemble.IsChecked = true;
           break;
       }
     }

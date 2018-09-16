@@ -22,6 +22,12 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 using Altaxo.Collections;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Drawing.D3D;
@@ -34,12 +40,6 @@ using Altaxo.Gui.Drawing.DashPatternManagement;
 using Altaxo.Gui.Graph.Graph3D;
 using Altaxo.Gui.Graph.Graph3D.Material;
 using Altaxo.Gui.Graph.Graph3D.Plot.Styles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
     public PenControlsGlue(bool isAllPropertiesGlue)
     {
-      this.InternalSelectedPen = new PenX3D(ColorSetManager.Instance.BuiltinDarkPlotColors[0], 1);
+      InternalSelectedPen = new PenX3D(ColorSetManager.Instance.BuiltinDarkPlotColors[0], 1);
       _isAllPropertiesGlue = isAllPropertiesGlue;
     }
 
@@ -219,8 +219,10 @@ namespace Altaxo.Gui.Drawing.D3D
           dpd.AddValueChanged(_cbBrush, EhBrush_SelectionChangeCommitted);
           if (!_isAllPropertiesGlue)
           {
-            var menuItem = new MenuItem();
-            menuItem.Header = "Custom Pen ...";
+            var menuItem = new MenuItem
+            {
+              Header = "Custom Pen ..."
+            };
             menuItem.Click += EhShowCustomPenDialog;
             _cbBrush.ContextMenu.Items.Insert(0, menuItem);
           }
@@ -1042,12 +1044,14 @@ namespace Altaxo.Gui.Drawing.D3D
 
     private void EhShowCustomPenDialog(object sender, EventArgs e)
     {
-      PenAllPropertiesController ctrler = new PenAllPropertiesController(this.Pen);
-      ctrler.ShowPlotColorsOnly = this._showPlotColorsOnly;
-      ctrler.ViewObject = new PenAllPropertiesControl();
+      var ctrler = new PenAllPropertiesController(Pen)
+      {
+        ShowPlotColorsOnly = _showPlotColorsOnly,
+        ViewObject = new PenAllPropertiesControl()
+      };
       if (Current.Gui.ShowDialog(ctrler, "Edit pen properties"))
       {
-        this.Pen = (PenX3D)ctrler.ModelObject;
+        Pen = (PenX3D)ctrler.ModelObject;
       }
     }
 

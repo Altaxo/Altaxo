@@ -89,10 +89,12 @@ namespace Altaxo.Gui.Common
 
       // Trick: we bind the text of our TextBox to our own property 'EditedText'. Even if we not really need this property, the binding provides us with the possibility of validation
       // and to change the style to an ErrorTemplate if validation fails.
-      Binding binding = new Binding("EditedText");
-      binding.Mode = BindingMode.TwoWay;
-      binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-      binding.Source = this;
+      var binding = new Binding("EditedText")
+      {
+        Mode = BindingMode.TwoWay,
+        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+        Source = this
+      };
       if (null != textBoxValidationRule)
       {
         binding.ValidationRules.Add(textBoxValidationRule); // Add a validation rule if it was provided
@@ -178,7 +180,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     private void EhTextBoxLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
-      ContextMenu newFocusedElement = e.NewFocus as ContextMenu;
+      var newFocusedElement = e.NewFocus as ContextMenu;
 
       if (newFocusedElement != null && newFocusedElement.PlacementTarget == (UIElement)sender)
       {

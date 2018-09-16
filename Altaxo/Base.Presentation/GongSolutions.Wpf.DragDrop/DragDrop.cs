@@ -12,8 +12,6 @@
 
 #endregion Copyright
 
-using GongSolutions.Wpf.DragDrop.Icons;
-using GongSolutions.Wpf.DragDrop.Utilities;
 using System;
 using System.Collections;
 using System.Linq;
@@ -23,6 +21,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using GongSolutions.Wpf.DragDrop.Icons;
+using GongSolutions.Wpf.DragDrop.Utilities;
 
 namespace GongSolutions.Wpf.DragDrop
 {
@@ -114,8 +114,10 @@ namespace GongSolutions.Wpf.DragDrop
         imageSourceFactory.SetValue(FrameworkElement.HeightProperty, 12.0);
         imageSourceFactory.SetValue(FrameworkElement.WidthProperty, 12.0);
 
-        template = new DataTemplate();
-        template.VisualTree = imageSourceFactory;
+        template = new DataTemplate
+        {
+          VisualTree = imageSourceFactory
+        };
       }
 
       return template;
@@ -436,24 +438,30 @@ namespace GongSolutions.Wpf.DragDrop
         {
           if (((IEnumerable)m_DragInfo.Data).Cast<object>().Count() <= 10)
           {
-            var itemsControl = new ItemsControl();
-            itemsControl.ItemsSource = (IEnumerable)m_DragInfo.Data;
-            itemsControl.ItemTemplate = template;
-            itemsControl.ItemTemplateSelector = templateSelector;
+            var itemsControl = new ItemsControl
+            {
+              ItemsSource = (IEnumerable)m_DragInfo.Data,
+              ItemTemplate = template,
+              ItemTemplateSelector = templateSelector
+            };
 
             // The ItemsControl doesn't display unless we create a border to contain it.
             // Not quite sure why this is...
-            var border = new Border();
-            border.Child = itemsControl;
+            var border = new Border
+            {
+              Child = itemsControl
+            };
             adornment = border;
           }
         }
         else
         {
-          var contentPresenter = new ContentPresenter();
-          contentPresenter.Content = m_DragInfo.Data;
-          contentPresenter.ContentTemplate = template;
-          contentPresenter.ContentTemplateSelector = templateSelector;
+          var contentPresenter = new ContentPresenter
+          {
+            Content = m_DragInfo.Data,
+            ContentTemplate = template,
+            ContentTemplateSelector = templateSelector
+          };
           adornment = contentPresenter;
         }
       }
@@ -530,9 +538,11 @@ namespace GongSolutions.Wpf.DragDrop
         var rootElement = (UIElement)Application.Current.MainWindow.Content;
         UIElement adornment = null;
 
-        var contentPresenter = new ContentPresenter();
-        contentPresenter.Content = m_DragInfo.Data;
-        contentPresenter.ContentTemplate = template;
+        var contentPresenter = new ContentPresenter
+        {
+          Content = m_DragInfo.Data,
+          ContentTemplate = template
+        };
 
         adornment = contentPresenter;
 
@@ -594,8 +604,10 @@ namespace GongSolutions.Wpf.DragDrop
       borderFactory.AppendChild(stackPanelFactory);
 
       // Finally add content to template
-      var template = new DataTemplate();
-      template.VisualTree = borderFactory;
+      var template = new DataTemplate
+      {
+        VisualTree = borderFactory
+      };
       return template;
     }
 
@@ -928,7 +940,7 @@ namespace GongSolutions.Wpf.DragDrop
         // ItemsPresenter provided by the style, try getting hold of a
         // ScrollContentPresenter and using that.
         var adornedElement =
-          (UIElement)itemsControl.GetVisualDescendent<ItemsPresenter>() ??
+          itemsControl.GetVisualDescendent<ItemsPresenter>() ??
           (UIElement)itemsControl.GetVisualDescendent<ScrollContentPresenter>();
 
         if (adornedElement != null)
@@ -967,7 +979,7 @@ namespace GongSolutions.Wpf.DragDrop
       e.Effects = dropInfo.Effects;
       e.Handled = !dropInfo.NotHandled;
 
-      Scroll((DependencyObject)dropInfo.VisualTarget, e);
+      Scroll(dropInfo.VisualTarget, e);
     }
 
     private static void DropTarget_PreviewDrop(object sender, DragEventArgs e)

@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing.D3D;
-using Altaxo.Gui.Drawing.D3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Collections;
+using Altaxo.Drawing.D3D;
+using Altaxo.Gui.Drawing.D3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
@@ -47,13 +47,15 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       InitializeComponent();
 
-      _penGlue = new PenControlsGlue();
-      _penGlue.CbBrush = _guiPenMaterial;
-      _penGlue.CbDashPattern = _guiPenDashStyle;
+      _penGlue = new PenControlsGlue
+      {
+        CbBrush = _guiPenMaterial,
+        CbDashPattern = _guiPenDashStyle,
 
-      _penGlue.CbLineStartCap = _cbLineStartCap;
-      _penGlue.CbLineStartCapAbsSize = _cbLineStartCapSize;
-      _penGlue.CbLineStartCapRelSize = _edLineStartCapRelSize;
+        CbLineStartCap = _cbLineStartCap,
+        CbLineStartCapAbsSize = _cbLineStartCapSize,
+        CbLineStartCapRelSize = _edLineStartCapRelSize
+      };
     }
 
     public bool AdditionalDropTargetIsEnabled
@@ -123,7 +125,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        this._guiIndependentColor.IsChecked = value;
+        _guiIndependentColor.IsChecked = value;
       }
     }
 
@@ -141,7 +143,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
       set
       {
-        this._guiSkipFrequency.Value = value;
+        _guiSkipFrequency.Value = value;
       }
     }
 

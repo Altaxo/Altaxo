@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Common
           DropDownMenu.PlacementTarget = this;
           DropDownMenu.IsOpen = true;
           DropDownMenu.Closed += DropDownMenu_Closed;
-          this.IsDropDownMenuOpen = true;
+          IsDropDownMenuOpen = true;
         }
       }
       else
@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Common
     private void DropDownMenu_Closed(object sender, RoutedEventArgs e)
     {
       ((ContextMenu)sender).Closed -= DropDownMenu_Closed;
-      this.IsDropDownMenuOpen = false;
+      IsDropDownMenuOpen = false;
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)

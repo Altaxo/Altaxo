@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Input;
+using Altaxo.Geometry;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {

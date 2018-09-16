@@ -54,8 +54,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     public SingleColumnControl(object tag, string labelText)
     {
-      this.Tag = tag;
-      this.LabelText = labelText;
+      Tag = tag;
+      LabelText = labelText;
 
       InitializeComponent();
 
@@ -64,8 +64,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     public SingleColumnControl(object tag, string labelText, string columnText, string columnTooltip, int severityLevel)
     {
-      this.Tag = tag;
-      this.LabelText = labelText;
+      Tag = tag;
+      LabelText = labelText;
 
       InitializeComponent();
 

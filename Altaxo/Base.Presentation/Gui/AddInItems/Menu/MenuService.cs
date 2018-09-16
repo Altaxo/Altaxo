@@ -16,8 +16,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.AddInItems;
-using Altaxo.Main.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,6 +27,8 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Altaxo.AddInItems;
+using Altaxo.Main.Services;
 
 // using WinForms = System.Windows.Forms;
 
@@ -70,10 +70,9 @@ namespace Altaxo.Gui.AddInItems
     {
       if (commandName == null)
         throw new ArgumentNullException("commandName");
-      System.Windows.Input.ICommand command;
       lock (knownCommands)
       {
-        if (knownCommands.TryGetValue(commandName, out command))
+        if (knownCommands.TryGetValue(commandName, out var command))
           return command;
       }
       return null;
@@ -105,7 +104,7 @@ namespace Altaxo.Gui.AddInItems
         return;
       foreach (object o in menuItems)
       {
-        IStatusUpdate cmi = o as IStatusUpdate;
+        var cmi = o as IStatusUpdate;
         if (cmi != null)
           cmi.UpdateStatus();
       }
@@ -117,7 +116,7 @@ namespace Altaxo.Gui.AddInItems
         return;
       foreach (object o in menuItems)
       {
-        IStatusUpdate cmi = o as IStatusUpdate;
+        var cmi = o as IStatusUpdate;
         if (cmi != null)
           cmi.UpdateText();
       }
@@ -153,7 +152,7 @@ namespace Altaxo.Gui.AddInItems
 
     public static ContextMenu ShowContextMenu(UIElement parent, object owner, string addInTreePath)
     {
-      ContextMenu menu = new ContextMenu();
+      var menu = new ContextMenu();
       menu.ItemsSource = CreateMenuItems(menu, owner, addInTreePath, "ContextMenu");
       menu.PlacementTarget = parent;
       menu.IsOpen = true;
@@ -211,7 +210,7 @@ namespace Altaxo.Gui.AddInItems
 
     internal static IList CreateUnexpandedMenuItems(MenuCreateContext context, IEnumerable descriptors)
     {
-      ArrayList result = new ArrayList();
+      var result = new ArrayList();
       if (descriptors != null)
       {
         foreach (MenuItemDescriptor descriptor in descriptors)
@@ -224,10 +223,10 @@ namespace Altaxo.Gui.AddInItems
 
     private static IList ExpandMenuBuilders(ICollection input, bool addDummyEntryIfMenuEmpty)
     {
-      List<object> result = new List<object>(input.Count);
+      var result = new List<object>(input.Count);
       foreach (object o in input)
       {
-        MenuItemBuilderPlaceholder p = o as MenuItemBuilderPlaceholder;
+        var p = o as MenuItemBuilderPlaceholder;
         if (p != null)
         {
           IEnumerable<object> c = p.BuildItems();
@@ -237,7 +236,7 @@ namespace Altaxo.Gui.AddInItems
         else
         {
           result.Add(o);
-          IStatusUpdate statusUpdate = o as IStatusUpdate;
+          var statusUpdate = o as IStatusUpdate;
           if (statusUpdate != null)
           {
             statusUpdate.UpdateStatus();

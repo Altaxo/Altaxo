@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +31,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Altaxo.Drawing.D3D;
 using sdd = System.Drawing.Drawing2D;
 
 namespace Altaxo.Gui.Drawing.D3D.LineCaps
@@ -83,11 +83,13 @@ namespace Altaxo.Gui.Drawing.D3D.LineCaps
       InitializeComponent();
       SetDefaultValues();
 
-      var binding = new Binding();
-      binding.Source = this;
-      binding.Path = new PropertyPath(_nameOfValueProp);
-      binding.Converter = new Converter(this);
-      this.SetBinding(ComboBox.SelectedItemProperty, binding);
+      var binding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath(_nameOfValueProp),
+        Converter = new Converter(this)
+      };
+      SetBinding(ComboBox.SelectedItemProperty, binding);
     }
 
     public bool IsForEndCap
@@ -107,7 +109,7 @@ namespace Altaxo.Gui.Drawing.D3D.LineCaps
           var cap = (ILineCap)Activator.CreateInstance(capType);
           var item = new Common.Drawing.ImageComboBoxItem(this, cap);
           _cachedItems.Add(cap.Name, item);
-          this.Items.Add(item);
+          Items.Add(item);
         }
         catch (Exception)
         {

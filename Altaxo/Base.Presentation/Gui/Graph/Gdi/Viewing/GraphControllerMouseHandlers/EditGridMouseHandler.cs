@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Input;
+using Altaxo.Geometry;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       if (null == view)
         throw new ArgumentNullException("view");
 
-      this._grac = view;
+      _grac = view;
 
       _grac.SetPanelCursor(Cursors.Arrow);
 
@@ -137,11 +137,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       base.OnMouseDown(position, e);
 
       _positionCurrentMouseInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
-
-      double minDistanceSquared;
-      int minIndex;
-      bool minInXGrid;
-      GetClosestGridLine(out minDistanceSquared, out minIndex, out minInXGrid);
+      GetClosestGridLine(out var minDistanceSquared, out var minIndex, out var minInXGrid);
 
       if (minDistanceSquared < _catchDistance_RLC * _catchDistance_RLC)
       {
@@ -186,10 +182,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
       else // not moving a grid line
       {
-        double minDistanceSquared;
-        int minIndex;
-        bool minInXGrid;
-        GetClosestGridLine(out minDistanceSquared, out minIndex, out minInXGrid);
+        GetClosestGridLine(out var minDistanceSquared, out var minIndex, out var minInXGrid);
         if (minDistanceSquared < _catchDistance_RLC * _catchDistance_RLC)
         {
           if (_grac != null)

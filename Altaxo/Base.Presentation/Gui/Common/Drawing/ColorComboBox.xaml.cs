@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +30,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Graph;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -135,10 +135,10 @@ namespace Altaxo.Gui.Common.Drawing
       }
 
       if (!newColor.Equals(_guiComboBox.SelectedValue))
-        this.UpdateComboBoxSourceSelection(newColor);
+        UpdateComboBoxSourceSelection(newColor);
 
       if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
-        this.UpdateTreeViewSelection();
+        UpdateTreeViewSelection();
 
       if (null != SelectedColorChanged)
         SelectedColorChanged(obj, args);
@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected override IColorSet GetColorSetForComboBox()
     {
-      NamedColor selColor = this.SelectedColor;
+      NamedColor selColor = SelectedColor;
       if (selColor.ParentColorSet != null)
         return selColor.ParentColorSet;
       else
@@ -178,7 +178,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       List<object> lastUsed;
 
-      List<object> separator = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
+      var separator = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
 
       lastUsed = GetFilteredList(_lastLocalUsedItems, filterString, ShowPlotColorsOnly);
 
@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_guiComboBox.SelectedValue == null)
         _guiComboBox.SelectedValue = SelectedColor;
       else
-        this.SelectedColor = (NamedColor)_guiComboBox.SelectedValue;
+        SelectedColor = (NamedColor)_guiComboBox.SelectedValue;
     }
 
     #endregion ComboBox event handling
@@ -250,8 +250,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
     {
-      NamedColor newColor;
-      if (base.InternalShowCustomColorDialog(sender, out newColor))
+      if (base.InternalShowCustomColorDialog(sender, out var newColor))
       {
         InternalSelectedColor = newColor;
       }
@@ -259,8 +258,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected void EhChooseOpacityFromContextMenu(object sender, RoutedEventArgs e)
     {
-      NamedColor newColor;
-      if (base.InternalChooseOpacityFromContextMenu(sender, out newColor))
+      if (base.InternalChooseOpacityFromContextMenu(sender, out var newColor))
       {
         InternalSelectedColor = newColor;
       }

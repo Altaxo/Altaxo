@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.DashPatternManagement;
-using Altaxo.Drawing.DashPatterns;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +29,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using Altaxo.Drawing;
+using Altaxo.Drawing.DashPatternManagement;
+using Altaxo.Drawing.DashPatterns;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
@@ -87,8 +87,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       string text = (string)value;
-      string error;
-      var result = ConvertFromText(text, out error);
+      var result = ConvertFromText(text, out var error);
 
       if (error == null)
         return result; // Ok conversion to a custom Dash pattern was possible
@@ -114,8 +113,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
         if (string.IsNullOrEmpty(parttrimmed))
           continue;
 
-        double val;
-        if (!Altaxo.Serialization.GUIConversion.IsDouble(parttrimmed, out val))
+        if (!Altaxo.Serialization.GUIConversion.IsDouble(parttrimmed, out var val))
           error = "Provided string can not be converted to a numeric value";
         else if (!(val > 0 && val < double.MaxValue))
           error = "One of the provided values is not a valid positive number";
@@ -132,8 +130,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     public string EhValidateText(object obj, System.Globalization.CultureInfo info)
     {
       string text = (string)obj;
-      string error;
-      var result = ConvertFromText(text, out error);
+      var result = ConvertFromText(text, out var error);
 
       if (null != _comboBox)
       {
@@ -200,9 +197,11 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
       // draws a transparent outline to fix the borders
       var drawingGroup = new DrawingGroup();
 
-      var geometryDrawing = new GeometryDrawing();
-      geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
-      geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      var geometryDrawing = new GeometryDrawing
+      {
+        Geometry = new RectangleGeometry(new Rect(0, 0, width, height)),
+        Pen = new Pen(Brushes.Transparent, 0)
+      };
       drawingGroup.Children.Add(geometryDrawing);
 
       geometryDrawing = new GeometryDrawing() { Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)) };

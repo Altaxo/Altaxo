@@ -45,62 +45,62 @@ namespace Altaxo.Gui.Worksheet
     {
       get
       {
-        return true == this.m_rbCreateSpectrum_FromRow.IsChecked;
+        return true == m_rbCreateSpectrum_FromRow.IsChecked;
       }
       set
       {
-        this.m_rbCreateSpectrum_FromRow.IsChecked = value;
+        m_rbCreateSpectrum_FromRow.IsChecked = value;
       }
     }
 
     public bool CreateSpectrumFromColumn
     {
-      get { return true == this.m_rbCreateSpectrum_FromColumn.IsChecked; }
+      get { return true == m_rbCreateSpectrum_FromColumn.IsChecked; }
     }
 
     public bool XValuesContinuousNumber
     {
       get
       {
-        return true == this.m_rbXValues_ContinuousNumber.IsChecked;
+        return true == m_rbXValues_ContinuousNumber.IsChecked;
       }
       set
       {
-        this.m_rbXValues_ContinuousNumber.IsChecked = value;
+        m_rbXValues_ContinuousNumber.IsChecked = value;
       }
     }
 
     public bool XValuesFromColumn
     {
-      get { return true == this.m_rbXValues_FromColumn.IsChecked; }
+      get { return true == m_rbXValues_FromColumn.IsChecked; }
     }
 
     public bool ExtendFileName_ContinuousNumber
     {
       get
       {
-        return true == this.m_rbExtFileName_ContinuousNumber.IsChecked;
+        return true == m_rbExtFileName_ContinuousNumber.IsChecked;
       }
       set
       {
-        this.m_rbExtFileName_ContinuousNumber.IsChecked = value;
+        m_rbExtFileName_ContinuousNumber.IsChecked = value;
       }
     }
 
     public bool ExtendFileName_ByColumn
     {
-      get { return true == this.m_rbFileName_FromColumn.IsChecked; }
+      get { return true == m_rbFileName_FromColumn.IsChecked; }
     }
 
     public string BasicFileName
     {
       get
       {
-        return this.m_edBasicFileNameAndPath.Text;
+        return m_edBasicFileNameAndPath.Text;
       }
       set
       {
-        this.m_edBasicFileNameAndPath.Text = value;
+        m_edBasicFileNameAndPath.Text = value;
       }
     }
 
@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Worksheet
 
     public bool EnableXValuesColumnBox
     {
-      set { this.m_cbXValues_Column.IsEnabled = value; }
+      set { m_cbXValues_Column.IsEnabled = value; }
     }
 
     public string XValuesColumnName
@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Worksheet
       get
       {
         GuiHelper.SynchronizeSelectionFromGui(m_cbXValues_Column);
-        return (string)this.m_cbXValues_Column.SelectedItem;
+        return (string)m_cbXValues_Column.SelectedItem;
       }
     }
 
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Worksheet
 
     public bool EnableExtFileNameColumnBox
     {
-      set { this.m_cbExtFileName_Column.IsEnabled = value; }
+      set { m_cbExtFileName_Column.IsEnabled = value; }
     }
 
     public string ExtFileNameColumnName
@@ -138,7 +138,7 @@ namespace Altaxo.Gui.Worksheet
       get
       {
         GuiHelper.SynchronizeSelectionFromGui(m_cbExtFileName_Column);
-        return (string)this.m_cbExtFileName_Column.SelectedItem;
+        return (string)m_cbExtFileName_Column.SelectedItem;
       }
     }
 

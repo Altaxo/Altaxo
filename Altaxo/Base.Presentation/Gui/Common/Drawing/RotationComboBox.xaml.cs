@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
-using Altaxo.Units.Angle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using Altaxo.Units;
+using Altaxo.Units.Angle;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -81,8 +81,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       double val = ((DimensionfulQuantity)item).AsValueIn(Degree.Instance);
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -102,27 +101,31 @@ namespace Altaxo.Gui.Common.Drawing
       double lineWidth = 0.08 * DesignHeight;
 
       // draws a transparent outline to fix the borders
-      var outlineDrawing = new GeometryDrawing();
-      outlineDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, DesignHeight, DesignHeight));
-      outlineDrawing.Pen = new Pen(Brushes.Transparent, 0);
+      var outlineDrawing = new GeometryDrawing
+      {
+        Geometry = new RectangleGeometry(new Rect(0, 0, DesignHeight, DesignHeight)),
+        Pen = new Pen(Brushes.Transparent, 0)
+      };
 
       // now the geometry itself
-      GeometryGroup ellipses = new GeometryGroup();
+      var ellipses = new GeometryGroup();
       ellipses.Children.Add(
           new EllipseGeometry(new Point(offset, offset), radius, radius)
           );
 
       ellipses.Children.Add(new LineGeometry(new Point(offset, offset), new Point(offset + radius * Math.Cos(AngleRad), offset + radius * Math.Sin(-AngleRad))));
-      GeometryDrawing geometryDrawing = new GeometryDrawing();
-      geometryDrawing.Geometry = ellipses;
-      // fill with a gradient brush
-      geometryDrawing.Brush =
+      var geometryDrawing = new GeometryDrawing
+      {
+        Geometry = ellipses,
+        // fill with a gradient brush
+        Brush =
           new LinearGradientBrush(
               Color.FromRgb(100, 100, 255),
               Color.FromRgb(204, 204, 255),
               new Point(0, 0),
-              new Point(1, 1));
-      geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth);
+              new Point(1, 1)),
+        Pen = new Pen(Brushes.Black, lineWidth)
+      };
 
       var group = new DrawingGroup();
       group.Children.Add(outlineDrawing);

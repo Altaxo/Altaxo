@@ -110,14 +110,17 @@ namespace Altaxo.Gui.Common
 
     static TextBlockForEditing()
     {
-      _itemsControlTypeToControlInfo = new Dictionary<Type, ItemsControlInfo>();
+      _itemsControlTypeToControlInfo = new Dictionary<Type, ItemsControlInfo>
+      {
+        { typeof(ListBox), new ItemsControlInfo { TypeOfItem = typeof(ListBoxItem), IsItemSelected = (x => ((ListBoxItem)x).IsSelected), SelectionCount = (x => ((ListBox)x).SelectedItems.Count) } },
+        { typeof(ListView), new ItemsControlInfo { TypeOfItem = typeof(ListViewItem), IsItemSelected = (x => ((ListViewItem)x).IsSelected), SelectionCount = (x => ((ListView)x).SelectedItems.Count) } },
+        { typeof(TreeView), new ItemsControlInfo { TypeOfItem = typeof(TreeViewItem), IsItemSelected = (x => ((TreeViewItem)x).IsSelected), SelectionCount = (x => 1) } }
+      };
 
-      _itemsControlTypeToControlInfo.Add(typeof(ListBox), new ItemsControlInfo { TypeOfItem = typeof(ListBoxItem), IsItemSelected = (x => ((ListBoxItem)x).IsSelected), SelectionCount = (x => ((ListBox)x).SelectedItems.Count) });
-      _itemsControlTypeToControlInfo.Add(typeof(ListView), new ItemsControlInfo { TypeOfItem = typeof(ListViewItem), IsItemSelected = (x => ((ListViewItem)x).IsSelected), SelectionCount = (x => ((ListView)x).SelectedItems.Count) });
-      _itemsControlTypeToControlInfo.Add(typeof(TreeView), new ItemsControlInfo { TypeOfItem = typeof(TreeViewItem), IsItemSelected = (x => ((TreeViewItem)x).IsSelected), SelectionCount = (x => 1) });
-
-      _itemsControlTypesToSkipOver = new HashSet<Type>();
-      _itemsControlTypesToSkipOver.Add(typeof(TreeViewItem));
+      _itemsControlTypesToSkipOver = new HashSet<Type>
+      {
+        typeof(TreeViewItem)
+      };
 
       TextBlockForEditing.TextProperty.OverrideMetadata(typeof(TextBlockForEditing), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
     }
@@ -257,8 +260,8 @@ namespace Altaxo.Gui.Common
     /// </summary>
     private void BeginEditing()
     {
-      AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
-      _adorner = new TextEditingAdorner(this, this.Text, TextBoxStyle, TextBoxValidationRule);
+      var layer = AdornerLayer.GetAdornerLayer(this);
+      _adorner = new TextEditingAdorner(this, Text, TextBoxStyle, TextBoxValidationRule);
       layer.Add(_adorner);
 
       _adorner.EditingFinished += EhEditingFinished;
@@ -287,7 +290,7 @@ namespace Altaxo.Gui.Common
 
       bool validationHasErrors = _adorner.ValidationHasErrors;
       string textBoxText = _adorner.EditedText;
-      AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
+      var layer = AdornerLayer.GetAdornerLayer(this);
 
       if (null != layer)
         layer.Remove(_adorner);
@@ -296,7 +299,7 @@ namespace Altaxo.Gui.Common
       if (!validationHasErrors)
       {
         // update the Text roperty with the new text box value
-        this.SetValue(TextProperty, textBoxText);
+        SetValue(TextProperty, textBoxText);
       }
     }
 

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
@@ -37,22 +37,24 @@ namespace Altaxo.Gui.Common
 
     public void Initialize(SelectableListNodeList choices)
     {
-      this.SelectionChanged -= EhSelectionChanged; // prevent firing event here
+      SelectionChanged -= EhSelectionChanged; // prevent firing event here
 
       _choices = choices;
-      this.Items.Clear();
+      Items.Clear();
       foreach (var choice in _choices)
       {
-        var item = new ListViewItem();
-        item.Content = choice.Text;
-        item.Tag = choice;
+        var item = new ListViewItem
+        {
+          Content = choice.Text,
+          Tag = choice
+        };
         Items.Add(item);
       }
       int selIndex = _choices.FirstSelectedNodeIndex;
       if (selIndex >= 0)
-        this.SelectedIndex = selIndex;
+        SelectedIndex = selIndex;
 
-      this.SelectionChanged += EhSelectionChanged; // now allow event again
+      SelectionChanged += EhSelectionChanged; // now allow event again
     }
 
     private void EhSelectionChanged(object sender, SelectionChangedEventArgs e)

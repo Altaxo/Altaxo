@@ -217,7 +217,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public bool IndependentOnShiftingGroupStyles
     {
       get { return true == _guiIndependentOnShiftingGroupStyles.IsChecked; }
-      set { this._guiIndependentOnShiftingGroupStyles.IsChecked = value; }
+      set { _guiIndependentOnShiftingGroupStyles.IsChecked = value; }
     }
 
     #endregion IXYPlotLineStyleView

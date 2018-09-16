@@ -78,11 +78,13 @@ namespace Altaxo.Gui.Common.Drawing
         Items.Add(_cachedItems[e]);
       }
 
-      var _valueBinding = new Binding();
-      _valueBinding.Source = this;
-      _valueBinding.Path = new PropertyPath(_nameOfValueProp);
-      _valueBinding.Converter = new CC(this);
-      this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
+      var _valueBinding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath(_nameOfValueProp),
+        Converter = new CC(this)
+      };
+      SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
     }
 
     #region Dependency property
@@ -119,8 +121,7 @@ namespace Altaxo.Gui.Common.Drawing
     public override ImageSource GetItemImage(object item)
     {
       var val = (LinearGradientMode)item;
-      ImageSource result;
-      if (!_cachedImages.TryGetValue(val, out result))
+      if (!_cachedImages.TryGetValue(val, out var result))
         _cachedImages.Add(val, result = GetImage(val));
       return result;
     }
@@ -133,7 +134,7 @@ namespace Altaxo.Gui.Common.Drawing
       //
       // Create the Geometry to draw.
       //
-      GeometryGroup geometryGroup = new GeometryGroup();
+      var geometryGroup = new GeometryGroup();
       geometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, width, height)));
 
       var geometryDrawing = new GeometryDrawing() { Geometry = geometryGroup };
@@ -160,7 +161,7 @@ namespace Altaxo.Gui.Common.Drawing
           break;
       }
 
-      DrawingImage geometryImage = new DrawingImage(geometryDrawing);
+      var geometryImage = new DrawingImage(geometryDrawing);
 
       // Freeze the DrawingImage for performance benefits.
       geometryImage.Freeze();

@@ -143,9 +143,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void SetParameterControl(object control)
     {
-      this._parameterControlHost.Child = null;
+      _parameterControlHost.Child = null;
       _setParameterControl = control as UIElement;
-      this._parameterControlHost.Child = _setParameterControl;
+      _parameterControlHost.Child = _setParameterControl;
     }
 
     private UIElement _funcSelControl;
@@ -161,19 +161,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void SetFitEnsembleControl(object control)
     {
-      this._tpFitEnsemble.Content = null;
+      _tpFitEnsemble.Content = null;
       _fitEnsembleControl = control as UIElement;
-      this._tpFitEnsemble.Content = _fitEnsembleControl;
+      _tpFitEnsemble.Content = _fitEnsembleControl;
     }
 
     public void SetChiSquare(double chiSquare)
     {
-      this._edChiSqr.Text = Altaxo.Serialization.GUIConversion.ToString(chiSquare);
+      _edChiSqr.Text = Altaxo.Serialization.GUIConversion.ToString(chiSquare);
     }
 
     public void SwitchToFitEnsemblePage()
     {
-      this._tabControl.SelectedItem = this._tpFitEnsemble;
+      _tabControl.SelectedItem = _tpFitEnsemble;
     }
 
     public object GetGenerationIntervalControl()

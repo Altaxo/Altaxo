@@ -49,10 +49,12 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public void AddTab(string name, string text)
     {
-      var tc = new TabItem();
-      tc.Name = name;
-      tc.Header = text;
-      this._tabCtrl.Items.Add(tc);
+      var tc = new TabItem
+      {
+        Name = name,
+        Header = text
+      };
+      _tabCtrl.Items.Add(tc);
     }
 
     public object CurrentContent
@@ -76,11 +78,11 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public void SelectTab(string name)
     {
-      foreach (TabItem page in this._tabCtrl.Items)
+      foreach (TabItem page in _tabCtrl.Items)
       {
-        if ((string)page.Name == name)
+        if (page.Name == name)
         {
-          this._tabCtrl.SelectedItem = page;
+          _tabCtrl.SelectedItem = page;
           break;
         }
       }

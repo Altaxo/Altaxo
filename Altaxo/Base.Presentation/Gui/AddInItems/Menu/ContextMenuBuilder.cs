@@ -18,10 +18,10 @@
 
 #region Usings
 
-using Altaxo.Gui.AddInItems;
 using System;
 using System.Globalization;
 using System.Windows.Data;
+using Altaxo.Gui.AddInItems;
 
 #endregion Usings
 

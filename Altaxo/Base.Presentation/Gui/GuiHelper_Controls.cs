@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,6 +35,8 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Xml;
+using Altaxo.Collections;
+using Altaxo.Geometry;
 
 namespace Altaxo.Gui
 {
@@ -177,7 +177,7 @@ namespace Altaxo.Gui
 
     public static int[] GetColumnWidths(ListView listView)
     {
-      GridView gv = (GridView)listView.View;
+      var gv = (GridView)listView.View;
 
       int[] ret = new int[gv.Columns.Count];
       for (int i = 0; i < ret.Length; i++)
@@ -187,7 +187,7 @@ namespace Altaxo.Gui
 
     public static void SetColumnWidths(ListView listView, int[] widths)
     {
-      GridView gv = (GridView)listView.View;
+      var gv = (GridView)listView.View;
 
       int len = Math.Min(widths.Length, gv.Columns.Count);
       for (int i = 0; i < len; i++)
@@ -280,8 +280,8 @@ namespace Altaxo.Gui
     /// <typeparam name="TC">The type of the converter.</typeparam>
     public static void RegisterConverter<T, TC>()
     {
-      Attribute[] attr = new Attribute[1];
-      TypeConverterAttribute vConv = new TypeConverterAttribute(typeof(TC));
+      var attr = new Attribute[1];
+      var vConv = new TypeConverterAttribute(typeof(TC));
       attr[0] = vConv;
       TypeDescriptor.AddAttributes(typeof(T), attr);
     }
@@ -310,10 +310,12 @@ namespace Altaxo.Gui
         OmitXmlDeclaration = true,
         NamespaceHandling = NamespaceHandling.OmitDuplicates,
       });
-      var mgr = new XamlDesignerSerializationManager(writer);
+      var mgr = new XamlDesignerSerializationManager(writer)
+      {
 
-      // HERE BE MAGIC!!!
-      mgr.XamlWriterMode = XamlWriterMode.Expression;
+        // HERE BE MAGIC!!!
+        XamlWriterMode = XamlWriterMode.Expression
+      };
       // THERE WERE MAGIC!!!
 
       System.Windows.Markup.XamlWriter.Save(elementToClone, mgr);
@@ -323,7 +325,7 @@ namespace Altaxo.Gui
       // now deserialize it again
 
       var stringReader = new System.IO.StringReader(frameworkElementAsXamlString);
-      XmlReader xmlReader = XmlReader.Create(stringReader);
+      var xmlReader = XmlReader.Create(stringReader);
       var clonedFrameworkElement = (FrameworkElement)XamlReader.Load(xmlReader);
       return clonedFrameworkElement;
     }

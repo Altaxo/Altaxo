@@ -78,14 +78,12 @@ namespace Altaxo.Gui.Common
 
       public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo culture)
       {
-        ValidationResult validationResult;
-        return ConvertBack(obj, targetType, parameter, culture, out validationResult);
+        return ConvertBack(obj, targetType, parameter, culture, out var validationResult);
       }
 
       public override ValidationResult Validate(object obj, CultureInfo cultureInfo)
       {
-        ValidationResult validationResult;
-        ConvertBack(obj, null, null, cultureInfo, out validationResult);
+        ConvertBack(obj, null, null, cultureInfo, out var validationResult);
         return validationResult;
       }
 
@@ -108,8 +106,7 @@ namespace Altaxo.Gui.Common
             return _parent.ValueIfTextIsEmpty;
         }
 
-        double result;
-        if (double.TryParse(s, System.Globalization.NumberStyles.Float, _conversionCulture, out result))
+        if (double.TryParse(s, System.Globalization.NumberStyles.Float, _conversionCulture, out var result))
         {
           return result;
         }
@@ -249,7 +246,7 @@ namespace Altaxo.Gui.Common
     private static object CoerceMinimum(DependencyObject element, object value)
     {
       double minimum = (double)value;
-      DoubleUpDown control = (DoubleUpDown)element;
+      var control = (DoubleUpDown)element;
       return minimum;
     }
 
@@ -279,7 +276,7 @@ namespace Altaxo.Gui.Common
 
     private static object CoerceMaximum(DependencyObject element, object value)
     {
-      DoubleUpDown control = (DoubleUpDown)element;
+      var control = (DoubleUpDown)element;
       double newMaximum = (double)value;
       return Math.Max(newMaximum, control.Minimum);
     }
@@ -314,7 +311,7 @@ namespace Altaxo.Gui.Common
     private static object CoerceChange(DependencyObject element, object value)
     {
       double newChange = (double)value;
-      DoubleUpDown control = (DoubleUpDown)element;
+      var control = (DoubleUpDown)element;
 
       return newChange;
     }
@@ -348,30 +345,30 @@ namespace Altaxo.Gui.Common
     protected override void OnIncrease()
     {
       // avoid an overflow before coerce of the value
-      var val = this.Value;
-      if (this.Value <= (double.MaxValue - Change))
-        this.Value += Change;
+      var val = Value;
+      if (Value <= (double.MaxValue - Change))
+        Value += Change;
       else
-        this.Value = double.MaxValue;
+        Value = double.MaxValue;
     }
 
     protected override void OnDecrease()
     {
       // avoid an underflow before coerce of the value
-      if (this.Value >= (double.MinValue + Change))
-        this.Value -= Change;
+      if (Value >= (double.MinValue + Change))
+        Value -= Change;
       else
-        this.Value = double.MinValue;
+        Value = double.MinValue;
     }
 
     protected override void OnGotoMinimum()
     {
-      this.Value = this.Minimum;
+      Value = Minimum;
     }
 
     protected override void OnGotoMaximum()
     {
-      this.Value = this.Maximum;
+      Value = Maximum;
     }
 
     #endregion Commands
@@ -415,7 +412,7 @@ namespace Altaxo.Gui.Common
     internal void RaiseValueChangedEvent(double oldValue, double newValue)
     {
       base.RaisePropertyChangedEvent(RangeValuePatternIdentifiers.ValueProperty,
-          (double)oldValue, (double)newValue);
+          oldValue, newValue);
     }
 
     #region IRangeValueProvider Members
@@ -430,17 +427,17 @@ namespace Altaxo.Gui.Common
 
     double IRangeValueProvider.LargeChange
     {
-      get { return (double)MyOwner.Change; }
+      get { return MyOwner.Change; }
     }
 
     double IRangeValueProvider.Maximum
     {
-      get { return (double)MyOwner.Maximum; }
+      get { return MyOwner.Maximum; }
     }
 
     double IRangeValueProvider.Minimum
     {
-      get { return (double)MyOwner.Minimum; }
+      get { return MyOwner.Minimum; }
     }
 
     void IRangeValueProvider.SetValue(double value)
@@ -450,7 +447,7 @@ namespace Altaxo.Gui.Common
         throw new ElementNotEnabledException();
       }
 
-      double val = (double)value;
+      double val = value;
       if (val < MyOwner.Minimum || val > MyOwner.Maximum)
       {
         throw new ArgumentOutOfRangeException("value");
@@ -461,12 +458,12 @@ namespace Altaxo.Gui.Common
 
     double IRangeValueProvider.SmallChange
     {
-      get { return (double)MyOwner.Change; }
+      get { return MyOwner.Change; }
     }
 
     double IRangeValueProvider.Value
     {
-      get { return (double)MyOwner.Value; }
+      get { return MyOwner.Value; }
     }
 
     #endregion IRangeValueProvider Members

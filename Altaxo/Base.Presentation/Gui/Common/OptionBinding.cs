@@ -80,18 +80,18 @@ namespace Altaxo.Gui.Common
       if (!regex.IsMatch(propertyName))
         throw new ArgumentException("parameter must have the following format: namespace:ClassName.FieldOrProperty", "propertyName");
 
-      this.FullPropertyName = propertyName;
+      FullPropertyName = propertyName;
     }
 
     public OptionBinding(Type container, string propertyName)
     {
-      this.propertyDeclaringType = container;
+      propertyDeclaringType = container;
       this.propertyName = propertyName;
     }
 
     public override object ProvideValue(IServiceProvider provider)
     {
-      IProvideValueTarget service = (IProvideValueTarget)provider.GetService(typeof(IProvideValueTarget));
+      var service = (IProvideValueTarget)provider.GetService(typeof(IProvideValueTarget));
 
       if (service == null)
         return null;
@@ -105,20 +105,20 @@ namespace Altaxo.Gui.Common
       if (FullPropertyName != null)
       {
         string[] name = FullPropertyName.Split('.');
-        IXamlTypeResolver typeResolver = provider.GetService(typeof(IXamlTypeResolver)) as IXamlTypeResolver;
+        var typeResolver = provider.GetService(typeof(IXamlTypeResolver)) as IXamlTypeResolver;
         propertyDeclaringType = typeResolver.Resolve(name[0]);
         propertyName = name[1];
       }
 
-      this.propertyInfo = propertyDeclaringType.GetProperty(propertyName);
-      if (this.propertyInfo != null)
+      propertyInfo = propertyDeclaringType.GetProperty(propertyName);
+      if (propertyInfo != null)
       {
         isStatic = (propertyInfo as PropertyInfo).GetGetMethod().IsStatic;
       }
       else
       {
-        this.propertyInfo = propertyDeclaringType.GetField(propertyName);
-        if (this.propertyInfo != null)
+        propertyInfo = propertyDeclaringType.GetField(propertyName);
+        if (propertyInfo != null)
         {
           isStatic = (propertyInfo as FieldInfo).IsStatic;
         }
@@ -140,13 +140,13 @@ namespace Altaxo.Gui.Common
       {
         object result = null;
 
-        if (this.propertyInfo is PropertyInfo)
+        if (propertyInfo is PropertyInfo)
         {
           result = (propertyInfo as PropertyInfo).GetValue(instance, null);
         }
         else
         {
-          if (this.propertyInfo is FieldInfo)
+          if (propertyInfo is FieldInfo)
             result = (propertyInfo as FieldInfo).GetValue(instance);
         }
 
@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Common
       }
       catch (Exception e)
       {
-        throw new Exception("Failing to convert " + this.FullPropertyName + " to " +
+        throw new Exception("Failing to convert " + FullPropertyName + " to " +
                             dp.OwnerType.Name + "." + dp.Name + " (" + dp.PropertyType + ")", e);
       }
     }

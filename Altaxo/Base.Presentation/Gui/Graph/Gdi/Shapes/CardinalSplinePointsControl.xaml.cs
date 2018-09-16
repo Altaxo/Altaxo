@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,6 +30,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using Altaxo.Geometry;
+using Altaxo.Graph;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -129,7 +129,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       get
       {
-        List<PointD2D> pts = new List<PointD2D>();
+        var pts = new List<PointD2D>();
         foreach (var p in _curvePoints)
           pts.Add(new PointD2D(p.X, p.Y));
         return pts;

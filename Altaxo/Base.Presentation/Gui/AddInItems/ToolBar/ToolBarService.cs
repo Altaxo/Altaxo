@@ -16,13 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.AddInItems;
-using Altaxo.Main.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.AddInItems;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.AddInItems
 {
@@ -54,11 +54,11 @@ namespace Altaxo.Gui.AddInItems
 
     private static IList CreateToolBarItems(UIElement inputBindingOwner, IEnumerable descriptors)
     {
-      List<object> result = new List<object>();
+      var result = new List<object>();
       foreach (ToolbarItemDescriptor descriptor in descriptors)
       {
         object item = CreateToolBarItemFromDescriptor(inputBindingOwner, descriptor);
-        IMenuItemBuilder submenuBuilder = item as IMenuItemBuilder;
+        var submenuBuilder = item as IMenuItemBuilder;
         if (submenuBuilder != null)
         {
           result.AddRange(submenuBuilder.BuildItems(descriptor.Codon, descriptor.Parameter));
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.AddInItems
       {
         if (managerType == typeof(LanguageChangeWeakEventManager))
         {
-          MenuService.UpdateText(this.ItemsSource);
+          MenuService.UpdateText(ItemsSource);
           return true;
         }
         return false;
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.AddInItems
       {
         return null;
       }
-      List<ToolBar> toolBars = new List<ToolBar>();
+      var toolBars = new List<ToolBar>();
       foreach (AddInTreeNode childNode in treeNode.ChildNodes.Values)
       {
         toolBars.Add(CreateToolBar(inputBindingOwner, owner, childNode));
@@ -196,25 +196,31 @@ namespace Altaxo.Gui.AddInItems
       bool isLabel = false;
       if (codon.Properties.Contains("icon"))
       {
-        image = new Image();
-        image.Source = PresentationResourceService.GetBitmapSource(StringParser.Parse(codon.Properties["icon"]));
-        image.Height = 16;
+        image = new Image
+        {
+          Source = PresentationResourceService.GetBitmapSource(StringParser.Parse(codon.Properties["icon"])),
+          Height = 16
+        };
         image.SetResourceReference(FrameworkElement.StyleProperty, ToolBarService.ImageStyleKey);
         isImage = true;
       }
       if (codon.Properties.Contains("label"))
       {
-        label = new Label();
-        label.Content = StringParser.Parse(codon.Properties["label"]);
-        label.Padding = new Thickness(0);
-        label.VerticalContentAlignment = VerticalAlignment.Center;
+        label = new Label
+        {
+          Content = StringParser.Parse(codon.Properties["label"]),
+          Padding = new Thickness(0),
+          VerticalContentAlignment = VerticalAlignment.Center
+        };
         isLabel = true;
       }
 
       if (isImage && isLabel)
       {
-        StackPanel panel = new StackPanel();
-        panel.Orientation = Orientation.Horizontal;
+        var panel = new StackPanel
+        {
+          Orientation = Orientation.Horizontal
+        };
         image.Margin = new Thickness(0, 0, 5, 0);
         panel.Children.Add(image);
         panel.Children.Add(label);

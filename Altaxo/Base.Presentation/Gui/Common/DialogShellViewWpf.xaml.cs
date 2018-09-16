@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +29,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Common
 {
@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Common
     /// </remarks>
     protected override Size MeasureOverride(Size availableSize)
     {
-      _workArea = Current.Gui.GetScreenInformation(this.Left, this.Top);
+      _workArea = Current.Gui.GetScreenInformation(Left, Top);
 
       var thisWindowPresentationSource = PresentationSource.FromVisual(this);
       var m = thisWindowPresentationSource.CompositionTarget.TransformToDevice;
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Common
       // TODO is this working for arrangments of monitors with different dpi settings, too?
       _workArea = new RectangleD2D(_workArea.X / thisDpiWidthFactor, _workArea.Y / thisDpiHeightFactor, _workArea.Width / thisDpiWidthFactor, _workArea.Height / thisDpiHeightFactor);
 
-      if (!this.IsLoaded) // when the dialog is initially loaded
+      if (!IsLoaded) // when the dialog is initially loaded
       {
         // adjust the size of the dialog box so that is is maximum the size of the working area
         if (availableSize.Height > _workArea.Height)
@@ -91,13 +91,13 @@ namespace Altaxo.Gui.Common
         if (availableSize.Width > _workArea.Width)
           availableSize.Width = _workArea.Width;
       }
-      else if (this.SizeToContent == System.Windows.SizeToContent.WidthAndHeight) // when the content size changed and the user had not manually resized the box
+      else if (SizeToContent == System.Windows.SizeToContent.WidthAndHeight) // when the content size changed and the user had not manually resized the box
       {
         // adjust the size of the dialog box so that it fits inside of the working area (without changing the position of the dialog
-        if (this.Top + availableSize.Height > _workArea.Bottom)
-          availableSize.Height = _workArea.Bottom - this.Top;
-        if (this.Left + availableSize.Width > _workArea.Right)
-          availableSize.Width = _workArea.Right - this.Left;
+        if (Top + availableSize.Height > _workArea.Bottom)
+          availableSize.Height = _workArea.Bottom - Top;
+        if (Left + availableSize.Width > _workArea.Right)
+          availableSize.Width = _workArea.Right - Left;
       }
 
       if (availableSize.Height < 0)
@@ -113,13 +113,13 @@ namespace Altaxo.Gui.Common
     /// <returns>A <see cref="T:System.Windows.Size"/> that reflects the actual size that was used.</returns>
     protected override Size ArrangeOverride(Size arrangeBounds)
     {
-      if (!this.IsLoaded) // when the dialog is initially loaded
+      if (!IsLoaded) // when the dialog is initially loaded
       {
         // adjust the top and left position of the dialog if neccessary so that the dialog box fits inside the working area
-        if (this.Top + arrangeBounds.Height > _workArea.Bottom)
-          this.Top = _workArea.Bottom - arrangeBounds.Height;
-        if (this.Left + arrangeBounds.Width > _workArea.Right)
-          this.Left = _workArea.Right - arrangeBounds.Width;
+        if (Top + arrangeBounds.Height > _workArea.Bottom)
+          Top = _workArea.Bottom - arrangeBounds.Height;
+        if (Left + arrangeBounds.Width > _workArea.Right)
+          Left = _workArea.Right - arrangeBounds.Width;
       }
 
       return base.ArrangeOverride(arrangeBounds);
@@ -153,14 +153,14 @@ namespace Altaxo.Gui.Common
 
       if (!eventArgs.Cancel)
       {
-        this.DialogResult = true;
+        DialogResult = true;
       }
     }
 
     private void EhButtonCancelPressed(object sender, RoutedEventArgs e)
     {
       ButtonCancelPressed?.Invoke();
-      this.DialogResult = false;
+      DialogResult = false;
     }
 
     private void EhButtonApplyPressed(object sender, RoutedEventArgs e)

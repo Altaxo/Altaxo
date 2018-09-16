@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +35,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 
 namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 {
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       InitializeComponent();
 
       // set the item template of current items to a more appropriate template
-      var currentItemsTemplate = this.FindResource("CurrentItemsTemplateResource") as DataTemplate;
+      var currentItemsTemplate = FindResource("CurrentItemsTemplateResource") as DataTemplate;
       _guiSL.CurrentItemsTemplate = currentItemsTemplate;
     }
 
@@ -416,7 +416,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
     {
       get
       {
-        return this.FindResource("CurrentItemsTemplateResource") as DataTemplate;
+        return FindResource("CurrentItemsTemplateResource") as DataTemplate;
       }
     }
   }

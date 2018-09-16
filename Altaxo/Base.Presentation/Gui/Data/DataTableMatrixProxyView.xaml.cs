@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Data
 
     private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
     {
-      GuiHelper.SynchronizeSelectionFromGui(this._guiAvailableTables);
+      GuiHelper.SynchronizeSelectionFromGui(_guiAvailableTables);
       if (null != SelectedTableChanged)
         SelectedTableChanged();
     }
@@ -136,12 +136,12 @@ namespace Altaxo.Gui.Data
 
     public void Initialize_XColumn(string colname)
     {
-      this._guiXColumnName.Text = colname;
+      _guiXColumnName.Text = colname;
     }
 
     public void Initialize_YColumn(string colname)
     {
-      this._guiYColumName.Text = colname;
+      _guiYColumName.Text = colname;
     }
 
     public bool AreDataColumnsShown

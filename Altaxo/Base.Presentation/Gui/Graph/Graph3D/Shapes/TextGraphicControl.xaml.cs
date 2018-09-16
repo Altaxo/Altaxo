@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D;
-using Altaxo.Graph.Graph3D.Background;
-using Altaxo.Gui.Graph.Graph3D.Background;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing.D3D;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Graph.Graph3D.Background;
+using Altaxo.Gui.Graph.Graph3D.Background;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
@@ -47,9 +47,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
     {
       InitializeComponent();
 
-      _backgroundGlue = new BackgroundControlsGlue();
-      _backgroundGlue.CbStyle = _cbBackgroundStyle;
-      _backgroundGlue.CbBrush = _cbBackgroundBrush;
+      _backgroundGlue = new BackgroundControlsGlue
+      {
+        CbStyle = _cbBackgroundStyle,
+        CbBrush = _cbBackgroundBrush
+      };
       _backgroundGlue.BackgroundStyleChanged += new EventHandler(EhBackgroundStyleChanged);
       _backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
 
@@ -235,7 +237,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     public void InsertBeforeAndAfterSelectedText(string insbefore, string insafter)
     {
-      if (0 != this.m_edText.SelectionLength)
+      if (0 != m_edText.SelectionLength)
       {
         // insert \b( at beginning of selection and ) at the end of the selection
         int len = m_edText.Text.Length;
@@ -252,7 +254,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
     public void RevertToNormal()
     {
       // remove a backslash x ( at the beginning and the closing brace at the end of the selection
-      if (this.m_edText.SelectionLength >= 4)
+      if (m_edText.SelectionLength >= 4)
       {
         int len = m_edText.Text.Length;
         int start = m_edText.SelectionStart;
@@ -287,7 +289,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
     private void EhLoaded(object sender, RoutedEventArgs e)
     {
-      this.m_edText.Focus();
+      m_edText.Focus();
     }
 
     private void EhMoreModifiersClicked(object sender, RoutedEventArgs e)

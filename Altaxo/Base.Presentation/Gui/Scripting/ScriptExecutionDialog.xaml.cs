@@ -107,7 +107,7 @@ namespace Altaxo.Gui.Scripting
       ShowBackgroundCancelControl(false);
 
       if (!_controller.HasExecutionErrors())
-        this.DialogResult = true;
+        DialogResult = true;
     }
 
     private void EhScriptExecutionStartDelayExpired()
@@ -119,11 +119,11 @@ namespace Altaxo.Gui.Scripting
     {
       if (showIt)
       {
-        this._backgroundCancelControl.Visibility = System.Windows.Visibility.Visible;
+        _backgroundCancelControl.Visibility = System.Windows.Visibility.Visible;
       }
       else
       {
-        this._backgroundCancelControl.Visibility = System.Windows.Visibility.Hidden;
+        _backgroundCancelControl.Visibility = System.Windows.Visibility.Hidden;
       }
     }
   }

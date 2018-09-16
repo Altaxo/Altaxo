@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui.Common.Drawing;
-using Altaxo.Gui.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common.Drawing;
+using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -52,10 +52,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       InitializeComponent();
 
-      _strokePenGlue = new PenControlsGlue();
-      _strokePenGlue.CbBrush = _guiPenColor;
-      _strokePenGlue.CbEndCap = _guiLineEndCap;
-      _strokePenGlue.CbDashPattern = _guiDashPattern;
+      _strokePenGlue = new PenControlsGlue
+      {
+        CbBrush = _guiPenColor,
+        CbEndCap = _guiLineEndCap,
+        CbDashPattern = _guiDashPattern
+      };
     }
 
     #region IErrorBarPlotStyleView Members
@@ -99,7 +101,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public bool IgnoreMissingDataPoints
     {
       get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
-      set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+      set { _guiIgnoreMissingDataPoints.IsChecked = value; }
     }
 
     public bool IndependentOnShiftingGroupStyles
@@ -318,64 +320,64 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void Initialize_CommonErrorColumn(string boxText, string toolTip, int status)
     {
-      this._guiCommonErrorColumn.Text = boxText;
-      this._guiCommonErrorColumn.ToolTip = toolTip;
-      this._guiCommonErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+      _guiCommonErrorColumn.Text = boxText;
+      _guiCommonErrorColumn.ToolTip = toolTip;
+      _guiCommonErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
     }
 
     public void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
     {
       if (null == transformationTextToShow)
       {
-        this._guiCommonErrorColumnTransformation.Visibility = Visibility.Collapsed;
+        _guiCommonErrorColumnTransformation.Visibility = Visibility.Collapsed;
       }
       else
       {
-        this._guiCommonErrorColumnTransformation.Text = transformationTextToShow;
-        this._guiCommonErrorColumnTransformation.ToolTip = transformationToolTip;
-        this._guiCommonErrorColumnTransformation.Visibility = Visibility.Visible;
+        _guiCommonErrorColumnTransformation.Text = transformationTextToShow;
+        _guiCommonErrorColumnTransformation.ToolTip = transformationToolTip;
+        _guiCommonErrorColumnTransformation.Visibility = Visibility.Visible;
       }
     }
 
     public void Initialize_PositiveErrorColumn(string boxText, string toolTip, int status)
     {
-      this._guiPositiveErrorColumn.Text = boxText;
-      this._guiPositiveErrorColumn.ToolTip = toolTip;
-      this._guiPositiveErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+      _guiPositiveErrorColumn.Text = boxText;
+      _guiPositiveErrorColumn.ToolTip = toolTip;
+      _guiPositiveErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
     }
 
     public void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
     {
       if (null == transformationTextToShow)
       {
-        this._guiPositiveErrorColumnTransformation.Visibility = Visibility.Collapsed;
+        _guiPositiveErrorColumnTransformation.Visibility = Visibility.Collapsed;
       }
       else
       {
-        this._guiPositiveErrorColumnTransformation.Text = transformationTextToShow;
-        this._guiPositiveErrorColumnTransformation.ToolTip = transformationToolTip;
-        this._guiPositiveErrorColumnTransformation.Visibility = Visibility.Visible;
+        _guiPositiveErrorColumnTransformation.Text = transformationTextToShow;
+        _guiPositiveErrorColumnTransformation.ToolTip = transformationToolTip;
+        _guiPositiveErrorColumnTransformation.Visibility = Visibility.Visible;
       }
     }
 
     public void Initialize_NegativeErrorColumn(string boxText, string toolTip, int status)
     {
-      this._guiNegativeErrorColumn.Text = boxText;
-      this._guiNegativeErrorColumn.ToolTip = toolTip;
-      this._guiNegativeErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+      _guiNegativeErrorColumn.Text = boxText;
+      _guiNegativeErrorColumn.ToolTip = toolTip;
+      _guiNegativeErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
     }
 
     public void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
     {
       if (null == transformationTextToShow)
       {
-        this._guiNegativeErrorColumnTransformation.Visibility = Visibility.Collapsed;
+        _guiNegativeErrorColumnTransformation.Visibility = Visibility.Collapsed;
       }
       else
       {
-        this._guiNegativeErrorColumnTransformation.Text = transformationTextToShow;
-        this._guiNegativeErrorColumnTransformation.ToolTip = transformationToolTip;
-        this._guiNegativeErrorColumnTransformation.Visibility = Visibility.Visible;
+        _guiNegativeErrorColumnTransformation.Text = transformationTextToShow;
+        _guiNegativeErrorColumnTransformation.ToolTip = transformationToolTip;
+        _guiNegativeErrorColumnTransformation.Visibility = Visibility.Visible;
       }
     }
 

@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,6 +30,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Common
 {
@@ -258,9 +258,8 @@ namespace Altaxo.Gui.Common
     /// <returns>The converted quantity.</returns>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
-      DimensionfulQuantity q;
       string s = (string)value;
-      var result = ConvertValidate(s, out q); // do not use culture parameter here, it is sometimes different from UICulture
+      var result = ConvertValidate(s, out var q); // do not use culture parameter here, it is sometimes different from UICulture
       if (result.IsValid)
       {
         _lastConvertedString = s;
@@ -277,9 +276,8 @@ namespace Altaxo.Gui.Common
     /// <returns>A validation result depending on the result of the validation.</returns>
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
-      DimensionfulQuantity q;
       string s = (string)value;
-      var result = ConvertValidate(s, out q);
+      var result = ConvertValidate(s, out var q);
       if (result.IsValid)
       {
         _lastConvertedString = s;
@@ -427,7 +425,7 @@ namespace Altaxo.Gui.Common
 
     private string GetErrorStringForUnrecognizedUnit(string unrecognizedPart)
     {
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
       stb.AppendFormat("The part \"{0}\" of your entered text is not recognized as a valid unit!\n", unrecognizedPart);
       stb.AppendFormat("Valid units are: \n");
 
@@ -642,7 +640,7 @@ namespace Altaxo.Gui.Common
         if (null != _unitEnvironment)
           _unitEnvironment.NumberOfDisplayedDigits = digits;
 
-        this.EhNumberOfDisplayedDigitsChanged();
+        EhNumberOfDisplayedDigitsChanged();
       }
     }
 

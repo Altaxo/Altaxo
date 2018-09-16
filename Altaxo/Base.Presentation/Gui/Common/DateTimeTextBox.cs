@@ -51,15 +51,17 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public DateTimeTextBox()
     {
-      var binding = new Binding();
-      binding.Source = this;
-      binding.Path = new PropertyPath("SelectedValue");
-      binding.Mode = BindingMode.TwoWay;
-      binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+      var binding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath("SelectedValue"),
+        Mode = BindingMode.TwoWay,
+        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+      };
       _converter = new DateTimeConverter();
       binding.Converter = _converter;
       binding.ValidationRules.Add(_converter);
-      this.SetBinding(TextBox.TextProperty, binding);
+      SetBinding(TextBox.TextProperty, binding);
     }
 
     #region Change selection behaviour

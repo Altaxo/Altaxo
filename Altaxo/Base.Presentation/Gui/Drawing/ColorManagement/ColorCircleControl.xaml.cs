@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +37,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
@@ -134,13 +134,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private void EhColorCircleModelSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      GuiHelper.SynchronizeSelectionFromGui(this._guiColorCircleModel);
+      GuiHelper.SynchronizeSelectionFromGui(_guiColorCircleModel);
       ColorCircleModelChanged?.Invoke();
     }
 
     private void EhColorVariationSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      GuiHelper.SynchronizeSelectionFromGui(this._guiColorVariation);
+      GuiHelper.SynchronizeSelectionFromGui(_guiColorVariation);
       ColorVariationModelChanged?.Invoke();
     }
 
@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private void EhNumberOfShadesChangedByUpDown(object sender, RoutedPropertyChangedEventArgs<int> e)
     {
-      if (this.IsLoaded)
+      if (IsLoaded)
       {
         int n = e.NewValue;
         _guiNumberOfShadesSlider.Value = n;
@@ -187,7 +187,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private void EhNumberOfShadesChangedBySlider(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-      if (this.IsLoaded)
+      if (IsLoaded)
       {
         int n = (int)Math.Round(e.NewValue);
         _guiNumberOfShadesUpDown.Value = n;

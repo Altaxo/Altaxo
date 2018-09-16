@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       if (null != action)
       {
         //System.Diagnostics.Debug.WriteLine("Before firing event RenderTriggered");
-        action(this.ActualWidth, this.ActualHeight);
+        action(ActualWidth, ActualHeight);
         //System.Diagnostics.Debug.WriteLine("After firing event RenderTriggered");
       }
     }

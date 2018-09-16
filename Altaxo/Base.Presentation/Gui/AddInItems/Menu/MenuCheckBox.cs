@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.AddInItems;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.AddInItems
 {
@@ -35,28 +35,28 @@ namespace Altaxo.Gui.AddInItems
     public MenuCheckBox(UIElement inputBindingOwner, Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
       : base(codon, caller, conditions)
     {
-      this.Command = CommandWrapper.CreateCommand(codon, conditions);
-      this.CommandParameter = caller;
+      Command = CommandWrapper.CreateCommand(codon, conditions);
+      CommandParameter = caller;
 
-      cmd = CommandWrapper.Unwrap(this.Command) as ICheckableMenuCommand;
+      cmd = CommandWrapper.Unwrap(Command) as ICheckableMenuCommand;
       if (cmd != null)
       {
         isCheckedChangedHandler = cmd_IsCheckedChanged;
         cmd.IsCheckedChanged += isCheckedChangedHandler;
-        this.IsChecked = cmd.IsChecked(caller);
+        IsChecked = cmd.IsChecked(caller);
       }
 
       if (!string.IsNullOrEmpty(codon.Properties["shortcut"]))
       {
         KeyGesture kg = MenuService.ParseShortcut(codon.Properties["shortcut"]);
-        MenuCommand.AddGestureToInputBindingOwner(inputBindingOwner, kg, this.Command, null);
-        this.InputGestureText = MenuService.GetDisplayStringForShortcut(kg);
+        MenuCommand.AddGestureToInputBindingOwner(inputBindingOwner, kg, Command, null);
+        InputGestureText = MenuService.GetDisplayStringForShortcut(kg);
       }
     }
 
     private void cmd_IsCheckedChanged(object sender, EventArgs e)
     {
-      this.IsChecked = cmd.IsChecked(_caller);
+      IsChecked = cmd.IsChecked(_caller);
     }
   }
 }

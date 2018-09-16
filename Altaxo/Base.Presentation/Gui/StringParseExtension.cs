@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Windows.Markup;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Common;
 using Altaxo.Main.Services;
-using System;
-using System.Windows.Markup;
 
 namespace Altaxo.Gui
 {
@@ -37,7 +37,7 @@ namespace Altaxo.Gui
     public StringParseExtension(string text)
     {
       this.text = text;
-      this.UsesAccessors = true;
+      UsesAccessors = true;
     }
 
     /// <summary>

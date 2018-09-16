@@ -47,25 +47,25 @@ namespace Altaxo.Gui.Worksheet
       cbCalibrationModelTable.Items.Clear();
       cbCalibrationModelTable.ItemsSource = tables;
       if (tables.Length > 0)
-        this.cbCalibrationModelTable.SelectedIndex = 0;
+        cbCalibrationModelTable.SelectedIndex = 0;
     }
 
     public void InitializeDestinationTables(string[] tables)
     {
-      this.cbDestinationTable.Items.Clear();
-      this.cbDestinationTable.ItemsSource = tables;
+      cbDestinationTable.Items.Clear();
+      cbDestinationTable.ItemsSource = tables;
       if (tables.Length > 0)
-        this.cbDestinationTable.SelectedIndex = 0;
+        cbDestinationTable.SelectedIndex = 0;
     }
 
     public int GetCalibrationTableChoice()
     {
-      return this.cbCalibrationModelTable.SelectedIndex;
+      return cbCalibrationModelTable.SelectedIndex;
     }
 
     public int GetDestinationTableChoice()
     {
-      return this.cbDestinationTable.SelectedIndex;
+      return cbDestinationTable.SelectedIndex;
     }
 
     #endregion IPLSPredictValueView

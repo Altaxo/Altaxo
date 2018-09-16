@@ -165,10 +165,9 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     /// <returns>The information about that type, or <c>null</c> if no information is found.</returns>
     private static ItemsControlInformation FindItemsControlInformation(ItemsControl itemsControl)
     {
-      ItemsControlInformation info;
 
       Type itemsControlType = itemsControl.GetType();
-      if (_itemsControlRegistrationDict.TryGetValue(itemsControlType, out info))
+      if (_itemsControlRegistrationDict.TryGetValue(itemsControlType, out var info))
         return info;
 
       while (itemsControlType != typeof(ItemsControl))
@@ -313,8 +312,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
 
     public static UIElement GetItemContainer(this ItemsControl itemsControl, UIElement child)
     {
-      bool isItemContainer;
-      var itemType = GetItemContainerType(itemsControl, out isItemContainer);
+      var itemType = GetItemContainerType(itemsControl, out var isItemContainer);
 
       if (itemType != null)
       {
@@ -342,8 +340,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     public static UIElement GetItemContainerAt(this ItemsControl itemsControl, Point position,
                                                Orientation searchDirection)
     {
-      bool isItemContainer;
-      var itemContainerType = GetItemContainerType(itemsControl, out isItemContainer);
+      var itemContainerType = GetItemContainerType(itemsControl, out var isItemContainer);
 
       Geometry hitTestGeometry;
 

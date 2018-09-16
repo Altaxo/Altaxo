@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
@@ -44,10 +44,12 @@ namespace Altaxo.Gui.Common
       Children.Clear();
       foreach (var choice in _choices)
       {
-        var rb = new RadioButton();
-        rb.Content = choice.Text;
-        rb.Tag = choice;
-        rb.IsChecked = choice.IsSelected;
+        var rb = new RadioButton
+        {
+          Content = choice.Text,
+          Tag = choice,
+          IsChecked = choice.IsSelected
+        };
         rb.Checked += EhRadioButtonChecked;
         rb.Margin = new Thickness(4, 4, 0, 0);
         Children.Add(rb);

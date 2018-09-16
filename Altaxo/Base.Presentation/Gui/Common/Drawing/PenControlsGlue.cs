@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui.Drawing;
-using Altaxo.Gui.Drawing.DashPatternManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Drawing;
+using Altaxo.Gui.Drawing.DashPatternManagement;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public PenControlsGlue(bool isAllPropertiesGlue)
     {
-      this.InternalSelectedPen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
+      InternalSelectedPen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
       _isAllPropertiesGlue = isAllPropertiesGlue;
     }
 
@@ -196,8 +196,10 @@ namespace Altaxo.Gui.Common.Drawing
           dpd.AddValueChanged(_cbBrush, EhBrush_SelectionChangeCommitted);
           if (!_isAllPropertiesGlue)
           {
-            var menuItem = new MenuItem();
-            menuItem.Header = "Custom Pen ...";
+            var menuItem = new MenuItem
+            {
+              Header = "Custom Pen ..."
+            };
             menuItem.Click += EhShowCustomPenDialog;
             _cbBrush.ContextMenu.Items.Insert(0, menuItem);
           }
@@ -679,12 +681,14 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhShowCustomPenDialog(object sender, EventArgs e)
     {
-      PenAllPropertiesController ctrler = new PenAllPropertiesController((PenX)this.Pen.Clone());
-      ctrler.ShowPlotColorsOnly = this._showPlotColorsOnly;
-      ctrler.ViewObject = new PenAllPropertiesControl();
+      var ctrler = new PenAllPropertiesController(Pen.Clone())
+      {
+        ShowPlotColorsOnly = _showPlotColorsOnly,
+        ViewObject = new PenAllPropertiesControl()
+      };
       if (Current.Gui.ShowDialog(ctrler, "Edit pen properties"))
       {
-        this.Pen = (PenX)ctrler.ModelObject;
+        Pen = (PenX)ctrler.ModelObject;
       }
     }
 

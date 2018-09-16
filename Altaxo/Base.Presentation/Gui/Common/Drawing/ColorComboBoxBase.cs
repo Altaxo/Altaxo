@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
-using Altaxo.Graph;
-using Altaxo.Gui.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +30,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Graph;
+using Altaxo.Gui.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       public override DataTemplate SelectTemplate(object item, DependencyObject container)
       {
-        NGTreeNode node = item as NGTreeNode;
+        var node = item as NGTreeNode;
         if (node != null)
         {
           if (node.Tag is NamedColor)
@@ -236,7 +236,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       color = color.CoerceParentColorSetToNullIfNotMember();
 
-      if (this.ShowPlotColorsOnly && (color.ParentColorSet == null || false == ColorSetManager.Instance.IsPlotColorSet(color.ParentColorSet)))
+      if (ShowPlotColorsOnly && (color.ParentColorSet == null || false == ColorSetManager.Instance.IsPlotColorSet(color.ParentColorSet)))
       {
         return ColorSetManager.Instance.BuiltinDarkPlotColors[0];
       }
@@ -323,7 +323,7 @@ namespace Altaxo.Gui.Common.Drawing
         }
         else if (newSelection.Tag is IColorSet)
         {
-          IColorSet cset = (IColorSet)newSelection.Tag;
+          var cset = (IColorSet)newSelection.Tag;
           if (cset.Count > 0)
           {
             InternalSelectedColor = cset[0];
@@ -386,7 +386,7 @@ namespace Altaxo.Gui.Common.Drawing
       var user = new NGTreeNode() { Text = "User", Tag = Altaxo.Main.ItemDefinitionLevel.UserDefined };
       var proj = new NGTreeNode() { Text = "Project", Tag = Altaxo.Main.ItemDefinitionLevel.Project };
 
-      bool showPlotColorsOnly = this.ShowPlotColorsOnly;
+      bool showPlotColorsOnly = ShowPlotColorsOnly;
 
       foreach (var set in _colorSetManager.GetEntryValues())
       {
@@ -425,7 +425,7 @@ namespace Altaxo.Gui.Common.Drawing
     /// </summary>
     protected virtual void UpdateTreeViewSelection()
     {
-      var selColor = this.InternalSelectedColor;
+      var selColor = InternalSelectedColor;
 
       GuiTreeView.ItemsSource = null;
       _treeRootNode.FromHereToLeavesDo(node => { node.IsExpanded = false; node.IsSelected = false; }); // deselect and collapse all nodes
@@ -436,8 +436,7 @@ namespace Altaxo.Gui.Common.Drawing
         Altaxo.Main.ItemDefinitionLevel level = Altaxo.Main.ItemDefinitionLevel.Project;
 
         bool isPlotColorSet = false;
-        ColorSetManagerEntryValue colorSetEntry;
-        if (selColor.ParentColorSet != null && ColorSetManager.Instance.TryGetList(selColor.ParentColorSet.Name, out colorSetEntry))
+        if (selColor.ParentColorSet != null && ColorSetManager.Instance.TryGetList(selColor.ParentColorSet.Name, out var colorSetEntry))
         {
           isPlotColorSet = colorSetEntry.IsPlotColorSet;
         }
@@ -487,7 +486,7 @@ namespace Altaxo.Gui.Common.Drawing
     /// <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs"/> that contains the event data.</param>
     protected override void OnKeyDown(KeyEventArgs e)
     {
-      if (this.GuiComboBox.IsDropDownOpen)
+      if (GuiComboBox.IsDropDownOpen)
       {
         Key pressedKey = e.Key;
         string pressedString = new KeyConverter().ConvertToInvariantString(pressedKey);
@@ -635,7 +634,7 @@ namespace Altaxo.Gui.Common.Drawing
     protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
     {
       base.OnIsKeyboardFocusWithinChanged(e);
-      if (this.IsTreeDropDownOpen && !base.IsKeyboardFocusWithin && !GuiTreeView.IsKeyboardFocusWithin)
+      if (IsTreeDropDownOpen && !base.IsKeyboardFocusWithin && !GuiTreeView.IsKeyboardFocusWithin)
       {
         IsTreeDropDownOpen = false;
       }

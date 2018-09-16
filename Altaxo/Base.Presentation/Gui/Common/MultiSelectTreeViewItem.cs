@@ -65,9 +65,9 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        for (ItemsControl container = this.ParentItemsControl; container != null; container = ItemsControl.ItemsControlFromItemContainer(container))
+        for (ItemsControl container = ParentItemsControl; container != null; container = ItemsControl.ItemsControlFromItemContainer(container))
         {
-          MultiSelectTreeView view = container as MultiSelectTreeView;
+          var view = container as MultiSelectTreeView;
           if (view != null)
           {
             return view;
@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        return (this.ParentItemsControl as MultiSelectTreeViewItem);
+        return (ParentItemsControl as MultiSelectTreeViewItem);
       }
     }
 
@@ -159,12 +159,12 @@ namespace Altaxo.Gui.Common
 
         if (e.Key == Key.Left)
         {
-          this.IsExpanded = false;
+          IsExpanded = false;
           e.Handled = true;
         }
         else if (e.Key == Key.Right)
         {
-          this.IsExpanded = true;
+          IsExpanded = true;
           e.Handled = true;
         }
         else if (e.Key == Key.Up)
@@ -173,11 +173,11 @@ namespace Altaxo.Gui.Common
           // - the previous at the same level (if this index node is NOT 0)
           // - the parent node (if this index node is 0)
 
-          int currentNodeIndex = this.ParentItemsControl.ItemContainerGenerator.IndexFromContainer(this);
+          int currentNodeIndex = ParentItemsControl.ItemContainerGenerator.IndexFromContainer(this);
 
           if (currentNodeIndex == 0)
           {
-            itemToSelect = this.ParentMultiSelectTreeViewItem;
+            itemToSelect = ParentMultiSelectTreeViewItem;
           }
           else
           {
@@ -194,9 +194,9 @@ namespace Altaxo.Gui.Common
           // - the next at the same level (if this not the last child)
           // - the next at the same level of the parent node (if this is the last child)
 
-          if (this.IsExpanded && this.Items.Count > 0)
+          if (IsExpanded && Items.Count > 0)
           { // Select first Child
-            itemToSelect = this.ItemContainerGenerator.ContainerFromIndex(0) as MultiSelectTreeViewItem;
+            itemToSelect = ItemContainerGenerator.ContainerFromIndex(0) as MultiSelectTreeViewItem;
           }
           else
           {
@@ -204,7 +204,7 @@ namespace Altaxo.Gui.Common
 
             if (itemToSelect == null) // current node has no subsequent node at the same level
             {
-              MultiSelectTreeViewItem tmp = this.ParentMultiSelectTreeViewItem;
+              MultiSelectTreeViewItem tmp = ParentMultiSelectTreeViewItem;
 
               while (itemToSelect == null && tmp != null) // searhing for the first parent that has a subsequent node at the same level
               {
@@ -452,13 +452,13 @@ namespace Altaxo.Gui.Common
       int count = Items.Count;
       for (int i = 0; i < count; ++i)
       {
-        var child = (MultiSelectTreeViewItem)this.ItemContainerGenerator.ContainerFromIndex(i);
+        var child = (MultiSelectTreeViewItem)ItemContainerGenerator.ContainerFromIndex(i);
         child.UnselectAllChildren();
       }
 
-      if (this.IsSelected)
+      if (IsSelected)
       {
-        this.IsSelected = false;
+        IsSelected = false;
         //ParentMultiSelectTreeView.OnSelectionChanges(this);
       }
     }
@@ -468,19 +468,19 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public void SelectAllChildren()
     {
-      if (this.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
+      if (ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
       {
         int count = Items.Count;
         for (int i = 0; i < count; ++i)
         {
-          var child = (MultiSelectTreeViewItem)this.ItemContainerGenerator.ContainerFromIndex(i);
+          var child = (MultiSelectTreeViewItem)ItemContainerGenerator.ContainerFromIndex(i);
           child.SelectAllChildren();
         }
       }
 
-      if (!this.IsSelected)
+      if (!IsSelected)
       {
-        this.IsSelected = true;
+        IsSelected = true;
         //ParentMultiSelectTreeView.OnSelectionChanges(this);
       }
     }
@@ -491,7 +491,7 @@ namespace Altaxo.Gui.Common
     /// <returns>The node depth of the node.</returns>
     public int GetDepth()
     {
-      var parent = this.ParentMultiSelectTreeViewItem;
+      var parent = ParentMultiSelectTreeViewItem;
       int result = 0;
       while (parent != null)
       {

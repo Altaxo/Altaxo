@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       {
         if (parent.Neighbors[i] == null)
         {
-          HexagonButton cell = new HexagonButton(FindResource("HexagonButtonStyle") as Style);
+          var cell = new HexagonButton(FindResource("HexagonButtonStyle") as Style);
           double dx = Canvas.GetLeft(parent) + HexagonButton.Offset * Math.Cos(i * Math.PI / 3d);
           double dy = Canvas.GetTop(parent) + HexagonButton.Offset * Math.Sin(i * Math.PI / 3d);
           Canvas.SetLeft(cell, dx);
@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       float delta = 1f / MaxGenerations;
       float ceiling = 0.99f;
 
-      System.Collections.Generic.List<HexagonButton> visitedNodes =
+      var visitedNodes =
           new System.Collections.Generic.List<HexagonButton>(6);
 
       for (int i = 0; i < 6; ++i)
@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     private void cell_Clicked(object sender, RoutedEventArgs e)
     {
-      HexagonButton cell = sender as HexagonButton;
+      var cell = sender as HexagonButton;
 
       _selectedColor = cell.NominalColor;
       FireColorSelected();
@@ -262,7 +262,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     public HexagonButton(Style style)
     {
-      this.Style = style;
+      Style = style;
 
       _neighbors = new HexagonButton[6];
       _nominalColor = Color.FromScRgb(1f, 1f, 1f, 1f);
@@ -298,12 +298,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     private Brush ConstructBackgroundGradient(float inflection)
     {
       Color a = NominalColor, z = Colors.Black;
-      Color m = Color.FromScRgb(a.ScA / 2, a.ScR / 2, a.ScG / 2, a.ScB / 2);
+      var m = Color.FromScRgb(a.ScA / 2, a.ScR / 2, a.ScG / 2, a.ScB / 2);
 
-      LinearGradientBrush lgb = new LinearGradientBrush();
-      lgb.ColorInterpolationMode = ColorInterpolationMode.ScRgbLinearInterpolation;
-      lgb.StartPoint = new Point(0.5, 0);
-      lgb.EndPoint = new Point(0, 0.75);
+      var lgb = new LinearGradientBrush
+      {
+        ColorInterpolationMode = ColorInterpolationMode.ScRgbLinearInterpolation,
+        StartPoint = new Point(0.5, 0),
+        EndPoint = new Point(0, 0.75)
+      };
       lgb.GradientStops.Add(new GradientStop(a, 0d));
       lgb.GradientStops.Add(new GradientStop(m, 0.8 * (1d - inflection)));
       lgb.GradientStops.Add(new GradientStop(z, 1d));

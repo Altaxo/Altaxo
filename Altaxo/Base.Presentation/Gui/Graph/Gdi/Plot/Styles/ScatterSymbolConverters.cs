@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Groups;
-using Altaxo.Graph.Graph2D.Plot.Styles;
-using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,6 +29,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Media;
+using Altaxo.Drawing;
+using Altaxo.Graph.Graph2D.Plot.Groups;
+using Altaxo.Graph.Graph2D.Plot.Styles;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -51,37 +51,39 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
       if (null == symbol)
         return null;
-
-      PathGeometry fill, frame, inset;
-      Brush fillBrush, frameBrush, insetBrush;
-
-      GetPathGeometries(symbol, SymbolSize, out fill, out frame, out inset);
-      GetBrushes(symbol, PlotColor, fill, frame, inset, out fillBrush, out frameBrush, out insetBrush);
+      GetPathGeometries(symbol, SymbolSize, out var fill, out var frame, out var inset);
+      GetBrushes(symbol, PlotColor, fill, frame, inset, out var fillBrush, out var frameBrush, out var insetBrush);
 
       // draws a transparent outline to fix the borders
       var drawingGroup = new DrawingGroup();
 
       if (null != fill)
       {
-        var geometryDrawing = new GeometryDrawing();
-        geometryDrawing.Geometry = fill;
-        geometryDrawing.Brush = fillBrush;
+        var geometryDrawing = new GeometryDrawing
+        {
+          Geometry = fill,
+          Brush = fillBrush
+        };
         drawingGroup.Children.Add(geometryDrawing);
       }
 
       if (null != frame)
       {
-        var geometryDrawing = new GeometryDrawing();
-        geometryDrawing.Geometry = frame;
-        geometryDrawing.Brush = frameBrush;
+        var geometryDrawing = new GeometryDrawing
+        {
+          Geometry = frame,
+          Brush = frameBrush
+        };
         drawingGroup.Children.Add(geometryDrawing);
       }
 
       if (null != inset)
       {
-        var geometryDrawing = new GeometryDrawing();
-        geometryDrawing.Geometry = inset;
-        geometryDrawing.Brush = insetBrush;
+        var geometryDrawing = new GeometryDrawing
+        {
+          Geometry = inset,
+          Brush = insetBrush
+        };
         drawingGroup.Children.Add(geometryDrawing);
       }
 
@@ -109,9 +111,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void GetPathGeometries(IScatterSymbol symbol, double symbolSize, out PathGeometry fill, out PathGeometry frame, out PathGeometry inset)
     {
-      List<List<ClipperLib.IntPoint>> framePolygon, insetPolygon, fillPolygon;
-
-      symbol.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      symbol.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
       fill = fillPolygon == null ? null : GetPathGeometry(fillPolygon, symbolSize);
       frame = framePolygon == null ? null : GetPathGeometry(framePolygon, symbolSize);

@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.AddInItems;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.AddInItems
 {
@@ -52,9 +52,9 @@ namespace Altaxo.Gui.AddInItems
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-        this.Visibility = Visibility.Collapsed;
+        Visibility = Visibility.Collapsed;
       else
-        this.Visibility = Visibility.Visible;
+        Visibility = Visibility.Visible;
     }
   }
 }

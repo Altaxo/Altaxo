@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
-using AUL = Altaxo.Units.Length;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
@@ -33,6 +31,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Units;
+using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph
 {
@@ -80,8 +80,8 @@ namespace Altaxo.Gui.Graph
 
     private void EhLoaded(object sender, RoutedEventArgs e)
     {
-      this._printerStatusCancellationTokenSource = new System.Threading.CancellationTokenSource();
-      this._printerStatusCancellationToken = _printerStatusCancellationTokenSource.Token;
+      _printerStatusCancellationTokenSource = new System.Threading.CancellationTokenSource();
+      _printerStatusCancellationToken = _printerStatusCancellationTokenSource.Token;
 
       System.Threading.Tasks.Task.Factory.StartNew(UpdatePrinterStatusGuiElements, _printerStatusCancellationToken);
     }
@@ -220,7 +220,7 @@ namespace Altaxo.Gui.Graph
         string escapedPrinterName = printerName.Replace("\\", "\\\\");
         //string query = string.Format("SELECT * from Win32_Printer WHERE Name LIKE '%{0}'", escapedPrinterName);
         string query = string.Format("SELECT * from Win32_Printer WHERE Name = '{0}'", escapedPrinterName);
-        ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+        var searcher = new ManagementObjectSearcher(query);
         ManagementObjectCollection coll = searcher.Get();
         foreach (ManagementObject printer in coll)
         {
@@ -239,9 +239,9 @@ namespace Altaxo.Gui.Graph
 
         Current.Dispatcher.InvokeIfRequired(() =>
           {
-            this._guiPrinterStatus.Content = status;
-            this._guiPrinterComment.Content = comment;
-            this._guiPrinterLocation.Content = location;
+            _guiPrinterStatus.Content = status;
+            _guiPrinterComment.Content = comment;
+            _guiPrinterLocation.Content = location;
           });
         System.Threading.Thread.Sleep(100);
       }

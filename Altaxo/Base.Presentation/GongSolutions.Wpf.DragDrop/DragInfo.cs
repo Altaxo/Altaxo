@@ -12,7 +12,6 @@
 
 #endregion Copyright
 
-using GongSolutions.Wpf.DragDrop.Utilities;
 using System;
 using System.Collections;
 using System.Linq;
@@ -20,6 +19,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using GongSolutions.Wpf.DragDrop.Utilities;
 
 namespace GongSolutions.Wpf.DragDrop
 {
@@ -47,17 +47,17 @@ namespace GongSolutions.Wpf.DragDrop
     /// </param>
     public DragInfo(object sender, MouseButtonEventArgs e)
     {
-      this.DragStartPosition = e.GetPosition((IInputElement)sender);
-      this.Effects = DragDropEffects.None;
-      this.MouseButton = e.ChangedButton;
-      this.VisualSource = sender as UIElement;
+      DragStartPosition = e.GetPosition((IInputElement)sender);
+      Effects = DragDropEffects.None;
+      MouseButton = e.ChangedButton;
+      VisualSource = sender as UIElement;
 
       if (sender is ItemsControl)
       {
         var itemsControl = (ItemsControl)sender;
 
-        this.SourceGroup = itemsControl.FindGroup(this.DragStartPosition);
-        this.VisualSourceFlowDirection = itemsControl.GetItemsPanelFlowDirection();
+        SourceGroup = itemsControl.FindGroup(DragStartPosition);
+        VisualSourceFlowDirection = itemsControl.GetItemsPanelFlowDirection();
 
         var sourceItem = e.OriginalSource as UIElement; // If we can't cast object as a UIElement it might be a FrameworkContentElement, if so try and use its parent.
         if (sourceItem == null && e.OriginalSource is FrameworkContentElement)
@@ -77,49 +77,49 @@ namespace GongSolutions.Wpf.DragDrop
         if (item != null)
         {
           // Remember the relative position of the item being dragged
-          this.PositionInDraggedItem = e.GetPosition(item);
+          PositionInDraggedItem = e.GetPosition(item);
 
           var itemParent = ItemsControl.ItemsControlFromItemContainer(item);
 
           if (itemParent != null)
           {
-            this.SourceCollection = itemParent.ItemsSource ?? itemParent.Items;
-            this.SourceIndex = itemParent.ItemContainerGenerator.IndexFromContainer(item);
-            this.SourceItem = itemParent.ItemContainerGenerator.ItemFromContainer(item);
+            SourceCollection = itemParent.ItemsSource ?? itemParent.Items;
+            SourceIndex = itemParent.ItemContainerGenerator.IndexFromContainer(item);
+            SourceItem = itemParent.ItemContainerGenerator.ItemFromContainer(item);
           }
           else
           {
-            this.SourceIndex = -1;
+            SourceIndex = -1;
           }
-          this.SourceItems = itemsControl.GetSelectedItems();
+          SourceItems = itemsControl.GetSelectedItems();
 
           // Some controls (I'm looking at you TreeView!) haven't updated their
           // SelectedItem by this point. Check to see if there 1 or less item in
           // the SourceItems collection, and if so, override the control's
           // SelectedItems with the clicked item.
-          if (this.SourceItems.Cast<object>().Count() <= 1)
+          if (SourceItems.Cast<object>().Count() <= 1)
           {
-            this.SourceItems = Enumerable.Repeat(this.SourceItem, 1);
+            SourceItems = Enumerable.Repeat(SourceItem, 1);
           }
 
-          this.VisualSourceItem = item;
+          VisualSourceItem = item;
         }
         else
         {
-          this.SourceCollection = itemsControl.ItemsSource ?? itemsControl.Items;
+          SourceCollection = itemsControl.ItemsSource ?? itemsControl.Items;
         }
       }
       else
       {
         if (sender is UIElement)
         {
-          this.PositionInDraggedItem = e.GetPosition((UIElement)sender);
+          PositionInDraggedItem = e.GetPosition((UIElement)sender);
         }
       }
 
-      if (this.SourceItems == null)
+      if (SourceItems == null)
       {
-        this.SourceItems = Enumerable.Empty<object>();
+        SourceItems = Enumerable.Empty<object>();
       }
     }
 

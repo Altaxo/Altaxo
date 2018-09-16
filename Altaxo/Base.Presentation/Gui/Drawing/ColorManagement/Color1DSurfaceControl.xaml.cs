@@ -67,12 +67,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       InitializeComponent();
 
-      this.Loaded += EhLoaded;
+      Loaded += EhLoaded;
     }
 
     private void EhLoaded(object sender, RoutedEventArgs e)
     {
-      this.Loaded -= EhLoaded;
+      Loaded -= EhLoaded;
       SetRectanglesLeftBottomOnCanvas();
     }
 
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       if (e.LeftButton == MouseButtonState.Pressed)
       {
-        _initialRectanglePosition = new Point(0, this.SelectionRectangleRelativePosition * _guiCanvas.ActualHeight);
+        _initialRectanglePosition = new Point(0, SelectionRectangleRelativePosition * _guiCanvas.ActualHeight);
         _initialMousePosition = e.GetPosition(_guiCanvas);
         _guiCanvas.CaptureMouse();
         e.Handled = true;
@@ -150,12 +150,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       else if (currentRectanglePositionY > _guiCanvas.ActualHeight)
         currentRectanglePositionY = _guiCanvas.ActualHeight;
 
-      this.SelectionRectangleRelativePosition = currentRectanglePositionY / _guiCanvas.ActualHeight;
+      SelectionRectangleRelativePosition = currentRectanglePositionY / _guiCanvas.ActualHeight;
     }
 
     private void SetRectanglesLeftBottomOnCanvas()
     {
-      double currentRectanglePositionY = this.SelectionRectangleRelativePosition * _guiCanvas.ActualHeight;
+      double currentRectanglePositionY = SelectionRectangleRelativePosition * _guiCanvas.ActualHeight;
 
       Canvas.SetLeft(_guiSelectionRectangle1, 0.5 * _guiCanvas.ActualWidth - 0.5 * _guiSelectionRectangle1.ActualWidth);
       Canvas.SetBottom(_guiSelectionRectangle1, currentRectanglePositionY - 0.5 * _guiSelectionRectangle1.ActualHeight);

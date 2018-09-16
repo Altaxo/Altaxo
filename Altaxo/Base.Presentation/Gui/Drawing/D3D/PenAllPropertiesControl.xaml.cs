@@ -22,14 +22,14 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D;
-using Altaxo.Gui.Drawing.D3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Altaxo.Drawing.D3D;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Gui.Drawing.D3D;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
@@ -44,34 +44,36 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       InitializeComponent();
 
-      _glue = new PenControlsGlue(true);
-      _glue.CbBrush = _cbBrush;
-      _glue.CbLineThickness1 = _cbThickness1;
-      _glue.CbLineThickness2 = _cbThickness2;
-      _glue.CbCrossSection = _guiCrossSection;
+      _glue = new PenControlsGlue(true)
+      {
+        CbBrush = _cbBrush,
+        CbLineThickness1 = _cbThickness1,
+        CbLineThickness2 = _cbThickness2,
+        CbCrossSection = _guiCrossSection,
 
-      _glue.CbLineStartCap = _cbLineStartCap;
-      _glue.CbLineStartCapAbsSize = _cbLineStartCapSize;
-      _glue.CbLineStartCapRelSize = _edLineStartCapRelSize;
+        CbLineStartCap = _cbLineStartCap,
+        CbLineStartCapAbsSize = _cbLineStartCapSize,
+        CbLineStartCapRelSize = _edLineStartCapRelSize,
 
-      _glue.CbLineEndCap = _cbLineEndCap;
-      _glue.CbLineEndCapAbsSize = _cbLineEndCapSize;
-      _glue.CbLineEndCapRelSize = _edLineEndCapRelSize;
+        CbLineEndCap = _cbLineEndCap,
+        CbLineEndCapAbsSize = _cbLineEndCapSize,
+        CbLineEndCapRelSize = _edLineEndCapRelSize,
 
-      _glue.CbDashPattern = _cbDashStyle;
+        CbDashPattern = _cbDashStyle,
 
-      _glue.CbDashStartCap = _cbDashStartCap;
-      _glue.CbDashStartCapAbsSize = _cbDashStartCapSize;
-      _glue.CbDashStartCapRelSize = _edDashStartCapRelSize;
+        CbDashStartCap = _cbDashStartCap,
+        CbDashStartCapAbsSize = _cbDashStartCapSize,
+        CbDashStartCapRelSize = _edDashStartCapRelSize,
 
-      _glue.CbDashEndCap = _cbDashEndCap;
-      _glue.CbDashEndCapAbsSize = _cbDashEndCapSize;
-      _glue.CbDashEndCapRelSize = _edDashEndCapRelSize;
+        CbDashEndCap = _cbDashEndCap,
+        CbDashEndCapAbsSize = _cbDashEndCapSize,
+        CbDashEndCapRelSize = _edDashEndCapRelSize,
 
-      _glue.CbLineJoin = _cbLineJoin;
-      _glue.CbMiterLimit = _cbMiterLimit;
+        CbLineJoin = _cbLineJoin,
+        CbMiterLimit = _cbMiterLimit,
 
-      _glue.PreviewPanel = _previewPanel;
+        PreviewPanel = _previewPanel
+      };
     }
 
     public PenX3D Pen

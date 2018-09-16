@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Common
 {
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Common
       _showUpDownConter = milliSecondsUntilShowUp / TimerTick_ms;
       _thread.Start();
 
-      _timer = new System.Windows.Threading.DispatcherTimer(new TimeSpan(0, 0, 0, 0, TimerTick_ms), System.Windows.Threading.DispatcherPriority.Normal, EhTimer, this.Dispatcher);
+      _timer = new System.Windows.Threading.DispatcherTimer(new TimeSpan(0, 0, 0, 0, TimerTick_ms), System.Windows.Threading.DispatcherPriority.Normal, EhTimer, Dispatcher);
     }
 
     public System.Threading.Thread Thread
@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Common
       {
         if (_monitor.HasReportText)
         {
-          this._guiProgressText.Text = _monitor.GetReportText();
+          _guiProgressText.Text = _monitor.GetReportText();
           double frac = _monitor.GetProgressFraction();
           if (!double.IsNaN(frac))
           {
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Common
 
     private void EhCancelClicked(object sender, RoutedEventArgs e)
     {
-      this._wasCancelledByUser = true;
+      _wasCancelledByUser = true;
       if (_monitor != null)
       {
         _monitor.SetCancellationPending();

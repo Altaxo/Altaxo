@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Windows.Input;
 using Altaxo.Data;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
-using System;
-using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     public ZoomAxesMouseHandler(GraphController grac)
       : base(grac)
     {
-      NextMouseHandlerType = this.GraphToolType;
+      NextMouseHandlerType = GraphToolType;
 
       if (_grac != null)
         _grac.SetPanelCursor(Cursors.SizeAll);
@@ -58,11 +58,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     protected override void FinishDrawing()
     {
-      // we must deduce from layer coordinates back to physical coordinates
-      Logical3D r0, r1;
-      XYPlotLayer layer = this._grac.ActiveLayer as XYPlotLayer;
-      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[0].LayerCoordinates.X, _Points[0].LayerCoordinates.Y, out r0);
-      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[1].LayerCoordinates.X, _Points[1].LayerCoordinates.Y, out r1);
+      var layer = _grac.ActiveLayer as XYPlotLayer;
+      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[0].LayerCoordinates.X, _Points[0].LayerCoordinates.Y, out var r0);
+      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[1].LayerCoordinates.X, _Points[1].LayerCoordinates.Y, out var r1);
 
       double xr0 = r0.RX;
       double yr0 = r0.RY;

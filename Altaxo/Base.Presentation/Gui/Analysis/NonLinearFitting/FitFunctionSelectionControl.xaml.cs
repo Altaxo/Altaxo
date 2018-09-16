@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Graph;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +29,11 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Graph;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         base(text)
       {
         RootNodeType = type;
-        this.Tag = type;
+        Tag = type;
       }
     }
 
@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         : base(text)
       {
         FunctionType = functionType;
-        this.Tag = functionType;
+        Tag = functionType;
       }
     }
 
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         : base(text)
       {
         FunctionInstance = func;
-        this.Tag = func;
+        Tag = func;
       }
     }
 
@@ -162,7 +162,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         : base(text)
       {
         FunctionInfo = func;
-        this.Tag = func;
+        Tag = func;
       }
     }
 
@@ -193,8 +193,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         }
         string rtf = Altaxo.Main.Services.RtfComposerService.GetRtfText(fitInfo.Description, _rtfGraphics, GetRtfBackgroundColor(), 12);
         var stream = new System.IO.MemoryStream(ASCIIEncoding.Default.GetBytes(rtf));
-        this._rtfDescription.SelectAll();
-        this._rtfDescription.Selection.Load(stream, DataFormats.Rtf);
+        _rtfDescription.SelectAll();
+        _rtfDescription.Selection.Load(stream, DataFormats.Rtf);
       }
     }
 
@@ -202,12 +202,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void SetFitFunctions(NGTreeNodeCollection list)
     {
-      this._guiFitFunctions.ItemsSource = list;
+      _guiFitFunctions.ItemsSource = list;
     }
 
     public void SetRtfDocumentation(string rtfString)
     {
-      this._rtfDescription.AppendText(rtfString);
+      _rtfDescription.AppendText(rtfString);
     }
 
     public NamedColor GetRtfBackgroundColor()

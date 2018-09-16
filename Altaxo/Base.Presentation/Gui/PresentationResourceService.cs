@@ -16,14 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Altaxo.Gui.Common;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Altaxo.Gui.Common;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
 {
@@ -109,8 +109,7 @@ namespace Altaxo.Gui
 
       lock (_bitmapCache)
       {
-        BitmapSource bs;
-        if (_bitmapCache.TryGetValue(name, out bs))
+        if (_bitmapCache.TryGetValue(name, out var bs))
           return bs;
 
         var imageObject = _resourceService.GetImageResource(name);

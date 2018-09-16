@@ -22,12 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
-using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Graph3D;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -36,6 +30,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using Altaxo.Drawing;
+using Altaxo.Drawing.D3D;
+using Altaxo.Geometry;
+using Altaxo.Graph;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
 {
@@ -337,8 +337,7 @@ namespace Altaxo.Gui
     protected virtual Typeface InternalToWpf(FontX fontX)
     {
       string fontID = fontX.FontFamilyName + ", " + fontX.Style.ToString();
-      Typeface result;
-      if (!_dictDescriptionStringToWpfTypeface.TryGetValue(fontID, out result))
+      if (!_dictDescriptionStringToWpfTypeface.TryGetValue(fontID, out var result))
       {
         result = _dictDescriptionStringToWpfTypeface.AddOrUpdate(fontID,
           x => CreateNewTypeface(fontX),
@@ -656,18 +655,16 @@ namespace Altaxo.Gui
       /// <returns>The list of polygons which forms the character.</returns>
       protected override RawCharacterOutline GetRawCharacterOutline(char textChar, FontX font, double fontSize)
       {
-        RawCharacterOutline result = new RawCharacterOutline();
+        var result = new RawCharacterOutline();
 
         Typeface typeface = WpfFontManager.ToWpf(font);
         FontFamily fontFamily = typeface.FontFamily;
 
-        GlyphTypeface glyphTypeface;
 
-        if (!typeface.TryGetGlyphTypeface(out glyphTypeface))
+        if (!typeface.TryGetGlyphTypeface(out var glyphTypeface))
           return result;
 
-        ushort glyphNumber;
-        if (!glyphTypeface.CharacterToGlyphMap.TryGetValue(textChar, out glyphNumber))
+        if (!glyphTypeface.CharacterToGlyphMap.TryGetValue(textChar, out var glyphNumber))
           return result;
 
         // Fill in the geometry

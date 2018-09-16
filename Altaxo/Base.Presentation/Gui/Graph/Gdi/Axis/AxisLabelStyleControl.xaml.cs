@@ -47,14 +47,18 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     public AxisLabelStyleControl()
     {
       InitializeComponent();
-      _backgroundGlue = new BackgroundControlsGlue();
-      _backgroundGlue.CbBrush = _cbBackgroundBrush;
-      _backgroundGlue.CbStyle = _cbBackgroundStyle;
+      _backgroundGlue = new BackgroundControlsGlue
+      {
+        CbBrush = _cbBackgroundBrush,
+        CbStyle = _cbBackgroundStyle
+      };
 
-      _fontGlue = new GdiFontGlue();
-      _fontGlue.GuiFontFamily = m_cbFontFamily;
-      _fontGlue.GuiFontStyle = m_cbFontStyle;
-      _fontGlue.GuiFontSize = m_cbFontSize;
+      _fontGlue = new GdiFontGlue
+      {
+        GuiFontFamily = m_cbFontFamily,
+        GuiFontStyle = m_cbFontStyle,
+        GuiFontSize = m_cbFontSize
+      };
     }
 
     public event Action LabelStyleChanged;
@@ -124,8 +128,8 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       set
       {
         _chkAutomaticAlignment.IsChecked = value;
-        this.m_cbHorizontalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
-        this.m_cbVerticalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
+        m_cbHorizontalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
+        m_cbVerticalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
       }
     }
 
@@ -133,11 +137,11 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       get
       {
-        return this.m_edRotation.SelectedQuantityAsValueInDegrees;
+        return m_edRotation.SelectedQuantityAsValueInDegrees;
       }
       set
       {
-        this.m_edRotation.SelectedQuantityAsValueInDegrees = value;
+        m_edRotation.SelectedQuantityAsValueInDegrees = value;
       }
     }
 
@@ -145,11 +149,11 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       get
       {
-        return this.m_edXOffset.SelectedQuantityAsValueInSIUnits;
+        return m_edXOffset.SelectedQuantityAsValueInSIUnits;
       }
       set
       {
-        this.m_edXOffset.SelectedQuantityAsValueInSIUnits = value;
+        m_edXOffset.SelectedQuantityAsValueInSIUnits = value;
       }
     }
 
@@ -161,13 +165,13 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
       set
       {
-        this.m_edYOffset.SelectedQuantityAsValueInSIUnits = value;
+        m_edYOffset.SelectedQuantityAsValueInSIUnits = value;
       }
     }
 
     public void LabelStyle_Initialize(Collections.SelectableListNodeList items)
     {
-      GuiHelper.Initialize(this.m_cbLabelStyle, items);
+      GuiHelper.Initialize(m_cbLabelStyle, items);
     }
 
     public string SuppressedLabelsByValue

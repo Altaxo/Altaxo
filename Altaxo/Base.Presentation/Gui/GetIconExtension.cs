@@ -38,7 +38,7 @@ namespace Altaxo.Gui
 
     public GetIconExtension(string key)
     {
-      this._key = key;
+      _key = key;
     }
 
     public override object ProvideValue(IServiceProvider serviceProvider)

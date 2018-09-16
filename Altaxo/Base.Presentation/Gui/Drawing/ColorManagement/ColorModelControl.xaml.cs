@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       _colorModel = new ColorModelRGB();
       _altColorModel = new TextOnlyColorModelRGB();
 
-      this.Loaded += EhLoaded;
+      Loaded += EhLoaded;
     }
 
     private void EhLoaded(object sender, RoutedEventArgs e)

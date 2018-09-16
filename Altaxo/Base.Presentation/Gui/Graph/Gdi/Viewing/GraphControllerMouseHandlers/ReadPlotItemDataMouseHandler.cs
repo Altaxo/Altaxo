@@ -22,17 +22,17 @@
 
 #endregion Copyright
 
+using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
+using System.Windows.Input;
 using Altaxo.Data;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Plot.Data;
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Runtime.InteropServices;
-using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -98,24 +98,20 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       base.OnMouseDown(position, e);
 
       var graphXY = _grac.ConvertMouseToRootLayerCoordinates(position);
-
-      // search for a object first
-      IHitTestObject clickedObject;
-      int[] clickedLayerNumber = null;
-      _grac.FindGraphObjectAtPixelPosition(position, true, out clickedObject, out clickedLayerNumber);
+      _grac.FindGraphObjectAtPixelPosition(position, true, out var clickedObject, out var clickedLayerNumber);
       if (null != clickedObject && clickedObject.HittedObject is XYColumnPlotItem)
       {
         _PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;
         var transXY = clickedObject.Transformation.InverseTransformPoint(graphXY);
 
-        this._layer = (XYPlotLayer)(clickedObject.ParentLayer);
+        _layer = (XYPlotLayer)(clickedObject.ParentLayer);
         XYScatterPointInformation scatterPoint = _PlotItem.GetNearestPlotPoint(_layer, transXY);
-        this._PlotItemNumber = GetPlotItemNumber(_layer, _PlotItem);
+        _PlotItemNumber = GetPlotItemNumber(_layer, _PlotItem);
 
         if (null != scatterPoint)
         {
-          this._PlotIndex = scatterPoint.PlotIndex;
-          this._RowIndex = scatterPoint.RowIndex;
+          _PlotIndex = scatterPoint.PlotIndex;
+          _RowIndex = scatterPoint.RowIndex;
           // convert this layer coordinates first to PrintableAreaCoordinates
           var rootLayerCoord = clickedObject.ParentLayer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates);
           _positionOfCrossInRootLayerCoordinates = rootLayerCoord;
@@ -128,7 +124,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           //var newCursorPosition = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
           //SetCursorPos(newCursorPosition.X, newCursorPosition.Y);
 
-          this.DisplayData(_PlotItem, scatterPoint.RowIndex,
+          DisplayData(_PlotItem, scatterPoint.RowIndex,
             _PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
             _PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
 
@@ -141,8 +137,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     private void ShowCross(XYScatterPointInformation scatterPoint)
     {
-      this._PlotIndex = scatterPoint.PlotIndex;
-      this._RowIndex = scatterPoint.RowIndex;
+      _PlotIndex = scatterPoint.PlotIndex;
+      _RowIndex = scatterPoint.RowIndex;
       // convert this layer coordinates first to PrintableAreaCoordinates
       var rootLayerCoord = _layer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates);
       _positionOfCrossInRootLayerCoordinates = rootLayerCoord;
@@ -153,7 +149,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       //Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
       //Cursor.Position = ((Control)_grac.View).PointToScreen(newPixelCoord);
 
-      this.DisplayData(_PlotItem, scatterPoint.RowIndex,
+      DisplayData(_PlotItem, scatterPoint.RowIndex,
         _PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
         _PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
 
@@ -183,7 +179,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         return false;
       if (_grac == null || _grac.Doc == null || _grac.Doc.RootLayer == null)
         return false;
-      if (null == this._layer)
+      if (null == _layer)
         return false;
 
       return true;
@@ -198,7 +194,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       if (!TestMovementPresumtions())
         return;
 
-      XYScatterPointInformation scatterPoint = _PlotItem.GetNextPlotPoint(_layer, this._PlotIndex, increment);
+      XYScatterPointInformation scatterPoint = _PlotItem.GetNextPlotPoint(_layer, _PlotIndex, increment);
 
       if (null != scatterPoint)
         ShowCross(scatterPoint);
@@ -217,7 +213,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       int numlayers = layerList.Count;
       var nextlayer = _layer as XYPlotLayer;
       int indexOfNextLayer = layerList.IndexOf(_layer);
-      int nextplotitemnumber = this._PlotItemNumber;
+      int nextplotitemnumber = _PlotItemNumber;
 
       XYScatterPointInformation scatterPoint = null;
       XYColumnPlotItem plotitem = null;
@@ -250,16 +246,16 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         if (null == plotitem)
           continue;
 
-        scatterPoint = plotitem.GetNextPlotPoint(nextlayer, this._PlotIndex, 0);
+        scatterPoint = plotitem.GetNextPlotPoint(nextlayer, _PlotIndex, 0);
       } while (scatterPoint == null);
 
       if (null != scatterPoint)
       {
-        this._PlotItem = plotitem;
-        this._layer = nextlayer;
-        this._PlotItemNumber = nextplotitemnumber;
-        this._PlotIndex = scatterPoint.PlotIndex;
-        this._RowIndex = scatterPoint.RowIndex;
+        _PlotItem = plotitem;
+        _layer = nextlayer;
+        _PlotItemNumber = nextplotitemnumber;
+        _PlotIndex = scatterPoint.PlotIndex;
+        _RowIndex = scatterPoint.RowIndex;
 
         ShowCross(scatterPoint);
       }
@@ -270,9 +266,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       // draw a red cross onto the selected data point
       double startLine = 1 / _grac.ZoomFactor;
       double endLine = 10 / _grac.ZoomFactor;
-      using (HatchBrush brush = new HatchBrush(HatchStyle.Percent50, Color.Red, Color.Yellow))
+      using (var brush = new HatchBrush(HatchStyle.Percent50, Color.Red, Color.Yellow))
       {
-        using (Pen pen = new Pen(brush, (float)(2 / _grac.ZoomFactor)))
+        using (var pen = new Pen(brush, (float)(2 / _grac.ZoomFactor)))
         {
           g.DrawLine(pen, (float)(_positionOfCrossInRootLayerCoordinates.X + startLine), (float)_positionOfCrossInRootLayerCoordinates.Y, (float)(_positionOfCrossInRootLayerCoordinates.X + endLine), (float)_positionOfCrossInRootLayerCoordinates.Y);
           g.DrawLine(pen, (float)(_positionOfCrossInRootLayerCoordinates.X - startLine), (float)_positionOfCrossInRootLayerCoordinates.Y, (float)(_positionOfCrossInRootLayerCoordinates.X - endLine), (float)_positionOfCrossInRootLayerCoordinates.Y);
@@ -315,7 +311,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
       else if (keyData == Key.Enter)
       {
-        Current.Console.WriteLine("{0}", this._RowIndex);
+        Current.Console.WriteLine("{0}", _RowIndex);
         return true;
       }
 

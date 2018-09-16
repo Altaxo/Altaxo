@@ -92,8 +92,7 @@ namespace Altaxo.Gui.Common
 
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
-      double result;
-      var validationResult = ConvertAndValidate(value, out result);
+      var validationResult = ConvertAndValidate(value, out var result);
       if (validationResult.IsValid)
       {
         _lastConvertedString = (string)value;
@@ -104,8 +103,7 @@ namespace Altaxo.Gui.Common
 
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
     {
-      double result;
-      var validationResult = ConvertAndValidate(value, out result);
+      var validationResult = ConvertAndValidate(value, out var result);
       if (validationResult.IsValid)
       {
         _lastConvertedString = (string)value;

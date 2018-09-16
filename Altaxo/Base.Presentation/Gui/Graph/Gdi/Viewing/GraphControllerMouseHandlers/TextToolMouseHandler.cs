@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Drawing.Drawing2D;
 using System.Windows.Input;
+using Altaxo.Geometry;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -62,14 +62,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       _cachedActiveLayer = _grac.ActiveLayer;
       _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-      _cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+      _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation;
 
       // get the page coordinates (in Point (1/72") units)
       var rootLayerCoord = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
       // with knowledge of the current active layer, calculate the layer coordinates from them
       var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
-      TextGraphic tgo = new TextGraphic(_grac.Doc.GetPropertyContext());
+      var tgo = new TextGraphic(_grac.Doc.GetPropertyContext());
       tgo.SetParentSize(_grac.ActiveLayer.Size, false);
       tgo.Position = layerCoord;
       tgo.ParentObject = _grac.ActiveLayer;

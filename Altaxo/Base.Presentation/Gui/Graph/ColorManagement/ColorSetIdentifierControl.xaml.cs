@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
       public override DataTemplate SelectTemplate(object item, DependencyObject container)
       {
-        NGTreeNode node = item as NGTreeNode;
+        var node = item as NGTreeNode;
         if (node != null)
         {
           if (node.Tag is NamedColor)

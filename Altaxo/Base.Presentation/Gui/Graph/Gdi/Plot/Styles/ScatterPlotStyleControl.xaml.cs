@@ -22,6 +22,12 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
@@ -30,12 +36,6 @@ using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using Altaxo.Gui.Common.Drawing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -68,12 +68,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void EnableDisableMain(bool bEnable)
     {
-      this._chkIndependentColor.IsEnabled = bEnable;
-      this._chkIndependentSize.IsEnabled = bEnable;
+      _chkIndependentColor.IsEnabled = bEnable;
+      _chkIndependentSize.IsEnabled = bEnable;
 
-      this._cbColor.IsEnabled = bEnable;
-      this._cbSymbolSize.IsEnabled = bEnable;
-      this._edSymbolSkipFrequency.IsEnabled = bEnable;
+      _cbColor.IsEnabled = bEnable;
+      _cbSymbolSize.IsEnabled = bEnable;
+      _edSymbolSkipFrequency.IsEnabled = bEnable;
     }
 
     #region IXYPlotScatterStyleView
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       set
       {
-        this._chkIndependentColor.IsChecked = value;
+        _chkIndependentColor.IsChecked = value;
       }
     }
 
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public bool IndependentSymbolSize
     {
       get { return true == _chkIndependentSize.IsChecked; }
-      set { this._chkIndependentSize.IsChecked = value; }
+      set { _chkIndependentSize.IsChecked = value; }
     }
 
     public double SymbolSize
@@ -188,26 +188,26 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
       set
       {
-        this._edSymbolSkipFrequency.Value = value;
+        _edSymbolSkipFrequency.Value = value;
       }
     }
 
     public bool IndependentSkipFrequency
     {
       get { return true == _chkIndependentSkipFreq.IsChecked; }
-      set { this._chkIndependentSkipFreq.IsChecked = value; }
+      set { _chkIndependentSkipFreq.IsChecked = value; }
     }
 
     public bool IgnoreMissingDataPoints
     {
       get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
-      set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+      set { _guiIgnoreMissingDataPoints.IsChecked = value; }
     }
 
     public bool IndependentOnShiftingGroupStyles
     {
       get { return true == _guiIndependentOnShiftingGroupStyles.IsChecked; }
-      set { this._guiIndependentOnShiftingGroupStyles.IsChecked = value; }
+      set { _guiIndependentOnShiftingGroupStyles.IsChecked = value; }
     }
 
     #endregion IXYPlotScatterStyleView
@@ -314,7 +314,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return (PlotColorInfluence)_guiOverriddenPlotColorInfluence.SelectedValue;
+        return _guiOverriddenPlotColorInfluence.SelectedValue;
       }
       set
       {

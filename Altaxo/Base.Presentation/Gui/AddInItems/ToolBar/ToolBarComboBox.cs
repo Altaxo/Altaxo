@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
-using Altaxo.Main.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using Altaxo.Gui.Common;
 using System.Windows.Input;
+using Altaxo.AddInItems;
+using Altaxo.Gui.Common;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.AddInItems
 {
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.AddInItems
 
       if (codon.Properties.Contains("name"))
       {
-        this.Name = codon.Properties["name"];
+        Name = codon.Properties["name"];
       }
       InitializeContent();
       UpdateText();
@@ -63,16 +63,16 @@ namespace Altaxo.Gui.AddInItems
     {
       if (codon.Properties.Contains("tooltip"))
       {
-        this.ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
+        ToolTip = StringParser.Parse(codon.Properties["tooltip"]);
       }
     }
 
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
-        this.Visibility = Visibility.Collapsed;
+        Visibility = Visibility.Collapsed;
       else
-        this.Visibility = Visibility.Visible;
+        Visibility = Visibility.Visible;
     }
 
     protected override void OnKeyDown(KeyEventArgs e)

@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +30,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       const int width = 32;
       const int height = 32;
 
-      WriteableBitmap wbitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
+      var wbitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
       byte[] pixels = new byte[height * width * 4];
 
       for (int row = 0; row < height; ++row)
@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
 
       // Update writeable bitmap with the colorArray to the image.
-      Int32Rect rect = new Int32Rect(0, 0, width, height);
+      var rect = new Int32Rect(0, 0, width, height);
       int stride = 4 * width;
       wbitmap.WritePixels(rect, pixels, stride, 0);
 

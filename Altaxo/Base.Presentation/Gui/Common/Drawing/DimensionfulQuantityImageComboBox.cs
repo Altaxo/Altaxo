@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +29,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -52,24 +52,26 @@ namespace Altaxo.Gui.Common.Drawing
     public DimensionfulQuantityImageComboBox()
     {
       SetBinding("SelectedQuantity");
-      this.IsTextSearchEnabled = false; // switch text search off since this interferes with the unit system
+      IsTextSearchEnabled = false; // switch text search off since this interferes with the unit system
     }
 
     protected void SetBinding(string nameOfValueProperty)
     {
-      var binding = new Binding();
-      binding.Source = this;
-      binding.Path = new PropertyPath(nameOfValueProperty);
-      binding.Mode = BindingMode.TwoWay;
+      var binding = new Binding
+      {
+        Source = this,
+        Path = new PropertyPath(nameOfValueProperty),
+        Mode = BindingMode.TwoWay
+      };
       _converter = new QuantityWithUnitConverter(this, SelectedQuantityProperty);
       binding.Converter = _converter;
       binding.ValidationRules.Add(_converter);
-      _converter.BindingExpression = this.SetBinding(ComboBox.TextProperty, binding);
+      _converter.BindingExpression = SetBinding(ComboBox.TextProperty, binding);
 
       var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ComboBox.TextProperty, typeof(DimensionfulQuantityImageComboBox));
       dpd.AddValueChanged(this, QuantityWithUnitTextBox_TextChanged);
 
-      var childs = this.LogicalChildren;
+      var childs = LogicalChildren;
     }
 
     private void QuantityWithUnitTextBox_TextChanged(object sender, EventArgs e)
