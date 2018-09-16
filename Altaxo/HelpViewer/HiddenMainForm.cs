@@ -34,21 +34,21 @@ using System.Windows.Forms;
 
 namespace Altaxo.Gui.HelpViewing
 {
-	public partial class HiddenMainForm : Form
-	{
-		public bool IsLoaded { get; private set; }
+  public partial class HiddenMainForm : Form
+  {
+    public bool IsLoaded { get; private set; }
 
-		public HiddenMainForm()
-		{
-			InitializeComponent();
-			this.Hide();
-		}
+    public HiddenMainForm()
+    {
+      InitializeComponent();
+      Hide();
+    }
 
-		protected override void OnLoad(EventArgs e)
-		{
-			base.OnLoad(e);
-			this.Hide();
-			IsLoaded = true;
-		}
-	}
+    protected override void OnLoad(EventArgs e)
+    {
+      base.OnLoad(e);
+      Hide();
+      IsLoaded = true;
+    }
+  }
 }
