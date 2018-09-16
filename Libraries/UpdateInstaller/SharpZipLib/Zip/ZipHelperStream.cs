@@ -208,7 +208,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <remarks>
     /// The underlying stream is closed only if <see cref="IsStreamOwner"/> is true.
     /// </remarks>
-    override public void Close()
+    public override void Close()
     {
       Stream toClose = stream_;
       stream_ = null;
@@ -283,7 +283,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         throw new ZipException("Entry name too long.");
       }
 
-      ZipExtraData ed = new ZipExtraData(entry.ExtraData);
+      var ed = new ZipExtraData(entry.ExtraData);
 
       if (entry.LocalHeaderRequiresZip64 && (headerInfoAvailable || patchEntryHeader))
       {

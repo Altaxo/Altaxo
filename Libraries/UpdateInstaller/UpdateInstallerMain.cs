@@ -104,8 +104,10 @@ namespace Altaxo.Serialization.AutoUpdates
             else
             {
               // Start a new process with elevated privileges and wait for exit
-              var proc = new System.Diagnostics.ProcessStartInfo();
-              proc.FileName = System.Reflection.Assembly.GetEntryAssembly().Location;
+              var proc = new System.Diagnostics.ProcessStartInfo
+              {
+                FileName = System.Reflection.Assembly.GetEntryAssembly().Location
+              };
               args[4] = "2";
               var stb = new StringBuilder();
               foreach (var s in args)
@@ -127,7 +129,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
         if (restartAltaxo)
         {
-          StringBuilder stb = new StringBuilder();
+          var stb = new StringBuilder();
           for (int i = 6; i < args.Length; ++i)
             stb.AppendFormat("\"{0}\"\t", args[i]);
           System.Diagnostics.Process.Start(args[5], stb.ToString());
@@ -149,8 +151,10 @@ namespace Altaxo.Serialization.AutoUpdates
       }
       if (null == mainWindow)
       {
-        mainWindow = new InstallerMainWindow(showInstallationWindow, timeoutAfterSuccessfullInstallation);
-        mainWindow._installer = installer;
+        mainWindow = new InstallerMainWindow(showInstallationWindow, timeoutAfterSuccessfullInstallation)
+        {
+          _installer = installer
+        };
         app.Run(mainWindow);
       }
     }

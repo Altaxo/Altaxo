@@ -37,9 +37,9 @@
 
 #if !NETCF_1_0
 
-using ICSharpCode.SharpZipLib.Checksums;
 using System;
 using System.Security.Cryptography;
+using ICSharpCode.SharpZipLib.Checksums;
 
 namespace ICSharpCode.SharpZipLib.Encryption
 {
@@ -55,7 +55,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
     /// </summary>
     /// <param name="seed">The seed value to initialise keys with.</param>
     /// <returns>A new key value.</returns>
-    static public byte[] GenerateKeys(byte[] seed)
+    public static byte[] GenerateKeys(byte[] seed)
     {
       if (seed == null)
       {
@@ -419,7 +419,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
     {
       get
       {
-        KeySizes[] keySizes = new KeySizes[1];
+        var keySizes = new KeySizes[1];
         keySizes[0] = new KeySizes(12 * 8, 12 * 8, 0);
         return keySizes;
       }
@@ -440,7 +440,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
     {
       get
       {
-        KeySizes[] keySizes = new KeySizes[1];
+        var keySizes = new KeySizes[1];
         keySizes[0] = new KeySizes(1 * 8, 1 * 8, 0);
         return keySizes;
       }
@@ -483,7 +483,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
     public override void GenerateKey()
     {
       key_ = new byte[12];
-      Random rnd = new Random();
+      var rnd = new Random();
       rnd.NextBytes(key_);
     }
 

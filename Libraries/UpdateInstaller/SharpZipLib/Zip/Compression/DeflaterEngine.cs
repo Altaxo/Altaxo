@@ -37,8 +37,8 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
-using ICSharpCode.SharpZipLib.Checksums;
 using System;
+using ICSharpCode.SharpZipLib.Checksums;
 
 namespace ICSharpCode.SharpZipLib.Zip.Compression
 {
@@ -494,12 +494,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
     /// <returns>True if a match greater than the minimum length is found</returns>
     private bool FindLongestMatch(int curMatch)
     {
-      int chainLength = this.max_chain;
+      int chainLength = max_chain;
       int niceLength = this.niceLength;
       short[] prev = this.prev;
-      int scan = this.strstart;
+      int scan = strstart;
       int match;
-      int best_end = this.strstart + matchLen;
+      int best_end = strstart + matchLen;
       int best_len = Math.Max(matchLen, MIN_MATCH - 1);
 
       int limit = Math.Max(strstart - MAX_DIST, 0);
@@ -509,7 +509,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
       byte scan_end = window[best_end];
 
       // Do not waste too much time if we already have a good match:
-      if (best_len >= this.goodLength)
+      if (best_len >= goodLength)
       {
         chainLength >>= 2;
       }

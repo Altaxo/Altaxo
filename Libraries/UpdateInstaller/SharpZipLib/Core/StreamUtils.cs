@@ -49,7 +49,7 @@ namespace ICSharpCode.SharpZipLib.Core
     /// <param name="stream">The stream to read.</param>
     /// <param name="buffer">The buffer to fill.</param>
     /// <seealso cref="ReadFully(Stream,byte[],int,int)"/>
-    static public void ReadFully(Stream stream, byte[] buffer)
+    public static void ReadFully(Stream stream, byte[] buffer)
     {
       ReadFully(stream, buffer, 0, buffer.Length);
     }
@@ -64,7 +64,7 @@ namespace ICSharpCode.SharpZipLib.Core
     /// <exception cref="ArgumentNullException">Required parameter is null</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> and or <paramref name="count"/> are invalid.</exception>
     /// <exception cref="EndOfStreamException">End of stream is encountered before all the data has been read.</exception>
-    static public void ReadFully(Stream stream, byte[] buffer, int offset, int count)
+    public static void ReadFully(Stream stream, byte[] buffer, int offset, int count)
     {
       if (stream == null)
       {
@@ -105,7 +105,7 @@ namespace ICSharpCode.SharpZipLib.Core
     /// <param name="source">The stream to source data from.</param>
     /// <param name="destination">The stream to write data to.</param>
     /// <param name="buffer">The buffer to use during copying.</param>
-    static public void Copy(Stream source, Stream destination, byte[] buffer)
+    public static void Copy(Stream source, Stream destination, byte[] buffer)
     {
       if (source == null)
       {
@@ -156,7 +156,7 @@ namespace ICSharpCode.SharpZipLib.Core
     /// <param name="sender">The source for this event.</param>
     /// <param name="name">The name to use with the event.</param>
     /// <remarks>This form is specialised for use within #Zip to support events during archive operations.</remarks>
-    static public void Copy(Stream source, Stream destination,
+    public static void Copy(Stream source, Stream destination,
       byte[] buffer, ProgressHandler progressHandler, TimeSpan updateInterval, object sender, string name)
     {
       Copy(source, destination, buffer, progressHandler, updateInterval, sender, name, -1);
@@ -175,7 +175,7 @@ namespace ICSharpCode.SharpZipLib.Core
     /// <param name="fixedTarget">A predetermined fixed target value to use with progress updates.
     /// If the value is negative the target is calculated by looking at the stream.</param>
     /// <remarks>This form is specialised for use within #Zip to support events during archive operations.</remarks>
-    static public void Copy(Stream source, Stream destination,
+    public static void Copy(Stream source, Stream destination,
       byte[] buffer,
       ProgressHandler progressHandler, TimeSpan updateInterval,
       object sender, string name, long fixedTarget)
@@ -222,7 +222,7 @@ namespace ICSharpCode.SharpZipLib.Core
       }
 
       // Always fire 0% progress..
-      ProgressEventArgs args = new ProgressEventArgs(name, processed, target);
+      var args = new ProgressEventArgs(name, processed, target);
       progressHandler(sender, args);
 
       bool progressFired = true;

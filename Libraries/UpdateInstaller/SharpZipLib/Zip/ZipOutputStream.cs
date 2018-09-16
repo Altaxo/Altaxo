@@ -41,12 +41,12 @@
 //	22-12-2009	Z-1649	Added AES support
 //	22-02-2010	Z-1648	Zero byte entries would create invalid zip files
 
-using ICSharpCode.SharpZipLib.Checksums;
-using ICSharpCode.SharpZipLib.Zip.Compression;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using System;
 using System.Collections;
 using System.IO;
+using ICSharpCode.SharpZipLib.Checksums;
+using ICSharpCode.SharpZipLib.Zip.Compression;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
@@ -341,7 +341,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       }
 
       entry.Offset = offset;
-      entry.CompressionMethod = (CompressionMethod)method;
+      entry.CompressionMethod = method;
 
       curMethod = method;
       sizePatchPos = -1;
@@ -407,7 +407,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         throw new ZipException("Entry name too long.");
       }
 
-      ZipExtraData ed = new ZipExtraData(entry.ExtraData);
+      var ed = new ZipExtraData(entry.ExtraData);
 
       if (entry.LocalHeaderRequiresZip64)
       {
@@ -640,7 +640,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       InitializePassword(Password);
 
       byte[] cryptBuffer = new byte[ZipConstants.CryptoHeaderSize];
-      Random rnd = new Random();
+      var rnd = new Random();
       rnd.NextBytes(cryptBuffer);
       cryptBuffer[11] = (byte)(crcValue >> 24);
 
@@ -670,9 +670,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     //
     private void WriteAESHeader(ZipEntry entry)
     {
-      byte[] salt;
-      byte[] pwdVerifier;
-      InitializeAESPassword(entry, Password, out salt, out pwdVerifier);
+      InitializeAESPassword(entry, Password, out var salt, out var pwdVerifier);
       // File format for AES:
       // Size (bytes)   Content
       // ------------   -------
@@ -837,7 +835,7 @@ namespace ICSharpCode.SharpZipLib.Zip
           throw new ZipException("Name too long.");
         }
 
-        ZipExtraData ed = new ZipExtraData(entry.ExtraData);
+        var ed = new ZipExtraData(entry.ExtraData);
 
         if (entry.CentralHeaderRequiresZip64)
         {
@@ -934,7 +932,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         sizeEntries += ZipConstants.CentralHeaderBaseSize + name.Length + extra.Length + entryComment.Length;
       }
 
-      using (ZipHelperStream zhs = new ZipHelperStream(baseOutputStream_))
+      using (var zhs = new ZipHelperStream(baseOutputStream_))
       {
         zhs.WriteEndOfCentralDirectory(numEntries, sizeEntries, offset, zipComment);
       }

@@ -90,9 +90,11 @@ namespace ICSharpCode.SharpZipLib.Encryption
       _encrPos = ENCRYPT_BLOCK;
 
       // Performs the equivalent of derive_key in Dr Brian Gladman's pwd2key.c
-      Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(key, saltBytes, KEY_ROUNDS);
-      RijndaelManaged rm = new RijndaelManaged();
-      rm.Mode = CipherMode.ECB;     // No feedback from cipher for CTR mode
+      var pdb = new Rfc2898DeriveBytes(key, saltBytes, KEY_ROUNDS);
+      var rm = new RijndaelManaged
+      {
+        Mode = CipherMode.ECB     // No feedback from cipher for CTR mode
+      };
       _counterNonce = new byte[_blockSize];
       byte[] byteKey1 = pdb.GetBytes(_blockSize);
       byte[] byteKey2 = pdb.GetBytes(_blockSize);

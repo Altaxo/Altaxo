@@ -158,7 +158,7 @@ namespace ICSharpCode.SharpZipLib.Core
 
       if (result)
       {
-        FileInfo fileInfo = new FileInfo(name);
+        var fileInfo = new FileInfo(name);
         result =
           (MinSize <= fileInfo.Length) &&
           (MaxSize >= fileInfo.Length) &&
@@ -195,7 +195,7 @@ namespace ICSharpCode.SharpZipLib.Core
     /// <summary>
     /// Get/set the maximum size/length for a file that will match this filter.
     /// </summary>
-    /// <remarks>The default value is <see cref="System.Int64.MaxValue"/></remarks>
+    /// <remarks>The default value is <see cref="long.MaxValue"/></remarks>
     /// <exception cref="ArgumentOutOfRangeException">value is less than zero or less than <see cref="MinSize"/></exception>
     public long MaxSize
     {
@@ -306,7 +306,7 @@ namespace ICSharpCode.SharpZipLib.Core
 
       if (result)
       {
-        FileInfo fileInfo = new FileInfo(name);
+        var fileInfo = new FileInfo(name);
         long length = fileInfo.Length;
         result =
           (MinSize <= length) &&

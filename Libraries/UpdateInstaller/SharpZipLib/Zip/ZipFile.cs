@@ -388,7 +388,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     {
       if (KeysRequired != null)
       {
-        KeysRequiredEventArgs krea = new KeysRequiredEventArgs(fileName, key);
+        var krea = new KeysRequiredEventArgs(fileName, key);
         KeysRequired(this, krea);
         key = krea.Key;
       }
@@ -614,10 +614,12 @@ namespace ICSharpCode.SharpZipLib.Zip
 
       FileStream fs = File.Create(fileName);
 
-      ZipFile result = new ZipFile();
-      result.name_ = fileName;
-      result.baseStream_ = fs;
-      result.isStreamOwner = true;
+      var result = new ZipFile
+      {
+        name_ = fileName,
+        baseStream_ = fs,
+        isStreamOwner = true
+      };
       return result;
     }
 
@@ -645,8 +647,10 @@ namespace ICSharpCode.SharpZipLib.Zip
         throw new ArgumentException("Stream is not seekable", "outStream");
       }
 
-      ZipFile result = new ZipFile();
-      result.baseStream_ = outStream;
+      var result = new ZipFile
+      {
+        baseStream_ = outStream
+      };
       return result;
     }
 
@@ -938,7 +942,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         throw new ObjectDisposedException("ZipFile");
       }
 
-      TestStatus status = new TestStatus(this);
+      var status = new TestStatus(this);
 
       if (resultHandler != null)
       {
@@ -990,9 +994,9 @@ namespace ICSharpCode.SharpZipLib.Zip
               resultHandler(status, null);
             }
 
-            Crc32 crc = new Crc32();
+            var crc = new Crc32();
 
-            using (Stream entryStream = this.GetInputStream(this[entryIndex]))
+            using (Stream entryStream = GetInputStream(this[entryIndex]))
             {
               byte[] buffer = new byte[4096];
               long totalBytes = 0;
@@ -1027,8 +1031,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 
             if ((this[entryIndex].Flags & (int)GeneralBitFlags.Descriptor) != 0)
             {
-              ZipHelperStream helper = new ZipHelperStream(baseStream_);
-              DescriptorData data = new DescriptorData();
+              var helper = new ZipHelperStream(baseStream_);
+              var data = new DescriptorData();
               helper.ReadDataDescriptor(this[entryIndex].LocalHeaderRequiresZip64, data);
               if (this[entryIndex].Crc != data.Crc)
               {
@@ -1130,7 +1134,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         byte[] extraData = new byte[extraDataLength];
         StreamUtils.ReadFully(baseStream_, extraData);
 
-        ZipExtraData localExtraData = new ZipExtraData(extraData);
+        var localExtraData = new ZipExtraData(extraData);
 
         // Extra data / zip64 checks
         if (localExtraData.Find(1))
@@ -1612,7 +1616,7 @@ namespace ICSharpCode.SharpZipLib.Zip
           if (entries_.Length == 0)
           {
             byte[] theComment = (newComment_ != null) ? newComment_.RawComment : ZipConstants.ConvertToArray(comment_);
-            using (ZipHelperStream zhs = new ZipHelperStream(baseStream_))
+            using (var zhs = new ZipHelperStream(baseStream_))
             {
               zhs.WriteEndOfCentralDirectory(0, 0, 0, theComment);
             }
@@ -2112,7 +2116,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       {
         // Note patch address for updating CRC later.
         update.CrcPatchOffset = baseStream_.Position;
-        WriteLEInt((int)0);
+        WriteLEInt(0);
       }
       else
       {
@@ -2142,7 +2146,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         throw new ZipException("Entry name too long.");
       }
 
-      ZipExtraData ed = new ZipExtraData(entry.ExtraData);
+      var ed = new ZipExtraData(entry.ExtraData);
 
       if (entry.LocalHeaderRequiresZip64)
       {
@@ -2248,7 +2252,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       WriteLEShort(name.Length);
 
       // Central header extra data is different to local header version so regenerate.
-      ZipExtraData ed = new ZipExtraData(entry.ExtraData);
+      var ed = new ZipExtraData(entry.ExtraData);
 
       if (entry.CentralHeaderRequiresZip64)
       {
@@ -2411,7 +2415,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       }
 
       // NOTE: Compressed size is updated elsewhere.
-      Crc32 crc = new Crc32();
+      var crc = new Crc32();
       byte[] buffer = GetBuffer();
 
       long targetBytes = bytesToCopy;
@@ -2477,7 +2481,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
       while (bytesToCopy > 0)
       {
-        int readSize = (int)bytesToCopy;
+        int readSize = bytesToCopy;
         byte[] buffer = GetBuffer();
 
         stream.Position = sourcePosition;
@@ -2502,7 +2506,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       long bytesToCopy = update.Entry.CompressedSize;
 
       // NOTE: Compressed size is updated elsewhere.
-      Crc32 crc = new Crc32();
+      var crc = new Crc32();
       byte[] buffer = GetBuffer();
 
       long targetBytes = bytesToCopy;
@@ -2624,8 +2628,10 @@ namespace ICSharpCode.SharpZipLib.Zip
           break;
 
         case CompressionMethod.Deflated:
-          DeflaterOutputStream dos = new DeflaterOutputStream(result, new Deflater(9, true));
-          dos.IsStreamOwner = false;
+          var dos = new DeflaterOutputStream(result, new Deflater(9, true))
+          {
+            IsStreamOwner = false
+          };
           result = dos;
           break;
 
@@ -2681,7 +2687,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
           if ((update.OutEntry.Flags & (int)GeneralBitFlags.Descriptor) == (int)GeneralBitFlags.Descriptor)
           {
-            ZipHelperStream helper = new ZipHelperStream(workFile.baseStream_);
+            var helper = new ZipHelperStream(workFile.baseStream_);
             helper.WriteDataDescriptor(update.OutEntry);
           }
         }
@@ -2703,7 +2709,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       {
         using (Stream output = workFile.GetOutputStream(update.OutEntry))
         {
-          using (Stream source = this.GetInputStream(update.Entry))
+          using (Stream source = GetInputStream(update.Entry))
           {
             CopyBytes(update, output, source, source.Length, true);
           }
@@ -2821,8 +2827,10 @@ namespace ICSharpCode.SharpZipLib.Zip
       if (archiveStorage_.UpdateMode == FileUpdateMode.Safe)
       {
         Stream copyStream = archiveStorage_.MakeTemporaryCopy(baseStream_);
-        updateFile = new ZipHelperStream(copyStream);
-        updateFile.IsStreamOwner = true;
+        updateFile = new ZipHelperStream(copyStream)
+        {
+          IsStreamOwner = true
+        };
 
         baseStream_.Close();
         baseStream_ = null;
@@ -2895,8 +2903,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         object x,
         object y)
       {
-        ZipUpdate zx = x as ZipUpdate;
-        ZipUpdate zy = y as ZipUpdate;
+        var zx = x as ZipUpdate;
+        var zy = y as ZipUpdate;
 
         int result;
 
@@ -3035,7 +3043,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         }
 
         byte[] theComment = (newComment_ != null) ? newComment_.RawComment : ZipConstants.ConvertToArray(comment_);
-        using (ZipHelperStream zhs = new ZipHelperStream(workFile.baseStream_))
+        using (var zhs = new ZipHelperStream(workFile.baseStream_))
         {
           zhs.WriteEndOfCentralDirectory(updateCount_, sizeEntries, centralDirOffset, theComment);
         }
@@ -3126,8 +3134,10 @@ namespace ICSharpCode.SharpZipLib.Zip
       public ZipUpdate(string fileName, string entryName, CompressionMethod compressionMethod)
       {
         command_ = UpdateCommand.Add;
-        entry_ = new ZipEntry(entryName);
-        entry_.CompressionMethod = compressionMethod;
+        entry_ = new ZipEntry(entryName)
+        {
+          CompressionMethod = compressionMethod
+        };
         filename_ = fileName;
       }
 
@@ -3142,8 +3152,10 @@ namespace ICSharpCode.SharpZipLib.Zip
       public ZipUpdate(IStaticDataSource dataSource, string entryName, CompressionMethod compressionMethod)
       {
         command_ = UpdateCommand.Add;
-        entry_ = new ZipEntry(entryName);
-        entry_.CompressionMethod = compressionMethod;
+        entry_ = new ZipEntry(entryName)
+        {
+          CompressionMethod = compressionMethod
+        };
         dataSource_ = dataSource;
       }
 
@@ -3377,7 +3389,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     // NOTE this returns the offset of the first byte after the signature.
     private long LocateBlockWithSignature(int signature, long endLocation, int minimumBlockSize, int maximumVariableData)
     {
-      using (ZipHelperStream les = new ZipHelperStream(baseStream_))
+      using (var les = new ZipHelperStream(baseStream_))
       {
         return les.LocateBlockWithSignature(signature, endLocation, minimumBlockSize, maximumVariableData);
       }
@@ -3516,8 +3528,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         int method = ReadLEUshort();
         uint dostime = ReadLEUint();
         uint crc = ReadLEUint();
-        long csize = (long)ReadLEUint();
-        long size = (long)ReadLEUint();
+        long csize = ReadLEUint();
+        long size = ReadLEUint();
         int nameLen = ReadLEUshort();
         int extraLen = ReadLEUshort();
         int commentLen = ReadLEUshort();
@@ -3533,15 +3545,17 @@ namespace ICSharpCode.SharpZipLib.Zip
         StreamUtils.ReadFully(baseStream_, buffer, 0, nameLen);
         string name = ZipConstants.ConvertToStringExt(bitFlags, buffer, nameLen);
 
-        ZipEntry entry = new ZipEntry(name, versionToExtract, versionMadeBy, (CompressionMethod)method);
-        entry.Crc = crc & 0xffffffffL;
-        entry.Size = size & 0xffffffffL;
-        entry.CompressedSize = csize & 0xffffffffL;
-        entry.Flags = bitFlags;
-        entry.DosTime = (uint)dostime;
-        entry.ZipFileIndex = (long)i;
-        entry.Offset = offset;
-        entry.ExternalFileAttributes = (int)externalAttributes;
+        var entry = new ZipEntry(name, versionToExtract, versionMadeBy, (CompressionMethod)method)
+        {
+          Crc = crc & 0xffffffffL,
+          Size = size & 0xffffffffL,
+          CompressedSize = csize & 0xffffffffL,
+          Flags = bitFlags,
+          DosTime = dostime,
+          ZipFileIndex = (long)i,
+          Offset = offset,
+          ExternalFileAttributes = (int)externalAttributes
+        };
 
         if ((bitFlags & 8) == 0)
         {
@@ -3598,7 +3612,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       if ((entry.Version < ZipConstants.VersionStrongEncryption)
         || (entry.Flags & (int)GeneralBitFlags.StrongEncryption) == 0)
       {
-        PkzipClassicManaged classicManaged = new PkzipClassicManaged();
+        var classicManaged = new PkzipClassicManaged();
 
         OnKeysRequired(entry.Name);
         if (HaveKeys == false)
@@ -3630,7 +3644,7 @@ namespace ICSharpCode.SharpZipLib.Zip
           baseStream.Read(pwdVerifyRead, 0, 2);
           int blockSize = entry.AESKeySize / 8; // bits to bytes
 
-          ZipAESTransform decryptor = new ZipAESTransform(rawPassword_, saltBytes, blockSize, false);
+          var decryptor = new ZipAESTransform(rawPassword_, saltBytes, blockSize, false);
           byte[] pwdVerifyCalc = decryptor.PwdVerifier;
           if (pwdVerifyCalc[0] != pwdVerifyRead[0] || pwdVerifyCalc[1] != pwdVerifyRead[1])
             throw new Exception("Invalid password for AES");
@@ -3652,7 +3666,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       if ((entry.Version < ZipConstants.VersionStrongEncryption)
         || (entry.Flags & (int)GeneralBitFlags.StrongEncryption) == 0)
       {
-        PkzipClassicManaged classicManaged = new PkzipClassicManaged();
+        var classicManaged = new PkzipClassicManaged();
 
         OnKeysRequired(entry.Name);
         if (HaveKeys == false)
@@ -3692,7 +3706,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     private static void WriteEncryptionHeader(Stream stream, long crcValue)
     {
       byte[] cryptBuffer = new byte[ZipConstants.CryptoHeaderSize];
-      Random rnd = new Random();
+      var rnd = new Random();
       rnd.NextBytes(cryptBuffer);
       cryptBuffer[11] = (byte)(crcValue >> 24);
       stream.Write(cryptBuffer, 0, cryptBuffer.Length);
@@ -3836,7 +3850,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       /// </summary>
       /// <param name="zipString">The <see cref="ZipString"/> to convert to a string.</param>
       /// <returns>The textual equivalent for the input value.</returns>
-      static public implicit operator string(ZipString zipString)
+      public static implicit operator string(ZipString zipString)
       {
         zipString.MakeTextAvailable();
         return zipString.comment_;
@@ -4495,7 +4509,7 @@ namespace ICSharpCode.SharpZipLib.Zip
   /// <summary>
   /// An abstract <see cref="IArchiveStorage"/> suitable for extension by inheritance.
   /// </summary>
-  abstract public class BaseArchiveStorage : IArchiveStorage
+  public abstract class BaseArchiveStorage : IArchiveStorage
   {
     #region Constructors
 

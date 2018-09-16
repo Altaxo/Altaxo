@@ -33,10 +33,10 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
-using ICSharpCode.SharpZipLib.Core;
 using System;
 using System.IO;
 using System.Text;
+using ICSharpCode.SharpZipLib.Core;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
@@ -192,7 +192,7 @@ namespace ICSharpCode.SharpZipLib.Zip
       int index = name.IndexOfAny(InvalidEntryChars);
       if (index >= 0)
       {
-        StringBuilder builder = new StringBuilder(name);
+        var builder = new StringBuilder(name);
 
         while (index >= 0)
         {

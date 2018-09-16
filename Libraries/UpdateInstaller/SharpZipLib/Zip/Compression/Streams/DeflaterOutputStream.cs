@@ -301,7 +301,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			}
 
 #else
-      PkzipClassicManaged pkManaged = new PkzipClassicManaged();
+      var pkManaged = new PkzipClassicManaged();
       byte[] key = PkzipClassic.GenerateKeys(ZipConstants.ConvertToArray(password));
       cryptoTransform_ = pkManaged.CreateEncryptor(key, null);
 #endif

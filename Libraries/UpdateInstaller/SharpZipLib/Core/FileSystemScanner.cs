@@ -136,7 +136,7 @@ namespace ICSharpCode.SharpZipLib.Core
         }
         else
         {
-          result = ((float)processed_ / (float)target_) * 100.0f;
+          result = (processed_ / (float)target_) * 100.0f;
         }
         return result;
       }
@@ -394,7 +394,7 @@ namespace ICSharpCode.SharpZipLib.Core
       bool result = (handler != null);
       if (result)
       {
-        ScanFailureEventArgs args = new ScanFailureEventArgs(directory, e);
+        var args = new ScanFailureEventArgs(directory, e);
         handler(this, args);
         alive_ = args.ContinueRunning;
       }
@@ -414,7 +414,7 @@ namespace ICSharpCode.SharpZipLib.Core
 
       if (result)
       {
-        ScanFailureEventArgs args = new ScanFailureEventArgs(file, e);
+        var args = new ScanFailureEventArgs(file, e);
         FileFailure(this, args);
         alive_ = args.ContinueRunning;
       }
@@ -431,7 +431,7 @@ namespace ICSharpCode.SharpZipLib.Core
 
       if (handler != null)
       {
-        ScanEventArgs args = new ScanEventArgs(file);
+        var args = new ScanEventArgs(file);
         handler(this, args);
         alive_ = args.ContinueRunning;
       }
@@ -447,7 +447,7 @@ namespace ICSharpCode.SharpZipLib.Core
 
       if (handler != null)
       {
-        ScanEventArgs args = new ScanEventArgs(file);
+        var args = new ScanEventArgs(file);
         handler(this, args);
         alive_ = args.ContinueRunning;
       }
@@ -464,7 +464,7 @@ namespace ICSharpCode.SharpZipLib.Core
 
       if (handler != null)
       {
-        DirectoryEventArgs args = new DirectoryEventArgs(directory, hasMatchingFiles);
+        var args = new DirectoryEventArgs(directory, hasMatchingFiles);
         handler(this, args);
         alive_ = args.ContinueRunning;
       }

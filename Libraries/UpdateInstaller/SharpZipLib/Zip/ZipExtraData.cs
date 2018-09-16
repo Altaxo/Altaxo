@@ -187,8 +187,8 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <param name="count">The number of bytes available.</param>
     public void SetData(byte[] data, int index, int count)
     {
-      using (MemoryStream ms = new MemoryStream(data, index, count, false))
-      using (ZipHelperStream helperStream = new ZipHelperStream(ms))
+      using (var ms = new MemoryStream(data, index, count, false))
+      using (var helperStream = new ZipHelperStream(ms))
       {
         // bit 0           if set, modification time is present
         // bit 1           if set, access time is present
@@ -227,8 +227,8 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>The raw binary data representing this instance.</returns>
     public byte[] GetData()
     {
-      using (MemoryStream ms = new MemoryStream())
-      using (ZipHelperStream helperStream = new ZipHelperStream(ms))
+      using (var ms = new MemoryStream())
+      using (var helperStream = new ZipHelperStream(ms))
       {
         helperStream.IsStreamOwner = false;
         helperStream.WriteByte((byte)_flags);     // Flags
@@ -373,8 +373,8 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <param name="count">The number of bytes available.</param>
     public void SetData(byte[] data, int index, int count)
     {
-      using (MemoryStream ms = new MemoryStream(data, index, count, false))
-      using (ZipHelperStream helperStream = new ZipHelperStream(ms))
+      using (var ms = new MemoryStream(data, index, count, false))
+      using (var helperStream = new ZipHelperStream(ms))
       {
         helperStream.ReadLEInt(); // Reserved
         while (helperStream.Position < helperStream.Length)
@@ -411,8 +411,8 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>The raw binary data representing this instance.</returns>
     public byte[] GetData()
     {
-      using (MemoryStream ms = new MemoryStream())
-      using (ZipHelperStream helperStream = new ZipHelperStream(ms))
+      using (var ms = new MemoryStream())
+      using (var helperStream = new ZipHelperStream(ms))
       {
         helperStream.IsStreamOwner = false;
         helperStream.WriteLEInt(0);       // Reserved
@@ -534,7 +534,7 @@ namespace ICSharpCode.SharpZipLib.Zip
   /// means that for extra data created by passing in data can have the values modified by the caller
   /// in some circumstances.
   /// </remarks>
-  sealed public class ZipExtraData : IDisposable
+  public sealed class ZipExtraData : IDisposable
   {
     #region Constructors
 

@@ -233,7 +233,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
       if (header != ZipConstants.LocalHeaderSignature)
       {
-        throw new ZipException("Wrong Local header signature: 0x" + String.Format("{0:X}", header));
+        throw new ZipException("Wrong Local header signature: 0x" + string.Format("{0:X}", header));
       }
 
       short versionRequiredToExtract = (short)inputBuffer.ReadLeShort();
@@ -254,10 +254,12 @@ namespace ICSharpCode.SharpZipLib.Zip
 
       string name = ZipConstants.ConvertToStringExt(flags, buffer);
 
-      entry = new ZipEntry(name, versionRequiredToExtract);
-      entry.Flags = flags;
+      entry = new ZipEntry(name, versionRequiredToExtract)
+      {
+        Flags = flags,
 
-      entry.CompressionMethod = (CompressionMethod)method;
+        CompressionMethod = (CompressionMethod)method
+      };
 
       if ((flags & 8) == 0)
       {
@@ -428,7 +430,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
       if ((inputBuffer.Available > csize) && (csize >= 0))
       {
-        inputBuffer.Available = (int)((long)inputBuffer.Available - csize);
+        inputBuffer.Available = (int)(inputBuffer.Available - csize);
       }
       else
       {
@@ -552,7 +554,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         }
 
         // Generate and set crypto transform...
-        PkzipClassicManaged managed = new PkzipClassicManaged();
+        var managed = new PkzipClassicManaged();
         byte[] key = PkzipClassic.GenerateKeys(ZipConstants.ConvertToArray(password));
 
         inputBuffer.CryptoTransform = managed.CreateDecryptor(key, null);

@@ -65,9 +65,9 @@ namespace Altaxo.Serialization.AutoUpdates
       _timeoutAfterSucessfullInstallation = timeoutAfterSuccessfullInstallation;
 
       if (_showInstallationWindow)
-        this.Visibility = System.Windows.Visibility.Visible;
+        Visibility = System.Windows.Visibility.Visible;
       else
-        this.Visibility = System.Windows.Visibility.Hidden;
+        Visibility = System.Windows.Visibility.Hidden;
 
       InitializeComponent();
       _normalBackground = _guiMessages.Background;
@@ -134,7 +134,7 @@ namespace Altaxo.Serialization.AutoUpdates
       _guiMessages.Text = message;
       _guiMessages.Background = new SolidColorBrush(Colors.LightPink);
 
-      this.Visibility = System.Windows.Visibility.Visible;
+      Visibility = System.Windows.Visibility.Visible;
     }
 
     /// <summary>Called when the user requests to close the window.</summary>
@@ -232,7 +232,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void EhOk(object sender, RoutedEventArgs e)
     {
-      this.Close();
+      Close();
     }
 
     /// <summary>Called when the TryAgain button was pressed.</summary>

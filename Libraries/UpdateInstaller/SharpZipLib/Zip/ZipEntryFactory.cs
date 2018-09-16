@@ -35,9 +35,9 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
-using ICSharpCode.SharpZipLib.Core;
 using System;
 using System.IO;
+using ICSharpCode.SharpZipLib.Core;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
@@ -230,8 +230,10 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>Returns a new <see cref="ZipEntry"/> based on the <paramref name="fileName"/>.</returns>
     public ZipEntry MakeFileEntry(string fileName, bool useFileSystem)
     {
-      ZipEntry result = new ZipEntry(nameTransform_.TransformFile(fileName));
-      result.IsUnicodeText = isUnicodeText_;
+      var result = new ZipEntry(nameTransform_.TransformFile(fileName))
+      {
+        IsUnicodeText = isUnicodeText_
+      };
 
       int externalAttributes = 0;
       bool useAttributes = (setAttributes_ != 0);
@@ -330,9 +332,11 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <returns>Returns a new <see cref="ZipEntry"></see> representing a directory.</returns>
     public ZipEntry MakeDirectoryEntry(string directoryName, bool useFileSystem)
     {
-      ZipEntry result = new ZipEntry(nameTransform_.TransformDirectory(directoryName));
-      result.IsUnicodeText = isUnicodeText_;
-      result.Size = 0;
+      var result = new ZipEntry(nameTransform_.TransformDirectory(directoryName))
+      {
+        IsUnicodeText = isUnicodeText_,
+        Size = 0
+      };
 
       int externalAttributes = 0;
 

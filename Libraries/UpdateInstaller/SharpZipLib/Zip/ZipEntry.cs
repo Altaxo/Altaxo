@@ -253,10 +253,10 @@ namespace ICSharpCode.SharpZipLib.Zip
         throw new ArgumentOutOfRangeException("versionRequiredToExtract");
       }
 
-      this.DateTime = System.DateTime.Now;
+      DateTime = System.DateTime.Now;
       this.name = name;
-      this.versionMadeBy = (ushort)madeByInfo;
-      this.versionToExtract = (ushort)versionRequiredToExtract;
+      versionMadeBy = (ushort)madeByInfo;
+      versionToExtract = (ushort)versionRequiredToExtract;
       this.method = method;
     }
 
@@ -705,7 +705,7 @@ namespace ICSharpCode.SharpZipLib.Zip
           // TODO: A better estimation of the true limit based on compression overhead should be used
           // to determine when an entry should use Zip64.
           result =
-            ((this.size >= uint.MaxValue) || (trueCompressedSize >= uint.MaxValue)) &&
+            ((size >= uint.MaxValue) || (trueCompressedSize >= uint.MaxValue)) &&
             ((versionToExtract == 0) || (versionToExtract >= ZipConstants.VersionZip64));
         }
 
@@ -844,8 +844,8 @@ namespace ICSharpCode.SharpZipLib.Zip
       }
       set
       {
-        this.size = (ulong)value;
-        this.known |= Known.Size;
+        size = (ulong)value;
+        known |= Known.Size;
       }
     }
 
@@ -863,8 +863,8 @@ namespace ICSharpCode.SharpZipLib.Zip
       }
       set
       {
-        this.compressedSize = (ulong)value;
-        this.known |= Known.CompressedSize;
+        compressedSize = (ulong)value;
+        known |= Known.CompressedSize;
       }
     }
 
@@ -885,12 +885,12 @@ namespace ICSharpCode.SharpZipLib.Zip
       }
       set
       {
-        if (((ulong)crc & 0xffffffff00000000L) != 0)
+        if ((crc & 0xffffffff00000000L) != 0)
         {
           throw new ArgumentOutOfRangeException("value");
         }
-        this.crc = (uint)value;
-        this.known |= Known.Crc;
+        crc = (uint)value;
+        known |= Known.Crc;
       }
     }
 
@@ -915,7 +915,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
           throw new NotSupportedException("Compression method not supported");
         }
-        this.method = value;
+        method = value;
       }
     }
 
@@ -1069,7 +1069,7 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// </param>
     internal void ProcessExtraData(bool localHeader)
     {
-      ZipExtraData extraData = new ZipExtraData(this.extra);
+      var extraData = new ZipExtraData(extra);
 
       if (extraData.Find(0x0001))
       {
@@ -1291,10 +1291,10 @@ namespace ICSharpCode.SharpZipLib.Zip
     /// <summary>
     /// Creates a copy of this zip entry.
     /// </summary>
-    /// <returns>An <see cref="Object"/> that is a copy of the current instance.</returns>
+    /// <returns>An <see cref="object"/> that is a copy of the current instance.</returns>
     public object Clone()
     {
-      ZipEntry result = (ZipEntry)this.MemberwiseClone();
+      var result = (ZipEntry)MemberwiseClone();
 
       // Ensure extra data is unique if it exists.
       if (extra != null)

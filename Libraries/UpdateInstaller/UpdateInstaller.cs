@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -92,7 +92,7 @@ namespace Altaxo.Serialization.AutoUpdates
     {
       string pathToInstallation = Path.GetDirectoryName(_altaxoExecutableFullName);
 
-      using (FileStream fs = new FileStream(_packageName, FileMode.Open, FileAccess.Read, FileShare.Read))
+      using (var fs = new FileStream(_packageName, FileMode.Open, FileAccess.Read, FileShare.Read))
       {
         fs.Seek(0, SeekOrigin.Begin);
 
@@ -236,7 +236,7 @@ namespace Altaxo.Serialization.AutoUpdates
       string fullName = Path.Combine(_pathToInstallation, PackListRelativePath);
       try
       {
-        using (FileStream fs = new FileStream(fullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+        using (var fs = new FileStream(fullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
         {
           fs.Close();
           return true;
@@ -252,7 +252,7 @@ namespace Altaxo.Serialization.AutoUpdates
     private void RemoveOldInstallationFiles()
     {
       byte[] buff = null;
-      using (FileStream fso = new FileStream(Path.Combine(_pathToInstallation, PackListRelativePath), FileMode.Open, FileAccess.Read, FileShare.Read))
+      using (var fso = new FileStream(Path.Combine(_pathToInstallation, PackListRelativePath), FileMode.Open, FileAccess.Read, FileShare.Read))
       {
         buff = new byte[fso.Length];
         fso.Read(buff, 0, buff.Length);
@@ -260,7 +260,7 @@ namespace Altaxo.Serialization.AutoUpdates
       }
       // thus we ensured that PackList.txt is closed, so that it can be deleted now
 
-      StreamReader str = new StreamReader(new MemoryStream(buff));
+      var str = new StreamReader(new MemoryStream(buff));
       string line;
       while (null != (line = str.ReadLine()))
       {
