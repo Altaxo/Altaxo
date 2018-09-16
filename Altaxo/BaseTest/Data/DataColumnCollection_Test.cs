@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Data
 {
@@ -37,7 +37,7 @@ namespace AltaxoTest.Data
     [Test]
     public void ZeroColumns()
     {
-      DataColumnCollection d = new DataColumnCollection();
+      var d = new DataColumnCollection();
       Assert.AreEqual(0, d.ColumnCount);
       Assert.AreEqual(0, d.RowCount);
       Assert.AreEqual(false, d.IsDirty);
@@ -47,9 +47,9 @@ namespace AltaxoTest.Data
     [Test]
     public void TenEmptyColumns()
     {
-      DataColumnCollection d = new DataColumnCollection();
+      var d = new DataColumnCollection();
 
-      DataColumn[] cols = new DataColumn[10];
+      var cols = new DataColumn[10];
       for (int i = 0; i < 10; i++)
       {
         cols[i] = new DoubleColumn();

@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace AltaxoTest.Main
 {
@@ -283,7 +283,7 @@ namespace AltaxoTest.Main
           var tester = new SuspendTester[NumberOfTesters];
           for (int i = 0; i < NumberOfTesters; ++i)
           {
-            tester[i] = new SuspendTester(i % 2 == 0 ? (ISuspendableByToken)childNode : (ISuspendableByToken)parentNode, 0.2);
+            tester[i] = new SuspendTester(i % 2 == 0 ? childNode : (ISuspendableByToken)parentNode, 0.2);
           }
 
           Parallel.ForEach(tester, test => test.Worker());

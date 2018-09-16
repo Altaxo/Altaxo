@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 {
@@ -40,13 +40,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
     [Test]
     public void TestGeneratedPolygons_WOFrame_WOInset()
     {
-      List<List<ClipperLib.IntPoint>> framePolygon;
-      List<List<ClipperLib.IntPoint>> insetPolygon;
-      List<List<ClipperLib.IntPoint>> fillPolygon;
 
       var square = new Square();
 
-      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
       Assert.IsNull(framePolygon);
       Assert.IsNull(insetPolygon);
@@ -56,13 +53,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
     [Test]
     public void TestGeneratedPolygons_WithFrame_WOInset()
     {
-      List<List<ClipperLib.IntPoint>> framePolygon;
-      List<List<ClipperLib.IntPoint>> insetPolygon;
-      List<List<ClipperLib.IntPoint>> fillPolygon;
 
       var square = new Square().WithFrame(new ConstantThicknessFrame()).WithRelativeStructureWidth(0.125);
 
-      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
       Assert.IsNotNull(framePolygon);
       Assert.IsNull(insetPolygon);
@@ -72,13 +66,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
     [Test]
     public void TestGeneratedPolygons_WOFrame_WithInset()
     {
-      List<List<ClipperLib.IntPoint>> framePolygon;
-      List<List<ClipperLib.IntPoint>> insetPolygon;
-      List<List<ClipperLib.IntPoint>> fillPolygon;
 
       var square = new Square().WithInset(new VerticalBarInset()).WithRelativeStructureWidth(0.125);
 
-      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
       Assert.IsNull(framePolygon);
       Assert.IsNotNull(insetPolygon);
@@ -88,16 +79,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
     [Test]
     public void TestGeneratedPolygons_WithFrame_WithInset()
     {
-      List<List<ClipperLib.IntPoint>> framePolygon;
-      List<List<ClipperLib.IntPoint>> insetPolygon;
-      List<List<ClipperLib.IntPoint>> fillPolygon;
 
       var square = new Square()
                     .WithFrame(new ConstantThicknessFrame())
                     .WithInset(new VerticalBarInset())
                     .WithRelativeStructureWidth(0.125);
 
-      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
       Assert.IsNotNull(framePolygon);
       Assert.IsNotNull(insetPolygon);
@@ -107,16 +95,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
     [Test]
     public void TestGeneratedPolygons_WithFrame_WithSquarePointInset()
     {
-      List<List<ClipperLib.IntPoint>> framePolygon;
-      List<List<ClipperLib.IntPoint>> insetPolygon;
-      List<List<ClipperLib.IntPoint>> fillPolygon;
 
       var square = new Square()
                     .WithFrame(new ConstantThicknessFrame())
                     .WithInset(new SquarePointInset())
                     .WithRelativeStructureWidth(0.125);
 
-      square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
+      square.CalculatePolygons(null, out var framePolygon, out var insetPolygon, out var fillPolygon);
 
       Assert.IsNotNull(framePolygon);
       Assert.IsNotNull(insetPolygon);

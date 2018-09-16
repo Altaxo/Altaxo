@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D;
+using NUnit.Framework;
 
 namespace Altaxo.Geometry
 {
@@ -276,7 +276,7 @@ namespace Altaxo.Geometry
       const double maxDev = 1E-6;
       var rnd = new System.Random();
 
-      PointD3D[] testPoints = new PointD3D[1024];
+      var testPoints = new PointD3D[1024];
 
       testPoints[0] = PointD3D.Empty;
       testPoints[1] = new PointD3D(0, 0.1, 0); // first line segment always in y direction, so that north is in z direction and west in -x direction

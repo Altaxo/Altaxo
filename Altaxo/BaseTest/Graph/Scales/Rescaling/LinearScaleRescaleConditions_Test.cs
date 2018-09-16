@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Graph.Scales.Rescaling;
 using Altaxo.Main;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Graph.Scales.Rescaling
 {

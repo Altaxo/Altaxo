@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Main;
 using NUnit.Framework;
-using System;
 
 namespace AltaxoTest.Data
 {
@@ -38,7 +38,7 @@ namespace AltaxoTest.Data
     [Test]
     public void ZeroElements()
     {
-      DoubleColumn d = new DoubleColumn();
+      var d = new DoubleColumn();
 
       Assert.AreEqual(0, d.Count);
       Assert.AreEqual(false, d.IsDirty);
@@ -49,7 +49,7 @@ namespace AltaxoTest.Data
     [Test]
     public void TenEmptyElements()
     {
-      DoubleColumn d = new DoubleColumn(10);
+      var d = new DoubleColumn(10);
       Assert.AreEqual(0, d.Count);
       Assert.AreEqual(false, d.IsDirty);
       for (int i = 0; i < 11; i++)
@@ -59,7 +59,7 @@ namespace AltaxoTest.Data
     [Test]
     public void TenElementsFirstFilled()
     {
-      DoubleColumn d = new DoubleColumn(10);
+      var d = new DoubleColumn(10);
       Assert.AreEqual(0, d.Count);
       d[0] = 77.0;
       Assert.AreEqual(1, d.Count);
@@ -80,7 +80,7 @@ namespace AltaxoTest.Data
     [Test]
     public void FiveElements89Filled()
     {
-      DoubleColumn d = new DoubleColumn(5);
+      var d = new DoubleColumn(5);
       Assert.AreEqual(0, d.Count);
       d[8] = 77.0;
       d[9] = 88;
@@ -170,7 +170,7 @@ namespace AltaxoTest.Data
         Assert.IsNotNull(sender);
         Assert.IsNotNull(e);
         Assert.IsTrue(e is Altaxo.Main.ParentChangedEventArgs);
-        Altaxo.Main.ParentChangedEventArgs ea = (Altaxo.Main.ParentChangedEventArgs)e;
+        var ea = (Altaxo.Main.ParentChangedEventArgs)e;
         Assert.AreEqual(null, ea.OldParent);
         Assert.AreEqual(this, ea.NewParent);
         _CallCount++;
@@ -182,7 +182,7 @@ namespace AltaxoTest.Data
         Assert.IsNotNull(sender);
         Assert.IsNotNull(e);
         Assert.IsTrue(e is Altaxo.Main.ParentChangedEventArgs);
-        Altaxo.Main.ParentChangedEventArgs ea = (Altaxo.Main.ParentChangedEventArgs)e;
+        var ea = (Altaxo.Main.ParentChangedEventArgs)e;
         Assert.AreEqual(this, ea.OldParent);
         Assert.AreEqual(null, ea.NewParent);
         _CallCount++;
@@ -195,7 +195,7 @@ namespace AltaxoTest.Data
         Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.IsNotNull(e, "Awaiting valid data change event args");
         Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
         Assert.AreEqual(5, ea.MinRowChanged);
         Assert.AreEqual(6, ea.MaxRowChanged);
         Assert.AreEqual(false, ea.HasRowCountDecreased);
@@ -209,7 +209,7 @@ namespace AltaxoTest.Data
         Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.IsNotNull(e, "Awaiting valid data change event args");
         Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
         Assert.AreEqual(5, ea.MinRowChanged);
         Assert.AreEqual(6, ea.MaxRowChanged);
         Assert.AreEqual(true, ea.HasRowCountDecreased);
@@ -223,7 +223,7 @@ namespace AltaxoTest.Data
         Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.IsNotNull(e, "Awaiting valid data change event args");
         Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
         Assert.AreEqual(7, ea.MinRowChanged);
         Assert.AreEqual(8, ea.MaxRowChanged);
         Assert.AreEqual(false, ea.HasRowCountDecreased);
@@ -238,7 +238,7 @@ namespace AltaxoTest.Data
         Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.IsNotNull(e, "Awaiting valid data change event args");
         Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
         Assert.AreEqual(0, ea.MinRowChanged);
         Assert.AreEqual(13, ea.MaxRowChanged);
         Assert.AreEqual(true, ea.HasRowCountDecreased);
@@ -252,7 +252,7 @@ namespace AltaxoTest.Data
         Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.IsNotNull(e, "Awaiting valid data change event args");
         Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
         Assert.AreEqual(5, ea.MinRowChanged);
         Assert.AreEqual(13, ea.MaxRowChanged);
         Assert.AreEqual(false, ea.HasRowCountDecreased);
@@ -266,7 +266,7 @@ namespace AltaxoTest.Data
         Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.IsNotNull(e, "Awaiting valid data change event args");
         Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
         Assert.AreEqual(0, ea.MinRowChanged);
         Assert.AreEqual(13, ea.MaxRowChanged);
         Assert.AreEqual(false, ea.HasRowCountDecreased);
@@ -280,7 +280,7 @@ namespace AltaxoTest.Data
         Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.IsNotNull(e, "Awaiting valid data change event args");
         Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
         Assert.AreEqual(9, ea.MinRowChanged);
         Assert.AreEqual(13, ea.MaxRowChanged);
         Assert.AreEqual(false, ea.HasRowCountDecreased);
@@ -366,12 +366,12 @@ namespace AltaxoTest.Data
     [Test]
     public void ParentNotification()
     {
-      DoubleColumn d = new DoubleColumn(10);
+      var d = new DoubleColumn(10);
       Assert.AreEqual(0, d.Count);
       Assert.AreEqual(false, d.IsDirty);
 
       // testing parent change notification
-      MyColumnParent parent = new MyColumnParent();
+      var parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.AreEqual(1, parent.CallCount, "There was no parent add notification");
@@ -387,12 +387,12 @@ namespace AltaxoTest.Data
     [Test]
     public void DataChangeNotification()
     {
-      DoubleColumn d = new DoubleColumn(10);
+      var d = new DoubleColumn(10);
       Assert.AreEqual(0, d.Count);
       Assert.AreEqual(false, d.IsDirty);
 
       // testing parent change notification
-      MyColumnParent parent = new MyColumnParent();
+      var parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.AreEqual(1, parent.CallCount, "There was no parent add notification");
@@ -453,7 +453,7 @@ namespace AltaxoTest.Data
     [Test]
     public void RowInsertionAtTheBeginning()
     {
-      DoubleColumn d = new DoubleColumn(10);
+      var d = new DoubleColumn(10);
       Assert.AreEqual(0, d.Count);
       Assert.AreEqual(false, d.IsDirty);
 
@@ -463,7 +463,7 @@ namespace AltaxoTest.Data
       Assert.AreEqual(10, d.Count);
 
       // testing parent change notification setting the parent
-      MyColumnParent parent = new MyColumnParent();
+      var parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.AreEqual(1, parent.CallCount, "There was no parent add notification");
@@ -490,7 +490,7 @@ namespace AltaxoTest.Data
     [Test]
     public void RowInsertionInTheMiddle()
     {
-      DoubleColumn d = new DoubleColumn(10);
+      var d = new DoubleColumn(10);
       Assert.AreEqual(0, d.Count);
       Assert.AreEqual(false, d.IsDirty);
 
@@ -500,7 +500,7 @@ namespace AltaxoTest.Data
       Assert.AreEqual(10, d.Count);
 
       // testing parent change notification setting the parent
-      MyColumnParent parent = new MyColumnParent();
+      var parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.AreEqual(1, parent.CallCount, "There was no parent add notification");
@@ -529,7 +529,7 @@ namespace AltaxoTest.Data
     [Test]
     public void RowInsertionOneBeforeEnd()
     {
-      DoubleColumn d = new DoubleColumn(10);
+      var d = new DoubleColumn(10);
       Assert.AreEqual(0, d.Count);
       Assert.AreEqual(false, d.IsDirty);
 
@@ -539,7 +539,7 @@ namespace AltaxoTest.Data
       Assert.AreEqual(10, d.Count);
 
       // testing parent change notification setting the parent
-      MyColumnParent parent = new MyColumnParent();
+      var parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.AreEqual(1, parent.CallCount, "There was no parent add notification");
@@ -568,7 +568,7 @@ namespace AltaxoTest.Data
     [Test]
     public void RowInsertionAtTheEnd()
     {
-      DoubleColumn d = new DoubleColumn(10);
+      var d = new DoubleColumn(10);
       Assert.AreEqual(0, d.Count);
       Assert.AreEqual(false, d.IsDirty);
 
@@ -578,7 +578,7 @@ namespace AltaxoTest.Data
       Assert.AreEqual(10, d.Count);
 
       // testing parent change notification setting the parent
-      MyColumnParent parent = new MyColumnParent();
+      var parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.AreEqual(1, parent.CallCount, "There was no parent add notification");

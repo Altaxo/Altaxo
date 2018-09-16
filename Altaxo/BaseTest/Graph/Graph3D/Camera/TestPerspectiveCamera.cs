@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Geometry;
+using NUnit.Framework;
 
 namespace Altaxo.Graph.Graph3D.Camera
 {
@@ -43,10 +43,10 @@ namespace Altaxo.Graph.Graph3D.Camera
       double zFar = 10000;
       double widthByZNear = 0.5;
       double distanceFactor = 0.75;
-      PointD3D targetPosition = new PointD3D(0, 0, 0);
-      VectorD3D targetToEye = new VectorD3D(0, 0, cameraDistanceOriginal);
-      VectorD3D cameraUpVector = new VectorD3D(0, 1, 0);
-      VectorD3D targetToWorldPoint = new VectorD3D(200, 0, 0);
+      var targetPosition = new PointD3D(0, 0, 0);
+      var targetToEye = new VectorD3D(0, 0, cameraDistanceOriginal);
+      var cameraUpVector = new VectorD3D(0, 1, 0);
+      var targetToWorldPoint = new VectorD3D(200, 0, 0);
 
       PointD3D cameraPosition = targetPosition + targetToEye;
       PointD3D worldPoint = targetPosition + targetToWorldPoint;
@@ -76,10 +76,10 @@ namespace Altaxo.Graph.Graph3D.Camera
       double zFar = 10000;
       double widthByZNear = 0.5;
       double distanceFactor = 0.75;
-      PointD3D targetPosition = new PointD3D(0, 0, 0);
-      VectorD3D targetToEye = new VectorD3D(cameraDistanceOriginal, 0, 0);
-      VectorD3D cameraUpVector = new VectorD3D(0, 0, 1);
-      VectorD3D targetToWorldPoint = new VectorD3D(0, 200, 0);
+      var targetPosition = new PointD3D(0, 0, 0);
+      var targetToEye = new VectorD3D(cameraDistanceOriginal, 0, 0);
+      var cameraUpVector = new VectorD3D(0, 0, 1);
+      var targetToWorldPoint = new VectorD3D(0, 200, 0);
 
       PointD3D cameraPosition = targetPosition + targetToEye;
       PointD3D worldPoint = targetPosition + targetToWorldPoint;
@@ -109,9 +109,9 @@ namespace Altaxo.Graph.Graph3D.Camera
       double zFar = 10000;
       double widthByZNear = 0.5;
       double distanceFactor = 0.75;
-      PointD3D cameraPosition = new PointD3D(0, 100, cameraDistanceOriginal);
-      PointD3D targetPosition = new PointD3D(0, 100, 300);
-      PointD3D worldPoint = new PointD3D(200, 100, 300);
+      var cameraPosition = new PointD3D(0, 100, cameraDistanceOriginal);
+      var targetPosition = new PointD3D(0, 100, 300);
+      var worldPoint = new PointD3D(200, 100, 300);
 
       var cameraO = new PerspectiveCamera(new VectorD3D(0, 1, 0), cameraPosition, targetPosition, zNear, zFar, widthByZNear * zNear);
 
@@ -134,9 +134,9 @@ namespace Altaxo.Graph.Graph3D.Camera
       double zFar = 10000;
       double widthByZNear = 0.5;
       double distanceFactor = 0.75;
-      PointD3D cameraPosition = new PointD3D(0, 0, cameraDistanceOriginal);
-      PointD3D targetPosition = new PointD3D(0, 0, 0);
-      PointD3D worldPoint = new PointD3D(200, 200, 0);
+      var cameraPosition = new PointD3D(0, 0, cameraDistanceOriginal);
+      var targetPosition = new PointD3D(0, 0, 0);
+      var worldPoint = new PointD3D(200, 200, 0);
 
       var cameraO = new PerspectiveCamera(new VectorD3D(0, 1, 0), cameraPosition, targetPosition, zNear, zFar, widthByZNear * zNear);
 

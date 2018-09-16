@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 
 namespace BaseTest.Serialization.Ascii
 {
@@ -154,7 +154,7 @@ namespace BaseTest.Serialization.Ascii
           int currentPosition = 0;
           var globColType = iColumnMode;
           var tokens = new List<string>();
-          this.TokenList.Add(tokens);
+          TokenList.Add(tokens);
 
           for (int c = 1; c <= MaxColumns; ++c) // 4 columns
           {
@@ -189,7 +189,7 @@ namespace BaseTest.Serialization.Ascii
             }
           }
 
-          this.LineList.Add(lineBuilder.ToString());
+          LineList.Add(lineBuilder.ToString());
         }
       }
 
@@ -274,7 +274,7 @@ namespace BaseTest.Serialization.Ascii
         {
           var lineBuilder = new StringBuilder();
           var tokens = new List<string>();
-          this.TokenList.Add(tokens);
+          TokenList.Add(tokens);
 
           for (int c = 1; c <= MaxColumns; ++c) // 4 columns
           {
@@ -286,7 +286,7 @@ namespace BaseTest.Serialization.Ascii
             if (c < MaxColumns)
               lineBuilder.Append(SeparationChar);
           }
-          this.LineList.Add(lineBuilder.ToString());
+          LineList.Add(lineBuilder.ToString());
         }
       }
     }

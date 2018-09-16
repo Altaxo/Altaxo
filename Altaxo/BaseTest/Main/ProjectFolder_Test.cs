@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 
 namespace Altaxo.Main
 {
@@ -53,7 +53,7 @@ namespace Altaxo.Main
     [Test]
     public void TestSplitNames()
     {
-      string result, result1;
+      string result;
 
       int len = _testNames.GetLength(0);
 
@@ -69,7 +69,7 @@ namespace Altaxo.Main
         result = ProjectFolder.GetNamePart(fullname);
         Assert.That(result == namepart, ReportNameError("GetNamePart", i));
 
-        ProjectFolder.SplitIntoFolderAndNamePart(fullname, out result, out result1);
+        ProjectFolder.SplitIntoFolderAndNamePart(fullname, out result, out var result1);
         Assert.That(result == dirpart && result1 == namepart, ReportNameError("SplitIntoFolderAndNamePart", i));
 
         result = ProjectFolder.Combine(result, result1);
