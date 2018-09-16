@@ -24,6 +24,9 @@
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
   using Altaxo.Geometry;
   using Altaxo.Graph.Graph3D;
   using Altaxo.Graph.Graph3D.Camera;
@@ -35,9 +38,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using SharpDX.D3DCompiler;
   using SharpDX.Direct3D10;
   using SharpDX.DXGI;
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using Buffer = SharpDX.Direct3D10.Buffer;
   using Device = SharpDX.Direct3D10.Device;
 

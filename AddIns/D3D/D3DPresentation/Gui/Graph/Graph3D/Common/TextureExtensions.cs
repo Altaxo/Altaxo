@@ -22,15 +22,15 @@
 
 #endregion Copyright
 
-using SharpDX;
-using SharpDX.Direct3D10;
-using SharpDX.DXGI;
-using SharpDX.WIC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SharpDX;
+using SharpDX.Direct3D10;
+using SharpDX.DXGI;
+using SharpDX.WIC;
 
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
@@ -72,8 +72,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       {
         textureCopy = new Texture2D(texture.Device, new Texture2DDescription
         {
-          Width = (int)texture.Description.Width,
-          Height = (int)texture.Description.Height,
+          Width = texture.Description.Width,
+          Height = texture.Description.Height,
           MipLevels = 1,
           ArraySize = 1,
           Format = texture.Description.Format,

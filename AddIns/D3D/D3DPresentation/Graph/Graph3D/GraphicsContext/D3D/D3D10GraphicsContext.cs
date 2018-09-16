@@ -260,9 +260,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     private PositionNormalIndexedTriangleBuffer InternalGetPositionNormalIndexedTriangleBuffer(IMaterial material)
     {
-      PositionNormalIndexedTriangleBuffer result;
       var materialKey = new MaterialKey(material);
-      if (!_positionNormalIndexedTriangleBuffers.TryGetValue(materialKey, out result))
+      if (!_positionNormalIndexedTriangleBuffers.TryGetValue(materialKey, out var result))
       {
         result = new PositionNormalIndexedTriangleBuffer(this);
         _positionNormalIndexedTriangleBuffers.Add(materialKey, result);
@@ -273,9 +272,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     private PositionNormalColorIndexedTriangleBuffer InternalGetPositionNormalColorIndexedTriangleBuffer(IMaterial material)
     {
-      PositionNormalColorIndexedTriangleBuffer result;
       var key = new MaterialPlusClippingKey(material, null);
-      if (!_positionNormalColorIndexedTriangleBuffers.TryGetValue(key, out result))
+      if (!_positionNormalColorIndexedTriangleBuffers.TryGetValue(key, out var result))
       {
         result = new PositionNormalColorIndexedTriangleBuffer(this);
         _positionNormalColorIndexedTriangleBuffers.Add(key, result);
@@ -286,10 +284,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     private PositionNormalUVIndexedTriangleBuffer InternalGetPositionNormalUVIndexedTriangleBuffer(IMaterial material)
     {
-      PositionNormalUVIndexedTriangleBuffer result;
       var materialKey = new MaterialKey(material);
 
-      if (!_positionNormalUVIndexedTriangleBuffers.TryGetValue(materialKey, out result))
+      if (!_positionNormalUVIndexedTriangleBuffers.TryGetValue(materialKey, out var result))
       {
         result = new PositionNormalUVIndexedTriangleBuffer(this);
         _positionNormalUVIndexedTriangleBuffers.Add(materialKey, result);
@@ -338,10 +335,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     private PositionIndexedTriangleBuffer InternalGetPositionIndexedTriangleBuffer(IMaterial material)
     {
-      PositionIndexedTriangleBuffer result;
       var materialKey = new MaterialKey(material);
 
-      if (!_positionIndexedTriangleBuffers.TryGetValue(materialKey, out result))
+      if (!_positionIndexedTriangleBuffers.TryGetValue(materialKey, out var result))
       {
         result = new PositionIndexedTriangleBuffer(this);
         _positionIndexedTriangleBuffers.Add(materialKey, result);
@@ -352,9 +348,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     private PositionColorIndexedTriangleBuffer InternalGetPositionColorIndexedTriangleBuffer(IMaterial material)
     {
-      PositionColorIndexedTriangleBuffer result;
       var key = new MaterialPlusClippingKey(material, null);
-      if (!_positionColorIndexedTriangleBuffers.TryGetValue(key, out result))
+      if (!_positionColorIndexedTriangleBuffers.TryGetValue(key, out var result))
       {
         result = new PositionColorIndexedTriangleBuffer(this);
         _positionColorIndexedTriangleBuffers.Add(key, result);
@@ -369,9 +364,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
       var clipPlanesTransformed = clipPlanes.Select(plane => _transformation.Transform(plane)).ToArray();
 
-      PositionNormalColorIndexedTriangleBuffer result;
       var key = new MaterialPlusClippingKey(material, clipPlanesTransformed);
-      if (!_positionNormalColorIndexedTriangleBuffers.TryGetValue(key, out result))
+      if (!_positionNormalColorIndexedTriangleBuffers.TryGetValue(key, out var result))
       {
         result = new PositionNormalColorIndexedTriangleBufferWithClipping(this, clipPlanesTransformed);
         _positionNormalColorIndexedTriangleBuffers.Add(key, result);
@@ -382,10 +376,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     private PositionUVIndexedTriangleBuffer InternalGetPositionUVIndexedTriangleBuffer(IMaterial material)
     {
-      PositionUVIndexedTriangleBuffer result;
       var materialKey = new MaterialKey(material);
 
-      if (!_positionUVIndexedTriangleBuffers.TryGetValue(materialKey, out result))
+      if (!_positionUVIndexedTriangleBuffers.TryGetValue(materialKey, out var result))
       {
         result = new PositionUVIndexedTriangleBuffer(this);
         _positionUVIndexedTriangleBuffers.Add(materialKey, result);
@@ -400,9 +393,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
       var clipPlanesTransformed = clipPlanes.Select(plane => _transformation.Transform(plane)).ToArray();
 
-      PositionNormalUIndexedTriangleBuffer result;
       var key = new MaterialPlusClippingPlusColorProviderKey(material, clipPlanesTransformed, colorProvider);
-      if (!_positionNormalUIndexedTriangleBuffers.TryGetValue(key, out result))
+      if (!_positionNormalUIndexedTriangleBuffers.TryGetValue(key, out var result))
       {
         result = new PositionNormalUIndexedTriangleBuffer(this);
         _positionNormalUIndexedTriangleBuffers.Add(key, result);

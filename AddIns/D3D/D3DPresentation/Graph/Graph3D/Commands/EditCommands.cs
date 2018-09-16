@@ -22,12 +22,12 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph.Graph3D.Viewing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Gui.Graph.Graph3D.Viewing;
 
 namespace Altaxo.Graph.Graph3D.Commands
 {

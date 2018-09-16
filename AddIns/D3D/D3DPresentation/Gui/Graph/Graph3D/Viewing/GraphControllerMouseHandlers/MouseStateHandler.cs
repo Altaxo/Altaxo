@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.GraphicsContext;
-using System;
-using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 {

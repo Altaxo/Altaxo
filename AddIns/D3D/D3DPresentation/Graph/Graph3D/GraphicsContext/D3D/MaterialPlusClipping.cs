@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing.D3D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       if (null == material)
         throw new ArgumentNullException(nameof(material));
 
-      this.Material = material;
+      Material = material;
     }
 
     public override bool Equals(object obj)
@@ -75,18 +75,18 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       if (null == from)
         return false;
 
-      if (!(this.Material.Equals(from.Material)))
+      if (!(Material.Equals(from.Material)))
         return false;
 
-      if (!(this.ClipPlanes != null && from.ClipPlanes != null))
-        return (this.ClipPlanes != null) ^ (from.ClipPlanes != null);
+      if (!(ClipPlanes != null && from.ClipPlanes != null))
+        return (ClipPlanes != null) ^ (from.ClipPlanes != null);
 
-      if (this.ClipPlanes.Length != from.ClipPlanes.Length)
+      if (ClipPlanes.Length != from.ClipPlanes.Length)
         return false;
 
-      for (int i = 0; i < this.ClipPlanes.Length; ++i)
+      for (int i = 0; i < ClipPlanes.Length; ++i)
       {
-        if (!this.ClipPlanes[i].Equals(from.ClipPlanes[i]))
+        if (!ClipPlanes[i].Equals(from.ClipPlanes[i]))
           return false;
       }
 

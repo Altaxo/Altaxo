@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing.D3D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       if (null == colorProvider)
         throw new ArgumentNullException(nameof(colorProvider));
 
-      this.ColorProvider = colorProvider;
+      ColorProvider = colorProvider;
     }
 
     public override bool Equals(object obj)
@@ -54,7 +54,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       if (null == from)
         return false;
 
-      return base.Equals(from) && this.ColorProvider.Equals(from.ColorProvider);
+      return base.Equals(from) && ColorProvider.Equals(from.ColorProvider);
     }
 
     public override int GetHashCode()

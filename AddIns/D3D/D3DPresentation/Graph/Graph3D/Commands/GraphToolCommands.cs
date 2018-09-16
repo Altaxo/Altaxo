@@ -22,6 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Plot.Data;
@@ -30,11 +35,6 @@ using Altaxo.Gui.Graph.Graph3D.Viewing;
 using Altaxo.Gui.Scripting;
 using Altaxo.Main;
 using Altaxo.Scripting;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 
 namespace Altaxo.Graph.Graph3D.Commands
 {
@@ -52,8 +52,8 @@ namespace Altaxo.Graph.Graph3D.Commands
       _graphToolType = toolType;
       if (null != Current.Workbench)
       {
-        Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(this.EhWorkbenchContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
-        this.EhWorkbenchContentChanged(this, EventArgs.Empty);
+        Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
+        EhWorkbenchContentChanged(this, EventArgs.Empty);
       }
     }
 
@@ -65,16 +65,16 @@ namespace Altaxo.Graph.Graph3D.Commands
         {
           lock (this)
           {
-            this.myCurrentGraphController.CurrentGraphToolChanged -= new EventHandler(this.EhGraphToolChanged);
-            this.myCurrentGraphController = null;
+            myCurrentGraphController.CurrentGraphToolChanged -= new EventHandler(EhGraphToolChanged);
+            myCurrentGraphController = null;
           }
         }
         if (Controller != null)
         {
           lock (this)
           {
-            this.myCurrentGraphController = this.Controller;
-            this.myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(this.EhGraphToolChanged);
+            myCurrentGraphController = Controller;
+            myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(EhGraphToolChanged);
           }
         }
         OnPropertyChanged("IsChecked");

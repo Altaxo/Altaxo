@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Shapes;
-using System;
-using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 {
@@ -61,12 +61,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 
       _cachedActiveLayer = _grac.ActiveLayer;
       _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+      GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out var hitPointOnLayerPlaneInLayerCoordinates, out var rotationsRadian);
 
-      PointD3D hitPointOnLayerPlaneInLayerCoordinates;
-      VectorD3D rotationsRadian;
-      GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
-
-      TextGraphic tgo = new TextGraphic(_grac.Doc.GetPropertyContext());
+      var tgo = new TextGraphic(_grac.Doc.GetPropertyContext());
       tgo.SetParentSize(_cachedActiveLayer.Size, false);
       tgo.Position = hitPointOnLayerPlaneInLayerCoordinates;
 

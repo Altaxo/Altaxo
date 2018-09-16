@@ -22,6 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Plot.Data;
@@ -33,11 +38,6 @@ using Altaxo.Gui.Scripting;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Scripting;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 
 namespace Altaxo.Graph.Graph3D.Commands
 {
@@ -303,7 +303,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
     private static IList<KeyValuePair<string, string>> GetFileFilterString(ImageFormat fmt)
     {
-      List<KeyValuePair<string, string>> filter = new List<KeyValuePair<string, string>>();
+      var filter = new List<KeyValuePair<string, string>>();
 
       if (fmt == ImageFormat.Bmp)
         filter.Add(new KeyValuePair<string, string>("*.bmp", "Bitmap files (*.bmp)"));
@@ -338,17 +338,18 @@ namespace Altaxo.Graph.Graph3D.Commands
     public override void Run(Graph3DController ctrl)
     {
       System.IO.Stream myStream;
-      var saveFileDialog1 = new Microsoft.Win32.SaveFileDialog();
-
-      saveFileDialog1.Filter = "Altaxo graph files (*.axogrp)|*.axogrp|All files (*.*)|*.*";
-      saveFileDialog1.FilterIndex = 1;
-      saveFileDialog1.RestoreDirectory = true;
+      var saveFileDialog1 = new Microsoft.Win32.SaveFileDialog
+      {
+        Filter = "Altaxo graph files (*.axogrp)|*.axogrp|All files (*.*)|*.*",
+        FilterIndex = 1,
+        RestoreDirectory = true
+      };
 
       if (true == saveFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
       {
         if ((myStream = saveFileDialog1.OpenFile()) != null)
         {
-          Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+          var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
           info.BeginWriting(myStream);
           info.AddValue("Graph", ctrl.Doc);
           info.EndWriting();
@@ -381,7 +382,7 @@ namespace Altaxo.Graph.Graph3D.Commands
   {
     public override void Run(Graph3DController ctrl)
     {
-      GraphDocument newDoc = new GraphDocument(ctrl.Doc);
+      var newDoc = new GraphDocument(ctrl.Doc);
       string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.Doc.Name, "GRAPH");
       newDoc.Name = Current.Project.GraphDocumentCollection.FindNewItemName(newnamebase);
       Current.Project.Graph3DDocumentCollection.Add(newDoc);
@@ -480,8 +481,8 @@ namespace Altaxo.Graph.Graph3D.Commands
       _cameraTypeForThisCommand = cameraTypeForThisCommand;
       if (null != Current.Workbench)
       {
-        Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(this.EhWorkbenchContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
-        this.EhWorkbenchContentChanged(this, EventArgs.Empty);
+        Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(EhWorkbenchContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
+        EhWorkbenchContentChanged(this, EventArgs.Empty);
       }
     }
 
@@ -493,16 +494,16 @@ namespace Altaxo.Graph.Graph3D.Commands
         {
           lock (this)
           {
-            this._currentGraphController.Doc.Changed -= new EventHandler(this.EhDocumentChanged);
-            this._currentGraphController = null;
+            _currentGraphController.Doc.Changed -= new EventHandler(EhDocumentChanged);
+            _currentGraphController = null;
           }
         }
         if (Controller != null)
         {
           lock (this)
           {
-            this._currentGraphController = this.Controller;
-            this._currentGraphController.Doc.Changed += new EventHandler(this.EhDocumentChanged);
+            _currentGraphController = Controller;
+            _currentGraphController.Doc.Changed += new EventHandler(EhDocumentChanged);
           }
         }
         OnPropertyChanged("IsChecked");

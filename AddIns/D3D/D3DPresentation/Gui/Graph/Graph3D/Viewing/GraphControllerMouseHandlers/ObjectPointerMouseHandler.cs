@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D;
-using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Altaxo.Collections;
+using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 {
@@ -220,9 +220,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
         {
           var superGrip = ActiveGrip as SuperGrip;
-          IHitTestObject hitTestObj;
-          IGripManipulationHandle gripHandle;
-          if (superGrip.GetHittedElement(hitData, out gripHandle, out hitTestObj))
+          if (superGrip.GetHittedElement(hitData, out var gripHandle, out var hitTestObj))
           {
             _selectedObjects.Remove(hitTestObj);
             superGrip.Remove(gripHandle);
@@ -234,11 +232,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
           ActiveGrip.Activate(hitData, false);
           return;
         }
-
-        // search for a object first
-        IHitTestObject clickedObject;
-        int[] clickedLayerNumber = null;
-        _grac.FindGraphObjectAtPixelPosition(hitData, false, out clickedObject, out clickedLayerNumber);
+        _grac.FindGraphObjectAtPixelPosition(hitData, false, out var clickedObject, out var clickedLayerNumber);
 
         if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
           ClearSelections();
@@ -351,7 +345,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       // if there is exactly one object selected, try to open the corresponding configuration dialog
       if (_selectedObjects.Count == 1)
       {
-        IHitTestObject graphObject = (IHitTestObject)SelectedObjects[0];
+        var graphObject = SelectedObjects[0];
 
         // Set the currently active layer to the layer the clicked object is belonging to.
         if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))

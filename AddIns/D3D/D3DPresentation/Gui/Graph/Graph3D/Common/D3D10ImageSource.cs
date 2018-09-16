@@ -45,11 +45,11 @@
 
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
-  using SharpDX.Direct3D9;
   using System;
   using System.Runtime.InteropServices;
   using System.Windows;
   using System.Windows.Interop;
+  using SharpDX.Direct3D9;
 
   public class D3D10ImageSource : D3DImage, IDisposable
   {
@@ -102,7 +102,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (!_isDisposed)
       {
         _isDisposed = true;
-        Disposer.RemoveAndDispose(ref this._renderTarget);
+        Disposer.RemoveAndDispose(ref _renderTarget);
         if (0 == System.Threading.Interlocked.Decrement(ref _numberOfActiveClients))
         {
           EndD3D();
@@ -113,9 +113,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     public void InvalidateD3DImage()
     {
       if (_isDisposed)
-        throw new ObjectDisposedException(this.GetType().Name);
+        throw new ObjectDisposedException(GetType().Name);
 
-      if (this._renderTarget != null)
+      if (_renderTarget != null)
       {
         base.Lock();
         base.AddDirtyRect(new Int32Rect(0, 0, base.PixelWidth, base.PixelHeight));
@@ -128,13 +128,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     public void SetRenderTargetDX10(SharpDX.Direct3D10.Texture2D renderTarget)
     {
       if (_isDisposed)
-        throw new ObjectDisposedException(this.GetType().Name);
+        throw new ObjectDisposedException(GetType().Name);
 
       // System.Diagnostics.Debug.WriteLine("D3DImageSource.SetRenderTarget Name={0}, Id={1}, renderTarget={2}", Name, InstanceID, renderTarget);
 
-      if (this._renderTarget != null)
+      if (_renderTarget != null)
       {
-        Disposer.RemoveAndDispose(ref this._renderTarget);
+        Disposer.RemoveAndDispose(ref _renderTarget);
 
         base.Lock();
         base.SetBackBuffer(D3DResourceType.IDirect3DSurface9, IntPtr.Zero);
@@ -154,8 +154,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         if (handle == IntPtr.Zero)
           throw new ArgumentNullException("Handle");
 
-        this._renderTarget = new Texture(D3D10ImageSource._d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
-        using (Surface surface = this._renderTarget.GetSurfaceLevel(0))
+        _renderTarget = new Texture(D3D10ImageSource._d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
+        using (Surface surface = _renderTarget.GetSurfaceLevel(0))
         {
           base.Lock();
           base.SetBackBuffer(D3DResourceType.IDirect3DSurface9, surface.NativePointer);

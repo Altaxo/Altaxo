@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.AddInItems;
 using System;
 using System.Collections;
+using Altaxo.AddInItems;
 
 namespace Altaxo.Main
 {
@@ -73,14 +73,14 @@ namespace Altaxo.Main
         if (codon == null)
           throw new ArgumentNullException(nameof(codon));
 
-        this._codon = codon;
-        this.Id = codon.Id;
+        _codon = codon;
+        Id = codon.Id;
 
         string title = codon.Properties["title"];
         if (string.IsNullOrEmpty(title))
-          this.Title = codon.Id;
+          Title = codon.Id;
         else
-          this.Title = title;
+          Title = title;
 
         _projectItemType = projectItemType;
         _viewContentType = viewContentType;

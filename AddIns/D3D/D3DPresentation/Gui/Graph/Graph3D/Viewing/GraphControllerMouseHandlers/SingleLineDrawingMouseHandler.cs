@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using Altaxo.Graph.Graph3D.Shapes;
-using System;
-using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 {
@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 
     public SingleLineDrawingMouseHandler(Graph3DController grac)
     {
-      this._grac = grac;
+      _grac = grac;
 
       _grac?.View?.SetPanelCursor(Cursors.Pen);
     }
@@ -74,10 +74,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         _cachedActiveLayer = _grac.ActiveLayer;
         _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
       }
-
-      PointD3D hitPointOnLayerPlaneInLayerCoordinates;
-      VectorD3D rotationsRadian;
-      GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
+      GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out var hitPointOnLayerPlaneInLayerCoordinates, out var rotationsRadian);
       _positionCurrentMouseInActiveLayerCoordinates = hitPointOnLayerPlaneInLayerCoordinates;
 
       _Points[_currentPoint] = _positionCurrentMouseInActiveLayerCoordinates;
@@ -97,9 +94,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 
       if (null != _cachedActiveLayer)
       {
-        PointD3D hitPointOnLayerPlaneInLayerCoordinates;
-        VectorD3D rotationsRadian;
-        GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _cachedActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
+        GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _cachedActiveLayer, position, out var hitPointOnLayerPlaneInLayerCoordinates, out var rotationsRadian);
         _positionCurrentMouseInActiveLayerCoordinates = hitPointOnLayerPlaneInLayerCoordinates;
         ModifyCurrentMousePrintAreaCoordinate();
 
@@ -149,7 +144,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 
       PointD3D p0, p1;
 
-      for (int i = 1; i < this._currentPoint; i++)
+      for (int i = 1; i < _currentPoint; i++)
       {
         // first transform this points to root layer coordinates
         p0 = _cachedActiveLayerTransformation.Transform(_Points[i - 1]);
@@ -167,7 +162,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 
     protected virtual void FinishDrawing()
     {
-      LineShape go = new LineShape(_Points[0], _Points[1], _grac.Doc.GetPropertyContext());
+      var go = new LineShape(_Points[0], _Points[1], _grac.Doc.GetPropertyContext());
 
       // deselect the text tool
       _grac.CurrentGraphTool = GraphToolType.ObjectPointer;

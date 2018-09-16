@@ -19,9 +19,9 @@
 // THE SOFTWARE.
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
+  using System;
   using Altaxo.Geometry;
   using SharpDX.Direct3D10;
-  using System;
 
   /// <summary>
   /// Scene.

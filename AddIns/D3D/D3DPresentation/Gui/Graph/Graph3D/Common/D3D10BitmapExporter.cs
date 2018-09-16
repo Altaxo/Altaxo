@@ -30,6 +30,12 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
+  using System;
+  using System.ComponentModel;
+  using System.Windows;
+  using System.Windows.Controls;
+  using System.Windows.Input;
+  using System.Windows.Media;
   using Altaxo.Geometry;
   using Altaxo.Graph;
   using Altaxo.Graph.Graph3D;
@@ -38,12 +44,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   using SharpDX;
   using SharpDX.Direct3D10;
   using SharpDX.DXGI;
-  using System;
-  using System.ComponentModel;
-  using System.Windows;
-  using System.Windows.Controls;
-  using System.Windows.Input;
-  using System.Windows.Media;
   using Device = SharpDX.Direct3D10.Device1;
 
   //using STG = SharpDX.Toolkit.Graphics;
@@ -142,7 +142,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           break;
       }
 
-      Texture2DDescription colordesc = new Texture2DDescription
+      var colordesc = new Texture2DDescription
       {
         BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
         Format = Format.B8G8R8A8_UNorm_SRgb,
@@ -156,7 +156,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         ArraySize = 1
       };
 
-      Texture2DDescription depthdesc = new Texture2DDescription
+      var depthdesc = new Texture2DDescription
       {
         BindFlags = BindFlags.DepthStencil,
         Format = Format.D32_Float_S8X24_UInt,
@@ -179,7 +179,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       device.OutputMerger.SetTargets(depthStencilView, renderTargetView);
       device.Rasterizer.SetViewports(new Viewport(0, 0, sizeX, sizeY, 0.0f, 1.0f));
-      Color4 clearColor = new Color4(1, 1, 1, 0); // Transparent
+      var clearColor = new Color4(1, 1, 1, 0); // Transparent
       if (options.BackgroundBrush != null)
       {
         var axoColor = options.BackgroundBrush.Color.Color;
@@ -198,7 +198,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (sampleCount > 1) // if renderTarget is an MSAA render target, we first have to copy it into a non-MSAA render target before we can copy it to a CPU texture and then hope to save it
       {
         // create a non-MSAA render target with the same size
-        Texture2DDescription renderTarget2Description = new Texture2DDescription
+        var renderTarget2Description = new Texture2DDescription
         {
           BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
           Format = Format.B8G8R8A8_UNorm_SRgb,

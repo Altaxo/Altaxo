@@ -24,6 +24,9 @@
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
   using Altaxo.Drawing;
   using Altaxo.Drawing.D3D;
   using Altaxo.Geometry;
@@ -37,9 +40,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using SharpDX.D3DCompiler;
   using SharpDX.Direct3D10;
   using SharpDX.DXGI;
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using Buffer = SharpDX.Direct3D10.Buffer;
   using Device = SharpDX.Direct3D10.Device;
 
@@ -234,7 +234,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       for (i = 0; i < _layoutNames.Length; ++i)
       {
         string techniqueName = "Shade_" + _layoutNames[i];
-        _renderLayouts[i].technique = this._lightingEffect.GetTechniqueByName(techniqueName);
+        _renderLayouts[i].technique = _lightingEffect.GetTechniqueByName(techniqueName);
         _renderLayouts[i].pass = _renderLayouts[i].technique.GetPassByIndex(0);
 
         if (null == _renderLayouts[i].technique || !_renderLayouts[i].technique.IsValid)
@@ -293,11 +293,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       //_constantBufferForSixPlanes = new Buffer(device, Utilities.SizeOf<Vector4>() * 6, ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
 
       // View transformation variables
-      _cbViewTransformation = this._lightingEffect.GetConstantBufferByName("cbViewTransformation");
+      _cbViewTransformation = _lightingEffect.GetConstantBufferByName("cbViewTransformation");
       _evWorldViewProj = _cbViewTransformation.GetMemberByName("WorldViewProj").AsMatrix();
       _evEyePosition = _cbViewTransformation.GetMemberByName("EyePosition").AsVector();
 
-      _cbMaterial = this._lightingEffect.GetConstantBufferByName("cbMaterial");
+      _cbMaterial = _lightingEffect.GetConstantBufferByName("cbMaterial");
       _evMaterialDiffuseColor = _cbMaterial.GetMemberByName("MaterialDiffuseColor").AsVector();
       _evMaterialSpecularExponent = _cbMaterial.GetMemberByName("MaterialSpecularExponent").AsScalar();
       _evMaterialSpecularExponent.Set(4.0f);
@@ -311,7 +311,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       BindTextureFor1DColorProviders();
 
       // Clip plane variables
-      _cbClipPlanes = this._lightingEffect.GetConstantBufferByName("cbClipPlanes");
+      _cbClipPlanes = _lightingEffect.GetConstantBufferByName("cbClipPlanes");
       for (i = 0; i < 6; ++i)
       {
         _evClipPlanes[i] = _cbClipPlanes.GetMemberByName("ClipPlane" + i.ToString(System.Globalization.CultureInfo.InvariantCulture)).AsVector();
@@ -427,7 +427,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       var _textureFor1DColorMeshTextureView = new ShaderResourceView(_hostDevice, _textureFor1DColorProvider);
 
-      var shaderResourceObj = this._lightingEffect.GetVariableByName("ColorGradient1DTexture");
+      var shaderResourceObj = _lightingEffect.GetVariableByName("ColorGradient1DTexture");
       EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
       shaderResource.SetResource(_textureFor1DColorMeshTextureView);
     }

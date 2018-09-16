@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (resource == null)
         return;
 
-      IDisposable disposer = resource as IDisposable;
+      var disposer = resource as IDisposable;
       if (disposer != null)
       {
         try

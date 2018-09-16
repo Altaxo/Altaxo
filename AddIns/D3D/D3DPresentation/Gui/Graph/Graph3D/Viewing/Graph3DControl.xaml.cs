@@ -39,6 +39,7 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
+  using System.Windows.Controls.Primitives;
   using Altaxo.Collections;
   using Altaxo.Geometry;
   using Altaxo.Graph.Graph3D;
@@ -47,7 +48,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using Altaxo.Gui.Graph.Graph3D.Common;
   using Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers;
   using Graph.Graph3D.Viewing;
-  using System.Windows.Controls.Primitives;
 
   /// <summary>
   /// Interaction logic for Graph3DControl.xaml
@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         }
         else // new Controller is null, so free any resources
         {
-          this.Dispose();
+          Dispose();
         }
       }
     }
@@ -142,19 +142,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
               break;
 
             case GraphToolType.ObjectPointer:
-              _mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(this.Controller);
+              _mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(Controller);
               break;
 
             case GraphToolType.TextDrawing:
-              _mouseState = new GraphControllerMouseHandlers.TextToolMouseHandler(this.Controller);
+              _mouseState = new GraphControllerMouseHandlers.TextToolMouseHandler(Controller);
               break;
 
             case GraphToolType.EllipseDrawing:
-              _mouseState = new GraphControllerMouseHandlers.EllipseDrawingMouseHandler(this.Controller);
+              _mouseState = new GraphControllerMouseHandlers.EllipseDrawingMouseHandler(Controller);
               break;
 
             case GraphToolType.SingleLineDrawing:
-              _mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(this.Controller);
+              _mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(Controller);
               break;
 
             /*
@@ -237,7 +237,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
     {
-      this._mouseState?.ProcessCmdKey(e);
+      _mouseState?.ProcessCmdKey(e);
     }
 
     private PointD3D GetMousePosition(MouseEventArgs e)
@@ -251,7 +251,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (!(_d3dCanvas.ActualWidth > 0 && _d3dCanvas.ActualHeight > 0))
         return; // _d3dCanvas was not measured till now
 
-      var mousePosition = e.GetPosition(this._d3dCanvas);
+      var mousePosition = e.GetPosition(_d3dCanvas);
       double relX = mousePosition.X / _d3dCanvas.ActualWidth;
       double relY = 1 - mousePosition.Y / _d3dCanvas.ActualHeight;
 

@@ -51,7 +51,7 @@ namespace Altaxo.Worksheet.Commands
       // Result: the reflection subsystem will skip this assembly when searching for user controls, because it thinks that we have no dependency
       // on PresentationCore and hence no user controls can exist in this assembly
       // Solution: make sure that the presentation core is referenced, by referencing an arbitrary type in it
-      System.Windows.TextAlignment alignment = new System.Windows.TextAlignment();
+      var alignment = new System.Windows.TextAlignment();
       string t = alignment.ToString();
 
       return t;
@@ -98,7 +98,7 @@ namespace Altaxo.Worksheet.Commands
 
       var plotStyle = new DataMeshPlotStyle();
 
-      XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
+      var assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
       if (assoc.DataTableMatrix.RowHeaderColumn == null)
         assoc.DataTableMatrix.RowHeaderColumn = new IndexerColumn();
       if (assoc.DataTableMatrix.ColumnHeaderColumn == null)

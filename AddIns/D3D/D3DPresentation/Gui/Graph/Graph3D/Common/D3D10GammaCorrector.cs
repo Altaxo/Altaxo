@@ -29,11 +29,11 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
+  using System;
   using SharpDX;
   using SharpDX.D3DCompiler;
   using SharpDX.Direct3D10;
   using SharpDX.DXGI;
-  using System;
   using Buffer = SharpDX.Direct3D10.Buffer;
   using Device = SharpDX.Direct3D10.Device;
 
@@ -60,18 +60,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
         using (shaderBytes = ShaderBytecode.FromStream(stream))
         {
-          this._effect = new Effect(device, shaderBytes);
+          _effect = new Effect(device, shaderBytes);
         }
       }
 
-      EffectTechnique technique = this._effect.GetTechniqueByIndex(0);
+      EffectTechnique technique = _effect.GetTechniqueByIndex(0);
       EffectPass pass = technique.GetPassByIndex(0);
 
-      this._vertexLayout = new InputLayout(device, pass.Description.Signature, new[] {
+      _vertexLayout = new InputLayout(device, pass.Description.Signature, new[] {
                                 new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
                                 new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0) });
 
-      this._vertices = Buffer.Create(device, BindFlags.VertexBuffer, new[]
+      _vertices = Buffer.Create(device, BindFlags.VertexBuffer, new[]
                                        {
                                       // 3D coordinates              UV Texture coordinates
                                        -1.0f, 1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
@@ -91,9 +91,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       {
         if (disposing)
         {
-          Disposer.RemoveAndDispose(ref this._vertexLayout);
-          Disposer.RemoveAndDispose(ref this._vertices);
-          Disposer.RemoveAndDispose(ref this._effect);
+          Disposer.RemoveAndDispose(ref _vertexLayout);
+          Disposer.RemoveAndDispose(ref _vertices);
+          Disposer.RemoveAndDispose(ref _effect);
           _cachedDevice = null;
         }
 
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     public void Render(Device device, ShaderResourceView textureView)
     {
       if (_isDisposed)
-        throw new ObjectDisposedException(this.GetType().Name);
+        throw new ObjectDisposedException(GetType().Name);
 
       if (device == null)
         return;
@@ -124,13 +124,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (!object.ReferenceEquals(device, _cachedDevice))
         throw new InvalidOperationException(string.Format("Argument {0} and member {1} do not match!", nameof(device), nameof(_cachedDevice)));
 
-      device.InputAssembler.InputLayout = this._vertexLayout;
+      device.InputAssembler.InputLayout = _vertexLayout;
       device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-      device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this._vertices, 24, 0));
+      device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertices, 24, 0));
 
-      EffectTechnique technique = this._effect.GetTechniqueByIndex(0);
+      EffectTechnique technique = _effect.GetTechniqueByIndex(0);
       EffectPass pass = technique.GetPassByIndex(0);
-      var shaderResourceObj = this._effect.GetVariableByName("ShaderTexture");
+      var shaderResourceObj = _effect.GetVariableByName("ShaderTexture");
       EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
       shaderResource.SetResource(textureView);
 

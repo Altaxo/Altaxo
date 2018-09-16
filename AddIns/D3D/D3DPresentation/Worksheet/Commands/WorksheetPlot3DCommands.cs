@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Data;
 using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
-using System;
 
 namespace Altaxo.Worksheet.Commands
 {

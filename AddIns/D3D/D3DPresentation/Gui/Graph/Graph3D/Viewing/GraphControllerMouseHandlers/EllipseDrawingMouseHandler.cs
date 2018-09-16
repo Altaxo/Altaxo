@@ -22,11 +22,11 @@
 
 #endregion Copyright
 
+using System;
+using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Shapes;
-using System;
-using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 {
@@ -61,13 +61,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 
       _cachedActiveLayer = _grac.ActiveLayer;
       _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-
-      PointD3D hitPointOnLayerPlaneInLayerCoordinates;
-      VectorD3D rotationsRadian;
-      GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out hitPointOnLayerPlaneInLayerCoordinates, out rotationsRadian);
+      GetHitPointOnActiveLayerPlaneFacingTheCamera(_grac.Doc, _grac.ActiveLayer, position, out var hitPointOnLayerPlaneInLayerCoordinates, out var rotationsRadian);
 
       double sphereDiameter = _cachedActiveLayer.Size.Length / 10;
-      Ellipsoid tgo = new Ellipsoid();
+      var tgo = new Ellipsoid();
       tgo.SetParentSize(_cachedActiveLayer.Size, false);
       tgo.Size = new VectorD3D(sphereDiameter, sphereDiameter, sphereDiameter);
       tgo.Position = hitPointOnLayerPlaneInLayerCoordinates;
