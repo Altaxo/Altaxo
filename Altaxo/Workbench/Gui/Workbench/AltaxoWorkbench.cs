@@ -22,20 +22,19 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Altaxo.AddInItems;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Startup;
 using Altaxo.Main;
 using Altaxo.Main.Services;
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Specialized;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -165,7 +164,7 @@ namespace Altaxo.Gui.Workbench
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AltaxoWorkbench s = (AltaxoWorkbench)obj;
+        var s = (AltaxoWorkbench)obj;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -196,8 +195,8 @@ namespace Altaxo.Gui.Workbench
       // if the application was started as a COM server, hide the window until there is an explicit COM command to show the window
       if (Current.ComManager?.ApplicationWasStartedWithEmbeddingArg ?? false)
       {
-        this.IsCollapsed = true;
-        this.IsShownInTaskbar = false;
+        IsCollapsed = true;
+        IsShownInTaskbar = false;
       }
     }
 
@@ -509,9 +508,9 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 
     public void SaveCompleteWorkbenchStateAndLayoutInPropertyService()
     {
-      this.StoreWorkbenchStateInPropertyService();
-      this.StoreWorkbenchDockingLayoutInPropertyService();
-      this.StoreWorkbenchDockingThemeInPropertyService();
+      StoreWorkbenchStateInPropertyService();
+      StoreWorkbenchDockingLayoutInPropertyService();
+      StoreWorkbenchDockingThemeInPropertyService();
     }
 
     #region WorkbenchState
@@ -697,7 +696,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     public bool CloseAllSolutionViews(bool force)
     {
       bool result = true;
-      foreach (var docContent in this._documentCollection.ToArray())
+      foreach (var docContent in _documentCollection.ToArray())
       {
         if (docContent.CloseWithSolution)
         {
@@ -827,13 +826,13 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     {
       if (content is IViewContent viewContent)
       {
-        this.ShowView(viewContent, selectView);
+        ShowView(viewContent, selectView);
       }
       else if (content is IProjectItemPresentationModel pm && pm.Document != null)
       {
         var ctrl = (IViewContent)Current.Gui.GetController(new object[] { content }, typeof(IViewContent));
         if (null != ctrl)
-          this.ShowView(ctrl, selectView);
+          ShowView(ctrl, selectView);
       }
     }
 

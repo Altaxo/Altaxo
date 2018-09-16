@@ -16,14 +16,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
-using Altaxo.Main.Services;
 using System;
-
 using System;
 using System.Collections.Generic;
-
+using System.Collections.Generic;
 using System.Diagnostics;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -35,14 +33,14 @@ namespace Altaxo.Gui.Workbench
 
     protected override void ChangeFileName(FileName newValue)
     {
-      fileService.OpenedFileFileNameChange(this, this.FileName, newValue);
+      fileService.OpenedFileFileNameChange(this, FileName, newValue);
       base.ChangeFileName(newValue);
     }
 
     internal FileServiceOpenedFile(FileService fileService, FileName fileName)
     {
       this.fileService = fileService;
-      this.FileName = fileName;
+      FileName = fileName;
       IsUntitled = false;
       //fileChangeWatcher = new FileChangeWatcher(this);
     }
@@ -50,7 +48,7 @@ namespace Altaxo.Gui.Workbench
     internal FileServiceOpenedFile(FileService fileService, byte[] fileData)
     {
       this.fileService = fileService;
-      this.FileName = null;
+      FileName = null;
       SetData(fileData);
       IsUntitled = true;
       MakeDirty();
@@ -131,7 +129,7 @@ namespace Altaxo.Gui.Workbench
     {
       if (registeredViews.Count == 0)
       {
-        bool wasDirty = this.IsDirty;
+        bool wasDirty = IsDirty;
         fileService.OpenedFileClosed(this);
 
         FileClosed(this, EventArgs.Empty);

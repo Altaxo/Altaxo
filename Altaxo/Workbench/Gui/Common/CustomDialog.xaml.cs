@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Common
 {
@@ -60,12 +60,12 @@ namespace Altaxo.Gui.Common
     {
       InitializeComponent();
 
-      this.Icon = null;
+      Icon = null;
       this.acceptButton = acceptButton;
       this.cancelButton = cancelButton;
 
       message = StringParser.Parse(message);
-      this.Title = StringParser.Parse(caption);
+      Title = StringParser.Parse(caption);
 
       buttonGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
 
@@ -102,15 +102,15 @@ namespace Altaxo.Gui.Common
     {
       if (cancelButton == -1 && e.Key == Key.Escape)
       {
-        this.Close();
+        Close();
       }
     }
 
     private void EhButtonClick(object sender, RoutedEventArgs e)
     {
       Result = (int)((Button)sender).Tag;
-      this.DialogResult = true;
-      this.Close();
+      DialogResult = true;
+      Close();
     }
   }
 }

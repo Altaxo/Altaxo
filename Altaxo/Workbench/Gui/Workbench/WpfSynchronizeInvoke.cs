@@ -1,12 +1,12 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
-using Altaxo.Main;
 using System;
 using System.ComponentModel;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Threading;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Workbench
 
     public object EndInvoke(IAsyncResult result)
     {
-      AsyncResult r = result as AsyncResult;
+      var r = result as AsyncResult;
       if (r == null)
         throw new ArgumentException("result must be the return value of a WpfSynchronizeInvoke.BeginInvoke call!");
       r.op.Wait();

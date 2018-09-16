@@ -17,19 +17,19 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Resources;
+using System.Windows.Forms;
+using System.Windows.Input;
 using Altaxo.AddInItems;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Workbench;
 using Altaxo.Gui.Workbench.Commands;
 using Altaxo.Main.Services;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Reflection;
-using System.Resources;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Linq;
 
 namespace Altaxo.Gui.Startup
 {
@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Startup
   /// </summary>
   public static class StartupMain
   {
-    private readonly static string[] _possibleStartupAssemblyNameEnds = { "startup", "startup32", "startup64" };
+    private static readonly string[] _possibleStartupAssemblyNameEnds = { "startup", "startup32", "startup64" };
 
     private static bool UseExceptionBox(params string[] startupArgs)
     {
@@ -230,7 +230,7 @@ namespace Altaxo.Gui.Startup
         startupSettings.AllowUserAddIns = true;
 
         string configDirectory = System.Configuration.ConfigurationManager.AppSettings["settingsPath"];
-        if (String.IsNullOrEmpty(configDirectory))
+        if (string.IsNullOrEmpty(configDirectory))
         {
           string relativeConfigDirectory = System.Configuration.ConfigurationManager.AppSettings["relativeSettingsPath"];
           if (string.IsNullOrEmpty(relativeConfigDirectory))
@@ -321,7 +321,7 @@ namespace Altaxo.Gui.Startup
       Current.Services = container;
 
       Current.Log.Info("Initialize application...");
-      CoreStartup startup = new CoreStartup(startupSettings.ApplicationName);
+      var startup = new CoreStartup(startupSettings.ApplicationName);
       if (startupSettings.UseExceptionBoxForErrorHandler)
       {
         ExceptionBox.RegisterExceptionBoxForUnhandledExceptions();
@@ -353,7 +353,7 @@ namespace Altaxo.Gui.Startup
           propertiesName);
       startup.StartCoreServices(propertyService, startupSettings);
 
-      Assembly exe = Assembly.Load(startupSettings.ResourceAssemblyName);
+      var exe = Assembly.Load(startupSettings.ResourceAssemblyName);
       Current.ResourceService.RegisterNeutralStrings(new ResourceManager("Altaxo.Resources.StringResources", exe));
       Current.ResourceService.RegisterNeutralImages(new ResourceManager("Altaxo.Resources.BitmapResources", exe));
       Current.ResourceService.RegisterNeutralStrings(new ResourceManager("Altaxo.Resources.AltaxoString", exe));
@@ -401,7 +401,7 @@ namespace Altaxo.Gui.Startup
     [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
     private static void RunWorkbench(StartupSettings wbSettings, Action BeforeRunWorkbench, Action WorkbenchClosed)
     {
-      WorkbenchStartup wbc = new WorkbenchStartup();
+      var wbc = new WorkbenchStartup();
       Current.Log.Info("Initializing workbench...");
       wbc.InitializeWorkbench();
 

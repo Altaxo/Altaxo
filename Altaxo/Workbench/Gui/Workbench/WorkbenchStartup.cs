@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Startup;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,6 +29,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.Gui.Startup;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {

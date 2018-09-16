@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Workbench
 
     public static string GetLayoutAsString(DockingManager dockManager)
     {
-      using (StringWriter fs = new StringWriter())
+      using (var fs = new StringWriter())
       {
         var xmlLayout = new XmlLayoutSerializer(dockManager);
 

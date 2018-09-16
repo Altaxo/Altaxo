@@ -23,126 +23,126 @@ using System.Windows.Forms;
 
 namespace Altaxo.Gui.Startup
 {
-	internal sealed class SplashScreenForm : Form
-	{
-		private static SplashScreenForm splashScreen;
-		private static List<string> requestedFileList = new List<string>();
-		private static List<string> parameterList = new List<string>();
-		private Bitmap bitmap;
+  internal sealed class SplashScreenForm : Form
+  {
+    private static SplashScreenForm splashScreen;
+    private static List<string> requestedFileList = new List<string>();
+    private static List<string> parameterList = new List<string>();
+    private Bitmap bitmap;
 
-		public static SplashScreenForm SplashScreen
-		{
-			get
-			{
-				return splashScreen;
-			}
-			set
-			{
-				splashScreen = value;
-			}
-		}
+    public static SplashScreenForm SplashScreen
+    {
+      get
+      {
+        return splashScreen;
+      }
+      set
+      {
+        splashScreen = value;
+      }
+    }
 
-		public SplashScreenForm()
-		{
-			System.Reflection.Assembly startass = System.Reflection.Assembly.GetExecutingAssembly();
-			Version version = startass.GetName().Version;
-			string versionText = string.Format("Altaxo {0}.{1} build {2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+    public SplashScreenForm()
+    {
+      var startass = System.Reflection.Assembly.GetExecutingAssembly();
+      Version version = startass.GetName().Version;
+      string versionText = string.Format("Altaxo {0}.{1} build {2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 #if DEBUG
-			versionText += " (debug)";
+      versionText += " (debug)";
 #endif
 
-			FormBorderStyle = FormBorderStyle.None;
-			StartPosition = FormStartPosition.CenterScreen;
-			ShowInTaskbar = false;
-			// Stream must be kept open for the lifetime of the bitmap
-			bitmap = new Bitmap(typeof(SplashScreenForm).Assembly.GetManifestResourceStream("Altaxo.Resources.SplashScreen.jpg"));
-			this.ClientSize = bitmap.Size;
+      FormBorderStyle = FormBorderStyle.None;
+      StartPosition = FormStartPosition.CenterScreen;
+      ShowInTaskbar = false;
+      // Stream must be kept open for the lifetime of the bitmap
+      bitmap = new Bitmap(typeof(SplashScreenForm).Assembly.GetManifestResourceStream("Altaxo.Resources.SplashScreen.jpg"));
+      ClientSize = bitmap.Size;
 
-			Font font = null;
-			foreach (string fontFamilyName in new[] { "Microsoft Sans Serif", "Liberation Sans", "Verdana", "Arial", "Helvetica" })
-			{
-				try
-				{
-					font = new Font(fontFamilyName, 4); break;
-				}
-				catch (Exception)
-				{
-				}
-			}
+      Font font = null;
+      foreach (string fontFamilyName in new[] { "Microsoft Sans Serif", "Liberation Sans", "Verdana", "Arial", "Helvetica" })
+      {
+        try
+        {
+          font = new Font(fontFamilyName, 4); break;
+        }
+        catch (Exception)
+        {
+        }
+      }
 
-			{
-				using (Graphics g = Graphics.FromImage(bitmap))
-				{
-					if (null != font)
-					{
-						g.DrawString(versionText, font, Brushes.Black, 230 - 3 * versionText.Length, 14);
-						font.Dispose();
-					}
-				}
-			}
-			BackgroundImage = bitmap;
-		}
+      {
+        using (var g = Graphics.FromImage(bitmap))
+        {
+          if (null != font)
+          {
+            g.DrawString(versionText, font, Brushes.Black, 230 - 3 * versionText.Length, 14);
+            font.Dispose();
+          }
+        }
+      }
+      BackgroundImage = bitmap;
+    }
 
-		public static void ShowSplashScreen()
-		{
-			splashScreen = new SplashScreenForm();
-			splashScreen.Show();
-		}
+    public static void ShowSplashScreen()
+    {
+      splashScreen = new SplashScreenForm();
+      splashScreen.Show();
+    }
 
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				if (bitmap != null)
-				{
-					bitmap.Dispose();
-					bitmap = null;
-				}
-			}
-			base.Dispose(disposing);
-		}
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (bitmap != null)
+        {
+          bitmap.Dispose();
+          bitmap = null;
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		public static string[] GetParameterList()
-		{
-			return parameterList.ToArray();
-		}
+    public static string[] GetParameterList()
+    {
+      return parameterList.ToArray();
+    }
 
-		public static string[] GetRequestedFileList()
-		{
-			return requestedFileList.ToArray();
-		}
+    public static string[] GetRequestedFileList()
+    {
+      return requestedFileList.ToArray();
+    }
 
-		public static void SetCommandLineArgs(string[] args)
-		{
-			requestedFileList.Clear();
-			parameterList.Clear();
+    public static void SetCommandLineArgs(string[] args)
+    {
+      requestedFileList.Clear();
+      parameterList.Clear();
 
-			foreach (string arg in args)
-			{
-				if (arg.Length == 0) continue;
-				if (arg[0] == '-' || arg[0] == '/')
-				{
-					int markerLength = 1;
+      foreach (string arg in args)
+      {
+        if (arg.Length == 0) continue;
+        if (arg[0] == '-' || arg[0] == '/')
+        {
+          int markerLength = 1;
 
-					if (arg.Length >= 2 && arg[0] == '-' && arg[1] == '-')
-					{
-						markerLength = 2;
-					}
+          if (arg.Length >= 2 && arg[0] == '-' && arg[1] == '-')
+          {
+            markerLength = 2;
+          }
 
-					string param = arg.Substring(markerLength);
-					// The SharpDevelop AddIn project template uses /addindir:"c:\temp\"
-					// but that actually means the last quote is escaped.
-					// This HACK makes this work anyways by replacing the trailing quote
-					// with a backslash:
-					if (param.EndsWith("\"", StringComparison.Ordinal))
-						param = param.Substring(0, param.Length - 1) + "\\";
-					parameterList.Add(param);
-				}
-				else
-				{
-					requestedFileList.Add(arg);
-				}
-			}
-		}
-	}
+          string param = arg.Substring(markerLength);
+          // The SharpDevelop AddIn project template uses /addindir:"c:\temp\"
+          // but that actually means the last quote is escaped.
+          // This HACK makes this work anyways by replacing the trailing quote
+          // with a backslash:
+          if (param.EndsWith("\"", StringComparison.Ordinal))
+            param = param.Substring(0, param.Length - 1) + "\\";
+          parameterList.Add(param);
+        }
+        else
+        {
+          requestedFileList.Add(arg);
+        }
+      }
+    }
+  }
 }

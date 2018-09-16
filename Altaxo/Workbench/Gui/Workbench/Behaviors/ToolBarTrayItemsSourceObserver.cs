@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Workbench
       frameworkElement.SetValue(ObservedItemsSourceProperty, observedItemsSource);
       if (GetObserve(frameworkElement))
       {
-        UpdateObservedValuesForFrameworkElement((ToolBarTray)frameworkElement);
+        UpdateObservedValuesForFrameworkElement(frameworkElement);
       }
     }
 

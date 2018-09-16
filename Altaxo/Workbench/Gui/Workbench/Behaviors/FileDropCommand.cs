@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Workbench
     /// <param name="e">DependencyPropertyChangedEventArgs concerning the drop command property.</param>
     private static void OnDropCommandChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-      UIElement uiElement = d as UIElement;     // Remove the handler if it exist to avoid memory leaks
+      var uiElement = d as UIElement;     // Remove the handler if it exist to avoid memory leaks
       uiElement.Drop -= UIElement_Drop;
 
       if (e.NewValue is ICommand command)
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Workbench
     /// <param name="e"></param>
     private static void UIElement_Drop(object sender, DragEventArgs e)
     {
-      UIElement uiElement = sender as UIElement;
+      var uiElement = sender as UIElement;
 
       // Sanity check just in case this was somehow send by something else
       if (uiElement == null)

@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Common
 {
@@ -53,24 +53,24 @@ namespace Altaxo.Gui.Common
     {
       InitializeComponent();
 
-      this.descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
-      this.retryButton.Content = StringParser.Parse("${res:Global.RetryButtonText}");
-      this.ignoreButton.Content = StringParser.Parse("${res:Global.IgnoreButtonText}");
-      this.exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
-      this.chooseLocationButton.Content = Current.ResourceService.GetString("Global.ChooseLocationButtonText");
+      descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
+      retryButton.Content = StringParser.Parse("${res:Global.RetryButtonText}");
+      ignoreButton.Content = StringParser.Parse("${res:Global.IgnoreButtonText}");
+      exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
+      chooseLocationButton.Content = Current.ResourceService.GetString("Global.ChooseLocationButtonText");
     }
 
     public SaveErrorChooseDialog(string fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       InitializeComponent();
 
-      this.descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
-      this.retryButton.Content = StringParser.Parse("${res:Global.RetryButtonText}");
-      this.ignoreButton.Content = StringParser.Parse("${res:Global.IgnoreButtonText}");
-      this.exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
-      this.chooseLocationButton.Content = Current.ResourceService.GetString("Global.ChooseLocationButtonText");
+      descriptionLabel.Content = StringParser.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel}");
+      retryButton.Content = StringParser.Parse("${res:Global.RetryButtonText}");
+      ignoreButton.Content = StringParser.Parse("${res:Global.IgnoreButtonText}");
+      exceptionButton.Content = Current.ResourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
+      chooseLocationButton.Content = Current.ResourceService.GetString("Global.ChooseLocationButtonText");
 
-      this.Title = StringParser.Parse(dialogName);
+      Title = StringParser.Parse(dialogName);
       //  Must be called for initialization
       chooseLocationButton.IsEnabled = chooseLocationEnabled;
 
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Common
           new StringTagPair("Exception", exceptionGot.GetType().FullName)
       );
 
-      descriptionTextBox.Text = StringParser.Parse(this.displayMessage);
+      descriptionTextBox.Text = StringParser.Parse(displayMessage);
 
       this.exceptionGot = exceptionGot;
     }

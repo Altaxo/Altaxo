@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -32,6 +31,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Workbench
     [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
     public ExceptionBox(Exception exception, string message, bool mustTerminate)
     {
-      this.exceptionThrown = exception;
+      exceptionThrown = exception;
       this.message = message;
       InitializeComponent();
       if (mustTerminate)
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Workbench
     [SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters")]
     private static void ShowErrorBox(object sender, UnhandledExceptionEventArgs e)
     {
-      Exception ex = e.ExceptionObject as Exception;
+      var ex = e.ExceptionObject as Exception;
       Current.Log.Fatal("UnhandledException caught", ex);
       if (e.IsTerminating)
         Current.Log.Fatal("Runtime is terminating because of unhandled exception.");
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Workbench
             Current.Log.Warn("Error tracking exception", ex);
           }
         }
-        ExceptionBox box = new ExceptionBox(exception, message, mustTerminate);
+        var box = new ExceptionBox(exception, message, mustTerminate);
         {
           box.ShowDialog();
         }
@@ -159,7 +159,7 @@ namespace Altaxo.Gui.Workbench
 
     public void InitializeText()
     {
-      this.Title = StringParser.Parse("${res:Altaxo.Gui.ExceptionBox.Title}");
+      Title = StringParser.Parse("${res:Altaxo.Gui.ExceptionBox.Title}");
       closeButton.Content = StringParser.Parse("${res:Altaxo.Gui.ExceptionBox.ExitAltaxo}");
       label3.Text = StringParser.Parse("${res:Altaxo.Gui.ExceptionBox.ThankYouMsg}");
       label2.Text = StringParser.Parse("${res:Altaxo.Gui.ExceptionBox.HelpText2}");
@@ -168,7 +168,7 @@ namespace Altaxo.Gui.Workbench
       reportButton.Content = StringParser.Parse("${res:Altaxo.Gui.ExceptionBox.ReportError}");
       copyErrorCheckBox.Content = StringParser.Parse("${res:Altaxo.Gui.ExceptionBox.CopyToClipboard}");
       if (PresentationResourceService.InstanceAvailable)
-        this._guiImage.Source = PresentationResourceService.GetBitmapSource("Altaxo.Gui.ExceptionBox.Image");
+        _guiImage.Source = PresentationResourceService.GetBitmapSource("Altaxo.Gui.ExceptionBox.Image");
     }
 
     private void EhCloseButton_Click(object sender, RoutedEventArgs e)
@@ -210,11 +210,13 @@ namespace Altaxo.Gui.Workbench
         }
         else
         {
-          Thread th = new Thread((ThreadStart)delegate
+          var th = new Thread((ThreadStart)delegate
           {
             Clipboard.SetText(exceptionText);
-          });
-          th.Name = "CopyInfoToClipboard";
+          })
+          {
+            Name = "CopyInfoToClipboard"
+          };
           th.SetApartmentState(ApartmentState.STA);
           th.Start();
         }
@@ -223,7 +225,7 @@ namespace Altaxo.Gui.Workbench
 
     private string getClipboardString()
     {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
 
       Version version = Assembly.GetEntryAssembly().GetName().Version;
       string versionText = string.Format("Altaxo {0}.{1} build {2}.{3}", version.Major, version.Minor, version.Build, version.Revision);

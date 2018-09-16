@@ -33,10 +33,10 @@ namespace Altaxo.Gui.Startup
 
     public StartupArguments(StartupArguments from)
     {
-      this.ApplicationName = from.ApplicationName;
-      this.RequestedFileList = from.RequestedFileList;
-      this.ParameterList = from.ParameterList;
-      this.StartupArgs = from.StartupArgs;
+      ApplicationName = from.ApplicationName;
+      RequestedFileList = from.RequestedFileList;
+      ParameterList = from.ParameterList;
+      StartupArgs = from.StartupArgs;
     }
 
     public StartupArguments(string applicationName, string[] args)

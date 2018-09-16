@@ -16,27 +16,23 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using Altaxo.Main;
-using System.Text;
-using Altaxo.Main.Services;
-using Altaxo.Workbench;
-
 using System;
-using System.Collections.Generic;
 //using ICSharpCode.AvalonEdit.Utils;
 using System;
 using System.Collections.Generic;
-
+using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 using System.Linq;
 using System.Text;
-
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Altaxo.Main;
+using Altaxo.Main.Services;
+using Altaxo.Workbench;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -137,7 +133,7 @@ namespace Altaxo.Gui.Workbench
 
     public string BrowseForFolder(string description, string selectedPath)
     {
-      using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+      using (var dialog = new FolderBrowserDialog())
       {
         dialog.Description = StringParser.Parse(description);
         if (selectedPath != null && selectedPath.Length > 0 && Directory.Exists(selectedPath))
@@ -186,8 +182,7 @@ namespace Altaxo.Gui.Workbench
 
       Altaxo.Current.Dispatcher.VerifyAccess();
 
-      OpenedFile file;
-      openedFileDict.TryGetValue(fileName, out file);
+      openedFileDict.TryGetValue(fileName, out var file);
       return file;
     }
 
@@ -203,8 +198,7 @@ namespace Altaxo.Gui.Workbench
       if (fileName == null)
         throw new ArgumentNullException("fileName");
 
-      OpenedFile file;
-      if (!openedFileDict.TryGetValue(fileName, out file))
+      if (!openedFileDict.TryGetValue(fileName, out var file))
       {
         openedFileDict[fileName] = file = new FileServiceOpenedFile(this, fileName);
       }
@@ -252,8 +246,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>Called by OpenedFile.UnregisterView to update the dictionary.</summary>
     internal void OpenedFileClosed(OpenedFile file)
     {
-      OpenedFile existing;
-      if (openedFileDict.TryGetValue(file.FileName, out existing) && existing != file)
+      if (openedFileDict.TryGetValue(file.FileName, out var existing) && existing != file)
         throw new ArgumentException("file must be registered");
 
       openedFileDict.Remove(file.FileName);
@@ -393,7 +386,7 @@ namespace Altaxo.Gui.Workbench
       }
       OpenedFile file = CreateUntitledOpenedFile(defaultName, content);
 
-      IFileViewContent newContent = (IFileViewContent)binding.CreateContentForFile(file);
+      var newContent = (IFileViewContent)binding.CreateContentForFile(file);
       if (newContent == null)
       {
         Current.Log.Warn("Created view content was null - DefaultName:" + defaultName);
@@ -412,7 +405,7 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        List<FileName> fileNames = new List<FileName>();
+        var fileNames = new List<FileName>();
         foreach (var content in Altaxo.Current.GetRequiredService<IWorkbench>().ViewContentCollection.OfType<IFileViewContent>())
         {
           FileName contentName = content.PrimaryFileName;
@@ -519,7 +512,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     public void RemoveFile(string fileName, bool isDirectory)
     {
-      FileCancelEventArgs eargs = new FileCancelEventArgs(fileName, isDirectory);
+      var eargs = new FileCancelEventArgs(fileName, isDirectory);
       OnFileRemoving(eargs);
       if (eargs.Cancel)
         return;
@@ -575,7 +568,7 @@ namespace Altaxo.Gui.Workbench
       // FileChangeWatcher.DisableAllChangeWatchers();
       try
       {
-        FileRenamingEventArgs eargs = new FileRenamingEventArgs(oldName, newName, isDirectory);
+        var eargs = new FileRenamingEventArgs(oldName, newName, isDirectory);
         OnFileRenaming(eargs);
         if (eargs.Cancel)
           return false;
@@ -621,7 +614,7 @@ namespace Altaxo.Gui.Workbench
     {
       if (FileUtility.IsEqualFileName(oldName, newName))
         return false;
-      FileRenamingEventArgs eargs = new FileRenamingEventArgs(oldName, newName, isDirectory);
+      var eargs = new FileRenamingEventArgs(oldName, newName, isDirectory);
       OnFileCopying(eargs);
       if (eargs.Cancel)
         return false;
@@ -730,7 +723,7 @@ namespace Altaxo.Gui.Workbench
     /// <returns>True if the operation can proceed, false if an event handler cancelled the operation.</returns>
     public bool FireFileReplacing(string fileName, bool isDirectory)
     {
-      FileCancelEventArgs e = new FileCancelEventArgs(fileName, isDirectory);
+      var e = new FileCancelEventArgs(fileName, isDirectory);
       if (FileReplacing != null)
       {
         FileReplacing(this, e);

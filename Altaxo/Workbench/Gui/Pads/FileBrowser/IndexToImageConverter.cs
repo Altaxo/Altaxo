@@ -37,16 +37,18 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     private static void Initialize()
     {
-      _imageList = new List<ImageSource>();
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.ClosedFolderBitmap"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.FLOPPY"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.DRIVE"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.CDROM"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.NETWORK"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Desktop"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PersonalFiles"));
-      _imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.MyComputer"));
+      _imageList = new List<ImageSource>
+      {
+        PresentationResourceService.GetBitmapSource("Icons.16x16.ClosedFolderBitmap"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.FLOPPY"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.DRIVE"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.CDROM"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.NETWORK"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.Desktop"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.PersonalFiles"),
+        PresentationResourceService.GetBitmapSource("Icons.16x16.MyComputer")
+      };
     }
 
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

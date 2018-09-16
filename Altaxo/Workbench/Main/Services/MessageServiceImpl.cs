@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Workbench;
 using Microsoft.Win32;
-using System;
-using System.Threading.Tasks;
-using System.Text;
-using System.Linq;
-using System.Collections.Generic;
-using System.Windows;
 
 namespace Altaxo.Main.Services
 {
@@ -43,7 +43,7 @@ namespace Altaxo.Main.Services
 
     public MessageServiceImpl()
     {
-      this.DefaultMessageBoxTitle = this.ProductName = "Altaxo";
+      DefaultMessageBoxTitle = ProductName = "Altaxo";
     }
 
     public virtual void ShowException(Exception ex, string message)
@@ -147,14 +147,14 @@ namespace Altaxo.Main.Services
 
     public int ShowCustomDialog(string caption, string dialogText, int acceptButtonIndex, int cancelButtonIndex, params string[] buttontexts)
     {
-      CustomDialog messageBox = new CustomDialog(caption, dialogText, acceptButtonIndex, cancelButtonIndex, buttontexts);
+      var messageBox = new CustomDialog(caption, dialogText, acceptButtonIndex, cancelButtonIndex, buttontexts);
       ((GuiFactoryServiceWpfWin)Current.Gui).ShowDialog(messageBox);
       return messageBox.Result;
     }
 
     public void InformSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot)
     {
-      SaveErrorInformDialog dlg = new SaveErrorInformDialog(fileName, message, dialogName, exceptionGot);
+      var dlg = new SaveErrorInformDialog(fileName, message, dialogName, exceptionGot);
       ((GuiFactoryServiceWpfWin)Current.Gui).ShowDialog(dlg);
     }
 
@@ -163,7 +163,7 @@ namespace Altaxo.Main.Services
       ChooseSaveErrorResult r = ChooseSaveErrorResult.Ignore;
 
 restartlabel:
-      SaveErrorChooseDialog dlg = new SaveErrorChooseDialog(fileName, message, dialogName, exceptionGot, chooseLocationEnabled);
+      var dlg = new SaveErrorChooseDialog(fileName, message, dialogName, exceptionGot, chooseLocationEnabled);
       ((GuiFactoryServiceWpfWin)Current.Gui).ShowDialog(dlg);
 
       switch (dlg.DetailedDialogResult)
@@ -171,14 +171,15 @@ restartlabel:
         case SaveErrorChooseDialog.SaveErrorChooseDialogResult.ChooseLocation:
           {
             // choose location:
-            SaveFileDialog fdiag = new SaveFileDialog();
-
-            fdiag.OverwritePrompt = true;
-            fdiag.AddExtension = true;
-            fdiag.CheckFileExists = false;
-            fdiag.CheckPathExists = true;
-            fdiag.Title = "Choose alternate file name";
-            fdiag.FileName = fileName;
+            var fdiag = new SaveFileDialog
+            {
+              OverwritePrompt = true,
+              AddExtension = true,
+              CheckFileExists = false,
+              CheckPathExists = true,
+              Title = "Choose alternate file name",
+              FileName = fileName
+            };
             if (fdiag.ShowDialog() == true)
             {
               r = ChooseSaveErrorResult.SaveAlternative(FileName.Create(fdiag.FileName));

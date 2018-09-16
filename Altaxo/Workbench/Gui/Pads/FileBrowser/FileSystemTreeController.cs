@@ -22,13 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
@@ -143,7 +143,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
           if ((attr & FileAttributes.Hidden) == 0)
           {
             string dir = System.IO.Path.GetFileName(fulldir);
-            TreeNode node = new TreeNode(dir, true)
+            var node = new TreeNode(dir, true)
             {
               Tag = fulldir,
               ImageIndex = 0,
@@ -181,7 +181,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       {
         Nodes.Clear();
 
-        TreeNode rootNode = new TreeNode(Path.GetFileName(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)), false)
+        var rootNode = new TreeNode(Path.GetFileName(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)), false)
         {
           ImageIndex = 6,
           SelectedImageIndex = 6,
@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
         };
         Nodes.Add(rootNode);
 
-        TreeNode myFilesNode = new TreeNode(Current.ResourceService.GetString("MainWindow.Windows.FileScout.MyDocuments"), true)
+        var myFilesNode = new TreeNode(Current.ResourceService.GetString("MainWindow.Windows.FileScout.MyDocuments"), true)
         {
           ImageIndex = 7,
           SelectedImageIndex = 7
@@ -206,7 +206,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
         rootNode.Nodes.Add(myFilesNode);
 
-        TreeNode computerNode = new TreeNode(Current.ResourceService.GetString("MainWindow.Windows.FileScout.MyComputer"), false)
+        var computerNode = new TreeNode(Current.ResourceService.GetString("MainWindow.Windows.FileScout.MyComputer"), false)
         {
           ImageIndex = 8,
           SelectedImageIndex = 8
@@ -246,8 +246,10 @@ namespace Altaxo.Gui.Pads.FileBrowser
           }
           text = StringParser.Parse(text);
 
-          TreeNode node = new TreeNode(text, true);
-          node.Tag = info;
+          var node = new TreeNode(text, true)
+          {
+            Tag = info
+          };
           switch (info.DriveType)
           {
             case DriveType.Removable:
@@ -276,7 +278,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
         foreach (string directory in Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)))
         {
-          TreeNode node = new TreeNode(Path.GetFileName(directory), true)
+          var node = new TreeNode(Path.GetFileName(directory), true)
           {
             Tag = directory,
             ImageIndex = 0,
@@ -323,7 +325,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       var node = obj as TreeNode;
       string path = node == null ? null : node.FullPath;
 
-      if (null != this.SelectedPathChanged && path != null)
+      if (null != SelectedPathChanged && path != null)
         SelectedPathChanged(path);
     }
   }

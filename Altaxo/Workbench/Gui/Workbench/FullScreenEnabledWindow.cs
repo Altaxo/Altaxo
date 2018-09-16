@@ -49,26 +49,26 @@ namespace Altaxo.Gui.Workbench
         {
           // enable fullscreen mode
           // remember previous window state
-          if (this.WindowState == System.Windows.WindowState.Normal || this.WindowState == System.Windows.WindowState.Maximized)
-            previousWindowState = this.WindowState;
-          oldLeft = this.Left;
-          oldTop = this.Top;
-          oldWidth = this.Width;
-          oldHeight = this.Height;
+          if (WindowState == System.Windows.WindowState.Normal || WindowState == System.Windows.WindowState.Maximized)
+            previousWindowState = WindowState;
+          oldLeft = Left;
+          oldTop = Top;
+          oldWidth = Width;
+          oldHeight = Height;
 
-          WindowInteropHelper interop = new WindowInteropHelper(this);
+          var interop = new WindowInteropHelper(this);
           interop.EnsureHandle();
-          Screen screen = Screen.FromHandle(interop.Handle);
+          var screen = Screen.FromHandle(interop.Handle);
 
           Rect bounds = screen.Bounds.ToWpf().TransformFromDevice(this);
 
-          this.ResizeMode = ResizeMode.NoResize;
-          this.Left = bounds.Left;
-          this.Top = bounds.Top;
-          this.Width = bounds.Width;
-          this.Height = bounds.Height;
-          this.WindowState = System.Windows.WindowState.Normal;
-          this.WindowStyle = WindowStyle.None;
+          ResizeMode = ResizeMode.NoResize;
+          Left = bounds.Left;
+          Top = bounds.Top;
+          Width = bounds.Width;
+          Height = bounds.Height;
+          WindowState = System.Windows.WindowState.Normal;
+          WindowStyle = WindowStyle.None;
         }
         else
         {
@@ -76,12 +76,12 @@ namespace Altaxo.Gui.Workbench
           ClearValue(ResizeModeProperty);
           ClearValue(MaxWidthProperty);
           ClearValue(MaxHeightProperty);
-          this.WindowState = previousWindowState;
+          WindowState = previousWindowState;
 
-          this.Left = oldLeft;
-          this.Top = oldTop;
-          this.Width = oldWidth;
-          this.Height = oldHeight;
+          Left = oldLeft;
+          Top = oldTop;
+          Width = oldWidth;
+          Height = oldHeight;
         }
       }
     }

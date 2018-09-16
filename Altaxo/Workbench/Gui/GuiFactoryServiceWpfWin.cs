@@ -22,18 +22,18 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
-using Altaxo.Gui.Common;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Drawing.Printing;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Input;
-using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using Altaxo.Geometry;
+using Altaxo.Gui.Common;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
 {
@@ -43,8 +43,8 @@ namespace Altaxo.Gui
 
     public GuiFactoryServiceWpfWin()
     {
-      this.RegisteredGuiTechnologies.Add(typeof(System.Windows.UIElement));
-      this.RegistedContextMenuProviders.Add(typeof(System.Windows.UIElement), ShowWpfContextMenu);
+      RegisteredGuiTechnologies.Add(typeof(System.Windows.UIElement));
+      RegistedContextMenuProviders.Add(typeof(System.Windows.UIElement), ShowWpfContextMenu);
     }
 
     private static void ShowWpfContextMenu(object parent, object owner, string addInPath, double x, double y)
@@ -223,11 +223,13 @@ namespace Altaxo.Gui
 
       if (controller.ViewObject is System.Windows.UIElement)
       {
-        var dlgview = new DialogShellViewWpf((System.Windows.UIElement)controller.ViewObject);
-        dlgview.Owner = TopmostModalWindow;
-        dlgview.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-        dlgview.Top = startLocationTop;
-        dlgview.Left = startLocationLeft;
+        var dlgview = new DialogShellViewWpf((System.Windows.UIElement)controller.ViewObject)
+        {
+          Owner = TopmostModalWindow,
+          WindowStartupLocation = System.Windows.WindowStartupLocation.Manual,
+          Top = startLocationTop,
+          Left = startLocationLeft
+        };
 
         var dlgctrl = new DialogShellController(dlgview, controller, title, showApplyButton);
         return true == InternalShowModalWindow(dlgview);
@@ -298,7 +300,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
 
     private string GetFilterString(OpenFileOptions options)
     {
-      StringBuilder stb = new StringBuilder();
+      var stb = new StringBuilder();
       foreach (var entry in options.FilterList)
       {
         stb.Append(entry.Value);
@@ -319,11 +321,12 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
 
     private bool InternalShowOpenFileDialog(OpenFileOptions options)
     {
-      var dlg = new Microsoft.Win32.OpenFileDialog();
-
-      dlg.Filter = GetFilterString(options);
-      dlg.FilterIndex = options.FilterIndex;
-      dlg.Multiselect = options.Multiselect;
+      var dlg = new Microsoft.Win32.OpenFileDialog
+      {
+        Filter = GetFilterString(options),
+        FilterIndex = options.FilterIndex,
+        Multiselect = options.Multiselect
+      };
       if (options.Title != null)
         dlg.Title = options.Title;
       if (options.InitialDirectory != null && System.IO.Directory.Exists(options.InitialDirectory))
@@ -347,9 +350,11 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
 
     private bool InternalShowSaveFileDialog(SaveFileOptions options)
     {
-      var dlg = new Microsoft.Win32.SaveFileDialog();
-      dlg.Filter = GetFilterString(options);
-      dlg.FilterIndex = options.FilterIndex;
+      var dlg = new Microsoft.Win32.SaveFileDialog
+      {
+        Filter = GetFilterString(options),
+        FilterIndex = options.FilterIndex
+      };
       //dlg.Multiselect = options.Multiselect;
       if (options.Title != null)
         dlg.Title = options.Title;

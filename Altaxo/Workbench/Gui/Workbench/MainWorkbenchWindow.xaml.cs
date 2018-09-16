@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using System.ComponentModel;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Workbench
     public MainWorkbenchWindow()
     {
       InitializeComponent();
-      this.Loaded += EhLoaded;
+      Loaded += EhLoaded;
     }
 
     private void EhLoaded(object sender, RoutedEventArgs e)
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Workbench
       System.Windows.Input.CommandManager.RequerySuggested += EhCommandManager_RequerySuggested;
 
       // set a timer with low priority that is called __after__ all bindings have been processed.
-      DispatcherTimer dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(1), DispatcherPriority.Background, EhAfterLoaded, this.Dispatcher);
+      var dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(1), DispatcherPriority.Background, EhAfterLoaded, Dispatcher);
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Workbench
     {
       ((DispatcherTimer)sender).Stop();
 
-      if (this.DataContext is AltaxoWorkbench wb)
+      if (DataContext is AltaxoWorkbench wb)
       {
         wb.FixViewContentIsNullWhenThereAreDocumentsAvailable();
       }
