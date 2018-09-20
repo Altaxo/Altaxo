@@ -183,7 +183,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
       arr[2] = new IntPoint(100, 100);
       arr[3] = new IntPoint(-200, 100);
 
-      var area = ConcaveHull.GetPolygonArea(arr);
+      var area = PolygonMath.GetClosedPolygonArea(arr);
       Assert.AreEqual(60000, area); // counterclockwise should give positive area
     }
 
@@ -205,9 +205,9 @@ namespace Altaxo.Geometry.PolygonHull.Int64
         arr[i] = new IntPoint(x + arr[i].X, y + arr[i].Y);
       }
 
-      var area = ConcaveHull.GetPolygonArea(arr);
+      var area = PolygonMath.GetClosedPolygonArea(arr);
       Assert.AreEqual(80000, area); // counterclockwise should give positive area
-      var centroid = ConcaveHull.GetPolygonCentroid(arr);
+      var centroid = PolygonMath.GetClosedPolygonCentroid(arr);
       Assert.AreEqual(x, centroid.X);
       Assert.AreEqual(y, centroid.Y);
     }

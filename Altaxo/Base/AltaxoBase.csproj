@@ -262,6 +262,7 @@
     <Compile Include="Geometry\PolygonHull\Int64\ConcaveHull_InnerClasses.cs" />
     <Compile Include="Geometry\PolygonHull\Int64\GrahamScan.cs" />
     <Compile Include="Geometry\PolygonHull\Int64\Int64LineD2DAnnotated.cs" />
+    <Compile Include="Geometry\PolygonHull\Int64\PolygonMath.cs" />
     <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeColumnsData.cs" />
     <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeDataBase.cs" />
     <Compile Include="Graph\Plot\IGPlotItem.cs" />
