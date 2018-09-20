@@ -190,9 +190,9 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     /// have to be non-selfintersecting!
     /// </summary>
     /// <param name="closedPolygons">The closed polygons.</param>
-    /// <returns>The second moments, Ix, Iy, and Ixy, of the given polygons (with respect to the origin (y=0, y=0)).</returns>
+    /// <returns>The second moments, Ixx, Iyy, and Ixy, of the given polygons (with respect to the origin (x=0, y=0)).</returns>
     /// <seealso href="https://en.wikipedia.org/wiki/Second_moment_of_area"/>
-    public static (double Ix, double Iy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<IEnumerable<IntPoint>> closedPolygons)
+    public static (double Ixx, double Iyy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<IEnumerable<IntPoint>> closedPolygons)
     {
       double sumX = 0, sumY = 0, sumXY = 0;
 
@@ -211,9 +211,9 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     /// has to be non-selfintersecting!
     /// </summary>
     /// <param name="closedPolygon">The closed polygon.</param>
-    /// <returns>The second moments, Ix, Iy, and Ixy, of the given polygon.</returns>
+    /// <returns>The second moments, Ixx, Iyy, and Ixy, of the given polygon (with respect to the origin (x=0, y=0)).</returns>
     /// <seealso href="https://en.wikipedia.org/wiki/Second_moment_of_area"/>
-    public static (double Ix, double Iy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<IntPoint> closedPolygon)
+    public static (double Ixx, double Iyy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<IntPoint> closedPolygon)
     {
       IntPoint firstPoint = default;
       IntPoint previous = default;
@@ -268,6 +268,48 @@ namespace Altaxo.Geometry.PolygonHull.Int64
 
         return (sumX, sumY, sumXY);
       }
+    }
+
+    /// <summary>
+    /// Gets the orientation angle (in rad) of the principal axis from the second moments.
+    /// </summary>
+    /// <param name="Ixx">The second moment Ixx.</param>
+    /// <param name="Iyy">The second moment Iyy.</param>
+    /// <param name="Ixy">The second moment Ixy.</param>
+    /// <returns>The orientation angle of the principal axis in rad.</returns>
+    public static double GetOrientationAngleOfPrincipalAxisFromSecondMoments(double Ixx, double Iyy, double Ixy)
+    {
+      return 0.5 * Math.Atan2(2 * Ixy, Iyy - Ixx);
+    }
+
+    /// <summary>
+    /// Gets the eigenvectors from the second moments.
+    /// </summary>
+    /// <param name="Ixx">The second moment Ixx.</param>
+    /// <param name="Iyy">The second moment Iyy.</param>
+    /// <param name="Ixy">The second moment Ixy.</param>
+    /// <returns>The Eigenvectors corresponding to the provided second moments (Eigenvector for the largest EigenValue is first).</returns>
+    public static (VectorD2D EigenVector1, VectorD2D EigenVector2) GetEigenVectorsFromSecondMoments(double Ixx, double Iyy, double Ixy)
+    {
+      var root = Math.Sqrt(4 * Pow2(Ixy) + Pow2(Ixx - Iyy));
+      var t1 = (Iyy - Ixx - root) / (2 * Ixy);
+      var t2 = (Iyy - Ixx + root) / (2 * Ixy);
+      return (new VectorD2D(t1, 1), new VectorD2D(t2, 1));
+    }
+
+    /// <summary>
+    /// Gets the eigenvalues from the second moments.
+    /// </summary>
+    /// <param name="Ixx">The second moment Ixx.</param>
+    /// <param name="Iyy">The second moment Iyy.</param>
+    /// <param name="Ixy">The second moment Ixy.</param>
+    /// <returns>The Eigenvalues corresponding to the second moments (largest Eigenvalue is the first element).</returns>
+    public static (double EigenValue1, double EigenValue2) GetEigenValuesFromSecondMoments(double Ixx, double Iyy, double Ixy)
+    {
+      var root = Math.Sqrt(4 * Pow2(Ixy) + Pow2(Ixx - Iyy));
+      var t1 = 0.5 * (Ixx + Iyy + root);
+      var t2 = 0.5 * (Ixx + Iyy - root);
+      return (t1, t2);
     }
 
     #endregion Closed Polygons
