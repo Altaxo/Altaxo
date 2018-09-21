@@ -163,13 +163,13 @@
     <Compile Include="Data\DoubleColumn_Test.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Geometry\PolygonHull\ConcaveHull_Test.cs" />
-    <Compile Include="Geometry\PolygonHull\GrahamScan_Test.cs" />
-    <Compile Include="Geometry\PolygonHull\Int64\ConcaveHull_Test.cs" />
-    <Compile Include="Geometry\PolygonHull\Int64\GrahamScan_Test.cs" />
-    <Compile Include="Geometry\PolygonHull\Int64\Intersect_Test.cs" />
-    <Compile Include="Geometry\PolygonHull\Int64\PolygonTestBase.cs" />
-    <Compile Include="Geometry\PolygonHull\PolygonTestBase.cs" />
+    <Compile Include="Geometry\Double_2D\ConcaveHull_Test.cs" />
+    <Compile Include="Geometry\Double_2D\GrahamScan_Test.cs" />
+    <Compile Include="Geometry\Int64_2D\ConcaveHull_Test.cs" />
+    <Compile Include="Geometry\Int64_2D\GrahamScan_Test.cs" />
+    <Compile Include="Geometry\Int64_2D\Intersect_Test.cs" />
+    <Compile Include="Geometry\Int64_2D\PolygonTestBase.cs" />
+    <Compile Include="Geometry\Double_2D\PolygonTestBase.cs" />
     <Compile Include="Geometry\TestMath2D.cs" />
     <Compile Include="Graph\CS\G2DCartesicCoordinateSystem_Test.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\ScatterSymbols\TestSquare.cs" />

@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ClipperLib;
 
-namespace Altaxo.Geometry.PolygonHull.Int64
+namespace Altaxo.Geometry.Int64_2D
 {
   /// <summary>
   /// Represents the concave hull of a set of 2D points.

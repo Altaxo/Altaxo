@@ -3,7 +3,7 @@
 Adapted from: https://github.com/masphei/ConvexHull
 The MIT License (MIT)
 Copyright (c) 2013 masphei
-Copyright (c) 2018 Dr. Dirk Lellinger
+Copyright (c) 2018 Dr. Dirk Lellinger (adapted to IntPoints, get rid of angle calculation)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -27,8 +27,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+using ClipperLib;
 
-namespace Altaxo.Geometry.PolygonHull
+namespace Altaxo.Geometry.Int64_2D
 {
   /// <summary>
   /// Calculation of the convex hull of a set of points by a Graham scan.
@@ -40,37 +41,32 @@ namespace Altaxo.Geometry.PolygonHull
     private const int TURN_NONE = 0;
 
 
-    private static int Turn(PointD2DAnnotated p, PointD2DAnnotated q, PointD2DAnnotated r)
+    private static int KindOfTurn(in IntPoint p, in IntPoint q, in IntPoint r)
     {
-      return ((q.X - p.X) * (r.Y - p.Y) - (r.X - p.X) * (q.Y - p.Y)).CompareTo(0);
+      var d1 = Int128.Int128Mul((q.X - p.X), (r.Y - p.Y));
+      var d2 = Int128.Int128Mul((r.X - p.X), (q.Y - p.Y));
+      return d1 == d2 ? 0 : (d1 < d2 ? -1 : 1);
     }
 
-    private static void KeepLeft(List<PointD2DAnnotated> hull, PointD2DAnnotated r)
+    private static void KeepLeft(List<(IntPoint point, int index)> hull, in (IntPoint point, int index) r)
     {
-      while (hull.Count > 1 && Turn(hull[hull.Count - 2], hull[hull.Count - 1], r) != TURN_LEFT)
+      while (hull.Count > 1 && KindOfTurn(hull[hull.Count - 2].point, hull[hull.Count - 1].point, r.point) != TURN_LEFT)
       {
         hull.RemoveAt(hull.Count - 1);
       }
-      if (hull.Count == 0 || hull[hull.Count - 1].ID != r.ID)
+      if (hull.Count == 0 || hull[hull.Count - 1].index != r.index)
       {
         hull.Add(r);
       }
     }
 
-    private static double GetAngle(PointD2DAnnotated p1, PointD2DAnnotated p2)
-    {
-      var xDiff = p2.X - p1.X;
-      var yDiff = p2.Y - p1.Y;
-      return Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
-    }
-
-    private static List<PointD2DAnnotated> MergeSort(PointD2DAnnotated p0, List<PointD2DAnnotated> arrPoint)
+    private static List<(IntPoint point, int index)> MergeSort(in IntPoint p0, List<(IntPoint point, int index)> arrPoint)
     {
       if (arrPoint.Count == 1)
       {
         return arrPoint;
       }
-      var arrSortedInt = new List<PointD2DAnnotated>();
+      var arrSortedInt = new List<(IntPoint point, int index)>();
       var middle = arrPoint.Count / 2;
       var leftArray = arrPoint.GetRange(0, middle);
       var rightArray = arrPoint.GetRange(middle, arrPoint.Count - middle);
@@ -90,7 +86,8 @@ namespace Altaxo.Geometry.PolygonHull
           arrSortedInt.Add(leftArray[leftptr]);
           leftptr++;
         }
-        else if (GetAngle(p0, leftArray[leftptr]) < GetAngle(p0, rightArray[rightptr]))
+        // else if (GetAngle(p0, leftArray[leftptr].point) < GetAngle(p0, rightArray[rightptr].point))
+        else if (TURN_LEFT == KindOfTurn(p0, leftArray[leftptr].point, rightArray[rightptr].point))
         {
           arrSortedInt.Add(leftArray[leftptr]);
           leftptr++;
@@ -105,53 +102,56 @@ namespace Altaxo.Geometry.PolygonHull
     }
 
     /// <summary>
-    /// Gets the convex hull of a set of points
+    /// Gets the convex hull of a set of points.
+    /// The returned points form a polygon in ccw direction (in a coordinate system in which y runs to the top, x runs to the right).
     /// </summary>
-    /// <param name="points">The points.</param>
+    /// <param name="points">The set of points for which to calculate the convex hull.</param>
     /// <returns>The ordered set of points that forms the hull.</returns>
-    public static IReadOnlyList<PointD2DAnnotated> GetConvexHull(IEnumerable<PointD2DAnnotated> points)
+    public static IReadOnlyList<(IntPoint point, int index)> GetConvexHull(IReadOnlyList<IntPoint> points)
     {
-      PointD2DAnnotated p0 = default;
-      var is_p0_initialized = false;
-      foreach (var value in points)
+      if (null == points)
       {
-        if (!is_p0_initialized)
-        {
-          p0 = value;
-          is_p0_initialized = true;
-        }
-        else
-        {
-          if (p0.Y > value.Y)
-          {
-            p0 = value;
-          }
-        }
+        throw new ArgumentNullException(nameof(points));
       }
 
-      if (!is_p0_initialized)
+      if (!(points.Count >= 3))
       {
-        throw new ArgumentException("Enumeration is empty", nameof(points));
+        throw new ArgumentException("Points list must at least contain 3 points", nameof(points));
       }
 
-      var order = new List<PointD2DAnnotated>();
-      foreach (var value in points)
+      var index0 = 0;
+      var point0 = points[index0];
+      for (var i = 1; i < points.Count; ++i)
       {
-        if (p0.ID != value.ID)
+        if (point0.Y > points[i].Y)
         {
-          order.Add(value);
+          index0 = i;
+          point0 = points[i];
         }
       }
 
-      order = MergeSort(p0, order);
-      var result = new List<PointD2DAnnotated>
+
+
+      var order = new List<(IntPoint point, int index)>();
+      for (var i = 0; i < points.Count; ++i)
       {
-        p0,
+        if (index0 != i)
+        {
+          order.Add((points[i], i));
+        }
+      }
+
+      order = MergeSort(point0, order);
+
+      var result = new List<(IntPoint point, int index)>
+      {
+        (point0, index0),
         order[0],
         order[1]
       };
       order.RemoveAt(0);
       order.RemoveAt(0);
+
       foreach (var value in order)
       {
         KeepLeft(result, value);

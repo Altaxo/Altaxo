@@ -29,7 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ClipperLib;
 
-namespace Altaxo.Geometry.PolygonHull.Int64
+namespace Altaxo.Geometry.Int64_2D
 {
   /// <summary>
   /// Mathematics for closed polygons.
@@ -313,6 +313,76 @@ namespace Altaxo.Geometry.PolygonHull.Int64
     }
 
     #endregion Closed Polygons
+
+    /// <summary>
+    /// Creates integer polygon points from points consisting of doubles.
+    /// The points can be transformed before converting to integers. First, the points are centered (x'=x-centerX, y'=y-centerY). Then the centered point
+    /// is rotated. Lastly, the such transformated points is scaled.
+    /// </summary>
+    /// <param name="points">The original points.</param>
+    /// <param name="centerX">The x coordinate of the center. (first transformation x' = x - centerX).</param>
+    /// <param name="centerY">The y coordinate of the center. (first transformation y' = y - centerY).</param>
+    /// <param name="rotation_rad">The rotation in rad (second transformation x'' = Cos(phi) * x' - Sin(phi) * y', y'' = Sin(phi) * x' + Cos(phi) * y').</param>
+    /// <param name="scale">The scale (third transformation x''' = scale * x'', y''' = scale * y'').</param>
+    /// <returns>The centered, rotated and scaled points, rounded to integers.</returns>
+    public static IEnumerable<IntPoint> ToIntPoints(this IEnumerable<Altaxo.Geometry.PointD2D> points, double centerX = 0, double centerY = 0, double rotation_rad = 0, double scale = 1)
+    {
+      double cos = 1, sin = 0;
+      if (0 != rotation_rad)
+      {
+        cos = Math.Cos(rotation_rad);
+        sin = Math.Sin(rotation_rad);
+      }
+
+      foreach (var pt in points)
+      {
+        var x = pt.X - centerX;
+        var y = pt.Y - centerY;
+
+        if (0 != rotation_rad)
+        {
+          var xx = x;
+          x = x * cos - y * sin;
+          y = xx * sin + y * cos;
+        }
+        yield return new IntPoint((long)Math.Round(x * scale), (long)Math.Round(y * scale));
+      }
+    }
+
+    /// <summary>
+    /// Creates integer polygon points from points consisting of doubles.
+    /// The points can be transformed before converting to integers. First, the points are centered (x'=x-centerX, y'=y-centerY). Then the centered point
+    /// is rotated. Lastly, the such transformated points is scaled.
+    /// </summary>
+    /// <param name="points">The original points.</param>
+    /// <param name="centerX">The x coordinate of the center. (first transformation x' = x - centerX).</param>
+    /// <param name="centerY">The y coordinate of the center. (first transformation y' = y - centerY).</param>
+    /// <param name="rotation_rad">The rotation in rad (second transformation x'' = Cos(phi) * x' - Sin(phi) * y', y'' = Sin(phi) * x' + Cos(phi) * y').</param>
+    /// <param name="scale">The scale (third transformation x''' = scale * x'', y''' = scale * y'').</param>
+    /// <returns>The centered, rotated and scaled points, rounded to integers.</returns>
+    public static IEnumerable<IntPoint> ToIntPoints(this IEnumerable<(double X, double Y)> points, double centerX = 0, double centerY = 0, double rotation_rad = 0, double scale = 1)
+    {
+      double cos = 1, sin = 0;
+      if (0 != rotation_rad)
+      {
+        cos = Math.Cos(rotation_rad);
+        sin = Math.Sin(rotation_rad);
+      }
+
+      foreach (var pt in points)
+      {
+        var x = pt.X - centerX;
+        var y = pt.Y - centerY;
+
+        if (0 != rotation_rad)
+        {
+          var xx = x;
+          x = x * cos - y * sin;
+          y = xx * sin + y * cos;
+        }
+        yield return new IntPoint((long)Math.Round(x * scale), (long)Math.Round(y * scale));
+      }
+    }
 
     private static double Pow2(double x) => x * x;
   }

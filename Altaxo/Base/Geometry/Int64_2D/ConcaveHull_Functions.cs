@@ -32,7 +32,7 @@ using ClipperLib;
 /// <summary>
 /// 
 /// </summary>
-namespace Altaxo.Geometry.PolygonHull.Int64
+namespace Altaxo.Geometry.Int64_2D
 {
   public readonly struct Int64LineSegment
   {

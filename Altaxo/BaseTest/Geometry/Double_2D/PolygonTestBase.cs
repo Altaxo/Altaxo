@@ -29,7 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Altaxo.Geometry.PolygonHull
+namespace Altaxo.Geometry.Double_2D
 {
   public class PolygonTestBase
   {

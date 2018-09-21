@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Altaxo.Geometry.PolygonHull
+namespace Altaxo.Geometry.Double_2D
 {
   /// <summary>
   /// Represents the concave hull of a set of 2D points.

@@ -28,7 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Altaxo.Geometry.PolygonHull
+namespace Altaxo.Geometry.Double_2D
 {
   public partial class ConcaveHull
   {

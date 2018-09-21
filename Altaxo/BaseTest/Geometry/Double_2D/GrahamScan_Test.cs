@@ -27,43 +27,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ClipperLib;
 using NUnit.Framework;
 
-namespace Altaxo.Geometry.PolygonHull.Int64
+namespace Altaxo.Geometry.Double_2D
 {
   [TestFixture]
   public class GrahamScan_Test : PolygonTestBase
   {
     private Random _random = new Random(1);
-
-    [Test]
-    public void Test1()
-    {
-      const int numberOfPoints = 4;
-
-      var a = new double[2 * numberOfPoints]
-      {
-595,
--662,
-587,
--386,
-646,
-772,
-112,
-433,
-      };
-
-
-      var arr = new IntPoint[numberOfPoints];
-      for (var i = 0; i < numberOfPoints; ++i)
-      {
-        arr[i] = new IntPoint(a[2 * i], a[2 * i + 1]);
-      }
-
-      var convexHull = GrahamScan.GetConvexHull(arr);
-      IncludenessTest(convexHull, arr);
-    }
 
     [Test]
     public void Test_Includeness()
@@ -73,7 +44,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
       for (var numberOfTests = 0; numberOfTests < 100; ++numberOfTests)
       {
         var numberOfPoints = 20 + numberOfTests * 10;
-        var arr = new IntPoint[numberOfPoints];
+        var arr = new PointD2DAnnotated[numberOfPoints];
 
         hash.Clear();
         for (var i = 0; i < numberOfPoints;)
@@ -84,7 +55,7 @@ namespace Altaxo.Geometry.PolygonHull.Int64
           if (!hash.Contains((x, y)))
           {
             hash.Add((x, y));
-            arr[i] = new IntPoint(x, y);
+            arr[i] = new PointD2DAnnotated(x, y, i);
             ++i;
           }
         }

@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 using ClipperLib;
 using NUnit.Framework;
 
-namespace Altaxo.Geometry.PolygonHull.Int64
+namespace Altaxo.Geometry.Int64_2D
 {
   [TestFixture]
   public class ConcaveHull_Test : PolygonTestBase

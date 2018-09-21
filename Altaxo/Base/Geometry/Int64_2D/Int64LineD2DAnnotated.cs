@@ -29,7 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ClipperLib;
 
-namespace Altaxo.Geometry.PolygonHull.Int64
+namespace Altaxo.Geometry.Int64_2D
 {
   /// <summary>
   /// Represents a line segment, using Points with Int64 coordinates. The points are annotated with integer numbers, which usually represents indices in a list or array.

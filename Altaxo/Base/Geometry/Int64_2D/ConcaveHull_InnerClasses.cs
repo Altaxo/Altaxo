@@ -27,42 +27,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using ClipperLib;
 
-namespace Altaxo.Geometry.PolygonHull
+namespace Altaxo.Geometry.Int64_2D
 {
-  [TestFixture]
-  public class GrahamScan_Test : PolygonTestBase
+  public partial class ConcaveHull
   {
-    private Random _random = new Random(1);
-
-    [Test]
-    public void Test_Includeness()
+    public class LengthComparer : IComparer<Int64LineD2DAnnotated>
     {
-      var hash = new HashSet<(int, int)>();
+      public static LengthComparer Instance { get; private set; } = new LengthComparer();
 
-      for (var numberOfTests = 0; numberOfTests < 100; ++numberOfTests)
+      public int Compare(Int64LineD2DAnnotated x, Int64LineD2DAnnotated y)
       {
-        var numberOfPoints = 20 + numberOfTests * 10;
-        var arr = new PointD2DAnnotated[numberOfPoints];
-
-        hash.Clear();
-        for (var i = 0; i < numberOfPoints;)
-        {
-          var x = _random.Next(-1000, 1000);
-          var y = _random.Next(-1000, 1000);
-
-          if (!hash.Contains((x, y)))
-          {
-            hash.Add((x, y));
-            arr[i] = new PointD2DAnnotated(x, y, i);
-            ++i;
-          }
-        }
-
-        var convexHull = GrahamScan.GetConvexHull(arr);
-
-        IncludenessTest(convexHull, arr);
+        return Comparer<double>.Default.Compare(x.Length, y.Length);
       }
     }
   }

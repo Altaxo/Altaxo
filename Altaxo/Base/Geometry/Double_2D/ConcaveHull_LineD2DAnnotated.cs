@@ -27,7 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 
-namespace Altaxo.Geometry.PolygonHull
+namespace Altaxo.Geometry.Double_2D
 {
   public partial class ConcaveHull
   {
