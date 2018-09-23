@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-// Originated from: Roslyn, EditorFeatures, Implementation/BraceMatching/BraceCharacterAndKind.cs
+// Originated from: Roslyn, EditorFeatures, Core/Implementation/BraceMatching/BraceCharacterAndKind.cs
 
 using System;
 using System.Collections.Generic;

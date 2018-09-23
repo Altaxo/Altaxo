@@ -1,6 +1,6 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-// Originated from: Roslyn, CSharpEditorFeatures, BraceMatching/StringLiteralBraceMatcher.cs
+// Originated from: Roslyn, EditorFeatures, CSharp/BraceMatching/StringLiteralBraceMatcher.cs
 
 using System.Threading;
 using System.Threading.Tasks;

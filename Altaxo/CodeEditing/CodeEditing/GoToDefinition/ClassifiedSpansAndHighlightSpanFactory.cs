@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-// Originated from: Roslyn, EditorFeatures, FindUsages/ClassifiedSpansAndHighlightSpanFactory.cs
+// Originated from: Roslyn, EditorFeatures, Core/FindUsages/ClassifiedSpansAndHighlightSpanFactory.cs
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
