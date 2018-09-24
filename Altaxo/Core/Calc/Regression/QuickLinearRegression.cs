@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -90,6 +90,30 @@ namespace Altaxo.Calc.Regression
     public double GetX0()
     {
       return -(_sy * _sxx - _syx * _sx) / (_n * _syx - _sx * _sy);
+    }
+
+    /// <summary>
+    /// Gets the y value for a given x value. Note that in every call of this function the coefficients a0 and a1 are calculated again.
+    /// For repeated calls, better use <see cref="GetYOfXFunction"/>, but note that this function represents the state of the regression at the time of this call.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <returns>The y value at the value x.</returns>
+    public double GetYOfX(double x)
+    {
+      var a0 = GetA0();
+      var a1 = GetA1();
+      return a0 + a1 * x;
+    }
+
+    /// <summary>
+    /// Returns a function to calculate y in dependence of x. Please note note that the returned function represents the state of the regression at the time of the call, i.e. subsequent additions of data does not change the function.
+    /// </summary>
+    /// <returns>A function to calculate y in dependence of x.</returns>
+    public Func<double, double> GetYOfXFunction()
+    {
+      var a0 = GetA0();
+      var a1 = GetA1();
+      return new Func<double, double>(x => a0 + a1 * x);
     }
 
     /// <summary>

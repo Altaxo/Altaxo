@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -95,13 +95,26 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the regression function value at the argument x. Don't call this function frequently, since the polynomial coefficients are calculated at each call.
+    /// Gets the y value for a given x value. Note that in every call of this function the polynomial coefficients a0, a2, and a1 are calculated again.
+    /// For repeated calls, better use <see cref="GetYOfXFunction"/>, but note that this function represents the state of the regression at the time of this call.
     /// </summary>
-    /// <param name="x">Argument.</param>
-    /// <returns>The regression function value at x.</returns>
-    public double GetY(double x)
+    /// <param name="x">The x value.</param>
+    /// <returns>The y value at the value x.</returns>
+    public double GetYOfX(double x)
     {
       return (GetA2() * x + GetA1()) * x + GetA0();
+    }
+
+    /// <summary>
+    /// Returns a function to calculate y in dependence of x. Please note note that the returned function represents the state of the regression at the time of the call, i.e. subsequent additions of data does not change the function.
+    /// </summary>
+    /// <returns>A function to calculate y in dependence of x.</returns>
+    public Func<double, double> GetYOfXFunction()
+    {
+      var a0 = GetA0();
+      var a1 = GetA1();
+      var a2 = GetA2();
+      return new Func<double, double>(x => ((a2 * x) + a1) * x + a0);
     }
   }
 }
