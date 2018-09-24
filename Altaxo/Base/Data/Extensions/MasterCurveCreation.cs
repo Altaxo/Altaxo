@@ -75,12 +75,12 @@ namespace Altaxo.Data
       public ShiftXBy XShiftBy { get; set; }
 
       /// <summary>
-      /// Resulting list of shift factors (or offsets).
+      /// Resulting list of shift offsets or ln(shiftfactors).
       /// </summary>
       private List<double> _resultingShiftFactors = new List<double>();
 
       /// <summary>
-      /// Resulting list of shift factors (or offsets).
+      /// Resulting list of shift offsets or ln(shiftfactors).
       /// </summary>
       public List<double> ResultingShifts { get { return _resultingShiftFactors; } }
 
@@ -459,8 +459,8 @@ namespace Altaxo.Data
               }
               else
               {
-                localMaxShift = interpolations[nColumnGroup].InterpolationMaximumX / xmin;
-                localMinShift = interpolations[nColumnGroup].InterpolationMinimumX / xmax;
+                localMaxShift = Math.Log(interpolations[nColumnGroup].InterpolationMaximumX / xmin);
+                localMinShift = Math.Log(interpolations[nColumnGroup].InterpolationMinimumX / xmax);
               }
               globalMinShift = Math.Min(globalMinShift, localMinShift);
               globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
@@ -471,14 +471,14 @@ namespace Altaxo.Data
             globalMaxShift = globalMaxShift - diff;
             globalMinShift = globalMinShift + diff;
 
-            double currentShiftFactor = initialShift;
+            double currentShift = initialShift; // remember: this is either a offset or the natural logarithm of the shift factor
             switch (options.OptimizationMethod)
             {
               case OptimizationMethod.OptimizeSignedDifference:
                 {
-                  currentShiftFactor =
+                  currentShift =
                   QuickRootFinding.ByBrentsAlgorithm(
-                    shiftFactor => GetMeanSignedPenalty(interpolations, currentColumns, shiftFactor, options), globalMinShift, globalMaxShift);
+                    shift => GetMeanSignedPenalty(interpolations, currentColumns, shift, options), globalMinShift, globalMaxShift);
                 }
                 break;
 
@@ -502,7 +502,7 @@ namespace Altaxo.Data
                   };
                   double initialStep = 0.05;
                   var result = optimizationMethod.Search(vec, dir, initialStep);
-                  currentShiftFactor = result[0];
+                  currentShift = result[0];
                   // currentShiftFactor = optimizationMethod.SolutionVector[0];
                 }
                 break;
@@ -526,7 +526,7 @@ namespace Altaxo.Data
                   };
                   double initialStep = 1;
                   var result = optimizationMethod.Search(vec, dir, initialStep);
-                  currentShiftFactor = result[0];
+                  currentShift = result[0];
                 }
                 break;
 
@@ -534,17 +534,17 @@ namespace Altaxo.Data
                 throw new NotImplementedException("OptimizationMethod not implemented: " + options.OptimizationMethod.ToString());
             }
 
-            if (currentShiftFactor.IsFinite())
+            if (currentShift.IsFinite())
             {
-              options.ResultingShifts[indexOfCurveInShiftGroup] = currentShiftFactor;
+              options.ResultingShifts[indexOfCurveInShiftGroup] = currentShift;
 
               for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
               {
                 // now build up a new interpolation, where the shifted data is taken into account
-                interpolations[nColumnGroup].AddXYColumnToInterpolation(currentShiftFactor, indexOfCurveInShiftGroup, currentColumns[nColumnGroup].CurrentXCol, currentColumns[nColumnGroup].CurrentYCol, options);
+                interpolations[nColumnGroup].AddXYColumnToInterpolation(currentShift, indexOfCurveInShiftGroup, currentColumns[nColumnGroup].CurrentXCol, currentColumns[nColumnGroup].CurrentYCol, options);
               }
 
-              initialShift = currentShiftFactor;
+              initialShift = currentShift;
             }
           }
         }
@@ -575,7 +575,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="interpolations">Current interpolation functions for the column groups (e.g. real and imaginary part).</param>
     /// <param name="currentColumns">Current x and y column.</param>
-    /// <param name="shift">Current shift (direct or log of shiftFactor).</param>
+    /// <param name="shift">Current shift (direct offset or the natural logarithm of the shiftFactor).</param>
     /// <param name="options">Options for creating the master curve.</param>
     /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
     private static double GetMeanSignedPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
@@ -638,7 +638,7 @@ namespace Altaxo.Data
     /// <param name="interpolMax">Maximum valid x value of the interpolation function.</param>
     /// <param name="x">Column of x values of the new part of the master curve.</param>
     /// <param name="y">Column of y values of the new part of the master curve.</param>
-    /// <param name="shift">Shift offset (direct or log of shiftFactor for the new part of the master curve.</param>
+    /// <param name="shift">Shift offset (direct offset or natural logarithm of the shiftFactor for the new part of the master curve.</param>
     /// <param name="options">Information for the master curve creation.</param>
     /// <param name="penalty">Returns the calculated penalty value (mean difference between interpolation curve and provided data).</param>
     /// <param name="evaluatedPoints">Returns the number of points (of the new part of the curve) used for calculating the penalty value.</param>
@@ -689,7 +689,7 @@ namespace Altaxo.Data
     /// <param name="interpolMax">Maximum valid x value of the interpolation function.</param>
     /// <param name="x">Column of x values of the new part of the master curve.</param>
     /// <param name="y">Column of y values of the new part of the master curve.</param>
-    /// <param name="shift">Shift offset (direct or log of shiftFactor) for the new part of the master curve.</param>
+    /// <param name="shift">Shift offset (direct offset or natural logarithm of the shiftFactor) for the new part of the master curve.</param>
     /// <param name="options">Information for the master curve creation.</param>
     /// <param name="penalty">Returns the calculated penalty value (mean squared difference between interpolation curve and provided data).</param>
     /// <param name="evaluatedPoints">Returns the number of points (of the new part of the curve) used for calculating the penalty value.</param>
