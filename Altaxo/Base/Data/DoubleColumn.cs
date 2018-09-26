@@ -42,8 +42,8 @@ namespace Altaxo.Data
     private int _capacity; // shortcut to m_Array.Length;
     private int _count;
     public static readonly double NullValue = double.NaN;
-    private const int MaxCount = 256 * 1024 * 1024 - 8; // this is the maximum possible number of double elements in 64-bit mode currently (Framework 4.0).
-
+    // private const int MaxCount = 256 * 1024 * 1024 - 8; // this is the maximum possible number of double elements in 64-bit mode currently (Framework 4.0).
+    private const int MaxCount = 2147483592; // MaxCount with gcAllowVeryLargeObjects set to true (see https://docs.microsoft.com/en-us/dotnet/framework/configure-apps/file-schema/runtime/gcallowverylargeobjects-element)
     #region Overridden functions
 
     public override object Clone()
