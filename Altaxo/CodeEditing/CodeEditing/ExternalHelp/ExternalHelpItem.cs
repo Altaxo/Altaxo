@@ -94,7 +94,12 @@ namespace Altaxo.CodeEditing.ExternalHelp
     {
       get
       {
-        return SymbolTypeCharacter + "_" + string.Join("_", TypeNameParts);
+        string result = SymbolTypeCharacter + "_" + string.Join("_", TypeNameParts);
+        if(!string.IsNullOrEmpty(MemberName))
+        {
+          result += "_" + MemberName;
+        }
+        return result;
       }
     }
   }
