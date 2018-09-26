@@ -97,7 +97,11 @@ namespace Altaxo.CodeEditing
 
     private CSharpParseOptions CreateParseOptions()
     {
-      return new CSharpParseOptions(kind: SourceCodeKind.Regular, preprocessorSymbols: PreprocessorSymbols);
+      return new CSharpParseOptions(
+                  languageVersion: LanguageVersion.Latest,
+                  kind: SourceCodeKind.Regular,
+                  preprocessorSymbols: PreprocessorSymbols
+                  );
     }
 
     public override Compilation GetCompilation(string assemblyName)

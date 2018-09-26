@@ -63,7 +63,12 @@ namespace Altaxo.CodeEditing.CompilationHandling
     {
       OutputKind = OutputKind.DynamicallyLinkedLibrary;
       Platform = Platform.AnyCpu;
-      ParseOptions = new CSharpParseOptions().WithKind(SourceCodeKind.Script).WithPreprocessorSymbols(workspace.PreprocessorSymbols);
+      ParseOptions = new CSharpParseOptions(
+                          languageVersion: LanguageVersion.Latest,
+                          kind: SourceCodeKind.Script,
+                          preprocessorSymbols: workspace.PreprocessorSymbols
+                          );
+
       FilePath = string.Empty;
       Usings = ImmutableArray<string>.Empty;
 
