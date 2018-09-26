@@ -2,6 +2,8 @@
 
 // Originated from: Roslyn, EditorFeatures, Core/Implementation/Classification/IEditorClassificationService.cs
 
+using System;
+
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,8 +12,9 @@ using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Altaxo.CodeEditing.GoToDefinition
+namespace Microsoft.CodeAnalysis.Editor
 {
+  [Obsolete("Use Microsoft.CodeAnalysis.Classification.IClassificationService instead")]
   internal interface IEditorClassificationService : ILanguageService
   {
     /// <summary>
@@ -54,4 +57,59 @@ namespace Altaxo.CodeEditing.GoToDefinition
     /// </summary>
     ClassifiedSpan AdjustStaleClassification(SourceText text, ClassifiedSpan classifiedSpan);
   }
+
+  /// <summary>
+  /// Exists to bridge between <see cref="IEditorClassificationService"/> and <see cref="IClassificationService"/>
+  /// </summary>
+  internal interface IClassificationDelegationService<TClassificationService>
+  {
+    void AddLexicalClassifications(TClassificationService service, SourceText text, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken);
+    Task AddSyntacticClassificationsAsync(TClassificationService service, Document document, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken);
+    Task AddSemanticClassificationsAsync(TClassificationService service, Document document, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken);
+    ClassifiedSpan AdjustStaleClassification(TClassificationService service, SourceText text, ClassifiedSpan classifiedSpan);
+  }
+
+  internal class WorkspaceClassificationDelegationService : IClassificationDelegationService<IClassificationService>
+  {
+    public static readonly IClassificationDelegationService<IClassificationService> Instance = new WorkspaceClassificationDelegationService();
+
+    private WorkspaceClassificationDelegationService()
+    {
+    }
+
+    public void AddLexicalClassifications(IClassificationService service, SourceText text, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken)
+        => service.AddLexicalClassifications(text, textSpan, result, cancellationToken);
+
+    public Task AddSyntacticClassificationsAsync(IClassificationService service, Document document, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken)
+        => service.AddSyntacticClassificationsAsync(document, textSpan, result, cancellationToken);
+
+    public Task AddSemanticClassificationsAsync(IClassificationService service, Document document, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken)
+        => service.AddSemanticClassificationsAsync(document, textSpan, result, cancellationToken);
+
+    public ClassifiedSpan AdjustStaleClassification(IClassificationService service, SourceText text, ClassifiedSpan classifiedSpan)
+        => service.AdjustStaleClassification(text, classifiedSpan);
+  }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+  internal class EditorClassificationDelegationService : IClassificationDelegationService<IEditorClassificationService>
+  {
+    public static readonly IClassificationDelegationService<IEditorClassificationService> Instance = new EditorClassificationDelegationService();
+
+    private EditorClassificationDelegationService()
+    {
+    }
+
+    public void AddLexicalClassifications(IEditorClassificationService service, SourceText text, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken)
+        => service.AddLexicalClassifications(text, textSpan, result, cancellationToken);
+
+    public Task AddSyntacticClassificationsAsync(IEditorClassificationService service, Document document, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken)
+        => service.AddSyntacticClassificationsAsync(document, textSpan, result, cancellationToken);
+
+    public Task AddSemanticClassificationsAsync(IEditorClassificationService service, Document document, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken)
+        => service.AddSemanticClassificationsAsync(document, textSpan, result, cancellationToken);
+
+    public ClassifiedSpan AdjustStaleClassification(IEditorClassificationService service, SourceText text, ClassifiedSpan classifiedSpan)
+        => service.AdjustStaleClassification(text, classifiedSpan);
+  }
+#pragma warning restore CS0612 // Type or member is obsolete
 }

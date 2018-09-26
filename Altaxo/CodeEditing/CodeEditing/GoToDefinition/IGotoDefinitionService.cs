@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Navigation;
-using Microsoft.CodeAnalysis.Options;
 
-namespace Altaxo.CodeEditing.GoToDefinition
+namespace Microsoft.CodeAnalysis.Editor
 {
   internal interface IGoToDefinitionService : ILanguageService
   {

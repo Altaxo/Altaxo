@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Host.Mef;
 
 namespace Altaxo.CodeEditing.Documentation
 {
-  [ExportWorkspaceServiceFactory(typeof(IDocumentationProviderService), ServiceLayer.Default), Shared]
+  [ExportWorkspaceServiceFactory(typeof(IDocumentationProviderService), ServiceLayer.Host), Shared]
   internal sealed class DocumentationProviderServiceFactory : IWorkspaceServiceFactory
   {
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)

@@ -24,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -128,12 +129,19 @@
     <Compile Include="CodeEditing\Completion\CompletionHelper.cs" />
     <Compile Include="CodeEditing\Completion\CompletionItemExtensions.cs" />
     <Compile Include="CodeEditing\GoToDefinition\AbstractGoToDefinitionService.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\AbstractGotoDefinitionSymbolService.cs" />
     <Compile Include="CodeEditing\GoToDefinition\ClassifiedSpansAndHighlightSpanFactory.cs" />
     <Compile Include="CodeEditing\GoToDefinition\CSharp\CSharpGoToDefinitionService.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\CSharp\CSharpGoToDefinitionSymbolService.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\EditorClassifier.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\FindUsageHelpers.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\FindUsagesContext.cs" />
     <Compile Include="CodeEditing\GoToDefinition\GoToDefinitionHelpers.cs" />
     <Compile Include="CodeEditing\GoToDefinition\IDefinitionAndReferencesFactory.cs" />
     <Compile Include="CodeEditing\GoToDefinition\IEditorClassificationService.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\IFindUsagesContext.cs" />
     <Compile Include="CodeEditing\GoToDefinition\IGotoDefinitionService.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\IGotoDefinitionSymbolService.cs" />
     <Compile Include="CodeEditing\RoslynSourceTextContainerAdapter.cs" />
     <Compile Include="CodeEditing\Completion\Glyph.cs" />
     <Compile Include="CodeEditing\Completion\GlyphExtensions.cs" />

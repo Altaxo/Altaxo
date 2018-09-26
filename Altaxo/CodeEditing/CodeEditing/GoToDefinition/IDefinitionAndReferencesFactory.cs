@@ -14,10 +14,11 @@ using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.FindUsages;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Roslyn.Utilities;
 
-namespace Altaxo.CodeEditing.GoToDefinition
+namespace Microsoft.CodeAnalysis.Editor.FindUsages
 {
   internal interface IDefinitionsAndReferencesFactory : IWorkspaceService
   {
@@ -43,30 +44,30 @@ namespace Altaxo.CodeEditing.GoToDefinition
   {
     public static DefinitionItem ToNonClassifiedDefinitionItem(
         this ISymbol definition,
-        Solution solution,
+            Project project,
         bool includeHiddenLocations)
     {
       // Because we're passing in 'false' for 'includeClassifiedSpans', this won't ever have
       // to actually do async work.  This is because the only asynchrony is when we are trying
       // to compute the classified spans for the locations of the definition.  So it's totally
       // fine to pass in CancellationToken.None and block on the result.
-      return ToDefinitionItemAsync(definition, solution, includeHiddenLocations,
-          includeClassifiedSpans: false, cancellationToken: CancellationToken.None).WaitAndGetResult_CanCallOnBackground(CancellationToken.None);
+      return ToDefinitionItemAsync(definition, project, includeHiddenLocations,
+    includeClassifiedSpans: false, cancellationToken: CancellationToken.None).WaitAndGetResult_CanCallOnBackground(CancellationToken.None);
     }
 
     public static Task<DefinitionItem> ToClassifiedDefinitionItemAsync(
         this ISymbol definition,
-        Solution solution,
+            Project project,
         bool includeHiddenLocations,
         CancellationToken cancellationToken)
     {
-      return ToDefinitionItemAsync(definition, solution,
-          includeHiddenLocations, includeClassifiedSpans: true, cancellationToken: cancellationToken);
+      return ToDefinitionItemAsync(definition, project,
+    includeHiddenLocations, includeClassifiedSpans: true, cancellationToken: cancellationToken);
     }
 
     private static async Task<DefinitionItem> ToDefinitionItemAsync(
         this ISymbol definition,
-        Solution solution,
+            Project project,
         bool includeHiddenLocations,
         bool includeClassifiedSpans,
         CancellationToken cancellationToken)
@@ -100,7 +101,7 @@ namespace Altaxo.CodeEditing.GoToDefinition
           if (location.IsInMetadata)
           {
             return DefinitionItem.CreateMetadataDefinition(
-                tags, displayParts, nameDisplayParts, solution,
+                            tags, displayParts, nameDisplayParts, project,
                 definition, properties, displayIfNoReferences);
           }
           else if (location.IsInSource)
@@ -111,7 +112,7 @@ namespace Altaxo.CodeEditing.GoToDefinition
               continue;
             }
 
-            var document = solution.GetDocument(location.SourceTree);
+            var document = project.Solution.GetDocument(location.SourceTree);
             if (document != null)
             {
               var documentLocation = !includeClassifiedSpans

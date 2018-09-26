@@ -6,9 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Editor.GoToDefinition;
 using Microsoft.CodeAnalysis.Host.Mef;
 
-namespace Altaxo.CodeEditing.GoToDefinition.CSharp
+namespace Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition
 {
   [ExportLanguageService(typeof(IGoToDefinitionService), LanguageNames.CSharp), Shared]
   internal class CSharpGoToDefinitionService : AbstractGoToDefinitionService
@@ -21,10 +22,5 @@ namespace Altaxo.CodeEditing.GoToDefinition.CSharp
 		{
 		}
 		*/
-
-    protected override ISymbol FindRelatedExplicitlyDeclaredSymbol(ISymbol symbol, Compilation compilation)
-    {
-      return symbol;
-    }
   }
 }

@@ -95,7 +95,7 @@ namespace Altaxo.Gui.CodeEditing
           }
         }
 
-        Image = GlyphExtensions.ToImageSource(glyph);
+        Image = Altaxo.CodeEditing.Completion.GlyphExtensions.ToImageSource(glyph);
       }
 
       public int CompareTo(ClassItem other)

@@ -42,6 +42,8 @@ using ICSharpCode.AvalonEdit.Indentation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editor;
+using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
 
@@ -434,7 +436,7 @@ namespace Altaxo.CodeEditing
 
     #region GoToDefinition
 
-    private GoToDefinition.IGoToDefinitionService _goToDefinitionService;
+    private IGoToDefinitionService _goToDefinitionService;
 
     /// <summary>
     /// Try to go to the definition of the symbol under the caret. This function is designed here for solutions
@@ -446,7 +448,7 @@ namespace Altaxo.CodeEditing
     public int? GoToDefinition(int caretOffset)
     {
       if (null == _goToDefinitionService)
-        _goToDefinitionService = new GoToDefinition.CSharp.CSharpGoToDefinitionService();
+        _goToDefinitionService = new CSharpGoToDefinitionService();
 
       var document = Workspace.CurrentSolution.GetDocument(DocumentId);
       var definitions = _goToDefinitionService.FindDefinitionsAsync(document, caretOffset, CancellationToken.None).Result;
