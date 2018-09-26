@@ -56,7 +56,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
       if (desc.Kind == SymbolKind.Parameter && model.Item2.Count >= 2) // for a parameter, we rather want to have the type of the parameter
         desc = model.Item2[1];
 
-      if (!desc.CanBeReferencedByName)
+      if (!desc.CanBeReferencedByName && !desc.IsConstructor())
         return null;
 
       if (desc.DeclaredAccessibility != Accessibility.NotApplicable && desc.DeclaredAccessibility < Accessibility.Protected)
@@ -64,6 +64,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
 
       var assemblySymbol = desc.ContainingAssembly;
       var assemblyIdentity = assemblySymbol.Identity;
+      int numberOfGenericArguments = 0;
 
       var namespaceName = desc.ContainingNamespace.GetNameParts();
 
@@ -78,9 +79,19 @@ namespace Altaxo.CodeEditing.ExternalHelp
       else if (desc is ILocalSymbol lsymb)
       {
         typeName = lsymb.Type.GetNameParts();
+        var args = lsymb.Type.GetTypeArguments();
+        numberOfGenericArguments = args.Length;
         memberName = null;
         assemblySymbol = lsymb.Type.ContainingAssembly;
         assemblyIdentity = assemblySymbol.Identity;
+      }
+      else if (desc.IsConstructor())
+      {
+        if (desc is IMethodSymbol msym)
+        {
+          var receiverType = msym.ReceiverType;
+          numberOfGenericArguments = receiverType.GetTypeArguments().Length;
+        }
       }
 
       char typeChar = 'T'; // if it is not a field, a method, or a property, then it is a type
@@ -95,9 +106,11 @@ namespace Altaxo.CodeEditing.ExternalHelp
 
       return new ExternalHelpItem(
         assemblyIdentity: assemblyIdentity,
-        nameParts: memberName == null ? typeName : typeName.Concat(memberName),
+        typeNameParts: typeName,
+        memberName: memberName,
         symbolTypeChar: typeChar,
-        isConstructor: desc.IsConstructor()
+        isConstructor: desc.IsConstructor(),
+        numberOfGenericArguments: numberOfGenericArguments
         );
     }
 

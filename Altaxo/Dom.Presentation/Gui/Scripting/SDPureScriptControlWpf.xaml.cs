@@ -118,13 +118,27 @@ namespace Altaxo.Gui.Scripting
 
     protected static void ShowMicrosoftClassReferenceHelp(ExternalHelpItem helpItem)
     {
-      string url = "https://msdn.microsoft.com/library/";
+      string url = "https://docs.microsoft.com/en-us/dotnet/api/";
 
-      for (int i = 0; i < helpItem.NameParts.Count; ++i)
+      for (int i = 0; i < helpItem.TypeNameParts.Count; ++i)
       {
-        url += helpItem.NameParts[i];
-        if (i < helpItem.NameParts.Count - 1)
+        url += helpItem.TypeNameParts[i];
+        if (i < helpItem.TypeNameParts.Count - 1)
           url += ".";
+      }
+
+      if (helpItem.NumberOfGenericArguments != 0)
+      {
+        url += "-" + helpItem.NumberOfGenericArguments.ToString(System.Globalization.CultureInfo.InvariantCulture);
+      }
+
+      if (!(helpItem.MemberName is null))
+      {
+        url += ".";
+        if (helpItem.MemberName == ".ctor")
+          url += "-ctor";
+        else
+          url += helpItem.MemberName;
       }
 
       // Invoke standard browser of the system

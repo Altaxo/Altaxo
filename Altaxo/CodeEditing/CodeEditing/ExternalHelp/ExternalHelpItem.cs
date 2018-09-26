@@ -52,14 +52,20 @@ namespace Altaxo.CodeEditing.ExternalHelp
     /// <summary>
     /// The name parts of the name of the type/method/etc.
     /// </summary>
-    public IReadOnlyList<string> NameParts { get; private set; }
+    public IReadOnlyList<string> TypeNameParts { get; private set; }
 
-    public ExternalHelpItem(AssemblyIdentity assemblyIdentity, IEnumerable<string> nameParts, char symbolTypeChar, bool isConstructor)
+    public string MemberName { get; }
+
+    public int NumberOfGenericArguments { get; private set; }
+
+    public ExternalHelpItem(AssemblyIdentity assemblyIdentity, IEnumerable<string> typeNameParts, string memberName, char symbolTypeChar, bool isConstructor, int numberOfGenericArguments)
     {
       AssemblyIdentity = assemblyIdentity;
-      NameParts = nameParts.ToImmutableArray();
+      TypeNameParts = typeNameParts.ToImmutableArray();
+      MemberName = memberName;
       SymbolTypeCharacter = symbolTypeChar;
       IsConstructor = isConstructor;
+      NumberOfGenericArguments = numberOfGenericArguments;
     }
 
     /// <summary>
@@ -88,7 +94,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
     {
       get
       {
-        return SymbolTypeCharacter + "_" + string.Join("_", NameParts);
+        return SymbolTypeCharacter + "_" + string.Join("_", TypeNameParts);
       }
     }
   }
