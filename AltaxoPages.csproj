@@ -1,0 +1,41 @@
+﻿<Project ToolsVersion="15.0">
+  <PropertyGroup>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <ProjectGuid>{214609A0-4794-4DDC-BD78-F6EA95F8D6C9}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="404.html" />
+    <Content Include="_includes\footer.html" />
+    <Content Include="_includes\head.html" />
+    <Content Include="_includes\header.html" />
+    <Content Include="_includes\script.html" />
+    <Content Include="_layouts\default.html" />
+    <Content Include="_layouts\page.html" />
+    <Content Include="_layouts\home.html" />
+    <Content Include="_layouts\post.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="about.md" />
+    <None Include="assets\css\style.scss" />
+    <None Include="developer.md" />
+    <None Include="manual.md" />
+    <None Include="support.md" />
+    <None Include="fraunhofer.md" />
+    <None Include="features.md" />
+    <None Include="download.md" />
+    <None Include="Gemfile" />
+    <None Include="Gemfile.lock" />
+    <None Include="history.md" />
+    <None Include="index.md" />
+    <None Include="_config.yml" />
+    <None Include="_posts\2014-02-01-altaxo-is-back.md" />
+    <None Include="_posts\2015-07-01-altaxo-on-github.md" />
+    <None Include="_posts\2017-01-01-altaxo-on-linux.md" />
+    <None Include="_posts\2017-03-01-goodby-windowsxp.md" />
+  </ItemGroup>
+</Project>

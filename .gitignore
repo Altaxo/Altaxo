@@ -1,0 +1,8 @@
+_site
+bin
+obj
+.vs
+.sass-cache
+.jekyll-metadata
+*.suo
+*.csproj.user

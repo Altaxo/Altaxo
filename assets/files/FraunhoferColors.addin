@@ -1,0 +1,43 @@
+<AddIn name        = "FraunhoferCorporateDesignColors"
+       author      = "Dirk Lellinger"
+       copyright   = "prj:///doc/copyright.txt"
+       description = "Provides the Fraunhofer corporate design colors"
+       addInManagerHidden = "preinstalled">
+	
+	<Manifest>
+		<Identity name = "Altaxo.Fraunhofer.CorporateDesignColors"/>
+	</Manifest>
+	
+	<Runtime>
+	</Runtime>
+	
+	<Path name ="/Altaxo/ApplicationColorSets">
+			<ColorSet id="FraunhoferColors"
+								label="FraunhoferColors" IsPlotColorSet="False">
+        <NamedColor id="Black" Value="{#FF000000}"/>
+        <NamedColor id="White" Value="{#FFFFFFFF}"/>
+        <NamedColor id="Transparent" Value="{#00000000}"/>
+        <NamedColor id="Green (FhG_Primary)" Value="{#FF179C7D}"/>
+        <NamedColor id="Grey (FhG_Primary)" Value="{#FFA8AFAF}"/>
+        <NamedColor id="Orange (FhG_Secondary)" Value="{#FFEB6A0A}"/>
+        <NamedColor id="Turquoise (FhG_Secondary)" Value="{#FF25BAE2}"/>
+        <NamedColor id="Petrol (FhG_Secondary)" Value="{#FF006E92}"/>
+        <NamedColor id="AppleGreen (FhG_Secondary)" Value="{#FFB1C800}"/>
+        <NamedColor id="LightBeige (FhG_Fond)" Value="{#FFFEEFD6}"/>
+        <NamedColor id="LightBlue (FhG_Fond)" Value="{#FFD4E6F4}"/>
+        <NamedColor id="LightGrey (FhG_Fond)" Value="{#FFE1E3E3}"/>
+      </ColorSet>
+    <ColorSet id="FraunhoferPlotColorsDark"
+              label="FraunhoferPlotColorsDark" IsPlotColorSet="True">
+      <NamedColor id="Black" Value="{#FF000000}"/>
+      <NamedColor id="Green (FhG_Primary)" Value="{#FF179C7D}"/>
+      <NamedColor id="Grey (FhG_Primary)" Value="{#FFA8AFAF}"/>
+      <NamedColor id="Orange (FhG_Secondary)" Value="{#FFEB6A0A}"/>
+      <NamedColor id="AppleGreen (FhG_Secondary)" Value="{#FFB1C800}"/>
+      <NamedColor id="Turquoise (FhG_Secondary)" Value="{#FF25BAE2}"/>
+    </ColorSet>
+  </Path>
+</AddIn>
+
+
+	
