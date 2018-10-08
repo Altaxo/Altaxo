@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Fraunhofer Color Addin
-permalink: /Fraunhofer.html
+permalink: /fraunhofer.html
 ---
 
 ### Fraunhofer corporation colors
