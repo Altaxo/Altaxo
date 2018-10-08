@@ -18,8 +18,8 @@ author: LelliD
 email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
   Altaxo data analysis plotting C# .NET framework scripting worksheets graphs data processing automation Ascii import export 
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://altaxo.github.io/Altaxo" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/Altaxo" # the subpath of your site, e.g. /blog
+url: "https://altaxo.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: 
 github_username:  
 
