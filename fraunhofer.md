@@ -12,4 +12,4 @@ All other users can have a look at this add-in as an example of how to provide c
 
 ### Installation of the add-in
 
-Right-click [on this link to the Fraunhofer colors addin file](/assets/files/FraunhoferColors.addin) and choose 'Save as' from the pop-up menu. Navigate to the 'Addins' subdirectory of your Altaxo installation and save the .addin file therein. Restart Altaxo. That's all!
+Right-click [on this link to the Fraunhofer colors addin file](assets/files/FraunhoferColors.addin) and choose 'Save as' from the pop-up menu. Navigate to the 'Addins' subdirectory of your Altaxo installation and save the .addin file therein. Restart Altaxo. That's all!

@@ -4,7 +4,7 @@ title: Developer of Altaxo
 permalink: /developer.html
 ---
 
-![Dirk Lellinger](/assets/img/DirkLellinger.jpg "Dirk Lellinger"){:width="48px"}
+![Dirk Lellinger](assets/img/DirkLellinger.jpg "Dirk Lellinger"){:width="48px"}
 
 
 Dr. Dirk Lellinger has been a senior scientist at the 
