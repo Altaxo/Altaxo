@@ -11,8 +11,11 @@ The [homepage](http://altaxo.github.io/Altaxo/) of the Altaxo project is hosted 
 The downloads are hosted on SourceForge. 
 There is a [folder for the latest stable version](https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Stable/) 
 and a [folder for the latest unstable version](https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Unstable/).
-Grab the file with the highest version number, either the `.msi` file or the `..Binaries..zip` file. The different versions in this folder require different versions of the .NET framework. See [here for download details](https://altaxo.github.io/Altaxo/download.html) 
-and [for installation](https://altaxo.sourceforge.io/AltaxoClassRef/html/1F4C428AAA53AFE4CCEE7744AB1CB94F.htm).
+Grab the file with the highest version number, either the `.msi` file or the `..Binaries..zip` file. 
+The different versions in this folder require different versions of the .NET framework.
+If in doubt, have a look into the `VersionInfo.txt` file in the download folder.
+See [here for download details](https://altaxo.github.io/Altaxo/download.html) 
+and [for installation instructions](https://altaxo.sourceforge.io/AltaxoClassRef/html/1F4C428AAA53AFE4CCEE7744AB1CB94F.htm).
 
 
 ## Building from source
