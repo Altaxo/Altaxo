@@ -34,3 +34,7 @@ A short 'CV' of Altaxo:
 * 2012: auto-updates of Altaxo
 * 2013: complete redesign of the positioning and layer system
 * 2014: COM/OLE functionality, property bags
+* 2015: Altaxo is going 3D
+* 2016: Refine the 3D graphs
+* 2017: Update to .NET framework 4.6 and use Roslyn as C# compiler
+* 2018: Markdown text, complete reorganization of the underlying architecture, separate from SharpDevelop
