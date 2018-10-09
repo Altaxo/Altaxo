@@ -1,6 +1,6 @@
-# Altaxo - Plotting and data analyzing made easy
+# Altaxo - Plotting and data analysis made easy
 
-Altaxo is a plotting and data analyzing program with a nice graphical user interface. Data analysis is convenient and fast. If the many built-in possibilities are still not fit your requirements: Almost everything in Altaxo can be scripted, using compiled C# code. Modern features like syntax highlighting and code completion renders scripting really easy. And you have access to a huge mathematical and signal processing library, which is constantly improved. If you want to permanently extend the features of Altaxo, you can even do this by writing an extension to Altaxo, which integrates seamlessly with the main program.
+Altaxo is a plotting and data analysis program with a nice graphical user interface. Data analysis is convenient and fast. If the many built-in possibilities are still not fit your requirements: Almost everything in Altaxo can be scripted, using compiled C# code. Modern features like syntax highlighting and code completion renders scripting really easy. And you have access to a huge mathematical and signal processing library, which is constantly improved. If you want to permanently extend the features of Altaxo, you can even do this by writing an extension to Altaxo, which integrates seamlessly with the main program.
 
 ## Homepage
 
@@ -25,18 +25,21 @@ Clone the sources: `git clone https://github.com/Altaxo/Altaxo.git`
 Open the solution file in the Altaxo source folder with the **latest** version of Visual Studio 2017.
 Visual Studio 2017 Community edition is sufficient.
 The installation of Visual Studio 2017 should include the C# desktop development workload,
-and furthermore should include the T4 text templates features. 
+and furthermore should include the T4 text templates feature. 
 
 
 ## Contribute!
 
 Help by other developers is greatly appreciated! 
 
-**Attention developers**: has anyone made a **successfull connection** to a **COM local server running as 64 bit WPF** process? You? Then please mail me how to do it! I could only get a connection if WPF runs as 32 bit process.
+**Attention developers**: has anyone made a **successfull connection** to a **COM local server running as 64 bit WPF** process? You? Then please mail me how to do it! I could only get a connection if WPF is running as 32 bit process.
 
 Help is especially welcome in the following areas: 
-- Mathematics: to implement the statistical functions, linear and non-linear curve fits, and special mathematical functions 
-- Help system: since the column scripts can use all public classes and objects from the program, a good documentation of these classes is absolutely necessary 
-- Help system: to write a user's guide 
+- Mathematics: non-linear curve fitting with parameter boundary conditions
+- Mathematics: add a basic set of commonly used fitting functions
+- Mathematics: tidy up Altaxo's linear algebra library
+- Mathematics: implement statistical functions, improve linear and non-linear curve fitting, and add special mathematical functions 
+- Help system: since the scripts can use all public classes and objects from the program, a good documentation of these classes is absolutely necessary 
+
 
 
