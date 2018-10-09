@@ -15,9 +15,9 @@ Altaxo is a plotting and data analyzing program with a nice graphical user inter
 * Find out how to use Altaxo by reading the [**user manual**](http://altaxo.sourceforge.net/AltaxoClassRef/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm)
 * If you want to write scripts in Altaxo, you might be interested in the
   [**Altaxo class reference**](http://altaxo.sourceforge.net/AltaxoClassRef/html/R_Project_Documentation.htm)
-* See the [currently implemented features](/Altaxo/features.html)
-* Learn something about the [history of Altaxo](/Altaxo/history.html) and the [developer](/Altaxo/developer.html)
+* See the [currently implemented features](features.html)
+* Learn something about the [history of Altaxo](history.html) and the [developer](developer.html)
 * The **source code** is now hosted on [GitHub](https://github.com/Altaxo/Altaxo)
-* Employees of **Fraunhofer Gesellschaft** (Germany) can download an add-in for providing
-  **corporation colors** [here](/Altaxo/fraunhofer.html)
-* [Support](/Altaxo/support.html)
+* Employees of **Fraunhofer Gesellschaft** (Germany) can download an [add-in for providing
+  **corporation colors**](fraunhofer.html)
+* [Support](support.html)
