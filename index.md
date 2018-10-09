@@ -12,9 +12,9 @@ Altaxo is a plotting and data analyzing program with a nice graphical user inter
 *To find out more about Altaxo*:
 
 * Find out where to [**download** and how to install Altaxo](download.html)
-* Find out how to use Altaxo by reading the [**user manual**](http://altaxo.sourceforge.net/AltaxoClassRef/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm)
+* Find out how to use Altaxo by reading the [**user manual**](https://altaxo.sourceforge.io/AltaxoClassRef/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm)
 * If you want to write scripts in Altaxo, you might be interested in the
-  [**Altaxo class reference**](http://altaxo.sourceforge.net/AltaxoClassRef/html/R_Project_Documentation.htm)
+  [**Altaxo class reference**](https://altaxo.sourceforge.io/AltaxoClassRef/html/R_Project_Documentation.htm)
 * See the [currently implemented features](features.html)
 * Learn something about the [history of Altaxo](history.html) and the [developer](developer.html)
 * The **source code** is now hosted on [GitHub](https://github.com/Altaxo/Altaxo)

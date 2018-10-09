@@ -23,7 +23,7 @@ the .NET-Framework 4.7.1.
 If your computer meets this requirement,
 then go to the file release page of the Altaxo project,
 and navigate to the folder
-[ Altaxo-Latest-Unstable](http://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Unstable/).
+[ Altaxo-Latest-Unstable](https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Unstable/).
 Download the file named 'AltaxoBinaries-4.7.x.x.zip'.
 **Important: before unzipping the downloaded file**,
 make sure that you right-click on the zip-file in Explorer, 
