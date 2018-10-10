@@ -23,6 +23,7 @@
     <None Include="about.md" />
     <None Include="assets\css\style.scss" />
     <None Include="developer.md" />
+    <None Include="screenshots.md" />
     <None Include="manual.md" />
     <None Include="support.md" />
     <None Include="fraunhofer.md" />
