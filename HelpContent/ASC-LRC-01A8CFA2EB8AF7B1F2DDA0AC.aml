@@ -1,0 +1,102 @@
+﻿
+<topic id="01A8CFA2EB8AF7B1F2DDA0AC01F0FED7" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="A801476992A9D8BE7D8039466EFC262F">The code editor window in detail</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Long running code in Altaxo is code that runs for more than 10 seconds. If your code runs for more than 10 seconds, another dialog box will open, which allows you to cancel or interrupt code execution.
+You can help to make long running code a little bit more responsive.
+</para>
+
+<para>
+There is a variable <codeInline>reporter</codeInline> available in the <codeInline>Execute</codeInline> method (<codeInline>Execute</codeInline> is the default method of the worksheet script). The <codeInline>reporter</codeInline> variable can and should be used for the following two purposes:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+To allow the user to cancel execution, and to return from code execution in a defined state.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+To show the user the progress of your code execution.
+</para>
+</listItem>
+</list>
+</introduction>
+
+<section address="DEF95C9E1EF58CB82E6E71C1742C1880">
+<title>Allow cancellation of code execution at defined points
+</title>
+<content>
+
+<para>
+To allow the user to cancel long running code, look at the following example:
+</para>
+
+<code>
+            for (int i = 0; i &lt; 100000; i++)
+            {
+                Foo(); // method Foo() runs moderately long (say &lt; 1 s)
+
+                if (reporter.CancellationPending)
+                    break; // or: return
+            }
+</code>
+
+<para>
+Here, the <codeInline>if (reporter.CancellationPending)</codeInline> statement ask the <codeInline>reporter</codeInline> if the user has requested to cancel the execution, and if so, ends the loop with a <codeInline>break</codeInline> statement.
+</para>
+</content>
+</section>
+
+<section address="331A4511FC4CFA928435F4BC88304F59">
+<title>Report the progress to the user
+</title>
+<content>
+
+<para>
+The example above can be extended to show progress to the user.
+</para>
+
+<code>
+            int len = 100000;
+            for (int i = 0; i &lt; len; i++)
+            {
+                Foo(); // method foo runs moderately long (&lt; 1 s)
+
+                if (reporter.CancellationPending)
+                    break; // or: return
+
+                if (reporter.ShouldReportNow)
+                    reporter.ReportProgress(string.Format(&quot;{0} of {1}&quot;, i, len), i / (double)len);
+            }
+</code>
+
+<para>
+Here, the statement <codeInline>if (reporter.ShouldReportNow)</codeInline> first asks if it is necessary to report now (this property is set every second or so). If so, the method <codeInline>ReportProgress</codeInline> is called, which reports the progress both as text (<codeInline>string.Format...</codeInline>) as well as as a numerical value in the range from 0 to 1. This value is calculated using the loop variable <codeInline>i</codeInline> and dividing it to the total number of loops <codeInline>len</codeInline>.
+</para>
+
+<para>
+Of course, you can omit the <codeInline>if (reporter.ShouldReportNow)</codeInline> statement and directly call the <codeInline>ReportProgress</codeInline> method. For smaller loops this is OK, but for a loop as shown here, this would call the <codeInline>string.Format</codeInline> method and <codeInline>ReportProgress</codeInline> method a hundred thousand times. Not very effective!
+</para>
+
+<code>
+Project organization
+</code>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

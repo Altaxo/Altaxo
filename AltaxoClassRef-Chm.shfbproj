@@ -122,11 +122,17 @@
     <None Include="HelpContent\TDM-CTT-847834D0535C024B51193819.aml" />
     <None Include="HelpContent\TDM-IOE-FDC514482A6F579D9BCA039C.aml" />
     <None Include="HelpContent\TDM-EOT-7029CC1C058EA6FCB5510AA6.aml" />
-    <None Include="HelpContent\PO-2F5E6BE1D416EEF88458DAC931E96.aml" />
-    <None Include="HelpContent\PO-PI-2783FED4411F72EE01B8906649.aml" />
+    <None Include="HelpContent\ASC-CBDD41AAA1B05A4B2362BE258C1A.aml" />
+    <None Include="HelpContent\ASC-KSA-1AE54454196F6ED80D4D5722.aml" />
+    <None Include="HelpContent\ASC-CEW-A801476992A9D8BE7D803946.aml" />
+    <None Include="HelpContent\ASC-LRC-01A8CFA2EB8AF7B1F2DDA0AC.aml" />
     <None Include="HelpContent\_Images.aml" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="HelpContent\Images\13379B58C9CCA9563E67844F3D49B063.png">
+      <ImageId>13379B58C9CCA9563E67844F3D49B063</ImageId>
+      <AlternateText>13379B58C9CCA9563E67844F3D49B063</AlternateText>
+    </Image>
     <Image Include="HelpContent\Images\BB9FABC6297FBD59A3C367E7A6812F02.png">
       <ImageId>BB9FABC6297FBD59A3C367E7A6812F02</ImageId>
       <AlternateText>BB9FABC6297FBD59A3C367E7A6812F02</AlternateText>

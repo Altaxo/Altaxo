@@ -1,0 +1,116 @@
+﻿
+<topic id="CBDD41AAA1B05A4B2362BE258C1A1A9D" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407">Export of a text document</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+The code editor in Altaxo is used to create, edit, and finally run scripts written in the <externalLink><linkText>C#</linkText><linkUri>https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/</linkUri></externalLink> programming language. The scripts are compiled using the Roslyn compiler, an <externalLink><linkText>open source project</linkText><linkUri>https://github.com/dotnet/roslyn</linkUri></externalLink> from Microsoft. In this way it keeps pace with the development of the C# language. Additionally, Roslyn is powering some features that make working with scripts more comfortable.
+These features are:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<legacyBold>Semantic highlighting</legacyBold>: the text is colored according to the semantics.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Code completion</legacyBold>: the editor gives you a list of class names available, member names that are valid in the given context and so on. This makes it very ease to write code, and method names can be long and meaningful.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Signature help</legacyBold>: closely related to code completion, signature help shows you different signatures of (overloaded) methods.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Brace matching</legacyBold>: if the cursor is at an open or closing brace, the corresponding brace will be highlighted, too.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Diagnostics</legacyBold>: code fragments that will not compile have red squiggles under the text.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Documentation</legacyBold>: documentation text that you have added to methods you have added to your script is shown when you use those methods in other parts of your script text.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>External help</legacyBold>: if you place the cursor on a .NET framework class or member and press <codeInline>F1</codeInline>, the documentation web page from Microsoft will be shown. Likewise, if you place the cursor on an Altaxo class or member, the documentation web page of Altaxo's class library will be shown in the browser.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Folding</legacyBold>: code fragments that are framed inside of <codeInline>#region</codeInline> and <codeInline>#endregion</codeInline> statements can be folded away or expanded again using the sidebar.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Go to definition</legacyBold>: if you place the cursor at a variable name and hit <codeInline>F12</codeInline>, the cursor jumps to the location where the variable is defined.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Live document formatting</legacyBold>: as you write the code, the code is formatted (at the end of the line when you enter the final semicolon, or at the end of a block when you enter the closing brace).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Reference highlighting</legacyBold>: if you click into a variable, all occurrences of that variable in the text will be highlighted.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Quick info</legacyBold>: hover the mouse over a variable, a class or a method, and you will get a quick info concerning that item.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyBold>Renaming</legacyBold>: clicking into a variable name and then press <codeInline>F2</codeInline> allows you to rename that variable. The name will be replaced in all occurrences of that variable.
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="1AE54454196F6ED80D4D5722F394B7FC">Keyboard shortcuts and commands</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

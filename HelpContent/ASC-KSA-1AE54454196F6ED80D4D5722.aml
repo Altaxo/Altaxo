@@ -1,0 +1,45 @@
+﻿
+<topic id="1AE54454196F6ED80D4D5722F394B7FC" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="CBDD41AAA1B05A4B2362BE258C1A1A9D">Altaxo's code editor</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Inside the code editor window the following keyboard shortcuts and other commands are available:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<codeInline>F2</codeInline>: rename variable
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>F12</codeInline>: go to definition
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+right click to open the context menu: format document (formats the entire document)
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="A801476992A9D8BE7D8039466EFC262F">The code editor window in detail</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>
