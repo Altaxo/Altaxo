@@ -613,6 +613,29 @@ namespace Altaxo.Main
       RenameFolder(folderName, newFolderName);
     }
 
+    /// <summary>
+    /// Validator for the name of a new folder, i.e. a folder that don't exist up to now.
+    /// </summary>
+    public class FolderIsNewValidator : Altaxo.Gui.Common.TextValueInputController.NonEmptyStringValidator
+    {
+      public FolderIsNewValidator()
+        : base("The folder name you provided is empty!")
+      {
+      }
+
+      public override string Validate(string name)
+      {
+        string err = base.Validate(name);
+        if (null != err)
+          return err;
+
+        if (!name.EndsWith(ProjectFolder.DirectorySeparatorString))
+          name += ProjectFolder.DirectorySeparatorString;
+
+        return Current.Project.Folders.ContainsFolder(name) ? "The folder name already exists! Please enter a name of a new folder." : null;
+      }
+    }
+
     #region Sorting of project items by dependencies
 
     /// <summary>

@@ -39,6 +39,7 @@ using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Gdi;
 using Altaxo.Gui.Graph.Gdi.Viewing;
@@ -787,8 +788,8 @@ namespace Altaxo.Graph.Commands
       var dlg = new Altaxo.Gui.SaveFileOptions();
 
       string description = StringParser.Parse("${res:Altaxo.FileFilter.ProjectFiles})");
-      ;
-      dlg.AddFilter(".axoprj", description);
+      
+      dlg.AddFilter("*.axoprj", description);
       dlg.OverwritePrompt = true;
       dlg.AddExtension = true;
 
@@ -832,6 +833,74 @@ namespace Altaxo.Graph.Commands
     public override void Run(GraphController ctrl)
     {
       SaveAsMiniProjectBase.Run(ctrl.Doc);
+    }
+  }
+
+  /// <summary>
+  /// Command that copies the currently selected graph as mini project to the clipboard
+  /// </summary>
+  public class CopyAsMiniProjectToClipboard : AbstractGraphControllerCommand
+  {
+    /// <summary>
+    /// Identifier used for putting a list of project items on the clipboard.
+    /// </summary>
+    public const string ClipboardFormat_MiniProjectItems = "Altaxo.Main.ProjectItems.GraphAsMiniProject";
+
+    public override void Run(GraphController ctrl)
+    {
+      var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
+      var newDocument = miniProjectBuilder.GetMiniProject(ctrl.Doc, false);
+
+      var items = new HashSet<IProjectItem>();
+      foreach (var coll in newDocument.ProjectItemCollections)
+        foreach (var item in coll.ProjectItems)
+          items.Add(item);
+
+      Altaxo.Serialization.Clipboard.ClipboardSerialization.PutObjectToClipboard(
+        new string[]{
+        Main.Commands.ProjectItemCommands.ClipboardFormat_ListOfProjectItems,
+        ClipboardFormat_MiniProjectItems
+        },
+        new Main.Commands.ProjectItemCommands.ProjectItemClipboardList(items, baseFolder: string.Empty));
+    }
+  }
+
+  /// <summary>
+  /// Command that copies the currently selected graph as mini project from the clipboard
+  /// to a new user defined project folder.
+  /// </summary>
+  public class PasteGraphAsMiniProject : SimpleCommand
+  {
+    public override bool CanExecute(object parameter)
+    {
+      return
+        Altaxo.Serialization.Clipboard.ClipboardSerialization.IsClipboardFormatAvailable(CopyAsMiniProjectToClipboard.ClipboardFormat_MiniProjectItems) &&
+        Altaxo.Serialization.Clipboard.ClipboardSerialization.IsClipboardFormatAvailable(Main.Commands.ProjectItemCommands.ClipboardFormat_ListOfProjectItems);
+    }
+
+    public override void Execute(object parameter)
+    {
+      if (!CanExecute(parameter))
+        return;
+
+      var tvctrl = new TextValueInputController(string.Empty, "Name of new folder for mini project: ")
+      {
+        Validator = new ProjectFolders.FolderIsNewValidator()
+      };
+
+      if (!Current.Gui.ShowDialog(tvctrl, "Enter new folder name", false))
+        return;
+
+      var folderName = tvctrl.InputText;
+      if (!folderName.EndsWith(ProjectFolder.DirectorySeparatorString))
+        folderName += ProjectFolder.DirectorySeparatorString;
+
+      var list = Altaxo.Serialization.Clipboard.ClipboardSerialization.GetObjectFromClipboard<Main.Commands.ProjectItemCommands.ProjectItemClipboardList>(Main.Commands.ProjectItemCommands.ClipboardFormat_ListOfProjectItems);
+
+      list.TryToKeepInternalReferences = true;
+      list.RelocateReferences = true;
+      Main.Commands.ProjectItemCommands.PasteItems(folderName, list);
+
     }
   }
 

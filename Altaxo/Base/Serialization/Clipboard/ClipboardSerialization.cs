@@ -47,6 +47,20 @@ namespace Altaxo.Serialization.Clipboard
       dataObject.SetData(clipBoardFormat, stb.ToString());
     }
 
+    /// <summary>Puts an object into the provided dataObject, using one or more clipboard formats.</summary>
+    /// <param name="clipBoardFormats">The clip board formats (are used later on to identify the data on the clipboard).</param>
+    /// <param name="toSerialize">Data to put on the clipboard.</param>
+    /// <param name="dataObject">The data object to put the data into.</param>
+    public static void PutObjectToDataObject(IEnumerable<string> clipBoardFormats, object toSerialize, Altaxo.Gui.IClipboardSetDataObject dataObject)
+    {
+      if (null == dataObject)
+        throw new ArgumentNullException(nameof(dataObject));
+
+      var stb = SerializeToStringBuilder(toSerialize).ToString();
+      foreach(var clipboardFormat in clipBoardFormats)
+        dataObject.SetData(clipboardFormat, stb);
+    }
+
     /// <summary>Puts an object to the clipboard.</summary>
     /// <param name="clipBoardFormat">The clip board format string (is used later on to identify the data on the clipboard).</param>
     /// <param name="toSerialize">Data to put on the clipboard.</param>
@@ -54,6 +68,16 @@ namespace Altaxo.Serialization.Clipboard
     {
       var dao = Current.Gui.GetNewClipboardDataObject();
       PutObjectToDataObject(clipBoardFormat, toSerialize, dao);
+      Current.Gui.SetClipboardDataObject(dao, true);
+    }
+
+    /// <summary>Puts an object to the clipboard.</summary>
+    /// <param name="clipBoardFormats">The clip board formats (are used later on to identify the data on the clipboard).</param>
+    /// <param name="toSerialize">Data to put on the clipboard.</param>
+    public static void PutObjectToClipboard(IEnumerable<string> clipBoardFormats, object toSerialize)
+    {
+      var dao = Current.Gui.GetNewClipboardDataObject();
+      PutObjectToDataObject(clipBoardFormats, toSerialize, dao);
       Current.Gui.SetClipboardDataObject(dao, true);
     }
 

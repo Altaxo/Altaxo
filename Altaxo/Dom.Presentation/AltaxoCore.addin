@@ -334,6 +334,8 @@
         <Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Exclude">
           <MenuItem id="CopyGraphActiveLayer" label="${res:XML.MainMenu.EditMenu.CopyGraphActiveLayer}" description="${res:XML.MainMenu.EditMenu.CopyGraphActiveLayer.Description}"
 						class="Altaxo.Graph.Commands.CopyActiveLayer" />
+          <MenuItem id="CopyGraphAsMiniProject" label="${res:XML.MainMenu.EditMenu.CopyGraphAsMiniProject}" description="${res:XML.MainMenu.EditMenu.CopyGraphAsMiniProject.Description}"
+						class="Altaxo.Graph.Commands.CopyAsMiniProjectToClipboard" />
         </Condition>
         <Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
           <MenuItem id="CopyTextWithImages" label="${res:XML.MainMenu.EditMenu.CopyTextWithImages}" description="${res:XML.MainMenu.EditMenu.CopyTextWithImages.Description}"
@@ -344,6 +346,10 @@
         <Condition name="Clipboard" content="Altaxo.Graph.GraphLayerAsXml" action="Exclude">
           <MenuItem id="PasteAsNewLayer" label="${res:XML.MainMenu.EditMenu.PasteAsNewLayer}" description="${res:XML.MainMenu.EditMenu.PasteAsNewLayer.Description}"
 						class="Altaxo.Graph.Commands.PasteAsNewLayer" />
+        </Condition>s
+        <Condition name="Clipboard" content="Altaxo.Main.ProjectItems.GraphAsMiniProject" action="Exclude">
+          <MenuItem id="PasteGraphAsMiniProject" label="${res:XML.MainMenu.EditMenu.PasteGraphAsMiniProject}" description="${res:XML.MainMenu.EditMenu.PasteGraphAsMiniProject.Description}"
+          class="Altaxo.Graph.Commands.PasteGraphAsMiniProject" />
         </Condition>
       </MenuItem>
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Exclude">
