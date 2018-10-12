@@ -47,12 +47,13 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="textDocument">The original text document. This document is not changed during the expansion.</param>
     /// <param name="recursionLevel">The recursion level. Start with 0 here.</param>
+    /// <param name="errors">A list that collects error messages.</param>
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, int recursionLevel = 0)
+    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, int recursionLevel = 0, List<MarkdownError> errors = null)
     {
-      return ExpandDocumentToNewDocument(textDocument, true, string.Empty, recursionLevel);
+      return ExpandDocumentToNewDocument(textDocument, true, string.Empty, recursionLevel, errors);
     }
 
 
@@ -63,10 +64,11 @@ namespace Altaxo.Text
     /// <param name="textDocument">The original text document. This document is not changed during the expansion.</param>
     /// <param name="targetDocumentFolder">Folder path of the final document that is the target of the expansion process.</param>
     /// <param name="recursionLevel">The recursion level. Start with 0 here.</param>
+    /// <param name="errors">A list that collects error messages.</param>
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, string targetDocumentFolder, int recursionLevel = 0)
+    public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, string targetDocumentFolder, int recursionLevel = 0, List<MarkdownError> errors = null)
     {
       return ExpandDocumentToNewDocument(textDocument, false, targetDocumentFolder, recursionLevel);
     }
@@ -79,10 +81,11 @@ namespace Altaxo.Text
     /// <param name="convertGraphsToImages">If true, links to Altaxo graphs will be converted to images. If false, the links to the graphs were kept, but the path to the graphs is changed appropriately.</param>
     /// <param name="newPath">Folder path of the final document that is the target of the expansion process.</param>
     /// <param name="recursionLevel">The recursion level. Start with 0 here.</param>
+    /// <param name="errors">A list that collects error messages.</param>
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    private static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, bool convertGraphsToImages, string newPath, int recursionLevel = 0)
+    private static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, bool convertGraphsToImages, string newPath, int recursionLevel = 0, List<MarkdownError> errors = null)
     {
       var resultDocument = new TextDocument();
       resultDocument.AddImagesFrom(textDocument);
@@ -166,12 +169,24 @@ namespace Altaxo.Text
 
           if (success)
           {
-            var expandedChild = ExpandDocumentToNewDocument(childTextDocument, convertGraphsToImages, newPath, recursionLevel + 1);
+            var expandedChild = ExpandDocumentToNewDocument(childTextDocument, convertGraphsToImages, newPath, recursionLevel + 1, errors);
             // exchange the source text
             documentAsStringBuilder.Remove(mdo.Span.Start, mdo.Span.Length);
             documentAsStringBuilder.Insert(mdo.Span.Start, expandedChild.SourceText);
             // insert images
             resultDocument.AddImagesFrom(expandedChild);
+          }
+          else if (null != errors) // report an error
+          {
+            var error = new MarkdownError()
+            {
+              AltaxoDocumentName = textDocument.Name,
+              LineNumber = blk.Line,
+              ColumnNumber = blk.Column,
+              ErrorMessage = string.Format("Could not expand child document \"{0}\" because this name could not be resolved!", childDocName)
+            };
+
+            errors.Add(error);
           }
         }
       }

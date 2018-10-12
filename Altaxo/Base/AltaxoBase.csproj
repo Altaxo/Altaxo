@@ -298,6 +298,7 @@
     <Compile Include="Text\ImageStreamProvider.cs" />
     <Compile Include="Text\HtmlExportOptions.cs" />
     <Compile Include="Text\MamlExportOptions.cs" />
+    <Compile Include="Text\MarkdownError.cs" />
     <Compile Include="Text\MarkdownExportOptions.cs" />
     <Compile Include="Text\MarkdownImportOptions.cs" />
     <Compile Include="Text\MarkdownUtilities.cs" />

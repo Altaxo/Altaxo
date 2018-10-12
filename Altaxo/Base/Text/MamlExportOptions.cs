@@ -316,13 +316,29 @@ namespace Altaxo.Text
         document.PropertyBagNotNull.SetValue(PropertyKeyMamlExportOptions, (MamlExportOptions)exportOptions.Clone());
         Current.PropertyService.ApplicationSettings.SetValue(PropertyKeyMamlExportOptions, (MamlExportOptions)exportOptions.Clone());
 
-        exportOptions.Export(document, exportOptions.OutputFileName);
+        var errors = new List<MarkdownError>();
+        exportOptions.Export(document, exportOptions.OutputFileName, errors);
+
+        if (errors.Count > 0)
+        {
+          var stb = new StringBuilder();
+          stb.AppendLine("There were error(s) during export:");
+          stb.AppendLine();
+
+          foreach (var error in errors)
+            stb.AppendLine(error.ToString());
+
+          Current.Gui.ErrorMessageBox(stb.ToString(), "Export errors");
+          return;
+        }
+
 
         // Start Sandcastle help file builder
         if (exportOptions.OpenHelpFileBuilder && System.IO.Path.GetExtension(exportOptions.OutputFileName).ToLowerInvariant() == ".shfbproj")
         {
           System.Diagnostics.Process.Start(exportOptions.OutputFileName);
         }
+
       }
     }
 
@@ -332,7 +348,8 @@ namespace Altaxo.Text
     /// <param name="document">The document to export.</param>
     /// <param name="fileName">Full name of the Maml file to export to. Note that if exporting to multiple Maml files,
     /// this is the base file name only; the file names will be derived from this name.</param>
-    public void Export(TextDocument document, string fileName)
+    /// <param name="errors">A list that collects error messages.</param>
+    public void Export(TextDocument document, string fileName, List<MarkdownError> errors = null)
     {
       if (null == document)
         throw new ArgumentNullException(nameof(document));
@@ -340,9 +357,10 @@ namespace Altaxo.Text
         throw new ArgumentNullException(nameof(fileName));
       var basePathName = Path.GetDirectoryName(fileName);
 
+
       if (ExpandChildDocuments)
       {
-        document = ChildDocumentExpander.ExpandDocumentToNewDocument(document);
+        document = ChildDocumentExpander.ExpandDocumentToNewDocument(document, errors: errors);
       }
 
       // remove the old content

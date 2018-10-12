@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Altaxo.Graph;
 using Altaxo.Gui;
 using Altaxo.Text.Renderers.Html;
@@ -303,9 +304,25 @@ namespace Altaxo.Text
       var exportOptions = document.GetPropertyValue(PropertyKeyHtmlExportOptions, () => new HtmlExportOptions());
       if (true == Current.Gui.ShowDialog(ref exportOptions, "Html export", false))
       {
+        var errors = new List<MarkdownError>();
+
+
         document.PropertyBagNotNull.SetValue(PropertyKeyHtmlExportOptions, (HtmlExportOptions)exportOptions.Clone());
         Current.PropertyService.ApplicationSettings.SetValue(PropertyKeyHtmlExportOptions, (HtmlExportOptions)exportOptions.Clone());
-        exportOptions.Export(document, exportOptions.OutputFileName);
+        exportOptions.Export(document, exportOptions.OutputFileName, errors);
+
+        if (errors.Count > 0)
+        {
+          var stb = new StringBuilder();
+          stb.AppendLine("There were error(s) during export:");
+          stb.AppendLine();
+
+          foreach (var error in errors)
+            stb.AppendLine(error.ToString());
+
+          Current.Gui.ErrorMessageBox(stb.ToString(), "Export errors");
+          return;
+        }
 
         // Start Html viewer
         if (exportOptions.OpenHtmlViewer && System.IO.Path.GetExtension(exportOptions.OutputFileName).ToLowerInvariant() == ".html")
@@ -321,7 +338,8 @@ namespace Altaxo.Text
     /// <param name="document">The document to export.</param>
     /// <param name="fileName">Full name of the Html file to export to. Note that if exporting to multiple Html files,
     /// this is the base file name only; the file names will be derived from this name.</param>
-    public void Export(TextDocument document, string fileName)
+    /// <param name="errors">A list that collects error messages.</param>
+    public void Export(TextDocument document, string fileName, List<MarkdownError> errors)
     {
       if (null == document)
       {
@@ -337,7 +355,7 @@ namespace Altaxo.Text
 
       if (ExpandChildDocuments)
       {
-        document = ChildDocumentExpander.ExpandDocumentToNewDocument(document);
+        document = ChildDocumentExpander.ExpandDocumentToNewDocument(document, errors: errors);
       }
 
       // remove the old content
