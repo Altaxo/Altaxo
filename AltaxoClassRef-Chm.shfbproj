@@ -126,6 +126,8 @@
     <None Include="HelpContent\ASC-KSA-1AE54454196F6ED80D4D5722.aml" />
     <None Include="HelpContent\ASC-CEW-A801476992A9D8BE7D803946.aml" />
     <None Include="HelpContent\ASC-LRC-01A8CFA2EB8AF7B1F2DDA0AC.aml" />
+    <None Include="HelpContent\PO-2F5E6BE1D416EEF88458DAC931E96.aml" />
+    <None Include="HelpContent\PO-PI-2783FED4411F72EE01B8906649.aml" />
     <None Include="HelpContent\_Images.aml" />
   </ItemGroup>
   <ItemGroup>

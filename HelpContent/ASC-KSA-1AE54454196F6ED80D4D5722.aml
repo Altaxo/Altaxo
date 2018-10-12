@@ -19,6 +19,13 @@ Inside the code editor window the following keyboard shortcuts and other command
 <listItem>
 
 <para>
+<codeInline>F1</codeInline> (while the cursor is in a variable, a method or class name): get help
+</para>
+</listItem>
+
+<listItem>
+
+<para>
 <codeInline>F2</codeInline>: rename variable
 </para>
 </listItem>

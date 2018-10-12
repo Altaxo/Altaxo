@@ -92,10 +92,15 @@ Here, the statement <codeInline>if (reporter.ShouldReportNow)</codeInline> first
 <para>
 Of course, you can omit the <codeInline>if (reporter.ShouldReportNow)</codeInline> statement and directly call the <codeInline>ReportProgress</codeInline> method. For smaller loops this is OK, but for a loop as shown here, this would call the <codeInline>string.Format</codeInline> method and <codeInline>ReportProgress</codeInline> method a hundred thousand times. Not very effective!
 </para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
 
-<code>
-Project organization
-</code>
+<content>
+
+<para>
+Next section: <link xlink:href="2F5E6BE1D416EEF88458DAC931E96092">Project organization</link></para>
 </content>
 </section>
 </developerConceptualDocument>
