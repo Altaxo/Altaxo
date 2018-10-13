@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,12 +31,17 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
+  using System.ComponentModel;
   using Altaxo.Collections;
+  using Altaxo.Drawing;
   using Altaxo.Graph;
   using Altaxo.Graph.Gdi;
+  using Altaxo.Graph.Gdi.Plot;
+  using Altaxo.Graph.Gdi.Plot.Groups;
   using Altaxo.Graph.Gdi.Shapes;
   using Altaxo.Gui.Workbench;
   using Altaxo.Main;
+  using Altaxo.Main.Services;
   using Altaxo.Serialization.Clipboard;
   using Gdi;
   using Geometry;
@@ -46,9 +51,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
   [UserControllerForObject(typeof(GraphDocument))]
   public partial class GraphController : AbstractViewContent, IGraphController, IGraphViewEventSink, IDisposable
   {
+    #region Member variables
+
     // following default unit is point (1/72 inch)
     /// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
-    protected const double PtPerInch = 72;
+    protected const double PointsPerInch = 72;
+
+    /// <summary>Inches per point unit.</summary>
+    protected const double InchPerPoint = 1 / 72.0;
 
     /// <summary>Holds the Graph document (the place were the layers, plots, graph elements... are stored).</summary>
     protected GraphDocument _doc;
@@ -76,12 +86,44 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     protected PointD2D _positionOfViewportsUpperLeftCornerInRootLayerCoordinates;
 
+    /// <summary>
+    /// The layer structure. This is projected onto the arrangement of the layer buttons in the view.
+    /// </summary>
     private NGTreeNode _layerStructure;
 
     protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
 
     [NonSerialized]
     protected WeakEventHandler[] _weakEventHandlersForDoc;
+
+    private static IList<IHitTestObject> _emptyReadOnlyList;
+
+    /// <summary>
+    /// Color for the area of the view, where there is no page.
+    /// </summary>
+    protected NamedColor _nonPageAreaColor;
+
+    /// <summary>
+    /// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
+    /// this brush fills only the non printable margins of the page.
+    /// </summary>
+    protected BrushX _pageGroundBrush;
+
+    /// <summary>
+    /// Brush to fill the printable area of the graph.
+    /// </summary>
+    protected BrushX _graphAreaBrush;
+
+    /// <summary>Screen resolution in dpi (in fact it is the factor that converts physical length on the screen (in inch) to the coordinate system used by Wpf (mouse coordinates, heights, widths, etc.).</summary>
+    protected PointD2D _screenResolutionDpi;
+
+    /// <summary>
+    /// Stores a time that designates when the next zomm by the mouse scroll wheel will be accepted.
+    /// This helps to ensure that the scroll zoom pauses for a second when the zoom factor is 100%.
+    /// </summary>
+    private DateTime _nextScrollZoomAcceptTime;
+
+    #endregion Member variables
 
     #region Constructors
 
@@ -116,6 +158,31 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       InternalInitializeGraphDocument(graphdoc); // Using DataTable here wires the event chain also
     }
 
+    private void InitTriggerBasedUpdate()
+    {
+      _triggerBasedUpdate = new Altaxo.Main.TriggerBasedUpdate(Current.TimerQueue)
+      {
+        MinimumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02),
+        MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02),
+        MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.1)
+      };
+      _triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
+    }
+
+    /// <summary>
+    /// Set the member variables to default values. Intended only for use in constructors and deserialization code.
+    /// </summary>
+    protected virtual void SetMemberVariablesToDefault()
+    {
+      _nonPageAreaColor = NamedColors.Gray;
+
+      _pageGroundBrush = new BrushX(NamedColors.LightGray) { ParentObject = SuspendableDocumentNode.StaticInstance };
+
+      _graphAreaBrush = new BrushX(NamedColors.Snow) { ParentObject = SuspendableDocumentNode.StaticInstance };
+
+      _screenResolutionDpi = Current.Gui.ScreenResolutionDpi;
+    }
+
     public bool InitializeDocument(params object[] args)
     {
       if (null == args || args.Length == 0)
@@ -145,6 +212,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     #endregion Constructors
 
+    #region Initialization
+
     protected void Initialize(bool initData)
     {
       if (initData)
@@ -170,16 +239,50 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         (sn, indices) => new NGTreeNode { Tag = indices.ToArray(), Text = HostLayer.GetDefaultNameOfLayer(indices) }, (parent, child) => parent.Nodes.Add(child));
     }
 
-    private void InitTriggerBasedUpdate()
+
+    private void InternalInitializeGraphDocument(GraphDocument doc)
     {
-      _triggerBasedUpdate = new Altaxo.Main.TriggerBasedUpdate(Current.TimerQueue)
+      if (_doc != null)
+        throw new ApplicationException(nameof(_doc) + " is already initialized");
+      _doc = doc ?? throw new ArgumentNullException(nameof(doc));
+
       {
-        MinimumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02),
-        MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02),
-        MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.1)
-      };
-      _triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
+        // we are using weak events here, to avoid that _doc will maintain strong references to the controller
+        // Attention: use local variable doc instead of member _doc for the anonymous methods below!
+        var rootLayer = doc.RootLayer; // local variable for rootLayer
+        _weakEventHandlersForDoc = new WeakEventHandler[3]; // storage for WeakEventhandlers for later removal
+        doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(EhGraph_Changed, x => doc.Changed -= x));
+        rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(EhGraph_LayerCollectionChanged, x => rootLayer.LayerCollectionChanged -= x));
+        doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(EhGraph_SizeChanged, x => doc.SizeChanged -= x));
+      }
+      // if the host layer has at least one child, we set the active layer to the first child of the host layer
+      if (_doc.RootLayer.Layers.Count >= 1)
+        _currentLayerNumber = new List<int>() { 0 };
+
+      // Ensure the current layer and plot numbers are valid
+      EnsureValidityOfCurrentLayerNumber();
+      EnsureValidityOfCurrentPlotNumber();
+      Title = _doc.Name;
     }
+
+    private void InternalUninitializeGraphDocument()
+    {
+      // remove the weak event handlers from doc
+      var wev = _weakEventHandlersForDoc;
+      if (null != wev)
+      {
+        foreach (var ev in wev)
+          ev.Remove();
+        _weakEventHandlersForDoc = null;
+      }
+
+      _doc = null;
+    }
+
+
+    #endregion Initialization
+
+    #region Property changed overrides to handle content visibility
 
     protected override void OnPropertyChanged(string propertyName)
     {
@@ -193,6 +296,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     {
       _view?.AnnounceContentVisibilityChanged(IsContentVisible);
     }
+
+    #endregion
 
     #region Properties
 
@@ -595,47 +700,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     #region IGraphController Members
 
-    private void InternalInitializeGraphDocument(GraphDocument doc)
-    {
-      if (_doc != null)
-        throw new ApplicationException(nameof(_doc) + " is already initialized");
-      if (doc == null)
-        throw new ArgumentNullException(nameof(doc));
-
-      _doc = doc;
-
-      {
-        // we are using weak events here, to avoid that _doc will maintain strong references to the controller
-        // Attention: use local variable doc instead of member _doc for the anonymous methods below!
-        var rootLayer = doc.RootLayer; // local variable for rootLayer
-        _weakEventHandlersForDoc = new WeakEventHandler[3]; // storage for WeakEventhandlers for later removal
-        doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(EhGraph_Changed, x => doc.Changed -= x));
-        rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(EhGraph_LayerCollectionChanged, x => rootLayer.LayerCollectionChanged -= x));
-        doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(EhGraph_SizeChanged, x => doc.SizeChanged -= x));
-      }
-      // if the host layer has at least one child, we set the active layer to the first child of the host layer
-      if (_doc.RootLayer.Layers.Count >= 1)
-        _currentLayerNumber = new List<int>() { 0 };
-
-      // Ensure the current layer and plot numbers are valid
-      EnsureValidityOfCurrentLayerNumber();
-      EnsureValidityOfCurrentPlotNumber();
-      Title = _doc.Name;
-    }
-
-    private void InternalUninitializeGraphDocument()
-    {
-      // remove the weak event handlers from doc
-      var wev = _weakEventHandlersForDoc;
-      if (null != wev)
-      {
-        foreach (var ev in wev)
-          ev.Remove();
-        _weakEventHandlersForDoc = null;
-      }
-
-      _doc = null;
-    }
 
     public Altaxo.Graph.Gdi.GraphDocument Doc
     {
@@ -813,8 +877,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <param name="e">The EventArgs.</param>
     protected void EhGraph_Changed(object sender, System.EventArgs e)
     {
-      var eAsNOC = e as Altaxo.Main.NamedObjectCollectionChangedEventArgs;
-      if (null != eAsNOC && eAsNOC.WasItemRenamed)
+      if (e is Altaxo.Main.NamedObjectCollectionChangedEventArgs eAsNOC && eAsNOC.WasItemRenamed)
       {
         Current.Dispatcher.InvokeIfRequired(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument)sender, eAsNOC.OldName);
         return;
@@ -823,16 +886,15 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       _triggerBasedUpdate.Trigger();
     }
 
+    /// <summary>
+    /// Is called after the trigger has expired. Attention: context is possible non-gui!
+    /// </summary>
     private void EhUpdateByTimerQueue()
     {
       // if something changed on the graph, make sure that the layer and plot number reflect this change
       EnsureValidityOfCurrentLayerNumber();
       EnsureValidityOfCurrentPlotNumber();
-
-      if (null != _view)
-      {
-        _view.InvalidateCachedGraphBitmapAndRepaint(); // this function is non-Gui thread safe
-      }
+      _view?.InvalidateCachedGraphBitmapAndRepaint(); // this function is non-Gui thread safe
     }
 
     /// <summary>
@@ -1667,6 +1729,325 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     }
 
     #endregion Movement in X Y direction
+
+    #region Functions used by View
+
+    public void SetGraphToolFromInternal(GraphToolType value)
+    {
+      _view.CurrentGraphTool = value;
+    }
+
+    public void SetPanelCursor(object cursor)
+    {
+      _view?.SetPanelCursor(cursor);
+    }
+
+    /// <summary>
+    /// Gets the color of the non page area, i.e. the area that not belongs to the graph.
+    /// </summary>
+    /// <value>
+    /// The color of the non page area.
+    /// </value>
+    public NamedColor NonPageAreaColor
+    {
+      get
+      {
+        return _nonPageAreaColor;
+      }
+    }
+
+    #endregion Functions used by View
+
+    #region Event handlers forwarded by view
+
+    /// <summary>
+    /// Called if the host window is about to be closed.
+    /// </summary>
+    /// <returns>True if the closing should be canceled, false otherwise.</returns>
+    public bool HostWindowClosing()
+    {
+      if (!Current.GetRequiredService<IShutdownService>().IsApplicationClosing)
+      {
+        if (false == Current.Gui.YesNoMessageBox("Do you really want to close this graph?", "Attention", false))
+        {
+          return true; // cancel the closing
+        }
+      }
+      return false;
+    }
+
+
+    /// <summary>Handles the mouse wheel event.</summary>
+    /// <param name="position">Mouse position.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.MouseWheelEventArgs"/> instance containing the event data.</param>
+    public virtual void EhView_GraphPanelMouseWheel(AltaxoMouseEventArgs e, AltaxoKeyboardModifierKeys keyModifiers, HandledEventArgs eHand)
+    {
+      var position = e.Position;
+      if (keyModifiers.HasFlag(AltaxoKeyboardModifierKeys.Control))
+      {
+        eHand.Handled = true;
+
+        DateTime now = DateTime.UtcNow;
+        if (now < _nextScrollZoomAcceptTime)
+          return;
+
+        var oldZoom = ZoomFactor;
+        var newZoom = oldZoom;
+        var autoZoomFactor = AutoZoomFactor;
+        bool isAutoZoomNext = false;
+        if (e.Delta > 0)
+        {
+          newZoom = oldZoom * 1.5;
+          isAutoZoomNext = newZoom >= autoZoomFactor && oldZoom < autoZoomFactor;
+        }
+        else if (e.Delta < 0)
+        {
+          newZoom = oldZoom / 1.5;
+          isAutoZoomNext = newZoom <= autoZoomFactor && oldZoom > autoZoomFactor;
+        }
+        // Do zoom action here
+        if (isAutoZoomNext)
+        {
+          IsAutoZoomActive = true;
+          _nextScrollZoomAcceptTime = now.AddMilliseconds(700);
+        }
+        else // manual zoom
+        {
+          var graphCoord = ConvertMouseToRootLayerCoordinates(position);
+          ZoomAroundPivotPoint(newZoom, graphCoord);
+        }
+      }
+      else if (keyModifiers.HasFlag(AltaxoKeyboardModifierKeys.Shift))
+      {
+        MouseWheelScroll(true, e.Delta);
+      }
+      else
+      {
+        MouseWheelScroll(false, e.Delta);
+      }
+    }
+
+    #endregion Event handlers forwarded by view
+
+    #region Event handlers set-up by this controller
+
+    /// <summary>
+    /// Handles the double click event onto a plot item.
+    /// </summary>
+    /// <param name="hit">Object containing information about the double clicked object.</param>
+    /// <returns>True if the object should be deleted, false otherwise.</returns>
+    protected static bool EhEditPlotItem(IHitTestObject hit)
+    {
+      var actLayer = hit.ParentLayer as XYPlotLayer;
+      var pa = (IGPlotItem)hit.HittedObject;
+
+      // get plot group
+      PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
+
+      Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);
+
+      return false;
+    }
+
+    /// <summary>
+    /// Handles the double click event onto a plot item.
+    /// </summary>
+    /// <param name="hit">Object containing information about the double clicked object.</param>
+    /// <returns>True if the object should be deleted, false otherwise.</returns>
+    protected static bool EhEditTextGraphics(IHitTestObject hit)
+    {
+      var layer = hit.ParentLayer;
+      var tg = (TextGraphic)hit.HittedObject;
+
+      bool shouldDeleted = false;
+
+      object tgoo = tg;
+      if (Current.Gui.ShowDialog(ref tgoo, "Edit text", true))
+      {
+        tg = (TextGraphic)tgoo;
+        if (tg == null || tg.Empty)
+        {
+          if (null != hit.Remove)
+            shouldDeleted = hit.Remove(hit);
+          else
+            shouldDeleted = false;
+        }
+        else
+        {
+          if (tg.ParentObject is IChildChangedEventSink)
+            tg.ParentObject.EhChildChanged(tg, EventArgs.Empty);
+        }
+      }
+
+      return shouldDeleted;
+    }
+
+    internal void CaptureMouse()
+    {
+      if (null != _view)
+        _view.CaptureMouseOnCanvas();
+    }
+
+    internal void ReleaseMouseCapture()
+    {
+      if (null != _view)
+        _view.ReleaseCaptureMouseOnCanvas();
+    }
+
+    #endregion Event handlers set-up by this controller
+
+    #region Painting
+
+    /// <summary>
+    /// This functions scales the graphics context to be ready for painting.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    public void ScaleForPaint(Graphics g)
+    {
+      // g.SmoothingMode = SmoothingMode.AntiAlias;
+      // get the dpi settings of the graphics context,
+      // for example; 96dpi on screen, 600dpi for the printer
+      // used to adjust grid and margin sizing.
+
+      g.PageUnit = GraphicsUnit.Point;
+      g.PageScale = (float)ZoomFactor;
+    }
+
+    public void ScaleForPaintingGraphDocument(Graphics g)
+    {
+      ScaleForPaint(g);
+
+      g.Clear(_nonPageAreaColor);
+      // Fill the page with its own color
+      //g.FillRectangle(_pageGroundBrush,_doc.PageBounds);
+      //g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
+      g.FillRectangle(_graphAreaBrush, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, (float)Doc.Size.X, (float)Doc.Size.Y);
+      // DrawMargins(g);
+
+      // Paint the graph now
+      //g.TranslateTransform(m_Graph.PrintableBounds.X,m_Graph.PrintableBounds.Y); // translate the painting to the printable area
+      g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
+    }
+
+    /// <summary>
+    /// If the cached graph bitmap is valid, the graph area is repainted immediately using the cached bitmap and then the custom mouse handler drawing.
+    /// If the cached graph bitmap is invalid, a repaint (and thus a recreation of the cached graph bitmap) is triggered, but only with Gui render priority.
+    /// </summary>
+    public void RenderOverlay()
+    {
+      if (_view == null || Doc == null || _view.ViewportSizeInPoints == PointD2D.Empty)
+        return;
+
+      _view.EhRenderOverlayTriggered();
+    }
+
+    /// <summary>
+    /// Infrastructure: intended to be used by graph views to draw the overlay (the selection rectangles and handles of the currently selected tool) into a bitmap.
+    /// </summary>
+    /// <param name="g">The graphics contexts (ususally created from a bitmap).</param>
+    public void DoPaintOverlay(Graphics g, double zoomFactor, PointD2D positionOfViewportsUpperLeftCornerInGraphCoordinates)
+    {
+      // g.SmoothingMode = SmoothingMode.AntiAlias;
+      // get the dpi settings of the graphics context,
+      // for example; 96dpi on screen, 600dpi for the printer
+      // used to adjust grid and margin sizing.
+
+      g.PageUnit = GraphicsUnit.Point;
+      g.PageScale = (float)zoomFactor;
+
+      g.Clear(System.Drawing.Color.Transparent);
+
+      // special painting depending on current selected tool
+      g.TranslateTransform((float)-positionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-positionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
+      _view.MouseState_AfterPaint(g);
+    }
+
+    public bool IsOverlayPaintingRequired
+    {
+      get
+      {
+        return _view?.MouseState_IsOverlayPaintingRequired ?? false;
+      }
+    }
+
+    #endregion Painting
+
+    #region Scaling and Positioning
+
+    /// <summary>
+    /// Factor for conversion of graph units (in points = 1/72 inch) to mouse coordinates.
+    /// The resolution used for this is <see cref="_screenResolutionDpi"/>.
+    /// </summary>
+    public PointD2D FactorForGraphToMouseCoordinateConversion
+    {
+      get
+      {
+        return new PointD2D(96, 96) * (ZoomFactor * InchPerPoint);
+      }
+    }
+
+    /// <summary>
+    /// Converts from mouse coordinates to graph coordinates.
+    /// </summary>
+    /// <param name="mouseCoord">Mouse coordinates as returned by MouseEvents.</param>
+    /// <returns>Position of the provided point in graph coordinates in points (1/72 inch).</returns>
+    public PointD2D ConvertMouseToRootLayerCoordinates(PointD2D mouseCoord)
+    {
+      var offset = PositionOfViewportsUpperLeftCornerInGraphCoordinates;
+      var factor = FactorForGraphToMouseCoordinateConversion;
+      return new PointD2D(offset.X + mouseCoord.X / factor.X, offset.Y + mouseCoord.Y / factor.Y);
+    }
+
+    /// <summary>
+    /// Converts graph coordinates to wpf coordinates.
+    /// </summary>
+    /// <param name="graphCoord">Graph coordinates.</param>
+    /// <returns>Pixel coordinates as returned by MouseEvents</returns>
+    public PointD2D ConvertGraphToMouseCoordinates(PointD2D graphCoord)
+    {
+      var offset = PositionOfViewportsUpperLeftCornerInGraphCoordinates;
+      var factor = FactorForGraphToMouseCoordinateConversion;
+      return new PointD2D((graphCoord.X - offset.X) * factor.X, (graphCoord.Y - offset.Y) * factor.Y);
+    }
+
+    #endregion Scaling and Positioning
+
+    #region Finding objects at position
+
+    /// <summary>
+    /// Looks for a graph object at pixel position <paramref name="pixelPos"/> and returns true if one is found.
+    /// </summary>
+    /// <param name="pixelPos">The pixel coordinates (graph panel coordinates)</param>
+    /// <param name="plotItemsOnly">If true, only the plot items where hit tested.</param>
+    /// <param name="foundObject">Found object if there is one found, else null</param>
+    /// <param name="foundInLayerNumber">The layer the found object belongs to, otherwise 0</param>
+    /// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
+    public bool FindGraphObjectAtPixelPosition(PointD2D pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int[] foundInLayerNumber)
+    {
+      var mousePT = ConvertMouseToRootLayerCoordinates(pixelPos);
+      var hitData = new HitTestPointData(mousePT, ZoomFactor);
+
+      foundObject = RootLayer.HitTest(hitData, plotItemsOnly);
+      if (null != foundObject && null != foundObject.ParentLayer)
+      {
+        foundInLayerNumber = foundObject.ParentLayer.IndexOf().ToArray();
+        return true;
+      }
+
+      foundObject = null;
+      foundInLayerNumber = null;
+      return false;
+    }
+
+    public void FindGraphObjectInRootLayerRectangle(RectangleD2D rectRootLayerCoordinates, out List<IHitTestObject> foundObjects)
+    {
+      foundObjects = new List<IHitTestObject>();
+      var hitData = new HitTestRectangularData(rectRootLayerCoordinates, ZoomFactor);
+      RootLayer.HitTest(hitData, foundObjects);
+    }
+
+    #endregion Finding objects at position
+
 
     public override void Dispose()
     {
