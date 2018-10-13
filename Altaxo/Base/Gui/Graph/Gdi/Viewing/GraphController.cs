@@ -861,6 +861,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
             Initialize(false);
             AttachView();
             _view.CurrentGraphTool = GraphToolType.ObjectPointer;
+            _view.AnnounceContentVisibilityChanged(IsContentVisible); // tell view if it is currently visible or not
           }
         }
       }
