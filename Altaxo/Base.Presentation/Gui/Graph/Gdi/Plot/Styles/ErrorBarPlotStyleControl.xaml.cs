@@ -315,6 +315,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _guiNegativeErrorColumnLabel.Visibility = posnegVisibility;
         _guiNegativeErrorColumn.Visibility = posnegVisibility;
         _guiNegativeErrorColumnTransformation.Visibility = posnegVisibility;
+        _guiNegativeErrorColumnHint.Visibility = posnegVisibility;
       }
     }
 
