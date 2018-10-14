@@ -587,7 +587,8 @@ namespace Altaxo.Gui.Markdown
       var flowDocument = _guiViewer.Document;
       var blocks = flowDocument.Blocks;
       var textOffset = _guiEditor.Document.GetOffset(sourceTextPosition.Location);
-      var textElement = PositionHelper.BinarySearchBlocksForTextOffset(flowDocument.Blocks, textOffset);
+      var (textElementBefore, textElementAfter) = PositionHelper.BinarySearchBlocksForTextOffset(flowDocument.Blocks, textOffset);
+      var textElement = PositionHelper.GetTextElementClosestToCursorPosition(textElementBefore, textElementAfter, textOffset);
       if (null != textElement && textElement.Tag is Markdig.Syntax.MarkdownObject markdigTag)
       {
         var viewTextPosition = textElement.ElementStart;

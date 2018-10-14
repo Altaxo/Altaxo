@@ -82,7 +82,8 @@ namespace Altaxo.Gui.Markdown
     /// if the position in the viewer could not be determined, the returned value is (null, false).</returns>
     public static (TextPointer textPointer, bool isReturnedPositionAccurate) SourceEditorTextPositionToViewersTextPosition(int textOffset, System.Collections.IList blocks)
     {
-      var textElement = BinarySearchBlocksForTextOffset(blocks, textOffset);
+      var (textElementBefore, textElementAfter) = BinarySearchBlocksForTextOffset(blocks, textOffset);
+      var textElement = GetTextElementClosestToCursorPosition(textElementBefore, textElementAfter, textOffset);
       if (null != textElement && textElement.Tag is Markdig.Syntax.MarkdownObject markdigTag)
       {
         var viewTextPosition = textElement.ContentStart;
@@ -139,29 +140,35 @@ namespace Altaxo.Gui.Markdown
     /// Searches a <see cref="FlowDocument" or any contiguous blocks of such a document for the <see cref="TextElement"/> which corresponds to a given source text position. />
     /// </summary>
     /// <param name="blocks">The blocks of the <see cref="FlowDocument"/>, as given by <see cref="FlowDocument.Blocks"/>.</param>
-    /// <param name="textPosition">The zero based source text offset.</param>
-    /// <returns>The <see cref="TextElement"/> which corresponds to the given source text position; or null (if no such <see cref="TextElement"/> could be found.</returns>
-    public static TextElement BinarySearchBlocksForTextOffset(System.Collections.IList blocks, int textPosition)
+    /// <param name="cursorPosition">The zero based cursor position in the source text.
+    /// A cursor position of 0 indicates that the cursor is positioned <b>before</b> the zero-th character, i.e. the very first character.
+    /// </param>
+    /// <returns>
+    /// If the cursor is inbetween two <see cref="TextElement"/>s, then the element before and the element after the cursor position.
+    /// If the cursor is in the middle of a <see cref="TextElement"/>, than in both tuple items that text element is returned.
+    /// Else the tuple (null, null) is returned.
+    /// </returns>
+    public static (TextElement textElementBefore, TextElement textElementAfter) BinarySearchBlocksForTextOffset(System.Collections.IList blocks, int cursorPosition)
     {
       var count = blocks.Count;
       if (0 == count)
-        return null;
+        return (null, null);
 
-      // Skip forward lowerIdx unil we find a markdown tag
+      // Skip forward lowerIdx until we find a markdown tag
       int lowerIdx;
       for (lowerIdx = 0; lowerIdx < count; ++lowerIdx)
       {
         if (((TextElement)blocks[lowerIdx]).Tag is Markdig.Syntax.MarkdownObject lowerMdo)
         {
-          if (lowerMdo.Span.Start > textPosition)
-            return (TextElement)blocks[lowerIdx]; // then we have already passed the position without finding the element
+          if (lowerMdo.Span.Start > cursorPosition)
+            return (null, (TextElement)blocks[lowerIdx]); // then we have already passed the position without finding the element
           else
             break;
         }
       }
 
       if (lowerIdx == count)
-        return null; // ups - no element with a tag found in the entire list of elements
+        return (null, null); // ups - no element with a tag found in the entire list of elements
 
       // Skip backward upperIdx until we find a markdown tag
       int upperIdx;
@@ -201,7 +208,7 @@ namespace Altaxo.Gui.Markdown
 
         if (!(((TextElement)blocks[middleIdx]).Tag is Markdig.Syntax.MarkdownObject middleMdo))
           break;
-        else if (middleMdo.Span.Start > textPosition)
+        else if (middleMdo.Span.Start >= cursorPosition)
           upperIdx = middleIdx;
         else
           lowerIdx = middleIdx;
@@ -216,28 +223,78 @@ namespace Altaxo.Gui.Markdown
       int upperIdxSpanStart = (((TextElement)blocks[upperIdx]).Tag as Markdig.Syntax.MarkdownObject).Span.Start;
 
       // if our search position is neither at the end of the lower nor at the start of the upper, but inbetween
-      if (textPosition > lowerIdxSpanEnd && textPosition < upperIdxSpanStart)
+      if (cursorPosition > lowerIdxSpanEnd && cursorPosition < upperIdxSpanStart)
       {
         // we look forward then and decide to use the position of the next element forward
-        return (TextElement)blocks[upperIdx];
+        return ((TextElement)blocks[lowerIdx], (TextElement)blocks[upperIdx]);
       }
 
-      int diveIntoIdx = upperIdxSpanStart <= textPosition ? upperIdx : lowerIdx;
+      int diveIntoIdx = cursorPosition >= upperIdxSpanStart ? upperIdx : lowerIdx;
 
       var childs = GetChildList((TextElement)blocks[diveIntoIdx]);
-      if (null == childs)
+
+      (TextElement childBefore, TextElement childAfter) = (null, null);
+      if (null != childs)
       {
-        return (TextElement)blocks[diveIntoIdx];
+        (childBefore, childAfter) = BinarySearchBlocksForTextOffset(childs, cursorPosition);
       }
-      else // there are child, so search in them
+
+      if (childBefore is null && childAfter is null)
       {
-        var result = BinarySearchBlocksForTextOffset(childs, textPosition);
-        if (null != result)
-          return result; // we have found a child, so return it
-        else
-          return (TextElement)blocks[diveIntoIdx]; // no child found, then diveIntoIdx may be the best choice.
+        // if there are no childs, we look more in detail at the span of the TextElement[diveIntoIdx]
+        var diveIntoMdo = (TextElement)blocks[diveIntoIdx];
+        if (cursorPosition > upperIdxSpanStart) // if cursor position really greater, then we are in the middle of diveIntoMdo
+        {
+          return (diveIntoMdo, diveIntoMdo);
+        }
+        else if (cursorPosition == upperIdxSpanStart) // then we are at the beginning of diveIntoMdo
+        {
+          return ((TextElement)blocks[lowerIdx], (TextElement)blocks[upperIdx]);
+        }
+        else                                            // then we are in the middle of lowerMdo
+        {
+          return ((TextElement)blocks[lowerIdx], (TextElement)blocks[lowerIdx]);
+        }
+      }
+      else // there is at least a child before or a child after
+      {
+        if (null != childBefore && null != childAfter)
+          return (childBefore, childAfter);
+        else if (diveIntoIdx == upperIdx)
+          return ((TextElement)blocks[lowerIdx], childAfter);
+        else // diveIntoIdx == lowerIdx
+          return (childAfter, (TextElement)blocks[upperIdx]);
       }
     }
+
+    public static TextElement GetTextElementClosestToCursorPosition(TextElement textElementBefore, TextElement textElementAfter, int cursorPosition)
+    {
+      var tagBefore = textElementBefore?.Tag as Markdig.Syntax.MarkdownObject;
+      var tagAfter = textElementBefore?.Tag as Markdig.Syntax.MarkdownObject;
+
+      if (null != tagBefore && cursorPosition <= tagBefore.Span.End + 1)
+      {
+        return textElementBefore;
+      }
+      else if (null != tagAfter && cursorPosition >= tagAfter.Span.Start)
+      {
+        return textElementAfter;
+      }
+      else if (null != tagBefore && null != tagAfter && cursorPosition > tagBefore.Span.End && cursorPosition < tagAfter.Span.Start)
+      {
+        // hmm, this is difficult to decide..
+        // the cursor is neither in the element before nor in the element after, but inbetween
+        // we decide on the nearest distance
+        var diff1 = cursorPosition - (tagBefore.Span.End + 1);
+        var diff2 = tagAfter.Span.Start - cursorPosition;
+        return diff2 < diff1 ? textElementAfter : textElementBefore;
+      }
+      else
+      {
+        return textElementBefore ?? textElementAfter;
+      }
+    }
+
 
     /// <summary>
     /// Performs a recursive binaries search in a list of <see cref="TextElement"/>s, most of them tagged with a <see cref="Markdig.Syntax.MarkdownObject"/> in order to find the
