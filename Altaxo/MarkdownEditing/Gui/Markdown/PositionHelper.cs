@@ -148,6 +148,16 @@ namespace Altaxo.Gui.Markdown
     /// If the cursor is in the middle of a <see cref="TextElement"/>, than in both tuple items that text element is returned.
     /// Else the tuple (null, null) is returned.
     /// </returns>
+    /// <remarks>
+    /// The following schematics depicture the relation between character position and cursor position:
+    /// <code>
+    /// 0   1   2   3   4   5       : cursor (caret) position
+    /// | a | b | c | d | e |   |   : characters
+    ///   0   1   2   3   4         : character position
+    ///   ↑               ↑
+    ///   Span.Start      Span.End 
+    /// </code>
+    /// </remarks>
     public static (TextElement textElementBefore, TextElement textElementAfter) BinarySearchBlocksForTextOffset(System.Collections.IList blocks, int cursorPosition)
     {
       var count = blocks.Count;
@@ -214,57 +224,47 @@ namespace Altaxo.Gui.Markdown
           lowerIdx = middleIdx;
       }
 
-      // now we have bracketed our search: lowerIdx should have a lineNumber less than our searched lineNumber,
-      // and upperIdx can have a line number less than, or greater than our searched line number
-      // our only chance is to search the children of the lowerIdx
+      // now we have bracketed our search: lowerIdx should have a start less than our searched lineNumber,
+      // and upperIdx can have a start less than, equal to, or greater than our searched line number
+      // we have to search the children, too
 
 
       int lowerIdxSpanEnd = (((TextElement)blocks[lowerIdx]).Tag as Markdig.Syntax.MarkdownObject).Span.End;
       int upperIdxSpanStart = (((TextElement)blocks[upperIdx]).Tag as Markdig.Syntax.MarkdownObject).Span.Start;
 
-      // if our search position is neither at the end of the lower nor at the start of the upper, but inbetween
-      if (cursorPosition > lowerIdxSpanEnd && cursorPosition < upperIdxSpanStart)
+      if (cursorPosition > upperIdxSpanStart) // if cursor position is "truly" contained in upperIdx
+        lowerIdx = upperIdx; // then there is no need to search in lowerIdx
+      else if (cursorPosition <= lowerIdxSpanEnd) // if cursor position is "truly" contained in lowerIdx
+        upperIdx = lowerIdx; // then there is no need to search in upperIdx (note that the cursor is at the end of the span if cursorPosition = 1 + lowerIdxSpanEnd)
+
+      (TextElement childLowerBefore, TextElement childLowerAfter) = (null, null);
+      (TextElement childUpperBefore, TextElement childUpperAfter) = (null, null);
+
+      var childsLower = GetChildList((TextElement)blocks[lowerIdx]);
+      if (null != childsLower)
       {
-        // we look forward then and decide to use the position of the next element forward
-        return ((TextElement)blocks[lowerIdx], (TextElement)blocks[upperIdx]);
+        (childLowerBefore, childLowerAfter) = BinarySearchBlocksForTextOffset(childsLower, cursorPosition);
       }
 
-      int diveIntoIdx = cursorPosition >= upperIdxSpanStart ? upperIdx : lowerIdx;
-
-      var childs = GetChildList((TextElement)blocks[diveIntoIdx]);
-
-      (TextElement childBefore, TextElement childAfter) = (null, null);
-      if (null != childs)
+      if (upperIdx != lowerIdx)
       {
-        (childBefore, childAfter) = BinarySearchBlocksForTextOffset(childs, cursorPosition);
-      }
-
-      if (childBefore is null && childAfter is null)
-      {
-        // if there are no childs, we look more in detail at the span of the TextElement[diveIntoIdx]
-        var diveIntoMdo = (TextElement)blocks[diveIntoIdx];
-        if (cursorPosition > upperIdxSpanStart) // if cursor position really greater, then we are in the middle of diveIntoMdo
+        var childsUpper = GetChildList((TextElement)blocks[upperIdx]);
+        if (null != childsUpper)
         {
-          return (diveIntoMdo, diveIntoMdo);
-        }
-        else if (cursorPosition == upperIdxSpanStart) // then we are at the beginning of diveIntoMdo
-        {
-          return ((TextElement)blocks[lowerIdx], (TextElement)blocks[upperIdx]);
-        }
-        else                                            // then we are in the middle of lowerMdo
-        {
-          return ((TextElement)blocks[lowerIdx], (TextElement)blocks[lowerIdx]);
+          (childUpperBefore, childUpperAfter) = BinarySearchBlocksForTextOffset(childsUpper, cursorPosition);
         }
       }
-      else // there is at least a child before or a child after
+      else // if upperIdx==lowerIdx, then we can simply use the already evaluated childs from lowerIdx
       {
-        if (null != childBefore && null != childAfter)
-          return (childBefore, childAfter);
-        else if (diveIntoIdx == upperIdx)
-          return ((TextElement)blocks[lowerIdx], childAfter);
-        else // diveIntoIdx == lowerIdx
-          return (childAfter, (TextElement)blocks[upperIdx]);
+        childUpperBefore = childLowerBefore;
+        childUpperAfter = childLowerAfter;
       }
+
+      return
+        (
+        childLowerBefore ?? (TextElement)blocks[lowerIdx],
+        childUpperAfter ?? (TextElement)blocks[upperIdx]
+        );
     }
 
     public static TextElement GetTextElementClosestToCursorPosition(TextElement textElementBefore, TextElement textElementAfter, int cursorPosition)

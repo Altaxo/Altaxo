@@ -61,6 +61,29 @@ namespace Altaxo.Gui.Markdown
     /// </summary>
     private bool _isFlowDocumentUpdateInProgress;
 
+    /// <summary>
+    /// This is strange (Visual Studio 2017, 15.8.4): when using a tuple instead of this class, as shown below,
+    /// we get a compiler error that says that we now have a dependency of Altaxo.Dom.Presentation on SharpEdit.
+    /// When using this class, everything compiles normally.
+    /// </summary>
+    private class StorageOfPositionAndUsn
+    {
+      public ICSharpCode.AvalonEdit.TextViewPosition CaretPosition { get; private set; }
+      public long SourceTextUsn { get; private set; }
+      public StorageOfPositionAndUsn(ICSharpCode.AvalonEdit.TextViewPosition caretPosition, long sourceTextUsn)
+      {
+        CaretPosition = caretPosition;
+        SourceTextUsn = sourceTextUsn;
+      }
+    }
+
+    /// <summary>
+    /// If the caret position of the source text has changed, but the flow document is not yet updated with the new source text,
+    /// here we store temporarily the caret position and the serial number of the source text this caret position corresponds to.
+    /// </summary>
+    private StorageOfPositionAndUsn _pendingSynchroniationOfSourceTextCursorPositionToPreviewPosition;
+    // private (ICSharpCode.AvalonEdit.TextViewPosition CaretPosition, long SourceTextUsn)? _pendingSynchroniationOfSourceTextCursorPositionToPreviewPosition;
+
     public ICSharpCode.AvalonEdit.TextEditor Editor { get { return _guiEditor; } }
     public RichTextBox Viewer { get { return _guiViewer; } }
 
@@ -313,6 +336,7 @@ namespace Altaxo.Gui.Markdown
     #region Rendering
 
     private string _lastSourceTextProcessed = null;
+    private long _lastSourceTextProcessedUsn;
     private Markdig.Syntax.MarkdownDocument _lastMarkdownDocumentProcessed = null;
     private System.Threading.CancellationTokenSource _lastCancellationTokenSource = null;
 
@@ -343,68 +367,72 @@ namespace Altaxo.Gui.Markdown
       if (IsInInitializationMode)
         return;
 
+      if (_guiViewer is null || _guiEditor is null)
+        return;
+
       ++_sourceTextUsn;
+      _sourceText = _guiEditor.Text;
+
       var pipeline = Pipeline ?? DefaultPipeline;
-
-      if (null != _guiViewer && null != _guiEditor)
+      if (forceCompleteRendering || _lastMarkdownDocumentProcessed == null || _lastSourceTextProcessed == null)
       {
-        _sourceText = _guiEditor.Text;
+        BeforeCompleteRendering?.Invoke(this, EventArgs.Empty);
 
-        if (forceCompleteRendering || _lastMarkdownDocumentProcessed == null || _lastSourceTextProcessed == null)
+        var markdownDocument = Markdig.Markdown.Parse(_sourceText, pipeline);
+        LinkReferenceTrackerPostProcessor.TrackLinks(markdownDocument, _sourceTextUsn, ImageProvider); // track links in the markdown document
+
+        // We override the renderer with our own writer
+        var flowDocument = new FlowDocument
         {
-          BeforeCompleteRendering?.Invoke(this, EventArgs.Empty);
+          IsHyphenationEnabled = _isHyphenationEnabled,
+          Language = System.Windows.Markup.XmlLanguage.GetLanguage(_documentCulture.IetfLanguageTag)
+        };
 
-          var markdownDocument = Markdig.Markdown.Parse(_sourceText, pipeline);
-          LinkReferenceTrackerPostProcessor.TrackLinks(markdownDocument, _sourceTextUsn, ImageProvider); // track links in the markdown document
-
-          // We override the renderer with our own writer
-          var flowDocument = new FlowDocument
-          {
-            IsHyphenationEnabled = _isHyphenationEnabled,
-            Language = System.Windows.Markup.XmlLanguage.GetLanguage(_documentCulture.IetfLanguageTag)
-          };
-
-          var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, _currentStyle)
-          {
-            ImageProvider = ImageProvider
-          };
-
-          pipeline.Setup(renderer);
-          renderer.Render(markdownDocument);
-          _isFlowDocumentUpdateInProgress = true;
-          _guiViewer.Document = flowDocument;
-          _isFlowDocumentUpdateInProgress = false;
-          _lastSourceTextProcessed = _sourceText;
-          _lastMarkdownDocumentProcessed = markdownDocument;
-          _foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
-        }
-        else
+        var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, _currentStyle)
         {
-          _lastCancellationTokenSource?.Cancel(); // cancel the previous task
-          _lastCancellationTokenSource = new System.Threading.CancellationTokenSource();
-          var task = new MarkdownDifferenceUpdater(
-            _lastSourceTextProcessed, _lastMarkdownDocumentProcessed, // old source text and old parsed document
-            pipeline,
-            _currentStyle,
-            ImageProvider,
-            _sourceText,  // new source
-            _sourceTextUsn, // new source update sequence number
-            _guiViewer.Document, // the flow document to edit
-            Dispatcher,
-            (newText, newDocument) =>
-            {
-              _lastSourceTextProcessed = newText;
-              _lastMarkdownDocumentProcessed = newDocument;
-              _foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
-            },
-            (isFlowDocumentUpdateInProgress) => _isFlowDocumentUpdateInProgress = isFlowDocumentUpdateInProgress,
-            _lastCancellationTokenSource.Token);
+          ImageProvider = ImageProvider
+        };
 
-          Task.Run(() => task.Parse());
-        }
+        pipeline.Setup(renderer);
 
-        SourceTextChanged?.Invoke(this, EventArgs.Empty);
+        renderer.Render(markdownDocument);
+        _isFlowDocumentUpdateInProgress = true;
+        _guiViewer.Document = flowDocument;
+        _isFlowDocumentUpdateInProgress = false;
+        _lastSourceTextProcessed = _sourceText;
+        _lastSourceTextProcessedUsn = _sourceTextUsn;
+        _lastMarkdownDocumentProcessed = markdownDocument;
+        _foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
+        HandlePendingSynchroniationOfSourceTextCursorPositionToPreviewPosition();
       }
+      else
+      {
+        _lastCancellationTokenSource?.Cancel(); // cancel the previous task
+        _lastCancellationTokenSource = new System.Threading.CancellationTokenSource();
+        var task = new MarkdownDifferenceUpdater(
+          _lastSourceTextProcessed, _lastMarkdownDocumentProcessed, // old source text and old parsed document
+          pipeline,
+          _currentStyle,
+          ImageProvider,
+          _sourceText,  // new source
+          _sourceTextUsn, // new source update sequence number
+          _guiViewer.Document, // the flow document to edit
+          Dispatcher,
+          (newText, newTextUsn, newDocument) =>
+          {
+            _lastSourceTextProcessed = newText;
+            _lastSourceTextProcessedUsn = newTextUsn;
+            _lastMarkdownDocumentProcessed = newDocument;
+            _foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
+            HandlePendingSynchroniationOfSourceTextCursorPositionToPreviewPosition();
+          },
+          (isFlowDocumentUpdateInProgress) => _isFlowDocumentUpdateInProgress = isFlowDocumentUpdateInProgress,
+          _lastCancellationTokenSource.Token);
+
+        Task.Run(() => task.Parse());
+      }
+
+      SourceTextChanged?.Invoke(this, EventArgs.Empty);
     }
 
     #endregion Rendering
@@ -667,8 +695,36 @@ namespace Altaxo.Gui.Markdown
     private void EhEditor_CaretPositionChanged(object sender, EventArgs e)
     {
       var sourceTextPosition = _guiEditor.TextArea.Caret.Position;
-      SyncSourceEditorTextPositionToViewer(sourceTextPosition);
+
+      if (_lastSourceTextProcessedUsn == _sourceTextUsn) // if the flow document is up to date
+      {
+        SyncSourceEditorTextPositionToViewer(sourceTextPosition); // we can directly search for the caret position in the view.
+      }
+      else // if the flow document is currently not up to date
+      {
+        _pendingSynchroniationOfSourceTextCursorPositionToPreviewPosition = new StorageOfPositionAndUsn(sourceTextPosition, _sourceTextUsn);
+      }
     }
+
+    /// <summary>
+    /// Handles a possibly pending synchroniation of the source text cursor position to the preview position.
+    /// </summary>
+    private void HandlePendingSynchroniationOfSourceTextCursorPositionToPreviewPosition()
+    {
+
+      var pending = _pendingSynchroniationOfSourceTextCursorPositionToPreviewPosition;
+      _pendingSynchroniationOfSourceTextCursorPositionToPreviewPosition = null;
+
+      if (!(pending is null))
+      {
+        if (pending.SourceTextUsn == _lastSourceTextProcessedUsn)
+        {
+          SyncSourceEditorTextPositionToViewer(pending.CaretPosition);
+        }
+      }
+
+    }
+
 
     #endregion Caret handling / synchronization
 

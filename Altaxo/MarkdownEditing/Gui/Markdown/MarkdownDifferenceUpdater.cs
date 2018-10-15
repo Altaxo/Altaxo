@@ -84,13 +84,13 @@ namespace Altaxo.Gui.Markdown
     /// <summary>
     /// The cancellation token, used to cancel the task if neccessary.
     /// </summary>
-    private CancellationToken cancellationToken;
+    private CancellationToken _cancellationToken;
 
     /// <summary>
     /// At the end of the task, when already in Gui context, this action is responsible for setting back
     /// the current version of the source text and the parsed markdown whereever they are stored.
     /// </summary>
-    protected Action<string, MarkdownDocument> NewTextAndDocumentSetter { get; private set; }
+    protected Action<string, long, MarkdownDocument> NewTextAndDocumentSetter { get; private set; }
 
     /// <summary>
     /// This action sets a flag to true when an update of the flow document is in progress.
@@ -106,16 +106,38 @@ namespace Altaxo.Gui.Markdown
     /// <summary>
     /// The list of changed markdig toplevel elements (in comparison from old to new parsed document).
     /// </summary>
-    private List<MarkdownObject> listOfChangedMarkdig;
+    private List<MarkdownObject> _listOfChangedMarkdig;
 
     /// <summary>
     /// The dictionary that translates the markdown object of the old markdig document into the elements of the new parsed markdig document.
     /// </summary>
-    private Dictionary<MarkdownObject, MarkdownObject> dictionaryOldToNew;
+    private Dictionary<MarkdownObject, MarkdownObject> _dictionaryOldToNew;
 
     #endregion Operational members
 
-    public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider, string newSourceText, long newSourceTextUsn, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, MarkdownDocument> newDocumentSetter, Action<bool> setFlowDocumentUpdateInProgressFlag, CancellationToken cancellationToken)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MarkdownDifferenceUpdater"/> class.
+    /// </summary>
+    /// <param name="oldSourceText">The previous version of the source text.</param>
+    /// <param name="oldDocument">The previous version of the parsed markdown document.</param>
+    /// <param name="pipeline">The markdown pipeline used to process the source text.</param>
+    /// <param name="styles">The markdown styles to be used for the rendering.</param>
+    /// <param name="imageProvider">The image provider.</param>
+    /// <param name="newSourceText">The new version of the source text.</param>
+    /// <param name="newSourceTextUsn">The serial number of the new source text.</param>
+    /// <param name="flowDocument">The flow document to render to.</param>
+    /// <param name="dispatcher">The dispatcher (used here to process some actions in Gui context).</param>
+    /// <param name="newDocumentSetter">
+    /// Action that is called at the end of the processing in Gui context. It is intended to set the new new document in the class that is calling this function.
+    /// The arguments are: i) the new source text, ii) the serial number of the new source text, and iii) the parsed markdown document.
+    /// </param>
+    /// <param name="setFlowDocumentUpdateInProgressFlag">
+    /// Action that is called in Gui context. It is intended to signal the class that is calling this function exactly when the flow document is updated.
+    /// This action is called twice: at the beginning of the update with the argument set to true, and at the end of the update with the argument set to false.
+    /// Argument is a flag that tells if the update of the flow document is in progress now.
+    /// </param>
+    /// <param name="cancellationToken">Cancellation token that can be used to cancel the update, e.g. if the user has entered new text.</param>
+    public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider, string newSourceText, long newSourceTextUsn, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, long, MarkdownDocument> newDocumentSetter, Action<bool> setFlowDocumentUpdateInProgressFlag, CancellationToken cancellationToken)
     {
       OldSourceText = oldSourceText;
       OldDocument = oldDocument;
@@ -128,49 +150,52 @@ namespace Altaxo.Gui.Markdown
       Dispatcher = dispatcher;
       NewTextAndDocumentSetter = newDocumentSetter;
       SetFlowDocumentUpdateInProgressFlag = setFlowDocumentUpdateInProgressFlag;
-      this.cancellationToken = cancellationToken;
+      _cancellationToken = cancellationToken;
     }
 
+    /// <summary>
+    /// Parses the new source text (given in the constructor), and updates the flow document.
+    /// </summary>
     public void Parse()
     {
-      if (cancellationToken.IsCancellationRequested)
+      if (_cancellationToken.IsCancellationRequested)
         return;
 
       // TODO make parse cancellable, at least in the first level
       NewDocument = Markdig.Markdown.Parse(NewSourceText, Pipeline);
 
-      if (cancellationToken.IsCancellationRequested)
+      if (_cancellationToken.IsCancellationRequested)
         return;
 
       LinkReferenceTrackerPostProcessor.TrackLinks(NewDocument, NewSourceTextUsn, ImageProvider);
 
-      if (cancellationToken.IsCancellationRequested)
+      if (_cancellationToken.IsCancellationRequested)
         return;
 
       var (indexOfFirstDifference, indexOfLastDifferenceInOld, indexOfLastDifferenceInNew) = FindFirstAndLastChangedIndexInSourceText();
 
-      if (cancellationToken.IsCancellationRequested)
+      if (_cancellationToken.IsCancellationRequested)
         return;
 
       // Dictionary that translates the markdown objects of the old parsed doc into markdown objects of the new parsed doc
-      dictionaryOldToNew = new Dictionary<MarkdownObject, MarkdownObject>();
-      int indexOfFirstTopLevelBlockChanged = TranslateOldToNewFirstPart(dictionaryOldToNew, indexOfFirstDifference, OldDocument, NewDocument);
+      _dictionaryOldToNew = new Dictionary<MarkdownObject, MarkdownObject>();
+      int indexOfFirstTopLevelBlockChanged = TranslateOldToNewFirstPart(_dictionaryOldToNew, indexOfFirstDifference, OldDocument, NewDocument);
 
-      if (cancellationToken.IsCancellationRequested)
+      if (_cancellationToken.IsCancellationRequested)
         return;
 
       // Dictionary that translates the markdown objects of the old parsed doc into markdown objects of the new parsed doc
-      var (indexOfLastTopLevelBlockChangedOld, indexOfLastTopLevelBlockChangedNew) = TranslateOldToNewLastPart(dictionaryOldToNew, indexOfLastDifferenceInOld, indexOfLastDifferenceInNew, OldDocument, NewDocument);
+      var (indexOfLastTopLevelBlockChangedOld, indexOfLastTopLevelBlockChangedNew) = TranslateOldToNewLastPart(_dictionaryOldToNew, indexOfLastDifferenceInOld, indexOfLastDifferenceInNew, OldDocument, NewDocument);
 
-      if (cancellationToken.IsCancellationRequested)
+      if (_cancellationToken.IsCancellationRequested)
         return;
 
       // create a list of changed markdig elements
-      listOfChangedMarkdig = new List<MarkdownObject>();
+      _listOfChangedMarkdig = new List<MarkdownObject>();
       for (int i = indexOfFirstTopLevelBlockChanged; i <= indexOfLastTopLevelBlockChangedNew; ++i)
-        listOfChangedMarkdig.Add(NewDocument[i]);
+        _listOfChangedMarkdig.Add(NewDocument[i]);
 
-      if (cancellationToken.IsCancellationRequested)
+      if (_cancellationToken.IsCancellationRequested)
         return;
 
       // the next part involves changes to the FlowDocument. That's why it is not cancellable any more, and needs to be executed in Gui context
@@ -186,7 +211,7 @@ namespace Altaxo.Gui.Markdown
     {
       // this is the very last opportunity to cancel the update, if it was for some time waiting in the message queue...
 
-      if (cancellationToken.IsCancellationRequested)
+      if (_cancellationToken.IsCancellationRequested)
         return;
 
       SetFlowDocumentUpdateInProgressFlag?.Invoke(true);
@@ -196,13 +221,13 @@ namespace Altaxo.Gui.Markdown
       // mess up the FlowDocument
 
       // Exchange the tags in the flow document
-      ExchangeMarkdigTagsInFlowDocument(dictionaryOldToNew, FlowDocument.Blocks);
+      ExchangeMarkdigTagsInFlowDocument(_dictionaryOldToNew, FlowDocument.Blocks);
 
       // Get the insertion and deletion positions in FlowDocument.Blocks
       var (firstLevelTextElementToInsertBefore, firstLevelTextElementToInsertAfter, firstLevelTextElementsToDelete) = GetTextElementInsertionAndDeletionPositions();
 
       // create new TextElements for the changed span of top level blocks - this seems to be the most CPU intensive call
-      var newListOfTextElements = ListOfMarkdownObjectsToListOfTextElements(listOfChangedMarkdig, Pipeline, Styles, ImageProvider); // create new TextElements
+      var newListOfTextElements = ListOfMarkdownObjectsToListOfTextElements(_listOfChangedMarkdig, Pipeline, Styles, ImageProvider); // create new TextElements
 
       // now delete the changed top level blocks of FlowDocument and insert or add the newly created ones
       DeleteOldAndInsertNewElementsInFlowDocument(firstLevelTextElementsToDelete, newListOfTextElements, firstLevelTextElementToInsertBefore, firstLevelTextElementToInsertAfter);
@@ -210,7 +235,7 @@ namespace Altaxo.Gui.Markdown
       SetFlowDocumentUpdateInProgressFlag?.Invoke(false);
 
       // exchange the current source text and parsed markdig in the text editor
-      NewTextAndDocumentSetter(NewSourceText, NewDocument);
+      NewTextAndDocumentSetter(NewSourceText, NewSourceTextUsn, NewDocument);
     }
 
     /// <summary>
@@ -271,10 +296,10 @@ namespace Altaxo.Gui.Markdown
     /// Gets the insertion and deletion positions of the top level blocks of <see cref="FlowDocument"/>.
     /// </summary>
     /// <returns>A tuple, consisting of positions either to insert before, to insert after, and the top level blocks to delete.</returns>
-    private
-      (System.Windows.Documents.Block firstLevelTextElementToInsertBefore,
-        System.Windows.Documents.Block firstLevelTextElementToInsertAfter,
-      List<System.Windows.Documents.Block> firstLevelTextElementsToDelete) GetTextElementInsertionAndDeletionPositions()
+    private (System.Windows.Documents.Block firstLevelTextElementToInsertBefore,
+              System.Windows.Documents.Block firstLevelTextElementToInsertAfter,
+              List<System.Windows.Documents.Block> firstLevelTextElementsToDelete
+            ) GetTextElementInsertionAndDeletionPositions()
     {
       // find the first block in FlowDocument that has to be exchanged
 
