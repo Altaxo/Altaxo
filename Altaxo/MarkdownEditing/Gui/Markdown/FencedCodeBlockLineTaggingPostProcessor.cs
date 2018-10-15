@@ -58,8 +58,18 @@ namespace Altaxo.Gui.Markdown
             for (var i = 0; i < lines.Count; i++)
             {
               var slice = slices[i].Slice;
-              fcb.Inline.AppendChild(new LiteralInline(slice) { Span = new SourceSpan(slice.Start, slice.End) }); // insert this in the newly created container inline
-              fcb.Inline.AppendChild(new LineBreakInline() { IsHard = true, Span = new SourceSpan(slice.End + 1, slice.End) });
+              fcb.Inline.AppendChild(new LiteralInline(slice)
+              {
+                Span = new SourceSpan(slice.Start, slice.End),
+                Line = fcb.Line + i + 1
+              }); // insert this in the newly created container inline
+
+              fcb.Inline.AppendChild(new LineBreakInline()
+              {
+                IsHard = true,
+                Span = new SourceSpan(slice.End + 1, i < (lines.Count - 1) ? slices[i + 1].Slice.Start - 1 : fcb.Span.End),
+                Line = fcb.Line + i + 1
+              });
             }
           }
         }
