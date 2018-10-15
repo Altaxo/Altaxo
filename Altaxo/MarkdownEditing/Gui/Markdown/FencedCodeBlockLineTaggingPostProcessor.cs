@@ -71,6 +71,15 @@ namespace Altaxo.Gui.Markdown
                 Line = fcb.Line + i + 1
               });
             }
+
+            // Trick: append a space at the beginning of the last line.
+            // this ensures that when the cursor is at that line in the viewer,
+            // we find a text run with a tag that corresponds to the three post fenced code block chars ``` 
+            fcb.Inline.AppendChild(new LiteralInline(" ")
+            {
+              Span = new SourceSpan(fcb.Span.End - 3, fcb.Span.End),
+              Line = fcb.Line + lines.Count + 1
+            }); // insert this in th)
           }
         }
         else if (block is ContainerBlock childContainerBlock)

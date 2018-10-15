@@ -646,33 +646,51 @@ namespace Altaxo.Gui.Markdown
 
     #region Caret handling / synchronization
 
+    private Markdig.Syntax.MarkdownObject GetMarkdownObjectAtViewerPosition(TextPointer textPosition)
+    {
+      var parent = textPosition.Parent is TextElement pe ? pe : textPosition.Paragraph;
+
+      // search parent or the ancestors of parent for a Markdig tag
+      while (null != parent)
+      {
+        if (parent.Tag is Markdig.Syntax.MarkdownObject mdo)
+        {
+          return mdo;
+        }
+        parent = parent.Parent as TextElement;
+      }
+      return null;
+    }
+
     private void EhViewer_SelectionChanged(object sender, RoutedEventArgs e)
     {
       if (_guiViewer.IsSelectionActive)
       {
+        // Trick: if a paragraph ends with a new line, and we place the cursor into the new line in the viewer,
+        // then the text position of the cursor corresponds to the paragraph, but not to the last run
+        // in that paragraph and also not to the last LineBreak in that paragraph
+        // This causes the end of the paragraph in the viewer to be synchronized with the beginning of the paragraph in the source editor,
+        // which is not acceptable.
+        // Thats why we not only look for the current cursor position, but also for the cursor position before that
+        // if the cursor position before the current corresponds to a tag that is further down the source text,
+        // we use that instead of the current tag
+
         var textPosition = _guiViewer.Selection.Start;
+        var textPositionPrev = textPosition.GetPositionAtOffset(-1);
 
-        TextElement parent;
-        if (textPosition.Parent is TextElement pe)
-          parent = pe;
-        else
-          parent = textPosition.Paragraph;
+        var markdigTag = GetMarkdownObjectAtViewerPosition(textPosition);
+        var markdigTagPrev = GetMarkdownObjectAtViewerPosition(textPosition.GetPositionAtOffset(-1));
 
-        // search parent or the ancestors of parent for a Markdig tag
-        Markdig.Syntax.MarkdownObject markdigTag = null;
-        while (null != parent)
+        if (markdigTagPrev.Span.Start > markdigTag.Span.Start)
         {
-          if (parent.Tag is Markdig.Syntax.MarkdownObject mdo)
-          {
-            markdigTag = mdo;
-            break;
-          }
-          parent = parent.Parent as TextElement;
+          markdigTag = markdigTagPrev;
+          textPosition = textPositionPrev;
         }
 
         if (null != markdigTag)
         {
           int columnOffset = 0;
+          var parent = textPosition.Parent is TextElement pe ? pe : textPosition.Paragraph;
           if (parent is Run run)
           {
             var parentStartPos = parent.ElementStart;
