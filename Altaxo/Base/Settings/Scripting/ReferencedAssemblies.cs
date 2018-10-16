@@ -112,6 +112,17 @@ namespace Altaxo.Settings.Scripting
         {
           try
           {
+            string fileName = additionalUserAssemblyName;
+
+            if (!System.IO.Path.IsPathRooted(fileName)) // if this is a relative path
+            {
+              // if the path was a relative path, make sure
+              // that we create a absolute path, starting from the entry assembly
+              var path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+              fileName = System.IO.Path.Combine(path, fileName);
+            }
+
+
             // try to load the assembly by its file name
             additionalAssembly = Assembly.LoadFrom(additionalUserAssemblyName);
             exception = null;
