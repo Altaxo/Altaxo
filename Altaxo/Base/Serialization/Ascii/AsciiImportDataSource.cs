@@ -194,9 +194,9 @@ namespace Altaxo.Serialization.Ascii
       else
       {
         if (_asciiImportOptions.ImportMultipleStreamsVertically)
-          AsciiImporter.ImportFromMultipleAsciiFilesVertically(destinationTable, validFileNames, true, _asciiImportOptions);
+          AsciiImporter.ImportFromMultipleAsciiFilesVertically(destinationTable, validFileNames, false, _asciiImportOptions);
         else
-          AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, true, _asciiImportOptions);
+          AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, false, _asciiImportOptions);
       }
     }
 
