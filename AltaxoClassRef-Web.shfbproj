@@ -19,16 +19,11 @@
     <Language>en-US</Language>
     <DocumentationSources>
       <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.Presentation.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.Presentation.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.Presentation.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoDom.Presentation.xml" />
-    </DocumentationSources>
+<DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoCore.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.xml" /></DocumentationSources>
     <HelpFileFormat>Website</HelpFileFormat>
     <SyntaxFilters>C#</SyntaxFilters>
     <PresentationStyle>VS2013</PresentationStyle>
