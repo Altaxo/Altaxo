@@ -38,6 +38,7 @@
     <None Include="_posts\2015-07-01-altaxo-on-github.md" />
     <None Include="_posts\2017-01-01-altaxo-on-linux.md" />
     <None Include="_posts\2018-05-21-markdown.md" />
+    <None Include="_posts\2018-10-17-altaxoclassref-on-github.md" />
     <None Include="_posts\2018-09-26-use-latest-csharp-version.md" />
     <None Include="_posts\2017-03-01-goodby-windowsxp.md" />
   </ItemGroup>

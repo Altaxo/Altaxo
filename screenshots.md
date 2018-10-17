@@ -36,7 +36,7 @@ The line caps can either have an absolute size or a size relative to the thickne
 This screenshot shows the text editor of Altaxo in action. In fact, the Altaxo manual,
 as shown here, is written using Altaxo itself! The content is then exported to Maml files
 into a Sandcastle help file builder project and compiled to a help file, 
-which is shipped with Altaxo and also available [online](https://altaxo.sourceforge.io/AltaxoClassRef/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm).
+which is shipped with Altaxo and also available [online](https://altaxo.github.io/AltaxoClassReference/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm).
 
 ### Altaxo's code editor
 

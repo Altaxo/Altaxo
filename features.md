@@ -12,7 +12,7 @@ permalink: /features.html
 * Simple dragging for change of column width
 * Selecting rows, columns and property columns, even non-contiguous regions
 * Copy and paste of selected areas, if the region does not match, the transposed region will be pasted in (if this matches better)
-* Renaming of columns / worksheets / graph. Allows to use [arbitrary names for the items](https://altaxo.sourceforge.io/AltaxoClassRef/html/2783FED4411F72EE01B8906649201D84.htm).
+* Renaming of columns / worksheets / graph. Allows to use [arbitrary names for the items](https://altaxo.github.io/AltaxoClassReference/html/2783FED4411F72EE01B8906649201D84.htm).
 * Project explorer shows all graphs and tables
 * Graph and Worksheet views can be closed without removing the underlying graph / table (they can be opened again using the project explorer)
 * Output text pane to show fitting results and messages. Also quite usefull when debugging worksheet scripts
@@ -53,7 +53,7 @@ permalink: /features.html
 
 ### Scripting / programming
 * Column scripts, worksheet scripts, function scripts, fit function scripts and more.
-* Script language is C# - you can use the whole bunch of classes of the .NET framework and all the [https://altaxo.sourceforge.io/AltaxoClassRef/Index.html classes of Altaxo] itself!
+* Script language is C# - you can use the whole bunch of classes of the .NET framework and all the [classes of Altaxo](https://altaxo.github.io/AltaxoClassReference/html/R_Project_Documentation.htm) itself!
 * Script execution is very fast since the scripts are compiled.
 * All scripts with syntax highlighting and code completion feature. You will see the documentation summary of the function/class.
 * Help pane with Altaxo class reference
