@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -39,10 +39,14 @@ namespace Altaxo.Main.Commands
       string fileName = FileUtility.ApplicationRootPath +
         Path.DirectorySeparatorChar + "doc" +
         Path.DirectorySeparatorChar + "help" +
-        Path.DirectorySeparatorChar + "AltaxoHelp.chm";
-      if (FileUtility.TestFileExists(fileName))
+        Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
+      if (System.IO.File.Exists(fileName))
       {
         Help.ShowHelp(null, fileName);
+      }
+      else
+      {
+        System.Diagnostics.Process.Start("https://altaxo.github.io/AltaxoClassReference/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm");
       }
     }
   }
@@ -64,7 +68,7 @@ namespace Altaxo.Main.Commands
       {
         if (Current.Gui.YesNoMessageBox("Altaxo class reference was not found on local computer. Do you want to open the online class reference instead?", "Local class ref not found!", true))
         {
-          System.Diagnostics.Process.Start("http://altaxo.sourceforge.net/AltaxoClassRef/");
+          System.Diagnostics.Process.Start("https://altaxo.github.io/AltaxoClassReference/html/R_Project_Documentation.htm");
         }
       }
     }

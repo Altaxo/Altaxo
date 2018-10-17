@@ -756,9 +756,9 @@
       <MenuItem id="Separator1" type = "Separator" />
       <MenuItem id="Web" label="${res:XML.MainMenu.HelpMenu.WebMenu}"  type="Menu">
         <MenuItem id="Altaxo" label="Altaxo" type="Menu">
-          <MenuItem id="Homepage" label="Homepage" icon="Icons.16x16.WebSearchIcon" link="http://altaxo.sourceforge.net" />
-          <MenuItem id="ProjectPage" label="Project page" icon="Icons.16x16.WebSearchIcon" link="http://sourceforge.net/projects/altaxo/" />
-          <MenuItem id="Downloads" label="Downloads" icon="Icons.16x16.WebSearchIcon" link="http://sourceforge.net/project/showfiles.php?group_id=73395" />
+          <MenuItem id="Homepage" label="Homepage" icon="Icons.16x16.WebSearchIcon" link="https://altaxo.github.io/Altaxo/" />
+          <MenuItem id="ProjectPage" label="Project page" icon="Icons.16x16.WebSearchIcon" link="https://sourceforge.net/projects/altaxo/" />
+          <MenuItem id="Downloads" label="Downloads" icon="Icons.16x16.WebSearchIcon" link="https://sourceforge.net/project/showfiles.php?group_id=73395" />
           <MenuItem id="BugReport" label="BugReport" icon="Icons.16x16.WebSearchIcon" link="https://github.com/Altaxo/Altaxo/issues" />
           <MenuItem id="SourceCode" label="Source code" icon="Icons.16x16.WebSearchIcon" link="https://github.com/Altaxo/Altaxo" />
         </MenuItem>

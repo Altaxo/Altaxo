@@ -147,7 +147,7 @@ namespace Altaxo.Gui.Scripting
 
     protected static void ShowAltaxoClassRefHelpFromWeb(ExternalHelpItem helpItem)
     {
-      string url = "http://altaxo.sourceforge.net/AltaxoClassRef/html/" + helpItem.DocumentationReferenceIdentifier + ".htm";
+      string url = "https://altaxo.github.io/AltaxoClassReference/html/" + helpItem.DocumentationReferenceIdentifier + ".htm";
 
       // Invoke standard browser of the system
       System.Diagnostics.Process.Start(url);
