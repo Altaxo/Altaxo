@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Plot.Data
       _ranges = ranges.ToArray();
 
       if (_ranges.Length == 0)
-        throw new ArgumentOutOfRangeException(nameof(ranges), "must not be empty");
+        _ranges = new IPlotRange[] { new PlotRange(0, 0) };
     }
 
     /// <inheritdoc/>

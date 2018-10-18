@@ -1,4 +1,4 @@
-#define VERIFY_TREESYNCHRONIZATION
+﻿#define VERIFY_TREESYNCHRONIZATION
 
 #region Copyright
 
@@ -774,11 +774,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     {
       var selNodes = PlotItemsSelected;
 
+      int maxRange = -1;
+
       if (selNodes.Length == 0)
+
         return;
-      if (!GetMinimumMaximumPlotRange(selNodes, out var minRange, out var maxRange))
+
+
+      if (!GetMinimumMaximumPlotRange(selNodes, out var minRange, out maxRange))
         return;
-      var range = new Altaxo.Collections.ContiguousNonNegativeIntegerRange(minRange, maxRange - minRange);
+
+      var range = Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndEndInclusive(minRange, maxRange);
 
       if (!Current.Gui.ShowDialog(ref range, "Edit plot range for selected items", false))
         return;
@@ -788,31 +794,74 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
         var pi = node.Tag as XYColumnPlotItem;
         if (pi == null)
           continue;
-        pi.Data.DataRowSelection = Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(range.Start, range.Count);
+        pi.Data.DataRowSelection = (Altaxo.Data.Selections.RangeOfRowIndices)range.Clone();
       }
     }
 
-    private bool GetMinimumMaximumPlotRange(IEnumerable<NGTreeNode> selNodes, out int minInclusive, out int maxExclusive)
+    private bool GetMinimumMaximumPlotRange(IEnumerable<NGTreeNode> selNodes, out int minInclusive, out int maxInclusive)
     {
-      minInclusive = 0;
-      maxExclusive = int.MaxValue;
+      int lowerBoundNegMax = int.MinValue;
+      int lowerBoundPosMax = int.MinValue;
+
+      int upperBoundNegMin = int.MaxValue;
+      int upperBoundPosMin = int.MaxValue;
+
       bool result = false;
 
       foreach (NGTreeNode node in selNodes)
       {
-        var pi = node.Tag as XYColumnPlotItem;
-        if (pi == null)
-          continue;
-
-        int totalRows = pi.Data.GetMaximumRowIndexFromDataColumns();
-        maxExclusive = Math.Min(totalRows, maxExclusive);
-        if (pi.Data.DataRowSelection.GetSelectedRowIndexSegmentsFromTo(minInclusive, maxExclusive, pi.Data.DataTable?.DataColumns, totalRows).TryGetFirstAndLast(out var firstSeg, out var lastSeg))
+        if (node.Tag is XYColumnPlotItem pi)
         {
-          minInclusive = Math.Max(minInclusive, firstSeg.start);
-          maxExclusive = Math.Min(maxExclusive, lastSeg.endExclusive);
+          // we ask for the same boundaries, first with int.Max and second with int.Max-1 as upper boundary
+          // if the two values (lower, lower1) are different, then the boundary was given as negative value
+          // the same holds if (upper, upper1) are different
+          if (
+            pi.Data.DataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, int.MaxValue, pi.Data.DataTable?.DataColumns, int.MaxValue).TryGetFirstAndLast(out var firstSeg, out var lastSeg) &&
+            pi.Data.DataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, int.MaxValue - 1, pi.Data.DataTable?.DataColumns, int.MaxValue - 1).TryGetFirstAndLast(out var firstSeg1, out var lastSeg1))
+          {
+            int lower = firstSeg.start;
+            int upper = lastSeg.endExclusive;
+            int lower1 = firstSeg1.start;
+            int upper1 = lastSeg1.endExclusive;
+
+            if (lower != lower1)
+              lower = (lower - int.MaxValue) - 1; // convert to negative boundary
+
+            // upper is exclusive bound here,
+            // thus we convert it to inclusive bound
+            if (upper != upper1)
+              upper = (upper - int.MaxValue) - 1; // convert to negative inclusive boundary
+            else
+              upper = upper - 1; // convert to inclusive boundary
+
+
+            if (lower < 0)
+              lowerBoundNegMax = Math.Max(lower, lowerBoundNegMax);
+            else
+              lowerBoundPosMax = Math.Max(lower, lowerBoundPosMax);
+
+            if (upper < 0)
+              upperBoundNegMin = Math.Min(upper, upperBoundNegMin);
+            else
+              upperBoundPosMin = Math.Min(upper, upperBoundPosMin);
+          }
+          result = true;
         }
-        result = true;
       }
+
+      if (lowerBoundPosMax >= 0 && lowerBoundNegMax == int.MinValue)
+        minInclusive = lowerBoundPosMax;
+      else if (lowerBoundNegMax < 0 && lowerBoundPosMax == int.MinValue)
+        minInclusive = lowerBoundNegMax;
+      else // we have both positive and negative values for lowerBound - we set it to 0
+        minInclusive = 0;
+
+      if (upperBoundNegMin < 0 && upperBoundPosMin == int.MaxValue)
+        maxInclusive = upperBoundNegMin;
+      else if (upperBoundPosMin >= 0 && upperBoundNegMin == int.MaxValue)
+        maxInclusive = upperBoundPosMin;
+      else // we have both positive and negative values for upperBound - we set it to -1
+        maxInclusive = -1;
 
       return result;
     }
