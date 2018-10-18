@@ -285,7 +285,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
               ContextMenu = null == _view ? null : _view.TreeNodeContextMenu
             };
             _directoryNodesByName.Add(dir, curNode);
-            parNode.Nodes.Add(curNode);
+            parNode.Nodes.AddSorted(curNode, (x, y) => string.Compare(x.Text, y.Text));
           }
           break;
 

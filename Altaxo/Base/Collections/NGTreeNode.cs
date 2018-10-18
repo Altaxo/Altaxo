@@ -41,6 +41,14 @@ namespace Altaxo.Collections
     void AddRange(NGTreeNode[] nodes);
 
     /// <summary>
+    /// Adds a tree node to a collection into a certain position. The new node is inserted at the first position
+    /// where the comparison between the new tree node and the existing nodes returns a value less than or equal to zero.
+    /// </summary>
+    /// <param name="node">The node to add.</param>
+    /// <param name="comparison">The comparison function. Arguments are i) the new node, ii) the existing node. Return value is a comparison between new and existing node.</param>
+    void AddSorted(NGTreeNode node, Func<NGTreeNode, NGTreeNode, int> comparison);
+
+    /// <summary>
     /// Swap the nodes of indices i and j.
     /// </summary>
     /// <param name="i"></param>
@@ -665,6 +673,26 @@ namespace Altaxo.Collections
       {
         foreach (var n in nodes)
           base.Add(n);
+      }
+
+      /// <summary>
+      /// Adds a tree node to a collection into a certain position. The new node is inserted at the first position
+      /// where the comparison between the new tree node and the existing nodes returns a value less than or equal to zero.
+      /// </summary>
+      /// <param name="node">The node to add.</param>
+      /// <param name="comparison">The comparison function. Arguments are i) the new node, ii) the existing node. Return value is a comparison between new and existing node.</param>
+      public void AddSorted(NGTreeNode node, Func<NGTreeNode, NGTreeNode, int> comparison)
+      {
+        for (int i = 0; i < base.Count; ++i)
+        {
+          if (comparison(node, base[i]) <= 0)
+          {
+            Insert(i, node);
+            return;
+          }
+        }
+        // if that failed, simply add the node
+        Add(node);
       }
 
       public void Swap(int i, int j)
