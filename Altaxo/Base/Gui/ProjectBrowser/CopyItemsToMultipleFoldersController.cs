@@ -151,6 +151,7 @@ namespace Altaxo.Gui.ProjectBrowser
     private void CreateDirectoryNode(string dir, NGTreeNode node)
     {
       var subfolders = Current.Project.Folders.GetSubfoldersAsStringList(dir, false);
+      subfolders.Sort();
       foreach (var subfolder in subfolders)
       {
         var subnode = new NGTreeNode(ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(subfolder))
