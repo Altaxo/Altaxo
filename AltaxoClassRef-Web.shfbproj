@@ -14,7 +14,7 @@
     <Name>Documentation</Name>
     <!-- SHFB properties -->
     <FrameworkVersion>.NET Framework 4.7.1</FrameworkVersion>
-    <OutputPath>..\Help\Web\</OutputPath>
+    <OutputPath>..\..\AltaxoClassReference\</OutputPath>
     <HtmlHelpName>Documentation</HtmlHelpName>
     <Language>en-US</Language>
     <DocumentationSources>
@@ -41,9 +41,12 @@
     <RootNamespaceTitle>Altaxo class reference</RootNamespaceTitle>
     <NamespaceGrouping>True</NamespaceGrouping>
     <Preliminary>False</Preliminary>
-    <FooterText>Altaxo can be downloaded from &amp;lt%3ba href=&amp;quot%3bhttps://sourceforge.net/projects/altaxo/files/Altaxo/&amp;quot%3b &amp;gt%3bSourceForge&amp;lt%3b/a&amp;gt%3b. Source code available on &amp;lt%3ba href=&amp;quot%3bhttps://github.com/Altaxo/Altaxo&amp;quot%3b &amp;gt%3bGithub&amp;lt%3b/a&amp;gt%3b.</FooterText>
-    <CopyrightHref>https://sourceforge.net/u/dlellinger/profile/</CopyrightHref>
-    <CopyrightText>%28C%29 Dr. Dirk Lellinger 2002 - 2018</CopyrightText>
+    <FooterText>Altaxo can be downloaded from &amp;lt%3ba href=&amp;quot%3bhttps://sourceforge.net/projects/altaxo/files/Altaxo/&amp;quot%3b &amp;gt%3bSourceForge&amp;lt%3b/a&amp;gt%3b. Source code available on &amp;lt%3ba href=&amp;quot%3bhttps://github.com/Altaxo/Altaxo&amp;quot%3b &amp;gt%3bGithub&amp;lt%3b/a&amp;gt%3b.
+&amp;lt%3bbr /&amp;gt%3b&amp;lt%3ba href=&amp;quot%3bhttps://sourceforge.net/u/dlellinger/profile/&amp;quot%3b &amp;gt%3b%28C%29 Dr. Dirk Lellinger 2002 - &amp;lt%3bscript&amp;gt%3bdocument.write%28new Date%28%29.getFullYear%28%29%29%3b &amp;lt%3b/script&amp;gt%3b&amp;lt%3b/a&amp;gt%3b</FooterText>
+    <CopyrightHref>
+    </CopyrightHref>
+    <CopyrightText>
+    </CopyrightText>
     <FeedbackEMailAddress>dlellinger%40users.sourceforge.net</FeedbackEMailAddress>
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <WarnOnMissingSourceContext>False</WarnOnMissingSourceContext>
@@ -82,46 +85,57 @@
     <ContentLayout Include="HelpContent\Manual.content" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="HelpContent\Manual000000.aml" />
-    <None Include="HelpContent\Manual000001.aml" />
-    <None Include="HelpContent\Manual000002.aml" />
-    <None Include="HelpContent\Manual000003.aml" />
-    <None Include="HelpContent\Manual000004.aml" />
-    <None Include="HelpContent\Manual000005.aml" />
-    <None Include="HelpContent\Manual000006.aml" />
-    <None Include="HelpContent\Manual000007.aml" />
-    <None Include="HelpContent\Manual000008.aml" />
-    <None Include="HelpContent\Manual000009.aml" />
-    <None Include="HelpContent\Manual000010.aml" />
-    <None Include="HelpContent\Manual000011.aml" />
-    <None Include="HelpContent\Manual000012.aml" />
-    <None Include="HelpContent\Manual000013.aml" />
-    <None Include="HelpContent\Manual000014.aml" />
-    <None Include="HelpContent\Manual000015.aml" />
-    <None Include="HelpContent\Manual000016.aml" />
-    <None Include="HelpContent\Manual000017.aml" />
-    <None Include="HelpContent\Manual000018.aml" />
-    <None Include="HelpContent\Manual000019.aml" />
-    <None Include="HelpContent\Manual000020.aml" />
-    <None Include="HelpContent\Manual000021.aml" />
-    <None Include="HelpContent\Manual000022.aml" />
-    <None Include="HelpContent\Manual000023.aml" />
-    <None Include="HelpContent\Manual000024.aml" />
-    <None Include="HelpContent\Manual000025.aml" />
-    <None Include="HelpContent\Manual000026.aml" />
-    <None Include="HelpContent\Manual000027.aml" />
-    <None Include="HelpContent\Manual000028.aml" />
-    <None Include="HelpContent\Manual000029.aml" />
-    <None Include="HelpContent\Manual000030.aml" />
-    <None Include="HelpContent\Manual000031.aml" />
-    <None Include="HelpContent\Manual000032.aml" />
-    <None Include="HelpContent\Manual000033.aml" />
-    <None Include="HelpContent\Manual_Images.aml" />
+    <None Include="HelpContent\AUM-1B7FE024E7E614BFA13DAA1FD005.aml" />
+    <None Include="HelpContent\IOA-1F4C428AAA53AFE4CCEE7744AB1C.aml" />
+    <None Include="HelpContent\IOA-IBC-FB292AFF9A439E8CD0E9A6A6.aml" />
+    <None Include="HelpContent\IOA-IBU-577B485E0653126B7C72BCA3.aml" />
+    <None Include="HelpContent\IOA-IOL-2FD7A20CC4874B8AC0167F6E.aml" />
+    <None Include="HelpContent\UI-92AA4F47B878880DFACC86FE4F58D.aml" />
+    <None Include="HelpContent\UI-TW-CA7B1E22CC877DA7601F34CE04.aml" />
+    <None Include="HelpContent\UI-DW-FED2A6345DDC8A2F7D0680F934.aml" />
+    <None Include="HelpContent\TAW-345E05B54F4611736070E46B38DD.aml" />
+    <None Include="HelpContent\TAW-DCA-5C8543F24C7EE1C52CD7211A.aml" />
+    <None Include="HelpContent\TAW-CH-AA57528103751EB21A179BF18.aml" />
+    <None Include="HelpContent\TAW-CNW-6FAC01304D7EC3D8AE1C724C.aml" />
+    <None Include="HelpContent\TAW-CAD-0F56118543F36CC6A6EB223F.aml" />
+    <None Include="HelpContent\TAW-SOC-9EC02FDB23AEF02047503483.aml" />
+    <None Include="HelpContent\TAW-CPO-F71D3901373F20479F4C3575.aml" />
+    <None Include="HelpContent\TAW-IAD-CCE945B2EC2C578D8C49120D.aml" />
+    <None Include="HelpContent\TAW-CSO-B09D5D470B8DCF524A698117.aml" />
+    <None Include="HelpContent\TAW-WN-742EC350D96B6D65DA918DE77.aml" />
+    <None Include="HelpContent\TAW-WSA-51AB2CB3ECBAFD1DD0F029C0.aml" />
+    <None Include="HelpContent\2G-942E3813AA2CE7361340941CE02C3.aml" />
+    <None Include="HelpContent\2G-C-F3F39DE287E6F866C4CE91FCB72.aml" />
+    <None Include="HelpContent\2G-CG-682F12AAF3087ADE24CCF36B36.aml" />
+    <None Include="HelpContent\2G-MG-AE99705CE5CA5220BF3FC52F74.aml" />
+    <None Include="HelpContent\3G-B304562CD5175896950785146ED10.aml" />
+    <None Include="HelpContent\TDM-5B0DC6C5A311694B99B22BE8194F.aml" />
+    <None Include="HelpContent\TDM-I-4CD3F47316CF9E15CE32CA2783.aml" />
+    <None Include="HelpContent\TDM-C-DDBD66CF333D18EB1803BCA37D.aml" />
+    <None Include="HelpContent\TDM-CNT-A24C4B5930CB93045CF36D7B.aml" />
+    <None Include="HelpContent\TDM-DET-344B9F731295BD2A097EAF64.aml" />
+    <None Include="HelpContent\TDM-RTD-48C59E28BE6B00A86532E9BA.aml" />
+    <None Include="HelpContent\TDM-MS-92B7CA00A4DC93F8BF66AEF35.aml" />
+    <None Include="HelpContent\TDM-UOE-D81BAB079B701CE4975A6890.aml" />
+    <None Include="HelpContent\TDM-CTT-847834D0535C024B51193819.aml" />
+    <None Include="HelpContent\TDM-IOE-FDC514482A6F579D9BCA039C.aml" />
+    <None Include="HelpContent\TDM-EOT-7029CC1C058EA6FCB5510AA6.aml" />
+    <None Include="HelpContent\ASC-CBDD41AAA1B05A4B2362BE258C1A.aml" />
+    <None Include="HelpContent\ASC-KSA-1AE54454196F6ED80D4D5722.aml" />
+    <None Include="HelpContent\ASC-CEW-A801476992A9D8BE7D803946.aml" />
+    <None Include="HelpContent\ASC-LRC-01A8CFA2EB8AF7B1F2DDA0AC.aml" />
+    <None Include="HelpContent\PO-2F5E6BE1D416EEF88458DAC931E96.aml" />
+    <None Include="HelpContent\PO-PI-2783FED4411F72EE01B8906649.aml" />
+    <None Include="HelpContent\_Images.aml" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="HelpContent\Images\BB9FABC6297FBD59A3C367E7A6812F02.png">
-      <ImageId>BB9FABC6297FBD59A3C367E7A6812F02</ImageId>
-      <AlternateText>BB9FABC6297FBD59A3C367E7A6812F02</AlternateText>
+    <Image Include="HelpContent\Images\DAC5749032FF9FBC19C8AE2CC671CBEE.png">
+      <ImageId>DAC5749032FF9FBC19C8AE2CC671CBEE</ImageId>
+      <AlternateText>DAC5749032FF9FBC19C8AE2CC671CBEE</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\00FE09F9A46709D6081B6C5B9A39397C.png">
+      <ImageId>00FE09F9A46709D6081B6C5B9A39397C</ImageId>
+      <AlternateText>00FE09F9A46709D6081B6C5B9A39397C</AlternateText>
     </Image>
     <Image Include="HelpContent\Images\D9153323BF81BCD356BFDF049BD1DF59.png">
       <ImageId>D9153323BF81BCD356BFDF049BD1DF59</ImageId>
@@ -295,13 +309,13 @@
       <ImageId>C7A8E60C99AC87B1EE9B91F945A0291A</ImageId>
       <AlternateText>C7A8E60C99AC87B1EE9B91F945A0291A</AlternateText>
     </Image>
-    <Image Include="HelpContent\Images\231A01EB7C0F4EF681AA2E7FB31E82E1.png">
-      <ImageId>231A01EB7C0F4EF681AA2E7FB31E82E1</ImageId>
-      <AlternateText>231A01EB7C0F4EF681AA2E7FB31E82E1</AlternateText>
+    <Image Include="HelpContent\Images\FE5E90F1A914A0CE71A1F438FE0F00A2.png">
+      <ImageId>FE5E90F1A914A0CE71A1F438FE0F00A2</ImageId>
+      <AlternateText>FE5E90F1A914A0CE71A1F438FE0F00A2</AlternateText>
     </Image>
-    <Image Include="HelpContent\Images\ACCACB429D15A747CCEE0850BBB9639B.png">
-      <ImageId>ACCACB429D15A747CCEE0850BBB9639B</ImageId>
-      <AlternateText>ACCACB429D15A747CCEE0850BBB9639B</AlternateText>
+    <Image Include="HelpContent\Images\6DFE5AFB73D644C5DC201164198A5753.png">
+      <ImageId>6DFE5AFB73D644C5DC201164198A5753</ImageId>
+      <AlternateText>6DFE5AFB73D644C5DC201164198A5753</AlternateText>
     </Image>
   </ItemGroup>
   <ItemGroup>
