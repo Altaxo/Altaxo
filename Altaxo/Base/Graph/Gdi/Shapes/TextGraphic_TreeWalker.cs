@@ -476,14 +476,34 @@ namespace Altaxo.Graph.Gdi.Shapes
               string s1 = GetText(childNode).Trim();
               var newContext = context.Clone();
               var conv = new ColorConverter();
+              bool wasColorConverted = false;
 
-              try
+              if (!wasColorConverted)
               {
-                object result = conv.ConvertFromInvariantString(s1);
-                newContext.brush = new SolidBrush((Color)result);
+                try
+                {
+                  object result = conv.ConvertFromInvariantString(s1);
+                  newContext.brush = new SolidBrush((Color)result);
+                  wasColorConverted = true;
+                }
+                catch (Exception)
+                {
+                }
               }
-              catch (Exception)
+
+              if (!wasColorConverted)
               {
+                try
+                {
+                  if (Drawing.ColorManagement.ColorSetManager.Instance.TryGetColorByHierarchicalName(s1, out var namedColor, true))
+                  {
+                    newContext.brush = new SolidBrush(namedColor);
+                    wasColorConverted = true;
+                  }
+                }
+                catch (Exception)
+                {
+                }
               }
 
               VisitNode(childNode.next_, newContext, parent);

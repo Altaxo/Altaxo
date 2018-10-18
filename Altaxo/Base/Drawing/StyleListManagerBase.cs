@@ -433,5 +433,61 @@ namespace Altaxo.Drawing
           throw new ArgumentOutOfRangeException(nameof(listLevel), "list level is out of range");
       }
     }
+
+    /// <summary>
+    /// Tries to get a item by its hierarchical name. The name can either consist of two elements: ListName/ItemName, or of
+    /// three elements ItemLevel/ListName/ItemName. Separator char is either forward slash or backslash
+    /// </summary>
+    /// <param name="fullItemName">Name of the item.</param>
+    /// <param name="predicate">A function that compares items with the item name, and returns true if the item has the provided item name.
+    /// First argument is the item, second argument the item name. The return value is true if the item's name and the itemName match.</param>
+    /// <param name="item">The found item. If the item was not found, the default value.</param>
+    /// <returns>True if the item was found; otherwise, false.</returns>
+    public bool TryGetItemByHierarchicalName(string fullItemName, Func<TItem, string, bool> predicate, out TItem item)
+    {
+      if (predicate is null)
+        throw new ArgumentNullException(nameof(predicate));
+
+      if (string.IsNullOrEmpty(fullItemName))
+      {
+        item = default;
+        return false;
+      }
+
+      var itemNameParts = fullItemName.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+      if (itemNameParts.Length != 2 && itemNameParts.Length != 3)
+      {
+        item = default;
+        return false; // wrong length of hierarchy
+      }
+
+      var listName = itemNameParts[itemNameParts.Length - 2];
+
+      if (!_allLists.TryGetValue(listName, out var listManagerEntry))
+      {
+        item = default;
+        return false; // list name not found
+      }
+
+      if (itemNameParts.Length == 3 && 0 != string.Compare(GetListLevelName(listManagerEntry.Level), itemNameParts[0]))
+      {
+        item = default;
+        return false; // wrong list level name
+      }
+
+      var itemShortName = itemNameParts[itemNameParts.Length - 1];
+      foreach (var listItem in listManagerEntry.List)
+      {
+        if (predicate(listItem, itemShortName))
+        {
+          item = listItem;
+          return true;
+        }
+      }
+
+      item = default;
+      return false;
+    }
   }
 }

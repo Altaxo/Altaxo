@@ -196,6 +196,26 @@ namespace Altaxo.Drawing.ColorManagement
       }
     }
 
+    /// <summary>
+    /// Tries to get a named color by its hierarchical name. The name can either consist of two elements: ListName/ItemName, or of
+    /// three elements ItemLevel/ListName/ItemName. Separator char is either forward slash or backslash.
+    /// </summary>
+    /// <param name="fullColorName">Full name of the color. Examples: Buildin/PlotColorsDark/Red  or simply PlotColorsDark/Red</param>
+    /// <param name="namedColor">The found color. If the color was not found, the default value.</param>
+    /// <param name="lazyMatch">If true, the match between the color's name and the name search for is done lazily.
+    /// It is considered as a match if the color's name starts with the name to be searched for.</param>
+    /// <returns>True if the color was found; otherwise, false.</returns>
+    public bool TryGetColorByHierarchicalName(string fullColorName, out NamedColor namedColor, bool lazyMatch = false)
+    {
+      if (base.TryGetItemByHierarchicalName(fullColorName, (item, name) => item.Name == name, out namedColor))
+        return true;
+
+      if (lazyMatch && base.TryGetItemByHierarchicalName(fullColorName, (item, name) => item.Name.StartsWith(name), out namedColor))
+        return true;
+
+      return false;
+    }
+
     #region Deserialization of colors
 
     public bool TryFindColorSetContaining(AxoColor color, out IColorSet value)
