@@ -211,12 +211,23 @@ namespace Altaxo.Settings.Scripting
     {
       get
       {
+        // use a dummy Linq question here to make sure Linq gets loaded
+        // before we use _startupAssemblies
+        var selection = _userAssemblies.Where(x => x.FullName == "dummydummy");
+
         var list = new List<Assembly>();
 
         if (IsFrameworkVersion47Installed)
         {
           // Do not include System.ValueTuple.dll in the list of referenced assemblies if .NetFrameworkVersion is > 4.7, because it is intrinsically there
-          list.AddRange(_startupAssemblies.Where(ass => !(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE"))));
+          // list.AddRange(_startupAssemblies.Where(ass => !(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE"))));
+          // Do not use Linq here, as in the line above, since Linq gets loaded sometimes in exactly the same moment than this statement is executed,
+          // and thus altering the content of _startupAssemblies
+          foreach (var ass in _startupAssemblies)
+          {
+            if (!(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE")))
+              list.Add(ass);
+          }
         }
         else
         {

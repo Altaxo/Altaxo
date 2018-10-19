@@ -362,6 +362,27 @@ namespace Altaxo.Main
         LoadProjectFromFile(file);
         break;
       }
+
+      for (int i = 0; i < cmdArgs.Length; ++i)
+      {
+        var lowerarg = cmdArgs[i].ToLowerInvariant();
+        if ((lowerarg == "-executetablescript" || lowerarg == "/executetablescript") && i < cmdArgs.Length - 1)
+        {
+          ExecuteTableScriptOfTable(cmdArgs[i + 1]);
+          ++i; // switch over the next argument, since it is then already processed
+        }
+      }
+    }
+
+    private void ExecuteTableScriptOfTable(string tableName)
+    {
+      if (Current.Project.DataTableCollection.TryGetValue(tableName, out var table))
+      {
+        if (null != table.TableScript)
+        {
+          table.TableScript.Execute(table, new DummyBackgroundMonitor());
+        }
+      }
     }
 
     #endregion Project opening

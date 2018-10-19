@@ -78,7 +78,14 @@ namespace Altaxo.Gui.Workbench
       _workbench.Initialize(mainForm);
       mainForm.DataContext = Current.Workbench;
       var propertyService = Current.PropertyService; // save as local variable because if the app is closed, the services will be shutdown by the shutdown service
+
       Current.IProjectService.ExecuteActionsImmediatelyBeforeRunningApplication(startupArguments.StartupArgs, startupArguments.ParameterList, startupArguments.RequestedFileList);
+
+      string lastArg = startupArguments.StartupArgs.Length > 0 ? startupArguments.StartupArgs[startupArguments.StartupArgs.Length - 1].ToLowerInvariant() : string.Empty;
+      if (lastArg == "-exit" || lastArg == "/exit")
+        return;
+
+
       _application.Run(mainForm);
     }
   }
