@@ -50,7 +50,7 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
 
       var formulaService = Current.GetRequiredService<ILaTeXFormulaImageStreamProvider>();
 
-      var (stream, placement, width, height) = formulaService.Parse(formulaText, renderer.BodyTextFontFamily, renderer.BodyTextFontSize, 192, renderer.IsIntendedForHelp1File);
+      var (stream, placement, offset, width, height) = formulaService.Parse(formulaText, renderer.BodyTextFontFamily, renderer.BodyTextFontSize, 192, renderer.IsIntendedForHelp1File);
 
       if (null == stream)
         return;

@@ -44,7 +44,7 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
 
       var formulaService = Current.GetRequiredService<ILaTeXFormulaImageStreamProvider>();
 
-      var (stream, placement, width, height) = formulaService.Parse(formulaText, renderer.BodyTextFontFamily, renderer.BodyTextFontSize, 192, renderer.IsIntendedForHelp1File);
+      var (stream, placement, offset, width, height) = formulaService.Parse(formulaText, renderer.BodyTextFontFamily, renderer.BodyTextFontSize, 192, renderer.IsIntendedForHelp1File);
 
       if (null == stream)
         return;
@@ -70,11 +70,14 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
       var attributes = new Dictionary<string, string>
       {
         { "src", localUrl },
-        { "align", placement },
-
         { "width", System.Xml.XmlConvert.ToString(width) },
         { "height", System.Xml.XmlConvert.ToString(height) }
       };
+
+      if (renderer.IsIntendedForHelp1File)
+        attributes.Add("align", placement);
+      else
+        attributes.Add("style", string.Format(System.Globalization.CultureInfo.InvariantCulture, "vertical-align:{0}px;", offset));
 
       renderer.Push(MamlElements.markup);
 

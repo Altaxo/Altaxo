@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Markdown
     private static TexFormulaParser _formulaParser = new TexFormulaParser();
 
     /// <inheritdoc/>
-    public (Stream bitmapStream, string placement, int width96thInch, int height96thInch) Parse(string text, string fontFamily, double fontSize, double dpiResolution, bool isIntendedForHelp1File)
+    public (Stream bitmapStream, string placement, int yoffset, int width96thInch, int height96thInch) Parse(string text, string fontFamily, double fontSize, double dpiResolution, bool isIntendedForHelp1File)
     {
       TexFormula formula = null;
       try
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Markdown
       }
       catch (Exception)
       {
-        return (null, null, 0, 0);
+        return (null, null, 0, 0, 0);
       }
 
       double cyAscent;
@@ -81,39 +81,57 @@ namespace Altaxo.Gui.Markdown
       var absoluteAscent = formulaRenderer.RenderSize.Height * (1 - formulaRenderer.RelativeDepth);
 
       double yoffset = 0;
-      var sort = new SortedDictionary<double, (double, string)>();
 
-      if (formulaRenderer.RelativeDepth < (1 / 16.0))
+      BitmapSource bmp;
+      int width96thInch, height96thInch;
+      string alignment;
+
+
+      if (isIntendedForHelp1File)
       {
-        sort.Add(0, (0.0, "baseline"));
+        // dictionary that holds the number of additional pixels neccessary to exactly align the formula, and the value is the alignment
+        var sort = new SortedDictionary<double, (double, string)>();
+
+        if (formulaRenderer.RelativeDepth < (1 / 16.0)) // if the formulas baseline is almost at the bottom of the image
+        {
+          sort.Add(0, (0.0, "baseline")); // then we can use baseline as vertical alight
+        }
+        if (absoluteAscent <= cyAscent)  // if our formula is higher than the top of the text
+        {
+          yoffset = cyAscent - absoluteAscent;
+          sort.Add(Math.Abs(yoffset), (yoffset, "texttop")); // then we can use texttop alignment, and we shift the formula downwards (positive offset)
+        }
+        if (absoluteDepth <= cyDescent) // then we can use bottom alignment, and we shift the formula upwards (negative offset)
+        {
+          yoffset = absoluteDepth - cyDescent;
+          sort.Add(Math.Abs(yoffset), (yoffset, "bottom"));
+        }
+
+        {
+          // Alignment: middle
+          // Note that this is a moving target: we must change the vertical size of the image, but by that
+          // we change the middle of the image, which changes again the offset...
+          if (isIntendedForHelp1File)
+            yoffset = absoluteDepth - absoluteAscent; // in help1 file, the baseline of text is aligned with the middle of the image
+          else
+            yoffset = 2 * cyMiddle + absoluteDepth - absoluteAscent; // if yoffset is negative, then pad at the bottom, else pad at the top
+
+          sort.Add(Math.Abs(yoffset), (yoffset, "middle"));
+        }
+
+        var firstEntry = sort.First();
+        (bmp, width96thInch, height96thInch) = RenderToBitmap(formulaRenderer, 0, firstEntry.Value.Item1, dpiResolution);
+        alignment = firstEntry.Value.Item2;
+        yoffset = 0; // 0 as return value
       }
-      if (absoluteAscent <= cyAscent) // then we can use texttop alignment, and we shift the formula downwards (positive offset)
+      else // MAML is intended for HTML help (so we can use HTML5 alignment with pixel accuracy        )
       {
-        yoffset = cyAscent - absoluteAscent;
-        sort.Add(Math.Abs(yoffset), (yoffset, "texttop"));
+        alignment = "baseline";
+        yoffset = Math.Round(-absoluteDepth);
+
+        // by providing a positive offset in arg2, the image is lowered compared to the baseline
+        (bmp, width96thInch, height96thInch) = RenderToBitmap(formulaRenderer, 0, 0 /* yoffset + absoluteDepth */, dpiResolution);
       }
-
-      if (absoluteDepth <= cyDescent) // then we can use bottom alignment, and we shift the formula upwards (negative offset)
-      {
-        yoffset = absoluteDepth - cyDescent;
-        sort.Add(Math.Abs(yoffset), (yoffset, "bottom"));
-      }
-
-      {
-        // Alignment: middle
-        // Note that this is a moving target: we must change the vertical size of the image, but by that
-        // we change the middle of the image, which changes again the offset...
-        if (isIntendedForHelp1File)
-          yoffset = absoluteDepth - absoluteAscent; // in help1 file, the baseline of text is aligned with the middle of the image
-        else
-          yoffset = 2 * cyMiddle + absoluteDepth - absoluteAscent; // if yoffset is negative, then pad at the bottom, else pad at the top
-
-        sort.Add(Math.Abs(yoffset), (yoffset, "middle"));
-      }
-
-      var firstEntry = sort.First();
-
-      var (bmp, width96thInch, height96thInch) = RenderToBitmap(formulaRenderer, 0, firstEntry.Value.Item1, dpiResolution);
 
       var fileStream = new MemoryStream();
       BitmapEncoder encoder = new PngBitmapEncoder();
@@ -121,7 +139,7 @@ namespace Altaxo.Gui.Markdown
       encoder.Save(fileStream);
       fileStream.Seek(0, SeekOrigin.Begin);
 
-      return (fileStream, firstEntry.Value.Item2, width96thInch, height96thInch);
+      return (fileStream, alignment, (int)Math.Round(yoffset), width96thInch, height96thInch);
     }
 
     /// <summary>

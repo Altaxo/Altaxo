@@ -371,10 +371,14 @@ namespace Altaxo.Text
       }
 
       // remove old images
+      var fullImageFolderName = Path.Combine(basePathName, ImageFolderName);
       if (EnableRemoveOldContentsOfImageFolder)
       {
-        var fullImageFolderName = Path.Combine(basePathName, ImageFolderName);
         MamlRenderer.RemoveOldContentsOfImageFolder(fullImageFolderName);
+      }
+      if (!Directory.Exists(fullImageFolderName))
+      {
+        Directory.CreateDirectory(fullImageFolderName);
       }
 
       // First, export the images
