@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Text
 
     private void EhSelectOutputFile()
     {
-      var (dialogResult, outputFileName) = MamlExportOptions.ShowGetOutputFileDialog();
+      var (dialogResult, outputFileName) = HtmlExportOptions.ShowGetOutputFileDialog();
       if (dialogResult == true)
       {
         OutputFileName = outputFileName;
