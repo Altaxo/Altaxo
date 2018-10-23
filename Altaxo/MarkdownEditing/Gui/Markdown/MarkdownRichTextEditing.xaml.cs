@@ -681,7 +681,7 @@ namespace Altaxo.Gui.Markdown
         var markdigTag = GetMarkdownObjectAtViewerPosition(textPosition);
         var markdigTagPrev = GetMarkdownObjectAtViewerPosition(textPosition.GetPositionAtOffset(-1));
 
-        if (markdigTagPrev.Span.Start > markdigTag.Span.Start)
+        if (null != markdigTagPrev && markdigTagPrev.Span.Start > markdigTag.Span.Start)
         {
           markdigTag = markdigTagPrev;
           textPosition = textPositionPrev;
