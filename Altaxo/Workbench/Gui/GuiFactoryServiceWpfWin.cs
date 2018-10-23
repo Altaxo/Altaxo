@@ -509,33 +509,85 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
 
       public (System.IO.Stream, string fileExtension) GetBitmapImageAsOptimizedMemoryStream()
       {
-        var imgSource = _dao.GetImage();
-
-        if (imgSource is System.Windows.Media.Imaging.BitmapSource bmpSource)
         {
-          var pngStream = new System.IO.MemoryStream();
-          var pngEncoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
-          pngEncoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bmpSource));
-          pngEncoder.Save(pngStream);
-          pngStream.Seek(0, System.IO.SeekOrigin.Begin);
+          if (_dao.GetData("PNG", false) is System.IO.MemoryStream stream)
+            return (stream, ".png");
+        }
 
-          var jpgStream = new System.IO.MemoryStream();
-          var jpgEncoder = new System.Windows.Media.Imaging.JpegBitmapEncoder();
-          jpgEncoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bmpSource));
-          jpgEncoder.Save(jpgStream);
-          jpgStream.Seek(0, System.IO.SeekOrigin.Begin);
+        {
+          if (_dao.GetData("png", false) is System.IO.MemoryStream stream)
+            return (stream, ".png");
+        }
+        {
+          if (_dao.GetData("JPG", false) is System.IO.MemoryStream stream)
+            return (stream, ".jpg");
+        }
+        {
+          if (_dao.GetData("JPEG", false) is System.IO.MemoryStream stream)
+            return (stream, ".jpg");
+        }
 
-          var stream = pngStream.Length < jpgStream.Length ? pngStream : jpgStream;
-          var strExt = pngStream.Length < jpgStream.Length ? ".png" : ".jpg";
-          var altStream = pngStream.Length < jpgStream.Length ? jpgStream : pngStream;
-          altStream.Dispose();
+        {
+          if (_dao.GetData("System.Windows.Media.Imaging.BitmapSource", true) is System.Windows.Media.Imaging.BitmapSource bitmapSource)
+            return StreamFromBitmapSource(bitmapSource);
+        }
 
-          return (stream, strExt);
+        {
+          if (_dao.GetData("System.Drawing.Bitmap", true) is System.Drawing.Bitmap sysDrawBitmap)
+            return StreamFromSystemDrawingBitmap(sysDrawBitmap);
+        }
+
+        if (_dao.GetImage() is System.Windows.Media.Imaging.BitmapSource bmpSource)
+        {
+          return StreamFromBitmapSource(bmpSource);
         }
 
         return (null, null);
       }
+
+      private (System.IO.Stream, string fileExtension) StreamFromBitmapSource(System.Windows.Media.Imaging.BitmapSource bmpSource)
+      {
+        var pngStream = new System.IO.MemoryStream();
+        var pngEncoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+        var pngFrame = System.Windows.Media.Imaging.BitmapFrame.Create(bmpSource);
+        pngEncoder.Frames.Add(pngFrame);
+        pngEncoder.Save(pngStream);
+        pngStream.Seek(0, System.IO.SeekOrigin.Begin);
+
+        var jpgStream = new System.IO.MemoryStream();
+        var jpgEncoder = new System.Windows.Media.Imaging.JpegBitmapEncoder();
+        var jpgFrame = System.Windows.Media.Imaging.BitmapFrame.Create(bmpSource);
+        jpgEncoder.Frames.Add(jpgFrame);
+        jpgEncoder.Save(jpgStream);
+        jpgStream.Seek(0, System.IO.SeekOrigin.Begin);
+
+        var stream = pngStream.Length < jpgStream.Length ? pngStream : jpgStream;
+        var strExt = pngStream.Length < jpgStream.Length ? ".png" : ".jpg";
+        var altStream = pngStream.Length < jpgStream.Length ? jpgStream : pngStream;
+        altStream.Dispose();
+
+        return (stream, strExt);
+      }
+
+      private (System.IO.Stream, string fileExtension) StreamFromSystemDrawingBitmap(System.Drawing.Bitmap sysDrawBitmap)
+      {
+        var pngStream = Altaxo.Graph.ImageProxy.ImageToStream(sysDrawBitmap, System.Drawing.Imaging.ImageFormat.Png);
+        var jpgStream = Altaxo.Graph.ImageProxy.ImageToStream(sysDrawBitmap, System.Drawing.Imaging.ImageFormat.Jpeg);
+        if (pngStream.Length < jpgStream.Length)
+        {
+          jpgStream.Dispose();
+          return (pngStream, ".png");
+        }
+        else
+        {
+          pngStream.Dispose();
+          return (jpgStream, ".jpg");
+        }
+      }
+
     }
+
+
 
     public override IClipboardSetDataObject GetNewClipboardDataObject()
     {
