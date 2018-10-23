@@ -127,10 +127,10 @@ namespace Altaxo.Gui.Markdown
       else // MAML is intended for HTML help (so we can use HTML5 alignment with pixel accuracy        )
       {
         alignment = "baseline";
-        yoffset = Math.Round(-absoluteDepth);
-
+        var yshift = Math.Ceiling(absoluteAscent) - absoluteAscent; // we shift the formula downwards, so that the new absoluteAscent is Math.Ceiling(absoluteAscent)
         // by providing a positive offset in arg2, the image is lowered compared to the baseline
-        (bmp, width96thInch, height96thInch) = RenderToBitmap(formulaRenderer, 0, 0 /* yoffset + absoluteDepth */, dpiResolution);
+        (bmp, width96thInch, height96thInch) = RenderToBitmap(formulaRenderer, 0, yshift, dpiResolution);
+        yoffset = Math.Ceiling(absoluteAscent) - height96thInch; // number of pixels from image bottom to baseline (negative sign)
       }
 
       var fileStream = new MemoryStream();
@@ -148,10 +148,11 @@ namespace Altaxo.Gui.Markdown
     /// <param name="formulaRenderer">The formula renderer.</param>
     /// <param name="x">The x offset of the formula.</param>
     /// <param name="y">The y offset.
-    /// If y is negative, the absolute value as number of pixels is padded at the bottom of the image,
-    /// so that, if measured from the bottom of the image, the formula shifts upwards.
-    /// If y is positve, the value as number of pixels is padded at the top of the image,
-    /// so that, if measured from the top of the image, the formula shifts downwards.
+    /// If y is negative, the distance of top to text does not change, and the distance from bottom to text changes by Ceiling(-y), because Ceiling(-y) pixel lines are added to the image.
+    /// That means, that if looked from the bottom of the image, the formula shifts upwardes, but in integer pixel steps.
+    /// If y is positive, the distance of top of image to text changes by y. Because Ceiling(y) pixel lines are added to the image,
+    /// the distance from bottom of the image to text changes by [Ceiling(y)-y], i.e. the shift is 0 for y==0, 1 for y==(0+epsilon), and 0 again for y==1.
+    /// That means, if measured from the bottom of the image, the formula shifts upwards, but maximal by 1 pixel.
     /// </param>
     /// <param name="dpiResolution">The resolution of the image in dpi. If not sure, use 96 dpi.</param>
     /// <returns>The bitmap souce that represents the formula.</returns>
@@ -159,11 +160,14 @@ namespace Altaxo.Gui.Markdown
     {
       var visual = new DrawingVisual();
       using (var drawingContext = visual.RenderOpen())
+      {
+        // Note that argument y in Render measures from the top. Thus is y is positive, this shifts the text down.
         formulaRenderer.Render(drawingContext, x, Math.Max(0, y)); // if y negative, then we don't change y, because we measure relative to the upper edge of the image. Only if y is positive, we translate the formula downwards.
+      }
 
       var width = (int)Math.Ceiling(formulaRenderer.RenderSize.Width);
       var height = (int)Math.Ceiling(formulaRenderer.RenderSize.Height);
-      height += (int)Math.Abs(y);
+      height += (int)Math.Ceiling(Math.Abs(y));
 
       var relativeResolution = dpiResolution / 96.0;
 
