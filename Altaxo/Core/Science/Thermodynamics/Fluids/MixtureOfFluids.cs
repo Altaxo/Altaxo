@@ -113,6 +113,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return new MixtureOfFluids(list);
     }
 
+
     public MixtureOfFluids(
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
@@ -727,5 +728,128 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     #endregion
 
     protected static double Pow3(double x) => x * x * x;
+
+
+    #region Static helpers
+
+    #region Mass fractions to mole fractions
+
+    /// <summary>
+    /// Gets the mole fractions from the fluids and the mass fractions of the fluids.
+    /// </summary>
+    /// <param name="list">The list of fluids and mass fractions of the fluids.</param>
+    /// <returns>An array with the mole fractions of the fluids.</returns>
+    public static double[] GetMoleFractionsFromFluidsAndMassFractions(params (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid, double MassFraction)[] list)
+    {
+      return GetMoleFractionsFromMolecularWeightsAndMassFractions(list.Select(entry => (entry.fluid.MolecularWeight, entry.MassFraction)));
+    }
+
+
+    /// <summary>
+    /// Gets the mole fractions from the fluids and the mass fractions of the fluids.
+    /// </summary>
+    /// <param name="list">The list of fluids and mass fractions of the fluids.</param>
+    /// <returns>An array with the mole fractions of the fluids.</returns>
+    public static double[] GetMoleFractionsFromFluidsAndMassFractions(IEnumerable<(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid, double MassFraction)> list)
+    {
+      return GetMoleFractionsFromMolecularWeightsAndMassFractions(list.Select(entry => (entry.fluid.MolecularWeight, entry.MassFraction)));
+    }
+
+    /// <summary>
+    /// Gets the mole fractions from the molecular weights and mass fractions of the fluids.
+    /// </summary>
+    /// <param name="list">The list of molecular weights and mass fractions of the fluids.</param>
+    /// <returns>An array with the mole fractions of the fluids.</returns>
+    public static double[] GetMoleFractionsFromMolecularWeightsAndMassFractions(params (double MolecularWeight, double MassFraction)[] list)
+    {
+      return GetMoleFractionsFromMolecularWeightsAndMassFractions((IEnumerable<(double MolecularWeight, double MassFraction)>)list);
+    }
+
+    /// <summary>
+    /// Gets the mole fractions from the molecular weights and mass fractions of the fluids.
+    /// </summary>
+    /// <param name="list">The list of molecular weights and mass fractions of the fluids.</param>
+    /// <returns>An array with the mole fractions of the fluids.</returns>
+    public static double[] GetMoleFractionsFromMolecularWeightsAndMassFractions(IEnumerable<(double MolecularWeight, double MassFraction)> list)
+    {
+      var result = new double[list.Count()];
+
+      // now that we have all fluids, we can calculate mole fractions
+      double sum = 0;
+      foreach (var (MolecularWeight, massFraction) in list)
+      {
+        sum += massFraction / MolecularWeight;
+      }
+
+      int i = 0;
+      foreach (var (MolecularWeight, massFraction) in list)
+      {
+        result[i++] = (massFraction / MolecularWeight) / sum;
+      }
+      return result;
+    }
+
+    #endregion
+
+    #region Mass fractions to mole fractions
+
+    /// <summary>
+    /// Gets the mass fractions from the fluids and the mole fractions of the fluids.
+    /// </summary>
+    /// <param name="list">The list of fluids and mole fractions of the fluids.</param>
+    /// <returns>An array with the mass fractions of the fluids.</returns>
+    public static double[] GetMassFractionsFromFluidsAndMoleFractions(params (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid, double MoleFraction)[] list)
+    {
+      return GetMassFractionsFromMolecularWeightsAndMoleFractions(list.Select(entry => (entry.fluid.MolecularWeight, entry.MoleFraction)));
+    }
+
+
+    /// <summary>
+    /// Gets the mass fractions from the fluids and the mole fractions of the fluids.
+    /// </summary>
+    /// <param name="list">The list of fluids and mole fractions of the fluids.</param>
+    /// <returns>An array with the mass fractions of the fluids.</returns>
+    public static double[] GetMassFractionsFromFluidsAndMoleFractions(IEnumerable<(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid, double MoleFraction)> list)
+    {
+      return GetMassFractionsFromMolecularWeightsAndMoleFractions(list.Select(entry => (entry.fluid.MolecularWeight, entry.MoleFraction)));
+    }
+
+    /// <summary>
+    /// Gets the mass fractions from the molecular weights and mole fractions of the fluids.
+    /// </summary>
+    /// <param name="list">The list of molecular weights and mole fractions of the fluids.</param>
+    /// <returns>An array with the mass fractions of the fluids.</returns>
+    public static double[] GetMassFractionsFromMolecularWeightsAndMoleFractions(params (double MolecularWeight, double MoleFraction)[] list)
+    {
+      return GetMassFractionsFromMolecularWeightsAndMoleFractions((IEnumerable<(double MolecularWeight, double MoleFraction)>)list);
+    }
+
+    /// <summary>
+    /// Gets the mass fractions from the molecular weights and mole fractions of the fluids.
+    /// </summary>
+    /// <param name="list">The list of molecular weights and mole fractions of the fluids.</param>
+    /// <returns>An array with the mass fractions of the fluids.</returns>
+    public static double[] GetMassFractionsFromMolecularWeightsAndMoleFractions(IEnumerable<(double MolecularWeight, double MoleFraction)> list)
+    {
+      var result = new double[list.Count()];
+
+      // now that we have all fluids, we can calculate mole fractions
+      double sum = 0;
+      foreach (var (MolecularWeight, moleFraction) in list)
+      {
+        sum += moleFraction * MolecularWeight;
+      }
+
+      int i = 0;
+      foreach (var (MolecularWeight, moleFraction) in list)
+      {
+        result[i++] = (moleFraction * MolecularWeight) / sum;
+      }
+      return result;
+    }
+
+    #endregion
+
+    #endregion
   }
 }
