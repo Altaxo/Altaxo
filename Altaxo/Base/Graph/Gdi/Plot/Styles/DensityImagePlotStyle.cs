@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     public DensityImagePlotStyle()
     {
-      ColorProvider = new ColorProvider.ColorProviderBGMYR();
+      ColorProvider = new ColorProvider.ColorProviderBGRY();
       Scale = new LinearScale() { TickSpacing = new NoTickSpacing() }; // Ticks are not needed here, they will only disturb the bounds of the scale
       InitializeMembers();
     }
