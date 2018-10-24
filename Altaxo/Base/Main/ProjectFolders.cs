@@ -843,12 +843,14 @@ namespace Altaxo.Main
     /// <param name="parentFolder">Folder for which to get the subfolders.</param>
     /// <param name="recurseSubdirectories">If true, the function returns not only the direct subfolders, but also all subfolders deeper in the hierarchy.</param>
     /// <returns>List of subfolders of the provied folder.</returns>
-    public List<string> GetSubfoldersAsDisplayFolderNameStringList(string parentFolder, bool recurseSubdirectories)
+    public List<string> GetSubfoldersAsDisplayFolderNameStringListSorted(string parentFolder, bool recurseSubdirectories)
     {
       var result = GetSubfoldersAsStringList(parentFolder, recurseSubdirectories);
 
       for (int i = 0; i < result.Count; ++i)
         result[i] = ProjectFolder.ConvertFolderNameToDisplayFolderName(result[i]);
+
+      result.Sort();
 
       return result;
     }

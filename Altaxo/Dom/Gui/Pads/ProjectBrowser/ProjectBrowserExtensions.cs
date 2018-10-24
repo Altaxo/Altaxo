@@ -108,7 +108,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <param name="list">List of items to move.</param>
     public static void MoveDocuments(IList<object> list)
     {
-      var names = Current.Project.Folders.GetSubfoldersAsDisplayFolderNameStringList(ProjectFolder.RootFolderName, true);
+      var names = Current.Project.Folders.GetSubfoldersAsDisplayFolderNameStringListSorted(ProjectFolder.RootFolderName, true);
       names.Insert(0, rootFolderDisplayName);
       var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to move the items into:" };
       if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <param name="originalSourceFolder">Original folder from which the items originate (only valid if <c>areDocumentsFromOneFolder</c> is true.</param>
     public static void CopyDocuments(IList<object> list, bool areDocumentsFromOneFolder, string originalSourceFolder)
     {
-      var names = Current.Project.Folders.GetSubfoldersAsDisplayFolderNameStringList(ProjectFolder.RootFolderName, true);
+      var names = Current.Project.Folders.GetSubfoldersAsDisplayFolderNameStringListSorted(ProjectFolder.RootFolderName, true);
       names.Insert(0, rootFolderDisplayName);
       var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to copy the items into:" };
       if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
