@@ -112,6 +112,7 @@
     <None Include="HelpContent\2G-CG-682F12AAF3087ADE24CCF36B36.aml" />
     <None Include="HelpContent\2G-MG-AE99705CE5CA5220BF3FC52F74.aml" />
     <None Include="HelpContent\3G-B304562CD5175896950785146ED10.aml" />
+    <None Include="HelpContent\3G-Q-1F16AF0BE101FBF63C832CFF751.aml" />
     <None Include="HelpContent\TDM-5B0DC6C5A311694B99B22BE8194F.aml" />
     <None Include="HelpContent\TDM-I-4CD3F47316CF9E15CE32CA2783.aml" />
     <None Include="HelpContent\TDM-C-DDBD66CF333D18EB1803BCA37D.aml" />
@@ -143,6 +144,14 @@
       <ImageId>BB9FABC6297FBD59A3C367E7A6812F02</ImageId>
       <AlternateText>BB9FABC6297FBD59A3C367E7A6812F02</AlternateText>
     </Image>
+    <Image Include="HelpContent\Images\AFB2B0AAED3EFA0590D34E63469121E7.png">
+      <ImageId>AFB2B0AAED3EFA0590D34E63469121E7</ImageId>
+      <AlternateText>AFB2B0AAED3EFA0590D34E63469121E7</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\6B74DE9C4450D027BDFA52CF6A27BC45.png">
+      <ImageId>6B74DE9C4450D027BDFA52CF6A27BC45</ImageId>
+      <AlternateText>6B74DE9C4450D027BDFA52CF6A27BC45</AlternateText>
+    </Image>
     <Image Include="HelpContent\Images\D9153323BF81BCD356BFDF049BD1DF59.png">
       <ImageId>D9153323BF81BCD356BFDF049BD1DF59</ImageId>
       <AlternateText>D9153323BF81BCD356BFDF049BD1DF59</AlternateText>
@@ -154,10 +163,6 @@
     <Image Include="HelpContent\Images\5428A70EB7DE7D4A7E4035D00BBFAC50.png">
       <ImageId>5428A70EB7DE7D4A7E4035D00BBFAC50</ImageId>
       <AlternateText>5428A70EB7DE7D4A7E4035D00BBFAC50</AlternateText>
-    </Image>
-    <Image Include="HelpContent\Images\6B74DE9C4450D027BDFA52CF6A27BC45.png">
-      <ImageId>6B74DE9C4450D027BDFA52CF6A27BC45</ImageId>
-      <AlternateText>6B74DE9C4450D027BDFA52CF6A27BC45</AlternateText>
     </Image>
     <Image Include="HelpContent\Images\1C4AD0DF2D0579780AD463587CA79B0D.png">
       <ImageId>1C4AD0DF2D0579780AD463587CA79B0D</ImageId>
