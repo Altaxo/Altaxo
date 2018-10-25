@@ -196,7 +196,7 @@ To include a formula inline, use a single dollar sign at the start and the end o
 
 <para>
 <legacyBold>Example:</legacyBold><lineBreak/>
-<codeInline>$f(x) = \frac{\sin(x)}{x}$</codeInline> renders to: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#231A01EB7C0F4EF681AA2E7FB31E82E1"><img src="../media/231A01EB7C0F4EF681AA2E7FB31E82E1.png" align="middle" width="88" height="43"></img></a></markup>
+<codeInline>$f(x) = \frac{\sin(x)}{x}$</codeInline> renders to: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E8DB12A3B096ABC72F9C0F5C0B0CDBA"><img src="../media/9E8DB12A3B096ABC72F9C0F5C0B0CDBA.png" width="88" height="44" align="middle"></img></a></markup>
 </para>
 </quote>
 
@@ -223,7 +223,7 @@ $$
 <para>
 renders to:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ACCACB429D15A747CCEE0850BBB9639B"><img src="../media/ACCACB429D15A747CCEE0850BBB9639B.png" width="139" height="20"></img></a></markup></quote>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D7E5A001B597507A7A92B895852C7B76"><img src="../media/D7E5A001B597507A7A92B895852C7B76.png" width="139" height="21"></img></a></markup></quote>
 </content>
 </section>
 

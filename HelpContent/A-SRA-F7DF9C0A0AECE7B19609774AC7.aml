@@ -1,0 +1,81 @@
+﻿
+<topic id="F7DF9C0A0AECE7B19609774AC70B147B" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="8A73F813C2BA5A0BB70B3262B294B137">Altaxo's command line arguments</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="0F1AE84ECC5B64EF7B0247DDC7B13975">
+<title>Save your settings
+</title>
+<content>
+
+<para>
+Your user settings are stored in a special subfolder of your user account. The easiest way to get there is to open Altaxo, and then choose from the main menu <codeInline>Help → Open settings directory</codeInline>. This will open an explorer window which shows Altaxo's settings directory.
+</para>
+
+<para>
+At the time of writing, in this directory resides one folder, named <codeInline>Altaxo4</codeInline>. It is this folder that you must save if you want to restore your settings later or if you want to transfer them to another computer or to another user account.
+</para>
+</content>
+</section>
+
+<section address="8E4F74F9C40C692B28A56859D2FAAFA5">
+<title>Restore your settings
+</title>
+<content>
+
+<para>
+To restore your settings on another computer, it is very important that you use the following order of actions:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+open Altaxo on the computer on which you want to restore the settings
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+use from the main menu <codeInline>Help → Open settings directory</codeInline> to open the explorer window with the settings directory.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Now <legacyBold>important: close all instances of Altaxo</legacyBold> on this computer (but leave the explorer window open)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Delete the current settings in the settings directory
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Copy your saved settings into the settings directory
+</para>
+</listItem>
+</list>
+
+<para>
+Why it is important to close all instances of Altaxo before you can restore your settings? That is because in the very moment you close Altaxo, Altaxo writes its current settings into the settings directory. If you first restore your settings and then close Altaxo, Altaxo would overwrite your restored settings again.
+</para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

@@ -13,6 +13,7 @@ Previous section: <link xlink:href="577B485E0653126B7C72BCA3C63D6692">Installati
 <para>
 Installation on Linux is described by the example of installing Altaxo on Ubuntu 18.04 LTS.
 Altaxo requires the full .Net framework, including Gui components such as <externalLink><linkText>Windows Presentation Foundation (WPF)</linkText><linkUri>https://en.wikipedia.org/wiki/Windows_Presentation_Foundation</linkUri></externalLink>, which was developed for the Windows operating system. This means that Altaxo can not run natively on Linux, but requires the installation of <externalLink><linkText>Wine</linkText><linkUri>https://en.wikipedia.org/wiki/Wine_(software)</linkUri></externalLink>, a compatibility layer that allows computer programs developed for Microsoft Windows to run on Unix-like operating systems.
+When writing this installation tutorial, the version 4.6.x.x of Altaxo was used, requiring the .NET framework 4.6 at this time.
 </para>
 
 <para>
@@ -24,7 +25,7 @@ The main tasks that are needed for installation are:
 <listItem>
 
 <para>
-install Wine and the .Net framework
+install Wine and the .Net framework 4.6
 </para>
 </listItem>
 

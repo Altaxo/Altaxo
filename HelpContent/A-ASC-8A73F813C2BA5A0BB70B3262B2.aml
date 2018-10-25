@@ -1,0 +1,77 @@
+﻿
+<topic id="8A73F813C2BA5A0BB70B3262B294B137" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="D7216AC7DC127824F9628052A8B61BF1">Appendix</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Altaxo can be started using either <codeInline>AltaxoStartup.exe</codeInline> or <codeInline>AltaxoStartup32.exe</codeInline>, located in the <codeInline>bin</codeInline> subfolder of the Altaxo installation folder.
+<codeInline>AltaxoStartup32.exe</codeInline> starts Altaxo always in 32 bit mode. If using <codeInline>AltaxoStartup.exe</codeInline>, the mode Altaxo is started with depends on your system architecture (32 bit on 32-bit Windows systems, 64 bit on 64-bit Windows systems).
+</para>
+
+<para>
+The following command line arguments can be used to start up Altaxo (both with <codeInline>AltaxoStartup.exe</codeInline> and <codeInline>AltaxoStartup32.exe</codeInline>:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<codeInline>xyz.axoprj</codeInline> :<lineBreak/>
+loads the Altaxo project named <codeInline>xyz.axoprj</codeInline>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>-nologo</codeInline> :<lineBreak/>
+suppresses the show up of the Altaxo logo during startup.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>-noExceptionBox</codeInline> :<lineBreak/>
+suppresses the show up of the exception box should an exception occur during startup or running of the application
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>-embedding</codeInline> :<lineBreak/>
+runs Altaxo in COM local server mode (do not use this unless you know exactly what you do, currently working properly only when used with <codeInline>AltaxoStartup32.exe</codeInline>, i.e. in 32 bit mode).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>-executetablescript nameOfTheTable</codeInline> :<lineBreak/>
+executes the table script of the table <codeInline>nameOfTheTable</codeInline>. This argument can be used multiple times. The scripts are executed in the order they are given at the command line.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>-exit</codeInline> :<lineBreak/>
+if this argument is the last argument, Altaxo is exited before Altaxo's workbench is shown. All arguments before this argument are executed nevertheless (e.g. loading of a Altaxo project, executing a table script etc.). If this argument is not the last one, it is ignored.
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="F7DF9C0A0AECE7B19609774AC70B147B">Save / restore Altaxo's user settings</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

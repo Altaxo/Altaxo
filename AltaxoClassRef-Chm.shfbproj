@@ -107,6 +107,7 @@
     <None Include="HelpContent\TAW-WN-742EC350D96B6D65DA918DE77.aml" />
     <None Include="HelpContent\TAW-WSA-51AB2CB3ECBAFD1DD0F029C0.aml" />
     <None Include="HelpContent\2G-942E3813AA2CE7361340941CE02C3.aml" />
+    <None Include="HelpContent\2G-Q-56A384C0B93B52A2D781F5F98DE.aml" />
     <None Include="HelpContent\2G-C-F3F39DE287E6F866C4CE91FCB72.aml" />
     <None Include="HelpContent\2G-CG-682F12AAF3087ADE24CCF36B36.aml" />
     <None Include="HelpContent\2G-MG-AE99705CE5CA5220BF3FC52F74.aml" />
@@ -128,6 +129,9 @@
     <None Include="HelpContent\ASC-LRC-01A8CFA2EB8AF7B1F2DDA0AC.aml" />
     <None Include="HelpContent\PO-2F5E6BE1D416EEF88458DAC931E96.aml" />
     <None Include="HelpContent\PO-PI-2783FED4411F72EE01B8906649.aml" />
+    <None Include="HelpContent\A-D7216AC7DC127824F9628052A8B61B.aml" />
+    <None Include="HelpContent\A-ASC-8A73F813C2BA5A0BB70B3262B2.aml" />
+    <None Include="HelpContent\A-SRA-F7DF9C0A0AECE7B19609774AC7.aml" />
     <None Include="HelpContent\_Images.aml" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +150,30 @@
     <Image Include="HelpContent\Images\E7C1337EFF0253E9B19B768CEA40DE1A.png">
       <ImageId>E7C1337EFF0253E9B19B768CEA40DE1A</ImageId>
       <AlternateText>E7C1337EFF0253E9B19B768CEA40DE1A</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\5428A70EB7DE7D4A7E4035D00BBFAC50.png">
+      <ImageId>5428A70EB7DE7D4A7E4035D00BBFAC50</ImageId>
+      <AlternateText>5428A70EB7DE7D4A7E4035D00BBFAC50</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\6B74DE9C4450D027BDFA52CF6A27BC45.png">
+      <ImageId>6B74DE9C4450D027BDFA52CF6A27BC45</ImageId>
+      <AlternateText>6B74DE9C4450D027BDFA52CF6A27BC45</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\1C4AD0DF2D0579780AD463587CA79B0D.png">
+      <ImageId>1C4AD0DF2D0579780AD463587CA79B0D</ImageId>
+      <AlternateText>1C4AD0DF2D0579780AD463587CA79B0D</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\043CF069B617EBD6F24FF7F227256E33.png">
+      <ImageId>043CF069B617EBD6F24FF7F227256E33</ImageId>
+      <AlternateText>043CF069B617EBD6F24FF7F227256E33</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\85FE3EBBB9483A31FE1C30B76A8F58F1.png">
+      <ImageId>85FE3EBBB9483A31FE1C30B76A8F58F1</ImageId>
+      <AlternateText>85FE3EBBB9483A31FE1C30B76A8F58F1</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\01004619A02F8B1489A15C66A0B16B00.png">
+      <ImageId>01004619A02F8B1489A15C66A0B16B00</ImageId>
+      <AlternateText>01004619A02F8B1489A15C66A0B16B00</AlternateText>
     </Image>
     <Image Include="HelpContent\Images\48AF9DC1A40E495A8934BEC23FA2EEC8.png">
       <ImageId>48AF9DC1A40E495A8934BEC23FA2EEC8</ImageId>
@@ -311,13 +339,25 @@
       <ImageId>C7A8E60C99AC87B1EE9B91F945A0291A</ImageId>
       <AlternateText>C7A8E60C99AC87B1EE9B91F945A0291A</AlternateText>
     </Image>
-    <Image Include="HelpContent\Images\231A01EB7C0F4EF681AA2E7FB31E82E1.png">
-      <ImageId>231A01EB7C0F4EF681AA2E7FB31E82E1</ImageId>
-      <AlternateText>231A01EB7C0F4EF681AA2E7FB31E82E1</AlternateText>
+    <Image Include="HelpContent\Images\E83DBABFB6DA25A06B5CB477EC8389AD.png">
+      <ImageId>E83DBABFB6DA25A06B5CB477EC8389AD</ImageId>
+      <AlternateText>E83DBABFB6DA25A06B5CB477EC8389AD</AlternateText>
     </Image>
-    <Image Include="HelpContent\Images\ACCACB429D15A747CCEE0850BBB9639B.png">
-      <ImageId>ACCACB429D15A747CCEE0850BBB9639B</ImageId>
-      <AlternateText>ACCACB429D15A747CCEE0850BBB9639B</AlternateText>
+    <Image Include="HelpContent\Images\428FF2B9A1B98993734C70D4AEC905DC.png">
+      <ImageId>428FF2B9A1B98993734C70D4AEC905DC</ImageId>
+      <AlternateText>428FF2B9A1B98993734C70D4AEC905DC</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\73A69C8C8AEF10A09EF9E4AF5877ADA0.png">
+      <ImageId>73A69C8C8AEF10A09EF9E4AF5877ADA0</ImageId>
+      <AlternateText>73A69C8C8AEF10A09EF9E4AF5877ADA0</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\9E8DB12A3B096ABC72F9C0F5C0B0CDBA.png">
+      <ImageId>9E8DB12A3B096ABC72F9C0F5C0B0CDBA</ImageId>
+      <AlternateText>9E8DB12A3B096ABC72F9C0F5C0B0CDBA</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\D7E5A001B597507A7A92B895852C7B76.png">
+      <ImageId>D7E5A001B597507A7A92B895852C7B76</ImageId>
+      <AlternateText>D7E5A001B597507A7A92B895852C7B76</AlternateText>
     </Image>
   </ItemGroup>
   <ItemGroup>

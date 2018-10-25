@@ -38,6 +38,8 @@
 </Topic>
 </Topic>
 <Topic id="942E3813AA2CE7361340941CE02C3EAE" visible="True" title="2D-Graphs">
+<Topic id="56A384C0B93B52A2D781F5F98DE90A52" visible="True" title="Quickstart">
+</Topic>
 <Topic id="F3F39DE287E6F866C4CE91FCB7269D42" visible="True" title="Concepts">
 </Topic>
 <Topic id="682F12AAF3087ADE24CCF36B3632B5EF" visible="True" title="Creating a graph">
@@ -79,6 +81,12 @@
 </Topic>
 <Topic id="2F5E6BE1D416EEF88458DAC931E96092" visible="True" title="Project organization">
 <Topic id="2783FED4411F72EE01B8906649201D84" visible="True" title="Project items">
+</Topic>
+</Topic>
+<Topic id="D7216AC7DC127824F9628052A8B61BF1" visible="True" title="Appendix">
+<Topic id="8A73F813C2BA5A0BB70B3262B294B137" visible="True" title="Altaxo's command line arguments">
+</Topic>
+<Topic id="F7DF9C0A0AECE7B19609774AC70B147B" visible="True" title="Save / restore Altaxo's user settings">
 </Topic>
 </Topic>
 <Topic id="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027" visible="True" title="Appendix: Images">
