@@ -229,10 +229,6 @@ namespace Altaxo.Main.Commands
       {
         new Altaxo.Graph.Commands.DuplicateGraph().Execute(parameter);
       }
-      else if (viewContent is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController)
-      {
-        new Altaxo.Graph.Commands.DuplicateGraph().Execute(parameter);
-      }
       else if (!(viewContent is null))
       {
         var viewModel = viewContent.ModelObject as IProjectItemPresentationModel;
