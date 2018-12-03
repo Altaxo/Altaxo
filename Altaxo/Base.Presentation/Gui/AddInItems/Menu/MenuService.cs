@@ -401,6 +401,10 @@ private static void ClearKeyboardBuffer(IntPtr hkl)
       int nonVirtualKey = MapVirtualKey((uint)keyData, 2);
 
       char mappedChar = Convert.ToChar(nonVirtualKey);
+      if (mappedChar == '\0')
+      {
+        mappedChar = (char)KeyInterop.VirtualKeyFromKey(keyData);
+      }
 
       return mappedChar;
     }
