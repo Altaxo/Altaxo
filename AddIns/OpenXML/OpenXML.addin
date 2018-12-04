@@ -1,0 +1,27 @@
+<AddIn name        = "OpenXML"
+       url         = "https://altaxo.sf.net"
+       version     = "1.0.0">
+
+  <Manifest>
+    <Identity name="Altaxo.AddIns.OpenXML"/>
+  </Manifest>
+
+  <Runtime>
+    <Import assembly=":AltaxoBase" />
+    <Import assembly=":AltaxoBase.Presentation" />
+    <Import assembly=":AltaxoDom" />
+    <Import assembly="OpenXMLAddin.dll"/>
+  </Runtime>
+
+  <Path name = "/Altaxo/Workbench/MainMenu/File">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
+      <MenuItem id = "OpenXMLSendToOrigin"
+                label = "OpenXML Send table to origin"
+                class = "Altaxo.Text.Commands.ExportOpenXML"/>
+    </Condition>
+  </Path>
+
+
+
+
+</AddIn>

@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{67F1A43C-4522-4DD5-B3C1-362B33960612}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Altaxo</RootNamespace>
+    <AssemblyName>OpenXMLAddin</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.5.5631.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Text\Commands\TextCommands.cs" />
+    <Compile Include="Text\Renderers\OpenXMLRenderer_NumberingStyles.cs" />
+    <Compile Include="Text\Renderers\OpenXMLRenderer_CharacterStyles.cs" />
+    <Compile Include="Text\Renderers\OpenXMLRenderer_ParagraphStyles.cs" />
+    <Compile Include="Text\Renderers\OpenXMLRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\CodeBlockRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\HeadingRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Inlines\AutolinkInlineRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Inlines\CodeInlineRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Inlines\DelimiterInlineRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Inlines\EmphasisInlineRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Inlines\HtmlEntityInlineRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Inlines\LineBreakInlineRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Inlines\LinkInlineRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Inlines\LiteralInlineRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\ListRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\OpenXMLObjectRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\ParagraphRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\QuoteBlockRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\ThematicBreakRenderer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="OpenXML.addin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj">
+      <Project>{323d97e6-92a8-40b4-99c1-d64d4368dfc7}</Project>
+      <Name>AltaxoBase.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Altaxo\Base\AltaxoBase.csproj">
+      <Project>{ca928a5c-9673-4fbb-a60e-f91364cc9db5}</Project>
+      <Name>AltaxoBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Altaxo\Dom\AltaxoDom.csproj">
+      <Project>{71636e05-f91f-4efe-a63a-5ba2d525071f}</Project>
+      <Name>AltaxoDom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj">
+      <Project>{a145ab45-e55e-4e22-8ca1-dae537a346e0}</Project>
+      <Name>Markdig</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)DocumentFormat.OpenXml.dll $(SolutionDir)rtDir\AddIns\OpenXMLAddin\
+copy $(TargetDir)OpenXMLAddin.dll $(SolutionDir)rtDir\AddIns\OpenXMLAddin\
+copy $(TargetDir)OpenXML.addin $(SolutionDir)rtDir\AddIns\OpenXMLAddin\</PostBuildEvent>
+  </PropertyGroup>
+</Project>
