@@ -185,28 +185,11 @@ namespace Altaxo.Text.Renderers.OpenXML
     /// <param name="isOrdered">If set to <c>true</c>, the list items will start with a number. If set to false, the items will start with a bullet.</param>
     private void AddLevelToAbstractNumberingDefinition(OpenXMLRenderer renderer, int level, bool isOrdered)
     {
-      Level levelDef;
-
       var presentLevels = _currentAbstractNumberingDefinition.ChildElements.OfType<Level>().Count();
       if (level <= presentLevels)
         return;
 
-
-      switch (level)
-      {
-        case 1:
-          levelDef = GenerateLevel1();
-          break;
-        case 2:
-          levelDef = GenerateLevel2();
-          break;
-        case 3:
-          levelDef = GenerateLevel3();
-          break;
-        default:
-          levelDef = null;
-          break;
-      }
+      var levelDef = GenerateLevel(level, isOrdered);
 
       if (null != levelDef)
       {
@@ -214,90 +197,55 @@ namespace Altaxo.Text.Renderers.OpenXML
       }
     }
 
-
-    // Creates an Level instance and adds its children.
-    public Level GenerateLevel1()
+    /// <summary>
+    /// Generates a level definition, either for a bullet list or for an ordered list.
+    /// </summary>
+    /// <param name="level">The level (1..9).</param>
+    /// <param name="isOrdered">If set to <c>true</c>, this is an ordered list (numbers are shown before the list items),
+    /// if false, this is an unordered list (bullets are shown before the list items).</param>
+    /// <returns></returns>
+    public Level GenerateLevel(int level, bool isOrdered)
     {
-      var level1 = new Level() { LevelIndex = 0, TemplateCode = "04070001" };
+      var levelInst = new Level() { LevelIndex = level - 1 };
       var startNumberingValue1 = new StartNumberingValue() { Val = 1 };
-      var numberingFormat1 = new NumberingFormat() { Val = NumberFormatValues.Bullet };
-      var levelText1 = new LevelText() { Val = "·" };
-      var levelJustification1 = new LevelJustification() { Val = LevelJustificationValues.Left };
 
-      var previousParagraphProperties1 = new PreviousParagraphProperties();
-      var indentation1 = new Indentation() { Left = "720", Hanging = "360" };
+      NumberingFormat numberingFormat;
+      LevelText levelText;
 
-      previousParagraphProperties1.Append(indentation1);
+      if (isOrdered)
+      {
+        numberingFormat = new NumberingFormat() { Val = NumberFormatValues.Decimal };
+        levelText = new LevelText() { Val = string.Format(System.Globalization.CultureInfo.InvariantCulture, "%{0}.", level) };
+      }
+      else
+      {
+        numberingFormat = new NumberingFormat() { Val = NumberFormatValues.Bullet };
+        levelText = new LevelText() { Val = "·" };
+      }
 
-      var numberingSymbolRunProperties1 = new NumberingSymbolRunProperties();
+      var levelJustification = new LevelJustification() { Val = LevelJustificationValues.Left };
+
+      var previousParagraphProperties = new PreviousParagraphProperties();
+      string indentationLeft = (360 + 360 * level).ToString(System.Globalization.CultureInfo.InvariantCulture);
+      var indentation1 = new Indentation() { Left = indentationLeft, Hanging = "360" };
+      previousParagraphProperties.Append(indentation1);
+
+      var numberingSymbolRunProperties = new NumberingSymbolRunProperties(); // needed only for bullet list, Font may depend on the bullet you want to show
       var runFonts1 = new RunFonts() { Hint = FontTypeHintValues.Default, Ascii = "Symbol", HighAnsi = "Symbol" };
+      numberingSymbolRunProperties.Append(runFonts1);
 
-      numberingSymbolRunProperties1.Append(runFonts1);
-
-      level1.Append(startNumberingValue1);
-      level1.Append(numberingFormat1);
-      level1.Append(levelText1);
-      level1.Append(levelJustification1);
-      level1.Append(previousParagraphProperties1);
-      level1.Append(numberingSymbolRunProperties1);
-      return level1;
+      levelInst.Append(startNumberingValue1);
+      levelInst.Append(numberingFormat);
+      levelInst.Append(levelText);
+      levelInst.Append(levelJustification);
+      levelInst.Append(previousParagraphProperties);
+      if (!isOrdered)
+      {
+        levelInst.Append(numberingSymbolRunProperties);
+      }
+      return levelInst;
     }
 
-    // Creates an Level instance and adds its children.
-    public Level GenerateLevel2()
-    {
-      var level1 = new Level() { LevelIndex = 1, TemplateCode = "04070003", Tentative = true };
-      var startNumberingValue1 = new StartNumberingValue() { Val = 1 };
-      var numberingFormat1 = new NumberingFormat() { Val = NumberFormatValues.Bullet };
-      var levelText1 = new LevelText() { Val = "o" };
-      var levelJustification1 = new LevelJustification() { Val = LevelJustificationValues.Left };
-
-      var previousParagraphProperties1 = new PreviousParagraphProperties();
-      var indentation1 = new Indentation() { Left = "1440", Hanging = "360" };
-
-      previousParagraphProperties1.Append(indentation1);
-
-      var numberingSymbolRunProperties1 = new NumberingSymbolRunProperties();
-      var runFonts1 = new RunFonts() { Hint = FontTypeHintValues.Default, Ascii = "Courier New", HighAnsi = "Courier New", ComplexScript = "Courier New" };
-
-      numberingSymbolRunProperties1.Append(runFonts1);
-
-      level1.Append(startNumberingValue1);
-      level1.Append(numberingFormat1);
-      level1.Append(levelText1);
-      level1.Append(levelJustification1);
-      level1.Append(previousParagraphProperties1);
-      level1.Append(numberingSymbolRunProperties1);
-      return level1;
-    }
-
-    // Creates an Level instance and adds its children.
-    public Level GenerateLevel3()
-    {
-      var level1 = new Level() { LevelIndex = 2, TemplateCode = "04070005", Tentative = true };
-      var startNumberingValue1 = new StartNumberingValue() { Val = 1 };
-      var numberingFormat1 = new NumberingFormat() { Val = NumberFormatValues.Bullet };
-      var levelText1 = new LevelText() { Val = "§" };
-      var levelJustification1 = new LevelJustification() { Val = LevelJustificationValues.Left };
-
-      var previousParagraphProperties1 = new PreviousParagraphProperties();
-      var indentation1 = new Indentation() { Left = "2160", Hanging = "360" };
-
-      previousParagraphProperties1.Append(indentation1);
-
-      var numberingSymbolRunProperties1 = new NumberingSymbolRunProperties();
-      var runFonts1 = new RunFonts() { Hint = FontTypeHintValues.Default, Ascii = "Wingdings", HighAnsi = "Wingdings" };
-
-      numberingSymbolRunProperties1.Append(runFonts1);
-
-      level1.Append(startNumberingValue1);
-      level1.Append(numberingFormat1);
-      level1.Append(levelText1);
-      level1.Append(levelJustification1);
-      level1.Append(previousParagraphProperties1);
-      level1.Append(numberingSymbolRunProperties1);
-      return level1;
-    }
 
 
     /// <summary>
