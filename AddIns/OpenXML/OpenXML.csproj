@@ -65,6 +65,7 @@
     <Compile Include="Text\Renderers\OpenXML\OpenXMLObjectRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\ParagraphRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\QuoteBlockRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Styles.cs" />
     <Compile Include="Text\Renderers\OpenXML\ThematicBreakRenderer.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -57,10 +57,18 @@ namespace Altaxo.Text.Commands
 
       var markdownDocument = Markdig.Markdown.Parse(document.SourceText, pipeline.Build());
 
-      var renderer = new OpenXMLRenderer(@"C:\Temp\RenderedWordFile.docx");
+      var renderer = new OpenXMLRenderer(@"C:\Temp\RenderedWordFile.docx", document.Images);
 
 
       renderer.Render(markdownDocument);
+    }
+  }
+
+  public class TestOpenXML : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      OpenXMLRenderer.Test();
     }
   }
 }

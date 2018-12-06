@@ -27,7 +27,15 @@ namespace Altaxo.Text.Renderers
     /// <value>
     /// The name of the word document file.
     /// </value>
-    public string WordDocumentFileName { get; private set; }
+    public string WordDocumentFileName { get; private set; } = "Github";
+
+    /// <summary>
+    /// Gets the name of the theme to style the OpenXml document with.
+    /// </summary>
+    /// <value>
+    /// The name of the theme.
+    /// </value>
+    public string ThemeName { get; private set; }
 
     /// <summary>
     /// The word document
@@ -37,6 +45,8 @@ namespace Altaxo.Text.Renderers
     public Body Body { get; private set; }
     public Paragraph Paragraph { get; set; }
     public Run Run { get; set; }
+
+    public Stack<(string StyleId, string StyleName)> InlineStyles { get; private set; } = new Stack<(string StyleId, string StyleName)>();
 
     public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> Images { get; private set; }
 
@@ -82,6 +92,9 @@ namespace Altaxo.Text.Renderers
       _wordDocument = null;
     }
 
+
+
+
     public override object Render(MarkdownObject markdownObject)
     {
       object result = null;
@@ -110,7 +123,7 @@ namespace Altaxo.Text.Renderers
           // If the Styles part does not exist, add it and then add the style.
           if (part == null)
           {
-            part = AddStylesPartToPackage(_wordDocument);
+            part = AddStylesPartToPackage(_wordDocument, ThemeName);
           }
 
           // now write the document
@@ -148,7 +161,35 @@ namespace Altaxo.Text.Renderers
       return this;
     }
 
+    public static void Test()
+    {
+      const string fileName = @"C:\Temp\MyWordDocument.docx";
 
+      using (var document =
+           WordprocessingDocument.Open(fileName, false))
+      {
+        // Get a reference to the main document part.
+        var docPart = document.MainDocumentPart;
+
+        // Assign a reference to the appropriate part to the
+        // stylesPart variable.
+
+        var stylesPart = docPart.StyleDefinitionsPart;
+
+        var latentStyles = stylesPart.Styles.LatentStyles;
+
+        var otherStyles = stylesPart.Styles;
+
+        foreach (var s in latentStyles)
+        {
+          var z = s.ToString();
+        }
+        foreach (var s in otherStyles)
+        {
+          var z = s.ToString();
+        }
+      }
+    }
 
 
   }

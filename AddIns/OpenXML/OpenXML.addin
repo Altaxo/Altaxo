@@ -18,7 +18,13 @@
       <MenuItem id = "OpenXMLSendToOrigin"
                 label = "OpenXML Send table to origin"
                 class = "Altaxo.Text.Commands.ExportOpenXML"/>
+
     </Condition>
+
+    <MenuItem id = "OpenXMLTest"
+                label = "OpenXML Test"
+                class = "Altaxo.Text.Commands.TestOpenXML"/>
+
   </Path>
 
 

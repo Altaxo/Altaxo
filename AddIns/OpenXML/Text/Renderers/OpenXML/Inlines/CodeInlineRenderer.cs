@@ -38,9 +38,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
     {
       renderer.Run = renderer.Paragraph.AppendChild(new Run());
 
-      renderer.ApplyStyleToRun("CodeInline", "CodeInline", renderer.Run);
+      renderer.ApplyStyleToRun(StyleNames.CodeInlineId, StyleNames.CodeInlineName, renderer.Run);
 
-      renderer.Run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = obj.Content.ToString() });
+      renderer.Run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\x202F" + obj.Content.ToString() + "\x202F" });
 
 
       renderer.Run = null;

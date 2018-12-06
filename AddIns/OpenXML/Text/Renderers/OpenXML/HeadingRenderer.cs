@@ -40,9 +40,50 @@ namespace Altaxo.Text.Renderers.OpenXML
       renderer.Paragraph = renderer.Body.AppendChild(paragraph);
       renderer.Run = null;
 
-      var levelString = obj.Level.ToString(System.Globalization.CultureInfo.InvariantCulture);
+      string id, name;
+      switch (obj.Level)
+      {
+        case 1:
+          id = StyleNames.Heading1Id;
+          name = StyleNames.Heading1Name;
+          break;
+        case 2:
+          id = StyleNames.Heading2Id;
+          name = StyleNames.Heading2Name;
+          break;
+        case 3:
+          id = StyleNames.Heading3Id;
+          name = StyleNames.Heading3Name;
+          break;
+        case 4:
+          id = StyleNames.Heading4Id;
+          name = StyleNames.Heading4Name;
+          break;
+        case 5:
+          id = StyleNames.Heading5Id;
+          name = StyleNames.Heading5Name;
+          break;
+        case 6:
+          id = StyleNames.Heading6Id;
+          name = StyleNames.Heading6Name;
+          break;
+        case 7:
+          id = StyleNames.Heading7Id;
+          name = StyleNames.Heading7Name;
+          break;
+        case 8:
+          id = StyleNames.Heading8Id;
+          name = StyleNames.Heading9Name;
+          break;
+        case 9:
+          id = StyleNames.Heading9Id;
+          name = StyleNames.Heading9Name;
+          break;
+        default:
+          throw new NotImplementedException();
+      }
 
-      renderer.ApplyStyleToParagraph("Heading" + levelString, "Heading" + levelString, paragraph);
+      renderer.ApplyStyleToParagraph(id, name, paragraph);
       renderer.WriteLeafInline(obj);
       // renderer.EnsureLine
 

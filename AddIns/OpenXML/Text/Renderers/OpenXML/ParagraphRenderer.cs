@@ -41,7 +41,9 @@ namespace Altaxo.Text.Renderers.OpenXML
       }
 
       renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
+      renderer.PeekParagraphStyleAndAppendTo(renderer.Paragraph);
       renderer.Run = null;
+
       renderer.WriteLeafInline(obj);
     }
   }

@@ -38,7 +38,7 @@ namespace Altaxo.Text.Renderers.OpenXML
     {
       renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
       renderer.Run = null;
-      renderer.ApplyStyleToParagraph("CodeBlock", "CodeBlock", renderer.Paragraph);
+      renderer.ApplyStyleToParagraph(StyleNames.CodeBlockId, StyleNames.CodeBlockName, renderer.Paragraph);
 
       if (obj.Inline != null)
       {
@@ -55,7 +55,8 @@ namespace Altaxo.Text.Renderers.OpenXML
           for (var i = 0; i < lines.Count; i++)
           {
             renderer.Paragraph.AppendChild(new Run(new DocumentFormat.OpenXml.Wordprocessing.Text() { Text = slices[i].Slice.ToString(), Space = SpaceProcessingModeValues.Preserve }));
-            renderer.Paragraph.AppendChild(new Run(new Break()));
+            if (i < lines.Count - 1)
+              renderer.Paragraph.AppendChild(new Run(new Break()));
           }
         }
       }

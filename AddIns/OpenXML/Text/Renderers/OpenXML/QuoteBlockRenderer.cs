@@ -35,11 +35,12 @@ namespace Altaxo.Text.Renderers.OpenXML
   {
     protected override void Write(OpenXMLRenderer renderer, QuoteBlock obj)
     {
-      if (renderer.Paragraph.HasChildren)
-        renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
+
       renderer.Run = null;
-      renderer.ApplyStyleToParagraph("QuoteBlock", "QuoteBlock", renderer.Paragraph);
+
+      renderer.PushParagraphStyle(StyleNames.QuoteBlockId, StyleNames.QuoteBlockName);
       renderer.WriteChildren(obj);
+      renderer.PopParagraphStyle();
     }
   }
 }

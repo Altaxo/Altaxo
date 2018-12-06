@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
@@ -37,33 +38,77 @@ namespace Altaxo.Text.Renderers.OpenXML
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class ListRenderer : OpenXMLObjectRenderer<ListBlock>
   {
+    /// <summary>
+    /// The current abstract numbering definition. This definition is  even valid  for sublevels of the list.
+    /// Can be thought of as a list class that holds a certain style of a list. This list class can have multiple instances,
+    /// but here we define one list class for one instance.
+    /// </summary>
+    private AbstractNum _currentAbstractNumberingDefinition;
+
+    /// <summary>
+    /// The current nonabstract numbering identifier. Can be thought of as identifier for this <b>instance</b> of the list, inclusive all sublevels.
+    /// </summary>
+    private int _currentNonabstractNumberingId;
+
+    /// <summary>
+    /// Writes the <see cref="ListBlock"/> to the specified renderer.
+    /// </summary>
+    /// <param name="renderer">The renderer.</param>
+    /// <param name="listBlock">The list block to write.</param>
     protected override void Write(OpenXMLRenderer renderer, ListBlock listBlock)
     {
       // https://stackoverflow.com/questions/1940911/openxml-2-sdk-word-document-create-bulleted-list-programmatically
 
-      // ensure to have a fresh paragraph
-      if (renderer.Paragraph.HasChildren)
-        renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
-
-      if (listBlock.IsOrdered)
+      // Get the level of this list block
+      int level = 0;
+      ContainerBlock b = listBlock;
+      while (null != b)
       {
-        // renderer.Push(MamlElements.list, new Dictionary<string, string> { ["class"] = "ordered" });
-      }
-      else
-      {
-        AddBulletList(renderer, listBlock);
+        if (b is ListBlock)
+          ++level;
+        b = b.Parent;
       }
 
+      // Note: currently, we have for each list an own abstract numbering definition
+      // This is not neccessary: if the structure of the list is the same than that of a list before,
+      // in theory we can use the same abstract numbering definition for that.
 
+      if (1 == level)
+      {
+        // Add an abstract numbering definition
+        // An abstract numbering definition is a definition of the numbering styles of the different levels of a list
+        // and can be used for multiple lists
+        _currentAbstractNumberingDefinition = AddAbstractNumberingDefinition(renderer);
+
+        // Add an Number Id
+        // The number id is a unique instance, that refers to the abstract numbering definition
+        // and is used by our current list
+        _currentNonabstractNumberingId = AddNonabstractNumberId(renderer);
+      }
+
+      AddLevelToAbstractNumberingDefinition(renderer, level, listBlock.IsOrdered);
+
+
+
+
+      AddListItems(renderer, listBlock, level, _currentNonabstractNumberingId);
+
+
+      if (1 == level)
+      {
+        _currentAbstractNumberingDefinition = null;
+        _currentNonabstractNumberingId = 0;
+      }
     }
 
-
     /// <summary>
-    /// Adds the bullet list. See <see href="https://stackoverflow.com/questions/1940911/openxml-2-sdk-word-document-create-bulleted-list-programmatically"/>
+    /// Adds the abstract numbering definition. The abstract numbering definition can be thought of as the list class, which can have multiple instances.
+    /// In this definition the styles of the different list levels will be defined, but here we add the definitions part only.
+    /// The level definitions will be added to this on demand later.
     /// </summary>
     /// <param name="renderer">The renderer.</param>
-    /// <param name="listBlock">The list block.</param>
-    public void AddBulletList(OpenXMLRenderer renderer, ListBlock listBlock)
+    /// <returns>The abstract numbering definition.</returns>
+    private AbstractNum AddAbstractNumberingDefinition(OpenXMLRenderer renderer)
     {
       var _wordDocument = renderer._wordDocument;
       // Introduce bulleted numbering in case it will be needed at some point
@@ -81,8 +126,9 @@ namespace Altaxo.Text.Renderers.OpenXML
       // AbstractNum comes first and then NumberingInstance and we want to
       // insert this AFTER the last AbstractNum and BEFORE the first NumberingInstance or we will get a validation error.
       var abstractNumberId = numberingPart.Numbering.Elements<AbstractNum>().Count() + 1;
-      var abstractLevel = new Level(new NumberingFormat() { Val = NumberFormatValues.Bullet }, new LevelText() { Val = "·" }) { LevelIndex = 0 };
-      var abstractNum1 = new AbstractNum(abstractLevel) { AbstractNumberId = abstractNumberId };
+      var abstractNum1 = new AbstractNum() { AbstractNumberId = abstractNumberId };
+
+      abstractNum1.AppendChild(new MultiLevelType() { Val = MultiLevelValues.HybridMultilevel });
 
       if (abstractNumberId == 1)
       {
@@ -93,6 +139,21 @@ namespace Altaxo.Text.Renderers.OpenXML
         AbstractNum lastAbstractNum = numberingPart.Numbering.Elements<AbstractNum>().Last();
         numberingPart.Numbering.InsertAfter(abstractNum1, lastAbstractNum);
       }
+      return abstractNum1;
+    }
+
+    /// <summary>
+    /// Creates a list instace be creating a (nonabstract) numbering instance. This is an element with a unique number (which is returned)
+    /// that refers to the abstract numbering definition.
+    /// </summary>
+    /// <param name="renderer">The renderer.</param>
+    /// <returns>The unique identifer. Is used afterwards in the list.</returns>
+    public int AddNonabstractNumberId(OpenXMLRenderer renderer)
+    {
+      var _wordDocument = renderer._wordDocument;
+      NumberingDefinitionsPart numberingPart = _wordDocument.MainDocumentPart.NumberingDefinitionsPart;
+
+      var abstractNumberId = _currentAbstractNumberingDefinition.AbstractNumberId;
 
       // Insert an NumberingInstance into the numbering part numbering list.  The order seems to matter or it will not pass the 
       // Open XML SDK Productity Tools validation test.  AbstractNum comes first and then NumberingInstance and we want to
@@ -112,36 +173,153 @@ namespace Altaxo.Text.Renderers.OpenXML
         numberingPart.Numbering.InsertAfter(numberingInstance1, lastNumberingInstance);
       }
 
-      Body body = _wordDocument.MainDocumentPart.Document.Body;
+      return numberId;
+    }
 
-      foreach (var item in listBlock)
+
+    /// <summary>
+    /// Adds the level to abstract numbering definition.
+    /// </summary>
+    /// <param name="renderer">The renderer.</param>
+    /// <param name="level">The level to add (1..9).</param>
+    /// <param name="isOrdered">If set to <c>true</c>, the list items will start with a number. If set to false, the items will start with a bullet.</param>
+    private void AddLevelToAbstractNumberingDefinition(OpenXMLRenderer renderer, int level, bool isOrdered)
+    {
+      Level levelDef;
+
+      var presentLevels = _currentAbstractNumberingDefinition.ChildElements.OfType<Level>().Count();
+      if (level <= presentLevels)
+        return;
+
+
+      switch (level)
       {
-        var listItem = (ListItemBlock)item;
-        var runItem = renderer.Run = renderer.Paragraph.AppendChild(new Run());
-        renderer.WriteChildren(listItem);
+        case 1:
+          levelDef = GenerateLevel1();
+          break;
+        case 2:
+          levelDef = GenerateLevel2();
+          break;
+        case 3:
+          levelDef = GenerateLevel3();
+          break;
+        default:
+          levelDef = null;
+          break;
+      }
 
-        // Create items for paragraph properties
-        var numberingProperties = new NumberingProperties(new NumberingLevelReference() { Val = 0 }, new NumberingId() { Val = numberId });
-        var spacingBetweenLines1 = new SpacingBetweenLines() { After = "0" };  // Get rid of space between bullets
-        var indentation = new Indentation() { Left = "720", Hanging = "360" };  // correct indentation 
-
-        var paragraphMarkRunProperties1 = new ParagraphMarkRunProperties();
-        var runFonts1 = new RunFonts() { Ascii = "Symbol", HighAnsi = "Symbol" };
-        paragraphMarkRunProperties1.Append(runFonts1);
-
-        // create paragraph properties
-        var paragraphProperties = new ParagraphProperties(numberingProperties, spacingBetweenLines1, indentation, paragraphMarkRunProperties1);
-
-        // Create paragraph 
-        var newPara = new Paragraph(paragraphProperties);
-
-        // Add run to the paragraph
-        newPara.AppendChild(runItem);
-
-        // Add one bullet item to the body
-        body.AppendChild(newPara);
+      if (null != levelDef)
+      {
+        _currentAbstractNumberingDefinition.AppendChild(levelDef);
       }
     }
 
+
+    // Creates an Level instance and adds its children.
+    public Level GenerateLevel1()
+    {
+      var level1 = new Level() { LevelIndex = 0, TemplateCode = "04070001" };
+      var startNumberingValue1 = new StartNumberingValue() { Val = 1 };
+      var numberingFormat1 = new NumberingFormat() { Val = NumberFormatValues.Bullet };
+      var levelText1 = new LevelText() { Val = "·" };
+      var levelJustification1 = new LevelJustification() { Val = LevelJustificationValues.Left };
+
+      var previousParagraphProperties1 = new PreviousParagraphProperties();
+      var indentation1 = new Indentation() { Left = "720", Hanging = "360" };
+
+      previousParagraphProperties1.Append(indentation1);
+
+      var numberingSymbolRunProperties1 = new NumberingSymbolRunProperties();
+      var runFonts1 = new RunFonts() { Hint = FontTypeHintValues.Default, Ascii = "Symbol", HighAnsi = "Symbol" };
+
+      numberingSymbolRunProperties1.Append(runFonts1);
+
+      level1.Append(startNumberingValue1);
+      level1.Append(numberingFormat1);
+      level1.Append(levelText1);
+      level1.Append(levelJustification1);
+      level1.Append(previousParagraphProperties1);
+      level1.Append(numberingSymbolRunProperties1);
+      return level1;
+    }
+
+    // Creates an Level instance and adds its children.
+    public Level GenerateLevel2()
+    {
+      var level1 = new Level() { LevelIndex = 1, TemplateCode = "04070003", Tentative = true };
+      var startNumberingValue1 = new StartNumberingValue() { Val = 1 };
+      var numberingFormat1 = new NumberingFormat() { Val = NumberFormatValues.Bullet };
+      var levelText1 = new LevelText() { Val = "o" };
+      var levelJustification1 = new LevelJustification() { Val = LevelJustificationValues.Left };
+
+      var previousParagraphProperties1 = new PreviousParagraphProperties();
+      var indentation1 = new Indentation() { Left = "1440", Hanging = "360" };
+
+      previousParagraphProperties1.Append(indentation1);
+
+      var numberingSymbolRunProperties1 = new NumberingSymbolRunProperties();
+      var runFonts1 = new RunFonts() { Hint = FontTypeHintValues.Default, Ascii = "Courier New", HighAnsi = "Courier New", ComplexScript = "Courier New" };
+
+      numberingSymbolRunProperties1.Append(runFonts1);
+
+      level1.Append(startNumberingValue1);
+      level1.Append(numberingFormat1);
+      level1.Append(levelText1);
+      level1.Append(levelJustification1);
+      level1.Append(previousParagraphProperties1);
+      level1.Append(numberingSymbolRunProperties1);
+      return level1;
+    }
+
+    // Creates an Level instance and adds its children.
+    public Level GenerateLevel3()
+    {
+      var level1 = new Level() { LevelIndex = 2, TemplateCode = "04070005", Tentative = true };
+      var startNumberingValue1 = new StartNumberingValue() { Val = 1 };
+      var numberingFormat1 = new NumberingFormat() { Val = NumberFormatValues.Bullet };
+      var levelText1 = new LevelText() { Val = "§" };
+      var levelJustification1 = new LevelJustification() { Val = LevelJustificationValues.Left };
+
+      var previousParagraphProperties1 = new PreviousParagraphProperties();
+      var indentation1 = new Indentation() { Left = "2160", Hanging = "360" };
+
+      previousParagraphProperties1.Append(indentation1);
+
+      var numberingSymbolRunProperties1 = new NumberingSymbolRunProperties();
+      var runFonts1 = new RunFonts() { Hint = FontTypeHintValues.Default, Ascii = "Wingdings", HighAnsi = "Wingdings" };
+
+      numberingSymbolRunProperties1.Append(runFonts1);
+
+      level1.Append(startNumberingValue1);
+      level1.Append(numberingFormat1);
+      level1.Append(levelText1);
+      level1.Append(levelJustification1);
+      level1.Append(previousParagraphProperties1);
+      level1.Append(numberingSymbolRunProperties1);
+      return level1;
+    }
+
+
+    /// <summary>
+    /// Adds the list items.
+    /// </summary>
+    /// <param name="renderer">The renderer.</param>
+    /// <param name="listBlock">The list block for which the items should be added.</param>
+    /// <param name="level">The current level of this list (1= main list, 2 = first sub list, etc.)</param>
+    /// <param name="numberId">The unique identifier identifying this list. Note: it is the same identifier independent on the level.</param>
+    public void AddListItems(OpenXMLRenderer renderer, ListBlock listBlock, int level, int numberId)
+    {
+      foreach (var item in listBlock)
+      {
+        // Create items for paragraph properties
+        var numberingProperties = new NumberingProperties(new NumberingLevelReference() { Val = level - 1 }, new NumberingId() { Val = numberId });
+        var paragraphProperties = renderer.PushParagraphStyle(StyleNames.ListParagraphId, StyleNames.ListParagraphName);
+        paragraphProperties.AppendChild(numberingProperties);
+        var listItem = (ListItemBlock)item;
+        renderer.Run = null;
+        renderer.WriteChildren(listItem);
+        renderer.PopParagraphStyle();
+      }
+    }
   }
 }

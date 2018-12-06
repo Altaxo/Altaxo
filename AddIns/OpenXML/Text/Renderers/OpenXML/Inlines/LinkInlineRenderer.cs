@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
@@ -41,6 +42,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
   /// </summary>
   public class LinkInlineRenderer : OpenXMLObjectRenderer<LinkInline>
   {
+
+
     /// <inheritdoc/>
     protected override void Write(OpenXMLRenderer renderer, LinkInline link)
     {
@@ -54,13 +57,12 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       {
         if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
         {
+          var nextId = renderer._wordDocument.MainDocumentPart.Parts.Count() + 1;
+          var rId = "rId" + nextId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          renderer._wordDocument.MainDocumentPart.AddHyperlinkRelationship(new System.Uri(url, System.UriKind.Absolute), true, rId);
 
-
-          renderer.Paragraph.AppendChild(new Hyperlink(renderer.Run = new Run())
-          {
-            DocLocation = url
-          });
-
+          renderer.Paragraph.AppendChild(new Hyperlink(renderer.Run = new Run()) { Id = rId });
+          renderer.ApplyStyleToRun(StyleNames.LinkId, StyleNames.LinkName, renderer.Run);
           renderer.WriteChildren(link);
           renderer.Run = null;
         }

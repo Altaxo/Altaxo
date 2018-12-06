@@ -20,17 +20,99 @@ namespace Altaxo.Text.Renderers
   /// <seealso cref="RendererBase" />
   public partial class OpenXMLRenderer : RendererBase, IDisposable
   {
+    /// <summary>
+    /// Stacks the paragraph properties for a bunch of paragraphs.
+    /// </summary>
+    private Stack<ParagraphProperties> ParagraphStyles = new Stack<ParagraphProperties>();
+
+    /// <summary>
+    /// Pushes the paragraph style to the stack
+    /// </summary>
+    /// <param name="styleid">The styleid (id of the style template).</param>
+    /// <param name="stylename">The stylename (name of the style template).</param>
+    /// <returns>The newly created paragraph properties, in which the styleid is already set.</returns>
+    public ParagraphProperties PushParagraphStyle(string styleid, string stylename)
+    {
+      var paragraphProperties = new ParagraphProperties();
+
+      styleid = GetStyleIdFromStyleName(stylename);
+
+      // Set the style of the paragraph.
+      paragraphProperties.ParagraphStyleId = new ParagraphStyleId() { Val = styleid };
+      ParagraphStyles.Push(paragraphProperties);
+
+      return paragraphProperties;
+    }
+
+    /// <summary>
+    /// Pushes a <see cref="ParagraphProperties"/> instance directly on the stack.
+    /// </summary>
+    /// <param name="paragraphProperties">The paragraph properties.</param>
+    public void PushParagraphStyle(ParagraphProperties paragraphProperties)
+    {
+      ParagraphStyles.Push(paragraphProperties);
+    }
+
+    /// <summary>
+    /// Pops a <see cref="ParagraphProperties"/> instance from the stack.
+    /// </summary>
+    public void PopParagraphStyle()
+    {
+      ParagraphStyles.Pop();
+    }
+
+    /// <summary>
+    /// Uses the topmost paragraph properties instance for the provided paragraph.
+    /// </summary>
+    /// <param name="p">The paragraph to assign the paragraph properties to.</param>
+    /// <returns>True if a <see cref="ParagraphProperties"/> instance could be assigned; otherwise, false.</returns>
+    public bool PeekParagraphStyleAndAppendTo(Paragraph p)
+    {
+      if (ParagraphStyles.Count > 0)
+      {
+        var pp = ParagraphStyles.Peek();
+
+        // If the paragraph has no ParagraphProperties object, create one.
+        if (p.Elements<ParagraphProperties>().Count() == 0)
+        {
+          p.PrependChild<ParagraphProperties>((ParagraphProperties)pp.Clone());
+          return true;
+        }
+      }
+      return false;
+    }
 
 
-    // Add a StylesDefinitionsPart to the document.  Returns a reference to it.
-    public static StyleDefinitionsPart AddStylesPartToPackage(WordprocessingDocument doc)
+    /// <summary>
+    /// Adds the styles part to the document.
+    /// </summary>
+    /// <param name="doc">The document.</param>
+    /// <param name="nameOfTheme">The name of the theme to add.</param>
+    /// <returns>The instance of the <see cref="StyleDefinitionsPart"/> containing the styles.</returns>
+    public static StyleDefinitionsPart AddStylesPartToPackage(WordprocessingDocument doc, string nameOfTheme)
     {
       StyleDefinitionsPart part;
       part = doc.MainDocumentPart.AddNewPart<StyleDefinitionsPart>();
       var root = new Styles();
       root.Save(part);
+
+      using (var stream = new FileStream(@"V:\C\Altaxo\Temp\Word\styles.xml", FileMode.Open, FileAccess.Read, FileShare.Read))
+      {
+        part.FeedData(stream);
+      }
       return part;
     }
+
+    /*
+    public static Stream OpenStream(string name)
+    {
+      var s = typeof().Assembly.GetManifestResourceStream($"{Prefix}{name}");
+      if (s == null)
+        throw new FileNotFoundException("The resource file '" + name + "' was not found.");
+      return s;
+    }
+    */
+
 
     /// <summary>
     /// Determines whether the given style identifier is found in the document.
@@ -57,7 +139,11 @@ namespace Altaxo.Text.Renderers
       return style == null ? false : true;
     }
 
-    // Return styleid that matches the styleName, or null when there's no match.
+    /// <summary>
+    /// Gets the name of the style identifier that matches the styleName, or null when there is no match.
+    /// </summary>
+    /// <param name="styleName">Name of the style.</param>
+    /// <returns>The style identifier, or null if there is no match.</returns>
     public string GetStyleIdFromStyleName(string styleName)
     {
       StyleDefinitionsPart stylePart = _wordDocument.MainDocumentPart.StyleDefinitionsPart;
@@ -68,15 +154,19 @@ namespace Altaxo.Text.Renderers
       return styleId;
     }
 
-    // Create a new style with the specified styleid and stylename and add it to the specified
-    // style definitions part.
+    /// <summary>
+    /// Not used. Is an example how to create and add a new style programatically.
+    /// </summary>
+    /// <param name="styleDefinitionsPart">The style definitions part.</param>
+    /// <param name="styleid">The styleid.</param>
+    /// <param name="stylename">The stylename.</param>
     public static void AddNewStyle(StyleDefinitionsPart styleDefinitionsPart, string styleid, string stylename)
     {
-      // Get access to the root element of the styles part.
-      Styles styles = styleDefinitionsPart.Styles;
+      Style style;
+
 
       // Create a new paragraph style and specify some of the properties.
-      var style = new Style()
+      style = new Style()
       {
         Type = StyleValues.Paragraph,
         StyleId = styleid,
@@ -106,12 +196,22 @@ namespace Altaxo.Text.Renderers
       // Add the run properties to the style.
       style.Append(styleRunProperties1);
 
+
+
       // Add the style to the styles part.
+      // Get access to the root element of the styles part.
+      var styles = styleDefinitionsPart.Styles;
       styles.Append(style);
     }
 
 
 
+
+    /// <summary>
+    /// Ensures that the style exists. If it not exists already, it is added.
+    /// </summary>
+    /// <param name="styleid">The style id.</param>
+    /// <param name="stylename">The style name.</param>
     public void EnsureStyleExists(string styleid, string stylename)
     {
       if (IsParagraphStyleIdInDocument(styleid) != true)
@@ -130,7 +230,13 @@ namespace Altaxo.Text.Renderers
     }
 
 
-    // Apply a style to a paragraph.
+
+    /// <summary>
+    /// Applies a style to the provided paragraph.
+    /// </summary>
+    /// <param name="styleid">The styleid.</param>
+    /// <param name="stylename">The stylename.</param>
+    /// <param name="p">The paragraph to apply the style to.</param>
     public void ApplyStyleToParagraph(string styleid, string stylename, Paragraph p)
     {
       // If the paragraph has no ParagraphProperties object, create one.
@@ -140,35 +246,16 @@ namespace Altaxo.Text.Renderers
       }
 
       // Get the paragraph properties element of the paragraph.
-      ParagraphProperties pPr = p.Elements<ParagraphProperties>().First();
+      var paragraphProperties = p.Elements<ParagraphProperties>().First();
 
-      // Get the Styles part for this document.
-      StyleDefinitionsPart part = _wordDocument.MainDocumentPart.StyleDefinitionsPart;
-
-      // If the Styles part does not exist, add it and then add the style.
-      if (part == null)
-      {
-        part = AddStylesPartToPackage(_wordDocument);
-        AddNewStyle(part, styleid, stylename);
-      }
-      else
-      {
-        // If the style is not in the document, add it.
-        if (IsParagraphStyleIdInDocument(styleid) != true)
-        {
-          // No match on styleid, so let's try style name.
-          string styleidFromName = GetStyleIdFromStyleName(stylename);
-          if (styleidFromName == null)
-          {
-            AddNewStyle(part, styleid, stylename);
-          }
-          else
-            styleid = styleidFromName;
-        }
-      }
+      styleid = GetStyleIdFromStyleName(stylename);
 
       // Set the style of the paragraph.
-      pPr.ParagraphStyleId = new ParagraphStyleId() { Val = styleid };
+      paragraphProperties.ParagraphStyleId = new ParagraphStyleId() { Val = styleid };
     }
+
+
+
+
   }
 }
