@@ -65,14 +65,14 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="doc">The graph document to export.</param>
     /// <param name="stream">The stream to render inot.</param>
     /// <param name="exportOptions">The export options to use.</param>
-    /// <returns>True if the rendering was successful. False if the rendering was unsuccessful, e.g. if no exporter was available.</returns>
-    public static bool RenderToStream(this GraphDocument doc, System.IO.Stream stream, Altaxo.Graph.Gdi.GraphExportOptions exportOptions)
+    /// <returns>The dimensions of the image in pixels). If the rendering was unsuccessful, e.g. because no exporter was available, the tuple (0,0) is returned.</returns>
+    public static (int pixelsX, int pixelsY) RenderToStream(this GraphDocument doc, System.IO.Stream stream, Altaxo.Graph.Gdi.GraphExportOptions exportOptions)
     {
       var imageExporter = Current.ProjectService.GetProjectItemImageExporter(doc);
       if (null == imageExporter)
-        return false;
-      imageExporter.ExportAsImageToStream(doc, exportOptions, stream);
-      return true;
+        return (0, 0);
+      else
+        return imageExporter.ExportAsImageToStream(doc, exportOptions, stream);
     }
 
     /// <summary>
@@ -85,8 +85,8 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="pixelformat">Specify the pixelformat here.</param>
     /// <param name="sourceDpiResolution">Resolution at which the graph document is rendered into a bitmap.</param>
     /// <param name="destinationDpiResolution">Resolution which is assigned to the bitmap. This determines the physical size of the bitmap.</param>
-    /// <returns>True if the rendering was successful. False if the rendering was unsuccessful, e.g. if no exporter was available.</returns>
-    public static bool RenderToStream(this GraphDocument doc, System.IO.Stream stream, Altaxo.Graph.Gdi.BrushX backbrush1, Altaxo.Graph.Gdi.BrushX backbrush2, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
+    /// <returns>The pixel dimensions of the image if the rendering was successful. The tuple (0,0) is returned if the rendering was unsuccessful, e.g. if no exporter was available.</returns>
+    public static (int PixelsX, int PixelsY) RenderToStream(this GraphDocument doc, System.IO.Stream stream, Altaxo.Graph.Gdi.BrushX backbrush1, Altaxo.Graph.Gdi.BrushX backbrush2, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
     {
       var exportOptions = new Altaxo.Graph.Gdi.GraphExportOptions();
       exportOptions.TrySetImageAndPixelFormat(ImageFormat.Png, PixelFormat.Format32bppArgb);

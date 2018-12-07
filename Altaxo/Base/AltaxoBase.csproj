@@ -252,6 +252,7 @@
     <Compile Include="Analysis\Statistics\Histograms\IBinning.cs" />
     <Compile Include="Analysis\Statistics\Histograms\LinearBinning.cs" />
     <Compile Include="Analysis\Statistics\Histograms\LogarithmicBinning.cs" />
+    <Compile Include="Drawing\ImageExtensions.cs" />
     <Compile Include="Geometry\Double_2D\PolygonMath.cs" />
     <Compile Include="Geometry\LineD2D.cs" />
     <Compile Include="Geometry\PointD2DAnnotated.cs" />

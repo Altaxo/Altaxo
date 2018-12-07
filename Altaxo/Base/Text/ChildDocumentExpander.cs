@@ -134,11 +134,11 @@ namespace Altaxo.Text
           {
             using (var stream = new System.IO.MemoryStream())
             {
-              var (isStreamImage, extension, errorMessage) = imageStreamProvider.GetImageStream(stream, link.Url, 300, Altaxo.Main.ProjectFolder.GetFolderPart(textDocument.Name), textDocument.Images);
-              if (null == errorMessage)
+              var streamResult = imageStreamProvider.GetImageStream(stream, link.Url, 300, Altaxo.Main.ProjectFolder.GetFolderPart(textDocument.Name), textDocument.Images);
+              if (null == streamResult.ErrorMessage)
               {
                 stream.Seek(0, System.IO.SeekOrigin.Begin);
-                var proxy = MemoryStreamImageProxy.FromStream(stream, extension);
+                var proxy = MemoryStreamImageProxy.FromStream(stream, streamResult.Extension);
                 resultDocument.AddImage(proxy);
                 documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
                 documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, "local:" + proxy.ContentHash);

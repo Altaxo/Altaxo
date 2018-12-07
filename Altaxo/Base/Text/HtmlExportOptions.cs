@@ -425,13 +425,13 @@ namespace Altaxo.Text
       {
         using (var stream = new System.IO.MemoryStream())
         {
-          var (isStreamImage, extension, errorMessage) = imageStreamProvider.GetImageStream(stream, Url, 300, Altaxo.Main.ProjectFolder.GetFolderPart(document.Name), document.Images);
+          var streamResult = imageStreamProvider.GetImageStream(stream, Url, 300, Altaxo.Main.ProjectFolder.GetFolderPart(document.Name), document.Images);
 
-          if (isStreamImage && null == errorMessage)
+          if (streamResult.IsValid)
           {
             var hashName = MemoryStreamImageProxy.ComputeStreamHash(stream);
 
-            var imageFileName = hashName + extension;
+            var imageFileName = hashName + streamResult.Extension;
 
             if (!Directory.Exists(imagePath))
             {

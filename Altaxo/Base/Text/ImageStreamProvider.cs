@@ -31,6 +31,46 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Text
 {
+  public class ImageRenderToStreamResult
+  {
+    public bool IsValid { get; private set; }
+    public string NameHint { get; private set; }
+    public string Extension { get; private set; }
+
+    public string ErrorMessage { get; private set; }
+
+    public double DpiX { get; private set; }
+    public double DpiY { get; private set; }
+
+    public double PixelsX { get; private set; }
+    public double PixelsY { get; private set; }
+
+    public ImageRenderToStreamResult(
+      string nameHint,
+      string extension,
+      double dpiX,
+      double dpiY,
+      double pixelsX,
+      double pixelsY)
+    {
+      IsValid = true;
+      ErrorMessage = null;
+      NameHint = nameHint;
+      Extension = extension;
+      DpiX = dpiX;
+      DpiY = dpiY;
+      PixelsX = pixelsX;
+      PixelsY = pixelsY;
+    }
+
+    public ImageRenderToStreamResult(string errorMessage)
+    {
+      IsValid = false;
+      ErrorMessage = errorMessage;
+    }
+  }
+
+
   /// <summary>
   /// Provided stream content of images referenced in a <see cref="TextDocument"/>.
   /// </summary>
@@ -45,7 +85,7 @@ namespace Altaxo.Text
     /// <param name="altaxoFolderLocation">The folder location of the <see cref="TextDocument"/> It is used for searching graphs relative to that location.</param>
     /// <param name="localImages">The local images of the <see cref="TextDocument"/>.</param>
     /// <returns>A tuple of tree values. isStreamImage is true if the url could be resolved to an image. extension is the file extension of the image. errorMessage is unequal to null if an error has occured. In this case the content of <paramref name="stream"/> was not set.</returns>
-    public (bool isStreamImage, string extension, string errorMessage) GetImageStream(System.IO.Stream stream, string url, double targetResolution, string altaxoFolderLocation, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages)
+    public ImageRenderToStreamResult GetImageStream(System.IO.Stream stream, string url, double targetResolution, string altaxoFolderLocation, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages)
     {
       if (url.StartsWith(ImagePretext.GraphRelativePathPretext))
       {
@@ -61,8 +101,10 @@ namespace Altaxo.Text
             DestinationDpiResolution = targetResolution,
           };
 
-          Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderToStream(graph, stream, options);
-          return (true, ".png", null);
+          var (pixelsX, pixelsY) = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderToStream(graph, stream, options);
+          return new ImageRenderToStreamResult(graph.Name, ".png",
+            options.DestinationDpiResolution, options.DestinationDpiResolution,
+            pixelsX, pixelsY);
         }
         else if (grp is Altaxo.Graph.Graph3D.GraphDocument graph3D)
         {
@@ -72,28 +114,58 @@ namespace Altaxo.Text
             DestinationDpiResolution = targetResolution,
           };
 
-          if (Altaxo.Graph.Graph3D.GraphDocumentExportActions.RenderToStream(graph3D, stream, options))
-            return (true, ".png", null);
+          var (pixelsX, pixelsY) = Altaxo.Graph.Graph3D.GraphDocumentExportActions.RenderToStream(graph3D, stream, options);
+          if (pixelsX > 0 && pixelsY > 0)
+            return new ImageRenderToStreamResult(graph3D.Name, ".png",
+              options.DestinationDpiResolution, options.DestinationDpiResolution,
+              pixelsX, pixelsY);
           else
-            return (true, null, string.Format("ERROR: NO RENDERER FOR 3D GRAPHS FOUND!"));
+            return new ImageRenderToStreamResult("ERROR: NO RENDERER FOR 3D GRAPHS FOUND!");
         }
         else
         {
-          return (true, null, string.Format("ERROR: GRAPH '{0}' NOT FOUND!", graphName));
+          return new ImageRenderToStreamResult(string.Format("ERROR: GRAPH '{0}' NOT FOUND!", graphName));
         }
       }
       else if (url.StartsWith(ImagePretext.ResourceImagePretext))
       {
         string name = url.Substring(ImagePretext.ResourceImagePretext.Length);
         var inStream = Current.ResourceService.GetResourceStream(name);
+
         if (null != inStream)
         {
+          string extension;
+          int pixelsX, pixelsY;
+          double dpiX, dpiY;
+
+          using (var image = System.Drawing.Image.FromStream(inStream))
+          {
+
+            pixelsX = image.Width;
+            pixelsY = image.Height;
+            dpiX = image.HorizontalResolution;
+            dpiY = image.VerticalResolution;
+            extension = Altaxo.Drawing.ImageExtensions.GetFileExtension(image);
+          }
+          inStream.Seek(0, SeekOrigin.Begin);
+
           inStream.CopyTo(stream);
-          return (true, ".png", null);
+          return new ImageRenderToStreamResult(url, extension, dpiX, dpiY, pixelsX, pixelsY);
         }
-        else
+        else // If it doesn't work with a stream, we try to get a bitmap
         {
-          return (true, null, string.Format("Resource image '{0}' not found!", name));
+          System.Drawing.Bitmap bitmap = null;
+          try { bitmap = Current.ResourceService.GetBitmap(name); } catch { }
+
+          if (null != bitmap)
+          {
+            bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            return new ImageRenderToStreamResult(url, ".png", bitmap.HorizontalResolution, bitmap.VerticalResolution, bitmap.Width, bitmap.Height);
+          }
+          else
+          {
+            return new ImageRenderToStreamResult(string.Format("Resource image '{0}' not found!", name));
+          }
         }
       }
       else if (url.StartsWith(ImagePretext.LocalImagePretext))
@@ -105,22 +177,24 @@ namespace Altaxo.Text
           var inStream = localImageStreamProxy.GetContentStream();
           var extension = localImageStreamProxy.Extension;
           inStream.CopyTo(stream);
-          return (true, extension, null);
+          return new ImageRenderToStreamResult(localImageStreamProxy.Name, localImageStreamProxy.Extension,
+            localImageStreamProxy.ResolutionDpi.X, localImageStreamProxy.ResolutionDpi.Y,
+            localImageStreamProxy.ImageSizePixels.X, localImageStreamProxy.ImageSizePixels.Y);
         }
         else
         {
-          return (true, null, string.Format("ERROR: LOCAL IMAGE '{0}' NOT FOUND!", name));
+          return new ImageRenderToStreamResult(string.Format("ERROR: LOCAL IMAGE '{0}' NOT FOUND!", name));
         }
       }
       else
       {
         if (string.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
         {
-          return (false, null, string.Format("Url empty or malformed: {0}", url));
+          return new ImageRenderToStreamResult(string.Format("Url empty or malformed: {0}", url));
         }
         else
         {
-          return (false, null, null);
+          return new ImageRenderToStreamResult(string.Format("Does not understand this kind of Url: {0}", url));
         }
       }
     }

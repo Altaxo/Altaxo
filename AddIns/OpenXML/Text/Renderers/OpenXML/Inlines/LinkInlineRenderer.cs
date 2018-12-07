@@ -42,7 +42,14 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
   /// </summary>
   public class LinkInlineRenderer : OpenXMLObjectRenderer<LinkInline>
   {
-
+    /// <summary>
+    /// The figure index. Is incremented by one for every figure created.
+    /// </summary>
+    private uint _figureIndex;
+    /// <summary>
+    /// The link index. Is incremented by one for every link created.
+    /// </summary>
+    private uint _linkIndex;
 
     /// <inheritdoc/>
     protected override void Write(OpenXMLRenderer renderer, LinkInline link)
@@ -57,8 +64,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       {
         if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
         {
-          var nextId = renderer._wordDocument.MainDocumentPart.Parts.Count() + 1;
-          var rId = "rId" + nextId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          ++_linkIndex;
+          //var nextId = renderer._wordDocument.MainDocumentPart.Parts.Count() + 1;
+          var rId = "lkId" + _linkIndex.ToString(System.Globalization.CultureInfo.InvariantCulture);
           renderer._wordDocument.MainDocumentPart.AddHyperlinkRelationship(new System.Uri(url, System.UriKind.Absolute), true, rId);
 
           renderer.Paragraph.AppendChild(new Hyperlink(renderer.Run = new Run()) { Id = rId });
@@ -75,77 +83,124 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
 
     private void RenderImage(OpenXMLRenderer renderer, LinkInline link, string url)
     {
-      if (!renderer.Images.ContainsKey(url))
-        return;
-
-
-      double? width = null, height = null;
-
-      if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
+      using (var imageStream = new MemoryStream())
       {
-        var htmlAttributes = (Markdig.Renderers.Html.HtmlAttributes)link.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-        if (null != htmlAttributes.Properties)
-        {
-          foreach (var entry in htmlAttributes.Properties)
-          {
-            switch (entry.Key.ToLowerInvariant())
-            {
-              case "width":
-                width = GetLength(entry.Value);
-                break;
+        var streamResult = renderer.ImageProvider.GetImageStream(imageStream, url, renderer.ImageResolution, renderer.TextDocumentFolderLocation, renderer.LocalImages);
 
-              case "height":
-                height = GetLength(entry.Value);
-                break;
+        if (!streamResult.IsValid)
+        {
+          Current.Console.WriteLine("Error resolving image url {0}: {1}", url, streamResult.ErrorMessage);
+          return;
+        }
+
+        double? width = null, height = null;
+
+        if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
+        {
+          var htmlAttributes = (Markdig.Renderers.Html.HtmlAttributes)link.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
+          if (null != htmlAttributes.Properties)
+          {
+            foreach (var entry in htmlAttributes.Properties)
+            {
+              switch (entry.Key.ToLowerInvariant())
+              {
+                case "width":
+                  width = GetLength(entry.Value);
+                  break;
+
+                case "height":
+                  height = GetLength(entry.Value);
+                  break;
+              }
             }
           }
         }
+
+        ImagePartType imgPartType = ImagePartType.Jpeg;
+        switch (streamResult.Extension.ToLowerInvariant())
+        {
+          case ".bmp":
+            imgPartType = ImagePartType.Bmp;
+            break;
+          case ".emf":
+            imgPartType = ImagePartType.Emf;
+            break;
+          case ".gif":
+            imgPartType = ImagePartType.Gif;
+            break;
+          case ".ico":
+            imgPartType = ImagePartType.Icon;
+            break;
+          case ".jpg":
+          case ".jpeg":
+            imgPartType = ImagePartType.Jpeg;
+            break;
+          case ".pcx":
+            imgPartType = ImagePartType.Pcx;
+            break;
+          case ".png":
+            imgPartType = ImagePartType.Png;
+            break;
+          case ".tif":
+          case ".tiff":
+            imgPartType = ImagePartType.Tiff;
+            break;
+          case ".wmf":
+            imgPartType = ImagePartType.Wmf;
+            break;
+          default:
+            throw new NotImplementedException();
+        }
+
+
+        MainDocumentPart mainPart = renderer._wordDocument.MainDocumentPart;
+        ImagePart imagePart = mainPart.AddImagePart(imgPartType);
+
+        imageStream.Seek(0, SeekOrigin.Begin);
+        imagePart.FeedData(imageStream);
+
+        AddImageToBody(renderer._wordDocument, mainPart.GetIdOfPart(imagePart), streamResult, width, height);
+
+
+        renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
       }
-
-      var imageProxy = renderer.Images[url];
-      ImagePartType imgPartType = ImagePartType.Jpeg;
-
-      switch (imageProxy.Extension.ToLowerInvariant())
-      {
-        case ".jpg":
-        case ".jpeg":
-          imgPartType = ImagePartType.Jpeg;
-          break;
-        case ".png":
-          imgPartType = ImagePartType.Png;
-          break;
-        case ".tif":
-        case ".tiff":
-          imgPartType = ImagePartType.Tiff;
-          break;
-        case ".gif":
-          imgPartType = ImagePartType.Gif;
-          break;
-        default:
-          throw new NotImplementedException();
-      }
-
-
-      MainDocumentPart mainPart = renderer._wordDocument.MainDocumentPart;
-      ImagePart imagePart = mainPart.AddImagePart(imgPartType);
-      using (var stream = imageProxy.GetContentStream())
-      {
-        imagePart.FeedData(stream);
-      }
-      AddImageToBody(renderer._wordDocument, mainPart.GetIdOfPart(imagePart));
-
-
-      renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
-
     }
 
-    private static void AddImageToBody(WordprocessingDocument wordDoc, string relationshipId)
+    private void AddImageToBody(WordprocessingDocument wordDoc, string relationshipId, ImageRenderToStreamResult streamResult, double? width, double? height)
     {
-      // Define the reference of the image.
-      var element =
+      bool changeAspect = false;
+      long cx;
+      long cy;
+
+      if (width.HasValue && height.HasValue)
+      {
+        changeAspect = true;
+        cx = (long)(width.Value * 9525);
+        cy = (long)(height.Value * 9525);
+      }
+      else if (width.HasValue)
+      {
+        double aspectYX = streamResult.PixelsY * streamResult.DpiX / (streamResult.PixelsX * streamResult.DpiY);
+        cx = (long)(width.Value * 9525);
+        cy = (long)(width.Value * 9525 * aspectYX);
+      }
+      else if (height.HasValue)
+      {
+        double aspectXY = streamResult.PixelsX * streamResult.DpiY / (streamResult.PixelsY * streamResult.DpiX);
+        cy = (long)(height.Value * 9525);
+        cx = (long)(height.Value * 9525 * aspectXY);
+      }
+      else
+      {
+        cx = (long)(914400 * streamResult.PixelsX / streamResult.DpiX);
+        cy = (long)(914400 * streamResult.PixelsY / streamResult.DpiY);
+      }
+      ++_figureIndex;
+
+      var drawing =
            new DocumentFormat.OpenXml.Wordprocessing.Drawing(
                new DW.Inline(
-                   new DW.Extent() { Cx = 990000L, Cy = 792000L },
+                   new DW.Extent() { Cx = cx, Cy = cy },
                    new DW.EffectExtent()
                    {
                      LeftEdge = 0L,
@@ -155,11 +210,12 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
                    },
                    new DW.DocProperties()
                    {
-                     Id = 1U,
-                     Name = "Picture 1"
+                     Id = _figureIndex,
+                     Name = "Figure " + _figureIndex.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                     Description = streamResult.NameHint
                    },
                    new DW.NonVisualGraphicFrameDrawingProperties(
-                       new A.GraphicFrameLocks() { NoChangeAspect = true }),
+                       new A.GraphicFrameLocks() { NoChangeAspect = !changeAspect }),
                    new A.Graphic(
                        new A.GraphicData(
                            new PIC.Picture(
@@ -167,7 +223,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
                                    new PIC.NonVisualDrawingProperties()
                                    {
                                      Id = 0U,
-                                     Name = "New Bitmap Image.jpg"
+                                     Name = streamResult.NameHint
                                    },
                                    new PIC.NonVisualPictureDrawingProperties()),
                                new PIC.BlipFill(
@@ -175,8 +231,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
                                        new A.BlipExtensionList(
                                            new A.BlipExtension()
                                            {
-                                             Uri =
-                                                  "{28A0092B-C50C-407E-A947-70E740481C1C}"
+                                             Uri = "{28A0092B-C50C-407E-A947-70E740481C1C}"
                                            })
                                    )
                                    {
@@ -189,7 +244,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
                                new PIC.ShapeProperties(
                                    new A.Transform2D(
                                        new A.Offset() { X = 0L, Y = 0L },
-                                       new A.Extents() { Cx = 990000L, Cy = 792000L }),
+                                       new A.Extents() { Cx = cx, Cy = cy }),
                                    new A.PresetGeometry(
                                        new A.AdjustValueList()
                                    )
@@ -201,12 +256,11 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
                  DistanceFromTop = 0U,
                  DistanceFromBottom = 0U,
                  DistanceFromLeft = 0U,
-                 DistanceFromRight = 0U,
-                 EditId = "50D07946"
+                 DistanceFromRight = 0U
                });
 
       // Append the reference to body, the element should be in a Run.
-      wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(element)));
+      wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(drawing)));
     }
 
     /// <summary>

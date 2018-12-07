@@ -62,6 +62,7 @@
     <Compile Include="Text\Renderers\OpenXML\Inlines\LinkInlineRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Inlines\LiteralInlineRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\ListRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\OpenXMLExportOptions.cs" />
     <Compile Include="Text\Renderers\OpenXML\OpenXMLObjectRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\ParagraphRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\QuoteBlockRenderer.cs" />
@@ -84,6 +85,10 @@
     <ProjectReference Include="..\..\Altaxo\Base\AltaxoBase.csproj">
       <Project>{ca928a5c-9673-4fbb-a60e-f91364cc9db5}</Project>
       <Name>AltaxoBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Altaxo\Core\AltaxoCore.csproj">
+      <Project>{7045c197-9da8-4fa4-886c-992acadd838f}</Project>
+      <Name>AltaxoCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Altaxo\Dom\AltaxoDom.csproj">
       <Project>{71636e05-f91f-4efe-a63a-5ba2d525071f}</Project>

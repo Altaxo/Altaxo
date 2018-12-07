@@ -44,20 +44,25 @@ namespace Altaxo.Graph.Gdi
   {
     #region Stream und file
 
-    public static void RenderToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions options)
+    public static (int pixelsX, int pixelsY) RenderToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions options)
     {
+      (int pixelsX, int pixelsY) result;
+
       if (options.ImageFormat == ImageFormat.Wmf || options.ImageFormat == ImageFormat.Emf)
-        RenderAsEnhancedMetafileVectorFormatToStream(doc, stream, options);
+        result = RenderAsEnhancedMetafileVectorFormatToStream(doc, stream, options);
       else
-        doc.RenderAsBitmapToStream(stream, options);
+        result = doc.RenderAsBitmapToStream(stream, options);
+
+      return result;
     }
 
-    public static void RenderToFile(this GraphDocument doc, string filename, GraphExportOptions options)
+    public static (int pixelsX, int pixelsY) RenderToFile(this GraphDocument doc, string filename, GraphExportOptions options)
     {
       using (System.IO.Stream str = new System.IO.FileStream(filename, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read))
       {
-        RenderToStream(doc, str, options);
+        var result = RenderToStream(doc, str, options);
         str.Close();
+        return result;
       }
     }
 
@@ -197,13 +202,18 @@ namespace Altaxo.Graph.Gdi
     /// <param name="pixelformat">Specify the pixelformat here.</param>
     /// <param name="sourceDpiResolution">Resolution at which the graph is rendered to a bitmap.</param>
     /// <param name="destinationDpiResolution">Resolution of the resulting bitmap. This determines the physical size of the bitmap.</param>
-    public static void RenderAsBitmapToStream(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, BrushX backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
+    /// <returns>The dimensions of the bitmap in pixels.</returns>
+    public static (int pixelsX, int pixelsY) RenderAsBitmapToStream(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, BrushX backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
     {
       System.Drawing.Bitmap bitmap = RenderAsBitmap(doc, backbrush, pixelformat, sourceDpiResolution, destinationDpiResolution);
 
       bitmap.Save(stream, imageFormat);
 
+      var result = (bitmap.Width, bitmap.Height);
+
       bitmap.Dispose();
+
+      return result;
     }
 
     /// <summary>
@@ -213,9 +223,10 @@ namespace Altaxo.Graph.Gdi
     /// <param name="stream">The stream to save the metafile into.</param>
     /// <param name="imageFormat">The format of the destination image.</param>
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
-    public static void RenderAsBitmapToStream(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, double dpiResolution)
+    /// <returns>The dimensions of the bitmap in pixels.</returns>
+    public static (int pixelX, int pixelY) RenderAsBitmapToStream(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, double dpiResolution)
     {
-      RenderAsBitmapToStream(doc, stream, imageFormat, null, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
+      return RenderAsBitmapToStream(doc, stream, imageFormat, null, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
     }
 
     /// <summary>
@@ -226,14 +237,22 @@ namespace Altaxo.Graph.Gdi
     /// <param name="imageFormat">The format of the destination image.</param>
     /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
-    public static void RenderAsBitmapToStream(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, BrushX backbrush, double dpiResolution)
+    /// <returns>The dimensions of the bitmap in pixels.</returns>
+    public static (int pixelX, int pixelY) RenderAsBitmapToStream(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, BrushX backbrush, double dpiResolution)
     {
-      RenderAsBitmapToStream(doc, stream, imageFormat, backbrush, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
+      return RenderAsBitmapToStream(doc, stream, imageFormat, backbrush, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
     }
 
-    public static void RenderAsBitmapToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions options)
+    /// <summary>
+    /// Saves the graph as an bitmap file into the stream using the default pixelformat 32bppArgb.<paramref name="stream"/>.
+    /// </summary>
+    /// <param name="doc">The graph document to export.</param>
+    /// <param name="stream">The stream to save the metafile into.</param>
+    /// <param name="options">The export options.</param>
+    /// <returns>The dimensions of the bitmap in pixels.</returns>
+    public static (int pixelX, int pixelY) RenderAsBitmapToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions options)
     {
-      RenderAsBitmapToStream(doc, stream, options.ImageFormat, options.GetBrushOrDefaultBrush(), options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
+      return RenderAsBitmapToStream(doc, stream, options.ImageFormat, options.GetBrushOrDefaultBrush(), options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
     }
 
     #endregion stream
@@ -250,12 +269,14 @@ namespace Altaxo.Graph.Gdi
     /// <param name="pixelformat">Specify the pixelformat here.</param>
     /// <param name="sourceDpiResolution">Resolution in dpi used to render the graph into the bitmap.</param>
     /// <param name="destinationDpiResolution">Resolution that is set in the parameters of the bitmap. This determines the physical size of the bitmap.</param>
-    public static void RenderAsBitmapToFile(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, BrushX backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
+    /// <returns>The dimensions of the bitmap in pixels.</returns>
+    public static (int pixelX, int pixelY) RenderAsBitmapToFile(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, BrushX backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
     {
       using (System.IO.Stream str = new System.IO.FileStream(filename, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read))
       {
-        RenderAsBitmapToStream(doc, str, imageFormat, backbrush, pixelformat, sourceDpiResolution, destinationDpiResolution);
+        var result = RenderAsBitmapToStream(doc, str, imageFormat, backbrush, pixelformat, sourceDpiResolution, destinationDpiResolution);
         str.Close();
+        return result;
       }
     }
 
@@ -267,9 +288,10 @@ namespace Altaxo.Graph.Gdi
     /// <param name="filename">The filename of the file to save the bitmap into.</param>
     /// <param name="imageFormat">The format of the destination image.</param>
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
-    public static void RenderAsBitmapToFile(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, double dpiResolution)
+    /// <returns>The dimensions of the bitmap in pixels.</returns>
+    public static (int pixelX, int pixelY) RenderAsBitmapToFile(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, double dpiResolution)
     {
-      RenderAsBitmapToFile(doc, filename, imageFormat, null, dpiResolution);
+      return RenderAsBitmapToFile(doc, filename, imageFormat, null, dpiResolution);
     }
 
     /// <summary>
@@ -281,14 +303,23 @@ namespace Altaxo.Graph.Gdi
     /// <param name="imageFormat">The format of the destination image.</param>
     /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
-    public static void RenderAsBitmapToFile(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, BrushX backbrush, double dpiResolution)
+    /// <returns>The dimensions of the bitmap in pixels.</returns>
+    public static (int pixelX, int pixelY) RenderAsBitmapToFile(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, BrushX backbrush, double dpiResolution)
     {
-      RenderAsBitmapToFile(doc, filename, imageFormat, backbrush, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
+      return RenderAsBitmapToFile(doc, filename, imageFormat, backbrush, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
     }
 
-    public static void RenderAsBitmapToFile(this GraphDocument doc, string filename, GraphExportOptions options)
+    /// <summary>
+    /// Saves the graph as an bitmap file into the file <paramref name="filename"/> using the default
+    /// pixel format 32bppArgb.
+    /// </summary>
+    /// <param name="doc">The graph document to export.</param>
+    /// <param name="filename">The filename of the file to save the bitmap into.</param>
+    /// <param name="options">The export options</param>
+    /// <returns>The dimensions of the bitmap in pixels.</returns>
+    public static (int pixelX, int pixelY) RenderAsBitmapToFile(this GraphDocument doc, string filename, GraphExportOptions options)
     {
-      RenderAsBitmapToFile(doc, filename, options.ImageFormat, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
+      return RenderAsBitmapToFile(doc, filename, options.ImageFormat, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
     }
 
     #endregion file name
@@ -359,7 +390,7 @@ namespace Altaxo.Graph.Gdi
     /// it is not really a choice.
     /// </para>
     /// </remarks>
-    public static void RenderAsEnhancedMetafileToStream(Action<Graphics> renderingProc, System.IO.Stream stream, PointD2D docSize, double sourceDpiResolution, double outputScalingFactor, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
+    public static (int pixelsX, int pixelsY) RenderAsEnhancedMetafileToStream(Action<Graphics> renderingProc, System.IO.Stream stream, PointD2D docSize, double sourceDpiResolution, double outputScalingFactor, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
     {
       if (stream == null)
         throw new ArgumentNullException("stream");
@@ -474,6 +505,8 @@ namespace Altaxo.Graph.Gdi
       stream.Position = 0;
 
       metafile.Dispose(); // we can safely dispose this metafile, because stream and metafile are independent of each other, and only the stream is patched
+
+      return (devicePixelsX, devicePixelsY);
     }
 
     /// <summary>
@@ -521,7 +554,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="outputScalingFactor">Output scaling factor. If less than 1, the image will appear smaller than originally, if greater than 1, the image will appear larger than originally.</param>
     /// <param name="backgroundBrush">The background brush. This argument can be null, or the brush can be transparent.</param>
     /// <param name="pixelFormat">Optional: Only used if the graphics context can not be created from a printer document. Pixel format of the bitmap that is used in this case to construct the graphics context.</param>
-    public static void RenderAsEnhancedMetafileVectorFormatToStream(GraphDocument doc, System.IO.Stream stream, double sourceDpiResolution, double outputScalingFactor, BrushX backgroundBrush = null, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
+    public static (int pixelsX, int pixelsY) RenderAsEnhancedMetafileVectorFormatToStream(GraphDocument doc, System.IO.Stream stream, double sourceDpiResolution, double outputScalingFactor, BrushX backgroundBrush = null, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
     {
       var renderingProc = new Action<Graphics>(
           (grfxMetafile) =>
@@ -548,7 +581,7 @@ namespace Altaxo.Graph.Gdi
             doc.Paint(grfxMetafile, true);
           });
 
-      RenderAsEnhancedMetafileToStream(renderingProc, stream, doc.Size, sourceDpiResolution, outputScalingFactor, pixelFormat);
+      return RenderAsEnhancedMetafileToStream(renderingProc, stream, doc.Size, sourceDpiResolution, outputScalingFactor, pixelFormat);
     }
 
     /// <summary>
@@ -610,9 +643,9 @@ namespace Altaxo.Graph.Gdi
     /// <param name="doc">The graph document used.</param>
     /// <param name="stream">The stream to which to render the metafile.</param>
     /// <param name="exportOptions">The clipboard export options.</param>
-    public static void RenderAsEnhancedMetafileVectorFormatToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions exportOptions)
+    public static (int pixelsX, int pixelsY) RenderAsEnhancedMetafileVectorFormatToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions exportOptions)
     {
-      RenderAsEnhancedMetafileVectorFormatToStream(doc, stream, exportOptions.SourceDpiResolution, exportOptions.SourceDpiResolution / exportOptions.DestinationDpiResolution, exportOptions.BackgroundBrush, exportOptions.PixelFormat);
+      return RenderAsEnhancedMetafileVectorFormatToStream(doc, stream, exportOptions.SourceDpiResolution, exportOptions.SourceDpiResolution / exportOptions.DestinationDpiResolution, exportOptions.BackgroundBrush, exportOptions.PixelFormat);
     }
 
     #endregion Convenience functions with export or embedded rendering options
@@ -708,11 +741,11 @@ namespace Altaxo.Graph.Gdi
   public class GraphDocumentImageExporter : Altaxo.Main.IProjectItemImageExporter
   {
     /// <inheritdoc/>
-    public void ExportAsImageToStream(IProjectItem item, GraphExportOptions options, Stream toStream)
+    public (int PixelsX, int PixelsY) ExportAsImageToStream(IProjectItem item, GraphExportOptions options, Stream toStream)
     {
       if (item is GraphDocument doc)
       {
-        GraphDocumentExportActions.RenderToStream(doc, toStream, options);
+        return GraphDocumentExportActions.RenderToStream(doc, toStream, options);
       }
       else
       {

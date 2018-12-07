@@ -305,6 +305,7 @@ namespace Altaxo.Graph
   /// <summary>
   /// Holds an image, either from a resource or from a file stream or from the clipboard.
   /// </summary>
+  /// <seealso cref="Altaxo.Graph.ImageProxy" />
   [Serializable]
   public class MemoryStreamImageProxy : ImageProxy
   {
@@ -319,6 +320,8 @@ namespace Altaxo.Graph
 
     /// <summary>Image size in points (1/72 inch).</summary>
     private PointD2D _imageSizePt;
+    private PointD2D _imageSizePixels;
+    private PointD2D _imageResolutionDpi;
 
     /// <summary>
     /// The media file extension, such as '.png', '.emf' or 'jpg'
@@ -623,6 +626,42 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Gets the image resolution in dpi.
+    /// </summary>
+    /// <value>
+    /// The resolution in dpi.
+    /// </value>
+    public PointD2D ResolutionDpi
+    {
+      get
+      {
+        if (_imageResolutionDpi.IsEmpty)
+          GetImage();
+
+        return _imageResolutionDpi;
+      }
+    }
+
+    /// <summary>
+    /// Gets the image size in pixels.
+    /// </summary>
+    /// <value>
+    /// The image size in pixels.
+    /// </value>
+    public PointD2D ImageSizePixels
+    {
+      get
+      {
+        if (_imageSizePixels.IsEmpty)
+          GetImage();
+
+        return _imageSizePixels;
+      }
+    }
+
+
+
     public override System.Drawing.Image GetImage()
     {
       if (_image != null && _image.IsAlive)
@@ -646,6 +685,8 @@ namespace Altaxo.Graph
 
       if (image != null)
       {
+        _imageSizePixels = new PointD2D(image.Width, image.Height);
+        _imageResolutionDpi = new PointD2D(image.HorizontalResolution, image.VerticalResolution);
         _imageSizePt = new PointD2D(image.Width * 72.0 / image.HorizontalResolution, image.Height * 72.0 / image.VerticalResolution);
         _image = new WeakReference(image);
       }

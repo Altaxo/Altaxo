@@ -43,6 +43,7 @@ namespace Altaxo.Main
     /// <param name="item">The item to export, for instance an item of type <see cref="Altaxo.Graph.Gdi.GraphDocument"/> or <see cref="Altaxo.Graph.Graph3D.GraphDocument"/>.</param>
     /// <param name="options">The export options.</param>
     /// <param name="toStream">The stream to save the image to.</param>
-    void ExportAsImageToStream(Main.IProjectItem item, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream);
+    /// <returns>The dimensions of the image in pixels.</returns>
+    (int PixelsX, int PixelsY) ExportAsImageToStream(Main.IProjectItem item, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream);
   }
 }

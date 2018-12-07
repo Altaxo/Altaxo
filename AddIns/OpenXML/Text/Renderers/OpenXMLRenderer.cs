@@ -15,11 +15,21 @@ using Markdig.Syntax;
 namespace Altaxo.Text.Renderers
 {
   /// <summary>
-  /// Renderer for a Markdown <see cref="MarkdownDocument"/> object that renders into one or multiple MAML files (MAML = Microsoft Assisted Markup Language).
+  /// Renderer for a Markdown <see cref="MarkdownDocument"/> object that renders into a OpenXML (.docx) document.
   /// </summary>
   /// <seealso cref="RendererBase" />
   public partial class OpenXMLRenderer : RendererBase, IDisposable
   {
+    public int ImageResolution { get; set; } = 600;
+
+    /// <summary>
+    /// Gets or sets the folder of the <see cref="TextDocument"/> that is rendered with this renderer.
+    /// </summary>
+    /// <value>
+    /// The text document folder location.
+    /// </value>
+    public string TextDocumentFolderLocation { get; set; } = string.Empty;
+
     private const bool EnableHtmlEscape = false;
     /// <summary>
     /// Gets the name of the word document file.
@@ -27,7 +37,7 @@ namespace Altaxo.Text.Renderers
     /// <value>
     /// The name of the word document file.
     /// </value>
-    public string WordDocumentFileName { get; private set; } = "Github";
+    public string WordDocumentFileName { get; private set; }
 
     /// <summary>
     /// Gets the name of the theme to style the OpenXml document with.
@@ -35,7 +45,7 @@ namespace Altaxo.Text.Renderers
     /// <value>
     /// The name of the theme.
     /// </value>
-    public string ThemeName { get; private set; }
+    public string ThemeName { get; private set; } = "Github";
 
     /// <summary>
     /// The word document
@@ -48,13 +58,21 @@ namespace Altaxo.Text.Renderers
 
     public Stack<(string StyleId, string StyleName)> InlineStyles { get; private set; } = new Stack<(string StyleId, string StyleName)>();
 
-    public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> Images { get; private set; }
+    public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> LocalImages { get; private set; }
 
+    public ImageStreamProvider ImageProvider { get; private set; } = new ImageStreamProvider();
 
-    public OpenXMLRenderer(string wordDocumentFileName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> images)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenXMLRenderer"/> class.
+    /// </summary>
+    /// <param name="wordDocumentFileName">Full name of the word document file (should have .docx extension).</param>
+    /// <param name="localImages">The local images of the text document.</param>
+    /// <param name="textDocumentFolder">The folder of the text document (needed to resolve the graphs).</param>
+    public OpenXMLRenderer(string wordDocumentFileName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages, string textDocumentFolder)
     {
       WordDocumentFileName = wordDocumentFileName;
-      Images = images;
+      LocalImages = localImages;
+      TextDocumentFolderLocation = textDocumentFolder;
 
 
       // Extension renderers that must be registered before the default renders

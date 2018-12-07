@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Text.Viewing
 
           using (var stream = new System.IO.MemoryStream())
           {
-            if (!Altaxo.Graph.Graph3D.GraphDocumentExportActions.RenderToStream(graph3D, stream, options))
+            if ((0, 0) == Altaxo.Graph.Graph3D.GraphDocumentExportActions.RenderToStream(graph3D, stream, options))
             {
               inlineItemIsErrorMessage = true;
               return new Run(string.Format("ERROR: NO RENDERER FOR 3D GRAPHS FOUND!"));

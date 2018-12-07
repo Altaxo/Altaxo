@@ -50,17 +50,8 @@ namespace Altaxo.Text.Commands
   {
     public override void Run(TextDocumentController ctrl)
     {
-      var document = ctrl.TextDocument;
-      // first parse it with Markdig
-      var pipeline = new MarkdownPipelineBuilder();
-      pipeline = MarkdownUtilities.UseSupportedExtensions(pipeline);
+      OpenXMLExportOptions.ExportShowFileSaveDialogOnly(ctrl.TextDocument);
 
-      var markdownDocument = Markdig.Markdown.Parse(document.SourceText, pipeline.Build());
-
-      var renderer = new OpenXMLRenderer(@"C:\Temp\RenderedWordFile.docx", document.Images);
-
-
-      renderer.Render(markdownDocument);
     }
   }
 
