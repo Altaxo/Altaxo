@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Altaxo.Text.Renderers.OpenXML;
+using Altaxo.Text.Renderers.OpenXML.Extensions;
 using Altaxo.Text.Renderers.OpenXML.Inlines;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
@@ -99,7 +100,7 @@ namespace Altaxo.Text.Renderers
       ObjectRenderers.Add(new LiteralInlineRenderer());
 
       // Extension renderers
-      //ObjectRenderers.Add(new TableRenderer());
+      ObjectRenderers.Add(new TableRenderer());
       //ObjectRenderers.Add(new MathInlineRenderer());
 
     }

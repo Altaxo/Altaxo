@@ -52,6 +52,7 @@
     <Compile Include="Text\Renderers\OpenXMLRenderer_ParagraphStyles.cs" />
     <Compile Include="Text\Renderers\OpenXMLRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\CodeBlockRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\TableRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\HeadingRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Inlines\AutolinkInlineRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Inlines\CodeInlineRenderer.cs" />
