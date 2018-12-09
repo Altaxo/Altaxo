@@ -32,10 +32,10 @@ using Markdig.Syntax;
 namespace Altaxo.Text.Renderers.OpenXML
 {
   /// <summary>
-  /// Maml renderer for a <see cref="ListBlock" />.
+  /// OpenXML renderer for a <see cref="ListBlock" />.
   /// </summary>
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.OpenXMLObjectRenderer{Markdig.Syntax.ListBlock}" />
-  /// <seealso cref="MamlObjectRenderer{T}" />
+  /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class ListRenderer : OpenXMLObjectRenderer<ListBlock>
   {
     /// <summary>
@@ -264,7 +264,8 @@ namespace Altaxo.Text.Renderers.OpenXML
         var paragraphProperties = renderer.PushParagraphStyle(StyleNames.ListParagraphId, StyleNames.ListParagraphName);
         paragraphProperties.AppendChild(numberingProperties);
         var listItem = (ListItemBlock)item;
-        renderer.Run = null;
+
+
         renderer.WriteChildren(listItem);
         renderer.PopParagraphStyle();
       }

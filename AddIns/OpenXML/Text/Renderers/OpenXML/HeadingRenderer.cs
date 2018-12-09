@@ -32,13 +32,17 @@ using Markdig.Syntax;
 
 namespace Altaxo.Text.Renderers.OpenXML
 {
+  /// <summary>
+  /// OpenXML renderer for a <see cref="HeadingBlock" />.
+  /// </summary>
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.OpenXMLObjectRenderer{Markdig.Syntax.HeadingBlock}" />
+  /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class HeadingRenderer : OpenXMLObjectRenderer<HeadingBlock>
   {
     protected override void Write(OpenXMLRenderer renderer, HeadingBlock obj)
     {
-      var paragraph = new DocumentFormat.OpenXml.Wordprocessing.Paragraph();
-      renderer.Paragraph = renderer.Body.AppendChild(paragraph);
-      renderer.Run = null;
+      var paragraph = new Paragraph();
+      renderer.Push(paragraph);
 
       string id, name;
       switch (obj.Level)
@@ -85,8 +89,7 @@ namespace Altaxo.Text.Renderers.OpenXML
 
       renderer.ApplyStyleToParagraph(id, name, paragraph);
       renderer.WriteLeafInline(obj);
-      // renderer.EnsureLine
-
+      renderer.PopTo(paragraph);
     }
   }
 }

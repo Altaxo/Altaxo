@@ -28,23 +28,25 @@ using Markdig.Syntax.Inlines;
 namespace Altaxo.Text.Renderers.OpenXML.Inlines
 {
   /// <summary>
-  /// Maml renderer for a <see cref="LineBreakInline"/>.
+  /// OpenXML renderer for a <see cref="LineBreakInline"/>.
   /// </summary>
   /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class LineBreakInlineRenderer : OpenXMLObjectRenderer<LineBreakInline>
   {
     protected override void Write(OpenXMLRenderer renderer, LineBreakInline obj)
     {
-      if (obj.IsHard)
+      var element = renderer.Peek();
+
+      if (element is Paragraph)
       {
-        renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
-        renderer.Run = null;
+        var run = renderer.Push(new Run());
+        run.AppendChild(new Break());
+        renderer.PopTo(run);
       }
       else
       {
-        if (renderer.Run == null)
-          renderer.Run = renderer.Paragraph.AppendChild(new Run());
-        renderer.Run.AppendChild(new Break());
+        var paragraph = renderer.Push(new Paragraph());
+        renderer.PopTo(paragraph);
       }
     }
   }

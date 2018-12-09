@@ -29,16 +29,17 @@ using Markdig.Syntax.Inlines;
 namespace Altaxo.Text.Renderers.OpenXML.Inlines
 {
   /// <summary>
-  /// Maml renderer for a <see cref="DelimiterInline"/>.
+  /// OpenXML renderer for a <see cref="DelimiterInline"/>.
   /// </summary>
   /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class DelimiterInlineRenderer : OpenXMLObjectRenderer<DelimiterInline>
   {
     protected override void Write(OpenXMLRenderer renderer, DelimiterInline obj)
     {
-      var run = renderer.Run ?? renderer.Paragraph.AppendChild(new Run());
+      var run = renderer.PushNewRun();
       run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = obj.ToLiteral() });
       renderer.WriteChildren(obj);
+      renderer.PopTo(run);
     }
   }
 }

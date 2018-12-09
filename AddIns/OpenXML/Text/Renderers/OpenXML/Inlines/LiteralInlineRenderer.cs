@@ -40,10 +40,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       if (obj.Content.IsEmpty)
         return;
 
-      var run = renderer.Run ?? renderer.Paragraph.AppendChild(new Run());
+      var run = renderer.PushNewRun();
       run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = obj.Content.ToString() });
-
-
+      renderer.PopTo(run);
     }
   }
 }

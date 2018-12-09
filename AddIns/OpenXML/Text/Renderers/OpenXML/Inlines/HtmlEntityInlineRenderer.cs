@@ -29,17 +29,16 @@ using Markdig.Syntax.Inlines;
 namespace Altaxo.Text.Renderers.OpenXML.Inlines
 {
   /// <summary>
-  /// Maml renderer for a <see cref="HtmlEntityInline"/>.
+  /// OpenXML renderer for a <see cref="HtmlEntityInline"/>.
   /// </summary>
   /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class HtmlEntityInlineRenderer : OpenXMLObjectRenderer<HtmlEntityInline>
   {
     protected override void Write(OpenXMLRenderer renderer, HtmlEntityInline obj)
     {
-      if (renderer.Run == null)
-        renderer.Run = renderer.Paragraph.AppendChild(new Run());
-
-      renderer.Run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = obj.Transcoded.Text });
+      var run = renderer.PushNewRun();
+      run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = obj.Transcoded.Text });
+      renderer.PopTo(run);
     }
   }
 }

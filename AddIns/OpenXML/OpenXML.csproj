@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Text\Commands\TextCommands.cs" />
-    <Compile Include="Text\Renderers\OpenXMLRenderer_NumberingStyles.cs" />
+    <Compile Include="Text\Renderers\OpenXMLRenderer_Stacks.cs" />
     <Compile Include="Text\Renderers\OpenXMLRenderer_CharacterStyles.cs" />
     <Compile Include="Text\Renderers\OpenXMLRenderer_ParagraphStyles.cs" />
     <Compile Include="Text\Renderers\OpenXMLRenderer.cs" />

@@ -29,16 +29,16 @@ using Markdig.Syntax;
 namespace Altaxo.Text.Renderers.OpenXML
 {
   /// <summary>
-  /// Maml renderer for a <see cref="CodeBlock"/>.
+  /// OpenXML renderer for a <see cref="CodeBlock"/>.
   /// </summary>
   /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class CodeBlockRenderer : OpenXMLObjectRenderer<CodeBlock>
   {
     protected override void Write(OpenXMLRenderer renderer, CodeBlock obj)
     {
-      renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
-      renderer.Run = null;
-      renderer.ApplyStyleToParagraph(StyleNames.CodeBlockId, StyleNames.CodeBlockName, renderer.Paragraph);
+      var paragraph = new Paragraph();
+      renderer.Push(paragraph);
+      renderer.ApplyStyleToParagraph(StyleNames.CodeBlockId, StyleNames.CodeBlockName, paragraph);
 
       if (obj.Inline != null)
       {
@@ -54,12 +54,17 @@ namespace Altaxo.Text.Renderers.OpenXML
           var slices = lines.Lines;
           for (var i = 0; i < lines.Count; i++)
           {
-            renderer.Paragraph.AppendChild(new Run(new DocumentFormat.OpenXml.Wordprocessing.Text() { Text = slices[i].Slice.ToString(), Space = SpaceProcessingModeValues.Preserve }));
+            var run = renderer.Push(new Run(new DocumentFormat.OpenXml.Wordprocessing.Text() { Text = slices[i].Slice.ToString(), Space = SpaceProcessingModeValues.Preserve }));
+            renderer.PopTo(run);
             if (i < lines.Count - 1)
-              renderer.Paragraph.AppendChild(new Run(new Break()));
+            {
+              run = renderer.Push(new Run(new Break()));
+              renderer.PopTo(run);
+            }
           }
         }
       }
+      renderer.PopTo(paragraph);
     }
   }
 }

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using md = Markdig.Extensions.Tables;
@@ -37,17 +38,17 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
     protected override void Write(OpenXMLRenderer renderer, md.Table mdTable)
     {
       // Create an empty table.
-      var table = new Table();
+      var table = renderer.Push(new Table());
 
       // Create a TableProperties object and specify its border information.
       var tblProp = new TableProperties(
           new TableBorders(
-              new TopBorder() { Val = new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-              new BottomBorder() { Val = new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-              new LeftBorder() { Val = new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-              new RightBorder() { Val = new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-              new InsideHorizontalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-              new InsideVerticalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 }
+              new TopBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
+              new BottomBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
+              new LeftBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
+              new RightBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
+              new InsideHorizontalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
+              new InsideVerticalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 }
           )
       );
       // Append the TableProperties object to the empty table.
@@ -60,32 +61,64 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
       {
 
         // Create a row.
-        var wRow = new TableRow();
+        var wRow = renderer.Push(new TableRow());
 
-        foreach (var mdCell in mdRow)
+        for (var i = 0; i < mdRow.Count; i++)
         {
+          var cellObj = mdRow[i];
+          var mdCell = (md.TableCell)cellObj;
           // Create a cell.
-          var wTableCell = new TableCell();
+          var wTableCell = renderer.Push(new TableCell());
+          wTableCell.Append(new TableCellProperties(new TableCellWidth() { Type = TableWidthUnitValues.Auto })); // Specify the width property of the table cell.
 
-          // Specify the width property of the table cell.
-          wTableCell.Append(new TableCellProperties(new TableCellWidth() { Type = TableWidthUnitValues.Auto }));
-
-          // Specify the table cell content.
-          wTableCell.Append(renderer.Paragraph = new Paragraph());
-          renderer.Run = null;
           renderer.Write(mdCell);
 
-          // Append the table cell to the table row.
-          wRow.Append(wTableCell);
-        }
+          // Apply horizontal alignment
+          var horizontalJustification = JustificationValues.Left;
 
-        table.Append(wRow);
+          if (mdTable.ColumnDefinitions != null)
+          {
+            var columnIndex = mdCell.ColumnIndex < 0 || mdCell.ColumnIndex >= mdTable.ColumnDefinitions.Count
+                ? i
+                : mdCell.ColumnIndex;
+            columnIndex = columnIndex >= mdTable.ColumnDefinitions.Count ? mdTable.ColumnDefinitions.Count - 1 : columnIndex;
+            var alignment = mdTable.ColumnDefinitions[columnIndex].Alignment;
+            if (alignment.HasValue)
+            {
+              switch (alignment)
+              {
+                case md.TableColumnAlign.Center:
+                  horizontalJustification = JustificationValues.Center;
+                  break;
+
+                case md.TableColumnAlign.Right:
+                  horizontalJustification = JustificationValues.Right;
+                  break;
+
+                case md.TableColumnAlign.Left:
+                  horizontalJustification = JustificationValues.Left;
+                  break;
+              }
+            }
+          }
+
+          if (horizontalJustification != JustificationValues.Left)
+          {
+            foreach (var paragraph in wTableCell.ChildElements.OfType<Paragraph>())
+            {
+              var pp = paragraph.ChildElements.OfType<ParagraphProperties>().FirstOrDefault()
+                        ?? paragraph.PrependChild(new ParagraphProperties());
+
+              pp.AppendChild(new Justification { Val = horizontalJustification });
+            }
+          }
+
+          renderer.PopTo(wTableCell);
+        }
+        renderer.PopTo(wRow);
       }
 
-      renderer._wordDocument.MainDocumentPart.Document.Body.Append(table);
-      renderer.Paragraph = new Paragraph();
-      renderer.Run = null;
-
+      renderer.PopTo(table);
     }
   }
 }

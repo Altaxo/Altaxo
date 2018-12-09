@@ -29,21 +29,17 @@ using Markdig.Syntax.Inlines;
 namespace Altaxo.Text.Renderers.OpenXML.Inlines
 {
   /// <summary>
-  /// Maml renderer for a <see cref="CodeInline"/>.
+  /// OpenXML renderer for a <see cref="CodeInline"/>.
   /// </summary>
   /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class CodeInlineRenderer : OpenXMLObjectRenderer<CodeInline>
   {
     protected override void Write(OpenXMLRenderer renderer, CodeInline obj)
     {
-      renderer.Run = renderer.Paragraph.AppendChild(new Run());
-
-      renderer.ApplyStyleToRun(StyleNames.CodeInlineId, StyleNames.CodeInlineName, renderer.Run);
-
-      renderer.Run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\x202F" + obj.Content.ToString() + "\x202F" });
-
-
-      renderer.Run = null;
+      var run = renderer.PushNewRun();
+      renderer.ApplyStyleToRun(StyleNames.CodeInlineId, StyleNames.CodeInlineName, run);
+      run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\x202F" + obj.Content.ToString() + "\x202F" });
+      renderer.PopTo(run);
     }
   }
 }

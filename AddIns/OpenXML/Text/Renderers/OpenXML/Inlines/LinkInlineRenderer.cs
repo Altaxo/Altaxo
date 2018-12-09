@@ -38,7 +38,7 @@ using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 namespace Altaxo.Text.Renderers.OpenXML.Inlines
 {
   /// <summary>
-  /// Maml renderer for a <see cref="LinkInline"/>.
+  /// OpenXML renderer for a <see cref="LinkInline"/>.
   /// </summary>
   public class LinkInlineRenderer : OpenXMLObjectRenderer<LinkInline>
   {
@@ -69,10 +69,14 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
           var rId = "lkId" + _linkIndex.ToString(System.Globalization.CultureInfo.InvariantCulture);
           renderer._wordDocument.MainDocumentPart.AddHyperlinkRelationship(new System.Uri(url, System.UriKind.Absolute), true, rId);
 
-          renderer.Paragraph.AppendChild(new Hyperlink(renderer.Run = new Run()) { Id = rId });
-          renderer.ApplyStyleToRun(StyleNames.LinkId, StyleNames.LinkName, renderer.Run);
+          var hyperlink = new Hyperlink() { Id = rId };
+          renderer.Push(hyperlink);
           renderer.WriteChildren(link);
-          renderer.Run = null;
+
+          foreach (var run in hyperlink.ChildElements.OfType<Run>())
+            renderer.ApplyStyleToRun(StyleNames.LinkId, StyleNames.LinkName, run);
+
+          renderer.PopTo(hyperlink);
         }
         else // not a well formed Uri String - then it is probably a fragment reference
         {
@@ -159,14 +163,11 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         imageStream.Seek(0, SeekOrigin.Begin);
         imagePart.FeedData(imageStream);
 
-        AddImageToBody(renderer._wordDocument, mainPart.GetIdOfPart(imagePart), streamResult, width, height);
-
-
-        renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
+        AddImageToBody(renderer, mainPart.GetIdOfPart(imagePart), streamResult, width, height);
       }
     }
 
-    private void AddImageToBody(WordprocessingDocument wordDoc, string relationshipId, ImageRenderToStreamResult streamResult, double? width, double? height)
+    private void AddImageToBody(OpenXMLRenderer renderer, string relationshipId, ImageRenderToStreamResult streamResult, double? width, double? height)
     {
       bool changeAspect = false;
       long cx;
@@ -259,8 +260,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
                  DistanceFromRight = 0U
                });
 
-      // Append the reference to body, the element should be in a Run.
-      wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(drawing)));
+      var run = renderer.Push(new Run());
+      run.AppendChild(drawing);
+      renderer.PopTo(run);
     }
 
     /// <summary>

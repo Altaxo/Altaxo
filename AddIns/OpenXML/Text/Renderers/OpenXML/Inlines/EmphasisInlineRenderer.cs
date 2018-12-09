@@ -29,7 +29,7 @@ using Markdig.Syntax.Inlines;
 namespace Altaxo.Text.Renderers.OpenXML.Inlines
 {
   /// <summary>
-  /// Maml renderer for an <see cref="EmphasisInline"/>.
+  /// OpenXML renderer for an <see cref="EmphasisInline"/>.
   /// </summary>
   /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class EmphasisInlineRenderer : OpenXMLObjectRenderer<EmphasisInline>
@@ -37,9 +37,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
 
     protected override void Write(OpenXMLRenderer renderer, EmphasisInline obj)
     {
-      renderer.Run = renderer.Paragraph.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Run());
-
-      var runProperties = renderer.Run.AppendChild(new RunProperties());
+      int nPushed = 0;
 
       switch (obj.DelimiterChar)
       {
@@ -47,38 +45,40 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         case '_':
           if (obj.IsDouble)
           {
-            var bold = new Bold { Val = OnOffValue.FromBoolean(true) };
-            runProperties.AppendChild(bold);
+            renderer.PushInlineFormat(OpenXMLRenderer.InlineFormat.Bold);
+            ++nPushed;
           }
           else
           {
-            var italic = new Italic { Val = OnOffValue.FromBoolean(true) };
-            runProperties.AppendChild(italic);
+            renderer.PushInlineFormat(OpenXMLRenderer.InlineFormat.Italic);
+            ++nPushed;
           }
           break;
 
         case '~':
           if (obj.IsDouble)
           {
-            var strike = new Strike { Val = OnOffValue.FromBoolean(true) };
-            runProperties.AppendChild(strike);
+            renderer.PushInlineFormat(OpenXMLRenderer.InlineFormat.Strikethrough);
+            ++nPushed;
           }
           else
           {
-            runProperties.VerticalTextAlignment = new VerticalTextAlignment() { Val = VerticalPositionValues.Subscript };
+            renderer.PushInlineFormat(OpenXMLRenderer.InlineFormat.Subscript);
+            ++nPushed;
           }
 
           break;
 
         case '^':
-          runProperties.VerticalTextAlignment = new VerticalTextAlignment() { Val = VerticalPositionValues.Superscript };
+          renderer.PushInlineFormat(OpenXMLRenderer.InlineFormat.Superscript);
+          ++nPushed;
           break;
 
         case '+':
           // Inserted style
           {
-            var underline = new Underline();
-            runProperties.AppendChild(underline);
+            renderer.PushInlineFormat(OpenXMLRenderer.InlineFormat.Underline);
+            ++nPushed;
           }
           break;
 
@@ -87,10 +87,10 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
           break;
       }
 
-      //renderer.Push(run);
       renderer.WriteChildren(obj);
 
-      renderer.Run = null;
+      for (int i = 0; i < nPushed; ++i)
+        renderer.PopInlineFormat();
     }
   }
 }

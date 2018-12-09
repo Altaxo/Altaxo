@@ -28,9 +28,9 @@ using Markdig.Syntax;
 namespace Altaxo.Text.Renderers.OpenXML
 {
   /// <summary>
-  /// Maml renderer for a <see cref="ParagraphBlock"/>.
+  /// OpenXML renderer for a <see cref="ParagraphBlock"/>.
   /// </summary>
-  /// <seealso cref="MamlObjectRenderer{T}" />
+  /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class ParagraphRenderer : OpenXMLObjectRenderer<ParagraphBlock>
   {
     protected override void Write(OpenXMLRenderer renderer, ParagraphBlock obj)
@@ -40,11 +40,12 @@ namespace Altaxo.Text.Renderers.OpenXML
 
       }
 
-      renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
-      renderer.PeekParagraphStyleAndAppendTo(renderer.Paragraph);
-      renderer.Run = null;
-
+      var paragraph = new Paragraph();
+      renderer.PeekParagraphStyleAndAppendTo(paragraph);
+      renderer.Push(paragraph);
       renderer.WriteLeafInline(obj);
+      renderer.PopTo(paragraph);
+
     }
   }
 }

@@ -28,15 +28,13 @@ using Markdig.Syntax;
 namespace Altaxo.Text.Renderers.OpenXML
 {
   /// <summary>
-  /// Maml renderer for a <see cref="QuoteBlock"/>.
+  /// OpenXML renderer for a <see cref="QuoteBlock"/>.
   /// </summary>
-  /// <seealso cref="MamlObjectRenderer{T}" />
+  /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class QuoteBlockRenderer : OpenXMLObjectRenderer<QuoteBlock>
   {
     protected override void Write(OpenXMLRenderer renderer, QuoteBlock obj)
     {
-
-      renderer.Run = null;
 
       renderer.PushParagraphStyle(StyleNames.QuoteBlockId, StyleNames.QuoteBlockName);
       renderer.WriteChildren(obj);

@@ -28,26 +28,21 @@ using Markdig.Syntax;
 namespace Altaxo.Text.Renderers.OpenXML
 {
   /// <summary>
-  /// Maml renderer for a <see cref="ThematicBreakBlock"/>.
+  /// OpenXML renderer for a <see cref="ThematicBreakBlock"/>.
   /// </summary>
-  /// <seealso cref="MamlObjectRenderer{T}" />
+  /// <seealso cref="OpenXMLObjectRenderer{T}" />
   public class ThematicBreakRenderer : OpenXMLObjectRenderer<ThematicBreakBlock>
   {
     protected override void Write(OpenXMLRenderer renderer, ThematicBreakBlock obj)
     {
-      renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
-      renderer.Run = null;
-
-
+      var paragraph = renderer.Push(new Paragraph());
       var paraProperties = new ParagraphProperties();
       var paraBorders = new ParagraphBorders();
       var bottom = new BottomBorder() { Val = BorderValues.Single, Color = "auto", Size = 12, Space = 1 };
       paraBorders.Append(bottom);
       paraProperties.Append(paraBorders);
-      renderer.Paragraph.Append(paraProperties);
-
-      renderer.Paragraph = renderer.Body.AppendChild(new Paragraph());
-      renderer.Run = null;
+      paragraph.Append(paraProperties);
+      renderer.PopTo(paragraph);
     }
   }
 }

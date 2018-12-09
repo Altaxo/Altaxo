@@ -37,7 +37,7 @@ using Markdig;
 namespace Altaxo.Text
 {
   /// <summary>
-  /// Options to export a <see cref="TextDocument"/> into one or multiple Maml file(s), including all the referenced graphs and local images.
+  /// Options to export a <see cref="TextDocument"/> into a OpenXML (MS Word) file, including all the referenced graphs and local images.
   /// </summary>
   public class OpenXMLExportOptions : ICloneable
   {

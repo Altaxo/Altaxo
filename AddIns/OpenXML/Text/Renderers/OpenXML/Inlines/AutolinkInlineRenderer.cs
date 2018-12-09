@@ -35,11 +35,13 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
   {
     protected override void Write(OpenXMLRenderer renderer, AutolinkInline obj)
     {
-
-      renderer.Paragraph.AppendChild(new Hyperlink(new Run(new DocumentFormat.OpenXml.Wordprocessing.Text(obj.Url)))
+      var hyperlink = new Hyperlink(new Run(new DocumentFormat.OpenXml.Wordprocessing.Text(obj.Url)))
       {
         DocLocation = obj.Url
-      });
+      };
+
+      renderer.Push(hyperlink);
+      renderer.PopTo(hyperlink);
     }
   }
 }

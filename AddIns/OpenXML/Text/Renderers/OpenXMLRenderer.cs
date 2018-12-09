@@ -54,13 +54,8 @@ namespace Altaxo.Text.Renderers
     public WordprocessingDocument _wordDocument { get; private set; }
     private MainDocumentPart _mainDocumentPart;
     public Body Body { get; private set; }
-    public Paragraph Paragraph { get; set; }
-    public Run Run { get; set; }
-
     public Stack<(string StyleId, string StyleName)> InlineStyles { get; private set; } = new Stack<(string StyleId, string StyleName)>();
-
     public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> LocalImages { get; private set; }
-
     public ImageStreamProvider ImageProvider { get; private set; } = new ImageStreamProvider();
 
     /// <summary>
@@ -133,6 +128,7 @@ namespace Altaxo.Text.Renderers
           // Create the document structure and add some text.
           _mainDocumentPart.Document = new Document();
           Body = _mainDocumentPart.Document.AppendChild(new Body());
+          Push(Body);
 
           // Ensure that a style part exists in this document
 
