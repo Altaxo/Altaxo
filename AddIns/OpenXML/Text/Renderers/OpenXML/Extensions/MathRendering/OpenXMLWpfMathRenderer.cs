@@ -24,29 +24,55 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using Altaxo.Text.Renderers.OpenXML;
-using Altaxo.Text.Renderers.OpenXML.Inlines;
+using System.Threading.Tasks;
 using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Markdig.Renderers;
-using Markdig.Syntax;
+using DocumentFormat.OpenXml.Math;
+using WpfMath;
 
-namespace Altaxo.Text.Renderers
+namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
 {
   /// <summary>
-  /// Renderer for a Markdown <see cref="MarkdownDocument"/> object that renders into one or multiple MAML files (MAML = Microsoft Assisted Markup Language).
+  /// Main class for rendering a TeX formula into an OpenXml document.
   /// </summary>
-  /// <seealso cref="RendererBase" />
-  public partial class OpenXMLRenderer : RendererBase, IDisposable
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.WpfMathRendererBase" />
+  internal class OpenXMLWpfMathRenderer : WpfMathRendererBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenXMLWpfMathRenderer"/> class.
+    /// </summary>
+    public OpenXMLWpfMathRenderer()
+    {
+      ObjectRenderers.Add(new Renderers.RowAtomRenderer()); // elements in a row
+      ObjectRenderers.Add(new Renderers.FractionAtomRenderer()); // fractions
+      ObjectRenderers.Add(new Renderers.BigOperatorAtomRenderer()); // integrals, sums operators, product operators, functions
+      ObjectRenderers.Add(new Renderers.ScriptsAtomRenderer()); // scripts like sub and superscript
+      ObjectRenderers.Add(new Renderers.RadicalAtomRenderer()); // radicals like square root
+      ObjectRenderers.Add(new Renderers.SymbolAtomRenderer()); // symbols like operators, greek, 
+      ObjectRenderers.Add(new Renderers.CharAtomRenderer()); // single chars
+      ObjectRenderers.Add(new Renderers.TypedAtomRenderer()); // elements hold together, like a function argument
+    }
+
+    public override object Render(Atom atom)
+    {
+      var officeMath = Push(new OfficeMath()); // our OpenXml root document 
+      Write(atom);
+      // Note we don't pop the Root from the stack
+      return officeMath;
+    }
+
+
     #region OpenXmlCompositeElement stack
+
     private List<OpenXmlCompositeElement> _currentElementStack = new List<OpenXmlCompositeElement>();
 
+    /// <summary>
+    /// Pushes an OpenXml element onto the stack
+    /// </summary>
+    /// <param name="element">The element to push.</param>
+    /// <returns>The element given in the argument.</returns>
+    /// <exception cref="ArgumentNullException">element</exception>
     public OpenXmlCompositeElement Push(OpenXmlCompositeElement element)
     {
       if (null == element)
@@ -63,13 +89,19 @@ namespace Altaxo.Text.Renderers
       return element;
     }
 
+    /// <summary>
+    /// Peeks the OpenXml element that is currently on top of the stack.
+    /// </summary>
+    /// <returns>The OpenXml element that is currently on top of the stack.</returns>
     public OpenXmlCompositeElement Peek()
     {
       return _currentElementStack[_currentElementStack.Count - 1];
     }
 
     /// <summary>
-    /// Pops one <see cref="OpenXmlCompositeElement"/> element from the stack, adds it to the element beneath it on the stack, and returns the popped element.
+    /// Pops one <see cref="OpenXmlCompositeElement"/> element from the stack,
+    /// adds it to the element beneath it on the stack,
+    /// and returns the popped element.
     /// </summary>
     /// <returns>The popped element.</returns>
     /// <exception cref="InvalidOperationException">Pop from an empty stack</exception>
@@ -90,6 +122,13 @@ namespace Altaxo.Text.Renderers
 
 
 
+    /// <summary>
+    /// Does repeatedly do <see cref="Pop"/> operations, until and including the
+    /// element given in the argument.
+    /// </summary>
+    /// <param name="element">The element.</param>
+    /// <exception cref="ArgumentNullException">element</exception>
+    /// <exception cref="InvalidOperationException">Could not pop to element " + element.ToString()</exception>
     public void PopTo(OpenXmlCompositeElement element)
     {
       if (null == element)
@@ -107,6 +146,13 @@ namespace Altaxo.Text.Renderers
         throw new InvalidOperationException("Could not pop to element " + element.ToString());
     }
 
+    /// <summary>
+    /// Does repeatedly do <see cref="Pop"/> operations, until but excluding the
+    /// element given in the argument.
+    /// </summary>
+    /// <param name="element">The element.</param>
+    /// <exception cref="ArgumentNullException">element</exception>
+    /// <exception cref="InvalidOperationException">Could not pop to before element " + element.ToString()</exception>
     public void PopToBefore(OpenXmlCompositeElement element)
     {
       if (null == element)
@@ -126,80 +172,6 @@ namespace Altaxo.Text.Renderers
 
 
     #endregion OpenXmlCompositeElement stack
-
-
-    #region Inline format stack
-
-    public enum InlineFormat
-    {
-      Bold,
-      Italic,
-      Underline,
-      Subscript,
-      Superscript,
-      Strikethrough
-    }
-
-    private List<InlineFormat> _currentInlineFormatStack = new List<InlineFormat>();
-
-    public void PushInlineFormat(InlineFormat inlineFormat)
-    {
-      _currentInlineFormatStack.Add(inlineFormat);
-    }
-
-    public void PopInlineFormat()
-    {
-      _currentInlineFormatStack.RemoveAt(_currentInlineFormatStack.Count - 1);
-    }
-
-    public Run PushNewRun()
-    {
-      var run = new Run();
-
-      var runProperties = run.AppendChild(new RunProperties());
-      int verticalPosition = 0;
-
-      for (int i = 0; i < _currentInlineFormatStack.Count; ++i)
-      {
-        var fmt = _currentInlineFormatStack[i];
-
-        switch (fmt)
-        {
-          case InlineFormat.Bold:
-            runProperties.AppendChild(new Bold { Val = OnOffValue.FromBoolean(true) });
-            break;
-          case InlineFormat.Italic:
-            runProperties.AppendChild(new Italic { Val = OnOffValue.FromBoolean(true) });
-            break;
-          case InlineFormat.Strikethrough:
-            runProperties.AppendChild(new Strike { Val = OnOffValue.FromBoolean(true) });
-            break;
-          case InlineFormat.Underline:
-            runProperties.AppendChild(new Underline());
-            break;
-          case InlineFormat.Subscript:
-            --verticalPosition;
-            break;
-          case InlineFormat.Superscript:
-            ++verticalPosition;
-            break;
-          default:
-            throw new NotImplementedException();
-        }
-      }
-
-      if (verticalPosition > 0)
-        runProperties.VerticalTextAlignment = new VerticalTextAlignment() { Val = VerticalPositionValues.Superscript };
-      else if (verticalPosition < 0)
-        runProperties.VerticalTextAlignment = new VerticalTextAlignment() { Val = VerticalPositionValues.Subscript };
-
-      Push(run);
-      return run;
-    }
-
-
-    #endregion
-
 
   }
 }

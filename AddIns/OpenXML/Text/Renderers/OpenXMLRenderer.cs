@@ -96,7 +96,7 @@ namespace Altaxo.Text.Renderers
 
       // Extension renderers
       ObjectRenderers.Add(new TableRenderer());
-      //ObjectRenderers.Add(new MathInlineRenderer());
+      ObjectRenderers.Add(new MathInlineRenderer());
 
     }
 

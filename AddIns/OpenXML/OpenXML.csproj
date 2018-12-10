@@ -52,6 +52,21 @@
     <Compile Include="Text\Renderers\OpenXMLRenderer_ParagraphStyles.cs" />
     <Compile Include="Text\Renderers\OpenXMLRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\CodeBlockRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathInlineRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\IWpfMathAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\IWpfMathRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\OpenXMLWpfMathRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\OpenXMLAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\RadicalAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\TypedAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\ScriptsAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\BigOperatorAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\SymbolAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\CharAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\FractionAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\RowAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\WpfMathAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\WpfMathRendererBase.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\TableRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\HeadingRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Inlines\AutolinkInlineRenderer.cs" />
@@ -98,6 +113,10 @@
     <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj">
       <Project>{a145ab45-e55e-4e22-8ca1-dae537a346e0}</Project>
       <Name>Markdig</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\WpfMath\WpfMath.csproj">
+      <Project>{08f4b41a-7f21-446d-836b-00056e7bc311}</Project>
+      <Name>WpfMath</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
