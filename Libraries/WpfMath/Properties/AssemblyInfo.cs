@@ -11,3 +11,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("0.3.1.*")]
 
 [assembly: InternalsVisibleTo("WpfMath.Tests")]
+[assembly: InternalsVisibleTo("OpenXMLAddin")]
