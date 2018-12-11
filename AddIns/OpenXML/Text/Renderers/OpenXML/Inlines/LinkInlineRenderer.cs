@@ -196,6 +196,38 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         cx = (long)(914400 * streamResult.PixelsX / streamResult.DpiX);
         cy = (long)(914400 * streamResult.PixelsY / streamResult.DpiY);
       }
+
+      // limit the image size if set in the renderer.
+      if (renderer.MaxImageWidthIn96thInch.HasValue && renderer.MaxImageHeigthIn96thInch.HasValue)
+      {
+        double cxmax = renderer.MaxImageWidthIn96thInch.Value * 9525;
+        double cymax = renderer.MaxImageHeigthIn96thInch.Value * 9525;
+        var r = Math.Min(cx / cxmax, cy / cymax);
+        if (r < 1)
+        {
+          cx = (long)(r * cx);
+          cy = (long)(r * cy);
+        }
+      }
+      else if (renderer.MaxImageWidthIn96thInch.HasValue)
+      {
+        double cxmax = renderer.MaxImageWidthIn96thInch.Value * 9525;
+        if (cx > cxmax)
+        {
+          cy = (long)(cy * (cx / cxmax));
+          cx = (long)cxmax;
+        }
+      }
+      else if (renderer.MaxImageHeigthIn96thInch.HasValue)
+      {
+        double cymax = renderer.MaxImageHeigthIn96thInch.Value * 9525;
+        if (cy > cymax)
+        {
+          cx = (long)(cx * (cy / cymax));
+          cy = (long)cymax;
+        }
+      }
+
       ++_figureIndex;
 
       var drawing =

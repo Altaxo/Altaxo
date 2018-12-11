@@ -56,6 +56,9 @@ namespace Altaxo.Text
         var s = (OpenXMLExportOptions)obj;
 
         info.AddValue("ExpandChildDocuments", s.ExpandChildDocuments);
+        info.AddValue("ThemeName", s.ThemeName);
+        info.AddValue("MaxImageHeight", s.MaximumImageHeight);
+        info.AddValue("MaxImageHeight", s.MaximumImageHeight);
         info.AddValue("OpenApplication", s.OpenApplication);
         info.AddValue("OutputFileName", s.OutputFileName);
       }
@@ -63,6 +66,9 @@ namespace Altaxo.Text
       public void Deserialize(OpenXMLExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         s.ExpandChildDocuments = info.GetBoolean("ExpandChildDocuments");
+        s.ThemeName = info.GetString("ThemeName");
+        s.MaximumImageWidth = info.GetNullableDouble("MaxImageWidth");
+        s.MaximumImageHeight = info.GetNullableDouble("MaxImageHeight");
         s.OpenApplication = info.GetBoolean("OpenApplication");
         s.OutputFileName = info.GetString("OutputFileName");
       }
@@ -84,6 +90,8 @@ namespace Altaxo.Text
 
     #region Properties
 
+    public string ThemeName { get; set; }
+
     /// <summary>
     /// Gets or sets the output file. This is preferably a Sandcastle help file builder project file, but can also be a layout content file (.content) or a Maml file (.aml).
     /// </summary>
@@ -99,6 +107,23 @@ namespace Altaxo.Text
     /// If true, the application that is linked to .docx format will be opened.
     /// </summary>
     public bool OpenApplication { get; set; }
+
+
+    /// <summary>
+    /// Gets or sets the maximum width of exported images in points (1/72nd inch).
+    /// </summary>
+    /// <value>
+    /// The maximum width of exported images (1/72nd inch).
+    /// </value>
+    public double? MaximumImageWidth { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum height of exported images in points (1/72nd inch).
+    /// </summary>
+    /// <value>
+    /// The maximum height of exported images (1/72nd inch).
+    /// </value>
+    public double? MaximumImageHeight { get; set; }
 
     #endregion Properties
 
@@ -223,6 +248,13 @@ namespace Altaxo.Text
         localImages: document.Images,
         textDocumentFolder: document.Folder
         );
+
+      if (MaximumImageWidth.HasValue)
+        renderer.MaxImageWidthIn96thInch = MaximumImageWidth.Value * 96.0 / 72.0;
+      if (MaximumImageHeight.HasValue)
+        renderer.MaxImageHeigthIn96thInch = MaximumImageHeight.Value * 96.0 / 72.0;
+      if (null != ThemeName)
+        renderer.ThemeName = ThemeName;
 
       renderer.Render(markdownDocument);
     }

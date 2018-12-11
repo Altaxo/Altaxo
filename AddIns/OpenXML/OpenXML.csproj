@@ -52,6 +52,7 @@
     <Compile Include="Text\Renderers\OpenXMLRenderer_ParagraphStyles.cs" />
     <Compile Include="Text\Renderers\OpenXMLRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\CodeBlockRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathBlockRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathInlineRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\IWpfMathAtomRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\IWpfMathRenderer.cs" />
@@ -78,7 +79,7 @@
     <Compile Include="Text\Renderers\OpenXML\Inlines\LinkInlineRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Inlines\LiteralInlineRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\ListRenderer.cs" />
-    <Compile Include="Text\Renderers\OpenXML\OpenXMLExportOptions.cs" />
+    <Compile Include="Text\OpenXMLExportOptions.cs" />
     <Compile Include="Text\Renderers\OpenXML\OpenXMLObjectRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\ParagraphRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\QuoteBlockRenderer.cs" />

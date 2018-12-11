@@ -16,12 +16,28 @@ using Markdig.Syntax;
 namespace Altaxo.Text.Renderers
 {
   /// <summary>
-  /// Renderer for a Markdown <see cref="MarkdownDocument"/> object that renders into a OpenXML (.docx) document.
+  /// Renderer for a Markdown <see cref="MarkdownDocument"/> object that renders into an OpenXML (.docx) document.
   /// </summary>
   /// <seealso cref="RendererBase" />
   public partial class OpenXMLRenderer : RendererBase, IDisposable
   {
     public int ImageResolution { get; set; } = 600;
+
+    /// <summary>
+    /// Gets or sets the maximum image width in 96th inch.
+    /// </summary>
+    /// <value>
+    /// The maximum image width in 96th inch.
+    /// </value>
+    public double? MaxImageWidthIn96thInch { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum image heigth in 96th inch.
+    /// </summary>
+    /// <value>
+    /// The maximum image heigth in 96th inch.
+    /// </value>
+    public double? MaxImageHeigthIn96thInch { get; set; }
 
     /// <summary>
     /// Gets or sets the folder of the <see cref="TextDocument"/> that is rendered with this renderer.
@@ -46,7 +62,7 @@ namespace Altaxo.Text.Renderers
     /// <value>
     /// The name of the theme.
     /// </value>
-    public string ThemeName { get; private set; } = "Github";
+    public string ThemeName { get; set; } = "Github";
 
     /// <summary>
     /// The word document
@@ -72,7 +88,7 @@ namespace Altaxo.Text.Renderers
 
 
       // Extension renderers that must be registered before the default renders
-      //ObjectRenderers.Add(new MathBlockRenderer()); // since MathBlock derives from CodeBlock, it must be registered before CodeBlockRenderer
+      ObjectRenderers.Add(new MathBlockRenderer()); // since MathBlock derives from CodeBlock, it must be registered before CodeBlockRenderer
 
       // Default block renderers
       ObjectRenderers.Add(new CodeBlockRenderer());
@@ -111,17 +127,13 @@ namespace Altaxo.Text.Renderers
 
     public override object Render(MarkdownObject markdownObject)
     {
-      object result = null;
-
       if (null == markdownObject)
         throw new ArgumentNullException(nameof(markdownObject));
 
       if (markdownObject is MarkdownDocument markdownDocument)
       {
-
         using (_wordDocument = WordprocessingDocument.Create(WordDocumentFileName, WordprocessingDocumentType.Document))
         {
-
           // Add a main document part. 
           _mainDocumentPart = _wordDocument.AddMainDocumentPart();
 
