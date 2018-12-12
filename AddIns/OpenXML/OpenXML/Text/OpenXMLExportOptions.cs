@@ -56,9 +56,10 @@ namespace Altaxo.Text
         var s = (OpenXMLExportOptions)obj;
 
         info.AddValue("ExpandChildDocuments", s.ExpandChildDocuments);
+        info.AddValue("MaxImageHeight", s.MaximumImageHeight);
+        info.AddValue("MaxImageHeight", s.MaximumImageHeight);
+
         info.AddValue("ThemeName", s.ThemeName);
-        info.AddValue("MaxImageHeight", s.MaximumImageHeight);
-        info.AddValue("MaxImageHeight", s.MaximumImageHeight);
         info.AddValue("OpenApplication", s.OpenApplication);
         info.AddValue("OutputFileName", s.OutputFileName);
       }
@@ -66,9 +67,10 @@ namespace Altaxo.Text
       public void Deserialize(OpenXMLExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         s.ExpandChildDocuments = info.GetBoolean("ExpandChildDocuments");
+        s.MaximumImageWidth = (Altaxo.Units.DimensionfulQuantity?)info.GetValue("MaxImageWidth", s);
+        s.MaximumImageHeight = (Altaxo.Units.DimensionfulQuantity?)info.GetValue("MaxImageHeight", s);
+
         s.ThemeName = info.GetString("ThemeName");
-        s.MaximumImageWidth = info.GetNullableDouble("MaxImageWidth");
-        s.MaximumImageHeight = info.GetNullableDouble("MaxImageHeight");
         s.OpenApplication = info.GetBoolean("OpenApplication");
         s.OutputFileName = info.GetString("OutputFileName");
       }
@@ -115,7 +117,7 @@ namespace Altaxo.Text
     /// <value>
     /// The maximum width of exported images (1/72nd inch).
     /// </value>
-    public double? MaximumImageWidth { get; set; }
+    public Altaxo.Units.DimensionfulQuantity? MaximumImageWidth { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum height of exported images in points (1/72nd inch).
@@ -123,7 +125,7 @@ namespace Altaxo.Text
     /// <value>
     /// The maximum height of exported images (1/72nd inch).
     /// </value>
-    public double? MaximumImageHeight { get; set; }
+    public Altaxo.Units.DimensionfulQuantity? MaximumImageHeight { get; set; }
 
     #endregion Properties
 
@@ -133,7 +135,7 @@ namespace Altaxo.Text
     /// Gets the output file by showing a save file dialog.
     /// </summary>
     /// <returns></returns>
-    public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog(string oldFileName)
+    public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog(string oldFileName = null)
     {
       var dlg = new SaveFileOptions();
       dlg.AddFilter("*.docx", "Docx files (*.docx)");
@@ -148,6 +150,26 @@ namespace Altaxo.Text
 
       var dialogResult = Current.Gui.ShowSaveFileDialog(dlg);
 
+      return (dialogResult, dlg.FileName);
+    }
+
+    /// <summary>
+    /// Gets the template file by showing a open file dialog.
+    /// </summary>
+    /// <returns></returns>
+    public static (bool dialogResult, string templateFileName) ShowGetTemplateFileDialog(string oldFileName = null)
+    {
+      var dlg = new OpenFileOptions();
+      dlg.AddFilter("*.docx", "Docx files (*.docx)");
+      dlg.AddFilter("*.*", "All files (*.*)");
+      dlg.Title = "Select a .docx file used as style template";
+
+      if (null != oldFileName)
+      {
+        dlg.InitialDirectory = System.IO.Path.GetDirectoryName(oldFileName);
+        dlg.FileName = oldFileName;
+      }
+      var dialogResult = Current.Gui.ShowOpenFileDialog(dlg);
       return (dialogResult, dlg.FileName);
     }
 
@@ -250,9 +272,9 @@ namespace Altaxo.Text
         );
 
       if (MaximumImageWidth.HasValue)
-        renderer.MaxImageWidthIn96thInch = MaximumImageWidth.Value * 96.0 / 72.0;
+        renderer.MaxImageWidthIn96thInch = MaximumImageWidth.Value.AsValueIn(Altaxo.Units.Length.Inch.Instance) * 96.0;
       if (MaximumImageHeight.HasValue)
-        renderer.MaxImageHeigthIn96thInch = MaximumImageHeight.Value * 96.0 / 72.0;
+        renderer.MaxImageHeigthIn96thInch = MaximumImageHeight.Value.AsValueIn(Altaxo.Units.Length.Inch.Instance) * 96.0;
       if (null != ThemeName)
         renderer.ThemeName = ThemeName;
 

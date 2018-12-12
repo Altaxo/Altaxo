@@ -29,7 +29,6 @@ using Altaxo.Gui;
 using Altaxo.Gui.Text.Viewing;
 using Altaxo.Gui.Workbench;
 using Altaxo.Text.Renderers;
-using Markdig;
 
 namespace Altaxo.Text.Commands
 {
@@ -74,16 +73,14 @@ namespace Altaxo.Text.Commands
   {
     public override void Run(TextDocumentController ctrl)
     {
-      OpenXMLExportOptions.ExportShowFileSaveDialogOnly(ctrl.TextDocument);
-
+      OpenXMLExportOptions.ExportShowDialog(ctrl.TextDocument);
     }
-  }
 
-  public class TestOpenXML : SimpleCommand
-  {
-    public override void Execute(object parameter)
+    // we need at least one reference to a UIElement in this assembly in order to let the ReflectionService
+    // recognize that this is a UI assembly.
+    public void Test()
     {
-      OpenXMLRenderer.Test();
+      var ui = new System.Windows.UIElement();
     }
   }
 }

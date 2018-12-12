@@ -202,7 +202,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       {
         double cxmax = renderer.MaxImageWidthIn96thInch.Value * 9525;
         double cymax = renderer.MaxImageHeigthIn96thInch.Value * 9525;
-        var r = Math.Min(cx / cxmax, cy / cymax);
+        var r = Math.Min(cxmax / cx, cymax / cy);
         if (r < 1)
         {
           cx = (long)(r * cx);
@@ -214,7 +214,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         double cxmax = renderer.MaxImageWidthIn96thInch.Value * 9525;
         if (cx > cxmax)
         {
-          cy = (long)(cy * (cx / cxmax));
+          cy = (long)(cy * (cxmax / cx));
           cx = (long)cxmax;
         }
       }
@@ -223,7 +223,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         double cymax = renderer.MaxImageHeigthIn96thInch.Value * 9525;
         if (cy > cymax)
         {
-          cx = (long)(cx * (cy / cymax));
+          cx = (long)(cx * (cymax / cy));
           cy = (long)cymax;
         }
       }

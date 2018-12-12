@@ -287,11 +287,11 @@
         <MenuItem id="TextImportExportSeparator"  type = "Separator" />
         <MenuItem id="TextExport" label="${res:XML.MainMenu.FileMenu.ExportMarkdown}"
 					description="${res:XML.MainMenu.FileMenu.ExportMarkdown.Description}" class="Altaxo.Main.MenuCommands.Text.ExportMarkdown" />
-        <MenuItem id="ExportMaml"
+        <MenuItem id="ExportTextAsMaml"
 										label="${res:XML.MainMenu.TextMenu.ExportMaml}"
 										description="${res:XML.MainMenu.TextMenu.ExportMaml.Description}"
 										class="Altaxo.Main.MenuCommands.Text.ExportMaml" />
-        <MenuItem id="ExportHtml"
+        <MenuItem id="ExportTextAsHtml"
 										label="${res:XML.MainMenu.TextMenu.ExportHtml}"
 										description="${res:XML.MainMenu.TextMenu.ExportHtml.Description}"
 										class="Altaxo.Main.MenuCommands.Text.ExportHtml" />

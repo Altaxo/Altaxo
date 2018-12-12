@@ -11,23 +11,16 @@
     <Import assembly=":AltaxoBase.Presentation" />
     <Import assembly=":AltaxoDom" />
     <Import assembly="OpenXMLAddin.dll"/>
+    <Import assembly="OpenXMLAddin.Presentation.dll"/>
   </Runtime>
 
   <Path name = "/Altaxo/Workbench/MainMenu/File">
     <Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
-      <MenuItem id = "OpenXMLSendToOrigin"
-                label = "OpenXML Send table to origin"
+      <MenuItem id = "ExportTextAsOpenXML"
+                insertbefore="ExportTextAsHtml"
+                label = "Export to OpenXML (.docx)"
                 class = "Altaxo.Text.Commands.ExportOpenXML"/>
 
     </Condition>
-
-    <MenuItem id = "OpenXMLTest"
-                label = "OpenXML Test"
-                class = "Altaxo.Text.Commands.TestOpenXML"/>
-
   </Path>
-
-
-
-
 </AddIn>

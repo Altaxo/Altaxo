@@ -237,6 +237,7 @@ namespace Altaxo.Main.Services
           return;
 
         SubClassTypeList tl = _parent[new Type[] { _baseType }];
+        tl.Update(); // Make sure the base class list is up to date
 
         foreach (Type definedtype in tl.GetSubTypeRange(_currentAssemblyCount, loadedAssemblyCount - _currentAssemblyCount))
         {
