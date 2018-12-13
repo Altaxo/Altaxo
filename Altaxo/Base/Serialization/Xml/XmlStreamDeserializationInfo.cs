@@ -572,7 +572,9 @@ namespace Altaxo.Serialization.Xml
         // Get the surrogate for this type
         IXmlSerializationSurrogate surr = _surrogateSelector.GetSurrogate(type);
         if (null == surr)
+        {
           throw new ApplicationException(string.Format("Unable to find XmlSurrogate for type {0}!", type));
+        }
         else
         {
           bool bNotEmpty = !_xmlReader.IsEmptyElement;
@@ -596,6 +598,61 @@ namespace Altaxo.Serialization.Xml
         throw new ApplicationException(string.Format("Unable to deserialize element at line {0}, position {1}, Type attribute missing!", _xmlReader.LineNumber, _xmlReader.LinePosition));
       }
     }
+
+    /// <summary>
+    /// Intended for lazy loading. Tries to get the deserialized value. If the type is unknown (this can happen if (especially for addin DLLs) a DLL
+    /// is not loaded yet), the outer XML node is returned as string value, so it can be deserialized later.
+    /// </summary>
+    /// <param name="name">Name of the node.</param>
+    /// <param name="parentobject">The parent object.</param>
+    /// <param name="returnValueIsOuterXml">If set to <c>true</c>, the return value is a string containing the outer XML node.</param>
+    /// <returns>The deserialized value (if <paramref name="returnValueIsOuterXml"/> is false), or the outer XML node (if <paramref name="returnValueIsOuterXml"/> is true).</returns>
+    /// <exception cref="ApplicationException"></exception>
+    public object GetValueOrOuterXml(string name, object parentobject, out bool returnValueIsOuterXml)
+    {
+      returnValueIsOuterXml = false;
+      string type = _xmlReader.GetAttribute("Type");
+
+      if (null != type)
+      {
+        if ("UndefinedValue" == type)
+        {
+          _xmlReader.Read();
+          return null;
+        }
+
+        // Get the surrogate for this type
+        IXmlSerializationSurrogate surr = _surrogateSelector.GetSurrogate(type);
+        if (null == surr)
+        {
+          returnValueIsOuterXml = true;
+          return _xmlReader.ReadOuterXml();
+        }
+        else
+        {
+          bool bNotEmpty = !_xmlReader.IsEmptyElement;
+          // System.Diagnostics.Trace.WriteLine(string.Format("Xml val {0}, type {1}, empty:{2}",m_Reader.Name,type,bNotEmpty));
+
+          if (bNotEmpty)
+            _xmlReader.ReadStartElement();  // note: this must now be done by  in the deserialization code
+
+          object retvalue = surr.Deserialize(null, this, parentobject);
+
+          if (bNotEmpty)
+            _xmlReader.ReadEndElement();
+          else
+            _xmlReader.Read();
+
+          return retvalue;
+        }
+      }
+      else
+      {
+        throw new ApplicationException(string.Format("Unable to deserialize element at line {0}, position {1}, Type attribute missing!", _xmlReader.LineNumber, _xmlReader.LinePosition));
+      }
+    }
+
+
 
     public void GetBaseValueEmbedded(object instance, System.Type basetype, object parent)
     {

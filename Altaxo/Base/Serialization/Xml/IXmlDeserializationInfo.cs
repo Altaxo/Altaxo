@@ -118,6 +118,8 @@ namespace Altaxo.Serialization.Xml
 
     object GetValue(string name, object parent);
 
+    object GetValueOrOuterXml(string name, object parent, out bool returnValueIsOuterXml);
+
     void GetBaseValueEmbedded(object instance, System.Type basetype, object parent);
 
     object GetBaseValueEmbedded(object instance, string fullyQualifiedBasetypeName, object parent);

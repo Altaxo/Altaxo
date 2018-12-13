@@ -43,10 +43,24 @@ namespace Altaxo.Main.Properties
     protected Dictionary<string, object> _properties;
 
     /// <summary>
+    /// The properties lazy loaded. All keys that are included here are not yet deserialized, i.e in the dictionary <see cref="_properties"/> the value should be a string.
+    /// </summary>
+    private HashSet<string> _propertiesLazyLoaded = new HashSet<string>();
+
+
+    /// <summary>
     /// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
     /// the propery is not serialized when storing the project.
     /// </summary>
     public const string TemporaryPropertyPrefixString = "tmp/";
+
+    /// <summary>
+    /// Gets the assembly version this property bag was loaded from, i.e. the version of Altaxo that has serialized this bag before it was loaded again.
+    /// </summary>
+    /// <value>
+    /// The assembly version of Altaxo this bag was loaded from, or null if this is the default bag.
+    /// </value>
+    public Version AssemblyVersionLoadedFrom { get; private set; }
 
     #region Serialization
 
@@ -68,12 +82,21 @@ namespace Altaxo.Main.Properties
             continue;
           keyList.Add(entry.Key);
         }
+
         info.CreateArray("Properties", keyList.Count);
+        info.AddAttributeValue("AssemblyVersion", s.GetType().Assembly.GetName().Version.ToString());
         foreach (var key in keyList)
         {
+          var value = s._properties[key];
+
           info.CreateElement("e");
           info.AddValue("Key", key);
-          info.AddValue("Value", s._properties[key]);
+
+          if (s._propertiesLazyLoaded.Contains(key) && value is string rawXml)
+            info.WriteRaw(rawXml);
+          else
+            info.AddValue("Value", value);
+
           info.CommitElement();
         }
         info.CommitArray();
@@ -81,18 +104,30 @@ namespace Altaxo.Main.Properties
 
       public void Deserialize(PropertyBag s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
+        var assemblyVersionString = info.GetStringAttribute("AssemblyVersion");
+        if (!string.IsNullOrEmpty(assemblyVersionString))
+          s.AssemblyVersionLoadedFrom = Version.Parse(assemblyVersionString);
+
+
         int count = info.OpenArray("Properties");
 
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < count; ++i)
         {
           info.OpenElement(); // "e"
           string propkey = info.GetString("Key");
-          object propval = info.GetValue("Value", s);
+          object value = info.GetValueOrOuterXml("Value", s, out var isOuterXml);
           info.CloseElement(); // "e"
-          s._properties[propkey] = propval;
-          var propValAsNode = propval as IDocumentLeafNode;
-          if (null != propValAsNode)
-            propValAsNode.ParentObject = s;
+
+          if (isOuterXml)
+          {
+            s._properties[propkey] = value;
+            s._propertiesLazyLoaded.Add(propkey);
+          }
+          else
+          {
+            s._properties[propkey] = value;
+            s._propertiesLazyLoaded.Remove(propkey);
+          }
         }
         info.CloseArray(count);
       }
@@ -135,10 +170,17 @@ namespace Altaxo.Main.Properties
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      var from = (IPropertyBag)obj;
-      if (null != from)
+      if (obj is PropertyBag fromBag)
       {
         _properties.Clear();
+        _propertiesLazyLoaded.Clear();
+        MergePropertiesFrom(fromBag, true);
+        return true;
+      }
+      else if (obj is IPropertyBag from)
+      {
+        _properties.Clear();
+        _propertiesLazyLoaded.Clear();
         foreach (var entry in from)
         {
           object value;
@@ -200,12 +242,51 @@ namespace Altaxo.Main.Properties
       }
     }
 
+    #region Conversion from Lazy
+
+    /// <summary>
+    /// Converts a property from the lazy representation as Xml string into the real value. Then the lazy property entry
+    /// is removed, and the property is stored in the regular property dictionary.
+    /// </summary>
+    /// <param name="propName">Name of the property.</param>
+    /// <param name="xml">The xml element to convert from.</param>
+    private bool ConvertFromLazy(string propName, string xml)
+    {
+      using (var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
+      {
+        object propval;
+        try // deserialization may fail, e.g. because the DLL the type is in is not loaded (e.g. if it is an addin DLL)
+        {
+          info.BeginReading(xml);
+          propval = info.GetValue("Value", this);
+        }
+        catch (Exception)
+        {
+          // if deserialization fails, we leave everything as it is.
+          return false;
+        }
+
+        if (propval is IDocumentLeafNode documentLeafNode)
+          documentLeafNode.ParentObject = this;
+
+        _propertiesLazyLoaded.Remove(propName);
+        _properties[propName] = propval;
+        return true;
+      }
+    }
+
+
+
+    #endregion Conversion from Lazy
+
+
     /// <summary>
     /// Removes all properties in this instance.
     /// </summary>
     public virtual void Clear()
     {
       _properties.Clear();
+      _propertiesLazyLoaded.Clear();
     }
 
     /// <summary>
@@ -234,6 +315,9 @@ namespace Altaxo.Main.Properties
     /// </returns>
     public virtual T GetValue<T>(PropertyKey<T> p)
     {
+      if (_propertiesLazyLoaded.Contains(p.GuidString) && _properties.TryGetValue(p.GuidString, out var obj) && obj is string xml && !ConvertFromLazy(p.GuidString, xml))
+        return default(T);
+
       if (_properties.ContainsKey(p.GuidString))
         return (T)_properties[p.GuidString];
       else
@@ -242,6 +326,9 @@ namespace Altaxo.Main.Properties
 
     public virtual T GetValue<T>(PropertyKey<T> p, T defaultValue)
     {
+      if (_propertiesLazyLoaded.Contains(p.GuidString) && _properties.TryGetValue(p.GuidString, out var obj) && obj is string xml && !ConvertFromLazy(p.GuidString, xml))
+        return defaultValue;
+
       if (_properties.ContainsKey(p.GuidString))
         return (T)_properties[p.GuidString];
       else
@@ -259,6 +346,12 @@ namespace Altaxo.Main.Properties
     /// </returns>
     public virtual bool TryGetValue<T>(PropertyKey<T> p, out T value)
     {
+      if (_propertiesLazyLoaded.Contains(p.GuidString) && _properties.TryGetValue(p.GuidString, out var obj) && obj is string xml && !ConvertFromLazy(p.GuidString, xml))
+      {
+        value = default(T);
+        return false;
+      }
+
       var isPresent = _properties.TryGetValue(p.GuidString, out var o);
       if (isPresent)
       {
@@ -284,6 +377,7 @@ namespace Altaxo.Main.Properties
       if (Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(typeof(T), p.PropertyType))
       {
         _properties[p.GuidString] = value;
+        _propertiesLazyLoaded.Remove(p.GuidString);
         var propValAsNode = value as IDocumentLeafNode;
         if (null != propValAsNode)
           propValAsNode.ParentObject = this;
@@ -304,6 +398,7 @@ namespace Altaxo.Main.Properties
     /// <returns><c>True</c> if the property has been successful removed, <c>false</c> if the property has not been found in this collection.</returns>
     public virtual bool RemoveValue<T>(PropertyKey<T> p)
     {
+      _propertiesLazyLoaded.Remove(p.GuidString);
       var removed = _properties.Remove(p.GuidString);
 
       if (removed)
@@ -326,6 +421,9 @@ namespace Altaxo.Main.Properties
     /// </returns>
     public virtual T GetValue<T>(string propName)
     {
+      if (_propertiesLazyLoaded.Contains(propName) && _properties.TryGetValue(propName, out var obj) && obj is string xml && !ConvertFromLazy(propName, xml))
+        return default(T);
+
       var result = _properties[propName];
       return (T)result;
     }
@@ -341,6 +439,13 @@ namespace Altaxo.Main.Properties
     /// </returns>
     public virtual bool TryGetValue<T>(string propName, out T value)
     {
+      if (_propertiesLazyLoaded.Contains(propName) && _properties.TryGetValue(propName, out var obj) && obj is string xml && !ConvertFromLazy(propName, xml))
+      {
+        value = default(T);
+        return false;
+      }
+
+
       var isPresent = _properties.TryGetValue(propName, out var o);
       if (isPresent)
       {
@@ -365,6 +470,7 @@ namespace Altaxo.Main.Properties
       if (string.IsNullOrEmpty(propName))
         throw new ArgumentNullException("propName is null or empty");
 
+      _propertiesLazyLoaded.Remove(propName);
       _properties[propName] = value;
       var propValAsNode = value as IDocumentLeafNode;
       if (null != propValAsNode)
@@ -383,6 +489,7 @@ namespace Altaxo.Main.Properties
     /// </returns>
     public virtual bool RemoveValue(string propName)
     {
+      _propertiesLazyLoaded.Remove(propName);
       bool removed = _properties.Remove(propName);
 
       if (removed && !(propName.StartsWith(TemporaryPropertyPrefixString)))
@@ -401,7 +508,21 @@ namespace Altaxo.Main.Properties
     /// </returns>
     public virtual IEnumerator<KeyValuePair<string, object>> GetEnumerator()
     {
-      return _properties.GetEnumerator();
+      // we yield only those properties which could be deserialized
+      foreach (var entry in _properties)
+      {
+        if (_propertiesLazyLoaded.Contains(entry.Key) && _properties.TryGetValue(entry.Key, out var obj) && obj is string xml)
+        {
+          if (ConvertFromLazy(entry.Key, xml))
+            yield return new KeyValuePair<string, object>(entry.Key, _properties[entry.Key]);
+          else
+            continue;
+        }
+        else
+        {
+          yield return entry;
+        }
+      }
     }
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -421,6 +542,7 @@ namespace Altaxo.Main.Properties
             ((IDisposable)pr.Value).Dispose();
 
         _properties.Clear();
+        _propertiesLazyLoaded.Clear();
 
         base.Dispose(isDisposing);
       }
@@ -439,7 +561,7 @@ namespace Altaxo.Main.Properties
 
       bool anythingChanged = false;
 
-      foreach (var entry in from)
+      foreach (var entry in from._properties)
       {
         if (overrideExistingProperties | !_properties.ContainsKey(entry.Key))
         {
@@ -456,6 +578,10 @@ namespace Altaxo.Main.Properties
             value = entry.Value;
           }
           _properties[entry.Key] = value;
+          if (from._propertiesLazyLoaded.Contains(entry.Key))
+            _propertiesLazyLoaded.Add(entry.Key);
+          else
+            _propertiesLazyLoaded.Remove(entry.Key);
 
           anythingChanged = true;
         }
