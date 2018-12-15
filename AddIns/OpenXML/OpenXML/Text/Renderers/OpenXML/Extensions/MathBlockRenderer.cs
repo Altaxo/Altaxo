@@ -65,10 +65,11 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
       var mathRenderer = new MathRendering.OpenXMLWpfMathRenderer();
 
       var mathObj = (DocumentFormat.OpenXml.OpenXmlCompositeElement)mathRenderer.Render(formula.RootAtom);
-      var mathParagraph = renderer.Push(new Paragraph());
+
+      var wordParagraph = renderer.Push(new DocumentFormat.OpenXml.Wordprocessing.Paragraph());
+      renderer.Push(new Paragraph());
       renderer.Push(mathObj);
-      renderer.PopTo(mathObj);
-      renderer.PopTo(mathParagraph);
+      renderer.PopTo(wordParagraph);
     }
   }
 }
