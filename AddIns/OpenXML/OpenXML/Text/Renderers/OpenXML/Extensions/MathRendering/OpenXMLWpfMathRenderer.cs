@@ -29,7 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Math;
-using WpfMath;
+using WpfMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
 {

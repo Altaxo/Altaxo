@@ -25,7 +25,7 @@
 
 using Markdig.Helpers;
 using Markdig.Syntax;
-using WpfMath;
+using WpfMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
 {

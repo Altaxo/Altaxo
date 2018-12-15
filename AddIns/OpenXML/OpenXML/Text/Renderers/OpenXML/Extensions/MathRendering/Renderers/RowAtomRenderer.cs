@@ -27,14 +27,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfMath;
+using WpfMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 {
   /// <summary>
   /// Renderer for <see cref="RowAtom"/> objects, containing children that are horizontally aligned.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.RowAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.RowAtom}" />
   internal class RowAtomRenderer : OpenXMLAtomRenderer<RowAtom>
   {
     protected override void Write(OpenXMLWpfMathRenderer renderer, RowAtom item)

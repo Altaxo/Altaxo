@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Math;
-using WpfMath;
+using WpfMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 {
@@ -36,7 +36,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// Renderer for <see cref="SymbolAtom"/> objects, like operator symbols, greek characters,
   /// and special symbols.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.SymbolAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.SymbolAtom}" />
   internal class SymbolAtomRenderer : OpenXMLAtomRenderer<SymbolAtom>
   {
     protected override void Write(OpenXMLWpfMathRenderer renderer, SymbolAtom item)

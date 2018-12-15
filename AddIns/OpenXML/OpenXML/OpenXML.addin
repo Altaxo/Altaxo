@@ -17,7 +17,7 @@
   <Path name = "/Altaxo/Workbench/MainMenu/File">
     <Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
       <MenuItem id = "ExportTextAsOpenXML"
-                insertbefore="ExportTextAsHtml"
+                insertbefore="ExportTextAsMaml"
                 label = "Export to OpenXML (.docx)"
                 class = "Altaxo.Text.Commands.ExportOpenXML"/>
 

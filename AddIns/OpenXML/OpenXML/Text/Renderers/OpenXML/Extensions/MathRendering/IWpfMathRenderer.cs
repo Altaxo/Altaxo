@@ -23,7 +23,7 @@
 #endregion Copyright
 
 using System;
-using WpfMath;
+using WpfMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
 {

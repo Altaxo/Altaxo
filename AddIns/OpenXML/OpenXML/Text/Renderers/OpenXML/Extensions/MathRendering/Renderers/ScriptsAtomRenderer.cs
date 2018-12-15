@@ -28,14 +28,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Math;
-using WpfMath;
+using WpfMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 {
   /// <summary>
   /// Renderer for <see cref="ScriptsAtom"/> objects, like subscript and superscript.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.ScriptsAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.ScriptsAtom}" />
   internal class ScriptsAtomRenderer : OpenXMLAtomRenderer<ScriptsAtom>
   {
     protected override void Write(OpenXMLWpfMathRenderer renderer, ScriptsAtom item)

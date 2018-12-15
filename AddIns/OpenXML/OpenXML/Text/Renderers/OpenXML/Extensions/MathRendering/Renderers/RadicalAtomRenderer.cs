@@ -33,9 +33,9 @@ using W = DocumentFormat.OpenXml.Wordprocessing;
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 {
   /// <summary>
-  /// Renderer for <see cref="WpfMath.Radical"/> objects (radicals like square root).
+  /// Renderer for <see cref="WpfMath.Atoms.Radical"/> objects (radicals like square root).
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Radical}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.Radical}" />
   internal class RadicalAtomRenderer : OpenXMLAtomRenderer<WpfMath.Radical>
   {
     protected override void Write(OpenXMLWpfMathRenderer renderer, WpfMath.Radical item)

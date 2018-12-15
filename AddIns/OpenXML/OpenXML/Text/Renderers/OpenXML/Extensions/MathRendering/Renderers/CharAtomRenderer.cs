@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Math;
-using WpfMath;
+using WpfMath.Atoms;
 using W = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
@@ -36,7 +36,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <summary>
   /// Renderer for <see cref="CharAtom"/> containing a single character.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.CharAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.CharAtom}" />
   internal class CharAtomRenderer : OpenXMLAtomRenderer<CharAtom>
   {
     protected override void Write(OpenXMLWpfMathRenderer renderer, CharAtom item)
