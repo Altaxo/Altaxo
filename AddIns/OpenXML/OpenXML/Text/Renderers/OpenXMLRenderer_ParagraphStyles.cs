@@ -25,7 +25,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Altaxo.Text.Renderers.OpenXML;
@@ -120,22 +122,62 @@ namespace Altaxo.Text.Renderers
       var root = new Styles();
       root.Save(part);
 
-      using (var stream = new FileStream(@"V:\C\Altaxo\Temp\Word\styles.xml", FileMode.Open, FileAccess.Read, FileShare.Read))
+      // now we have to decide: if nameOfTheme is a full file name, then we treat it as .docx file
+
+      if (Path.IsPathRooted(nameOfTheme))
       {
-        part.FeedData(stream);
+        // full file name
+
+        if (Path.GetExtension(nameOfTheme).ToLowerInvariant() == ".xml")
+        {
+          // we treat the file as XML file directly containing the styles
+          using (var stream = new FileStream(nameOfTheme, FileMode.Open, FileAccess.Read, FileShare.Read))
+          {
+            part.FeedData(stream);
+          }
+        }
+        else
+        {
+          // we treat the file as .docx file
+          using (var zipToOpen = new FileStream(nameOfTheme, FileMode.Open, FileAccess.Read, FileShare.Read))
+          {
+            using (var archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read))
+            {
+              foreach (var entry in archive.Entries)
+              {
+                if (entry.Name.ToLowerInvariant() == "styles.xml")
+                {
+                  using (var stream = entry.Open())
+                  {
+                    part.FeedData(stream);
+                  }
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+      }
+      else // Path is not rooted, so this is probably the name of a resource
+      {
+        var assembly = Assembly.GetExecutingAssembly();
+        var resourceName = string.Format("Altaxo.Text.OpenXMLStyles.{0}.xml", nameOfTheme);
+
+
+        using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+        {
+          if (null != stream)
+            part.FeedData(stream);
+          else
+            throw new ArgumentOutOfRangeException("Resource not found: " + nameOfTheme, nameof(nameOfTheme));
+        }
+
       }
       return part;
     }
 
-    /*
-    public static Stream OpenStream(string name)
-    {
-      var s = typeof().Assembly.GetManifestResourceStream($"{Prefix}{name}");
-      if (s == null)
-        throw new FileNotFoundException("The resource file '" + name + "' was not found.");
-      return s;
-    }
-    */
+
 
 
     /// <summary>

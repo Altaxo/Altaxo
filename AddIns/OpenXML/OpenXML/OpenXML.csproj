@@ -37,6 +37,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -87,6 +88,7 @@
     <Compile Include="Text\Renderers\OpenXML\QuoteBlockRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Styles.cs" />
     <Compile Include="Text\Renderers\OpenXML\ThematicBreakRenderer.cs" />
+    <EmbeddedResource Include="Text\OpenXMLStyles\GitHub.xml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="OpenXML.addin">
@@ -121,6 +123,9 @@
       <Project>{08f4b41a-7f21-446d-836b-00056e7bc311}</Project>
       <Name>WpfMath</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Text\OpenXMLStyles\README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />

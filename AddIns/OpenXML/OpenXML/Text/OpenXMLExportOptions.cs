@@ -271,6 +271,7 @@ namespace Altaxo.Text
         textDocumentFolder: document.Folder
         );
 
+
       if (MaximumImageWidth.HasValue)
         renderer.MaxImageWidthIn96thInch = MaximumImageWidth.Value.AsValueIn(Altaxo.Units.Length.Inch.Instance) * 96.0;
       if (MaximumImageHeight.HasValue)
