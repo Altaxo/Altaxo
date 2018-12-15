@@ -78,9 +78,6 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
           );
         naryProps.AppendChild(controlProperties);
 
-
-
-
         if (item.LowerLimitAtom != null)
         {
           var sub = renderer.Push(new SubArgument());
@@ -98,7 +95,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
         var callback = new CallbackPopAfterNextElement(renderer, elementToPopTo: nary);
         // renderer.PopTo(nary); we don't pop here, the pop is done after the next element was written (see line before)
       }
-      if (item.Type == TexAtomType.BigOperator && item.BaseAtom is RowAtom rowAtom)
+      else if (item.Type == TexAtomType.BigOperator && item.BaseAtom is RowAtom rowAtom)
       {
         // this is treated as a function if rowAtom contains character elements
         if (rowAtom.Elements.Any(a => !(a is CharAtom)))
