@@ -62,9 +62,18 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
     }
 
+    public static bool TryConvert(string symbolName, out string textString)
+    {
+      var result = _nameToSymbol.TryGetValue(symbolName, out textString);
+
+      if (!result)
+        textString = symbolName;
+
+      return result;
+    }
 
 
-    private Dictionary<string, string> _nameToSymbol = new Dictionary<string, string>()
+    private static Dictionary<string, string> _nameToSymbol = new Dictionary<string, string>()
     {
       // miscellaneous
       ["%"] = "%",
@@ -77,7 +86,48 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["faculty"] = "!",
       ["question"] = "?",
 
-      // greek lowercase letters
+      // < !--math accents-- >
+      // see https://de.wikipedia.org/wiki/Unicodeblock_Kombinierende_diakritische_Zeichen
+
+      ["acute"] = "\u0301",
+      ["grave"] = "\u0300",
+      ["ddot"] = "\u0308",
+      ["tilde"] = "\u0303",
+      ["bar"] = "\u0304",
+      ["breve"] = "\u0306",
+      ["check"] = "\u030C",
+      ["hat"] = "\u0302",
+      ["vec"] = "\u20D7",
+      ["dot"] = "\u0307",
+      ["widehat"] = "\u0361", // Word renders a widehat only if the AccentChar instance is null (this is handled in AccentedAtomRenderer)
+      ["widetilde"] = "\u0303", // in literature this is \u0360, but for Word it seems to be \u0303
+
+      // < !--delimiters that can change size-- >
+
+      ["lbrace"] = "{",
+      ["rbrace"] = "}",
+      ["lbrack"] = "[",
+      ["rbrack"] = "}",
+      ["rsqbrack"] = "]",
+      ["lsqbrack"] = "[",
+      ["langle"] = "\u2329",
+      ["rangle"] = "\u232A",
+      ["lfloor"] = "\u230A",
+      ["rfloor"] = "\u230B",
+      ["lceil"] = "\u2308",
+      ["rceil"] = "\u2309",
+      ["uparrow"] = "\u2191",
+      ["Uparrow"] = "\u21D1",
+      ["downarrow"] = "\u2193",
+      ["Downarrow"] = "\u21D3",
+      ["updownarrow"] = "\u2195",
+      ["Updownarrow"] = "\u21D5",
+      ["vert"] = "\u007C",
+      ["Vert"] = "\u2016",
+      ["\u007C"] = "\u2016", // note \| is parsed in WpfMath to SymbolAtom |, so when we render a symbol atom with |, we need a double vertical line
+      // ["slashdel" ] = "",                                               
+
+      //lowercase greek letters
       ["alpha"] = "α",
       ["beta"] = "β",
       ["gamma"] = "γ",
@@ -135,6 +185,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["Psi"] = "Ψ",
       ["Omega"] = "Ω",
 
+      // < !--special relation symbol with "width=0"(to overlap other relational symbols)-- >
+      ["not"] = "\u0338",
+
       // other chars
       ["aleph"] = "ℵ",
       ["imath"] = "ı",
@@ -151,7 +204,6 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["surdsign"] = "√",
       ["top"] = "⊤",
       ["bot"] = "⊥",
-      ["|"] = "|",
       ["triangle"] = "△",
       ["forall"] = "∀",
       ["exists"] = "∃",

@@ -50,8 +50,23 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
         run = (Run)renderer.Push(new Run());
 
         var runProperties = new W.RunProperties();
-        var runFonts = new W.RunFonts() { Ascii = "Cambria Math", HighAnsi = "Cambria Math" };
-        runProperties.Append(runFonts);
+        runProperties.AppendChild(new W.RunFonts() { Ascii = "Cambria Math", HighAnsi = "Cambria Math" });
+
+        // Foreground color
+        var cf = renderer.PeekForegroundColor();
+        if (cf.R != 0 || cf.G != 0 || cf.B != 0)
+        {
+          runProperties.AppendChild(new W.Color() { Val = string.Format("{0:X2}{1:X2}{2:X2}", cf.R, cf.G, cf.B) });
+        }
+
+        // Background color
+        var cb = renderer.PeekBackgroundColor();
+        if (cb.R != 255 || cb.G != 255 || cb.B != 255)
+        {
+          runProperties.AppendChild(new W.Shading() { Color = "Auto", Fill = string.Format("{0:X2}{1:X2}{2:X2}", cb.R, cb.G, cb.B) });
+        }
+
+
         run.AppendChild(runProperties);
 
       }

@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Math;
 using WpfMath.Atoms;
@@ -49,9 +50,19 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
       ObjectRenderers.Add(new Renderers.BigOperatorAtomRenderer()); // integrals, sums operators, product operators, functions
       ObjectRenderers.Add(new Renderers.ScriptsAtomRenderer()); // scripts like sub and superscript
       ObjectRenderers.Add(new Renderers.RadicalAtomRenderer()); // radicals like square root
+      ObjectRenderers.Add(new Renderers.AccentedAtomRenderer()); // symbols with accent, e.g. a tilde over the base symbol
+      ObjectRenderers.Add(new Renderers.UnderlinedAtomRenderer()); // symbols with a line underneath
+      ObjectRenderers.Add(new Renderers.OverlinedAtomRenderer()); // symbols with a line above
       ObjectRenderers.Add(new Renderers.SymbolAtomRenderer()); // symbols like operators, greek, 
       ObjectRenderers.Add(new Renderers.CharAtomRenderer()); // single chars
+      ObjectRenderers.Add(new Renderers.StyledAtomRenderer()); // elements with special foreground or background color
       ObjectRenderers.Add(new Renderers.TypedAtomRenderer()); // elements hold together, like a function argument
+      ObjectRenderers.Add(new Renderers.FencedAtomRenderer()); // Delimiters that can change size
+    }
+
+    internal void PushColor(Color color)
+    {
+      throw new NotImplementedException();
     }
 
     public override object Render(Atom atom)
@@ -172,6 +183,54 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
 
 
     #endregion OpenXmlCompositeElement stack
+
+    #region Foreground color stack
+
+    private List<(byte R, byte G, byte B)> _foregroundColorStack = new List<(byte R, byte G, byte B)>();
+
+    internal void PushForegroundColor(byte r, byte g, byte b)
+    {
+      _foregroundColorStack.Add((r, g, b));
+    }
+
+    internal void PopForegroundColor()
+    {
+      _foregroundColorStack.RemoveAt(_foregroundColorStack.Count - 1);
+    }
+
+    internal (byte R, byte G, byte B) PeekForegroundColor()
+    {
+      if (_foregroundColorStack.Count > 0)
+        return _foregroundColorStack[_foregroundColorStack.Count - 1];
+      else
+        return (0, 0, 0);
+    }
+
+    #endregion
+
+    #region Background color stack
+
+    private List<(byte R, byte G, byte B)> _backgroundColorStack = new List<(byte R, byte G, byte B)>();
+
+    internal void PushBackgroundColor(byte r, byte g, byte b)
+    {
+      _backgroundColorStack.Add((r, g, b));
+    }
+
+    internal void PopBackgroundColor()
+    {
+      _backgroundColorStack.RemoveAt(_backgroundColorStack.Count - 1);
+    }
+
+    internal (byte R, byte G, byte B) PeekBackgroundColor()
+    {
+      if (_backgroundColorStack.Count > 0)
+        return _backgroundColorStack[_backgroundColorStack.Count - 1];
+      else
+        return (255, 255, 255);
+    }
+
+    #endregion
 
   }
 }

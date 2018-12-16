@@ -46,22 +46,53 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
     // \int_1_N{x} converts to BigOperatorAtom(IsBigOperator=true) , BaseAtom = SymbolAtom("int"), LowerLimitAtom = CharAtom("1"), UpperLimitAtom = CharAtom("N")
 
 
+    private Dictionary<string, string> _nameToBigOperatorSymbol = new Dictionary<string, string>()
+    {
+      // miscellaneous
+      ["sum"] = "\u2211",
+      ["prod"] = "\u220F",
+      ["coprod"] = "\u2210",
+      ["bigoplus"] = "\u2A01",
+      ["bigotimes"] = "\u2A02",
+      ["bigodot"] = "\u2A00",
+      ["bigcup"] = "\u22C3",
+      ["bigcap"] = "\u22C2",
+      ["biguplus"] = "\u2A04",
+      ["bigsqcup"] = "\u2A06",
+      ["bigvee"] = "\u22C1",
+      ["bigwedge"] = "\u22C0",
+      ["int"] = "\u222B",
+      ["iint"] = "\u222C",
+      ["iiint"] = "\u222D",
+      ["iiiint"] = "\u222C",
+      ["oint"] = "\u222E",
+    };
+
     protected override void Write(OpenXMLWpfMathRenderer renderer, BigOperatorAtom item)
     {
       if (item.Type == TexAtomType.BigOperator && item.BaseAtom is SymbolAtom symAtom)
       {
+        // something like \int, \sum, \prod etc.
+
         LimitLocationValues? limitLocation = null;
-        string accentString = null;
         switch (symAtom.Name)
         {
           case "int":
+          case "iint":
+          case "iiint":
+          case "iiiint":
+          case "idotsint":
+          case "oint":
             limitLocation = LimitLocationValues.SubscriptSuperscript;
             break;
-          case "sum":
+          default:
             limitLocation = LimitLocationValues.UnderOver;
-            accentString = "∑";
             break;
         }
+
+        if (!_nameToBigOperatorSymbol.TryGetValue(symAtom.Name, out var accentString))
+          accentString = null;
+
 
         var nary = renderer.Push(new Nary());
         var naryProps = nary.AppendChild(new NaryProperties());

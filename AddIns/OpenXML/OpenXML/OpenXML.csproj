@@ -35,6 +35,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libraries\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
@@ -61,7 +62,12 @@
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\IWpfMathRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\OpenXMLWpfMathRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\OpenXMLAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\StyledAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\UnderlinedAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\OverlinedAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\AccentedAtomRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\RadicalAtomRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\FencedAtomRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\TypedAtomRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\ScriptsAtomRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\Renderers\BigOperatorAtomRenderer.cs" />
