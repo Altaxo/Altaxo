@@ -82,6 +82,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["cdotp"] = "·",
       ["normaldot"] = ".",
       ["slash"] = "/",
+      //  < !--this symbol is not defined in "TeXSymbols.xml", because it's not meant to be used as a symbol. Use "surd" instead. -->
+      ["sqrt"] = "\u221A",
+
       ["semicolon"] = ";",
       ["faculty"] = "!",
       ["question"] = "?",
@@ -185,10 +188,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["Psi"] = "Ψ",
       ["Omega"] = "Ω",
 
-      // < !--special relation symbol with "width=0"(to overlap other relational symbols)-- >
-      ["not"] = "\u0338",
 
-      // other chars
+      // <!--miscellaneous symbols of type "ord"-- >
       ["aleph"] = "ℵ",
       ["imath"] = "ı",
       ["jmath"] = "ȷ",
@@ -219,10 +220,111 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["lacc"] = "{",
       ["racc"] = "}",
 
+      // < !--"large" operators-- >
 
+      ["bigcap"] = "\u22C2",
+      ["bigcup"] = "\u22C3",
+      ["bigodot"] = "\u2A00",
+      ["bigoplus"] = "\u2A01",
+      ["bigotimes"] = "\u2A02",
+      ["bigsqcup"] = "\u2A06",
+      ["biguplus"] = "\u2A04",
+      ["bigvee"] = "\u22C1",
+      ["bigwedge"] = "\u22C0",
+      ["coprod"] = "\u2210",
+      ["int"] = "\u222B",
+      ["oint"] = "\u222E",
+      ["sum"] = "\u2211",
+      ["prod"] = "\u220F",
+      ["smallint"] = "\u222B", // TODO no Unicode char found, using int instead
+      ["iint"] = "\u222C",
+      ["iiint"] = "\u222D",
+      ["iiiint"] = "\u222C",
 
-      ["plus"] = "+",
+      // < !--binary operations-- >
+
       ["minus"] = "-",
+      ["plus"] = "+",
+      ["pm"] = "\u00B1",
+      ["mp"] = "\u2213",
+      ["setminus"] = "\u29F5",
+      ["cdot"] = "\u22C5",
+      ["times"] = "\u00D7",
+      ["ast"] = "\u2217",
+      ["star"] = "\u22C6",
+      ["diamond"] = "\u22C4",
+      ["circ"] = "\u2218",
+      ["bullet"] = "\u2219",
+      ["div"] = "\u00F7",
+      ["cap"] = "\u2229",
+      ["cup"] = "\u222A",
+      ["uplus"] = "\u228E",
+      ["sqcap"] = "\u2293",
+      ["sqcup"] = "\u2294",
+      ["triangleleft"] = "\u22B2",
+      ["triangleright"] = "\u22B3",
+      ["wr"] = "\u2240",
+      ["bigcirc"] = "\u25EF",
+      ["bigtriangleup"] = "\u25B3",
+      ["bigtriangledown"] = "\u25BD",
+      ["vee"] = "\u2228",
+      ["lor"] = "\u2228",
+      ["wedge"] = "\u2227",
+      ["land"] = "\u2227",
+      ["oplus"] = "\u2295",
+      ["ominus"] = "\u2296",
+      ["otimes"] = "\u2297",
+      ["oslash"] = "\u2298",
+      ["odot"] = "\u2299",
+      ["dagger"] = "\u2020",
+      ["ddagger"] = "\u2021",
+      ["amalg"] = "\u2A3F",
+
+      // < !--relations-- >
+
+      ["equals"] = "=",
+      ["gt"] = ">",
+      ["lt"] = "<",
+      ["leq"] = "\u2264",
+      ["le"] = "\u2264",
+      ["prec"] = "\u227A",
+      ["preceq"] = "\u2AAF",
+      ["ll"] = "\u226A",
+      ["subset"] = "\u2282",
+      ["subseteq"] = "\u2286",
+      ["sqsubseteq"] = "\u2291",
+      ["in"] = "",
+      ["vdash"] = "",
+      ["smile"] = "",
+      ["frown"] = "",
+      ["geq"] = "",
+      ["ge"] = "",
+      ["succ"] = "",
+      ["succeq"] = "",
+      ["gg"] = "",
+      ["supset"] = "",
+      ["supseteq"] = "",
+      ["sqsupseteq"] = "",
+      ["ni"] = "",
+      ["owns"] = "",
+      ["dashv"] = "",
+      ["mid"] = "",
+      ["parallel"] = "",
+      ["equiv"] = "",
+      ["sim"] = "",
+      ["simeq"] = "",
+      ["asymp"] = "",
+      ["approx"] = "",
+      ["propto"] = "",
+      ["perp"] = "",
+
+
+
+      // < !--special relation symbol with "width=0"(to overlap other relational symbols)-- >
+      ["not"] = "\u0338",
+
+
+
       ["slash"] = "/",
       ["ast"] = "*",
       ["lbrack"] = "(",
@@ -242,6 +344,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["lsqbrack"] = "[",
       ["rbrace"] = "}",
       // [""] = "",
+
+
 
     };
   }
