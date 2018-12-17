@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System.Linq;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Markdig.Syntax;
 
@@ -35,13 +36,15 @@ namespace Altaxo.Text.Renderers.OpenXML
   {
     protected override void Write(OpenXMLRenderer renderer, ThematicBreakBlock obj)
     {
-      var paragraph = renderer.Push(new Paragraph());
-      var paraProperties = new ParagraphProperties();
+      var paragraph = renderer.PushNewParagraph();
+      var paraProperties = paragraph.ChildElements.FirstOrDefault() as ParagraphProperties;
+      if (null == paraProperties)
+        paraProperties = paragraph.AppendChild(new ParagraphProperties());
+
       var paraBorders = new ParagraphBorders();
       var bottom = new BottomBorder() { Val = BorderValues.Single, Color = "auto", Size = 12, Space = 1 };
       paraBorders.Append(bottom);
       paraProperties.Append(paraBorders);
-      paragraph.Append(paraProperties);
       renderer.PopTo(paragraph);
     }
   }

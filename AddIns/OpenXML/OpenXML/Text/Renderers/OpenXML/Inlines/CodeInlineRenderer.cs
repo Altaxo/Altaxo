@@ -37,8 +37,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
     protected override void Write(OpenXMLRenderer renderer, CodeInline obj)
     {
       var run = renderer.PushNewRun();
-      renderer.ApplyStyleToRun(StyleNames.CodeInlineId, StyleNames.CodeInlineName, run);
-      run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\x202F" + obj.Content.ToString() + "\x202F" });
+      renderer.ApplyStyleToRun(ParaStyleName.CodeInline, StyleDictionary.IdToName[ParaStyleName.CodeInline], run);
+      run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\u202F" + obj.Content.ToString() + "\u202F" });
       renderer.PopTo(run);
     }
   }

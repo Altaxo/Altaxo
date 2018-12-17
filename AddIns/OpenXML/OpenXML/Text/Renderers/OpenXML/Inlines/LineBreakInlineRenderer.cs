@@ -22,8 +22,9 @@
 
 #endregion Copyright
 
-using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml;
 using Markdig.Syntax.Inlines;
+using W = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Altaxo.Text.Renderers.OpenXML.Inlines
 {
@@ -35,18 +36,35 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
   {
     protected override void Write(OpenXMLRenderer renderer, LineBreakInline obj)
     {
-      var element = renderer.Peek();
-
-      if (element is Paragraph)
+      if (obj.IsHard)
       {
-        var run = renderer.Push(new Run());
-        run.AppendChild(new Break());
-        renderer.PopTo(run);
+        var element = renderer.Peek();
+        if (element is W.Paragraph)
+        {
+          var run = renderer.Push(new W.Run());
+          run.AppendChild(new W.Break());
+          renderer.PopTo(run);
+        }
+        else
+        {
+          var paragraph = renderer.Push(new W.Paragraph());
+          renderer.PopTo(paragraph);
+        }
       }
-      else
+      else // neither hard nor backslash -> but we have to add a space at least
       {
-        var paragraph = renderer.Push(new Paragraph());
-        renderer.PopTo(paragraph);
+        var element = renderer.Peek();
+        if (element is W.Paragraph)
+        {
+          var run = renderer.PushNewRun();
+          run.AppendChild(new W.Text() { Space = SpaceProcessingModeValues.Preserve, Text = " " });
+          renderer.PopTo(run);
+        }
+        else // this should not happen, because we already are in a paragraph
+        {
+          var paragraph = renderer.Push(new W.Paragraph());
+          renderer.PopTo(paragraph);
+        }
       }
     }
   }

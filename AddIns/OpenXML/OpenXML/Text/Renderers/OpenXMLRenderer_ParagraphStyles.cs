@@ -57,11 +57,11 @@ namespace Altaxo.Text.Renderers
     /// <param name="styleid">The styleid (id of the style template).</param>
     /// <param name="stylename">The stylename (name of the style template).</param>
     /// <returns>The newly created paragraph properties, in which the styleid is already set.</returns>
-    public ParagraphProperties PushParagraphStyle(string styleid, string stylename)
+    private ParagraphProperties PushParagraphStyle(string styleid, string stylename)
     {
       var paragraphProperties = new ParagraphProperties();
 
-      styleid = GetStyleIdFromStyleName(stylename);
+      styleid = GetParagraphStyleIdFromStyleName(stylename);
 
       // Set the style of the paragraph.
       paragraphProperties.ParagraphStyleId = new ParagraphStyleId() { Val = styleid };
@@ -82,7 +82,7 @@ namespace Altaxo.Text.Renderers
     /// <summary>
     /// Pops a <see cref="ParagraphProperties"/> instance from the stack.
     /// </summary>
-    public void PopParagraphStyle()
+    private void PopParagraphStyle()
     {
       ParagraphStyles.Pop();
     }
@@ -210,7 +210,7 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     /// <param name="styleName">Name of the style.</param>
     /// <returns>The style identifier, or null if there is no match.</returns>
-    public string GetStyleIdFromStyleName(string styleName)
+    public string GetParagraphStyleIdFromStyleName(string styleName)
     {
       StyleDefinitionsPart stylePart = _wordDocument.MainDocumentPart.StyleDefinitionsPart;
       string styleId = stylePart.Styles.Descendants<StyleName>()
@@ -226,7 +226,7 @@ namespace Altaxo.Text.Renderers
     /// <param name="styleDefinitionsPart">The style definitions part.</param>
     /// <param name="styleid">The styleid.</param>
     /// <param name="stylename">The stylename.</param>
-    public static void AddNewStyle(StyleDefinitionsPart styleDefinitionsPart, string styleid, string stylename)
+    public static void AddNewParagraphStyle(StyleDefinitionsPart styleDefinitionsPart, string styleid, string stylename)
     {
       Style style;
 
@@ -283,10 +283,10 @@ namespace Altaxo.Text.Renderers
       if (IsParagraphStyleIdInDocument(styleid) != true)
       {
         // No match on styleid, so let's try style name.
-        string styleidFromName = GetStyleIdFromStyleName(stylename);
+        string styleidFromName = GetParagraphStyleIdFromStyleName(stylename);
         if (styleidFromName == null)
         {
-          AddNewStyle(_mainDocumentPart.StyleDefinitionsPart, styleid, stylename);
+          AddNewParagraphStyle(_mainDocumentPart.StyleDefinitionsPart, styleid, stylename);
         }
         else
         {
@@ -294,8 +294,6 @@ namespace Altaxo.Text.Renderers
         }
       }
     }
-
-
 
     /// <summary>
     /// Applies a style to the provided paragraph.
@@ -314,14 +312,10 @@ namespace Altaxo.Text.Renderers
       // Get the paragraph properties element of the paragraph.
       var paragraphProperties = p.Elements<ParagraphProperties>().First();
 
-      styleid = GetStyleIdFromStyleName(stylename);
+      styleid = GetParagraphStyleIdFromStyleName(stylename);
 
       // Set the style of the paragraph.
       paragraphProperties.ParagraphStyleId = new ParagraphStyleId() { Val = styleid };
     }
-
-
-
-
   }
 }

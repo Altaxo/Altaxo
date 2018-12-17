@@ -41,55 +41,47 @@ namespace Altaxo.Text.Renderers.OpenXML
   {
     protected override void Write(OpenXMLRenderer renderer, HeadingBlock obj)
     {
-      var paragraph = new Paragraph();
-      renderer.Push(paragraph);
 
-      string id, name;
+
+      ParaStyleName id;
       switch (obj.Level)
       {
         case 1:
-          id = StyleNames.Heading1Id;
-          name = StyleNames.Heading1Name;
+          id = ParaStyleName.Heading1;
           break;
         case 2:
-          id = StyleNames.Heading2Id;
-          name = StyleNames.Heading2Name;
+          id = ParaStyleName.Heading2;
           break;
         case 3:
-          id = StyleNames.Heading3Id;
-          name = StyleNames.Heading3Name;
+          id = ParaStyleName.Heading3;
           break;
         case 4:
-          id = StyleNames.Heading4Id;
-          name = StyleNames.Heading4Name;
+          id = ParaStyleName.Heading4;
           break;
         case 5:
-          id = StyleNames.Heading5Id;
-          name = StyleNames.Heading5Name;
+          id = ParaStyleName.Heading5;
           break;
         case 6:
-          id = StyleNames.Heading6Id;
-          name = StyleNames.Heading6Name;
+          id = ParaStyleName.Heading6;
           break;
         case 7:
-          id = StyleNames.Heading7Id;
-          name = StyleNames.Heading7Name;
+          id = ParaStyleName.Heading7;
           break;
         case 8:
-          id = StyleNames.Heading8Id;
-          name = StyleNames.Heading9Name;
+          id = ParaStyleName.Heading8;
           break;
         case 9:
-          id = StyleNames.Heading9Id;
-          name = StyleNames.Heading9Name;
+          id = ParaStyleName.Heading9;
           break;
         default:
           throw new NotImplementedException();
       }
 
-      renderer.ApplyStyleToParagraph(id, name, paragraph);
+      renderer.PushParagraphFormat(id);
+      var paragraph = renderer.PushNewParagraph();
       renderer.WriteLeafInline(obj);
       renderer.PopTo(paragraph);
+      renderer.PopParagraphFormat();
     }
   }
 }

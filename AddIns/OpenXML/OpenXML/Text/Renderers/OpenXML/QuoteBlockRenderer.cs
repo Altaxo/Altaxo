@@ -36,9 +36,9 @@ namespace Altaxo.Text.Renderers.OpenXML
     protected override void Write(OpenXMLRenderer renderer, QuoteBlock obj)
     {
 
-      renderer.PushParagraphStyle(StyleNames.QuoteBlockId, StyleNames.QuoteBlockName);
+      renderer.PushParagraphFormat(ParaStyleName.QuoteBlock);
       renderer.WriteChildren(obj);
-      renderer.PopParagraphStyle();
+      renderer.PopParagraphFormat();
     }
   }
 }

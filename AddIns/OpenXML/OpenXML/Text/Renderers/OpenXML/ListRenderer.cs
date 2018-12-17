@@ -260,14 +260,14 @@ namespace Altaxo.Text.Renderers.OpenXML
       foreach (var item in listBlock)
       {
         // Create items for paragraph properties
-        var numberingProperties = new NumberingProperties(new NumberingLevelReference() { Val = level - 1 }, new NumberingId() { Val = numberId });
-        var paragraphProperties = renderer.PushParagraphStyle(StyleNames.ListParagraphId, StyleNames.ListParagraphName);
-        paragraphProperties.AppendChild(numberingProperties);
+        renderer.PushParagraphFormat(ParaStyleName.ListParagraph);
+        renderer.NumberingProperties = new NumberingProperties(new NumberingLevelReference() { Val = level - 1 }, new NumberingId() { Val = numberId });
+
         var listItem = (ListItemBlock)item;
-
-
         renderer.WriteChildren(listItem);
-        renderer.PopParagraphStyle();
+
+        renderer.NumberingProperties = null;
+        renderer.PopParagraphFormat();
       }
     }
   }

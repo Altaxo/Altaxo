@@ -36,10 +36,8 @@ namespace Altaxo.Text.Renderers.OpenXML
   {
     protected override void Write(OpenXMLRenderer renderer, CodeBlock obj)
     {
-      var paragraph = new Paragraph();
-      renderer.Push(paragraph);
-      renderer.ApplyStyleToParagraph(StyleNames.CodeBlockId, StyleNames.CodeBlockName, paragraph);
-
+      renderer.PushParagraphFormat(ParaStyleName.CodeBlock);
+      var paragraph = renderer.PushNewParagraph();
       if (obj.Inline != null)
       {
         // there was a post-processor which has already processed the lines in this code block
@@ -65,6 +63,7 @@ namespace Altaxo.Text.Renderers.OpenXML
         }
       }
       renderer.PopTo(paragraph);
+      renderer.PopParagraphFormat();
     }
   }
 }

@@ -44,8 +44,9 @@ namespace Altaxo.Text.Renderers
   /// <seealso cref="RendererBase" />
   public partial class OpenXMLRenderer : RendererBase, IDisposable
   {
-    public void ApplyStyleToRun(string styleid, string stylename, Run p)
+    public void ApplyStyleToRun(ParaStyleName style, string stylename, Run p)
     {
+      var styleid = Enum.GetName(typeof(ParaStyleName), style);
       if (!IsCharacterStyleIdInDocument(styleid))
         CreateAndAddCharacterStyle(styleid, stylename);
 

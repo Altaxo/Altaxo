@@ -152,6 +152,11 @@ namespace Altaxo.Text.Renderers
       _currentInlineFormatStack.RemoveAt(_currentInlineFormatStack.Count - 1);
     }
 
+    /// <summary>
+    /// Pushes a new run onto the element stack, with all the run properties collected in the inline format stack.
+    /// </summary>
+    /// <returns>The new run, with the <see cref="RunProperties"/> already set.</returns>
+    /// <exception cref="NotImplementedException"></exception>
     public Run PushNewRun()
     {
       var run = new Run();
@@ -197,6 +202,135 @@ namespace Altaxo.Text.Renderers
       return run;
     }
 
+
+    #endregion
+
+    #region Paragraph format stack
+
+    private List<ParaStyleName> _currentParagraphFormatStack = new List<ParaStyleName>();
+
+    public NumberingProperties NumberingProperties { get; set; }
+
+    public void PushParagraphFormat(ParaStyleName paragraphId)
+    {
+      _currentParagraphFormatStack.Add(paragraphId);
+    }
+
+    public void PopParagraphFormat()
+    {
+      _currentParagraphFormatStack.RemoveAt(_currentParagraphFormatStack.Count - 1);
+    }
+
+
+    /// <summary>
+    /// Pushes a new paragraph, applying the paragraph styles that are currently on the stack.
+    /// </summary>
+    /// <returns>The newly created paragraph, with the paragraph style already appended.</returns>
+    public Paragraph PushNewParagraph()
+    {
+      var paragraph = new Paragraph();
+
+      if (_currentParagraphFormatStack.Count == 0)
+      {
+        // there is no need to add paragraph properties here, because the "Normal" style is assumed in this case
+      }
+      else
+      {
+        var paragraphStyleId = GetOrCreateNewParagraphStyleRecursivelyFromParagraphStack();
+        var paragraphProperties = new ParagraphProperties { ParagraphStyleId = new ParagraphStyleId() { Val = paragraphStyleId } };
+        if (null != NumberingProperties)
+        {
+          paragraphProperties.AppendChild(NumberingProperties);
+          NumberingProperties = null;
+        }
+        paragraph.AppendChild(paragraphProperties);
+      }
+      Push(paragraph);
+      return paragraph;
+    }
+
+    /// <summary>
+    /// Gets the paragraph style that corresponds to the current paragraph stack, or creates a new paragraph style that corresponds to
+    /// the current paragraph stack.
+    /// </summary>
+    /// <returns>The id of the retrieved or newly created paragraph style. If the paragraph style stack is empty, the return value is null.</returns>
+    private string GetOrCreateNewParagraphStyleRecursivelyFromParagraphStack()
+    {
+      string styleid = null;
+      if (_currentParagraphFormatStack.Count >= 0)
+      {
+
+        for (int i = 1; i <= _currentParagraphFormatStack.Count; ++i)
+        {
+          var styleName = string.Join(" ", _currentParagraphFormatStack.Take(i).Select(localId => StyleDictionary.IdToName[localId]));
+          styleid = GetParagraphStyleIdFromStyleName(styleName);
+          if (string.IsNullOrEmpty(styleid))
+          {
+            var basedOnStyle = (i <= 1) ? "Normal" : string.Join(" ", _currentParagraphFormatStack.Take(i - 1).Select(localId => StyleDictionary.IdToName[localId]));
+            AddNewEmptyParagraphStyle(styleName, basedOnStyle);
+            styleid = GetParagraphStyleIdFromStyleName(styleName);
+          }
+        }
+      }
+      return styleid;
+    }
+
+    /// <summary>
+    /// Add a new style to the document, without a specific formatting. This leaves the user the chance to
+    /// specify the formatting of the style afterwards.
+    /// </summary>
+    /// <param name="styleid">The name of the new style that should be created.</param>
+    /// <param name="stylename">The name of the style this style is based on.</param>
+    public void AddNewEmptyParagraphStyle(string stylename, string basedOnStyleName = "Normal")
+    {
+      var basedOnStyleId = GetParagraphStyleIdFromStyleName(basedOnStyleName);
+      if (string.IsNullOrEmpty(basedOnStyleId))
+        throw new ArgumentOutOfRangeException(string.Format("Based on style {0} is not found in the document", basedOnStyleName), nameof(basedOnStyleName));
+
+
+      // Create a new paragraph style and specify some of the properties.
+      var style = new Style()
+      {
+        Type = StyleValues.Paragraph,
+        StyleId = stylename,
+        CustomStyle = true
+      };
+      var styleNameEle = new StyleName() { Val = stylename };
+      var basedOnEle = new BasedOn() { Val = basedOnStyleId };
+      var nextParagraphStyleEle = new NextParagraphStyle() { Val = basedOnStyleName };
+      style.Append(styleNameEle);
+      style.Append(basedOnEle);
+      style.Append(nextParagraphStyleEle);
+
+      // Create the StyleRunProperties object and specify some of the run properties.
+      var styleRunProperties = new StyleRunProperties();
+
+      // here it would be possible to add specific styles, but as we don't know how the style should look like,
+      // we don't add specific formatting
+
+      /*
+      var bold1 = new Bold();
+      var color1 = new Color() { ThemeColor = ThemeColorValues.Accent2 };
+      var font1 = new RunFonts() { Ascii = "Lucida Console" };
+      var italic1 = new Italic();
+      // Specify a 12 point size.
+      var fontSize1 = new FontSize() { Val = "24" };
+      styleRunProperties1.Append(bold1);
+      styleRunProperties1.Append(color1);
+      styleRunProperties1.Append(font1);
+      styleRunProperties1.Append(fontSize1);
+      styleRunProperties1.Append(italic1);
+      */
+
+      // Add the run properties to the style.
+      style.Append(styleRunProperties);
+
+
+
+      // Add the style to the styles part.
+      // Get access to the root element of the styles part.
+      _mainDocumentPart.StyleDefinitionsPart.Styles.Append(style);
+    }
 
     #endregion
 

@@ -92,7 +92,7 @@
     <Compile Include="Text\Renderers\OpenXML\OpenXMLObjectRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\ParagraphRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\QuoteBlockRenderer.cs" />
-    <Compile Include="Text\Renderers\OpenXML\Styles.cs" />
+    <Compile Include="Text\Renderers\OpenXML\StyleNames.cs" />
     <Compile Include="Text\Renderers\OpenXML\ThematicBreakRenderer.cs" />
     <EmbeddedResource Include="Text\OpenXMLStyles\GitHub.xml" />
   </ItemGroup>

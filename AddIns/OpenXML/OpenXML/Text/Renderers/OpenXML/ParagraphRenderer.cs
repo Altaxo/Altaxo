@@ -35,17 +35,9 @@ namespace Altaxo.Text.Renderers.OpenXML
   {
     protected override void Write(OpenXMLRenderer renderer, ParagraphBlock obj)
     {
-      if (!renderer.IsFirstInContainer)
-      {
-
-      }
-
-      var paragraph = new Paragraph();
-      renderer.PeekParagraphStyleAndAppendTo(paragraph);
-      renderer.Push(paragraph);
+      var paragraph = renderer.PushNewParagraph();
       renderer.WriteLeafInline(obj);
       renderer.PopTo(paragraph);
-
     }
   }
 }
