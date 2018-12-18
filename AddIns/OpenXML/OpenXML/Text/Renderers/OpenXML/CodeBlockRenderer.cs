@@ -36,7 +36,7 @@ namespace Altaxo.Text.Renderers.OpenXML
   {
     protected override void Write(OpenXMLRenderer renderer, CodeBlock obj)
     {
-      renderer.PushParagraphFormat(ParaStyleName.CodeBlock);
+      renderer.PushParagraphFormat(FormatStyle.CodeBlock);
       var paragraph = renderer.PushNewParagraph();
       if (obj.Inline != null)
       {

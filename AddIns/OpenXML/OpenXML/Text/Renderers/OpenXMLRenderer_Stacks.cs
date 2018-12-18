@@ -47,6 +47,12 @@ namespace Altaxo.Text.Renderers
     #region OpenXmlCompositeElement stack
     private List<OpenXmlCompositeElement> _currentElementStack = new List<OpenXmlCompositeElement>();
 
+    /// <summary>
+    /// Pushes the specified <see cref="OpenXmlCompositeElement"/> element on the stack.
+    /// </summary>
+    /// <param name="element">The <see cref="OpenXmlCompositeElement"/> element.</param>
+    /// <returns>The same <see cref="OpenXmlCompositeElement"/> as given in the argument.</returns>
+    /// <exception cref="ArgumentNullException">element</exception>
     public OpenXmlCompositeElement Push(OpenXmlCompositeElement element)
     {
       if (null == element)
@@ -63,6 +69,10 @@ namespace Altaxo.Text.Renderers
       return element;
     }
 
+    /// <summary>
+    /// Peeks the <see cref="OpenXmlCompositeElement"/> stack and returns the topmost element.
+    /// </summary>
+    /// <returns>The topmost element on the <see cref="OpenXmlCompositeElement"/> stack.</returns>
     public OpenXmlCompositeElement Peek()
     {
       return _currentElementStack[_currentElementStack.Count - 1];
@@ -90,6 +100,13 @@ namespace Altaxo.Text.Renderers
 
 
 
+    /// <summary>
+    /// Pops elements from the <see cref="OpenXmlCompositeElement"/> stack, adds them to the element beneath it on the stack.
+    /// The process is repeated until the element given in the argument is popped from the stack.
+    /// </summary>
+    /// <param name="element">The element to pop from the stack.</param>
+    /// <exception cref="ArgumentNullException">element</exception>
+    /// <exception cref="InvalidOperationException">Could not pop to element " + element.ToString()</exception>
     public void PopTo(OpenXmlCompositeElement element)
     {
       if (null == element)
@@ -107,6 +124,13 @@ namespace Altaxo.Text.Renderers
         throw new InvalidOperationException("Could not pop to element " + element.ToString());
     }
 
+    /// <summary>
+    /// Pops elements from the <see cref="OpenXmlCompositeElement"/> stack, adds them to the element beneath it on the stack.
+    /// The process is repeated until the element given in the argument is and remains the topmost element on the stack.
+    /// </summary>
+    /// <param name="element">The element.</param>
+    /// <exception cref="ArgumentNullException">element</exception>
+    /// <exception cref="InvalidOperationException">Could not pop to before element " + element.ToString()</exception>
     public void PopToBefore(OpenXmlCompositeElement element)
     {
       if (null == element)
@@ -130,6 +154,9 @@ namespace Altaxo.Text.Renderers
 
     #region Inline format stack
 
+    /// <summary>
+    /// Different inline formats.Some of them can be applied together.
+    /// </summary>
     public enum InlineFormat
     {
       Bold,
@@ -140,22 +167,33 @@ namespace Altaxo.Text.Renderers
       Strikethrough
     }
 
+    /// <summary>
+    /// The current stack of inline formattings.
+    /// </summary>
     private List<InlineFormat> _currentInlineFormatStack = new List<InlineFormat>();
 
+    /// <summary>
+    /// Pushes an inline format to the inline stack.
+    /// </summary>
+    /// <param name="inlineFormat">The inline format.</param>
     public void PushInlineFormat(InlineFormat inlineFormat)
     {
       _currentInlineFormatStack.Add(inlineFormat);
     }
 
+    /// <summary>
+    /// Pops ane inline format element from the stack.
+    /// </summary>
     public void PopInlineFormat()
     {
       _currentInlineFormatStack.RemoveAt(_currentInlineFormatStack.Count - 1);
     }
 
     /// <summary>
-    /// Pushes a new run onto the element stack, with all the run properties collected in the inline format stack.
+    /// Pushes a new <see cref="Run"/> onto the <see cref="OpenXmlCompositeElement"/> element stack,
+    /// with all the run properties collected in the inline format stack applied to the <see cref="Run"/>.
     /// </summary>
-    /// <returns>The new run, with the <see cref="RunProperties"/> already set.</returns>
+    /// <returns>The new <see cref="Run"/>, with the <see cref="RunProperties"/> already set.</returns>
     /// <exception cref="NotImplementedException"></exception>
     public Run PushNewRun()
     {
@@ -207,15 +245,34 @@ namespace Altaxo.Text.Renderers
 
     #region Paragraph format stack
 
-    private List<ParaStyleName> _currentParagraphFormatStack = new List<ParaStyleName>();
+    /// <summary>
+    /// The stack of paragraph format elements. This is neccessary, since Markdown allows the nesting of paragraphs, for instance
+    /// a CodeBlock inside a QuoteBlock.
+    /// The mapping to OpenXML is done by defining additional paragraph styles, for the example above e.g. the style 'BlockText CodeBlock'.
+    /// </summary>
+    private List<FormatStyle> _currentParagraphFormatStack = new List<FormatStyle>();
 
+    /// <summary>
+    /// Gets or sets the numbering properties. If this instance is set, the numbering properties
+    /// will be added to the next <see cref="Paragraph"/> that gets created.
+    /// </summary>
+    /// <value>
+    /// The numbering properties to set for the next <see cref="Paragraph"/> created.
+    /// </value>
     public NumberingProperties NumberingProperties { get; set; }
 
-    public void PushParagraphFormat(ParaStyleName paragraphId)
+    /// <summary>
+    /// Pushes a paragraph <see cref="FormatStyle"/> onto the stack.
+    /// </summary>
+    /// <param name="formatStyle">The paragraph  <see cref="FormatStyle"/>.</param>
+    public void PushParagraphFormat(FormatStyle formatStyle)
     {
-      _currentParagraphFormatStack.Add(paragraphId);
+      _currentParagraphFormatStack.Add(formatStyle);
     }
 
+    /// <summary>
+    /// Pops a paragraph <see cref="FormatStyle"/> from the stack.
+    /// </summary>
     public void PopParagraphFormat()
     {
       _currentParagraphFormatStack.RemoveAt(_currentParagraphFormatStack.Count - 1);
@@ -223,7 +280,10 @@ namespace Altaxo.Text.Renderers
 
 
     /// <summary>
-    /// Pushes a new paragraph, applying the paragraph styles that are currently on the stack.
+    /// Pushes a new paragraph onto the <see cref="OpenXmlCompositeElement"/> stack,
+    /// applying the paragraph styles elements that are currently on the paragraph format stack.
+    /// If a matching paragraph style could not be found in the OpenXML document, an empty style is created.
+    /// This leaves the user the chance to modify the paragraph style afterwards in the document.
     /// </summary>
     /// <returns>The newly created paragraph, with the paragraph style already appended.</returns>
     public Paragraph PushNewParagraph()
@@ -264,12 +324,12 @@ namespace Altaxo.Text.Renderers
         {
           var replaceSpace = i <= 1 ? " " : string.Empty; // for nested styles, we remove the spaces from the single style names (for single styles, we leave the spaces).
           var styleName = string.Join(" ", _currentParagraphFormatStack.Take(i).Select(localId => StyleDictionary.IdToName[localId].Replace(" ", replaceSpace)));
-          styleid = GetParagraphStyleIdFromStyleName(styleName);
+          styleid = GetIdFromParagraphStyleName(styleName);
           if (string.IsNullOrEmpty(styleid))
           {
             var basedOnStyle = (i <= 1) ? "Normal" : string.Join(" ", _currentParagraphFormatStack.Take(i - 1).Select(localId => StyleDictionary.IdToName[localId]));
             AddNewEmptyParagraphStyle(styleName, basedOnStyle);
-            styleid = GetParagraphStyleIdFromStyleName(styleName);
+            styleid = GetIdFromParagraphStyleName(styleName);
           }
         }
       }
@@ -284,7 +344,7 @@ namespace Altaxo.Text.Renderers
     /// <param name="stylename">The name of the style this style is based on.</param>
     public void AddNewEmptyParagraphStyle(string stylename, string basedOnStyleName = "Normal")
     {
-      var basedOnStyleId = GetParagraphStyleIdFromStyleName(basedOnStyleName);
+      var basedOnStyleId = GetIdFromParagraphStyleName(basedOnStyleName);
       if (string.IsNullOrEmpty(basedOnStyleId))
         throw new ArgumentOutOfRangeException(string.Format("Based on style {0} is not found in the document", basedOnStyleName), nameof(basedOnStyleName));
 
@@ -339,11 +399,20 @@ namespace Altaxo.Text.Renderers
 
     private int _currentBookmarkId;
 
+    /// <summary>
+    /// Gets the next bookmark identifier.
+    /// </summary>
+    /// <returns></returns>
     public int GetNextBookmarkId()
     {
       return ++_currentBookmarkId;
     }
 
+    /// <summary>
+    /// Looks into the markdown element for a marker, and adds it as bookmark to the OpenXML document.
+    /// The presumtion here is that the topmost element on the <see cref="OpenXmlCompositeElement"/> stack is a <see cref="Paragraph"/>.
+    /// </summary>
+    /// <param name="obj">The object.</param>
     public void AddBookmarkIfNeccessary(MarkdownObject obj)
     {
       if (Peek() is Paragraph paragraph)
@@ -351,6 +420,11 @@ namespace Altaxo.Text.Renderers
     }
 
 
+    /// <summary>
+    /// Looks into the markdown element for a marker, and adds it as bookmark to the OpenXML document.
+    /// </summary>
+    /// <param name="obj">The markdown object to look for the marker.</param>
+    /// <param name="paragraphToAddBookmarkTo">The paragraph to add the bookmark to.</param>
     public void AddBookmarkIfNeccessary(MarkdownObject obj, Paragraph paragraphToAddBookmarkTo)
     {
       // Text markers

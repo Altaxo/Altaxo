@@ -35,8 +35,7 @@ namespace Altaxo.Text.Renderers.OpenXML
   {
     protected override void Write(OpenXMLRenderer renderer, QuoteBlock obj)
     {
-
-      renderer.PushParagraphFormat(ParaStyleName.QuoteBlock);
+      renderer.PushParagraphFormat(FormatStyle.QuoteBlock);
       renderer.WriteChildren(obj);
       renderer.PopParagraphFormat();
     }

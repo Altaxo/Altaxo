@@ -44,27 +44,32 @@ namespace Altaxo.Text.Renderers
   /// <seealso cref="RendererBase" />
   public partial class OpenXMLRenderer : RendererBase, IDisposable
   {
-    public void ApplyStyleToRun(ParaStyleName style, string stylename, Run p)
+    /// <summary>
+    /// Applies the character style given by its name to a <see cref="Run"/>.
+    /// </summary>
+    /// <param name="stylename">The style name.</param>
+    /// <param name="run">The <see cref="Run"/> the style should be applied to.</param>
+    public void ApplyStyleToRun(string stylename, Run run)
     {
       string styleId = GetIdFromCharacterStyleName(stylename);
 
       if (null == styleId)
         styleId = CreateAndAddCharacterStyle(stylename.Replace(" ", ""), stylename);
 
-      if (p.RunProperties == null)
-        p.RunProperties = new RunProperties();
+      if (run.RunProperties == null)
+        run.RunProperties = new RunProperties();
 
-      if (p.RunProperties.RunStyle == null)
-        p.RunProperties.RunStyle = new RunStyle() { Val = styleId };
+      if (run.RunProperties.RunStyle == null)
+        run.RunProperties.RunStyle = new RunStyle() { Val = styleId };
     }
 
+
     /// <summary>
-    /// Determines whether the given character style identifier is found in the document.
+    /// Gets the name of the character style identifier from the character style name.
+    /// Can be used to determine whether a character style with the given name is present in the document.
     /// </summary>
-    /// <param name="styleid">The character style identifier.</param>
-    /// <returns>
-    ///   <c>true</c> if the given character style identifier is found in the document; otherwise, <c>false</c>.
-    /// </returns>
+    /// <param name="styleName">Style name.</param>
+    /// <returns>The character style identifier, or null, if no style with the given name was found.</returns>
     public string GetIdFromCharacterStyleName(string styleName)
     {
       // Get access to the Styles element for this document.
@@ -84,33 +89,15 @@ namespace Altaxo.Text.Renderers
     }
 
 
-    /// <summary>
-    /// Determines whether the given character style identifier is found in the document.
-    /// </summary>
-    /// <param name="styleid">The character style identifier.</param>
-    /// <returns>
-    ///   <c>true</c> if the given character style identifier is found in the document; otherwise, <c>false</c>.
-    /// </returns>
-    public bool IsCharacterStyleIdInDocument(string styleid)
-    {
-      // Get access to the Styles element for this document.
-      Styles s = _wordDocument.MainDocumentPart.StyleDefinitionsPart.Styles;
-
-      // Check that there are styles and how many.
-      int n = s.Elements<Style>().Count();
-      if (n == 0)
-        return false;
-
-      // Look for a match on styleid.
-      Style style = s.Elements<Style>()
-          .Where(st => (st.StyleId == styleid) && (st.Type == StyleValues.Character))
-          .FirstOrDefault();
-
-      return style == null ? false : true;
-    }
-
     // Create a new character style with the specified style id, style name and aliases and 
     // add it to the specified style definitions part.
+    /// <summary>
+    /// Creates a character style and adds it to the document.
+    /// </summary>
+    /// <param name="styleid">The style Id of the new style. This usually should be the same as the style name, but without spaces.</param>
+    /// <param name="stylename">The style name of the new character style.</param>
+    /// <param name="aliases">The aliases.</param>
+    /// <returns>The style Id of the newly created character style.</returns>
     public string CreateAndAddCharacterStyle(
         string styleid, string stylename, string aliases = "")
     {
@@ -147,9 +134,8 @@ namespace Altaxo.Text.Renderers
           break;
       }
 
-
-      /*
-       Bold bold1 = new Bold();
+      /* // Here are some more possibilities how to style
+      Bold bold1 = new Bold();
       Color color1 = new Color() { ThemeColor = ThemeColorValues.Accent2 };
       RunFonts font1 = new RunFonts() { Ascii = "Tahoma" };
       Italic italic1 = new Italic();
@@ -171,6 +157,10 @@ namespace Altaxo.Text.Renderers
       return style.StyleId;
     }
 
+    /// <summary>
+    /// Sets some basic properties for the CodeInline style.
+    /// </summary>
+    /// <param name="srp">The style run properties where to add the style details.</param>
     private void SetCodeInlineProperties(StyleRunProperties srp)
     {
       var font1 = new RunFonts() { Ascii = "Courier" };

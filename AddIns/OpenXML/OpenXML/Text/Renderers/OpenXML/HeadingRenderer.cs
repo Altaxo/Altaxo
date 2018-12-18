@@ -43,35 +43,35 @@ namespace Altaxo.Text.Renderers.OpenXML
     {
 
 
-      ParaStyleName id;
+      FormatStyle id;
       switch (obj.Level)
       {
         case 1:
-          id = ParaStyleName.Heading1;
+          id = FormatStyle.Heading1;
           break;
         case 2:
-          id = ParaStyleName.Heading2;
+          id = FormatStyle.Heading2;
           break;
         case 3:
-          id = ParaStyleName.Heading3;
+          id = FormatStyle.Heading3;
           break;
         case 4:
-          id = ParaStyleName.Heading4;
+          id = FormatStyle.Heading4;
           break;
         case 5:
-          id = ParaStyleName.Heading5;
+          id = FormatStyle.Heading5;
           break;
         case 6:
-          id = ParaStyleName.Heading6;
+          id = FormatStyle.Heading6;
           break;
         case 7:
-          id = ParaStyleName.Heading7;
+          id = FormatStyle.Heading7;
           break;
         case 8:
-          id = ParaStyleName.Heading8;
+          id = FormatStyle.Heading8;
           break;
         case 9:
-          id = ParaStyleName.Heading9;
+          id = FormatStyle.Heading9;
           break;
         default:
           throw new NotImplementedException();

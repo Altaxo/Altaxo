@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Text.Renderers.OpenXML
 {
-  public enum ParaStyleName
+  public enum FormatStyle
   {
     // Built-in styles (for the names used in word see the StyleDictionary)
     Heading1,
@@ -50,38 +50,40 @@ namespace Altaxo.Text.Renderers.OpenXML
     CodeInline
   }
 
+
+
   /// <summary>
   /// Static class containing the style Ids and names used in the style templates.
   /// </summary>
   public static class StyleDictionary
   {
-    private static Dictionary<ParaStyleName, string> _idToName;
+    private static Dictionary<FormatStyle, string> _idToName;
     /// <summary>
     /// Dictionary that translates the StyleId to the style name.
     /// </summary>
     /// <value>
     /// Dictionary that translates the StyleId to the style name
     /// </value>
-    public static IReadOnlyDictionary<ParaStyleName, string> IdToName { get { return _idToName; } }
+    public static IReadOnlyDictionary<FormatStyle, string> IdToName { get { return _idToName; } }
 
     static StyleDictionary()
     {
-      _idToName = new Dictionary<ParaStyleName, string>()
+      _idToName = new Dictionary<FormatStyle, string>()
       {
-        [ParaStyleName.Heading1] = "heading 1",
-        [ParaStyleName.Heading2] = "heading 2",
-        [ParaStyleName.Heading3] = "heading 3",
-        [ParaStyleName.Heading4] = "heading 4",
-        [ParaStyleName.Heading5] = "heading 5",
-        [ParaStyleName.Heading6] = "heading 6",
-        [ParaStyleName.Heading7] = "heading 7",
-        [ParaStyleName.Heading8] = "heading 8",
-        [ParaStyleName.Heading9] = "heading 9",
-        [ParaStyleName.QuoteBlock] = "Block Text",
-        [ParaStyleName.ListParagraph] = "List Paragraph",
-        [ParaStyleName.Link] = "Hyperlink",
-        [ParaStyleName.CodeBlock] = "CodeBlock",
-        [ParaStyleName.CodeInline] = "CodeInline",
+        [FormatStyle.Heading1] = "heading 1",
+        [FormatStyle.Heading2] = "heading 2",
+        [FormatStyle.Heading3] = "heading 3",
+        [FormatStyle.Heading4] = "heading 4",
+        [FormatStyle.Heading5] = "heading 5",
+        [FormatStyle.Heading6] = "heading 6",
+        [FormatStyle.Heading7] = "heading 7",
+        [FormatStyle.Heading8] = "heading 8",
+        [FormatStyle.Heading9] = "heading 9",
+        [FormatStyle.QuoteBlock] = "Block Text",
+        [FormatStyle.ListParagraph] = "List Paragraph",
+        [FormatStyle.Link] = "Hyperlink",
+        [FormatStyle.CodeBlock] = "CodeBlock",
+        [FormatStyle.CodeInline] = "CodeInline",
       };
     }
 

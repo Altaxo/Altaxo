@@ -75,7 +75,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
           renderer.WriteChildren(link);
 
           foreach (var run in hyperlink.ChildElements.OfType<Run>())
-            renderer.ApplyStyleToRun(ParaStyleName.Link, StyleDictionary.IdToName[ParaStyleName.Link], run);
+            renderer.ApplyStyleToRun(StyleDictionary.IdToName[FormatStyle.Link], run);
 
           renderer.PopTo(hyperlink);
         }
@@ -86,7 +86,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
           renderer.WriteChildren(link);
 
           foreach (var run in hyperlink.ChildElements.OfType<Run>())
-            renderer.ApplyStyleToRun(ParaStyleName.Link, StyleDictionary.IdToName[ParaStyleName.Link], run);
+            renderer.ApplyStyleToRun(StyleDictionary.IdToName[FormatStyle.Link], run);
 
           renderer.PopTo(hyperlink);
         }

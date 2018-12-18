@@ -260,7 +260,7 @@ namespace Altaxo.Text.Renderers.OpenXML
       foreach (var item in listBlock)
       {
         // Create items for paragraph properties
-        renderer.PushParagraphFormat(ParaStyleName.ListParagraph);
+        renderer.PushParagraphFormat(FormatStyle.ListParagraph);
         renderer.NumberingProperties = new NumberingProperties(new NumberingLevelReference() { Val = level - 1 }, new NumberingId() { Val = numberId });
 
         var listItem = (ListItemBlock)item;

@@ -21,6 +21,12 @@ namespace Altaxo.Text.Renderers
   /// <seealso cref="RendererBase" />
   public partial class OpenXMLRenderer : RendererBase, IDisposable
   {
+    /// <summary>
+    /// Gets or sets the image resolution in dpi that is used for rendering the graphs.
+    /// </summary>
+    /// <value>
+    /// The image resolution in dpi.
+    /// </value>
     public int ImageResolution { get; set; } = 600;
 
     /// <summary>
@@ -58,6 +64,8 @@ namespace Altaxo.Text.Renderers
 
     /// <summary>
     /// Gets the name of the theme to style the OpenXml document with.
+    /// If the string is a full path name, then it is assumed that it leads to a .docx file that is used as template file containing the styles.
+    /// If the string is not a full path name, it is assumed that this is a name of a resource Xml file containing the styles.
     /// </summary>
     /// <value>
     /// The name of the theme.
@@ -77,10 +85,35 @@ namespace Altaxo.Text.Renderers
     /// The word document
     /// </summary>
     public WordprocessingDocument _wordDocument { get; private set; }
+    /// <summary>
+    /// The main document part of the word document.
+    /// </summary>
     private MainDocumentPart _mainDocumentPart;
-    public Body Body { get; private set; }
-    public Stack<(string StyleId, string StyleName)> InlineStyles { get; private set; } = new Stack<(string StyleId, string StyleName)>();
+
+    /// <summary>
+    /// Gets the body.
+    /// </summary>
+    /// <value>
+    /// The body.
+    /// </value>
+    protected Body Body { get; private set; }
+
+
+
+    /// <summary>
+    /// Gets the local images of the document that is rendered.
+    /// </summary>
+    /// <value>
+    /// The local images of the rendered document.
+    /// </value>
     public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> LocalImages { get; private set; }
+
+    /// <summary>
+    /// Gets the image provider, responsible for rendering the graphs.
+    /// </summary>
+    /// <value>
+    /// The image provider.
+    /// </value>
     public ImageStreamProvider ImageProvider { get; private set; } = new ImageStreamProvider();
 
     /// <summary>
@@ -125,6 +158,9 @@ namespace Altaxo.Text.Renderers
 
     }
 
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
     public void Dispose()
     {
       _wordDocument?.Dispose();
@@ -134,6 +170,12 @@ namespace Altaxo.Text.Renderers
 
 
 
+    /// <summary>
+    /// Renders the specified markdown object, usually the <see cref="MarkdownDocument"/>.
+    /// </summary>
+    /// <param name="markdownObject">The markdown document.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException">markdownObject</exception>
     public override object Render(MarkdownObject markdownObject)
     {
       if (null == markdownObject)
