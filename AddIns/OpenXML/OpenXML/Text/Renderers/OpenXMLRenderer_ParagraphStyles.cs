@@ -79,6 +79,8 @@ namespace Altaxo.Text.Renderers
       ParagraphStyles.Push(paragraphProperties);
     }
 
+
+
     /// <summary>
     /// Pops a <see cref="ParagraphProperties"/> instance from the stack.
     /// </summary>

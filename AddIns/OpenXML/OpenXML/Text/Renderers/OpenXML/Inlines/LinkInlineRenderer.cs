@@ -59,6 +59,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       if (link.IsImage)
       {
         RenderImage(renderer, link, url);
+        renderer.AddBookmarkIfNeccessary(link);
       }
       else // link is not an image
       {
@@ -78,9 +79,16 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
 
           renderer.PopTo(hyperlink);
         }
-        else // not a well formed Uri String - then it is probably a fragment reference
+        else if (!string.IsNullOrEmpty(url) && url.StartsWith("#")) // not a well formed Uri String - then it is probably a fragment reference
         {
+          var hyperlink = new Hyperlink() { Anchor = url.Substring(1) };
+          renderer.Push(hyperlink);
+          renderer.WriteChildren(link);
 
+          foreach (var run in hyperlink.ChildElements.OfType<Run>())
+            renderer.ApplyStyleToRun(ParaStyleName.Link, StyleDictionary.IdToName[ParaStyleName.Link], run);
+
+          renderer.PopTo(hyperlink);
         }
       }
     }

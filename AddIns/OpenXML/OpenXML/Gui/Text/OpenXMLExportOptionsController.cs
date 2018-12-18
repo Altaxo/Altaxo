@@ -81,9 +81,12 @@ namespace Altaxo.Gui.Text
     public DimensionfulQuantity MaximumImageWidth { get { return _maximumImageWidth; } set { _maximumImageWidth = value; OnPropertyChanged(nameof(MaximumImageWidth)); } }
     public bool ApplyMaximumImageHeight { get { return _applyMaximumImageHeight; } set { _applyMaximumImageHeight = value; OnPropertyChanged(nameof(ApplyMaximumImageHeight)); } }
     public DimensionfulQuantity MaximumImageHeight { get { return _maximumImageHeight; } set { _maximumImageHeight = value; OnPropertyChanged(nameof(MaximumImageHeight)); } }
+    public bool ExpandChildDocuments { get { return _doc.ExpandChildDocuments; } set { _doc.ExpandChildDocuments = value; OnPropertyChanged(nameof(ExpandChildDocuments)); } }
     public string ThemeName { get { return _doc.ThemeName; } set { _doc.ThemeName = value; OnPropertyChanged(nameof(ThemeName)); } }
+    public bool RemoveOldContentsOfTemplateFile { get { return _doc.RemoveOldContentsOfTemplateFile; } set { _doc.RemoveOldContentsOfTemplateFile = value; OnPropertyChanged(nameof(RemoveOldContentsOfTemplateFile)); } }
     public string OutputFileName { get { return _doc.OutputFileName; } set { _doc.OutputFileName = value; OnPropertyChanged(nameof(OutputFileName)); } }
     public bool OpenApplication { get { return _doc.OpenApplication; } set { _doc.OpenApplication = value; OnPropertyChanged(nameof(OpenApplication)); } }
+
 
     public ICommand CommandSelectTemplateFile { get; }
     public ICommand CommandSelectOutputFile { get; }

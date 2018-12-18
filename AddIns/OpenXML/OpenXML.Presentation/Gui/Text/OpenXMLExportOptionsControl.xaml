@@ -76,18 +76,33 @@
 
         <GroupBox Header="Name of a file used as style template, or name of a built-in export theme:" Grid.Row="6" Grid.ColumnSpan="3">
             <DockPanel>
-                <Button Content="Select ..." DockPanel.Dock="Right" Margin="4,0,0,0" Command="{Binding CommandSelectTemplateFile}"/>
-                <TextBox
+                <Button Content="Select ..." 
+                        DockPanel.Dock="Right"
+                        Margin="4,0,0,0" 
+                        Command="{Binding CommandSelectTemplateFile}"
+                        ToolTip="Select a .docx file used as the style template. The file you select is not be changed."/>
+                <CheckBox DockPanel.Dock="Bottom" 
+                          Content="Remove old contents of style template file" 
+                          IsChecked="{Binding RemoveOldContentsOfTemplateFile, Mode=TwoWay}"
+                          ToolTip="If a .docx file is selected as style template, checking will remove the old contents of the style template file. When unchecked, the old contents is kept, and the new contents is appended at the end of the document"
+                          />
+                <ComboBox IsEditable="True"
 					Text="{Binding ThemeName, Mode=TwoWay}"
 					ToolTip="Name of the theme used for export. Either use a full file name of a .docx file used as template, or use one of the template names."
-					/>
+					>
+                    <ComboBoxItem>GitHub</ComboBoxItem>
+                </ComboBox>
             </DockPanel>
         </GroupBox>
 
 
         <GroupBox Header="Output file name:" Grid.Row="8" Grid.ColumnSpan="3">
             <DockPanel>
-                <Button Content="Select ..." DockPanel.Dock="Right" Margin="4,0,0,0" Command="{Binding CommandSelectOutputFile}"/>
+                <Button Content="Select ..." 
+                        DockPanel.Dock="Right" 
+                        Margin="4,0,0,0" 
+                        Command="{Binding CommandSelectOutputFile}"
+                        ToolTip="Select a .docx file name to save the export result."/>
                 <TextBox
 					Text="{Binding OutputFileName, Mode=TwoWay}"
 					ToolTip="Please provide here the name of the Sandcastle help file builder project file. If you don't want the use the Maml files with Sandcastle help file builder, you can specify any other file name. The file name is then used as base to derive the file name for the content layout file. Additionally, the directory where the file is located in, is used as base directory for other subdirectories, for instance the Image subdirectory."

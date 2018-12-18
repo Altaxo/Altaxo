@@ -46,15 +46,41 @@ namespace Altaxo.Text.Renderers
   {
     public void ApplyStyleToRun(ParaStyleName style, string stylename, Run p)
     {
-      var styleid = Enum.GetName(typeof(ParaStyleName), style);
-      if (!IsCharacterStyleIdInDocument(styleid))
-        CreateAndAddCharacterStyle(styleid, stylename);
+      string styleId = GetIdFromCharacterStyleName(stylename);
+
+      if (null == styleId)
+        styleId = CreateAndAddCharacterStyle(stylename.Replace(" ", ""), stylename);
 
       if (p.RunProperties == null)
         p.RunProperties = new RunProperties();
 
       if (p.RunProperties.RunStyle == null)
-        p.RunProperties.RunStyle = new RunStyle() { Val = styleid };
+        p.RunProperties.RunStyle = new RunStyle() { Val = styleId };
+    }
+
+    /// <summary>
+    /// Determines whether the given character style identifier is found in the document.
+    /// </summary>
+    /// <param name="styleid">The character style identifier.</param>
+    /// <returns>
+    ///   <c>true</c> if the given character style identifier is found in the document; otherwise, <c>false</c>.
+    /// </returns>
+    public string GetIdFromCharacterStyleName(string styleName)
+    {
+      // Get access to the Styles element for this document.
+      Styles s = _wordDocument.MainDocumentPart.StyleDefinitionsPart.Styles;
+
+      // Check that there are styles and how many.
+      int n = s.Elements<Style>().Count();
+      if (n == 0)
+        return null;
+
+      // Look for a match on styleid.
+      Style style = s.Elements<Style>()
+          .Where(st => (st.StyleName.Val == styleName) && (st.Type == StyleValues.Character))
+          .FirstOrDefault();
+
+      return style == null ? null : style.StyleId;
     }
 
 
@@ -85,7 +111,7 @@ namespace Altaxo.Text.Renderers
 
     // Create a new character style with the specified style id, style name and aliases and 
     // add it to the specified style definitions part.
-    public void CreateAndAddCharacterStyle(
+    public string CreateAndAddCharacterStyle(
         string styleid, string stylename, string aliases = "")
     {
       // Get access to the root element of the styles part.
@@ -141,6 +167,8 @@ namespace Altaxo.Text.Renderers
 
       // Add the style to the styles part.
       styles.Append(style);
+
+      return style.StyleId;
     }
 
     private void SetCodeInlineProperties(StyleRunProperties srp)

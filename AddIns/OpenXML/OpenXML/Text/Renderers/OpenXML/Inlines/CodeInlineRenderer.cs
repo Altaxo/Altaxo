@@ -36,10 +36,30 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
   {
     protected override void Write(OpenXMLRenderer renderer, CodeInline obj)
     {
-      var run = renderer.PushNewRun();
-      renderer.ApplyStyleToRun(ParaStyleName.CodeInline, StyleDictionary.IdToName[ParaStyleName.CodeInline], run);
-      run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\u202F" + obj.Content.ToString() + "\u202F" });
-      renderer.PopTo(run);
+      {
+        var run = renderer.PushNewRun();
+        renderer.ApplyStyleToRun(ParaStyleName.CodeInline, StyleDictionary.IdToName[ParaStyleName.CodeInline], run);
+        var runProp = run.ChildElements[0] as RunProperties;
+        runProp.AppendChild(new CharacterScale { Val = 25 });
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\u202F" });
+        renderer.PopTo(run);
+      }
+
+      {
+        var run = renderer.PushNewRun();
+        renderer.ApplyStyleToRun(ParaStyleName.CodeInline, StyleDictionary.IdToName[ParaStyleName.CodeInline], run);
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = obj.Content.ToString().Replace(" ", "\u00A0") }); // change spaces against fixed spaces
+        renderer.PopTo(run);
+      }
+
+      {
+        var run = renderer.PushNewRun();
+        renderer.ApplyStyleToRun(ParaStyleName.CodeInline, StyleDictionary.IdToName[ParaStyleName.CodeInline], run);
+        var runProp = run.ChildElements[0] as RunProperties;
+        runProp.AppendChild(new CharacterScale { Val = 25 });
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = "\u202F" });
+        renderer.PopTo(run);
+      }
     }
   }
 }

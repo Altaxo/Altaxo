@@ -60,6 +60,7 @@ namespace Altaxo.Text
         info.AddValue("MaxImageHeight", s.MaximumImageHeight);
 
         info.AddValue("ThemeName", s.ThemeName);
+        info.AddValue("RemoveOldContent", s.RemoveOldContentsOfTemplateFile);
         info.AddValue("OpenApplication", s.OpenApplication);
         info.AddValue("OutputFileName", s.OutputFileName);
       }
@@ -71,6 +72,8 @@ namespace Altaxo.Text
         s.MaximumImageHeight = (Altaxo.Units.DimensionfulQuantity?)info.GetValue("MaxImageHeight", s);
 
         s.ThemeName = info.GetString("ThemeName");
+        if (info.CurrentElementName == "RemoveOldContent")
+          s.RemoveOldContentsOfTemplateFile = info.GetBoolean("RemoveOldContent");
         s.OpenApplication = info.GetBoolean("OpenApplication");
         s.OutputFileName = info.GetString("OutputFileName");
       }
@@ -92,7 +95,16 @@ namespace Altaxo.Text
 
     #region Properties
 
-    public string ThemeName { get; set; }
+    public string ThemeName { get; set; } = "GitHub";
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the old contents of the .docx file used as style template should be removed.
+    /// If set to false, the content is kept, and the new content is appended to the end of the document.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the old contents of the template file should be removed; otherwise, <c>false</c>.
+    /// </value>
+    public bool RemoveOldContentsOfTemplateFile { get; set; } = true;
 
     /// <summary>
     /// Gets or sets the output file. This is preferably a Sandcastle help file builder project file, but can also be a layout content file (.content) or a Maml file (.aml).
@@ -108,7 +120,7 @@ namespace Altaxo.Text
     /// <summary>
     /// If true, the application that is linked to .docx format will be opened.
     /// </summary>
-    public bool OpenApplication { get; set; }
+    public bool OpenApplication { get; set; } = true;
 
 
     /// <summary>
@@ -117,7 +129,7 @@ namespace Altaxo.Text
     /// <value>
     /// The maximum width of exported images (1/72nd inch).
     /// </value>
-    public Altaxo.Units.DimensionfulQuantity? MaximumImageWidth { get; set; }
+    public Altaxo.Units.DimensionfulQuantity? MaximumImageWidth { get; set; } // = new Units.DimensionfulQuantity(16, new Units.PrefixedUnit(Units.SIPrefix.Centi, Units.Length.Meter.Instance));
 
     /// <summary>
     /// Gets or sets the maximum height of exported images in points (1/72nd inch).
@@ -125,7 +137,7 @@ namespace Altaxo.Text
     /// <value>
     /// The maximum height of exported images (1/72nd inch).
     /// </value>
-    public Altaxo.Units.DimensionfulQuantity? MaximumImageHeight { get; set; }
+    public Altaxo.Units.DimensionfulQuantity? MaximumImageHeight { get; set; } // = new Units.DimensionfulQuantity(9.5, new Units.PrefixedUnit(Units.SIPrefix.Centi, Units.Length.Meter.Instance));
 
     #endregion Properties
 
@@ -278,6 +290,7 @@ namespace Altaxo.Text
         renderer.MaxImageHeigthIn96thInch = MaximumImageHeight.Value.AsValueIn(Altaxo.Units.Length.Inch.Instance) * 96.0;
       if (null != ThemeName)
         renderer.ThemeName = ThemeName;
+      renderer.RemoveOldContentsOfTemplateFile = RemoveOldContentsOfTemplateFile;
 
       renderer.Render(markdownDocument);
     }

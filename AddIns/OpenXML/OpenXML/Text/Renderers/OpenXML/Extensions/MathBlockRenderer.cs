@@ -66,8 +66,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
 
       var mathObj = (DocumentFormat.OpenXml.OpenXmlCompositeElement)mathRenderer.Render(formula.RootAtom);
 
-      var wordParagraph = renderer.Push(new DocumentFormat.OpenXml.Wordprocessing.Paragraph());
-      renderer.Push(new Paragraph());
+      var wordParagraph = renderer.PushNewParagraph(); // this is a Word paragraph
+      renderer.Push(new Paragraph()); // Attention this is a __Math__ paragraph!
       renderer.Push(mathObj);
       renderer.PopTo(wordParagraph);
     }

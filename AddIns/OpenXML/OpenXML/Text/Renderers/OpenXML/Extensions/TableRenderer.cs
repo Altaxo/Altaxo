@@ -117,7 +117,6 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
         }
         renderer.PopTo(wRow);
       }
-
       renderer.PopTo(table);
     }
   }

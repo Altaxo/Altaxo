@@ -262,7 +262,8 @@ namespace Altaxo.Text.Renderers
 
         for (int i = 1; i <= _currentParagraphFormatStack.Count; ++i)
         {
-          var styleName = string.Join(" ", _currentParagraphFormatStack.Take(i).Select(localId => StyleDictionary.IdToName[localId]));
+          var replaceSpace = i <= 1 ? " " : string.Empty; // for nested styles, we remove the spaces from the single style names (for single styles, we leave the spaces).
+          var styleName = string.Join(" ", _currentParagraphFormatStack.Take(i).Select(localId => StyleDictionary.IdToName[localId].Replace(" ", replaceSpace)));
           styleid = GetParagraphStyleIdFromStyleName(styleName);
           if (string.IsNullOrEmpty(styleid))
           {
@@ -330,6 +331,45 @@ namespace Altaxo.Text.Renderers
       // Add the style to the styles part.
       // Get access to the root element of the styles part.
       _mainDocumentPart.StyleDefinitionsPart.Styles.Append(style);
+    }
+
+    #endregion
+
+    #region Bookmarks
+
+    private int _currentBookmarkId;
+
+    public int GetNextBookmarkId()
+    {
+      return ++_currentBookmarkId;
+    }
+
+    public void AddBookmarkIfNeccessary(MarkdownObject obj)
+    {
+      if (Peek() is Paragraph paragraph)
+        AddBookmarkIfNeccessary(obj, paragraph);
+    }
+
+
+    public void AddBookmarkIfNeccessary(MarkdownObject obj, Paragraph paragraphToAddBookmarkTo)
+    {
+      // Text markers
+      // Find a unique address in order for AutoOutline to work
+      var attr = (Markdig.Renderers.Html.HtmlAttributes)obj.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
+      string uniqueAddress = attr?.Id; // this header has a user defined address
+      if (!string.IsNullOrEmpty(uniqueAddress))
+      {
+        var bookmarkId = "bkm" + GetNextBookmarkId().ToString(System.Globalization.CultureInfo.InvariantCulture);
+        paragraphToAddBookmarkTo.AppendChild(new BookmarkStart
+        {
+          Name = uniqueAddress,
+          Id = bookmarkId
+        });
+        paragraphToAddBookmarkTo.AppendChild(new BookmarkEnd
+        {
+          Id = bookmarkId
+        });
+      }
     }
 
     #endregion

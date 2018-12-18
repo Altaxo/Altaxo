@@ -82,6 +82,9 @@ namespace Altaxo.Text.Renderers.OpenXML
       renderer.WriteLeafInline(obj);
       renderer.PopTo(paragraph);
       renderer.PopParagraphFormat();
+
+
+      renderer.AddBookmarkIfNeccessary(obj, paragraph);
     }
   }
 }

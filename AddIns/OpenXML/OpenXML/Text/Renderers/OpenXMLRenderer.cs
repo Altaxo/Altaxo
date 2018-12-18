@@ -65,6 +65,15 @@ namespace Altaxo.Text.Renderers
     public string ThemeName { get; set; } = "Github";
 
     /// <summary>
+    /// Gets or sets a value indicating whether the old contents of the .docx file used as style template should be removed.
+    /// If set to false, the content is kept, and the new content is appended to the end of the document.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the old contents of the template file should be removed; otherwise, <c>false</c>.
+    /// </value>
+    public bool RemoveOldContentsOfTemplateFile { get; set; } = true;
+
+    /// <summary>
     /// The word document
     /// </summary>
     public WordprocessingDocument _wordDocument { get; private set; }
@@ -132,29 +141,61 @@ namespace Altaxo.Text.Renderers
 
       if (markdownObject is MarkdownDocument markdownDocument)
       {
-        using (_wordDocument = WordprocessingDocument.Create(WordDocumentFileName, WordprocessingDocumentType.Document))
+        if (System.IO.Path.IsPathRooted(ThemeName))
         {
-          // Add a main document part. 
-          _mainDocumentPart = _wordDocument.AddMainDocumentPart();
-
-          // Create the document structure and add some text.
-          _mainDocumentPart.Document = new Document();
-          Body = _mainDocumentPart.Document.AppendChild(new Body());
-          Push(Body);
-
-          // Ensure that a style part exists in this document
-
-          // Get the Styles part for this document.
-          StyleDefinitionsPart part = _mainDocumentPart.StyleDefinitionsPart;
-
-          // If the Styles part does not exist, add it and then add the style.
-          if (part == null)
+          // Route 1: create the Word document from an existing document
+          using (_wordDocument = WordprocessingDocument.CreateFromTemplate(ThemeName, false))
           {
-            part = AddStylesPartToPackage(_wordDocument, ThemeName);
-          }
+            _mainDocumentPart = _wordDocument.MainDocumentPart;
+            Body = _wordDocument.MainDocumentPart.Document.Body;
+            Push(Body);
 
-          // now write the document
-          Write(markdownObject);
+            if (RemoveOldContentsOfTemplateFile)
+            {
+              Body.RemoveAllChildren();
+            }
+
+            // Get the Styles part for this document.
+            StyleDefinitionsPart part = _mainDocumentPart.StyleDefinitionsPart;
+
+            // If the Styles part does not exist, add it and then add the style.
+            if (part == null)
+            {
+              part = AddStylesPartToPackage(_wordDocument, ThemeName);
+            }
+
+            // now write the document
+            Write(markdownObject);
+
+            _wordDocument.SaveAs(WordDocumentFileName);
+          }
+        }
+        else
+        {
+          using (_wordDocument = WordprocessingDocument.Create(WordDocumentFileName, WordprocessingDocumentType.Document))
+          {
+            // Add a main document part. 
+            _mainDocumentPart = _wordDocument.AddMainDocumentPart();
+
+            // Create the document structure and add some text.
+            _mainDocumentPart.Document = new Document();
+            Body = _mainDocumentPart.Document.AppendChild(new Body());
+            Push(Body);
+
+            // Ensure that a style part exists in this document
+
+            // Get the Styles part for this document.
+            StyleDefinitionsPart part = _mainDocumentPart.StyleDefinitionsPart;
+
+            // If the Styles part does not exist, add it and then add the style.
+            if (part == null)
+            {
+              part = AddStylesPartToPackage(_wordDocument, ThemeName);
+            }
+
+            // now write the document
+            Write(markdownObject);
+          }
         }
       }
       else
@@ -187,37 +228,5 @@ namespace Altaxo.Text.Renderers
       }
       return this;
     }
-
-    public static void Test()
-    {
-      const string fileName = @"C:\Temp\MyWordDocument.docx";
-
-      using (var document =
-           WordprocessingDocument.Open(fileName, false))
-      {
-        // Get a reference to the main document part.
-        var docPart = document.MainDocumentPart;
-
-        // Assign a reference to the appropriate part to the
-        // stylesPart variable.
-
-        var stylesPart = docPart.StyleDefinitionsPart;
-
-        var latentStyles = stylesPart.Styles.LatentStyles;
-
-        var otherStyles = stylesPart.Styles;
-
-        foreach (var s in latentStyles)
-        {
-          var z = s.ToString();
-        }
-        foreach (var s in otherStyles)
-        {
-          var z = s.ToString();
-        }
-      }
-    }
-
-
   }
 }
