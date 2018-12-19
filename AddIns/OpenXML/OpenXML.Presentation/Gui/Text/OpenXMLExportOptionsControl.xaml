@@ -69,12 +69,16 @@
                                        SelectedQuantity="{Binding MaximumImageHeight, Mode=TwoWay}"
 		    ToolTip="Designates the maximum height exported images should have. Usually you specify a value here not more than the height of the printable area of the document."/>
 
-        <CheckBox  Grid.Row="4" Grid.ColumnSpan="3" Content="Expand child documents" Margin="4,0,0,0"
+        <Label Grid.Row="4" Content="Graph rendering resolution (dpi) :"/>
+        <axogc:Int32UpDown Grid.Row="4" Grid.Column="2" Value="{Binding ImageResolutionDpi, Mode=TwoWay}" Minimum="1" 
+                               ToolTip="Enter the resolution in dpi to render the embedded graphs with."/>
+
+        <CheckBox  Grid.Row="6" Grid.ColumnSpan="3" Content="Expand child documents" Margin="4,0,0,0"
 							 IsChecked="{Binding ExpandChildDocuments, Mode=TwoWay}"
 							 ToolTip="By enabling this option, child documents included (with the extension to include child Markdown documents) are expanded before export."/>
 
 
-        <GroupBox Header="Name of a file used as style template, or name of a built-in export theme:" Grid.Row="6" Grid.ColumnSpan="3">
+        <GroupBox Header="Name of a file used as style template, or name of a built-in export theme:" Grid.Row="8" Grid.ColumnSpan="3">
             <DockPanel>
                 <Button Content="Select ..." 
                         DockPanel.Dock="Right"
@@ -96,7 +100,7 @@
         </GroupBox>
 
 
-        <GroupBox Header="Output file name:" Grid.Row="8" Grid.ColumnSpan="3">
+        <GroupBox Header="Output file name:" Grid.Row="10" Grid.ColumnSpan="3">
             <DockPanel>
                 <Button Content="Select ..." 
                         DockPanel.Dock="Right" 
@@ -105,11 +109,11 @@
                         ToolTip="Select a .docx file name to save the export result."/>
                 <TextBox
 					Text="{Binding OutputFileName, Mode=TwoWay}"
-					ToolTip="Please provide here the name of the Sandcastle help file builder project file. If you don't want the use the Maml files with Sandcastle help file builder, you can specify any other file name. The file name is then used as base to derive the file name for the content layout file. Additionally, the directory where the file is located in, is used as base directory for other subdirectories, for instance the Image subdirectory."
+					ToolTip="Please provide here the name of the OpenXML (.docx) output file."
 					/>
             </DockPanel>
         </GroupBox>
-        <CheckBox  Grid.Row="10" Grid.ColumnSpan="3"  Margin="4,0,0,0"
+        <CheckBox  Grid.Row="12" Grid.ColumnSpan="3"  Margin="4,0,0,0"
 							 IsChecked="{Binding OpenApplication, Mode=TwoWay}"
 							 Content="Open the application associated with OpenXML files (.docx) after export"
 							 ToolTip="By enabling this option, if you have a application associated with .docx files, after export this application is launched."/>

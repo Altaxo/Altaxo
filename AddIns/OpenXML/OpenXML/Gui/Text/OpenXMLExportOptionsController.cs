@@ -81,6 +81,8 @@ namespace Altaxo.Gui.Text
     public DimensionfulQuantity MaximumImageWidth { get { return _maximumImageWidth; } set { _maximumImageWidth = value; OnPropertyChanged(nameof(MaximumImageWidth)); } }
     public bool ApplyMaximumImageHeight { get { return _applyMaximumImageHeight; } set { _applyMaximumImageHeight = value; OnPropertyChanged(nameof(ApplyMaximumImageHeight)); } }
     public DimensionfulQuantity MaximumImageHeight { get { return _maximumImageHeight; } set { _maximumImageHeight = value; OnPropertyChanged(nameof(MaximumImageHeight)); } }
+    public int ImageResolutionDpi { get { return _doc.ImageResolutionDpi; } set { _doc.ImageResolutionDpi = value; OnPropertyChanged(nameof(ImageResolutionDpi)); } }
+
     public bool ExpandChildDocuments { get { return _doc.ExpandChildDocuments; } set { _doc.ExpandChildDocuments = value; OnPropertyChanged(nameof(ExpandChildDocuments)); } }
     public string ThemeName { get { return _doc.ThemeName; } set { _doc.ThemeName = value; OnPropertyChanged(nameof(ThemeName)); } }
     public bool RemoveOldContentsOfTemplateFile { get { return _doc.RemoveOldContentsOfTemplateFile; } set { _doc.RemoveOldContentsOfTemplateFile = value; OnPropertyChanged(nameof(RemoveOldContentsOfTemplateFile)); } }

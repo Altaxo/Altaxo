@@ -58,6 +58,7 @@ namespace Altaxo.Text
         info.AddValue("ExpandChildDocuments", s.ExpandChildDocuments);
         info.AddValue("MaxImageHeight", s.MaximumImageHeight);
         info.AddValue("MaxImageHeight", s.MaximumImageHeight);
+        info.AddValue("ImageResolution", s.ImageResolutionDpi);
 
         info.AddValue("ThemeName", s.ThemeName);
         info.AddValue("RemoveOldContent", s.RemoveOldContentsOfTemplateFile);
@@ -70,10 +71,12 @@ namespace Altaxo.Text
         s.ExpandChildDocuments = info.GetBoolean("ExpandChildDocuments");
         s.MaximumImageWidth = (Altaxo.Units.DimensionfulQuantity?)info.GetValue("MaxImageWidth", s);
         s.MaximumImageHeight = (Altaxo.Units.DimensionfulQuantity?)info.GetValue("MaxImageHeight", s);
+        //if (info.CurrentElementName == "ImageResolution")
+        s.ImageResolutionDpi = info.GetInt32("ImageResolution");
 
         s.ThemeName = info.GetString("ThemeName");
-        if (info.CurrentElementName == "RemoveOldContent")
-          s.RemoveOldContentsOfTemplateFile = info.GetBoolean("RemoveOldContent");
+        //if (info.CurrentElementName == "RemoveOldContent")
+        s.RemoveOldContentsOfTemplateFile = info.GetBoolean("RemoveOldContent");
         s.OpenApplication = info.GetBoolean("OpenApplication");
         s.OutputFileName = info.GetString("OutputFileName");
       }
@@ -105,6 +108,14 @@ namespace Altaxo.Text
     ///   <c>true</c> if the old contents of the template file should be removed; otherwise, <c>false</c>.
     /// </value>
     public bool RemoveOldContentsOfTemplateFile { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the image resolution of the graphs that must be rendered in Dpi.
+    /// </summary>
+    /// <value>
+    /// The image resolution in dpi.
+    /// </value>
+    public int ImageResolutionDpi { get; set; } = 600;
 
     /// <summary>
     /// Gets or sets the output file. This is preferably a Sandcastle help file builder project file, but can also be a layout content file (.content) or a Maml file (.aml).
@@ -291,6 +302,7 @@ namespace Altaxo.Text
       if (null != ThemeName)
         renderer.ThemeName = ThemeName;
       renderer.RemoveOldContentsOfTemplateFile = RemoveOldContentsOfTemplateFile;
+      renderer.ImageResolution = ImageResolutionDpi;
 
       renderer.Render(markdownDocument);
     }
