@@ -648,16 +648,19 @@ namespace Altaxo.Gui.Markdown
 
     private Markdig.Syntax.MarkdownObject GetMarkdownObjectAtViewerPosition(TextPointer textPosition)
     {
-      var parent = textPosition.Parent is TextElement pe ? pe : textPosition.Paragraph;
-
-      // search parent or the ancestors of parent for a Markdig tag
-      while (null != parent)
+      if (null != textPosition)
       {
-        if (parent.Tag is Markdig.Syntax.MarkdownObject mdo)
+        var parent = textPosition.Parent is TextElement pe ? pe : textPosition.Paragraph;
+
+        // search parent or the ancestors of parent for a Markdig tag
+        while (null != parent)
         {
-          return mdo;
+          if (parent.Tag is Markdig.Syntax.MarkdownObject mdo)
+          {
+            return mdo;
+          }
+          parent = parent.Parent as TextElement;
         }
-        parent = parent.Parent as TextElement;
       }
       return null;
     }
