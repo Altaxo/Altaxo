@@ -11,20 +11,15 @@ Previous section: <link xlink:href="0F56118543F36CC6A6EB223F48A5B2C2">Creating a
 <markup><hr/></markup>
 
 <para>
-For plotting commands, you need to select the data columns to plot. For
-copy command, you need to select data columns, data rows and property
-columns that you want to copy. For paste operations, you need to specify
-the place where the data should be pasted.
+For plotting commands, you need to select the data columns to plot. For copy command, you need to select data columns, data rows and property columns that you want to copy. For paste operations, you need to specify the place where the data should be pasted.
 </para>
 
 <para>
-For all this, you should be able to select specific data columns, data
-rows or property columns.
+For all this, you should be able to select specific data columns, data rows or property columns.
 </para>
 
 <para>
-In Altaxo, it is possible to select data columns, property columns and
-data rows, concurrently.
+In Altaxo, it is possible to select data columns, property columns and data rows, concurrently.
 </para>
 </introduction>
 
@@ -38,38 +33,27 @@ data rows, concurrently.
 <listItem>
 
 <para>
-Click in the column header of the first data column you want to
-select, without pressing any key on the keyboard. The background
-color of the selected column changes to blue.
+Click in the column header of the first data column you want to select, without pressing any key on the keyboard. The background color of the selected column changes to blue.
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-SHIFT-click in the column header of the last data column you want
-to select. All columns between the first selected column and the
-column selected now are selected now, indicated by the blue
-background color. (SHIFT-click means holding the SHIFT key on the
-keyboard pressed while clicking the left mouse button).
+SHIFT-click in the column header of the last data column you want to select. All columns between the first selected column and the column selected now are selected now, indicated by the blue background color. (SHIFT-click means holding the SHIFT key on the keyboard pressed while clicking the left mouse button).
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-Additional columns can be selected by CTRL-click in the column
-header of data columns that are not already selected yet. CTRL-click
-in the column header of an already selected column to deselect it.
-(CTRL-click means holding the CTRL key on the keyboard pressed while
-clicking the left mouse button).
+Additional columns can be selected by CTRL-click in the column header of data columns that are not already selected yet. CTRL-click in the column header of an already selected column to deselect it. (CTRL-click means holding the CTRL key on the keyboard pressed while clicking the left mouse button).
 </para>
 </listItem>
 </list>
 
 <para>
-If you now have only data columns selected, as described above, all data
-rows and all property column cells are affected by the operation.
+If you now have only data columns selected, as described above, all data rows and all property column cells are affected by the operation.
 </para>
 </content>
 </section>
@@ -84,27 +68,21 @@ rows and all property column cells are affected by the operation.
 <listItem>
 
 <para>
-Click in the data row header of the first data row you want
-to select. If data columns or property columns are selected already,
-you should use CTRL-click instead, in order to keep the
-existing selection(s).
+Click in the data row header of the first data row you want to select. If data columns or property columns are selected already, you should use CTRL-click instead, in order to keep the existing selection(s).
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-SHIFT-click in the row header of the last data row you want
-to select.
+SHIFT-click in the row header of the last data row you want to select.
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-Additional data rows can be selected by using CTRL-click in the row
-header of data rows that are not selected yet. Likewise, CTRL-click
-in the row header of already selected data rows will unselect them.
+Additional data rows can be selected by using CTRL-click in the row header of data rows that are not selected yet. Likewise, CTRL-click in the row header of already selected data rows will unselect them.
 </para>
 </listItem>
 </list>
@@ -121,31 +99,21 @@ in the row header of already selected data rows will unselect them.
 <listItem>
 
 <para>
-Click in the property column header of the first property column you
-want to select, without pressing any key on the keyboard. The
-background color of the selected column changes to blue. If you
-already have data columns or data rows selected, you should use
-CTRL-click instead, in order to keep the existing selection(s).
+Click in the property column header of the first property column you want to select, without pressing any key on the keyboard. The background color of the selected column changes to blue. If you already have data columns or data rows selected, you should use CTRL-click instead, in order to keep the existing selection(s).
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-SHIFT-click in the property column header of the last property
-column you want to select. All property columns between the first
-selected property column and the property column selected now are
-selected, indicated by the blue background color.
+SHIFT-click in the property column header of the last property column you want to select. All property columns between the first selected property column and the property column selected now are selected, indicated by the blue background color.
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-Additional property columns can be selected by CTRL-click in the
-column header of property columns that are not already selected yet.
-CTRL-click in the property column header of an already selected
-property column to deselect it.
+Additional property columns can be selected by CTRL-click in the column header of property columns that are not already selected yet. CTRL-click in the property column header of an already selected property column to deselect it.
 </para>
 </listItem>
 </list>
@@ -177,24 +145,21 @@ Clicked on the data column header of data column B
 <listItem>
 
 <para>
-SHIFT-clicked on the data column header of data column D (to select
-columns B, C, and D)
+SHIFT-clicked on the data column header of data column D (to select columns B, C, and D)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-CTRL-clicked on data column header of column F (to additionally
-select data column F)
+CTRL-clicked on data column header of column F (to additionally select data column F)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-CTRL-clicked on the property column header of property column B (to
-select it)
+CTRL-clicked on the property column header of property column B (to select it)
 </para>
 </listItem>
 
@@ -215,8 +180,7 @@ SHIFT-clicked on data row [4] (to selected data rows 2 to 4)
 <listItem>
 
 <para>
-CTRL-clicked on the data row [7] (to additionally select data
-row 7)
+CTRL-clicked on the data row [7] (to additionally select data row 7)
 </para>
 </listItem>
 </list>

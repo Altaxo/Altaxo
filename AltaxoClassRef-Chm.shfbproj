@@ -140,9 +140,25 @@
       <ImageId>13379B58C9CCA9563E67844F3D49B063</ImageId>
       <AlternateText>13379B58C9CCA9563E67844F3D49B063</AlternateText>
     </Image>
+    <Image Include="HelpContent\Images\06D8248E997554DD0567A6EA259FFD12.png">
+      <ImageId>06D8248E997554DD0567A6EA259FFD12</ImageId>
+      <AlternateText>06D8248E997554DD0567A6EA259FFD12</AlternateText>
+    </Image>
     <Image Include="HelpContent\Images\BB9FABC6297FBD59A3C367E7A6812F02.png">
       <ImageId>BB9FABC6297FBD59A3C367E7A6812F02</ImageId>
       <AlternateText>BB9FABC6297FBD59A3C367E7A6812F02</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\05B4E2522BE556D5F32E65FA07248B80.png">
+      <ImageId>05B4E2522BE556D5F32E65FA07248B80</ImageId>
+      <AlternateText>05B4E2522BE556D5F32E65FA07248B80</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\33BB00AA8F05FE282D82AC31C73D02F6.png">
+      <ImageId>33BB00AA8F05FE282D82AC31C73D02F6</ImageId>
+      <AlternateText>33BB00AA8F05FE282D82AC31C73D02F6</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\4D0DF8284423095FCA32789ACBFED9E5.png">
+      <ImageId>4D0DF8284423095FCA32789ACBFED9E5</ImageId>
+      <AlternateText>4D0DF8284423095FCA32789ACBFED9E5</AlternateText>
     </Image>
     <Image Include="HelpContent\Images\AFB2B0AAED3EFA0590D34E63469121E7.png">
       <ImageId>AFB2B0AAED3EFA0590D34E63469121E7</ImageId>
@@ -175,6 +191,18 @@
     <Image Include="HelpContent\Images\85FE3EBBB9483A31FE1C30B76A8F58F1.png">
       <ImageId>85FE3EBBB9483A31FE1C30B76A8F58F1</ImageId>
       <AlternateText>85FE3EBBB9483A31FE1C30B76A8F58F1</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\A62A94C2535F1D435A33FE39DD2D5A78.png">
+      <ImageId>A62A94C2535F1D435A33FE39DD2D5A78</ImageId>
+      <AlternateText>A62A94C2535F1D435A33FE39DD2D5A78</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\26827730A02E68A77D220244B80E64A2.png">
+      <ImageId>26827730A02E68A77D220244B80E64A2</ImageId>
+      <AlternateText>26827730A02E68A77D220244B80E64A2</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\59488AEDA91BB694E9909374075A2CAB.png">
+      <ImageId>59488AEDA91BB694E9909374075A2CAB</ImageId>
+      <AlternateText>59488AEDA91BB694E9909374075A2CAB</AlternateText>
     </Image>
     <Image Include="HelpContent\Images\01004619A02F8B1489A15C66A0B16B00.png">
       <ImageId>01004619A02F8B1489A15C66A0B16B00</ImageId>
@@ -355,6 +383,26 @@
     <Image Include="HelpContent\Images\73A69C8C8AEF10A09EF9E4AF5877ADA0.png">
       <ImageId>73A69C8C8AEF10A09EF9E4AF5877ADA0</ImageId>
       <AlternateText>73A69C8C8AEF10A09EF9E4AF5877ADA0</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\44219DEFE82DD67D0E22DA491C6CE648.png">
+      <ImageId>44219DEFE82DD67D0E22DA491C6CE648</ImageId>
+      <AlternateText>44219DEFE82DD67D0E22DA491C6CE648</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\57FF354C4A2DBF1FCBD735990DEAB361.png">
+      <ImageId>57FF354C4A2DBF1FCBD735990DEAB361</ImageId>
+      <AlternateText>57FF354C4A2DBF1FCBD735990DEAB361</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\2F3D96BFAF017454E0E0533233574F25.png">
+      <ImageId>2F3D96BFAF017454E0E0533233574F25</ImageId>
+      <AlternateText>2F3D96BFAF017454E0E0533233574F25</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\6251E9836783C6C235501CC6408AB9A3.png">
+      <ImageId>6251E9836783C6C235501CC6408AB9A3</ImageId>
+      <AlternateText>6251E9836783C6C235501CC6408AB9A3</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\F27B4102B9803118BF57674D9DA0DC1D.png">
+      <ImageId>F27B4102B9803118BF57674D9DA0DC1D</ImageId>
+      <AlternateText>F27B4102B9803118BF57674D9DA0DC1D</AlternateText>
     </Image>
     <Image Include="HelpContent\Images\9E8DB12A3B096ABC72F9C0F5C0B0CDBA.png">
       <ImageId>9E8DB12A3B096ABC72F9C0F5C0B0CDBA</ImageId>

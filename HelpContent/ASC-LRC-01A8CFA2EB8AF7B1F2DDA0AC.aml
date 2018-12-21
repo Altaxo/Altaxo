@@ -47,13 +47,13 @@ To allow the user to cancel long running code, look at the following example:
 </para>
 
 <code>
-            for (int i = 0; i &lt; 100000; i++)
-            {
-                Foo(); // method Foo() runs moderately long (say &lt; 1 s)
+for (int i = 0; i &lt; 100000; i++)
+{
+    Foo(); // method Foo() runs moderately long (say &lt; 1 s)
 
-                if (reporter.CancellationPending)
-                    break; // or: return
-            }
+    if (reporter.CancellationPending)
+        break; // or: return
+}
 </code>
 
 <para>
@@ -72,17 +72,17 @@ The example above can be extended to show progress to the user.
 </para>
 
 <code>
-            int len = 100000;
-            for (int i = 0; i &lt; len; i++)
-            {
-                Foo(); // method foo runs moderately long (&lt; 1 s)
+int len = 100000;
+for (int i = 0; i &lt; len; i++)
+{
+    Foo(); // method foo runs moderately long (&lt; 1 s)
 
-                if (reporter.CancellationPending)
-                    break; // or: return
+    if (reporter.CancellationPending)
+        break; // or: return
 
-                if (reporter.ShouldReportNow)
-                    reporter.ReportProgress(string.Format(&quot;{0} of {1}&quot;, i, len), i / (double)len);
-            }
+    if (reporter.ShouldReportNow)
+        reporter.ReportProgress(string.Format(&quot;{0} of {1}&quot;, i, len), i / (double)len);
+}
 </code>
 
 <para>

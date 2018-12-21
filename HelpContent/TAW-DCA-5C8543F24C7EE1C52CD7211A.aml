@@ -11,32 +11,15 @@ Previous section: <link xlink:href="345E05B54F4611736070E46B38DD4CB5">Tables and
 <markup><hr/></markup>
 
 <para>
-Although there are different types of data columns (numerical columns,
-text columns, date-time columns), the <legacyBold>data in a single column are all
-of the same type</legacyBold>. This is in contrast to programs like MS Excel®,
-where you can have data of arbitrary type in each cell of a column.
+Although there are different types of data columns (numerical columns, text columns, date-time columns), the <legacyBold>data in a single column are all of the same type</legacyBold>. This is in contrast to programs like MS Excel®, where you can have data of arbitrary type in each cell of a column. Thus, when you <legacyBold>create new columns</legacyBold>, make sure that you <legacyBold>choose the appropriate column type</legacyBold> for your data.
 </para>
 
 <para>
-Thus, when you <legacyBold>create new columns</legacyBold>, make sure that you <legacyBold>choose the
-appropriate column type</legacyBold> for your data.
+To have some meta-information for the data columns, let’s say the physical dimension of the numbers in a data column, there exist &quot;horizontal columns” containing that information. In Altaxo they are called &quot;property columns&quot; (Note: I’m fully aware that the term ‘column’ is misleading here, because they are represented as rows in the worksheet view, but the underlying type in the data table is a data column). Like data columns, property columns also have different types: numeric, text or date-time. If your data table contains property columns, you will find them below the data column header.
 </para>
 
 <para>
-To have some meta-information for the data columns, let’s say the
-physical dimension of the numbers in a data column, there exist
-&quot;horizontal columns” containing that information. In Altaxo they are
-called &quot;property columns&quot; (Note: I’m fully aware that the term ‘column’
-is misleading here, because they are represented as rows in the
-worksheet view, but the underlying type in the data table is a data
-column). Like data columns, property columns also have different types:
-numeric, text or date-time. If your data table contains property
-columns, you will find them below the data column header.
-</para>
-
-<para>
-In the following figure the different regions of a worksheet are
-designated.
+In the following figure the different regions of a worksheet are designated.
 </para>
 
 <para>
@@ -44,20 +27,13 @@ designated.
 </para>
 
 <para>
-The figure shows a worksheet with three data columns, named ‘Name’,
-‘Length’ and ‘Weight’. The first data column ‘Name’ is a text column,
-whereas the other two data columns are numeric columns. There are only
-two data rows in the worksheet. The other rows are unused. Unused text
-cells are empty, unused numerical cells are represented by ‘NaN’, which
-means Not_A_Number, and this it what it says: there is no number in
-those cells.
+The figure shows a worksheet with three data columns, named ‘Name’, ‘Length’ and ‘Weight’. The first data column ‘Name’ is a text column,
+whereas the other two data columns are numeric columns. There are only two data rows in the worksheet. The other rows are unused. Unused text cells are empty, unused numerical cells are represented by ‘NaN’, which means Not_A_Number, and this it what it says: there is no number in those cells.
 </para>
 
 <para>
-There are also two property columns in the worksheet, named ‘Unit’ and
-‘Description’. Both are of type TextColumn. Note how those property
-columns holding meta data for the data column. Property columns are
-marked by their property column header at the left, and the larger
+There are also two property columns in the worksheet, named ‘Unit’ and ‘Description’. Both are of type TextColumn. Note how those property
+columns holding meta data for the data column. Property columns are marked by their property column header at the left, and the larger
 height of the cells.
 </para>
 <markup><hr/></markup>

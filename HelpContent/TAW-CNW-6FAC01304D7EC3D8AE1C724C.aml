@@ -11,21 +11,16 @@ Previous section: <link xlink:href="AA57528103751EB21A179BF18C6C5F58">Column hea
 <markup><hr/></markup>
 
 <para>
-When you create a new worksheet, you can decide either to create an
-empty worksheet or a standard worksheet. The standard worksheet already
-contains two numeric columns, ‘A’ and ‘B’, with ‘A’ being the ‘X’-column
-and ‘B’ the ‘V’-column.
+When you create a new worksheet, you can decide either to create an empty worksheet or a standard worksheet. The standard worksheet already
+contains two numeric columns, ‘A’ and ‘B’, with ‘A’ being the ‘X’-column and ‘B’ the ‘V’-column.
 </para>
 
 <para>
-Note: If you intend to import data into the worksheet, you should instead create
-an empty worksheet and import the data afterwards. If you want to enter
-data manually, and are happy with two numeric columns, you should opt
-for the standard worksheet.
+Note: If you intend to import data into the worksheet, you should instead create an empty worksheet and import the data afterwards. If you want to enter data manually, and are happy with two numeric columns, you should opt for the standard worksheet.
 </para>
 
 <para>
-There are four ways to create a worksheet (either empty or standard)
+There are four ways to create a worksheet (either empty or standard):
 </para>
 
 <list class="bullet">
@@ -33,9 +28,7 @@ There are four ways to create a worksheet (either empty or standard)
 <listItem>
 
 <para>
-From the ‘<legacyBold>File menu</legacyBold>’: choose File→New→Empty Worksheet to
-create an empty worksheet or File→New→Standard Worksheet to
-create a standard worksheet
+From the ‘<legacyBold>File menu</legacyBold>’: choose File→New→Empty Worksheet to create an empty worksheet or File→New→Standard Worksheet to create a standard worksheet
 </para>
 </listItem>
 
@@ -50,8 +43,7 @@ From the <legacyBold>toolbar</legacyBold>: see Figure below<lineBreak/>
 <listItem>
 
 <para>
-From the <legacyBold>context menu</legacyBold> of the <legacyBold>project explorer</legacyBold>: see Figure
-below<lineBreak/>
+From the <legacyBold>context menu</legacyBold> of the <legacyBold>project explorer</legacyBold>: see Figure below<lineBreak/>
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EC4015BC0143B4D0D1994540B480806E"><img src="../media/EC4015BC0143B4D0D1994540B480806E.png" width="567"></img></a></markup>
 </para>
 </listItem>
@@ -59,17 +51,14 @@ below<lineBreak/>
 <listItem>
 
 <para>
-From a <legacyBold>keyboard shortcut</legacyBold>: Ctrl-E to create an empty worksheet,
-Ctrl-W to create a standard worksheet
+From a <legacyBold>keyboard shortcut</legacyBold>: Ctrl-E to create an empty worksheet, Ctrl-W to create a standard worksheet
 </para>
 </listItem>
 </list>
 
 <para>
-If you use the context menu of the project explorer, the new worksheet
-is created in the folder that is currently open, which is the folder
-‘Foo\’ in the figure above. With all other methods, the new worksheet
-is created in the root folder of the project.
+If you use the context menu of the project explorer, the new worksheet is created in the folder that is currently open, which is the folder
+‘Foo\’ in the figure above. With all other methods, the new worksheet is created in the root folder of the project.
 </para>
 <markup><hr/></markup>
 <para>

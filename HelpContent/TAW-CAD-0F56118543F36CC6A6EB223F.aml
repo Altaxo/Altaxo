@@ -11,8 +11,7 @@ Previous section: <link xlink:href="6FAC01304D7EC3D8AE1C724CA084256B">Creating a
 <markup><hr/></markup>
 
 <para>
-New data columns can be added by choosing from the main menu
-Worksheet→Add data columns. A dialog opens (see Figure below).
+New data columns can be added by choosing from the main menu Worksheet→Add data columns. A dialog opens (see Figure below).
 </para>
 
 <para>
@@ -20,14 +19,12 @@ Worksheet→Add data columns. A dialog opens (see Figure below).
 </para>
 
 <para>
-Choose the number of columns you want to add, and the type of data
-(numeric, date/time, or text) that the column(s) should store. After you
+Choose the number of columns you want to add, and the type of data (numeric, date/time, or text) that the column(s) should store. After you
 click OK, the new column(s) are added with a default name.
 </para>
 
 <para>
-Likewise, you can add new property columns by choosing from the main
-menu Worksheet→Add property columns.
+Likewise, you can add new property columns by choosing from the main menu Worksheet→Add property columns.
 </para>
 <markup><hr/></markup>
 <para>
