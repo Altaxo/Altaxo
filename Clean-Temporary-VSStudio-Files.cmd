@@ -6,6 +6,12 @@ rmdir /S /Q .\AddIns\D3D\D3DPresentation\bin
 rmdir /S /Q .\AddIns\OriginConnector\obj
 rmdir /S /Q .\AddIns\OriginConnector\bin
 
+rmdir /S /Q .\AddIns\OpenXML\OpenXML\obj
+rmdir /S /Q .\AddIns\OpenXML\OpenXML\bin
+
+rmdir /S /Q .\AddIns\OpenXML\OpenXML.Presentation\obj
+rmdir /S /Q .\AddIns\OpenXML\OpenXML.Presentation\bin
+
 rmdir /S /Q .\Altaxo\Base\obj
 rmdir /S /Q .\Altaxo\Base\bin
 
