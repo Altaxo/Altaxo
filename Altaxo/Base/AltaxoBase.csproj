@@ -308,6 +308,8 @@
     <Compile Include="Text\Renderers\MamlRenderer_ContentLayoutFileHandling.cs" />
     <Compile Include="Text\Renderers\MamlRenderer_ImageTopicFileHandling.cs" />
     <Compile Include="Text\Renderers\MamlRenderer_ImageFileHandling.cs" />
+    <Compile Include="Text\Renderers\Maml\Extensions\FigureCaptionRenderer.cs" />
+    <Compile Include="Text\Renderers\Maml\Extensions\FigureRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\MathBlockRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\MathInlineRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\TableRenderer.cs" />

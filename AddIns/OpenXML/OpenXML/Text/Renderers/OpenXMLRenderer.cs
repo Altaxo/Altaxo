@@ -131,6 +131,7 @@ namespace Altaxo.Text.Renderers
 
       // Extension renderers that must be registered before the default renders
       ObjectRenderers.Add(new MathBlockRenderer()); // since MathBlock derives from CodeBlock, it must be registered before CodeBlockRenderer
+      ObjectRenderers.Add(new FigureRenderer());
 
       // Default block renderers
       ObjectRenderers.Add(new CodeBlockRenderer());
@@ -155,6 +156,7 @@ namespace Altaxo.Text.Renderers
       // Extension renderers
       ObjectRenderers.Add(new TableRenderer());
       ObjectRenderers.Add(new MathInlineRenderer());
+      ObjectRenderers.Add(new FigureCaptionRenderer());
 
     }
 

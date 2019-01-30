@@ -56,6 +56,8 @@
     <Compile Include="Text\Renderers\OpenXMLRenderer_ParagraphStyles.cs" />
     <Compile Include="Text\Renderers\OpenXMLRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\CodeBlockRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\FigureCaptionRenderer.cs" />
+    <Compile Include="Text\Renderers\OpenXML\Extensions\FigureRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathBlockRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathInlineRenderer.cs" />
     <Compile Include="Text\Renderers\OpenXML\Extensions\MathRendering\IWpfMathAtomRenderer.cs" />
