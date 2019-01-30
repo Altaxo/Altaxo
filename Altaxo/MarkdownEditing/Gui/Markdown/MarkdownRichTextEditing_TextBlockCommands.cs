@@ -188,6 +188,16 @@ namespace Altaxo.Gui.Markdown
       EhTextLineCommand(sender, e, ">");
     }
 
+    private void EhCanFigure(object sender, CanExecuteRoutedEventArgs e)
+    {
+      EhCanUseTextBlockCommand(sender, e);
+    }
+
+    private void EhFigure(object sender, ExecutedRoutedEventArgs e)
+    {
+      EhTextBlockCommand(sender, e, "^^^");
+    }
+
     private void EhCanHeader1(object sender, CanExecuteRoutedEventArgs e)
     {
       EhCanUseTextBlockCommand(sender, e);

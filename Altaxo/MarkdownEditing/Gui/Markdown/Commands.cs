@@ -101,6 +101,11 @@ namespace Altaxo.Gui.Markdown
     public static RoutedCommand Quoted { get; } = new RoutedCommand(nameof(Quoted), typeof(Commands));
 
     /// <summary>
+    /// Command for converting text to a figure block.
+    /// </summary>
+    public static RoutedCommand Figure { get; } = new RoutedCommand(nameof(Figure), typeof(Commands));
+
+    /// <summary>
     /// Command for converting text to header1 text.
     /// </summary>
     public static RoutedCommand Header1 { get; } = new RoutedCommand(nameof(Header1), typeof(Commands));

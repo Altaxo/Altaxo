@@ -7,56 +7,57 @@
 						 xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-	<Grid Name="_guiGrid" SizeChanged="EhEditorOrGrid_SizeChanged">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition />
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition />
-			<RowDefinition Height="4" />
-			<RowDefinition />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+    <Grid Name="_guiGrid" SizeChanged="EhEditorOrGrid_SizeChanged">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="4" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<FrameworkElement.CommandBindings>
-			<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
-			<CommandBinding Command="{x:Static markdig:Commands.FragmentLink}" Executed="JumpToFragmentLink" />
-			<CommandBinding Command="{x:Static local:Commands.RefreshViewer}" Executed="EhRefreshViewer" />
-			<CommandBinding Command="{x:Static local:Commands.ToggleBetweenEditorAndViewer}" Executed="EhToggleBetweenEditorAndViewer" />
-			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorLeftViewerRight}" Executed="EhSwitchToConfigurationEditorLeftViewerRight" CanExecute="EhCanSwitchToConfigurationEditorLeftViewerRight" />
-			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorRightViewerLeft}" Executed="EhSwitchToConfigurationEditorRightViewerLeft" CanExecute="EhCanSwitchToConfigurationEditorRightViewerLeft" />
-			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorTopViewerBottom}" Executed="EhSwitchToConfigurationEditorTopViewerBottom" CanExecute="EhCanSwitchToConfigurationEditorTopViewerBottom" />
-			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorBottomViewerTop}" Executed="EhSwitchToConfigurationEditorBottomViewerTop" CanExecute="EhCanSwitchToConfigurationEditorBottomViewerTop" />
-			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationTabbedEditorAndViewer}" Executed="EhSwitchToConfigurationTabbedEditorAndViewer" CanExecute="EhCanSwitchToConfigurationTabbedEditorAndViewer" />
-			<!-- Text inline commands -->
-			<CommandBinding Command="{x:Static local:Commands.Subscript}" Executed="EhSubscript" CanExecute="EhCanSubscript" />
-			<CommandBinding Command="{x:Static local:Commands.Superscript}" Executed="EhSuperscript" CanExecute="EhCanSuperscript" />
-			<CommandBinding Command="{x:Static local:Commands.Bold}" Executed="EhBold" CanExecute="EhCanBold" />
-			<CommandBinding Command="{x:Static local:Commands.Italic}" Executed="EhItalic" CanExecute="EhCanItalic" />
-			<CommandBinding Command="{x:Static local:Commands.Strikethrough}" Executed="EhStrikethrough" CanExecute="EhCanStrikethrough" />
-			<CommandBinding Command="{x:Static local:Commands.InlineCode}" Executed="EhInlineCode" CanExecute="EhCanInlineCode" />
-			<!-- Text block commands -->
-			<CommandBinding Command="{x:Static local:Commands.CodeBlock}" Executed="EhBlockCode" CanExecute="EhCanBlockCode" />
-			<CommandBinding Command="{x:Static local:Commands.Quoted}" Executed="EhQuoted" CanExecute="EhCanQuoted" />
-			<CommandBinding Command="{x:Static local:Commands.Header1}" Executed="EhHeader1" CanExecute="EhCanHeader1" />
-			<CommandBinding Command="{x:Static local:Commands.Header2}" Executed="EhHeader2" CanExecute="EhCanHeader2" />
-			<CommandBinding Command="{x:Static local:Commands.Header3}" Executed="EhHeader3" CanExecute="EhCanHeader3" />
-			<CommandBinding Command="{x:Static local:Commands.Header4}" Executed="EhHeader4" CanExecute="EhCanHeader4" />
-			<CommandBinding Command="{x:Static local:Commands.Header5}" Executed="EhHeader5" CanExecute="EhCanHeader5" />
-			<CommandBinding Command="{x:Static local:Commands.Header6}" Executed="EhHeader6" CanExecute="EhCanHeader6" />
-		</FrameworkElement.CommandBindings>
+        <FrameworkElement.CommandBindings>
+            <CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
+            <CommandBinding Command="{x:Static markdig:Commands.FragmentLink}" Executed="JumpToFragmentLink" />
+            <CommandBinding Command="{x:Static local:Commands.RefreshViewer}" Executed="EhRefreshViewer" />
+            <CommandBinding Command="{x:Static local:Commands.ToggleBetweenEditorAndViewer}" Executed="EhToggleBetweenEditorAndViewer" />
+            <CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorLeftViewerRight}" Executed="EhSwitchToConfigurationEditorLeftViewerRight" CanExecute="EhCanSwitchToConfigurationEditorLeftViewerRight" />
+            <CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorRightViewerLeft}" Executed="EhSwitchToConfigurationEditorRightViewerLeft" CanExecute="EhCanSwitchToConfigurationEditorRightViewerLeft" />
+            <CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorTopViewerBottom}" Executed="EhSwitchToConfigurationEditorTopViewerBottom" CanExecute="EhCanSwitchToConfigurationEditorTopViewerBottom" />
+            <CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorBottomViewerTop}" Executed="EhSwitchToConfigurationEditorBottomViewerTop" CanExecute="EhCanSwitchToConfigurationEditorBottomViewerTop" />
+            <CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationTabbedEditorAndViewer}" Executed="EhSwitchToConfigurationTabbedEditorAndViewer" CanExecute="EhCanSwitchToConfigurationTabbedEditorAndViewer" />
+            <!-- Text inline commands -->
+            <CommandBinding Command="{x:Static local:Commands.Subscript}" Executed="EhSubscript" CanExecute="EhCanSubscript" />
+            <CommandBinding Command="{x:Static local:Commands.Superscript}" Executed="EhSuperscript" CanExecute="EhCanSuperscript" />
+            <CommandBinding Command="{x:Static local:Commands.Bold}" Executed="EhBold" CanExecute="EhCanBold" />
+            <CommandBinding Command="{x:Static local:Commands.Italic}" Executed="EhItalic" CanExecute="EhCanItalic" />
+            <CommandBinding Command="{x:Static local:Commands.Strikethrough}" Executed="EhStrikethrough" CanExecute="EhCanStrikethrough" />
+            <CommandBinding Command="{x:Static local:Commands.InlineCode}" Executed="EhInlineCode" CanExecute="EhCanInlineCode" />
+            <!-- Text block commands -->
+            <CommandBinding Command="{x:Static local:Commands.CodeBlock}" Executed="EhBlockCode" CanExecute="EhCanBlockCode" />
+            <CommandBinding Command="{x:Static local:Commands.Quoted}" Executed="EhQuoted" CanExecute="EhCanQuoted" />
+            <CommandBinding Command="{x:Static local:Commands.Figure}" Executed="EhFigure" CanExecute="EhCanFigure" />
+            <CommandBinding Command="{x:Static local:Commands.Header1}" Executed="EhHeader1" CanExecute="EhCanHeader1" />
+            <CommandBinding Command="{x:Static local:Commands.Header2}" Executed="EhHeader2" CanExecute="EhCanHeader2" />
+            <CommandBinding Command="{x:Static local:Commands.Header3}" Executed="EhHeader3" CanExecute="EhCanHeader3" />
+            <CommandBinding Command="{x:Static local:Commands.Header4}" Executed="EhHeader4" CanExecute="EhCanHeader4" />
+            <CommandBinding Command="{x:Static local:Commands.Header5}" Executed="EhHeader5" CanExecute="EhCanHeader5" />
+            <CommandBinding Command="{x:Static local:Commands.Header6}" Executed="EhHeader6" CanExecute="EhCanHeader6" />
+        </FrameworkElement.CommandBindings>
 
-		<GridSplitter Name="_guiColumnGridSplitter" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="4" ResizeDirection="Columns" />
-		<GridSplitter Name="_guiRowGridSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="4" ResizeDirection="Rows" Visibility="Hidden" />
+        <GridSplitter Name="_guiColumnGridSplitter" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="4" ResizeDirection="Columns" />
+        <GridSplitter Name="_guiRowGridSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="4" ResizeDirection="Rows" Visibility="Hidden" />
 
-		<TabControl Name="_guiTabControl" TabStripPlacement="Bottom" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Hidden" SelectionChanged="EhTabControl_SelectionChanged">
-			<TabItem Name="_guiEditorTab" Header="Editor" />
-			<TabItem Name="_guiViewerTab" Header="Preview" />
-		</TabControl>
+        <TabControl Name="_guiTabControl" TabStripPlacement="Bottom" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Hidden" SelectionChanged="EhTabControl_SelectionChanged">
+            <TabItem Name="_guiEditorTab" Header="Editor" />
+            <TabItem Name="_guiViewerTab" Header="Preview" />
+        </TabControl>
 
-		<avalonEdit:TextEditor Grid.Row="0" Grid.RowSpan="4" Grid.Column="0"
+        <avalonEdit:TextEditor Grid.Row="0" Grid.RowSpan="4" Grid.Column="0"
 			x:Name="_guiEditor"
 			xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
 			FontFamily="Consolas"
@@ -70,7 +71,7 @@
 			PreviewMouseDown="EhEditor_MouseDown"
 													 SizeChanged="EhEditorOrGrid_SizeChanged" />
 
-		<RichTextBox Grid.Row="0" Grid.RowSpan="4" Grid.Column="2"
+        <RichTextBox Grid.Row="0" Grid.RowSpan="4" Grid.Column="2"
 								 Name="_guiViewer"
 								 IsDocumentEnabled="True"
 								 IsReadOnly="True"
@@ -86,9 +87,9 @@
 								 SelectionChanged="EhViewer_SelectionChanged"
 
 								 IsUndoEnabled="False">
-			<!-- Note: It is of utmost importance that Undo is disabled for this RichTextBox,
+            <!-- Note: It is of utmost importance that Undo is disabled for this RichTextBox,
 			otherwise RichTextBox would try to serialize deleted elements to store them for Undo,
 			which cost performance, especially with images -->
-		</RichTextBox>
-	</Grid>
+        </RichTextBox>
+    </Grid>
 </UserControl>

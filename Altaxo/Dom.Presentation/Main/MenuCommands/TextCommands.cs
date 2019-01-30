@@ -310,6 +310,19 @@ namespace Altaxo.Main.MenuCommands.Text
     }
   }
 
+  public class Figure : AbstractTextControllerCommand
+  {
+    public override bool CanExecute(object parameter)
+    {
+      return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.Figure.CanExecute(null, null);
+    }
+
+    public override void Run(TextDocumentController ctrl)
+    {
+      Altaxo.Gui.Markdown.Commands.Figure.Execute(null, null);
+    }
+  }
+
   public class Header1 : AbstractTextControllerCommand
   {
     public override bool CanExecute(object parameter)

@@ -954,6 +954,8 @@
 				class="Altaxo.Main.MenuCommands.Text.CodeBlock" />
       <ToolbarItem id="Quoted" icon="Icons.16x16.Quoted" tooltip="${res:XML.MainMenu.TextMenu.Quoted.Description}"
 				class="Altaxo.Main.MenuCommands.Text.Quoted" />
+      <ToolbarItem id="Figure" icon="Icons.16x16.ImageButton" tooltip="${res:XML.MainMenu.TextMenu.Figure.Description}"
+				class="Altaxo.Main.MenuCommands.Text.Figure" />
       <ToolbarItem id="Header1" icon="Icons.16x16.Header1" tooltip="${res:XML.MainMenu.TextMenu.Header1.Description}"
 				class="Altaxo.Main.MenuCommands.Text.Header1" />
       <ToolbarItem id="Header2" icon="Icons.16x16.Header2" tooltip="${res:XML.MainMenu.TextMenu.Header2.Description}"
