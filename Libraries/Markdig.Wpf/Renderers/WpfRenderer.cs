@@ -2,13 +2,6 @@
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Markup;
 using Markdig.Annotations;
 using Markdig.Helpers;
 using Markdig.Renderers.Wpf;
@@ -16,6 +9,13 @@ using Markdig.Renderers.Wpf.Extensions;
 using Markdig.Renderers.Wpf.Inlines;
 using Markdig.Syntax;
 using Markdig.Wpf;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Markup;
 using Block = System.Windows.Documents.Block;
 
 namespace Markdig.Renderers
@@ -40,14 +40,8 @@ namespace Markdig.Renderers
         /// </value>
         public IWpfImageProvider ImageProvider
         {
-            get
-            {
-                return _imageProvider;
-            }
-            set
-            {
-                _imageProvider = value ?? WpfImageProviderBase.Instance;
-            }
+            get => _imageProvider;
+            set => _imageProvider = value ?? WpfImageProviderBase.Instance;
         }
 
         public WpfRenderer([NotNull] IAddChild document)
@@ -61,11 +55,16 @@ namespace Markdig.Renderers
             Styles = styles ?? Markdig.Wpf.DynamicStyles.Instance;
             Document = document;
             if (document is FrameworkContentElement teDocument)
+            {
                 Styles.ApplyDocumentStyle(teDocument);
+            }
+
             stack.Push(document);
 
             // Extension renderers that must be registered before the default renders
             ObjectRenderers.Add(new MathBlockRenderer()); // since MathBlock derives from CodeBlock, it must be registered before CodeBlockRenderer
+            ObjectRenderers.Add(new FigureRenderer());
+            ObjectRenderers.Add(new FigureCaptionRenderer());
 
             // Default block renderers
             ObjectRenderers.Add(new CodeBlockRenderer());
@@ -102,8 +101,11 @@ namespace Markdig.Renderers
 
         public object Render(IList<MarkdownObject> markdownObjects)
         {
-            foreach (var markdownObject in markdownObjects)
+            foreach (MarkdownObject markdownObject in markdownObjects)
+            {
                 Write(markdownObject);
+            }
+
             return Document;
         }
 
@@ -115,8 +117,12 @@ namespace Markdig.Renderers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void WriteLeafInline([NotNull] LeafBlock leafBlock)
         {
-            if (leafBlock == null) throw new ArgumentNullException(nameof(leafBlock));
-            var inline = (Syntax.Inlines.Inline)leafBlock.Inline;
+            if (leafBlock == null)
+            {
+                throw new ArgumentNullException(nameof(leafBlock));
+            }
+
+            Syntax.Inlines.Inline inline = leafBlock.Inline;
             while (inline != null)
             {
                 Write(inline);
@@ -130,12 +136,16 @@ namespace Markdig.Renderers
         /// <param name="leafBlock">The leaf block.</param>
         public void WriteLeafRawLines([NotNull] LeafBlock leafBlock)
         {
-            if (leafBlock == null) throw new ArgumentNullException(nameof(leafBlock));
+            if (leafBlock == null)
+            {
+                throw new ArgumentNullException(nameof(leafBlock));
+            }
+
             if (leafBlock.Lines.Lines != null)
             {
-                var lines = leafBlock.Lines;
-                var slices = lines.Lines;
-                for (var i = 0; i < lines.Count; i++)
+                StringLineGroup lines = leafBlock.Lines;
+                StringLine[] slices = lines.Lines;
+                for (int i = 0; i < lines.Count; i++)
                 {
                     WriteText(ref slices[i].Slice);
                     WriteInline(new LineBreak());
@@ -145,19 +155,19 @@ namespace Markdig.Renderers
 
         internal void Push([NotNull] IAddChild o)
         {
-            var pred = stack.Peek();
+            IAddChild pred = stack.Peek();
             stack.Push(o);
             pred.AddChild(o);
         }
 
         internal void Pop()
         {
-            var popped = stack.Pop();
+            IAddChild popped = stack.Pop();
         }
 
         internal double CurrentFontSize()
         {
-            var stackEle = stack.Peek();
+            IAddChild stackEle = stack.Peek();
             if (stackEle is TextElement te)
             {
                 return te.FontSize;
@@ -168,8 +178,8 @@ namespace Markdig.Renderers
             }
             else if (stackEle != null)
             {
-                var type = stackEle.GetType();
-                var prop = type.GetProperty("FontSize");
+                Type type = stackEle.GetType();
+                System.Reflection.PropertyInfo prop = type.GetProperty("FontSize");
                 if (null != prop)
                 {
                     return (double)prop.GetValue(stackEle);
@@ -201,7 +211,9 @@ namespace Markdig.Renderers
         internal void WriteText(ref StringSlice slice)
         {
             if (slice.Start > slice.End)
+            {
                 return;
+            }
 
             WriteText(slice.Text, slice.Start, slice.Length);
         }
@@ -215,7 +227,9 @@ namespace Markdig.Renderers
         internal void WriteText([CanBeNull] string text, int offset, int length)
         {
             if (text == null)
+            {
                 return;
+            }
 
             if (offset == 0 && text.Length == length)
             {
@@ -268,7 +282,7 @@ namespace Markdig.Renderers
         {
             while (true)
             {
-                var inlines = (element as Span)?.Inlines ?? (element as Paragraph)?.Inlines;
+                InlineCollection inlines = (element as Span)?.Inlines ?? (element as Paragraph)?.Inlines;
 
                 if (inlines?.LastInline is Run run)
                 {

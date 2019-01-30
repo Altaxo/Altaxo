@@ -2,8 +2,8 @@
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using System;
 using Markdig.Annotations;
+using System;
 
 // ReSharper disable once CheckNamespace
 namespace Markdig.Wpf
@@ -20,7 +20,11 @@ namespace Markdig.Wpf
         /// <returns>The modified pipeline</returns>
         public static MarkdownPipelineBuilder UseSupportedExtensions([NotNull] this MarkdownPipelineBuilder pipeline)
         {
-            if (pipeline == null) throw new ArgumentNullException(nameof(pipeline));
+            if (pipeline == null)
+            {
+                throw new ArgumentNullException(nameof(pipeline));
+            }
+
             return pipeline
                 .UseEmphasisExtras()
                 .UseGridTables()
@@ -28,7 +32,8 @@ namespace Markdig.Wpf
                 .UseTaskLists()
                 .UseAutoLinks()
                 .UseMathematics()
-                .UseGenericAttributes();
+                .UseGenericAttributes()
+                .UseFigures();
         }
     }
 }

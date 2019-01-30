@@ -76,6 +76,8 @@
     <Compile Include="Renderers\IWpfImageProvider.cs" />
     <Compile Include="Renderers\WpfRenderer.cs" />
     <Compile Include="Renderers\Wpf\CodeBlockRenderer.cs" />
+    <Compile Include="Renderers\Wpf\Extensions\FigureCaptionRenderer.cs" />
+    <Compile Include="Renderers\Wpf\Extensions\FigureRenderer.cs" />
     <Compile Include="Renderers\Wpf\Extensions\MathBlockRenderer.cs" />
     <Compile Include="Renderers\Wpf\Extensions\TableRenderer.cs" />
     <Compile Include="Renderers\Wpf\Extensions\TaskListRenderer.cs" />
