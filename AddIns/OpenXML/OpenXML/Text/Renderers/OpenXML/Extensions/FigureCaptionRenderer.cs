@@ -39,8 +39,10 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
   {
     protected override void Write(OpenXMLRenderer renderer, Markdig.Extensions.Figures.FigureCaption obj)
     {
-      renderer.PushParagraphFormat(FormatStyle.QuoteBlock);
+      renderer.PushParagraphFormat(FormatStyle.Caption);
+      var paragraph = renderer.PushNewParagraph();
       renderer.WriteLeafInline(obj);
+      renderer.PopTo(paragraph);
       renderer.PopParagraphFormat();
     }
   }

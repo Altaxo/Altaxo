@@ -54,7 +54,8 @@ namespace Altaxo.Text
           .UseTaskLists()
           .UseAutoLinks()
           .UseMathematics()
-          .UseGenericAttributes();
+          .UseGenericAttributes()
+          .UseFigures();
     }
 
     /// <summary>

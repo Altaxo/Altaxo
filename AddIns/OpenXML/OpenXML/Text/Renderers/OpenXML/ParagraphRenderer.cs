@@ -38,6 +38,8 @@ namespace Altaxo.Text.Renderers.OpenXML
       var paragraph = renderer.PushNewParagraph();
       renderer.WriteLeafInline(obj);
       renderer.PopTo(paragraph);
+
+      renderer.AddBookmarkIfNeccessary(obj, paragraph);
     }
   }
 }

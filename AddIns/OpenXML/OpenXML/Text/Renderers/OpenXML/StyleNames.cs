@@ -45,6 +45,7 @@ namespace Altaxo.Text.Renderers.OpenXML
     QuoteBlock,
     ListParagraph,
     Link,
+    Caption,
     // not built-in styles (must be added manually to the Word document)
     CodeBlock,
     CodeInline
@@ -70,6 +71,7 @@ namespace Altaxo.Text.Renderers.OpenXML
     {
       _idToName = new Dictionary<FormatStyle, string>()
       {
+        [FormatStyle.Caption] = "caption",
         [FormatStyle.Heading1] = "heading 1",
         [FormatStyle.Heading2] = "heading 2",
         [FormatStyle.Heading3] = "heading 3",
