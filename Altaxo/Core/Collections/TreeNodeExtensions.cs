@@ -510,6 +510,204 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
+    /// Projects a source tree onto a destination tree.
+    /// Nodes are updated, added, or deleted in the destination tree to match the source tree.
+    /// </summary>
+    /// <typeparam name="S">Type of the source node.</typeparam>
+    /// <typeparam name="D">Type of the destination node.</typeparam>
+    /// <param name="sourceRoot">The source root node.</param>
+    /// <param name="destRoot">The destination root node.</param>
+    /// <param name="updateDestinationNodeFromSourceNode">An action that takes a source node and a destination node and updates the destination node according to the contents of the source node.</param>
+    public static void ProjectTreeToTree<S, D>(
+      this S sourceRoot,
+      D destRoot,
+      Action<S, D> updateDestinationNodeFromSourceNode)
+      where S : ITreeNode<S>
+      where D : ITreeListNode<D>, new()
+    {
+      List<(D, D, int)> destNodesToDelete = null;
+      ProjectTreeToTree(
+        sourceRoot,
+        destRoot,
+        updateDestinationNodeFromSourceNode,
+        (parent) => { var result = new D(); parent.ChildNodes.Add(result); return result; },
+        (parent, child, idx) => parent.ChildNodes.RemoveAt(idx),
+        ref destNodesToDelete);
+    }
+
+    /// <summary>
+    /// Projects a source tree onto a destination tree.
+    /// Nodes are updated, added, or deleted in the destination tree to match the source tree.
+    /// </summary>
+    /// <typeparam name="S">Type of the source node.</typeparam>
+    /// <typeparam name="D">Type of the destination node.</typeparam>
+    /// <param name="sourceRoot">The source root node.</param>
+    /// <param name="destRoot">The destination root node.</param>
+    /// <param name="updateDestinationNodeFromSourceNode">An action that takes a source node and a destination node and updates the destination node according to the contents of the source node.</param>
+    /// <param name="createDestinationNode">A function that takes a parent destination node as argument and creates a new destination node as a child of that parent. The return value is the newly created node.</param>
+    public static void ProjectTreeToTree<S, D>(
+      this S sourceRoot,
+      D destRoot,
+      Action<S, D> updateDestinationNodeFromSourceNode,
+      Func<D, D> createDestinationNode)
+      where S : ITreeNode<S>
+      where D : ITreeListNode<D>
+    {
+      List<(D, D, int)> destNodesToDelete = null;
+      ProjectTreeToTree(
+        sourceRoot,
+        destRoot,
+        updateDestinationNodeFromSourceNode,
+        createDestinationNode,
+        (parent, child, idx) => parent.ChildNodes.RemoveAt(idx),
+        ref destNodesToDelete);
+    }
+
+    /// <summary>
+    /// Projects a source tree onto a destination tree.
+    /// Nodes are updated, added, or deleted in the destination tree to match the source tree.
+    /// </summary>
+    /// <typeparam name="S">Type of the source node.</typeparam>
+    /// <typeparam name="D">Type of the destination node.</typeparam>
+    /// <param name="sourceRoot">The source root node.</param>
+    /// <param name="destRoot">The destination root node.</param>
+    /// <param name="updateDestinationNodeFromSourceNode">An action that takes a source node and a destination node and updates the destination node according to the contents of the source node.</param>
+    /// <param name="createDestinationNode">A function that takes a parent destination node as argument and creates a new destination node as a child of that parent. The return value is the newly created node.</param>
+    /// <param name="deleteDestinationNode">An action that deletes a destination node. First argument is the parent node, the second argument is the destination node to delete, 3rd argument is the index of the child node (as obtained from the order of the child node enumeration).</param>
+    public static void ProjectTreeToTree<S, D>(
+      this S sourceRoot,
+      D destRoot,
+      Action<S, D> updateDestinationNodeFromSourceNode,
+      Func<D, D> createDestinationNode,
+      Action<D, D, int> deleteDestinationNode)
+      where S : ITreeNode<S>
+      where D : ITreeNode<D>
+    {
+      List<(D, D, int)> destNodesToDelete = null;
+      ProjectTreeToTree(sourceRoot, destRoot, updateDestinationNodeFromSourceNode, createDestinationNode, deleteDestinationNode, ref destNodesToDelete);
+    }
+
+    /// <summary>
+    /// Projects a source tree onto a destination tree.
+    /// Nodes are updated, added, or deleted in the destination tree to match the source tree.
+    /// </summary>
+    /// <typeparam name="S">Type of the source node.</typeparam>
+    /// <typeparam name="D">Type of the destination node.</typeparam>
+    /// <param name="sourceRoot">The source root node.</param>
+    /// <param name="destRoot">The destination root node.</param>
+    /// <param name="updateDestinationNodeFromSourceNode">An action that takes a source node and a destination node and updates the destination node according to the contents of the source node.</param>
+    /// <param name="createDestinationNode">A function that takes a parent destination node as argument and creates a new destination node as a child of that parent. The return value is the newly created node.</param>
+    /// <param name="deleteDestinationNode">An action that deletes a destination node. First argument is the parent node, the second argument is the destination node to delete, 3rd argument is the index of the child node (as obtained from the order of the child node enumeration).</param>
+    /// <param name="destNodesToDelete">A helper collection to collect destination nodes that have to be deleted.</param>
+    public static void ProjectTreeToTree<S, D>(
+      this S sourceRoot,
+      D destRoot,
+      Action<S, D> updateDestinationNodeFromSourceNode,
+      Func<D, D> createDestinationNode,
+      Action<D, D, int> deleteDestinationNode,
+      ref List<(D, D, int)> destNodesToDelete)
+      where S : ITreeNode<S>
+      where D : ITreeNode<D>
+    {
+      ProjectTreeToTree<S, D>(
+        sourceRoot,
+        destRoot,
+        (sourceNode) => sourceNode.ChildNodes?.GetEnumerator() ?? Enumerable.Empty<S>().GetEnumerator(),
+        (destNode) => destNode.ChildNodes?.GetEnumerator() ?? Enumerable.Empty<D>().GetEnumerator(),
+        updateDestinationNodeFromSourceNode,
+        createDestinationNode,
+        deleteDestinationNode,
+        ref destNodesToDelete);
+    }
+
+
+    /// <summary>
+    /// Projects a source tree onto a destination tree.
+    /// Nodes are updated, added, or deleted in the destination tree to match the source tree.
+    /// </summary>
+    /// <typeparam name="S">Type of the source node.</typeparam>
+    /// <typeparam name="D">Type of the destination node.</typeparam>
+    /// <param name="sourceRootNode">The source root node.</param>
+    /// <param name="destinationRootNode">The destination root node.</param>
+    /// <param name="getSourceChildEnumerator">A function that takes a source node and returns an enumerator to enumerate the children of that node.</param>
+    /// <param name="getDestinationChildEnumerator">A function that takes a destination node and returns an enumerator to enumerate the children of that node.</param>
+    /// <param name="updateDestinationNodeFromSourceNode">An action that takes a source node and a destination node and updates the destination node according to the contents of the source node.</param>
+    /// <param name="createDestinationNode">A function that takes a parent destination node as argument and creates a new destination node as a child of that parent. The return value is the newly created node.</param>
+    /// <param name="deleteDestinationNode">An action that deletes a destination node. First argument is the parent node, the second argument is the destination node to delete, 3rd argument is the index of the child node (as obtained from the order of the child node enumeration).</param>
+    /// <param name="destinationNodesToDelete">A helper collection to collect destination nodes that have to be deleted. Initially, may be null.</param>
+    public static void ProjectTreeToTree<S, D>(
+        S sourceRootNode,
+        D destinationRootNode,
+        Func<S, IEnumerator<S>> getSourceChildEnumerator,
+        Func<D, IEnumerator<D>> getDestinationChildEnumerator,
+        Action<S, D> updateDestinationNodeFromSourceNode,
+        Func<D, D> createDestinationNode,
+        Action<D, D, int> deleteDestinationNode,
+        ref List<(D ParentNode, D ChildNode, int Index)> destinationNodesToDelete)
+    {
+      updateDestinationNodeFromSourceNode(sourceRootNode, destinationRootNode);
+
+      int destinationNodesToDeleteOriginalCount = destinationNodesToDelete?.Count ?? 0;
+
+
+      using (var sourceChildEnum = getSourceChildEnumerator(sourceRootNode))
+      {
+        using (var destChildEnum = getDestinationChildEnumerator(destinationRootNode))
+        {
+          bool s = !(sourceChildEnum is null);
+          bool d = !(destChildEnum is null);
+          for (int idx = 0; ; ++idx)
+          {
+            if (s)
+              s = sourceChildEnum.MoveNext();
+
+            if (d)
+              d = destChildEnum.MoveNext();
+            else
+              destChildEnum?.Dispose(); // allows addition of elements without complaining
+
+            if (s)
+            {
+              var destChildNode = d ? destChildEnum.Current : createDestinationNode(destinationRootNode);
+              ProjectTreeToTree(
+                sourceChildEnum.Current,
+                destChildNode,
+                getSourceChildEnumerator,
+                getDestinationChildEnumerator,
+                updateDestinationNodeFromSourceNode,
+                createDestinationNode,
+                deleteDestinationNode,
+                ref destinationNodesToDelete);
+            }
+            else // if (!s)
+            {
+              if (d)
+              {
+                if (null == destinationNodesToDelete)
+                  destinationNodesToDelete = new List<(D, D, int)>();
+
+                destinationNodesToDelete.Add((destinationRootNode, destChildEnum.Current, idx));
+              }
+              else
+              {
+                break;
+              }
+            }
+          } // for(;;)
+        }
+      }
+
+      if (null != destinationNodesToDelete)
+      {
+        for (int i = destinationNodesToDelete.Count - 1; i >= destinationNodesToDeleteOriginalCount; --i)
+        {
+          deleteDestinationNode(destinationNodesToDelete[i].ParentNode, destinationNodesToDelete[i].ChildNode, destinationNodesToDelete[i].Index);
+          destinationNodesToDelete.RemoveAt(i);
+        }
+      }
+    }
+
+    /// <summary>
     /// Ensures that a list of indices that point to a node in a tree is valid.
     /// </summary>
     /// <typeparam name="T">Type of the tree node.</typeparam>

@@ -65,6 +65,23 @@ namespace Altaxo.Gui.Text.Viewing
     string HighlightingStyle { set; }
 
     /// <summary>
+    /// Sets a value indicating whether this the outline window is visible.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the outline window is visible; otherwise, <c>false</c>.
+    /// </value>
+    bool IsOutlineWindowVisible { get; set; }
+
+    /// <summary>
+    /// Sets the width of the outline window. A value of <see cref="double.NaN"/> indicates
+    /// that the width is determined automatically by the contents of the outline window.
+    /// </summary>
+    /// <value>
+    /// The relative width of the outline window (relative to the available width)
+    /// </value>
+    double OutlineWindowRelativeWidth { set; }
+
+    /// <summary>
     /// Sets the culture for this document. This is important for instance for spell checking.
     /// </summary>
     CultureInfo DocumentCulture { set; }

@@ -404,6 +404,7 @@ namespace Altaxo.Gui.Markdown
         _lastMarkdownDocumentProcessed = markdownDocument;
         _foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
         HandlePendingSynchroniationOfSourceTextCursorPositionToPreviewPosition();
+        UpdateOutline(_lastMarkdownDocumentProcessed);
       }
       else
       {
@@ -425,6 +426,7 @@ namespace Altaxo.Gui.Markdown
             _lastMarkdownDocumentProcessed = newDocument;
             _foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
             HandlePendingSynchroniationOfSourceTextCursorPositionToPreviewPosition();
+            UpdateOutline(_lastMarkdownDocumentProcessed);
           },
           (isFlowDocumentUpdateInProgress) => _isFlowDocumentUpdateInProgress = isFlowDocumentUpdateInProgress,
           _lastCancellationTokenSource.Token);
@@ -1326,6 +1328,10 @@ namespace Altaxo.Gui.Markdown
       }
     }
 
+
+
     #endregion ViewingConfiguration
+
+
   }
 }

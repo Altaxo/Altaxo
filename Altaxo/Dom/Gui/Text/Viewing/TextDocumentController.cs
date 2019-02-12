@@ -148,6 +148,8 @@ namespace Altaxo.Gui.Text.Viewing
         _view.IsHyphenationEnabled = TextDocument.IsHyphenationEnabled ?? TextDocument.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsHyphenationEnabled, () => true);
         _view.IsFoldingEnabled = _options.IsFoldingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsFoldingEnabled, () => true);
         _view.HighlightingStyle = _options.HighlightingStyle ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyHighlightingStyle, () => "default");
+        _view.IsOutlineWindowVisible = _options.IsOutlineWindowVisible ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyOutlineVisible, () => false);
+        _view.OutlineWindowRelativeWidth = _options.OutlineWindowRelativeWidth ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyOutlineWindowRelativeWidth, () => double.NaN);
         _view.IsInInitializationMode = false;
       }
     }
@@ -173,6 +175,19 @@ namespace Altaxo.Gui.Text.Viewing
       if (null != _view)
       {
         TextDocument.SourceText = _view.SourceText;
+      }
+    }
+
+    public bool IsOutlineVisible
+    {
+      get
+      {
+        return _view?.IsOutlineWindowVisible ?? false;
+      }
+      set
+      {
+        if (null != _view)
+          _view.IsOutlineWindowVisible = value;
       }
     }
 

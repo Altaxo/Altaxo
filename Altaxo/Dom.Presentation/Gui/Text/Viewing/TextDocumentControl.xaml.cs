@@ -196,6 +196,30 @@ namespace Altaxo.Gui.Text.Viewing
       }
     }
 
+    public bool IsOutlineWindowVisible
+    {
+      get
+      {
+        return _guiEditor.IsOutlineWindowVisible;
+      }
+      set
+      {
+        _guiEditor.IsOutlineWindowVisible = value;
+      }
+    }
+
+    public double OutlineWindowRelativeWidth
+    {
+      get
+      {
+        return _guiEditor.OutlineWindowRelativeWidth;
+      }
+      set
+      {
+        _guiEditor.OutlineWindowRelativeWidth = value;
+      }
+    }
+
     /// <summary>
     /// Sets the culture for this document. This is important for instance for spell checking.
     /// </summary>

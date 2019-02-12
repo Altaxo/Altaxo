@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.AddInItems;
 using Altaxo.Gui;
 using Altaxo.Gui.Text.Viewing;
 using Altaxo.Gui.Workbench;
@@ -48,6 +49,13 @@ namespace Altaxo.Main.MenuCommands.Text
       if (!(parameter is IViewContent viewContent))
         viewContent = Current.Workbench.ActiveViewContent;
       return viewContent is Altaxo.Gui.Text.Viewing.TextDocumentController;
+    }
+
+    public TextDocumentController GetContext(object parameter)
+    {
+      if (!(parameter is IViewContent viewContent))
+        viewContent = Current.Workbench.ActiveViewContent;
+      return viewContent as Altaxo.Gui.Text.Viewing.TextDocumentController;
     }
 
     /// <summary>
@@ -197,6 +205,28 @@ namespace Altaxo.Main.MenuCommands.Text
     public override void Run(TextDocumentController ctrl)
     {
       ctrl.ExpandTextDocumentIntoNewDocument();
+    }
+  }
+
+  /// <summary>
+  /// Command to expand the current active text document into a new text document.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.MenuCommands.Text.AbstractTextControllerCommand" />
+  public class ShowOutline : AbstractTextControllerCommand, ICheckableMenuCommand
+  {
+    public event EventHandler IsCheckedChanged;
+
+    public bool IsChecked(object parameter)
+    {
+      var context = GetContext(parameter);
+
+      return context?.IsOutlineVisible ?? false;
+    }
+
+    public override void Run(TextDocumentController ctrl)
+    {
+      ctrl.IsOutlineVisible = !ctrl.IsOutlineVisible;
+      IsCheckedChanged?.Invoke(this, EventArgs.Empty);
     }
   }
 

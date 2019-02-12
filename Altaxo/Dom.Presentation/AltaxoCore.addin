@@ -671,6 +671,11 @@
 										description="${res:XML.MainMenu.TextMenu.TabbedEditorAndViewer.Description}"
 										class="Altaxo.Main.MenuCommands.Text.SwitchToConfigurationTabbedEditorAndViewer" />
         </MenuItem>
+        <MenuItem   id="ShowOutline"
+                    type="CheckBox"
+										label="${res:XML.MainMenu.TextMenu.ShowOutline}"
+										description="${res:XML.MainMenu.TextMenu.ShowOutline.Description}"
+										class="Altaxo.Main.MenuCommands.Text.ShowOutline" />
         <MenuItem id="ExpandText"
 										label="${res:XML.MainMenu.TextMenu.ExpandText}"
 										description="${res:XML.MainMenu.TextMenu.ExpandText.Description}"

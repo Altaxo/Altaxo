@@ -78,6 +78,24 @@ namespace Altaxo.Text.GuiModels
     /// </summary>
     private double _fractionOfSourceEditorWindowVisible = 0.5;
 
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the outline window is visible.
+    /// </summary>
+    /// <value>
+    /// A value indicating whether the outline window is visible.
+    /// </value>
+    public bool? IsOutlineWindowVisible { get; set; }
+
+    /// <summary>
+    /// Gets or sets the relative width of the outline window. A value of <see cref="double.NaN"/>
+    /// is indicating that the width of the outline window is set automatically.
+    /// </summary>
+    /// <value>
+    /// The width of the outline window relative.
+    /// </value>
+    public double? OutlineWindowRelativeWidth { get; set; }
+
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextDocumentViewOptions), 0)]
@@ -98,6 +116,8 @@ namespace Altaxo.Text.GuiModels
         info.AddValue("IsSpellCheckingEnabled", s.IsSpellCheckingEnabled);
         info.AddValue("IsFoldingEnabled", s.IsFoldingEnabled);
         info.AddValue("HighlightingStyle", s.HighlightingStyle);
+        info.AddValue("IsOutlineWindowVisible", s.IsOutlineWindowVisible);
+        info.AddValue("OutlineWindowRelativeWidth", s.OutlineWindowRelativeWidth);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -113,6 +133,11 @@ namespace Altaxo.Text.GuiModels
         s.IsSpellCheckingEnabled = info.GetNullableBoolean("IsSpellCheckingEnabled");
         s.IsFoldingEnabled = info.GetNullableBoolean("IsFoldingEnabled");
         s.HighlightingStyle = info.GetString("HighlightingStyle");
+        if (info.CurrentElementName == "IsOutlineWindowVisible")
+        {
+          s.IsOutlineWindowVisible = info.GetNullableBoolean("IsOutlineWindowVisible");
+          s.OutlineWindowRelativeWidth = info.GetNullableDouble("OutlineWindowRelativeWidth");
+        }
 
         var surr = new XmlSerializationSurrogate0
         {
@@ -224,6 +249,23 @@ namespace Altaxo.Text.GuiModels
     Main.Properties.PropertyLevel.All,
     typeof(TextDocument),
     () => "default");
+
+    public static readonly Main.Properties.PropertyKey<bool> PropertyKeyOutlineVisible =
+      new Main.Properties.PropertyKey<bool>(
+        "208895E4-47CA-4A54-A19E-E09E1A2376CD",
+        "Text\\OutlineWindowVisible",
+        Main.Properties.PropertyLevel.All,
+        typeof(TextDocument),
+        () => false);
+
+    public static readonly Main.Properties.PropertyKey<double> PropertyKeyOutlineWindowRelativeWidth =
+      new Main.Properties.PropertyKey<double>(
+        "6E55BC19-E1B5-4838-AD20-9A354E3C1C16",
+        "Text\\OutlineWindowRelativeWidth",
+        Main.Properties.PropertyLevel.All,
+        typeof(TextDocument),
+        () => double.NaN);
+
 
     #endregion Property keys
   }
