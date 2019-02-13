@@ -212,6 +212,18 @@ namespace Altaxo.Main.MenuCommands.Text
   /// Command to expand the current active text document into a new text document.
   /// </summary>
   /// <seealso cref="Altaxo.Main.MenuCommands.Text.AbstractTextControllerCommand" />
+  public class RenumerateFigures : AbstractTextControllerCommand
+  {
+    public override void Run(TextDocumentController ctrl)
+    {
+      ctrl.RenumerateFigures();
+    }
+  }
+
+  /// <summary>
+  /// Command to expand the current active text document into a new text document.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.MenuCommands.Text.AbstractTextControllerCommand" />
   public class ShowOutline : AbstractTextControllerCommand, ICheckableMenuCommand
   {
     public event EventHandler IsCheckedChanged;

@@ -680,6 +680,10 @@
 										label="${res:XML.MainMenu.TextMenu.ExpandText}"
 										description="${res:XML.MainMenu.TextMenu.ExpandText.Description}"
 										class="Altaxo.Main.MenuCommands.Text.ExpandTextDocumentIntoNewDocument" />
+        <MenuItem id="RenumerateFigures"
+                   label="${res:XML.MainMenu.TextMenu.RenumerateFigures}"
+                   description="${res:XML.MainMenu.TextMenu.RenumerateFigures.Description}"
+                   class="Altaxo.Main.MenuCommands.Text.RenumerateFigures" />
       </MenuItem>
     </Condition>
     <!-- Tools menu -->

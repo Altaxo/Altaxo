@@ -132,5 +132,28 @@ namespace Altaxo.Text
       }
       return list;
     }
+
+    /// <summary>
+    /// Determines whether the given <paramref name="url"/> points to anywhere inside the given Markdig <paramref name="element"/>.
+    /// </summary>
+    /// <param name="url">The URL.</param>
+    /// <param name="element">The Markdig element.</param>
+    /// <returns>
+    /// <c>true</c> if the given <paramref name="url"/> points to anywhere inside the given Markdig <paramref name="element"/>.; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool IsLinkInElement(string url, Markdig.Syntax.MarkdownObject element)
+    {
+      if (url.StartsWith("#"))
+        url = url.Substring(1);
+
+      foreach (var child in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(element))
+      {
+        var attr = (Markdig.Renderers.Html.HtmlAttributes)child.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
+        string uniqueAddress = attr?.Id; // this header has a user defined address
+        if (uniqueAddress == url)
+          return true;
+      }
+      return false;
+    }
   }
 }

@@ -387,6 +387,17 @@ namespace Altaxo.Gui.Text.Viewing
       Current.ProjectService.OpenOrCreateViewContentForDocument(newTextDocument);
     }
 
+    /// <summary>
+    /// Expands the current text document and stores it into a new text document in the same project folder.
+    /// </summary>
+    public void RenumerateFigures()
+    {
+      var newSource = FigureRenumerator.RenumerateFigures(TextDocument.SourceText);
+      TextDocument.SourceText = newSource;
+      if (null != _view)
+        _view.SourceText = newSource;
+    }
+
     public override object ViewObject
     {
       get
