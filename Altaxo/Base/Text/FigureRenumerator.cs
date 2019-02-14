@@ -420,7 +420,7 @@ namespace Altaxo.Text
             ExtractTextContentFrom(childContainerInline, result);
             break;
           case Markdig.Syntax.Inlines.LiteralInline literalInline:
-            result.Add((literalInline.Content.ToString(), literalInline.Content.Start));
+            result.Add((literalInline.Content.ToString(), literalInline.Span.Start));
             break;
           default:
             throw new NotImplementedException();
@@ -447,7 +447,7 @@ namespace Altaxo.Text
             ExtractTextContentFrom(childContainerInline, result);
             break;
           case Markdig.Syntax.Inlines.LiteralInline literalInline:
-            result.Add((literalInline.Content.ToString(), literalInline.Content.Start));
+            result.Add((literalInline.Content.ToString(), literalInline.Span.Start));
             break;
           default:
             throw new NotImplementedException();
