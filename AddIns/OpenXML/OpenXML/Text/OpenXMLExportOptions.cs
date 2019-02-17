@@ -64,6 +64,11 @@ namespace Altaxo.Text
         info.AddValue("RemoveOldContent", s.RemoveOldContentsOfTemplateFile);
         info.AddValue("OpenApplication", s.OpenApplication);
         info.AddValue("OutputFileName", s.OutputFileName);
+
+        info.AddValue("RenumerateFigures", s.RenumerateFigures);
+        info.AddValue("UseAutomaticFigureNumbering", s.UseAutomaticFigureNumbering);
+        info.AddValue("DoNotFormatFigureLinksAsHyperlinks", s.DoNotFormatFigureLinksAsHyperlinks);
+
       }
 
       public void Deserialize(OpenXMLExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -79,6 +84,13 @@ namespace Altaxo.Text
         s.RemoveOldContentsOfTemplateFile = info.GetBoolean("RemoveOldContent");
         s.OpenApplication = info.GetBoolean("OpenApplication");
         s.OutputFileName = info.GetString("OutputFileName");
+
+        if (info.CurrentElementName == "RenumerateFigures")
+        {
+          s.RenumerateFigures = info.GetBoolean("RenumerateFigures");
+          s.UseAutomaticFigureNumbering = info.GetBoolean("UseAutomaticFigureNumbering");
+          s.DoNotFormatFigureLinksAsHyperlinks = info.GetBoolean("DoNotFormatFigureLinksAsHyperlinks");
+        }
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -127,6 +139,26 @@ namespace Altaxo.Text
     /// If true, included child documents are expanded before the markdown document is processed.
     /// </summary>
     public bool ExpandChildDocuments { get; set; } = true;
+
+    /// <summary>
+    /// If true, figures are renumerated and the links to those figures updated.
+    /// </summary>
+    public bool RenumerateFigures { get; set; } = true;
+
+    /// <summary>
+    /// If true, in the exported OpenXML document, the figures are numbered automatically, and the links will be replaced by fields.
+    /// </summary>
+    public bool UseAutomaticFigureNumbering { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether links to figures are formatted as hyperlinks or not.
+    /// Explanation: in MS Word, it seems not possible to have a reference to a text marker hyperlink formatted.
+    /// But, for automatic figure numbering and referencing we need references to text markers.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if links to figures should not be hyperlink formatted.; otherwise, <c>false</c>.
+    /// </value>
+    public bool DoNotFormatFigureLinksAsHyperlinks { get; set; } = true;
 
     /// <summary>
     /// If true, the application that is linked to .docx format will be opened.
@@ -280,6 +312,11 @@ namespace Altaxo.Text
         document = ChildDocumentExpander.ExpandDocumentToNewDocument(document, errors: errors);
       }
 
+      if (RenumerateFigures)
+      {
+        document.SourceText = FigureRenumerator.RenumerateFigures(document.SourceText);
+      }
+
       // now export the markdown document as Maml file(s)
 
       // first parse it with Markdig
@@ -303,6 +340,8 @@ namespace Altaxo.Text
         renderer.ThemeName = ThemeName;
       renderer.RemoveOldContentsOfTemplateFile = RemoveOldContentsOfTemplateFile;
       renderer.ImageResolution = ImageResolutionDpi;
+      renderer.UseAutomaticFigureNumbering = UseAutomaticFigureNumbering;
+      renderer.DoNotFormatFigureLinksAsHyperlinks = DoNotFormatFigureLinksAsHyperlinks;
 
       renderer.Render(markdownDocument);
     }

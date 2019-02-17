@@ -10,8 +10,10 @@ using Altaxo.Text.Renderers.OpenXML.Inlines;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Markdig.Extensions.Figures;
 using Markdig.Renderers;
 using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers
 {
@@ -82,6 +84,26 @@ namespace Altaxo.Text.Renderers
     public bool RemoveOldContentsOfTemplateFile { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether in the OpenXML document automatic figure numbering is used.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if automatic figure numbering is used in the rendered document; otherwise, <c>false</c>.
+    /// </value>
+    public bool UseAutomaticFigureNumbering { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether links to figures are formatted as hyperlinks or not.
+    /// Explanation: in MS Word, it seems not possible to have a reference to a text marker hyperlink formatted.
+    /// But, for automatic figure numbering and referencing we need references to text markers.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if links to figures should not be hyperlink formatted.; otherwise, <c>false</c>.
+    /// </value>
+    public bool DoNotFormatFigureLinksAsHyperlinks { get; set; }
+
+
+
+    /// <summary>
     /// The word document
     /// </summary>
     public WordprocessingDocument _wordDocument { get; private set; }
@@ -115,6 +137,40 @@ namespace Altaxo.Text.Renderers
     /// The image provider.
     /// </value>
     public ImageStreamProvider ImageProvider { get; private set; } = new ImageStreamProvider();
+
+
+    /// <summary>
+    /// This of the figure captions that needs to be replaced by automatic figure numbers.
+    /// </summary>
+    public List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Figure Figure, FigureCaption FigureCaption)> FigureCaptionList { get; private set; }
+
+    /// <summary>
+    /// Gets the list of the figure numbers for each figure in the <see cref="FigureCaptionList"/>.
+    /// </summary>
+    public List<int> FigureCaptionIndices { get; private set; }
+
+    /// <summary>
+    /// Gets a list of links which point to figures in the <see cref="FigureCaptionList"/>
+    /// </summary>
+    public List<(int CaptionListIndex, (int Position, int Count) Number, LinkInline Link)> FigureLinkList { get; private set; }
+    public int FigureLinkRandom { get; private set; }
+
+    /// <summary>
+    /// If currently rendering a figure caption, this property holds the index into the figure caption that is
+    /// under consideration. Is null if no figure caption is under consideration.
+    /// </summary>
+    /// <value>
+    /// The index of the current figure caption list.
+    /// </value>
+    public int? CurrentFigureCaptionListIndex { get; set; }
+
+    /// <summary>
+    /// If currently rendering a link which points to a figure, this property holds the index to the <see cref="FigureLinkList"/>.
+    /// Is null if such a link is not currently rendered.
+    /// </summary>
+    public int? CurrentFigureLinkListIndex { get; set; }
+
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OpenXMLRenderer"/> class.
@@ -185,6 +241,14 @@ namespace Altaxo.Text.Renderers
 
       if (markdownObject is MarkdownDocument markdownDocument)
       {
+        if (UseAutomaticFigureNumbering)
+        {
+          FigureCaptionList = FigureRenumerator.GetCaptionList(markdownDocument);
+          FigureCaptionIndices = FigureRenumerator.GetCaptionNumberList(FigureCaptionList);
+          FigureLinkList = FigureRenumerator.GetLinkList(markdownDocument, FigureCaptionList);
+          FigureLinkRandom = new System.Random().Next();
+        }
+
         if (System.IO.Path.IsPathRooted(ThemeName))
         {
           // Route 1: create the Word document from an existing document

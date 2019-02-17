@@ -81,14 +81,25 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         }
         else if (!string.IsNullOrEmpty(url) && url.StartsWith("#")) // not a well formed Uri String - then it is probably a fragment reference
         {
+          if (null != renderer.FigureLinkList)
+          {
+            var idx = renderer.FigureLinkList.FindIndex(x => object.ReferenceEquals(x.Link, link));
+            if (idx >= 0)
+              renderer.CurrentFigureLinkListIndex = idx;
+          }
+
           var hyperlink = new Hyperlink() { Anchor = url.Substring(1) };
           renderer.Push(hyperlink);
           renderer.WriteChildren(link);
 
-          foreach (var run in hyperlink.ChildElements.OfType<Run>())
-            renderer.ApplyStyleToRun(StyleDictionary.IdToName[FormatStyle.Link], run);
-
+          if (!renderer.CurrentFigureLinkListIndex.HasValue || !renderer.DoNotFormatFigureLinksAsHyperlinks)
+          {
+            foreach (var run in hyperlink.ChildElements.OfType<Run>())
+              renderer.ApplyStyleToRun(StyleDictionary.IdToName[FormatStyle.Link], run);
+          }
           renderer.PopTo(hyperlink);
+
+          renderer.CurrentFigureLinkListIndex = null;
         }
       }
     }

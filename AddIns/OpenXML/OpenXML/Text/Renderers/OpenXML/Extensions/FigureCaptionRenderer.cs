@@ -39,11 +39,19 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
   {
     protected override void Write(OpenXMLRenderer renderer, Markdig.Extensions.Figures.FigureCaption obj)
     {
+      if (null != renderer.FigureCaptionList)
+      {
+        var idx = renderer.FigureCaptionList.FindIndex(x => object.ReferenceEquals(x.FigureCaption, obj));
+        if (idx >= 0)
+          renderer.CurrentFigureCaptionListIndex = idx;
+      }
+
       renderer.PushParagraphFormat(FormatStyle.Caption);
       var paragraph = renderer.PushNewParagraph();
       renderer.WriteLeafInline(obj);
       renderer.PopTo(paragraph);
       renderer.PopParagraphFormat();
+      renderer.CurrentFigureCaptionListIndex = null;
     }
   }
 }

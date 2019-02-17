@@ -64,77 +64,17 @@ namespace Altaxo.Text
     /// <returns>The modified document text, with renumerated figure captions and updated links.</returns>
     public static string RenumerateFigures(MarkdownDocument document, string documentText)
     {
-      var captionList = new List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Markdig.Extensions.Figures.Figure Figure)>();
-
-      foreach (var figure in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(document).OfType<Markdig.Extensions.Figures.Figure>())
-      {
-        var figureCaption = MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(figure).OfType<Markdig.Extensions.Figures.FigureCaption>().SingleOrDefault();
-
-        if (null == figureCaption)
-          continue;
-
-        var (category, digits) = ExtractCategoryAndNumber(figureCaption);
-
-        if (!string.IsNullOrEmpty(category.Name))
-        {
-          captionList.Add((category, digits, figure));
-        }
-      }
+      // Get the list of all captions with the positions of the caption id and the position of the number
+      var captionList = GetCaptionList(document);
 
       // Now parse through all links
-
-      var linkList = new List<(int CaptionListIndex, (int Position, int Count) Number)>();
-      foreach (var link in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(document).OfType<Markdig.Syntax.Inlines.LinkInline>())
-      {
-        if (link.IsImage)
-          continue;
-
-        if (!link.Url.StartsWith("#"))
-          continue;
-
-        // look if the link can be resolved to be in one of the figures
-
-        int captionListIndex = -1;
-        for (int i = 0; i < captionList.Count; ++i)
-        {
-          var fig = captionList[i];
-          if (MarkdownUtilities.IsLinkInElement(link.Url, fig.Figure))
-          {
-            captionListIndex = i;
-            break;
-          }
-        }
-
-        if (captionListIndex < 0)
-          continue;
-
-        var linkNumber = ExtractNumberFromLink(link);
-        if (linkNumber.Position < 0)
-          continue;
-
-        linkList.Add((captionListIndex, linkNumber));
-      }
+      var linkList = GetLinkList(document, captionList);
 
 
       // now attach a new number to each figure caption
       // we store the numbers in a separate list
 
-      var dictCategoryNumber = new Dictionary<string, int>();
-      var captionNumbers = new List<int>(captionList.Count);
-
-      foreach (var cap in captionList)
-      {
-        if (!dictCategoryNumber.TryGetValue(cap.Category.Name, out var number))
-        {
-          number = 0;
-          dictCategoryNumber.Add(cap.Category.Name, number);
-        }
-
-        ++number;
-        dictCategoryNumber[cap.Category.Name] = number;
-
-        captionNumbers.Add(number);
-      }
+      var captionNumbers = GetCaptionNumberList(captionList);
 
       // now we have everything in order to modify the text
       // for this we have to collect all the positions where text has to be changed,
@@ -176,6 +116,112 @@ namespace Altaxo.Text
       }
 
       return stb.ToString();
+    }
+
+    /// <summary>
+    /// Gets a list of integers with the same length as the <paramref name="captionList"/>. The numbers in the returned list are the number of the
+    /// figures. Each category of figure has its own numbering.
+    /// </summary>
+    /// <param name="captionList">The caption list.</param>
+    /// <returns>List of integers with the same length as the <paramref name="captionList"/> which gives the figure number for each figure in the caption list. </returns>
+    public static List<int> GetCaptionNumberList(List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Markdig.Extensions.Figures.Figure Figure, Markdig.Extensions.Figures.FigureCaption FigureCaption)> captionList)
+    {
+      var dictCategoryNumber = new Dictionary<string, int>();
+      var captionNumbers = new List<int>(captionList.Count);
+
+      foreach (var cap in captionList)
+      {
+        if (!dictCategoryNumber.TryGetValue(cap.Category.Name, out var number))
+        {
+          number = 0;
+          dictCategoryNumber.Add(cap.Category.Name, number);
+        }
+
+        ++number;
+        dictCategoryNumber[cap.Category.Name] = number;
+
+        captionNumbers.Add(number);
+      }
+
+      return captionNumbers;
+    }
+
+    /// <summary>
+    /// Gets a list containing all links that point to figures, and that have a number inside the link text that is
+    /// considered as the number of the figure the link is referring to.
+    /// </summary>
+    /// <param name="document">The markdown document.</param>
+    /// <param name="captionList">The caption list, as retrieved by <see cref="GetCaptionList(MarkdownDocument)"/>.</param>
+    /// <returns>A list containing tuples. Each tuple contains the following elements:
+    /// The CaptionListIndex is the index in the <paramref name="captionList"/> that the link is referring to.
+    /// The Number tuple contains the position and the length of the number string in the link.
+    /// The Link element is the markdown link itself.</returns>
+    public static List<(int CaptionListIndex, (int Position, int Count) Number, Markdig.Syntax.Inlines.LinkInline Link)> GetLinkList(MarkdownDocument document, List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Markdig.Extensions.Figures.Figure Figure, Markdig.Extensions.Figures.FigureCaption FigureCaption)> captionList)
+    {
+      var linkList = new List<(int CaptionListIndex, (int Position, int Count) Number, Markdig.Syntax.Inlines.LinkInline Link)>();
+      foreach (var link in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(document).OfType<Markdig.Syntax.Inlines.LinkInline>())
+      {
+        if (link.IsImage)
+          continue;
+
+        if (!link.Url.StartsWith("#"))
+          continue;
+
+        // look if the link can be resolved to be in one of the figures
+
+        int captionListIndex = -1;
+        for (int i = 0; i < captionList.Count; ++i)
+        {
+          var fig = captionList[i];
+          if (MarkdownUtilities.IsLinkInElement(link.Url, fig.Figure))
+          {
+            captionListIndex = i;
+            break;
+          }
+        }
+
+        if (captionListIndex < 0)
+          continue;
+
+        var linkNumber = ExtractNumberFromLink(link);
+        if (linkNumber.Position < 0)
+          continue;
+
+        linkList.Add((captionListIndex, linkNumber, link));
+      }
+
+      return linkList;
+    }
+
+    /// <summary>
+    /// Gets a list with all figure captions of the document, where i) there is exactly one figure caption in the figure,
+    /// ii) a figure identifier (such as 'Figure') can be clearly identified, and iii) a number can be identified in that caption.
+    /// </summary>
+    /// <param name="document">The document.</param>
+    /// <returns>A tuple. The category tuple contains the caption identifier (such as 'Figure') along with its position and length.
+    /// The Number tuple contains the position and length of the number string in the document.
+    /// The 3rd element of the tuple is the figure which contains the caption.
+    /// The last element of the tuple is the figure caption.</returns>
+    public static List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Markdig.Extensions.Figures.Figure Figure, Markdig.Extensions.Figures.FigureCaption FigureCaption)> GetCaptionList(MarkdownDocument document)
+    {
+      var captionList = new List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Markdig.Extensions.Figures.Figure Figure, Markdig.Extensions.Figures.FigureCaption FigureCaption)>();
+
+      foreach (var figure in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(document).OfType<Markdig.Extensions.Figures.Figure>())
+      {
+        var figureCaption = MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(figure).OfType<Markdig.Extensions.Figures.FigureCaption>().SingleOrDefault();
+
+        if (null == figureCaption)
+          continue;
+
+        var (category, digits) = ExtractCategoryAndNumber(figureCaption);
+
+        if (!string.IsNullOrEmpty(category.Name))
+        {
+          captionList.Add((category, digits, figure, figureCaption));
+        }
+      }
+
+      return captionList;
     }
 
 

@@ -106,6 +106,7 @@ namespace Altaxo.Text
         info.AddValue("ContentFolderName", s.ContentFolderName);
         info.AddValue("EnableRemoveOldContentsOfContentFolder", s.EnableRemoveOldContentsOfContentFolder);
         info.AddValue("ContentFileNameBase", s.ContentFileNameBase);
+        info.AddValue("RenumerateFigures", s.RenumerateFigures);
       }
 
       public void Deserialize(MamlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -128,6 +129,8 @@ namespace Altaxo.Text
         s.ContentFolderName = info.GetString("ContentFolderName");
         s.EnableRemoveOldContentsOfContentFolder = info.GetBoolean("EnableRemoveOldContentsOfContentFolder");
         s.ContentFileNameBase = info.GetString("ContentFileNameBase");
+        if (info.CurrentElementName == "RenumerateFigures")
+          s.RenumerateFigures = info.GetBoolean("RenumerateFigures");
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -258,6 +261,11 @@ namespace Altaxo.Text
     public string LinkToNextSectionLabelText { get; set; } = "Next section: ";
 
     /// <summary>
+    /// If true, the figures are renumerated before the markdown document is exported.
+    /// </summary>
+    public bool RenumerateFigures { get; set; }
+
+    /// <summary>
     /// If true, included child documents are expanded before the markdown document is processed.
     /// </summary>
     public bool ExpandChildDocuments { get; set; } = true;
@@ -361,6 +369,11 @@ namespace Altaxo.Text
       if (ExpandChildDocuments)
       {
         document = ChildDocumentExpander.ExpandDocumentToNewDocument(document, errors: errors);
+      }
+
+      if (RenumerateFigures)
+      {
+        document.SourceText = FigureRenumerator.RenumerateFigures(document.SourceText);
       }
 
       // remove the old content

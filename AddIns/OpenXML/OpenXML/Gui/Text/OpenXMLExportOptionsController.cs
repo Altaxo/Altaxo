@@ -84,6 +84,10 @@ namespace Altaxo.Gui.Text
     public int ImageResolutionDpi { get { return _doc.ImageResolutionDpi; } set { _doc.ImageResolutionDpi = value; OnPropertyChanged(nameof(ImageResolutionDpi)); } }
 
     public bool ExpandChildDocuments { get { return _doc.ExpandChildDocuments; } set { _doc.ExpandChildDocuments = value; OnPropertyChanged(nameof(ExpandChildDocuments)); } }
+    public bool RenumerateFigures { get { return _doc.RenumerateFigures; } set { _doc.RenumerateFigures = value; OnPropertyChanged(nameof(RenumerateFigures)); } }
+    public bool UseAutomaticFigureNumbering { get { return _doc.UseAutomaticFigureNumbering; } set { _doc.UseAutomaticFigureNumbering = value; OnPropertyChanged(nameof(RenumerateFigures)); } }
+    public bool DoNotFormatFigureLinksAsHyperlinks { get { return _doc.DoNotFormatFigureLinksAsHyperlinks; } set { _doc.DoNotFormatFigureLinksAsHyperlinks = value; OnPropertyChanged(nameof(DoNotFormatFigureLinksAsHyperlinks)); } }
+
     public string ThemeName { get { return _doc.ThemeName; } set { _doc.ThemeName = value; OnPropertyChanged(nameof(ThemeName)); } }
     public bool RemoveOldContentsOfTemplateFile { get { return _doc.RemoveOldContentsOfTemplateFile; } set { _doc.RemoveOldContentsOfTemplateFile = value; OnPropertyChanged(nameof(RemoveOldContentsOfTemplateFile)); } }
     public string OutputFileName { get { return _doc.OutputFileName; } set { _doc.OutputFileName = value; OnPropertyChanged(nameof(OutputFileName)); } }

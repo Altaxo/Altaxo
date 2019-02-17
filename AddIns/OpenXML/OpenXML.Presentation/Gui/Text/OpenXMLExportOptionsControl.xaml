@@ -8,7 +8,7 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase.Presentation"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing;assembly=AltaxoBase.Presentation" 
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="500">
+             >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -77,8 +77,20 @@
 							 IsChecked="{Binding ExpandChildDocuments, Mode=TwoWay}"
 							 ToolTip="By enabling this option, child documents included (with the extension to include child Markdown documents) are expanded before export."/>
 
+        <CheckBox  Grid.Row="8" Grid.ColumnSpan="3" Content="Renumerate figures" Margin="4,0,0,0"
+							 IsChecked="{Binding RenumerateFigures, Mode=TwoWay}"
+							 ToolTip="By enabling this option, figures will be renumerated and the links to those figures updated."/>
 
-        <GroupBox Header="Name of a file used as style template, or name of a built-in export theme:" Grid.Row="8" Grid.ColumnSpan="3">
+        <CheckBox  Grid.Row="10" Grid.ColumnSpan="3" Content="Use automatic figure numbering" Margin="4,0,0,0"
+							 IsChecked="{Binding UseAutomaticFigureNumbering, Mode=TwoWay}"
+							 ToolTip="By enabling this option, figure captions in the exported document will be numbered automatically."/>
+
+        <CheckBox  Grid.Row="12" Grid.ColumnSpan="3" Content="Do not use hyperlink style for figure references" Margin="4,0,0,0"
+							 IsChecked="{Binding DoNotFormatFigureLinksAsHyperlinks, Mode=TwoWay}"
+							 ToolTip="If checked, and 'Use automatic figure numbering' is checked too, links that point to figures are not styled with the hyperlink style (they remain in standard style)."/>
+
+
+        <GroupBox Header="Name of a file used as style template, or name of a built-in export theme:" Grid.Row="14" Grid.ColumnSpan="3">
             <DockPanel>
                 <Button Content="Select ..." 
                         DockPanel.Dock="Right"
@@ -100,7 +112,7 @@
         </GroupBox>
 
 
-        <GroupBox Header="Output file name:" Grid.Row="10" Grid.ColumnSpan="3">
+        <GroupBox Header="Output file name:" Grid.Row="16" Grid.ColumnSpan="3">
             <DockPanel>
                 <Button Content="Select ..." 
                         DockPanel.Dock="Right" 
@@ -113,7 +125,7 @@
 					/>
             </DockPanel>
         </GroupBox>
-        <CheckBox  Grid.Row="12" Grid.ColumnSpan="3"  Margin="4,0,0,0"
+        <CheckBox  Grid.Row="18" Grid.ColumnSpan="3"  Margin="4,0,0,0"
 							 IsChecked="{Binding OpenApplication, Mode=TwoWay}"
 							 Content="Open the application associated with OpenXML files (.docx) after export"
 							 ToolTip="By enabling this option, if you have a application associated with .docx files, after export this application is launched."/>

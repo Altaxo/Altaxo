@@ -40,9 +40,136 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       if (obj.Content.IsEmpty)
         return;
 
-      var run = renderer.PushNewRun();
-      run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = obj.Content.ToString() });
-      renderer.PopTo(run);
+      if (renderer.CurrentFigureCaptionListIndex.HasValue &&
+          Includes(obj.Span, renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Number.Position, renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Number.Count)
+        )
+      {
+        // we are inside a figure caption, and the use of automatic figure numbering was chosen
+        WriteFigureCaptionLiteralInline(renderer, obj);
+      }
+
+      else if (
+        renderer.CurrentFigureLinkListIndex.HasValue &&
+        Includes(obj.Span, renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].Number.Position, renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].Number.Count)
+        )
+      {
+        // we are inside a link to a figure, and the use of automatic figure numbering was chosen
+        WriteFigureLinkLiteralInline(renderer, obj);
+      }
+      else
+      {
+        // Write a normal inline
+        var run = renderer.PushNewRun();
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = obj.Content.ToString() });
+        renderer.PopTo(run);
+      }
+    }
+
+
+    private static void WriteFigureCaptionLiteralInline(OpenXMLRenderer renderer, LiteralInline obj)
+    {
+      // This is probably a figure caption, and maybe the category identifier and the number needs to be replaced by special elements
+
+      // Split the text in text before the number, and after the number
+
+      var text = obj.Content.ToString();
+
+      var numberPosition = renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Number.Position;
+      var numberLength = renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Number.Count;
+      var categoryName = renderer.FigureCaptionList[renderer.CurrentFigureCaptionListIndex.Value].Category.Name;
+
+      var textBeforeNumber = text.Substring(0, numberPosition - obj.Span.Start);
+      var textAfterNumber = text.Substring(numberPosition + numberLength - obj.Span.Start);
+
+      if (!string.IsNullOrEmpty(textBeforeNumber))
+      {
+        var run = renderer.PushNewRun();
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = textBeforeNumber });
+        renderer.PopTo(run);
+      }
+
+      var para = renderer.Peek();
+      var bookmarkId = GetBookmarkId(renderer, renderer.CurrentFigureCaptionListIndex.Value);
+      {
+        var bookmarkStart = new BookmarkStart
+        {
+          Id = bookmarkId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+          Name = "_REF" + bookmarkId.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        };
+
+
+        para.AppendChild(bookmarkStart);
+      }
+      {
+        var field = renderer.Push(new SimpleField { Instruction = $" SEQ {categoryName} \\* ARABIC " });
+
+        // include the number
+        var captionNumber = renderer.FigureCaptionIndices[renderer.CurrentFigureCaptionListIndex.Value];
+        var run = renderer.PushNewRun();
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = captionNumber.ToString() });
+        renderer.PopTo(field);
+      }
+
+      {
+        var bookmarkEnd = new BookmarkEnd() { Id = bookmarkId.ToString(System.Globalization.CultureInfo.InvariantCulture) };
+        para.AppendChild(bookmarkEnd);
+      }
+      if (!string.IsNullOrEmpty(textAfterNumber))
+      {
+        var run = renderer.PushNewRun();
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = textAfterNumber });
+        renderer.PopTo(run);
+      }
+    }
+
+    private static void WriteFigureLinkLiteralInline(OpenXMLRenderer renderer, LiteralInline obj)
+    {
+      var text = obj.Content.ToString();
+
+      var numberPosition = renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].Number.Position;
+      var numberLength = renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].Number.Count;
+      var textBeforeNumber = text.Substring(0, numberPosition - obj.Span.Start);
+      var textAfterNumber = text.Substring(numberPosition + numberLength - obj.Span.Start);
+
+      var figureCaptionIndex = renderer.FigureLinkList[renderer.CurrentFigureLinkListIndex.Value].CaptionListIndex;
+      var bookmarkId = GetBookmarkId(renderer, figureCaptionIndex);
+
+      if (!string.IsNullOrEmpty(textBeforeNumber))
+      {
+        var run = renderer.PushNewRun();
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = textBeforeNumber });
+        renderer.PopTo(run);
+      }
+
+      {
+        var bookmarkRef = "_REF" + bookmarkId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var field = renderer.Push(new SimpleField { Instruction = $" REF {bookmarkRef} \\h " });
+
+        var captionNumber = renderer.FigureCaptionIndices[figureCaptionIndex];
+        // include the number
+        var run = renderer.PushNewRun();
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = captionNumber.ToString() });
+        // renderer.ApplyStyleToRun(StyleDictionary.IdToName[FormatStyle.Link], run); // Note: This would not work - word is not formatting the text as hyperlink if the text is, like here, inside a field
+        renderer.PopTo(field);
+      }
+
+      if (!string.IsNullOrEmpty(textAfterNumber))
+      {
+        var run = renderer.PushNewRun();
+        run.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Text() { Space = SpaceProcessingModeValues.Preserve, Text = textAfterNumber });
+        renderer.PopTo(run);
+      }
+    }
+
+
+    private static long GetBookmarkId(OpenXMLRenderer renderer, int figureCaptionIndex)
+    {
+      return (renderer.FigureLinkRandom + 97L * figureCaptionIndex) % 1000000;
+    }
+
+    private bool Includes(Markdig.Syntax.SourceSpan span, int position, int length)
+    {
+      return position >= span.Start && position <= span.End && length <= span.Length;
     }
   }
 }

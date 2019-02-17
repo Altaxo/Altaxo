@@ -87,6 +87,7 @@ namespace Altaxo.Text
         info.AddValue("OutputFileName", s.OutputFileName);
         info.AddValue("EnableRemoveOldContentsOfOutputFolder", s.EnableRemoveOldContentsOfOutputFolder);
         info.AddValue("OpenHtmlViewer", s.OpenHtmlViewer);
+        info.AddValue("RenumerateFigures", s.RenumerateFigures);
       }
 
       public void Deserialize(HtmlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -107,6 +108,8 @@ namespace Altaxo.Text
         s.OutputFileName = info.GetString("OutputFileName");
         s.EnableRemoveOldContentsOfOutputFolder = info.GetBoolean("EnableRemoveOldContentsOfOutputFolder");
         s.OpenHtmlViewer = info.GetBoolean("OpenHtmlViewer");
+        if (info.CurrentElementName == "RenumerateFigures")
+          s.RenumerateFigures = info.GetBoolean("RenumerateFigures");
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -252,7 +255,10 @@ namespace Altaxo.Text
     /// </summary>
     public bool ExpandChildDocuments { get; set; } = true;
 
-
+    /// <summary>
+    /// If true, figures will be renumerated and the links to those figures updated.
+    /// </summary>
+    public bool RenumerateFigures { get; set; }
 
     /// <summary>
     /// If true, the default Htlm viewer application is opened after the Html files were exported.
@@ -356,6 +362,11 @@ namespace Altaxo.Text
       if (ExpandChildDocuments)
       {
         document = ChildDocumentExpander.ExpandDocumentToNewDocument(document, errors: errors);
+      }
+
+      if (RenumerateFigures)
+      {
+        document.SourceText = FigureRenumerator.RenumerateFigures(document.SourceText);
       }
 
       // remove the old content

@@ -94,6 +94,7 @@ namespace Altaxo.Gui.Text
     public bool EnableLinkToTableOfContents { get { return _doc.EnableLinkToTableOfContents; } set { _doc.EnableLinkToTableOfContents = value; OnPropertyChanged(nameof(EnableLinkToTableOfContents)); } }
     public string LinkToTableOfContentsLabelText { get { return _doc.LinkToTableOfContentsLabelText; } set { _doc.LinkToTableOfContentsLabelText = value; OnPropertyChanged(nameof(LinkToTableOfContentsLabelText)); } }
     public bool ExpandChildDocuments { get { return _doc.ExpandChildDocuments; } set { _doc.ExpandChildDocuments = value; OnPropertyChanged(nameof(ExpandChildDocuments)); } }
+    public bool RenumerateFigures { get { return _doc.RenumerateFigures; } set { _doc.RenumerateFigures = value; OnPropertyChanged(nameof(RenumerateFigures)); } }
     public string BodyTextFontFamilyName { get { return _doc.BodyTextFontFamily; } set { _doc.BodyTextFontFamily = value; OnPropertyChanged(nameof(BodyTextFontFamilyName)); } }
     public double BodyTextFontSize { get { return _doc.BodyTextFontSize; } set { _doc.BodyTextFontSize = value; OnPropertyChanged(nameof(BodyTextFontSize)); } }
     public string OutputFileName { get { return _doc.OutputFileName; } set { _doc.OutputFileName = value; OnPropertyChanged(nameof(OutputFileName)); } }

@@ -46,6 +46,7 @@ namespace Altaxo.Text.Renderers
   /// <seealso cref="RendererBase" />
   public partial class OpenXMLRenderer : RendererBase, IDisposable
   {
+
     /// <summary>
     /// Adds the styles part to the document.
     /// </summary>
