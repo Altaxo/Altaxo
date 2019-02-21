@@ -113,6 +113,25 @@ editor window and preview window in a tab control, i.e. only one of them is disp
 </list>
 </content>
 </section>
+
+<section address="2DB657F3A16531760AA14E645AB8A9BF">
+<title>Outline window
+</title>
+<content>
+
+<para>
+You can show or hide a window containing the outline of your document by using <codeInline>Text -&gt; Show outline window</codeInline> from the main menu. If the outline window is shown, as in <link xlink:href="D81BAB079B701CE4975A6890157D3C46#TextDocuments_OutlineWindow">Fig. 1</link>, you can double-click onto an item in the outline window to scroll the text in the source text window to the corresponding location.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFEE1860E4110A85CA97A71742514CBD"><img src="../media/BFEE1860E4110A85CA97A71742514CBD.png" width="567"></img></a></markup>  
+</para>
+
+<para>
+Figure 1:	The outline window is always shown to the left of the source text and preview windows.
+</para>
+</content>
+</section>
 <markup><hr/></markup>
 <section>
 

@@ -406,6 +406,80 @@ Item4
 </listItem>
 </list>
 
+<section address="E79398901F3F14C38BAD2E1CB32A2C22">
+<title>Figure extension
+</title>
+<content>
+
+<para>
+This extension is useful if you want to include figures and tables on separate lines, and want to provide them with a figure caption or table caption, respectively. Special commands are built into Altaxo to renumerate figures, and to allow to reference them from the text by number.
+</para>
+
+<para>
+To include a figure, surround the figure by a block of <codeInline>^^^</codeInline>, like so:
+</para>
+
+<code>
+^^^
+![](graph://Foo\GRAPH0){width=5cm}  {#An_important_graph}
+^^^ Figure 1: This is a graph 
+</code>
+
+<para>
+In line 2 of the code block above, a graph from the Altaxo project is included. This is not new and was shown already before. The graph has a text mark <codeInline>#An_important_graph</codeInline> attached. New is that the graph is now framed with <codeInline>^^^</codeInline> blocks above and below. Moreover, in the last line, there is a figure caption. You can write figure captions either above (in the first line containing <codeInline>^^^</codeInline>, which is e.g. common for tables), or as in the example above, in the line below the figure or table.
+</para>
+
+<para>
+Even more useful is the figure extension, if used in conjunction with Altaxo's built in <legacyBold>figure renumeration feature</legacyBold>.  
+</para>
+
+<para>
+If you have more than one figure, for instance:
+</para>
+
+<code>
+^^^
+![](graph://Foo\GRAPH0){width=5cm}  {#An_important_graph}
+^^^ Figure 1: This is a graph 
+..
+..
+..
+^^^
+![](graph://Foo\GRAPH1){width=5cm}  {#Another_graph}
+^^^ Figure 3: This is another graph
+</code>
+
+<para>
+you most probably have the problem to keep the figure numbers up-to-date. After Figure 1, Figure 2 should follow, but in the example above, it is Figure 3 instead.
+</para>
+
+<para>
+<legacyBold>Invoke Altaxo's figure renumeration command</legacyBold> by using <codeInline>Text → Renumerate figures</codeInline> from the main menu. This command looks for all figure captions in the document, and then tries to find a category and a number in each figure caption. The category is considered the first word in the figure caption. In the example above, the category for both figures is <codeInline>Figure</codeInline>. Both figure captions have a number, too. Altaxo then replaces the numbers in the figure captions by new numbers. Each category gets its own numbering.
+</para>
+
+<para>
+Even more useful is that Altaxo also cares about the links to the figures. Assume you have referenced the figure in the text like this:
+</para>
+
+<code>
+As can be seen in [Fig. 3](#Another_graph) .....
+</code>
+
+<para>
+During the figure renumeration command, Altaxo parses all links. If a link points to inside a figure block, then the link text (here: <codeInline>Fig. 3</codeInline>) is parsed. If a number is found in the link text, then this number is replaced by the actual number that the figure has got now. In the example above, <codeInline>Figure 3</codeInline> would be renumerated to <codeInline>Figure 2</codeInline>, and the link text would then be changed to <codeInline>Fig. 2</codeInline>, accordingly.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold>
+</para>
+
+<para>
+The figure renumeration feature is also available as a preprocessor option when exporting a document to Maml, Html, or an OpenXml document.
+</para>
+</quote>
+
 <section address="ExtensionToIncludeChildMarkdownDocuments">
 <title>Extension to include child markdown documents
 </title>
@@ -428,6 +502,8 @@ The text <codeInline>Chapter1 - Title</codeInline> inside of the code block is o
 <para>
 The master document can be expanded later, for instance during export to <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407#MamlExportOfMarkdownDocuments">Maml</link> or to an <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407#MarkdownExportOfMarkdownDocuments">external Markdown document</link>.
 </para>
+</content>
+</section>
 </content>
 </section>
 </content>

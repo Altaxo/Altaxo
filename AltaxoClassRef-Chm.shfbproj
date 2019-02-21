@@ -47,7 +47,7 @@
     <Preliminary>False</Preliminary>
     <FooterText>Altaxo is hosted on &amp;lt%3ba href=&amp;quot%3bhttps://sourceforge.net/projects/altaxo&amp;quot%3b target=&amp;quot%3b_blank&amp;quot%3b&amp;gt%3b&amp;lt%3bimg src=&amp;quot%3bhttps://sflogo.sourceforge.net/sflogo.php%3fgroup_id=73395&amp;amp%3bamp%3btype=10&amp;quot%3b width=&amp;quot%3b80&amp;quot%3b height=&amp;quot%3b15&amp;quot%3b alt=&amp;quot%3bGet Altaxo Data Processing/Plotting Program at SourceForge.net. Fast, secure and Free Open Source software downloads&amp;quot%3b /&amp;gt%3b&amp;lt%3b/a&amp;gt%3b</FooterText>
     <CopyrightHref>https://sourceforge.net/u/dlellinger/profile/</CopyrightHref>
-    <CopyrightText>%28C%29 Dr. Dirk Lellinger 2002 - 2018</CopyrightText>
+    <CopyrightText>%28C%29 Dr. Dirk Lellinger 2002 - 2019</CopyrightText>
     <FeedbackEMailAddress>dlellinger%40users.sourceforge.net</FeedbackEMailAddress>
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <WarnOnMissingSourceContext>False</WarnOnMissingSourceContext>
@@ -140,9 +140,13 @@
       <ImageId>13379B58C9CCA9563E67844F3D49B063</ImageId>
       <AlternateText>13379B58C9CCA9563E67844F3D49B063</AlternateText>
     </Image>
-    <Image Include="HelpContent\Images\06D8248E997554DD0567A6EA259FFD12.png">
-      <ImageId>06D8248E997554DD0567A6EA259FFD12</ImageId>
-      <AlternateText>06D8248E997554DD0567A6EA259FFD12</AlternateText>
+    <Image Include="HelpContent\Images\A035D44B6CBB32B281DAA09667B60402.png">
+      <ImageId>A035D44B6CBB32B281DAA09667B60402</ImageId>
+      <AlternateText>A035D44B6CBB32B281DAA09667B60402</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Images\BFEE1860E4110A85CA97A71742514CBD.png">
+      <ImageId>BFEE1860E4110A85CA97A71742514CBD</ImageId>
+      <AlternateText>BFEE1860E4110A85CA97A71742514CBD</AlternateText>
     </Image>
     <Image Include="HelpContent\Images\BB9FABC6297FBD59A3C367E7A6812F02.png">
       <ImageId>BB9FABC6297FBD59A3C367E7A6812F02</ImageId>

@@ -159,6 +159,13 @@ To export to Maml, choose from the main menu <codeInline>File → Export to Maml
 <listItem>
 
 <para>
+<legacyItalic>Renumerate figures</legacyItalic>: if this option is checked, all figures will be renumerated (after the document is expanded). See the figure renumeration feature <link xlink:href="92B7CA00A4DC93F8BF66AEF350E77316#Feature_FigureRenumeration">above</link>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
 <legacyItalic>Font family of body text</legacyItalic>: concerns export of formulas only - since formulas are exported as images, it is important to know the properties of the text they are embedded in. Therefore, font family and font size have to be known in advance. For use with the Sandcastle Help file builder, at the time of writing the font family was &quot;Segoe UI&quot;, and the font size 15.
 </para>
 </listItem>
@@ -261,6 +268,13 @@ Lists (bullet lists and numbered lists) are mapped to Word's built-in <codeInlin
 
 <para>
 Code blocks are mapped to <codeInline>CodeBlock</codeInline> style. This style is not built in Word and will be created if it is not already present (see the topic templating below).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Figure captions are mapped to the <codeInline>Caption</codeInline> style.
 </para>
 </listItem>
 </list>
@@ -383,6 +397,9 @@ Code Code Code (style: 'CodeBlock')
 Code Code Code (style: 'CodeBlock')
 Code Code Code (style: 'CodeBlock')
 ```
+^^^
+![](res:Icons.16x16.ArrangeBottom){width=5cm}
+^^^ Figure 1: (style: 'Caption')
 
 &gt; Note: the next paragraph is a CodeBlock inside a BlockQuote.
 &gt;```
@@ -426,7 +443,7 @@ Make the text document you want to export your current window. Then choose <code
 </para>
 
 <para>
-<mediaLinkInline><image xlink:href="06D8248E997554DD0567A6EA259FFD12"></image></mediaLinkInline>
+<mediaLinkInline><image xlink:href="A035D44B6CBB32B281DAA09667B60402"></image></mediaLinkInline>
 </para>
 
 <para>
@@ -455,6 +472,27 @@ The graphs that are included in your Markdown will be rendered with that resolut
 
 <para>
 Expand child documents: If your Markdown document contains child documents (see <link xlink:href="92B7CA00A4DC93F8BF66AEF350E77316#ExtensionToIncludeChildMarkdownDocuments">here</link>), they will be expanded prior to the export.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Renumerate figures: if this option is checked, all figures will be renumerated (after the document is expanded). See the figure renumeration feature <link xlink:href="92B7CA00A4DC93F8BF66AEF350E77316#Feature_FigureRenumeration">above</link>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Use automatic figure numbering: if this option is checked, the built-in capability of OpenXml documents for figure numeration is used. The figure numbers are exported to text fields that do the numbering automatically. The number in the links to the figures are replaced by text references to those automatic numbers.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Do not use hyperlink style for figure references: if checked, the links to figures are not formatted in the hyperlink style. Instead, they are formatted as plain text.
 </para>
 </listItem>
 
