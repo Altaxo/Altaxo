@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -413,7 +413,10 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.WorksheetCommands.WorksheetClearData(ctrl);
+      using (var token = ctrl.DataTable.SuspendGetToken())
+      {
+        Altaxo.Worksheet.Commands.WorksheetCommands.WorksheetClearData(ctrl);
+      }
     }
   }
 
@@ -421,7 +424,10 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      ctrl.DataTable.DataColumns.ClearData();
+      using (var token = ctrl.DataTable.SuspendGetToken())
+      {
+        ctrl.DataTable.DataColumns.ClearData();
+      }
     }
   }
 
@@ -429,7 +435,10 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      ctrl.DataTable.DataColumns.RemoveColumnsAll();
+      using (var token = ctrl.DataTable.SuspendGetToken())
+      {
+        ctrl.DataTable.DataColumns.RemoveColumnsAll();
+      }
     }
   }
 
