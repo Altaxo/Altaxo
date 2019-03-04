@@ -61,6 +61,15 @@ namespace Altaxo.Gui.Workbench
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    /// <summary>
+    /// 
+    /// Gets or sets the visibility of the pad.
+    /// If false, the pad is not visible.
+    /// If true, the pad may be visible or is collapsed.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this instance is visible; otherwise, <c>false</c>.
+    /// </value>
     public bool IsVisible
     {
       get

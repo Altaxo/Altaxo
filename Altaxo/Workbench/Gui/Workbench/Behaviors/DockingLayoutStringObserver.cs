@@ -135,8 +135,9 @@ namespace Altaxo.Gui.Workbench
           return true;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Current.MessageService.ShowException(ex, "Exception during layout deserialization");
       }
       return false;
     }

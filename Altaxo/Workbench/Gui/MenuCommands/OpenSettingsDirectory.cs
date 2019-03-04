@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Main.Services;
@@ -57,4 +58,30 @@ namespace Altaxo.Gui.MenuCommands
       }
     }
   }
+
+  public class OpenProgramDirectory : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var entryAssemblyPath = Assembly.GetEntryAssembly().Location;
+      string dir = Path.GetDirectoryName(entryAssemblyPath);
+
+      string args = "/e," + dir;
+
+      var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args)
+      {
+        CreateNoWindow = false,
+        WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
+      };
+
+      try
+      {
+        var proc = System.Diagnostics.Process.Start(processInfo);
+      }
+      catch (Exception)
+      {
+      }
+    }
+  }
+
 }

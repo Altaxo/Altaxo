@@ -175,17 +175,17 @@ namespace Altaxo.Gui
         it.IsSelected = true;
     }
 
-    public static int[] GetColumnWidths(ListView listView)
+    public static double[] GetColumnWidths(ListView listView)
     {
       var gv = (GridView)listView.View;
 
-      int[] ret = new int[gv.Columns.Count];
+      var ret = new double[gv.Columns.Count];
       for (int i = 0; i < ret.Length; i++)
-        ret[i] = (int)gv.Columns[i].ActualWidth;
+        ret[i] = gv.Columns[i].ActualWidth;
       return ret;
     }
 
-    public static void SetColumnWidths(ListView listView, int[] widths)
+    public static void SetColumnWidths(ListView listView, double[] widths)
     {
       var gv = (GridView)listView.View;
 

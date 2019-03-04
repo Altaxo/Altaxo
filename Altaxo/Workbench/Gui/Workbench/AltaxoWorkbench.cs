@@ -157,19 +157,75 @@ namespace Altaxo.Gui.Workbench
 
     #region "Serialization"
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "ICSharpCode.SharpDevelop.Gui.Workbench1", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.Workbench1", 1)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoWorkbench), 2)]
-    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    public object CreateMemento()
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      IsLayoutSerializationRequired = true;
+      return new WorkbenchLayoutMemento(CurrentLayoutConfiguration);
+    }
+
+    public void SetMemento(object obj)
+    {
+      if (obj is WorkbenchLayoutMemento memento && !string.IsNullOrEmpty(memento.LayoutAsString))
       {
-        var s = (AltaxoWorkbench)obj;
+        try
+        {
+          CurrentLayoutConfiguration = memento.LayoutAsString;
+        }
+        catch (Exception)
+        {
+
+        }
+      }
+    }
+
+    /// <summary>
+    /// Memento that stores the current layout configuration to be serialized / deserialized
+    /// </summary>
+    private class WorkbenchLayoutMemento
+    {
+      public string LayoutAsString { get; private set; }
+      public WorkbenchLayoutMemento(string layoutAsString)
+      {
+        LayoutAsString = layoutAsString;
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "ICSharpCode.SharpDevelop.Gui.Workbench1", 0)]
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.Workbench1", 1)]
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("Workbench", "Altaxo.Gui.Workbench.AltaxoWorkbench", 2)]
+      private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        return o;
+        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        {
+        }
+
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          var s = o as WorkbenchLayoutMemento ?? new WorkbenchLayoutMemento(null);
+          return o;
+        }
+      }
+
+
+      /// <summary>
+      /// 2018-11-30 using memento
+      /// </summary>
+      /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorkbenchLayoutMemento), 3)]
+      private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      {
+        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        {
+          var s = (WorkbenchLayoutMemento)obj;
+          info.AddValue("CurrentLayoutConfiguration", s.LayoutAsString);
+        }
+
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          var s = o as WorkbenchLayoutMemento ?? new WorkbenchLayoutMemento(string.Empty);
+          s.LayoutAsString = info.GetString("CurrentLayoutConfiguration");
+          return s;
+        }
       }
     }
 
@@ -299,6 +355,18 @@ namespace Altaxo.Gui.Workbench
       {
         _toolBarTrayItemsSource = value;
         OnPropertyChanged(nameof(ToolBarTrayItemsSource));
+      }
+    }
+
+    public bool IsLayoutSerializationRequired
+    {
+      get
+      {
+        return true;
+      }
+      set
+      {
+        OnPropertyChanged(nameof(IsLayoutSerializationRequired));
       }
     }
 
@@ -795,6 +863,27 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       if (switchToPad)
       {
         content.IsSelected = true;
+      }
+    }
+
+    /// <summary>
+    /// Closes the pad.
+    /// </summary>
+    /// <param name="content">The content.</param>
+    /// <exception cref="ArgumentNullException">content</exception>
+    public void ClosePad(IPadContent content)
+    {
+      if (null == content)
+        throw new ArgumentNullException(nameof(content));
+
+      if (content.PadDescriptor is null) // this is a document in the pad area
+      {
+        _padContentCollection.Remove(content);
+        (content as IDisposable)?.Dispose();
+      }
+      else
+      {
+        content.IsVisible = false;
       }
     }
 

@@ -157,7 +157,7 @@ namespace Altaxo.Gui.Startup
 
       if (!noLogo)
       {
-        SplashScreenForm.ShowSplashScreen(); // show splash screen
+        SplashScreenForm.ShowSplashScreen(startupArguments.ApplicationName); // show splash screen
       }
 
       try

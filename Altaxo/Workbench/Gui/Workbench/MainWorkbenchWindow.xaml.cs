@@ -44,6 +44,31 @@ namespace Altaxo.Gui.Workbench
     {
       InitializeComponent();
       Loaded += EhLoaded;
+      DataContextChanged += EhDataContextChanged;
+    }
+
+    private void EhDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      {
+        if (e.OldValue is AltaxoWorkbench wb)
+        {
+          wb.PropertyChanged -= EhWorkbenchPropertyChanged;
+        }
+      }
+      {
+        if (e.NewValue is AltaxoWorkbench wb)
+        {
+          wb.PropertyChanged += EhWorkbenchPropertyChanged;
+        }
+      }
+    }
+
+    private void EhWorkbenchPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(AltaxoWorkbench.IsLayoutSerializationRequired))
+      {
+        DockingLayoutStringObserver.SerializeLayoutAndUpdateLayoutString(_dockManager);
+      }
     }
 
     private void EhLoaded(object sender, RoutedEventArgs e)
@@ -71,6 +96,8 @@ namespace Altaxo.Gui.Workbench
         wb.FixViewContentIsNullWhenThereAreDocumentsAvailable();
       }
     }
+
+
 
     protected override void OnStateChanged(EventArgs e)
     {
@@ -240,5 +267,7 @@ namespace Altaxo.Gui.Workbench
     }
 
     #endregion Status of Menu and Toolbar
+
+
   }
 }

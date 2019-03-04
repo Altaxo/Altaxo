@@ -49,14 +49,24 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether this pad is visible at all. This means, that if this property is false,
-    /// the pad will not be shown, even the title is not shown anywhere.
+    /// 
+    /// Gets or sets the visibility of a pad or document.
+    /// If false for a pad, the pad is not visible. If false for a document, the document tab header is not visible (but the document itself maybe visible).
+    /// If true for a pad, the pad may be visible or is collapsed. If true for a document, the document tab header is visible (if it fits in the bar),
+    /// and the document is visible, if it is selected, too.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if this instance is visible; otherwise, <c>false</c>.
+    /// <c>true</c> if this instance is visible; otherwise, <c>false</c>.
     /// </value>
     bool IsVisible { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this pad or document is selected.
+    /// If this is a document, it is selected if the tab of the document is selected.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if this instance is selected; otherwise, <c>false</c>.
+    /// </value>
     bool IsSelected { get; set; }
 
     bool IsActive { get; set; }

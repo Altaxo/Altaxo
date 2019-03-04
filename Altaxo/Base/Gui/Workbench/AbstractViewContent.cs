@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -42,7 +43,7 @@ namespace Altaxo.Gui.Workbench
 
     protected bool _isSelected;
 
-    protected bool _isVisible;
+    protected bool _isVisible = true;
 
     protected string _title;
 
@@ -160,6 +161,16 @@ namespace Altaxo.Gui.Workbench
       get { return false; }
     }
 
+    /// <summary>
+    /// 
+    /// Gets or sets the visibility of the document.
+    /// If false, the document tab header is not visible (but the document itself maybe visible !).
+    /// If true, the document tab header is visible (if it fits in the bar),
+    /// and the document is visible, if it is selected, too.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this instance is visible; otherwise, <c>false</c>.
+    /// </value>
     public bool IsVisible
     {
       get
@@ -268,15 +279,41 @@ namespace Altaxo.Gui.Workbench
       get
       {
         var model = ModelObject;
-        if (model != null)
+
+        // Get the project item, either directly or via its presentation model
+        var projectItem = model as IProjectItem;
+        if (null == projectItem && model is IProjectItemPresentationModel pipModel)
+        {
+          projectItem = pipModel.Document;
+        }
+
+        if (null != projectItem)
+        {
+          var name = Altaxo.Main.AbsoluteDocumentPath.GetPathString(projectItem, 16);
+          System.Diagnostics.Debug.WriteLine("GetName: " + name);
+          return name;
+        }
+        else if (model != null)
+        {
           return "ContentHash:" + RuntimeHelpers.GetHashCode(model).ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
         else
+        {
           return "ContentHash:Empty";
+        }
       }
       set
       {
         throw new NotImplementedException();
       }
+    }
+
+    /// <summary>
+    /// Can be used to notify the view content that the <see cref="ContentId"/> maybe has changed.
+    /// </summary>
+    public virtual void NotifyContentIdChanged()
+    {
+      OnPropertyChanged(nameof(ContentId));
     }
 
     #endregion ContentId

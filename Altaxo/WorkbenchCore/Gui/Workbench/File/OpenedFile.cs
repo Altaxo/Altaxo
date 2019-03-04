@@ -424,20 +424,12 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
-    private static Altaxo.Main.Services.Properties GetMemento(IFileViewContent viewContent)
+    private static object GetMemento(IFileViewContent viewContent)
     {
-      IMementoCapable mementoCapable = viewContent.GetService<IMementoCapable>();
-      if (mementoCapable == null)
-      {
-        return null;
-      }
-      else
-      {
-        return mementoCapable.CreateMemento();
-      }
+      return viewContent.GetService<IMementoCapable>()?.CreateMemento();
     }
 
-    private static void RestoreMemento(IFileViewContent viewContent, Altaxo.Main.Services.Properties memento)
+    private static void RestoreMemento(IFileViewContent viewContent, object memento)
     {
       if (memento != null)
       {

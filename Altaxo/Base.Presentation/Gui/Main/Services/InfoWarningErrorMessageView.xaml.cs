@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Main.Services
 
     #region IMessageView Members
 
-    public int[] ColumnWidths
+    public double[] ColumnWidths
     {
       get
       {

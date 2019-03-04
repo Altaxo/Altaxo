@@ -24,47 +24,47 @@
 
         Height="300"
         Width="300">
-	<Window.Resources>
-		<bpaxog:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
-		<local:ActiveDocumentConverter x:Key="ActiveDocumentConverter" />
-		<local:DockManagerThemeConverter x:Key="DockManagerThemeConverter" />
-		<avalonDockConv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" xmlns:avalonDockConv="clr-namespace:Xceed.Wpf.AvalonDock.Converters;assembly=Xceed.Wpf.AvalonDock" />
-		<conv:ResourceImageConverter x:Key="ResourceStringToImageSourceConverter" xmlns:conv="clr-namespace:Altaxo.Gui.Common.Converters;assembly=AltaxoBase.Presentation" />
-		<conv:StringParserConverter x:Key="StringParserConverter" xmlns:conv="clr-namespace:Altaxo.Gui.Common.Converters;assembly=AltaxoBase.Presentation" />
+    <Window.Resources>
+        <bpaxog:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
+        <local:ActiveDocumentConverter x:Key="ActiveDocumentConverter" />
+        <local:DockManagerThemeConverter x:Key="DockManagerThemeConverter" />
+        <avalonDockConv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" xmlns:avalonDockConv="clr-namespace:Xceed.Wpf.AvalonDock.Converters;assembly=Xceed.Wpf.AvalonDock" />
+        <conv:ResourceImageConverter x:Key="ResourceStringToImageSourceConverter" xmlns:conv="clr-namespace:Altaxo.Gui.Common.Converters;assembly=AltaxoBase.Presentation" />
+        <conv:StringParserConverter x:Key="StringParserConverter" xmlns:conv="clr-namespace:Altaxo.Gui.Common.Converters;assembly=AltaxoBase.Presentation" />
 
-		<!-- Circumvent bug in WPF when binding MenuItemsSource directly to menutitems
+        <!-- Circumvent bug in WPF when binding MenuItemsSource directly to menutitems
             see https://stackoverflow.com/questions/14526371/menuitem-added-programmatically-causes-binding-error  -->
-		<Style TargetType="MenuItem">
-			<Setter Property="HorizontalContentAlignment" Value="Left" />
-			<Setter Property="VerticalContentAlignment" Value="Center" />
-		</Style>
-	</Window.Resources>
+        <Style TargetType="MenuItem">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
 
-	<!-- TaskbarItemInfo is responsible for showing e.g. progress information directly as overlay of the item in the taskbar -->
-	<Window.TaskbarItemInfo>
-		<TaskbarItemInfo />
-	</Window.TaskbarItemInfo>
+    <!-- TaskbarItemInfo is responsible for showing e.g. progress information directly as overlay of the item in the taskbar -->
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo />
+    </Window.TaskbarItemInfo>
 
-	<DockPanel Name="dockPanel">
+    <DockPanel Name="dockPanel">
 
-		<!-- Main menu  -->
-		<!-- There is a bug in WPF when binding directly to MenuItems, to prevent various data binding errors, we
+        <!-- Main menu  -->
+        <!-- There is a bug in WPF when binding directly to MenuItems, to prevent various data binding errors, we
         have to apply values for HorizontalContentAlignment and VerticalContentAlignment, see Style for MenuItem in
         the resources section of this file -->
-		<Menu Name="mainMenu" DockPanel.Dock="Top" ItemsSource="{Binding MainMenuItemsSource}" />
+        <Menu Name="mainMenu" DockPanel.Dock="Top" ItemsSource="{Binding MainMenuItemsSource}" />
 
-		<!-- ToolBars: we use a ToolBarTray in order to support multiple Toolbars  -->
-		<ToolBarTray x:Name="_guiToolBarTray"
+        <!-- ToolBars: we use a ToolBarTray in order to support multiple Toolbars  -->
+        <ToolBarTray x:Name="_guiToolBarTray"
             DockPanel.Dock="Top"
                 local:ToolBarTrayItemsSourceObserver.Observe="true"
                 local:ToolBarTrayItemsSourceObserver.ObservedItemsSource="{Binding ToolBarTrayItemsSource, Mode=OneWay}" />
 
-		<!-- Statusbar, we will use a binding from the controller  -->
-		<ContentControl DockPanel.Dock="Bottom" Content="{Binding StatusBarView, Mode=OneWay}" />
+        <!-- Statusbar, we will use a binding from the controller  -->
+        <ContentControl DockPanel.Dock="Bottom" Content="{Binding StatusBarView, Mode=OneWay}" />
 
-		<!-- Avalon docking manager -->
-		<avalonDock:DockingManager x:Name="_dockManager"
-																	 AllowMixedOrientation="True"
+        <!-- Avalon docking manager -->
+        <avalonDock:DockingManager x:Name="_dockManager" 
+								   AllowMixedOrientation="True"
                                    AnchorablesSource="{Binding PadContentCollection}"
                                    DocumentsSource="{Binding ViewContentCollection}"
                                    LayoutUpdateStrategy="{x:Static local:LayoutUpdateStrategy.Instance}"
@@ -76,89 +76,89 @@
 
             Grid.Row="1">
 
-			<!-- Context menu that is shown when right-clicking the headers of the document views in the document area -->
-			<avalonDock:DockingManager.DocumentContextMenu>
-				<!-- <ContextMenu ItemsSource="{Binding Source=x:Static axo:Current.Workbench, Path=DocumentContextMenuItemsSource, Mode=OneWay}" /> -->
-				<!--
+            <!-- Context menu that is shown when right-clicking the headers of the document views in the document area -->
+            <avalonDock:DockingManager.DocumentContextMenu>
+                <!-- <ContextMenu ItemsSource="{Binding Source=x:Static axo:Current.Workbench, Path=DocumentContextMenuItemsSource, Mode=OneWay}" /> -->
+                <!--
                 <ContextMenu ContextMenuOpening="EhDocumentContextMenuOpening">
                     <MenuItem Header="MMMM" />
                 </ContextMenu>
                 -->
 
-				<ContextMenu ItemsSource="{Binding Path=Data.DocumentContextMenuItemsSource, Source={StaticResource DataContextProxy}}">
-				</ContextMenu>
-			</avalonDock:DockingManager.DocumentContextMenu>
+                <ContextMenu ItemsSource="{Binding Path=Data.DocumentContextMenuItemsSource, Source={StaticResource DataContextProxy}}">
+                </ContextMenu>
+            </avalonDock:DockingManager.DocumentContextMenu>
 
-			<!-- Choose view templates for tool windows as well as for document windows -->
-			<avalonDock:DockingManager.LayoutItemTemplateSelector>
-				<!-- The class PanesTemplateSelector is responsible for choosing the right view template, either for a pad or for a document -->
-				<local:PanesTemplateSelector>
-					<!-- Template for tool windows -->
-					<local:PanesTemplateSelector.ToolTemplate>
-						<DataTemplate>
-							<!-- it binds its contents to the view object of the PadContent -->
-							<ContentPresenter Content="{Binding ViewObject }" />
-						</DataTemplate>
-					</local:PanesTemplateSelector.ToolTemplate>
-					<!-- Template for document windows -->
-					<local:PanesTemplateSelector.DocumentTemplate>
-						<DataTemplate>
-							<!-- it binds its contents directly to the ViewObject of the controller (viewmodel) -->
-							<ContentPresenter Content="{Binding ViewObject}" />
-						</DataTemplate>
-					</local:PanesTemplateSelector.DocumentTemplate>
-				</local:PanesTemplateSelector>
-			</avalonDock:DockingManager.LayoutItemTemplateSelector>
+            <!-- Choose view templates for tool windows as well as for document windows -->
+            <avalonDock:DockingManager.LayoutItemTemplateSelector>
+                <!-- The class PanesTemplateSelector is responsible for choosing the right view template, either for a pad or for a document -->
+                <local:PanesTemplateSelector>
+                    <!-- Template for tool windows -->
+                    <local:PanesTemplateSelector.ToolTemplate>
+                        <DataTemplate>
+                            <!-- it binds its contents to the view object of the PadContent -->
+                            <ContentPresenter Content="{Binding ViewObject }" />
+                        </DataTemplate>
+                    </local:PanesTemplateSelector.ToolTemplate>
+                    <!-- Template for document windows -->
+                    <local:PanesTemplateSelector.DocumentTemplate>
+                        <DataTemplate>
+                            <!-- it binds its contents directly to the ViewObject of the controller (viewmodel) -->
+                            <ContentPresenter Content="{Binding ViewObject}" />
+                        </DataTemplate>
+                    </local:PanesTemplateSelector.DocumentTemplate>
+                </local:PanesTemplateSelector>
+            </avalonDock:DockingManager.LayoutItemTemplateSelector>
 
-			<avalonDock:DockingManager.LayoutItemContainerStyleSelector>
-				<!-- The class PanesStyleSelector is responsible for choosing the right style, either for a pad or for a document -->
-				<local:PanesStyleSelector>
-					<!-- Style for a tool window -->
-					<local:PanesStyleSelector.ToolStyle>
-						<Style TargetType="{x:Type avalonDock:LayoutAnchorableItem}">
-							<!-- just remember: Model is of type IPadPadContent -->
-							<Setter Property="Title" Value="{Binding Model.Title, Converter={StaticResource StringParserConverter}}" />
-							<Setter Property="IconSource" Value="{Binding Model.IconSource, Converter={StaticResource ResourceStringToImageSourceConverter}}" />
-							<Setter Property="ContentId" Value="{Binding Model.ContentId}" />
-							<Setter Property="Visibility" Value="{Binding Model.IsVisible, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}" />
-							<Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}" />
-							<Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}" />
-						</Style>
-					</local:PanesStyleSelector.ToolStyle>
+            <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
+                <!-- The class PanesStyleSelector is responsible for choosing the right style, either for a pad or for a document -->
+                <local:PanesStyleSelector>
+                    <!-- Style for a tool window -->
+                    <local:PanesStyleSelector.ToolStyle>
+                        <Style TargetType="{x:Type avalonDock:LayoutAnchorableItem}">
+                            <!-- just remember: Model is of type IPadPadContent -->
+                            <Setter Property="Title" Value="{Binding Model.Title, Converter={StaticResource StringParserConverter}}" />
+                            <Setter Property="IconSource" Value="{Binding Model.IconSource, Converter={StaticResource ResourceStringToImageSourceConverter}}" />
+                            <Setter Property="ContentId" Value="{Binding Model.ContentId}" />
+                            <Setter Property="Visibility" Value="{Binding Model.IsVisible, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}" />
+                            <Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}" />
+                            <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}" />
+                        </Style>
+                    </local:PanesStyleSelector.ToolStyle>
 
-					<!-- Style for a document window -->
-					<local:PanesStyleSelector.DocumentStyle>
-						<Style TargetType="{x:Type avalonDock:LayoutDocumentItem}">
-							<!-- just remember: Model is of type IViewContent -->
-							<Setter Property="Title" Value="{Binding Model.Title, Converter={StaticResource StringParserConverter}}" />
-							<Setter Property="IconSource" Value="{Binding Model.IconSource, Mode=OneWay, Converter={x:Static conv:ResourceImageConverter.Instance}}" />
-							<Setter Property="ContentId" Value="{Binding Model.ContentId}" />
-							<Setter Property="Visibility" Value="{Binding Model.IsVisible, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}" />
-							<Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}" />
-							<Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}" />
-							<Setter Property="ToolTip" Value="{Binding Model.InfoTip, Converter={StaticResource StringParserConverter}}" />
-							<Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
-						</Style>
-					</local:PanesStyleSelector.DocumentStyle>
-				</local:PanesStyleSelector>
-			</avalonDock:DockingManager.LayoutItemContainerStyleSelector>
+                    <!-- Style for a document window -->
+                    <local:PanesStyleSelector.DocumentStyle>
+                        <Style TargetType="{x:Type avalonDock:LayoutDocumentItem}">
+                            <!-- just remember: Model is of type IViewContent -->
+                            <Setter Property="Title" Value="{Binding Model.Title, Converter={StaticResource StringParserConverter}}" />
+                            <Setter Property="IconSource" Value="{Binding Model.IconSource, Mode=OneWay, Converter={x:Static conv:ResourceImageConverter.Instance}}" />
+                            <Setter Property="ContentId" Value="{Binding Model.ContentId}" />
+                            <Setter Property="Visibility" Value="{Binding Model.IsVisible, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}" />
+                            <Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}" />
+                            <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}" />
+                            <Setter Property="ToolTip" Value="{Binding Model.InfoTip, Converter={StaticResource StringParserConverter}}" />
+                            <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                        </Style>
+                    </local:PanesStyleSelector.DocumentStyle>
+                </local:PanesStyleSelector>
+            </avalonDock:DockingManager.LayoutItemContainerStyleSelector>
 
-			<!-- the default layout for Avalondock consist of a tool window at the right,
+            <!-- the default layout for Avalondock consist of a tool window at the right,
                 whereas the left sides bottom is another tool window. The upper part of the left side is
                 shared between the left tool window and the document area.
                 We must pre-create all tool windows here in order to add the pads to the appropriate sides, using the LayoutUpdateStrategy helper class. -->
-			<avalonDock:LayoutRoot>
-				<avalonDock:LayoutPanel Orientation="Horizontal">
-					<avalonDock:LayoutPanel Orientation="Vertical">
-						<avalonDock:LayoutPanel Orientation="Horizontal">
-							<avalonDock:LayoutAnchorablePane Name="DockLeft" DockWidth="250" />
-							<avalonDock:LayoutDocumentPane />
-						</avalonDock:LayoutPanel>
-						<avalonDock:LayoutAnchorablePane Name="DockBottom" DockHeight="250" />
-					</avalonDock:LayoutPanel>
-					<avalonDock:LayoutAnchorablePane Name="DockRight" DockWidth="250" />
-				</avalonDock:LayoutPanel>
-			</avalonDock:LayoutRoot>
-		</avalonDock:DockingManager>
-	</DockPanel>
+            <avalonDock:LayoutRoot>
+                <avalonDock:LayoutPanel Orientation="Horizontal">
+                    <avalonDock:LayoutPanel Orientation="Vertical">
+                        <avalonDock:LayoutPanel Orientation="Horizontal">
+                            <avalonDock:LayoutAnchorablePane Name="DockLeft" DockWidth="250" />
+                            <avalonDock:LayoutDocumentPane />
+                        </avalonDock:LayoutPanel>
+                        <avalonDock:LayoutAnchorablePane Name="DockBottom" DockHeight="250" />
+                    </avalonDock:LayoutPanel>
+                    <avalonDock:LayoutAnchorablePane Name="DockRight" DockWidth="250" />
+                </avalonDock:LayoutPanel>
+            </avalonDock:LayoutRoot>
+        </avalonDock:DockingManager>
+    </DockPanel>
 </local:FullScreenEnabledWindow>

@@ -39,6 +39,7 @@ namespace Altaxo.Main.Services
     private double _progressFraction = double.NaN;
     private OperationStatus _operationStatus;
     private string _taskName;
+
     private bool _cancellationPending;
     private CancellationTokenSource _cancellationTokenSource;
 

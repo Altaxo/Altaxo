@@ -66,7 +66,7 @@ namespace Altaxo.Main.Services
       _instanceRetrievalTried = false;
 
       Current.ServiceChanged += new WeakActionHandler(EhServiceChanged, handler => Current.ServiceChanged -= handler);
-      // EhServiceChanged(); do not call EhServiceChanged here: for services how have a static intance of CachedService to cache their own service, we would create a circular dependence
+      // EhServiceChanged(); do not call EhServiceChanged here: for services that have a static intance of CachedService to cache their own service, we would create a circular dependence
     }
 
     private void EhServiceChanged()
@@ -119,5 +119,17 @@ namespace Altaxo.Main.Services
         return _instance;
       }
     }
+
+    /// <summary>Starts the caching of the service. Call this method if the service itself is not needed (so there is no need to use <see cref="Instance"/>), but
+    /// the methods to attach the service and detach the service should be called.</summary>
+    public void StartCaching()
+    {
+      if (null == _instance && !_instanceRetrievalTried)
+      {
+        EhServiceChanged();
+      }
+    }
+
+
   }
 }

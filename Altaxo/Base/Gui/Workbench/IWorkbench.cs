@@ -30,7 +30,7 @@ namespace Altaxo.Gui.Workbench
   /// <summary>
   /// Summary description for IWorkbench.
   /// </summary>
-  public interface IWorkbench : System.ComponentModel.INotifyPropertyChanged
+  public interface IWorkbench : System.ComponentModel.INotifyPropertyChanged, Altaxo.Main.Services.IMementoCapable
   {
     /// <summary>Gets the corresponding workbench GUI object, i.e for Windows the main windows.</summary>
     object ViewObject { get; }
@@ -102,6 +102,14 @@ namespace Altaxo.Gui.Workbench
     /// <param name="content">The content.</param>
     /// <param name="switchToPad">If true, the pad is made the active content, i.e. it is selected.</param>
     void ShowPad(IPadContent content, bool switchToPad);
+
+    /// <summary>
+    /// Closes a pad. Be aware that only those pads could be closed, which are treated as documents, but are located
+    /// in the pad area. Those pads don't have a pad descriptor.
+    /// Pads that have a pad descriptor can not be closed by this command. To hide them, set the IsVisible property to false.
+    /// </summary>
+    /// <param name="pad">The pad.</param>
+    void ClosePad(IPadContent pad);
 
     /// <summary>
     /// Closes the workbench view content.

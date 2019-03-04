@@ -30,6 +30,7 @@ using System.Text;
 using System.Windows.Input;
 using System.Xml;
 using Altaxo.Gui.Workbench;
+using Altaxo.Main.Properties;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Main.Services
@@ -44,14 +45,14 @@ namespace Altaxo.Gui.Main.Services
     /// </value>
     object DataContext { set; }
 
-    int[] ColumnWidths { get; set; }
+    double[] ColumnWidths { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IInfoWarningErrorMessageView))]
-  public class InfoWarningErrorMessageController : AbstractPadContent
+  public class InfoWarningErrorMessageController : AbstractPadContent, IMementoCapable
   {
     private bool _viewDirectionRecentIsFirst = true;
-    private int[] _columnWidths;
+    private double[] _columnWidths;
     private IInfoWarningErrorMessageView _view;
     private ObservableCollection<InfoWarningErrorTextMessageItem> _unreversedDoc;
     private Altaxo.Collections.ObservableCollectionReversingWrapper<InfoWarningErrorTextMessageItem> _reversedDoc;
@@ -61,6 +62,32 @@ namespace Altaxo.Gui.Main.Services
 
     private ICommand _commandClearAllMessages;
     private ICommand _commandReverseMessages;
+
+    private CachedService<IShutdownService, IShutdownService> _shutDownService;
+
+    public InfoWarningErrorMessageController()
+    {
+      Current.ServiceChanged += EhServiceChanged;
+      _unreversedDoc = new ObservableCollection<InfoWarningErrorTextMessageItem>();
+      _reversedDoc = new Collections.ObservableCollectionReversingWrapper<InfoWarningErrorTextMessageItem>(_unreversedDoc);
+      _currentDoc = _unreversedDoc;
+
+      _commandClearAllMessages = new RelayCommand(EhClearAllMessages);
+      _commandReverseMessages = new RelayCommand(EhReverseAllMessages);
+
+      _shutDownService = new CachedService<IShutdownService, IShutdownService>(false,
+        (shutdownService) => shutdownService.Closed += EhApplicationClosed,
+        (shutdownService) => shutdownService.Closed -= EhApplicationClosed);
+      _shutDownService.StartCaching();
+
+      var memento = Current.PropertyService.GetValue(PropertyKeyMessageControlState, RuntimePropertyKind.UserAndApplicationAndBuiltin, () => null);
+      if (null != memento)
+        SetMemento(memento);
+
+
+      EhServiceChanged();
+    }
+
 
     #region Bindable properties for view
 
@@ -83,17 +110,6 @@ namespace Altaxo.Gui.Main.Services
 
     #endregion Bindable properties for view
 
-    public InfoWarningErrorMessageController()
-    {
-      Current.ServiceChanged += EhServiceChanged;
-      _unreversedDoc = new ObservableCollection<InfoWarningErrorTextMessageItem>();
-      _reversedDoc = new Collections.ObservableCollectionReversingWrapper<InfoWarningErrorTextMessageItem>(_unreversedDoc);
-      _currentDoc = _unreversedDoc;
-
-      _commandClearAllMessages = new RelayCommand(EhClearAllMessages);
-      _commandReverseMessages = new RelayCommand(EhReverseAllMessages);
-      EhServiceChanged();
-    }
 
     public override void Dispose()
     {
@@ -219,7 +235,7 @@ namespace Altaxo.Gui.Main.Services
 
       count = XmlConvert.ToInt32(tr.GetAttribute("Count"));
       tr.ReadStartElement("ColumnWidths");
-      _columnWidths = new int[count];
+      _columnWidths = new double[count];
       for (int i = 0; i < count; i++)
         _columnWidths[i] = tr.ReadElementContentAsInt("Width", string.Empty);
       if (count > 0)
@@ -241,7 +257,7 @@ namespace Altaxo.Gui.Main.Services
       tw.WriteElementString("DirectionRecentFirst", System.Xml.XmlConvert.ToString(_viewDirectionRecentIsFirst));
 
       tw.WriteStartElement("ColumnWidths");
-      int[] colWidths = null != _view ? _view.ColumnWidths : new int[0];
+      var colWidths = null != _view ? _view.ColumnWidths : new double[0];
       tw.WriteAttributeString("Count", XmlConvert.ToString(colWidths.Length));
       for (int i = 0; i < colWidths.Length; i++)
         tw.WriteElementString("Width", XmlConvert.ToString(colWidths[i]));
@@ -326,5 +342,88 @@ namespace Altaxo.Gui.Main.Services
     }
 
     #endregion IXmlSerializable Members
+
+
+    #region Memento
+
+    public override object GetService(Type serviceType)
+    {
+      // TODO make MementoService availabe if the user chooses to store the state of the online window with the document file
+      // and make it unavailable if not ( but then store the state in the properties of the application)
+      // like this:
+      // if(!wantToStoreMemento) return null; else return base.GetService(serviceType);
+      return base.GetService(serviceType);
+    }
+
+    private void EhApplicationClosed(object sender, EventArgs e)
+    {
+      Current.PropertyService.SetValue(PropertyKeyMessageControlState, (StateMemento)CreateMemento());
+    }
+
+    private static readonly PropertyKey<StateMemento> PropertyKeyMessageControlState = new PropertyKey<StateMemento>("1E2D00F9-5A27-4C2C-84C1-842AAC0F5343", "Messages\\ControlState", PropertyLevel.Application);
+
+
+    public object CreateMemento()
+    {
+      if (null != _view)
+        _columnWidths = _view.ColumnWidths;
+      return new StateMemento(_columnWidths);
+    }
+
+    public void SetMemento(object memento)
+    {
+      if (memento is StateMemento m)
+        _columnWidths = m.ColumnWidths;
+      if (null != _view)
+        _view.ColumnWidths = _columnWidths;
+    }
+
+
+
+    private class StateMemento
+    {
+      public double[] ColumnWidths { get; private set; }
+      public StateMemento(double[] columnWidths)
+      {
+        ColumnWidths = columnWidths;
+      }
+
+      /// <summary>
+      /// 2017-09-21 Version 0
+      /// </summary>
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StateMemento), 0)]
+      private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      {
+        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        {
+          var s = (StateMemento)obj;
+
+          info.CreateArray("ColumnWidths", s.ColumnWidths.Length);
+
+          foreach (var w in s.ColumnWidths)
+            info.AddValue("e", w);
+
+          info.CommitArray();
+        }
+
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          var s = (StateMemento)o ?? new StateMemento(new double[0]);
+
+          var count = info.OpenArray("ColumnWidths");
+          s.ColumnWidths = new double[count];
+
+          for (int i = 0; i < count; ++i)
+            s.ColumnWidths[i] = info.GetDouble("e");
+
+          info.CloseArray(count);
+
+          return s;
+        }
+      }
+    }
+
+    #endregion
+
   }
 }

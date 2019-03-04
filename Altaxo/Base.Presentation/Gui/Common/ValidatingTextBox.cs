@@ -38,6 +38,15 @@ namespace Altaxo.Gui.Common
     private NotifyChangedValue<string> _validatedText = new NotifyChangedValue<string>();
     private bool _isInitialTextModified;
     private bool _isValidatedSuccessfully = true;
+    private BindingExpressionBase _bindingExToValidatedText;
+
+    /// <summary>
+    /// Static initialization.
+    /// </summary>
+    static ValidatingTextBox()
+    {
+      DefaultStyleKeyProperty.OverrideMetadata(typeof(ValidatingTextBox), new FrameworkPropertyMetadata(typeof(ValidatingTextBox)));
+    }
 
     public ValidatingTextBox()
     {
@@ -47,10 +56,13 @@ namespace Altaxo.Gui.Common
       var binding = new Binding
       {
         Source = this,
-        Path = new PropertyPath("ValidatedText")
+        Path = new PropertyPath(nameof(ValidatedText))
       };
       binding.ValidationRules.Add(new ValidationWithErrorString(EhValidateText));
-      SetBinding(TextBox.TextProperty, binding);
+      _bindingExToValidatedText = SetBinding(TextBox.TextProperty, binding);
+
+
+
     }
 
     #region Change selection behaviour
@@ -104,6 +116,14 @@ namespace Altaxo.Gui.Common
 
     #endregion Dependency property
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the validation is carried out on every text change
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the validation is carried out on every text change; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsValidatingOnEveryTextChange { get; set; }
+
     public string InitialText
     {
       set
@@ -133,6 +153,9 @@ namespace Altaxo.Gui.Common
     protected virtual void EhTextChanged(object sender, EventArgs e)
     {
       _isInitialTextModified = true;
+
+      if (IsValidatingOnEveryTextChange)
+        _bindingExToValidatedText?.UpdateSource();
     }
 
     /// <summary>

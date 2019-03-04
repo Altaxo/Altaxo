@@ -32,8 +32,8 @@ namespace Altaxo.Main.Services
 {
   /// <summary>
   /// This interface flags an object beeing "mementocapable". This means that the
-  /// state of the object could be saved to an <see cref="Properties"/> object
-  /// and set from a object from the same class.
+  /// state of the object could be saved to an object that can be serialized,
+  /// and set from an object from the same class.
   /// This is used to save and restore the state of GUI objects.
   /// </summary>
   /// <remarks>
@@ -42,14 +42,16 @@ namespace Altaxo.Main.Services
   public interface IMementoCapable
   {
     /// <summary>
-    /// Creates a new memento from the state.
+    /// Creates a new memento from the state. 
     /// </summary>
-    Properties CreateMemento();
+    /// <returns>An object representing the state. This object should be serializable.</returns>
+    object CreateMemento();
 
     /// <summary>
-    /// Sets the state to the given memento.
+    /// Sets the state, using the given memento.
     /// </summary>
-    void SetMemento(Properties memento);
+    /// <param name="memento">The memento to set the state from.</param>
+    void SetMemento(object memento);
   }
 
   /// <summary>

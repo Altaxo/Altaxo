@@ -42,11 +42,11 @@ namespace Altaxo.Gui.Startup
       }
     }
 
-    public SplashScreenForm()
+    public SplashScreenForm(string applicationName)
     {
       var startass = System.Reflection.Assembly.GetExecutingAssembly();
       Version version = startass.GetName().Version;
-      string versionText = string.Format("Altaxo {0}.{1} build {2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+      string versionText = string.Format("{0} {1}.{2} build {3}.{4}", applicationName, version.Major, version.Minor, version.Build, version.Revision);
 #if DEBUG
       versionText += " (debug)";
 #endif
@@ -55,7 +55,10 @@ namespace Altaxo.Gui.Startup
       StartPosition = FormStartPosition.CenterScreen;
       ShowInTaskbar = false;
       // Stream must be kept open for the lifetime of the bitmap
-      bitmap = new Bitmap(typeof(SplashScreenForm).Assembly.GetManifestResourceStream("Altaxo.Resources.SplashScreen.jpg"));
+      // use the image from the startup assembly, if not there, then from this assembly
+      bitmap = new Bitmap(
+        System.Reflection.Assembly.GetEntryAssembly().GetManifestResourceStream("Altaxo.Resources.SplashScreen.jpg")
+        ?? typeof(SplashScreenForm).Assembly.GetManifestResourceStream("Altaxo.Resources.SplashScreen.jpg"));
       ClientSize = bitmap.Size;
 
       Font font = null;
@@ -83,9 +86,9 @@ namespace Altaxo.Gui.Startup
       BackgroundImage = bitmap;
     }
 
-    public static void ShowSplashScreen()
+    public static void ShowSplashScreen(string applicationName)
     {
-      splashScreen = new SplashScreenForm();
+      splashScreen = new SplashScreenForm(applicationName);
       splashScreen.Show();
     }
 
