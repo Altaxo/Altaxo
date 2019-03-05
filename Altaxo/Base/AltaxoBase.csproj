@@ -292,6 +292,7 @@
     <Compile Include="Main\Services\InvokeableThread.cs" />
     <Compile Include="Main\Services\IAutoUpdateInstallationService.cs" />
     <Compile Include="Main\Services\PropertyService\PropertyService.cs" />
+    <Compile Include="Serialization\AutoUpdates\INetFrameworkVersionDetermination.cs" />
     <Compile Include="Text\ChildDocumentExpander.cs" />
     <Compile Include="Text\FigureRenumerator.cs" />
     <Compile Include="Text\GuiModels\TextDocumentViewOptions.cs" />
@@ -1166,7 +1167,6 @@
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysisOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiImportDataSource.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
-    <Compile Include="Serialization\AutoUpdates\NetFrameworkVersionDetermination.cs" />
     <Compile Include="Serialization\AutoUpdates\SystemRequirements.cs" />
     <Compile Include="Serialization\Clipboard\IDataObject.cs" />
     <Compile Include="Serialization\Clipboard\ProjectItemsPasteOptions.cs" />

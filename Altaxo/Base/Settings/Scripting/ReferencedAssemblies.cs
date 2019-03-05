@@ -39,12 +39,6 @@ namespace Altaxo.Settings.Scripting
   /// </summary>
   public static class ReferencedAssemblies
   {
-    /// <summary>
-    /// Gets a value indicating whether a .Net framework version >= 4.7  is installed.
-    /// When it is, the DLL System.ValueTuple.dll must not be included in the list of referenced assemblies, because it is built-in then.
-    /// </summary>
-    public static bool IsFrameworkVersion47Installed { get; private set; } = Altaxo.Serialization.AutoUpdates.NetFrameworkVersionDetermination.IsVersion47Installed();
-
     private static List<Assembly> _startupAssemblies = new List<Assembly>();
     private static readonly List<Assembly> _userAssemblies = new List<Assembly>();
     private static List<Assembly> _userTemporaryAssemblies = new List<Assembly>();
@@ -217,7 +211,6 @@ namespace Altaxo.Settings.Scripting
 
         var list = new List<Assembly>();
 
-        if (IsFrameworkVersion47Installed)
         {
           // Do not include System.ValueTuple.dll in the list of referenced assemblies if .NetFrameworkVersion is > 4.7, because it is intrinsically there
           // list.AddRange(_startupAssemblies.Where(ass => !(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE"))));
@@ -228,10 +221,6 @@ namespace Altaxo.Settings.Scripting
             if (!(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE")))
               list.Add(ass);
           }
-        }
-        else
-        {
-          list.AddRange(_startupAssemblies);
         }
 
         list.AddRange(_userTemporaryAssemblies);

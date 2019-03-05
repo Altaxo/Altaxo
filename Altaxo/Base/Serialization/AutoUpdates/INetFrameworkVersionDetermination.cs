@@ -26,30 +26,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
-  public static class SystemRequirements
+  public interface INetFrameworkVersionDetermination
   {
-    public const string PropertyKeyNetFrameworkVersion = "RequiredNetFrameworkVersion";
-
-    public static bool MatchesRequirements(PackageInfo packageInfo)
-    {
-      var properties = packageInfo.Properties;
-
-      string netFrameworkVersion;
-
-      if (properties.ContainsKey(PropertyKeyNetFrameworkVersion))
-        netFrameworkVersion = properties[PropertyKeyNetFrameworkVersion];
-      else
-        netFrameworkVersion = "4.0";
-
-      var frameworkDeterminationService = Current.GetRequiredService<INetFrameworkVersionDetermination>();
-
-      if (!frameworkDeterminationService.IsVersionInstalled(netFrameworkVersion))
-        return false;
-
-      return true;
-    }
+    /// <summary>
+    /// Determines whether a specified version of the net framework is installed.
+    /// </summary>
+    /// <param name="version">The version. Examples are 4.0, 4.6, 4.7.1 etc.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified version of the .NET framework is installed; otherwise, <c>false</c>.
+    /// </returns>
+    bool IsVersionInstalled(string version);
   }
 }

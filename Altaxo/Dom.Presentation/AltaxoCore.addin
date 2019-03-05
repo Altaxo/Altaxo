@@ -97,6 +97,8 @@
 						 class="Altaxo.Gui.GuiFactoryServiceWpfWin" />
     <Service id="Altaxo.Main.Services.ILaTeXFormulaImageStreamProvider"
 						 class="Altaxo.Gui.Markdown.LaTeXFormulaImageStreamProvider" />
+    <Service id="Altaxo.Serialization.AutoUpdates.INetFrameworkVersionDetermination"
+						 class="Altaxo.Main.Services.NetFrameworkVersionDetermination" />
   </Path>
 
   <Path name="/Altaxo/Autostart">

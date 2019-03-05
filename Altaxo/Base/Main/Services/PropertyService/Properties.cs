@@ -24,7 +24,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
-using System.Xaml;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -311,7 +310,7 @@ namespace Altaxo.Main.Services
               }
               return array;
             }
-            catch (XamlObjectWriterException ex)
+            catch (NotImplementedException /* XamlObjectWriterException */ ex)
             {
               Current.Log.Warn(ex);
             }
@@ -412,7 +411,8 @@ namespace Altaxo.Main.Services
       }
       using (var xmlWriter = element.CreateWriter())
       {
-        XamlServices.Save(xmlWriter, value);
+        throw new NotImplementedException();
+        // XamlServices.Save(xmlWriter, value);
       }
       return element;
     }
@@ -426,7 +426,8 @@ namespace Altaxo.Main.Services
       {
         using (var xmlReader = element.Elements().Single().CreateReader())
         {
-          return XamlServices.Load(xmlReader);
+          throw new NotImplementedException();
+          // return XamlServices.Load(xmlReader);
         }
       }
       else

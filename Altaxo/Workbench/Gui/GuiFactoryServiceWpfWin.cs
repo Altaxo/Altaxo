@@ -571,8 +571,8 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
 
       private (System.IO.Stream, string fileExtension) StreamFromSystemDrawingBitmap(System.Drawing.Bitmap sysDrawBitmap)
       {
-        var pngStream = Altaxo.Graph.ImageProxy.ImageToStream(sysDrawBitmap, System.Drawing.Imaging.ImageFormat.Png);
-        var jpgStream = Altaxo.Graph.ImageProxy.ImageToStream(sysDrawBitmap, System.Drawing.Imaging.ImageFormat.Jpeg);
+        var pngStream = ImageToStream(sysDrawBitmap, System.Drawing.Imaging.ImageFormat.Png);
+        var jpgStream = ImageToStream(sysDrawBitmap, System.Drawing.Imaging.ImageFormat.Jpeg);
         if (pngStream.Length < jpgStream.Length)
         {
           jpgStream.Dispose();
@@ -584,10 +584,15 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
           return (jpgStream, ".jpg");
         }
       }
-
     }
-
-
+    public static System.IO.MemoryStream ImageToStream(System.Drawing.Image image, System.Drawing.Imaging.ImageFormat format)
+    {
+      var str = new System.IO.MemoryStream();
+      image.Save(str, format);
+      str.Flush();
+      str.Seek(0, System.IO.SeekOrigin.Begin);
+      return str;
+    }
 
     public override IClipboardSetDataObject GetNewClipboardDataObject()
     {

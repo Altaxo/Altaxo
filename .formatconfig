@@ -1,0 +1,6 @@
+root = true
+
+[*.*]
+command = Edit.FormatDocument
+allowed_extensions = .*
+denied_extensions = .html

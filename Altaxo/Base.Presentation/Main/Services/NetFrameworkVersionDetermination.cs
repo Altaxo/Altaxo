@@ -28,11 +28,16 @@ using System.Linq;
 using System.Text;
 using Microsoft.Win32;
 
-namespace Altaxo.Serialization.AutoUpdates
+namespace Altaxo.Main.Services
 {
-  public static class NetFrameworkVersionDetermination
+  public class NetFrameworkVersionDetermination : Serialization.AutoUpdates.INetFrameworkVersionDetermination
   {
-    public static bool IsVersionInstalled(string version)
+    public bool IsVersionInstalled(string version)
+    {
+      return IsVersionInstalledHere(version);
+    }
+
+    public static bool IsVersionInstalledHere(string version)
     {
       version = version.ToUpperInvariant();
 

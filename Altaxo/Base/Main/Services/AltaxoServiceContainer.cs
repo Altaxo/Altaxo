@@ -121,7 +121,7 @@ namespace Altaxo.Main.Services
       if (_taskCompletionSources.TryGetValue(serviceType, out dynamic taskCompletionSource))
       {
         _taskCompletionSources.Remove(serviceType);
-        taskCompletionSource.SetResult((dynamic)serviceInstance);
+        taskCompletionSource.SetResult(/*(dynamic)*/ serviceInstance); // 2019-03-05 dynamic removed because it does not compile with .NET core
       }
     }
 

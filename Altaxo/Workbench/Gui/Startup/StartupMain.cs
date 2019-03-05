@@ -181,9 +181,9 @@ namespace Altaxo.Gui.Startup
     {
       // Safety check: our setup already checks that .NET 4 is installed, but we manually check the .NET version in case the app is
       // used on another machine than it was installed on (e.g. "on USB stick")
-      if (!Altaxo.Serialization.AutoUpdates.NetFrameworkVersionDetermination.IsVersion46Installed())
+      if (!Altaxo.Main.Services.NetFrameworkVersionDetermination.IsVersion471Installed())
       {
-        MessageBox.Show(string.Format("This version of {0} requires .NET 4.6. You are using: {1´}", args.ApplicationName, Environment.Version));
+        MessageBox.Show(string.Format("This version of {0} requires .NET 4.7.1 You are using: {1}", args.ApplicationName, Environment.Version));
         return false;
       }
       // Work around a WPF issue when %WINDIR% is set to an incorrect path

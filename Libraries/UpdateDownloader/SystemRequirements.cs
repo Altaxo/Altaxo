@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -44,9 +45,8 @@ namespace Altaxo.Serialization.AutoUpdates
       else
         netFrameworkVersion = "4.0";
 
-      var frameworkDeterminationService = Current.GetRequiredService<INetFrameworkVersionDetermination>();
 
-      if (!frameworkDeterminationService.IsVersionInstalled(netFrameworkVersion))
+      if (!NetFrameworkVersionDetermination.IsVersionInstalledHere(netFrameworkVersion))
         return false;
 
       return true;

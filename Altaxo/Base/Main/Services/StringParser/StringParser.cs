@@ -237,9 +237,6 @@ namespace Altaxo.Main.Services
         propertyName = propertyName.Substring(k + 1);
         switch (prefix.ToUpperInvariant())
         {
-          case "SDKTOOLPATH":
-            return FileUtility.GetSdkPath(propertyName);
-
           case "ADDINPATH":
             foreach (var addIn in Altaxo.Current.GetRequiredService<IAddInTree>().AddIns)
             {
