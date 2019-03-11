@@ -123,7 +123,7 @@ namespace Altaxo.Main
           using (var zipEntryStream = zipEntry.Open())
           {
             info.BeginWriting(zipEntryStream);
-            info.AddValue("MainWindow", Current.Workbench);
+            info.AddValue("MainWindow", Current.Workbench.CreateMemento());
             info.EndWriting();
           }
         }
