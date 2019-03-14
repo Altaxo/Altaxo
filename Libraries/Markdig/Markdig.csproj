@@ -92,6 +92,7 @@
     <Compile Include="Extensions\Footnotes\HtmlFootnoteLinkRenderer.cs" />
     <Compile Include="Extensions\GenericAttributes\GenericAttributesExtension.cs" />
     <Compile Include="Extensions\GenericAttributes\GenericAttributesParser.cs" />
+    <Compile Include="Extensions\Globalization\GlobalizationExtension.cs" />
     <Compile Include="Extensions\Hardlines\SoftlineBreakAsHardlineExtension.cs" />
     <Compile Include="Extensions\JiraLinks\JiraLink.cs" />
     <Compile Include="Extensions\JiraLinks\JiraLinkExtension.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="Extensions\TaskLists\TaskList.cs" />
     <Compile Include="Extensions\TaskLists\TaskListExtension.cs" />
     <Compile Include="Extensions\TaskLists\TaskListInlineParser.cs" />
+    <Compile Include="Extensions\TextRenderer\ConfigureNewLineExtension.cs" />
     <Compile Include="Extensions\Yaml\YamlFrontMatterBlock.cs" />
     <Compile Include="Extensions\Yaml\YamlFrontMatterExtension.cs" />
     <Compile Include="Extensions\Yaml\YamlFrontMatterParser.cs" />
@@ -147,6 +149,7 @@
     <Compile Include="Helpers\CharacterMap.cs" />
     <Compile Include="Helpers\CharHelper.cs" />
     <Compile Include="Helpers\CharNormalizer.cs" />
+    <Compile Include="Helpers\CompactPrefixTree.cs" />
     <Compile Include="Helpers\DefaultObjectCache.cs" />
     <Compile Include="Helpers\EntityHelper.cs" />
     <Compile Include="Helpers\HtmlHelper.cs" />
@@ -162,9 +165,11 @@
     <Compile Include="Helpers\StringLineGroup.cs" />
     <Compile Include="Helpers\StringSlice.cs" />
     <Compile Include="Helpers\TextMatcher.cs" />
+    <Compile Include="Helpers\ThrowHelper.cs" />
     <Compile Include="IMarkdownExtension.cs" />
     <Compile Include="Markdown.cs" />
     <Compile Include="MarkdownExtensions.cs" />
+    <Compile Include="MarkdownParserContext.cs" />
     <Compile Include="MarkdownPipeline.cs" />
     <Compile Include="MarkdownPipelineBuilder.cs" />
     <Compile Include="Parsers\BlockParser.cs" />

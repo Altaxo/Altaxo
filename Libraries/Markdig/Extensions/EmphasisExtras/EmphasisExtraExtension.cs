@@ -6,13 +6,14 @@ using Markdig.Parsers.Inlines;
 using Markdig.Renderers;
 using Markdig.Renderers.Html.Inlines;
 using Markdig.Syntax.Inlines;
+using System.Diagnostics;
 
 namespace Markdig.Extensions.EmphasisExtras
 {
     /// <summary>
     /// Extension for strikethrough, subscript, superscript, inserted and marked.
     /// </summary>
-    /// <seealso cref="Markdig.IMarkdownExtension" />
+    /// <seealso cref="IMarkdownExtension" />
     public class EmphasisExtraExtension : IMarkdownExtension
     {
         /// <summary>
@@ -68,7 +69,9 @@ namespace Markdig.Extensions.EmphasisExtras
 
                 if (requireTilde && !hasTilde)
                 {
-                    parser.EmphasisDescriptors.Add(new EmphasisDescriptor('~', 1, 2, true));
+                    int minimumCount = (Options & EmphasisExtraOptions.Subscript) != 0 ? 1 : 2;
+                    int maximumCount = (Options & EmphasisExtraOptions.Strikethrough) != 0 ? 2 : 1;
+                    parser.EmphasisDescriptors.Add(new EmphasisDescriptor('~', minimumCount, maximumCount, true));
                 }
                 if (requireSup && !hasSup)
                 {
@@ -87,8 +90,7 @@ namespace Markdig.Extensions.EmphasisExtras
 
         public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
         {
-            var htmlRenderer = renderer as HtmlRenderer;
-            if (htmlRenderer != null)
+            if (renderer is HtmlRenderer htmlRenderer)
             {
                 // Extend the rendering here.
                 var emphasisRenderer = htmlRenderer.ObjectRenderers.FindExact<EmphasisInlineRenderer>();
@@ -106,7 +108,8 @@ namespace Markdig.Extensions.EmphasisExtras
             switch (c)
             {
                 case '~':
-                    return emphasisInline.IsDouble ? "del" : "sub";
+                    Debug.Assert(emphasisInline.DelimiterCount <= 2);
+                    return emphasisInline.DelimiterCount == 2 ? "del" : "sub";
                 case '^':
                     return "sup";
                 case '+':

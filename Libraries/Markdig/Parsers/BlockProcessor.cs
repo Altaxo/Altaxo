@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 using System;
@@ -41,7 +41,7 @@ namespace Markdig.Parsers
         /// <param name="parsers">The list of parsers.</param>
         /// <exception cref="System.ArgumentNullException">
         /// </exception>
-        public BlockProcessor(StringBuilderCache stringBuilders, MarkdownDocument document, BlockParserList parsers)
+        public BlockProcessor(StringBuilderCache stringBuilders, MarkdownDocument document, BlockParserList parsers, MarkdownParserContext context)
         {
             if (stringBuilders == null) throw new ArgumentNullException(nameof(stringBuilders));
             if (document == null) throw new ArgumentNullException(nameof(document));
@@ -51,6 +51,7 @@ namespace Markdig.Parsers
             Document = document;
             document.IsOpen = true;
             Parsers = parsers;
+            Context = context;
             OpenedBlocks = new List<Block>();
             NewBlocks = new Stack<Block>();
             root = this;
@@ -66,6 +67,11 @@ namespace Markdig.Parsers
         /// Gets the list of <see cref="BlockParser"/> configured with this parser state.
         /// </summary>
         public BlockParserList Parsers { get; }
+
+        /// <summary>
+        /// Gets the parser context or <c>null</c> if none is available.
+        /// </summary>
+        public MarkdownParserContext Context { get; }
 
         /// <summary>
         /// Gets the current active container.
@@ -161,6 +167,21 @@ namespace Markdig.Parsers
         /// Gets or sets a value indicating whether to continue processing the current line.
         /// </summary>
         private bool ContinueProcessingLine { get; set; }
+
+        /// <summary>
+        /// Get the current Container that is currently opened
+        /// </summary>
+        /// <returns>The current Container that is currently opened</returns>
+        public ContainerBlock GetCurrentContainerOpened()
+        {
+            var container = CurrentContainer;
+            while (container != null && !container.IsOpen)
+            {
+                container = container.Parent;
+            }
+
+            return container;
+        }
 
         /// <summary>
         /// Returns the next character in the line being processed. Update <see cref="Start"/> and <see cref="Column"/>.
@@ -428,6 +449,8 @@ namespace Markdig.Parsers
         public void ProcessLine(StringSlice newLine)
         {
             CurrentLineStartPosition = newLine.Start;
+
+            Document.LineStartIndexes?.Add(CurrentLineStartPosition);
 
             ContinueProcessingLine = true;
 

@@ -3,8 +3,6 @@
 // See the license.txt file in the project root for more information.
 using System;
 using System.Runtime.CompilerServices;
-using System.Text;
-using Markdig.Parsers.Inlines;
 using Markdig.Syntax;
 
 namespace Markdig.Helpers
@@ -304,14 +302,19 @@ namespace Markdig.Helpers
                     }
 
                     // Chars valid for both scheme and email
-                    if (c > ' ' && c < 127 && c != '<')
+                    if (c <= 127)
+                    {
+                        if (c > ' ' && c != '>')
+                        {
+                            builder.Append(c);
+                        }
+                        else break;
+                    }
+                    else if (!c.IsSpaceOrPunctuation())
                     {
                         builder.Append(c);
                     }
-                    else
-                    {
-                        break;
-                    }
+                    else break;
                 }
             }
 
@@ -321,9 +324,7 @@ namespace Markdig.Helpers
 
         public static bool TryParseInlineLink(StringSlice text, out string link, out string title)
         {
-            SourceSpan linkSpan;
-            SourceSpan titleSpan;
-            return TryParseInlineLink(ref text, out link, out title, out linkSpan, out titleSpan);
+            return TryParseInlineLink(ref text, out link, out title, out _, out _);
         }
 
         public static bool TryParseInlineLink(StringSlice text, out string link, out string title, out SourceSpan linkSpan, out SourceSpan titleSpan)
@@ -666,6 +667,57 @@ namespace Markdig.Helpers
             return c == '\0' || c.IsSpaceOrTab() || c.IsControl() || (isAutoLink && c == '<'); // TODO: specs unclear. space is strict or relaxed? (includes tabs?)
         }
 
+        public static bool IsValidDomain(string link, int prefixLength)
+        {
+            // https://github.github.com/gfm/#extended-www-autolink
+            // A valid domain consists of alphanumeric characters, underscores (_), hyphens (-) and periods (.).
+            // There must be at least one period, and no underscores may be present in the last two segments of the domain.
+
+            // Extended as of https://github.com/lunet-io/markdig/issues/316 to accept non-ascii characters,
+            // as long as they are not in the space or punctuation categories
+
+            int segmentCount = 1;
+            bool segmentHasCharacters = false;
+            int lastUnderscoreSegment = -1;
+
+            for (int i = prefixLength; i < link.Length; i++)
+            {
+                char c = link[i];
+
+                if (c == '.') // New segment
+                {
+                    if (!segmentHasCharacters)
+                        return false;
+
+                    segmentCount++;
+                    segmentHasCharacters = false;
+                    continue;
+                }
+
+                if (!c.IsAlphaNumeric())
+                {
+                    if (c == '/' || c == '?' || c == '#' || c == ':') // End of domain name
+                        break;
+
+                    if (c == '_')
+                    {
+                        lastUnderscoreSegment = segmentCount;
+                    }
+                    else if (c != '-' && c.IsSpaceOrPunctuation())
+                    {
+                        // An invalid character has been found
+                        return false;
+                    }
+                }
+
+                segmentHasCharacters = true;
+            }
+
+            return segmentCount != 1 && // At least one dot was present
+                segmentHasCharacters && // Last segment has valid characters
+                segmentCount - lastUnderscoreSegment >= 2; // No underscores are present in the last two segments of the domain
+        }
+
         public static bool TryParseLinkReferenceDefinition<T>(T text, out string label, out string url,
             out string title) where T : ICharIterator
         {
@@ -784,7 +836,6 @@ namespace Markdig.Helpers
             SourceSpan labelSpan;
             return TryParseLabel(ref lines, false, out label, out labelSpan);
         }
-
 
         public static bool TryParseLabel<T>(ref T lines, out string label, out SourceSpan labelSpan) where T : ICharIterator
         {

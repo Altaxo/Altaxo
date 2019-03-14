@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 using Markdig.Helpers;
@@ -9,7 +9,7 @@ namespace Markdig.Parsers
     /// <summary>
     /// Block parser for a <see cref="ParagraphBlock"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.BlockParser" />
+    /// <seealso cref="BlockParser" />
     public class ParagraphBlockParser : BlockParser
     {
         public override BlockState TryOpen(BlockProcessor processor)
@@ -152,27 +152,21 @@ namespace Markdig.Parsers
             {
                 // If we have found a LinkReferenceDefinition, we can discard the previous paragraph
                 var iterator = lines.ToCharIterator();
-                LinkReferenceDefinition linkReferenceDefinition;
-                if (LinkReferenceDefinition.TryParse(ref iterator, out linkReferenceDefinition))
+                if (LinkReferenceDefinition.TryParse(ref iterator, out LinkReferenceDefinition linkReferenceDefinition))
                 {
-                    if (!state.Document.ContainsLinkReferenceDefinition(linkReferenceDefinition.Label))
-                    {
-                        state.Document.SetLinkReferenceDefinition(linkReferenceDefinition.Label, linkReferenceDefinition);
-                    }
+                    state.Document.SetLinkReferenceDefinition(linkReferenceDefinition.Label, linkReferenceDefinition);
                     atLeastOneFound = true;
 
-                    // Remove lines that have been matched
-                    if (iterator.Start > iterator.End)
-                    {
-                        lines.Clear();
-                    }
-                    else
-                    {
-                        for (int i = iterator.SliceIndex - 1; i >= 0; i--)
-                        {
-                            lines.RemoveAt(i);
-                        }
-                    }
+                    // Correct the locations of each field
+                    linkReferenceDefinition.Line = lines.Lines[0].Line;
+                    int startPosition = lines.Lines[0].Slice.Start;
+
+                    linkReferenceDefinition.Span        = linkReferenceDefinition.Span      .MoveForward(startPosition);
+                    linkReferenceDefinition.LabelSpan   = linkReferenceDefinition.LabelSpan .MoveForward(startPosition);
+                    linkReferenceDefinition.UrlSpan     = linkReferenceDefinition.UrlSpan   .MoveForward(startPosition);
+                    linkReferenceDefinition.TitleSpan   = linkReferenceDefinition.TitleSpan .MoveForward(startPosition);
+
+                    lines = iterator.Remaining();
                 }
                 else
                 {

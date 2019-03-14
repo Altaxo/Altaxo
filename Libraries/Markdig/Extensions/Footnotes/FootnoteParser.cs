@@ -33,7 +33,8 @@ namespace Markdig.Extensions.Footnotes
         private BlockState TryOpen(BlockProcessor processor, bool isContinue)
         {
             // We expect footnote to appear only at document level and not indented more than a code indent block
-            if (processor.IsCodeIndent || (!isContinue && processor.CurrentContainer.GetType() != typeof(MarkdownDocument)) || (isContinue && !(processor.CurrentContainer is Footnote)))
+            var currentContainer = processor.GetCurrentContainerOpened();
+            if (processor.IsCodeIndent || (!isContinue && currentContainer.GetType() != typeof(MarkdownDocument)) || (isContinue && !(currentContainer is FootnoteGroup)))
             {
                 return BlockState.None;
             }
@@ -74,7 +75,11 @@ namespace Markdig.Extensions.Footnotes
             var linkRef = new FootnoteLinkReferenceDefinition()
             {
                 Footnote = footnote,
-                CreateLinkInline = CreateLinkToFootnote
+                CreateLinkInline = CreateLinkToFootnote,
+                Line = processor.LineIndex,
+                Span = new SourceSpan(start, processor.Start - 2), // account for ]:
+                LabelSpan = labelSpan,
+                Label = label
             };
             processor.Document.SetLinkReferenceDefinition(footnote.Label, linkRef);
             processor.NewBlocks.Push(footnote);

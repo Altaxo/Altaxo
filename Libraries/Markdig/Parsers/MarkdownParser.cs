@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 
@@ -35,9 +35,10 @@ namespace Markdig.Parsers
         /// </summary>
         /// <param name="text">The reader.</param>
         /// <param name="pipeline">The pipeline.</param>
+        /// <param name="context">A parser context used for the parsing.</param>
         /// <exception cref="System.ArgumentNullException">
         /// </exception>
-        private MarkdownParser(string text, MarkdownPipeline pipeline)
+        private MarkdownParser(string text, MarkdownPipeline pipeline, MarkdownParserContext context)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
             if (pipeline == null) throw new ArgumentNullException(nameof(pipeline));
@@ -51,10 +52,10 @@ namespace Markdig.Parsers
             document = new MarkdownDocument();
 
             // Initialize the block parsers
-            blockProcessor = new BlockProcessor(stringBuilderCache, document, pipeline.BlockParsers);
+            blockProcessor = new BlockProcessor(stringBuilderCache, document, pipeline.BlockParsers, context);
 
             // Initialize the inline parsers
-            inlineProcessor = new InlineProcessor(stringBuilderCache, document, pipeline.InlineParsers, pipeline.PreciseSourceLocation)
+            inlineProcessor = new InlineProcessor(stringBuilderCache, document, pipeline.InlineParsers, pipeline.PreciseSourceLocation, context)
             {
                 DebugLog = pipeline.DebugLog
             };
@@ -67,15 +68,16 @@ namespace Markdig.Parsers
         /// </summary>
         /// <param name="text">A Markdown text</param>
         /// <param name="pipeline">The pipeline used for the parsing.</param>
+        /// <param name="context">A parser context used for the parsing.</param>
         /// <returns>An AST Markdown document</returns>
         /// <exception cref="System.ArgumentNullException">if reader variable is null</exception>
-        public static MarkdownDocument Parse(string text, MarkdownPipeline pipeline = null)
+        public static MarkdownDocument Parse(string text, MarkdownPipeline pipeline = null, MarkdownParserContext context = null)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
             pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
 
             // Perform the parsing
-            var markdownParser = new MarkdownParser(text, pipeline);
+            var markdownParser = new MarkdownParser(text, pipeline, context);
             return markdownParser.Parse();
         }
 
@@ -85,8 +87,14 @@ namespace Markdig.Parsers
         /// <returns>A document instance</returns>
         private MarkdownDocument Parse()
         {
+            if (preciseSourceLocation)
+                document.LineStartIndexes = new List<int>();
+
             ProcessBlocks();
             ProcessInlines();
+
+            // At this point the LineIndex is the same as the number of lines in the document
+            document.LineCount = blockProcessor.LineIndex;
             
             // Allow to call a hook after processing a document
             documentProcessed?.Invoke(document);
@@ -146,8 +154,7 @@ namespace Markdig.Parsers
                 for (; item.Index < container.Count; item.Index++)
                 {
                     var block = container[item.Index];
-                    var leafBlock = block as LeafBlock;
-                    if (leafBlock != null)
+                    if (block is LeafBlock leafBlock)
                     {
                         leafBlock.OnProcessInlinesBegin(inlineProcessor);
                         if (leafBlock.ProcessInlines)
