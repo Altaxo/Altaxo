@@ -65,7 +65,14 @@ namespace Altaxo.Gui.Common
       if (!IsLoaded)
         return new Size(DefaultWidth, DefaultHeigth);
       else
-        return new Size(ActualWidth, ActualHeight);
+        return new Size(Math.Min(ActualWidth,constraint.Width), Math.Min(ActualHeight, constraint.Height));
+    }
+
+    protected override Size ArrangeOverride(Size arrangeBounds)
+    {
+      var result = base.ArrangeOverride(arrangeBounds);
+      this.Document.PageWidth = result.Width;
+      return result;
     }
   }
 }
