@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -97,7 +97,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
-    [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Retardation.Generic.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Part3")]
     public static IFitFunction CreateModulusOfOmega()
     {
       var result = new KohlrauschModulusRetardation
@@ -110,7 +116,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Lg10 - Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
-    [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Retardation.Generic.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Part3")]
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
       var result = new KohlrauschModulusRetardation
@@ -124,7 +136,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/Modulus", 1, 2, 4)]
-    [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Retardation.Generic.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Part3")]
     public static IFitFunction CreateModulusOfFrequency()
     {
       var result = new KohlrauschModulusRetardation
@@ -137,7 +155,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Lg10 Kohlrausch Complex (Freq)", "Retardation/Modulus", 1, 2, 4)]
-    [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Retardation.Generic.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Part3")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
       var result = new KohlrauschModulusRetardation

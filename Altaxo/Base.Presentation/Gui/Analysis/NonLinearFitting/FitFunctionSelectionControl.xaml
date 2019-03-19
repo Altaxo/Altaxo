@@ -42,7 +42,7 @@
 			</ItemsControl.Resources>
 		</TreeView>
 		<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ResizeDirection="Columns" />
-		<axogc:RichTextBoxWithDefaultSize x:Name="_rtfDescription" Grid.Column="2" MinWidth="60" DefaultWidth="300" DefaultHeigth="270">
+        <axogc:RichTextBoxWithDefaultSize x:Name="_rtfDescription" Grid.Column="2" MinWidth="60"  DefaultWidth="300" DefaultHeigth="270">
 			<FlowDocument>
 				<Paragraph>Description of the fit function details:</Paragraph>
 			</FlowDocument>

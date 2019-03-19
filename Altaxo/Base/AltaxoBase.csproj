@@ -1634,6 +1634,7 @@
     <Content Include="Poly2Tri\LICENSE.txt" />
     <Content Include="Poly2Tri\README-Altaxo.txt" />
     <Content Include="Poly2Tri\README.txt" />
+    <EmbeddedResource Include="Calc\FitFunctions\StringResources.resx" />
     <EmbeddedResource Include="Textures.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

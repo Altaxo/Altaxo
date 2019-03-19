@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -127,7 +127,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 4)]
-    [System.ComponentModel.Description("FitFunctions.Relaxation.Kohlrausch.Decay")]
+    [System.ComponentModel.Description("Altaxo.Calc.FitFunctions.Relaxation.KohlrauschDecay")]
     public static IFitFunction CreateDefault()
     {
       return new KohlrauschDecay();

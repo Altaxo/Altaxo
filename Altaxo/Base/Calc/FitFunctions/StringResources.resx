@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="General.PolynomialFit.Description" xml:space="preserve">
+    <value>This implements a polynomial fit. Please use the polynomial fit from the analysis menu instead of this unless you need to set some parameters fixed. The fit function is defined as:
+$$
+y(x) = a_0 + a_1 x + a_2 x^2 + ... + a_n x^n
+$$
+in which x is the independent variable, y is the dependent variable, and $ a_0 ... a_n $ are the parameters.</value>
+  </data>
+  <data name="IndependentVariable.FrequencyAsOmega" xml:space="preserve">
+    <value>with the frequency $f$ being the independent variable  ($\omega = 2 \pi f$ is calculated from $f$), </value>
+  </data>
+  <data name="IndependentVariable.Omega" xml:space="preserve">
+    <value>with the circular frequency $\omega$  being the independent variable, </value>
+  </data>
+  <data name="Materials.ArrheniusLaw.Description" xml:space="preserve">
+    <value>The Arrhenius law describes the dependence of (chemical) reaction rates on the temperature.  
+The function is defined as:
+$$
+y(T) = y_0 \exp\left(\frac{-E_a}{k T})
+$$
+in which $y$ is the reaction rate (dependent variable), $T$ is the absolute (!) temperature (independent variable), and $k$ is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
+
+The parameters are: 
+- $y_0$ is the reaction rate in the limit $T\rightarrow\infty$
+- $E_a$ is the activation energy.
+
+Please note that for large temperature intervals, the reaction rate can vary over some orders of magnitude. This will lead to a poor fit, because the data points with small values of the reaction rate then contribute too little to the fit. 
+
+In order to get a good fit nevertheless, it is neccessary  that you logarithmize your data points before they get fitted, and choose the `DecadicLogarithm` dependent variable option on this fit.
+
+*Options for the independent variable x*:
+- Kelvin: x is $T$ in Kelvin
+- AsInverseKelvin: x is $\frac{1}{T}$
+- DegreeCelsius: x is in °C
+- DegreeFahrenheit: x is in °F
+
+
+*Options for the dependent variable y*:
+- Original: the original value of $y$ (the rate)
+- Inverse:  the inverse of the rate, i.e. $\frac{1}{y}$
+- Negative: the negative rate $-y$
+- DecadicLogarithm: $\log_{10}(y)$
+- NegativeDecadicLogarithm: $-\log_{10}(y)$
+- NaturalLogarithm: $\ln(y)$
+- NegativeNaturalLogarithm: $-\ln(y)$
+
+
+
+*Option for parameters*:
+- ParameterEnergyRepresentation
+  - Joule: $E_a$ is in Joule
+  - JoulePerMole: $E_a$ is in Joule per mole
+  - ElectronVolt: $E_a$ is in eV (electron volt)
+  - kWh, calorie, calorie per mole and more..</value>
+  </data>
+  <data name="Relaxation.DielectricSusceptibility.Introduction" xml:space="preserve">
+    <value>This implements the dielectric susceptibility function</value>
+  </data>
+  <data name="Relaxation.Generic.Modulus.Formula" xml:space="preserve">
+    <value>$$
+M' + i M'' = M_{0}+(M_{\infty}-M_{0})\int_0^{\infty}\exp(-i \omega t')\frac{d\Phi(t)}{dt}dt'
+
+$$
+
+or with flow term (for $\eta=0$ the two equations are equivalent):
+
+$$
+M' + i M'' = \frac{1}{\frac{1}{M_{0}+(M_{\infty}-M_{0})\int_0^{\infty}\exp(-i \omega t')\frac{d\Phi(t)}{dt}dt'}-\frac{i\eta}{\omega}}
+
+$$</value>
+  </data>
+  <data name="Relaxation.HavriliakNegami.Modulus.Formula" xml:space="preserve">
+    <value>
+$$
+M' - i M'' = M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} 
+$$
+
+or with a flow term (both equations are equivalent if $\eta=0$) :
+
+$$
+M' - i M'' = \frac{1}{\frac{1}{M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} } + \frac{i \eta}{\omega}}
+$$
+</value>
+  </data>
+  <data name="Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Formula" xml:space="preserve">
+    <value>
+$$
+\varepsilon' - i \varepsilon'' = \varepsilon_{\infty} + \frac{\Delta\varepsilon}{(1+(i \tau \omega)^{\alpha})^{\gamma}} - \frac{i \sigma}{\omega \varepsilon_0}
+$$
+</value>
+  </data>
+  <data name="Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities" xml:space="preserve">
+    <value> and $\varepsilon'$ and $\varepsilon''$ being the dependent variables, namely the real and negative imaginary part of the dielectric function.
+
+The parameters are:
+
+- $\varepsilon_{\infty}$: high frequency dielectric value (permittivity)
+- $\Delta\varepsilon$: step height of dielectric function
+- $\tau$: retardation time
+- $\alpha$, $\gamma$: shape exponents
+- $\sigma$: specific electrical conductivity [S/m]</value>
+  </data>
+  <data name="Relaxation.HavriliakNegamiSusceptibility.General.Formula" xml:space="preserve">
+    <value>
+$$
+\chi' - i \chi'' = \chi_{\infty} + \frac{\Delta\chi}{(1+(i \tau \omega)^{\alpha})^{\gamma}} - \frac{i \eta}{\omega }
+$$
+</value>
+  </data>
+  <data name="Relaxation.HavriliakNegamiSusceptibility.General.Quantities" xml:space="preserve">
+    <value> and $\chi'$ and $\chi''$ being the dependent variables, namely the real and negative imaginary part of the dynamic susceptibility.
+
+The parameters are:
+
+- $\chi_{\infty}$: high frequency susceptibility value
+- $\Delta\chi$: step height of susceptibility function
+- $\tau$: retardation time
+- $\alpha$, $\gamma$: shape exponents
+- $\eta$: generalized flow term, e.g. inverse (!) viscosity</value>
+  </data>
+  <data name="Relaxation.HavriliakNegamiSusceptibility.Introduction" xml:space="preserve">
+    <value>This implements the Havriliak-Negami function
+</value>
+  </data>
+  <data name="Relaxation.KohlrauschDecay" xml:space="preserve">
+    <value>This implements the Kohlrausch decay function (also known as 'stretched exponential function' in the time domain: 
+
+$$
+y(x) = o + a \times \exp\left(-(\frac{x}{\tau})^{\beta})
+$$
+
+in which x is the independent variable (usually the time), and y is the dependent variable. The parameters are:
+- o is the offset,
+- a is the amplitude,
+- $\tau$ is the characteristic decay time, and
+- $\beta$ is the shape parameter.
+
+The value of $\beta$ is usually in the range (0, 1]. A smaller value of $\beta$ causes a steeper slope at $x$ close to 0, and a longer tail for large values of x.</value>
+  </data>
+  <data name="Relaxation.KohlrauschKernel.Formula" xml:space="preserve">
+    <value>
+$$
+\Phi(t) = \exp\left(-(\frac{t}{\tau})^{\beta})
+$$
+</value>
+  </data>
+  <data name="Relaxation.KohlrauschSusceptibility.General.Formula" xml:space="preserve">
+    <value>
+$$
+\chi' - i \chi'' = \chi_{\infty} + \Delta\chi \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' - \frac{i \eta}{\omega}
+$$
+</value>
+  </data>
+  <data name="Relaxation.KohlrauschSusceptibility.Part2" xml:space="preserve">
+    <value>
+based on the Fourier transform of the (derivative of the) Kohlrausch function:
+</value>
+  </data>
+  <data name="Relaxation.KohlrauschSusceptibility.Part3" xml:space="preserve">
+    <value> and $\chi'$ and $\chi''$ being the dependent variables, namely the real and negative imaginary part of the dynamic susceptibility.
+
+The parameters are:
+
+- $\chi_{\infty}$ : high frequency susceptibility value
+- $\Delta\chi$ : step height of the susceptibility function
+- $\tau$ : retardation time
+- $\beta$ : shape exponent ($ 0 &lt; \beta \le 1 $)
+- $\eta$ : generalized flow term, for instance inverse (!) viscosity</value>
+  </data>
+  <data name="Relaxation.ModulusRelaxation.Introduction" xml:space="preserve">
+    <value>This function models the complex dynamic modulus in dependence of the frequency as:
+</value>
+  </data>
+  <data name="Relaxation.ModulusRelaxation.Part3" xml:space="preserve">
+    <value>and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus.
+
+The parameters are:
+
+- $M_0$: low frequency modulus limit
+- $M_{\infty}$: high frequency modulus limit
+- $\tau$: relaxation time
+- $\beta$: shape exponent ($ 0&lt;\beta\le 1 $)
+- $\eta$: generalized flow term, for instance viscosity</value>
+  </data>
+  <data name="Relaxation.ModulusRetardation.Introduction" xml:space="preserve">
+    <value>This implements the modulus function as the scaled inverse of the generic susceptibility:
+</value>
+  </data>
+  <data name="Relaxation.ModulusRetardation.Part3" xml:space="preserve">
+    <value> and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the dynamic modulus.
+
+The parameters are:
+
+- $M_0$: low frequency modulus limit
+- $M_{\infty}$: high frequency modulus limit
+- $\tau$: retardation time (not relaxation time!)
+- $\beta$: shape exponent ($ 0&lt;\beta\le 1 $)
+- $\eta$: generalized flow term, for instance inverse (!) viscosity</value>
+  </data>
+  <data name="Relaxation.Susceptibility.Dielectrics.Formula" xml:space="preserve">
+    <value>
+$$
+\varepsilon' - i \varepsilon'' = \varepsilon_{\infty} + \Delta\varepsilon \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' - \frac{i \sigma}{\varepsilon_0 \omega}
+$$
+</value>
+  </data>
+  <data name="Relaxation.Susceptibility.Introduction" xml:space="preserve">
+    <value>This implements the susceptibility function:
+</value>
+  </data>
+  <data name="Retardation.Generic.Modulus.Formula" xml:space="preserve">
+    <value>
+$$
+M' + i M'' = \frac{1}{\frac{1}{M_{\infty}}+(\frac{1}{M_{0}}-\frac{1}{M_{\infty}})\int_0^{\infty}\exp(-i \omega t')\frac{d\Phi(t)}{dt}dt'-\frac{i\eta}{\omega}}
+
+$$
+</value>
+  </data>
+</root>

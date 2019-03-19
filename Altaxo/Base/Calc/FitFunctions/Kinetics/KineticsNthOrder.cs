@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -103,7 +103,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// of free aggregating particles as variable x and the number of aggregating particels inside aggregates as the variable y.
     /// The solution was reformulated with volume fractions, using a new kinetic constant scaled by the volume of one aggregating particel.
     /// </remarks>
-    public static double AgglomarateConcentrationFromPA0AndPAInf(double t, double pA0, double pAInf, double k, double order, double pSample)
+    public static double AgglomerateConcentrationFromPA0AndPAInf(double t, double pA0, double pAInf, double k, double order, double pSample)
     {
       double p0 = pSample * (1 - pA0 / pAInf);
       return (pAInf - (pAInf - pA0) * CoreSolution(t, p0, k, order));

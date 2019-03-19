@@ -74,7 +74,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 5)]
-    [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegami.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateModulusOfOmega()
     {
       var result = new HavriliakNegamiModulusRelaxation
@@ -87,7 +91,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Lg10 HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 5)]
-    [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegami.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
       var result = new HavriliakNegamiModulusRelaxation
@@ -101,7 +109,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Relaxation/Modulus", 1, 2, 5)]
-    [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegami.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateModulusOfFrequency()
     {
       var result = new HavriliakNegamiModulusRelaxation
@@ -114,7 +126,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Lg10 HavriliakNegami Complex (Freq)", "Relaxation/Modulus", 1, 2, 5)]
-    [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegami.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
       var result = new HavriliakNegamiModulusRelaxation

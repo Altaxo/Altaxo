@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -289,7 +289,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/Dielectrics", 1, 2, 5)]
-    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities")]
     public static IFitFunction CreateDielectricFunctionOfOmega()
     {
       var result = new HavriliakNegamiSusceptibility
@@ -302,7 +306,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/Dielectrics", 1, 2, 5)]
-    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities")]
     public static IFitFunction CreateDielectricFunctionOfFrequency()
     {
       var result = new HavriliakNegamiSusceptibility
@@ -315,7 +323,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/General", 1, 2, 5)]
-    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General.Quantities")]
     public static IFitFunction CreateGeneralFunctionOfOmega()
     {
       var result = new HavriliakNegamiSusceptibility
@@ -328,7 +340,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/General", 1, 2, 5)]
-    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General.Quantities")]
     public static IFitFunction CreateGeneralFunctionOfFrequency()
     {
       var result = new HavriliakNegamiSusceptibility

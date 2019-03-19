@@ -115,6 +115,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
     [FitFunctionCreator("ArrheniusLaw", "Materials", 1, 1, 2)]
+    [System.ComponentModel.Description("Altaxo.Calc.FitFunctions.Materials.ArrheniusLaw.Description")]
     public static IFitFunction CreateDefault()
     {
       return new ArrheniusLaw();

@@ -1329,6 +1329,7 @@
     <Compile Include="Gui\Common\OptionBinding.cs" />
     <Compile Include="Gui\Common\RestrictDesiredSize.cs" />
     <Compile Include="Gui\Common\RestrictDesiredSizeWrapPanel.cs" />
+    <Compile Include="Gui\Common\FlowDocumentScrollViewerWithDefaultSize.cs" />
     <Compile Include="Gui\Common\SortableGridViewColumn.cs" />
     <Compile Include="Gui\Common\SplitButton.cs" />
     <Compile Include="Gui\Common\WpfTreeNavigation.cs" />
@@ -2301,6 +2302,14 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Markdig.Wpf\Markdig.Wpf.csproj">
+      <Project>{73cef9b3-7110-45f0-bf93-b25ea8559bad}</Project>
+      <Name>Markdig.Wpf</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj">
+      <Project>{a145ab45-e55e-4e22-8ca1-dae537a346e0}</Project>
+      <Name>Markdig</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Base\AltaxoBase.csproj">
       <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
       <Name>AltaxoBase</Name>

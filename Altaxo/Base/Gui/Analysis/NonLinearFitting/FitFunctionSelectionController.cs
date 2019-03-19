@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   {
     void SetFitFunctions(NGTreeNodeCollection list);
 
-    void SetRtfDocumentation(string rtfString);
+    // void SetRtfDocumentation(string rtfString);
 
     NamedColor GetRtfBackgroundColor();
 

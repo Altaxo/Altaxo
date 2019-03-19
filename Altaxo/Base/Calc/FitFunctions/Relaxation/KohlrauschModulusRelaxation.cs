@@ -97,7 +97,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Relaxation/Modulus", 1, 2, 4)]
-    [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.Generic.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateModulusOfOmega()
     {
       var result = new KohlrauschModulusRelaxation
@@ -110,7 +116,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Lg10 Kohlrausch Complex (Omega)", "Relaxation/Modulus", 1, 2, 4)]
-    [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.Generic.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.Omega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
       var result = new KohlrauschModulusRelaxation
@@ -124,7 +136,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Freq)", "Relaxation/Modulus", 1, 2, 4)]
-    [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.Generic.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateModulusOfFrequency()
     {
       var result = new KohlrauschModulusRelaxation
@@ -137,7 +155,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Lg10 Kohlrausch Complex (Freq)", "Relaxation/Modulus", 1, 2, 4)]
-    [Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
+    [Description(
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.Generic.Modulus.Formula;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula;" +
+      "Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega;" +
+      "Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
       var result = new KohlrauschModulusRelaxation

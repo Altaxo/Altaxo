@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     [FitFunctionCreator("PolynomialFit", "General", 1, 1, 10)]
-    [System.ComponentModel.Description("FitFunctions.General.PolynomialFit")]
+    [System.ComponentModel.Description("Altaxo.Calc.FitFunctions.General.PolynomialFit.Description")]
     public static IFitFunction CreatePolynomialFitOrder9()
     {
       return new PolynomialFit(9);

@@ -28,12 +28,15 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Main.Services;
+using Markdig;
+using Markdig.Wpf;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -186,16 +189,41 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
       if (fitInfo != null)
       {
-        if (_rtfGraphics == null)
-        {
-          var bmp = new System.Drawing.Bitmap(4, 4);
-          _rtfGraphics = System.Drawing.Graphics.FromImage(bmp);
-        }
-        string rtf = Altaxo.Main.Services.RtfComposerService.GetRtfText(fitInfo.Description, _rtfGraphics, GetRtfBackgroundColor(), 12);
-        var stream = new System.IO.MemoryStream(ASCIIEncoding.Default.GetBytes(rtf));
-        _rtfDescription.SelectAll();
-        _rtfDescription.Selection.Load(stream, DataFormats.Rtf);
+        var text = fitInfo.Description;
+        var flowDoc = RenderDocument(text, System.Globalization.CultureInfo.InvariantCulture);
+        _rtfDescription.Document = flowDoc;
       }
+    }
+
+    private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
+    private MarkdownPipeline Pipeline { get; set; }
+
+    /// <summary>
+    /// Renders the document.
+    /// </summary>
+    /// only those parts that were changed in the source text are rendered anew.
+    /// Note that setting this parameter to <c>true</c> does not force a new rendering of the images; for that, call <see cref="IWpfImageProvider.ClearCache"/> of the <see cref="ImageProvider"/> member before rendering.</param>
+    private FlowDocument RenderDocument(string sourceText, System.Globalization.CultureInfo documentCulture)
+    {
+      var pipeline = Pipeline ?? DefaultPipeline;
+
+        var markdownDocument = Markdig.Markdown.Parse(sourceText, pipeline);
+
+        // We override the renderer with our own writer
+        var flowDocument = new FlowDocument
+        {
+          IsHyphenationEnabled = true,
+          Language = System.Windows.Markup.XmlLanguage.GetLanguage(documentCulture.IetfLanguageTag)
+        };
+
+        var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, DynamicStyles.Instance)
+        {
+          // ImageProvider = ImageProvider
+        };
+
+        pipeline.Setup(renderer);
+        renderer.Render(markdownDocument);
+      return flowDocument;
     }
 
     #region IFitFunctionSelectionView
@@ -205,10 +233,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _guiFitFunctions.ItemsSource = list;
     }
 
-    public void SetRtfDocumentation(string rtfString)
-    {
-      _rtfDescription.AppendText(rtfString);
-    }
+    
 
     public NamedColor GetRtfBackgroundColor()
     {
