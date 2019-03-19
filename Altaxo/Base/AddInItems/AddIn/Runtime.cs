@@ -127,6 +127,9 @@ namespace Altaxo.AddInItems
               loadedAssembly = LoadAssemblyFrom(Path.Combine(hintPath, assembly));
             }
 
+            // register all resources that are directly included into the assembly
+            Current.GetRequiredService<IResourceService>().RegisterAssemblyResources(loadedAssembly);
+
 #if DEBUG
             // preload assembly to provoke FileLoadException if dependencies are missing
             loadedAssembly.GetExportedTypes();

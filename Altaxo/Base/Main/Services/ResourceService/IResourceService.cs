@@ -94,6 +94,17 @@ namespace Altaxo.Main.Services
     void RegisterImages(string baseResourceName, Assembly assembly);
 
     void RegisterNeutralImages(ResourceManager imageManager);
+
+    /// <summary>
+    /// Registers all resources that are directly included into the assembly given in the argument. See remarks for how the string resources are registered.
+    /// </summary>
+    /// <param name="assembly">The assembly for which to register the resources.</param>
+    /// <remarks>
+    /// The name of a string resource is constructed from the namespace where the .resx file is located in, a dot, and the name of the resource in the .resx file.
+    /// Example: the .resx file is located namespace Altaxo.Main.Services. The string resource's key is Foo. Then this string resource is registered with the name Altaxo.Main.Services.Foo.
+    /// Image files directly included in the assembly have the name they are included with, but without extension.
+    /// </remarks>
+    void RegisterAssemblyResources(Assembly assembly);
   }
 
   internal sealed class FallbackResourceService : IResourceService
@@ -140,6 +151,20 @@ namespace Altaxo.Main.Services
     }
 
     void IResourceService.RegisterNeutralImages(ResourceManager imageManager)
+    {
+      throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Registers all resources that are directly included into the assembly given in the argument. See remarks for how the string resources are registered.
+    /// </summary>
+    /// <param name="assembly">The assembly for which to register the resources.</param>
+    /// <remarks>
+    /// The name of a string resource is constructed from the namespace where the .resx file is located in, a dot, and the name of the resource in the .resx file.
+    /// Example: the .resx file is located namespace Altaxo.Main.Services. The string resource's key is Foo. Then this string resource is registered with the name Altaxo.Main.Services.Foo.
+    /// Image files directly included in the assembly have the name they are included with, but without extension.
+    /// </remarks>
+    void IResourceService.RegisterAssemblyResources(Assembly assembly)
     {
       throw new NotImplementedException();
     }

@@ -45,10 +45,16 @@ namespace Altaxo.Main.Services
     private readonly object _loadLock = new object();
 
     /// <summary>English strings (list of resource managers)</summary>
-    private List<ResourceManager> _neutralStringsResMgrs = new List<ResourceManager>();
+    private List<(string Prefix, ResourceManager Manager)> _neutralStringsResMgrs = new List<(string Prefix, ResourceManager Manager)>();
 
     /// <summary>Neutral/English images (list of resource managers)</summary>
-    private List<ResourceManager> _neutralIconsResMgrs = new List<ResourceManager>();
+    private List<(string Prefix, ResourceManager Manager)> _neutralIconsResMgrs = new List<(string Prefix, ResourceManager Manager)>();
+
+    /// <summary>Stores images that are directly included into assemblies (compiled as embedded resource).
+    /// Key is the resource name, value is the assembly where the resource is to find.
+    /// We keep the entries even if we have retrieved an image, because
+    /// in that way we can create images in different formats (System.Drawing.Bitmap, Wpf image source etc.)</summary>
+    private Dictionary<string, Assembly> _neutralLatentImageStreams = new Dictionary<string, Assembly>();
 
     /// <summary>Hashtable containing the local strings from the main application.</summary>
     private Hashtable _localStrings = null;
@@ -56,10 +62,10 @@ namespace Altaxo.Main.Services
     private Hashtable _localIcons = null;
 
     /// <summary>Strings resource managers for the current language</summary>
-    private List<ResourceManager> _localStringsResMgrs = new List<ResourceManager>();
+    private List<(string Prefix, ResourceManager Manager)> _localStringsResMgrs = new List<(string Prefix, ResourceManager Manager)>();
 
     /// <summary>Image resource managers for the current language</summary>
-    private List<ResourceManager> _localIconsResMgrs = new List<ResourceManager>();
+    private List<(string Prefix, ResourceManager Manager)> _localIconsResMgrs = new List<(string Prefix, ResourceManager Manager)>();
 
     /// <summary>List of ResourceAssembly</summary>
     private List<ResourceAssembly> _resourceAssemblies = new List<ResourceAssembly>();
@@ -99,7 +105,7 @@ namespace Altaxo.Main.Services
     /// <example><c>ResourceService.RegisterStrings("TestAddin.Resources.StringResources", GetType().Assembly);</c></example>
     public void RegisterStrings(string baseResourceName, Assembly assembly)
     {
-      RegisterNeutralStrings(new ResourceManager(baseResourceName, assembly));
+      RegisterNeutralStrings(Path.GetFileNameWithoutExtension(baseResourceName) + ".", new ResourceManager(baseResourceName, assembly));
       var ra = new ResourceAssembly(this, assembly, baseResourceName, false);
       _resourceAssemblies.Add(ra);
       ra.Load();
@@ -107,7 +113,12 @@ namespace Altaxo.Main.Services
 
     public void RegisterNeutralStrings(ResourceManager stringManager)
     {
-      _neutralStringsResMgrs.Add(stringManager);
+      RegisterNeutralStrings(string.Empty, stringManager);
+    }
+
+    public void RegisterNeutralStrings(string prefix, ResourceManager stringManager)
+    {
+      _neutralStringsResMgrs.Add((prefix, stringManager));
     }
 
     /// <summary>
@@ -118,7 +129,7 @@ namespace Altaxo.Main.Services
     /// <example><c>ResourceService.RegisterImages("TestAddin.Resources.BitmapResources", GetType().Assembly);</c></example>
     public void RegisterImages(string baseResourceName, Assembly assembly)
     {
-      RegisterNeutralImages(new ResourceManager(baseResourceName, assembly));
+      RegisterNeutralImages(Path.GetFileNameWithoutExtension(baseResourceName) + ".", new ResourceManager(baseResourceName, assembly));
       var ra = new ResourceAssembly(this, assembly, baseResourceName, true);
       _resourceAssemblies.Add(ra);
       ra.Load();
@@ -126,7 +137,51 @@ namespace Altaxo.Main.Services
 
     public void RegisterNeutralImages(ResourceManager imageManager)
     {
-      _neutralIconsResMgrs.Add(imageManager);
+      RegisterNeutralImages(string.Empty, imageManager);
+    }
+
+    public void RegisterNeutralImages(string baseResourceName, ResourceManager imageManager)
+    {
+      _neutralIconsResMgrs.Add((baseResourceName, imageManager));
+    }
+
+    public void RegisterAssemblyResources(Assembly assembly)
+    {
+
+      // Get all resources in an assembly
+      string[] resourceNames = assembly.GetManifestResourceNames();
+
+      foreach (string resourceName in resourceNames)
+      {
+        var extension = Path.GetExtension(resourceName);
+        switch (extension)
+        {
+          case ".resources":
+            {
+              var baseName = Path.GetFileNameWithoutExtension(resourceName);
+              var prefix = Path.GetFileNameWithoutExtension(baseName);
+              var name = baseName.Substring(prefix.Length);
+              if (name != ".g")
+              {
+                if (name.Contains("image") || name.Contains("icon") || name.Contains("bitmap"))
+                {
+                  RegisterImages(baseName, assembly);
+                }
+                else // string resources
+                {
+                  RegisterStrings(baseName, assembly);
+                }
+              }
+            }
+            break;
+          case ".png":
+          case ".jpg":
+            {
+              _neutralLatentImageStreams.Add(Path.GetFileNameWithoutExtension(resourceName), assembly);
+            }
+            break;
+        }
+      }
     }
 
     private void OnPropertyChange(object sender, PropertyChangedEventArgs e)
@@ -225,7 +280,7 @@ namespace Altaxo.Main.Services
 
         // search all local resource managers
         string s = null;
-        foreach (ResourceManager resourceManger in _localStringsResMgrs)
+        foreach ((string prefix, ResourceManager resourceManger) in _localStringsResMgrs)
         {
           try
           {
@@ -242,17 +297,20 @@ namespace Altaxo.Main.Services
         if (s == null)
         {
           // search all unlocalized resource managers
-          foreach (ResourceManager resourceManger in _neutralStringsResMgrs)
+          foreach ((string prefix, ResourceManager resourceManger) in _neutralStringsResMgrs)
           {
-            try
+            if (prefix.Length == 0 || name.StartsWith(prefix))
             {
-              s = resourceManger.GetString(name);
-            }
-            catch (Exception) { }
+              try
+              {
+                s = resourceManger.GetString(prefix.Length == 0 ? name : name.Substring(prefix.Length));
+              }
+              catch (Exception) { }
 
-            if (s != null)
-            {
-              break;
+              if (s != null)
+              {
+                break;
+              }
             }
           }
         }
@@ -277,7 +335,7 @@ namespace Altaxo.Main.Services
         }
         else
         {
-          foreach (ResourceManager resourceManger in _localIconsResMgrs)
+          foreach ((string prefix, ResourceManager resourceManger) in _localIconsResMgrs)
           {
             iconobj = resourceManger.GetObject(name);
             if (iconobj != null)
@@ -288,7 +346,7 @@ namespace Altaxo.Main.Services
 
           if (iconobj == null)
           {
-            foreach (ResourceManager resourceManger in _neutralIconsResMgrs)
+            foreach ((string prefix, ResourceManager resourceManger) in _neutralIconsResMgrs)
             {
               try
               {
@@ -318,7 +376,13 @@ namespace Altaxo.Main.Services
       {
         System.IO.Stream resourceStream = null;
 
-        foreach (ResourceManager resourceManger in _localIconsResMgrs)
+        if (_neutralLatentImageStreams.TryGetValue(name, out var assembly))
+        {
+          return assembly.GetManifestResourceStream(name);
+        }
+
+
+        foreach ((string prefix, ResourceManager resourceManger) in _localIconsResMgrs)
         {
           resourceStream = resourceManger.GetStream(name);
           if (resourceStream != null)
@@ -329,7 +393,7 @@ namespace Altaxo.Main.Services
 
         if (resourceStream == null)
         {
-          foreach (ResourceManager resourceManger in _neutralIconsResMgrs)
+          foreach ((string prefix, ResourceManager resourceManger) in _neutralIconsResMgrs)
           {
             try
             {
@@ -373,7 +437,7 @@ namespace Altaxo.Main.Services
         fileName = Path.Combine(Path.Combine(Path.GetDirectoryName(_assembly.Location), language), fileName);
         if (File.Exists(fileName))
         {
-          Current.Log.Info("Loging resources " + _baseResourceName + " loading from satellite " + language);
+          Current.Log.Info("Logging resources " + _baseResourceName + " loading from satellite " + language);
           return new ResourceManager(_baseResourceName, Assembly.LoadFrom(fileName));
         }
         else
@@ -414,9 +478,13 @@ namespace Altaxo.Main.Services
         else
         {
           if (_isIcons)
-            _service._localIconsResMgrs.Add(manager);
+          {
+            _service._localIconsResMgrs.Add((string.Empty, manager));
+          }
           else
-            _service._localStringsResMgrs.Add(manager);
+          {
+            _service._localStringsResMgrs.Add((string.Empty, manager));
+          }
         }
       }
     }
