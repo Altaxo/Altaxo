@@ -286,7 +286,7 @@ The parameters are:
 - $\eta$ : generalized flow term, for instance inverse (!) viscosity</value>
   </data>
   <data name="Relaxation.ModulusRelaxation.Introduction" xml:space="preserve">
-    <value>This function models the complex dynamic modulus in dependence of the frequency as:
+    <value>This function models the complex dynamic modulus in dependence on the frequency as:
 </value>
   </data>
   <data name="Relaxation.ModulusRelaxation.Part3" xml:space="preserve">
@@ -298,7 +298,14 @@ The parameters are:
 - $M_{\infty}$: high frequency modulus limit
 - $\tau$: relaxation time
 - $\beta$: shape exponent ($ 0&lt;\beta\le 1 $)
-- $\eta$: generalized flow term, for instance viscosity</value>
+- $\eta$: generalized flow term, for instance inverse (!) viscosity</value>
+  </data>
+  <data name="Relaxation.ModulusRetardation.HavriliakNegami.Formula" xml:space="preserve">
+    <value>
+$$
+M' - i M'' = \frac{1}{\frac{1}{M_{\infty}} + (\frac{1}{M_{0}}-\frac{1}{M_{\infty}}) \frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} - \frac{i \eta}{\omega }}
+$$
+</value>
   </data>
   <data name="Relaxation.ModulusRetardation.Introduction" xml:space="preserve">
     <value>This implements the modulus function as the scaled inverse of the generic susceptibility:

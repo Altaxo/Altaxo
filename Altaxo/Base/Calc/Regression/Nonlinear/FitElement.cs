@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -815,7 +815,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         cols[i] = _independentVariables[i].Document;
         selectedCols.Add(i);
-        if (cols[i].Count.HasValue)
+        if (cols[i]?.Count != null)
           maxLength = Math.Min(maxLength, cols[i].Count.Value);
       }
 
@@ -826,7 +826,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         {
           cols[i] = _dependentVariables[j].Document;
           selectedCols.Add(i);
-          if (cols[i].Count.HasValue)
+          if (cols[i]?.Count != null)
             maxLength = Math.Min(maxLength, cols[i].Count.Value);
         }
       }

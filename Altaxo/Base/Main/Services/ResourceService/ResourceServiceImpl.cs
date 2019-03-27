@@ -163,6 +163,16 @@ namespace Altaxo.Main.Services
               var name = baseName.Substring(prefix.Length);
               if (name != ".g")
               {
+                {
+                  // we make an exception for backward compatibility here:
+                  // if the resources file is in a subdirectory named "Resources", then
+                  // we do not assume a base name
+                  // this ensures that old resources will be accessible with their original name
+                  var splitName = baseName.Split(new char[] { '.' });
+                  if (splitName.Length >= 2 && splitName[1].ToLowerInvariant() == "resources")
+                    baseName = string.Empty; // do not use a base name if subdirectory is "Resources"
+                }
+
                 if (name.Contains("image") || name.Contains("icon") || name.Contains("bitmap"))
                 {
                   RegisterImages(baseName, assembly);
