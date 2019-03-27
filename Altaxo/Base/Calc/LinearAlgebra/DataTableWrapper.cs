@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -585,10 +585,20 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < selectedCols.Count; i++)
       {
         var col = table[selectedCols[i]];
-        for (int j = 0; j < rowCount; j++)
+        if (col is null)
         {
-          if (double.IsNaN(col[j]))
+          for (int j = 0; j < rowCount; j++)
+          {
             rowValid[j] = false;
+          }
+        }
+        else
+        {
+          for (int j = 0; j < rowCount; j++)
+          {
+            if (double.IsNaN(col[j]))
+              rowValid[j] = false;
+          }
         }
       }
       return rowValid;
