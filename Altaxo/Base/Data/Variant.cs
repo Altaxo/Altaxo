@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -123,7 +123,7 @@ namespace Altaxo.Data
   /// AltaxoVariant is never used to store the data in the array, for this purpose
   /// the native data types are used
   /// </summary>
-  public struct AltaxoVariant : IComparable
+  public struct AltaxoVariant : IComparable, IFormattable
   {
     public enum Content { VNull, VDouble, VDateTime, VString, VOperatable, VObject }
 
