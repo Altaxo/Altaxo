@@ -191,6 +191,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Data\ConvertXYVToMatrixOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Data\ConvertXYVToMatrixDataControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Data\Selections\IncludeSingleTextValueControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1333,6 +1341,12 @@
     <Compile Include="Gui\Common\SortableGridViewColumn.cs" />
     <Compile Include="Gui\Common\SplitButton.cs" />
     <Compile Include="Gui\Common\WpfTreeNavigation.cs" />
+    <Compile Include="Gui\Data\ConvertXYVToMatrixOptionsControl.xaml.cs">
+      <DependentUpon>ConvertXYVToMatrixOptionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\ConvertXYVToMatrixDataControl.xaml.cs">
+      <DependentUpon>ConvertXYVToMatrixDataControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Data\Selections\IncludeSingleTextValueControl.xaml.cs">
       <DependentUpon>IncludeSingleTextValueControl.xaml</DependentUpon>
     </Compile>

@@ -36,28 +36,108 @@ namespace Altaxo.Gui.Common
   {
     public event Action SelectionChanged;
 
-    private SelectableListNodeList _choices;
+    #region Dependency property
+
+    public static readonly DependencyProperty ItemsSourceProperty =
+    DependencyProperty.Register(
+      nameof(ItemsSource),
+      typeof(SelectableListNodeList),
+      typeof(SingleChoiceRadioStackPanel),
+      new FrameworkPropertyMetadata(EhItemsSourceChanged));
+
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public SelectableListNodeList ItemsSource
+    {
+      get { var result = (SelectableListNodeList)GetValue(ItemsSourceProperty); return result; }
+      set { SetValue(ItemsSourceProperty, value); }
+    }
+
+    private static void EhItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((SingleChoiceRadioStackPanel)obj).OnItemsSourceChanged(obj, args);
+    }
+
+    protected void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      var list = args.NewValue as SelectableListNodeList;
+      if(null!=list)
+      {
+        SelectedItem = list.FirstSelectedNode;
+        Initialize(list);
+      }
+      else
+      {
+        SelectedItem = null;
+      }
+    }
+
+    public static readonly DependencyProperty SelectedItemProperty =
+   DependencyProperty.Register(
+     nameof(SelectedItem),
+     typeof(SelectableListNode),
+     typeof(SingleChoiceRadioStackPanel),
+     new FrameworkPropertyMetadata(EhSelectedItemChanged));
+
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public SelectableListNode SelectedItem
+    {
+      get { var result = (SelectableListNode)GetValue(SelectedItemProperty); return result; }
+      set { SetValue(SelectedItemProperty, value); }
+    }
+
+    private static void EhSelectedItemChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((SingleChoiceRadioStackPanel)obj).OnSelectedItemChanged(obj, args);
+    }
+
+    protected void OnSelectedItemChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      var list = ItemsSource;
+
+      if (null != list)
+      {
+        list.ClearSelectionsAll();
+        if (null != args.NewValue)
+          list.SetSelection((node) => object.ReferenceEquals(node, args.NewValue));
+        }
+    }
+
+    #endregion
+
 
     public void Initialize(SelectableListNodeList choices)
     {
-      _choices = choices;
-      Children.Clear();
-      foreach (var choice in _choices)
+      if(!object.ReferenceEquals(choices, ItemsSource))
       {
-        var rb = new RadioButton
+        ItemsSource = choices;
+      }
+
+      Children.Clear();
+      if (null != choices)
+      {
+        foreach (var choice in choices)
         {
-          Content = choice.Text,
-          Tag = choice,
-          IsChecked = choice.IsSelected
-        };
-        rb.Checked += EhRadioButtonChecked;
+          var rb = new RadioButton
+          {
+            Content = choice.Text,
+            ToolTip = choice.Text0,
+            Tag = choice,
+            IsChecked = choice.IsSelected,
+            
+          };
+          rb.Checked += EhRadioButtonChecked;
 
-        if (Orientation == System.Windows.Controls.Orientation.Horizontal)
-          rb.Margin = new Thickness(3, 0, 3, 0);
-        else
-          rb.Margin = new Thickness(0, 3, 0, 3);
+          if (Orientation == System.Windows.Controls.Orientation.Horizontal)
+            rb.Margin = new Thickness(3, 0, 3, 0);
+          else
+            rb.Margin = new Thickness(0, 3, 0, 3);
 
-        Children.Add(rb);
+          Children.Add(rb);
+        }
       }
     }
 
@@ -65,14 +145,13 @@ namespace Altaxo.Gui.Common
     {
       var rb = (RadioButton)sender;
       var node = rb.Tag as SelectableListNode;
-      if (node != null)
+      if (node != null && (true == rb.IsChecked))
       {
-        _choices.ClearSelectionsAll();
-        node.IsSelected = true == rb.IsChecked;
+        SelectedItem = node;
       }
 
-      if (null != SelectionChanged)
-        SelectionChanged();
+      
+      SelectionChanged?.Invoke();
     }
   }
 }

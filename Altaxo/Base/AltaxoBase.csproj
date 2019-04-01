@@ -253,6 +253,8 @@
     <Compile Include="Analysis\Statistics\Histograms\LinearBinning.cs" />
     <Compile Include="Analysis\Statistics\Histograms\LogarithmicBinning.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiModulusRetardation.cs" />
+    <Compile Include="Data\Extensions\ConvertXYVToMatrixDataSource.cs" />
+    <Compile Include="Data\Extensions\ConvertXYVToMatrix.cs" />
     <Compile Include="Drawing\ImageExtensions.cs" />
     <Compile Include="Geometry\Double_2D\PolygonMath.cs" />
     <Compile Include="Geometry\LineD2D.cs" />
@@ -271,6 +273,10 @@
     <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeDataBase.cs" />
     <Compile Include="Graph\Plot\IGPlotItem.cs" />
     <Compile Include="Graph\Plot\Styles\IGPlotStyle.cs" />
+    <Compile Include="Gui\Data\ConvertXYVToMatrixController.cs" />
+    <Compile Include="Gui\Data\ConvertXYVToMatrixDataController.cs" />
+    <Compile Include="Gui\Data\ConvertXYVToMatrixOptionsController.cs" />
+    <Compile Include="Gui\Data\ConvertXYVToMatrixDataSourceController.cs" />
     <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeColumnsController.cs" />
     <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeTableController.cs" />
     <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeTableData.cs" />
