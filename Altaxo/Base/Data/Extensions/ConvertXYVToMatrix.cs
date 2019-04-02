@@ -42,12 +42,7 @@ namespace Altaxo.Data
   {
     #region Enums
 
-    public enum OutputSorting
-    {
-      None,
-      Ascending,
-      Descending
-    }
+
 
     public enum OutputAveraging
     {
@@ -76,12 +71,12 @@ namespace Altaxo.Data
 
 
     /// <summary>If set, the destination x-columns will be sorted according to the first averaged column (if there is any).</summary>
-    protected OutputSorting _destinationXColumnSorting = OutputSorting.Ascending;
+    protected SortDirection _destinationXColumnSorting = SortDirection.Ascending;
     bool _useClusteringForX;
     int? _numberOfClustersX;
 
     /// <summary>If set, the destination y-columns will be sorted according to the first averaged column (if there is any).</summary>
-    protected OutputSorting _destinationYColumnSorting = OutputSorting.Ascending;
+    protected SortDirection _destinationYColumnSorting = SortDirection.Ascending;
     bool _useClusteringForY;
     int? _numberOfClustersY;
 
@@ -124,11 +119,11 @@ namespace Altaxo.Data
         s._outputNaming = (OutputNaming)info.GetEnum("ColumnNaming", typeof(OutputNaming));
         s._outputColumnNameFormatString = info.GetString("ColumnNamingFormatting");
 
-        s._destinationXColumnSorting = (OutputSorting)info.GetEnum("DestinationXColumnSorting", typeof(OutputSorting));
+        s._destinationXColumnSorting = (SortDirection)info.GetEnum("DestinationXColumnSorting", typeof(SortDirection));
         s._useClusteringForX = info.GetBoolean("UseClusteringForX");
         s._numberOfClustersX = info.GetNullableInt32("NumberOfClustersX");
 
-        s._destinationYColumnSorting = (OutputSorting)info.GetEnum("DestinationYColumnSorting", typeof(OutputSorting));
+        s._destinationYColumnSorting = (SortDirection)info.GetEnum("DestinationYColumnSorting", typeof(SortDirection));
         s._useClusteringForY = info.GetBoolean("UseClusteringForY");
         s._numberOfClustersY = info.GetNullableInt32("NumberOfClustersY");
 
@@ -197,11 +192,17 @@ namespace Altaxo.Data
     public string ColumnNameFormatString { get => _outputColumnNameFormatString; set => _outputColumnNameFormatString = value ?? throw new ArgumentNullException(nameof(ColumnNameFormatString)); }
 
     /// <summary>If set, the destination columns will be either not sorted or sorted.</summary>
-    public OutputSorting DestinationXColumnSorting { get { return _destinationXColumnSorting; } set { SetMemberEnumAndRaiseSelfChanged(ref _destinationXColumnSorting, value); } }
+    public SortDirection DestinationXColumnSorting { get { return _destinationXColumnSorting; } set { SetMemberEnumAndRaiseSelfChanged(ref _destinationXColumnSorting, value); } }
 
     /// <summary>If set, the destination columns will be either not sorted or sorted.</summary>
-    public OutputSorting DestinationYColumnSorting { get { return _destinationYColumnSorting; } set { SetMemberEnumAndRaiseSelfChanged(ref _destinationYColumnSorting, value); } }
+    public SortDirection DestinationYColumnSorting { get { return _destinationYColumnSorting; } set { SetMemberEnumAndRaiseSelfChanged(ref _destinationYColumnSorting, value); } }
 
+
+    public bool UseClusteringForX { get { return _useClusteringForX; } set { _useClusteringForX = value; } }
+    public bool UseClusteringForY { get { return _useClusteringForY; } set { _useClusteringForY = value; } }
+
+    public int? NumberOfClustersX { get { return _numberOfClustersX; } set { _numberOfClustersX = value; } }
+    public int? NumberOfClustersY { get { return _numberOfClustersY; } set { _numberOfClustersY = value; } }
 
     #endregion Properties
   }
@@ -456,30 +457,21 @@ namespace Altaxo.Data
       DataColumn srcYCol = inputData.GetDataColumnOrNull(ConvertXYVToMatrixDataAndOptions.ColumnY);
 
       // X-Values
-      var decomposedValuesX = Decompose(srcXCol);
-      // the decomposedValues are not sorted yes
-      if (options.DestinationXColumnSorting == ConvertXYVToMatrixOptions.OutputSorting.Ascending)
-      {
-        decomposedValuesX.Sort();
-      }
-      else if (options.DestinationXColumnSorting == ConvertXYVToMatrixOptions.OutputSorting.Descending)
-      {
-        decomposedValuesX.Sort();
-        decomposedValuesX.Reverse();
-      }
+      IReadOnlyList<AltaxoVariant> clusterValuesX;
+      IReadOnlyList<int> clusterIndicesX;
+      if (options.UseClusteringForX && options.NumberOfClustersX.HasValue && srcXCol is DoubleColumn srcXDbl)
+        (clusterValuesX, clusterIndicesX) = ClusterValuesByKMeans(srcXDbl, options.NumberOfClustersX.Value, options.DestinationXColumnSorting);
+      else
+        (clusterValuesX, clusterIndicesX) = ClusterValuesByEquality(srcXCol, options.DestinationXColumnSorting);
 
       // Y-Values
-      var decomposedValuesY = Decompose(srcYCol);
-      // the decomposedValues are not sorted yes
-      if (options.DestinationYColumnSorting == ConvertXYVToMatrixOptions.OutputSorting.Ascending)
-      {
-        decomposedValuesY.Sort();
-      }
-      else if (options.DestinationYColumnSorting == ConvertXYVToMatrixOptions.OutputSorting.Descending)
-      {
-        decomposedValuesY.Sort();
-        decomposedValuesY.Reverse();
-      }
+      IReadOnlyList<AltaxoVariant> clusterValuesY;
+      IReadOnlyList<int> clusterIndicesY;
+      if (options.UseClusteringForY && options.NumberOfClustersY.HasValue && srcYCol is DoubleColumn srcYDbl)
+        (clusterValuesY, clusterIndicesY) = ClusterValuesByKMeans(srcYDbl, options.NumberOfClustersY.Value, options.DestinationYColumnSorting);
+      else
+        (clusterValuesY, clusterIndicesY) = ClusterValuesByEquality(srcYCol, options.DestinationYColumnSorting);
+
 
       // get the other columns to process
       var srcColumnsToProcess = new List<DataColumn>(inputData.GetDataColumns(ConvertXYVToMatrixDataAndOptions.ColumnV));
@@ -490,18 +482,18 @@ namespace Altaxo.Data
       // the only property column that is now useful is that with the repeated values
       var destXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol), srcXCol.GetType(), ColumnKind.X, 0);
       destXCol[0] = double.NaN;
-      for (int i = 0; i < decomposedValuesX.Count; ++i)
-        destXCol[i + 1] = decomposedValuesX[i]; // leave index 0 for the y-column
+      for (int i = 0; i < clusterValuesX.Count; ++i)
+        destXCol[i + 1] = clusterValuesX[i]; // leave index 0 for the y-column
 
       var destYCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcYCol), srcYCol.GetType(), ColumnKind.X, 0);
-      for (int i = 0; i < decomposedValuesY.Count; ++i)
-        destYCol[i] = decomposedValuesY[i]; // leave index 0 for the y-column
+      for (int i = 0; i < clusterValuesY.Count; ++i)
+        destYCol[i] = clusterValuesY[i]; // leave index 0 for the y-column
 
       var srcVColumn = srcColumnsToProcess[0];
 
       // Create as many columns as there are values in the destXColumn
 
-      for (int i = 0; i < decomposedValuesX.Count; ++i)
+      for (int i = 0; i < clusterValuesX.Count; ++i)
       {
         if (options.ColumnNaming == ConvertXYVToMatrixOptions.OutputNaming.ColAndIndex || string.IsNullOrEmpty(options.ColumnNameFormatString))
         {
@@ -509,17 +501,15 @@ namespace Altaxo.Data
         }
         else
         {
-          destTable.DataColumns.EnsureExistence(string.Format(options.ColumnNameFormatString, decomposedValuesX[i], i), srcVColumn.GetType(), ColumnKind.V, 0);
+          destTable.DataColumns.EnsureExistence(string.Format(options.ColumnNameFormatString, clusterValuesX[i], i), srcVColumn.GetType(), ColumnKind.V, 0);
         }
       }
-
-
 
       var dict = new Dictionary<(int iX, int iY), (AltaxoVariant sum, int count)>();
       for (int i = 0; i < srcVColumn.Count; ++i)
       {
-        var iX = destXCol.IndexOf(srcXCol[i]);
-        var iY = destYCol.IndexOf(srcYCol[i]);
+        var iX = 1 + clusterIndicesX[i];
+        var iY = clusterIndicesY[i];
 
         if (destTable[iX].IsElementEmpty(iY))
         {
@@ -558,14 +548,16 @@ namespace Altaxo.Data
       return null;
     }
 
-    /// <summary>
-    /// Decomposes a column into repeat units by analysing the values of the column with increasing index.
-    /// If a column value is repeated, the current range is finalized and a new range is started. At the end,
-    /// a list of index ranges is returned. Inside each range the column values are guaranteed to be unique.
-    /// </summary>
-    /// <param name="col">Column to decompose.</param>
-    /// <returns>List of integer ranges. Inside a single range the column values are ensured to be unique.</returns>
-    public static List<AltaxoVariant> Decompose(DataColumn col)
+    public static (IReadOnlyList<AltaxoVariant> ClusterValues, IReadOnlyList<int> ClusterIndices) ClusterValuesByKMeans(DoubleColumn col, int numberOfClusters, SortDirection sortDirection)
+    {
+      var clustering = new Altaxo.Calc.Clustering.KMeans_Double1D() { SortingOfClusterValues = sortDirection };
+      clustering.Evaluate(col.ToROVector(), numberOfClusters);
+      var resultList = new List<AltaxoVariant>(clustering.ClusterMeans.Select(x => new AltaxoVariant(x)));
+      var resultIndices = clustering.ClusterIndices;
+      return (resultList, resultIndices);
+    }
+
+    public static (IReadOnlyList<AltaxoVariant> ClusterValues, IReadOnlyList<int> ClusterIndices) ClusterValuesByEquality(DataColumn col, SortDirection sortDirection)
     {
       var result = new List<AltaxoVariant>();
       var alreadyIn = new HashSet<AltaxoVariant>();
@@ -578,7 +570,27 @@ namespace Altaxo.Data
           alreadyIn.Add(item);
         }
       }
-      return result;
+
+      switch (sortDirection)
+      {
+        case SortDirection.Ascending:
+          result.Sort();
+          break;
+        case SortDirection.Descending:
+          result.Sort((x, y) => Comparer<AltaxoVariant>.Default.Compare(y, x));
+          break;
+        default:
+          break;
+      }
+
+      int[] clusterIndices = new int[col.Count];
+
+      for (int i = 0; i < clusterIndices[i]; ++i)
+      {
+        clusterIndices[i] = result.IndexOf(col[i]);
+      }
+
+      return (result, clusterIndices);
     }
   }
 }

@@ -67,11 +67,13 @@ namespace Altaxo.Gui.Data
 
     #region ViewModel
 
-    public SelectableListNodeList ColumnXSorting { get { return _xColumnSorting; } set { _xColumnSorting = value;  OnPropertyChanged(nameof(ColumnXSorting)); } }
-    public SelectableListNodeList ColumnYSorting { get { return _xColumnSorting; } set { _xColumnSorting = value; OnPropertyChanged(nameof(ColumnYSorting)); } }
+    public SelectableListNodeList ColumnXSorting { get { return _xColumnSorting; } set { _xColumnSorting = value; OnPropertyChanged(nameof(ColumnXSorting)); } }
+    public SelectableListNodeList ColumnYSorting { get { return _yColumnSorting; } set { _yColumnSorting = value; OnPropertyChanged(nameof(ColumnYSorting)); } }
     public SelectableListNodeList Averaging { get { return _averaging; } set { _averaging = value; OnPropertyChanged(nameof(Averaging)); } }
-    public SelectableListNodeList ColumnNaming { get { return _columnNaming; } set { _columnNaming = value; OnPropertyChanged(nameof(ColumnNaming)); } }
+    public SelectableListNodeList ColumnNaming { get { return _columnNaming; } set { _columnNaming = value; OnPropertyChanged(nameof(ColumnNaming)); OnPropertyChanged(nameof(IsColumnNameFormatStringEnabled)); } }
+    public bool IsColumnNameFormatStringEnabled { get { return (ConvertXYVToMatrixOptions.OutputNaming?)(_columnNaming.FirstSelectedNode?.Tag) == ConvertXYVToMatrixOptions.OutputNaming.FormatString; } }
     public string ColumnNameFormatString { get { return _columnNameFormatString; } set { _columnNameFormatString = value; OnPropertyChanged(nameof(ColumnNameFormatString)); } }
+
 
     public bool UseClusteringForX { get { return _useClusteringForX; } set { _useClusteringForX = value; OnPropertyChanged(nameof(UseClusteringForX)); } }
     public bool UseClusteringForY { get { return _useClusteringForY; } set { _useClusteringForY = value; OnPropertyChanged(nameof(UseClusteringForY)); } }
@@ -84,7 +86,7 @@ namespace Altaxo.Gui.Data
 
     protected override void AttachView()
     {
-     
+
       base.AttachView();
 
       if (null != _view)
@@ -105,16 +107,21 @@ namespace Altaxo.Gui.Data
 
       if (initData)
       {
-       _xColumnSorting = new SelectableListNodeList();
-       _xColumnSorting.FillWithEnumeration(_doc.DestinationXColumnSorting);
-       _yColumnSorting = new SelectableListNodeList();
-       _yColumnSorting.FillWithEnumeration(_doc.DestinationYColumnSorting);
+        _xColumnSorting = new SelectableListNodeList();
+        _xColumnSorting.FillWithEnumeration(_doc.DestinationXColumnSorting);
+        _yColumnSorting = new SelectableListNodeList();
+        _yColumnSorting.FillWithEnumeration(_doc.DestinationYColumnSorting);
 
         _averaging = new SelectableListNodeList();
         _averaging.FillWithEnumeration(_doc.ValueAveraging);
         _columnNaming = new SelectableListNodeList();
         _columnNaming.FillWithEnumeration(_doc.ColumnNaming);
         _columnNameFormatString = _doc.ColumnNameFormatString;
+
+        _useClusteringForX = _doc.UseClusteringForX;
+        _useClusteringForY = _doc.UseClusteringForY;
+        _numberOfClustersX = _doc.NumberOfClustersX;
+        _numberOfClustersY = _doc.NumberOfClustersY;
       }
       if (null != _view)
       {
@@ -123,12 +130,16 @@ namespace Altaxo.Gui.Data
 
     public override bool Apply(bool disposeController)
     {
-      _doc.DestinationXColumnSorting = (ConvertXYVToMatrixOptions.OutputSorting)_xColumnSorting.FirstSelectedNode.Tag;
-      _doc.DestinationYColumnSorting = (ConvertXYVToMatrixOptions.OutputSorting)_yColumnSorting.FirstSelectedNode.Tag;
+      _doc.DestinationXColumnSorting = (SortDirection)_xColumnSorting.FirstSelectedNode.Tag;
+      _doc.DestinationYColumnSorting = (SortDirection)_yColumnSorting.FirstSelectedNode.Tag;
       _doc.ValueAveraging = (ConvertXYVToMatrixOptions.OutputAveraging)_averaging.FirstSelectedNode.Tag;
       _doc.ColumnNaming = (ConvertXYVToMatrixOptions.OutputNaming)_columnNaming.FirstSelectedNode.Tag;
       _doc.ColumnNameFormatString = _columnNameFormatString;
 
+      _doc.UseClusteringForX = _useClusteringForX;
+      _doc.UseClusteringForY = _useClusteringForY;
+      _doc.NumberOfClustersX = _numberOfClustersX;
+      _doc.NumberOfClustersY = _numberOfClustersY;
 
       return ApplyEnd(true, disposeController);
     }

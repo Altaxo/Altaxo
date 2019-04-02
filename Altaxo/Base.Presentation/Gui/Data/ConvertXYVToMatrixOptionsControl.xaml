@@ -5,16 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:AltaxoCommon="clr-namespace:Altaxo.Gui.Common"
 	mc:Ignorable="d">
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
-			<ColumnDefinition MinWidth="140" SharedSizeGroup="EditColumn1" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+            <ColumnDefinition MinWidth="140" SharedSizeGroup="EditColumn1" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
@@ -35,6 +35,10 @@
         <Label Grid.Row="6" Grid.Column="0" >Destination column naming:</Label>
         <AltaxoCommon:SingleChoiceRadioStackPanel Grid.Row="6" Grid.Column="1"  Orientation="Vertical" ItemsSource="{Binding ColumnNaming}" />
         <Label Grid.Row="8" Grid.Column="0" >Column name format string:</Label>
-        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding ColumnNameFormatString, Mode=TwoWay}" />
+        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding ColumnNameFormatString, Mode=TwoWay}" IsEnabled="{Binding IsColumnNameFormatStringEnabled}" ToolTip="Enter '{0}' to access the x-value, enter '{1}' to access the column index, or enter any combination of it with text." />
+        <CheckBox Grid.Row="10" Grid.Column="0" Content="Cluster X values, number of clusters:" IsChecked="{Binding UseClusteringForX, Mode=TwoWay}"/>
+        <AltaxoCommon:Int32UpDown Grid.Row="10" Grid.Column="1" Value="{Binding NumberOfClustersX, Mode=TwoWay}" IsEnabled="{Binding UseClusteringForX}"/>
+        <CheckBox Grid.Row="12" Grid.Column="0" Content="Cluster Y values, number of clusters:" IsChecked="{Binding UseClusteringForY, Mode=TwoWay}"/>
+        <AltaxoCommon:Int32UpDown Grid.Row="12" Grid.Column="1" Value="{Binding NumberOfClustersY, Mode=TwoWay}" IsEnabled="{Binding UseClusteringForY}"/>
     </Grid>
 </UserControl>
