@@ -74,11 +74,13 @@ namespace Altaxo.Data
     protected SortDirection _destinationXColumnSorting = SortDirection.Ascending;
     bool _useClusteringForX;
     int? _numberOfClustersX;
+    bool _createStdDevX;
 
     /// <summary>If set, the destination y-columns will be sorted according to the first averaged column (if there is any).</summary>
     protected SortDirection _destinationYColumnSorting = SortDirection.Ascending;
     bool _useClusteringForY;
     int? _numberOfClustersY;
+    bool _createStdDevY;
 
 
     #endregion Members
@@ -104,10 +106,12 @@ namespace Altaxo.Data
         info.AddEnum("DestinationXColumnSorting", s._destinationXColumnSorting);
         info.AddValue("UseClusteringForX", s._useClusteringForX);
         info.AddValue("NumberOfClustersX", s._numberOfClustersX);
+        info.AddValue("CreateStdDevX", s._createStdDevX);
 
         info.AddEnum("DestinationYColumnSorting", s._destinationYColumnSorting);
         info.AddValue("UseClusteringForY", s._useClusteringForY);
         info.AddValue("NumberOfClustersY", s._numberOfClustersY);
+        info.AddValue("CreateStdDevY", s._createStdDevY);
 
       }
 
@@ -122,10 +126,12 @@ namespace Altaxo.Data
         s._destinationXColumnSorting = (SortDirection)info.GetEnum("DestinationXColumnSorting", typeof(SortDirection));
         s._useClusteringForX = info.GetBoolean("UseClusteringForX");
         s._numberOfClustersX = info.GetNullableInt32("NumberOfClustersX");
+        s._createStdDevX = info.GetBoolean("CreateStdDevX");
 
         s._destinationYColumnSorting = (SortDirection)info.GetEnum("DestinationYColumnSorting", typeof(SortDirection));
         s._useClusteringForY = info.GetBoolean("UseClusteringForY");
         s._numberOfClustersY = info.GetNullableInt32("NumberOfClustersY");
+        s._createStdDevY = info.GetBoolean("CreateStdDevY");
 
         return s;
       }
@@ -203,6 +209,10 @@ namespace Altaxo.Data
 
     public int? NumberOfClustersX { get { return _numberOfClustersX; } set { _numberOfClustersX = value; } }
     public int? NumberOfClustersY { get { return _numberOfClustersY; } set { _numberOfClustersY = value; } }
+
+    public bool CreateStdDevX { get { return _createStdDevX; } set { _createStdDevX = value; } }
+    public bool CreateStdDevY { get { return _createStdDevY; } set { _createStdDevY = value; } }
+
 
     #endregion Properties
   }
@@ -459,16 +469,18 @@ namespace Altaxo.Data
       // X-Values
       IReadOnlyList<AltaxoVariant> clusterValuesX;
       IReadOnlyList<int> clusterIndicesX;
+      IReadOnlyList<double> clusterStdDevX = null;
       if (options.UseClusteringForX && options.NumberOfClustersX.HasValue && srcXCol is DoubleColumn srcXDbl)
-        (clusterValuesX, clusterIndicesX) = ClusterValuesByKMeans(srcXDbl, options.NumberOfClustersX.Value, options.DestinationXColumnSorting);
+        (clusterValuesX, clusterStdDevX, clusterIndicesX) = ClusterValuesByKMeans(srcXDbl, options.NumberOfClustersX.Value, options.DestinationXColumnSorting, options.CreateStdDevX);
       else
         (clusterValuesX, clusterIndicesX) = ClusterValuesByEquality(srcXCol, options.DestinationXColumnSorting);
 
       // Y-Values
       IReadOnlyList<AltaxoVariant> clusterValuesY;
       IReadOnlyList<int> clusterIndicesY;
+      IReadOnlyList<double> clusterStdDevY = null;
       if (options.UseClusteringForY && options.NumberOfClustersY.HasValue && srcYCol is DoubleColumn srcYDbl)
-        (clusterValuesY, clusterIndicesY) = ClusterValuesByKMeans(srcYDbl, options.NumberOfClustersY.Value, options.DestinationYColumnSorting);
+        (clusterValuesY, clusterStdDevY, clusterIndicesY) = ClusterValuesByKMeans(srcYDbl, options.NumberOfClustersY.Value, options.DestinationYColumnSorting, options.CreateStdDevY);
       else
         (clusterValuesY, clusterIndicesY) = ClusterValuesByEquality(srcYCol, options.DestinationYColumnSorting);
 
@@ -479,15 +491,33 @@ namespace Altaxo.Data
       srcColumnsToProcess.Remove(srcXCol);
       srcColumnsToProcess.Remove(srcYCol);
 
+      int xOffset = 1 + (clusterStdDevY != null ? 1 : 0);
       // the only property column that is now useful is that with the repeated values
       var destXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol), srcXCol.GetType(), ColumnKind.X, 0);
-      destXCol[0] = double.NaN;
+      for(int i=0; i<xOffset;++i)
+        destXCol[0] = double.NaN;
       for (int i = 0; i < clusterValuesX.Count; ++i)
-        destXCol[i + 1] = clusterValuesX[i]; // leave index 0 for the y-column
+        destXCol[i + xOffset] = clusterValuesX[i]; // leave index 0 and maybe 1for the y-column
+
+      if(clusterStdDevX != null)
+      {
+        var stdXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol)+"_StdDev", srcXCol.GetType(), ColumnKind.Err, 0);
+        for (int i = 0; i < xOffset; ++i)
+          stdXCol[0] = double.NaN;
+        for (int i = 0; i < clusterStdDevX.Count; ++i)
+          stdXCol[i + xOffset] = clusterStdDevX[i]; // leave index 0 and maybe 1 for the y-column
+      }
 
       var destYCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcYCol), srcYCol.GetType(), ColumnKind.X, 0);
       for (int i = 0; i < clusterValuesY.Count; ++i)
         destYCol[i] = clusterValuesY[i]; // leave index 0 for the y-column
+
+      if(clusterStdDevY != null)
+      {
+        var stdYCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcYCol) + "_StdDev", srcYCol.GetType(), ColumnKind.Err, 0);
+        for (int i = 0; i < clusterStdDevY.Count; ++i)
+          stdYCol[i] = clusterStdDevY[i]; // leave index 0 for the y-column
+      }
 
       var srcVColumn = srcColumnsToProcess[0];
 
@@ -508,7 +538,7 @@ namespace Altaxo.Data
       var dict = new Dictionary<(int iX, int iY), (AltaxoVariant sum, int count)>();
       for (int i = 0; i < srcVColumn.Count; ++i)
       {
-        var iX = 1 + clusterIndicesX[i];
+        var iX = xOffset + clusterIndicesX[i];
         var iY = clusterIndicesY[i];
 
         if (destTable[iX].IsElementEmpty(iY))
@@ -548,13 +578,19 @@ namespace Altaxo.Data
       return null;
     }
 
-    public static (IReadOnlyList<AltaxoVariant> ClusterValues, IReadOnlyList<int> ClusterIndices) ClusterValuesByKMeans(DoubleColumn col, int numberOfClusters, SortDirection sortDirection)
+    public static (IReadOnlyList<AltaxoVariant> ClusterValues, IReadOnlyList<double> ClusterStdDev, IReadOnlyList<int> ClusterIndices) ClusterValuesByKMeans(DoubleColumn col, int numberOfClusters, SortDirection sortDirection, bool createStdDev)
     {
       var clustering = new Altaxo.Calc.Clustering.KMeans_Double1D() { SortingOfClusterValues = sortDirection };
       clustering.Evaluate(col.ToROVector(), numberOfClusters);
       var resultList = new List<AltaxoVariant>(clustering.ClusterMeans.Select(x => new AltaxoVariant(x)));
       var resultIndices = clustering.ClusterIndices;
-      return (resultList, resultIndices);
+
+      IReadOnlyList<double> resultStdDev = null;
+      if (createStdDev)
+      {
+        resultStdDev = clustering.EvaluateClustersStandardDeviation();
+      }
+      return (resultList, resultStdDev, resultIndices);
     }
 
     public static (IReadOnlyList<AltaxoVariant> ClusterValues, IReadOnlyList<int> ClusterIndices) ClusterValuesByEquality(DataColumn col, SortDirection sortDirection)

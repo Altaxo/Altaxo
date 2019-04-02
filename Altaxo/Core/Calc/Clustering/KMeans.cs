@@ -512,6 +512,8 @@ namespace Altaxo.Calc.Clustering
       return max_i;
     }
 
+    #region Helper functions for result output
+
     /// <summary>
     /// Sorts the cluster values, if cluster data are sortable (if they implement <see cref="IComparable"/>). 
     /// </summary>
@@ -539,6 +541,40 @@ namespace Altaxo.Calc.Clustering
         ++_clusterCounts[_pointsClusterIdx[i]];
       }
     }
+
+    /// <summary>
+    /// Evaluates for each cluster the standard deviation, i.e. the square root ( of the sum of squared distances divided by N-1)
+    /// </summary>
+    /// <returns></returns>
+    public IReadOnlyList<double> EvaluateClustersStandardDeviation()
+    {
+      var stdDev = new double[_clusterMeans.Length];
+
+      for (int ic = 0; ic < _clusterMeans.Length; ++ic)
+      {
+        var mean = _clusterMeans[ic];
+
+        double sum = 0;
+        int count = 0;
+        for (int jp = 0; jp < _pointsData.Length; ++jp)
+        {
+          if (_pointsClusterIdx[jp] == ic)
+          {
+            ++count;
+            var x = _distanceFunction(mean, _pointsData[jp]);
+            if (_isDistanceFunctionSquareOfDistance)
+              sum += x;
+            else
+              sum += x * x;
+          }
+        }
+        stdDev[ic] = Math.Sqrt(sum / (count-1));
+      }
+      return stdDev;
+    }
+
+
+    #endregion
   }
 
 
