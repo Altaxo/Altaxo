@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2016 Dr. Dirk Lellinger
+//    Copyright (C) 2019 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -60,9 +60,9 @@ namespace Altaxo.Data
       {
         var s = (o == null ? new DecomposeByColumnContentDataSource() : (DecomposeByColumnContentDataSource)o);
 
-        s._processData = (DataTableMultipleColumnProxy)info.GetValue("ProcessData", s);
-        s._processOptions = (DecomposeByColumnContentOptions)info.GetValue("ProcessOptions", s);
-        s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", s);
+        s.ChildSetMember(ref s._processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", s));
+        s.ChildSetMember(ref s._processOptions, (DecomposeByColumnContentOptions)info.GetValue("ProcessOptions", s));
+        s.ChildSetMember(ref s._importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", s));
 
         s.InputData = s._processData;
 
@@ -223,10 +223,7 @@ namespace Altaxo.Data
       }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("value");
-
-        if (ChildSetMember(ref _processData, value))
+        if (ChildSetMember(ref _processData, value ?? throw new ArgumentNullException(nameof(value))))
         {
           EhChildChanged(_processData, EventArgs.Empty);
         }
@@ -248,12 +245,10 @@ namespace Altaxo.Data
       }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("ImportOptions");
-
-        var oldValue = _importOptions;
-
-        _importOptions = value;
+        if(ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        {
+          EhChildChanged(_importOptions, EventArgs.Empty);
+        }
       }
     }
 
@@ -272,12 +267,10 @@ namespace Altaxo.Data
       }
       set
       {
-        if (null == value)
-          throw new ArgumentNullException("DataSourceOptions");
-
-        var oldValue = _processOptions;
-
-        _processOptions = value;
+        if(ChildSetMember(ref _processOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        {
+          EhChildChanged(_processOptions, EventArgs.Empty);
+        }
       }
     }
 
@@ -308,6 +301,11 @@ namespace Altaxo.Data
     {
       if (null != _processData)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
+      if (null != _processOptions)
+        yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
+      if (null != _importOptions)
+        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
+
     }
 
     #endregion Document Node functions

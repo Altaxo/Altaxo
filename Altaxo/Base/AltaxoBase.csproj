@@ -253,8 +253,19 @@
     <Compile Include="Analysis\Statistics\Histograms\LinearBinning.cs" />
     <Compile Include="Analysis\Statistics\Histograms\LogarithmicBinning.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiModulusRetardation.cs" />
+    <Compile Include="Data\Extensions\ConvertXYVToMatrixActions.cs" />
+    <Compile Include="Data\Extensions\ConvertXYVToMatrixDataAndOptions.cs" />
     <Compile Include="Data\Extensions\ConvertXYVToMatrixDataSource.cs" />
-    <Compile Include="Data\Extensions\ConvertXYVToMatrix.cs" />
+    <Compile Include="Data\Extensions\ConvertXYVToMatrixOptions.cs" />
+    <Compile Include="Data\Extensions\DataTableTransposeDataSource.cs" />
+    <Compile Include="Data\Extensions\DataTableTransposeOptions.cs" />
+    <Compile Include="Data\Extensions\DecomposeByColumnContentActions.cs" />
+    <Compile Include="Data\Extensions\DecomposeByColumnContentDataAndOptions.cs" />
+    <Compile Include="Data\Extensions\DecomposeByColumnContentOptions.cs" />
+    <Compile Include="Data\Extensions\ExpandCyclingVariableColumnActions.cs" />
+    <Compile Include="Data\Extensions\ExpandCyclingVariableColumnDataAndOptions.cs" />
+    <Compile Include="Data\Extensions\ExpandCyclingVariableColumnOptions.cs" />
+    <Compile Include="Data\Extensions\Transposing.cs" />
     <Compile Include="Drawing\ImageExtensions.cs" />
     <Compile Include="Geometry\Double_2D\PolygonMath.cs" />
     <Compile Include="Geometry\LineD2D.cs" />
@@ -373,7 +384,6 @@
     <Compile Include="Data\DataTableMatrixProxy.cs" />
     <Compile Include="Data\Extensions\DatabaseCommands.cs" />
     <Compile Include="Data\Extensions\DataTableToMatrixConverter.cs" />
-    <Compile Include="Data\Extensions\DecomposeByColumnContent.cs" />
     <Compile Include="Data\Extensions\DecomposeByColumnContentDataSource.cs" />
     <Compile Include="Data\Extensions\ExpandCyclingVariableColumnDataSource.cs" />
     <Compile Include="Data\Extensions\IReadableColumnExtensions.cs" />
@@ -1256,7 +1266,6 @@
     <Compile Include="Collections\SystemCollectionsSerialization.cs" />
     <Compile Include="Data\DataRow.cs" />
     <Compile Include="Data\Extensions\AnalysisRealFourierTransformCommands.cs" />
-    <Compile Include="Data\Extensions\ExpandCyclingVariableColumn.cs" />
     <Compile Include="Data\Extensions\MasterCurveCreation.cs" />
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
@@ -1673,7 +1682,6 @@
     <Compile Include="Data\Extensions\Sorting.cs" />
     <Compile Include="Data\Extensions\StatisticCommands.cs" />
     <Compile Include="Data\Extensions\DataTableCommands.cs" />
-    <Compile Include="Data\Extensions\Transpose.cs" />
     <Compile Include="Graph\CSAxisInformation.cs" />
     <Compile Include="Graph\CSLineID.cs" />
     <Compile Include="Graph\CSPlaneID.cs" />

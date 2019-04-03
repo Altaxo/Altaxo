@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2019 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,15 +24,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Data
 {
-  public class ConvertXYVToMatrixDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
+  public class DataTableTransposeDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
-    private ConvertXYVToMatrixOptions _processOptions;
-    private DataTableMultipleColumnProxy _processData;
+    private DataTableTransposeOptions _processOptions;
+    private DataTableProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
     public Action<IAltaxoTableDataSource> _dataSourceChanged;
@@ -42,28 +40,27 @@ namespace Altaxo.Data
     #region Version 0
 
     /// <summary>
-    /// 2019-04-01 initial version.
+    /// 2015-08-26 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConvertXYVToMatrixDataSource), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableTransposeDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ConvertXYVToMatrixDataSource)obj;
+        var s = (DataTableTransposeDataSource)obj;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);
         info.AddValue("ImportOptions", s._importOptions);
       }
 
-      protected virtual ConvertXYVToMatrixDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual DataTableTransposeDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        var s = (o == null ? new ConvertXYVToMatrixDataSource() : (ConvertXYVToMatrixDataSource)o);
+        var s = (o == null ? new DataTableTransposeDataSource() : (DataTableTransposeDataSource)o);
 
-        s.ChildSetMember(ref s._processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", s));
-        s.ChildSetMember(ref s._processOptions, (ConvertXYVToMatrixOptions)info.GetValue("ProcessOptions", s));
+        s.ChildSetMember(ref s._processData, (DataTableProxy)info.GetValue("ProcessData", s));
+        s._processOptions = (DataTableTransposeOptions)info.GetValue("ProcessOptions", s);
         s.ChildSetMember(ref s._importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", s));
-
         return s;
       }
 
@@ -78,12 +75,12 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
-    protected ConvertXYVToMatrixDataSource()
+    protected DataTableTransposeDataSource()
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
+    /// Initializes a new instance of the <see cref="DataTableTransposeDataSource"/> class.
     /// </summary>
     /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
     /// <param name="dataSourceOptions">The Fourier transformation options.</param>
@@ -95,7 +92,7 @@ namespace Altaxo.Data
     /// or
     /// importOptions
     /// </exception>
-    public ConvertXYVToMatrixDataSource(DataTableMultipleColumnProxy inputData, ConvertXYVToMatrixOptions dataSourceOptions, IDataSourceImportOptions importOptions)
+    public DataTableTransposeDataSource(DataTableProxy inputData, DataTableTransposeOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
       if (null == inputData)
         throw new ArgumentNullException(nameof(inputData));
@@ -106,17 +103,17 @@ namespace Altaxo.Data
 
       using (var token = SuspendGetToken())
       {
-        DataSourceOptions = dataSourceOptions;
+        TransposeOptions = dataSourceOptions;
         ImportOptions = importOptions;
         InputData = inputData;
       }
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
+    /// Initializes a new instance of the <see cref="ExpandCyclingVariableColumnDataSource"/> class.
     /// </summary>
     /// <param name="from">Another instance to copy from.</param>
-    public ConvertXYVToMatrixDataSource(ConvertXYVToMatrixDataSource from)
+    public DataTableTransposeDataSource(DataTableTransposeDataSource from)
     {
       CopyFrom(from);
     }
@@ -131,20 +128,20 @@ namespace Altaxo.Data
       if (object.ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as ConvertXYVToMatrixDataSource;
+      var from = obj as DataTableTransposeDataSource;
       if (null != from)
       {
         using (var token = SuspendGetToken())
         {
-          ConvertXYVToMatrixOptions dataSourceOptions = null;
-          DataTableMultipleColumnProxy inputData = null;
+          DataTableTransposeOptions dataSourceOptions = null;
+          DataTableProxy inputData = null;
           IDataSourceImportOptions importOptions = null;
 
           CopyHelper.Copy(ref importOptions, from._importOptions);
           CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
           CopyHelper.Copy(ref inputData, from._processData);
 
-          DataSourceOptions = dataSourceOptions;
+          TransposeOptions = dataSourceOptions;
           ImportOptions = importOptions;
           InputData = inputData;
 
@@ -162,7 +159,7 @@ namespace Altaxo.Data
     /// </returns>
     public object Clone()
     {
-      return new ConvertXYVToMatrixDataSource(this);
+      return new DataTableTransposeDataSource(this);
     }
 
     #region IAltaxoTableDataSource
@@ -175,7 +172,11 @@ namespace Altaxo.Data
     {
       try
       {
-        ConvertXYVToMatrixActions.ConvertXYVToMatrix(_processData, _processOptions, destinationTable);
+        DataTable srcTable = _processData.Document;
+        if (srcTable == null)
+          throw new InvalidOperationException(string.Format("Source table was not found: {0}", _processData));
+
+        Transposing.Transpose(srcTable, _processOptions, destinationTable);
       }
       catch (Exception ex)
       {
@@ -211,9 +212,9 @@ namespace Altaxo.Data
     /// Gets or sets the input data.
     /// </summary>
     /// <value>
-    /// The input data.
+    /// The input data. This data is the input for the 2D-Fourier transformation.
     /// </value>
-    public DataTableMultipleColumnProxy InputData
+    public DataTableProxy InputData
     {
       get
       {
@@ -251,12 +252,13 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Gets or sets the options for this data source.
+    /// Gets or sets the options for the transpose operation.
     /// </summary>
     /// <value>
-    /// The options for this data source.
+    /// The transpose options.
     /// </value>
-    public ConvertXYVToMatrixOptions DataSourceOptions
+    /// <exception cref="System.ArgumentNullException">FourierTransformation2DOptions</exception>
+    public DataTableTransposeOptions TransposeOptions
     {
       get
       {
@@ -264,10 +266,12 @@ namespace Altaxo.Data
       }
       set
       {
-        if (ChildSetMember(ref _processOptions, value ?? throw new ArgumentNullException(nameof(value))))
-        {
-          EhChildChanged(_processOptions, EventArgs.Empty);
-        }
+        if (null == value)
+          throw new ArgumentNullException(nameof(value));
+
+        var oldValue = _processOptions;
+
+        _processOptions = value;
       }
     }
 
@@ -298,8 +302,8 @@ namespace Altaxo.Data
     {
       if (null != _processData)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-      if (null != _processOptions)
-        yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
+      // if (null != _processOptions)
+      //   yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
       if (null != _importOptions)
         yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
     }
@@ -319,7 +323,8 @@ namespace Altaxo.Data
     /// <param name="ReportProxies">The report proxies.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
-      _processData?.VisitDocumentReferences(ReportProxies);
+      if (_processData != null)
+        ReportProxies(_processData, this, "ProcessData");
     }
 
     #endregion IAltaxoTableDataSource
