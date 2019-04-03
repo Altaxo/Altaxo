@@ -1072,7 +1072,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
       else if (e is CameraChangedEventArgs) // Only the camera has changed, there is no need to rebuild the geometry
       {
-        _view.SetCamera(_doc.Camera, _doc.Lighting);
+        _view?.SetCamera(_doc.Camera, _doc.Lighting);
         _view?.TriggerRendering();
       }
       else // everything else need to rebuild the geometry
