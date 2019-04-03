@@ -56,7 +56,7 @@ namespace Altaxo.Text
         var s = (OpenXMLExportOptions)obj;
 
         info.AddValue("ExpandChildDocuments", s.ExpandChildDocuments);
-        info.AddValue("MaxImageHeight", s.MaximumImageHeight);
+        info.AddValue("MaxImageWidth", s.MaximumImageWidth);
         info.AddValue("MaxImageHeight", s.MaximumImageHeight);
         info.AddValue("ImageResolution", s.ImageResolutionDpi);
 
