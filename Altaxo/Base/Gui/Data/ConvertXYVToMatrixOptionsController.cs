@@ -50,6 +50,8 @@ namespace Altaxo.Gui.Data
     bool _useClusteringForY;
     int? _numberOfClustersX;
     int? _numberOfClustersY;
+    private bool _createStdDevX;
+    private bool _createStdDevY;
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -79,8 +81,11 @@ namespace Altaxo.Gui.Data
     public bool UseClusteringForY { get { return _useClusteringForY; } set { _useClusteringForY = value; OnPropertyChanged(nameof(UseClusteringForY)); } }
 
     public int? NumberOfClustersX { get { return _numberOfClustersX; } set { _numberOfClustersX = value; OnPropertyChanged(nameof(NumberOfClustersX)); } }
-
     public int? NumberOfClustersY { get { return _numberOfClustersY; } set { _numberOfClustersY = value; OnPropertyChanged(nameof(NumberOfClustersY)); } }
+
+    public bool CreateStdDevX { get { return _createStdDevX; } set { _createStdDevX = value; OnPropertyChanged(nameof(CreateStdDevX)); } }
+    public bool CreateStdDevY { get { return _createStdDevY; } set { _createStdDevY = value; OnPropertyChanged(nameof(CreateStdDevY)); } }
+
 
     #endregion
 
@@ -122,6 +127,8 @@ namespace Altaxo.Gui.Data
         _useClusteringForY = _doc.UseClusteringForY;
         _numberOfClustersX = _doc.NumberOfClustersX;
         _numberOfClustersY = _doc.NumberOfClustersY;
+        _createStdDevX = _doc.CreateStdDevX;
+        _createStdDevY = _doc.CreateStdDevY;
       }
       if (null != _view)
       {
@@ -140,7 +147,8 @@ namespace Altaxo.Gui.Data
       _doc.UseClusteringForY = _useClusteringForY;
       _doc.NumberOfClustersX = _numberOfClustersX;
       _doc.NumberOfClustersY = _numberOfClustersY;
-
+      _doc.CreateStdDevX = _createStdDevX;
+      _doc.CreateStdDevY = _createStdDevY;
       return ApplyEnd(true, disposeController);
     }
   }

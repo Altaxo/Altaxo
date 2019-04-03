@@ -494,14 +494,14 @@ namespace Altaxo.Data
       int xOffset = 1 + (clusterStdDevY != null ? 1 : 0);
       // the only property column that is now useful is that with the repeated values
       var destXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol), srcXCol.GetType(), ColumnKind.X, 0);
-      for(int i=0; i<xOffset;++i)
+      for (int i = 0; i < xOffset; ++i)
         destXCol[0] = double.NaN;
       for (int i = 0; i < clusterValuesX.Count; ++i)
         destXCol[i + xOffset] = clusterValuesX[i]; // leave index 0 and maybe 1for the y-column
 
-      if(clusterStdDevX != null)
+      if (clusterStdDevX != null)
       {
-        var stdXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol)+"_StdDev", srcXCol.GetType(), ColumnKind.Err, 0);
+        var stdXCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol) + "_StdDev", srcXCol.GetType(), ColumnKind.Err, 0);
         for (int i = 0; i < xOffset; ++i)
           stdXCol[0] = double.NaN;
         for (int i = 0; i < clusterStdDevX.Count; ++i)
@@ -512,7 +512,7 @@ namespace Altaxo.Data
       for (int i = 0; i < clusterValuesY.Count; ++i)
         destYCol[i] = clusterValuesY[i]; // leave index 0 for the y-column
 
-      if(clusterStdDevY != null)
+      if (clusterStdDevY != null)
       {
         var stdYCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcYCol) + "_StdDev", srcYCol.GetType(), ColumnKind.Err, 0);
         for (int i = 0; i < clusterStdDevY.Count; ++i)

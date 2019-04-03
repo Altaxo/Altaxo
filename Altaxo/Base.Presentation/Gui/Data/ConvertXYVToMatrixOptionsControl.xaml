@@ -22,7 +22,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="4" />
+            <RowDefinition Height="0" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="16" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="0" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
         </Grid.RowDefinitions>
@@ -38,7 +42,9 @@
         <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding ColumnNameFormatString, Mode=TwoWay}" IsEnabled="{Binding IsColumnNameFormatStringEnabled}" ToolTip="Enter '{0}' to access the x-value, enter '{1}' to access the column index, or enter any combination of it with text." />
         <CheckBox Grid.Row="10" Grid.Column="0" Content="Cluster X values, number of clusters:" IsChecked="{Binding UseClusteringForX, Mode=TwoWay}"/>
         <AltaxoCommon:Int32UpDown Grid.Row="10" Grid.Column="1" Value="{Binding NumberOfClustersX, Mode=TwoWay}" IsEnabled="{Binding UseClusteringForX}"/>
-        <CheckBox Grid.Row="12" Grid.Column="0" Content="Cluster Y values, number of clusters:" IsChecked="{Binding UseClusteringForY, Mode=TwoWay}"/>
-        <AltaxoCommon:Int32UpDown Grid.Row="12" Grid.Column="1" Value="{Binding NumberOfClustersY, Mode=TwoWay}" IsEnabled="{Binding UseClusteringForY}"/>
+        <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" Content="Create property column for X standard deviation" IsChecked="{Binding CreateStdDevX}"  IsEnabled="{Binding UseClusteringForX}"/>
+        <CheckBox Grid.Row="14" Grid.Column="0" Content="Cluster Y values, number of clusters:" IsChecked="{Binding UseClusteringForY, Mode=TwoWay}"/>
+        <AltaxoCommon:Int32UpDown Grid.Row="14" Grid.Column="1" Value="{Binding NumberOfClustersY, Mode=TwoWay}" IsEnabled="{Binding UseClusteringForY}"/>
+        <CheckBox Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" Content="Create data column for Y standard deviation"  IsChecked="{Binding CreateStdDevY}"  IsEnabled="{Binding UseClusteringForY}"/>
     </Grid>
 </UserControl>
