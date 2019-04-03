@@ -31,21 +31,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <remarks>This method hides any thrown exceptions that might occur during disposal of the object (by design)</remarks>
     public static void RemoveAndDispose<TypeName>(ref TypeName resource) where TypeName : class
     {
-      if (resource == null)
-        return;
-
-      var disposer = resource as IDisposable;
-      if (disposer != null)
+      if (resource is IDisposable disposable)
       {
         try
         {
-          disposer.Dispose();
+          disposable.Dispose();
         }
         catch
         {
         }
       }
-
       resource = null;
     }
   }

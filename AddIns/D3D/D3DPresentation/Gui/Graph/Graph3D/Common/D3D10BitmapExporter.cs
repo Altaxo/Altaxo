@@ -66,8 +66,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       double sourceDpi = options.SourceDpiResolution;
 
-      var exporter = new D3D10BitmapExporter();
-
       var scene = new Viewing.D3D10Scene();
 
       var g = new D3D10GraphicsContext();
@@ -125,7 +123,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       scene.SetLighting(doc.Lighting);
       scene.SetDrawing(g);
 
-      exporter.Export(pixelsX, pixelsY, scene, options, toStream);
+      Export(pixelsX, pixelsY, scene, options, toStream);
+
+      Disposer.RemoveAndDispose(ref g);
+      Disposer.RemoveAndDispose(ref scene);
 
       return (pixelsX, pixelsY);
     }
