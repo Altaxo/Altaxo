@@ -127,6 +127,10 @@ namespace Altaxo.Main.Properties
           {
             s._properties[propkey] = value;
             s._propertiesLazyLoaded.Remove(propkey);
+
+            if (value is IDocumentLeafNode valueLeafNode)
+              valueLeafNode.ParentObject = s;
+
           }
         }
         info.CloseArray(count);
@@ -378,8 +382,7 @@ namespace Altaxo.Main.Properties
       {
         _properties[p.GuidString] = value;
         _propertiesLazyLoaded.Remove(p.GuidString);
-        var propValAsNode = value as IDocumentLeafNode;
-        if (null != propValAsNode)
+        if (value is IDocumentLeafNode propValAsNode)
           propValAsNode.ParentObject = this;
 
         EhSelfChanged(EventArgs.Empty);
@@ -472,8 +475,7 @@ namespace Altaxo.Main.Properties
 
       _propertiesLazyLoaded.Remove(propName);
       _properties[propName] = value;
-      var propValAsNode = value as IDocumentLeafNode;
-      if (null != propValAsNode)
+      if (value is IDocumentLeafNode propValAsNode)
         propValAsNode.ParentObject = this;
 
       if (!(propName.StartsWith(TemporaryPropertyPrefixString)))
@@ -538,8 +540,12 @@ namespace Altaxo.Main.Properties
       if (null != _parent)
       {
         foreach (var pr in _properties)
-          if (pr.Value is IDisposable)
-            ((IDisposable)pr.Value).Dispose();
+        {
+          if (pr.Value is IDisposable disposable)
+          {
+            disposable.Dispose();
+          }
+        }
 
         _properties.Clear();
         _propertiesLazyLoaded.Clear();
@@ -565,18 +571,10 @@ namespace Altaxo.Main.Properties
       {
         if (overrideExistingProperties | !_properties.ContainsKey(entry.Key))
         {
-          object value;
-          if (entry.Value is ICloneable)
-          {
-            value = ((ICloneable)entry.Value).Clone();
-            var propValAsNode = value as IDocumentLeafNode;
-            if (null != propValAsNode)
-              propValAsNode.ParentObject = this;
-          }
-          else
-          {
-            value = entry.Value;
-          }
+          var value = entry.Value is ICloneable cloneableValue ? cloneableValue.Clone() : entry.Value;
+          if (value is IDocumentLeafNode propValAsNode)
+            propValAsNode.ParentObject = this;
+
           _properties[entry.Key] = value;
           if (from._propertiesLazyLoaded.Contains(entry.Key))
             _propertiesLazyLoaded.Add(entry.Key);
