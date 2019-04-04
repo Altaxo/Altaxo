@@ -39,40 +39,38 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
   public class D3D10GammaCorrector : IDisposable
   {
+    private bool _isDisposed;
     private InputLayout _vertexLayout;
     private Buffer _vertices;
     private Effect _effect;
     private Device _cachedDevice;
-    private bool _isDisposed = false;
 
     public D3D10GammaCorrector(Device device, string gammaCorrectorResourcePath)
     {
-      if (device == null)
-        throw new ArgumentNullException(nameof(device));
+      _cachedDevice = device ?? throw new ArgumentNullException(nameof(device));
 
-      _cachedDevice = device;
-
-      ShaderBytecode shaderBytes = null;
       using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(gammaCorrectorResourcePath))
       {
         if (null == stream)
           throw new InvalidOperationException(string.Format("Compiled shader resource not found: {0}", gammaCorrectorResourcePath));
 
-        using (shaderBytes = ShaderBytecode.FromStream(stream))
+        using (var shaderBytes = ShaderBytecode.FromStream(stream))
         {
           _effect = new Effect(device, shaderBytes);
         }
       }
 
-      EffectTechnique technique = _effect.GetTechniqueByIndex(0);
-      EffectPass pass = technique.GetPassByIndex(0);
+      using (EffectTechnique technique = _effect.GetTechniqueByIndex(0))
+      {
+        using (EffectPass pass = technique.GetPassByIndex(0))
+        {
+          _vertexLayout = new InputLayout(device, pass.Description.Signature, new[] {
+            new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+            new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
+          });
 
-      _vertexLayout = new InputLayout(device, pass.Description.Signature, new[] {
-                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0) });
-
-      _vertices = Buffer.Create(device, BindFlags.VertexBuffer, new[]
-                                       {
+          _vertices = Buffer.Create(device, BindFlags.VertexBuffer, new[]
+                                           {
                                       // 3D coordinates              UV Texture coordinates
                                        -1.0f, 1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
                                        1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
@@ -81,24 +79,25 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
                                        1.0f,  1.0f, 0.5f, 1.0f,      1.0f, 0.0f,
                                        1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
             });
+        }
+      }
     }
 
     #region IDisposable Support
+
+    ~D3D10GammaCorrector()
+    {
+      Dispose(false);
+    }
 
     protected virtual void Dispose(bool disposing)
     {
       if (!_isDisposed)
       {
-        if (disposing)
-        {
-          Disposer.RemoveAndDispose(ref _vertexLayout);
-          Disposer.RemoveAndDispose(ref _vertices);
-          Disposer.RemoveAndDispose(ref _effect);
-          _cachedDevice = null;
-        }
-
-        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-        // TODO: set large fields to null.
+        Disposer.RemoveAndDispose(ref _vertexLayout);
+        Disposer.RemoveAndDispose(ref _vertices);
+        Disposer.RemoveAndDispose(ref _effect);
+        _cachedDevice = null;
 
         _isDisposed = true;
       }
@@ -107,8 +106,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     public void Dispose()
     {
       Dispose(true);
-      // uncomment the following line if the finalizer is overridden.
-      // GC.SuppressFinalize(this);
+      GC.SuppressFinalize(this);
     }
 
     #endregion IDisposable Support
@@ -128,16 +126,31 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
       device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertices, 24, 0));
 
-      EffectTechnique technique = _effect.GetTechniqueByIndex(0);
-      EffectPass pass = technique.GetPassByIndex(0);
-      var shaderResourceObj = _effect.GetVariableByName("ShaderTexture");
-      EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
-      shaderResource.SetResource(textureView);
 
-      for (int i = 0; i < technique.Description.PassCount; ++i)
+      EffectTechnique technique = null;
+      EffectPass pass = null;
+      EffectVariable shaderResourceObj = null;
+      EffectShaderResourceVariable shaderResource = null;
+      try
       {
-        pass.Apply();
-        device.Draw(6, 0);
+        technique = _effect.GetTechniqueByIndex(0);
+        pass = technique.GetPassByIndex(0);
+        shaderResourceObj = _effect.GetVariableByName("ShaderTexture");
+        shaderResource = shaderResourceObj.AsShaderResource();
+        shaderResource.SetResource(textureView);
+
+        for (int i = 0; i < technique.Description.PassCount; ++i)
+        {
+          pass.Apply();
+          device.Draw(6, 0);
+        }
+      }
+      finally
+      {
+        Disposer.RemoveAndDispose(ref shaderResource);
+        Disposer.RemoveAndDispose(ref shaderResourceObj);
+        Disposer.RemoveAndDispose(ref pass);
+        Disposer.RemoveAndDispose(ref technique);
       }
     }
   }
