@@ -87,7 +87,12 @@
     <Compile Include="Gui\Graph\Graph3D\Common\TextureExtensions.cs" />
     <Compile Include="Gui\Graph\Graph3D\Common\D3D10RendererToImageSource.cs" />
     <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene_Lighting.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.RenderLayout.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.VertexAndIndexDeviceBuffer.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.VertexAndIndexDeviceBufferNoMaterial.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.VertexAndIndexDeviceBufferNoMaterialWithUColor.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.VertexBufferNoMaterial.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.Lighting.cs" />
     <Compile Include="Gui\Graph\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>
     </Compile>

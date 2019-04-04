@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -45,120 +45,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
   public partial class D3D10Scene : ID3D10Scene
   {
-    #region Internal structs
-
-    internal struct RenderLayout
-    {
-      public InputLayout VertexLayout;
-      public EffectTechnique technique;
-      public EffectPass pass;
-
-      public void Dispose()
-      {
-        Disposer.RemoveAndDispose(ref VertexLayout);
-        Disposer.RemoveAndDispose(ref technique);
-        Disposer.RemoveAndDispose(ref pass);
-      }
-    }
-
-    internal struct VertexAndIndexDeviceBuffer
-    {
-      public IMaterial Material;
-      public Buffer VertexBuffer;
-      public Buffer IndexBuffer;
-      public int VertexCount;
-      public int IndexCount;
-      public Plane[] ClipPlanes;
-      public byte[] UColors;
-
-      public void RemoveAndDispose()
-      {
-        Disposer.RemoveAndDispose(ref VertexBuffer);
-        Disposer.RemoveAndDispose(ref IndexBuffer);
-        VertexCount = 0;
-        IndexCount = 0;
-        Material = null;
-      }
-    }
-
-    internal class VertexAndIndexDeviceBufferNoMaterial
-    {
-      public Buffer VertexBuffer;
-      public Buffer IndexBuffer;
-      public int VertexCount;
-      public int IndexCount;
-
-      public void RemoveAndDispose()
-      {
-        Disposer.RemoveAndDispose(ref VertexBuffer);
-        Disposer.RemoveAndDispose(ref IndexBuffer);
-        VertexCount = 0;
-        IndexCount = 0;
-      }
-    }
-
-    internal class VertexAndIndexDeviceBufferNoMaterialWithUColor
-    {
-      public Buffer VertexBuffer;
-      public Buffer IndexBuffer;
-      public int VertexCount;
-      public int IndexCount;
-      public float[] UColor;
-
-      public void RemoveAndDispose()
-      {
-        Disposer.RemoveAndDispose(ref VertexBuffer);
-        Disposer.RemoveAndDispose(ref IndexBuffer);
-        VertexCount = 0;
-        IndexCount = 0;
-      }
-    }
-
-    internal class VertexBufferNoMaterial
-    {
-      public Buffer VertexBuffer;
-      public int VertexCount;
-
-      public void RemoveAndDispose()
-      {
-        Disposer.RemoveAndDispose(ref VertexBuffer);
-        VertexCount = 0;
-      }
-    }
-
-    #endregion Internal structs
-
-    private Device _hostDevice;
-
-    private PointD2D _hostSize;
-
-    private AxoColor? _sceneBackgroundColor;
-
-    private D3D10GraphicsContext _drawing;
-
-    private D3D10OverlayContext _markerGeometry;
-
-    private D3D10OverlayContext _overlayGeometry;
-
-    private CameraBase _camera;
-
-    /// <summary>The light settings from AltaxoBase</summary>
-    private LightSettings _lightSettings;
-
-    protected Buffer _constantBuffer;
-
-    protected Buffer _constantBufferForColor;
-
-    protected Buffer _constantBufferForSixPlanes;
-
-    private int _renderCounter;
-
-    private string[] _layoutNames = new string[7] { "P", "PC", "PT", "PN", "PNC", "PNT", "PNT1" };
-
-    private RenderLayout[] _renderLayouts = new RenderLayout[7];
-
-    private Effect _lightingEffect;
-
     /// <summary>
     /// The _this triangle buffers. These buffers are used for current rendering
     /// 0: Position, 1: PositionColor, 2: PositionUV, 3: PositionNormal, 4: PositionNormalColor, 5: PositionNormalUV
@@ -171,6 +57,30 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private VertexBufferNoMaterial _markerGeometryLineListBuffer;
     private VertexAndIndexDeviceBufferNoMaterial _overlayGeometryTriangleDeviceBuffer;
     private VertexBufferNoMaterial _overlayGeometryLineListBuffer;
+
+
+
+    /// <summary>
+    /// The cached D3D device. Do not dispose this device when disposing this class!
+    /// </summary>
+    private Device _cachedDevice;
+
+    private PointD2D _hostSize;
+
+    protected Buffer _constantBuffer;
+
+    protected Buffer _constantBufferForColor;
+
+    protected Buffer _constantBufferForSixPlanes;
+
+    private int _renderCounter;
+
+    // Meaning: P = PointCoordinates, C = Color, T = TextureCoordinates, N = Normal
+    private string[] _layoutNames = new string[7] { "P", "PC", "PT", "PN", "PNC", "PNT", "PNT1" };
+
+    private RenderLayout[] _renderLayouts = new RenderLayout[7];
+
+
 
     // Effect variables
 
@@ -203,20 +113,56 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     // Lighting
     private Lighting _lighting;
 
+    private Effect _lightingEffect;
+
+
+
+    #region Members that do not utilize unmanaged resources, and thus are not associated with a 3D device
+    // --------------------------------------------------------------------------------------------------
+
+    private AxoColor? _sceneBackgroundColor;
+
+    /// <summary>
+    /// The geometry to render, i.e. the scene itself.
+    /// </summary>
+    private D3D10GraphicsContext _altaxoDrawingGeometry;
+
+    /// <summary>
+    /// Helper geometry that draws X-Y-Z arrows for better orientation.
+    /// </summary>
+    private D3D10OverlayContext _altaxoMarkerGeometry;
+
+    /// <summary>
+    /// Geometry that is used temporarily, e.g. to show boxes when objects are moved or selected.
+    /// </summary>
+    private D3D10OverlayContext _altaxoOverlayGeometry;
+
+    /// <summary>
+    /// The camera associated with the scene
+    /// </summary>
+    private CameraBase _altaxoCamera;
+
+    /// <summary>The light settings from AltaxoBase</summary>
+    private LightSettings _altaxoLightSettings;
+
+    #endregion
+
     public void Attach(SharpDX.ComObject hostDevice, PointD2D hostSize)
     {
       Attach((Device)hostDevice, hostSize);
     }
-
-    public void Attach(Device hostDevice, PointD2D hostSize)
+    /// <summary>
+    /// Attaches the scene to the device specified in <paramref name="device"/>, and allocate resources specific to that device.
+    /// </summary>
+    /// <param name="device">The device to attach to.</param>
+    /// <param name="hostSize">The size of the device.</param>
+    public void Attach(Device device, PointD2D hostSize)
     {
-      if (hostDevice == null)
-        throw new ArgumentNullException(nameof(hostDevice));
+      if (null != _cachedDevice)
+        throw new InvalidOperationException("Try to attach to device without deattach former device!");
 
-      _hostDevice = hostDevice;
+      _cachedDevice = device ?? throw new ArgumentNullException(nameof(device));
       _hostSize = hostSize;
-
-      Device device = _hostDevice;
 
       using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.Effects.Lighting.cso"))
       {
@@ -229,63 +175,74 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         }
       }
 
-      int i;
 
-      for (i = 0; i < _layoutNames.Length; ++i)
+
+      for (int i = 0; i < _layoutNames.Length; ++i)
       {
         string techniqueName = "Shade_" + _layoutNames[i];
-        _renderLayouts[i].technique = _lightingEffect.GetTechniqueByName(techniqueName);
-        _renderLayouts[i].pass = _renderLayouts[i].technique.GetPassByIndex(0);
-
-        if (null == _renderLayouts[i].technique || !_renderLayouts[i].technique.IsValid)
+        var technique = _lightingEffect.GetTechniqueByName(techniqueName);
+        if (null == technique || !technique.IsValid)
           throw new InvalidProgramException(string.Format("Technique {0} was not found or is invalid", techniqueName));
-        if (null == _renderLayouts[i].pass || !_renderLayouts[i].pass.IsValid)
+
+        var pass = technique.GetPassByIndex(0);
+        if (null == pass || !pass.IsValid)
           throw new InvalidProgramException(string.Format("Pass[0] of technique {0} was not found or is invalid", techniqueName));
+
+        InputLayout inputLayout;
+        switch (i)
+        {
+          case 0:
+            inputLayout = new InputLayout(device, pass.Description.Signature, new[] {
+                                          new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0)
+                                          });
+            break;
+          case 1:
+            inputLayout = new InputLayout(device, pass.Description.Signature, new[] {
+                                          new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                          new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0)
+                                          });
+            break;
+          case 2:
+            inputLayout = new InputLayout(device, pass.Description.Signature, new[] {
+                                          new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                          new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
+                                          });
+            break;
+          case 3:
+            inputLayout = new InputLayout(device, pass.Description.Signature, new[] {
+                                          new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                          new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0)
+                                          });
+            break;
+          case 4:
+            inputLayout = new InputLayout(device, pass.Description.Signature, new[] {
+                                          new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                          new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
+                                          new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 32, 0)
+                                          });
+            break;
+          case 5:
+            inputLayout = new InputLayout(device, pass.Description.Signature, new[] {
+                                          new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                          new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
+                                          new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
+                                          });
+            break;
+          case 6:
+            inputLayout = new InputLayout(device, pass.Description.Signature, new[] {
+                                          new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0),
+                                          new InputElement("NORMAL", 0, Format.R32G32B32_Float, 12, 0),
+                                          new InputElement("TEXCOORD", 0, Format.R32G32_Float, 24, 0)
+                                          });
+            break;
+          default:
+            throw new NotImplementedException();
+        }
+
+        _renderLayouts[i] = new RenderLayout(technique, pass, inputLayout);
       }
 
-      i = 0;
-      _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
-                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0)
-                                                });
 
-      i = 1;
-      _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
-                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                                                new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0)
-                                                });
-
-      i = 2;
-      _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
-                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                                                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
-                                                });
-
-      i = 3;
-      _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
-                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                                                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0)
-                                                });
-
-      i = 4;
-      _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
-                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                                                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
-                                                                new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 32, 0)
-                                                });
-
-      i = 5;
-      _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
-                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                                                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
-                                                                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
-                                                });
-
-      i = 6;
-      _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
-                                                                new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0),
-                                                                new InputElement("NORMAL", 0, Format.R32G32B32_Float, 12, 0),
-                                                                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 24, 0)
-                                                });
 
       // Create Constant Buffers
       //_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
@@ -312,32 +269,148 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       // Clip plane variables
       _cbClipPlanes = _lightingEffect.GetConstantBufferByName("cbClipPlanes");
-      for (i = 0; i < 6; ++i)
+      for (int i = 0; i < 6; ++i)
       {
         _evClipPlanes[i] = _cbClipPlanes.GetMemberByName("ClipPlane" + i.ToString(System.Globalization.CultureInfo.InvariantCulture)).AsVector();
       }
 
       // Lighting variables
 
-      _lighting.Initialize(_lightingEffect);
+      _lighting = new Lighting(_lightingEffect);
       _lighting.SetDefaultLighting();
 
-      // --------------------
-      if (_drawing != null)
-      {
-        BringDrawingIntoBuffers(_drawing);
-      }
+      // -------------------- now draw the scene again with the new attached device --------------
 
-      if (null != _markerGeometry)
+      if (null != _altaxoCamera && null != _altaxoLightSettings)
       {
-        BringMarkerGeometryIntoDeviceBuffers(_markerGeometry);
-      }
+        if (_altaxoDrawingGeometry != null)
+        {
+          BringDrawingIntoBuffers(_altaxoDrawingGeometry);
+        }
 
-      if (null != _overlayGeometry)
-      {
-        BringOverlayGeometryIntoDeviceBuffers(_overlayGeometry);
+        if (null != _altaxoMarkerGeometry)
+        {
+          BringMarkerGeometryIntoDeviceBuffers(_altaxoMarkerGeometry);
+        }
+
+        if (null != _altaxoOverlayGeometry)
+        {
+          BringOverlayGeometryIntoDeviceBuffers(_altaxoOverlayGeometry);
+        }
       }
     }
+
+    /// <summary>
+    /// Detaches the scene from the device it was attached to, freeing all resources associated with the formerly attached device.
+    /// </summary>
+    public void Detach()
+    {
+      // Dispose all buffers
+      if (null != _nextTriangleDeviceBuffers)
+      {
+        for (int i = _nextTriangleDeviceBuffers.Length - 1; i >= 0; --i)
+        {
+          if (null != _nextTriangleDeviceBuffers[i])
+          {
+            foreach (var ele in _nextTriangleDeviceBuffers[i])
+            {
+              ele.Dispose();
+            }
+            _nextTriangleDeviceBuffers[i] = null;
+          }
+        }
+      }
+
+      if (null != _thisTriangleDeviceBuffers)
+      {
+        for (int i = _thisTriangleDeviceBuffers.Length - 1; i >= 0; --i)
+        {
+          if (null != _thisTriangleDeviceBuffers[i])
+          {
+            foreach (var ele in _thisTriangleDeviceBuffers[i])
+            {
+              ele.Dispose();
+            }
+            _thisTriangleDeviceBuffers[i] = null;
+          }
+        }
+      }
+
+      Disposer.RemoveAndDispose(ref _markerGeometryTriangleDeviceBuffer);
+      Disposer.RemoveAndDispose(ref _markerGeometryLineListBuffer);
+      Disposer.RemoveAndDispose(ref _overlayGeometryTriangleDeviceBuffer);
+      Disposer.RemoveAndDispose(ref _overlayGeometryLineListBuffer);
+      // ------- end disposing buffers -----
+
+
+      // now dispose all other device dependent variables, in inverse order than in Attach()
+
+      Disposer.RemoveAndDispose(ref _lighting);
+
+      for (int i = 0; i < _evClipPlanes.Length; ++i)
+      {
+        Disposer.RemoveAndDispose(ref _evClipPlanes[i]);
+      }
+      Disposer.RemoveAndDispose(ref _cbClipPlanes);
+      ReleaseTextureFor1DColorProviders();
+      Disposer.RemoveAndDispose(ref _evMaterialMetalnessValue);
+      Disposer.RemoveAndDispose(ref _evMaterialDiffuseIntensity);
+      Disposer.RemoveAndDispose(ref _evMaterialSpecularIntensity);
+      Disposer.RemoveAndDispose(ref _evMaterialSpecularExponent);
+      Disposer.RemoveAndDispose(ref _evMaterialDiffuseColor);
+      Disposer.RemoveAndDispose(ref _cbMaterial);
+      Disposer.RemoveAndDispose(ref _evEyePosition);
+      Disposer.RemoveAndDispose(ref _evWorldViewProj);
+      Disposer.RemoveAndDispose(ref _cbViewTransformation);
+      for (int i = 0; i < _renderLayouts.Length; ++i)
+      {
+        _renderLayouts[i]?.Dispose();
+      }
+
+      Disposer.RemoveAndDispose(ref _lightingEffect);
+
+      _cachedDevice = null;
+    }
+
+    #region IDisposable Support
+
+    private bool _isDisposed = false; // To detect redundant calls
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!_isDisposed)
+      {
+        if (disposing)
+        {
+          _altaxoDrawingGeometry?.Dispose();
+          _altaxoDrawingGeometry = null;
+          _altaxoMarkerGeometry?.Dispose();
+          _altaxoMarkerGeometry = null;
+          _altaxoOverlayGeometry?.Dispose();
+          _altaxoOverlayGeometry = null;
+          _altaxoCamera = null;
+          _altaxoLightSettings = null;
+        }
+
+        Detach();
+
+        _isDisposed = true;
+      }
+    }
+
+    ~D3D10Scene()
+    {
+      // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+      Dispose(false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+    #endregion
+
 
     public void SetSceneBackColor(AxoColor? sceneBackColor)
     {
@@ -354,7 +427,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     internal void SetMarkerGeometry(D3D10OverlayContext markerGeometry)
     {
-      _markerGeometry = markerGeometry;
+      _altaxoMarkerGeometry = markerGeometry;
       BringMarkerGeometryIntoDeviceBuffers(markerGeometry);
     }
 
@@ -365,13 +438,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public void SetDrawing(D3D10GraphicsContext drawing)
     {
-      _drawing = drawing;
+      _altaxoDrawingGeometry = drawing;
       BringDrawingIntoBuffers(drawing);
     }
 
     public void SetOverlayGeometry(D3D10OverlayContext overlayGeometry)
     {
-      _overlayGeometry = overlayGeometry;
+      _altaxoOverlayGeometry = overlayGeometry;
       BringOverlayGeometryIntoDeviceBuffers(overlayGeometry);
     }
 
@@ -380,7 +453,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (null == camera)
         throw new ArgumentNullException(nameof(camera));
 
-      _camera = camera;
+      _altaxoCamera = camera;
     }
 
     public void SetLighting(LightSettings lightSettings)
@@ -388,7 +461,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (null == lightSettings)
         throw new ArgumentNullException(nameof(lightSettings));
 
-      _lightSettings = lightSettings;
+      _altaxoLightSettings = lightSettings;
     }
 
     private void UseNextTriangleDeviceBuffers()
@@ -403,7 +476,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           if (null != oldBuffers)
           {
             foreach (var entry in oldBuffers)
-              entry.RemoveAndDispose();
+              entry.Dispose();
           }
         }
       }
@@ -423,9 +496,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         Width = 1024
       };
 
-      _textureFor1DColorProvider = new Texture1D(_hostDevice, _descriptionTextureFor1DColorProvider);
+      _textureFor1DColorProvider = new Texture1D(_cachedDevice, _descriptionTextureFor1DColorProvider);
 
-      var _textureFor1DColorMeshTextureView = new ShaderResourceView(_hostDevice, _textureFor1DColorProvider);
+      var _textureFor1DColorMeshTextureView = new ShaderResourceView(_cachedDevice, _textureFor1DColorProvider);
 
       var shaderResourceObj = _lightingEffect.GetVariableByName("ColorGradient1DTexture");
       EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
@@ -438,82 +511,80 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       Disposer.RemoveAndDispose(ref _textureFor1DColorProvider);
     }
 
-    private void BringDrawingIntoBuffers(D3D10GraphicsContext drawing)
+    private void BringDrawingIntoBuffers(D3D10GraphicsContext altaxoDrawingGeometry)
     {
-      Device device = _hostDevice;
+      Device device = _cachedDevice;
       if (device == null || device.IsDisposed)
         return;
 
-      var buffersOfType =
+      var altaxoBuffersOfType =
               new IEnumerable<KeyValuePair<MaterialKey, IndexedTriangleBuffer>>[]
               {
-                                drawing.PositionIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                                drawing.PositionColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                                drawing.PositionUVIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                                drawing.PositionNormalIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                                drawing.PositionNormalColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                                drawing.PositionNormalUVIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                                drawing.PositionNormalUIndexedTriangleBuffersAsIndexedTriangleBuffers
+                                altaxoDrawingGeometry.PositionIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                altaxoDrawingGeometry.PositionColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                altaxoDrawingGeometry.PositionUVIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                altaxoDrawingGeometry.PositionNormalIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                altaxoDrawingGeometry.PositionNormalColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                altaxoDrawingGeometry.PositionNormalUVIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                altaxoDrawingGeometry.PositionNormalUIndexedTriangleBuffersAsIndexedTriangleBuffers
               };
 
-      for (int i = 0; i < buffersOfType.Length; ++i)
+      for (int i = 0; i < altaxoBuffersOfType.Length; ++i)
       {
         var newDeviceBuffers = new List<VertexAndIndexDeviceBuffer>();
-        foreach (var entry in buffersOfType[i])
+        foreach (var altaxoBuffer in altaxoBuffersOfType[i])
         {
-          var buf = entry.Value;
-          if (buf.TriangleCount == 0)
+          var altaxoTriangleBuffer = altaxoBuffer.Value;
+          if (altaxoTriangleBuffer.TriangleCount == 0)
             continue;
 
-          var vertexBuffer = Buffer.Create<float>(device, buf.VertexStream, new BufferDescription()
+          var vertexBuffer = Buffer.Create<float>(device, altaxoTriangleBuffer.VertexStream, new BufferDescription()
           {
             BindFlags = BindFlags.VertexBuffer,
             CpuAccessFlags = CpuAccessFlags.None,
             OptionFlags = ResourceOptionFlags.None,
-            SizeInBytes = buf.VertexStreamLength,
+            SizeInBytes = altaxoTriangleBuffer.VertexStreamLength,
             Usage = ResourceUsage.Default
           });
 
-          var indexBuffer = Buffer.Create<int>(device, buf.IndexStream, new BufferDescription()
+          var indexBuffer = Buffer.Create<int>(device, altaxoTriangleBuffer.IndexStream, new BufferDescription()
           {
             BindFlags = BindFlags.IndexBuffer,
             CpuAccessFlags = CpuAccessFlags.None,
             OptionFlags = ResourceOptionFlags.None,
-            SizeInBytes = buf.IndexStreamLength,
+            SizeInBytes = altaxoTriangleBuffer.IndexStreamLength,
             Usage = ResourceUsage.Default
           });
-          var indexCount = buf.TriangleCount * 3;
+          var indexCount = altaxoTriangleBuffer.TriangleCount * 3;
 
           Plane[] clipPlanes = null;
-          if (entry.Key is MaterialPlusClippingKey)
+          if (altaxoBuffer.Key is MaterialPlusClippingKey)
           {
-            var axoClipPlanes = ((MaterialPlusClippingKey)entry.Key).ClipPlanes;
+            var axoClipPlanes = ((MaterialPlusClippingKey)altaxoBuffer.Key).ClipPlanes;
             if (null != axoClipPlanes)
               clipPlanes = axoClipPlanes.Select(axoPlane => new Plane((float)axoPlane.X, (float)axoPlane.Y, (float)axoPlane.Z, (float)-axoPlane.W)).ToArray();
           }
 
           byte[] uColors = null;
-          var material = entry.Key.Material;
-          if (buf is PositionNormalUIndexedTriangleBuffer && entry.Key is MaterialPlusClippingPlusColorProviderKey)
+          var material = altaxoBuffer.Key.Material;
+          if (altaxoTriangleBuffer is PositionNormalUIndexedTriangleBuffer && altaxoBuffer.Key is MaterialPlusClippingPlusColorProviderKey)
           {
-            var bufs = (PositionNormalUIndexedTriangleBuffer)buf;
-            var colorProvider = ((MaterialPlusClippingPlusColorProviderKey)(entry.Key)).ColorProvider;
+            var bufs = (PositionNormalUIndexedTriangleBuffer)altaxoTriangleBuffer;
+            var colorProvider = ((MaterialPlusClippingPlusColorProviderKey)(altaxoBuffer.Key)).ColorProvider;
             var fColors = bufs.GetColorArrayForColorProvider(colorProvider);
             uColors = new byte[fColors.Length * 4];
             System.Buffer.BlockCopy(fColors, 0, uColors, 0, uColors.Length);
             material = material.WithColor(new NamedColor(colorProvider.GetAxoColor(double.NaN))); // Material needs to have InvalidColor, because this can not be represented in the Texture1D
           }
-
-          newDeviceBuffers.Add(new VertexAndIndexDeviceBuffer { Material = entry.Key.Material, VertexBuffer = vertexBuffer, VertexCount = buf.VertexCount, IndexBuffer = indexBuffer, IndexCount = indexCount, ClipPlanes = clipPlanes, UColors = uColors });
+          newDeviceBuffers.Add(new VertexAndIndexDeviceBuffer(material: altaxoBuffer.Key.Material, vertexBuffer: vertexBuffer, vertexCount: altaxoTriangleBuffer.VertexCount, indexBuffer: indexBuffer, indexCount: indexCount, clipPlanes: clipPlanes, uColors: uColors));
         }
-
         System.Threading.Interlocked.Exchange(ref _nextTriangleDeviceBuffers[i], newDeviceBuffers);
       }
     }
 
     private void BringMarkerGeometryIntoDeviceBuffers(D3D10OverlayContext overlayGeometry)
     {
-      Device device = _hostDevice;
+      Device device = _cachedDevice;
       if (device == null || device.IsDisposed)
         return;
 
@@ -540,11 +611,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         });
         var indexCount = buf.TriangleCount * 3;
 
-        var devBuffer = new VertexAndIndexDeviceBufferNoMaterial { VertexBuffer = vertexBuffer, VertexCount = buf.VertexCount, IndexBuffer = indexBuffer, IndexCount = indexCount };
+        var devBuffer = new VertexAndIndexDeviceBufferNoMaterial(vertexBuffer: vertexBuffer, vertexCount: buf.VertexCount, indexBuffer: indexBuffer, indexCount: indexCount);
 
         var oldBuffer = System.Threading.Interlocked.Exchange(ref _markerGeometryTriangleDeviceBuffer, devBuffer);
-
-        oldBuffer?.RemoveAndDispose();
+        oldBuffer?.Dispose();
       }
 
       // ------------------  Line list buffer ------------------------------------
@@ -560,17 +630,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           Usage = ResourceUsage.Default
         });
 
-        var devBuffer = new VertexBufferNoMaterial { VertexBuffer = vertexBuffer, VertexCount = buf.VertexCount };
 
-        var oldBuffer = System.Threading.Interlocked.Exchange(ref _markerGeometryLineListBuffer, devBuffer);
-
-        oldBuffer?.RemoveAndDispose();
+        var oldBuffer = System.Threading.Interlocked.Exchange(
+          ref _markerGeometryLineListBuffer,
+          new VertexBufferNoMaterial(vertexBuffer: vertexBuffer, vertexCount: buf.VertexCount));
+        Disposer.RemoveAndDispose(ref oldBuffer);
       }
     }
 
     private void BringOverlayGeometryIntoDeviceBuffers(D3D10OverlayContext overlayGeometry)
     {
-      Device device = _hostDevice;
+      Device device = _cachedDevice;
       if (device == null || device.IsDisposed)
         return;
 
@@ -597,11 +667,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         });
         var indexCount = buf.TriangleCount * 3;
 
-        var devBuffer = new VertexAndIndexDeviceBufferNoMaterial { VertexBuffer = vertexBuffer, VertexCount = buf.VertexCount, IndexBuffer = indexBuffer, IndexCount = indexCount };
 
-        var oldBuffer = System.Threading.Interlocked.Exchange(ref _overlayGeometryTriangleDeviceBuffer, devBuffer);
-
-        oldBuffer?.RemoveAndDispose();
+        var oldBuffer = System.Threading.Interlocked.Exchange(
+          ref _overlayGeometryTriangleDeviceBuffer,
+          new VertexAndIndexDeviceBufferNoMaterial(vertexBuffer: vertexBuffer, vertexCount: buf.VertexCount, indexBuffer: indexBuffer, indexCount: indexCount));
+        Disposer.RemoveAndDispose(ref oldBuffer);
       }
 
       // ------------------  Line list buffer ------------------------------------
@@ -617,33 +687,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           Usage = ResourceUsage.Default
         });
 
-        var devBuffer = new VertexBufferNoMaterial { VertexBuffer = vertexBuffer, VertexCount = buf.VertexCount };
 
-        var oldBuffer = System.Threading.Interlocked.Exchange(ref _overlayGeometryLineListBuffer, devBuffer);
+        var oldBuffer = System.Threading.Interlocked.Exchange(
+          ref _overlayGeometryLineListBuffer,
+          new VertexBufferNoMaterial(vertexBuffer: vertexBuffer, vertexCount: buf.VertexCount));
 
-        oldBuffer?.RemoveAndDispose();
+        oldBuffer?.Dispose();
       }
     }
 
-    void IScene.Detach()
-    {
-      if (null != _nextTriangleDeviceBuffers)
-        foreach (var bufType in _nextTriangleDeviceBuffers)
-          if (null != bufType)
-            foreach (var ele in bufType)
-              ele.RemoveAndDispose();
 
-      if (null != _thisTriangleDeviceBuffers)
-        foreach (var bufType in _thisTriangleDeviceBuffers)
-          if (null != bufType)
-            foreach (var ele in bufType)
-              ele.RemoveAndDispose();
-
-      foreach (var entry in _renderLayouts)
-        entry.Dispose();
-
-      ReleaseTextureFor1DColorProviders();
-    }
 
     void IScene.Update(TimeSpan sceneTime)
     {
@@ -652,14 +705,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     void IScene.Render()
     {
-      Device device = _hostDevice;
+      Device device = _cachedDevice;
       if (device == null)
         throw new InvalidOperationException("Rendering failed because device is null");
       if (device.IsDisposed)
         throw new InvalidOperationException("Rendering failed because device is disposed");
-      if (_camera == null)
+      if (_altaxoCamera == null)
         throw new InvalidOperationException("Rendering failed because camera is null");
-      if (_drawing == null)
+      if (_altaxoDrawingGeometry == null)
         throw new InvalidOperationException("Rendering failed because drawing is null");
 
       UseNextTriangleDeviceBuffers();
@@ -669,9 +722,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       Matrix worldViewProjTr; // world-view matrix, transposed
 
-      if (null != _camera)
+      if (null != _altaxoCamera)
       {
-        var cam = _camera;
+        var cam = _altaxoCamera;
         var eye = cam.EyePosition;
         var target = cam.TargetPosition;
         var up = cam.UpVector;
@@ -699,10 +752,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       // World projection and camera
       _evWorldViewProj.SetMatrixTranspose(ref worldViewProjTr);
-      _evEyePosition.Set(ToVector3(_camera.EyePosition));
+      _evEyePosition.Set(ToVector3(_altaxoCamera.EyePosition));
 
       // lighting
-      _lighting.SetLighting(_lightSettings, _camera);
+      _lighting.SetLighting(_altaxoLightSettings, _altaxoCamera);
 
       // Material is separate for each buffer, therefore it is set there
 
@@ -853,7 +906,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
       device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
 
-      _renderLayouts[layoutNumber].pass.Apply();
+      _renderLayouts[layoutNumber].Pass.Apply();
       device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
     }
 
@@ -876,7 +929,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 48, 0));
       device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
 
-      _renderLayouts[layoutNumber].pass.Apply();
+      _renderLayouts[layoutNumber].Pass.Apply();
       device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
 
       if (null != deviceBuffers.ClipPlanes)
@@ -919,7 +972,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
       device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
 
-      _renderLayouts[layoutNumber].pass.Apply();
+      _renderLayouts[layoutNumber].Pass.Apply();
       device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
 
       // clear clip planes afterwards
@@ -944,7 +997,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
       device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
 
-      _renderLayouts[layoutNumber].pass.Apply();
+      _renderLayouts[layoutNumber].Pass.Apply();
       device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
     }
 
@@ -957,7 +1010,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
       device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
 
-      _renderLayouts[layoutNumber].pass.Apply();
+      _renderLayouts[layoutNumber].Pass.Apply();
       device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
     }
 
@@ -969,7 +1022,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, (8 * 4), 0));
 
-      _renderLayouts[layoutNumber].pass.Apply();
+      _renderLayouts[layoutNumber].Pass.Apply();
       device.Draw(deviceBuffers.VertexCount, 0);
     }
 

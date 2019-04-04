@@ -26,7 +26,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   /// <summary>
   /// Scene.
   /// </summary>
-  public interface IScene
+  public interface IScene : IDisposable
   {
     /// <summary>
     /// Attaches the scene to the specified scene host.
