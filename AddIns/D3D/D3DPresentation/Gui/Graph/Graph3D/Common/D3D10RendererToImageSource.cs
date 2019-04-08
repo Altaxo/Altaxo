@@ -93,17 +93,25 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
     ~D3D10RendererToImageSource()
     {
-      if (!_isDisposed)
-        throw new InvalidProgramException("Object was not disposed!");
+      Dispose(false);
     }
 
     public void Dispose()
     {
-      _isDisposed = true;
-      EndD3D();
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
 
-      _d3dImageSource.IsFrontBufferAvailableChanged -= EhIsFrontBufferAvailableChanged;
-      _d3dImageSource = null;
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!_isDisposed)
+      {
+        EndD3D();
+        _d3dImageSource.IsFrontBufferAvailableChanged -= EhIsFrontBufferAvailableChanged;
+        _d3dImageSource = null;
+
+        _isDisposed = true;
+      }
     }
 
     /// <summary>
@@ -119,7 +127,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       if (null == _device)
       {
-        _device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
+        _device = D3D10DeviceFactory.Instance.BorrowDevice();
+        // _device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
       }
 
       Scene?.SetHostSize(new PointD2D(sizeX, sizeY));
@@ -156,7 +165,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       CreateAndBindTargets(0, 0);
 
-      Disposer.RemoveAndDispose(ref _device);
+      D3D10DeviceFactory.Instance.PassbackDevice(ref _device);
     }
 
     private void CreateAndBindTargets(int sizeX, int sizeY)

@@ -104,6 +104,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     private Texture1D _textureFor1DColorProvider;
     private ShaderResourceView _textureFor1DColorProviderView;
+    private EffectVariable _textureFor1DColorProviderVariable;
+    private EffectShaderResourceVariable _textureFor1DColorProviderShaderResourceVariable;
 
     // Clip planes
     private EffectConstantBuffer _cbClipPlanes;
@@ -392,7 +394,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           _altaxoLightSettings = null;
         }
 
-        Detach();
+        if (null != _cachedDevice)
+        {
+          Detach();
+        }
 
         _isDisposed = true;
       }
@@ -498,15 +503,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       _textureFor1DColorProvider = new Texture1D(_cachedDevice, _descriptionTextureFor1DColorProvider);
 
-      var _textureFor1DColorMeshTextureView = new ShaderResourceView(_cachedDevice, _textureFor1DColorProvider);
+      _textureFor1DColorProviderView = new ShaderResourceView(_cachedDevice, _textureFor1DColorProvider);
 
-      var shaderResourceObj = _lightingEffect.GetVariableByName("ColorGradient1DTexture");
-      EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
-      shaderResource.SetResource(_textureFor1DColorMeshTextureView);
+      _textureFor1DColorProviderVariable = _lightingEffect.GetVariableByName("ColorGradient1DTexture");
+      _textureFor1DColorProviderShaderResourceVariable = _textureFor1DColorProviderVariable.AsShaderResource();
+      _textureFor1DColorProviderShaderResourceVariable.SetResource(_textureFor1DColorProviderView);
     }
 
     private void ReleaseTextureFor1DColorProviders()
     {
+      Disposer.RemoveAndDispose(ref _textureFor1DColorProviderShaderResourceVariable);
+      Disposer.RemoveAndDispose(ref _textureFor1DColorProviderVariable);
       Disposer.RemoveAndDispose(ref _textureFor1DColorProviderView);
       Disposer.RemoveAndDispose(ref _textureFor1DColorProvider);
     }

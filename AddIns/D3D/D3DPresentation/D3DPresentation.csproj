@@ -80,6 +80,7 @@
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Gui\Graph\Graph3D\Common\D3D10BitmapExporter.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Common\D3D10DeviceFactory.cs" />
     <Compile Include="Gui\Graph\Graph3D\Common\D3D10GammaCorrector.cs" />
     <Compile Include="Gui\Graph\Graph3D\Common\Disposer.cs" />
     <Compile Include="Gui\Graph\Graph3D\Common\D3D10ImageSource.cs" />

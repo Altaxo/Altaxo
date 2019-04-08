@@ -45,6 +45,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <param name="toStream">The stream to save the image to.</param>
     public (int PixelsX, int PixelsY) ExportAsImageToStream(Altaxo.Main.IProjectItem item, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
     {
+      // SharpDX.Configuration.EnableObjectTracking = true;
+      // var listOfActiveObjects = SharpDX.Diagnostics.ObjectTracker.FindActiveObjects();
+
       if (item == null)
         throw new ArgumentNullException(nameof(item));
       if (!(item is Altaxo.Graph.Graph3D.GraphDocument))
@@ -134,7 +137,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       try
       {
-        device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
+        //device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
+        device = D3D10DeviceFactory.Instance.BorrowDevice();
         // try to get the highest MSAA level with the highest quality
         int sampleCount = 32;
         int qlevel_sampleCount = 0;
@@ -231,7 +235,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         Disposer.RemoveAndDispose(ref renderTarget2);
         Disposer.RemoveAndDispose(ref renderTarget);
         Disposer.RemoveAndDispose(ref depthStencil);
-        Disposer.RemoveAndDispose(ref device);
+
+        device.ClearState();
+        D3D10DeviceFactory.Instance.PassbackDevice(ref device);
+        //device.QueryInterface<DeviceDebug>().ReportLiveDeviceObjects(ReportingLevel.Summary)
+        // Disposer.RemoveAndDispose(ref device);
+        //var activeObjects = SharpDX.Diagnostics.ObjectTracker.FindActiveObjects();
       }
 
     }
