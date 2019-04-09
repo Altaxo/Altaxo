@@ -32,6 +32,7 @@ namespace Altaxo.Main.Commands
   using Altaxo.Gui;
   using Altaxo.Gui.AddInItems;
   using Altaxo.Main.Services;
+  using Altaxo.Scripting;
 
   public class CreateNewWorksheet : SimpleCommand
   {
@@ -385,6 +386,47 @@ namespace Altaxo.Main.Commands
         return ex.Message;
       }
       return null;
+    }
+
+
+  }
+
+  /// <summary>
+  /// This command saves the project without worksheet scripts, and then
+  /// restores the scripts.
+  /// </summary>
+  public class SaveProjectWithoutWorksheetScripts : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var dict = new Dictionary<DataTable, TableScript>();
+
+      foreach (var table in Current.Project.DataTableCollection)
+      {
+
+        dict.Add(table, table.TableScript);
+        table.TableScript = null;
+      }
+
+      var oldFileName = Current.ProjectService.CurrentProjectFileName;
+
+
+      try
+      {
+        Current.ProjectService.CurrentProjectFileName = null;
+
+        Current.ProjectService.SaveProjectAs();
+      }
+      finally
+      {
+        foreach (var table in Current.Project.DataTableCollection)
+        {
+          table.TableScript = dict[table];
+        }
+
+        Current.ProjectService.CurrentProjectFileName = oldFileName;
+      }
+
     }
   }
 }

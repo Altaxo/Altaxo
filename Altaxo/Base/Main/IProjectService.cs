@@ -132,7 +132,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
     /// </summary>
-    string CurrentProjectFileName { get; }
+    string CurrentProjectFileName { get; set; }
+
 
     /// <summary>
     /// Creates the very first document. Used internal into the autostart command.

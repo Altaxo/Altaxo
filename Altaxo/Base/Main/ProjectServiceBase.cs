@@ -107,6 +107,15 @@ namespace Altaxo.Dom
     public virtual string CurrentProjectFileName
     {
       get { return _currentProjectFileName; }
+      set
+      {
+        if (!(_currentProjectFileName == value))
+        {
+          var oldName = _currentProjectFileName;
+          _currentProjectFileName = value;
+          OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldName, _currentProjectFileName));
+        }
+      }
     }
 
     /// <summary>
