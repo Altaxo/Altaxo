@@ -66,7 +66,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="xvec">Vector of x (independent) data.</param>
     /// <param name="yvec">Vector of y (dependent) data.</param>
     /// <returns></returns>
-    int Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec);
+    void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec);
 
     /// <summary>
     /// Returns a y value in dependence of a parameter u.
@@ -170,6 +170,57 @@ namespace Altaxo.Calc.Interpolation
     protected static bool MatchingIndexRange(IReadOnlyList<double> a, IReadOnlyList<double> b)
     {
       return a.Count == b.Count;
+    }
+
+    protected static bool IsStrictlyMonotonicallyIncreasing(IReadOnlyList<double> a)
+    {
+      if (a.Count == 0)
+        throw new ArgumentException("Array is empty", nameof(a));
+
+      var previous = a[0];
+      for (int i = 1; i < a.Count; ++i)
+      {
+        if (!(a[i] > previous))
+          return false;
+      }
+      return true;
+    }
+    /// <summary>
+    /// Throws an argument exception if the array a is not monotonically increasing.
+    /// If the array contains NaN, then the function also throws the exception.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="argumentName"></param>
+    protected static void ThrowIfIsNotStrictlyMonotonicallyIncreasing(IReadOnlyList<double> a, string argumentName)
+    {
+      if (a.Count == 0)
+        throw new ArgumentException("Array is empty", nameof(a));
+
+      var previous = a[0];
+      for (int i = 1; i < a.Count; ++i)
+      {
+        if (!(a[i] > previous))
+          throw new ArgumentException($"Array {argumentName} is not strictly monotonically increasing at index {i}. Element[{i - 1}]={previous}, Element[{i}]={a[i]}", argumentName);
+        previous = a[i];
+      }
+    }
+
+    protected static void ThrowIfContainsNaNOrInfiniteValues(IReadOnlyList<double> a, string argumentName)
+    {
+      for (int i = 0; i < a.Count; ++i)
+      {
+        if (!(double.MinValue <= a[i] && a[i] <= double.MaxValue))
+          throw new ArgumentException($"Array {argumentName} contains at least one invalid element at index {i}. Element[{i}]={a[i]}", argumentName);
+      }
+    }
+
+    protected static void ThrowIfContainsNegativeOrNaNOrInfiniteValues(IReadOnlyList<double> a, string argumentName)
+    {
+      for (int i = 0; i < a.Count; ++i)
+      {
+        if (!(0 <= a[i] && a[i] <= double.MaxValue))
+          throw new ArgumentException($"Array {argumentName} contains at least one invalid element at index {i}. Element[{i}]={a[i]}", argumentName);
+      }
     }
 
     #endregion Helper functions
@@ -336,8 +387,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="x">The vector of abscissa values.</param>
     /// <param name="y">The vector of ordinate values.</param>
-    /// <returns></returns>
-    public abstract int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y);
+    public abstract void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y);
 
     /// <summary>
     /// Get the abscissa value in dependence on parameter u.
@@ -539,7 +589,7 @@ namespace Altaxo.Calc.Interpolation
 
     #region IInterpolationCurve Members
 
-    public int Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
+    public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       if (null == x)
         x = new DoubleVector();
@@ -548,8 +598,6 @@ namespace Altaxo.Calc.Interpolation
 
       x.CopyFrom(xvec);
       y.CopyFrom(yvec);
-
-      return 0;
     }
 
     public double GetYOfU(double u)
@@ -736,11 +784,10 @@ tryinterpolation:
       RegressionOrder = regressionOrder;
     }
 
-    public int Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
+    public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       var err = VectorMath.GetConstantVector(1.0, yvec.Count);
       _fit = new Regression.LinearFitBySvd(xvec, yvec, err, xvec.Count, RegressionOrder + 1, Regression.LinearFitBySvd.GetPolynomialFunctionBase(RegressionOrder), 1E-6);
-      return 0;
     }
 
     public double GetYOfX(double x)
@@ -828,7 +875,7 @@ tryinterpolation:
     //
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
 
@@ -845,7 +892,7 @@ tryinterpolation:
         y1.Clear();
         y2.Clear();
         y3.Clear();
-        return 0; // ok
+        return; // ok
       }
 
       int hi = x.Count - 1;
@@ -892,8 +939,6 @@ tryinterpolation:
         // calculate remaining spline coefficients y2(i) and y3(i)
         CubicSplineCoefficients(x, y, y1, y2, y3);
       }
-
-      return 0; // ok
     }
 
     public override double GetXOfU(double u)
@@ -1041,7 +1086,7 @@ tryinterpolation:
     // The abscissa vector must be strictly increasing.
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
 
@@ -1058,7 +1103,7 @@ tryinterpolation:
         y1.Clear();
         y2.Clear();
         y3.Clear();
-        return 0; // ok
+        return; // ok
       }
 
       const int lo = 0, lo1 = lo + 1, lo2 = lo + 2;
@@ -1152,8 +1197,6 @@ tryinterpolation:
         // calculate remaining spline coefficients y2(i) and y3(i)
         CubicSplineCoefficients(x, y, y1, y2, y3);
       }
-
-      return 0; // ok
     }
 
     public override double GetXOfU(double u)
@@ -1202,7 +1245,7 @@ tryinterpolation:
   /// </remarks>
   public class BezierCubicSpline : CurveBase
   {
-    public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // verify index range
       if (!MatchingIndexRange(x, y))
@@ -1211,8 +1254,6 @@ tryinterpolation:
       // link original data vectors into base class
       base.x = x;
       base.y = y;
-
-      return 0; // ok
     }
 
     public override double GetXOfU(double t)
@@ -1428,7 +1469,7 @@ void DrawClosedCurve (Scene &scene)
   /// </remarks>
   public class CardinalCubicSpline : CurveBase
   {
-    public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // verify index range
       if (!MatchingIndexRange(x, y))
@@ -1437,8 +1478,6 @@ void DrawClosedCurve (Scene &scene)
       // link original data vectors into base class
       base.x = x;
       base.y = y;
-
-      return 0; // ok
     }
 
     //----------------------------------------------------------------------------//
@@ -2230,7 +2269,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
 
@@ -2250,7 +2289,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         b.Clear();
         c.Clear();
         d.Clear();
-        return 0; // ok
+        return; // ok
       }
 
       const int lo = 0;
@@ -2308,8 +2347,6 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       {
         throw new NotImplementedException("PERIODIC BOUNDARIES NOT YET IMPLEMENTED");
       }
-
-      return 0; // ok
     }
 
     public override double GetXOfU(double u)
@@ -2394,7 +2431,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       sigma = 1.0;
     }
 
-    public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
 
@@ -2410,7 +2447,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       {
         y1.Clear();
         tmp.Clear();
-        return 0; // ok
+        return; // ok
       }
 
       const int lo = 0;
@@ -2422,7 +2459,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       if (n == 1)
       {
         y1[lo] = 0.0;
-        return 0; // ok
+        return; // ok
       }
 
       tmp.Resize(n);   // temporary
@@ -2513,7 +2550,6 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       for (int i = hi - 1; i >= lo; i--)
         y1[i] -= tmp[i] * y1[i + 1];
 
-      return 0; // ok
     }
 
     public override double GetXOfU(double u)
@@ -2616,7 +2652,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
 
@@ -2633,8 +2669,6 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         C.Clear();
         D.Clear();
       }
-
-      return 0; // ok
     }
 
     public override double GetXOfU(double u)
@@ -2787,7 +2821,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
 
@@ -2804,7 +2838,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         xr.Clear();
         yr.Clear();
         m.Clear();
-        return 0;
+        return;
       }
 
       const int lo = 0;
@@ -2858,7 +2892,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
           if (yr[i] != 0.0)
             yr[i] = 1.0 / yr[i];
           else
-            return 1; // interpolation function doesn't exist
+            throw new ArgumentException("Interpolation function does not exist"); // interpolation function doesn't exist
         }
         m[hi] = 0;
         j = num;
@@ -2878,7 +2912,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         }
 
         if (nend < lo && denom < 0)
-          return 2;
+          throw new InvalidOperationException("Denominator is < 0");
 
         if (nend > lo)
         {
@@ -2912,7 +2946,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
             denom = nend - num;
           }
           if (denom < 0 && nend < lo)
-            return 3; // degree of denominator polynomial < 0
+            throw new InvalidOperationException("Degree of denominator polynomial is < 0"); // degree of denominator polynomial < 0
         }
       }
 
@@ -2923,10 +2957,9 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       {
         x2 = GetYOfU(x[i]);
         if (Math.Abs(x2 - y[i]) > n * epsilon * y2)
-          return 4; // not all points have been used
+          throw new InvalidOperationException("Not all points have been used"); // not all points have been used
       }
 
-      return 0; // ok
     }
 
     public override double GetXOfU(double u)
