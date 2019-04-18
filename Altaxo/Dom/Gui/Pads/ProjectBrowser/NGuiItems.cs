@@ -310,17 +310,17 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       if (item is Altaxo.Graph.Gdi.GraphDocument)
       {
-        if (Current.Project.GraphDocumentCollection.ContainsAnyName(name))
+        if (Current.Project.GraphDocumentCollection.ContainsAnyName(fullName))
           return "A graph with the same name is already present in the project";
       }
       else if (item is Altaxo.Graph.Graph3D.GraphDocument)
       {
-        if (Current.Project.Graph3DDocumentCollection.ContainsAnyName(name))
+        if (Current.Project.Graph3DDocumentCollection.ContainsAnyName(fullName))
           return "A graph with the same name is already present in the project";
       }
       else if (item is Altaxo.Data.DataTable)
       {
-        if (Current.Project.DataTableCollection.ContainsAnyName(name))
+        if (Current.Project.DataTableCollection.ContainsAnyName(fullName))
           return "A table with the same name is already present in the project";
       }
       else if (item is Altaxo.Text.TextDocument)
@@ -328,7 +328,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         if (Altaxo.Main.ProjectFolder.IsValidFolderName(item.Name)) // if it is a project folder note
           return "A project folder note can not be renamed";
 
-        if (Current.Project.TextDocumentCollection.ContainsAnyName(name))
+        if (Current.Project.TextDocumentCollection.ContainsAnyName(fullName))
           return "A text document with the same name is already present in the project";
       }
       else if (item is Altaxo.Main.ProjectFolder)
@@ -360,7 +360,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
         if (item is Altaxo.Graph.Gdi.GraphDocument)
         {
-          if (!Current.Project.GraphDocumentCollection.ContainsAnyName(name))
+          if (!Current.Project.GraphDocumentCollection.ContainsAnyName(fullName))
           {
             ((Altaxo.Graph.Gdi.GraphDocument)item).Name = fullName;
             return true;
@@ -368,7 +368,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         }
         if (item is Altaxo.Graph.Graph3D.GraphDocument)
         {
-          if (!Current.Project.Graph3DDocumentCollection.ContainsAnyName(name))
+          if (!Current.Project.Graph3DDocumentCollection.ContainsAnyName(fullName))
           {
             ((Altaxo.Graph.Graph3D.GraphDocument)item).Name = fullName;
             return true;
@@ -376,7 +376,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         }
         else if (item is Altaxo.Data.DataTable)
         {
-          if (!Current.Project.DataTableCollection.ContainsAnyName(name))
+          if (!Current.Project.DataTableCollection.ContainsAnyName(fullName))
           {
             ((Altaxo.Data.DataTable)item).Name = fullName;
             return true;
@@ -384,7 +384,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         }
         else if (item is Altaxo.Text.TextDocument)
         {
-          if (!Current.Project.TextDocumentCollection.ContainsAnyName(name))
+          if (!Current.Project.TextDocumentCollection.ContainsAnyName(fullName))
           {
             ((Altaxo.Text.TextDocument)item).Name = fullName;
             return true;
