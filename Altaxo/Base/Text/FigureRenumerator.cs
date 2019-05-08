@@ -111,8 +111,11 @@ namespace Altaxo.Text
           number = captionNumbers[entry.Index];
         }
 
-        stb.Remove(entry.Number.Position, entry.Number.Count);
-        stb.Insert(entry.Number.Position, number.ToString());
+        if (entry.Number.Position >= 0) // if position is negative, the number is missing in the caption or in the link
+        {
+          stb.Remove(entry.Number.Position, entry.Number.Count);
+          stb.Insert(entry.Number.Position, number.ToString());
+        }
       }
 
       return stb.ToString();
