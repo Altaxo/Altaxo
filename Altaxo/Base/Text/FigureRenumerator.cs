@@ -211,7 +211,33 @@ namespace Altaxo.Text
 
       foreach (var figure in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(document).OfType<Markdig.Extensions.Figures.Figure>())
       {
-        var figureCaption = MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(figure).OfType<Markdig.Extensions.Figures.FigureCaption>().SingleOrDefault();
+        var figureCaptions = MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(figure).OfType<Markdig.Extensions.Figures.FigureCaption>().ToArray();
+
+        if (null == figureCaptions || 0 == figureCaptions.Length)
+          continue;
+
+        Markdig.Extensions.Figures.FigureCaption figureCaption = null;
+        if (figureCaptions.Length == 1)
+        {
+          figureCaption = figureCaptions[0];
+        }
+        else
+        {
+          // find the first figure caption that contains text
+          foreach (var figCaption in figureCaptions)
+          {
+            var words = new List<(string Text, int Position)>();
+            ExtractTextContentFrom(figCaption, words);
+            if (words.Count > 0)
+            {
+              if (null == figureCaption)
+              {
+                figureCaption = figCaption;
+                break;
+              }
+            }
+          }
+        }
 
         if (null == figureCaption)
           continue;
