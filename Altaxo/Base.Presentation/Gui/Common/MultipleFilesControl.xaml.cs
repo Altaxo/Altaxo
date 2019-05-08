@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2019 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -30,12 +30,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Altaxo.Gui.Worksheet
+namespace Altaxo.Gui.Common
 {
   /// <summary>
   /// Interaction logic for RealFourierTransformation2DDataSourceControl.xaml
   /// </summary>
-  public partial class ImportAsciiDataSourceControl : UserControl, IImportAsciiDataSourceView
+  public partial class MultipleFilesControl : UserControl, IMultipleFilesView
   {
     public event Action BrowseSelectedFileName;
 
@@ -51,19 +51,9 @@ namespace Altaxo.Gui.Worksheet
 
     public event Action SortFileNamesAscending;
 
-    public ImportAsciiDataSourceControl()
+    public MultipleFilesControl()
     {
       InitializeComponent();
-    }
-
-    public void SetAsciiImportOptionsControl(object p)
-    {
-      _guiAsciiImportOptionsHost.Child = p as UIElement;
-    }
-
-    public void SetImportOptionsControl(object p)
-    {
-      _guiImportOptionsHost.Child = p as UIElement;
     }
 
     public Collections.SelectableListNodeList FileNames

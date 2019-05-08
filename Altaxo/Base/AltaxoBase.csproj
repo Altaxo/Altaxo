@@ -253,6 +253,7 @@
     <Compile Include="Analysis\Statistics\Histograms\LinearBinning.cs" />
     <Compile Include="Analysis\Statistics\Histograms\LogarithmicBinning.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiModulusRetardation.cs" />
+    <Compile Include="Data\Extensions\FileImportScriptDataSource.cs" />
     <Compile Include="Data\Extensions\ConvertXYVToMatrixActions.cs" />
     <Compile Include="Data\Extensions\ConvertXYVToMatrixDataAndOptions.cs" />
     <Compile Include="Data\Extensions\ConvertXYVToMatrixDataSource.cs" />
@@ -288,6 +289,8 @@
     <Compile Include="Gui\Data\ConvertXYVToMatrixDataController.cs" />
     <Compile Include="Gui\Data\ConvertXYVToMatrixOptionsController.cs" />
     <Compile Include="Gui\Data\ConvertXYVToMatrixDataSourceController.cs" />
+    <Compile Include="Gui\Data\FileImportScriptDataSourceController.cs" />
+    <Compile Include="Gui\Data\IImportDataSourceView.cs" />
     <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeColumnsController.cs" />
     <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeTableController.cs" />
     <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeTableData.cs" />
@@ -303,6 +306,8 @@
     <Compile Include="Gui\Workbench\StartupSettings.cs" />
     <Compile Include="Gui\Workbench\ViewStatesMemento.cs" />
     <Compile Include="Gui\Workbench\WorkbenchState.cs" />
+    <Compile Include="Gui\Common\MultipleFilesController.cs" />
+    <Compile Include="Gui\Worksheet\SmoothingCubicSplineController.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
     <Compile Include="Main\Services\ILaTeXFormulaImageStreamProvider.cs" />
     <Compile Include="Main\Services\IInvokableThread.cs" />
@@ -310,6 +315,7 @@
     <Compile Include="Main\Services\InvokeableThread.cs" />
     <Compile Include="Main\Services\IAutoUpdateInstallationService.cs" />
     <Compile Include="Main\Services\PropertyService\PropertyService.cs" />
+    <Compile Include="Scripting\FileImportScript.cs" />
     <Compile Include="Serialization\AutoUpdates\INetFrameworkVersionDetermination.cs" />
     <Compile Include="Text\ChildDocumentExpander.cs" />
     <Compile Include="Text\FigureRenumerator.cs" />

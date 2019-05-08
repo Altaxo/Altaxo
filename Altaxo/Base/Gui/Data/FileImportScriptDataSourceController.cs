@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2019 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,17 +27,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Altaxo.Collections;
+using Altaxo.Data;
 using Altaxo.Gui.Common;
-using Altaxo.Gui.Data;
+using Altaxo.Scripting;
 using Altaxo.Serialization.Ascii;
 
-namespace Altaxo.Gui.Worksheet
+namespace Altaxo.Gui.Data
 {
-
-
   [ExpectedTypeOfView(typeof(IImportDataSourceView))]
-  [UserControllerForObject(typeof(AsciiImportDataSource))]
-  public class AsciiImportDataSourceController : MVCANControllerEditOriginalDocBase<AsciiImportDataSource, IImportDataSourceView>, IMVCSupportsApplyCallback
+  [UserControllerForObject(typeof(FileImportScriptDataSource))]
+  public class FileImportScriptDataSourceController : MVCANControllerEditOriginalDocBase<FileImportScriptDataSource, IImportDataSourceView>, IMVCSupportsApplyCallback
   {
     private IMVCANController _commonImportOptionsController;
     private IMVCANController _specificImportOptionsController;
@@ -61,10 +60,11 @@ namespace Altaxo.Gui.Worksheet
         //_doc.SourceFileName
 
         _commonImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        _specificImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.AsciiImportOptions, new AsciiImportOptionsAnalysisDataProvider(this) }, typeof(IMVCANController), UseDocument.Directly);
+        _specificImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportScript }, typeof(IMVCANController), UseDocument.Directly);
         _specificImportSourceController = new MultipleFilesController();
         _specificImportSourceController.InitializeDocument(_doc.SourceFileNames);
         Current.Gui.FindAndAttachControlTo(_specificImportSourceController);
+
       }
 
       if (null != _view)
@@ -84,9 +84,12 @@ namespace Altaxo.Gui.Worksheet
 
       result = _specificImportOptionsController.Apply(false);
       if (!result)
+      {
+        Current.Gui.ErrorMessageBox("Error in script. Please edit the script to remove the error");
         return result;
+      }
       else
-        _doc.AsciiImportOptions = (AsciiImportOptions)_specificImportOptionsController.ModelObject; // AsciiImportOptions is cloned in property set
+        _doc.ImportScript = (FileImportScript)_specificImportOptionsController.ModelObject; // AsciiImportOptions is cloned in property set
 
       result = _specificImportSourceController.Apply(false);
       if (!result)
@@ -102,6 +105,7 @@ namespace Altaxo.Gui.Worksheet
       }
 
       SuccessfullyApplied?.Invoke();
+
       return ApplyEnd(true, disposeController);
     }
 
@@ -109,9 +113,8 @@ namespace Altaxo.Gui.Worksheet
     {
       base.AttachView();
       _view.SetCommonImportOptionsControl("Common import options", _commonImportOptionsController.ViewObject);
-      _view.SetSpecificImportOptionsControl("Ascii import options", _specificImportOptionsController.ViewObject);
-      _view.SetSpecificImportSourceControl("Ascii file(s)", _specificImportSourceController.ViewObject);
-
+      _view.SetSpecificImportOptionsControl("Import script", _specificImportOptionsController.ViewObject);
+      _view.SetSpecificImportSourceControl("File(s) to import", _specificImportSourceController.ViewObject);
     }
 
     protected override void DetachView()
@@ -123,44 +126,7 @@ namespace Altaxo.Gui.Worksheet
       base.DetachView();
     }
 
-    private class AsciiImportOptionsAnalysisDataProvider : Altaxo.Gui.Serialization.Ascii.IAsciiImportOptionsAnalysisDataProvider
-    {
-      private AsciiImportDataSourceController _parent;
 
-      internal AsciiImportOptionsAnalysisDataProvider(AsciiImportDataSourceController parent)
-      {
-        _parent = parent;
-      }
 
-      public System.IO.Stream GetStreamForAnalysis()
-      {
-        try
-        {
-          var str = AsciiImporter.GetAsciiInputFileStream(_parent._doc.SourceFileName);
-          return str;
-        }
-        catch (Exception)
-        {
-        }
-        return null;
-      }
-    }
-
-    /// <summary>
-    /// Gets a file stream of the first file for analysis purposes. Returns null without throwing an exception if the file is not available or could not be opened.
-    /// </summary>
-    /// <returns></returns>
-    private System.IO.Stream GetFileStreamForAnalysis()
-    {
-      try
-      {
-        var str = AsciiImporter.GetAsciiInputFileStream(_doc.SourceFileName);
-        return str;
-      }
-      catch (Exception)
-      {
-      }
-      return null;
-    }
   }
 }

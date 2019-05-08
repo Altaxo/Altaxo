@@ -191,6 +191,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\MultipleFilesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Data\ConvertXYVToMatrixOptionsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1251,7 +1255,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Worksheet\ImportAsciiDataSourceControl.xaml">
+    <Page Include="Gui\Data\ImportDataSourceControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1332,6 +1336,9 @@
     <Compile Include="Gui\Common\GetBitmapExtension.cs" />
     <Compile Include="Gui\Common\GlobalStyles.cs" />
     <Compile Include="Gui\Common\GridViewColumnAutoSize.cs" />
+    <Compile Include="Gui\Common\MultipleFilesControl.xaml.cs">
+      <DependentUpon>MultipleFilesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\IOptionBindingContainer.cs" />
     <Compile Include="Gui\Common\NativeMethods.cs" />
     <Compile Include="Gui\Common\OptionBinding.cs" />
@@ -2287,8 +2294,8 @@
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformationControl.xaml.cs">
       <DependentUpon>RealFourierTransformationControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Worksheet\ImportAsciiDataSourceControl.xaml.cs">
-      <DependentUpon>ImportAsciiDataSourceControl.xaml</DependentUpon>
+    <Compile Include="Gui\Data\ImportDataSourceControl.xaml.cs">
+      <DependentUpon>ImportDataSourceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Data\DataTableTransposeOptionsControl.xaml.cs">
       <DependentUpon>DataTableTransposeOptionsControl.xaml</DependentUpon>

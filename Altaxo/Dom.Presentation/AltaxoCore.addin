@@ -262,6 +262,9 @@
           <MenuItem id="WorksheetImportImage" label="${res:XML.MainMenu.FileMenu.Import.ImageData}"
 						icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.ImageData.Description}"
 						class="Altaxo.Worksheet.Commands.ImportImage" />
+          <MenuItem id="WorksheetFileImportScript" label="${res:XML.MainMenu.FileMenu.Import.UsingFileImportScript}"
+						icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.UsingFileImportScript.Description}"
+						class="Altaxo.Worksheet.Commands.OpenFileImportScriptDialog" />
         </Condition>
       </MenuItem>
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">

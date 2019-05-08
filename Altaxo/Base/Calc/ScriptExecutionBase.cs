@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc
 {
@@ -1106,7 +1107,6 @@ namespace Altaxo.Calc
   /// to be overwritten by the table script in order to execute the script.
   /// The method provided here is not defined as abstract, but instead does nothing.
   /// </remarks>
-
   public class TableScriptExeBase : ScriptExecutionBase
   {
     /// <summary>
@@ -1128,6 +1128,40 @@ namespace Altaxo.Calc
       Execute(myTable);
     }
   }
+
+  /// <summary>
+  /// TableScriptExeBase is the base class of all table scripts.
+  /// </summary>
+  /// <remarks>
+  /// Every table script defines his own class, which is derived from here.
+  /// There is only one method in TableScriptExeBase, Execute, which has
+  /// to be overwritten by the table script in order to execute the script.
+  /// The method provided here is not defined as abstract, but instead does nothing.
+  /// </remarks>
+  public class FileImportScriptExeBase : ScriptExecutionBase
+  {
+    /// <summary>
+    /// This method must be overriden by the import script in order to be able to execute the script.
+    /// This method is the entry point of the import script.
+    /// </summary>
+    /// <param name="myTable">The table on which the table script is executed.</param>
+    /// <param name="fileNames">The file name(s) of the file(s) to import.</param>
+    /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+    public virtual void Execute(Altaxo.Data.DataTable myTable, IReadOnlyList<string> fileNames, Altaxo.IProgressReporter reporter)
+    {
+    }
+
+    /// <summary>
+    /// Returns true if this import script can accept multiple files for one table.
+    /// </summary>
+    public virtual bool CanAcceptMultipleFiles { get { return false; } }
+
+    /// <summary>
+    /// Returns the file filters.
+    /// </summary>
+    public virtual (string Filter, string Description)[] FileFilters { get; } = new[] { ("*.*", "All files (*.*)") };
+  }
+
 
   /// <summary>
   /// Base class for a program instance script.

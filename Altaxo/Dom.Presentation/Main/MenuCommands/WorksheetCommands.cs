@@ -511,6 +511,45 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class OpenFileImportScriptDialog : AbstractWorksheetControllerCommand
+  {
+    private Altaxo.Data.DataTable _table;
+
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      _table = ctrl.DataTable;
+
+      var script = _table.GetPropertyValue<FileImportScript>("Temp\\FileImportScript") ?? new FileImportScript();
+      object[] args = new object[] { script, new Altaxo.Gui.Scripting.ScriptExecutionHandler(EhScriptExecution) };
+
+      if (Current.Gui.ShowDialog(args, "File import script of " + _table.Name))
+      {
+        _table.PropertyBag.SetValue<FileImportScript>("Temp\\FileImportScript", (FileImportScript)args[0]);
+      }
+
+      _table = null;
+    }
+
+    public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
+    {
+      if (script is FileImportScript fileImportScript)
+      {
+
+        var dlg = new OpenFileOptions();
+        foreach (var tuple in fileImportScript.FileFilters)
+          dlg.AddFilter(tuple.Filter, tuple.Description);
+
+        dlg.Multiselect = fileImportScript.CanAcceptMultipleFiles;
+        if (Current.Gui.ShowOpenFileDialog(dlg))
+        {
+          _table.DataSource = new FileImportScriptDataSource(dlg.FileNames, fileImportScript);
+          return fileImportScript.ExecuteWithSuspendedNotifications(_table, dlg.FileNames, reporter);
+        }
+      }
+      return false;
+    }
+  }
+
   #endregion Worksheet
 
   #region Column commands
