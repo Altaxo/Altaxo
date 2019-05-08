@@ -105,9 +105,16 @@ namespace Altaxo.Calc.Interpolation
     public bool CheckArguments { get; set; } = true;
 
     /// <summary>
+    /// If true, points with x values that are very similar are combined into one point, which helds the average value of x and y
+    /// </summary>
+    public bool CombineNeighbouringPoints { get; set; }
+
+    /// <summary>
     /// If true, standard error estimates are calculated and provided in <see cref="ErrorEstimate"/>.
     /// </summary>
     public bool CalculateStandardErrorEstimates { get; set; } = true;
+
+
 
     protected double _variance;
 
@@ -208,7 +215,11 @@ namespace Altaxo.Calc.Interpolation
 
       if (CheckArguments)
       {
-        ThrowIfIsNotStrictlyMonotonicallyIncreasing(x, nameof(x));
+        if (CombineNeighbouringPoints)
+          ThrowIfIsNotMonotonicallyIncreasing(x, nameof(x));
+        else
+          ThrowIfIsNotStrictlyMonotonicallyIncreasing(x, nameof(x));
+
         ThrowIfContainsNaNOrInfiniteValues(y, nameof(y));
         if (null != dy)
         {
@@ -228,11 +239,58 @@ namespace Altaxo.Calc.Interpolation
       // the required number of points is larger than currently.
       SmartReallocate(n);
 
-      // Copy x into _x and y into f (!)
-      for (int i = 0; i < n; ++i)
+      if (CombineNeighbouringPoints)
       {
-        _x[i] = x[i];
-        _f[i] = y[i];
+        double meanXDiff = 0;
+        for (int i = 1; i < n; ++i)
+        {
+          meanXDiff += Math.Abs(x[i] - x[i - 1]);
+        }
+        meanXDiff /= (n - 1); // calculate the average of the differences between x[i] and x[i-1]
+        double threshold = 1E-7 * meanXDiff;
+
+        int prevI = 0;
+        int nextI;
+        int j = 0;
+        do
+        {
+          // advance nextI until there is enough distance between the x values
+          for (nextI = prevI + 1; (nextI < n) && (x[nextI] - x[prevI]) < threshold; ++nextI) ;
+
+
+          if (nextI == prevI + 1) // copy the values if no average is neccessary
+          {
+            _x[j] = x[prevI];
+            _f[j] = y[prevI];
+            ++j;
+          }
+          else // or combine the values by averaging
+          {
+            // average over prevI .. k-1
+            double sumX = 0, sumY = 0;
+            for (int k = prevI; k < nextI; ++k)
+            {
+              sumX += x[k];
+              sumY += y[k];
+            }
+            _x[j] = sumX / (nextI - prevI);
+            _f[j] = sumY / (nextI - prevI);
+            ++j;
+          }
+          prevI = nextI;
+        } while (nextI < n);
+
+        n = j; // assing our new n (number of points
+        SmartReallocate(n);
+      }
+      else // Do not combine neighbouring points - thus simply copy the x and f values
+      {
+        // Copy x into _x and y into f (!)
+        for (int i = 0; i < n; ++i)
+        {
+          _x[i] = x[i];
+          _f[i] = y[i];
+        }
       }
 
 

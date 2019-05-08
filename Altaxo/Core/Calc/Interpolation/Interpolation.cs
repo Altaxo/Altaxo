@@ -185,8 +185,9 @@ namespace Altaxo.Calc.Interpolation
       }
       return true;
     }
+
     /// <summary>
-    /// Throws an argument exception if the array a is not monotonically increasing.
+    /// Throws an argument exception if the array a is not strictly monotonically increasing.
     /// If the array contains NaN, then the function also throws the exception.
     /// </summary>
     /// <param name="a"></param>
@@ -201,6 +202,26 @@ namespace Altaxo.Calc.Interpolation
       {
         if (!(a[i] > previous))
           throw new ArgumentException($"Array {argumentName} is not strictly monotonically increasing at index {i}. Element[{i - 1}]={previous}, Element[{i}]={a[i]}", argumentName);
+        previous = a[i];
+      }
+    }
+
+    /// <summary>
+    /// Throws an argument exception if the array a is not monotonically increasing.
+    /// If the array contains NaN, then the function also throws the exception.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="argumentName"></param>
+    protected static void ThrowIfIsNotMonotonicallyIncreasing(IReadOnlyList<double> a, string argumentName)
+    {
+      if (a.Count == 0)
+        throw new ArgumentException("Array is empty", nameof(a));
+
+      var previous = a[0];
+      for (int i = 1; i < a.Count; ++i)
+      {
+        if (!(a[i] >= previous))
+          throw new ArgumentException($"Array {argumentName} is not monotonically increasing at index {i}. Element[{i - 1}]={previous}, Element[{i}]={a[i]}", argumentName);
         previous = a[i];
       }
     }
