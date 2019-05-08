@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -74,7 +74,8 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     public override bool Add(IReadableColumn col, int idx)
     {
-      return Add((col is INumericColumn) ? ((INumericColumn)col)[idx] : idx);
+      var v = col[idx];
+      return Add((v.IsNativeNumeric) ? v.ToDouble() : idx);
     }
 
     public override bool Add(Altaxo.Data.AltaxoVariant val)
