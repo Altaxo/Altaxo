@@ -437,7 +437,16 @@ namespace Altaxo.Gui.Markdown
             return (i, j);
         }
 
-        dictOldToNew.Add(blockO, blockN);
+        // 2019-05-09 Try to find out why sometimes blockO is already in the dictionary
+        if (dictOldToNew.TryGetValue(blockO, out var alreadyPresentBlockN))
+        {
+          if (!object.ReferenceEquals(alreadyPresentBlockN, blockN))
+            throw new InvalidOperationException();
+        }
+        else
+        {
+          dictOldToNew.Add(blockO, blockN);
+        }
       }
 
       return (i, j);
