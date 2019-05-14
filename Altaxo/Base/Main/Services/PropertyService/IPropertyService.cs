@@ -48,6 +48,7 @@ namespace Altaxo.Main.Services
   /// <summary>
   /// Service for getting global and user defined properties for the application.
   /// </summary>
+  [GlobalService(FallbackImplementation = typeof(PropertyServiceFallbackImplementation))]
   public interface IPropertyService
   {
     /// <summary>

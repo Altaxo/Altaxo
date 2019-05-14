@@ -315,6 +315,7 @@
     <Compile Include="Main\Services\InvokeableThread.cs" />
     <Compile Include="Main\Services\IAutoUpdateInstallationService.cs" />
     <Compile Include="Main\Services\PropertyService\PropertyService.cs" />
+    <Compile Include="Main\Services\PropertyService\PropertyServiceFallbackImplementation.cs" />
     <Compile Include="Scripting\FileImportScript.cs" />
     <Compile Include="Serialization\AutoUpdates\INetFrameworkVersionDetermination.cs" />
     <Compile Include="Text\ChildDocumentExpander.cs" />
