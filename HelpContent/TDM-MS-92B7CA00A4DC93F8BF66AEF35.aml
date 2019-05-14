@@ -429,6 +429,17 @@ To include a figure, surround the figure by a block of <codeInline>^^^</codeInli
 In line 2 of the code block above, a graph from the Altaxo project is included. This is not new and was shown already before. The graph has a text mark <codeInline>#An_important_graph</codeInline> attached. New is that the graph is now framed with <codeInline>^^^</codeInline> blocks above and below. Moreover, in the last line, there is a figure caption. You can write figure captions either above (in the first line containing <codeInline>^^^</codeInline>, which is e.g. common for tables), or as in the example above, in the line below the figure or table.
 </para>
 
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold>
+</para>
+
+<para>
+Only one of the two possible figure captions (above, below) may contain text. However, you can place a text marker in the other caption.
+</para>
+</quote>
+
 <para>
 Even more useful is the figure extension, if used in conjunction with Altaxo's built in <legacyBold>figure renumeration feature</legacyBold>.  
 </para>
