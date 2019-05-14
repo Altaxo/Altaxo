@@ -21,7 +21,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>
     </RootNamespace>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>
     <FileUpgradeFlags>
