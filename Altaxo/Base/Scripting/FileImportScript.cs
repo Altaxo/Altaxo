@@ -150,10 +150,10 @@ namespace Altaxo.Scripting
       {
         return
           "\t\t\t\r\n" +
-          "\t\t\tfor(int i=0;i<col.RowCount;i++)\r\n" +
-          "\t\t\t\t{\r\n" +
-          "\t\t\t\t// Add your code here\r\n" +
-          "\t\t\t\t}\r\n" +
+          "\t\t\tusing (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))\r\n" +
+          "\t\t\t{\r\n" +
+          "\t\t\t\t// do something with the stream\r\n" +
+          "\t\t\t}\r\n" +
           "\t\t\t\r\n"
           ;
       }
