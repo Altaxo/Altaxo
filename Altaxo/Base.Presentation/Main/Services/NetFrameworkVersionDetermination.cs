@@ -73,6 +73,9 @@ namespace Altaxo.Main.Services
         case "4.7.2":
           return IsVersion472Installed();
 
+        case "4.8":
+          return IsVersion48Installed();
+
         default:
           return false;
       }
@@ -209,6 +212,19 @@ namespace Altaxo.Main.Services
       else
       {
         return release >= 461808;
+      }
+    }
+
+    public static bool IsVersion48Installed()
+    {
+      var release = GetFramework45ReleaseNumber();
+      if (!release.HasValue)
+      {
+        return false;
+      }
+      else
+      {
+        return release >= 528040;
       }
     }
 
