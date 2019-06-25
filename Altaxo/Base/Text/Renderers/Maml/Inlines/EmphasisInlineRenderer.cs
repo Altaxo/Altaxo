@@ -32,10 +32,11 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
   /// <seealso cref="MamlObjectRenderer{T}" />
   public class EmphasisInlineRenderer : MamlObjectRenderer<EmphasisInline>
   {
-    private MamlElement mamlElement = null;
 
     protected override void Write(MamlRenderer renderer, EmphasisInline obj)
     {
+      MamlElement mamlElement = null;
+
       switch (obj.DelimiterChar)
       {
         case '*':
