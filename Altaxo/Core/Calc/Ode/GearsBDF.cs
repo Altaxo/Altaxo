@@ -240,23 +240,10 @@ namespace Altaxo.Calc.Ode
         _qn = qcurr;
         _delta = 0;
         _Dq = 0;
-        _dt = dt;
-        _tn = t0;
         _nsuccess = 0;
         _rFactor = 1;
-
-        // Copy x0
         _xn = new double[n];
-        VectorMath.Copy(x0, _xn);
-
-        //Compute Nordstieck's history matrix at t=t0;
         _zn = new DoubleMatrix(n, qmax + 1);
-        for (int i = 0; i < n; i++)
-        {
-          _zn[i, 0] = x0[i]; // x0
-          _zn[i, 1] = dt * dydt0[i]; // 1st derivative * dt
-        }
-
         zcurr = new DoubleMatrix(n, qmax + 1);
         z0 = new DoubleMatrix(n, qmax + 1);
 
@@ -271,6 +258,24 @@ namespace Altaxo.Calc.Ode
         xcurr = new double[n]; // length: n
         gm = new double[n]; // length n
         deltaE = new double[n]; // length n
+
+        Reinitialize(dt, t0, x0, dydt0);
+      }
+
+      internal void Reinitialize(double dt, double t0, double[] x0, double[] dydt0)
+      {
+        _dt = dt;
+        _tn = t0;
+
+        // Copy x0
+        Array.Copy(x0, _xn, _xn.Length);
+
+        //Compute Nordstieck's history matrix at t=t0;
+        for (int i = 0; i < _xn.Length; i++)
+        {
+          _zn[i, 0] = x0[i]; // x0
+          _zn[i, 1] = dt * dydt0[i]; // 1st derivative * dt
+        }
       }
 
       /// <summary>
@@ -682,6 +687,14 @@ namespace Altaxo.Calc.Ode
     public double CurrentTimeStep { get { return currstate._dt; } }
 
     /// <summary>
+    /// Gets or sets the maximum time step.
+    /// </summary>
+    /// <value>
+    /// The maximum time step.
+    /// </value>
+    public double MaximumTimeStep { get { return opts.MaxStep; } set { opts.MaxStep = value; } }
+
+    /// <summary>
     /// Gets the current nordsieck matrix. Rows corresponds to the state variables y0..yn, colums are the
     /// variable y, then y'dt, y''dt²/2, y'''dt³/6, and so on. Can be used to get the coefficients of the interpolating
     /// polynomial(s) between <see cref="CurrentTime"/>-<see cref="CurrentTimeStep"/> to <see cref="CurrentTime"/>.
@@ -764,6 +777,12 @@ namespace Altaxo.Calc.Ode
       InternalInitialize(t0, y0, dydt, opts ?? GearsBDFOptions.Default);
     }
 
+    // Arrays needed for initialization and at discontinuities
+    // All arrays have length n
+    double[] _dydt;
+    double[] _ewt;
+    double[] _ywt;
+
     /// <summary>
     /// Implementation of Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.
     /// </summary>
@@ -779,38 +798,14 @@ namespace Altaxo.Calc.Ode
 
       double t = t0;
       var x = (double[])x0.Clone();
-
-      var dydt = (double[])x0.Clone(); // just to get the array.
-
       n = x0.Length;
 
       this.f = f;
       this.opts = opts;
 
       //Initial step size.
-      f(t0, x0, dydt); // rates now in dx
-      double dt;
-      if (opts.InitialStep != 0)
-      {
-        dt = opts.InitialStep;
-      }
-      else
-      {
-        var tol = opts.RelativeTolerance;
-        var ewt = new double[n];
-        var ywt = new double[n];
-        var sum = 0.0;
-        for (int i = 0; i < n; i++)
-        {
-          ewt[i] = opts.RelativeTolerance * Math.Abs(x[i]) + opts.AbsoluteTolerance;
-          ywt[i] = ewt[i] / tol;
-          sum = sum + dydt[i] * dydt[i] / (ywt[i] * ywt[i]);
-        }
-
-        dt = Math.Sqrt(tol / (1.0d / (ywt[0] * ywt[0]) + sum / n));
-      }
-
-      dt = Math.Min(dt, opts.MaxStep);
+      _dydt = _dydt ?? new double[n];
+      var dt = EvaluateRatesAndGetDt(t0, x0, _dydt);
       var resdt = dt;
 
       int qmax = 5;
@@ -818,7 +813,7 @@ namespace Altaxo.Calc.Ode
 
       _zn_saved = new DoubleMatrix(n, qmax + 1);
 
-      currstate = new NordsieckState(n, qmax, qcurr, dt, t, x0, dydt);
+      currstate = new NordsieckState(n, qmax, qcurr, dt, t, x0, _dydt);
 
       isIterationFailed = false;
 
@@ -832,6 +827,57 @@ namespace Altaxo.Calc.Ode
       // Firstly, return initial point
       // EvaluateInternally(t0, true, out t0, xout);
       _initializationState = InitializationState.NotInitialized;
+    }
+
+    /// <summary>
+    /// Marks a discontinuity at the last point that was evaluated.
+    /// </summary>
+    /// <remarks>This function is indended to be used if discontinuous boundary conditions exist. The function evaluates
+    /// the rate at the last point, and effectively restarts the ODE. See example for details.
+    /// Example: if a discontinuity exist at t=1000,
+    /// then
+    /// then (i) evaluate the ODE until t=1000,
+    /// then (ii) change the boundary conditions,
+    /// and then (iii) call this function.</remarks>
+    public void MarkDiscontinuity()
+    {
+      var t0 = last_tout;
+      var x0 = xout;
+
+      _dydt = _dydt ?? new double[n];
+      var dt = EvaluateRatesAndGetDt(t0, x0, _dydt);
+      currstate.Reinitialize(dt, t0, xout, _dydt);
+      _initializationState = InitializationState.NotInitialized;
+    }
+
+    private double EvaluateRatesAndGetDt(double t0, double[] x0, double[] dydt)
+    {
+      f(t0, x0, dydt); // rates now in dx
+
+      double dt;
+      if (opts.InitialStep != 0)
+      {
+        dt = opts.InitialStep;
+      }
+      else
+      {
+        _ewt = _ewt ?? new double[n];
+        _ywt = _ywt ?? new double[n];
+
+        var tol = opts.RelativeTolerance;
+        var sum = 0.0;
+        for (int i = 0; i < n; i++)
+        {
+          _ewt[i] = opts.RelativeTolerance * Math.Abs(x0[i]) + opts.AbsoluteTolerance;
+          _ywt[i] = _ewt[i] / tol;
+          sum = sum + dydt[i] * dydt[i] / (_ywt[i] * _ywt[i]);
+        }
+
+        dt = Math.Sqrt(tol / (1.0d / (_ywt[0] * _ywt[0]) + sum / n));
+      }
+
+      dt = Math.Min(dt, opts.MaxStep);
+      return dt;
     }
 
     public void Evaluate(out double t_result, double[] result)
