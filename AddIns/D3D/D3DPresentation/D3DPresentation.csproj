@@ -1,48 +1,43 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D08538DC-E8A8-473D-90E0-0436F551DFD4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net471</TargetFramework>
+    <UseWPF>true</UseWPF>
     <RootNamespace>Altaxo</RootNamespace>
-    <AssemblyName>D3DPresentation</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>bin\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <Fx40File Include="Shaders\Lighting.fx" />
+    <Fx40File Include="Shaders\GammaCorrector.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="CompiledShaders\Effects\GammaCorrector.cso" />
+    <None Remove="CompiledShaders\Effects\Lighting.cso" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CompiledShaders\Effects\GammaCorrector.cso" />
+    <EmbeddedResource Include="CompiledShaders\Effects\Lighting.cso" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj" />
+    <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj" />
+    <ProjectReference Include="..\..\..\Altaxo\Core\AltaxoCore.csproj" />
+    <ProjectReference Include="..\..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj" />
+    <ProjectReference Include="..\..\..\Altaxo\Dom\AltaxoDom.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="SharpDX">
       <HintPath>Libraries\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.D3DCompiler">
       <HintPath>Libraries\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct2D1, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SharpDX.Direct2D1">
       <HintPath>Libraries\SharpDX.Direct2D1.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D10">
@@ -54,123 +49,18 @@
     <Reference Include="SharpDX.DXGI">
       <HintPath>Libraries\SharpDX.DXGI.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10GraphicsContext.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10OverlayContext.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\IndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialPlusClippingPlusColorProvider.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialPlusClipping.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBufferWithClipping.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorLineListBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Common\D3D10BitmapExporter.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Common\D3D10DeviceFactory.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Common\D3D10GammaCorrector.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Common\Disposer.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Common\D3D10ImageSource.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Common\IScene.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Common\TextureExtensions.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Common\D3D10RendererToImageSource.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.RenderLayout.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.VertexAndIndexDeviceBuffer.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.VertexAndIndexDeviceBufferNoMaterial.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.VertexAndIndexDeviceBufferNoMaterialWithUColor.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.VertexBufferNoMaterial.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.Lighting.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\Graph3DControl.xaml.cs">
-      <DependentUpon>Graph3DControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\MouseStateHandler.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
-    <Compile Include="Main\Graph3DDisplayBindingDoozer.cs" />
-    <Compile Include="Main\Graph3DExportBindingDoozer.cs" />
-    <Compile Include="Graph\Graph3D\Commands\EditCommands.cs" />
-    <Compile Include="Graph\Graph3D\Commands\GraphLayerCommands.cs" />
-    <Compile Include="Graph\Graph3D\Commands\GraphToolCommands.cs" />
-    <Compile Include="Graph\Graph3D\Commands\GraphCommands.cs" />
-    <Compile Include="Worksheet\Commands\PlotCommands.cs" />
-    <Compile Include="Properties\AssemblyInfo.autogenerated.cs" />
-    <Compile Include="Worksheet\Commands\WorksheetPlot3DCommands.cs" />
-    <Content Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Gui\Graph\Graph3D\Viewing\Graph3DControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="D3D.addin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Fx40File Include="Shaders\Lighting.fx" />
-    <Fx40File Include="Shaders\GammaCorrector.fx" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Altaxo\Dom\AltaxoDom.csproj">
-      <Project>{71636e05-f91f-4efe-a63a-5ba2d525071f}</Project>
-      <Name>AltaxoDom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj">
-      <Project>{323d97e6-92a8-40b4-99c1-d64d4368dfc7}</Project>
-      <Name>AltaxoBase.Presentation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj">
-      <Project>{ca928a5c-9673-4fbb-a60e-f91364cc9db5}</Project>
-      <Name>AltaxoBase</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Altaxo\Core\AltaxoCore.csproj">
-      <Project>{7045c197-9da8-4fa4-886c-992acadd838f}</Project>
-      <Name>AltaxoCore</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj">
-      <Project>{9ebab076-12f4-4549-9fd5-6d2b8b387b06}</Project>
-      <Name>AltaxoDom.Presentation</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="CompiledShaders\Effects\GammaCorrector.cso" />
-    <EmbeddedResource Include="CompiledShaders\Effects\Lighting.cso" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
-  <Target Name="BeforeBuild">
+  <Target Name="DoCompileShaders" AfterTargets="Compile">
     <Shader InputFiles="@(Fx40File)" OutputPath="$(ProjectDir)\CompiledShaders\Effects" Profile="fx_4_0" />
     <Shader InputFiles="@(Vs40File)" OutputPath="$(ProjectDir)\CompiledShaders\VS" Profile="vs_4_0" EntryPoint="VS" />
     <Shader InputFiles="@(Ps40File)" OutputPath="$(ProjectDir)\CompiledShaders\PS" Profile="ps_4_0" EntryPoint="PS" />
+  </Target>
+  <Target Name="DoMakeFileVersion" AfterTargets="Compile">
     <GitVersionFile TemplateFile="Properties\AssemblyInfo.cs" DestinationFile="Properties\AssemblyInfo.autogenerated.cs" SettingsFile="..\..\..\MSBuildVersioning.xml" />
   </Target>
-  <Target Name="AfterBuild">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="mkdir $(SolutionDir)rtDir\AddIns\D3D\&#xD;&#xA;copy $(ProjectDir)D3D.addin $(SolutionDir)rtDir\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)D3DPresentation.??l $(SolutionDir)rtDir\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)SharpDX*.??l $(SolutionDir)rtDir\AddIns\D3D\" />
   </Target>
-  <PropertyGroup>
-    <PostBuildEvent>mkdir $(SolutionDir)rtDir\AddIns\D3D\
-copy $(TargetDir)D3D.addin $(SolutionDir)rtDir\AddIns\D3D\
-copy $(TargetDir)D3DPresentation.??l $(SolutionDir)rtDir\AddIns\D3D\
-copy $(TargetDir)SharpDX*.??l $(SolutionDir)rtDir\AddIns\D3D\</PostBuildEvent>
-  </PropertyGroup>
 </Project>

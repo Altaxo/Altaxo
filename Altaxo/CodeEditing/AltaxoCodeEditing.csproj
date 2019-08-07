@@ -1,46 +1,22 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3E93FAF9-D791-4F48-B925-623257B6FCBE}</ProjectGuid>
-    <OutputType>library</OutputType>
-    <RootNamespace>Altaxo</RootNamespace>
     <AssemblyName>RoslynETAHost</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\rtDir\bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\rtDir\bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFramework>net471</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Altaxo</RootNamespace>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>..\..\rtDir\bin</OutputPath>
     <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>Keys\RoslynInternalKey.Private.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis">
       <HintPath>LibrariesBin\Microsoft.CodeAnalysis.dll</HintPath>
@@ -64,217 +40,37 @@
       <HintPath>LibrariesBin\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="System.Collections.Immutable">
       <HintPath>LibrariesBin\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="System.Composition.AttributedModel">
       <HintPath>LibrariesBin\System.Composition.AttributedModel.dll</HintPath>
     </Reference>
-    <Reference Include="System.Composition.Hosting, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="System.Composition.Hosting">
       <HintPath>LibrariesBin\System.Composition.Hosting.dll</HintPath>
     </Reference>
-    <Reference Include="System.Composition.Runtime, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="System.Composition.Runtime">
       <HintPath>LibrariesBin\System.Composition.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="System.Composition.TypedParts, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="System.Composition.TypedParts">
       <HintPath>LibrariesBin\System.Composition.TypedParts.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    <Reference Include="System.IO.Compression">
+      <HintPath>LibrariesBin\System.IO.Compression.dll</HintPath>
     </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Reflection.Metadata">
+      <HintPath>LibrariesBin\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>LibrariesBin\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CodeEditing\AltaxoWorkspaceBase.cs" />
-    <Compile Include="CodeEditing\AltaxoWorkspaceForCSharpScripts.cs" />
-    <Compile Include="CodeEditing\BraceMatching\AbstractBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\AbstractDirectiveTriviaBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\BraceCharacterAndKind.cs" />
-    <Compile Include="CodeEditing\BraceMatching\BraceMatchingService.cs" />
-    <Compile Include="CodeEditing\BraceMatching\CSharp\AbstractCSharpBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\CSharp\CSharpDirectiveTriviaBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\CSharp\LessThanGreaterThanBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\CSharp\OpenCloseBraceBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\CSharp\OpenCloseBracketBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\CSharp\OpenCloseParenBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\CSharp\StringLiteralBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\ExportBraceMatchingAttribute.cs" />
-    <Compile Include="CodeEditing\BraceMatching\IBraceMatcher.cs" />
-    <Compile Include="CodeEditing\BraceMatching\IBraceMatchingService.cs" />
-    <Compile Include="CodeEditing\BraceMatching\LanguageMetadata.cs" />
-    <Compile Include="CodeEditing\ClassDeclarationVisitor.cs" />
-    <Compile Include="CodeEditing\CodeEditorViewAdapterCSharp.cs" />
-    <Compile Include="CodeEditing\CompilationHandling\AltaxoDiagnostic.cs" />
-    <Compile Include="CodeEditing\CompilationHandling\CompilationFactorySimple.cs" />
-    <Compile Include="CodeEditing\CompilationHandling\CompilationService.cs" />
-    <Compile Include="CodeEditing\CompilationHandling\AltaxoCompilationResult.cs" />
-    <Compile Include="CodeEditing\CompilationHandling\DesktopAssemblyLoader.cs" />
-    <Compile Include="CodeEditing\CompilationHandling\DiagnosticBag.cs" />
-    <Compile Include="CodeEditing\CompilationHandling\InteractiveAssemblyLoader.cs" />
-    <Compile Include="CodeEditing\Completion\CodeEditorCompletionProvider.cs" />
-    <Compile Include="CodeEditing\Completion\CompletionHelper.cs" />
-    <Compile Include="CodeEditing\Completion\CompletionItemExtensions.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\AbstractGoToDefinitionService.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\AbstractGotoDefinitionSymbolService.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\ClassifiedSpansAndHighlightSpanFactory.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\CSharp\CSharpGoToDefinitionService.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\CSharp\CSharpGoToDefinitionSymbolService.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\EditorClassifier.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\FindUsageHelpers.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\FindUsagesContext.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\GoToDefinitionHelpers.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\IDefinitionAndReferencesFactory.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\IEditorClassificationService.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\IFindUsagesContext.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\IGotoDefinitionService.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\IGotoDefinitionSymbolService.cs" />
-    <Compile Include="CodeEditing\RoslynSourceTextContainerAdapter.cs" />
-    <Compile Include="CodeEditing\Completion\Glyph.cs" />
-    <Compile Include="CodeEditing\Completion\GlyphExtensions.cs" />
-    <Compile Include="CodeEditing\Completion\RoslynCompletionData.cs" />
-    <Compile Include="CodeEditing\Diagnostics\AnalyzerAssemblyLoader.cs" />
-    <Compile Include="CodeEditing\Diagnostics\DiagnosticData.cs" />
-    <Compile Include="CodeEditing\Diagnostics\DiagnosticDataLocation.cs" />
-    <Compile Include="CodeEditing\Diagnostics\DiagnosticsService.cs" />
-    <Compile Include="CodeEditing\Diagnostics\DiagnosticsUpdatedArgs.cs" />
-    <Compile Include="CodeEditing\Diagnostics\DiagnosticsUpdatedKind.cs" />
-    <Compile Include="CodeEditing\Diagnostics\IDiagnosticService.cs" />
-    <Compile Include="CodeEditing\Diagnostics\IDiagnosticsEventSink.cs" />
-    <Compile Include="CodeEditing\Diagnostics\UpdatedEventArgs.cs" />
-    <Compile Include="CodeEditing\Diagnostics\WorkspaceDiagnosticAnalyzerProviderService.cs" />
-    <Compile Include="CodeEditing\Documentation\DocumentationProviderServiceFactory.cs" />
-    <Compile Include="CodeEditing\ExternalHelp\ExternalHelpItem.cs" />
-    <Compile Include="CodeEditing\ExternalHelp\ExternalHelpProvider.cs" />
-    <Compile Include="CodeEditing\ExternalHelp\IExternalHelpProvider.cs" />
-    <Compile Include="CodeEditing\Folding\SyntaxTreeFoldingManager.cs" />
-    <Compile Include="CodeEditing\IAltaxoWorkspace.cs" />
-    <Compile Include="CodeEditing\ICaretOffsetProvider.cs" />
-    <Compile Include="CodeEditing\ICodeEditorViewAdapter.cs" />
-    <Compile Include="CodeEditing\LanguageService\ExportLanguageService.cs" />
-    <Compile Include="CodeEditing\LiveDocumentFormatting\ILiveDocumentFormatter.cs" />
-    <Compile Include="CodeEditing\LiveDocumentFormatting\LiveDocumentFormatterCSharp.cs" />
-    <Compile Include="CodeEditing\QuickInfo\DeferredQuickInfoContentProvider.cs" />
-    <Compile Include="CodeEditing\QuickInfo\QuickInfoItem.cs" />
-    <Compile Include="CodeEditing\QuickInfo\IQuickInfoProvider.cs" />
-    <Compile Include="CodeEditing\QuickInfo\QuickInfoProvider.cs" />
-    <Compile Include="CodeEditing\ReferenceHighlighting\AbstractDocumentHighlightsService.cs" />
-    <Compile Include="CodeEditing\ReferenceHighlighting\CSharp\CSharpDocumentHighlightsService.cs" />
-    <Compile Include="CodeEditing\ReferenceHighlighting\CSharp\ReferenceHighlightingAdditionalReferenceProvider.cs" />
-    <Compile Include="CodeEditing\ReferenceHighlighting\IDocumentHighlightsService.cs" />
-    <Compile Include="CodeEditing\ReferenceHighlighting\IReferenceHighlightingAdditionalReferenceProvider.cs" />
-    <Compile Include="CodeEditing\Renaming\IRenameSymbolDialog.cs" />
-    <Compile Include="CodeEditing\Renaming\IRenamingService.cs" />
-    <Compile Include="CodeEditing\Renaming\RenameHelper.cs" />
-    <Compile Include="CodeEditing\Renaming\RenamingService.cs" />
-    <Compile Include="CodeEditing\RoslynHost.cs" />
-    <Compile Include="CodeEditing\SignatureHelp\AggregateSignatureHelpProvider.cs" />
-    <Compile Include="CodeEditing\SignatureHelp\ISignatureHelpProvider.cs" />
-    <Compile Include="CodeEditing\SignatureHelp\RoslynOverloadProvider.cs" />
-    <Compile Include="CodeEditing\SignatureHelp\SignatureHelpItem.cs" />
-    <Compile Include="CodeEditing\SignatureHelp\SignatureHelpItems.cs" />
-    <Compile Include="CodeEditing\SignatureHelp\SignatureHelpParameter.cs" />
-    <Compile Include="CodeEditing\SignatureHelp\SignatureHelpProviderExtensions.cs" />
-    <Compile Include="CodeEditing\SignatureHelp\SignatureHelpTriggerInfo.cs" />
-    <Compile Include="CodeEditing\SignatureHelp\SignatureHelpTriggerReason.cs" />
-    <Compile Include="CodeEditing\SnippetHandling\CodeSnippet.cs" />
-    <Compile Include="CodeEditing\SnippetHandling\AltaxoSnippedInfoService.cs" />
-    <Compile Include="CodeEditing\SnippetHandling\ICSharpEditSnippetInfoService.cs" />
-    <Compile Include="CodeEditing\SnippetHandling\SnippetInfo.cs" />
-    <Compile Include="CodeEditing\SnippetHandling\SnippetInfoService.cs" />
-    <Compile Include="CodeEditing\SnippetHandling\SnippetManager.cs" />
-    <Compile Include="CodeEditing\SemanticHighlighting\SemanticHighlighter.cs" />
-    <Compile Include="CodeEditing\SemanticHighlighting\SemanticHightlightingColorizer.cs" />
-    <Compile Include="CodeEditing\Utilities\NotificationObject.cs" />
-    <Compile Include="Gui\CodeEditing\BraceMatching\BracketHighlightRenderer.cs" />
-    <Compile Include="Gui\CodeEditing\CaretHighlightAdorner.cs" />
-    <Compile Include="Gui\CodeEditing\CodeEditor.cs" />
-    <Compile Include="Gui\CodeEditing\CodeEditorView.cs" />
-    <Compile Include="Gui\CodeEditing\CodeTextEditorFactory.cs" />
-    <Compile Include="Gui\CodeEditing\CompletionResult.cs" />
-    <Compile Include="Gui\CodeEditing\FrozenExtensions.cs" />
-    <Compile Include="Gui\CodeEditing\Renaming\RenameSymbolDialog.xaml.cs">
-      <DependentUpon>RenameSymbolDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\CodeEditing\RoutedCommands.cs" />
-    <Compile Include="CodeEditing\AltaxoWorkspaceForCSharpRegularDll.cs" />
-    <Compile Include="Gui\CodeEditing\DiagnosticWrapper.cs" />
-    <Compile Include="Gui\CodeEditing\ICodeEditorCompletionProvider.cs" />
-    <Compile Include="Gui\CodeEditing\ICompletionDataEx.cs" />
-    <Compile Include="Gui\CodeEditing\IOverloadProviderEx.cs" />
-    <Compile Include="Gui\CodeEditing\DiagnosticMessageControl.xaml.cs">
-      <DependentUpon>DiagnosticMessageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\CodeEditing\QuickClassBrowser.xaml.cs">
-      <DependentUpon>QuickClassBrowser.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\CodeEditing\ReferenceHighlighting\ExpressionHighlightRenderer.cs" />
-    <Compile Include="Gui\CodeEditing\SymbolDisplayPartExtensions.cs" />
-    <Compile Include="Gui\CodeEditing\CodeEditorWithDiagnostics.cs" />
-    <Compile Include="Gui\CodeEditing\SemanticHighlighting\IHighlightingColors.cs" />
-    <Compile Include="Gui\CodeEditing\SemanticHighlighting\TextHightlightingColorsAltaxoStyle.cs" />
-    <Compile Include="Gui\CodeEditing\SemanticHighlighting\TextHightlightingColorsVisualStudioStyle.cs" />
-    <Compile Include="Gui\CodeEditing\TextMarkerHandling\TextMarker.cs" />
-    <Compile Include="Gui\CodeEditing\TextMarkerHandling\TextMarkerService.cs" />
-    <Compile Include="Gui\CodeEditing\TextMarkerHandling\TextMarkerToolTipProvider.cs" />
-    <Compile Include="Gui\CodeEditing\ToolTipRequestEventArgs.cs" />
-    <Compile Include="Properties\AssemblyInfo.autogenerated.cs" />
-    <Compile Include="CodeEditing\GoToDefinition\IStreamingFindUsagePresenter.cs" />
-    <Content Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Keys\RoslynInternalKey.Private.snk" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
-      <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
-      <Name>ICSharpCode.AvalonEdit</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Gui\CodeEditing\DiagnosticMessageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\CodeEditing\QuickClassBrowser.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Gui\CodeEditing\Renaming\RenameSymbolDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\Icons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy $(ProjectDir)\LibrariesBin\*.dll $(ProjectDir)..\..\rtDir\bin</PostBuildEvent>
-  </PropertyGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
-  <Target Name="BeforeBuild">
+  <Target Name="DoMakeFileVersion" AfterTargets="Compile">
     <GitVersionFile TemplateFile="Properties\AssemblyInfo.cs" DestinationFile="Properties\AssemblyInfo.autogenerated.cs" SettingsFile="..\..\MSBuildVersioning.xml" />
+  </Target>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(ProjectDir)\LibrariesBin\*.dll $(ProjectDir)..\..\rtDir\bin" />
   </Target>
 </Project>

@@ -32,20 +32,20 @@ namespace Altaxo.Gui
   /// <summary>
   /// Can be used for a control to denote which type of controller can control this.
   /// </summary>
-  public class UserControlForControllerAttribute : System.Attribute, IComparable, IClassForClassAttribute
+  public class UserControlForControllerAttribute : UserControlPriorityAttribute, IClassForClassAttribute
   {
     private System.Type _type;
-    private int _priority = 0;
 
     public UserControlForControllerAttribute(System.Type type)
+      : base(0)
     {
       _type = type;
     }
 
     public UserControlForControllerAttribute(System.Type type, int priority)
+      : base(priority)
     {
       _type = type;
-      _priority = priority;
     }
 
     public System.Type TargetType
@@ -53,20 +53,6 @@ namespace Altaxo.Gui
       get { return _type; }
     }
 
-    public int Priority
-    {
-      get { return _priority; }
-    }
 
-    #region IComparable Members
-
-    public int CompareTo(object obj)
-    {
-      // Attention - we sort the items so that the item with the highest priority value is the first (!) entry in a sorted list
-      var to = (UserControlForControllerAttribute)obj;
-      return _priority == to._priority ? 0 : (_priority > to._priority ? -1 : 1);
-    }
-
-    #endregion IComparable Members
   }
 }

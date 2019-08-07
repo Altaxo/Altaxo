@@ -9,11 +9,11 @@ using System.Windows;
 // associated with an assembly.
 [assembly: AssemblyTitle("AltaxoMarkdownEditing")]
 [assembly: AssemblyDescription("Markdown editing library for Altaxo")]
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$, DATE: $REVDATE$")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
-[assembly: AssemblyProduct("AltaxoMarkdownEditing")]
-[assembly: AssemblyCopyright("Copyright © Dr. Dirk Lellinger 2018")]
-[assembly: AssemblyTrademark("Copyright © Dr. Dirk Lellinger 2018")]
+[assembly: AssemblyProduct("Altaxo")]
+[assembly: AssemblyCopyright("Copyright © Dr. Dirk Lellinger 2018-$YEAR$")]
+[assembly: AssemblyTrademark("Copyright © Dr. Dirk Lellinger 2018-$YEAR$")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -49,5 +49,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.6.0.0")]
-[assembly: AssemblyFileVersion("4.6.0.0")]
+[assembly: AssemblyVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
+[assembly: AssemblyFileVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]

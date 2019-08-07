@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Scripting
   /// <summary>
   /// Interaction logic for SDPureScriptControlWpf.xaml
   /// </summary>
-
+  [UserControlPriority(1)]
   public partial class SDPureScriptControlWpf : UserControl, IScriptView, IViewRequiresSpecialShellWindow
   {
     protected static CodeEditing.CodeTextEditorFactory _factory;

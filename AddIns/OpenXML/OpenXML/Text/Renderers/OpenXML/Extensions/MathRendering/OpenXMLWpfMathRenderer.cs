@@ -60,11 +60,6 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
       ObjectRenderers.Add(new Renderers.FencedAtomRenderer()); // Delimiters that can change size
     }
 
-    internal void PushColor(Color color)
-    {
-      throw new NotImplementedException();
-    }
-
     public override object Render(Atom atom)
     {
       var officeMath = Push(new OfficeMath()); // our OpenXml root document 

@@ -249,6 +249,20 @@ namespace Altaxo.Main.Services
         foreach (ExpectedTypeOfViewAttribute attr in viewattributes)
         {
           Type[] controltypes = ReflectionService.GetNonAbstractSubclassesOf(new System.Type[] { guiControlType, attr.TargetType });
+          if (controltypes.Length > 1)
+          {
+            // retrieve priorities for the types, and then sort controltypes using priority descending
+
+            var priorities = new int[controltypes.Length];
+            for (int i = 0; i < controltypes.Length; ++i)
+            {
+              object[] pattributes = controltypes[i].GetCustomAttributes(typeof(UserControlPriorityAttribute), false);
+              if (null != pattributes && pattributes.Length > 0)
+                priorities[i] = -((UserControlPriorityAttribute)pattributes[0]).Priority;
+            }
+            Array.Sort(priorities, controltypes); // the negation of priority (see above) ensures that the sorting is priority descending
+          }
+
           foreach (Type controltype in controltypes)
           {
             // test if the control has a special preference for a controller...

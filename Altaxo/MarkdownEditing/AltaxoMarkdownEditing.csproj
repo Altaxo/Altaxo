@@ -1,132 +1,26 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4932152A-9031-4277-8C47-C53AB8FE8322}</ProjectGuid>
-    <OutputType>library</OutputType>
+    <TargetFramework>net471</TargetFramework>
+    <UseWPF>true</UseWPF>
     <RootNamespace>Altaxo</RootNamespace>
-    <AssemblyName>AltaxoMarkdownEditing</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>..\..\rtDir\bin</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\rtDir\bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\rtDir\bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
+    <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj" />
+    <ProjectReference Include="..\..\Libraries\Markdig.Wpf\Markdig.Wpf.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="ReachFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Printing" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Gui\Markdown\Commands.cs" />
-    <Compile Include="Gui\Markdown\LastActivatedWindow.cs" />
-    <Compile Include="Gui\Markdown\LinkReferenceTrackerPostProcessor.cs" />
-    <Compile Include="Gui\Markdown\FencedCodeBlockLineTaggingPostProcessor.cs" />
-    <Compile Include="Gui\Markdown\MarkdownDifferenceUpdater.cs" />
-    <Compile Include="Gui\Markdown\MarkdownRichTextEditing.xaml.cs">
-      <DependentUpon>MarkdownRichTextEditing.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Markdown\MarkdownEditing.xaml.cs">
-      <DependentUpon>MarkdownEditing.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Markdown\MarkdownRichTextEditing_Outline.cs" />
-    <Compile Include="Gui\Markdown\MarkdownRichTextEditing_TextBlockCommands.cs" />
-    <Compile Include="Gui\Markdown\MarkdownRichTextEditing_TextInlineCommands.cs" />
-    <Compile Include="Gui\Markdown\MarkdownSimpleEditing.xaml.cs">
-      <DependentUpon>MarkdownSimpleEditing.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Markdown\PositionHelper.cs" />
-    <Compile Include="Gui\Markdown\Printing.cs" />
-    <Compile Include="Gui\Markdown\SyntaxTreeFoldingStrategy.cs" />
-    <Compile Include="Gui\Markdown\ViewingConfiguration.cs" />
-    <Compile Include="Gui\Tests\TestControl1.xaml.cs">
-      <DependentUpon>TestControl1.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
-      <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
-      <Name>ICSharpCode.AvalonEdit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\Markdig.Wpf\Markdig.Wpf.csproj">
-      <Project>{73cef9b3-7110-45f0-bf93-b25ea8559bad}</Project>
-      <Name>Markdig.Wpf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj">
-      <Project>{a145ab45-e55e-4e22-8ca1-dae537a346e0}</Project>
-      <Name>Markdig</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Gui\Markdown\MarkdownRichTextEditing.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Gui\Markdown\MarkdownEditing.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Gui\Markdown\MarkdownSimpleEditing.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Tests\TestControl1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
+  <Target Name="DoMakeFileVersion" AfterTargets="Compile">
+    <GitVersionFile TemplateFile="Properties\AssemblyInfo.cs" DestinationFile="Properties\AssemblyInfo.autogenerated.cs" SettingsFile="..\..\MSBuildVersioning.xml" />
+  </Target>
 </Project>
