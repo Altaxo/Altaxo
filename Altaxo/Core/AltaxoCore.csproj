@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
     <RootNamespace>Altaxo</RootNamespace>
@@ -7,15 +7,111 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>..\..\rtDir\bin</OutputPath>
     <DefineConstants>MANAGED</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;1591</NoWarn>
+    <TransformOnBuild>true</TransformOnBuild>
+    <NoWarn>1701;1702;1573;1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Calc\LinearAlgebra\MatrixMath_BinaryOperations.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MatrixMath_BinaryOperations.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Calc\LinearAlgebra\MatrixMath_InnerTypes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MatrixMath_InnerTypes.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Calc\LinearAlgebra\MatrixMath_VectorRelated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MatrixMath_VectorRelated.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Calc\LinearAlgebra\VectorMath_BinaryFunctionsNonNullableTypes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VectorMath_BinaryFunctionsNonNullableTypes.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Calc\LinearAlgebra\VectorMath_Copy.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VectorMath_Copy.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Calc\LinearAlgebra\VectorMath_FunctionsOnIVector_NonNullableTypes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VectorMath_FunctionsOnIVector_NonNullableTypes.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Calc\LinearAlgebra\VectorMath_UnaryFunctionNonNullableTypes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VectorMath_UnaryFunctionNonNullableTypes.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Calc\LinearAlgebra\VectorMath_ValidRelated_FloatTypes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VectorMath_ValidRelated_FloatTypes.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Calc\LinearAlgebra\VectorMath_WrapperTypes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VectorMath_WrapperTypes.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Calc\LinearAlgebra\Vector_Arithmetics.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Vector_Arithmetics.generated.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Calc\LinearAlgebra\MatrixMath_BinaryOperations.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MatrixMath_BinaryOperations.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Calc\LinearAlgebra\MatrixMath_InnerTypes.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MatrixMath_InnerTypes.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Calc\LinearAlgebra\MatrixMath_VectorRelated.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MatrixMath_VectorRelated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Calc\LinearAlgebra\VectorMath_BinaryFunctionsNonNullableTypes.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>VectorMath_BinaryFunctionsNonNullableTypes.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Calc\LinearAlgebra\VectorMath_Copy.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>VectorMath_Copy.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Calc\LinearAlgebra\VectorMath_FunctionsOnIVector_NonNullableTypes.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>VectorMath_FunctionsOnIVector_NonNullableTypes.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Calc\LinearAlgebra\VectorMath_UnaryFunctionNonNullableTypes.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>VectorMath_UnaryFunctionNonNullableTypes.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Calc\LinearAlgebra\VectorMath_ValidRelated_FloatTypes.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>VectorMath_ValidRelated_FloatTypes.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Calc\LinearAlgebra\VectorMath_WrapperTypes.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>VectorMath_WrapperTypes.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Calc\LinearAlgebra\Vector_Arithmetics.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Vector_Arithmetics.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
-  <Target Name="DoMakeFileVersion" AfterTargets="Compile">
+  <Target Name="GenAssInfo">
     <GitVersionFile TemplateFile="Properties\AssemblyInfo.cs" DestinationFile="Properties\AssemblyInfo.autogenerated.cs" SettingsFile="..\..\MSBuildVersioning.xml" />
   </Target>
 </Project>
