@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     public virtual bool IsRenamingEnabled { get { return false; } }
 
     /// <summary>
-    /// Bind the validation to this property and use a <see cref="Altaxo.Gui.Common.ConverterStringFuncToValidationRule"/> converter to convert it into a validation rule.
+    /// Bind the validation to this property and use a ConverterStringFuncToValidationRule converter to convert it into a validation rule.
     /// </summary>
     /// <value>
     /// The renaming validation function.
@@ -282,7 +282,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     #region Renaming
 
     /// <summary>
-    /// Bind the validation to this property and use a <see cref="Altaxo.Gui.Common.ConverterStringFuncToValidationRule"/> converter to convert it into a validation rule.
+    /// Bind the validation to this property and use a ConverterStringFuncToValidationRule converter to convert it into a validation rule.
     /// </summary>
     /// <value>
     /// The renaming validation function.
