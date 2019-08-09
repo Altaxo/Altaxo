@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -92,9 +92,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-    private SelectableListNodeList _dropLineChoices;
     private SelectableListNodeList _symbolShapeChoices;
-    private SelectableListNodeList _symbolStyleChoices;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -105,9 +103,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       _colorGroupStyleTracker = null;
 
-      _dropLineChoices = null;
       _symbolShapeChoices = null;
-      _symbolStyleChoices = null;
 
       base.Dispose(isDisposing);
     }

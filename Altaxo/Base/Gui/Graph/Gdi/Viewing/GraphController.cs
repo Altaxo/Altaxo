@@ -1779,8 +1779,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 
     /// <summary>Handles the mouse wheel event.</summary>
-    /// <param name="position">Mouse position.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseWheelEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The instance containing the event data.</param>
+    /// <param name="keyModifiers">The modifier keys currently pressed</param>
+    /// <param name="eHand">Argument to signal whether this event was handled here.</param>
     public virtual void EhView_GraphPanelMouseWheel(AltaxoMouseEventArgs e, AltaxoKeyboardModifierKeys keyModifiers, HandledEventArgs eHand)
     {
       var position = e.Position;

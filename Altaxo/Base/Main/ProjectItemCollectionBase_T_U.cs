@@ -439,7 +439,6 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="newName">The new name of the child.</param>
     /// <param name="child">The child's instance.</param>
-    /// <param name="parent">The parent's instance.</param>
     /// <param name="setName">Action to set the name to the provided value. This function should only do set the name, but not raise any evens etc.</param>
     /// <param name="raiseOnNameChanged">Action to raise the NameChanged event on the child.</param>
     /// <exception cref="ArgumentNullException">newName - New name is null</exception>

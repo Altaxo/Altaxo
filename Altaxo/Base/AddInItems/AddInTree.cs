@@ -241,7 +241,7 @@ namespace Altaxo.AddInItems
     /// The specified AddIn is added to the <see cref="AddIns"/> collection.
     /// If the AddIn is enabled, its doozers, condition evaluators and extension
     /// paths are added to the AddInTree and its resources are added to the
-    /// <see cref="ResourceService"/>.
+    /// <see cref="IResourceService"/>.
     /// </summary>
     public void InsertAddIn(AddIn addIn)
     {

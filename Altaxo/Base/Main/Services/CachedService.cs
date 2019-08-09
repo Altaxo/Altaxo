@@ -90,7 +90,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Performs an implicit conversion from <see cref="CachedService{T, U}"/> to the service <see cref="T"/>.
+    /// Performs an implicit conversion from <see cref="CachedService{T, U}"/> to the service <see cref="T:T"/>.
     /// </summary>
     /// <param name="s">The s.</param>
     /// <returns>

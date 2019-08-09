@@ -1310,7 +1310,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// Handles the mouse move event onto the graph in the controller class.
     /// </summary>
     /// <param name="position">Mouse position.</param>
-    /// <param name="e">MouseEventArgs.</param>
+    /// <param name="mouseButtonState">State of the mouse buttons.</param>
     public virtual void EhView_GraphPanelMouseMove(PointD3D position, AltaxoMouseButtons mouseButtonState)
     {
       if (!(mouseButtonState.HasFlag(AltaxoMouseButtons.Middle))) // if middle button is released

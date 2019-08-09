@@ -34,7 +34,7 @@ namespace Altaxo.Data
 
   public static class ConvertXYVToMatrixActions
   {
-    // <summary>
+    /// <summary>
     /// Creates a matrix from three selected columns. This must be a x-column, a y-column, and a value column.
     /// </summary>
     /// <param name="ctrl">Controller where the columns are selected in.</param>

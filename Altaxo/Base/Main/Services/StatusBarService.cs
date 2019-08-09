@@ -29,8 +29,8 @@ namespace Altaxo.Main.Services
   /// <summary>
   /// Implements a standard <see cref="IStatusBarService"/>. This can be used also as a controller for the Gui component of the status bar.
   /// </summary>
-  /// <seealso cref="Altaxo.Gui.Workbench.IStatusBarService" />
-  /// <seealso cref="Altaxo.Gui.IMVCController" />
+  /// <seealso cref="IStatusBarService" />
+  /// <seealso cref="IMVCController" />
   [ExpectedTypeOfView(typeof(IStatusBarView))]
   public class StatusBarService : IStatusBarService, IMVCController
   {

@@ -24,7 +24,6 @@ namespace Altaxo.Main.Services
   /// <summary>
   /// Interface to a class that stores recently open files and projects.
   /// </summary>
-  /// <see cref="IFileService.RecentOpen" />
   public interface IRecentOpen
   {
     /// <summary>

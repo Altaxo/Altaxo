@@ -168,10 +168,10 @@ namespace Altaxo.Dom
 
     #region Project saving
 
-    /// </inheritdoc>
+    /// <inheritdoc/>
     public abstract IEnumerable<string> ProjectFileExtensions { get; }
 
-    /// </inheritdoc>
+    /// <inheritdoc/>
     public void AskForSavingOfProject(CancelEventArgs e)
     {
       string text = Current.ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");

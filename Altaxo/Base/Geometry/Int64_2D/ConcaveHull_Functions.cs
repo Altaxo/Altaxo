@@ -29,9 +29,6 @@ using System.Text;
 using System.Threading.Tasks;
 using ClipperLib;
 
-/// <summary>
-/// 
-/// </summary>
 namespace Altaxo.Geometry.Int64_2D
 {
   public readonly struct Int64LineSegment

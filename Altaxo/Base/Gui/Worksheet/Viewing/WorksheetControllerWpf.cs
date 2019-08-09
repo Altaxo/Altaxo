@@ -1117,7 +1117,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// Handles the mouse wheel event.
     /// </summary>
     /// <param name="position">Mouse position.</param>
-    /// <param name="e">MouseEventArgs.</param>
+    /// <param name="mouseDelta">Delta value of the mouse wheel.</param>
     public void EhView_TableAreaMouseWheel(PointD2D position, int mouseDelta)
     {
       int oldScrollPos = VertScrollPos;

@@ -64,7 +64,7 @@ namespace Altaxo.Text.Renderers.Html
     public string ContentFolderName { get; }
 
     /// <summary>
-    /// Gets or sets the base name of .aml files. This property is ignored if the <see cref="ProjectOrContentFileName"/> itself is a .aml file.
+    /// Gets or sets the base name of .aml files.
     /// </summary>
     public string ContentFileNameBase { get; }
 
@@ -125,13 +125,6 @@ namespace Altaxo.Text.Renderers.Html
     /// The parsed markdown file.
     /// </summary>
     private MarkdownDocument _markdownDocument;
-
-    /// <summary>
-    /// Helper to calculate MD5 hashes.
-    /// </summary>
-    private readonly System.Security.Cryptography.MD5 _md5Hasher = System.Security.Cryptography.MD5.Create();
-
-
 
 
     /// <summary>

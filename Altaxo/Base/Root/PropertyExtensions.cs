@@ -324,6 +324,7 @@ namespace Altaxo
         return default(T);
     }
 
+    /// <summary>
     /// Gets the property value. The property is searched in the provided owner, then in the containing folder, and then the hierarchy down to the built-in property bag.
     /// </summary>
     /// <typeparam name="T">Type of the property value to be retrieved.</typeparam>

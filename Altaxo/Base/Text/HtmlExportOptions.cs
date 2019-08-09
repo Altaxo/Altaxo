@@ -415,7 +415,7 @@ namespace Altaxo.Text
     /// Exports the images.
     /// </summary>
     /// <param name="document">The text document from which to export the images.</param>
-    /// <param name="basePathName">Full name of the base folder. The base folder is the folder of which the <see cref="ImageFolderName"/> and <see cref="ContentFolderName"/> are subfolders.</param>
+    /// <param name="basePathName">Full name of the base folder. The base folder is the folder of which the <see cref="ImageFolderName"/> are subfolders.</param>
     /// <returns>A tuple consisting of a dictionary which translates old image Urls to new image Urls, and a set of full image file names that were exported.</returns>
     private (Dictionary<string, string> oldToNewImageUrl, HashSet<string> listOfReferencedImageFileNames)
           ExportImages(TextDocument document, string basePathName)

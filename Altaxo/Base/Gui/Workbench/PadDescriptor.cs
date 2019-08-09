@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Workbench
       string precreate = codon.Properties["precreated"];
       if (precreate != null && precreate.ToLower() == "true")
         CreatePad();
-      /// End: ModifiedForAltaxo
+      // End: ModifiedForAltaxo
     }
 
     /// <summary>
