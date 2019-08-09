@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////
+﻿/////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //    See http://altaxo.sourceforge.net
@@ -55,10 +55,3 @@ If you feel I have forgotten you in the list above, please email me a short noti
 Thanks again to all of the contributors,
 
 		D.Lellinger
-
-
-
-
-
-
-

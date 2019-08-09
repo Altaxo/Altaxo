@@ -63,7 +63,7 @@ namespace Altaxo.Scripting
     #endregion Serialization
 
     /// <summary>
-    /// Creates an empty import script. 
+    /// Creates an empty import script.
     /// </summary>
     public FileImportScript()
     {

@@ -71,9 +71,9 @@ namespace Altaxo.Gui
     }
 
 
- 
+
     #endregion
-  
+
     #region Combobox
 
 		public static void UpdateList(ComboBox comboBox, SelectableListNodeList items)
@@ -199,7 +199,7 @@ namespace Altaxo.Gui
 
     }
 
-	
+
 
     public static void SynchronizeSelectionFromGui(ListView listView)
     {

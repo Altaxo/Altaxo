@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Graph
 {
   partial class FunctionPlotDataControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Graph
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -53,9 +53,9 @@ namespace Altaxo.Gui.Graph
       this._edText = new System.Windows.Forms.TextBox();
       this._btEditText = new System.Windows.Forms.Button();
       this.SuspendLayout();
-      // 
+      //
       // _edText
-      // 
+      //
       this._edText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -67,9 +67,9 @@ namespace Altaxo.Gui.Graph
       this._edText.Size = new System.Drawing.Size(320, 299);
       this._edText.TabIndex = 0;
       this._edText.WordWrap = false;
-      // 
+      //
       // _btEditText
-      // 
+      //
       this._btEditText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this._btEditText.Location = new System.Drawing.Point(3, 308);
       this._btEditText.Name = "_btEditText";
@@ -78,9 +78,9 @@ namespace Altaxo.Gui.Graph
       this._btEditText.Text = "Edit ..";
       this._btEditText.UseVisualStyleBackColor = true;
       this._btEditText.Click += new System.EventHandler(this.EhEditText_Click);
-      // 
+      //
       // FunctionPlotDataControl
-      // 
+      //
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this._btEditText);

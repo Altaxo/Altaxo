@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -30,7 +30,7 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers 
+namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
   /// <summary>
   /// Summary description for RectangleDrawingMouseHandler.
@@ -40,7 +40,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public RectangleDrawingMouseHandler(GraphView grac)
       : base(grac)
     {
-      
+
     }
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
@@ -59,9 +59,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       _grac.ActiveLayer.GraphObjects.Add(go);
       _grac.WinFormsController.RefreshGraph();
     }
- 
+
   }
 
 
- 
+
 }

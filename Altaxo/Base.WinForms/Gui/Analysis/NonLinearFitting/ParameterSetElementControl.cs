@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private System.Windows.Forms.TextBox _edParameterValue;
     private System.Windows.Forms.CheckBox _chkParameterVaries;
     private System.Windows.Forms.TextBox _edVarianceValue;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -70,8 +70,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -81,43 +81,43 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._chkParameterVaries = new System.Windows.Forms.CheckBox();
       this._edVarianceValue = new System.Windows.Forms.TextBox();
       this.SuspendLayout();
-      // 
+      //
       // _lblParameterName
-      // 
+      //
       this._lblParameterName.Location = new System.Drawing.Point(0, 0);
       this._lblParameterName.Name = "_lblParameterName";
       this._lblParameterName.Size = new System.Drawing.Size(136, 20);
       this._lblParameterName.TabIndex = 0;
       this._lblParameterName.Text = "label1";
-      // 
+      //
       // _edParameterValue
-      // 
+      //
       this._edParameterValue.Location = new System.Drawing.Point(152, 0);
       this._edParameterValue.Name = "_edParameterValue";
       this._edParameterValue.Size = new System.Drawing.Size(128, 20);
       this._edParameterValue.TabIndex = 1;
       this._edParameterValue.Text = "textBox1";
       this._edParameterValue.Validating += new System.ComponentModel.CancelEventHandler(this._edParameterValue_Validating);
-      // 
+      //
       // _chkParameterVaries
-      // 
+      //
       this._chkParameterVaries.Location = new System.Drawing.Point(288, 0);
       this._chkParameterVaries.Name = "_chkParameterVaries";
       this._chkParameterVaries.Size = new System.Drawing.Size(20, 20);
       this._chkParameterVaries.TabIndex = 2;
       this._chkParameterVaries.CheckedChanged += new System.EventHandler(this._chkParameterVaries_CheckedChanged);
-      // 
+      //
       // _edVarianceValue
-      // 
+      //
       this._edVarianceValue.Location = new System.Drawing.Point(312, 0);
       this._edVarianceValue.Name = "_edVarianceValue";
       this._edVarianceValue.Size = new System.Drawing.Size(128, 20);
       this._edVarianceValue.TabIndex = 3;
       this._edVarianceValue.Text = "textBox1";
       this._edVarianceValue.Validating += new System.ComponentModel.CancelEventHandler(this._edVarianceValue_Validating);
-      // 
+      //
       // ParameterSetElementControl
-      // 
+      //
       this.Controls.Add(this._edVarianceValue);
       this.Controls.Add(this._chkParameterVaries);
       this.Controls.Add(this._edParameterValue);
@@ -140,8 +140,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     IParameterSetElementViewEventSink _controller;
 
-    public IParameterSetElementViewEventSink Controller 
-    { 
+    public IParameterSetElementViewEventSink Controller
+    {
       get
       {
         return _controller;
@@ -155,7 +155,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private void _edParameterValue_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
       if(_controller!=null)
-        _controller.EhView_ParameterValidating(this._edParameterValue.Text,e);    
+        _controller.EhView_ParameterValidating(this._edParameterValue.Text,e);
     }
 
     private void _chkParameterVaries_CheckedChanged(object sender, System.EventArgs e)
@@ -167,8 +167,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private void _edVarianceValue_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
       if(_controller!=null)
-        _controller.EhView_VarianceValidating(this._edVarianceValue.Text,e);    
+        _controller.EhView_VarianceValidating(this._edVarianceValue.Text,e);
     }
-  
+
   }
 }

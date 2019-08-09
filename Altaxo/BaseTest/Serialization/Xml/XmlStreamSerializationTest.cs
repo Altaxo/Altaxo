@@ -1,4 +1,4 @@
-#region Copyright
+ï»¿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -38,7 +38,7 @@ namespace Altaxo.Test.Serialization.Xml
 
     string m_String;
 
-    const string testString = "Dies<ist>ein=fieser-Ströng_mit&lt-und_&gt-und\\sogar\"mittendrin";
+    const string testString = "Dies<ist>ein=fieser-StrÃ¶ng_mit&lt-und_&gt-und\\sogar\"mittendrin";
 
     [XmlSerializationSurrogateFor(typeof(Foo),0)]
       public class Ser1 : IXmlSerializationSurrogate
@@ -87,7 +87,7 @@ namespace Altaxo.Test.Serialization.Xml
       bool bEnabled=true;
 
       if(m_Array.Length!=len)
-        Console.WriteLine("Achtung die Längen sind unterschiedlich!");
+        Console.WriteLine("Achtung die LÃ¤ngen sind unterschiedlich!");
 
       for(int i=0;i<m_Array.Length;i++)
       {

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// <summary>
   /// Summary description for FitFunctionSelectionControl.
   /// </summary>
-  [UserControlForController(typeof(IFitFunctionSelectionViewEventSink))] 
+  [UserControlForController(typeof(IFitFunctionSelectionViewEventSink))]
   public class FitFunctionSelectionControl : System.Windows.Forms.UserControl, IFitFunctionSelectionView
   {
     IFitFunctionSelectionViewEventSink _controller;
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private ContextMenu _appFileLeafNodeContextMenu;
     private MenuItem menuItem1;
     private MenuItem menuItem2;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -80,8 +80,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -100,9 +100,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			this._splitContainer.Panel2.SuspendLayout();
 			this._splitContainer.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// _twFitFunctions
-			// 
+			//
 			this._twFitFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._twFitFunctions.Location = new System.Drawing.Point(0, 0);
 			this._twFitFunctions.Name = "_twFitFunctions";
@@ -110,27 +110,27 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			this._twFitFunctions.TabIndex = 1;
 			this._twFitFunctions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._twFitFunctions_AfterSelect);
 			this._twFitFunctions.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._twFitFunctions_NodeMouseClick);
-			// 
+			//
 			// _splitContainer
-			// 
+			//
 			this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this._splitContainer.Location = new System.Drawing.Point(0, 0);
 			this._splitContainer.Name = "_splitContainer";
-			// 
+			//
 			// _splitContainer.Panel1
-			// 
+			//
 			this._splitContainer.Panel1.Controls.Add(this._twFitFunctions);
-			// 
+			//
 			// _splitContainer.Panel2
-			// 
+			//
 			this._splitContainer.Panel2.Controls.Add(this._rtfDescription);
 			this._splitContainer.Size = new System.Drawing.Size(349, 344);
 			this._splitContainer.SplitterDistance = 153;
 			this._splitContainer.TabIndex = 2;
-			// 
+			//
 			// _rtfDescription
-			// 
+			//
 			this._rtfDescription.Cursor = System.Windows.Forms.Cursors.IBeam;
 			this._rtfDescription.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._rtfDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -140,44 +140,44 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			this._rtfDescription.Size = new System.Drawing.Size(192, 344);
 			this._rtfDescription.TabIndex = 0;
 			this._rtfDescription.Text = "";
-			// 
+			//
 			// _userFileLeafNodeContextMenu
-			// 
+			//
 			this._userFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuContextEdit,
             this.menuItem2,
             this.menuContextRemove});
-			// 
+			//
 			// menuContextEdit
-			// 
+			//
 			this.menuContextEdit.Index = 0;
 			this.menuContextEdit.Text = "Edit";
 			this.menuContextEdit.Click += new System.EventHandler(this.menuContextEdit_Click);
-			// 
+			//
 			// menuItem2
-			// 
+			//
 			this.menuItem2.Index = 1;
 			this.menuItem2.Text = "Edit copy of this";
 			this.menuItem2.Click += new System.EventHandler(this.menuContextCreateFromHere_Click);
-			// 
+			//
 			// menuContextRemove
-			// 
+			//
 			this.menuContextRemove.Index = 2;
 			this.menuContextRemove.Text = "Remove";
 			this.menuContextRemove.Click += new System.EventHandler(this.menuContextRemove_Click);
-			// 
+			//
 			// _appFileLeafNodeContextMenu
-			// 
+			//
 			this._appFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem1});
-			// 
+			//
 			// menuItem1
-			// 
+			//
 			this.menuItem1.Index = 0;
 			this.menuItem1.Text = "Edit";
-			// 
+			//
 			// FitFunctionSelectionControl
-			// 
+			//
 			this.Controls.Add(this._splitContainer);
 			this.Name = "FitFunctionSelectionControl";
 			this.Size = new System.Drawing.Size(349, 344);
@@ -192,7 +192,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region IFitFunctionSelectionView Members
 
-    public IFitFunctionSelectionViewEventSink Controller 
+    public IFitFunctionSelectionViewEventSink Controller
     {
       get
       {
@@ -249,7 +249,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     class LeafNode : TreeNode
     {
-      public LeafNode(string text) : base(text) { }  
+      public LeafNode(string text) : base(text) { }
     }
 
     class BuiltinLeafNode : LeafNode
@@ -298,7 +298,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // The key of the entries is the FitFunctionAttribute, the value is the type of the fitting function
 
       this._twFitFunctions.BeginUpdate();
-      
+
 
       RootNode rnode = new RootNode(rootname, RootNodeType.Builtin);
       this._twFitFunctions.Nodes.Add(rnode);
@@ -341,9 +341,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
 
 
-  
 
-   
+
+
     #endregion
 
     private Graphics _rtfGraphics;
@@ -390,8 +390,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _lastClickedNode = e.Node;
     }
 
-		
 
-  
+
+
   }
 }

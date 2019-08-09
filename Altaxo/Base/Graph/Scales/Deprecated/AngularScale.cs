@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -29,27 +29,27 @@ using System.Text;
 namespace Altaxo.Graph.Scales.Deprecated
 {
   /// <summary>
-  /// Scales a full circle, either by degree or by radian. The origin is choosable, and the ticks default to ratios of 180� (or Pi, respectively).
+  /// Scales a full circle, either by degree or by radian. The origin is choosable, and the ticks default to ratios of 180° (or Pi, respectively).
   /// </summary>
   public class AngularScale : NumericalScale
   {
     /// <summary>
-    /// Denotes the possible dividers of 360� to form ticks.
+    /// Denotes the possible dividers of 360° to form ticks.
     /// </summary>
     protected static readonly int[] _possibleDividers =
       {
-        1,   // 360�
-        2,   // 180�
-        3,   // 120�
-        4,   // 90�
-        6,   // 60�
-        8,   // 45�
-        12,  // 30�
-        16,  // 22.5�
-        24,  // 15�
-        36,  // 10�
-        72,  // 5�
-        360  // 1�
+        1,   // 360°
+        2,   // 180°
+        3,   // 120°
+        4,   // 90°
+        6,   // 60°
+        8,   // 45°
+        12,  // 30°
+        16,  // 22.5°
+        24,  // 15°
+        36,  // 10°
+        72,  // 5°
+        360  // 1°
       };
 
     /// <summary>If true, use degree instead of radian.</summary>
@@ -61,10 +61,10 @@ namespace Altaxo.Graph.Scales.Deprecated
     /// <summary>Minor tick divider. Should be one of the values of the table <see cref="_possibleDividers"/>.</summary>
     protected int _minorTickDivider = 24;
 
-    /// <summary>Origin of the scale in multiples of 90�</summary>
-    protected int _scaleOrigin; // in 90�
+    /// <summary>Origin of the scale in multiples of 90°</summary>
+    protected int _scaleOrigin; // in 90°
 
-    /// <summary>If true, the scale uses positive and negative values (-180..180�) instead of only positive values (0..360�).</summary>
+    /// <summary>If true, the scale uses positive and negative values (-180..180°) instead of only positive values (0..360°).</summary>
     protected bool _usePositiveNegativeAngles;
 
     /// <summary>
@@ -277,7 +277,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       /*
 			if (_useDegree)
 			{
-				// Major ticks at 0, 45, 90 degree, minor every 15�
+				// Major ticks at 0, 45, 90 degree, minor every 15°
 				double start = 45*Math.Floor(_cachedAxisOrg / 45);
 				for (; start < End; start += 45)
 					result.Add(start);
@@ -377,7 +377,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       set
       {
         double angle = _useDegree ? value : value * 180 / Math.PI;
-        // round the angle to full 90�
+        // round the angle to full 90°
         angle = Math.Round(angle / 90);
         angle = Math.IEEERemainder(angle, 4);
         _scaleOrigin = (int)angle;

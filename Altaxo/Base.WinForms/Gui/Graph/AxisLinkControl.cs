@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label label23;
     private System.Windows.Forms.RadioButton m_rbLinkAxisCustom;
     private System.Windows.Forms.RadioButton m_rbLinkAxisStraight;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -75,8 +75,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -92,96 +92,96 @@ namespace Altaxo.Gui.Graph
       this.m_rbLinkAxisCustom = new System.Windows.Forms.RadioButton();
       this.m_rbLinkAxisStraight = new System.Windows.Forms.RadioButton();
       this.SuspendLayout();
-      // 
+      //
       // label26
-      // 
+      //
       this.label26.Location = new System.Drawing.Point(96, 57);
       this.label26.Name = "label26";
       this.label26.Size = new System.Drawing.Size(16, 13);
       this.label26.TabIndex = 21;
       this.label26.Text = "b";
       this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      // 
+      //
       // label25
-      // 
+      //
       this.label25.Location = new System.Drawing.Point(48, 57);
       this.label25.Name = "label25";
       this.label25.Size = new System.Drawing.Size(16, 13);
       this.label25.TabIndex = 20;
       this.label25.Text = "a";
       this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      // 
+      //
       // label24
-      // 
+      //
       this.label24.Location = new System.Drawing.Point(3, 96);
       this.label24.Name = "label24";
       this.label24.Size = new System.Drawing.Size(29, 16);
       this.label24.TabIndex = 19;
       this.label24.Text = "End";
       this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      // 
+      //
       // m_edLinkAxisEndB
-      // 
+      //
       this.m_edLinkAxisEndB.Location = new System.Drawing.Point(88, 96);
       this.m_edLinkAxisEndB.Name = "m_edLinkAxisEndB";
       this.m_edLinkAxisEndB.Size = new System.Drawing.Size(40, 20);
       this.m_edLinkAxisEndB.TabIndex = 18;
       this.m_edLinkAxisEndB.Validating += new System.ComponentModel.CancelEventHandler(this.EhEndB_Validating);
-      // 
+      //
       // m_edLinkAxisEndA
-      // 
+      //
       this.m_edLinkAxisEndA.Location = new System.Drawing.Point(40, 96);
       this.m_edLinkAxisEndA.Name = "m_edLinkAxisEndA";
       this.m_edLinkAxisEndA.Size = new System.Drawing.Size(40, 20);
       this.m_edLinkAxisEndA.TabIndex = 17;
       this.m_edLinkAxisEndA.Validating += new System.ComponentModel.CancelEventHandler(this.EhEndA_Validating);
-      // 
+      //
       // m_edLinkAxisOrgB
-      // 
+      //
       this.m_edLinkAxisOrgB.Location = new System.Drawing.Point(88, 72);
       this.m_edLinkAxisOrgB.Name = "m_edLinkAxisOrgB";
       this.m_edLinkAxisOrgB.Size = new System.Drawing.Size(40, 20);
       this.m_edLinkAxisOrgB.TabIndex = 16;
       this.m_edLinkAxisOrgB.Validating += new System.ComponentModel.CancelEventHandler(this.EhOrgB_Validating);
-      // 
+      //
       // m_edLinkAxisOrgA
-      // 
+      //
       this.m_edLinkAxisOrgA.Location = new System.Drawing.Point(40, 72);
       this.m_edLinkAxisOrgA.Name = "m_edLinkAxisOrgA";
       this.m_edLinkAxisOrgA.Size = new System.Drawing.Size(40, 20);
       this.m_edLinkAxisOrgA.TabIndex = 15;
       this.m_edLinkAxisOrgA.Validating += new System.ComponentModel.CancelEventHandler(this.EhOrgA_Validating);
-      // 
+      //
       // label23
-      // 
+      //
       this.label23.Location = new System.Drawing.Point(3, 72);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(29, 16);
       this.label23.TabIndex = 14;
       this.label23.Text = "Org";
       this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      // 
+      //
       // m_rbLinkAxisCustom
-      // 
+      //
       this.m_rbLinkAxisCustom.Location = new System.Drawing.Point(16, 38);
       this.m_rbLinkAxisCustom.Name = "m_rbLinkAxisCustom";
       this.m_rbLinkAxisCustom.Size = new System.Drawing.Size(104, 16);
       this.m_rbLinkAxisCustom.TabIndex = 13;
       this.m_rbLinkAxisCustom.Text = "Custom (a+bx)";
       this.m_rbLinkAxisCustom.CheckedChanged += new System.EventHandler(this.EhLinkCustom_CheckedChanged);
-      // 
+      //
       // m_rbLinkAxisStraight
-      // 
+      //
       this.m_rbLinkAxisStraight.Location = new System.Drawing.Point(16, 19);
       this.m_rbLinkAxisStraight.Name = "m_rbLinkAxisStraight";
       this.m_rbLinkAxisStraight.Size = new System.Drawing.Size(104, 16);
       this.m_rbLinkAxisStraight.TabIndex = 12;
       this.m_rbLinkAxisStraight.Text = "Straight (1:1)";
       this.m_rbLinkAxisStraight.CheckedChanged += new System.EventHandler(this.EhLinkStraight_CheckedChanged);
-     
-      // 
+
+      //
       // AxisLinkControl
-      // 
+      //
       this.Controls.Add(this.label26);
       this.Controls.Add(this.label25);
       this.Controls.Add(this.label24);
@@ -200,7 +200,7 @@ namespace Altaxo.Gui.Graph
     }
     #endregion
 
-  
+
 
     private void EhLinkStraight_CheckedChanged(object sender, System.EventArgs e)
     {
@@ -232,7 +232,7 @@ namespace Altaxo.Gui.Graph
 				OrgB_Validating(ev);
 				e.Cancel = ev.HasErrors;
       }
-    
+
     }
 
     private void EhEndA_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Graph
 			}
     }
     #region ILinkAxisView Members
-  
+
     void EnableCustom(bool bEnab)
     {
       this.m_edLinkAxisOrgA.Enabled = bEnab;
@@ -276,7 +276,7 @@ namespace Altaxo.Gui.Graph
           this.m_rbLinkAxisCustom.Checked = true;
           EnableCustom(true);
 			 }
-      
+
     }
 
     public void OrgA_Initialize(string text)
@@ -307,7 +307,7 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
-  
+
 
 
 		public event Action<ValidationEventArgs<string>> OrgA_Validating;

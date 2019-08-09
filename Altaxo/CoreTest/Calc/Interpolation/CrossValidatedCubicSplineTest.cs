@@ -58,7 +58,7 @@ namespace AltaxoTest.Calc.Interpolation
       double[][] _testdata { get; }
 
       /// <summary>
-      /// SmoothingParameter; DegreesOfFreedom; GeneralizedCrossValidation, MeanSquareResidual, EstimateOfTrueMeanSquareError, EstimateOfErrorVariance, MeanSquareValueOfDfi, Variance 
+      /// SmoothingParameter; DegreesOfFreedom; GeneralizedCrossValidation, MeanSquareResidual, EstimateOfTrueMeanSquareError, EstimateOfErrorVariance, MeanSquareValueOfDfi, Variance
       /// </summary>
       double[] _teststat { get; }
     }

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph
 
     #region IShapeGraphicView Members
 
-   
+
     public PointD2D DocPosition
     {
       get
@@ -80,6 +80,6 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
-   
+
   }
 }

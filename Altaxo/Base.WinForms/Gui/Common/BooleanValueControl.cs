@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Common
   public class BooleanValueControl : System.Windows.Forms.UserControl, IBooleanValueView
   {
     private System.Windows.Forms.CheckBox _cbCheckBox1;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Common
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -64,18 +64,18 @@ namespace Altaxo.Gui.Common
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
       this._cbCheckBox1 = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
-      // 
+      //
       // _cbCheckBox1
-      // 
-      this._cbCheckBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this._cbCheckBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this._cbCheckBox1.Location = new System.Drawing.Point(8, 8);
       this._cbCheckBox1.Name = "_cbCheckBox1";
@@ -83,9 +83,9 @@ namespace Altaxo.Gui.Common
       this._cbCheckBox1.TabIndex = 0;
       this._cbCheckBox1.Text = "checkBox1";
       this._cbCheckBox1.CheckedChanged += new System.EventHandler(this._cbCheckBox1_CheckedChanged);
-      // 
+      //
       // BooleanValueControl
-      // 
+      //
       this.Controls.Add(this._cbCheckBox1);
       this.Name = "BooleanValueControl";
       this.Size = new System.Drawing.Size(264, 32);

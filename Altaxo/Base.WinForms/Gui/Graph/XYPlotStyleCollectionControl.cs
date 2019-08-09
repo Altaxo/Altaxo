@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Button _btAddStyle;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.ComboBox _cbPredefinedStyleSets;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -75,8 +75,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -91,52 +91,52 @@ namespace Altaxo.Gui.Graph
       this.label2 = new System.Windows.Forms.Label();
       this._cbPredefinedStyleSets = new System.Windows.Forms.ComboBox();
       this.SuspendLayout();
-      // 
+      //
       // _lbStyles
-      // 
+      //
       this._lbStyles.Location = new System.Drawing.Point(8, 136);
       this._lbStyles.Name = "_lbStyles";
       this._lbStyles.Size = new System.Drawing.Size(232, 173);
       this._lbStyles.TabIndex = 0;
-      // 
+      //
       // _btStyleUp
-      // 
+      //
       this._btStyleUp.Image = ((System.Drawing.Image)(resources.GetObject("_btStyleUp.Image")));
       this._btStyleUp.Location = new System.Drawing.Point(248, 168);
       this._btStyleUp.Name = "_btStyleUp";
       this._btStyleUp.Size = new System.Drawing.Size(32, 23);
       this._btStyleUp.TabIndex = 1;
       this._btStyleUp.Click += new System.EventHandler(this.EhStyleUp_Click);
-      // 
+      //
       // _btStyleDown
-      // 
+      //
       this._btStyleDown.Image = ((System.Drawing.Image)(resources.GetObject("_btStyleDown.Image")));
       this._btStyleDown.Location = new System.Drawing.Point(248, 200);
       this._btStyleDown.Name = "_btStyleDown";
       this._btStyleDown.Size = new System.Drawing.Size(32, 23);
       this._btStyleDown.TabIndex = 2;
       this._btStyleDown.Click += new System.EventHandler(this.EhStyleDown_Click);
-      // 
+      //
       // _btStyleEdit
-      // 
+      //
       this._btStyleEdit.Image = ((System.Drawing.Image)(resources.GetObject("_btStyleEdit.Image")));
       this._btStyleEdit.Location = new System.Drawing.Point(248, 248);
       this._btStyleEdit.Name = "_btStyleEdit";
       this._btStyleEdit.Size = new System.Drawing.Size(32, 23);
       this._btStyleEdit.TabIndex = 3;
       this._btStyleEdit.Click += new System.EventHandler(this.EhStyleEdit_Click);
-      // 
+      //
       // _btStyleRemove
-      // 
+      //
       this._btStyleRemove.Image = ((System.Drawing.Image)(resources.GetObject("_btStyleRemove.Image")));
       this._btStyleRemove.Location = new System.Drawing.Point(248, 280);
       this._btStyleRemove.Name = "_btStyleRemove";
       this._btStyleRemove.Size = new System.Drawing.Size(32, 23);
       this._btStyleRemove.TabIndex = 4;
       this._btStyleRemove.Click += new System.EventHandler(this.EhStyleRemove_Click);
-      // 
+      //
       // _btAddStyle
-      // 
+      //
       this._btAddStyle.AccessibleDescription = "Adds a new style.";
       this._btAddStyle.Image = ((System.Drawing.Image)(resources.GetObject("_btAddStyle.Image")));
       this._btAddStyle.Location = new System.Drawing.Point(248, 136);
@@ -144,26 +144,26 @@ namespace Altaxo.Gui.Graph
       this._btAddStyle.Size = new System.Drawing.Size(32, 23);
       this._btAddStyle.TabIndex = 5;
       this._btAddStyle.Click += new System.EventHandler(this.EhAddStyle_Click);
-      // 
+      //
       // label2
-      // 
+      //
       this.label2.Location = new System.Drawing.Point(8, 56);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(120, 16);
       this.label2.TabIndex = 8;
       this.label2.Text = "Predefined style sets :";
-      // 
+      //
       // _cbPredefinedStyleSets
-      // 
+      //
       this._cbPredefinedStyleSets.Location = new System.Drawing.Point(8, 72);
       this._cbPredefinedStyleSets.Name = "_cbPredefinedStyleSets";
       this._cbPredefinedStyleSets.Size = new System.Drawing.Size(272, 21);
       this._cbPredefinedStyleSets.TabIndex = 9;
       this._cbPredefinedStyleSets.Text = "comboBox1";
       this._cbPredefinedStyleSets.SelectionChangeCommitted += new System.EventHandler(this.EhPredefinedStyleSets_SelectionChange);
-      // 
+      //
       // XYPlotStyleCollectionControl
-      // 
+      //
       this.Controls.Add(this._cbPredefinedStyleSets);
       this.Controls.Add(this.label2);
       this.Controls.Add(this._btAddStyle);
@@ -214,7 +214,7 @@ namespace Altaxo.Gui.Graph
         _lbStyles.SetSelected(selindices[i],true);
       }
       this._lbStyles.EndUpdate();
-    
+
     }
 
     MenuItem[] _availablePlotStyles;

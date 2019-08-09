@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Common.Drawing
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
 
       System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
-      
+
       PointF middle = new PointF(rectColor.Left+0.5f*rectColor.Width,rectColor.Top+0.5f*rectColor.Height);
 
       PointF[] points = new PointF[]{
@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Common.Drawing
       };
 
       grfx.FillPolygon(foreColorBrush, points);
-      
+
       string text = Altaxo.Serialization.GUIConversion.ToString(itemThickness);
       grfx.DrawString(text, Font, foreColorBrush, rectText);
     }

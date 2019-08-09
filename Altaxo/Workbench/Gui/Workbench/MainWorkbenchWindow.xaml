@@ -63,7 +63,7 @@
         <ContentControl DockPanel.Dock="Bottom" Content="{Binding StatusBarView, Mode=OneWay}" />
 
         <!-- Avalon docking manager -->
-        <avalonDock:DockingManager x:Name="_dockManager" 
+        <avalonDock:DockingManager x:Name="_dockManager"
 								   AllowMixedOrientation="True"
                                    AnchorablesSource="{Binding PadContentCollection}"
                                    DocumentsSource="{Binding ViewContentCollection}"

@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Common
             ToolTip = choice.Text0,
             Tag = choice,
             IsChecked = choice.IsSelected,
-            
+
           };
           rb.Checked += EhRadioButtonChecked;
 
@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Common
         SelectedItem = node;
       }
 
-      
+
       SelectionChanged?.Invoke();
     }
   }

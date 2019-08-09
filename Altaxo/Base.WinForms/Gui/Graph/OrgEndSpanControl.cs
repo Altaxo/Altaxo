@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -49,12 +49,12 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.ComboBox cbCombo3;
     private System.Windows.Forms.TextBox edText3;
     private System.Windows.Forms.Label lblLabel3;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    public IOrgEndSpanViewEventReceiver Controller 
+    public IOrgEndSpanViewEventReceiver Controller
     {
       get { return _controller; }
       set { _controller = value; }
@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -84,8 +84,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -100,87 +100,87 @@ namespace Altaxo.Gui.Graph
       this.edText3 = new System.Windows.Forms.TextBox();
       this.lblLabel3 = new System.Windows.Forms.Label();
       this.SuspendLayout();
-      // 
+      //
       // lblLabel1
-      // 
+      //
       this.lblLabel1.Location = new System.Drawing.Point(8, 0);
       this.lblLabel1.Name = "lblLabel1";
       this.lblLabel1.Size = new System.Drawing.Size(64, 20);
       this.lblLabel1.TabIndex = 0;
       this.lblLabel1.Text = "label1";
-      // 
+      //
       // edText1
-      // 
+      //
       this.edText1.Location = new System.Drawing.Point(216, 0);
       this.edText1.Name = "edText1";
       this.edText1.Size = new System.Drawing.Size(100, 20);
       this.edText1.TabIndex = 1;
       this.edText1.Text = "textBox1";
       this.edText1.Validating += new System.ComponentModel.CancelEventHandler(this.edText1_Validating);
-      // 
+      //
       // cbCombo1
-      // 
+      //
       this.cbCombo1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCombo1.Location = new System.Drawing.Point(80, 0);
       this.cbCombo1.Name = "cbCombo1";
       this.cbCombo1.Size = new System.Drawing.Size(121, 21);
       this.cbCombo1.TabIndex = 2;
       this.cbCombo1.SelectionChangeCommitted += new System.EventHandler(this.cbCombo1_SelectionChangeCommitted);
-      // 
+      //
       // cbCombo2
-      // 
+      //
       this.cbCombo2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCombo2.Location = new System.Drawing.Point(80, 40);
       this.cbCombo2.Name = "cbCombo2";
       this.cbCombo2.Size = new System.Drawing.Size(121, 21);
       this.cbCombo2.TabIndex = 5;
       this.cbCombo2.SelectionChangeCommitted += new System.EventHandler(this.cbCombo2_SelectionChangeCommitted);
-      // 
+      //
       // edText2
-      // 
+      //
       this.edText2.Location = new System.Drawing.Point(216, 40);
       this.edText2.Name = "edText2";
       this.edText2.Size = new System.Drawing.Size(100, 20);
       this.edText2.TabIndex = 4;
       this.edText2.Text = "textBox2";
       this.edText2.Validating += new System.ComponentModel.CancelEventHandler(this.edText2_Validating);
-      // 
+      //
       // lblLabel2
-      // 
+      //
       this.lblLabel2.Location = new System.Drawing.Point(8, 40);
       this.lblLabel2.Name = "lblLabel2";
       this.lblLabel2.Size = new System.Drawing.Size(64, 20);
       this.lblLabel2.TabIndex = 3;
       this.lblLabel2.Text = "label2";
-      // 
+      //
       // cbCombo3
-      // 
+      //
       this.cbCombo3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCombo3.Location = new System.Drawing.Point(80, 80);
       this.cbCombo3.Name = "cbCombo3";
       this.cbCombo3.Size = new System.Drawing.Size(121, 21);
       this.cbCombo3.TabIndex = 8;
       this.cbCombo3.SelectionChangeCommitted += new System.EventHandler(this.cbCombo3_SelectionChangeCommitted);
-      // 
+      //
       // edText3
-      // 
+      //
       this.edText3.Location = new System.Drawing.Point(216, 80);
       this.edText3.Name = "edText3";
       this.edText3.Size = new System.Drawing.Size(100, 20);
       this.edText3.TabIndex = 7;
       this.edText3.Text = "textBox3";
       this.edText3.Validating += new System.ComponentModel.CancelEventHandler(this.edText3_Validating);
-      // 
+      //
       // lblLabel3
-      // 
+      //
       this.lblLabel3.Location = new System.Drawing.Point(8, 80);
       this.lblLabel3.Name = "lblLabel3";
       this.lblLabel3.Size = new System.Drawing.Size(64, 20);
       this.lblLabel3.TabIndex = 6;
       this.lblLabel3.Text = "label3";
-      // 
+      //
       // OrgEndSpanControl
-      // 
+      //
       this.Controls.Add(this.cbCombo3);
       this.Controls.Add(this.edText3);
       this.Controls.Add(this.lblLabel3);
@@ -251,41 +251,41 @@ namespace Altaxo.Gui.Graph
     {
       this.edText3.Text = txt;
     }
-  
+
 
     public void EnableChoice1(bool enable)
     {
       this.cbCombo1.Enabled = enable;
-      
+
     }
 
     public void EnableChoice2(bool enable)
     {
       this.cbCombo2.Enabled = enable;
-     
+
     }
 
     public void EnableChoice3(bool enable)
     {
       this.cbCombo3.Enabled = enable;
-     
+
     }
 
     public void EnableValue1(bool enable)
     {
-      
+
       this.edText1.Enabled = enable;
     }
 
     public void EnableValue2(bool enable)
     {
-      
+
       this.edText2.Enabled = enable;
     }
 
     public void EnableValue3(bool enable)
     {
-     
+
       this.edText3.Enabled = enable;
     }
 
@@ -328,5 +328,5 @@ namespace Altaxo.Gui.Graph
     }
   }
 
- 
+
 }

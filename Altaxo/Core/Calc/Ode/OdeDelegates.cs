@@ -1,11 +1,11 @@
-#region Copyright © 2009, De Santiago-Castillo JA. All rights reserved.
+ï»¿#region Copyright Â© 2009, De Santiago-Castillo JA. All rights reserved.
 
-//Copyright © 2009 Jose Antonio De Santiago-Castillo
+//Copyright Â© 2009 Jose Antonio De Santiago-Castillo
 //E-mail:JAntonioDeSantiago@gmail.com
 //Web: www.DotNumerics.com
 //
 
-#endregion Copyright © 2009, De Santiago-Castillo JA. All rights reserved.
+#endregion Copyright Â© 2009, De Santiago-Castillo JA. All rights reserved.
 
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Common.Drawing
 {
   partial class BrushAllPropertiesControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -82,9 +82,9 @@ namespace Altaxo.Gui.Common.Drawing
       this.flowLayoutPanel1.SuspendLayout();
       this.tableLayoutPanel1.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // flowLayoutPanel1
-      // 
+      //
       this.flowLayoutPanel1.AutoSize = true;
       this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.flowLayoutPanel1.Controls.Add(this.tableLayoutPanel1);
@@ -94,9 +94,9 @@ namespace Altaxo.Gui.Common.Drawing
       this.flowLayoutPanel1.Name = "flowLayoutPanel1";
       this.flowLayoutPanel1.Size = new System.Drawing.Size(402, 343);
       this.flowLayoutPanel1.TabIndex = 0;
-      // 
+      //
       // tableLayoutPanel1
-      // 
+      //
       this.tableLayoutPanel1.AutoSize = true;
       this.tableLayoutPanel1.ColumnCount = 4;
       this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -139,9 +139,9 @@ namespace Altaxo.Gui.Common.Drawing
       this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this.tableLayoutPanel1.Size = new System.Drawing.Size(396, 162);
       this.tableLayoutPanel1.TabIndex = 0;
-      // 
+      //
       // _lblTextureScale
-      // 
+      //
       this._lblTextureScale.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblTextureScale.AutoSize = true;
       this._lblTextureScale.Location = new System.Drawing.Point(8, 142);
@@ -149,9 +149,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblTextureScale.Size = new System.Drawing.Size(58, 13);
       this._lblTextureScale.TabIndex = 21;
       this._lblTextureScale.Text = "Tex.Scale:";
-      // 
+      //
       // _lblGradientScale
-      // 
+      //
       this._lblGradientScale.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblGradientScale.AutoSize = true;
       this._lblGradientScale.Location = new System.Drawing.Point(11, 115);
@@ -159,9 +159,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblGradientScale.Size = new System.Drawing.Size(55, 13);
       this._lblGradientScale.TabIndex = 17;
       this._lblGradientScale.Text = "Col.Scale:";
-      // 
+      //
       // _lblGradientFocus
-      // 
+      //
       this._lblGradientFocus.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblGradientFocus.AutoSize = true;
       this._lblGradientFocus.Location = new System.Drawing.Point(27, 88);
@@ -169,9 +169,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblGradientFocus.Size = new System.Drawing.Size(39, 13);
       this._lblGradientFocus.TabIndex = 15;
       this._lblGradientFocus.Text = "Focus:";
-      // 
+      //
       // _lblWrapMode
-      // 
+      //
       this._lblWrapMode.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblWrapMode.AutoSize = true;
       this._lblWrapMode.Location = new System.Drawing.Point(3, 61);
@@ -179,9 +179,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblWrapMode.Size = new System.Drawing.Size(63, 13);
       this._lblWrapMode.TabIndex = 9;
       this._lblWrapMode.Text = "WrapMode:";
-      // 
+      //
       // _cbColor
-      // 
+      //
       this._cbColor.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._cbColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -367,9 +367,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbColor.Name = "_cbColor";
       this._cbColor.Size = new System.Drawing.Size(121, 21);
       this._cbColor.TabIndex = 0;
-      // 
+      //
       // _cbBrushType
-      // 
+      //
       this._cbBrushType.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._cbBrushType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbBrushType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -379,9 +379,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbBrushType.Name = "_cbBrushType";
       this._cbBrushType.Size = new System.Drawing.Size(121, 21);
       this._cbBrushType.TabIndex = 1;
-      // 
+      //
       // _cbBackColor
-      // 
+      //
       this._cbBackColor.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._cbBackColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._cbBackColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -915,9 +915,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbBackColor.Name = "_cbBackColor";
       this._cbBackColor.Size = new System.Drawing.Size(121, 21);
       this._cbBackColor.TabIndex = 2;
-      // 
+      //
       // _lblBrushColor
-      // 
+      //
       this._lblBrushColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblBrushColor.AutoSize = true;
       this._lblBrushColor.Location = new System.Drawing.Point(32, 7);
@@ -925,9 +925,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblBrushColor.Size = new System.Drawing.Size(34, 13);
       this._lblBrushColor.TabIndex = 4;
       this._lblBrushColor.Text = "Color:";
-      // 
+      //
       // _lblBackColor
-      // 
+      //
       this._lblBackColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblBackColor.AutoSize = true;
       this._lblBackColor.Location = new System.Drawing.Point(7, 34);
@@ -935,9 +935,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblBackColor.Size = new System.Drawing.Size(59, 13);
       this._lblBackColor.TabIndex = 5;
       this._lblBackColor.Text = "BackColor:";
-      // 
+      //
       // _lblBrushType
-      // 
+      //
       this._lblBrushType.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblBrushType.AutoSize = true;
       this._lblBrushType.Location = new System.Drawing.Point(205, 7);
@@ -945,9 +945,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblBrushType.Size = new System.Drawing.Size(61, 13);
       this._lblBrushType.TabIndex = 6;
       this._lblBrushType.Text = "BrushType:";
-      // 
+      //
       // _lblHatchStyle
-      // 
+      //
       this._lblHatchStyle.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblHatchStyle.AutoSize = true;
       this._lblHatchStyle.Location = new System.Drawing.Point(204, 34);
@@ -955,9 +955,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblHatchStyle.Size = new System.Drawing.Size(62, 13);
       this._lblHatchStyle.TabIndex = 7;
       this._lblHatchStyle.Text = "HatchStyle:";
-      // 
+      //
       // _cbWrapMode
-      // 
+      //
       this._cbWrapMode.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbWrapMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbWrapMode.FormattingEnabled = true;
@@ -966,9 +966,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbWrapMode.Name = "_cbWrapMode";
       this._cbWrapMode.Size = new System.Drawing.Size(121, 21);
       this._cbWrapMode.TabIndex = 8;
-      // 
+      //
       // _cbHatchStyle
-      // 
+      //
       this._cbHatchStyle.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._cbHatchStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbHatchStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -978,9 +978,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbHatchStyle.Name = "_cbHatchStyle";
       this._cbHatchStyle.Size = new System.Drawing.Size(121, 21);
       this._cbHatchStyle.TabIndex = 3;
-      // 
+      //
       // _cbGradientMode
-      // 
+      //
       this._cbGradientMode.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbGradientMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbGradientMode.FormattingEnabled = true;
@@ -989,9 +989,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbGradientMode.Name = "_cbGradientMode";
       this._cbGradientMode.Size = new System.Drawing.Size(121, 21);
       this._cbGradientMode.TabIndex = 10;
-      // 
+      //
       // _lblGradientMode
-      // 
+      //
       this._lblGradientMode.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblGradientMode.AutoSize = true;
       this._lblGradientMode.Location = new System.Drawing.Point(203, 61);
@@ -999,9 +999,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblGradientMode.Size = new System.Drawing.Size(63, 13);
       this._lblGradientMode.TabIndex = 11;
       this._lblGradientMode.Text = "Grad.Mode:";
-      // 
+      //
       // _cbGradientShape
-      // 
+      //
       this._cbGradientShape.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbGradientShape.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbGradientShape.FormattingEnabled = true;
@@ -1010,9 +1010,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbGradientShape.Name = "_cbGradientShape";
       this._cbGradientShape.Size = new System.Drawing.Size(121, 21);
       this._cbGradientShape.TabIndex = 12;
-      // 
+      //
       // _lblGradientShape
-      // 
+      //
       this._lblGradientShape.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblGradientShape.AutoSize = true;
       this._lblGradientShape.Location = new System.Drawing.Point(199, 88);
@@ -1020,9 +1020,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblGradientShape.Size = new System.Drawing.Size(67, 13);
       this._lblGradientShape.TabIndex = 13;
       this._lblGradientShape.Text = "Grad.Shape:";
-      // 
+      //
       // _cbGradientFocus
-      // 
+      //
       this._cbGradientFocus.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbGradientFocus.FormattingEnabled = true;
       this._cbGradientFocus.ItemHeight = 15;
@@ -1030,9 +1030,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbGradientFocus.Name = "_cbGradientFocus";
       this._cbGradientFocus.Size = new System.Drawing.Size(121, 21);
       this._cbGradientFocus.TabIndex = 14;
-      // 
+      //
       // _cbGradientScale
-      // 
+      //
       this._cbGradientScale.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbGradientScale.FormattingEnabled = true;
       this._cbGradientScale.ItemHeight = 15;
@@ -1040,9 +1040,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbGradientScale.Name = "_cbGradientScale";
       this._cbGradientScale.Size = new System.Drawing.Size(121, 21);
       this._cbGradientScale.TabIndex = 16;
-      // 
+      //
       // _cbTextureScale
-      // 
+      //
       this._cbTextureScale.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbTextureScale.FormattingEnabled = true;
       this._cbTextureScale.ItemHeight = 15;
@@ -1050,9 +1050,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbTextureScale.Name = "_cbTextureScale";
       this._cbTextureScale.Size = new System.Drawing.Size(121, 21);
       this._cbTextureScale.TabIndex = 20;
-      // 
+      //
       // _lblTextureImage
-      // 
+      //
       this._lblTextureImage.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblTextureImage.AutoSize = true;
       this._lblTextureImage.Location = new System.Drawing.Point(220, 142);
@@ -1060,9 +1060,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblTextureImage.Size = new System.Drawing.Size(46, 13);
       this._lblTextureImage.TabIndex = 19;
       this._lblTextureImage.Text = "Texture:";
-      // 
+      //
       // _cbTextureImage
-      // 
+      //
       this._cbTextureImage.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbTextureImage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbTextureImage.FormattingEnabled = true;
@@ -1071,17 +1071,17 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbTextureImage.Name = "_cbTextureImage";
       this._cbTextureImage.Size = new System.Drawing.Size(121, 21);
       this._cbTextureImage.TabIndex = 18;
-      // 
+      //
       // _brushPreviewPanel
-      // 
+      //
       this._brushPreviewPanel.Location = new System.Drawing.Point(3, 171);
       this._brushPreviewPanel.Name = "_brushPreviewPanel";
       this._brushPreviewPanel.Size = new System.Drawing.Size(387, 169);
       this._brushPreviewPanel.TabIndex = 1;
       this._brushPreviewPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.EhBrushPreview_Paint);
-      // 
+      //
       // _brushGlue
-      // 
+      //
       this._brushGlue.CbBrushType = this._cbBrushType;
       this._brushGlue.CbColor1 = this._cbColor;
       this._brushGlue.CbColor2 = this._cbBackColor;
@@ -1106,9 +1106,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._brushGlue.LabelTextureScale = this._lblTextureScale;
       this._brushGlue.LabelWrapMode = this._lblWrapMode;
       this._brushGlue.BrushChanged += new System.EventHandler(this.EhBrushChanged);
-      // 
+      //
       // _lblExchangeColors
-      // 
+      //
       this._lblExchangeColors.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblExchangeColors.AutoSize = true;
       this._lblExchangeColors.Location = new System.Drawing.Point(200, 115);
@@ -1116,9 +1116,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblExchangeColors.Size = new System.Drawing.Size(66, 13);
       this._lblExchangeColors.TabIndex = 22;
       this._lblExchangeColors.Text = "Xchg colors:";
-      // 
+      //
       // _chkExchangeColors
-      // 
+      //
       this._chkExchangeColors.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._chkExchangeColors.AutoSize = true;
       this._chkExchangeColors.Location = new System.Drawing.Point(272, 114);
@@ -1126,9 +1126,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._chkExchangeColors.Size = new System.Drawing.Size(15, 14);
       this._chkExchangeColors.TabIndex = 23;
       this._chkExchangeColors.UseVisualStyleBackColor = true;
-      // 
+      //
       // BrushAllPropertiesControl
-      // 
+      //
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.AutoSize = true;

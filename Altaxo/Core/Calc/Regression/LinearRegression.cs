@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -64,7 +64,7 @@ namespace Altaxo.Calc.Regression
 
     /// <summary>
     /// The reduced variance of prediction at each index. Is calculated from x' (X'X)^(-1) x.
-    /// To get the real prediction variance, the values have to be multiplicated with sigma�.
+    /// To get the real prediction variance, the values have to be multiplicated with sigma².
     /// </summary>
     private double[] _reducedPredictionVariance;
 

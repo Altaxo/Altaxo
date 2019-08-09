@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -323,7 +323,7 @@ namespace Altaxo.Data
               for (int j = sizey - 1; j >= 0; j--)
                 dblcol[j] = colorfunc(bmp.GetPixel(i, j));
 
-              table.DataColumns.Add(dblcol, table.DataColumns.FindUniqueColumnName(i.ToString())); // Spalte hinzuf�gen
+              table.DataColumns.Add(dblcol, table.DataColumns.FindUniqueColumnName(i.ToString())); // Spalte hinzufügen
             } // end for all x coordinaates
 
             suspendToken.Dispose();

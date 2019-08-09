@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -103,9 +103,9 @@ namespace Altaxo.Gui.Common
 			this.m_btOK = new System.Windows.Forms.Button();
 			this.m_ButtonPanel.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// m_ButtonPanel
-			// 
+			//
 			this.m_ButtonPanel.Controls.Add(this.m_btApply);
 			this.m_ButtonPanel.Controls.Add(this.m_btCancel);
 			this.m_ButtonPanel.Controls.Add(this.m_btOK);
@@ -114,36 +114,36 @@ namespace Altaxo.Gui.Common
 			this.m_ButtonPanel.Name = "m_ButtonPanel";
 			this.m_ButtonPanel.Size = new System.Drawing.Size(292, 40);
 			this.m_ButtonPanel.TabIndex = 0;
-			// 
+			//
 			// m_btApply
-			// 
+			//
 			this.m_btApply.Location = new System.Drawing.Point(192, 8);
 			this.m_btApply.Name = "m_btApply";
 			this.m_btApply.Size = new System.Drawing.Size(59, 24);
 			this.m_btApply.TabIndex = 2;
 			this.m_btApply.Text = "Apply";
 			this.m_btApply.Click += new System.EventHandler(this.EhButtonApply_Click);
-			// 
+			//
 			// m_btCancel
-			// 
+			//
 			this.m_btCancel.Location = new System.Drawing.Point(104, 8);
 			this.m_btCancel.Name = "m_btCancel";
 			this.m_btCancel.Size = new System.Drawing.Size(59, 24);
 			this.m_btCancel.TabIndex = 1;
 			this.m_btCancel.Text = "Cancel";
 			this.m_btCancel.Click += new System.EventHandler(this.EhButtonCancel_Click);
-			// 
+			//
 			// m_btOK
-			// 
+			//
 			this.m_btOK.Location = new System.Drawing.Point(16, 8);
 			this.m_btOK.Name = "m_btOK";
 			this.m_btOK.Size = new System.Drawing.Size(59, 24);
 			this.m_btOK.TabIndex = 0;
 			this.m_btOK.Text = "OK";
 			this.m_btOK.Click += new System.EventHandler(this.EhButtonOK_Click);
-			// 
+			//
 			// DialogShellView
-			// 
+			//
 			this.AcceptButton = this.m_btOK;
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.CancelButton = this.m_btCancel;
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Common
     }
     #endregion
 
-  
+
     private void EhButtonOK_Click(object sender, System.EventArgs e)
     {
       var eventArgs = new System.ComponentModel.CancelEventArgs();

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Common.Drawing
       Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.375 * e.Bounds.Height));
       linePen.LineJoin = item;
       grfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
-     
+
       grfx.DrawLines(linePen,
         new PointF[]{
           new PointF(rectColor.Right,rectColor.Top+0.125f*rectColor.Height),

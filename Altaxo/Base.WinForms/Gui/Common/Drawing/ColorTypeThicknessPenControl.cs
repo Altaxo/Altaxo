@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -74,8 +74,8 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -94,9 +94,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._controlContextMenu.SuspendLayout();
       this._tableLayout.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(28, 7);
@@ -104,9 +104,9 @@ namespace Altaxo.Gui.Common.Drawing
       this.label1.Size = new System.Drawing.Size(34, 13);
       this.label1.TabIndex = 3;
       this.label1.Text = "Color:";
-      // 
+      //
       // label2
-      // 
+      //
       this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(28, 34);
@@ -114,9 +114,9 @@ namespace Altaxo.Gui.Common.Drawing
       this.label2.Size = new System.Drawing.Size(34, 13);
       this.label2.TabIndex = 4;
       this.label2.Text = "Type:";
-      // 
+      //
       // label3
-      // 
+      //
       this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label3.AutoSize = true;
       this.label3.Location = new System.Drawing.Point(3, 61);
@@ -124,34 +124,34 @@ namespace Altaxo.Gui.Common.Drawing
       this.label3.Size = new System.Drawing.Size(59, 13);
       this.label3.TabIndex = 5;
       this.label3.Text = "Thickness:";
-      // 
+      //
       // _controlContextMenu
-      // 
+      //
       this._controlContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._menuShowFullPenDialog});
       this._controlContextMenu.Name = "_controlContextMenu";
       this._controlContextMenu.Size = new System.Drawing.Size(209, 26);
-      // 
+      //
       // _menuShowFullPenDialog
-      // 
+      //
       this._menuShowFullPenDialog.Name = "_menuShowFullPenDialog";
       this._menuShowFullPenDialog.Size = new System.Drawing.Size(208, 22);
       this._menuShowFullPenDialog.Text = "Show full pen dialog ...";
       this._menuShowFullPenDialog.Click += new System.EventHandler(this._menuShowFullPenDialog_Click);
-      // 
+      //
       // _cbThickness
-      // 
+      //
       this._cbThickness.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._cbThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbThickness.ItemHeight = 15;
-    
+
       this._cbThickness.Location = new System.Drawing.Point(68, 57);
       this._cbThickness.Name = "_cbThickness";
       this._cbThickness.Size = new System.Drawing.Size(121, 21);
       this._cbThickness.TabIndex = 2;
-      // 
+      //
       // _cbLineType
-      // 
+      //
       this._cbLineType.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._cbLineType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbLineType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -160,9 +160,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbLineType.Name = "_cbLineType";
       this._cbLineType.Size = new System.Drawing.Size(121, 21);
       this._cbLineType.TabIndex = 1;
-      // 
+      //
       // _cbColor
-      // 
+      //
       this._cbColor.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._cbColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -173,9 +173,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbColor.Name = "_cbColor";
       this._cbColor.Size = new System.Drawing.Size(121, 21);
       this._cbColor.TabIndex = 0;
-      // 
+      //
       // _penGlue
-      // 
+      //
       this._penGlue.CbBrushColor = this._cbColor;
       this._penGlue.CbBrushColor2 = null;
       this._penGlue.CbBrushHatchStyle = null;
@@ -190,9 +190,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._penGlue.CbStartCap = null;
       this._penGlue.CbStartCapSize = null;
       this._penGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
-      // 
+      //
       // _tableLayout
-      // 
+      //
       this._tableLayout.AutoSize = true;
       this._tableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._tableLayout.ColumnCount = 2;
@@ -212,9 +212,9 @@ namespace Altaxo.Gui.Common.Drawing
       this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._tableLayout.Size = new System.Drawing.Size(192, 81);
       this._tableLayout.TabIndex = 0;
-      // 
+      //
       // ColorTypeThicknessPenControl
-      // 
+      //
       this.AutoSize = true;
       this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.ContextMenuStrip = this._controlContextMenu;

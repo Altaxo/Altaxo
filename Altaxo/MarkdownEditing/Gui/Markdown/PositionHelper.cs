@@ -155,7 +155,7 @@ namespace Altaxo.Gui.Markdown
     /// | a | b | c | d | e |   |   : characters
     ///   0   1   2   3   4         : character position
     ///   ↑               ↑
-    ///   Span.Start      Span.End 
+    ///   Span.Start      Span.End
     /// </code>
     /// </remarks>
     public static (TextElement textElementBefore, TextElement textElementAfter) BinarySearchBlocksForTextOffset(System.Collections.IList blocks, int cursorPosition)

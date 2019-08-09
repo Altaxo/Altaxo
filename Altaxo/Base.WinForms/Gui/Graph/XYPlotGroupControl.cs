@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     public event EventHandler AdvancedPlotGroupControl;
 
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -86,8 +86,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -104,9 +104,9 @@ namespace Altaxo.Gui.Graph
       this._btAdvancedGroupControl = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // groupBox1
-      // 
+      //
       this.groupBox1.Controls.Add(this._btAdvancedGroupControl);
       this.groupBox1.Controls.Add(this._cbStrict);
       this.groupBox1.Controls.Add(this.m_chkPlotGroupSymbol);
@@ -120,73 +120,73 @@ namespace Altaxo.Gui.Graph
       this.groupBox1.TabIndex = 29;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Plot Group";
-      // 
+      //
       // _cbStrict
-      // 
+      //
       this._cbStrict.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbStrict.Location = new System.Drawing.Point(2, 150);
       this._cbStrict.Name = "_cbStrict";
       this._cbStrict.Size = new System.Drawing.Size(88, 21);
       this._cbStrict.TabIndex = 7;
-      // 
+      //
       // m_chkPlotGroupSymbol
-      // 
+      //
       this.m_chkPlotGroupSymbol.Location = new System.Drawing.Point(8, 72);
       this.m_chkPlotGroupSymbol.Name = "m_chkPlotGroupSymbol";
       this.m_chkPlotGroupSymbol.Size = new System.Drawing.Size(72, 16);
       this.m_chkPlotGroupSymbol.TabIndex = 4;
       this.m_chkPlotGroupSymbol.Text = "Symbol";
-      // 
+      //
       // m_chkPlotGroupLineType
-      // 
+      //
       this.m_chkPlotGroupLineType.Location = new System.Drawing.Point(8, 48);
       this.m_chkPlotGroupLineType.Name = "m_chkPlotGroupLineType";
       this.m_chkPlotGroupLineType.Size = new System.Drawing.Size(80, 16);
       this.m_chkPlotGroupLineType.TabIndex = 3;
       this.m_chkPlotGroupLineType.Text = "Line Type";
-      // 
+      //
       // m_chkPlotGroupColor
-      // 
+      //
       this.m_chkPlotGroupColor.Location = new System.Drawing.Point(8, 24);
       this.m_chkPlotGroupColor.Name = "m_chkPlotGroupColor";
       this.m_chkPlotGroupColor.Size = new System.Drawing.Size(72, 16);
       this.m_chkPlotGroupColor.TabIndex = 2;
       this.m_chkPlotGroupColor.Text = "Color";
-      // 
+      //
       // _rbtSequential
-      // 
+      //
       this._rbtSequential.Location = new System.Drawing.Point(8, 96);
       this._rbtSequential.Name = "_rbtSequential";
       this._rbtSequential.Size = new System.Drawing.Size(88, 24);
       this._rbtSequential.TabIndex = 1;
       this._rbtSequential.Text = "Sequential";
-      // 
+      //
       // _rbtConcurrently
-      // 
+      //
       this._rbtConcurrently.Location = new System.Drawing.Point(8, 120);
       this._rbtConcurrently.Name = "_rbtConcurrently";
       this._rbtConcurrently.Size = new System.Drawing.Size(88, 24);
       this._rbtConcurrently.TabIndex = 0;
       this._rbtConcurrently.Text = "Concurrently";
-      // 
+      //
       // m_btRemove
-      // 
+      //
       this.m_btRemove.Location = new System.Drawing.Point(8, 40);
       this.m_btRemove.Name = "m_btRemove";
       this.m_btRemove.Size = new System.Drawing.Size(96, 24);
       this.m_btRemove.TabIndex = 28;
       this.m_btRemove.Text = "Remove";
-      // 
+      //
       // m_btWorksheet
-      // 
+      //
       this.m_btWorksheet.Location = new System.Drawing.Point(8, 8);
       this.m_btWorksheet.Name = "m_btWorksheet";
       this.m_btWorksheet.Size = new System.Drawing.Size(96, 24);
       this.m_btWorksheet.TabIndex = 27;
       this.m_btWorksheet.Text = "Worksheet";
-      // 
+      //
       // _btAdvancedGroupControl
-      // 
+      //
       this._btAdvancedGroupControl.Location = new System.Drawing.Point(2, 189);
       this._btAdvancedGroupControl.Name = "_btAdvancedGroupControl";
       this._btAdvancedGroupControl.Size = new System.Drawing.Size(88, 23);
@@ -194,9 +194,9 @@ namespace Altaxo.Gui.Graph
       this._btAdvancedGroupControl.Text = "Advanced ...";
       this._btAdvancedGroupControl.UseVisualStyleBackColor = true;
       this._btAdvancedGroupControl.Click += new System.EventHandler(this._btAdvancedGroupControl_Click);
-      // 
+      //
       // XYPlotGroupControl
-      // 
+      //
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.m_btRemove);
       this.Controls.Add(this.m_btWorksheet);
@@ -226,8 +226,8 @@ namespace Altaxo.Gui.Graph
       set { m_Controller = value; }
     }
 
- 
-    
+
+
 
     public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict)
     {
@@ -243,7 +243,7 @@ namespace Altaxo.Gui.Graph
       this._cbStrict.SelectedIndex = (int)bStrict;
     }
 
-   
+
 
     public bool PlotGroupConcurrently
     {
@@ -264,7 +264,7 @@ namespace Altaxo.Gui.Graph
     }
     public Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict
     {
-      get 
+      get
       {
         return (PlotGroupStrictness)(System.Enum.GetValues(typeof(PlotGroupStrictness))).GetValue(this._cbStrict.SelectedIndex);
       }

@@ -233,7 +233,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _guiFitFunctions.ItemsSource = list;
     }
 
-    
+
 
     public NamedColor GetRtfBackgroundColor()
     {

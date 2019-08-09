@@ -320,7 +320,7 @@ namespace Altaxo.Calc.Clustering
         }
 
         // 3. Choose one new data point at random as a new center, using a weighted
-        // probability distribution where a point x is chosen with probability 
+        // probability distribution where a point x is chosen with probability
         // proportional to D(x)^2.
         double uniformRandomVariable = random.NextDouble();
         double cumulativeSum = 0;
@@ -515,7 +515,7 @@ namespace Altaxo.Calc.Clustering
     #region Helper functions for result output
 
     /// <summary>
-    /// Sorts the cluster values, if cluster data are sortable (if they implement <see cref="IComparable"/>). 
+    /// Sorts the cluster values, if cluster data are sortable (if they implement <see cref="IComparable"/>).
     /// </summary>
     private void SortClusters()
     {
@@ -589,7 +589,7 @@ namespace Altaxo.Calc.Clustering
       base(
         (x, y) => Math.Abs(x - y),  // distance function
         false,                      // distance is Euclidean distance
-        (sum, x) => sum + x,        // sum up function  
+        (sum, x) => sum + x,        // sum up function
         (sum, count) => sum / count // divide function
         )
     {

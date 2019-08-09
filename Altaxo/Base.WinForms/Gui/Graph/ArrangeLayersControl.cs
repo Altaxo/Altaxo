@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph
     private ComboBox _cbSuperfluousLayersAction;
     private Label label9;
     private TableLayoutPanel tableLayoutPanel1;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -86,8 +86,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -113,9 +113,9 @@ namespace Altaxo.Gui.Graph
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// label1
-			// 
+			//
 			this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(3, 6);
@@ -123,9 +123,9 @@ namespace Altaxo.Gui.Graph
 			this.label1.Size = new System.Drawing.Size(84, 13);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Number of rows:";
-			// 
+			//
 			// label2
-			// 
+			//
 			this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label2.AutoSize = true;
 			this.label2.Location = new System.Drawing.Point(3, 32);
@@ -133,9 +133,9 @@ namespace Altaxo.Gui.Graph
 			this.label2.Size = new System.Drawing.Size(101, 13);
 			this.label2.TabIndex = 1;
 			this.label2.Text = "Number of columns:";
-			// 
+			//
 			// label3
-			// 
+			//
 			this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label3.AutoSize = true;
 			this.label3.Location = new System.Drawing.Point(3, 58);
@@ -143,9 +143,9 @@ namespace Altaxo.Gui.Graph
 			this.label3.Size = new System.Drawing.Size(89, 13);
 			this.label3.TabIndex = 2;
 			this.label3.Text = "Row spacing (%):";
-			// 
+			//
 			// label4
-			// 
+			//
 			this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label4.AutoSize = true;
 			this.label4.Location = new System.Drawing.Point(3, 84);
@@ -153,9 +153,9 @@ namespace Altaxo.Gui.Graph
 			this.label4.Size = new System.Drawing.Size(102, 13);
 			this.label4.TabIndex = 3;
 			this.label4.Text = "Column spacing (%):";
-			// 
+			//
 			// label5
-			// 
+			//
 			this.label5.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label5.AutoSize = true;
 			this.label5.Location = new System.Drawing.Point(3, 110);
@@ -163,9 +163,9 @@ namespace Altaxo.Gui.Graph
 			this.label5.Size = new System.Drawing.Size(80, 13);
 			this.label5.TabIndex = 4;
 			this.label5.Text = "Top margin (%):";
-			// 
+			//
 			// label6
-			// 
+			//
 			this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label6.AutoSize = true;
 			this.label6.Location = new System.Drawing.Point(3, 136);
@@ -173,9 +173,9 @@ namespace Altaxo.Gui.Graph
 			this.label6.Size = new System.Drawing.Size(79, 13);
 			this.label6.TabIndex = 5;
 			this.label6.Text = "Left margin (%):";
-			// 
+			//
 			// label7
-			// 
+			//
 			this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label7.AutoSize = true;
 			this.label7.Location = new System.Drawing.Point(3, 162);
@@ -183,9 +183,9 @@ namespace Altaxo.Gui.Graph
 			this.label7.Size = new System.Drawing.Size(94, 13);
 			this.label7.TabIndex = 6;
 			this.label7.Text = "Bottom margin (%):";
-			// 
+			//
 			// label8
-			// 
+			//
 			this.label8.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label8.AutoSize = true;
 			this.label8.Location = new System.Drawing.Point(3, 188);
@@ -193,81 +193,81 @@ namespace Altaxo.Gui.Graph
 			this.label8.Size = new System.Drawing.Size(86, 13);
 			this.label8.TabIndex = 7;
 			this.label8.Text = "Right margin (%):";
-			// 
+			//
 			// _edNumberOfRows
-			// 
+			//
 			this._edNumberOfRows.Location = new System.Drawing.Point(111, 3);
 			this._edNumberOfRows.Name = "_edNumberOfRows";
 			this._edNumberOfRows.Size = new System.Drawing.Size(119, 20);
 			this._edNumberOfRows.TabIndex = 8;
 			this._edNumberOfRows.Text = "1";
 			this._edNumberOfRows.Validating += new System.ComponentModel.CancelEventHandler(this._edNumberOfRows_Validating);
-			// 
+			//
 			// _edNumberOfColumns
-			// 
+			//
 			this._edNumberOfColumns.Location = new System.Drawing.Point(111, 29);
 			this._edNumberOfColumns.Name = "_edNumberOfColumns";
 			this._edNumberOfColumns.Size = new System.Drawing.Size(119, 20);
 			this._edNumberOfColumns.TabIndex = 9;
 			this._edNumberOfColumns.Text = "1";
 			this._edNumberOfColumns.Validating += new System.ComponentModel.CancelEventHandler(this._edNumberOfColumns_Validating);
-			// 
+			//
 			// _edRowSpacing
-			// 
+			//
 			this._edRowSpacing.Location = new System.Drawing.Point(111, 55);
 			this._edRowSpacing.Name = "_edRowSpacing";
 			this._edRowSpacing.Size = new System.Drawing.Size(119, 20);
 			this._edRowSpacing.TabIndex = 10;
 			this._edRowSpacing.Text = "0";
 			this._edRowSpacing.Validating += new System.ComponentModel.CancelEventHandler(this._edNumberOfColumns_Validating);
-			// 
+			//
 			// _edColumnSpacing
-			// 
+			//
 			this._edColumnSpacing.Location = new System.Drawing.Point(111, 81);
 			this._edColumnSpacing.Name = "_edColumnSpacing";
 			this._edColumnSpacing.Size = new System.Drawing.Size(119, 20);
 			this._edColumnSpacing.TabIndex = 11;
 			this._edColumnSpacing.Text = "0";
 			this._edColumnSpacing.Validating += new System.ComponentModel.CancelEventHandler(this._edNumberOfColumns_Validating);
-			// 
+			//
 			// _edTopMargin
-			// 
+			//
 			this._edTopMargin.Location = new System.Drawing.Point(111, 107);
 			this._edTopMargin.Name = "_edTopMargin";
 			this._edTopMargin.Size = new System.Drawing.Size(119, 20);
 			this._edTopMargin.TabIndex = 12;
 			this._edTopMargin.Text = "10";
 			this._edTopMargin.Validating += new System.ComponentModel.CancelEventHandler(this._edTopMargin_Validating);
-			// 
+			//
 			// _edLeftMargin
-			// 
+			//
 			this._edLeftMargin.Location = new System.Drawing.Point(111, 133);
 			this._edLeftMargin.Name = "_edLeftMargin";
 			this._edLeftMargin.Size = new System.Drawing.Size(119, 20);
 			this._edLeftMargin.TabIndex = 13;
 			this._edLeftMargin.Text = "10";
 			this._edLeftMargin.Validating += new System.ComponentModel.CancelEventHandler(this._edLeftMargin_Validating);
-			// 
+			//
 			// _edBottomMargin
-			// 
+			//
 			this._edBottomMargin.Location = new System.Drawing.Point(111, 159);
 			this._edBottomMargin.Name = "_edBottomMargin";
 			this._edBottomMargin.Size = new System.Drawing.Size(119, 20);
 			this._edBottomMargin.TabIndex = 14;
 			this._edBottomMargin.Text = "10";
 			this._edBottomMargin.Validating += new System.ComponentModel.CancelEventHandler(this._edBottomMargin_Validating);
-			// 
+			//
 			// _edRightMargin
-			// 
+			//
 			this._edRightMargin.Location = new System.Drawing.Point(111, 185);
 			this._edRightMargin.Name = "_edRightMargin";
 			this._edRightMargin.Size = new System.Drawing.Size(119, 20);
 			this._edRightMargin.TabIndex = 15;
 			this._edRightMargin.Text = "10";
 			this._edRightMargin.Validating += new System.ComponentModel.CancelEventHandler(this._edRightMargin_Validating);
-			// 
+			//
 			// _cbSuperfluousLayersAction
-			// 
+			//
 			this._cbSuperfluousLayersAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._cbSuperfluousLayersAction.FormattingEnabled = true;
 			this._cbSuperfluousLayersAction.Location = new System.Drawing.Point(111, 211);
@@ -275,9 +275,9 @@ namespace Altaxo.Gui.Graph
 			this._cbSuperfluousLayersAction.Size = new System.Drawing.Size(122, 21);
 			this._cbSuperfluousLayersAction.TabIndex = 16;
 			this._cbSuperfluousLayersAction.SelectionChangeCommitted += new System.EventHandler(this._cbSuperfluousLayersAction_SelectionChangeCommitted);
-			// 
+			//
 			// label9
-			// 
+			//
 			this.label9.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label9.AutoSize = true;
 			this.label9.Location = new System.Drawing.Point(3, 215);
@@ -285,9 +285,9 @@ namespace Altaxo.Gui.Graph
 			this.label9.Size = new System.Drawing.Size(96, 13);
 			this.label9.TabIndex = 17;
 			this.label9.Text = "Superfluous layers:";
-			// 
+			//
 			// tableLayoutPanel1
-			// 
+			//
 			this.tableLayoutPanel1.AutoSize = true;
 			this.tableLayoutPanel1.ColumnCount = 2;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -324,9 +324,9 @@ namespace Altaxo.Gui.Graph
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(248, 235);
 			this.tableLayoutPanel1.TabIndex = 18;
-			// 
+			//
 			// ArrangeLayersControl
-			// 
+			//
 			this.AutoSize = true;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "ArrangeLayersControl";
@@ -346,7 +346,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        
+
         return _controller;
       }
       set
@@ -422,7 +422,7 @@ namespace Altaxo.Gui.Graph
 
 			if (_controller != null)
 				e.Cancel |= _controller.EhNumberOfColumnsChanged(val);
-    
+
     }
 
     private void _edHorizontalSpacing_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -446,21 +446,21 @@ namespace Altaxo.Gui.Graph
     {
       if(_controller!=null)
         e.Cancel |= _controller.EhLeftMarginChanged(this._edLeftMargin.Text);
-    
+
     }
 
     private void _edBottomMargin_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
       if(_controller!=null)
         e.Cancel |= _controller.EhBottomMarginChanged(this._edBottomMargin.Text);
-    
+
     }
 
     private void _edRightMargin_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
       if(_controller!=null)
         e.Cancel |= _controller.EhRightMarginChanged(this._edRightMargin.Text);
-    
+
     }
 
     private void _cbSuperfluousLayersAction_SelectionChangeCommitted(object sender, EventArgs e)

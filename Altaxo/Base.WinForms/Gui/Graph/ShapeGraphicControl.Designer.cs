@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Graph
 {
   partial class ShapeGraphicControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Graph
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -67,9 +67,9 @@ namespace Altaxo.Gui.Graph
 			this._brushTableLayout.SuspendLayout();
 			this._grpbPosition.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// flowLayoutPanel1
-			// 
+			//
 			this.flowLayoutPanel1.AutoSize = true;
 			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.flowLayoutPanel1.Controls.Add(this._grpbPen);
@@ -80,9 +80,9 @@ namespace Altaxo.Gui.Graph
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(359, 377);
 			this.flowLayoutPanel1.TabIndex = 0;
-			// 
+			//
 			// _grpbPen
-			// 
+			//
 			this._grpbPen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this._grpbPen.AutoSize = true;
 			this._grpbPen.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -93,9 +93,9 @@ namespace Altaxo.Gui.Graph
 			this._grpbPen.TabIndex = 0;
 			this._grpbPen.TabStop = false;
 			this._grpbPen.Text = "Pen:";
-			// 
+			//
 			// _ctrlPenColorTypeThickness
-			// 
+			//
 			this._ctrlPenColorTypeThickness.AutoSize = true;
 			this._ctrlPenColorTypeThickness.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._ctrlPenColorTypeThickness.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
@@ -105,9 +105,9 @@ namespace Altaxo.Gui.Graph
 			this._ctrlPenColorTypeThickness.Name = "_ctrlPenColorTypeThickness";
 			this._ctrlPenColorTypeThickness.Size = new System.Drawing.Size(198, 87);
 			this._ctrlPenColorTypeThickness.TabIndex = 0;
-			// 
+			//
 			// _grpbBrush
-			// 
+			//
 			this._grpbBrush.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this._grpbBrush.AutoSize = true;
 			this._grpbBrush.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -118,9 +118,9 @@ namespace Altaxo.Gui.Graph
 			this._grpbBrush.TabIndex = 1;
 			this._grpbBrush.TabStop = false;
 			this._grpbBrush.Text = "Filling:";
-			// 
+			//
 			// _brushTableLayout
-			// 
+			//
 			this._brushTableLayout.AutoSize = true;
 			this._brushTableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._brushTableLayout.ColumnCount = 2;
@@ -137,9 +137,9 @@ namespace Altaxo.Gui.Graph
 			this._brushTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._brushTableLayout.Size = new System.Drawing.Size(188, 47);
 			this._brushTableLayout.TabIndex = 0;
-			// 
+			//
 			// _cbFillBrush
-			// 
+			//
 			this._cbFillBrush.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._cbFillBrush.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
 			this._cbFillBrush.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -499,9 +499,9 @@ namespace Altaxo.Gui.Graph
 			this._cbFillBrush.Name = "_cbFillBrush";
 			this._cbFillBrush.Size = new System.Drawing.Size(120, 21);
 			this._cbFillBrush.TabIndex = 0;
-			// 
+			//
 			// _lblFillBrush
-			// 
+			//
 			this._lblFillBrush.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this._lblFillBrush.AutoSize = true;
 			this._lblFillBrush.Location = new System.Drawing.Point(22, 27);
@@ -509,9 +509,9 @@ namespace Altaxo.Gui.Graph
 			this._lblFillBrush.Size = new System.Drawing.Size(37, 13);
 			this._lblFillBrush.TabIndex = 1;
 			this._lblFillBrush.Text = "Brush:";
-			// 
+			//
 			// _lblFillBrushEnable
-			// 
+			//
 			this._lblFillBrushEnable.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this._lblFillBrushEnable.AutoSize = true;
 			this._lblFillBrushEnable.Location = new System.Drawing.Point(3, 3);
@@ -519,9 +519,9 @@ namespace Altaxo.Gui.Graph
 			this._lblFillBrushEnable.Size = new System.Drawing.Size(56, 13);
 			this._lblFillBrushEnable.TabIndex = 2;
 			this._lblFillBrushEnable.Text = "Fill Shape:";
-			// 
+			//
 			// _chkFillShapeEnable
-			// 
+			//
 			this._chkFillShapeEnable.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._chkFillShapeEnable.AutoSize = true;
 			this._chkFillShapeEnable.Location = new System.Drawing.Point(65, 3);
@@ -530,9 +530,9 @@ namespace Altaxo.Gui.Graph
 			this._chkFillShapeEnable.TabIndex = 3;
 			this._chkFillShapeEnable.UseVisualStyleBackColor = true;
 			this._chkFillShapeEnable.CheckedChanged += new System.EventHandler(this.EhIsShapedFilled_CheckChanged);
-			// 
+			//
 			// _grpbPosition
-			// 
+			//
 			this._grpbPosition.AutoSize = true;
 			this._grpbPosition.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._grpbPosition.Controls.Add(this._ctrlPosSize);
@@ -542,18 +542,18 @@ namespace Altaxo.Gui.Graph
 			this._grpbPosition.TabIndex = 2;
 			this._grpbPosition.TabStop = false;
 			this._grpbPosition.Text = "Position/Size";
-			// 
+			//
 			// _ctrlPosSize
-			// 
+			//
 			this._ctrlPosSize.AutoSize = true;
 			this._ctrlPosSize.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._ctrlPosSize.Location = new System.Drawing.Point(6, 19);
 			this._ctrlPosSize.Name = "_ctrlPosSize";
 			this._ctrlPosSize.Size = new System.Drawing.Size(341, 111);
 			this._ctrlPosSize.TabIndex = 0;
-			// 
+			//
 			// ShapeGraphicControl
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;

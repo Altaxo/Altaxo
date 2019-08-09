@@ -128,7 +128,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["vert"] = "\u007C",
       ["Vert"] = "\u2016",
       ["\u007C"] = "\u2016", // note \| is parsed in WpfMath to SymbolAtom |, so when we render a symbol atom with |, we need a double vertical line
-      // ["slashdel" ] = "",                                               
+      // ["slashdel" ] = "",
 
       //lowercase greek letters
       ["alpha"] = "α",

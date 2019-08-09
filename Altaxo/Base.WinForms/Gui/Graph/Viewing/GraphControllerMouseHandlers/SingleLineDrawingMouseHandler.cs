@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -45,7 +45,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
 		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
 
-    
+
 
     protected struct POINT
     {
@@ -98,22 +98,22 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         _currentPoint=0;
         _grac.SetGraphToolFromInternal( NextMouseHandlerType);
       }
-     
+
     }
 
 
     public override void OnMouseMove( MouseEventArgs e)
     {
       base.OnMouseMove ( e);
-     
+
       _currentMousePrintAreaCoord = _grac.WinFormsController.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
 
       ModifyCurrentMousePrintAreaCoordinate();
 
       _grac.WinFormsController.RepaintGraphArea();
-   
 
-   
+
+
     }
 
     protected virtual void ModifyCurrentMousePrintAreaCoordinate()
@@ -121,7 +121,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(_currentPoint>0)
       {
         bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
-        bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));      
+        bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
         // draw a temporary lines of all points to the current mouse position
 
         if(bShiftKey && _currentPoint>0)
@@ -158,7 +158,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       if(_currentPoint>0)
         g.DrawLine(Pens.Blue,_Points[_currentPoint-1].printAreaCoord,_currentMousePrintAreaCoord);
-      
+
     }
 
 
@@ -170,7 +170,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
       _grac.ActiveLayer.GraphObjects.Add(go);
       _grac.WinFormsController.RefreshGraph();
-      
+
     }
 
   }

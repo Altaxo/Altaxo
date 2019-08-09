@@ -13,7 +13,7 @@ namespace Altaxo.Gui.Common
   {
     public event Action<int> SelectionChangeCommitted;
     public event Action<string, CancelEventArgs> TextValidating;
-    
+
     public FreeTextComboBoxControl()
     {
       InitializeComponent();

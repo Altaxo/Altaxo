@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.GUI
 
 		/// <summary>
 		/// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
-		/// this brush fills only the non printable margins of the page. 
+		/// this brush fills only the non printable margins of the page.
 		/// </summary>
 		protected BrushX _pageGroundBrush;
 
@@ -86,7 +86,7 @@ namespace Altaxo.Graph.GUI
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
 		protected MouseStateHandler _mouseState;
 
-		
+
 
 		/// <summary>
 		/// This holds a frozen image of the graph during the moving time
@@ -698,7 +698,7 @@ namespace Altaxo.Graph.GUI
 
 		/// <summary>
 		/// Converts pixel coordinates to unscaled page coordinates (in points=1/72 inch). Uses the resolutions <see cref="m_HorizRes"/>
-		/// and <see cref="m_VertRes"/> for calculation. 
+		/// and <see cref="m_VertRes"/> for calculation.
 		/// </summary>
 		/// <param name="pixelc">The pixel coordinates to convert.</param>
 		/// <returns>The coordinates as unscaled page coordinates in points=1/72 inch, i.e. the true x and y distance in points from
@@ -708,7 +708,7 @@ namespace Altaxo.Graph.GUI
 			return new PointF(UnitPerInch * pixelc.X / _horizontalResolution, UnitPerInch * pixelc.Y / _verticalResolution);
 		}
 
-		
+
 		public SizeF PixelToPageCoordinates(SizeF pixelc)
 		{
 			return new SizeF(PixelToPageCoordinates(new PointF(pixelc.Width, pixelc.Height)));

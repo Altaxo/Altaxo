@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Worksheet
     private MinMaxIntegerControl ctrlNumMovedPropCols;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -60,10 +60,10 @@ namespace Altaxo.Gui.Worksheet
 
       ctrlNumMovedDataCols.Maximum = int.MaxValue;
       ctrlNumMovedPropCols.Maximum = int.MaxValue;
-      
+
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -105,8 +105,8 @@ namespace Altaxo.Gui.Worksheet
 
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -118,23 +118,23 @@ namespace Altaxo.Gui.Worksheet
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // ctrlNumMovedDataCols
-      // 
+      //
       this.ctrlNumMovedDataCols.Location = new System.Drawing.Point(16, 56);
       this.ctrlNumMovedDataCols.Name = "ctrlNumMovedDataCols";
       this.ctrlNumMovedDataCols.Size = new System.Drawing.Size(104, 96);
       this.ctrlNumMovedDataCols.TabIndex = 0;
-      // 
+      //
       // ctrlNumMovedPropCols
-      // 
+      //
       this.ctrlNumMovedPropCols.Location = new System.Drawing.Point(16, 56);
       this.ctrlNumMovedPropCols.Name = "ctrlNumMovedPropCols";
       this.ctrlNumMovedPropCols.Size = new System.Drawing.Size(104, 96);
       this.ctrlNumMovedPropCols.TabIndex = 1;
-      // 
+      //
       // groupBox1
-      // 
+      //
       this.groupBox1.Controls.Add(this.ctrlNumMovedDataCols);
       this.groupBox1.Location = new System.Drawing.Point(8, 16);
       this.groupBox1.Name = "groupBox1";
@@ -142,9 +142,9 @@ namespace Altaxo.Gui.Worksheet
       this.groupBox1.TabIndex = 2;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "number of data columns changing to property columns";
-      // 
+      //
       // groupBox2
-      // 
+      //
       this.groupBox2.Controls.Add(this.ctrlNumMovedPropCols);
       this.groupBox2.Location = new System.Drawing.Point(176, 16);
       this.groupBox2.Name = "groupBox2";
@@ -152,9 +152,9 @@ namespace Altaxo.Gui.Worksheet
       this.groupBox2.TabIndex = 3;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "number of property columns changing to data columns+";
-      // 
+      //
       // TransposeWorksheetControl
-      // 
+      //
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Name = "TransposeWorksheetControl";

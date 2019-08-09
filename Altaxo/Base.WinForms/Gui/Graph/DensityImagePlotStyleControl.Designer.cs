@@ -2,12 +2,12 @@
 {
 	partial class DensityImagePlotStyleControl
 	{
-		/// <summary> 
+		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -22,8 +22,8 @@
 
 		#region Component Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
@@ -40,9 +40,9 @@
 			this._grpColorProvider.SuspendLayout();
 			this._grpOtherProperties.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// _flowLayoutVerticalMain
-			// 
+			//
 			this._flowLayoutVerticalMain.AutoSize = true;
 			this._flowLayoutVerticalMain.Controls.Add(this._grpScale);
 			this._flowLayoutVerticalMain.Controls.Add(this._grpColorProvider);
@@ -53,9 +53,9 @@
 			this._flowLayoutVerticalMain.Name = "_flowLayoutVerticalMain";
 			this._flowLayoutVerticalMain.Size = new System.Drawing.Size(340, 263);
 			this._flowLayoutVerticalMain.TabIndex = 0;
-			// 
+			//
 			// _grpScale
-			// 
+			//
 			this._grpScale.AutoSize = true;
 			this._grpScale.Controls.Add(this._ctrlDensityScale);
 			this._grpScale.Location = new System.Drawing.Point(3, 3);
@@ -64,17 +64,17 @@
 			this._grpScale.TabIndex = 0;
 			this._grpScale.TabStop = false;
 			this._grpScale.Text = "Scale:";
-			// 
+			//
 			// _ctrlDensityScale
-			// 
+			//
 			this._ctrlDensityScale.AutoSize = true;
 			this._ctrlDensityScale.Location = new System.Drawing.Point(6, 19);
 			this._ctrlDensityScale.Name = "_ctrlDensityScale";
 			this._ctrlDensityScale.Size = new System.Drawing.Size(322, 50);
 			this._ctrlDensityScale.TabIndex = 0;
-			// 
+			//
 			// _grpColorProvider
-			// 
+			//
 			this._grpColorProvider.AutoSize = true;
 			this._grpColorProvider.Controls.Add(this._ctrlColorProvider);
 			this._grpColorProvider.Location = new System.Drawing.Point(3, 97);
@@ -83,17 +83,17 @@
 			this._grpColorProvider.TabIndex = 1;
 			this._grpColorProvider.TabStop = false;
 			this._grpColorProvider.Text = "Colorization:";
-			// 
+			//
 			// _ctrlColorProvider
-			// 
+			//
 			this._ctrlColorProvider.AutoSize = true;
 			this._ctrlColorProvider.Location = new System.Drawing.Point(6, 19);
 			this._ctrlColorProvider.Name = "_ctrlColorProvider";
 			this._ctrlColorProvider.Size = new System.Drawing.Size(224, 70);
 			this._ctrlColorProvider.TabIndex = 0;
-			// 
+			//
 			// _grpOtherProperties
-			// 
+			//
 			this._grpOtherProperties.Controls.Add(this._chkClipToLayer);
 			this._grpOtherProperties.Location = new System.Drawing.Point(3, 211);
 			this._grpOtherProperties.Name = "_grpOtherProperties";
@@ -101,9 +101,9 @@
 			this._grpOtherProperties.TabIndex = 2;
 			this._grpOtherProperties.TabStop = false;
 			this._grpOtherProperties.Text = "Other:";
-			// 
+			//
 			// _chkClipToLayer
-			// 
+			//
 			this._chkClipToLayer.AutoSize = true;
 			this._chkClipToLayer.Location = new System.Drawing.Point(6, 19);
 			this._chkClipToLayer.Name = "_chkClipToLayer";
@@ -111,9 +111,9 @@
 			this._chkClipToLayer.TabIndex = 0;
 			this._chkClipToLayer.Text = "Clip to layer";
 			this._chkClipToLayer.UseVisualStyleBackColor = true;
-			// 
+			//
 			// DensityImagePlotStyleControl
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;

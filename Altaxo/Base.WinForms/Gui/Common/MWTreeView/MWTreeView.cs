@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 #endregion
 
 using System;
@@ -21,7 +21,7 @@ using System.Diagnostics;
 //		My mikwib address can be found on hotmail.com (usual HoTMaiL spam filters)
 //		My mick address can be found on ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
 //		My mik address can be found on netatonce.net (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-//	
+//
 //	Feel free to use the MWTreeView as you wish, as long as you do not take credit for it yourself (see next line).
 //	However if it is used in commercial projects or applications it is NOT, I repeat NOT, free. Please contact me for further information.
 //		Note that this differs from previous versions of the MWTreeView and I have made this decision in order to be duly compensated for my work
@@ -32,7 +32,7 @@ namespace MWControlSuite
 {
 	/// <summary>
 	/// A TreeView Control that allows multiple TreeNodes to be selected at once.
-	/// 
+	///
 	/// Note that the MWTreeView is only using fully managed code, no interop or Win32 stuff. All code will abide by this and therefore some
 	///		things are very hard to do.
 	///	Any code suggestions using Win32 stuff or other is however of interest to me, but will never make it into the MWTreeView. If I receive
@@ -41,7 +41,7 @@ namespace MWControlSuite
 	///	Also note though that I will use the Paint methods of the original TreeView Control - I will NOT draw the whole MWTreeView myself. If
 	///		that was what I wanted I would have created one from scratch, probably using less code than this one, and with more(!)
 	///		functionality.
-	/// 
+	///
 	///	Overriding the OnBeforeSelect EventHandler is the key to having a TreeView with multi select working properly (some other people
 	///		have tried, quite unsuccessfully in my view, to create multi-select TreeViews without overriding this EventHandler).
 	///	The important call in the overridden OnBeforeSelect EventHandler is 'e.Cancel = true;'. This means that the MS TreeView
@@ -49,16 +49,16 @@ namespace MWControlSuite
 	///		As of v1.0.5.0 the SelectedNode property is used alongside the SelNode property for 'backwards conformity'.
 	///			I suggest not to use the SelectedNode property though - use the SelNode property instead. The get accessor of the SelectedNode
 	///			property is now overridden and returns the SelNode anyhow.
-	/// 
+	///
 	/// As of v1.0.5.0 the MWTreeView supports TreeNodes of any colors. Different colors for different TreeNodes in the same MWTreeView is also
 	///		supported. And needless to say, multi selection still works.
-	///	
+	///
 	///	As of v2.0.0.0 the MWTreeView supports custom selection colors and it all works with HotTracking.
-	/// 
+	///
 	/// The AllowMultipleExpandedPaths property can be set to false which will disallow more than one branch to be open at once.
 	///		Think of it as a concertina folder where you can only really have one compartment (fully) open at once. Open another one and you
 	///			have to close the one that was previously open.
-	/// 
+	///
 	/// There are additional keyboard commands implemented for selecting/deselecting TreeNodes.
 	///		Note that in order to keep the feature of scrolling the MWTreeView (inherited from MS TreeView) when the Control key is pressed
 	///			while clicking the Up/Down etc keys, selecting multiple TreeNodes using the keyboard is done by holding down the Shift key. (Note
@@ -80,7 +80,7 @@ namespace MWControlSuite
 	///		Escape		Deselecting all TreeNodes. Try holding down Shift. (Note the AllowKeyEscapeDeselectAll property.)
 	///		Control-Q	Collapse all TreeNodes. Try holding down Shift and/or Alt.
 	///		Control-E	Expand all TreeNodes. Try holding down Shift and/or Alt.
-	///	
+	///
 	/// The MultiSelect property allows you to select TreeNodes in some various ways.
 	///		Classic is the same as the normal TreeView.
 	///		NoMulti works the same way as a normal MS TreeView when it comes to selecting TreeNodes - only one can be selected at a time.
@@ -105,7 +105,7 @@ namespace MWControlSuite
 	///			NoMulti. But the other ones... Well MultiSameBranch is the reason why I created this Control in the first place - because I
 	///			needed this kind of functionality. And people have requested a couple of the other ones.
 	///		So there you go.
-	///	
+	///
 	///	The RubberbandSelection property lets you select TreeNodes using some rubberband selection mode just like in many Windows
 	///		applications - I haven't seen this in a TreeView before though (too hard? nah).
 	///		The MWTreeView has support for a bunch of rubberband selection modes.
@@ -123,73 +123,73 @@ namespace MWControlSuite
 	///		toggles the entries in the 'files panel', but I don't personally like this - so I did not implement it like that intentionally.
 	///	The rubberband painting can handle that the MWTreeView is scrolled vertically while painting it. Scrolling horizontally will not move
 	///		the rubberband though, since again I don't have access to the ScrollBars.
-	/// 
+	///
 	/// The AllowBlankNodeText property allows you to set whether the Text of TreeNodes can be blank or not. If this property is set to
 	///		false and there is an attempt to set the Text to string.Empty the old Text is used instead.
-	///	
+	///
 	///	The AllowNoSelNode property allows you to decide whether no TreeNode can be selected in the MWTreeView. If there is no TreeNode
 	///		selected and this property is set to false a TreeNode is selected.
-	///	
+	///
 	///	If the ScrollToSelNode property is set to true the MWTreeView scrolls so that the SelNode is visible if possible.
-	///	
+	///
 	///	FullRowSelect has been implemented. This feature didn't seem to be 'turned on' in the MS TreeView.
 	///	Because MS did such a 'good' job of hiding the ScrollBars (Controls, methods for positions etc) I couldn't find out if the Control
 	///		is scrolled (if anyone has any ideas how to do this in managed, non-interop etc code, PLEASE let me know). This made it a lot
 	///		harder for me to implement TreeNode selection if the click is done on something other than the Text or Image.
-	/// 
+	///
 	/// HotTracking has been fully implemented.
-	/// 
+	///
 	/// A focus rectangle is now painted around the last selected TreeNode unless the UseExtendedSelectionColors is set to true.
-	///	
+	///
 	///	If the LabelEditRegEx Property is set to a regular expression this has to be satisfied in order to change the TreeNode Text.
 	///	Note that the LabelEditRegEx Property only applies to changes done through the GUI - NOT in code. This is intentional.
-	///	
+	///
 	///	If the DisallowLabelEditRegEx Property is set to a regular expression this must NOT be satisfied in order to be able to change the
 	///		TreeNode Text. I.e. If you have a TreeNode whose Text currently satisfies the regular expression in the DisallowLabelEditRegEx
 	///		Property, this TreeNode's Text CANNOT be changed.
 	///	Note that the DisallowLabelEditRegEx Property only applies to attempted changes done through the GUI - NOT in code. This is intentional.
-	/// 
+	///
 	/// If the SelectNodeRegEx Property is set to a regular expression this must be satisfied in order to be able to select the TreeNode.
-	/// 
+	///
 	/// If the CheckNodeRegEx Property is set to a regular expression this must be satisfied in order to be able to check the TreeNode.
-	/// 
+	///
 	/// As of v1.0.4.0 the MWTreeView allows proper TreeNode label editing (not like previous versions where you had to double-click).
 	///		Note that F2 enters label edit mode as well.
-	///	
+	///
 	///	Disabling the MWTreeView is now much more dynamic.
-	///	
+	///
 	///	See the ConstainedShiftKeySelection and ConstrainedRubberbandSelection properties for a better (default true is better) way to select
 	///		TreeNodes when using MultiSameBranch, MultiSameBranchSameLevel or MultiSameLevel multi select modes.
-	///	
+	///
 	///	The ExtendedTemporaryMarking property has been added so that when the right mouse button is pressed on or next to the text of an unselected
 	///			TreeNode it is marked as being sort of selected (image does not change, but back and fore colors change). When the right mouse
 	///			button is then released the TreeNode goes back to using its own back and fore colors.
 	///		The regular TreeView does this for plain-colored TreeNodes, but not for TreeNodes with a different back and/or fore color. With the
 	///			ExtendedTemporaryMarking property set to true it works for non-plain-colored TreeNodes as well.
-	///	
+	///
 	///	The TreeNodeMouseDown property has been added to make it easier to delete a bunch of TreeNodes from a ContextMenu. (If some TreeNodes are
 	///		selected and then a TreeNode that is not selected is right clicked a ContextMenu could pop up with the choice to delete TreeNodes.
 	///		Expected behavior is then to have all selected TreeNodes deleted, including the one that was right clicked to get the ContextMenu up. Of
 	///		course the RemoveSelectedNodes method could be called with an argument of true.)
-	///	
+	///
 	///	Changing ImageIndex and SelectedImageIndex of TreeNodes should be done using the ChangeTreeNodeImageIndex, ChangeTreeNodeSelectedImageIndex
 	///		and ChangeTreeNodeImageIndices static methods. These methods are implemented because of the fact that MWTreeNodeWrappers are added to the
 	///		SelNodes property and not normal TreeNodes. The MWTreeNodeWrappers remember which ImageIndex and SelectedImageIndex was set before it
 	///		modifies it to show that a TreeNode contained in the MWTreeNodeWrapper is selected.
-	///	
+	///
 	///	Changing the BackColor and ForeColor of TreeNodes should be done using the ChangeBackColor, ChangeForeColor and ChangeColors methods.
-	/// 
+	///
 	/// Note that OnBeforeSelNodesChanged, OnAfterSelNodesChanged, OnBeforeCheckedNodesChanged and OnAfterCheckedNodesChanged events are only raised
 	///		when the actual Variable underlying the Property changed - not when MWTreeNodesWrappers or TreeNodes are added or removed.
-	/// 
-	/// 
-	/// 
+	///
+	///
+	///
 	/// It may seem that there are too many options to choose from for the MWTreeView. The MWTreeView has been created so that the programmer who
 	///			uses it in his or her project(s) have full(?) control over how it should behave.
 	///		Many of the events being raised are quite useless in most projects, but some do need them - and that is why they are there.
-	/// 
-	/// 
-	/// 
+	///
+	///
+	///
 	/// Is there any other functionality you would like to see in the MWTreeView? Please tell me and I'll see what I can do.
 	/// </summary>
 	public class MWTreeView : System.Windows.Forms.TreeView
@@ -1079,7 +1079,7 @@ namespace MWControlSuite
 			tRubberbandUpdate.Interval = iRubberbandUpdateTimeout;
 		}
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -1101,8 +1101,8 @@ namespace MWControlSuite
 
 		#region Component Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
@@ -1113,29 +1113,29 @@ namespace MWControlSuite
 			this.tRubberbandSelectionAllowedExpand = new System.Windows.Forms.Timer(this.components);
 			this.tRubberbandSelectionAllowedCollapse = new System.Windows.Forms.Timer(this.components);
 			this.tRubberbandUpdate = new System.Windows.Forms.Timer(this.components);
-			// 
+			//
 			// tLabelEdit
-			// 
+			//
 			this.tLabelEdit.Interval = 200;
 			this.tLabelEdit.Tick += new System.EventHandler(this.tLabelEdit_Tick);
-			// 
+			//
 			// tLabelEditAllowed
-			// 
+			//
 			this.tLabelEditAllowed.Interval = 200;
 			this.tLabelEditAllowed.Tick += new System.EventHandler(this.tLabelEditAllowed_Tick);
-			// 
+			//
 			// tRubberbandSelectionAllowedExpand
-			// 
+			//
 			this.tRubberbandSelectionAllowedExpand.Interval = 1000;
 			this.tRubberbandSelectionAllowedExpand.Tick += new System.EventHandler(this.tRubberbandSelectionAllowedExpand_Tick);
-			// 
+			//
 			// tRubberbandSelectionAllowedCollapse
-			// 
+			//
 			this.tRubberbandSelectionAllowedCollapse.Interval = 1000;
 			this.tRubberbandSelectionAllowedCollapse.Tick += new System.EventHandler(this.tRubberbandSelectionAllowedCollapse_Tick);
-			// 
+			//
 			// tRubberbandUpdate
-			// 
+			//
 			this.tRubberbandUpdate.Interval = 200;
 			this.tRubberbandUpdate.Tick += new System.EventHandler(this.tRubberbandUpdate_Tick);
 
@@ -2678,7 +2678,7 @@ namespace MWControlSuite
 			//{
 			//	Debug.WriteLine("TreeNode is NULL");
 			//}
- 
+
 			if(this.MultiSelect != TreeViewMultiSelect.Classic)
 			{
 				if(this.ExtendedTemporaryMarking && !bTNDone && tnTNDown != null && !IsTreeNodeSelected(tnTNDown))
@@ -15020,7 +15020,7 @@ namespace MWControlSuite
 
 		/// <summary>
 		/// Note that this method should never be called except from the SelectBranch method.
-		/// 
+		///
 		/// Select a branch of TreeNodes.
 		/// The TreeNode supplied and the TreeNodes under it, if any (the TreeNodes in its Nodes collection), are selected.
 		/// If bChangeSubBranches is true all the branches of the branches etc of the TreeNode supplied are selected.

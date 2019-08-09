@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <summary>
-    /// 
+    ///
     /// Gets or sets the visibility of a pad or document.
     /// If false for a pad, the pad is not visible. If false for a document, the document tab header is not visible (but the document itself maybe visible).
     /// If true for a pad, the pad may be visible or is collapsed. If true for a document, the document tab header is visible (if it fits in the bar),

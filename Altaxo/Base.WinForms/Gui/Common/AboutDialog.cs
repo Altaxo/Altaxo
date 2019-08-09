@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -90,9 +90,9 @@ namespace Altaxo.Main
       this.label3 = new System.Windows.Forms.Label();
       this.m_LinkLabel = new System.Windows.Forms.LinkLabel();
       this.SuspendLayout();
-      // 
+      //
       // m_btOK
-      // 
+      //
       this.m_btOK.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btOK.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -101,9 +101,9 @@ namespace Altaxo.Main
       this.m_btOK.Size = new System.Drawing.Size(75, 23);
       this.m_btOK.TabIndex = 0;
       this.m_btOK.Text = "OK";
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Font = new System.Drawing.Font("Times New Roman", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -112,9 +112,9 @@ namespace Altaxo.Main
       this.label1.Size = new System.Drawing.Size(104, 32);
       this.label1.TabIndex = 1;
       this.label1.Text = "Altaxo";
-      // 
+      //
       // label2
-      // 
+      //
       this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -123,9 +123,9 @@ namespace Altaxo.Main
       this.label2.Size = new System.Drawing.Size(432, 32);
       this.label2.TabIndex = 2;
       this.label2.Text = "data processing / data plotting program";
-      // 
+      //
       // textBox1
-      // 
+      //
       this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -137,9 +137,9 @@ namespace Altaxo.Main
       this.textBox1.Size = new System.Drawing.Size(496, 312);
       this.textBox1.TabIndex = 3;
       this.textBox1.Text = resources.GetString("textBox1.Text");
-      // 
+      //
       // label3
-      // 
+      //
       this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(312, 16);
@@ -147,9 +147,9 @@ namespace Altaxo.Main
       this.label3.Size = new System.Drawing.Size(192, 16);
       this.label3.TabIndex = 4;
       this.label3.Text = "(C) 2002-2007 Dr. Dirk Lellinger";
-      // 
+      //
       // m_LinkLabel
-      // 
+      //
       this.m_LinkLabel.Location = new System.Drawing.Point(16, 80);
       this.m_LinkLabel.Name = "m_LinkLabel";
       this.m_LinkLabel.Size = new System.Drawing.Size(488, 16);
@@ -158,9 +158,9 @@ namespace Altaxo.Main
       this.m_LinkLabel.Text = "You can obtain the latest version of Altaxo from http://sourceforge.net/projects/" +
           "altaxo";
       this.m_LinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_LinkLabel_LinkClicked);
-      // 
+      //
       // AboutDialog
-      // 
+      //
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(512, 458);
       this.Controls.Add(this.m_LinkLabel);

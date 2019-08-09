@@ -47,6 +47,6 @@ namespace Altaxo.Gui.Graph
 			set { _edDataColumn.Text = value; }
 		}
 
-	
+
 	}
 }

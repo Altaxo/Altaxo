@@ -344,6 +344,6 @@ namespace Altaxo.Gui
 		#endregion
 
 
-	
+
 	}
 }

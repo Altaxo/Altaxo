@@ -54,7 +54,7 @@ namespace Altaxo.Geometry.Double_2D
     {
       /* Returns true if segments collide
        * If they have in common a segment edge returns false
-       * Algorithm obtained from: 
+       * Algorithm obtained from:
        * http://stackoverflow.com/questions/3838329/how-can-i-check-if-two-segments-intersect
        * Thanks OMG_peanuts !
        * */
@@ -231,8 +231,8 @@ namespace Altaxo.Geometry.Double_2D
 
     private static (int minx, int miny, int maxx, int maxy) getBoundary(LineD2DAnnotated line, int scaleFactor)
     {
-      /* Giving a scaleFactor it returns an area around the line 
-       * where we will search for nearby points 
+      /* Giving a scaleFactor it returns an area around the line
+       * where we will search for nearby points
        * */
       var aNode = line.P0;
       var bNode = line.P1;
@@ -249,7 +249,7 @@ namespace Altaxo.Geometry.Double_2D
       /* The bigger the scaleFactor the more points it will return
        * Inspired by this precious algorithm:
        * http://www.it.uu.se/edu/course/homepage/projektTDB/ht13/project10/Project-10-report.pdf
-       * Be carefull: if it's too small it will return very little points (or non!), 
+       * Be carefull: if it's too small it will return very little points (or non!),
        * if it's too big it will add points that will not be used and will consume time
        * */
       var nearbyPoints = new List<PointD2DAnnotated>();

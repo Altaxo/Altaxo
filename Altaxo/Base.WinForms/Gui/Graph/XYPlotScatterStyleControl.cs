@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -81,8 +81,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -104,27 +104,27 @@ namespace Altaxo.Gui.Graph
 			this.label1 = new System.Windows.Forms.Label();
 			this.m_edRelativePenWidth = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
-			// 
+			//
 			// _lblDropLine
-			// 
+			//
 			this._lblDropLine.Location = new System.Drawing.Point(6, 197);
 			this._lblDropLine.Name = "_lblDropLine";
 			this._lblDropLine.Size = new System.Drawing.Size(64, 16);
 			this._lblDropLine.TabIndex = 29;
 			this._lblDropLine.Text = "Drop Lines:";
 			this._lblDropLine.Click += new System.EventHandler(this.label1_Click);
-			// 
+			//
 			// _lbDropLine
-			// 
+			//
 			this._lbDropLine.CheckOnClick = true;
 			this._lbDropLine.FormattingEnabled = true;
 			this._lbDropLine.Location = new System.Drawing.Point(76, 197);
 			this._lbDropLine.Name = "_lbDropLine";
 			this._lbDropLine.Size = new System.Drawing.Size(128, 64);
 			this._lbDropLine.TabIndex = 25;
-			// 
+			//
 			// _cbColor
-			// 
+			//
 			this._cbColor.ColorType = Altaxo.Graph.ColorType.PlotColor;
 			this._cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this._cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -159,108 +159,108 @@ namespace Altaxo.Gui.Graph
 			this._cbColor.Name = "_cbColor";
 			this._cbColor.Size = new System.Drawing.Size(121, 21);
 			this._cbColor.TabIndex = 28;
-			// 
+			//
 			// _chkIndependentSize
-			// 
+			//
 			this._chkIndependentSize.Location = new System.Drawing.Point(9, 102);
 			this._chkIndependentSize.Name = "_chkIndependentSize";
 			this._chkIndependentSize.Size = new System.Drawing.Size(77, 24);
 			this._chkIndependentSize.TabIndex = 27;
 			this._chkIndependentSize.Text = "ind. Size:";
-			// 
+			//
 			// m_edSymbolSkipFrequency
-			// 
+			//
 			this.m_edSymbolSkipFrequency.Location = new System.Drawing.Point(132, 132);
 			this.m_edSymbolSkipFrequency.Name = "m_edSymbolSkipFrequency";
 			this.m_edSymbolSkipFrequency.Size = new System.Drawing.Size(72, 20);
 			this.m_edSymbolSkipFrequency.TabIndex = 9;
 			this.m_edSymbolSkipFrequency.Text = "textBox1";
-			// 
+			//
 			// label6
-			// 
+			//
 			this.label6.Location = new System.Drawing.Point(6, 135);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(64, 16);
 			this.label6.TabIndex = 8;
 			this.label6.Text = "Skip Points";
-			// 
+			//
 			// m_chkSymbolSkipPoints
-			// 
+			//
 			this.m_chkSymbolSkipPoints.Location = new System.Drawing.Point(83, 136);
 			this.m_chkSymbolSkipPoints.Name = "m_chkSymbolSkipPoints";
 			this.m_chkSymbolSkipPoints.Size = new System.Drawing.Size(48, 16);
 			this.m_chkSymbolSkipPoints.TabIndex = 7;
 			this.m_chkSymbolSkipPoints.Text = "Freq";
 			this.m_chkSymbolSkipPoints.CheckedChanged += new System.EventHandler(this.m_chkSymbolSkipPoints_CheckedChanged);
-			// 
+			//
 			// m_cbSymbolSize
-			// 
+			//
 			this.m_cbSymbolSize.Location = new System.Drawing.Point(83, 102);
 			this.m_cbSymbolSize.Name = "m_cbSymbolSize";
 			this.m_cbSymbolSize.Size = new System.Drawing.Size(121, 21);
 			this.m_cbSymbolSize.TabIndex = 5;
 			this.m_cbSymbolSize.Text = "comboBox1";
-			// 
+			//
 			// m_cbSymbolStyle
-			// 
+			//
 			this.m_cbSymbolStyle.Location = new System.Drawing.Point(52, 38);
 			this.m_cbSymbolStyle.Name = "m_cbSymbolStyle";
 			this.m_cbSymbolStyle.Size = new System.Drawing.Size(152, 21);
 			this.m_cbSymbolStyle.TabIndex = 4;
 			this.m_cbSymbolStyle.Text = "comboBox1";
-			// 
+			//
 			// m_cbSymbolShape
-			// 
+			//
 			this.m_cbSymbolShape.Location = new System.Drawing.Point(52, 6);
 			this.m_cbSymbolShape.Name = "m_cbSymbolShape";
 			this.m_cbSymbolShape.Size = new System.Drawing.Size(152, 21);
 			this.m_cbSymbolShape.TabIndex = 3;
 			this.m_cbSymbolShape.Text = "comboBox1";
 			this.m_cbSymbolShape.SelectionChangeCommitted += new System.EventHandler(this.EhSymbolShape_SelectionChangeCommit);
-			// 
+			//
 			// m_lblSymbolStyle
-			// 
+			//
 			this.m_lblSymbolStyle.Location = new System.Drawing.Point(4, 46);
 			this.m_lblSymbolStyle.Name = "m_lblSymbolStyle";
 			this.m_lblSymbolStyle.Size = new System.Drawing.Size(40, 16);
 			this.m_lblSymbolStyle.TabIndex = 1;
 			this.m_lblSymbolStyle.Text = "Style";
-			// 
+			//
 			// m_lblSymbolShape
-			// 
+			//
 			this.m_lblSymbolShape.Location = new System.Drawing.Point(4, 14);
 			this.m_lblSymbolShape.Name = "m_lblSymbolShape";
 			this.m_lblSymbolShape.Size = new System.Drawing.Size(42, 16);
 			this.m_lblSymbolShape.TabIndex = 0;
 			this.m_lblSymbolShape.Text = "Shape";
-			// 
+			//
 			// _chkIndependentColor
-			// 
+			//
 			this._chkIndependentColor.Location = new System.Drawing.Point(9, 77);
 			this._chkIndependentColor.Name = "_chkIndependentColor";
 			this._chkIndependentColor.Size = new System.Drawing.Size(80, 16);
 			this._chkIndependentColor.TabIndex = 26;
 			this._chkIndependentColor.Text = "ind. Color:";
 			this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
-			// 
+			//
 			// label1
-			// 
+			//
 			this.label1.Location = new System.Drawing.Point(6, 166);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(97, 16);
 			this.label1.TabIndex = 30;
 			this.label1.Text = "Rel. pen width (%)";
-			// 
+			//
 			// m_edRelativePenWidth
-			// 
+			//
 			this.m_edRelativePenWidth.Location = new System.Drawing.Point(132, 162);
 			this.m_edRelativePenWidth.Name = "m_edRelativePenWidth";
 			this.m_edRelativePenWidth.Size = new System.Drawing.Size(72, 20);
 			this.m_edRelativePenWidth.TabIndex = 31;
 			this.m_edRelativePenWidth.Text = "textBox1";
-			// 
+			//
 			// XYPlotScatterStyleControl
-			// 
+			//
 			this.Controls.Add(this.m_edRelativePenWidth);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._lblDropLine);
@@ -299,7 +299,7 @@ namespace Altaxo.Gui.Graph
     {
       this._chkIndependentColor.Enabled = bEnable;
       this._chkIndependentSize.Enabled = bEnable;
-      
+
       this._cbColor.Enabled = bEnable;
       this.m_cbSymbolSize.Enabled = bEnable;
       this.m_cbSymbolStyle.Enabled = bEnable;
@@ -311,7 +311,7 @@ namespace Altaxo.Gui.Graph
     {
       return this.m_cbSymbolShape.SelectedIndex != 0 ||
         this._lbDropLine.CheckedIndices.Count > 0;
-          
+
     }
     public void SetEnableDisableMain(bool bActivate)
     {
@@ -327,7 +327,7 @@ namespace Altaxo.Gui.Graph
       set { _controller = value; }
     }
 
-     
+
 
 
     public void InitializeSymbolStyle(string[] arr, string sel)
@@ -390,7 +390,7 @@ namespace Altaxo.Gui.Graph
         return names;
       }
     }
-  
+
     public void InitializePlotStyleColor(Color sel)
     {
       _cbColor.ColorChoice = sel;
@@ -444,18 +444,18 @@ namespace Altaxo.Gui.Graph
       this._chkIndependentColor.Checked = val;
       _chkIndependentColor_CheckedChanged(_chkIndependentColor.Checked,EventArgs.Empty);
     }
- 
-    public bool IndependentColor 
+
+    public bool IndependentColor
     {
       get
       {
-        return this._chkIndependentColor.Checked; 
+        return this._chkIndependentColor.Checked;
       }
     }
 
     private void _chkIndependentColor_CheckedChanged(object sender, System.EventArgs e)
     {
-        
+
     }
 
     #endregion
@@ -501,6 +501,6 @@ namespace Altaxo.Gui.Graph
 
     }
 
-     
+
   }
 }

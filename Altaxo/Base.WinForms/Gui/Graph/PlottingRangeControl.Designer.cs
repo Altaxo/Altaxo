@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Graph
 {
   partial class PlottingRangeControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Graph
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -57,9 +57,9 @@ namespace Altaxo.Gui.Graph
       this._edTo = new System.Windows.Forms.TextBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // groupBox1
-      // 
+      //
       this.groupBox1.Controls.Add(this._edTo);
       this.groupBox1.Controls.Add(this._edFrom);
       this.groupBox1.Controls.Add(this.label2);
@@ -70,43 +70,43 @@ namespace Altaxo.Gui.Graph
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "PlotRange";
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(3, 16);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(33, 13);
       this.label1.TabIndex = 0;
       this.label1.Text = "From:";
-      // 
+      //
       // label2
-      // 
+      //
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(74, 16);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(23, 13);
       this.label2.TabIndex = 1;
       this.label2.Text = "To:";
-      // 
+      //
       // _edFrom
-      // 
+      //
       this._edFrom.Location = new System.Drawing.Point(3, 32);
       this._edFrom.Name = "_edFrom";
       this._edFrom.Size = new System.Drawing.Size(68, 20);
       this._edFrom.TabIndex = 2;
       this._edFrom.Validating += new System.ComponentModel.CancelEventHandler(this._edFrom_Validating);
-      // 
+      //
       // _edTo
-      // 
+      //
       this._edTo.Location = new System.Drawing.Point(77, 32);
       this._edTo.Name = "_edTo";
       this._edTo.Size = new System.Drawing.Size(63, 20);
       this._edTo.TabIndex = 3;
       this._edTo.Validating += new System.ComponentModel.CancelEventHandler(this._edTo_Validating);
-      // 
+      //
       // PlotRangeControl
-      // 
+      //
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.groupBox1);

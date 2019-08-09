@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph
     private Altaxo.Gui.Common.CheckableGroupBox _axisLineGroupBox;
     private CheckBox _chkShowMajorLabels;
     private CheckBox _chkShowMinorLabels;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -70,8 +70,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -86,41 +86,41 @@ namespace Altaxo.Gui.Graph
       this._lineStyleControl = new Altaxo.Gui.Graph.AxisLineStyleControl();
       this._axisLineGroupBox.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // m_Format_edAxisPositionValue
-      // 
+      //
       this.m_Format_edAxisPositionValue.Location = new System.Drawing.Point(319, 3);
       this.m_Format_edAxisPositionValue.Name = "m_Format_edAxisPositionValue";
       this.m_Format_edAxisPositionValue.Size = new System.Drawing.Size(96, 20);
       this.m_Format_edAxisPositionValue.TabIndex = 33;
-      // 
+      //
       // label11
-      // 
+      //
       this.label11.AutoSize = true;
       this.label11.Location = new System.Drawing.Point(206, 8);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(107, 13);
       this.label11.TabIndex = 25;
       this.label11.Text = "Shift Axis Position (%)";
-      // 
+      //
       // m_Format_edTitle
-      // 
+      //
       this.m_Format_edTitle.Location = new System.Drawing.Point(49, 3);
       this.m_Format_edTitle.Name = "m_Format_edTitle";
       this.m_Format_edTitle.Size = new System.Drawing.Size(100, 20);
       this.m_Format_edTitle.TabIndex = 19;
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(16, 6);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(27, 13);
       this.label1.TabIndex = 18;
       this.label1.Text = "Title";
-      // 
+      //
       // _chkShowMajorLabels
-      // 
+      //
       this._chkShowMajorLabels.AutoSize = true;
       this._chkShowMajorLabels.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this._chkShowMajorLabels.Location = new System.Drawing.Point(38, 29);
@@ -129,9 +129,9 @@ namespace Altaxo.Gui.Graph
       this._chkShowMajorLabels.TabIndex = 36;
       this._chkShowMajorLabels.Text = "Show major labels";
       this._chkShowMajorLabels.UseVisualStyleBackColor = true;
-      // 
+      //
       // _chkShowMinorLabels
-      // 
+      //
       this._chkShowMinorLabels.AutoSize = true;
       this._chkShowMinorLabels.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this._chkShowMinorLabels.Location = new System.Drawing.Point(38, 52);
@@ -140,9 +140,9 @@ namespace Altaxo.Gui.Graph
       this._chkShowMinorLabels.TabIndex = 37;
       this._chkShowMinorLabels.Text = "Show minor labels";
       this._chkShowMinorLabels.UseVisualStyleBackColor = true;
-      // 
+      //
       // _axisLineGroupBox
-      // 
+      //
       this._axisLineGroupBox.AutoSize = true;
       this._axisLineGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._axisLineGroupBox.Checked = false;
@@ -154,9 +154,9 @@ namespace Altaxo.Gui.Graph
       this._axisLineGroupBox.TabStop = false;
       this._axisLineGroupBox.Text = "Show axis line and ticks";
       this._axisLineGroupBox.CheckedChanged += new System.EventHandler(this.EhShowAxisLine_CheckChanged);
-      // 
+      //
       // _lineStyleControl
-      // 
+      //
       this._lineStyleControl.AutoSize = true;
       this._lineStyleControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._lineStyleControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -171,9 +171,9 @@ namespace Altaxo.Gui.Graph
       this._lineStyleControl.ShowLine = false;
       this._lineStyleControl.Size = new System.Drawing.Size(409, 223);
       this._lineStyleControl.TabIndex = 34;
-      // 
+      //
       // TitleFormatLayerControl
-      // 
+      //
       this.AutoSize = true;
       this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.Controls.Add(this._chkShowMinorLabels);
@@ -193,7 +193,7 @@ namespace Altaxo.Gui.Graph
     }
     #endregion
 
-  
+
 
     #region ITitleFormatLayerView Members
 
@@ -256,7 +256,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public object LineStyleView 
+    public object LineStyleView
     {
       set
       {
@@ -289,13 +289,13 @@ namespace Altaxo.Gui.Graph
           return 0;
       }
     }
-   
-   
+
+
 
     #endregion
 
-   
-   
+
+
 
 
   }

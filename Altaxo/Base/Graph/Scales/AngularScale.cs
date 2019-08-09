@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Scales
   using Ticks;
 
   /// <summary>
-  /// Scales a full circle, either by degree or by radian. The origin is choosable, and the ticks default to ratios of 180� (or Pi, respectively).
+  /// Scales a full circle, either by degree or by radian. The origin is choosable, and the ticks default to ratios of 180° (or Pi, respectively).
   /// </summary>
   public abstract class AngularScale : NumericalScale
   {

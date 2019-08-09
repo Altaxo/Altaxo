@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Graph
 		private Label label1;
 		private ComboBox _cbTickSpacingType;
 
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -76,8 +76,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -97,18 +97,18 @@ namespace Altaxo.Gui.Graph
       this._flp_LinkType.SuspendLayout();
       this._flp_TickSpacingType.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // m_Scale_cbType
-      // 
+      //
       this.m_Scale_cbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_Scale_cbType.Location = new System.Drawing.Point(69, 3);
       this.m_Scale_cbType.Name = "m_Scale_cbType";
       this.m_Scale_cbType.Size = new System.Drawing.Size(121, 21);
       this.m_Scale_cbType.TabIndex = 16;
       this.m_Scale_cbType.SelectionChangeCommitted += new System.EventHandler(this.EhAxisType_SelectionChangeCommit);
-      // 
+      //
       // label4
-      // 
+      //
       this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this.label4.AutoSize = true;
       this.label4.Location = new System.Drawing.Point(3, 7);
@@ -117,9 +117,9 @@ namespace Altaxo.Gui.Graph
       this.label4.TabIndex = 12;
       this.label4.Text = "Scale type:";
       this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      // 
+      //
       // _tlp_Main
-      // 
+      //
       this._tlp_Main.AutoSize = true;
       this._tlp_Main.ColumnCount = 1;
       this._tlp_Main.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -137,9 +137,9 @@ namespace Altaxo.Gui.Graph
       this._tlp_Main.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._tlp_Main.Size = new System.Drawing.Size(308, 294);
       this._tlp_Main.TabIndex = 17;
-      // 
+      //
       // _flp_ScaleType
-      // 
+      //
       this._flp_ScaleType.AutoSize = true;
       this._flp_ScaleType.Controls.Add(this.label4);
       this._flp_ScaleType.Controls.Add(this.m_Scale_cbType);
@@ -147,9 +147,9 @@ namespace Altaxo.Gui.Graph
       this._flp_ScaleType.Name = "_flp_ScaleType";
       this._flp_ScaleType.Size = new System.Drawing.Size(193, 27);
       this._flp_ScaleType.TabIndex = 0;
-      // 
+      //
       // _flp_LinkType
-      // 
+      //
       this._flp_LinkType.AutoSize = true;
       this._flp_LinkType.Controls.Add(this._chkLinkScale);
       this._flp_LinkType.Controls.Add(this._cbLinkTarget);
@@ -157,9 +157,9 @@ namespace Altaxo.Gui.Graph
       this._flp_LinkType.Name = "_flp_LinkType";
       this._flp_LinkType.Size = new System.Drawing.Size(222, 27);
       this._flp_LinkType.TabIndex = 1;
-      // 
+      //
       // _chkLinkScale
-      // 
+      //
       this._chkLinkScale.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._chkLinkScale.AutoSize = true;
       this._chkLinkScale.Location = new System.Drawing.Point(3, 5);
@@ -169,17 +169,17 @@ namespace Altaxo.Gui.Graph
       this._chkLinkScale.Text = "Link scale to:";
       this._chkLinkScale.UseVisualStyleBackColor = true;
       this._chkLinkScale.CheckedChanged += new System.EventHandler(this.EhLinked_CheckedChanged);
-      // 
+      //
       // _cbLinkTarget
-      // 
+      //
       this._cbLinkTarget.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbLinkTarget.Location = new System.Drawing.Point(98, 3);
       this._cbLinkTarget.Name = "_cbLinkTarget";
       this._cbLinkTarget.Size = new System.Drawing.Size(121, 21);
       this._cbLinkTarget.TabIndex = 17;
-      // 
+      //
       // _flp_TickSpacingType
-      // 
+      //
       this._flp_TickSpacingType.AutoSize = true;
       this._flp_TickSpacingType.Controls.Add(this.label1);
       this._flp_TickSpacingType.Controls.Add(this._cbTickSpacingType);
@@ -187,9 +187,9 @@ namespace Altaxo.Gui.Graph
       this._flp_TickSpacingType.Name = "_flp_TickSpacingType";
       this._flp_TickSpacingType.Size = new System.Drawing.Size(204, 27);
       this._flp_TickSpacingType.TabIndex = 2;
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(3, 7);
@@ -198,9 +198,9 @@ namespace Altaxo.Gui.Graph
       this.label1.TabIndex = 13;
       this.label1.Text = "Tick spacing:";
       this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      // 
+      //
       // _cbTickSpacingType
-      // 
+      //
       this._cbTickSpacingType.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._cbTickSpacingType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbTickSpacingType.Location = new System.Drawing.Point(80, 3);
@@ -208,9 +208,9 @@ namespace Altaxo.Gui.Graph
       this._cbTickSpacingType.Size = new System.Drawing.Size(121, 21);
       this._cbTickSpacingType.TabIndex = 17;
       this._cbTickSpacingType.SelectionChangeCommitted += new System.EventHandler(this.EhTickSpacingType_SelectionChangeCommitted);
-      // 
+      //
       // AxisScaleControl
-      // 
+      //
       this.AutoScroll = true;
       this.AutoSize = true;
       this.BackColor = System.Drawing.SystemColors.Control;
@@ -291,7 +291,7 @@ namespace Altaxo.Gui.Graph
     {
 			if (null != _scaleControl)
 				_tlp_Main.Controls.Remove(_scaleControl);
-			
+
 			_scaleControl = guiobject as Control;
 
       if (_scaleControl != null)
@@ -338,7 +338,7 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
-   
+
     private void EhAxisType_SelectionChangeCommit(object sender, System.EventArgs e)
     {
 			if (null != AxisTypeChanged)

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph
     private ILayerController m_Ctrl;
     private int m_SuppressEvents=0;
 
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -68,8 +68,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -77,21 +77,21 @@ namespace Altaxo.Gui.Graph
       this.m_lbEdges = new System.Windows.Forms.ListBox();
       this.m_TabCtrl = new System.Windows.Forms.TabControl();
       this.SuspendLayout();
-      // 
+      //
       // m_lbEdges
-      // 
-      this.m_lbEdges.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+      //
+      this.m_lbEdges.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
         | System.Windows.Forms.AnchorStyles.Left)));
       this.m_lbEdges.Location = new System.Drawing.Point(8, 8);
       this.m_lbEdges.Name = "m_lbEdges";
       this.m_lbEdges.Size = new System.Drawing.Size(64, 420);
       this.m_lbEdges.TabIndex = 2;
       this.m_lbEdges.SelectedIndexChanged += new System.EventHandler(this.EhSecondChoice_SelChanged);
-      // 
+      //
       // m_TabCtrl
-      // 
-      this.m_TabCtrl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this.m_TabCtrl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.m_TabCtrl.Location = new System.Drawing.Point(80, 8);
       this.m_TabCtrl.Name = "m_TabCtrl";
@@ -99,9 +99,9 @@ namespace Altaxo.Gui.Graph
       this.m_TabCtrl.Size = new System.Drawing.Size(552, 420);
       this.m_TabCtrl.TabIndex = 3;
       this.m_TabCtrl.SelectedIndexChanged += new System.EventHandler(this.EhTabCtrl_SelectedIndexChanged);
-      // 
+      //
       // LayerControl
-      // 
+      //
       this.Controls.Add(this.m_TabCtrl);
       this.Controls.Add(this.m_lbEdges);
       this.Name = "LayerControl";
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-   
+
 
     public void AddTab(string name, string text)
     {
@@ -135,7 +135,7 @@ namespace Altaxo.Gui.Graph
       tc.CausesValidation = true;
 			tc.AutoScroll = true;
       tc.Validating += EhTabControl_Validating;
-      
+
       this.m_TabCtrl.Controls.Add( tc );
     }
 
@@ -191,7 +191,7 @@ namespace Altaxo.Gui.Graph
           ctrl.Dock = DockStyle.Fill;
           tp.Controls.Add(ctrl);
           ctrl.CausesValidation = true;
-          
+
         }
       }
     }
@@ -246,7 +246,7 @@ namespace Altaxo.Gui.Graph
     {
       _pageEnabled = _chkPageEnable.Checked;
       m_TabCtrl.SelectedTab.Controls[0].Enabled = _pageEnabled;
-			
+
       if(null!=m_Ctrl && m_SuppressEvents==0)
         m_Ctrl.EhView_PageEnabledChanged(_pageEnabled);
     }

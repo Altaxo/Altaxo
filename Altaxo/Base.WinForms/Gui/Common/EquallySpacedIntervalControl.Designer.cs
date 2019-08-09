@@ -2,12 +2,12 @@
 {
 	partial class EquallySpacedIntervalControl
 	{
-		/// <summary> 
+		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -22,8 +22,8 @@
 
 		#region Component Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
@@ -43,9 +43,9 @@
 			this._lblIntv = new System.Windows.Forms.Label();
 			this._tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// _tableLayoutPanel
-			// 
+			//
 			this._tableLayoutPanel.AutoSize = true;
 			this._tableLayoutPanel.ColumnCount = 2;
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -73,9 +73,9 @@
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.Size = new System.Drawing.Size(226, 150);
 			this._tableLayoutPanel.TabIndex = 0;
-			// 
+			//
 			// _lblStart
-			// 
+			//
 			this._lblStart.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this._lblStart.AutoSize = true;
 			this._lblStart.Location = new System.Drawing.Point(77, 52);
@@ -83,9 +83,9 @@
 			this._lblStart.Size = new System.Drawing.Size(32, 13);
 			this._lblStart.TabIndex = 0;
 			this._lblStart.Text = "Start:";
-			// 
+			//
 			// _lblEnd
-			// 
+			//
 			this._lblEnd.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this._lblEnd.AutoSize = true;
 			this._lblEnd.Location = new System.Drawing.Point(80, 78);
@@ -93,27 +93,27 @@
 			this._lblEnd.Size = new System.Drawing.Size(29, 13);
 			this._lblEnd.TabIndex = 1;
 			this._lblEnd.Text = "End:";
-			// 
+			//
 			// _edStart
-			// 
+			//
 			this._edStart.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._edStart.Location = new System.Drawing.Point(115, 49);
 			this._edStart.Name = "_edStart";
 			this._edStart.Size = new System.Drawing.Size(108, 20);
 			this._edStart.TabIndex = 4;
 			this._edStart.TextChanged += new System.EventHandler(this._edStart_TextChanged);
-			// 
+			//
 			// _edEnd
-			// 
+			//
 			this._edEnd.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._edEnd.Location = new System.Drawing.Point(115, 75);
 			this._edEnd.Name = "_edEnd";
 			this._edEnd.Size = new System.Drawing.Size(108, 20);
 			this._edEnd.TabIndex = 5;
 			this._edEnd.TextChanged += new System.EventHandler(this._edEnd_TextChanged);
-			// 
+			//
 			// _rbStartCountInterval
-			// 
+			//
 			this._rbStartCountInterval.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._rbStartCountInterval.AutoSize = true;
 			this._rbStartCountInterval.Location = new System.Drawing.Point(115, 3);
@@ -124,9 +124,9 @@
 			this._rbStartCountInterval.Text = "Start, Count, Intv.";
 			this._rbStartCountInterval.UseVisualStyleBackColor = true;
 			this._rbStartCountInterval.CheckedChanged += new System.EventHandler(this._rbStartEndCount_CheckedChanged);
-			// 
+			//
 			// _rbEndCountIntv
-			// 
+			//
 			this._rbEndCountIntv.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._rbEndCountIntv.AutoSize = true;
 			this._rbEndCountIntv.Location = new System.Drawing.Point(115, 26);
@@ -137,9 +137,9 @@
 			this._rbEndCountIntv.Text = "End, Count, Intv.";
 			this._rbEndCountIntv.UseVisualStyleBackColor = true;
 			this._rbEndCountIntv.CheckedChanged += new System.EventHandler(this._rbStartEndCount_CheckedChanged);
-			// 
+			//
 			// _rbStartEndCount
-			// 
+			//
 			this._rbStartEndCount.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._rbStartEndCount.AutoSize = true;
 			this._rbStartEndCount.Location = new System.Drawing.Point(3, 26);
@@ -150,9 +150,9 @@
 			this._rbStartEndCount.Text = "Start, End, Count";
 			this._rbStartEndCount.UseVisualStyleBackColor = true;
 			this._rbStartEndCount.CheckedChanged += new System.EventHandler(this._rbStartEndCount_CheckedChanged);
-			// 
+			//
 			// _rbStartEndIntv
-			// 
+			//
 			this._rbStartEndIntv.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._rbStartEndIntv.AutoSize = true;
 			this._rbStartEndIntv.Location = new System.Drawing.Point(3, 3);
@@ -163,9 +163,9 @@
 			this._rbStartEndIntv.Text = "Start, End, Intv.";
 			this._rbStartEndIntv.UseVisualStyleBackColor = true;
 			this._rbStartEndIntv.CheckedChanged += new System.EventHandler(this._rbStartEndCount_CheckedChanged);
-			// 
+			//
 			// _edCount
-			// 
+			//
 			this._edCount.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._edCount.Location = new System.Drawing.Point(115, 127);
 			this._edCount.Name = "_edCount";
@@ -173,9 +173,9 @@
 			this._edCount.TabIndex = 6;
 			this._edCount.TextChanged += new System.EventHandler(this._edCount_TextChanged);
 			this._edCount.Validating += new System.ComponentModel.CancelEventHandler(this._edCount_Validating);
-			// 
+			//
 			// _edIntv
-			// 
+			//
 			this._edIntv.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._edIntv.Location = new System.Drawing.Point(115, 101);
 			this._edIntv.Name = "_edIntv";
@@ -183,9 +183,9 @@
 			this._edIntv.TabIndex = 7;
 			this._edIntv.TextChanged += new System.EventHandler(this._edIntv_TextChanged);
 			this._edIntv.Validating += new System.ComponentModel.CancelEventHandler(this._edIntv_Validating);
-			// 
+			//
 			// _lblCount
-			// 
+			//
 			this._lblCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this._lblCount.AutoSize = true;
 			this._lblCount.Location = new System.Drawing.Point(71, 130);
@@ -193,9 +193,9 @@
 			this._lblCount.Size = new System.Drawing.Size(38, 13);
 			this._lblCount.TabIndex = 2;
 			this._lblCount.Text = "Count:";
-			// 
+			//
 			// _lblIntv
-			// 
+			//
 			this._lblIntv.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this._lblIntv.AutoSize = true;
 			this._lblIntv.Location = new System.Drawing.Point(64, 104);
@@ -203,9 +203,9 @@
 			this._lblIntv.Size = new System.Drawing.Size(45, 13);
 			this._lblIntv.TabIndex = 3;
 			this._lblIntv.Text = "Interval:";
-			// 
+			//
 			// EquallySpacedIntervalControl
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;

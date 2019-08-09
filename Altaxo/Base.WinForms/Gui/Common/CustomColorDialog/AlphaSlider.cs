@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Common
 		}
 
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose( bool disposing )
@@ -89,15 +89,15 @@ namespace Altaxo.Gui.Common
 		#endregion
 
 		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
 		{
-			// 
+			//
 			// ctrl1DColorBar
-			// 
+			//
 			this.Name = "ctrl1DColorBar";
 			this.Size = new System.Drawing.Size(40, 264);
 			this.Resize += new System.EventHandler(this.ctrl1DColorBar_Resize);
@@ -218,7 +218,7 @@ namespace Altaxo.Gui.Common
 				nMinimum = value;
 			}
 		}
-		
+
 		private int nMaximum = 255;
 		public int Maximum
 		{
@@ -278,7 +278,7 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		/// <param name="position">position value of the slider, lowest being at the bottom.  The range
 		/// is between 0 and the controls height-9.  The values will be adjusted if too large/small</param>
-		/// <param name="Unconditional">If Unconditional is true, the slider is drawn, otherwise some logic 
+		/// <param name="Unconditional">If Unconditional is true, the slider is drawn, otherwise some logic
 		/// is performed to determine is drawing is really neccessary.</param>
 		private void DrawSlider(int position, bool Unconditional)
 		{
@@ -288,10 +288,10 @@ namespace Altaxo.Gui.Common
 			nValue = ((position*(nMaximum-nMinimum))/(this.Height-(nTickHeight*2)));
 
 			Trace.WriteLine(nValue);
-			
-			if ( position < nTickHeight ) 
+
+			if ( position < nTickHeight )
 				position = nTickHeight;
-			if ( position >= this.Height - nTickHeight*2 ) 
+			if ( position >= this.Height - nTickHeight*2 )
 				position = this.Height - nTickHeight-1;
 
 			if ( m_iMarker_Start_Y == position && !Unconditional )	//	If the marker position hasn't changed
@@ -322,7 +322,7 @@ namespace Altaxo.Gui.Common
 			NativeMethods.SendMessage(_hParent, 0x5050, val,null);
 		}
 
-		
+
 
 
 		/// <summary>
@@ -334,9 +334,9 @@ namespace Altaxo.Gui.Common
 			Graphics g = this.CreateGraphics();
 
 			Pen pencil;
-			
+
 			//	To make the control look like Adobe Photoshop's the border around the control will be a gray line
-			//	on the top and left side, a white line on the bottom and right side, and a black rectangle (line) 
+			//	on the top and left side, a white line on the bottom and right side, and a black rectangle (line)
 			//	inside the gray/white rectangle
 
 			pencil = new Pen(Color.FromArgb(172,168,153));	//	The same gray color used by Photoshop
@@ -394,14 +394,14 @@ namespace Altaxo.Gui.Common
 		private int Round(double val)
 		{
 			int ret_val = (int)val;
-			
+
 			int temp = (int)(val * 100);
 
 			if ( (temp % 100) >= 50 )
 				ret_val += 1;
 
 			return ret_val;
-			
+
 		}
 
 

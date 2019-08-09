@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Graph
     private MWControlSuite.MWTreeView m_Content_tvDataAvail;
     private System.Windows.Forms.Label label13;
     private SplitContainer _splitContainer;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -79,8 +79,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -104,9 +104,9 @@ namespace Altaxo.Gui.Graph
       this._splitContainer.Panel2.SuspendLayout();
       this._splitContainer.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // m_Contents_chkShowRange
-      // 
+      //
       this.m_Contents_chkShowRange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_chkShowRange.Location = new System.Drawing.Point(147, 240);
       this.m_Contents_chkShowRange.Name = "m_Contents_chkShowRange";
@@ -114,9 +114,9 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_chkShowRange.TabIndex = 25;
       this.m_Contents_chkShowRange.Text = "Show Range";
       this.m_Contents_chkShowRange.CheckedChanged += new System.EventHandler(this.EhShowRange_CheckedChanged);
-      // 
+      //
       // m_Contents_btEditRange
-      // 
+      //
       this.m_Contents_btEditRange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btEditRange.Location = new System.Drawing.Point(147, 208);
       this.m_Contents_btEditRange.Name = "m_Contents_btEditRange";
@@ -124,9 +124,9 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_btEditRange.TabIndex = 24;
       this.m_Contents_btEditRange.Text = "Edit Range...";
       this.m_Contents_btEditRange.Click += new System.EventHandler(this.EhEditRange_Click);
-      // 
+      //
       // m_Contents_btUngroup
-      // 
+      //
       this.m_Contents_btUngroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btUngroup.Location = new System.Drawing.Point(147, 176);
       this.m_Contents_btUngroup.Name = "m_Contents_btUngroup";
@@ -134,9 +134,9 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_btUngroup.TabIndex = 23;
       this.m_Contents_btUngroup.Text = "Ungroup";
       this.m_Contents_btUngroup.Click += new System.EventHandler(this.EhUngroup_Click);
-      // 
+      //
       // m_Contents_btGroup
-      // 
+      //
       this.m_Contents_btGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btGroup.Location = new System.Drawing.Point(147, 144);
       this.m_Contents_btGroup.Name = "m_Contents_btGroup";
@@ -144,9 +144,9 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_btGroup.TabIndex = 22;
       this.m_Contents_btGroup.Text = "Group";
       this.m_Contents_btGroup.Click += new System.EventHandler(this.EhGroup_Click);
-      // 
+      //
       // m_Contents_btPlotAssociations
-      // 
+      //
       this.m_Contents_btPlotAssociations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btPlotAssociations.Location = new System.Drawing.Point(147, 112);
       this.m_Contents_btPlotAssociations.Name = "m_Contents_btPlotAssociations";
@@ -155,9 +155,9 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_btPlotAssociations.Text = "PlotAssociations...";
       this.m_Contents_btPlotAssociations.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       this.m_Contents_btPlotAssociations.Click += new System.EventHandler(this.EhPlotAssociations_Click);
-      // 
+      //
       // m_Contents_btListSelDown
-      // 
+      //
       this.m_Contents_btListSelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btListSelDown.Image = ((System.Drawing.Image)(resources.GetObject("m_Contents_btListSelDown.Image")));
       this.m_Contents_btListSelDown.Location = new System.Drawing.Point(147, 72);
@@ -165,9 +165,9 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_btListSelDown.Size = new System.Drawing.Size(32, 32);
       this.m_Contents_btListSelDown.TabIndex = 20;
       this.m_Contents_btListSelDown.Click += new System.EventHandler(this.EhListSelDown_Click);
-      // 
+      //
       // m_Contents_btListSelUp
-      // 
+      //
       this.m_Contents_btListSelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btListSelUp.Image = ((System.Drawing.Image)(resources.GetObject("m_Contents_btListSelUp.Image")));
       this.m_Contents_btListSelUp.Location = new System.Drawing.Point(147, 32);
@@ -175,9 +175,9 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_btListSelUp.Size = new System.Drawing.Size(32, 32);
       this.m_Contents_btListSelUp.TabIndex = 19;
       this.m_Contents_btListSelUp.Click += new System.EventHandler(this.EhListSelUp_Click);
-      // 
+      //
       // m_Contents_lbContents
-      // 
+      //
       this.m_Contents_lbContents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -191,9 +191,9 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_lbContents.Size = new System.Drawing.Size(136, 240);
       this.m_Contents_lbContents.TabIndex = 18;
       this.m_Contents_lbContents.DoubleClick += new System.EventHandler(this.EhContents_DoubleClick);
-      // 
+      //
       // m_Contents_btPullData
-      // 
+      //
       this.m_Contents_btPullData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btPullData.Image = ((System.Drawing.Image)(resources.GetObject("m_Contents_btPullData.Image")));
       this.m_Contents_btPullData.Location = new System.Drawing.Point(163, 72);
@@ -201,9 +201,9 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_btPullData.Size = new System.Drawing.Size(32, 32);
       this.m_Contents_btPullData.TabIndex = 17;
       this.m_Contents_btPullData.Click += new System.EventHandler(this.EhPullData_Click);
-      // 
+      //
       // m_Contents_btPutData
-      // 
+      //
       this.m_Contents_btPutData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btPutData.Image = ((System.Drawing.Image)(resources.GetObject("m_Contents_btPutData.Image")));
       this.m_Contents_btPutData.Location = new System.Drawing.Point(163, 32);
@@ -211,17 +211,17 @@ namespace Altaxo.Gui.Graph
       this.m_Contents_btPutData.Size = new System.Drawing.Size(32, 32);
       this.m_Contents_btPutData.TabIndex = 16;
       this.m_Contents_btPutData.Click += new System.EventHandler(this.EhPutData_Click);
-      // 
+      //
       // label14
-      // 
+      //
       this.label14.Location = new System.Drawing.Point(0, 8);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(88, 16);
       this.label14.TabIndex = 15;
       this.label14.Text = "XYPlotLayer Contents";
-      // 
+      //
       // m_Content_tvDataAvail
-      // 
+      //
       this.m_Content_tvDataAvail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -235,31 +235,31 @@ namespace Altaxo.Gui.Graph
       this.m_Content_tvDataAvail.Size = new System.Drawing.Size(152, 240);
       this.m_Content_tvDataAvail.TabIndex = 14;
       this.m_Content_tvDataAvail.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.EhDataAvailable_BeforeExpand);
-      // 
+      //
       // label13
-      // 
+      //
       this.label13.Location = new System.Drawing.Point(3, 8);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(80, 16);
       this.label13.TabIndex = 13;
       this.label13.Text = "Available data";
-      // 
+      //
       // _splitContainer
-      // 
+      //
       this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
       this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
       this._splitContainer.Location = new System.Drawing.Point(0, 0);
       this._splitContainer.Name = "_splitContainer";
-      // 
+      //
       // _splitContainer.Panel1
-      // 
+      //
       this._splitContainer.Panel1.Controls.Add(this.m_Content_tvDataAvail);
       this._splitContainer.Panel1.Controls.Add(this.label13);
       this._splitContainer.Panel1.Controls.Add(this.m_Contents_btPutData);
       this._splitContainer.Panel1.Controls.Add(this.m_Contents_btPullData);
-      // 
+      //
       // _splitContainer.Panel2
-      // 
+      //
       this._splitContainer.Panel2.Controls.Add(this.m_Contents_lbContents);
       this._splitContainer.Panel2.Controls.Add(this.m_Contents_chkShowRange);
       this._splitContainer.Panel2.Controls.Add(this.label14);
@@ -272,9 +272,9 @@ namespace Altaxo.Gui.Graph
       this._splitContainer.Size = new System.Drawing.Size(456, 271);
       this._splitContainer.SplitterDistance = 196;
       this._splitContainer.TabIndex = 26;
-      // 
+      //
       // LineScatterLayerContentsControl
-      // 
+      //
       this.Controls.Add(this._splitContainer);
       this.Name = "LineScatterLayerContentsControl";
       this.Size = new System.Drawing.Size(456, 271);
@@ -308,7 +308,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
- 
+
 
     void Update(MWControlSuite.MWTreeView view, TreeNodeCollection tree, NGTreeNodeCollection coll, Hashtable selectedNGNodes)
     {
@@ -318,17 +318,17 @@ namespace Altaxo.Gui.Graph
       for (int i = 0; i < coll.Count; i++)
       {
         bool isExpanded = false;
-       
+
 
         if (null != coll[i].GuiTag)
         {
           TreeNode node = (TreeNode)coll[i].GuiTag;
           isExpanded = node.IsExpanded;
-         
+
           node.Remove();
           node.Nodes.Clear();
           tree.Add(node);
-          
+
         }
         else
         {
@@ -372,7 +372,7 @@ namespace Altaxo.Gui.Graph
 
 
 
-  
+
 
     public void DataAvailable_Initialize(NGTreeNodeCollection nodes)
     {
@@ -389,7 +389,7 @@ namespace Altaxo.Gui.Graph
     {
       this.m_Content_tvDataAvail.ClearSelNodes();
     }
-  
+
     public void Contents_SetItems(NGTreeNodeCollection items)
     {
       // please note:
@@ -408,7 +408,7 @@ namespace Altaxo.Gui.Graph
         for (int i = 0; i < m_Contents_lbContents.Nodes.Count; i++)
           m_Contents_lbContents.Nodes[i].Expand();
       }
-      
+
       this.m_Contents_lbContents.EndUpdate();
       this.m_Contents_lbContents.Focus();
 
@@ -439,7 +439,7 @@ namespace Altaxo.Gui.Graph
     }
 
     #endregion
-  
+
     private void EhDataAvailable_BeforeExpand(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
     {
       if(null!=Controller)
@@ -458,7 +458,7 @@ namespace Altaxo.Gui.Graph
     {
       if(null!=Controller)
       {
-       
+
         if(this.m_Contents_lbContents.SelNodes.Count==1)
         {
           foreach (DictionaryEntry dict in this.m_Contents_lbContents.SelNodes)
@@ -486,7 +486,7 @@ namespace Altaxo.Gui.Graph
 
     private void EhContents_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-    
+
     }
 
     private void EhPutData_Click(object sender, System.EventArgs e)
@@ -515,7 +515,7 @@ namespace Altaxo.Gui.Graph
         Controller.EhView_ListSelUpClick(SelectedNodes(this.m_Contents_lbContents));
         this.m_Contents_lbContents.Focus();
       }
-      
+
     }
 
     private void EhListSelDown_Click(object sender, System.EventArgs e)
@@ -526,7 +526,7 @@ namespace Altaxo.Gui.Graph
         Controller.EhView_SelDownClick(SelectedNodes(this.m_Contents_lbContents));
         this.m_Contents_lbContents.Focus();
       }
-      
+
     }
 
     private void EhPlotAssociations_Click(object sender, System.EventArgs e)
@@ -537,7 +537,7 @@ namespace Altaxo.Gui.Graph
         Controller.EhView_PlotAssociationsClick(SelectedNodes(this.m_Contents_lbContents));
         this.m_Contents_lbContents.Focus();
       }
-      
+
     }
 
     private void EhGroup_Click(object sender, System.EventArgs e)
@@ -548,8 +548,8 @@ namespace Altaxo.Gui.Graph
         Controller.EhView_GroupClick(SelectedNodes(this.m_Contents_lbContents));
         this.m_Contents_lbContents.Focus();
       }
-      
-    
+
+
     }
 
     private void EhUngroup_Click(object sender, System.EventArgs e)
@@ -560,7 +560,7 @@ namespace Altaxo.Gui.Graph
         Controller.EhView_UngroupClick(SelectedNodes(this.m_Contents_lbContents));
         this.m_Contents_lbContents.Focus();
       }
-      
+
     }
 
     private void EhEditRange_Click(object sender, System.EventArgs e)
@@ -571,12 +571,12 @@ namespace Altaxo.Gui.Graph
         Controller.EhView_EditRangeClick(SelectedNodes(this.m_Contents_lbContents));
         this.m_Contents_lbContents.Focus();
       }
-      
+
     }
 
     private void EhShowRange_CheckedChanged(object sender, System.EventArgs e)
     {
-    
+
     }
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -595,7 +595,7 @@ namespace Altaxo.Gui.Graph
 
       return base.ProcessCmdKey(ref msg, keyData);
     }
-   
+
 
     #region IMVCView Members
 

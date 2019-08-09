@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    
+
     private void EhBackgroundColor_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
       if (null != Controller)
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Graph
     }
 
 
-  
+
 
     public void BackgroundBrush_Initialize(BrushX brush)
     {

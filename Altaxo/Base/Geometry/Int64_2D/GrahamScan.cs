@@ -160,4 +160,3 @@ namespace Altaxo.Geometry.Int64_2D
     }
   }
 }
-

@@ -282,7 +282,7 @@ namespace Altaxo.Text.Renderers
         {
           using (_wordDocument = WordprocessingDocument.Create(WordDocumentFileName, WordprocessingDocumentType.Document))
           {
-            // Add a main document part. 
+            // Add a main document part.
             _mainDocumentPart = _wordDocument.AddMainDocumentPart();
 
             // Create the document structure and add some text.

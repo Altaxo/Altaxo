@@ -16,7 +16,7 @@ namespace Altaxo.Gui.Graph
 			InitializeComponent();
 		}
 
-		
+
 		#region IDensityScaleView Members
 
 		public void InitializeAxisType(Altaxo.Collections.SelectableListNodeList names)

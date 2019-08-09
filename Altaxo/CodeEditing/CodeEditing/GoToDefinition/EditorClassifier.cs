@@ -57,9 +57,9 @@ namespace Microsoft.CodeAnalysis.Editor
 
       // Call out to the individual language to classify the chunk of text around the
       // reference. We'll get both the syntactic and semantic spans for this region.
-      // Because the semantic tags may override the semantic ones (for example, 
+      // Because the semantic tags may override the semantic ones (for example,
       // "DateTime" might be syntactically an identifier, but semantically a struct
-      // name), we'll do a later merging step to get the final correct list of 
+      // name), we'll do a later merging step to get the final correct list of
       // classifications.  For tagging, normally the editor handles this.  But as
       // we're producing the list of Inlines ourselves, we have to handles this here.
       var syntaxSpans = ListPool<ClassifiedSpan>.Allocate();
@@ -97,13 +97,13 @@ namespace Microsoft.CodeAnalysis.Editor
 
       // It's possible for us to get classified spans that occur *before*
       // or after the span we want to present. This happens because the calls to
-      // AddSyntacticClassificationsAsync and AddSemanticClassificationsAsync 
+      // AddSyntacticClassificationsAsync and AddSemanticClassificationsAsync
       // may return more spans than the range asked for.  While bad form,
       // it's never been a requirement that implementation not do that.
       // For example, the span may be the non-full-span of a node, but the
       // classifiers may still return classifications for leading/trailing
       // trivia even if it's out of the bounds of that span.
-      // 
+      //
       // To deal with that, we adjust all spans so that they don't go outside
       // of the range we care about.
       AdjustSpans(syntaxSpans, widenedSpan);
@@ -111,7 +111,7 @@ namespace Microsoft.CodeAnalysis.Editor
 
       // The classification service will only produce classifications for
       // things it knows about.  i.e. there will be gaps in what it produces.
-      // Fill in those gaps so we have *all* parts of the span 
+      // Fill in those gaps so we have *all* parts of the span
       // classified properly.
       var filledInSyntaxSpans = ArrayBuilder<ClassifiedSpan>.GetInstance();
       var filledInSemanticSpans = ArrayBuilder<ClassifiedSpan>.GetInstance();
@@ -141,7 +141,7 @@ namespace Microsoft.CodeAnalysis.Editor
       {
         var span = spans[i];
 
-        // Make sure the span actually intersects 'widenedSpan'.  If it 
+        // Make sure the span actually intersects 'widenedSpan'.  If it
         // does not, just put in an empty length span.  It will get ignored later
         // when we walk through this list.
         var intersection = span.TextSpan.Intersection(widenedSpan);
@@ -191,7 +191,7 @@ namespace Microsoft.CodeAnalysis.Editor
         ArrayBuilder<ClassifiedSpan> syntaxParts,
         ArrayBuilder<ClassifiedSpan> semanticParts)
     {
-      // Take all the syntax parts.  However, if any have been overridden by a 
+      // Take all the syntax parts.  However, if any have been overridden by a
       // semantic part, then choose that one.
 
       var finalParts = ArrayBuilder<ClassifiedSpan>.GetInstance();
@@ -205,7 +205,7 @@ namespace Microsoft.CodeAnalysis.Editor
             lastReplacementIndex, t => t.TextSpan == syntaxPartAndSpan.TextSpan);
 
         // Take the semantic part if it's just 'text'.  We want to keep it if
-        // the semantic classifier actually produced an interesting result 
+        // the semantic classifier actually produced an interesting result
         // (as opposed to it just being a 'gap' classification).
         var part = replacementIndex >= 0 && !IsClassifiedAsText(semanticParts[replacementIndex])
             ? semanticParts[replacementIndex]
@@ -215,7 +215,7 @@ namespace Microsoft.CodeAnalysis.Editor
         if (replacementIndex >= 0)
         {
           // If we found a semantic replacement, update the lastIndex.
-          // That way we can start searching from that point instead 
+          // That way we can start searching from that point instead
           // of checking all the elements each time.
           lastReplacementIndex = replacementIndex + 1;
         }
@@ -226,8 +226,8 @@ namespace Microsoft.CodeAnalysis.Editor
 
     private static bool IsClassifiedAsText(ClassifiedSpan partAndSpan)
     {
-      // Don't take 'text' from the semantic parts.  We'll get those for the 
-      // spaces between the actual interesting semantic spans, and we don't 
+      // Don't take 'text' from the semantic parts.  We'll get those for the
+      // spaces between the actual interesting semantic spans, and we don't
       // want them to override actual good syntax spans.
       return partAndSpan.ClassificationType == ClassificationTypeNames.Text;
     }

@@ -13,7 +13,7 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <TreeView Grid.Column="0" x:Name="_guiOutline" 
+        <TreeView Grid.Column="0" x:Name="_guiOutline"
                   MouseDoubleClick="EhOutline_SelectedItemDoubleClick"
                   Visibility="Collapsed"
                   SizeChanged="EhOutline_SizeChanged">

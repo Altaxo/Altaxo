@@ -2,12 +2,12 @@
 {
 	partial class ColumnDrivenColorPlotStyleControl
 	{
-		/// <summary> 
+		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -22,8 +22,8 @@
 
 		#region Component Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
@@ -40,9 +40,9 @@
 			this.groupBox1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// _grpScale
-			// 
+			//
 			this._grpScale.AutoSize = true;
 			this._grpScale.Controls.Add(this._ctrlScale);
 			this._grpScale.Location = new System.Drawing.Point(3, 3);
@@ -51,17 +51,17 @@
 			this._grpScale.TabIndex = 1;
 			this._grpScale.TabStop = false;
 			this._grpScale.Text = "Scale:";
-			// 
+			//
 			// _ctrlScale
-			// 
+			//
 			this._ctrlScale.AutoSize = true;
 			this._ctrlScale.Location = new System.Drawing.Point(6, 19);
 			this._ctrlScale.Name = "_ctrlScale";
 			this._ctrlScale.Size = new System.Drawing.Size(322, 50);
 			this._ctrlScale.TabIndex = 0;
-			// 
+			//
 			// _btClearDataColumn
-			// 
+			//
 			this._btClearDataColumn.Location = new System.Drawing.Point(281, 45);
 			this._btClearDataColumn.Name = "_btClearDataColumn";
 			this._btClearDataColumn.Size = new System.Drawing.Size(49, 20);
@@ -69,27 +69,27 @@
 			this._btClearDataColumn.Text = "Clear!";
 			this._btClearDataColumn.UseVisualStyleBackColor = true;
 			this._btClearDataColumn.Click += new System.EventHandler(this._btClearDataColumn_Click);
-			// 
+			//
 			// _edDataColumn
-			// 
+			//
 			this._edDataColumn.Location = new System.Drawing.Point(8, 19);
 			this._edDataColumn.Name = "_edDataColumn";
 			this._edDataColumn.ReadOnly = true;
 			this._edDataColumn.Size = new System.Drawing.Size(322, 20);
 			this._edDataColumn.TabIndex = 55;
 			this._edDataColumn.Text = "textBox1";
-			// 
+			//
 			// _btSelectDataColumn
-			// 
+			//
 			this._btSelectDataColumn.Location = new System.Drawing.Point(8, 45);
 			this._btSelectDataColumn.Name = "_btSelectDataColumn";
 			this._btSelectDataColumn.Size = new System.Drawing.Size(56, 20);
 			this._btSelectDataColumn.TabIndex = 56;
 			this._btSelectDataColumn.Text = "Select ..";
 			this._btSelectDataColumn.Click += new System.EventHandler(this._btSelectDataColumn_Click);
-			// 
+			//
 			// groupBox1
-			// 
+			//
 			this.groupBox1.Controls.Add(this._edDataColumn);
 			this.groupBox1.Controls.Add(this._btSelectDataColumn);
 			this.groupBox1.Controls.Add(this._btClearDataColumn);
@@ -99,9 +99,9 @@
 			this.groupBox1.TabIndex = 60;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Data column:";
-			// 
+			//
 			// flowLayoutPanel1
-			// 
+			//
 			this.flowLayoutPanel1.Controls.Add(this._grpScale);
 			this.flowLayoutPanel1.Controls.Add(this.groupBox1);
 			this.flowLayoutPanel1.Controls.Add(this._colorProviderControl);
@@ -111,17 +111,17 @@
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(446, 497);
 			this.flowLayoutPanel1.TabIndex = 61;
-			// 
+			//
 			// _colorProviderControl
-			// 
+			//
 			this._colorProviderControl.AutoSize = true;
 			this._colorProviderControl.Location = new System.Drawing.Point(3, 179);
 			this._colorProviderControl.Name = "_colorProviderControl";
 			this._colorProviderControl.Size = new System.Drawing.Size(224, 70);
 			this._colorProviderControl.TabIndex = 61;
-			// 
+			//
 			// ColumnDrivenColorPlotStyleControl
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.flowLayoutPanel1);

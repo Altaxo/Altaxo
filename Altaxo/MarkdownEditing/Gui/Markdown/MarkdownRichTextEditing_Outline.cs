@@ -430,4 +430,3 @@ namespace Altaxo.Gui.Markdown
     }
   }
 }
-

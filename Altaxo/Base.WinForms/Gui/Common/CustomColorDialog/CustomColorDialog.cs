@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Diagnostics;
 
 using System.Windows.Forms;
-	
+
 
 namespace Altaxo.Gui.Common
 {
@@ -54,11 +54,11 @@ namespace Altaxo.Gui.Common
 		{
 			// create the ChooseColor structure to pass to WinAPI
 			_cc.lStructSize = Marshal.SizeOf( _cc );
-			_cc.lpfnHook = new CCHookProc(MyHookProc);								//hook function 
+			_cc.lpfnHook = new CCHookProc(MyHookProc);								//hook function
 			_cc.Flags = ChooseColorFlags.FullOpen | ChooseColorFlags.EnableHook;	//enable hook
 			_cc.hwndOwner = handle;													//set the owner window
 			Int32	temp = 0;
-			IntPtr CustColor = Marshal.AllocCoTaskMem( 16 * Marshal.SizeOf(temp));	
+			IntPtr CustColor = Marshal.AllocCoTaskMem( 16 * Marshal.SizeOf(temp));
 
 			//fill in the value to load custom colors with these values
 			_cc.lpCustColors = CustColor;											//set the custom color buffer
@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Common
 		/// <param name="lParam">mess-specific parameter data</param>
 		/// <returns></returns>
 
-		
+
 		public IntPtr MyHookProc( IntPtr hWnd, UInt16 msg, Int32 wParam, Int32 lParam )
 		{
 			// return if invalid window
@@ -125,12 +125,12 @@ namespace Altaxo.Gui.Common
 				Trace.WriteLine(wParam);
 				_textAlpha.Text = wParam.ToString();
 			}
-				
+
 
 			//this is total hack
 			//I could not find the message posted by ChooColor dialog when user presses OK
 			//this I found the last message sent and using it
-			//TODO: find the correct message as documented i.e. COLOROKSTRING 
+			//TODO: find the correct message as documented i.e. COLOROKSTRING
 			if( msg == 0xC072 /*==COLOROKSTRING*/)
 			{
 				//get the current ChooseColor structure
@@ -143,7 +143,7 @@ namespace Altaxo.Gui.Common
 				int G = (char )(((int)(cc.rgbResult)) >> 8);
 				int B = (char )(cc.rgbResult >> 16);
 
-				//the typecase problem 
+				//the typecase problem
 				//TODO: write the C# version of GetRValue, GetGValue, GetBValue
 				if( R > 256 )
 					R = R/257;
@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Common
 				{
 					return IntPtr.Zero;
 				}
-			
+
 
 				// WM_INITDIALOG - at this point the ChooseColorDialog exists, so we pull the user-supplied control
 				// into the FileOpenDialog now, using the SetParent API.
@@ -192,7 +192,7 @@ namespace Altaxo.Gui.Common
 
 					Rectangle rcClient = _panelAlpha.ClientRectangle;
 					NativeMethods.MoveWindow( hWnd, rc.left, rc.top, bottomRight.X+rcClient.Width+10, bottomRight.Y+28, true );
-					
+
 					return IntPtr.Zero;
 				}
 					// WM_SIZE - the OpenFileDialog has been resized, so we'll resize the content and user-supplied

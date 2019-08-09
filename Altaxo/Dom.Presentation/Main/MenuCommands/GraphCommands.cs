@@ -788,7 +788,7 @@ namespace Altaxo.Graph.Commands
       var dlg = new Altaxo.Gui.SaveFileOptions();
 
       string description = StringParser.Parse("${res:Altaxo.FileFilter.ProjectFiles})");
-      
+
       dlg.AddFilter("*.axoprj", description);
       dlg.OverwritePrompt = true;
       dlg.AddExtension = true;

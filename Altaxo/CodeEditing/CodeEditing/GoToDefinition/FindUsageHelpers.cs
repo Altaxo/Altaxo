@@ -19,12 +19,12 @@ namespace Microsoft.CodeAnalysis.Editor.FindUsages
         => symbol.IsConstructor() ? symbol.ContainingType.Name : symbol.Name;
 
     /// <summary>
-    /// Common helper for both the synchronous and streaming versions of FAR. 
+    /// Common helper for both the synchronous and streaming versions of FAR.
     /// It returns the symbol we want to search for and the solution we should
     /// be searching.
-    /// 
+    ///
     /// Note that the <see cref="Solution"/> returned may absolutely *not* be
-    /// the same as <c>document.Project.Solution</c>.  This is because 
+    /// the same as <c>document.Project.Solution</c>.  This is because
     /// there may be symbol mapping involved (for example in Metadata-As-Source
     /// scenarios).
     /// </summary>

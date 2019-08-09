@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Scripting
   public class PureScriptControl : System.Windows.Forms.UserControl, IPureScriptView
   {
     private System.Windows.Forms.TextBox _edScriptText;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Scripting
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -67,17 +67,17 @@ namespace Altaxo.Gui.Scripting
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
       this._edScriptText = new System.Windows.Forms.TextBox();
       this.SuspendLayout();
-      // 
+      //
       // _edScriptText
-      // 
+      //
       this._edScriptText.Dock = System.Windows.Forms.DockStyle.Fill;
       this._edScriptText.Location = new System.Drawing.Point(0, 0);
       this._edScriptText.Multiline = true;
@@ -85,9 +85,9 @@ namespace Altaxo.Gui.Scripting
       this._edScriptText.Size = new System.Drawing.Size(448, 360);
       this._edScriptText.TabIndex = 0;
       this._edScriptText.Text = "";
-      // 
+      //
       // PureScriptControl
-      // 
+      //
       this.Controls.Add(this._edScriptText);
       this.Name = "PureScriptControl";
       this.Size = new System.Drawing.Size(448, 360);
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Scripting
     {
       get
       {
-        
+
         return _controller;
       }
       set
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Scripting
     {
       get
       {
-        
+
         return _edScriptText.Text;
       }
       set

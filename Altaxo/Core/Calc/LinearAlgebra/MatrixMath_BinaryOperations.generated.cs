@@ -56,7 +56,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
 				throw new RankException("Mismatch of dimensions of src1 and result");
 
-			var cols = src1.ColumnCount; 
+			var cols = src1.ColumnCount;
 			var rows = src1.RowCount;
 			for (int i = 0; i < rows; ++i)
 			{
@@ -88,7 +88,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
 				throw new RankException("Mismatch of dimensions of src1 and result");
 
-			var cols = src1.ColumnCount; 
+			var cols = src1.ColumnCount;
 			var rows = src1.RowCount;
 			for (int i = 0; i < rows; ++i)
 			{
@@ -115,7 +115,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
 				throw new RankException("Mismatch of dimensions of src1 and result");
 
-			var cols = src1.ColumnCount; 
+			var cols = src1.ColumnCount;
 			var rows = src1.RowCount;
 			for (int i = 0; i < rows; ++i)
 			{
@@ -127,7 +127,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 
-	
+
 
 		/// <summary>
 		/// Elementwise application of a function to each element of two matrices. The result is stored in another matrix or in the same matrix.
@@ -150,7 +150,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
 				throw new RankException("Mismatch of dimensions of src1 and result");
 
-			var cols = src1.ColumnCount; 
+			var cols = src1.ColumnCount;
 			var rows = src1.RowCount;
 			for (int i = 0; i < rows; ++i)
 			{
@@ -180,7 +180,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
 				throw new RankException("Mismatch of dimensions of src1 and result");
 
-			var cols = src1.ColumnCount; 
+			var cols = src1.ColumnCount;
 			var rows = src1.RowCount;
 			for (int i = 0; i < rows; ++i)
 			{

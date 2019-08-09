@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -40,9 +40,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     public PenX Pen
     {
-      get 
+      get
       {
-        return _penGlue.Pen; 
+        return _penGlue.Pen;
       }
       set
       {
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       if(_penGlue!=null)
         grfx.DrawLine(_penGlue.Pen, p1, p2);
- 
+
     }
   }
 }

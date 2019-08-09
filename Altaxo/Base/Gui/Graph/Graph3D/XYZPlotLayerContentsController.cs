@@ -1,4 +1,4 @@
-#define VERIFY_TREESYNCHRONIZATION
+﻿#define VERIFY_TREESYNCHRONIZATION
 
 #region Copyright
 

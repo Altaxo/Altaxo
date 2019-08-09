@@ -36,7 +36,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
   /// <typeparam name="TObject">The type of the object.</typeparam>
   /// Adopted from <see cref="Markdig.Renderers.MarkdownObjectRenderer{TRenderer, TObject}"/>
   /// Copyright (c) Alexandre Mutel. All rights reserved.
-  /// Licensed under the BSD-Clause 2 license. 
+  /// Licensed under the BSD-Clause 2 license.
   /// </remarks>
   internal abstract class WpfMathAtomRenderer<TRenderer, TObject> : IWpfMathAtomRenderer where TRenderer : WpfMathRendererBase where TObject : Atom
   {

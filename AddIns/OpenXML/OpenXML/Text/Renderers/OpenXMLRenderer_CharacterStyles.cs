@@ -89,7 +89,7 @@ namespace Altaxo.Text.Renderers
     }
 
 
-    // Create a new character style with the specified style id, style name and aliases and 
+    // Create a new character style with the specified style id, style name and aliases and
     // add it to the specified style definitions part.
     /// <summary>
     /// Creates a character style and adds it to the document.

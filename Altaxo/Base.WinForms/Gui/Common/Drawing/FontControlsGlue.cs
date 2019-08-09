@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -31,11 +31,11 @@ namespace Altaxo.Gui.Common.Drawing
 {
   public class FontControlsGlue : Component
   {
-   
+
 
     public FontControlsGlue()
     {
-      
+
     }
 
     #region Font
@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Common.Drawing
       {
         _font = value;
         _fontUnit = value.Unit;
-       
+
         CbFont = _cbFont;
         CbFontSize = _cbFontSize;
       }
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion
 
-  
+
 
     #region Font
 
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-   
+
 
     #endregion
 
@@ -170,8 +170,8 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion
 
-  
 
-  
+
+
   }
 }

@@ -134,6 +134,6 @@ namespace Altaxo.Gui.Common
 			if (null != CountValidating)
 				CountValidating(e);
 		}
-	
+
 	}
 }

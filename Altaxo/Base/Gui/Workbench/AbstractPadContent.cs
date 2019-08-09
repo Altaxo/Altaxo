@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <summary>
-    /// 
+    ///
     /// Gets or sets the visibility of the pad.
     /// If false, the pad is not visible.
     /// If true, the pad may be visible or is collapsed.

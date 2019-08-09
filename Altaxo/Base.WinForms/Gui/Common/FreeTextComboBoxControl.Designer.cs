@@ -2,12 +2,12 @@
 {
   partial class FreeTextComboBoxControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -22,8 +22,8 @@
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -33,9 +33,9 @@
 			this._cbChoice = new System.Windows.Forms.ComboBox();
 			this._mainLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// _mainLayoutPanel
-			// 
+			//
 			this._mainLayoutPanel.AutoSize = true;
 			this._mainLayoutPanel.ColumnCount = 1;
 			this._mainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -49,9 +49,9 @@
 			this._mainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._mainLayoutPanel.Size = new System.Drawing.Size(213, 55);
 			this._mainLayoutPanel.TabIndex = 0;
-			// 
+			//
 			// _lblDescription
-			// 
+			//
 			this._lblDescription.AutoSize = true;
 			this._lblDescription.Location = new System.Drawing.Point(3, 0);
 			this._lblDescription.Name = "_lblDescription";
@@ -59,9 +59,9 @@
 			this._lblDescription.Size = new System.Drawing.Size(119, 23);
 			this._lblDescription.TabIndex = 0;
 			this._lblDescription.Text = "Please choose or enter:";
-			// 
+			//
 			// _cbChoice
-			// 
+			//
 			this._cbChoice.FormattingEnabled = true;
 			this._cbChoice.Location = new System.Drawing.Point(3, 26);
 			this._cbChoice.Name = "_cbChoice";
@@ -69,9 +69,9 @@
 			this._cbChoice.TabIndex = 1;
 			this._cbChoice.SelectionChangeCommitted += new System.EventHandler(this.EhSelectionChangeCommitted);
 			this._cbChoice.Validating += new System.ComponentModel.CancelEventHandler(this.EhValidating);
-			// 
+			//
 			// FreeTextComboBoxControl
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;

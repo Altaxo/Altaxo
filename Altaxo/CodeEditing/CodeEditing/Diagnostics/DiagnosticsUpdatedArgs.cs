@@ -1,4 +1,4 @@
-// Copyright Eli Arbel (no explicit copyright notice in original file)
+﻿// Copyright Eli Arbel (no explicit copyright notice in original file)
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/DiagnosticsUpdatedArgs.cs
 

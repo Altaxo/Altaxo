@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 #endregion
 
 using System;
@@ -17,7 +17,7 @@ using System.Windows.Forms;
 //		My mikwib address can be found on hotmail.com (usual HoTMaiL spam filters)
 //		My mick address can be found on ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
 //		My mik address can be found on netatonce.net (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-//	
+//
 //	Feel free to use the MWTreeView as you wish, as long as you do not take credit for it yourself (see next line).
 //	However if it is used in commercial projects or applications it is NOT, I repeat NOT, free. Please contact me for further information.
 //		Note that this differs from previous versions of the MWTreeView and I have made this decision in order to be duly compensated for my work
@@ -51,9 +51,9 @@ namespace MWControlSuite
 		/// </summary>
 		/// <param name="itdc">Standard ITypeDescriptorContext object.</param>
 		/// <returns>The desired UITypeEditorEditStyle (in a DropDown).</returns>
-		public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext itdc) 
+		public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext itdc)
 		{
-			if(itdc != null && itdc.Instance != null) 
+			if(itdc != null && itdc.Instance != null)
 			{
 				return UITypeEditorEditStyle.DropDown;
 			}
@@ -70,7 +70,7 @@ namespace MWControlSuite
 		/// <returns>The new value as an object.</returns>
 		public override object EditValue(ITypeDescriptorContext itdc, IServiceProvider isp, object value)
 		{
-			if(itdc != null && itdc.Instance != null && isp != null) 
+			if(itdc != null && itdc.Instance != null && isp != null)
 			{
 				iwfes = (IWindowsFormsEditorService)isp.GetService(typeof(IWindowsFormsEditorService));
 

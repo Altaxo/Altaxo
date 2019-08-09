@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Worksheet
 		private System.Windows.Forms.ComboBox cbAnalysisMethod;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.RadioButton rbCrossValidationHalfEnsemble;
-		/// <summary> 
+		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Worksheet
 
 		}
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -82,8 +82,8 @@ namespace Altaxo.Gui.Worksheet
 		}
 
 		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
@@ -100,26 +100,26 @@ namespace Altaxo.Gui.Worksheet
 			((System.ComponentModel.ISupportInitialize)(this.edMaxNumFactors)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// label1
-			// 
+			//
 			this.label1.Location = new System.Drawing.Point(16, 64);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(168, 32);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Maximum number of factors to calculate:";
-			// 
+			//
 			// edMaxNumFactors
-			// 
+			//
 			this.edMaxNumFactors.Location = new System.Drawing.Point(16, 96);
 			this.edMaxNumFactors.Name = "edMaxNumFactors";
 			this.edMaxNumFactors.Size = new System.Drawing.Size(168, 20);
 			this.edMaxNumFactors.TabIndex = 1;
 			this.edMaxNumFactors.Validated += new System.EventHandler(this.edMaxNumFactors_Validated);
 			this.edMaxNumFactors.ValueChanged += new System.EventHandler(this.edMaxNumFactors_ValueChanged);
-			// 
+			//
 			// groupBox1
-			// 
+			//
 			this.groupBox1.Controls.Add(this.rbCrossValidationHalfEnsemble);
 			this.groupBox1.Controls.Add(this.rbCrossValidationGroups);
 			this.groupBox1.Controls.Add(this.rbCrossValidationEvery);
@@ -130,61 +130,61 @@ namespace Altaxo.Gui.Worksheet
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Cross validation calculation:";
-			// 
+			//
 			// rbCrossValidationGroups
-			// 
+			//
 			this.rbCrossValidationGroups.Location = new System.Drawing.Point(8, 72);
 			this.rbCrossValidationGroups.Name = "rbCrossValidationGroups";
 			this.rbCrossValidationGroups.Size = new System.Drawing.Size(136, 32);
 			this.rbCrossValidationGroups.TabIndex = 2;
 			this.rbCrossValidationGroups.Text = "Exclude groups of similar measurements";
 			this.rbCrossValidationGroups.CheckedChanged += new System.EventHandler(this.rbCrossValidationGroups_CheckedChanged);
-			// 
+			//
 			// rbCrossValidationEvery
-			// 
+			//
 			this.rbCrossValidationEvery.Location = new System.Drawing.Point(8, 40);
 			this.rbCrossValidationEvery.Name = "rbCrossValidationEvery";
 			this.rbCrossValidationEvery.Size = new System.Drawing.Size(144, 32);
 			this.rbCrossValidationEvery.TabIndex = 1;
 			this.rbCrossValidationEvery.Text = "Exclude every measurement";
 			this.rbCrossValidationEvery.CheckedChanged += new System.EventHandler(this.rbCrossValidationEvery_CheckedChanged);
-			// 
+			//
 			// rbCrossValidationNone
-			// 
+			//
 			this.rbCrossValidationNone.Location = new System.Drawing.Point(8, 16);
 			this.rbCrossValidationNone.Name = "rbCrossValidationNone";
 			this.rbCrossValidationNone.TabIndex = 0;
 			this.rbCrossValidationNone.Text = "None";
 			this.rbCrossValidationNone.CheckedChanged += new System.EventHandler(this.rbCrossValidationNone_CheckedChanged);
-			// 
+			//
 			// cbAnalysisMethod
-			// 
+			//
 			this.cbAnalysisMethod.Location = new System.Drawing.Point(16, 32);
 			this.cbAnalysisMethod.Name = "cbAnalysisMethod";
 			this.cbAnalysisMethod.Size = new System.Drawing.Size(168, 21);
 			this.cbAnalysisMethod.TabIndex = 3;
 			this.cbAnalysisMethod.Text = "comboBox1";
 			this.cbAnalysisMethod.SelectionChangeCommitted += new System.EventHandler(this.cbAnalysisMethod_SelectionChangeCommitted);
-			// 
+			//
 			// label2
-			// 
+			//
 			this.label2.Location = new System.Drawing.Point(16, 16);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(100, 16);
 			this.label2.TabIndex = 4;
 			this.label2.Text = "Method:";
-			// 
+			//
 			// rbCrossValidationHalfEnsemble
-			// 
+			//
 			this.rbCrossValidationHalfEnsemble.Location = new System.Drawing.Point(8, 104);
 			this.rbCrossValidationHalfEnsemble.Name = "rbCrossValidationHalfEnsemble";
 			this.rbCrossValidationHalfEnsemble.Size = new System.Drawing.Size(136, 32);
 			this.rbCrossValidationHalfEnsemble.TabIndex = 3;
 			this.rbCrossValidationHalfEnsemble.Text = "Exclude half ensembly of measurements";
 			this.rbCrossValidationHalfEnsemble.CheckedChanged += new System.EventHandler(this.rbCrossValidationHalfEnsemble_CheckedChanged);
-			// 
+			//
 			// PLSStartAnalysisControl
-			// 
+			//
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.cbAnalysisMethod);
 			this.Controls.Add(this.groupBox1);

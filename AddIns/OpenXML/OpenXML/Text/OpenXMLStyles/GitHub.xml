@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml" xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex" mc:Ignorable="w14 w15 w16se">
   <w:docDefaults>
     <w:rPrDefault>
@@ -630,7 +630,7 @@
     <w:unhideWhenUsed/>
   </w:style>
   <w:style w:type="character" w:customStyle="1" w:styleId="berschrift1Zchn">
-    <w:name w:val="Überschrift 1 Zchn"/>
+    <w:name w:val="Ãœberschrift 1 Zchn"/>
     <w:basedOn w:val="Absatz-Standardschriftart"/>
     <w:link w:val="berschrift1"/>
     <w:uiPriority w:val="9"/>
@@ -645,7 +645,7 @@
     </w:rPr>
   </w:style>
   <w:style w:type="character" w:customStyle="1" w:styleId="berschrift2Zchn">
-    <w:name w:val="Überschrift 2 Zchn"/>
+    <w:name w:val="Ãœberschrift 2 Zchn"/>
     <w:basedOn w:val="Absatz-Standardschriftart"/>
     <w:link w:val="berschrift2"/>
     <w:uiPriority w:val="9"/>
@@ -660,7 +660,7 @@
     </w:rPr>
   </w:style>
   <w:style w:type="character" w:customStyle="1" w:styleId="berschrift3Zchn">
-    <w:name w:val="Überschrift 3 Zchn"/>
+    <w:name w:val="Ãœberschrift 3 Zchn"/>
     <w:basedOn w:val="Absatz-Standardschriftart"/>
     <w:link w:val="berschrift3"/>
     <w:uiPriority w:val="9"/>
@@ -674,7 +674,7 @@
     </w:rPr>
   </w:style>
   <w:style w:type="character" w:customStyle="1" w:styleId="berschrift4Zchn">
-    <w:name w:val="Überschrift 4 Zchn"/>
+    <w:name w:val="Ãœberschrift 4 Zchn"/>
     <w:basedOn w:val="Absatz-Standardschriftart"/>
     <w:link w:val="berschrift4"/>
     <w:uiPriority w:val="9"/>
@@ -689,7 +689,7 @@
     </w:rPr>
   </w:style>
   <w:style w:type="character" w:customStyle="1" w:styleId="berschrift5Zchn">
-    <w:name w:val="Überschrift 5 Zchn"/>
+    <w:name w:val="Ãœberschrift 5 Zchn"/>
     <w:basedOn w:val="Absatz-Standardschriftart"/>
     <w:link w:val="berschrift5"/>
     <w:uiPriority w:val="9"/>
@@ -701,7 +701,7 @@
     </w:rPr>
   </w:style>
   <w:style w:type="character" w:customStyle="1" w:styleId="berschrift6Zchn">
-    <w:name w:val="Überschrift 6 Zchn"/>
+    <w:name w:val="Ãœberschrift 6 Zchn"/>
     <w:basedOn w:val="Absatz-Standardschriftart"/>
     <w:link w:val="berschrift6"/>
     <w:uiPriority w:val="9"/>
@@ -714,7 +714,7 @@
     </w:rPr>
   </w:style>
   <w:style w:type="character" w:customStyle="1" w:styleId="berschrift7Zchn">
-    <w:name w:val="Überschrift 7 Zchn"/>
+    <w:name w:val="Ãœberschrift 7 Zchn"/>
     <w:basedOn w:val="Absatz-Standardschriftart"/>
     <w:link w:val="berschrift7"/>
     <w:uiPriority w:val="9"/>
@@ -728,7 +728,7 @@
     </w:rPr>
   </w:style>
   <w:style w:type="character" w:customStyle="1" w:styleId="berschrift8Zchn">
-    <w:name w:val="Überschrift 8 Zchn"/>
+    <w:name w:val="Ãœberschrift 8 Zchn"/>
     <w:basedOn w:val="Absatz-Standardschriftart"/>
     <w:link w:val="berschrift8"/>
     <w:uiPriority w:val="9"/>
@@ -742,7 +742,7 @@
     </w:rPr>
   </w:style>
   <w:style w:type="character" w:customStyle="1" w:styleId="berschrift9Zchn">
-    <w:name w:val="Überschrift 9 Zchn"/>
+    <w:name w:val="Ãœberschrift 9 Zchn"/>
     <w:basedOn w:val="Absatz-Standardschriftart"/>
     <w:link w:val="berschrift9"/>
     <w:uiPriority w:val="9"/>

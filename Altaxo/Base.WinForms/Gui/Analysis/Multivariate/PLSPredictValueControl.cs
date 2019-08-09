@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Worksheet
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.ComboBox cbCalibrationModelTable;
     private System.Windows.Forms.ComboBox cbDestinationTable;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Worksheet
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -67,8 +67,8 @@ namespace Altaxo.Gui.Worksheet
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -78,40 +78,40 @@ namespace Altaxo.Gui.Worksheet
       this.cbCalibrationModelTable = new System.Windows.Forms.ComboBox();
       this.cbDestinationTable = new System.Windows.Forms.ComboBox();
       this.SuspendLayout();
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.Location = new System.Drawing.Point(8, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(168, 16);
       this.label1.TabIndex = 0;
       this.label1.Text = "PLS calibration model:";
-      // 
+      //
       // label2
-      // 
+      //
       this.label2.Location = new System.Drawing.Point(8, 112);
       this.label2.Name = "label2";
       this.label2.TabIndex = 1;
       this.label2.Text = "Destination table:";
-      // 
+      //
       // cbCalibrationModelTable
-      // 
+      //
       this.cbCalibrationModelTable.Location = new System.Drawing.Point(8, 48);
       this.cbCalibrationModelTable.Name = "cbCalibrationModelTable";
       this.cbCalibrationModelTable.Size = new System.Drawing.Size(184, 21);
       this.cbCalibrationModelTable.TabIndex = 2;
       this.cbCalibrationModelTable.Text = "comboBox1";
-      // 
+      //
       // cbDestinationTable
-      // 
+      //
       this.cbDestinationTable.Location = new System.Drawing.Point(8, 136);
       this.cbDestinationTable.Name = "cbDestinationTable";
       this.cbDestinationTable.Size = new System.Drawing.Size(184, 21);
       this.cbDestinationTable.TabIndex = 3;
       this.cbDestinationTable.Text = "comboBox2";
-      // 
+      //
       // PLSPredictValueControl
-      // 
+      //
       this.Controls.Add(this.cbDestinationTable);
       this.Controls.Add(this.cbCalibrationModelTable);
       this.Controls.Add(this.label2);

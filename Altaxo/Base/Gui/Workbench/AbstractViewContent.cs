@@ -162,7 +162,7 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <summary>
-    /// 
+    ///
     /// Gets or sets the visibility of the document.
     /// If false, the document tab header is not visible (but the document itself maybe visible !).
     /// If true, the document tab header is visible (if it fits in the bar),

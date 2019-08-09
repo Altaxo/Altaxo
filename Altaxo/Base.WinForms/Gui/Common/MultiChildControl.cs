@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Common
   [UserControlForController(typeof(IMultiChildViewEventSink))]
   public class MultiChildControl : System.Windows.Forms.UserControl, IMultiChildView
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Common
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -70,18 +70,18 @@ namespace Altaxo.Gui.Common
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
       this.m_Label1 = new System.Windows.Forms.Label();
       this.SuspendLayout();
-      // 
+      //
       // m_Label1
-      // 
-      this.m_Label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this.m_Label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Label1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.m_Label1.Location = new System.Drawing.Point(8, 8);
@@ -90,9 +90,9 @@ namespace Altaxo.Gui.Common
       this.m_Label1.TabIndex = 3;
       this.m_Label1.Text = "Please enter :";
       this.m_Label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-      // 
+      //
       // MultiChildControl
-      // 
+      //
       this.Controls.Add(this.m_Label1);
       this.Name = "MultiChildControl";
       this.Size = new System.Drawing.Size(264, 56);
@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Common
 
     IMultiChildViewEventSink _controller;
     private System.Windows.Forms.Label m_Label1;
-  
+
     public IMultiChildViewEventSink Controller
     {
       get
@@ -138,7 +138,7 @@ namespace Altaxo.Gui.Common
     public void InitializeDescription(string value)
     {
       _description = value;
-      LocateAndResize();  
+      LocateAndResize();
     }
 
     Control[] _childs = new Control[0];
@@ -162,7 +162,7 @@ namespace Altaxo.Gui.Common
         if(string.IsNullOrEmpty(childs[i].Title))
         {
           _childs[i] = (Control)childs[i].View;
-          
+
           _childs[i].SizeChanged += EhChilds_SizeChanged;
           _childs[i].Enter += EhChilds_Enter;
           _childs[i].Validated += EhChilds_Validated;
@@ -173,7 +173,7 @@ namespace Altaxo.Gui.Common
           gbox.Text = childs[i].Title;
           Control gboxchild = (Control)childs[i].View;
 
-          int vertDistance = Math.Max(SystemInformation.CaptionHeight / 2, gbox.Padding.Top); 
+          int vertDistance = Math.Max(SystemInformation.CaptionHeight / 2, gbox.Padding.Top);
           gboxchild.Location = new Point(gbox.Padding.Left, vertDistance);
           gbox.Controls.Add(gboxchild);
           gboxchild.Margin = new Padding(0, 0, 0, 0);
@@ -188,7 +188,7 @@ namespace Altaxo.Gui.Common
           gboxchild.Validated += EhChilds_Validated;
         }
       }
-    
+
       this.Controls.AddRange(_childs);
       LocateAndResize();
     }
@@ -301,6 +301,6 @@ namespace Altaxo.Gui.Common
 
     #endregion
 
-  
+
   }
 }

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 
     public BrushColorComboBox()
-     
+
     {
       ColorComboBox.SetComboBoxProperties(this);
       _contextStrip = new ContextMenuStrip();
@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Common.Drawing
         {
           if (!ColorDictionary.IsColorOfType(selectedBrush.Color, _colorType))
             Items.Add(selectedBrush.Color);
-         
+
         }
         else
         {
@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       SelectedIndex = 0;
     }
-  
+
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public BrushX Brush
     {
@@ -204,7 +204,7 @@ namespace Altaxo.Gui.Common.Drawing
           grfx.FillRectangle(itemBrush, rectColor);
           text = "Custom Brush";
         }
-      
+
       grfx.DrawString(text, Font, new SolidBrush(e.ForeColor), rectText);
     }
 

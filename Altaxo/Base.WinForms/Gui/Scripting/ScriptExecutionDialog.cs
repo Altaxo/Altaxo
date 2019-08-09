@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -94,9 +94,9 @@ namespace Altaxo.Gui.Scripting
       this._btUpdate = new System.Windows.Forms.Button();
       this._btCancel = new System.Windows.Forms.Button();
       this.SuspendLayout();
-      // 
+      //
       // _btOk
-      // 
+      //
       this._btOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this._btOk.Location = new System.Drawing.Point(728, 16);
       this._btOk.Name = "_btOk";
@@ -104,9 +104,9 @@ namespace Altaxo.Gui.Scripting
       this._btOk.TabIndex = 0;
       this._btOk.Text = "Ok";
       this._btOk.Click += new System.EventHandler(this._btOk_Click);
-      // 
+      //
       // _btCompile
-      // 
+      //
       this._btCompile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this._btCompile.Location = new System.Drawing.Point(728, 64);
       this._btCompile.Name = "_btCompile";
@@ -114,9 +114,9 @@ namespace Altaxo.Gui.Scripting
       this._btCompile.TabIndex = 1;
       this._btCompile.Text = "Compile";
       this._btCompile.Click += new System.EventHandler(this._btCompile_Click);
-      // 
+      //
       // _btUpdate
-      // 
+      //
       this._btUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this._btUpdate.Location = new System.Drawing.Point(728, 120);
       this._btUpdate.Name = "_btUpdate";
@@ -124,9 +124,9 @@ namespace Altaxo.Gui.Scripting
       this._btUpdate.TabIndex = 2;
       this._btUpdate.Text = "Update";
       this._btUpdate.Click += new System.EventHandler(this._btUpdate_Click);
-      // 
+      //
       // _btCancel
-      // 
+      //
       this._btCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this._btCancel.Location = new System.Drawing.Point(728, 528);
       this._btCancel.Name = "_btCancel";
@@ -134,9 +134,9 @@ namespace Altaxo.Gui.Scripting
       this._btCancel.TabIndex = 3;
       this._btCancel.Text = "Cancel";
       this._btCancel.Click += new System.EventHandler(this._btCancel_Click);
-      // 
+      //
       // ScriptExecutionDialog
-      // 
+      //
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(792, 566);
       this.Controls.Add(this._btCancel);

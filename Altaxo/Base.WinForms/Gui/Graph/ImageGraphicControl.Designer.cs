@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Graph
 {
   partial class ImageGraphicControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Graph
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -56,9 +56,9 @@ namespace Altaxo.Gui.Graph
 			this.flowLayoutPanel1.SuspendLayout();
 			this._grpbPosition.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// flowLayoutPanel1
-			// 
+			//
 			this.flowLayoutPanel1.AutoSize = true;
 			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.flowLayoutPanel1.Controls.Add(this._grpbPosition);
@@ -67,9 +67,9 @@ namespace Altaxo.Gui.Graph
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(359, 155);
 			this.flowLayoutPanel1.TabIndex = 0;
-			// 
+			//
 			// _grpbPosition
-			// 
+			//
 			this._grpbPosition.AutoSize = true;
 			this._grpbPosition.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._grpbPosition.Controls.Add(this._ctrlPosSize);
@@ -79,18 +79,18 @@ namespace Altaxo.Gui.Graph
 			this._grpbPosition.TabIndex = 2;
 			this._grpbPosition.TabStop = false;
 			this._grpbPosition.Text = "Position/Size";
-			// 
+			//
 			// _ctrlPosSize
-			// 
+			//
 			this._ctrlPosSize.AutoSize = true;
 			this._ctrlPosSize.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._ctrlPosSize.Location = new System.Drawing.Point(6, 19);
 			this._ctrlPosSize.Name = "_ctrlPosSize";
 			this._ctrlPosSize.Size = new System.Drawing.Size(341, 111);
 			this._ctrlPosSize.TabIndex = 0;
-			// 
+			//
 			// ImageGraphicControl
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;

@@ -1,4 +1,4 @@
-#region Copyright
+ï»¿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -82,11 +82,11 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     {
       _originList = new SelectableListNodeList
       {
-        new SelectableListNode("-90°", -1, -1 == _doc.ScaleOrigin),
-        new SelectableListNode("0°", 0, 0 == _doc.ScaleOrigin),
-        new SelectableListNode("90°", 1, 1 == _doc.ScaleOrigin),
-        new SelectableListNode("180°", 2, 2 == _doc.ScaleOrigin),
-        new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin)
+        new SelectableListNode("-90Â°", -1, -1 == _doc.ScaleOrigin),
+        new SelectableListNode("0Â°", 0, 0 == _doc.ScaleOrigin),
+        new SelectableListNode("90Â°", 1, 1 == _doc.ScaleOrigin),
+        new SelectableListNode("180Â°", 2, 2 == _doc.ScaleOrigin),
+        new SelectableListNode("270Â°", 3, 3 == _doc.ScaleOrigin)
       };
     }
   }

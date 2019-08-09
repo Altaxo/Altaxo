@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.TextBox m_edLabelColumn;
     private System.Windows.Forms.Button m_btEraseLabel;
     private SplitContainer _splitContainer;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -81,8 +81,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -112,9 +112,9 @@ namespace Altaxo.Gui.Graph
       this._splitContainer.Panel2.SuspendLayout();
       this._splitContainer.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // m_cbTables
-      // 
+      //
       this.m_cbTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.m_cbTables.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -123,9 +123,9 @@ namespace Altaxo.Gui.Graph
       this.m_cbTables.Size = new System.Drawing.Size(156, 21);
       this.m_cbTables.TabIndex = 0;
       this.m_cbTables.SelectionChangeCommitted += new System.EventHandler(this.EhTables_SelectionChangeCommit);
-      // 
+      //
       // m_lbColumns
-      // 
+      //
       this.m_lbColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -133,9 +133,9 @@ namespace Altaxo.Gui.Graph
       this.m_lbColumns.Name = "m_lbColumns";
       this.m_lbColumns.Size = new System.Drawing.Size(156, 225);
       this.m_lbColumns.TabIndex = 1;
-      // 
+      //
       // m_btToX
-      // 
+      //
       this.m_btToX.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btToX.Image = ((System.Drawing.Image)(resources.GetObject("m_btToX.Image")));
       this.m_btToX.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -146,9 +146,9 @@ namespace Altaxo.Gui.Graph
       this.m_btToX.Text = "X";
       this.m_btToX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.m_btToX.Click += new System.EventHandler(this.EhToX_Click);
-      // 
+      //
       // m_btToY
-      // 
+      //
       this.m_btToY.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btToY.Image = ((System.Drawing.Image)(resources.GetObject("m_btToY.Image")));
       this.m_btToY.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -159,9 +159,9 @@ namespace Altaxo.Gui.Graph
       this.m_btToY.Text = "Y";
       this.m_btToY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.m_btToY.Click += new System.EventHandler(this.EhToY_Click);
-      // 
+      //
       // m_edXColumn
-      // 
+      //
       this.m_edXColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.m_edXColumn.Location = new System.Drawing.Point(49, 7);
@@ -171,9 +171,9 @@ namespace Altaxo.Gui.Graph
       this.m_edXColumn.TabIndex = 4;
       this.m_edXColumn.Text = "textBox1";
       this.m_edXColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      // 
+      //
       // m_btEraseX
-      // 
+      //
       this.m_btEraseX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btEraseX.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseX.Image")));
       this.m_btEraseX.Location = new System.Drawing.Point(293, 7);
@@ -181,9 +181,9 @@ namespace Altaxo.Gui.Graph
       this.m_btEraseX.Size = new System.Drawing.Size(24, 24);
       this.m_btEraseX.TabIndex = 5;
       this.m_btEraseX.Click += new System.EventHandler(this.EhEraseX_Click);
-      // 
+      //
       // m_edYColumn
-      // 
+      //
       this.m_edYColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.m_edYColumn.Location = new System.Drawing.Point(49, 36);
@@ -193,9 +193,9 @@ namespace Altaxo.Gui.Graph
       this.m_edYColumn.TabIndex = 6;
       this.m_edYColumn.Text = "textBox2";
       this.m_edYColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      // 
+      //
       // m_btEraseY
-      // 
+      //
       this.m_btEraseY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btEraseY.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseY.Image")));
       this.m_btEraseY.Location = new System.Drawing.Point(293, 37);
@@ -203,25 +203,25 @@ namespace Altaxo.Gui.Graph
       this.m_btEraseY.Size = new System.Drawing.Size(24, 24);
       this.m_btEraseY.TabIndex = 7;
       this.m_btEraseY.Click += new System.EventHandler(this.EhEraseY_Click);
-      // 
+      //
       // m_nudPlotRangeFrom
-      // 
+      //
       this.m_nudPlotRangeFrom.Location = new System.Drawing.Point(64, 24);
       this.m_nudPlotRangeFrom.Name = "m_nudPlotRangeFrom";
       this.m_nudPlotRangeFrom.Size = new System.Drawing.Size(80, 20);
       this.m_nudPlotRangeFrom.TabIndex = 8;
       this.m_nudPlotRangeFrom.Validating += new System.ComponentModel.CancelEventHandler(this.EhPlotRangeFrom_Validating);
-      // 
+      //
       // m_nudPlotRangeTo
-      // 
+      //
       this.m_nudPlotRangeTo.Location = new System.Drawing.Point(200, 24);
       this.m_nudPlotRangeTo.Name = "m_nudPlotRangeTo";
       this.m_nudPlotRangeTo.Size = new System.Drawing.Size(72, 20);
       this.m_nudPlotRangeTo.TabIndex = 9;
       this.m_nudPlotRangeTo.Validating += new System.ComponentModel.CancelEventHandler(this.EhPlotRangeTo_Validating);
-      // 
+      //
       // groupBox1
-      // 
+      //
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.m_nudPlotRangeFrom);
@@ -232,26 +232,26 @@ namespace Altaxo.Gui.Graph
       this.groupBox1.TabIndex = 10;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Plot Range";
-      // 
+      //
       // label2
-      // 
+      //
       this.label2.Location = new System.Drawing.Point(162, 26);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(32, 16);
       this.label2.TabIndex = 11;
       this.label2.Text = "To:";
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.Location = new System.Drawing.Point(8, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(32, 16);
       this.label1.TabIndex = 10;
       this.label1.Text = "From:";
       this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      // 
+      //
       // m_btToLabel
-      // 
+      //
       this.m_btToLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btToLabel.Image = ((System.Drawing.Image)(resources.GetObject("m_btToLabel.Image")));
       this.m_btToLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -262,9 +262,9 @@ namespace Altaxo.Gui.Graph
       this.m_btToLabel.Text = "L";
       this.m_btToLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.m_btToLabel.Click += new System.EventHandler(this.EhToLabel_Click);
-      // 
+      //
       // m_edLabelColumn
-      // 
+      //
       this.m_edLabelColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.m_edLabelColumn.Location = new System.Drawing.Point(49, 72);
@@ -274,9 +274,9 @@ namespace Altaxo.Gui.Graph
       this.m_edLabelColumn.TabIndex = 12;
       this.m_edLabelColumn.Text = "textBox2";
       this.m_edLabelColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      // 
+      //
       // m_btEraseLabel
-      // 
+      //
       this.m_btEraseLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btEraseLabel.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseLabel.Image")));
       this.m_btEraseLabel.Location = new System.Drawing.Point(293, 69);
@@ -284,20 +284,20 @@ namespace Altaxo.Gui.Graph
       this.m_btEraseLabel.Size = new System.Drawing.Size(24, 24);
       this.m_btEraseLabel.TabIndex = 13;
       this.m_btEraseLabel.Click += new System.EventHandler(this.EhEraseLabel_Click);
-      // 
+      //
       // _splitContainer
-      // 
+      //
       this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
       this._splitContainer.Location = new System.Drawing.Point(0, 0);
       this._splitContainer.Name = "_splitContainer";
-      // 
+      //
       // _splitContainer.Panel1
-      // 
+      //
       this._splitContainer.Panel1.Controls.Add(this.m_cbTables);
       this._splitContainer.Panel1.Controls.Add(this.m_lbColumns);
-      // 
+      //
       // _splitContainer.Panel2
-      // 
+      //
       this._splitContainer.Panel2.Controls.Add(this.m_btToX);
       this._splitContainer.Panel2.Controls.Add(this.groupBox1);
       this._splitContainer.Panel2.Controls.Add(this.m_btEraseLabel);
@@ -311,9 +311,9 @@ namespace Altaxo.Gui.Graph
       this._splitContainer.Size = new System.Drawing.Size(486, 261);
       this._splitContainer.SplitterDistance = 162;
       this._splitContainer.TabIndex = 14;
-      // 
+      //
       // LineScatterPlotDataControl
-      // 
+      //
       this.AutoSize = true;
       this.Controls.Add(this._splitContainer);
       this.Name = "LineScatterPlotDataControl";
@@ -416,7 +416,7 @@ namespace Altaxo.Gui.Graph
     {
       if(null!=Controller)
         Controller.EhView_ToLabel(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem,m_lbColumns.SelectedIndex,(string)this.m_lbColumns.SelectedItem);
-  
+
     }
 
 
@@ -456,7 +456,7 @@ namespace Altaxo.Gui.Graph
         Controller.EhView_TableSelectionChanged(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem);
     }
 
- 
+
 
     #region IMVCView Members
 

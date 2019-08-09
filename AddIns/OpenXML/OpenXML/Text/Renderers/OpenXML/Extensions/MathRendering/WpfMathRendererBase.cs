@@ -32,13 +32,13 @@ using WpfMath.Atoms;
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
 {
   /// <summary>
-  /// 
+  ///
   /// </summary>
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.IWpfMathRenderer" />
   /// <remarks>
   /// Adopted from <see cref="Markdig.Renderers.RendererBase"/>
   /// Copyright (c) Alexandre Mutel. All rights reserved.
-  /// Licensed under the BSD-Clause 2 license. 
+  /// Licensed under the BSD-Clause 2 license.
   /// </remarks>
   internal abstract class WpfMathRendererBase : IWpfMathRenderer
   {

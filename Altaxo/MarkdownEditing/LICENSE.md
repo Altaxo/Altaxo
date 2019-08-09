@@ -1,4 +1,4 @@
-The AltaxoMarkdownEdition library is - different from Altaxo itself - licensed under
+﻿The AltaxoMarkdownEdition library is - different from Altaxo itself - licensed under
 
 
 The MIT License (MIT)

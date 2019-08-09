@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -36,7 +36,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// </summary>
   public abstract class AbstractRectangularToolMouseHandler : MouseStateHandler
   {
-  
+
     #region Member variables
 
     protected GraphView _grac;
@@ -45,7 +45,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
 		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
 
-    
+
 
     protected struct POINT
     {
@@ -66,7 +66,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(_grac!=null)
         _grac.SetPanelCursor(Cursors.Arrow);
     }
-   
+
 
     public override void OnMouseDown(MouseEventArgs e)
     {
@@ -85,15 +85,15 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         _Points[_currentPoint].printAreaCoord = printAreaCoord;
         _currentPoint++;
 
-       
+
       }
     }
 
     public override void OnMouseMove(MouseEventArgs e)
     {
-     
+
       base.OnMouseMove ( e);
-     
+
       _currentMousePrintAreaCoord = _grac.WinFormsController.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
 
       if(e.Button==MouseButtons.Left)
@@ -141,7 +141,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(_currentPoint>0)
       {
         bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
-        bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));      
+        bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
         // draw a temporary lines of all points to the current mouse position
 
         if(bShiftKey && _currentPoint>0)
@@ -220,7 +220,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       g.DrawLine(pen,b.X,a.Y,b.X,b.Y);
       g.DrawLine(pen,b.X,b.Y,a.X,b.Y);
       g.DrawLine(pen,a.X,b.Y,a.X,a.Y);
-      //      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);      
+      //      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);
     }
 
     protected abstract void FinishDrawing();

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Common.Drawing
         this.Text = rotation.ToString();
 
       this.EndUpdate();
-      
+
       _textIsDirty = false;
 
     }
@@ -125,14 +125,14 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-     
+
       int minSize = Math.Min(rectColor.Height,rectColor.Width);
       PointF middle = new PointF(rectColor.X+minSize/2,rectColor.Y+minSize/2);
       double rot = (double)Items[e.Index];
       PointF dest = new PointF(
         (float)(middle.X+(0.5*minSize*Math.Cos(rot*Math.PI/180))),
         (float)(middle.Y-(0.5*minSize*Math.Sin(rot*Math.PI/180))));
-      
+
 
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
       Pen foreColorPen = new Pen(e.ForeColor);

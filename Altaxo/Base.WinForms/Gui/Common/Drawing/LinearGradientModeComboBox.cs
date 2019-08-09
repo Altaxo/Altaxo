@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Common.Drawing
         e.DrawBackground();
 
       LinearGradientMode item = e.Index >= 0 ? (LinearGradientMode)Items[e.Index] : LinearGradientMode.Horizontal;
-      
+
       using (LinearGradientBrush br = new LinearGradientBrush(rectColor, e.ForeColor, e.BackColor, item))
       {
         grfx.FillRectangle(br, rectColor);

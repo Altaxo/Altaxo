@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -69,8 +69,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -84,9 +84,9 @@ namespace Altaxo.Gui.Graph
       this._tableLayout = new System.Windows.Forms.TableLayoutPanel();
       this._tableLayout.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // _majorStyle
-      // 
+      //
       this._majorStyle.AutoSize = true;
       this._majorStyle.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._majorStyle.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
@@ -96,9 +96,9 @@ namespace Altaxo.Gui.Graph
       this._majorStyle.Name = "_majorStyle";
       this._majorStyle.Size = new System.Drawing.Size(198, 87);
       this._majorStyle.TabIndex = 0;
-      // 
+      //
       // _minorStyle
-      // 
+      //
       this._minorStyle.AutoSize = true;
       this._minorStyle.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._minorStyle.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
@@ -108,9 +108,9 @@ namespace Altaxo.Gui.Graph
       this._minorStyle.Name = "_minorStyle";
       this._minorStyle.Size = new System.Drawing.Size(198, 87);
       this._minorStyle.TabIndex = 1;
-      // 
+      //
       // _cbEnable
-      // 
+      //
       this._cbEnable.AutoSize = true;
       this._cbEnable.Location = new System.Drawing.Point(3, 3);
       this._cbEnable.Name = "_cbEnable";
@@ -118,9 +118,9 @@ namespace Altaxo.Gui.Graph
       this._cbEnable.TabIndex = 2;
       this._cbEnable.Text = "Enable";
       this._cbEnable.CheckedChanged += new System.EventHandler(this._cbEnable_CheckedChanged);
-      // 
+      //
       // _cbShowMinor
-      // 
+      //
       this._cbShowMinor.AutoSize = true;
       this._cbShowMinor.Location = new System.Drawing.Point(207, 26);
       this._cbShowMinor.Name = "_cbShowMinor";
@@ -128,9 +128,9 @@ namespace Altaxo.Gui.Graph
       this._cbShowMinor.TabIndex = 3;
       this._cbShowMinor.Text = "Show minor grid";
       this._cbShowMinor.CheckedChanged += new System.EventHandler(this._cbShowMinor_CheckedChanged);
-      // 
+      //
       // _cbShowZeroOnly
-      // 
+      //
       this._cbShowZeroOnly.AutoSize = true;
       this._cbShowZeroOnly.Location = new System.Drawing.Point(3, 26);
       this._cbShowZeroOnly.Name = "_cbShowZeroOnly";
@@ -138,9 +138,9 @@ namespace Altaxo.Gui.Graph
       this._cbShowZeroOnly.TabIndex = 4;
       this._cbShowZeroOnly.Text = "At zero only";
       this._cbShowZeroOnly.CheckedChanged += new System.EventHandler(this._cbShowZeroOnly_CheckedChanged);
-      // 
+      //
       // _tableLayout
-      // 
+      //
       this._tableLayout.AutoSize = true;
       this._tableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._tableLayout.ColumnCount = 2;
@@ -159,9 +159,9 @@ namespace Altaxo.Gui.Graph
       this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._tableLayout.Size = new System.Drawing.Size(408, 139);
       this._tableLayout.TabIndex = 5;
-      // 
+      //
       // XYGridStyleControl
-      // 
+      //
       this.AutoSize = true;
       this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.Controls.Add(this._tableLayout);
@@ -182,7 +182,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        
+
         return _controller;
       }
       set
@@ -239,21 +239,21 @@ namespace Altaxo.Gui.Graph
     {
       if(_controller!=null)
         _controller.EhView_ShowGridChanged(this._cbEnable.Checked);
-    
+
     }
 
     private void _cbShowZeroOnly_CheckedChanged(object sender, System.EventArgs e)
     {
       if(_controller!=null)
         _controller.EhView_ShowZeroOnly(this._cbShowZeroOnly.Checked);
-    
+
     }
 
     private void _cbShowMinor_CheckedChanged(object sender, System.EventArgs e)
     {
       if(_controller!=null)
         _controller.EhView_ShowMinorGridChanged(this._cbShowMinor.Checked);
-    
+
     }
   }
 }

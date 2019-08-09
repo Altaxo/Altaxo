@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 #endregion
 
 using System;
@@ -10,7 +10,7 @@ using System.Drawing.Drawing2D;
 //		My mikwib address can be found on hotmail.com (usual HoTMaiL spam filters)
 //		My mick address can be found on ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
 //		My mik address can be found on netatonce.net (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-//	
+//
 //	Feel free to use the MWTreeView as you wish, as long as you do not take credit for it yourself (see next line).
 //	However if it is used in commercial projects or applications it is NOT, I repeat NOT, free. Please contact me for further information.
 //		Note that this differs from previous versions of the MWTreeView and I have made this decision in order to be duly compensated for my work
@@ -87,7 +87,7 @@ namespace MWControlSuite
 			get
 			{
 				return oCurrent;
-			} 
+			}
 		}
 
 		#endregion Current Property
@@ -104,7 +104,7 @@ namespace MWControlSuite
 			get
 			{
 				return oProposed;
-			} 
+			}
 		}
 
 		#endregion Proposed Property
@@ -177,7 +177,7 @@ namespace MWControlSuite
 			get
 			{
 				return oUpdated;
-			} 
+			}
 		}
 
 		#endregion Properties
@@ -200,7 +200,7 @@ namespace MWControlSuite
 	/// <summary>
 	/// MWHatchStyleEventArgs class.
 	/// </summary>
-	public class MWHatchStyleEventArgs : System.EventArgs 
+	public class MWHatchStyleEventArgs : System.EventArgs
 	{
 		#region Variables
 
@@ -247,7 +247,7 @@ namespace MWControlSuite
 			get
 			{
 				return hsOldHatchStyle;
-			} 
+			}
 		}
 
 		#endregion OldHatchStyle Property
@@ -264,7 +264,7 @@ namespace MWControlSuite
 			get
 			{
 				return hsNewHatchStyle;
-			} 
+			}
 		}
 
 		#endregion NewHatchStyle Property
@@ -288,7 +288,7 @@ namespace MWControlSuite
 	/// <summary>
 	/// MWRubberbandPaintEventArgs class.
 	/// </summary>
-	public class MWRubberbandPaintEventArgs : System.EventArgs 
+	public class MWRubberbandPaintEventArgs : System.EventArgs
 	{
 		#region Variables
 
@@ -458,7 +458,7 @@ namespace MWControlSuite
 	/// <summary>
 	/// MWRubberbandClearEventArgs class.
 	/// </summary>
-	public class MWRubberbandClearEventArgs : System.EventArgs 
+	public class MWRubberbandClearEventArgs : System.EventArgs
 	{
 		#region Variables
 

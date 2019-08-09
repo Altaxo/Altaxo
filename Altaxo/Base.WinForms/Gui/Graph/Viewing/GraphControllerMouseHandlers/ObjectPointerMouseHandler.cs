@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -260,9 +260,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 				}
 				return null;
 			}
-		
 
-   
+
+
 
 
 
@@ -272,7 +272,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <param name="e">The mouse event args</param>
     /// <remarks>
     /// The strategy to handle the mousedown event is as following:
-    /// 
+    ///
     /// Have we clicked on already selected objects?
     ///   if yes (we have clicked on already selected objects) and the shift or control key was pressed -> deselect the object and repaint
     ///   if yes (we have clicked on already selected objects) and none shift nor control key was pressed-> activate the object moving  mode
@@ -416,7 +416,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 					DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
 					bRepaint = true;
 				}
-					
+
 
         if (bRefresh)
           _grac.WinFormsController.RefreshGraph(); // redraw the contents
@@ -450,11 +450,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           //EndMovingObjects(); // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
           ClearSelections();  // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
           graphObject.OnDoubleClick();
-         
+
           //ClearSelections();
         }
       }
-      
+
     }
 
 
@@ -469,7 +469,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       System.Console.WriteLine("Click");
 
-     
+
     }
 
     public override void AfterPaint(Graphics g)

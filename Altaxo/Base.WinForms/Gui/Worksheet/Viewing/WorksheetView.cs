@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		/// <summary>Function that creates the Gui dependent controller.</summary>
 		Func<Altaxo.Gui.Worksheet.Viewing.IWorksheetController, WorksheetView, WinFormsWorksheetController> _createGuiDependentController;
-    
+
     public WorksheetView()
     {
       //
@@ -90,8 +90,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
     }
 
     #region Windows Form Designer generated code
-  
-    
+
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -102,27 +102,27 @@ namespace Altaxo.Gui.Worksheet.Viewing
       this._horzScrollBar = new System.Windows.Forms.HScrollBar();
       this._worksheetPanel = new WorksheetPanel();
       this.SuspendLayout();
-      // 
+      //
       // m_VertScrollBar
-      // 
+      //
       this._vertScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
       this._vertScrollBar.Location = new System.Drawing.Point(276, 0);
       this._vertScrollBar.Name = "m_VertScrollBar";
       this._vertScrollBar.Size = new System.Drawing.Size(16, 266);
       this._vertScrollBar.TabIndex = 2;
       this._vertScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhVertScrollBar_Scroll);
-      // 
+      //
       // m_HorzScrollBar
-      // 
+      //
       this._horzScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
       this._horzScrollBar.Location = new System.Drawing.Point(0, 250);
       this._horzScrollBar.Name = "m_HorzScrollBar";
       this._horzScrollBar.Size = new System.Drawing.Size(276, 16);
       this._horzScrollBar.TabIndex = 3;
       this._horzScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhHorzScrollBar_Scroll);
-      // 
+      //
       // m_GridPanel
-      // 
+      //
       this._worksheetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
       this._worksheetPanel.Location = new System.Drawing.Point(0, 0);
       this._worksheetPanel.Name = "m_GridPanel";
@@ -138,10 +138,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
       this._worksheetPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
       this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
       //this.ParentForm.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
-      
-      // 
+
+      //
       // WorksheetView
-      // 
+      //
       //this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(292, 266);
       this.Controls.Add(this._worksheetPanel);
@@ -226,8 +226,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
       if(null!=_winFormsController)
         _winFormsController.EhView_TableAreaSizeChanged(e);
     }
-  
-  
+
+
     #endregion
 
     #region IWorksheetView Members
@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
-  
+
 
     public void TakeFocus()
     {

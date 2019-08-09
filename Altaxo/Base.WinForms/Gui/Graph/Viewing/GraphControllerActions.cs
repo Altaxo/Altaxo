@@ -46,7 +46,7 @@ namespace Altaxo.Graph.GUI
 			mi.Click += new EventHandler(EhMenuFilePrintPreview_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
-			// File - Print 
+			// File - Print
 			mi = new MenuItem("Print..");
 			mi.Click += new EventHandler(EhMenuFilePrint_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
@@ -63,14 +63,14 @@ namespace Altaxo.Graph.GUI
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 			index2 = m_MainMenu.MenuItems[index].MenuItems.Count - 1;
 
-			// File - Export - Metafile 
+			// File - Export - Metafile
 			mi = new MenuItem("Metafile");
 			mi.Click += new EventHandler(EhMenuFileExportMetafile_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
 
 			// Edit (Popup)
-			// ****************************************************************** 
+			// ******************************************************************
 			mi = new MenuItem("Edit");
 			mi.Index = 1;
 			mi.MergeOrder = 1;
@@ -85,34 +85,34 @@ namespace Altaxo.Graph.GUI
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 			index2 = m_MainMenu.MenuItems[index].MenuItems.Count - 1;
 
-			// Edit - NewLayer - Normal:Bottom X and Left Y 
+			// Edit - NewLayer - Normal:Bottom X and Left Y
 			mi = new MenuItem("(Normal): Bottom X + Left Y ");
 			mi.Click += new EventHandler(EhMenuEditNewlayerNormalBottomXLeftY_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
-			// Edit - NewLayer - "(Linked: Top X + Right Y" 
+			// Edit - NewLayer - "(Linked: Top X + Right Y"
 			mi = new MenuItem("(Linked: Top X + Right Y");
 			mi.Click += new EventHandler(EhMenuEditNewlayerLinkedTopXRightY_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
-			// Edit - NewLayer - "(Linked): Top X" 
+			// Edit - NewLayer - "(Linked): Top X"
 			mi = new MenuItem("(Linked): Top X");
 			mi.Click += new EventHandler(EhMenuEditNewlayerLinkedTopX_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
-			// Edit - NewLayer - "(Linked): Right Y" 
+			// Edit - NewLayer - "(Linked): Right Y"
 			mi = new MenuItem("(Linked): Right Y");
 			mi.Click += new EventHandler(EhMenuEditNewlayerLinkedRightY_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
-			// Edit - NewLayer - "(Linked): Top X + Right Y + X Axis Straight" 
+			// Edit - NewLayer - "(Linked): Top X + Right Y + X Axis Straight"
 			mi = new MenuItem("(Linked): Top X + Right Y + X Axis Straight");
 			mi.Click += new EventHandler(EhMenuEditNewlayerLinkedTopXRightYXAxisStraight_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
 
 			// Data (Popup)
-			// ****************************************************************** 
+			// ******************************************************************
 			mi = new MenuItem("Data");
 			mi.Index = 3;
 			mi.MergeOrder = 3;
@@ -123,7 +123,7 @@ namespace Altaxo.Graph.GUI
 
 
 			// Graph (Popup)
-			// ****************************************************************** 
+			// ******************************************************************
 			mi = new MenuItem("Graph");
 			mi.Index = 4;
 			mi.MergeOrder = 4;

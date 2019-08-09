@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -28,7 +28,7 @@ using Altaxo.Worksheet;
 namespace Altaxo.Gui.Worksheet.Viewing
 {
   /// <remarks>
-  /// ClickedCellInfo retrieves (from mouse coordinates of a click), which cell has clicked onto. 
+  /// ClickedCellInfo retrieves (from mouse coordinates of a click), which cell has clicked onto.
   /// </remarks>
   public class ClickedCellInfo : System.EventArgs
   {
@@ -137,29 +137,29 @@ namespace Altaxo.Gui.Worksheet.Viewing
     }
 
 
-   
+
 
 
     /// <value>The enclosing Rectangle of the clicked cell</value>
     public Rectangle CellRectangle { get { return _clickedCellRectangle; }}
 
     /// <value>The row number clicked onto.</value>
-    public int Row 
+    public int Row
     {
       get { return _clickedRow; }
       set { _clickedRow = value; }
     }
     /// <value>The column number clicked onto.</value>
-    public int Column 
+    public int Column
     {
       get { return _clickedColumn; }
       set { _clickedColumn = value; }
     }
     /// <value>The type of area clicked onto.</value>
     public AreaType ClickedArea { get { return _clickedAreaType; }}
- 
+
     /// <summary>
-    /// Retrieves the column number clicked onto 
+    /// Retrieves the column number clicked onto
     /// </summary>
     /// <param name="dg">The parent data grid</param>
     /// <param name="mouseCoord">The coordinates of the mouse click.</param>

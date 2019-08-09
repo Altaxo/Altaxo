@@ -703,7 +703,7 @@ namespace Altaxo.Text.Renderers.Html
         if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
         {
           // it is a fragment link
-          // the challenge here is to find out where (in which file) our target is. 
+          // the challenge here is to find out where (in which file) our target is.
           var (fileGuid, localUrl) = SplitRenderer.FindFragmentLink(url);
           var totalAddress = string.Empty;
           if (null != fileGuid && null != localUrl)

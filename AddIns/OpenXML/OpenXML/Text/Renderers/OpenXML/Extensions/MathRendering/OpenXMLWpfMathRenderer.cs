@@ -53,7 +53,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
       ObjectRenderers.Add(new Renderers.AccentedAtomRenderer()); // symbols with accent, e.g. a tilde over the base symbol
       ObjectRenderers.Add(new Renderers.UnderlinedAtomRenderer()); // symbols with a line underneath
       ObjectRenderers.Add(new Renderers.OverlinedAtomRenderer()); // symbols with a line above
-      ObjectRenderers.Add(new Renderers.SymbolAtomRenderer()); // symbols like operators, greek, 
+      ObjectRenderers.Add(new Renderers.SymbolAtomRenderer()); // symbols like operators, greek,
       ObjectRenderers.Add(new Renderers.CharAtomRenderer()); // single chars
       ObjectRenderers.Add(new Renderers.StyledAtomRenderer()); // elements with special foreground or background color
       ObjectRenderers.Add(new Renderers.TypedAtomRenderer()); // elements hold together, like a function argument
@@ -62,7 +62,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
 
     public override object Render(Atom atom)
     {
-      var officeMath = Push(new OfficeMath()); // our OpenXml root document 
+      var officeMath = Push(new OfficeMath()); // our OpenXml root document
       Write(atom);
       // Note we don't pop the Root from the stack
       return officeMath;

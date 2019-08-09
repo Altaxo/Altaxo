@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Common.Drawing
           br.WrapMode = item;
         grfx.FillRectangle(br, rectColor);
       }
-      
+
       using (SolidBrush foreColorBrush = new SolidBrush(e.ForeColor))
       {
         grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);

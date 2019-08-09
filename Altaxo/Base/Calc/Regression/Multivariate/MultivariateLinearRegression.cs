@@ -1,4 +1,4 @@
-#region Copyright
+ï»¿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -253,7 +253,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           1 - FDistribution.CDF(fit.TofParameter(i), fit.NumberOfParameter, fit.NumberOfData - 1)
           );
 
-      Current.Console.WriteLine("R²: {0}, Adjusted R²: {1}",
+      Current.Console.WriteLine("RÂ²: {0}, Adjusted RÂ²: {1}",
         fit.RSquared,
         fit.AdjustedRSquared);
 

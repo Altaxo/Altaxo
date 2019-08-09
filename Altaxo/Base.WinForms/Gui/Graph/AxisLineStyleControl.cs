@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Graph
         _chkEnableLine.Checked = value;
       }
     }
-   
+
     bool CustomMajorThickness
     {
       set
@@ -243,7 +243,7 @@ namespace Altaxo.Gui.Graph
 
     private void EhLinePen_Changed(object sender, EventArgs e)
     {
-      
+
       if (!_chkCustomMajorColor.Checked)
       {
         if(this._majorPenGlue.Pen!=null)
@@ -265,5 +265,5 @@ namespace Altaxo.Gui.Graph
     }
   }
 
- 
+
 }

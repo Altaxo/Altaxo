@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
 
-   
+
 
     void SetDataSource(DashCap selected)
     {
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Common.Drawing
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
 
       Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.5 * e.Bounds.Height));
-      linePen.DashStyle = DashStyle.Dot; 
+      linePen.DashStyle = DashStyle.Dot;
       linePen.DashCap = item;
 
       grfx.DrawLine(linePen,
@@ -107,6 +107,6 @@ namespace Altaxo.Gui.Common.Drawing
       grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
     }
 
-   
+
   }
 }

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 #endregion
 
 using System;
@@ -17,7 +17,7 @@ using System.Reflection;
 //		My mikwib address can be found on hotmail.com (usual HoTMaiL spam filters)
 //		My mick address can be found on ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
 //		My mik address can be found on netatonce.net (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-//	
+//
 //	Feel free to use the MWTreeView as you wish, as long as you do not take credit for it yourself (see next line).
 //	However if it is used in commercial projects or applications it is NOT, I repeat NOT, free. Please contact me for further information.
 //		Note that this differs from previous versions of the MWTreeView and I have made this decision in order to be duly compensated for my work
@@ -59,7 +59,7 @@ namespace MWControlSuite
 		private System.Windows.Forms.Panel pForeColor;
 		private System.Windows.Forms.Panel pChangeColors;
 
-		/// <summary> 
+		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
@@ -102,7 +102,7 @@ namespace MWControlSuite
 			this.Width = 224;
 		}
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -124,8 +124,8 @@ namespace MWControlSuite
 
 		#region Component Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
@@ -144,10 +144,10 @@ namespace MWControlSuite
 			this.pChangeColors = new System.Windows.Forms.Panel();
 			this.pChangeColors.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// lbHatchStyles
-			// 
-			this.lbHatchStyles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			//
+			this.lbHatchStyles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 				| System.Windows.Forms.AnchorStyles.Left)));
 			this.lbHatchStyles.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
 			this.lbHatchStyles.IntegralHeight = false;
@@ -158,18 +158,18 @@ namespace MWControlSuite
 			this.lbHatchStyles.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.lbHatchStyles_MeasureItem);
 			this.lbHatchStyles.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbHatchStyles_DrawItem);
 			this.lbHatchStyles.SelectedIndexChanged += new System.EventHandler(this.lbHatchStyles_SelectedIndexChanged);
-			// 
+			//
 			// lblHatchStyleNameLabel
-			// 
+			//
 			this.lblHatchStyleNameLabel.Location = new System.Drawing.Point(216, 0);
 			this.lblHatchStyleNameLabel.Name = "lblHatchStyleNameLabel";
 			this.lblHatchStyleNameLabel.Size = new System.Drawing.Size(144, 16);
 			this.lblHatchStyleNameLabel.TabIndex = 1;
 			this.lblHatchStyleNameLabel.Text = "HatchStyle Name:";
 			this.lblHatchStyleNameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
+			//
 			// lblHatchStyleName
-			// 
+			//
 			this.lblHatchStyleName.Location = new System.Drawing.Point(208, 16);
 			this.lblHatchStyleName.Name = "lblHatchStyleName";
 			this.lblHatchStyleName.Size = new System.Drawing.Size(160, 16);
@@ -177,9 +177,9 @@ namespace MWControlSuite
 			this.lblHatchStyleName.Text = "Dashed Downward Diagonal";
 			this.lblHatchStyleName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.lblHatchStyleName.Visible = false;
-			// 
+			//
 			// btChangeSize
-			// 
+			//
 			this.btChangeSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btChangeSize.BackColor = System.Drawing.SystemColors.Control;
 			this.btChangeSize.Location = new System.Drawing.Point(352, 0);
@@ -188,18 +188,18 @@ namespace MWControlSuite
 			this.btChangeSize.TabIndex = 3;
 			this.btChangeSize.Click += new System.EventHandler(this.btChangeSize_Click);
 			this.btChangeSize.Paint += new System.Windows.Forms.PaintEventHandler(this.btChangeSize_Paint);
-			// 
+			//
 			// pLargeSample
-			// 
+			//
 			this.pLargeSample.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pLargeSample.Location = new System.Drawing.Point(224, 56);
 			this.pLargeSample.Name = "pLargeSample";
 			this.pLargeSample.Size = new System.Drawing.Size(128, 128);
 			this.pLargeSample.TabIndex = 4;
 			this.pLargeSample.Paint += new System.Windows.Forms.PaintEventHandler(this.pLargeSample_Paint);
-			// 
+			//
 			// btAccept
-			// 
+			//
 			this.btAccept.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.btAccept.Location = new System.Drawing.Point(224, 32);
 			this.btAccept.Name = "btAccept";
@@ -207,9 +207,9 @@ namespace MWControlSuite
 			this.btAccept.TabIndex = 5;
 			this.btAccept.Text = "Accept";
 			this.btAccept.Click += new System.EventHandler(this.btAccept_Click);
-			// 
+			//
 			// btCancel
-			// 
+			//
 			this.btCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.btCancel.Location = new System.Drawing.Point(296, 32);
 			this.btCancel.Name = "btCancel";
@@ -217,27 +217,27 @@ namespace MWControlSuite
 			this.btCancel.TabIndex = 5;
 			this.btCancel.Text = "Cancel";
 			this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
-			// 
+			//
 			// lblBackColor
-			// 
+			//
 			this.lblBackColor.Location = new System.Drawing.Point(0, 0);
 			this.lblBackColor.Name = "lblBackColor";
 			this.lblBackColor.Size = new System.Drawing.Size(64, 24);
 			this.lblBackColor.TabIndex = 6;
 			this.lblBackColor.Text = "Back Color";
 			this.lblBackColor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
+			//
 			// lblForeColor
-			// 
+			//
 			this.lblForeColor.Location = new System.Drawing.Point(0, 24);
 			this.lblForeColor.Name = "lblForeColor";
 			this.lblForeColor.Size = new System.Drawing.Size(64, 24);
 			this.lblForeColor.TabIndex = 7;
 			this.lblForeColor.Text = "Fore Color";
 			this.lblForeColor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
+			//
 			// pBackColor
-			// 
+			//
 			this.pBackColor.BackColor = System.Drawing.Color.Black;
 			this.pBackColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pBackColor.Location = new System.Drawing.Point(64, 0);
@@ -245,9 +245,9 @@ namespace MWControlSuite
 			this.pBackColor.Size = new System.Drawing.Size(24, 24);
 			this.pBackColor.TabIndex = 8;
 			this.pBackColor.Click += new System.EventHandler(this.pBackColor_Click);
-			// 
+			//
 			// pForeColor
-			// 
+			//
 			this.pForeColor.BackColor = System.Drawing.Color.White;
 			this.pForeColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pForeColor.Location = new System.Drawing.Point(64, 24);
@@ -255,9 +255,9 @@ namespace MWControlSuite
 			this.pForeColor.Size = new System.Drawing.Size(24, 24);
 			this.pForeColor.TabIndex = 9;
 			this.pForeColor.Click += new System.EventHandler(this.pForeColor_Click);
-			// 
+			//
 			// pChangeColors
-			// 
+			//
 			this.pChangeColors.Controls.Add(this.lblForeColor);
 			this.pChangeColors.Controls.Add(this.lblBackColor);
 			this.pChangeColors.Controls.Add(this.pBackColor);
@@ -266,9 +266,9 @@ namespace MWControlSuite
 			this.pChangeColors.Name = "pChangeColors";
 			this.pChangeColors.Size = new System.Drawing.Size(96, 48);
 			this.pChangeColors.TabIndex = 10;
-			// 
+			//
 			// EditorHatchStyleUI
-			// 
+			//
 			this.Controls.Add(this.pChangeColors);
 			this.Controls.Add(this.btAccept);
 			this.Controls.Add(this.pLargeSample);

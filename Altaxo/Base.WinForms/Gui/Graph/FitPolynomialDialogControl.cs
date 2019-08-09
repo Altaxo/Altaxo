@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.TextBox _edFitCurveXmin;
     private System.Windows.Forms.TextBox _edFitCurveXmax;
     private System.Windows.Forms.CheckBox _chkShowFormulaOnGraph;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -71,8 +71,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -85,9 +85,9 @@ namespace Altaxo.Gui.Graph
       this._edFitCurveXmax = new System.Windows.Forms.TextBox();
       this._chkShowFormulaOnGraph = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.ImageAlign = System.Drawing.ContentAlignment.BottomLeft;
       this.label1.Location = new System.Drawing.Point(16, 8);
       this.label1.Name = "label1";
@@ -95,55 +95,55 @@ namespace Altaxo.Gui.Graph
       this.label1.TabIndex = 0;
       this.label1.Text = "Order (1=linear)";
       this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
+      //
       // label2
-      // 
+      //
       this.label2.Location = new System.Drawing.Point(16, 40);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(100, 16);
       this.label2.TabIndex = 1;
       this.label2.Text = "Fit curve Xmin";
-      // 
+      //
       // label3
-      // 
+      //
       this.label3.Location = new System.Drawing.Point(16, 72);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(100, 16);
       this.label3.TabIndex = 2;
       this.label3.Text = "Fit curve Xmax";
-      // 
+      //
       // _edOrder
-      // 
+      //
       this._edOrder.Location = new System.Drawing.Point(144, 8);
       this._edOrder.Name = "_edOrder";
       this._edOrder.TabIndex = 3;
       this._edOrder.Text = "";
-      // 
+      //
       // _edFitCurveXmin
-      // 
+      //
       this._edFitCurveXmin.Location = new System.Drawing.Point(144, 40);
       this._edFitCurveXmin.Name = "_edFitCurveXmin";
       this._edFitCurveXmin.TabIndex = 4;
       this._edFitCurveXmin.Text = "textBox2";
-      // 
+      //
       // _edFitCurveXmax
-      // 
+      //
       this._edFitCurveXmax.Location = new System.Drawing.Point(144, 72);
       this._edFitCurveXmax.Name = "_edFitCurveXmax";
       this._edFitCurveXmax.TabIndex = 5;
       this._edFitCurveXmax.Text = "textBox3";
-      // 
+      //
       // _chkShowFormulaOnGraph
-      // 
+      //
       this._chkShowFormulaOnGraph.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this._chkShowFormulaOnGraph.Location = new System.Drawing.Point(16, 104);
       this._chkShowFormulaOnGraph.Name = "_chkShowFormulaOnGraph";
       this._chkShowFormulaOnGraph.Size = new System.Drawing.Size(144, 16);
       this._chkShowFormulaOnGraph.TabIndex = 6;
       this._chkShowFormulaOnGraph.Text = "Show formula on graph";
-      // 
+      //
       // FitPolynomialDialogControl
-      // 
+      //
       this.Controls.Add(this._chkShowFormulaOnGraph);
       this.Controls.Add(this._edFitCurveXmax);
       this.Controls.Add(this._edFitCurveXmin);
@@ -180,16 +180,16 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public int Order 
-    { 
-      get 
+    public int Order
+    {
+      get
       {
         int result=1;
         try
         {
           result = int.Parse(_edOrder.Text);
         }
-        catch(Exception) 
+        catch(Exception)
         {
         }
         return result;
@@ -199,7 +199,7 @@ namespace Altaxo.Gui.Graph
         _edOrder.Text = value.ToString();
       }
     }
-    public double FitCurveXmin 
+    public double FitCurveXmin
     {
       get
       {
@@ -228,7 +228,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public bool ShowFormulaOnGraph 
+    public bool ShowFormulaOnGraph
     {
       get
       {

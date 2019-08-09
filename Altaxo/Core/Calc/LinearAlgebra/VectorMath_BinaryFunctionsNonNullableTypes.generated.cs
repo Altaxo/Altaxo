@@ -170,7 +170,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-	
+
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
@@ -515,7 +515,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-	
+
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
@@ -860,7 +860,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-	
+
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
@@ -1205,7 +1205,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-	
+
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
@@ -1550,7 +1550,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-	
+
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.

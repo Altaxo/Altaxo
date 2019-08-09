@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -152,9 +152,9 @@ namespace Altaxo.Gui.Common
       this._btInterrupt = new System.Windows.Forms.Button();
       this._btAbort = new System.Windows.Forms.Button();
       this.SuspendLayout();
-      // 
+      //
       // lblText
-      // 
+      //
       this.lblText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -164,9 +164,9 @@ namespace Altaxo.Gui.Common
       this.lblText.TabIndex = 0;
       this.lblText.Text = "An operation has not yet finished. If you feel that the operation takes unusual l" +
           "ong time, you can interrupt it.";
-      // 
+      //
       // btCancel
-      // 
+      //
       this.btCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.btCancel.Location = new System.Drawing.Point(152, 72);
       this.btCancel.Name = "btCancel";
@@ -174,14 +174,14 @@ namespace Altaxo.Gui.Common
       this.btCancel.TabIndex = 1;
       this.btCancel.Text = "Cancel";
       this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
-      // 
+      //
       // _timer
-      // 
+      //
       this._timer.Interval = 100;
       this._timer.Tick += new EventHandler(this._timer_Elapsed);
-      // 
+      //
       // _btInterrupt
-      // 
+      //
       this._btInterrupt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this._btInterrupt.Location = new System.Drawing.Point(152, 72);
       this._btInterrupt.Name = "_btInterrupt";
@@ -190,9 +190,9 @@ namespace Altaxo.Gui.Common
       this._btInterrupt.Text = "Interrupt";
       this._btInterrupt.Visible = false;
       this._btInterrupt.Click += new System.EventHandler(this._btInterrupt_Click);
-      // 
+      //
       // _btAbort
-      // 
+      //
       this._btAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this._btAbort.Location = new System.Drawing.Point(152, 72);
       this._btAbort.Name = "_btAbort";
@@ -201,9 +201,9 @@ namespace Altaxo.Gui.Common
       this._btAbort.Text = "Abort";
       this._btAbort.Visible = false;
       this._btAbort.Click += new System.EventHandler(this._btAbort_Click);
-      // 
+      //
       // BackgroundCancelDialog
-      // 
+      //
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(384, 98);
       this.Controls.Add(this._btAbort);
@@ -218,8 +218,8 @@ namespace Altaxo.Gui.Common
     }
     #endregion
 
-   
-  
+
+
     private void _timer_Elapsed(object sender, EventArgs e)
     {
       if (_monitor != null)
@@ -238,7 +238,7 @@ namespace Altaxo.Gui.Common
     }
 
 
-  
+
     private void btCancel_Click(object sender, System.EventArgs e)
     {
       this.wasUserInterrupted = true;
@@ -271,7 +271,7 @@ namespace Altaxo.Gui.Common
       }
       _btInterrupt.Visible = false;
       _btAbort.Visible = true;
-    
+
     }
 
     private void _btAbort_Click(object sender, System.EventArgs e)

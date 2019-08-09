@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Graph
 
     public double SymbolSize
     {
-      get 
+      get
       {
 				double val;
 				if (Altaxo.Serialization.GUIConversion.IsDouble(_cbSymbolSize.Text, out val))

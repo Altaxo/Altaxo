@@ -41,7 +41,7 @@ namespace Altaxo.Main.Services
   public interface IMementoCapable
   {
     /// <summary>
-    /// Creates a new memento from the state. 
+    /// Creates a new memento from the state.
     /// </summary>
     /// <returns>An object representing the state. This object should be serializable.</returns>
     object CreateMemento();

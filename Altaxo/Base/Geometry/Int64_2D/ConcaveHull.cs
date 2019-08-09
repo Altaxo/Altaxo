@@ -418,7 +418,7 @@ namespace Altaxo.Geometry.Int64_2D
       // The value is a tuple of the two indices of the line segments which have a point with this ID either as start or end point
       var dict = new Dictionary<int, (int idx1, int idx2)>();
 
-      // fill this dictionary  
+      // fill this dictionary
       for (var i = 0; i < hull_concave_edges.Count; ++i)
       {
         var id = hull_concave_edges[i].I0;
@@ -462,7 +462,7 @@ namespace Altaxo.Geometry.Int64_2D
 
         j = (j != tuple.idx1) ? tuple.idx1 : tuple.idx2; // use this new index of the tuple, which is not our own current segment index
 
-        // find the index of the point in the next segment which has the id 
+        // find the index of the point in the next segment which has the id
         if (hull_concave_edges[j].I0 == id)
         {
           subidx0 = 0;

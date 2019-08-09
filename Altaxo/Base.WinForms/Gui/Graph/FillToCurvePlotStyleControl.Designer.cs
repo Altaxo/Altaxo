@@ -2,12 +2,12 @@
 {
 	partial class FillToCurvePlotStyleControl
 	{
-		/// <summary> 
+		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -22,8 +22,8 @@
 
 		#region Component Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
@@ -38,9 +38,9 @@
 			this._chkFillNext = new System.Windows.Forms.CheckBox();
 			this._tableLayout.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// _tableLayout
-			// 
+			//
 			this._tableLayout.AutoSize = true;
 			this._tableLayout.ColumnCount = 2;
 			this._tableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -59,9 +59,9 @@
 			this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayout.Size = new System.Drawing.Size(206, 65);
 			this._tableLayout.TabIndex = 0;
-			// 
+			//
 			// label1
-			// 
+			//
 			this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(32, 46);
@@ -69,9 +69,9 @@
 			this.label1.Size = new System.Drawing.Size(48, 13);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Fill color:";
-			// 
+			//
 			// label2
-			// 
+			//
 			this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.label2.AutoSize = true;
 			this.label2.Location = new System.Drawing.Point(3, 3);
@@ -79,9 +79,9 @@
 			this.label2.Size = new System.Drawing.Size(77, 13);
 			this.label2.TabIndex = 1;
 			this.label2.Text = "Fill to previous:";
-			// 
+			//
 			// _cbFillColor
-			// 
+			//
 			this._cbFillColor.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._cbFillColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
 			this._cbFillColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -92,9 +92,9 @@
 			this._cbFillColor.Name = "_cbFillColor";
 			this._cbFillColor.Size = new System.Drawing.Size(117, 19);
 			this._cbFillColor.TabIndex = 2;
-			// 
+			//
 			// label3
-			// 
+			//
 			this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.label3.AutoSize = true;
 			this.label3.Location = new System.Drawing.Point(23, 23);
@@ -102,9 +102,9 @@
 			this.label3.Size = new System.Drawing.Size(57, 13);
 			this.label3.TabIndex = 3;
 			this.label3.Text = "Fill to next:";
-			// 
+			//
 			// _chkFillPrevious
-			// 
+			//
 			this._chkFillPrevious.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._chkFillPrevious.AutoSize = true;
 			this._chkFillPrevious.Location = new System.Drawing.Point(86, 3);
@@ -112,9 +112,9 @@
 			this._chkFillPrevious.Size = new System.Drawing.Size(15, 14);
 			this._chkFillPrevious.TabIndex = 4;
 			this._chkFillPrevious.UseVisualStyleBackColor = true;
-			// 
+			//
 			// _chkFillNext
-			// 
+			//
 			this._chkFillNext.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._chkFillNext.AutoSize = true;
 			this._chkFillNext.Location = new System.Drawing.Point(86, 23);
@@ -122,9 +122,9 @@
 			this._chkFillNext.Size = new System.Drawing.Size(15, 14);
 			this._chkFillNext.TabIndex = 5;
 			this._chkFillNext.UseVisualStyleBackColor = true;
-			// 
+			//
 			// FillToCurvePlotStyleControl
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;

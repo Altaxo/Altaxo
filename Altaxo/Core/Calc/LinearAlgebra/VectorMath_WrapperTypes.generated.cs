@@ -170,7 +170,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RODoubleEquidistantElementVector(start, step, length);
 		}
 
-			
+
 			/// <summary>
 		/// Provides a read-only vector with equally spaced elements y[i] = start + (i-startOffset) * increment.
 		/// </summary>
@@ -389,7 +389,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -484,7 +484,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -578,7 +578,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -721,7 +721,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			protected int _amendedValuesAtStartCount;
 			protected Double _amendedValueAtEnd;
 			protected int _amendedValuesAtEndCount;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -774,7 +774,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length +_amendedValuesAtStartCount)
 						return _x[i - _amendedValuesAtStartCount];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -786,7 +786,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length + _amendedValuesAtStartCount + _amendedValuesAtEndCount;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -857,7 +857,7 @@ namespace Altaxo.Calc.LinearAlgebra
       private  Double[] _x;
 			private  Double _amendedValueAtStart;
 			private  Double _amendedValueAtEnd;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -901,7 +901,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length)
 						return _x[i];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -913,7 +913,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>Attention! Returns the length of the wrapped part of the array.</summary>
      public int Count
@@ -945,7 +945,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-		
+
 		/// <summary>
 		/// Wraps a Double[] array to get a struct with an <see cref="IROVector{Double}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
@@ -1018,7 +1018,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWDoubleArrayWrapper(array, usedlength);
 		}
 
-		
+
 		private class RWDoubleArraySectionWrapper : RODoubleArraySectionWrapper, IVector<Double>
     {
       public RWDoubleArraySectionWrapper(Double[] x)
@@ -1317,7 +1317,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new ROFloatEquidistantElementVector(start, step, length);
 		}
 
-			
+
 			/// <summary>
 		/// Provides a read-only vector with equally spaced elements y[i] = start + (i-startOffset) * increment.
 		/// </summary>
@@ -1536,7 +1536,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -1631,7 +1631,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -1725,7 +1725,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -1868,7 +1868,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			protected int _amendedValuesAtStartCount;
 			protected Single _amendedValueAtEnd;
 			protected int _amendedValuesAtEndCount;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -1921,7 +1921,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length +_amendedValuesAtStartCount)
 						return _x[i - _amendedValuesAtStartCount];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -1933,7 +1933,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length + _amendedValuesAtStartCount + _amendedValuesAtEndCount;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -2004,7 +2004,7 @@ namespace Altaxo.Calc.LinearAlgebra
       private  Single[] _x;
 			private  Single _amendedValueAtStart;
 			private  Single _amendedValueAtEnd;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -2048,7 +2048,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length)
 						return _x[i];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -2060,7 +2060,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>Attention! Returns the length of the wrapped part of the array.</summary>
      public int Count
@@ -2092,7 +2092,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-		
+
 		/// <summary>
 		/// Wraps a Single[] array to get a struct with an <see cref="IROVector{Single}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
@@ -2165,7 +2165,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWFloatArrayWrapper(array, usedlength);
 		}
 
-		
+
 		private class RWFloatArraySectionWrapper : ROFloatArraySectionWrapper, IVector<Single>
     {
       public RWFloatArraySectionWrapper(Single[] x)
@@ -2464,7 +2464,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new ROIntEquidistantElementVector(start, step, length);
 		}
 
-			
+
 			/// <summary>
 		/// Provides a read-only vector with equally spaced elements y[i] = start + (i-startOffset) * increment.
 		/// </summary>
@@ -2683,7 +2683,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -2778,7 +2778,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -2872,7 +2872,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -3015,7 +3015,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			protected int _amendedValuesAtStartCount;
 			protected Int32 _amendedValueAtEnd;
 			protected int _amendedValuesAtEndCount;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -3068,7 +3068,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length +_amendedValuesAtStartCount)
 						return _x[i - _amendedValuesAtStartCount];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -3080,7 +3080,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length + _amendedValuesAtStartCount + _amendedValuesAtEndCount;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -3151,7 +3151,7 @@ namespace Altaxo.Calc.LinearAlgebra
       private  Int32[] _x;
 			private  Int32 _amendedValueAtStart;
 			private  Int32 _amendedValueAtEnd;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -3195,7 +3195,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length)
 						return _x[i];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -3207,7 +3207,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>Attention! Returns the length of the wrapped part of the array.</summary>
      public int Count
@@ -3239,7 +3239,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-		
+
 		/// <summary>
 		/// Wraps a Int32[] array to get a struct with an <see cref="IROVector{Int32}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
@@ -3312,7 +3312,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWIntArrayWrapper(array, usedlength);
 		}
 
-		
+
 		private class RWIntArraySectionWrapper : ROIntArraySectionWrapper, IVector<Int32>
     {
       public RWIntArraySectionWrapper(Int32[] x)
@@ -3611,7 +3611,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new ROShortEquidistantElementVector(start, step, length);
 		}
 
-			
+
 			/// <summary>
 		/// Provides a read-only vector with equally spaced elements y[i] = start + (i-startOffset) * increment.
 		/// </summary>
@@ -3830,7 +3830,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -3925,7 +3925,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -4019,7 +4019,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -4162,7 +4162,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			protected int _amendedValuesAtStartCount;
 			protected Int16 _amendedValueAtEnd;
 			protected int _amendedValuesAtEndCount;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -4215,7 +4215,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length +_amendedValuesAtStartCount)
 						return _x[i - _amendedValuesAtStartCount];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -4227,7 +4227,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length + _amendedValuesAtStartCount + _amendedValuesAtEndCount;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -4298,7 +4298,7 @@ namespace Altaxo.Calc.LinearAlgebra
       private  Int16[] _x;
 			private  Int16 _amendedValueAtStart;
 			private  Int16 _amendedValueAtEnd;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -4342,7 +4342,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length)
 						return _x[i];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -4354,7 +4354,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>Attention! Returns the length of the wrapped part of the array.</summary>
      public int Count
@@ -4386,7 +4386,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-		
+
 		/// <summary>
 		/// Wraps a Int16[] array to get a struct with an <see cref="IROVector{Int16}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
@@ -4459,7 +4459,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWShortArrayWrapper(array, usedlength);
 		}
 
-		
+
 		private class RWShortArraySectionWrapper : ROShortArraySectionWrapper, IVector<Int16>
     {
       public RWShortArraySectionWrapper(Int16[] x)
@@ -4758,7 +4758,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new ROSByteEquidistantElementVector(start, step, length);
 		}
 
-			
+
 			/// <summary>
 		/// Provides a read-only vector with equally spaced elements y[i] = start + (i-startOffset) * increment.
 		/// </summary>
@@ -4977,7 +4977,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -5072,7 +5072,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -5166,7 +5166,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -5309,7 +5309,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			protected int _amendedValuesAtStartCount;
 			protected SByte _amendedValueAtEnd;
 			protected int _amendedValuesAtEndCount;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -5362,7 +5362,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length +_amendedValuesAtStartCount)
 						return _x[i - _amendedValuesAtStartCount];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -5374,7 +5374,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length + _amendedValuesAtStartCount + _amendedValuesAtEndCount;
         }
-      } 
+      }
 
      /// <summary>The number of elements of this vector.</summary>
      public int Count
@@ -5445,7 +5445,7 @@ namespace Altaxo.Calc.LinearAlgebra
       private  SByte[] _x;
 			private  SByte _amendedValueAtStart;
 			private  SByte _amendedValueAtEnd;
-			
+
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
@@ -5489,7 +5489,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						return _amendedValueAtStart;
           else if(i<_length)
 						return _x[i];
-					else 
+					else
 						return _amendedValueAtEnd;
         }
       }
@@ -5501,7 +5501,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           return _length;
         }
-      } 
+      }
 
      /// <summary>Attention! Returns the length of the wrapped part of the array.</summary>
      public int Count
@@ -5533,7 +5533,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-		
+
 		/// <summary>
 		/// Wraps a SByte[] array to get a struct with an <see cref="IROVector{SByte}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
@@ -5606,7 +5606,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWSByteArrayWrapper(array, usedlength);
 		}
 
-		
+
 		private class RWSByteArraySectionWrapper : ROSByteArraySectionWrapper, IVector<SByte>
     {
       public RWSByteArraySectionWrapper(SByte[] x)

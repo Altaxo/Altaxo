@@ -31,8 +31,8 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
 
     private ISymbol GetSymbol(TokenSemanticInfo semanticInfo, bool includeType)
     {
-      // Prefer references to declarations. It's more likely that the user is attempting to 
-      // go to a definition at some other location, rather than the definition they're on. 
+      // Prefer references to declarations. It's more likely that the user is attempting to
+      // go to a definition at some other location, rather than the definition they're on.
       // This can happen when a token is at a location that is both a reference and a definition.
       // For example, on an anonymous type member declaration.
 

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   [UserControlForController(typeof(IFitElementViewEventSink))]
   public class FitElementControl : System.Windows.Forms.UserControl, IFitElementView
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose(bool disposing)
@@ -69,8 +69,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -129,7 +129,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     public int SlotHeight { get { return _slotHeight; } }
 
 
-    public bool FitFunctionSelected 
+    public bool FitFunctionSelected
     {
       set
       {
@@ -405,7 +405,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       _lastMouseDown = new Point(e.X,e.Y);
       _lastMouseButton = e.Button;
-      
+
       base.OnMouseDown (e);
     }
 
@@ -515,7 +515,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       public int TagIndex;
       public IdxMenuItem(string txt, System.EventHandler evt, int idx) : base(txt,evt) { TagIndex=idx; }
     }
-   
+
     protected override void OnClick(EventArgs e)
     {
       int idx=0;

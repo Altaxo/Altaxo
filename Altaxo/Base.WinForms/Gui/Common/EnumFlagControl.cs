@@ -28,7 +28,7 @@ namespace Altaxo.Gui.Common
 				checkBox.AutoSize = true;
         checkBox.Text = names[i];
         checkBox.Tag = i;
-				
+
         checkBox.CheckedChanged += EhCheckedChanged;
         _layoutPanel.Controls.Add(checkBox);
       }
@@ -59,6 +59,6 @@ namespace Altaxo.Gui.Common
 
     #endregion
 
-   
+
   }
 }

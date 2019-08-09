@@ -1,4 +1,4 @@
-#region Copyright
+ï»¿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Graph
 {
   partial class PlotGroupCollectionControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Graph
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -67,25 +67,25 @@ namespace Altaxo.Gui.Graph
       this._chkUpdateFromParentGroups = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // _lbGroupStylesAvailable
-      // 
+      //
       this._lbGroupStylesAvailable.FormattingEnabled = true;
       this._lbGroupStylesAvailable.Location = new System.Drawing.Point(3, 28);
       this._lbGroupStylesAvailable.Name = "_lbGroupStylesAvailable";
       this._lbGroupStylesAvailable.Size = new System.Drawing.Size(138, 173);
       this._lbGroupStylesAvailable.TabIndex = 1;
-      // 
+      //
       // _lbGroupStyles
-      // 
+      //
       this._lbGroupStyles.FormattingEnabled = true;
       this._lbGroupStyles.Location = new System.Drawing.Point(170, 28);
       this._lbGroupStyles.Name = "_lbGroupStyles";
       this._lbGroupStyles.Size = new System.Drawing.Size(182, 169);
       this._lbGroupStyles.TabIndex = 3;
-      // 
+      //
       // _btRemoveNormalGroupStyle
-      // 
+      //
       this._btRemoveNormalGroupStyle.Location = new System.Drawing.Point(144, 28);
       this._btRemoveNormalGroupStyle.Name = "_btRemoveNormalGroupStyle";
       this._btRemoveNormalGroupStyle.Size = new System.Drawing.Size(20, 20);
@@ -94,9 +94,9 @@ namespace Altaxo.Gui.Graph
       this._btRemoveNormalGroupStyle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       this._btRemoveNormalGroupStyle.UseVisualStyleBackColor = true;
       this._btRemoveNormalGroupStyle.Click += new System.EventHandler(this._btRemoveNormalGroupStyle_Click);
-      // 
+      //
       // _btAddNormalGroupStyle
-      // 
+      //
       this._btAddNormalGroupStyle.Location = new System.Drawing.Point(144, 54);
       this._btAddNormalGroupStyle.Name = "_btAddNormalGroupStyle";
       this._btAddNormalGroupStyle.Size = new System.Drawing.Size(20, 20);
@@ -105,82 +105,82 @@ namespace Altaxo.Gui.Graph
       this._btAddNormalGroupStyle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       this._btAddNormalGroupStyle.UseVisualStyleBackColor = true;
       this._btAddNormalGroupStyle.Click += new System.EventHandler(this._btAddNormalGroupStyle_Click);
-      // 
+      //
       // _btDown
-      // 
+      //
       this._btDown.Font = new System.Drawing.Font("Wingdings", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
       this._btDown.Location = new System.Drawing.Point(358, 106);
       this._btDown.Name = "_btDown";
       this._btDown.Size = new System.Drawing.Size(20, 20);
       this._btDown.TabIndex = 8;
-      this._btDown.Text = "â";
+      this._btDown.Text = "Ã¢";
       this._btDown.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       this._btDown.UseVisualStyleBackColor = true;
       this._btDown.Click += new System.EventHandler(this._btDown_Click);
-      // 
+      //
       // _btUp
-      // 
+      //
       this._btUp.Font = new System.Drawing.Font("Wingdings", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
       this._btUp.Location = new System.Drawing.Point(358, 80);
       this._btUp.Name = "_btUp";
       this._btUp.Size = new System.Drawing.Size(20, 20);
       this._btUp.TabIndex = 9;
-      this._btUp.Text = "á";
+      this._btUp.Text = "Ã¡";
       this._btUp.UseVisualStyleBackColor = true;
       this._btUp.Click += new System.EventHandler(this._btUp_Click);
-      // 
+      //
       // _btUnindent
-      // 
+      //
       this._btUnindent.Font = new System.Drawing.Font("Wingdings", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
       this._btUnindent.Location = new System.Drawing.Point(358, 54);
       this._btUnindent.Name = "_btUnindent";
       this._btUnindent.Size = new System.Drawing.Size(20, 20);
       this._btUnindent.TabIndex = 10;
-      this._btUnindent.Text = "ß";
+      this._btUnindent.Text = "ÃŸ";
       this._btUnindent.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       this._btUnindent.UseVisualStyleBackColor = true;
       this._btUnindent.Click += new System.EventHandler(this._btUnindent_Click);
-      // 
+      //
       // _btIndent
-      // 
+      //
       this._btIndent.Font = new System.Drawing.Font("Wingdings", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
       this._btIndent.Location = new System.Drawing.Point(358, 29);
       this._btIndent.Name = "_btIndent";
       this._btIndent.Size = new System.Drawing.Size(20, 20);
       this._btIndent.TabIndex = 11;
-      this._btIndent.Text = "à";
+      this._btIndent.Text = "Ã ";
       this._btIndent.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       this._btIndent.UseVisualStyleBackColor = true;
       this._btIndent.Click += new System.EventHandler(this._btIndent_Click);
-      // 
+      //
       // _cbCoordTransfoStyle
-      // 
+      //
       this._cbCoordTransfoStyle.FormattingEnabled = true;
       this._cbCoordTransfoStyle.Location = new System.Drawing.Point(170, 1);
       this._cbCoordTransfoStyle.Name = "_cbCoordTransfoStyle";
       this._cbCoordTransfoStyle.Size = new System.Drawing.Size(179, 21);
       this._cbCoordTransfoStyle.TabIndex = 12;
       this._cbCoordTransfoStyle.SelectionChangeCommitted += new System.EventHandler(this._cbCoordTransfoStyle_SelectionChangeCommitted);
-      // 
+      //
       // _cbGroupStrictness
-      // 
+      //
       this._cbGroupStrictness.FormattingEnabled = true;
       this._cbGroupStrictness.Location = new System.Drawing.Point(6, 19);
       this._cbGroupStrictness.Name = "_cbGroupStrictness";
       this._cbGroupStrictness.Size = new System.Drawing.Size(132, 21);
       this._cbGroupStrictness.TabIndex = 13;
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(19, 4);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(145, 13);
       this.label1.TabIndex = 15;
       this.label1.Text = "Coordinate transforming style:";
-      // 
+      //
       // _btEditCSTransfoStyle
-      // 
+      //
       this._btEditCSTransfoStyle.Location = new System.Drawing.Point(358, 1);
       this._btEditCSTransfoStyle.Name = "_btEditCSTransfoStyle";
       this._btEditCSTransfoStyle.Size = new System.Drawing.Size(20, 20);
@@ -188,9 +188,9 @@ namespace Altaxo.Gui.Graph
       this._btEditCSTransfoStyle.Text = "..";
       this._btEditCSTransfoStyle.UseVisualStyleBackColor = true;
       this._btEditCSTransfoStyle.Click += new System.EventHandler(this._btEditCSTransfoStyle_Click);
-      // 
+      //
       // _chkDistributeToSubGroups
-      // 
+      //
       this._chkDistributeToSubGroups.AutoSize = true;
       this._chkDistributeToSubGroups.Location = new System.Drawing.Point(167, 32);
       this._chkDistributeToSubGroups.Name = "_chkDistributeToSubGroups";
@@ -198,9 +198,9 @@ namespace Altaxo.Gui.Graph
       this._chkDistributeToSubGroups.TabIndex = 17;
       this._chkDistributeToSubGroups.Text = "distribute to child groups";
       this._chkDistributeToSubGroups.UseVisualStyleBackColor = true;
-      // 
+      //
       // groupBox1
-      // 
+      //
       this.groupBox1.Controls.Add(this._chkUpdateFromParentGroups);
       this.groupBox1.Controls.Add(this._cbGroupStrictness);
       this.groupBox1.Controls.Add(this._chkDistributeToSubGroups);
@@ -210,9 +210,9 @@ namespace Altaxo.Gui.Graph
       this.groupBox1.TabIndex = 18;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Update";
-      // 
+      //
       // _chkUpdateFromParentGroups
-      // 
+      //
       this._chkUpdateFromParentGroups.AutoSize = true;
       this._chkUpdateFromParentGroups.Location = new System.Drawing.Point(167, 9);
       this._chkUpdateFromParentGroups.Name = "_chkUpdateFromParentGroups";
@@ -220,9 +220,9 @@ namespace Altaxo.Gui.Graph
       this._chkUpdateFromParentGroups.TabIndex = 18;
       this._chkUpdateFromParentGroups.Text = "inherit from parent groups";
       this._chkUpdateFromParentGroups.UseVisualStyleBackColor = true;
-      // 
+      //
       // PlotGroupCollectionControl
-      // 
+      //
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.groupBox1);

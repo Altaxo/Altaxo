@@ -1,4 +1,4 @@
-#region Copyright
+ï»¿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -243,7 +243,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <param name="independentVariableTransformation">Transformation, which is applied to the x value before it is applied to the fit function. Can be null.</param>
     /// <param name="numberOfFittedPoints">Number of points that were used for fitting. Needed to calculate the Student's distribution quantile.</param>
     /// <param name="sigmaSquare">Mean square difference between data points and fitting curve = sumChiSquare/(n-r).</param>
-    /// <param name="covarianceMatrixTimesSigmaSquare">A matrix, representing sigma²(A*At)^-1, which are the covariances of the parameter.</param>
+    /// <param name="covarianceMatrixTimesSigmaSquare">A matrix, representing sigmaÂ²(A*At)^-1, which are the covariances of the parameter.</param>
     public XYNonlinearFitFunctionConfidenceBandPlotData(
         bool isPredictionBand,
         bool isLowerBand,
@@ -500,7 +500,7 @@ namespace Altaxo.Graph.Plot.Data
 
       // calculate derivation
 
-      // calculate jacobian*CovarianceMatrixTimesSigma²*jacobian
+      // calculate jacobian*CovarianceMatrixTimesSigmaÂ²*jacobian
       double jacCovJac = 0;
 
       foreach (var iRow in _cachedIndicesOfVaryingParametersOfThisFitElement)

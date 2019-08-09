@@ -1,4 +1,4 @@
-#region Copyright
+ï»¿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -324,7 +324,7 @@ namespace Altaxo.Calc.Probability
 
 #if false
 /*
- * Copyright © 2006 Stefan Troschütz (stefan@troschuetz.de)
+ * Copyright Â© 2006 Stefan TroschÃ¼tz (stefan@troschuetz.de)
  *
  * This file is part of Troschuetz.Random Class Library.
  *

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -32,7 +32,7 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
- 
+
 
 
   public class DashStyleComboBox : ComboBox
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Common.Drawing
     public DashStyleComboBox(DashStyleEx selected)
       : this()
     {
-     
+
       SetDataSource(selected);
 
     }

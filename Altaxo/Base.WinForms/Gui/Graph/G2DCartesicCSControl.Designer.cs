@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Graph
 {
   partial class G2DCartesicCSControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Graph
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -56,9 +56,9 @@ namespace Altaxo.Gui.Graph
       this._chkYReverse = new System.Windows.Forms.CheckBox();
       this._verticalPanel.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // _chkExchangeXY
-      // 
+      //
       this._chkExchangeXY.AutoSize = true;
       this._chkExchangeXY.Location = new System.Drawing.Point(3, 3);
       this._chkExchangeXY.Name = "_chkExchangeXY";
@@ -66,9 +66,9 @@ namespace Altaxo.Gui.Graph
       this._chkExchangeXY.TabIndex = 0;
       this._chkExchangeXY.Text = "Exchange X-Y (X is vertical)";
       this._chkExchangeXY.UseVisualStyleBackColor = true;
-      // 
+      //
       // _verticalPanel
-      // 
+      //
       this._verticalPanel.AutoSize = true;
       this._verticalPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._verticalPanel.Controls.Add(this._chkExchangeXY);
@@ -79,9 +79,9 @@ namespace Altaxo.Gui.Graph
       this._verticalPanel.Name = "_verticalPanel";
       this._verticalPanel.Size = new System.Drawing.Size(163, 69);
       this._verticalPanel.TabIndex = 1;
-      // 
+      //
       // _chkXReverse
-      // 
+      //
       this._chkXReverse.AutoSize = true;
       this._chkXReverse.Location = new System.Drawing.Point(3, 26);
       this._chkXReverse.Name = "_chkXReverse";
@@ -89,9 +89,9 @@ namespace Altaxo.Gui.Graph
       this._chkXReverse.TabIndex = 1;
       this._chkXReverse.Text = "Reverse X";
       this._chkXReverse.UseVisualStyleBackColor = true;
-      // 
+      //
       // _chkYReverse
-      // 
+      //
       this._chkYReverse.AutoSize = true;
       this._chkYReverse.Location = new System.Drawing.Point(3, 49);
       this._chkYReverse.Name = "_chkYReverse";
@@ -99,9 +99,9 @@ namespace Altaxo.Gui.Graph
       this._chkYReverse.TabIndex = 2;
       this._chkYReverse.Text = "Reverse Y";
       this._chkYReverse.UseVisualStyleBackColor = true;
-      // 
+      //
       // G2DCartesicCSControl
-      // 
+      //
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.AutoSize = true;

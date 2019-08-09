@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 // Copyright Microsoft Research in collaboration with Moscow State University
 // Microsoft Research License, see license file "MSR-LA - Open Solving Library for ODEs.rtf"

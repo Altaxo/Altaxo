@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     }
 
     /// <summary>
-    /// Gives back a D3D10 device. 
+    /// Gives back a D3D10 device.
     /// </summary>
     /// <param name="device">Reference to the device to give back. After calling the function, the reference is set to null to signal that the device
     /// was given back to the device factory.</param>

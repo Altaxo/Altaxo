@@ -121,7 +121,7 @@ namespace Altaxo.Text.Renderers.OpenXML
       }
 
       // Insert an AbstractNum into the numbering part numbering list.
-      // The order seems to matter or it will not pass the 
+      // The order seems to matter or it will not pass the
       // Open XML SDK Productity Tools validation test.
       // AbstractNum comes first and then NumberingInstance and we want to
       // insert this AFTER the last AbstractNum and BEFORE the first NumberingInstance or we will get a validation error.
@@ -155,7 +155,7 @@ namespace Altaxo.Text.Renderers.OpenXML
 
       var abstractNumberId = _currentAbstractNumberingDefinition.AbstractNumberId;
 
-      // Insert an NumberingInstance into the numbering part numbering list.  The order seems to matter or it will not pass the 
+      // Insert an NumberingInstance into the numbering part numbering list.  The order seems to matter or it will not pass the
       // Open XML SDK Productity Tools validation test.  AbstractNum comes first and then NumberingInstance and we want to
       // insert this AFTER the last NumberingInstance and AFTER all the AbstractNum entries or we will get a validation error.
       var numberId = numberingPart.Numbering.Elements<NumberingInstance>().Count() + 1;

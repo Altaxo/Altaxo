@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -106,10 +106,10 @@ namespace Altaxo.Gui.Common.Drawing
 
       NamedItem<FontFamily> item = e.Index >= 0 ? (NamedItem<FontFamily>)Items[e.Index] : new NamedItem<FontFamily>(FontFamily.GenericSansSerif,FontFamily.GenericSansSerif.Name);
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
-    
+
       Font font = new Font(item.Item,Font.Size,FontStyle.Regular);
-   
-      
+
+
       grfx.DrawString("Abc", font, foreColorBrush, rectColor);
 
       grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);

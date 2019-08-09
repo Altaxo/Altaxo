@@ -45,6 +45,6 @@ namespace Altaxo.Gui.Graph
 
 		#endregion
 
-		
+
 	}
 }

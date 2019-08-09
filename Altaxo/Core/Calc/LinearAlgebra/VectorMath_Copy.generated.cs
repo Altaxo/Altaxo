@@ -53,7 +53,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -69,7 +69,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<double> to double[] *************************************
@@ -87,7 +87,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -103,7 +103,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for double[] to IVector<double> *************************************
@@ -121,7 +121,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -137,7 +137,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<double> to IVector<double> *************************************
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -171,7 +171,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for float[] to double[] *************************************
@@ -189,7 +189,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -205,7 +205,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<float> to double[] *************************************
@@ -223,7 +223,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -239,7 +239,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for float[] to IVector<double> *************************************
@@ -257,7 +257,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -273,7 +273,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<float> to IVector<double> *************************************
@@ -291,7 +291,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -307,7 +307,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for float[] to float[] *************************************
@@ -325,7 +325,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -341,7 +341,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<float> to float[] *************************************
@@ -359,7 +359,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -375,7 +375,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for float[] to IVector<float> *************************************
@@ -393,7 +393,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -409,7 +409,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<float> to IVector<float> *************************************
@@ -427,7 +427,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -443,7 +443,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for int[] to double[] *************************************
@@ -461,7 +461,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -477,7 +477,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<int> to double[] *************************************
@@ -495,7 +495,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -511,7 +511,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for int[] to IVector<double> *************************************
@@ -529,7 +529,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -545,7 +545,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<int> to IVector<double> *************************************
@@ -563,7 +563,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -579,7 +579,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for int[] to float[] *************************************
@@ -597,7 +597,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -613,7 +613,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<int> to float[] *************************************
@@ -631,7 +631,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -647,7 +647,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for int[] to IVector<float> *************************************
@@ -665,7 +665,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -681,7 +681,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<int> to IVector<float> *************************************
@@ -699,7 +699,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -715,7 +715,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for int[] to int[] *************************************
@@ -733,7 +733,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -749,7 +749,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<int> to int[] *************************************
@@ -767,7 +767,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -783,7 +783,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for int[] to IVector<int> *************************************
@@ -801,7 +801,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -817,7 +817,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 // ********************** Definitions for IReadOnlyList<int> to IVector<int> *************************************
@@ -835,7 +835,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
 		}
-	
+
 
 		/// <summary>
 		/// Copies elements of a source vector to a destination vector.
@@ -851,7 +851,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
-		
+
 
 
 	} // class

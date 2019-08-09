@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -31,67 +31,67 @@ namespace Altaxo.Calc
 
     /*
 -----------------------------------------------------------------------
- 
+
      IPMPAR PROVIDES THE INTEGER MACHINE CONSTANTS FOR THE COMPUTER
      THAT IS USED. IT IS ASSUMED THAT THE ARGUMENT I IS AN INTEGER
      HAVING ONE OF THE VALUES 1-10. IPMPAR(I) HAS THE VALUE ...
- 
+
   INTEGERS.
- 
+
      ASSUME INTEGERS ARE REPRESENTED IN THE N-DIGIT, BASE-A FORM
- 
+
                SIGN ( X(N-1)*A**(N-1) + ... + X(1)*A + X(0) )
- 
+
                WHERE 0 .LE. X(I) .LT. A FOR I=0,...,N-1.
- 
+
      IPMPAR(1) = A, THE BASE.
- 
+
      IPMPAR(2) = N, THE NUMBER OF BASE-A DIGITS.
- 
+
      IPMPAR(3) = A**N - 1, THE LARGEST MAGNITUDE.
- 
+
   FLOATING-POINT NUMBERS.
- 
+
      IT IS ASSUMED THAT THE SINGLE AND DOUBLE PRECISION FLOATING
      POINT ARITHMETICS HAVE THE SAME BASE, SAY B, AND THAT THE
      NONZERO NUMBERS ARE REPRESENTED IN THE FORM
- 
+
                SIGN (B**E) * (X(1)/B + ... + X(M)/B**M)
- 
+
                WHERE X(I) = 0,1,...,B-1 FOR I=1,...,M,
                X(1) .GE. 1, AND EMIN .LE. E .LE. EMAX.
- 
+
      IPMPAR(4) = B, THE BASE.
- 
+
   SINGLE-PRECISION
- 
+
      IPMPAR(5) = M, THE NUMBER OF BASE-B DIGITS.
- 
+
      IPMPAR(6) = EMIN, THE SMALLEST EXPONENT E.
- 
+
      IPMPAR(7) = EMAX, THE LARGEST EXPONENT E.
- 
+
   DOUBLE-PRECISION
- 
+
      IPMPAR(8) = M, THE NUMBER OF BASE-B DIGITS.
- 
+
      IPMPAR(9) = EMIN, THE SMALLEST EXPONENT E.
- 
+
      IPMPAR(10) = EMAX, THE LARGEST EXPONENT E.
- 
+
 -----------------------------------------------------------------------
- 
+
      TO DEFINE THIS FUNCTION FOR THE COMPUTER BEING USED REMOVE
      THE COMMENT DELIMITORS FROM THE DEFINITIONS DIRECTLY BELOW THE NAME
      OF THE MACHINE
- 
+
 -----------------------------------------------------------------------
- 
+
      IPMPAR IS AN ADAPTATION OF THE FUNCTION I1MACH, WRITTEN BY
      P.A. FOX, A.D. HALL, AND N.L. SCHRYER (BELL LABORATORIES).
      IPMPAR WAS FORMED BY A.H. MORRIS (NSWC). THE CONSTANTS ARE
      FROM BELL LABORATORIES, NSWC, AND OTHER SOURCES.
- 
+
 -----------------------------------------------------------------------
      .. Scalar Arguments ..
 */
@@ -130,7 +130,7 @@ namespace Altaxo.Calc
     {
       return c_spmpar.fspmpar(i);
     }
-   
+
 
     class c_spmpar
     {
@@ -144,19 +144,19 @@ namespace Altaxo.Calc
       public static double fspmpar(int i)
         /*
         -----------------------------------------------------------------------
- 
+
              SPMPAR PROVIDES THE SINGLE PRECISION MACHINE CONSTANTS FOR
              THE COMPUTER BEING USED. IT IS ASSUMED THAT THE ARGUMENT
              I IS AN INTEGER HAVING ONE OF THE VALUES 1, 2, OR 3. IF THE
              SINGLE PRECISION ARITHMETIC BEING USED HAS M BASE B DIGITS AND
              ITS SMALLEST AND LARGEST EXPONENTS ARE EMIN AND EMAX, THEN
- 
+
                 SPMPAR(1) = B**(1 - M), THE MACHINE PRECISION,
- 
+
                 SPMPAR(2) = B**(EMIN - 1), THE SMALLEST MAGNITUDE,
- 
+
                 SPMPAR(3) = B**EMAX*(1 - B**(-M)), THE LARGEST MAGNITUDE.
- 
+
         -----------------------------------------------------------------------
              WRITTEN BY
                 ALFRED H. MORRIS, JR.
@@ -170,7 +170,7 @@ namespace Altaxo.Calc
         -----------------------------------------------------------------------
         */
       {
- 
+
         /*
              ..
              .. Executable Statements ..
@@ -212,56 +212,56 @@ namespace Altaxo.Calc
     static double T1,T2;
 
     static void cumf(
-      double f, 
+      double f,
       double dfn,
       double dfd,
       ref double cum,
       ref double ccum)
       /*
       **********************************************************************
- 
+
            void cumf(double *f,double *dfn,double *dfd,double *cum,double *ccum)
                           CUMulative F distribution
- 
- 
+
+
                                     Function
- 
- 
+
+
            Computes  the  integral from  0  to  F of  the f-density  with DFN
            and DFD degrees of freedom.
- 
- 
+
+
                                     Arguments
- 
- 
+
+
            F --> Upper limit of integration of the f-density.
                                                         F is DOUBLE PRECISION
- 
+
            DFN --> Degrees of freedom of the numerator sum of squares.
                                                         DFN is DOUBLE PRECISI
- 
+
            DFD --> Degrees of freedom of the denominator sum of squares.
                                                         DFD is DOUBLE PRECISI
- 
+
            CUM <-- Cumulative f distribution.
                                                         CUM is DOUBLE PRECISI
- 
+
            CCUM <-- Compliment of Cumulative f distribution.
                                                         CCUM is DOUBLE PRECIS
- 
- 
+
+
                                     Method
- 
- 
+
+
            Formula  26.5.28 of  Abramowitz and   Stegun   is  used to  reduce
            the cumulative F to a cumulative beta distribution.
- 
- 
+
+
                                     Note
- 
- 
+
+
            If F is less than or equal to 0, 0 is returned.
- 
+
       **********************************************************************
       */
     {
@@ -289,7 +289,7 @@ namespace Altaxo.Calc
       */
       dsum = dfd+prod;
       xx = dfd/dsum;
-      if(xx > half) 
+      if(xx > half)
       {
         yy = prod/dsum;
         xx = done-yy;
@@ -343,7 +343,7 @@ namespace Altaxo.Calc
         DINVR:
           if(status > 0) goto S310;
         qcond = !qxmon(small,x,big);
-        if(qcond) 
+        if(qcond)
           throw new ArgumentException("SMALL, X, BIG not monotone in INVR");
 
         xsave = x;
@@ -579,7 +579,7 @@ namespace Altaxo.Calc
         bool first,qrzero;
         switch(IENTRY)
         {
-          case 0: goto DZROR; 
+          case 0: goto DZROR;
           case 1: goto DSTZR;
         }
 
@@ -743,65 +743,65 @@ namespace Altaxo.Calc
       ref double xhi, ref bool qleft, ref bool qhi)
     /*
     **********************************************************************
- 
+
          void dzror(int *status,double *x,double *fx,double *xlo,
                double *xhi,unsigned long *qleft,unsigned long *qhi)
 
          Double precision ZeRo of a function -- Reverse Communication
- 
- 
+
+
                                   Function
- 
- 
+
+
          Performs the zero finding.  STZROR must have been called before
          this routine in order to set its parameters.
- 
- 
+
+
                                   Arguments
- 
- 
+
+
          STATUS <--> At the beginning of a zero finding problem, STATUS
                      should be set to 0 and ZROR invoked.  (The value
                      of other parameters will be ignored on this call.)
- 
+
                      When ZROR needs the function evaluated, it will set
                      STATUS to 1 and return.  The value of the function
                      should be set in FX and ZROR again called without
                      changing any of its other parameters.
- 
+
                      When ZROR has finished without error, it will return
                      with STATUS 0.  In that case (XLO,XHI) bound the answe
- 
+
                      If ZROR finds an error (which implies that F(XLO)-Y an
                      F(XHI)-Y have the same sign, it returns STATUS -1.  In
                      this case, XLO and XHI are undefined.
                              INTEGER STATUS
- 
+
          X <-- The value of X at which F(X) is to be evaluated.
                              DOUBLE PRECISION X
- 
+
          FX --> The value of F(X) calculated when ZROR returns with
                 STATUS = 1.
                              DOUBLE PRECISION FX
- 
+
          XLO <-- When ZROR returns with STATUS = 0, XLO bounds the
                  inverval in X containing the solution below.
                              DOUBLE PRECISION XLO
- 
+
          XHI <-- When ZROR returns with STATUS = 0, XHI bounds the
                  inverval in X containing the solution above.
                              DOUBLE PRECISION XHI
- 
+
          QLEFT <-- .TRUE. if the stepping search terminated unsucessfully
                     at XLO.  If it is .FALSE. the search terminated
                     unsucessfully at XHI.
                         QLEFT is LOGICAL
- 
+
          QHI <-- .TRUE. if F(X) .GT. Y at the termination of the
                   search and .FALSE. if F(X) .LT. Y at the
                   termination of the search.
                         QHI is LOGICAL
- 
+
     **********************************************************************
     */
   {
@@ -1135,7 +1135,7 @@ namespace Altaxo.Calc
            Select the minimum of P or Q
            Calculate ANSWERS
       */
-  if(1 == which) 
+  if(1 == which)
 {
   /*
              Calculating P
@@ -1143,7 +1143,7 @@ namespace Altaxo.Calc
   cumf(f,dfn,dfd,ref p,ref q);
   status = 0;
 }
-  else if(2 == which) 
+  else if(2 == which)
 {
   /*
              Calculating F
@@ -1179,7 +1179,7 @@ namespace Altaxo.Calc
   S270:
   ;
 }
-  else if(3 == which) 
+  else if(3 == which)
 {
   /*
              Calculating DFN
@@ -1216,7 +1216,7 @@ namespace Altaxo.Calc
   S340:
   ;
 }
-  else if(4 == which) 
+  else if(4 == which)
 {
   /*
              Calculating DFD

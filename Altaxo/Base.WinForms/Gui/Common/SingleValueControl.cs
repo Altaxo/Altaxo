@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Common
   {
     private System.Windows.Forms.TextBox m_edEdit;
     private System.Windows.Forms.Label m_Label1;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Common
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -64,8 +64,8 @@ namespace Altaxo.Gui.Common
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -73,10 +73,10 @@ namespace Altaxo.Gui.Common
       this.m_edEdit = new System.Windows.Forms.TextBox();
       this.m_Label1 = new System.Windows.Forms.Label();
       this.SuspendLayout();
-      // 
+      //
       // m_edEdit
-      // 
-      this.m_edEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this.m_edEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.m_edEdit.Location = new System.Drawing.Point(8, 32);
       this.m_edEdit.Name = "m_edEdit";
@@ -84,10 +84,10 @@ namespace Altaxo.Gui.Common
       this.m_edEdit.TabIndex = 3;
       this.m_edEdit.Text = "";
       this.m_edEdit.Validating += new System.ComponentModel.CancelEventHandler(this.m_edEdit_Validating);
-      // 
+      //
       // m_Label1
-      // 
-      this.m_Label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this.m_Label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Label1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.m_Label1.Location = new System.Drawing.Point(8, 8);
@@ -96,9 +96,9 @@ namespace Altaxo.Gui.Common
       this.m_Label1.TabIndex = 2;
       this.m_Label1.Text = "Please enter :";
       this.m_Label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-      // 
+      //
       // SingleValueControl
-      // 
+      //
       this.Controls.Add(this.m_edEdit);
       this.Controls.Add(this.m_Label1);
       this.Name = "SingleValueControl";

@@ -1,4 +1,4 @@
-#region Copyright
+ï»¿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -87,7 +87,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="numX">Number of history x samples to be taken into account for the parameter estimation (samples x[i], x[i-1]..x[i+1-numX]).</param>
     /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples y[i-1], y[i-2]..x[i-numY].</param>
-    /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, i² are fitted additionally to x and y. A order of 0 fits a constant
+    /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, iÂ² are fitted additionally to x and y. A order of 0 fits a constant
     /// background, 1 a linear depencence, and so on. Set this parameter to -1 if you don't need a background fit.</param>
     public DynamicParameterEstimation(int numX, int numY, int backgroundOrder)
       : this(numX, numY, backgroundOrder, SVDSolver)
@@ -100,7 +100,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="numX">Number of history x samples to be taken into account for the parameter estimation (samples x[i], x[i-1]..x[i+1-numX]).</param>
     /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples y[i-1], y[i-2]..x[i-numY].</param>
-    /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, i² are fitted additionally to x and y. A order of 0 fits a constant
+    /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, iÂ² are fitted additionally to x and y. A order of 0 fits a constant
     /// background, 1 a linear depencence, and so on. Set this parameter to -1 if you don't need a background fit.</param>
     /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="SVDSolver" /> or <see cref="LUSolver" /> to get a solver.</param>
     public DynamicParameterEstimation(int numX, int numY, int backgroundOrder, IDynamicParameterEstimationSolver solver)
@@ -119,7 +119,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="y">Vector of y values ("response values").</param>
     /// <param name="numX">Number of history x samples to be taken into account for the parameter estimation (samples x[i], x[i-1]..x[i+1-numX]).</param>
     /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples y[i-1], y[i-2]..x[i-numY].</param>
-    /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, i² are fitted additionally to x and y. A order of 0 fits a constant
+    /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, iÂ² are fitted additionally to x and y. A order of 0 fits a constant
     /// background, 1 a linear depencence, and so on. Set this parameter to -1 if you don't need a background fit.</param>
     public DynamicParameterEstimation(IReadOnlyList<double> x, IReadOnlyList<double> y, int numX, int numY, int backgroundOrder)
     {
@@ -321,19 +321,19 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the mean prediction error, i.e. Sqrt(Sum((y-yprediced)²)/N).
+    /// Calculates the mean prediction error, i.e. Sqrt(Sum((y-yprediced)Â²)/N).
     /// </summary>
-    /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
+    /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)Â²)/N).</returns>
     public virtual double CalculatePredictionError()
     {
       return CalculatePredictionError(null);
     }
 
     /// <summary>
-    /// Calculates the mean prediction error, i.e. Sqrt(Sum((y-yprediced)²)).
+    /// Calculates the mean prediction error, i.e. Sqrt(Sum((y-yprediced)Â²)).
     /// </summary>
     /// <param name="predictedOutput">The resultant predicted output. If null, a temporary vector is allocated for calculation.</param>
-    /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
+    /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)Â²)/N).</returns>
     public virtual double CalculatePredictionError(IVector<double> predictedOutput)
     {
       if (null == predictedOutput)
@@ -346,9 +346,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the mean prediction error, i.e. Sqrt(Sum((y-yprediced)²)).
+    /// Calculates the mean prediction error, i.e. Sqrt(Sum((y-yprediced)Â²)).
     /// </summary>
-    /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
+    /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)Â²)/N).</returns>
     public virtual double CalculateSelfPredictionError()
     {
       return CalculateSelfPredictionError(null);

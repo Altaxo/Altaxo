@@ -121,4 +121,3 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions
     }
   }
 }
-

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Common
     private System.Windows.Forms.RadioButton _rbMax;
     private System.Windows.Forms.RadioButton _rbEnterNumber;
     private System.Windows.Forms.NumericUpDown _edNumber;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Common
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -95,8 +95,8 @@ namespace Altaxo.Gui.Common
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -107,42 +107,42 @@ namespace Altaxo.Gui.Common
       this._edNumber = new System.Windows.Forms.NumericUpDown();
       ((System.ComponentModel.ISupportInitialize)(this._edNumber)).BeginInit();
       this.SuspendLayout();
-      // 
+      //
       // _rbMin
-      // 
+      //
       this._rbMin.Location = new System.Drawing.Point(0, 0);
       this._rbMin.Name = "_rbMin";
       this._rbMin.TabIndex = 0;
       this._rbMin.Text = "Min";
       this._rbMin.CheckedChanged += new System.EventHandler(this._rbMin_CheckedChanged);
-      // 
+      //
       // _rbMax
-      // 
+      //
       this._rbMax.Location = new System.Drawing.Point(0, 24);
       this._rbMax.Name = "_rbMax";
       this._rbMax.TabIndex = 1;
       this._rbMax.Text = "Max";
       this._rbMax.CheckedChanged += new System.EventHandler(this._rbMax_CheckedChanged);
-      // 
+      //
       // _rbEnterNumber
-      // 
+      //
       this._rbEnterNumber.Location = new System.Drawing.Point(0, 48);
       this._rbEnterNumber.Name = "_rbEnterNumber";
       this._rbEnterNumber.TabIndex = 2;
       this._rbEnterNumber.Text = "Number:";
       this._rbEnterNumber.CheckedChanged += new System.EventHandler(this._rbEnterNumber_CheckedChanged);
-      // 
+      //
       // _edNumber
-      // 
+      //
       this._edNumber.Location = new System.Drawing.Point(0, 72);
       this._edNumber.Name = "_edNumber";
       this._edNumber.Size = new System.Drawing.Size(104, 20);
       this._edNumber.TabIndex = 3;
       this._edNumber.Validating += new System.ComponentModel.CancelEventHandler(this._edNumber_Validating);
       this._edNumber.ValueChanged += new System.EventHandler(this._edNumber_ValueChanged);
-      // 
+      //
       // MinMaxIntegerControl
-      // 
+      //
       this.Controls.Add(this._edNumber);
       this.Controls.Add(this._rbEnterNumber);
       this.Controls.Add(this._rbMax);
@@ -204,13 +204,13 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Get/sets the value that the user entered.
     /// </summary>
-    public int Value 
+    public int Value
     {
-      get 
+      get
       {
-        return _Value; 
+        return _Value;
       }
-      set 
+      set
       {
         _Value =  _StartValue = value;
         _edNumber.Value = value;

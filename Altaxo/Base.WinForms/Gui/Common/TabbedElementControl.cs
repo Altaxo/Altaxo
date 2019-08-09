@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -81,28 +81,28 @@ namespace Altaxo.Gui.Common
       this.m_ButtonPanel = new System.Windows.Forms.Panel();
       this.m_TabControl = new System.Windows.Forms.TabControl();
       this.SuspendLayout();
-      // 
+      //
       // m_ButtonPanel
-      // 
+      //
       this.m_ButtonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.m_ButtonPanel.Location = new System.Drawing.Point(0, 218);
       this.m_ButtonPanel.Name = "m_ButtonPanel";
       this.m_ButtonPanel.Size = new System.Drawing.Size(272, 40);
       this.m_ButtonPanel.TabIndex = 0;
-      // 
+      //
       // m_TabControl
-      // 
-      this.m_TabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this.m_TabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.m_TabControl.Location = new System.Drawing.Point(4, 8);
       this.m_TabControl.Name = "m_TabControl";
       this.m_TabControl.SelectedIndex = 0;
       this.m_TabControl.Size = new System.Drawing.Size(264, 200);
       this.m_TabControl.TabIndex = 1;
-      // 
+      //
       // TabbedDialogView
-      // 
+      //
       this.Controls.Add(this.m_TabControl);
       this.Controls.Add(this.m_ButtonPanel);
       this.Name = "TabbedDialogView";
@@ -113,8 +113,8 @@ namespace Altaxo.Gui.Common
     }
     #endregion
 
-  
-  
+
+
 
     private void EhView_Load(object sender, System.EventArgs e)
     {
@@ -140,7 +140,7 @@ namespace Altaxo.Gui.Common
             this.ResumeLayout(false);
       */
       System.Windows.Forms.TabPage tab = new System.Windows.Forms.TabPage(title);
-      
+
 
       System.Windows.Forms.Control cc = (System.Windows.Forms.Control)view;
 

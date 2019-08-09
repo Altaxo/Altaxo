@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph
   [UserControlForController(typeof(ISingleColumnChoiceViewEventSink))]
   public class SingleColumnChoiceControl : System.Windows.Forms.UserControl, ISingleColumnChoiceView
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -69,17 +69,17 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
       this._tvColumns = new System.Windows.Forms.TreeView();
       this.SuspendLayout();
-      // 
+      //
       // _tvColumns
-      // 
+      //
       this._tvColumns.Dock = System.Windows.Forms.DockStyle.Fill;
       this._tvColumns.ImageIndex = -1;
       this._tvColumns.Location = new System.Drawing.Point(0, 0);
@@ -89,9 +89,9 @@ namespace Altaxo.Gui.Graph
       this._tvColumns.TabIndex = 0;
       this._tvColumns.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._tvColumns_AfterSelect);
       this._tvColumns.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this._tvColumns_BeforeExpand);
-      // 
+      //
       // SingleColumnChoiceControl
-      // 
+      //
       this.Controls.Add(this._tvColumns);
       this.Name = "SingleColumnChoiceControl";
       this.Size = new System.Drawing.Size(256, 296);
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-       
+
         return _controller;
       }
       set
@@ -117,7 +117,7 @@ namespace Altaxo.Gui.Graph
         _controller = value;
       }
     }
-		
+
 
     public void Initialize(NGTreeNode[] nodes)
     {
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Graph
       GuiHelper.MirrorTreeNodesAdded(nodes);
     }
 
-    
+
     public void EhNodesCleared(NGTreeNodeCollection orgNodes)
     {
       foreach (var orgNode in orgNodes)

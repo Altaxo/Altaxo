@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -56,8 +56,8 @@ namespace Altaxo.Gui.Graph
     {
       return GetPositionValue(t, ref value);
     }
-  
-  
+
+
 
     #endregion
 
@@ -67,14 +67,14 @@ namespace Altaxo.Gui.Graph
     public double PositionX
     {
       get { return _positionX; }
-      set 
+      set
       {
         _positionX = value;
         SetPositionText(_edPositionX, value);
       }
     }
 
-    
+
     double _positionY;
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double PositionY
@@ -92,16 +92,16 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        return new PointD2D(_positionX, _positionY); 
+        return new PointD2D(_positionX, _positionY);
       }
-      set 
+      set
       {
-        PositionX = value.X; 
+        PositionX = value.X;
         PositionY = value.Y;
       }
     }
 
-  
+
 
     TextBox _edPositionX;
     public TextBox EdPositionX
@@ -282,12 +282,12 @@ namespace Altaxo.Gui.Graph
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double Rotation
     {
-      get 
+      get
       {
         if (_cbRotation != null)
           return _cbRotation.Rotation;
         else
-        return _rotation; 
+        return _rotation;
       }
       set
       {
@@ -301,7 +301,7 @@ namespace Altaxo.Gui.Graph
     public Altaxo.Gui.Common.Drawing.RotationComboBox CbRotation
     {
       get { return _cbRotation; }
-      set 
+      set
       {
         if (_cbRotation != null)
         {
@@ -319,8 +319,8 @@ namespace Altaxo.Gui.Graph
           _cbRotation.Rotation = (float)_rotation;
         }
 
-        
-      
+
+
       }
     }
 

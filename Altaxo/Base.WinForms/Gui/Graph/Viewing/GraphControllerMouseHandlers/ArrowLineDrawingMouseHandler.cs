@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -56,12 +56,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       LineCapEx cap = LineCapEx.FromName("ArrowF10");
       cap.Size = 10;
       go.Pen.EndCap = cap;
-     
+
       // deselect the text tool
 			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
       _grac.ActiveLayer.GraphObjects.Add(go);
       _grac.WinFormsController.RefreshGraph();
-      
+
     }
   }
 }

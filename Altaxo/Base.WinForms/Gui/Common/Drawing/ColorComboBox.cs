@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Common.Drawing
       box.DropDownStyle = ComboBoxStyle.DropDownList;
       box.DrawMode = DrawMode.OwnerDrawFixed;
       box.ItemHeight = box.Font.Height;
-    
+
     }
 
     public static void AddCustomColorContextMenu(ContextMenuStrip menu, EventHandler eh)
@@ -173,7 +173,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-   
+
     protected override void OnDrawItem(DrawItemEventArgs e)
     {
       Graphics grfx = e.Graphics;
@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Common.Drawing
         e.DrawBackground();
 
       grfx.DrawRectangle(new Pen(e.ForeColor), rectColor);
-      
+
       Color itemColor = e.Index < 0 ? Color.Black : (Color)Items[e.Index];
       grfx.FillRectangle(new SolidBrush(itemColor), rectColor);
       string text = "Custom";

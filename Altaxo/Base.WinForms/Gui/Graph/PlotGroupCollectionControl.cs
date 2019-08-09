@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph
         _controller.EhView_CoordinateTransformingGroupStyleChanged();
       }
     }
-  
+
     private void _btEditCSTransfoStyle_Click(object sender, EventArgs e)
     {
       if (null != _controller)
@@ -187,7 +187,7 @@ namespace Altaxo.Gui.Graph
       for(int i=0;i<list.Count;i++)
       {
         CheckableSelectableListNode node=list[i];
-      
+
         box.Items.Add(node, node.Checked);
         if (node.Selected)
           box.SelectedIndices.Add(i);
@@ -218,7 +218,7 @@ namespace Altaxo.Gui.Graph
       _chkUpdateFromParentGroups.Checked = inheritFromParent;
       _chkDistributeToSubGroups.Checked = distributeToChilds;
     }
-    
+
     public void QueryUpdateMode(out bool inheritFromParent, out bool distributeToChilds)
     {
       SynchronizeComboBoxWithSelectableListNodes(_cbGroupStrictness);
@@ -234,7 +234,7 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
-   
+
 
 
   }

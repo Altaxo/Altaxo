@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -77,7 +77,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// Handles the MouseDown event when the plot point tool is selected
     /// </summary>
     /// <param name="e">The mouse event args</param>
-     
+
     public override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
       base.OnMouseDown(e);
@@ -86,10 +86,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       m_Cross = _grac.WinFormsController.PixelToPrintableAreaCoordinates(mouseXY);
 
       DisplayCrossCoordinates();
-      
+
       _grac.WinFormsController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
-         
-     
+
+
     } // end of function
 
 
@@ -145,7 +145,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <param name="increment"></param>
     void MoveLeftRight(float increment)
     {
-      
+
       m_Cross.X += increment;
 
       DisplayCrossCoordinates();
@@ -159,14 +159,14 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <param name="increment"></param>
     void MoveUpDown(float increment)
     {
-      
+
       m_Cross.Y += increment;
 
       DisplayCrossCoordinates();
 
       _grac.WinFormsController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
 
-      
+
     }
 
 
@@ -255,7 +255,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
 
-    
+
 
   } // end of class
 

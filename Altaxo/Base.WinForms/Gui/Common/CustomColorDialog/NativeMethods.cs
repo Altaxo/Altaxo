@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -82,23 +82,23 @@ namespace Altaxo.Gui.Common
 	/// See the documentation for CHOOSECOLOR
 	/// </summary>
 	internal struct ChooseColor
-	{ 
-		public Int32		lStructSize; 
-		public IntPtr		hwndOwner; 
-		public IntPtr		hInstance; 
-		public Int32		rgbResult; 
-		public IntPtr		lpCustColors; 
-		public Int32		Flags; 
-		public IntPtr		lCustData; 
-		public CCHookProc	lpfnHook; 
-		public IntPtr		lpTemplateName; 
+	{
+		public Int32		lStructSize;
+		public IntPtr		hwndOwner;
+		public IntPtr		hInstance;
+		public Int32		rgbResult;
+		public IntPtr		lpCustColors;
+		public Int32		Flags;
+		public IntPtr		lCustData;
+		public CCHookProc	lpfnHook;
+		public IntPtr		lpTemplateName;
 	};
-	
+
 	/// <summary>
 	/// The rectangle structure used in Win32 API calls
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct RECT 
+	internal struct RECT
 	{
 		public int left;
 		public int top;
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Common
 		public int X;
 		public int Y;
 	};
-	
+
 	/// <summary>
 	/// Contains all of the p/invoke declarations for the Win32 APIs used in this sample
 	/// </summary>
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Common
 
 		[DllImport("User32.dll", CharSet = CharSet.Unicode)]
 		internal static extern IntPtr SetParent( IntPtr hWndChild, IntPtr hWndNewParent );
-		
+
 		[DllImport("User32.dll", CharSet = CharSet.Unicode)]
 		internal static extern UInt32 SendMessage( IntPtr hWnd, UInt32 msg, UInt32 wParam, StringBuilder buffer );
 

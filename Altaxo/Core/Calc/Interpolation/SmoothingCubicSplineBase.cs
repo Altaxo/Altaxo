@@ -80,7 +80,7 @@ namespace Altaxo.Calc.Interpolation
   /// Latest revision 15 august 1985.
   ///
   /// FORTRAN source code translated to C by jheinen and IngoHeimbach (see <see href="https://github.com/sciapp/gr/blob/master/lib/gr/spline.c"/>)
-  /// 
+  ///
   /// C source code transfered to C# by Dirk Lellinger.
   ///
   /// References:
@@ -606,7 +606,7 @@ namespace Altaxo.Calc.Interpolation
     #region cubgcv
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="x">Input: Abscissae of the N data points. Must be ordered so that x[i] &lt; x[i+1].</param>
     /// <param name="f">Input: Ordinates (function values) of the N data points.</param>
@@ -625,7 +625,7 @@ namespace Altaxo.Calc.Interpolation
     /// S(T)=((C(I,3)*D+C(I,2))*D+C(I,1))*D+Y(I)
     /// WHERE X(I).LE.T.LT.X(I+1) AND
     ///  D = T-X(I). </param>
-    /// <param name="ic">Input: 
+    /// <param name="ic">Input:
     /// ROW DIMENSION OF MATRIX C EXACTLY
     /// AS SPECIFIED IN THE DIMENSION
     /// STATEMENT IN THE CALLING PROGRAM.
@@ -650,7 +650,7 @@ namespace Altaxo.Calc.Interpolation
     ///JOB = 0 SHOULD BE SELECTED IF POINT STANDARD ERROR
     ///                           ESTIMATES ARE NOT REQUIRED IN SE.
     ///                         JOB = 1 SHOULD BE SELECTED IF POINT STANDARD ERROR
-    ///                           ESTIMATES ARE REQUIRED IN SE.        
+    ///                           ESTIMATES ARE REQUIRED IN SE.
     ///                           </param>
     /// <param name="se">
     /// SE     - VECTOR OF LENGTH N CONTAINING BAYESIAN STANDARD

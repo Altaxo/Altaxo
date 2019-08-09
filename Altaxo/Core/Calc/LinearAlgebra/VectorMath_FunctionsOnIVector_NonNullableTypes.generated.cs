@@ -104,7 +104,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < y.Length; ++i)
 				y[i] = x / y[i];
 		}
-   
+
 		/// <summary>
 		/// Fills a vector with a certain value. so that all elements are equal.
 		/// </summary>
@@ -280,7 +280,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < y.Length; ++i)
 				y[i] = x / y[i];
 		}
-   
+
 		/// <summary>
 		/// Fills a vector with a certain value. so that all elements are equal.
 		/// </summary>
@@ -456,7 +456,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < y.Length; ++i)
 				y[i] = x / y[i];
 		}
-   
+
 		/// <summary>
 		/// Fills a vector with a certain value. so that all elements are equal.
 		/// </summary>
@@ -632,7 +632,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < y.Count; ++i)
 				y[i] = x / y[i];
 		}
-   
+
 		/// <summary>
 		/// Fills a vector with a certain value. so that all elements are equal.
 		/// </summary>
@@ -808,7 +808,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < y.Count; ++i)
 				y[i] = x / y[i];
 		}
-   
+
 		/// <summary>
 		/// Fills a vector with a certain value. so that all elements are equal.
 		/// </summary>

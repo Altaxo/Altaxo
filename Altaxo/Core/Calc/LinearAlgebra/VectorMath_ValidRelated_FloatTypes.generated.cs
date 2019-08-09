@@ -59,7 +59,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return 0;
 		}
 
-		
+
 		/// <summary>
 		/// Returns the used length of the vector. This is one more than the highest index of the element that is different from NaN.
 		/// </summary>
@@ -86,7 +86,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			for (i = i - 1; i >= 0; --i)
 			{
-				var tmp = vector[i]; 
+				var tmp = vector[i];
 				if (tmp > max)
 					max = tmp;
 			}
@@ -109,7 +109,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			for (i = i - 1; i >= 0; --i)
 			{
-				var tmp = vector[i]; 
+				var tmp = vector[i];
 				if (tmp < min)
 					min = tmp;
 			}
@@ -138,7 +138,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return 0;
 		}
 
-		
+
 		/// <summary>
 		/// Returns the used length of the vector. This is one more than the highest index of the element that is different from NaN.
 		/// </summary>
@@ -165,7 +165,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			for (i = i - 1; i >= 0; --i)
 			{
-				var tmp = vector[i]; 
+				var tmp = vector[i];
 				if (tmp > max)
 					max = tmp;
 			}
@@ -188,7 +188,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			for (i = i - 1; i >= 0; --i)
 			{
-				var tmp = vector[i]; 
+				var tmp = vector[i];
 				if (tmp < min)
 					min = tmp;
 			}
@@ -217,7 +217,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return 0;
 		}
 
-		
+
 		/// <summary>
 		/// Returns the used length of the vector. This is one more than the highest index of the element that is different from NaN.
 		/// </summary>
@@ -244,7 +244,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			for (i = i - 1; i >= 0; --i)
 			{
-				var tmp = vector[i]; 
+				var tmp = vector[i];
 				if (tmp > max)
 					max = tmp;
 			}
@@ -267,7 +267,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			for (i = i - 1; i >= 0; --i)
 			{
-				var tmp = vector[i]; 
+				var tmp = vector[i];
 				if (tmp < min)
 					min = tmp;
 			}
@@ -296,7 +296,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return 0;
 		}
 
-		
+
 		/// <summary>
 		/// Returns the used length of the vector. This is one more than the highest index of the element that is different from NaN.
 		/// </summary>
@@ -323,7 +323,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			for (i = i - 1; i >= 0; --i)
 			{
-				var tmp = vector[i]; 
+				var tmp = vector[i];
 				if (tmp > max)
 					max = tmp;
 			}
@@ -346,7 +346,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			for (i = i - 1; i >= 0; --i)
 			{
-				var tmp = vector[i]; 
+				var tmp = vector[i];
 				if (tmp < min)
 					min = tmp;
 			}

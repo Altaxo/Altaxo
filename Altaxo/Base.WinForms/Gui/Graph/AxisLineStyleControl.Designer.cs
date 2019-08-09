@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Graph
 {
   partial class AxisLineStyleControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Graph
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -94,9 +94,9 @@ namespace Altaxo.Gui.Graph
       this._minorLayoutTable.SuspendLayout();
       this._minorWhichTicksLayout.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // _verticalPanel
-      // 
+      //
       this._verticalPanel.AutoSize = true;
       this._verticalPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._verticalPanel.Controls.Add(this._lineGroupBox);
@@ -108,9 +108,9 @@ namespace Altaxo.Gui.Graph
       this._verticalPanel.Name = "_verticalPanel";
       this._verticalPanel.Size = new System.Drawing.Size(409, 223);
       this._verticalPanel.TabIndex = 0;
-      // 
+      //
       // _lineGroupBox
-      // 
+      //
       this._lineGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this._lineGroupBox.AutoSize = true;
       this._lineGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -121,9 +121,9 @@ namespace Altaxo.Gui.Graph
       this._lineGroupBox.TabIndex = 0;
       this._lineGroupBox.TabStop = false;
       this._lineGroupBox.Text = "Line";
-      // 
+      //
       // _lineLayoutTable
-      // 
+      //
       this._lineLayoutTable.AutoSize = true;
       this._lineLayoutTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._lineLayoutTable.ColumnCount = 5;
@@ -145,9 +145,9 @@ namespace Altaxo.Gui.Graph
       this._lineLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._lineLayoutTable.Size = new System.Drawing.Size(397, 48);
       this._lineLayoutTable.TabIndex = 0;
-      // 
+      //
       // _lblLineColor
-      // 
+      //
       this._lblLineColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblLineColor.AutoSize = true;
       this._lblLineColor.Location = new System.Drawing.Point(3, 29);
@@ -156,9 +156,9 @@ namespace Altaxo.Gui.Graph
       this._lblLineColor.Size = new System.Drawing.Size(52, 13);
       this._lblLineColor.TabIndex = 2;
       this._lblLineColor.Text = "Color:";
-      // 
+      //
       // _lblLineThickness
-      // 
+      //
       this._lblLineThickness.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblLineThickness.AutoSize = true;
       this._lblLineThickness.Location = new System.Drawing.Point(208, 29);
@@ -166,9 +166,9 @@ namespace Altaxo.Gui.Graph
       this._lblLineThickness.Size = new System.Drawing.Size(59, 13);
       this._lblLineThickness.TabIndex = 3;
       this._lblLineThickness.Text = "Thickness:";
-      // 
+      //
       // _chkEnableLine
-      // 
+      //
       this._chkEnableLine.AutoSize = true;
       this._chkEnableLine.Location = new System.Drawing.Point(61, 3);
       this._chkEnableLine.Name = "_chkEnableLine";
@@ -176,9 +176,9 @@ namespace Altaxo.Gui.Graph
       this._chkEnableLine.TabIndex = 4;
       this._chkEnableLine.Text = "Enable";
       this._chkEnableLine.UseVisualStyleBackColor = true;
-      // 
+      //
       // _majorGroupBox
-      // 
+      //
       this._majorGroupBox.AutoSize = true;
       this._majorGroupBox.Controls.Add(this._majorLayoutTable);
       this._majorGroupBox.Location = new System.Drawing.Point(3, 76);
@@ -187,9 +187,9 @@ namespace Altaxo.Gui.Graph
       this._majorGroupBox.TabIndex = 1;
       this._majorGroupBox.TabStop = false;
       this._majorGroupBox.Text = "Major Ticks";
-      // 
+      //
       // _majorLayoutTable
-      // 
+      //
       this._majorLayoutTable.AutoSize = true;
       this._majorLayoutTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._majorLayoutTable.ColumnCount = 4;
@@ -213,9 +213,9 @@ namespace Altaxo.Gui.Graph
       this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this._majorLayoutTable.Size = new System.Drawing.Size(397, 50);
       this._majorLayoutTable.TabIndex = 0;
-      // 
+      //
       // _chkCustomMajorColor
-      // 
+      //
       this._chkCustomMajorColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._chkCustomMajorColor.AutoSize = true;
       this._chkCustomMajorColor.Location = new System.Drawing.Point(3, 4);
@@ -225,9 +225,9 @@ namespace Altaxo.Gui.Graph
       this._chkCustomMajorColor.Text = "Color:";
       this._chkCustomMajorColor.UseVisualStyleBackColor = true;
       this._chkCustomMajorColor.CheckedChanged += new System.EventHandler(this.EhIndividualMajorColor_CheckChanged);
-      // 
+      //
       // _chkCustomMajorThickness
-      // 
+      //
       this._chkCustomMajorThickness.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._chkCustomMajorThickness.AutoSize = true;
       this._chkCustomMajorThickness.Location = new System.Drawing.Point(189, 4);
@@ -237,9 +237,9 @@ namespace Altaxo.Gui.Graph
       this._chkCustomMajorThickness.Text = "Thickness:";
       this._chkCustomMajorThickness.UseVisualStyleBackColor = true;
       this._chkCustomMajorThickness.CheckedChanged += new System.EventHandler(this.EhIndividualMajorThickness_CheckChanged);
-      // 
+      //
       // _lblMajorLength
-      // 
+      //
       this._lblMajorLength.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblMajorLength.AutoSize = true;
       this._lblMajorLength.Location = new System.Drawing.Point(13, 31);
@@ -247,9 +247,9 @@ namespace Altaxo.Gui.Graph
       this._lblMajorLength.Size = new System.Drawing.Size(43, 13);
       this._lblMajorLength.TabIndex = 2;
       this._lblMajorLength.Text = "Length:";
-      // 
+      //
       // _majorWhichTicksLayout
-      // 
+      //
       this._majorWhichTicksLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -261,9 +261,9 @@ namespace Altaxo.Gui.Graph
       this._majorWhichTicksLayout.Name = "_majorWhichTicksLayout";
       this._majorWhichTicksLayout.Size = new System.Drawing.Size(127, 25);
       this._majorWhichTicksLayout.TabIndex = 6;
-      // 
+      //
       // _chkWhichMajor1
-      // 
+      //
       this._chkWhichMajor1.AutoSize = true;
       this._chkWhichMajor1.Location = new System.Drawing.Point(3, 3);
       this._chkWhichMajor1.Name = "_chkWhichMajor1";
@@ -271,9 +271,9 @@ namespace Altaxo.Gui.Graph
       this._chkWhichMajor1.TabIndex = 0;
       this._chkWhichMajor1.Text = "In";
       this._chkWhichMajor1.UseVisualStyleBackColor = true;
-      // 
+      //
       // _chkWhichMajor2
-      // 
+      //
       this._chkWhichMajor2.AutoSize = true;
       this._chkWhichMajor2.Location = new System.Drawing.Point(44, 3);
       this._chkWhichMajor2.Name = "_chkWhichMajor2";
@@ -281,9 +281,9 @@ namespace Altaxo.Gui.Graph
       this._chkWhichMajor2.TabIndex = 1;
       this._chkWhichMajor2.Text = "Out";
       this._chkWhichMajor2.UseVisualStyleBackColor = true;
-      // 
+      //
       // _minorGroupBox
-      // 
+      //
       this._minorGroupBox.AutoSize = true;
       this._minorGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._minorGroupBox.Controls.Add(this._minorLayoutTable);
@@ -293,9 +293,9 @@ namespace Altaxo.Gui.Graph
       this._minorGroupBox.TabIndex = 2;
       this._minorGroupBox.TabStop = false;
       this._minorGroupBox.Text = "Minor Ticks";
-      // 
+      //
       // _minorLayoutTable
-      // 
+      //
       this._minorLayoutTable.AutoSize = true;
       this._minorLayoutTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._minorLayoutTable.ColumnCount = 4;
@@ -319,9 +319,9 @@ namespace Altaxo.Gui.Graph
       this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this._minorLayoutTable.Size = new System.Drawing.Size(397, 50);
       this._minorLayoutTable.TabIndex = 3;
-      // 
+      //
       // _chkCustomMinorColor
-      // 
+      //
       this._chkCustomMinorColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._chkCustomMinorColor.AutoSize = true;
       this._chkCustomMinorColor.Location = new System.Drawing.Point(3, 4);
@@ -331,9 +331,9 @@ namespace Altaxo.Gui.Graph
       this._chkCustomMinorColor.Text = "Color:";
       this._chkCustomMinorColor.UseVisualStyleBackColor = true;
       this._chkCustomMinorColor.CheckedChanged += new System.EventHandler(this.EhIndividualMinorColor_CheckChanged);
-      // 
+      //
       // _chkCustomMinorThickness
-      // 
+      //
       this._chkCustomMinorThickness.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._chkCustomMinorThickness.AutoSize = true;
       this._chkCustomMinorThickness.Location = new System.Drawing.Point(189, 4);
@@ -343,9 +343,9 @@ namespace Altaxo.Gui.Graph
       this._chkCustomMinorThickness.Text = "Thickness:";
       this._chkCustomMinorThickness.UseVisualStyleBackColor = true;
       this._chkCustomMinorThickness.CheckedChanged += new System.EventHandler(this.EhIndividualMinorThickness_CheckChanged);
-      // 
+      //
       // _lblMinorLength
-      // 
+      //
       this._lblMinorLength.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblMinorLength.AutoSize = true;
       this._lblMinorLength.Location = new System.Drawing.Point(13, 31);
@@ -353,9 +353,9 @@ namespace Altaxo.Gui.Graph
       this._lblMinorLength.Size = new System.Drawing.Size(43, 13);
       this._lblMinorLength.TabIndex = 2;
       this._lblMinorLength.Text = "Length:";
-      // 
+      //
       // _minorWhichTicksLayout
-      // 
+      //
       this._minorWhichTicksLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -367,9 +367,9 @@ namespace Altaxo.Gui.Graph
       this._minorWhichTicksLayout.Name = "_minorWhichTicksLayout";
       this._minorWhichTicksLayout.Size = new System.Drawing.Size(127, 25);
       this._minorWhichTicksLayout.TabIndex = 6;
-      // 
+      //
       // _chkWhichMinor1
-      // 
+      //
       this._chkWhichMinor1.AutoSize = true;
       this._chkWhichMinor1.Location = new System.Drawing.Point(3, 3);
       this._chkWhichMinor1.Name = "_chkWhichMinor1";
@@ -377,9 +377,9 @@ namespace Altaxo.Gui.Graph
       this._chkWhichMinor1.TabIndex = 2;
       this._chkWhichMinor1.Text = "In";
       this._chkWhichMinor1.UseVisualStyleBackColor = true;
-      // 
+      //
       // _chkWhichMinor2
-      // 
+      //
       this._chkWhichMinor2.AutoSize = true;
       this._chkWhichMinor2.Location = new System.Drawing.Point(44, 3);
       this._chkWhichMinor2.Name = "_chkWhichMinor2";
@@ -387,9 +387,9 @@ namespace Altaxo.Gui.Graph
       this._chkWhichMinor2.TabIndex = 3;
       this._chkWhichMinor2.Text = "Out";
       this._chkWhichMinor2.UseVisualStyleBackColor = true;
-      // 
+      //
       // _lineBrushColor
-      // 
+      //
       this._lineBrushColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._lineBrushColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineBrushColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -574,9 +574,9 @@ namespace Altaxo.Gui.Graph
       this._lineBrushColor.Name = "_lineBrushColor";
       this._lineBrushColor.Size = new System.Drawing.Size(121, 19);
       this._lineBrushColor.TabIndex = 0;
-      // 
+      //
       // _lineLineThickness
-      // 
+      //
       this._lineLineThickness.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._lineLineThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineLineThickness.FormattingEnabled = true;
@@ -586,9 +586,9 @@ namespace Altaxo.Gui.Graph
       this._lineLineThickness.Size = new System.Drawing.Size(121, 19);
       this._lineLineThickness.TabIndex = 1;
       this._lineLineThickness.PenWidthChoiceChanged += new System.EventHandler(this.EhLineThickness_Changed);
-      // 
+      //
       // _majorLineColor
-      // 
+      //
       this._majorLineColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._majorLineColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._majorLineColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -774,9 +774,9 @@ namespace Altaxo.Gui.Graph
       this._majorLineColor.Name = "_majorLineColor";
       this._majorLineColor.Size = new System.Drawing.Size(121, 19);
       this._majorLineColor.TabIndex = 3;
-      // 
+      //
       // _lineMajorThickness
-      // 
+      //
       this._lineMajorThickness.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._lineMajorThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMajorThickness.Enabled = false;
@@ -786,9 +786,9 @@ namespace Altaxo.Gui.Graph
       this._lineMajorThickness.Name = "_lineMajorThickness";
       this._lineMajorThickness.Size = new System.Drawing.Size(121, 19);
       this._lineMajorThickness.TabIndex = 4;
-      // 
+      //
       // _lineMajorLength
-      // 
+      //
       this._lineMajorLength.Anchor = System.Windows.Forms.AnchorStyles.None;
       this._lineMajorLength.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMajorLength.FormattingEnabled = true;
@@ -797,9 +797,9 @@ namespace Altaxo.Gui.Graph
       this._lineMajorLength.Name = "_lineMajorLength";
       this._lineMajorLength.Size = new System.Drawing.Size(121, 19);
       this._lineMajorLength.TabIndex = 5;
-      // 
+      //
       // _minorLineColor
-      // 
+      //
       this._minorLineColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._minorLineColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._minorLineColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -985,9 +985,9 @@ namespace Altaxo.Gui.Graph
       this._minorLineColor.Name = "_minorLineColor";
       this._minorLineColor.Size = new System.Drawing.Size(121, 19);
       this._minorLineColor.TabIndex = 3;
-      // 
+      //
       // _lineMinorThickness
-      // 
+      //
       this._lineMinorThickness.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._lineMinorThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMinorThickness.Enabled = false;
@@ -997,9 +997,9 @@ namespace Altaxo.Gui.Graph
       this._lineMinorThickness.Name = "_lineMinorThickness";
       this._lineMinorThickness.Size = new System.Drawing.Size(121, 19);
       this._lineMinorThickness.TabIndex = 4;
-      // 
+      //
       // _lineMinorLength
-      // 
+      //
       this._lineMinorLength.Anchor = System.Windows.Forms.AnchorStyles.None;
       this._lineMinorLength.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMinorLength.FormattingEnabled = true;
@@ -1008,9 +1008,9 @@ namespace Altaxo.Gui.Graph
       this._lineMinorLength.Name = "_lineMinorLength";
       this._lineMinorLength.Size = new System.Drawing.Size(121, 19);
       this._lineMinorLength.TabIndex = 5;
-      // 
+      //
       // _linePenGlue
-      // 
+      //
       this._linePenGlue.CbBrushColor = this._lineBrushColor;
       this._linePenGlue.CbBrushColor2 = null;
       this._linePenGlue.CbBrushHatchStyle = null;
@@ -1026,9 +1026,9 @@ namespace Altaxo.Gui.Graph
       this._linePenGlue.CbStartCapSize = null;
       this._linePenGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._linePenGlue.PenChanged += new System.EventHandler(this.EhLinePen_Changed);
-      // 
+      //
       // _majorPenGlue
-      // 
+      //
       this._majorPenGlue.CbBrushColor = this._majorLineColor;
       this._majorPenGlue.CbBrushColor2 = null;
       this._majorPenGlue.CbBrushHatchStyle = null;
@@ -1043,9 +1043,9 @@ namespace Altaxo.Gui.Graph
       this._majorPenGlue.CbStartCap = null;
       this._majorPenGlue.CbStartCapSize = null;
       this._majorPenGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
-      // 
+      //
       // _minorPenGlue
-      // 
+      //
       this._minorPenGlue.CbBrushColor = this._minorLineColor;
       this._minorPenGlue.CbBrushColor2 = null;
       this._minorPenGlue.CbBrushHatchStyle = null;
@@ -1060,9 +1060,9 @@ namespace Altaxo.Gui.Graph
       this._minorPenGlue.CbStartCap = null;
       this._minorPenGlue.CbStartCapSize = null;
       this._minorPenGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
-      // 
+      //
       // AxisLineStyleControl
-      // 
+      //
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.AutoSize = true;

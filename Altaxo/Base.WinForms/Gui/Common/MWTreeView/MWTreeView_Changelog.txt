@@ -1,4 +1,4 @@
-Changes made to v2.0.0.0
+﻿Changes made to v2.0.0.0
 
 MWTreeView
 ==================================================

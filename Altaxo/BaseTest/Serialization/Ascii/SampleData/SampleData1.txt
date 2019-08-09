@@ -1,6 +1,6 @@
-Time	Ticks	Date	Temperature	Shutter	Lichtmenge	ThermoBad	TempExt	SollTemp	TempablMz	AmpCut.5	TauCut.5	ErrCut.5	GCut'.5	GCut''.5	GCutNP.5	GCutErr.5	AmpAll.5	TauAll.5	ErrAll.5	GAll'.5	GAll''.5	GAllNP.5	GAllErr.5	TimeOffsLipp
+ï»¿Time	Ticks	Date	Temperature	Shutter	Lichtmenge	ThermoBad	TempExt	SollTemp	TempablMz	AmpCut.5	TauCut.5	ErrCut.5	GCut'.5	GCut''.5	GCutNP.5	GCutErr.5	AmpAll.5	TauAll.5	ErrAll.5	GAll'.5	GAll''.5	GAllNP.5	GAllErr.5	TimeOffsLipp
 Time	100 ns ticks since 1.1.0001	Date	Temperature	Shutter	Lichtmenge	Temperatur_Thermostatbad	Temperatur_Extern	Solltemperatur	TemperaturableitungMesszelle	AmpCut.5	TauCut.5	ErrCut.5	GCut'.5	GCut''.5	GCutNP.5	GCutErr.5	AmpAll.5	TauAll.5	ErrAll.5	GAll'.5	GAll''.5	GAllNP.5	GAllErr.5	TimeOffset to Spectrometer
-s			°C		W/cm²	°C		°C	K/s	Vs	sec		Pa	Pa	Pa	Pa	Vs	sec		Pa	Pa	Pa	Pa	s
+s			Â°C		W/cmÂ²	Â°C		Â°C	K/s	Vs	sec		Pa	Pa	Pa	Pa	Vs	sec		Pa	Pa	Pa	Pa	s
 0	6.338756987995561E+17	03.09.2009 10:17:59.955	20.01	0	-2E-10	19.79	27.047	20	4.58733421523834E-06	6.27536560111165E-09	2.82257518526958E-05	3.9809790905565E-05					4.45058160563361E-08	2.84022215674639E-05	4.69951555714943E-06					-0.0418252
 30.001	6.3387569909954944E+17	03.09.2009 10:18:29.954	20.02	0	-2E-10	19.78	27.213	20	1.20215855068343E-05															-0.0401539
 60.002	6.3387569939953549E+17	03.09.2009 10:18:59.953	20.02	0	-2E-10	19.78	27.344	20	1.7878340498518E-05	6.26710713902465E-09	2.82257414950933E-05	4.13771012972575E-05					4.44817459070138E-08	2.81974108198428E-05	3.71282703781617E-06					-0.0372634

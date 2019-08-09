@@ -160,4 +160,3 @@ namespace Altaxo.Geometry.Double_2D
     }
   }
 }
-

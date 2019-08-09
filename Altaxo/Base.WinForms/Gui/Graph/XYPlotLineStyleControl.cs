@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -80,8 +80,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -99,9 +99,9 @@ namespace Altaxo.Gui.Graph
       this._chkIndependentColor = new System.Windows.Forms.CheckBox();
       this.m_chkLineSymbolGap = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
-      // 
+      //
       // _chkConnectCircular
-      // 
+      //
       this._chkConnectCircular.AutoSize = true;
       this._chkConnectCircular.Location = new System.Drawing.Point(95, 33);
       this._chkConnectCircular.Name = "_chkConnectCircular";
@@ -109,9 +109,9 @@ namespace Altaxo.Gui.Graph
       this._chkConnectCircular.TabIndex = 28;
       this._chkConnectCircular.Text = "Circular connection";
       this._chkConnectCircular.UseVisualStyleBackColor = true;
-      // 
+      //
       // _chkIndependentFillColor
-      // 
+      //
       this._chkIndependentFillColor.AutoSize = true;
       this._chkIndependentFillColor.Location = new System.Drawing.Point(5, 209);
       this._chkIndependentFillColor.Name = "_chkIndependentFillColor";
@@ -119,9 +119,9 @@ namespace Altaxo.Gui.Graph
       this._chkIndependentFillColor.TabIndex = 27;
       this._chkIndependentFillColor.Text = "ind. Fill color:";
       this._chkIndependentFillColor.UseVisualStyleBackColor = true;
-      // 
+      //
       // _ctrlColorTypeThickness
-      // 
+      //
       this._ctrlColorTypeThickness.AutoSize = true;
       this._ctrlColorTypeThickness.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._ctrlColorTypeThickness.ColorType = Altaxo.Graph.ColorType.PlotColor;
@@ -131,9 +131,9 @@ namespace Altaxo.Gui.Graph
       this._ctrlColorTypeThickness.Name = "_ctrlColorTypeThickness";
       this._ctrlColorTypeThickness.Size = new System.Drawing.Size(198, 87);
       this._ctrlColorTypeThickness.TabIndex = 26;
-      // 
+      //
       // m_cbLineFillColor
-      // 
+      //
       this.m_cbLineFillColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this.m_cbLineFillColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.m_cbLineFillColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -666,68 +666,68 @@ namespace Altaxo.Gui.Graph
       this.m_cbLineFillColor.Name = "m_cbLineFillColor";
       this.m_cbLineFillColor.Size = new System.Drawing.Size(121, 21);
       this.m_cbLineFillColor.TabIndex = 25;
-      // 
+      //
       // m_cbLineFillDirection
-      // 
+      //
       this.m_cbLineFillDirection.Location = new System.Drawing.Point(96, 236);
       this.m_cbLineFillDirection.Name = "m_cbLineFillDirection";
       this.m_cbLineFillDirection.Size = new System.Drawing.Size(121, 21);
       this.m_cbLineFillDirection.TabIndex = 9;
       this.m_cbLineFillDirection.Text = "comboBox1";
-      // 
+      //
       // label4
-      // 
+      //
       this.label4.Location = new System.Drawing.Point(17, 239);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(75, 16);
       this.label4.TabIndex = 7;
       this.label4.Text = "Fill Direction";
-      // 
+      //
       // m_chkLineFillArea
-      // 
+      //
       this.m_chkLineFillArea.Location = new System.Drawing.Point(5, 187);
       this.m_chkLineFillArea.Name = "m_chkLineFillArea";
       this.m_chkLineFillArea.Size = new System.Drawing.Size(74, 16);
       this.m_chkLineFillArea.TabIndex = 6;
       this.m_chkLineFillArea.Text = "Fill Area";
       this.m_chkLineFillArea.CheckedChanged += new System.EventHandler(this.EhLineFillArea_CheckedChanged);
-      // 
+      //
       // m_cbLineConnect
-      // 
+      //
       this.m_cbLineConnect.Location = new System.Drawing.Point(96, 6);
       this.m_cbLineConnect.Name = "m_cbLineConnect";
       this.m_cbLineConnect.Size = new System.Drawing.Size(121, 21);
       this.m_cbLineConnect.TabIndex = 3;
       this.m_cbLineConnect.Text = "comboBox1";
       this.m_cbLineConnect.SelectionChangeCommitted += new System.EventHandler(this.m_cbLineConnect_SelectionChangeCommitted);
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.Location = new System.Drawing.Point(5, 10);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(48, 16);
       this.label1.TabIndex = 0;
       this.label1.Text = "Connect";
-      // 
+      //
       // _chkIndependentColor
-      // 
+      //
       this._chkIndependentColor.Location = new System.Drawing.Point(8, 76);
       this._chkIndependentColor.Name = "_chkIndependentColor";
       this._chkIndependentColor.Size = new System.Drawing.Size(45, 16);
       this._chkIndependentColor.TabIndex = 24;
       this._chkIndependentColor.Text = "ind.";
       this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
-      // 
+      //
       // m_chkLineSymbolGap
-      // 
+      //
       this.m_chkLineSymbolGap.Location = new System.Drawing.Point(95, 45);
       this.m_chkLineSymbolGap.Name = "m_chkLineSymbolGap";
       this.m_chkLineSymbolGap.Size = new System.Drawing.Size(112, 24);
       this.m_chkLineSymbolGap.TabIndex = 22;
       this.m_chkLineSymbolGap.Text = "Line/Symbol Gap";
-      // 
+      //
       // XYPlotLineStyleControl
-      // 
+      //
       this.Controls.Add(this._chkIndependentColor);
       this.Controls.Add(this._chkConnectCircular);
       this.Controls.Add(this._chkIndependentFillColor);
@@ -762,7 +762,7 @@ namespace Altaxo.Gui.Graph
       ++m_SuppressEvents;
       box.Items.Clear();
       box.Items.AddRange(names.ToArray());
-      
+
       if(sel>=0 && sel<box.Items.Count)
         box.SelectedIndex = sel;
 
@@ -772,7 +772,7 @@ namespace Altaxo.Gui.Graph
     public void EnableDisableMain(bool bEnable)
     {
       this._chkIndependentColor.Enabled = bEnable;
-      
+
       this._ctrlColorTypeThickness.Enabled = bEnable;
       this.m_cbLineFillColor.Enabled = bEnable;
       this.m_chkLineSymbolGap.Enabled = bEnable;
@@ -814,8 +814,8 @@ namespace Altaxo.Gui.Graph
       controller.ViewObject = this._ctrlColorTypeThickness;
     }
 
-  
- 
+
+
 
     public void InitializeLineConnect(string[] arr, string sel)
     {
@@ -825,8 +825,8 @@ namespace Altaxo.Gui.Graph
     {
       get { return (string)m_cbLineConnect.SelectedItem; }
     }
-    
-  
+
+
 
     public void InitializeFillCondition(bool bFill)
     {
@@ -835,12 +835,12 @@ namespace Altaxo.Gui.Graph
       this.m_cbLineFillDirection.Enabled = bFill;
     }
 
-    public bool LineFillArea 
+    public bool LineFillArea
     {
       get { return m_chkLineFillArea.Checked; }
     }
 
-  
+
 
 
     private void EhLineFillArea_CheckedChanged(object sender, System.EventArgs e)
@@ -853,7 +853,7 @@ namespace Altaxo.Gui.Graph
         EnableDisableMain(this.ShouldEnableMain());
     }
 
-   
+
 
     public void InitializeFillColor(BrushX sel)
     {
@@ -864,34 +864,34 @@ namespace Altaxo.Gui.Graph
     {
       get { return m_cbLineFillColor.Brush; }
     }
-  
+
     public void InitializeFillDirection(List<ListNode> list, int sel)
     {
       InitComboBox(this.m_cbLineFillDirection,list,sel);
     }
 
-       
-      
+
+
     public ListNode LineFillDirection
     {
       get { return (ListNode)m_cbLineFillDirection.SelectedItem; }
     }
-  
+
     public void InitializeIndependentColor(bool val)
     {
       this._chkIndependentColor.Checked = val;
       _chkIndependentColor_CheckedChanged(_chkIndependentColor.Checked,EventArgs.Empty);
     }
 
-    public bool IndependentColor 
+    public bool IndependentColor
     {
       get
       {
-        return this._chkIndependentColor.Checked; 
+        return this._chkIndependentColor.Checked;
       }
     }
 
-    public bool ConnectCircular 
+    public bool ConnectCircular
     {
       get { return _chkConnectCircular.Checked; }
       set { _chkConnectCircular.Checked = value; }
@@ -905,11 +905,11 @@ namespace Altaxo.Gui.Graph
 
     private void _chkIndependentColor_CheckedChanged(object sender, System.EventArgs e)
     {
-     
+
     }
 
 
-       
+
 
 
     #endregion

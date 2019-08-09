@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Common.Drawing
     public BrushX Brush
     {
       get { return _brush; }
-      set 
+      set
       {
         _brush = value;
 
@@ -107,19 +107,19 @@ namespace Altaxo.Gui.Common.Drawing
     public BrushTypeComboBox CbBrushType
     {
       get { return _cbBrushType; }
-      set 
+      set
       {
         if (null != _cbBrushType)
           _cbBrushType.SelectionChangeCommitted -= EhBrushType_SelectionChangeCommitted;
-        
+
         _cbBrushType = value;
         if (_brush != null && CbBrushType!=null)
           _cbBrushType.BrushType = _brush.BrushType;
 
         if (null != _cbBrushType)
           _cbBrushType.SelectionChangeCommitted += EhBrushType_SelectionChangeCommitted;
-      
-      
+
+
       }
     }
 
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_brush != null)
       {
         _brush.BrushType = _cbBrushType.BrushType;
-        
+
         OnBrushChanged();
 
         UpdateColor2State();
@@ -151,7 +151,7 @@ namespace Altaxo.Gui.Common.Drawing
     public HatchStyleComboBox CbHatchStyle
     {
       get { return _cbHatchStyle; }
-      set 
+      set
       {
         if (_cbHatchStyle != null)
           _cbHatchStyle.SelectionChangeCommitted -= EhHatchStyle_SelectionChangeCommitted;
@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Common.Drawing
           _cbHatchStyle.SelectionChangeCommitted += EhHatchStyle_SelectionChangeCommitted;
 
         UpdateHatchStyleState();
-      
+
       }
     }
 
@@ -211,7 +211,7 @@ namespace Altaxo.Gui.Common.Drawing
     public ColorComboBox CbColor1
     {
       get { return _cbColor1; }
-      set 
+      set
       {
         if (_cbColor1 != null)
         {
@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Common.Drawing
     public ColorComboBox CbColor2
     {
       get { return _cbColor2; }
-      set 
+      set
       {
         if (_cbColor2 != null)
           _cbColor2.ColorChoiceChanged -= EhColor2_ColorChoiceChanged;

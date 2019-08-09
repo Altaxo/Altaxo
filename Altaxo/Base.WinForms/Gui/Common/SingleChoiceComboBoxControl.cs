@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Common
   {
     private System.Windows.Forms.Label m_Label1;
     private System.Windows.Forms.ComboBox _cbChoice;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -47,10 +47,10 @@ namespace Altaxo.Gui.Common
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
 
-    
+
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -66,8 +66,8 @@ namespace Altaxo.Gui.Common
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -75,10 +75,10 @@ namespace Altaxo.Gui.Common
       this.m_Label1 = new System.Windows.Forms.Label();
       this._cbChoice = new System.Windows.Forms.ComboBox();
       this.SuspendLayout();
-      // 
+      //
       // m_Label1
-      // 
-      this.m_Label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this.m_Label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Label1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.m_Label1.Location = new System.Drawing.Point(8, 8);
@@ -87,10 +87,10 @@ namespace Altaxo.Gui.Common
       this.m_Label1.TabIndex = 2;
       this.m_Label1.Text = "Please enter :";
       this.m_Label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-      // 
+      //
       // _cbChoice
-      // 
-      this._cbChoice.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this._cbChoice.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this._cbChoice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbChoice.Location = new System.Drawing.Point(8, 32);
@@ -98,9 +98,9 @@ namespace Altaxo.Gui.Common
       this._cbChoice.Size = new System.Drawing.Size(248, 21);
       this._cbChoice.TabIndex = 3;
       this._cbChoice.SelectionChangeCommitted += new System.EventHandler(this._cbChoice_SelectionChangeCommitted);
-      // 
+      //
       // SingleChoiceComboBoxControl
-      // 
+      //
       this.Controls.Add(this._cbChoice);
       this.Controls.Add(this.m_Label1);
       this.Name = "SingleChoiceComboBoxControl";
@@ -149,13 +149,13 @@ namespace Altaxo.Gui.Common
     }
 
     #endregion
-   
+
 
     private void _cbChoice_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
       if(null!=_controller)
         _controller.EhChoiceChanged(this._cbChoice.SelectedIndex);
-    
+
     }
   }
 }

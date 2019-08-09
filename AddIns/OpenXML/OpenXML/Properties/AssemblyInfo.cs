@@ -46,4 +46,3 @@ using System.Windows;
 [assembly: AssemblyFileVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
 
 [assembly: Altaxo.Serialization.SupportsSerializationVersioningAttribute()]
-

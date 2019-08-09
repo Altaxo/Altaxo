@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Scripting
     private System.Windows.Forms.Splitter _vertSplitter;
     private System.Windows.Forms.ListBox lbCompilerErrors;
     private System.Windows.Forms.Panel _panelText;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Scripting
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -68,8 +68,8 @@ namespace Altaxo.Gui.Scripting
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -78,35 +78,35 @@ namespace Altaxo.Gui.Scripting
 			this.lbCompilerErrors = new System.Windows.Forms.ListBox();
 			this._panelText = new System.Windows.Forms.Panel();
 			this.SuspendLayout();
-			// 
+			//
 			// _vertSplitter
-			// 
+			//
 			this._vertSplitter.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this._vertSplitter.Location = new System.Drawing.Point(0, 262);
 			this._vertSplitter.Name = "_vertSplitter";
 			this._vertSplitter.Size = new System.Drawing.Size(408, 3);
 			this._vertSplitter.TabIndex = 1;
 			this._vertSplitter.TabStop = false;
-			// 
+			//
 			// lbCompilerErrors
-			// 
+			//
 			this.lbCompilerErrors.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.lbCompilerErrors.Location = new System.Drawing.Point(0, 265);
 			this.lbCompilerErrors.Name = "lbCompilerErrors";
 			this.lbCompilerErrors.Size = new System.Drawing.Size(408, 95);
 			this.lbCompilerErrors.TabIndex = 2;
 			this.lbCompilerErrors.DoubleClick += new System.EventHandler(this.lbCompilerErrors_DoubleClick);
-			// 
+			//
 			// _panelText
-			// 
+			//
 			this._panelText.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._panelText.Location = new System.Drawing.Point(0, 0);
 			this._panelText.Name = "_panelText";
 			this._panelText.Size = new System.Drawing.Size(408, 262);
 			this._panelText.TabIndex = 0;
-			// 
+			//
 			// ScriptControl
-			// 
+			//
 			this.Controls.Add(this._panelText);
 			this.Controls.Add(this._vertSplitter);
 			this.Controls.Add(this.lbCompilerErrors);

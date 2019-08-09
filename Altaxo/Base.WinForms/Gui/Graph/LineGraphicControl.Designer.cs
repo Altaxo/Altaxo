@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Graph
 {
   partial class LineGraphicControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Graph
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -80,41 +80,41 @@ namespace Altaxo.Gui.Graph
       this._positionSizeGlue = new Altaxo.Gui.Graph.ObjectPositionAndSizeGlue();
       this.tableLayoutPanel1.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // _edPositionX
-      // 
+      //
       this._edPositionX.Location = new System.Drawing.Point(68, 158);
       this._edPositionX.Name = "_edPositionX";
       this._edPositionX.Size = new System.Drawing.Size(100, 20);
       this._edPositionX.TabIndex = 7;
       this._edPositionX.Text = "0 pt";
-      // 
+      //
       // _edPositionY
-      // 
+      //
       this._edPositionY.Location = new System.Drawing.Point(68, 184);
       this._edPositionY.Name = "_edPositionY";
       this._edPositionY.Size = new System.Drawing.Size(100, 20);
       this._edPositionY.TabIndex = 8;
       this._edPositionY.Text = "0 pt";
-      // 
+      //
       // _edSizeX
-      // 
+      //
       this._edSizeX.Location = new System.Drawing.Point(251, 158);
       this._edSizeX.Name = "_edSizeX";
       this._edSizeX.Size = new System.Drawing.Size(100, 20);
       this._edSizeX.TabIndex = 10;
       this._edSizeX.Text = "0 pt";
-      // 
+      //
       // _edSizeY
-      // 
+      //
       this._edSizeY.Location = new System.Drawing.Point(251, 184);
       this._edSizeY.Name = "_edSizeY";
       this._edSizeY.Size = new System.Drawing.Size(100, 20);
       this._edSizeY.TabIndex = 11;
       this._edSizeY.Text = "0 pt";
-      // 
+      //
       // tableLayoutPanel1
-      // 
+      //
       this.tableLayoutPanel1.AutoSize = true;
       this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.tableLayoutPanel1.ColumnCount = 4;
@@ -160,9 +160,9 @@ namespace Altaxo.Gui.Graph
       this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this.tableLayoutPanel1.Size = new System.Drawing.Size(375, 234);
       this.tableLayoutPanel1.TabIndex = 13;
-      // 
+      //
       // _lblColor
-      // 
+      //
       this._lblColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblColor.AutoSize = true;
       this._lblColor.Location = new System.Drawing.Point(28, 7);
@@ -170,9 +170,9 @@ namespace Altaxo.Gui.Graph
       this._lblColor.Size = new System.Drawing.Size(34, 13);
       this._lblColor.TabIndex = 13;
       this._lblColor.Text = "Color:";
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(29, 34);
@@ -180,9 +180,9 @@ namespace Altaxo.Gui.Graph
       this.label1.Size = new System.Drawing.Size(33, 13);
       this.label1.TabIndex = 14;
       this.label1.Text = "Style:";
-      // 
+      //
       // label2
-      // 
+      //
       this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(3, 61);
@@ -190,9 +190,9 @@ namespace Altaxo.Gui.Graph
       this.label2.Size = new System.Drawing.Size(59, 13);
       this.label2.TabIndex = 15;
       this.label2.Text = "Thickness:";
-      // 
+      //
       // label3
-      // 
+      //
       this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label3.AutoSize = true;
       this.label3.Location = new System.Drawing.Point(11, 88);
@@ -200,9 +200,9 @@ namespace Altaxo.Gui.Graph
       this.label3.Size = new System.Drawing.Size(51, 13);
       this.label3.TabIndex = 16;
       this.label3.Text = "StartCap:";
-      // 
+      //
       // label4
-      // 
+      //
       this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label4.AutoSize = true;
       this.label4.Location = new System.Drawing.Point(14, 115);
@@ -210,9 +210,9 @@ namespace Altaxo.Gui.Graph
       this.label4.Size = new System.Drawing.Size(48, 13);
       this.label4.TabIndex = 17;
       this.label4.Text = "EndCap:";
-      // 
+      //
       // label5
-      // 
+      //
       this.label5.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label5.AutoSize = true;
       this.label5.Location = new System.Drawing.Point(24, 161);
@@ -220,9 +220,9 @@ namespace Altaxo.Gui.Graph
       this.label5.Size = new System.Drawing.Size(38, 13);
       this.label5.TabIndex = 18;
       this.label5.Text = "Pos.X:";
-      // 
+      //
       // label6
-      // 
+      //
       this.label6.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label6.AutoSize = true;
       this.label6.Location = new System.Drawing.Point(24, 187);
@@ -230,9 +230,9 @@ namespace Altaxo.Gui.Graph
       this.label6.Size = new System.Drawing.Size(38, 13);
       this.label6.TabIndex = 19;
       this.label6.Text = "Pos.Y:";
-      // 
+      //
       // label7
-      // 
+      //
       this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label7.AutoSize = true;
       this.label7.Location = new System.Drawing.Point(207, 161);
@@ -240,9 +240,9 @@ namespace Altaxo.Gui.Graph
       this.label7.Size = new System.Drawing.Size(38, 13);
       this.label7.TabIndex = 20;
       this.label7.Text = "Width:";
-      // 
+      //
       // label8
-      // 
+      //
       this.label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label8.AutoSize = true;
       this.label8.Location = new System.Drawing.Point(204, 187);
@@ -250,9 +250,9 @@ namespace Altaxo.Gui.Graph
       this.label8.Size = new System.Drawing.Size(41, 13);
       this.label8.TabIndex = 21;
       this.label8.Text = "Height:";
-      // 
+      //
       // label9
-      // 
+      //
       this.label9.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label9.AutoSize = true;
       this.label9.Location = new System.Drawing.Point(12, 214);
@@ -260,9 +260,9 @@ namespace Altaxo.Gui.Graph
       this.label9.Size = new System.Drawing.Size(50, 13);
       this.label9.TabIndex = 22;
       this.label9.Text = "Rotation:";
-      // 
+      //
       // label10
-      // 
+      //
       this.label10.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label10.AutoSize = true;
       this.label10.Location = new System.Drawing.Point(195, 88);
@@ -270,9 +270,9 @@ namespace Altaxo.Gui.Graph
       this.label10.Size = new System.Drawing.Size(50, 13);
       this.label10.TabIndex = 23;
       this.label10.Text = "Min.Size:";
-      // 
+      //
       // label11
-      // 
+      //
       this.label11.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.label11.AutoSize = true;
       this.label11.Location = new System.Drawing.Point(195, 115);
@@ -280,22 +280,22 @@ namespace Altaxo.Gui.Graph
       this.label11.Size = new System.Drawing.Size(50, 13);
       this.label11.TabIndex = 24;
       this.label11.Text = "Min.Size:";
-      // 
+      //
       // _cbColor
-      // 
+      //
       this._cbColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbColor.FormattingEnabled = true;
       this._cbColor.ItemHeight = 15;
-  
+
       this._cbColor.Location = new System.Drawing.Point(68, 3);
       this._cbColor.Name = "_cbColor";
       this._cbColor.Size = new System.Drawing.Size(121, 21);
       this._cbColor.TabIndex = 1;
-      // 
+      //
       // _cbRotation
-      // 
+      //
       this._cbRotation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbRotation.FormattingEnabled = true;
       this._cbRotation.ItemHeight = 15;
@@ -312,9 +312,9 @@ namespace Altaxo.Gui.Graph
       this._cbRotation.Name = "_cbRotation";
       this._cbRotation.Size = new System.Drawing.Size(121, 21);
       this._cbRotation.TabIndex = 12;
-      // 
+      //
       // _cbDashStyle
-      // 
+      //
       this._cbDashStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbDashStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbDashStyle.FormattingEnabled = true;
@@ -323,20 +323,20 @@ namespace Altaxo.Gui.Graph
       this._cbDashStyle.Name = "_cbDashStyle";
       this._cbDashStyle.Size = new System.Drawing.Size(121, 21);
       this._cbDashStyle.TabIndex = 0;
-      // 
+      //
       // _cbLineThickness
-      // 
+      //
       this._cbLineThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbLineThickness.FormattingEnabled = true;
       this._cbLineThickness.ItemHeight = 15;
-     
+
       this._cbLineThickness.Location = new System.Drawing.Point(68, 57);
       this._cbLineThickness.Name = "_cbLineThickness";
       this._cbLineThickness.Size = new System.Drawing.Size(121, 21);
       this._cbLineThickness.TabIndex = 2;
-      // 
+      //
       // _cbStartCap
-      // 
+      //
       this._cbStartCap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbStartCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbStartCap.FormattingEnabled = true;
@@ -345,9 +345,9 @@ namespace Altaxo.Gui.Graph
       this._cbStartCap.Name = "_cbStartCap";
       this._cbStartCap.Size = new System.Drawing.Size(121, 21);
       this._cbStartCap.TabIndex = 3;
-      // 
+      //
       // _cbEndCap
-      // 
+      //
       this._cbEndCap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbEndCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbEndCap.FormattingEnabled = true;
@@ -356,33 +356,33 @@ namespace Altaxo.Gui.Graph
       this._cbEndCap.Name = "_cbEndCap";
       this._cbEndCap.Size = new System.Drawing.Size(121, 21);
       this._cbEndCap.TabIndex = 4;
-      // 
+      //
       // _cbStartCapSize
-      // 
+      //
       this._cbStartCapSize.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbStartCapSize.FormattingEnabled = true;
       this._cbStartCapSize.ItemHeight = 15;
-     
+
       this._cbStartCapSize.Location = new System.Drawing.Point(251, 84);
       this._cbStartCapSize.Name = "_cbStartCapSize";
       this._cbStartCapSize.Size = new System.Drawing.Size(121, 21);
       this._cbStartCapSize.TabIndex = 5;
       this._cbStartCapSize.Thickness = 8F;
-      // 
+      //
       // _cbEndCapSize
-      // 
+      //
       this._cbEndCapSize.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbEndCapSize.FormattingEnabled = true;
       this._cbEndCapSize.ItemHeight = 15;
-    
+
       this._cbEndCapSize.Location = new System.Drawing.Point(251, 111);
       this._cbEndCapSize.Name = "_cbEndCapSize";
       this._cbEndCapSize.Size = new System.Drawing.Size(121, 21);
       this._cbEndCapSize.TabIndex = 6;
       this._cbEndCapSize.Thickness = 8F;
-      // 
+      //
       // _penGlue
-      // 
+      //
       this._penGlue.CbBrushColor = this._cbColor;
       this._penGlue.CbBrushColor2 = null;
       this._penGlue.CbBrushHatchStyle = null;
@@ -397,17 +397,17 @@ namespace Altaxo.Gui.Graph
       this._penGlue.CbStartCap = this._cbStartCap;
       this._penGlue.CbStartCapSize = this._cbStartCapSize;
       this._penGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
-      // 
+      //
       // _positionSizeGlue
-      // 
+      //
       this._positionSizeGlue.CbRotation = this._cbRotation;
       this._positionSizeGlue.EdPositionX = this._edPositionX;
       this._positionSizeGlue.EdPositionY = this._edPositionY;
       this._positionSizeGlue.EdSizeX = this._edSizeX;
       this._positionSizeGlue.EdSizeY = this._edSizeY;
-      // 
+      //
       // LineGraphicControl
-      // 
+      //
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.AutoSize = true;

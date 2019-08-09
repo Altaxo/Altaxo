@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -52,7 +52,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public virtual void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
-      
+
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public virtual void OnMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
       m_LastMouseUp = new Point(e.X,e.Y);
-      
+
     }
 
     /// <summary>
@@ -74,9 +74,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public virtual void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
       m_LastMouseDown = new Point(e.X,e.Y);
-      
+
     }
-      
+
     /// <summary>
     /// Handles the mouse click event.
     /// </summary>
@@ -84,9 +84,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public virtual void OnClick(System.EventArgs e)
     {
-      
+
     }
-      
+
     /// <summary>
     /// Handles the mouse doubleclick event.
     /// </summary>
@@ -94,7 +94,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public virtual void OnDoubleClick(System.EventArgs e)
     {
-      
+
     }
 
 
@@ -124,6 +124,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       return false; // per default the key is not processed
     }
   }
- 
+
 
 }

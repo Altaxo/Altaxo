@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Worksheet
     private System.Windows.Forms.TextBox _edFrom;
     private System.Windows.Forms.TextBox _edTo;
     private System.Windows.Forms.TextBox _edNumberOfPoints;
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Worksheet
 
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose( bool disposing )
@@ -82,8 +82,8 @@ namespace Altaxo.Gui.Worksheet
     }
 
     #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -97,18 +97,18 @@ namespace Altaxo.Gui.Worksheet
       this._edTo = new System.Windows.Forms.TextBox();
       this._edNumberOfPoints = new System.Windows.Forms.TextBox();
       this.SuspendLayout();
-      // 
+      //
       // label1
-      // 
+      //
       this.label1.Location = new System.Drawing.Point(8, 8);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(48, 16);
       this.label1.TabIndex = 0;
       this.label1.Text = "Using:";
-      // 
+      //
       // _cbInterpolationClass
-      // 
-      this._cbInterpolationClass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this._cbInterpolationClass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this._cbInterpolationClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbInterpolationClass.Location = new System.Drawing.Point(64, 8);
@@ -116,34 +116,34 @@ namespace Altaxo.Gui.Worksheet
       this._cbInterpolationClass.Size = new System.Drawing.Size(192, 21);
       this._cbInterpolationClass.TabIndex = 1;
       this._cbInterpolationClass.SelectionChangeCommitted += new System.EventHandler(this._cbInterpolationClass_SelectionChangeCommitted);
-      // 
+      //
       // label2
-      // 
+      //
       this.label2.Location = new System.Drawing.Point(8, 56);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(56, 16);
       this.label2.TabIndex = 2;
       this.label2.Text = "From:";
-      // 
+      //
       // label3
-      // 
+      //
       this.label3.Location = new System.Drawing.Point(8, 88);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(56, 16);
       this.label3.TabIndex = 3;
       this.label3.Text = "To:";
-      // 
+      //
       // label4
-      // 
+      //
       this.label4.Location = new System.Drawing.Point(8, 120);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(56, 16);
       this.label4.TabIndex = 4;
       this.label4.Text = "No of pts:";
-      // 
+      //
       // _edFrom
-      // 
-      this._edFrom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this._edFrom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this._edFrom.Location = new System.Drawing.Point(64, 56);
       this._edFrom.Name = "_edFrom";
@@ -151,10 +151,10 @@ namespace Altaxo.Gui.Worksheet
       this._edFrom.TabIndex = 5;
       this._edFrom.Text = "textBox1";
       this._edFrom.Validating += new System.ComponentModel.CancelEventHandler(this._edFrom_Validating);
-      // 
+      //
       // _edTo
-      // 
-      this._edTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this._edTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this._edTo.Location = new System.Drawing.Point(64, 88);
       this._edTo.Name = "_edTo";
@@ -162,10 +162,10 @@ namespace Altaxo.Gui.Worksheet
       this._edTo.TabIndex = 6;
       this._edTo.Text = "textBox2";
       this._edTo.Validating += new System.ComponentModel.CancelEventHandler(this._edTo_Validating);
-      // 
+      //
       // _edNumberOfPoints
-      // 
-      this._edNumberOfPoints.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      //
+      this._edNumberOfPoints.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this._edNumberOfPoints.Location = new System.Drawing.Point(64, 120);
       this._edNumberOfPoints.Name = "_edNumberOfPoints";
@@ -173,9 +173,9 @@ namespace Altaxo.Gui.Worksheet
       this._edNumberOfPoints.TabIndex = 7;
       this._edNumberOfPoints.Text = "textBox3";
       this._edNumberOfPoints.Validating += new System.ComponentModel.CancelEventHandler(this._edNumberOfPoints_Validating);
-      // 
+      //
       // InterpolationControl
-      // 
+      //
       this.Controls.Add(this._edNumberOfPoints);
       this.Controls.Add(this._edTo);
       this.Controls.Add(this._edFrom);

@@ -377,7 +377,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
           needFirstValidMoleDensity = false;
           moleDensityForMinimumGibbsValue = moleDensity;
         }
-        else // there are at least two valid mole density values, thus we need to compare Gibbs values. 
+        else // there are at least two valid mole density values, thus we need to compare Gibbs values.
         {
           if (needFirstValidMoleDensityGibbsValue) // true if the Gibbs value for the first valid mole density needs to be calculated
           {

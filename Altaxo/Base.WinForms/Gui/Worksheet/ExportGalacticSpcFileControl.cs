@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Worksheet
     /// <param name="selectedColumns">The columns selected in the table.</param>
     public void Initialize(Altaxo.Data.DataTable table, IAscendingIntegerCollection selectedRows, IAscendingIntegerCollection selectedColumns)
     {
-     
+
     }
 
 
@@ -164,10 +164,10 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     public string XValuesColumnName
     {
-      get 
+      get
 			{
 				GuiHelper.SynchronizeSelectionFromGui(m_cbXValues_Column);
-				return (string)this.m_cbXValues_Column.SelectedItem; 
+				return (string)this.m_cbXValues_Column.SelectedItem;
 			}
     }
 
@@ -193,10 +193,10 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     public string ExtFileNameColumnName
     {
-      get 
+      get
 			{
 				GuiHelper.SynchronizeSelectionFromGui(m_cbExtFileName_Column);
-				return (string)this.m_cbExtFileName_Column.SelectedItem; 
+				return (string)this.m_cbExtFileName_Column.SelectedItem;
 			}
     }
 
@@ -248,34 +248,34 @@ namespace Altaxo.Gui.Worksheet
       this.m_grpExtendFileName.SuspendLayout();
       this.m_grpCreateSpectrum.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // m_lbl_BasicFileNameAndPath
-      // 
+      //
       this.m_lbl_BasicFileNameAndPath.Location = new System.Drawing.Point(16, 8);
       this.m_lbl_BasicFileNameAndPath.Name = "m_lbl_BasicFileNameAndPath";
       this.m_lbl_BasicFileNameAndPath.Size = new System.Drawing.Size(168, 16);
       this.m_lbl_BasicFileNameAndPath.TabIndex = 0;
       this.m_lbl_BasicFileNameAndPath.Text = "Basic file name and path:";
-      // 
+      //
       // m_edBasicFileNameAndPath
-      // 
+      //
       this.m_edBasicFileNameAndPath.Location = new System.Drawing.Point(16, 24);
       this.m_edBasicFileNameAndPath.Name = "m_edBasicFileNameAndPath";
       this.m_edBasicFileNameAndPath.Size = new System.Drawing.Size(320, 20);
       this.m_edBasicFileNameAndPath.TabIndex = 1;
       this.m_edBasicFileNameAndPath.Text = "";
-      // 
+      //
       // m_btChooseBasicFileNameAndPath
-      // 
+      //
       this.m_btChooseBasicFileNameAndPath.Location = new System.Drawing.Point(344, 24);
       this.m_btChooseBasicFileNameAndPath.Name = "m_btChooseBasicFileNameAndPath";
       this.m_btChooseBasicFileNameAndPath.Size = new System.Drawing.Size(32, 20);
       this.m_btChooseBasicFileNameAndPath.TabIndex = 2;
       this.m_btChooseBasicFileNameAndPath.Text = "...";
       this.m_btChooseBasicFileNameAndPath.Click += new System.EventHandler(this.EhChooseBasicFileNameAndPath_Click);
-      // 
+      //
       // m_grpXValues
-      // 
+      //
       this.m_grpXValues.Controls.Add(this.m_cbXValues_Column);
       this.m_grpXValues.Controls.Add(this.m_rbXValues_FromColumn);
       this.m_grpXValues.Controls.Add(this.m_rbXValuesContinuousNumber);
@@ -285,27 +285,27 @@ namespace Altaxo.Gui.Worksheet
       this.m_grpXValues.TabIndex = 3;
       this.m_grpXValues.TabStop = false;
       this.m_grpXValues.Text = "X-values:";
-      // 
+      //
       // m_cbXValues_Column
-      // 
+      //
       this.m_cbXValues_Column.Enabled = false;
       this.m_cbXValues_Column.Location = new System.Drawing.Point(80, 48);
       this.m_cbXValues_Column.Name = "m_cbXValues_Column";
       this.m_cbXValues_Column.Size = new System.Drawing.Size(272, 21);
       this.m_cbXValues_Column.TabIndex = 2;
       this.m_cbXValues_Column.Text = "";
-      // 
+      //
       // m_rbXValues_FromColumn
-      // 
+      //
       this.m_rbXValues_FromColumn.Location = new System.Drawing.Point(16, 48);
       this.m_rbXValues_FromColumn.Name = "m_rbXValues_FromColumn";
       this.m_rbXValues_FromColumn.Size = new System.Drawing.Size(64, 16);
       this.m_rbXValues_FromColumn.TabIndex = 1;
       this.m_rbXValues_FromColumn.Text = "Column";
       this.m_rbXValues_FromColumn.CheckedChanged += new System.EventHandler(this.EhXValuesChooseOptions_CheckedChanged);
-      // 
+      //
       // m_rbXValuesContinuousNumber
-      // 
+      //
       this.m_rbXValuesContinuousNumber.Checked = true;
       this.m_rbXValuesContinuousNumber.Location = new System.Drawing.Point(16, 24);
       this.m_rbXValuesContinuousNumber.Name = "m_rbXValuesContinuousNumber";
@@ -314,9 +314,9 @@ namespace Altaxo.Gui.Worksheet
       this.m_rbXValuesContinuousNumber.TabStop = true;
       this.m_rbXValuesContinuousNumber.Text = "Continuous number";
       this.m_rbXValuesContinuousNumber.CheckedChanged += new System.EventHandler(this.EhXValuesChooseOptions_CheckedChanged);
-      // 
+      //
       // m_grpExtendFileName
-      // 
+      //
       this.m_grpExtendFileName.Controls.Add(this.m_cbExtFileName_Column);
       this.m_grpExtendFileName.Controls.Add(this.m_rbFileName_FromColumn);
       this.m_grpExtendFileName.Controls.Add(this.m_rbExtFileName_ContinuousNumber);
@@ -326,27 +326,27 @@ namespace Altaxo.Gui.Worksheet
       this.m_grpExtendFileName.TabIndex = 4;
       this.m_grpExtendFileName.TabStop = false;
       this.m_grpExtendFileName.Text = "Extend file name by:";
-      // 
+      //
       // m_cbExtFileName_Column
-      // 
+      //
       this.m_cbExtFileName_Column.Enabled = false;
       this.m_cbExtFileName_Column.Location = new System.Drawing.Point(80, 48);
       this.m_cbExtFileName_Column.Name = "m_cbExtFileName_Column";
       this.m_cbExtFileName_Column.Size = new System.Drawing.Size(272, 21);
       this.m_cbExtFileName_Column.TabIndex = 2;
       this.m_cbExtFileName_Column.Text = "";
-      // 
+      //
       // m_rbFileName_FromColumn
-      // 
+      //
       this.m_rbFileName_FromColumn.Location = new System.Drawing.Point(16, 48);
       this.m_rbFileName_FromColumn.Name = "m_rbFileName_FromColumn";
       this.m_rbFileName_FromColumn.Size = new System.Drawing.Size(64, 16);
       this.m_rbFileName_FromColumn.TabIndex = 1;
       this.m_rbFileName_FromColumn.Text = "Column";
       this.m_rbFileName_FromColumn.CheckedChanged += new System.EventHandler(this.EhFileNameExtendOptions1_CheckedChanged);
-      // 
+      //
       // m_rbExtFileName_ContinuousNumber
-      // 
+      //
       this.m_rbExtFileName_ContinuousNumber.Checked = true;
       this.m_rbExtFileName_ContinuousNumber.Location = new System.Drawing.Point(16, 24);
       this.m_rbExtFileName_ContinuousNumber.Name = "m_rbExtFileName_ContinuousNumber";
@@ -355,10 +355,10 @@ namespace Altaxo.Gui.Worksheet
       this.m_rbExtFileName_ContinuousNumber.TabStop = true;
       this.m_rbExtFileName_ContinuousNumber.Text = "Continuous number";
       this.m_rbExtFileName_ContinuousNumber.CheckedChanged += new System.EventHandler(this.EhFileNameExtendOptions1_CheckedChanged);
-     
-      // 
+
+      //
       // m_grpCreateSpectrum
-      // 
+      //
       this.m_grpCreateSpectrum.Controls.Add(this.m_rbCreateSpectrum_FromColumn);
       this.m_grpCreateSpectrum.Controls.Add(this.m_rbCreateSpectrum_FromRow);
       this.m_grpCreateSpectrum.Location = new System.Drawing.Point(16, 56);
@@ -367,18 +367,18 @@ namespace Altaxo.Gui.Worksheet
       this.m_grpCreateSpectrum.TabIndex = 7;
       this.m_grpCreateSpectrum.TabStop = false;
       this.m_grpCreateSpectrum.Text = "Create a spectrum from:";
-      // 
+      //
       // m_rbCreateSpectrum_FromColumn
-      // 
+      //
       this.m_rbCreateSpectrum_FromColumn.Location = new System.Drawing.Point(136, 24);
       this.m_rbCreateSpectrum_FromColumn.Name = "m_rbCreateSpectrum_FromColumn";
       this.m_rbCreateSpectrum_FromColumn.Size = new System.Drawing.Size(144, 16);
       this.m_rbCreateSpectrum_FromColumn.TabIndex = 1;
       this.m_rbCreateSpectrum_FromColumn.Text = "Data on a column";
       this.m_rbCreateSpectrum_FromColumn.CheckedChanged += new System.EventHandler(this.EhCreateSpectrumFrom_CheckedChanged);
-      // 
+      //
       // m_rbCreateSpectrum_FromRow
-      // 
+      //
       this.m_rbCreateSpectrum_FromRow.Checked = true;
       this.m_rbCreateSpectrum_FromRow.Location = new System.Drawing.Point(16, 24);
       this.m_rbCreateSpectrum_FromRow.Name = "m_rbCreateSpectrum_FromRow";
@@ -387,9 +387,9 @@ namespace Altaxo.Gui.Worksheet
       this.m_rbCreateSpectrum_FromRow.TabStop = true;
       this.m_rbCreateSpectrum_FromRow.Text = "Data on a row";
       this.m_rbCreateSpectrum_FromRow.CheckedChanged += new System.EventHandler(this.EhCreateSpectrumFrom_CheckedChanged);
-      // 
+      //
       // ExportGalacticSpcFileDialog
-      // 
+      //
       this.ClientSize = new System.Drawing.Size(384, 386);
       this.Controls.Add(this.m_grpCreateSpectrum);
       this.Controls.Add(this.m_grpExtendFileName);
@@ -409,9 +409,9 @@ namespace Altaxo.Gui.Worksheet
 
     private void EhChooseBasicFileNameAndPath_Click(object sender, System.EventArgs e)
     {
-			
+
       if(null!=BasicFileNameAndPathChoose)
-				BasicFileNameAndPathChoose();    
+				BasicFileNameAndPathChoose();
     }
 
     private void EhCreateSpectrumFrom_CheckedChanged(object sender, System.EventArgs e)

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -35,7 +35,7 @@ namespace Altaxo.Graph.GUI
   /// <summary>
   /// Summary description for GraphView.
   /// </summary>
-  public class GraphView : System.Windows.Forms.UserControl, 
+  public class GraphView : System.Windows.Forms.UserControl,
 		Altaxo.Gui.Graph.Viewing.IGraphView
   {
     private System.Windows.Forms.ImageList _graphToolsImages;
@@ -46,7 +46,7 @@ namespace Altaxo.Graph.GUI
     private System.ComponentModel.IContainer components;
     private Altaxo.Graph.GUI.WinFormsGraphController _winFormsController;
 		private Altaxo.Gui.Graph.Viewing.GraphController _controller;
-		
+
     [Browsable(false)]
     private MainMenu _mainMenu;
 
@@ -55,7 +55,7 @@ namespace Altaxo.Graph.GUI
 		private VScrollBar _verticalScrollBar;
 		private HScrollBar _horizontalScrollBar;
 
-   
+
 
     [Browsable(false)]
     private int        _cachedCurrentLayer = -1;
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.GUI
 
 			_winFormsController = new WinFormsGraphController(this);
 
-			
+
     }
 
     /// <summary>
@@ -107,22 +107,22 @@ namespace Altaxo.Graph.GUI
 			this._horizontalScrollBar = new System.Windows.Forms.HScrollBar();
 			this._graphPanel = new Altaxo.Graph.GUI.GraphPanel();
 			this.SuspendLayout();
-			// 
+			//
 			// m_GraphToolsImages
-			// 
+			//
 			this._graphToolsImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_GraphToolsImages.ImageStream")));
 			this._graphToolsImages.TransparentColor = System.Drawing.Color.Transparent;
 			this._graphToolsImages.Images.SetKeyName(0, "");
 			this._graphToolsImages.Images.SetKeyName(1, "");
-			// 
+			//
 			// m_LayerButtonImages
-			// 
+			//
 			this._layerButtonImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
 			this._layerButtonImages.ImageSize = new System.Drawing.Size(1, 1);
 			this._layerButtonImages.TransparentColor = System.Drawing.Color.Transparent;
-			// 
+			//
 			// m_LayerToolbar
-			// 
+			//
 			this._layerToolbar.ButtonSize = new System.Drawing.Size(22, 22);
 			this._layerToolbar.Dock = System.Windows.Forms.DockStyle.Left;
 			this._layerToolbar.DropDownArrows = true;
@@ -134,9 +134,9 @@ namespace Altaxo.Graph.GUI
 			this._layerToolbar.TabIndex = 0;
 			this._layerToolbar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhLayerToolbar_ButtonClick);
 			this._layerToolbar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhLayerToolbar_MouseDown);
-			// 
+			//
 			// _verticalScrollBar
-			// 
+			//
 			this._verticalScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
 			this._verticalScrollBar.Location = new System.Drawing.Point(317, 0);
 			this._verticalScrollBar.Maximum = 1000000;
@@ -145,9 +145,9 @@ namespace Altaxo.Graph.GUI
 			this._verticalScrollBar.TabIndex = 1;
 			this._verticalScrollBar.Visible = false;
 			this._verticalScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhVerticalScrollBar_Scroll);
-			// 
+			//
 			// _horizontalScrollBar
-			// 
+			//
 			this._horizontalScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 									| System.Windows.Forms.AnchorStyles.Right)));
 			this._horizontalScrollBar.Location = new System.Drawing.Point(22, 294);
@@ -157,9 +157,9 @@ namespace Altaxo.Graph.GUI
 			this._horizontalScrollBar.TabIndex = 2;
 			this._horizontalScrollBar.Visible = false;
 			this._horizontalScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhHorizontalScrollBar_Scroll);
-			// 
+			//
 			// m_GraphPanel
-			// 
+			//
 			this._graphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._graphPanel.Location = new System.Drawing.Point(22, 0);
 			this._graphPanel.Name = "m_GraphPanel";
@@ -172,9 +172,9 @@ namespace Altaxo.Graph.GUI
 			this._graphPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseDown);
 			this._graphPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseUp);
 			this._graphPanel.SizeChanged += new System.EventHandler(this.EhGraphPanel_SizeChanged);
-			// 
+			//
 			// GraphView
-			// 
+			//
 			this.Controls.Add(this._horizontalScrollBar);
 			this.Controls.Add(this._verticalScrollBar);
 			this.Controls.Add(this._graphPanel);
@@ -187,8 +187,8 @@ namespace Altaxo.Graph.GUI
     }
     #endregion
 
-  
-    
+
+
     public Altaxo.Graph.GUI.WinFormsGraphController WinFormsController
     {
       get { return _winFormsController; }
@@ -224,7 +224,7 @@ namespace Altaxo.Graph.GUI
       if(null!=_controller)
       {
         int pushedLayerNumber = System.Convert.ToInt32(e.Button.Text);
-    
+
         _controller.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
       }
     }
@@ -290,7 +290,7 @@ namespace Altaxo.Graph.GUI
         _controller.EhView_GraphPanelSizeChanged();
     }
 
-  
+
 
     private void EhGraphToolsToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
     {
@@ -304,7 +304,7 @@ namespace Altaxo.Graph.GUI
 
     }
 
-    
+
 
     public void OnViewDeselection()
     {
@@ -312,10 +312,10 @@ namespace Altaxo.Graph.GUI
         _graphToolsToolBar.Parent=null;
     }
 
-  
+
 
     #region IGraphView Members
- 
+
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public MainMenu GraphMenu
     {
@@ -343,7 +343,7 @@ namespace Altaxo.Graph.GUI
 
 
 		/// <summary>
-		/// Get / sets the AutoScroll size property 
+		/// Get / sets the AutoScroll size property
 		/// </summary>
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool ShowGraphScrollBars
@@ -359,8 +359,8 @@ namespace Altaxo.Graph.GUI
     /// Get /sets the scroll position of the graph
     /// </summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public PointF GraphScrollPosition 
-    { 
+    public PointF GraphScrollPosition
+    {
       get
       {
 				return new PointF(_horizontalScrollBar.Value/(float)_horizontalScrollBar.Maximum, _verticalScrollBar.Value/(float)_verticalScrollBar.Maximum);
@@ -385,7 +385,7 @@ namespace Altaxo.Graph.GUI
         return this._graphPanel.Size;
       }
     }
-   
+
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int CurrentLayer
     {
@@ -428,7 +428,7 @@ namespace Altaxo.Graph.GUI
 
     /// <summary>
     /// This function is to solve the problem, that after selection of the graph window by
-    /// clicking in the graphdoc, the View did not receive KeyPressed messages. 
+    /// clicking in the graphdoc, the View did not receive KeyPressed messages.
     /// The cause was that by clicking the graphdoc, the control did not receive focus, because
     /// it was at this moment invisible. By making it explicit visible it now can receive the focus.
     /// </summary>
@@ -437,10 +437,10 @@ namespace Altaxo.Graph.GUI
       this.Parent.Show();
       this.Show();
       this.Focus();
-     
+
     }
 
-   
+
     /// <summary>
     /// Sets the Cursor of the graph panel.
     /// </summary>
@@ -487,7 +487,7 @@ namespace Altaxo.Graph.GUI
 
 		public void SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType value)
 		{
-			
+
 				_winFormsController.GraphTool = value;
 				if (null != _controller)
 					_controller.EhView_CurrentGraphToolChanged();
@@ -526,7 +526,7 @@ namespace Altaxo.Graph.GUI
 			_winFormsController.RefreshGraph();
 		}
 
-	
+
 		public SizeF ViewportSizeInInch
 		{
 			get
@@ -550,7 +550,7 @@ namespace Altaxo.Graph.GUI
 			}
 		}
 
-	
+
 
 		public IList<IHitTestObject> SelectedObjects
 		{
@@ -560,7 +560,7 @@ namespace Altaxo.Graph.GUI
 			}
 		}
 
-	
+
 
 
 		Altaxo.Gui.Graph.Viewing.GraphToolType Altaxo.Gui.Graph.Viewing.IGraphView.GraphTool
@@ -582,5 +582,3 @@ namespace Altaxo.Graph.GUI
 
 	}
 }
-  
-

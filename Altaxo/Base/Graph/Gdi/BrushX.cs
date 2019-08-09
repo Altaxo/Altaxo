@@ -1,4 +1,4 @@
-#region Copyright
+ï»¿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -98,12 +98,12 @@ namespace Altaxo.Graph.Gdi
     protected NamedColor _foreColor; // Color of the brush
     protected NamedColor _backColor = NamedColors.Transparent; // Backcolor of brush, f.i.f. HatchStyle brushes
     protected bool _exchangeColors;
-    protected WrapMode _wrapMode; // für TextureBrush und LinearGradientBrush
+    protected WrapMode _wrapMode; // fÃ¼r TextureBrush und LinearGradientBrush
     protected double _angle;
     protected double _offsetX;
     protected double _offsetY;
     protected double _gradientColorScale;
-    protected ImageProxy _textureImage; // für Texturebrush
+    protected ImageProxy _textureImage; // fÃ¼r Texturebrush
     protected TextureScaling _textureScale = TextureScaling.Default;
 
     protected RectangleD2D _brushBoundingRectangle;
@@ -644,12 +644,12 @@ namespace Altaxo.Graph.Gdi
       _foreColor = from._foreColor; // Color of the brush
       _backColor = from._backColor; // Backcolor of brush, f.i.f. HatchStyle brushes
       _exchangeColors = from._exchangeColors;
-      _wrapMode = from._wrapMode; // für TextureBrush und LinearGradientBrush
+      _wrapMode = from._wrapMode; // fÃ¼r TextureBrush und LinearGradientBrush
       _angle = from._angle;
       _offsetX = from._offsetX;
       _offsetY = from._offsetY;
       _gradientColorScale = from._gradientColorScale;
-      _textureImage = null == from._textureImage ? null : (ImageProxy)from._textureImage.Clone(); // für Texturebrush
+      _textureImage = null == from._textureImage ? null : (ImageProxy)from._textureImage.Clone(); // fÃ¼r Texturebrush
       _textureScale = from._textureScale;
 
       _brushBoundingRectangle = from._brushBoundingRectangle;

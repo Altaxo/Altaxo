@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -24,12 +24,12 @@ namespace Altaxo.Gui.Common
 {
   partial class TypeAndInstanceControl
   {
-    /// <summary> 
+    /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -44,8 +44,8 @@ namespace Altaxo.Gui.Common
 
     #region Component Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
@@ -58,9 +58,9 @@ namespace Altaxo.Gui.Common
       this._verticalPanel.SuspendLayout();
       this._horzizontalPanel.SuspendLayout();
       this.SuspendLayout();
-      // 
+      //
       // _verticalPanel
-      // 
+      //
       this._verticalPanel.AutoSize = true;
       this._verticalPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._verticalPanel.Controls.Add(this._horzizontalPanel);
@@ -71,9 +71,9 @@ namespace Altaxo.Gui.Common
       this._verticalPanel.Name = "_verticalPanel";
       this._verticalPanel.Size = new System.Drawing.Size(242, 39);
       this._verticalPanel.TabIndex = 0;
-      // 
+      //
       // _horzizontalPanel
-      // 
+      //
       this._horzizontalPanel.AutoSize = true;
       this._horzizontalPanel.Controls.Add(this._lblCSType);
       this._horzizontalPanel.Controls.Add(this._cbTypeChoice);
@@ -81,18 +81,18 @@ namespace Altaxo.Gui.Common
       this._horzizontalPanel.Name = "_horzizontalPanel";
       this._horzizontalPanel.Size = new System.Drawing.Size(236, 27);
       this._horzizontalPanel.TabIndex = 0;
-      // 
+      //
       // _lblCSType
-      // 
+      //
       this._lblCSType.AutoSize = true;
       this._lblCSType.Location = new System.Drawing.Point(3, 0);
       this._lblCSType.Name = "_lblCSType";
       this._lblCSType.Size = new System.Drawing.Size(34, 13);
       this._lblCSType.TabIndex = 0;
       this._lblCSType.Text = "Type:";
-      // 
+      //
       // _cbTypeChoice
-      // 
+      //
       this._cbTypeChoice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this._cbTypeChoice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbTypeChoice.FormattingEnabled = true;
@@ -101,17 +101,17 @@ namespace Altaxo.Gui.Common
       this._cbTypeChoice.Size = new System.Drawing.Size(190, 21);
       this._cbTypeChoice.TabIndex = 1;
       this._cbTypeChoice.SelectionChangeCommitted += new System.EventHandler(this.EhSelectionChangeCommitted);
-      // 
+      //
       // _panelForSubControl
-      // 
+      //
       this._panelForSubControl.AutoSize = true;
       this._panelForSubControl.Location = new System.Drawing.Point(3, 36);
       this._panelForSubControl.Name = "_panelForSubControl";
       this._panelForSubControl.Size = new System.Drawing.Size(0, 0);
       this._panelForSubControl.TabIndex = 1;
-      // 
+      //
       // TypeAndInstanceControl
-      // 
+      //
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.AutoSize = true;

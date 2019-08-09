@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Common.Drawing
         e.DrawBackground();
 
       BrushType item = e.Index>=0 ? (BrushType)Items[e.Index] : BrushType.SolidBrush;
-    
+
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
       Brush fillbrush = foreColorBrush;
 

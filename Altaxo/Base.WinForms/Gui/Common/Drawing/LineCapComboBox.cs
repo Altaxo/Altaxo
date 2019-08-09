@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2007 Dr. Dirk Lellinger
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected override void OnDrawItem(DrawItemEventArgs e)
     {
-     
+
       Graphics grfx = e.Graphics;
       Rectangle rectColor = new Rectangle(e.Bounds.Left, e.Bounds.Top, 2 * e.Bounds.Height, e.Bounds.Height);
       rectColor.Inflate(-1, -1);
