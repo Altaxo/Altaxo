@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo;DoCompileShaders">
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
     <UseWPF>true</UseWPF>
@@ -52,7 +52,7 @@
   </ItemGroup>
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
-  <Target Name="DoCompileShaders" AfterTargets="Compile">
+  <Target Name="DoCompileShaders">
     <Shader InputFiles="@(Fx40File)" OutputPath="$(ProjectDir)\CompiledShaders\Effects" Profile="fx_4_0" />
     <Shader InputFiles="@(Vs40File)" OutputPath="$(ProjectDir)\CompiledShaders\VS" Profile="vs_4_0" EntryPoint="VS" />
     <Shader InputFiles="@(Ps40File)" OutputPath="$(ProjectDir)\CompiledShaders\PS" Profile="ps_4_0" EntryPoint="PS" />
