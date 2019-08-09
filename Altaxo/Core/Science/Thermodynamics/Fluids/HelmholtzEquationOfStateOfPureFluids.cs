@@ -119,8 +119,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public override IEnumerable<double> MoleDensityEstimates_FromPressureAndTemperature(double pressure, double temperature)
     {
       // find good start values
-      double moleDensityEstimate;
-      double? moleDensityEstimateAlt = null;
       if (temperature >= CriticalPointTemperature || pressure >= CriticalPointPressure)
       {
         // we can treat this as a gas
@@ -133,14 +131,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         if (temperature > temperatureBoundary + 1)
         {
           // then it is a gas
-          yield return moleDensityEstimate = vaporDens * (temperatureBoundary / temperature);
+          yield return vaporDens * (temperatureBoundary / temperature);
         }
         else if (temperature < temperatureBoundary - 1)
         {
           // then it is a liquid or a solid
 
 
-          yield return moleDensityEstimate = SaturatedLiquidMoleDensityEstimate_FromTemperature(temperature);
+          yield return SaturatedLiquidMoleDensityEstimate_FromTemperature(temperature);
         }
         else
         {
@@ -227,6 +225,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// This is done by iteration, using multivariate Newton-Raphson.
     /// </summary>
     /// <param name="pressure">The pressure in Pa. Must be greater than or equal the triple point pressure and less than or equal to the critical point pressure.</param>
+    /// <param name="relativeAccuracy">The relative accuracy of the calculation.</param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     public (double liquidMoleDensity, double vaporMoleDensity, double temperature) SaturatedLiquidAndVaporMoleDensitiesAndTemperature_FromPressure(double pressure, double relativeAccuracy = 1E-6)
@@ -340,6 +339,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// This is done by iteration, using multivariate Newton-Raphson.
     /// </summary>
     /// <param name="temperature">The temperature in Kelvin. Must be greater than or equal the triple point temperature and less than or equal to the critical point temperature.</param>
+    /// <param name="relativeAccuracy">The relative accuracy of the calculation.</param>
     /// <returns>A tuple consisting of the liquid mole density (mol/m³), the vapor mole density (mol/m³), and the pressure in Pa.</returns>
     /// <exception cref="NotImplementedException"></exception>
     public (double liquidMoleDensity, double vaporMoleDensity, double pressure) SaturatedLiquidAndVaporMoleDensitiesAndPressure_FromTemperature(double temperature, double relativeAccuracy = 1E-6)
@@ -356,6 +356,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <param name="temperature">The temperature in Kelvin. Must be greater than or equal the triple point temperature and less than or equal to the critical point temperature.</param>
     /// <param name="liquidMoleDensity">Starting value for the liquid mole density (mol/m³) for the iteration.</param>
     /// <param name="vaporMoleDensity">Starting value for the vapor mole density (mol/m³) for the iteration.</param>
+    /// <param name="relativeAccuracy">The relative accuracy of the calculation.</param>
     /// <returns>A tuple consisting of the liquid mole density (mol/m³), the vapor mole density (mol/m³), and the pressure in Pa.</returns>
     /// <exception cref="NotImplementedException"></exception>
     public (double liquidMoleDensity, double vaporMoleDensity, double pressure) SaturatedLiquidAndVaporMoleDensitiesAndPressure_FromTemperature(double temperature, double liquidMoleDensity, double vaporMoleDensity, double relativeAccuracy = 1E-6)

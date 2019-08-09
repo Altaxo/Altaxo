@@ -50,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// This class provides members for inverting a symmetric square Toeplitz matrix
   /// (see <see cref="GetInverse"/> member), calculating the determinant of the matrix
   /// (see <see cref="GetDeterminant"/> member) and solving linear systems associated
-  /// with the matrix (see <see cref="Solve(IROVector{double})"/> members).
+  /// with the matrix (see <see cref="Solve(IReadOnlyList{double})"/> members).
   /// <para>
   /// The class implements an <B>UDL</B> decomposition of the inverse of the Toeplitz matrix.
   /// The decomposition is based upon Levinson's algorithm. As a consequence, all operations

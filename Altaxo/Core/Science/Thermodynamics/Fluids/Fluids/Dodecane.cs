@@ -42,7 +42,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
   /// <para>The source code was created automatically using the fluid file 'c12.fld' from the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
   /// <para>Further references (extracted from the fluid file):</para>
-  /// <para>EquationOfState (EOS): Lemmon, E.W. and Huber, M.L. "Thermodynamic Properties of n-Dodecane," Energy & Fuels, 18:960-967, 2004.</para>
+  /// <para>EquationOfState (EOS): Lemmon, E.W. and Huber, M.L. "Thermodynamic Properties of n-Dodecane," Energy &amp; Fuels, 18:960-967, 2004.</para>
   /// <para>HeatCapacity (CPP): Lemmon, E.W., Based on TRC Thermodynamic Properties of Substances in the Ideal Gas State Version 1.0M, 1994.</para>
   /// <para>Saturated vapor pressure: Lemmon, C.K. and Lemmon, E.W., 2010.</para>
   /// <para>Saturated liquid density: Lemmon, C.K. and Lemmon, E.W., 2010.</para>

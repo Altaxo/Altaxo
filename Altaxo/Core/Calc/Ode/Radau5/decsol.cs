@@ -1964,7 +1964,6 @@ LABEL50:
       int MP1 = 0;
       double X = 0;
       double Y = 0;
-      double DABS = 0;
 
       #endregion Variables
 

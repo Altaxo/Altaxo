@@ -448,12 +448,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 			/// <summary>
-		/// Returns the L-infinity norm of the difference of the provided <paramref name="vector"/>s (as is the maximum of the absolute value of the elements). If one
+		/// Returns the L-infinity norm of the difference of <paramref name="vector1"/> and <paramref name="vector2"/> (as is the maximum of the absolute value of the differences of the elements). If one
 		/// of the elements of the vector is invalid, the return value is also invalid (for the floating point types).
 		/// </summary>
 		/// <param name="vector1">The first vector.</param>
 		/// <param name="vector2">The second vector. Must have same length as the first vector.</param>
-		/// <returns>The L-infinity norm of the provided <paramref name="vector"/> (as is the maximum of the absolute value of the elements).</returns>
+		/// <returns>The L-infinity norm of the element-wise differences of the provided vectors (as is the maximum of the absolute value of the differences).</returns>
 		public static double LInfinityNorm(double[] vector1, double[] vector2)
 		{
 			if( vector1.Length != vector2.Length)
@@ -1134,12 +1134,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 			/// <summary>
-		/// Returns the L-infinity norm of the difference of the provided <paramref name="vector"/>s (as is the maximum of the absolute value of the elements). If one
+		/// Returns the L-infinity norm of the difference of <paramref name="vector1"/> and <paramref name="vector2"/> (as is the maximum of the absolute value of the differences of the elements). If one
 		/// of the elements of the vector is invalid, the return value is also invalid (for the floating point types).
 		/// </summary>
 		/// <param name="vector1">The first vector.</param>
 		/// <param name="vector2">The second vector. Must have same length as the first vector.</param>
-		/// <returns>The L-infinity norm of the provided <paramref name="vector"/> (as is the maximum of the absolute value of the elements).</returns>
+		/// <returns>The L-infinity norm of the element-wise differences of the provided vectors (as is the maximum of the absolute value of the differences).</returns>
 		public static float LInfinityNorm(float[] vector1, float[] vector2)
 		{
 			if( vector1.Length != vector2.Length)
@@ -1818,12 +1818,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 			/// <summary>
-		/// Returns the L-infinity norm of the difference of the provided <paramref name="vector"/>s (as is the maximum of the absolute value of the elements). If one
+		/// Returns the L-infinity norm of the difference of <paramref name="vector1"/> and <paramref name="vector2"/> (as is the maximum of the absolute value of the differences of the elements). If one
 		/// of the elements of the vector is invalid, the return value is also invalid (for the floating point types).
 		/// </summary>
 		/// <param name="vector1">The first vector.</param>
 		/// <param name="vector2">The second vector. Must have same length as the first vector.</param>
-		/// <returns>The L-infinity norm of the provided <paramref name="vector"/> (as is the maximum of the absolute value of the elements).</returns>
+		/// <returns>The L-infinity norm of the element-wise differences of the provided vectors (as is the maximum of the absolute value of the differences).</returns>
 		public static long LInfinityNorm(int[] vector1, int[] vector2)
 		{
 			if( vector1.Length != vector2.Length)
@@ -2502,12 +2502,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 			/// <summary>
-		/// Returns the L-infinity norm of the difference of the provided <paramref name="vector"/>s (as is the maximum of the absolute value of the elements). If one
+		/// Returns the L-infinity norm of the difference of <paramref name="vector1"/> and <paramref name="vector2"/> (as is the maximum of the absolute value of the differences of the elements). If one
 		/// of the elements of the vector is invalid, the return value is also invalid (for the floating point types).
 		/// </summary>
 		/// <param name="vector1">The first vector.</param>
 		/// <param name="vector2">The second vector. Must have same length as the first vector.</param>
-		/// <returns>The L-infinity norm of the provided <paramref name="vector"/> (as is the maximum of the absolute value of the elements).</returns>
+		/// <returns>The L-infinity norm of the element-wise differences of the provided vectors (as is the maximum of the absolute value of the differences).</returns>
 		public static double LInfinityNorm(IReadOnlyList<double> vector1, IReadOnlyList<double> vector2)
 		{
 			if( vector1.Count != vector2.Count)
@@ -3188,12 +3188,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 			/// <summary>
-		/// Returns the L-infinity norm of the difference of the provided <paramref name="vector"/>s (as is the maximum of the absolute value of the elements). If one
+		/// Returns the L-infinity norm of the difference of <paramref name="vector1"/> and <paramref name="vector2"/> (as is the maximum of the absolute value of the differences of the elements). If one
 		/// of the elements of the vector is invalid, the return value is also invalid (for the floating point types).
 		/// </summary>
 		/// <param name="vector1">The first vector.</param>
 		/// <param name="vector2">The second vector. Must have same length as the first vector.</param>
-		/// <returns>The L-infinity norm of the provided <paramref name="vector"/> (as is the maximum of the absolute value of the elements).</returns>
+		/// <returns>The L-infinity norm of the element-wise differences of the provided vectors (as is the maximum of the absolute value of the differences).</returns>
 		public static float LInfinityNorm(IReadOnlyList<float> vector1, IReadOnlyList<float> vector2)
 		{
 			if( vector1.Count != vector2.Count)

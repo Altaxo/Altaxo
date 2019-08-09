@@ -67,7 +67,6 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>Compute the Jacobian</summary>
-      /// <param name="f">The derivative function. 1st arg is time, 2nd arg are current y, and the rates are returned in the 3rd arg.</param>
       /// <param name="t">Current time.</param>
       /// <param name="y">Current value of the variables of the ODE.</param>
       /// <returns>The (approximated) Jacobian matrix.</returns>
@@ -130,7 +129,6 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>Compute the Jacobian</summary>
-      /// <param name="f">The derivative function. 1st arg is time, 2nd arg are current y, and the rates are returned in the 3rd arg.</param>
       /// <param name="t">Current time.</param>
       /// <param name="y">Current value of the variables of the ODE.</param>
       /// <returns>The (approximated) Jacobian matrix.</returns>
@@ -339,8 +337,6 @@ namespace Altaxo.Calc.Ode
       /// Krishnan Radhakrishnan and Alan C.Hindmarsh "Description and Use of LSODE,
       /// the Livermore Solver of Ordinary Differential Equations"
       /// </summary>
-      /// <param name="arg">previous value of Nordsieck's matrix, so-called Z(n-1)</param>
-      /// <returns>So-called Zn0, initial vaue of Z in new step</returns>
       public void ZNew()
       {
         int q = _zn.ColumnCount;

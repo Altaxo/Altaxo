@@ -4521,7 +4521,7 @@ LABEL720:
       double CNQM1 = 0;
       double CSUM = 0;
       double ELP = 0;
-      int offset_em = 0;
+      // int offset_em = 0;
       int o_em = -1;
       double EM0 = 0;
       double FLOTI = 0;
@@ -7782,16 +7782,24 @@ LABEL40:
       // C
       //ERROR-ERROR      WRITE (LUNIT,10)  MSG;
       if (NI == 1)
-        ;//ERROR-ERRORWRITE(LUNIT,20)I1
+      {
+        //ERROR-ERRORWRITE(LUNIT,20)I1
+      }
       if (NI == 2)
-        ;//ERROR-ERRORWRITE(LUNIT,30)I1,I2
+      {
+        //ERROR-ERRORWRITE(LUNIT,30)I1,I2
+      }
       if (NR == 1)
-        ;//ERROR-ERRORWRITE(LUNIT,40)R1
+      {
+        //ERROR-ERRORWRITE(LUNIT,40)R1
+      }
       if (NR == 2)
-        ;//ERROR-ERRORWRITE(LUNIT,50)R1,R2
-         // C
-         // C  Abort the run if LEVEL = 2.
-         // C
+      {
+        //ERROR-ERRORWRITE(LUNIT,50)R1,R2
+      }
+// C
+// C  Abort the run if LEVEL = 2.
+// C
 LABEL100:
       if (LEVEL != 2)
         return;

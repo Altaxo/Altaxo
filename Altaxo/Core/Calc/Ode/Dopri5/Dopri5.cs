@@ -422,7 +422,9 @@ namespace Altaxo.Calc.Ode.Dopri5
         if (NMAX <= 0)
         {
           if (IPRINT > 0)
-            ; //ERROR-ERRORWRITE(IPRINT,*)' WRONG INPUT IWORK(1)=',IWORK(1)
+          {
+            //ERROR-ERRORWRITE(IPRINT,*)' WRONG INPUT IWORK(1)=',IWORK(1)
+          }
           ARRET = true;
         }
       }
@@ -437,7 +439,9 @@ namespace Altaxo.Calc.Ode.Dopri5
         if (METH <= 0 || METH >= 4)
         {
           if (IPRINT > 0)
-            ;//ERROR-ERRORWRITE(IPRINT,*)' CURIOUS INPUT IWORK(2)=',IWORK(2)
+          {
+            //ERROR-ERRORWRITE(IPRINT,*)' CURIOUS INPUT IWORK(2)=',IWORK(2)
+          }
           ARRET = true;
         }
       }
@@ -452,7 +456,9 @@ namespace Altaxo.Calc.Ode.Dopri5
       if (NRDENS < 0 || NRDENS > N)
       {
         if (IPRINT > 0)
-          ;//ERROR-ERRORWRITE(IPRINT,*)' CURIOUS INPUT IWORK(5)=',IWORK(5)
+        {
+          //ERROR-ERRORWRITE(IPRINT,*)' CURIOUS INPUT IWORK(5)=',IWORK(5)
+        }
         ARRET = true;
       }
       else
@@ -460,7 +466,9 @@ namespace Altaxo.Calc.Ode.Dopri5
         if (NRDENS > 0 && IOUT < 2)
         {
           if (IPRINT > 0)
-            ;//ERROR-ERRORWRITE(IPRINT,*)' WARNING: PUT IOUT=2 FOR DENSE OUTPUT '
+          {
+            //ERROR-ERRORWRITE(IPRINT,*)' WARNING: PUT IOUT=2 FOR DENSE OUTPUT '
+          }
         }
         if (NRDENS == N)
         {
@@ -481,7 +489,9 @@ namespace Altaxo.Calc.Ode.Dopri5
         if (UROUND <= 1.0E-35 || UROUND >= 1.0E0)
         {
           if (IPRINT > 0)
-            ;//ERROR-ERRORWRITE(IPRINT,*)' WHICH MACHINE DO YOU HAVE? YOUR UROUND WAS:',WORK(1)
+          {
+            //ERROR-ERRORWRITE(IPRINT,*)' WHICH MACHINE DO YOU HAVE? YOUR UROUND WAS:',WORK(1)
+          }
           ARRET = true;
         }
       }
@@ -496,7 +506,8 @@ namespace Altaxo.Calc.Ode.Dopri5
         if (SAFE >= 1.0E0 || SAFE <= 1.0E-4)
         {
           if (IPRINT > 0)
-            ;//ERROR-ERRORWRITE(IPRINT,*)' CURIOUS INPUT FOR SAFETY FACTOR WORK(2)=',WORK(2)
+          {//ERROR-ERRORWRITE(IPRINT,*)' CURIOUS INPUT FOR SAFETY FACTOR WORK(2)=',WORK(2)
+          }
           ARRET = true;
         }
       }
@@ -534,7 +545,9 @@ namespace Altaxo.Calc.Ode.Dopri5
           if (BETA > 0.2E0)
           {
             if (IPRINT > 0)
-              ;//ERROR-ERRORWRITE(IPRINT,*)' CURIOUS INPUT FOR BETA: WORK(5)=',WORK(5)
+            {
+              //ERROR-ERRORWRITE(IPRINT,*)' CURIOUS INPUT FOR BETA: WORK(5)=',WORK(5)
+            }
             ARRET = true;
           }
         }
@@ -565,7 +578,9 @@ namespace Altaxo.Calc.Ode.Dopri5
       if (ISTORE > LWORK)
       {
         if (IPRINT > 0)
-          ;//ERROR-ERRORWRITE(IPRINT,*)' INSUFFICIENT STORAGE FOR WORK, MIN. LWORK=',ISTORE
+        {
+          //ERROR-ERRORWRITE(IPRINT,*)' INSUFFICIENT STORAGE FOR WORK, MIN. LWORK=',ISTORE
+        }
         ARRET = true;
       }
       ICOMP = 21;
@@ -573,7 +588,9 @@ namespace Altaxo.Calc.Ode.Dopri5
       if (ISTORE > LIWORK)
       {
         if (IPRINT > 0)
-          ;//ERROR-ERRORWRITE(IPRINT,*)' INSUFFICIENT STORAGE FOR IWORK, MIN. LIWORK=',ISTORE
+        {
+          //ERROR-ERRORWRITE(IPRINT,*)' INSUFFICIENT STORAGE FOR IWORK, MIN. LIWORK=',ISTORE
+        }
         ARRET = true;
       }
       // C ------ WHEN A FAIL HAS OCCURED, WE RETURN WITH IDID=-1
@@ -953,7 +970,9 @@ LABEL1:
             if (IASTI == 15)
             {
               if (IPRINT > 0)
-                ;//ERROR-ERRORWRITE(IPRINT,*)' THE PROBLEM SEEMS TO BECOME STIFF AT X = ',X
+              {
+                //ERROR-ERRORWRITE(IPRINT,*)' THE PROBLEM SEEMS TO BECOME STIFF AT X = ',X
+              }
               if (IPRINT <= 0)
                 goto LABEL76;
             }
@@ -1026,23 +1045,32 @@ LABEL76:
 LABEL77:
       ;
       if (IPRINT > 0)
-        ;//ERROR-ERRORWRITE(IPRINT,979)X
+      {//ERROR-ERRORWRITE(IPRINT,979)X
+      }
       if (IPRINT > 0)
-        ;//ERROR-ERRORWRITE(IPRINT,*)' STEP SIZE T0O SMALL, H=',H
+      {
+        //ERROR-ERRORWRITE(IPRINT,*)' STEP SIZE T0O SMALL, H=',H
+      }
       IDID = -3;
       return;
 LABEL78:
       ;
       if (IPRINT > 0)
-        ;//ERROR-ERRORWRITE(IPRINT,979)X
+      {
+        //ERROR-ERRORWRITE(IPRINT,979)X
+      }
       if (IPRINT > 0)
-        ;//ERROR-ERRORWRITE(IPRINT,*)' MORE THAN NMAX =',NMAX,'STEPS ARE NEEDED'
+      {
+        //ERROR-ERRORWRITE(IPRINT,*)' MORE THAN NMAX =',NMAX,'STEPS ARE NEEDED'
+      }
       IDID = -2;
       return;
 LABEL79:
       ;
       if (IPRINT > 0)
-        ;//ERROR-ERRORWRITE(IPRINT,979)X
+      {
+        //ERROR-ERRORWRITE(IPRINT,979)X
+      }
       IDID = 2;
       return;
 

@@ -42,7 +42,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
   /// <para>The source code was created automatically using the fluid file 'mstearat.fld' from the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
   /// <para>Further references (extracted from the fluid file):</para>
-  /// <para>EquationOfState (EOS):  Huber, M.L., Lemmon, E.W., Kazakov, A., Ott, L.S., and Bruno, T.J. "Model for the Thermodynamic Properties of a Biodiesel Fuel," Energy & Fuels, 23:3790-3797, 2009.</para>
+  /// <para>EquationOfState (EOS):  Huber, M.L., Lemmon, E.W., Kazakov, A., Ott, L.S., and Bruno, T.J. "Model for the Thermodynamic Properties of a Biodiesel Fuel," Energy &amp; Fuels, 23:3790-3797, 2009.</para>
   /// <para>HeatCapacity (CPP):  TDE 3.0 internal version, March 2008, Planck-Einstein form based on estimation from Joback method, uncertainty 10%</para>
   /// <para>Saturated vapor pressure: Cullimore, I.D., 2010.</para>
   /// <para>Saturated liquid density: Cullimore, I.D., 2010.</para>

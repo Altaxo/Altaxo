@@ -39,7 +39,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
   /// <para>The source code was created automatically using the mixture file 'nitrogen-so2.mix' from the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
   /// <para>Further references (extracted from the mixture file):</para>
-  /// <para>Info: Bell & Herrig (2015)</para>
+  /// <para>Info: Bell &amp; Herrig (2015)</para>
   /// </remarks>
   [CASRegistryNumber("7727-37-9")]
   [CASRegistryNumber("7446-09-5")]

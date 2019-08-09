@@ -237,6 +237,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Matrix multiplication</summary>
+    /// <param name="m"></param>
     /// <param name="v">Vector</param>
     /// <returns></returns>
     public static DoubleVector operator *(SparseDoubleMatrix m, IReadOnlyList<double> v)
@@ -268,6 +269,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     /// <summary>Matrix multiplication</summary>
     /// <param name="v">Vector</param>
+    /// <param name="m"></param>
     /// <returns></returns>
     public static DoubleVector operator *(IReadOnlyList<double> v, SparseDoubleMatrix m)
     {
@@ -396,13 +398,13 @@ namespace Altaxo.Calc.LinearAlgebra
           {
             throw new NotImplementedException("Yet to be implemented and tested");
           }
-          break;
+
 
         case Zeros.Include:
           {
             throw new NotImplementedException("Yet to be implemented and tested");
           }
-          break;
+
       }
     }
 

@@ -114,7 +114,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<summary>Returns a subvector of this vector.</summary>
 		///<param name="startElement">Return data starting from this element.</param>
 		///<param name="endElement">Return data ending in this element.</param>
-		///<returns>A subvector of this vector<./returns>
+		///<returns>A subvector of this vector.</returns>
 		///<exception cref="ArgumentException">Exception thrown if <paramref>endElement</paramref> is greater than <paramref>startElement</paramref></exception>
 		///<exception cref="ArgumentOutOfRangeException">Exception thrown if input dimensions are out of the range of <c>FloatVector</c> dimensions</exception>
 		public new DoubleVector GetSubVector(int startElement, int endElement)
@@ -661,7 +661,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<summary>Returns a subvector of this vector.</summary>
 		///<param name="startElement">Return data starting from this element.</param>
 		///<param name="endElement">Return data ending in this element.</param>
-		///<returns>A subvector of this vector<./returns>
+		///<returns>A subvector of this vector.</returns>
 		///<exception cref="ArgumentException">Exception thrown if <paramref>endElement</paramref> is greater than <paramref>startElement</paramref></exception>
 		///<exception cref="ArgumentOutOfRangeException">Exception thrown if input dimensions are out of the range of <c>FloatVector</c> dimensions</exception>
 		public new FloatVector GetSubVector(int startElement, int endElement)

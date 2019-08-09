@@ -34,7 +34,7 @@ namespace Altaxo.Units.Angle
   {
     private static readonly Radian _instance = new Radian();
 
-    /// <summary>List with only the prefix <see cref="None"/>.</summary>
+    /// <summary>List with only the prefix <see cref="SIPrefix.None"/>.</summary>
     private static SIPrefixList _prefixList = new SIPrefixList(new SIPrefix[] { SIPrefix.None, SIPrefix.Micro, SIPrefix.Nano, SIPrefix.Pico });
 
     public static Radian Instance { get { return _instance; } }
