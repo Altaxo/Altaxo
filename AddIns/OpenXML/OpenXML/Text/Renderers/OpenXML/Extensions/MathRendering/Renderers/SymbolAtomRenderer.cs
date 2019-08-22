@@ -106,7 +106,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["widetilde"] = "\u0303", // in literature this is \u0360, but for Word it seems to be \u0303
 
       // < !--delimiters that can change size-- >
-
+      ["("] = "(",
+      [")"] = ")",
       ["lbrace"] = "{",
       ["rbrace"] = "}",
       ["lbrack"] = "[",
