@@ -6,7 +6,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>..\..\rtDir\bin</OutputPath>
-    <ApplicationIcon />
+    <ApplicationIcon>Altaxo.ico</ApplicationIcon>
     <OutputType>WinExe</OutputType>
     <StartupObject />
   </PropertyGroup>
