@@ -39,7 +39,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.AccentedAtom}" />
   internal class AccentedAtomRenderer : OpenXMLAtomRenderer<AccentedAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, AccentedAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, AccentedAtom item)
     {
 
       string accentString = string.Empty;
@@ -77,6 +77,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       renderer.Write(item.BaseAtom);
 
       renderer.PopTo(accent);
+
+      return WriteResult.Completed;
     }
   }
 }

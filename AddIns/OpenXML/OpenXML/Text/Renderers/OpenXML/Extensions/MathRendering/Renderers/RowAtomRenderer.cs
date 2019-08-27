@@ -37,10 +37,12 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.RowAtom}" />
   internal class RowAtomRenderer : OpenXMLAtomRenderer<RowAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, RowAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, RowAtom item)
     {
       foreach (var subItems in item.Elements)
         renderer.Write(subItems);
+
+      return WriteResult.Completed;
     }
   }
 }

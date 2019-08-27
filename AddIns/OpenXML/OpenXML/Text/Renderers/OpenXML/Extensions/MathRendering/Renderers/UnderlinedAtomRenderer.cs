@@ -39,7 +39,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.UnderlinedAtom}" />
   internal class UnderlinedAtomRenderer : OpenXMLAtomRenderer<UnderlinedAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, UnderlinedAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, UnderlinedAtom item)
     {
       var bar = renderer.Push(new Bar());
       var barProperties = new BarProperties();
@@ -64,6 +64,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       renderer.Write(item.BaseAtom);
 
       renderer.PopTo(bar);
+
+      return WriteResult.Completed;
     }
   }
 }

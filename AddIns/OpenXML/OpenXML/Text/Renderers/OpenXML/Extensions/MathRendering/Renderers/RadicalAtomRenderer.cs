@@ -38,7 +38,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.Radical}" />
   internal class RadicalAtomRenderer : OpenXMLAtomRenderer<WpfMath.Radical>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, WpfMath.Radical item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, WpfMath.Radical item)
     {
 
       var radicalEle = renderer.Push(new Radical());
@@ -74,6 +74,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       }
 
       renderer.PopTo(radicalEle);
+
+      return WriteResult.Completed;
     }
   }
 }

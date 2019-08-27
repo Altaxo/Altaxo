@@ -42,44 +42,35 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
   {
     protected WpfMathAtomRenderer()
     {
-      TryWriters = new OrderedList<TryWriteDelegate>();
     }
-
-    public delegate bool TryWriteDelegate(TRenderer renderer, TObject obj);
 
     public virtual bool Accept(WpfMathRendererBase renderer, Atom obj)
     {
       return obj is TObject;
     }
 
-    public virtual void Write(WpfMathRendererBase renderer, Atom obj)
+    /// <summary>
+    /// Writes the specified <see cref="Atom"/> to the <see cref="renderer"/>.
+    /// </summary>
+    /// <param name="renderer">The renderer.</param>
+    /// <param name="objectToRender">The WpfMath atom to render.</param>
+    /// <returns><see cref="WriteResult.Completed"/> if the writing was completed. If writing is still not completed (as in deferred writing), the return value is <see cref="WriteResult.CompletionDeferred"/>.</returns>
+    public virtual WriteResult Write(WpfMathRendererBase renderer, Atom obj)
     {
       var rendererHere = (TRenderer)renderer;
       var typedObj = (TObject)obj;
 
-      // Try processing
-      for (int i = 0; i < TryWriters.Count; i++)
-      {
-        var tryWriter = TryWriters[i];
-        if (tryWriter(rendererHere, typedObj))
-        {
-          return;
-        }
-      }
 
-      Write(rendererHere, typedObj);
+
+      return Write(rendererHere, typedObj);
     }
-
-    /// <summary>
-    /// Gets the optional writers attached to this instance.
-    /// </summary>
-    public OrderedList<TryWriteDelegate> TryWriters { get; }
 
     /// <summary>
     /// Writes the specified Markdown object to the renderer.
     /// </summary>
     /// <param name="renderer">The renderer.</param>
     /// <param name="obj">The markdown object.</param>
-    protected abstract void Write(TRenderer renderer, TObject obj);
+    /// <returns><see cref="WriteResult.Completed"/> if the writing was completed. If writing is still not completed (as in deferred writing), the return value is <see cref="WriteResult.CompletionDeferred"/>.</returns>
+    protected abstract WriteResult Write(TRenderer renderer, TObject obj);
   }
 }

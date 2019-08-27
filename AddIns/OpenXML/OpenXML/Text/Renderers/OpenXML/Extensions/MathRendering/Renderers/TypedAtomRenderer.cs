@@ -39,11 +39,12 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.TypedAtom}" />
   internal class TypedAtomRenderer : OpenXMLAtomRenderer<TypedAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, TypedAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, TypedAtom item)
     {
 
       renderer.Write(item.Atom);
 
+      return WriteResult.Completed;
     }
   }
 }

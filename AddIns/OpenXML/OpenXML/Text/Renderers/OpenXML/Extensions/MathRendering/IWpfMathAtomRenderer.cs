@@ -49,6 +49,24 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
     /// </summary>
     /// <param name="renderer">The renderer.</param>
     /// <param name="objectToRender">The WpfMath atom to render.</param>
-    void Write(WpfMathRendererBase renderer, Atom objectToRender);
+    /// <returns><see cref="WriteResult.Completed"/> if the writing was completed. If writing is still not completed (as in deferred writing), the return value is <see cref="WriteResult.CompletionDeferred"/>.</returns>
+    WriteResult Write(WpfMathRendererBase renderer, Atom objectToRender);
+  }
+
+  /// <summary>
+  /// Result of an write operation.
+  /// </summary>
+  internal enum WriteResult
+  {
+    /// <summary>
+    /// The writing of the math atom was completed.
+    /// </summary>
+    Completed,
+
+    /// <summary>
+    /// The writing of the math atom was not completed.
+    /// Completion is usually deferred until the writing of inner atoms is completed.
+    /// </summary>
+    CompletionDeferred
   }
 }

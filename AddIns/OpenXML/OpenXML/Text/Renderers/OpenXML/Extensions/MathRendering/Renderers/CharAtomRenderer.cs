@@ -39,7 +39,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.CharAtom}" />
   internal class CharAtomRenderer : OpenXMLAtomRenderer<CharAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, CharAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, CharAtom item)
     {
       bool runCreated = false;
       var run = renderer.Peek() as Run;
@@ -78,6 +78,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       if (runCreated)
         renderer.PopTo(run);
 
+      return WriteResult.Completed;
     }
   }
 }

@@ -39,7 +39,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.FractionAtom}" />
   internal class FractionAtomRenderer : OpenXMLAtomRenderer<FractionAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, FractionAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, FractionAtom item)
     {
 
       var frac = renderer.Push(new Fraction());
@@ -54,6 +54,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
       renderer.PopTo(frac);
 
+      return WriteResult.Completed;
     }
   }
 }

@@ -68,8 +68,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       ["oint"] = "\u222E",
     };
 
-    protected override void Write(OpenXMLWpfMathRenderer renderer, BigOperatorAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, BigOperatorAtom item)
     {
+      var writeResult = WriteResult.Completed;
       if (item.Type == TexAtomType.BigOperator && item.BaseAtom is SymbolAtom symAtom)
       {
         // something like \int, \sum, \prod etc.
@@ -123,8 +124,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
         }
 
         var baseA = renderer.Push(new Base());
-        var callback = new CallbackPopAfterNextElement(renderer, elementToPopTo: nary);
+        var callback = new CallbackPopAfterNextElement(renderer, item, elementToPopTo: nary);
         // renderer.PopTo(nary); we don't pop here, the pop is done after the next element was written (see line before)
+        writeResult = WriteResult.CompletionDeferred;
       }
       else if (item.Type == TexAtomType.BigOperator && item.BaseAtom is RowAtom rowAtom)
       {
@@ -168,20 +170,18 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
           renderer.PopTo(functionNameEle);
 
           renderer.Push(new Base());
-          var callback = new CallbackPopAfterNextElement(renderer, elementToPopTo: mathFunction);
+          var callback = new CallbackPopAfterNextElement(renderer, item, elementToPopTo: mathFunction);
           // renderer.PopTo(mathFunction);  we don't pop here, the pop is done after the next element was written (see line before)
+          writeResult = WriteResult.CompletionDeferred;
         }
-
-
       }
-
-
       else
       {
 
         renderer.Write(item.BaseAtom);
+        writeResult = WriteResult.Completed;
       }
-
+      return writeResult;
     }
 
     /// <summary>
@@ -190,12 +190,14 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
     private class CallbackPopAfterNextElement
     {
       private OpenXMLWpfMathRenderer _renderer;
-      private Atom _atomToPopAfter;
+      private Atom _atom; // The original atom that this BigOperatorAtom is rendering, for example the integral \int
+      private Atom _atomToPopAfter; // the inner atom, for example, all the parts the belong to the integral
       private OpenXmlCompositeElement _elementToPopTo;
 
-      public CallbackPopAfterNextElement(OpenXMLWpfMathRenderer renderer, OpenXmlCompositeElement elementToPopTo)
+      public CallbackPopAfterNextElement(OpenXMLWpfMathRenderer renderer, Atom atom, OpenXmlCompositeElement elementToPopTo)
       {
         _renderer = renderer;
+        _atom = atom;
         _elementToPopTo = elementToPopTo;
         _renderer.ObjectWriteBefore += EhObjectWriteBefore;
       }
@@ -214,6 +216,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
         renderer.ObjectWriteAfter -= EhObjectWriteAfter;
         ((OpenXMLWpfMathRenderer)renderer).PopTo(_elementToPopTo);
+
+        renderer.OnCompletionOfElement(_atom);
       }
     }
 

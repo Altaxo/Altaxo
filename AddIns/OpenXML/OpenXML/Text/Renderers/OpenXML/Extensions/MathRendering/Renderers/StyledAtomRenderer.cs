@@ -38,7 +38,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.StyledAtom}" />
   internal class StyledAtomRenderer : OpenXMLAtomRenderer<StyledAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, StyledAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, StyledAtom item)
     {
       bool foregroundPushed = false;
       bool backgroundPushed = false;
@@ -68,6 +68,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       {
         renderer.PopBackgroundColor();
       }
+
+      return WriteResult.Completed;
     }
   }
 }

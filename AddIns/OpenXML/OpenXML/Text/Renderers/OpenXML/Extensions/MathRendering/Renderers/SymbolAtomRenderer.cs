@@ -39,7 +39,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.SymbolAtom}" />
   internal class SymbolAtomRenderer : OpenXMLAtomRenderer<SymbolAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, SymbolAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, SymbolAtom item)
     {
       bool runCreated = false;
       var run = renderer.Peek() as Run;
@@ -60,6 +60,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       if (runCreated)
         renderer.PopTo(run);
 
+      return WriteResult.Completed;
     }
 
     public static bool TryConvert(string symbolName, out string textString)

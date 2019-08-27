@@ -38,7 +38,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.ScriptsAtom}" />
   internal class ScriptsAtomRenderer : OpenXMLAtomRenderer<ScriptsAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, ScriptsAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, ScriptsAtom item)
     {
 
       if (item.SubscriptAtom != null && item.SuperscriptAtom != null)
@@ -102,6 +102,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
         renderer.PopTo(subscript);
       }
 
+      return WriteResult.Completed;
     }
   }
 }

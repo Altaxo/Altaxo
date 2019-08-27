@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using DocumentFormat.OpenXml;
 using WpfMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
@@ -53,5 +54,12 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
     /// <param name="atom">The WpfMath atom.</param>
     /// <returns>The result of the rendering.</returns>
     object Render(Atom atom);
+
+
+    /// <summary>
+    /// Announces the completion of an element by firing the <see cref="ObjectWriteAfter"/> event.
+    /// </summary>
+    /// <param name="completedElement">The element that was just completed.</param>
+    void OnCompletionOfElement(Atom completedElement);
   }
 }

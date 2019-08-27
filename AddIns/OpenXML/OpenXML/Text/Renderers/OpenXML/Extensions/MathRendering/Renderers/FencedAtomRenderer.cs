@@ -40,7 +40,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.FencedAtom}" />
   internal class FencedAtomRenderer : OpenXMLAtomRenderer<FencedAtom>
   {
-    protected override void Write(OpenXMLWpfMathRenderer renderer, FencedAtom item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, FencedAtom item)
     {
 
       var delimiter = renderer.Push(new Delimiter());
@@ -79,10 +79,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
       renderer.PopTo(delimiter);
 
-
-
-
-
+      return WriteResult.Completed;
     }
   }
 }

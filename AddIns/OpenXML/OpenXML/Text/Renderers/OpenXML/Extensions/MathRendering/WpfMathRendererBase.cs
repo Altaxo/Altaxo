@@ -90,9 +90,11 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
           }
         }
       }
+
+      var writeResult = WriteResult.Completed;
       if (renderer != null)
       {
-        renderer.Write(this, obj);
+        writeResult = renderer.Write(this, obj);
       }
       else
       {
@@ -104,7 +106,19 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
       previousRenderer = renderer;
 
       // Calls after writing an object
-      ObjectWriteAfter?.Invoke(this, obj);
+      if (writeResult == WriteResult.Completed) // if the object was completed here
+      {
+        OnCompletionOfElement(obj); // then announce completion (otherwise completion is usually announced in some callback code of the specific renderer)
+      }
+    }
+
+    /// <summary>
+    /// Called to announce the completion of an element by firing the <see cref="ObjectWriteAfter"/> event.
+    /// </summary>
+    /// <param name="elementCompleted">The completed element.</param>
+    public void OnCompletionOfElement(Atom elementCompleted)
+    {
+      ObjectWriteAfter?.Invoke(this, elementCompleted);
     }
   }
 
