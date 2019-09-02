@@ -34,6 +34,7 @@ using Altaxo.Gui;
 using Altaxo.Gui.Graph.Gdi.Viewing;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
+using Altaxo.Main.Services.Files;
 
 namespace Altaxo.Main
 {
@@ -81,27 +82,20 @@ namespace Altaxo.Main
 
     #region Project saving
 
-    public override Exception SaveProject(System.IO.Stream myStream)
+    public override Exception SaveProject(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom)
     {
       Exception savingException = null;
       try
       {
         var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-        using (var zippedStream = new ZipArchive(myStream, ZipArchiveMode.Create))
-        {
-          CurrentOpenProject.SaveToZippedFile(zippedStream, info);
+        CurrentOpenProject.SaveToZippedFile(archiveToSaveTo, info, archiveToCopyFrom);
 
-          if (!Current.Dispatcher.InvokeRequired)
-            SaveWindowStateToZippedFile(zippedStream, info);
-        }
+        if (!Current.Dispatcher.InvokeRequired)
+          SaveWindowStateToZippedFile(archiveToSaveTo, info);
       }
       catch (Exception exc)
       {
         savingException = exc;
-      }
-      finally
-      {
-        myStream.Close();
       }
       return savingException;
     }
@@ -111,16 +105,16 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="zippedStream">The file stream of the zip file.</param>
     /// <param name="info">The serialization info used to serialize the state of the main window.</param>
-    public void SaveWindowStateToZippedFile(ZipArchive zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
+    public void SaveWindowStateToZippedFile(Services.Files.IProjectArchive zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
     {
       var errorText = new System.Text.StringBuilder();
 
       {
         // first, we save our own state
-        var zipEntry = zippedStream.CreateEntry("Workbench/MainWindow.xml", 0);
+        var zipEntry = zippedStream.CreateEntry("Workbench/MainWindow.xml");
         try
         {
-          using (var zipEntryStream = zipEntry.Open())
+          using (var zipEntryStream = zipEntry.OpenForWriting())
           {
             info.BeginWriting(zipEntryStream);
             info.AddValue("MainWindow", Current.Workbench.CreateMemento());
@@ -144,10 +138,10 @@ namespace Altaxo.Main
           var entryName = "Workbench/Views/View" + i.ToString() + ".xml";
           if (ctrl.IsSelected)
             selectedViewsMemento.SelectedView_EntryName = entryName;
-          var zipEntry = zippedStream.CreateEntry(entryName, 0);
+          var zipEntry = zippedStream.CreateEntry(entryName);
           try
           {
-            using (var zipEntryStream = zipEntry.Open())
+            using (var zipEntryStream = zipEntry.OpenForWriting())
             {
               info.BeginWriting(zipEntryStream);
               info.AddValue("ViewContentModel", ctrl.ModelObject);
@@ -163,10 +157,10 @@ namespace Altaxo.Main
 
       {
         // Save the states of the views
-        var zipEntry = zippedStream.CreateEntry("Workbench/ViewStates.xml", 0);
+        var zipEntry = zippedStream.CreateEntry("Workbench/ViewStates.xml");
         try
         {
-          using (var zipEntryStream = zipEntry.Open())
+          using (var zipEntryStream = zipEntry.OpenForWriting())
           {
             info.BeginWriting(zipEntryStream);
             info.AddValue("ViewStates", selectedViewsMemento);
@@ -227,17 +221,15 @@ namespace Altaxo.Main
 
       OnProjectChanged(new ProjectEventArgs(null, filename, ProjectEventKind.ProjectOpening));
 
-      ZipArchive zipFile = null;
-      ;
+      Services.Files.IProjectArchive projectArchive = null;
       AltaxoDocument newdocument = null;
-      ;
       Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
 
       try
       {
         newdocument = new AltaxoDocument();
 
-        zipFile = new ZipArchive(myStream, ZipArchiveMode.Read);
+        projectArchive = new Services.Files.ZipArchiveAsProjectArchive(myStream, ZipArchiveMode.Read, false);
         info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
       }
       catch (Exception exc)
@@ -250,7 +242,7 @@ namespace Altaxo.Main
       {
         using (var suspendToken = newdocument.SuspendGetToken())
         {
-          newdocument.RestoreFromZippedFile(zipFile, info);
+          newdocument.RestoreFromZippedFile(projectArchive, info);
         }
       }
       catch (Exception exc)
@@ -262,7 +254,7 @@ namespace Altaxo.Main
       {
         SetCurrentProject(newdocument, filename);
 
-        RestoreWindowStateFromZippedFile(zipFile, info, newdocument);
+        RestoreWindowStateFromZippedFile(projectArchive, info, newdocument);
         info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
 
         CurrentOpenProject.IsDirty = false;
@@ -284,7 +276,7 @@ namespace Altaxo.Main
     /// <param name="zipFile">The zip file where the state file can be found into.</param>
     /// <param name="info">The deserialization info used to retrieve the data.</param>
     /// <param name="restoredDoc">The previously (also from the zip file!) restored Altaxo document.</param>
-    public void RestoreWindowStateFromZippedFile(ZipArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
+    public void RestoreWindowStateFromZippedFile(Services.Files.IProjectArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
     {
       var restoredDocModels = new List<(object Document, string ZipEntryName)>();
       var restoredPadModels = new List<object>();
@@ -296,7 +288,7 @@ namespace Altaxo.Main
         {
           if (zipEntry.FullName.StartsWith("Workbench/Views/"))
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("ViewContentModel", null);
@@ -306,7 +298,7 @@ namespace Altaxo.Main
           }
           else if (zipEntry.FullName.StartsWith("Workbench/Pads/"))
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Model", null);
@@ -322,7 +314,7 @@ namespace Altaxo.Main
           }
           else if (zipEntry.FullName == "Workbench/ViewStates.xml")
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               selectedViewsMemento = info.GetValue("ViewStates", null) as Altaxo.Gui.Workbench.ViewStatesMemento;

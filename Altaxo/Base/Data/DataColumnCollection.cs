@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
+using Altaxo.Main.Services.Files;
 using Altaxo.Scripting;
 using Altaxo.Serialization;
 
@@ -193,11 +194,23 @@ namespace Altaxo.Data
     /// </summary>
     protected bool _triedOutRegularNaming = false;
 
+    /// <summary>
+    /// If not null, this is a sign that the data of this collection are not yet loaded.
+    /// </summary>
+    protected object _deferredDataLoader;
+
     #endregion Member data
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumnCollection), 0)]
+    /// <summary>If set, only the data should be stored, but e.g. not the scripts etc.</summary>
+    public const string SerialiationInfoProperty_StoreDataOnly = "Altaxo.Data.DataColumnCollection_StoreDataOnly";
+    public const string DeserialiationInfoProperty_RestoreDataOnly = "Altaxo.Data.DataColumnCollection_RestoreDataOnly";
+
+    /// <summary>Used during deserialization to store the info how to read the data at a later time.</summary>
+    public const string DeserialiationInfoProperty_DeferredDataDeserialization = "Altaxo.Data.DataColumnCollection_DefDataDeser";
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataColumnCollection", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -263,6 +276,104 @@ namespace Altaxo.Data
           s.ColumnScripts.Add(s[name], script);
         }
         info.CloseArray(count); // end script array
+        return s;
+      }
+    }
+
+    /// <summary>
+    /// 2019-08-23 Change order of serialization, so that the columns came last. Add row count in order to have it available before accessing the data.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumnCollection), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        // Note: info property 'DataOnly': stores only the data, but not the scripts and so on
+
+
+        var s = (Altaxo.Data.DataColumnCollection)obj;
+
+        var storeDataOnly = info.GetProperty(SerialiationInfoProperty_StoreDataOnly) != null;
+
+        if (!storeDataOnly)
+        {
+          // serialize the column scripts
+          info.CreateArray("ColumnScripts", s._columnScripts.Count);
+          foreach (KeyValuePair<DataColumn, IColumnScriptText> entry in s._columnScripts)
+          {
+            info.CreateElement("Script");
+            info.AddValue("ColName", s.GetColumnName(entry.Key));
+            info.AddValue("Content", entry.Value);
+            info.CommitElement();
+          }
+          info.CommitArray();
+        }
+
+        info.AddValue("NumberOfRows", s._numberOfRows);
+
+        info.CreateArray("ColumnArray", s._columnsByNumber.Count);
+        for (int i = 0; i < s._columnsByNumber.Count; i++)
+        {
+          info.CreateElement("Column");
+
+          DataColumnInfo colinfo = s.GetColumnInfo(i);
+          info.AddValue("Name", colinfo.Name);
+          info.AddValue("Kind", (int)colinfo.Kind);
+          info.AddValue("Group", colinfo.Group);
+          info.AddValue("Data", s._columnsByNumber[i]);
+
+          info.CommitElement();
+        }
+        info.CommitArray();
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        Altaxo.Data.DataColumnCollection s = null != o ? (Altaxo.Data.DataColumnCollection)o : new Altaxo.Data.DataColumnCollection();
+
+        int count;
+
+        if (!info.PropertyDictionary.ContainsKey(DeserialiationInfoProperty_RestoreDataOnly))
+        {
+          // deserialize the scripts
+          count = info.OpenArray();
+          for (int i = 0; i < count; i++)
+          {
+            info.OpenElement();
+            string name = info.GetString();
+            var script = (IColumnScriptText)info.GetValue("e", s);
+            info.CloseElement();
+            s.ColumnScripts.Add(s[name], script);
+          }
+          info.CloseArray(count); // end script array
+        }
+
+        int numberOfRows = info.GetInt32("NumberOfRows");
+        // deserialize the columns, here the columns are deserialized without data.
+        count = info.OpenArray();
+        for (int i = 0; i < count; i++)
+        {
+          info.OpenElement(); // Column
+
+          string name = info.GetString("Name");
+          var kind = (ColumnKind)info.GetInt32("Kind");
+          int group = info.GetInt32("Group");
+          var col = (DataColumn)info.GetValue("Data", s);
+          if (col != null)
+            s.Add(col, new DataColumnInfo(name, kind, group));
+
+          info.CloseElement(); // Column
+        }
+        info.CloseArray(count);
+
+        s._deferredDataLoader = info.GetPropertyOrDefault<object>(DeserialiationInfoProperty_DeferredDataDeserialization);
+        if (null != s._deferredDataLoader)
+        {
+          s._numberOfRows = numberOfRows;
+          s._hasNumberOfRowsDecreased = false;
+        }
+
         return s;
       }
     }
@@ -403,6 +514,81 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
+    #region Deserialization (deferred data loading)
+
+    private object _deferredLock = new object();
+    private void TryLoadDeferredData()
+    {
+      object deferredDataLoader = null;
+      lock (_deferredLock)
+      {
+        if (null != _deferredDataLoader)
+        {
+          deferredDataLoader = _deferredDataLoader;
+          _deferredDataLoader = new object();
+        }
+      }
+
+      if (deferredDataLoader is null)
+      {
+        return;
+      }
+      else if (deferredDataLoader is IProjectArchiveEntryMemento tp)
+      {
+        LoadDeferredData(tp);
+        tp?.Dispose();
+        lock (_deferredLock)
+        {
+          _deferredDataLoader = null;
+        }
+      }
+      else
+      {
+        while (!(_deferredDataLoader is null))
+          System.Threading.Thread.Sleep(10);
+      }
+    }
+
+    void LoadDeferredData(IProjectArchiveEntryMemento memento)
+    {
+      var zipEntry = memento.GetArchiveEntry();
+      using (var zipinpstream = zipEntry.OpenForReading())
+      {
+        var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+        info.PropertyDictionary[DeserialiationInfoProperty_RestoreDataOnly] = "true";
+        info.BeginReading(zipinpstream);
+        object readedobject = info.GetValue("TableData", null);
+        if (readedobject is Altaxo.Data.DataColumnCollection dataColColl)
+        {
+          TransferDeferredData(dataColColl);
+        }
+        info.EndReading();
+        info.Dispose();
+      }
+    }
+
+    private void TransferDeferredData(Altaxo.Data.DataColumnCollection dataColColl)
+    {
+      using (var lc = this.SuspendGetToken())
+      {
+        int rowCount = 0;
+        var len = Math.Min(ColumnCount, dataColColl.ColumnCount);
+        for (int i = 0; i < len; ++i)
+        {
+          _columnsByNumber[i].Data = dataColColl[i];
+          rowCount = System.Math.Max(rowCount, _columnsByNumber[i].Count);
+        }
+
+        _numberOfRows = rowCount;
+        _hasNumberOfRowsDecreased = false;
+
+        lc.ResumeSilently();
+      }
+    }
+
+
+    #endregion
+
     #region Constructors
 
     /// <summary>
@@ -459,6 +645,8 @@ namespace Altaxo.Data
     {
       if (!IsDisposed)
       {
+        _deferredDataLoader = null;
+
         // first relase all column scripts
         _columnScripts?.Dispose();
         _columnScripts = null;
@@ -490,6 +678,9 @@ namespace Altaxo.Data
     {
       get
       {
+        if (null != _deferredDataLoader)
+          TryLoadDeferredData();
+
         foreach (var c in _columnsByNumber)
           yield return c;
       }
@@ -549,6 +740,10 @@ namespace Altaxo.Data
     /// <param name="info">The DataColumnInfo object for the column to add.</param>
     private void Add(Altaxo.Data.DataColumn datac, DataColumnInfo info)
     {
+      if (null != _deferredDataLoader)
+        TryLoadDeferredData();
+
+
       if (!(ContainsColumn(datac) == false))
         throw new ArgumentException(nameof(datac) + " is already contained in this collection");
 
@@ -788,6 +983,9 @@ namespace Altaxo.Data
       if (newCol.IsSomeoneListeningToChanges)
         throw new ArgumentException("The column provided in the argument is not a fresh column, because someone is listening already to this column");
 
+      if (null != _deferredDataLoader)
+        TryLoadDeferredData();
+
       DataColumn oldCol = this[index];
       if (object.ReferenceEquals(oldCol, newCol))
         return;
@@ -1022,10 +1220,12 @@ namespace Altaxo.Data
 
     public void RemoveColumns(IAscendingIntegerCollection selectedColumns)
     {
+      if (null != _deferredDataLoader)
+        TryLoadDeferredData();
+
+
       int nOriginalColumnCount = ColumnCount;
-
       int lastRangeStart = 0;
-
       var colsToDispose = new List<DataColumn>(selectedColumns.Count);
 
       foreach (var range in selectedColumns.RangesDescending)
@@ -1072,10 +1272,11 @@ namespace Altaxo.Data
     /// <param name="selectedColumns">The indices of the column of the source collection that are moved.</param>
     public void MoveColumnsTo(DataColumnCollection destination, int destindex, IAscendingIntegerCollection selectedColumns)
     {
+      if (null != _deferredDataLoader)
+        TryLoadDeferredData();
+
       int nOriginalColumnCount = ColumnCount;
-
       int numberMoved = selectedColumns.Count;
-
       var tmpColumn = new DataColumn[numberMoved];
       var tmpInfo = new DataColumnInfo[numberMoved];
       var tmpScript = new IColumnScriptText[numberMoved];
@@ -1749,6 +1950,9 @@ namespace Altaxo.Data
     /// <remarks>An exception is thrown if newPosition is negative or higher than possible.</remarks>
     public void ChangeColumnPosition(Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int newPosition)
     {
+      if (null != _deferredDataLoader)
+        TryLoadDeferredData();
+
       int numberSelected = selectedColumns.Count;
       if (numberSelected == 0)
         return;
@@ -1937,6 +2141,9 @@ namespace Altaxo.Data
     {
       get
       {
+        if (null != _deferredDataLoader)
+          TryLoadDeferredData();
+
         try
         {
           return _columnsByNumber[idx];
@@ -1948,6 +2155,9 @@ namespace Altaxo.Data
       }
       set
       {
+        if (null != _deferredDataLoader)
+          TryLoadDeferredData();
+
         // setting a column should not change its name nor its other properties
         // only the data array and the related parameters should be changed
 
@@ -2201,8 +2411,10 @@ namespace Altaxo.Data
     /// observed only until one column is reached, which has the same value of the row count as this collection.</param>
     public void RefreshRowCount(bool bSearchOnlyUntilOldRowCountReached)
     {
-      int rowCount = 0;
+      if (null != _deferredDataLoader)
+        TryLoadDeferredData();
 
+      int rowCount = 0;
       if (bSearchOnlyUntilOldRowCountReached)
       {
         foreach (DataColumn c in _columnsByNumber)

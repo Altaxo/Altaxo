@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Main.Services.Files;
 
 namespace Altaxo.Main
 {
@@ -134,6 +135,14 @@ namespace Altaxo.Main
     /// </summary>
     string CurrentProjectFileName { get; set; }
 
+    /// <summary>
+    /// Gets the object that represents the storage of the current project on disk. If the current project was opened as a COM object, the value is null.
+    /// </summary>
+    /// <value>
+    /// The current project storage, if the project was opened from the file system. The value is null if the project was opened from a COM stream.
+    /// </value>
+    IProjectArchive CurrentProjectFileStorage { get; }
+
 
     /// <summary>
     /// Creates the very first document. Used internal into the autostart command.
@@ -174,7 +183,7 @@ namespace Altaxo.Main
     void SaveProjectCopyAs();
 
     /// <summary>
-    /// Saves the project under the given file name.
+    /// Saves the project under the given file name, using the standard archive format.
     /// </summary>
     /// <param name="fileName">Name of the file.</param>
     void SaveProject(string fileName);
@@ -182,9 +191,9 @@ namespace Altaxo.Main
     /// <summary>
     /// Saves the project in the provided stream.
     /// </summary>
-    /// <param name="stream">Stream to save the project into</param>
+    /// <param name="archive">Archive to save the project into</param>
     /// <returns>Null if everything was saved sucessfully, or an exception if not.</returns>
-    Exception SaveProject(System.IO.Stream stream);
+    Exception SaveProject(IProjectArchive archive);
 
     /// <summary>
     /// Saves a project under the current file name.

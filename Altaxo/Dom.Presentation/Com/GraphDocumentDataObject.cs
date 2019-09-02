@@ -573,10 +573,10 @@ namespace Altaxo.Com
         // Store the project
         using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZip", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
         {
-          using (var zippedStream = new System.IO.Compression.ZipArchive(stream, System.IO.Compression.ZipArchiveMode.Create))
+          using (var archive = new Main.Services.Files.ZipArchiveAsProjectArchive(stream, System.IO.Compression.ZipArchiveMode.Create, false))
           {
             var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-            projectToSave.SaveToZippedFile(zippedStream, info);
+            projectToSave.SaveToZippedFile(archive, info);
           }
           stream.Close();
         }

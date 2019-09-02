@@ -33,6 +33,7 @@ using Altaxo.Gui;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Main.Services;
+using Altaxo.Main.Services.Files;
 
 namespace Altaxo.Dom
 {
@@ -43,6 +44,8 @@ namespace Altaxo.Dom
     protected IProject _currentProject;
 
     protected string _currentProjectFileName;
+
+    protected IProjectArchive _currentProjectFileStorage;
 
     public event ProjectEventHandler ProjectOpened;
 
@@ -115,6 +118,14 @@ namespace Altaxo.Dom
           _currentProjectFileName = value;
           OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldName, _currentProjectFileName));
         }
+      }
+    }
+
+    public virtual IProjectArchive CurrentProjectFileStorage
+    {
+      get
+      {
+        return _currentProjectFileStorage;
       }
     }
 
@@ -289,13 +300,24 @@ namespace Altaxo.Dom
       string testfilename = tempFileName ?? filename;
 
       Exception savingException = null;
-      using (var myStream = new System.IO.FileStream(testfilename, System.IO.FileMode.Create, FileAccess.Write, FileShare.None))
+      using (var archiveToSaveTo = new ZipArchiveAsProjectArchive(testfilename, System.IO.Compression.ZipArchiveMode.Create))
       {
-        savingException = SaveProject(myStream);
+        if (testfilename != filename)
+        {
+          using (var archiveToCopyFrom = new ZipArchiveAsProjectArchive(filename, System.IO.Compression.ZipArchiveMode.Read))
+          {
+            savingException = SaveProject(archiveToSaveTo, archiveToCopyFrom);
+          }
+        }
+        else
+        {
+          savingException = SaveProject(archiveToSaveTo, null);
+        }
+
 
         if (null == savingException)
         {
-          savingException = InternalTestIntegrityOfSavedProjectFile(myStream, testfilename);
+          savingException = InternalTestIntegrityOfSavedProjectFile(archiveToSaveTo, testfilename);
         }
       }
 
@@ -312,12 +334,26 @@ namespace Altaxo.Dom
       _currentProject.IsDirty = false;
     }
 
-    protected virtual Exception InternalTestIntegrityOfSavedProjectFile(Stream myStream, string fileName)
+    protected virtual Exception InternalTestIntegrityOfSavedProjectFile(IProjectArchive archive, string fileName)
     {
       return null;
     }
 
-    public abstract Exception SaveProject(System.IO.Stream myStream);
+    /// <summary>
+    /// Saves a project.
+    /// </summary>
+    /// <param name="archiveToSaveTo">The project archive to save the project to.</param>
+    /// <param name="archiveToCopyFrom">The project archive that represents the last state of saving before this saving Can be used to copy some of the data,
+    /// that were not changed inbetween savings. This parameter can be null, for instance, if no such archive exists.</param>
+    /// <returns>Null if the operation succeeded, otherwise, the exception being thrown.</returns>
+    public abstract Exception SaveProject(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom);
+
+    /// <summary>
+    /// Saves a project.
+    /// </summary>
+    /// <param name="archiveToSaveTo">The project archive to save the project to.</param>
+    /// <returns>Null if the operation succeeded, otherwise, the exception being thrown.</returns>
+    public Exception SaveProject(IProjectArchive archiveToSaveTo) => SaveProject(archiveToSaveTo, null);
 
     #endregion Project saving
 

@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.Runtime.Serialization;
 using Altaxo.Main;
+using Altaxo.Main.Services.Files;
 using Altaxo.Serialization;
 
 namespace Altaxo
@@ -91,26 +92,41 @@ namespace Altaxo
 
     #region Serialization
 
-    public void SaveToZippedFile(ZipArchive zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
+    /// <summary>
+    /// Saves the document to a project archive.
+    /// </summary>
+    /// <param name="archiveToSaveTo">The archive to save the document to.</param>
+    /// <param name="info">The serialization information.</param>
+    /// <param name="originalArchive">The original archive that belongs to the project being saved. Can accelerate the saving of the document by recycling some of the already saved streams.
+    /// This parameter can be null.</param>
+    /// <exception cref="ApplicationException"></exception>
+    public void SaveToZippedFile(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive originalArchive = null)
     {
+      bool supportsSeparateDataStorage = true;
       var errorText = new System.Text.StringBuilder();
       int compressionLevel = 1;
       // DateTime time1 = DateTime.UtcNow;
+
+      bool supportsStreamRecycling = originalArchive?.GetType() == archiveToSaveTo.GetType() && archiveToSaveTo.SupportsCopyEntryFrom(originalArchive);
+
+      if (supportsSeparateDataStorage)
+      {
+        info.SetProperty(Altaxo.Data.DataTable.SerializationInfoProperty_SupportsSeparatedData, "true");
+      }
 
       // first, we save all tables into the tables subdirectory
       foreach (Altaxo.Data.DataTable table in _dataTables)
       {
         try
         {
-          var zipEntry = zippedStream.CreateEntry("Tables/" + table.Name + ".xml");
-          using (var zs = zipEntry.Open())
+          string entryName = string.Concat("Tables/", table.Name, ".xml");
+          var zipEntry = archiveToSaveTo.CreateEntry(entryName);
+          using (var zs = zipEntry.OpenForWriting())
           {
-            //ZipEntry ZipEntry = new ZipEntry("Tables/"+table.Name+".xml");
-            //zippedStream.PutNextEntry(ZipEntry);
-            //zippedStream.SetLevel(0);
             info.BeginWriting(zs);
             info.AddValue("Table", table);
             info.EndWriting();
+
           }
         }
         catch (Exception exc)
@@ -119,13 +135,45 @@ namespace Altaxo
         }
       }
 
+      if (supportsSeparateDataStorage)
+      {
+        var orginalValue_StoreDataOnly = info.SaveAndSetProperty(Altaxo.Data.DataColumnCollection.SerialiationInfoProperty_StoreDataOnly, "true");
+        // first, we save all tables into the tables subdirectory
+        foreach (Altaxo.Data.DataTable table in _dataTables)
+        {
+          var entryName = string.Concat("TableData/", table.Name, ".xml");
+          try
+          {
+            if (supportsStreamRecycling && !table.DataColumns.IsDirty && originalArchive.ContainsEntry(entryName))
+            {
+              archiveToSaveTo.CopyEntryFrom(originalArchive, entryName);
+            }
+            else
+            {
+              var zipEntry = archiveToSaveTo.CreateEntry(entryName);
+              using (var zs = zipEntry.OpenForWriting())
+              {
+                info.BeginWriting(zs);
+                info.AddValue("TableData", table.DataColumns);
+                info.EndWriting();
+              }
+            }
+          }
+          catch (Exception exc)
+          {
+            errorText.Append(exc.ToString());
+          }
+        }
+        info.SetProperty(Altaxo.Data.DataColumnCollection.SerialiationInfoProperty_StoreDataOnly, orginalValue_StoreDataOnly);
+      }
+
       // second, we save all graphs into the Graphs subdirectory
       foreach (Graph.Gdi.GraphDocument graph in _graphs)
       {
         try
         {
-          var zipEntry = zippedStream.CreateEntry("Graphs/" + graph.Name + ".xml");
-          using (var zs = zipEntry.Open())
+          var zipEntry = archiveToSaveTo.CreateEntry("Graphs/" + graph.Name + ".xml");
+          using (var zs = zipEntry.OpenForWriting())
           {
             //ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
             //zippedStream.PutNextEntry(ZipEntry);
@@ -146,8 +194,8 @@ namespace Altaxo
       {
         try
         {
-          var zipEntry = zippedStream.CreateEntry("Graphs3D/" + graph.Name + ".xml");
-          using (var zs = zipEntry.Open())
+          var zipEntry = archiveToSaveTo.CreateEntry("Graphs3D/" + graph.Name + ".xml");
+          using (var zs = zipEntry.OpenForWriting())
           {
             //ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
             //zippedStream.PutNextEntry(ZipEntry);
@@ -168,8 +216,8 @@ namespace Altaxo
       {
         try
         {
-          var zipEntry = zippedStream.CreateEntry("Texts/" + item.Name + ".xml");
-          using (var zs = zipEntry.Open())
+          var zipEntry = archiveToSaveTo.CreateEntry("Texts/" + item.Name + ".xml");
+          using (var zs = zipEntry.OpenForWriting())
           {
             info.BeginWriting(zs);
             info.AddValue("Text", item);
@@ -190,8 +238,8 @@ namespace Altaxo
 
         try
         {
-          var zipEntry = zippedStream.CreateEntry("TableLayouts/" + layout.Name + ".xml");
-          using (var zs = zipEntry.Open())
+          var zipEntry = archiveToSaveTo.CreateEntry("TableLayouts/" + layout.Name + ".xml");
+          using (var zs = zipEntry.OpenForWriting())
           {
             //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
             //zippedStream.PutNextEntry(ZipEntry);
@@ -212,11 +260,11 @@ namespace Altaxo
       {
         try
         {
-          var zipEntry = zippedStream.CreateEntry("FitFunctionScripts/" + fit.CreationTime.ToString() + ".xml");
+          var zipEntry = archiveToSaveTo.CreateEntry("FitFunctionScripts/" + fit.CreationTime.ToString() + ".xml");
           //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
           //zippedStream.PutNextEntry(ZipEntry);
           //zippedStream.SetLevel(0);
-          using (var zs = zipEntry.Open())
+          using (var zs = zipEntry.OpenForWriting())
           {
             info.BeginWriting(zs);
             info.AddValue("FitFunctionScript", fit);
@@ -234,11 +282,11 @@ namespace Altaxo
         {
           try
           {
-            var zipEntry = zippedStream.CreateEntry("FolderProperties/" + folderProperty.Name + ".xml");
+            var zipEntry = archiveToSaveTo.CreateEntry("FolderProperties/" + folderProperty.Name + ".xml");
             //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
             //zippedStream.PutNextEntry(ZipEntry);
             //zippedStream.SetLevel(0);
-            using (var zs = zipEntry.Open())
+            using (var zs = zipEntry.OpenForWriting())
             {
               info.BeginWriting(zs);
               info.AddValue("FolderProperty", folderProperty);
@@ -254,8 +302,8 @@ namespace Altaxo
 
       {
         // nun noch den DocumentIdentifier abspeichern
-        var zipEntry = zippedStream.CreateEntry("DocumentInformation.xml");
-        using (var zs = zipEntry.Open())
+        var zipEntry = archiveToSaveTo.CreateEntry("DocumentInformation.xml");
+        using (var zs = zipEntry.OpenForWriting())
         {
           info.BeginWriting(zs);
           info.AddValue("DocumentInformation", _documentInformation);
@@ -268,7 +316,7 @@ namespace Altaxo
         throw new ApplicationException(errorText.ToString());
     }
 
-    public void RestoreFromZippedFile(ZipArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
+    public void RestoreFromZippedFile(IProjectArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
     {
       var errorText = new System.Text.StringBuilder();
 
@@ -278,18 +326,26 @@ namespace Altaxo
         {
           if (zipEntry.FullName.StartsWith("Tables/"))
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
+              string entryName = "TableData/" + zipEntry.FullName.Substring("Tables/".Length);
+              if (zipFile.ContainsEntry(entryName))
+              {
+                info.PropertyDictionary[Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization] = zipFile.GetEntryMemento(entryName);
+              }
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Table", null);
-              if (readedobject is Altaxo.Data.DataTable)
-                _dataTables.Add((Altaxo.Data.DataTable)readedobject);
+              if (readedobject is Altaxo.Data.DataTable dataTable)
+              {
+                _dataTables.Add(dataTable);
+              }
               info.EndReading();
+              info.PropertyDictionary.Remove(Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization);
             }
           }
           else if (zipEntry.FullName.StartsWith("Graphs/"))
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Graph", null);
@@ -300,7 +356,7 @@ namespace Altaxo
           }
           else if (zipEntry.FullName.StartsWith("Graphs3D/"))
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Graph", null);
@@ -311,7 +367,7 @@ namespace Altaxo
           }
           else if (zipEntry.FullName.StartsWith("Texts/"))
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("Text", null);
@@ -322,7 +378,7 @@ namespace Altaxo
           }
           else if (zipEntry.FullName.StartsWith("TableLayouts/"))
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("WorksheetLayout", null);
@@ -333,7 +389,7 @@ namespace Altaxo
           }
           else if (zipEntry.FullName.StartsWith("FitFunctionScripts/"))
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("FitFunctionScript", null);
@@ -344,7 +400,7 @@ namespace Altaxo
           }
           else if (zipEntry.FullName.StartsWith("FolderProperties/"))
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("FolderProperty", null);
@@ -355,7 +411,7 @@ namespace Altaxo
           }
           else if (zipEntry.FullName == "DocumentInformation.xml")
           {
-            using (var zipinpstream = zipEntry.Open())
+            using (var zipinpstream = zipEntry.OpenForReading())
             {
               info.BeginReading(zipinpstream);
               object readedobject = info.GetValue("DocumentInformation", null);
@@ -368,7 +424,7 @@ namespace Altaxo
         catch (Exception exc)
         {
           errorText.Append("Error deserializing ");
-          errorText.Append(zipEntry.Name);
+          errorText.Append(zipEntry.FullName);
           errorText.Append(", ");
           errorText.Append(exc.ToString());
         }

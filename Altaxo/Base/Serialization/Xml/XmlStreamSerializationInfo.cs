@@ -111,6 +111,13 @@ namespace Altaxo.Serialization.Xml
       return m_Properties[propertyname];
     }
 
+    public string SaveAndSetProperty(string propertyName, string propertyValue)
+    {
+      var result = m_Properties[propertyName];
+      SetProperty(propertyName, propertyValue);
+      return result;
+    }
+
     /// <summary>
     /// Clears the property dictionary. Useful if the serialization info should be used to serialize multiple values.
     /// If you clear the properties before the serialization of each value, the serialization behaves as if each value is

@@ -108,6 +108,9 @@ namespace Altaxo.Data
 
     #region Serialization
 
+    /// <summary>Serialization property that when set, indicates that storage of data separate from the DataColumnCollection is supported.</summary>
+    public const string SerializationInfoProperty_SupportsSeparatedData = "Altaxo.Data.DataTable.SupSepData";
+
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTable", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -267,7 +270,7 @@ namespace Altaxo.Data
     /// <summary>
     /// 2014-01-30 Table properties are now in it's own class
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable), 4)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTable", 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -329,6 +332,90 @@ namespace Altaxo.Data
             s._tableDataSource.OnAfterDeserialization();
           }
         }
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
+        Deserialize(s, info, parent);
+        return s;
+      }
+    }
+
+
+    /// <summary>
+    /// 2018-08-26 Separate storage of data if possible
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable), 5)]
+    private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (Altaxo.Data.DataTable)obj;
+        info.AddValue("Name", s._name); // name of the Table
+        info.AddValue("TableScript", s._tableScript);
+        info.AddValue("Properties", s._tableProperties);
+        info.AddValue("Notes", s._notes.Text);
+        info.AddValue("CreationTime", s._creationTime.ToLocalTime());
+        info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
+        if (null != s._tableDataSource)
+          info.AddValue("TableDataSource", s._tableDataSource);
+
+        // Always save the properties
+        info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
+
+        // Now the data
+        string originalSaveAsTemplateOption = info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate");
+
+        bool saveDataAsTemplateRequired =
+          (null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData) ||
+          (null != info.GetProperty(SerializationInfoProperty_SupportsSeparatedData));
+
+        if (saveDataAsTemplateRequired)
+        {
+          info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", "true");
+        }
+
+        info.AddValue("DataCols", s._dataColumns);
+
+        info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", originalSaveAsTemplateOption);
+      }
+
+      public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        s._name = info.GetString("Name");
+
+
+        s._tableScript = (TableScript)info.GetValue("TableScript", s);
+        if (null != s._tableScript)
+          s._tableScript.ParentObject = s;
+
+        s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+
+        s._notes.Text = info.GetString("Notes");
+        s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
+        s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
+        if (info.CurrentElementName == "TableDataSource")
+        {
+          s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource", s);
+          if (null != s._tableDataSource)
+          {
+            s._tableDataSource.ParentObject = s;
+            s._tableDataSource.OnAfterDeserialization();
+          }
+        }
+
+        // if there is a deferredDataObject, do not use it for deserialization of the properties
+        object deferredDataObject = info.GetPropertyOrDefault<object>(Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization);
+        info.PropertyDictionary.Remove(Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization);
+        s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+        s._propertyColumns.ParentObject = s;
+        s._propertyColumns.ColumnScripts.ParentObject = s;
+        info.PropertyDictionary[Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization] = deferredDataObject;
+
+        s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
+        s._dataColumns.ParentObject = s;
+        s._dataColumns.ColumnScripts.ParentObject = s;
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -548,6 +635,8 @@ namespace Altaxo.Data
     /// <param name="e"></param>
     protected override void OnChanged(EventArgs e)
     {
+      _lastChangeTime = DateTime.UtcNow; // changing LastChangeTime should obviously not trigger a changed event
+
       // if the DataTableSource has changed, we need to update the table
       if (e is TableDataSourceChangedEventArgs)
       {

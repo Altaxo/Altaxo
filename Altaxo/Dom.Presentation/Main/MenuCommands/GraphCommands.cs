@@ -815,10 +815,10 @@ namespace Altaxo.Graph.Commands
     {
       using (var myStream = new System.IO.FileStream(filename, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.None))
       {
-        using (var zippedStream = new System.IO.Compression.ZipArchive(myStream, System.IO.Compression.ZipArchiveMode.Create))
+        using (var archive = new Main.Services.Files.ZipArchiveAsProjectArchive(myStream, System.IO.Compression.ZipArchiveMode.Create, false))
         {
           var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-          projectToSave.SaveToZippedFile(zippedStream, info);
+          projectToSave.SaveToZippedFile(archive, info);
         }
         myStream.Close();
       }

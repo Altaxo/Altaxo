@@ -606,9 +606,13 @@ namespace Altaxo.Com
         {
           _comManager.InvokeGuiThread(() =>
           {
-            saveEx = Current.IProjectService.SaveProject(stream);
+            using (var archive = new Main.Services.Files.ZipArchiveAsProjectArchive(stream, System.IO.Compression.ZipArchiveMode.Create, false))
+            {
+              saveEx = Current.IProjectService.SaveProject(archive);
+            }
           }
-          );
+
+        );
         }
 
         _isDocumentDirty = false;
