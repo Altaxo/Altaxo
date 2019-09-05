@@ -35,12 +35,6 @@ namespace Altaxo.Main.Services
     {
     }
 
-    [Obsolete("The input already is a FileName")]
-    public FileName(FileName path)
-      : base(path)
-    {
-    }
-
     /// <summary>
     /// Creates a FileName instance from the string.
     /// It is valid to pass null or an empty string to this method (in that case, a null reference will be returned).
@@ -53,11 +47,6 @@ namespace Altaxo.Main.Services
         return new FileName(fileName);
     }
 
-    [Obsolete("The input already is a FileName")]
-    public static FileName Create(FileName fileName)
-    {
-      return fileName;
-    }
 
     /// <summary>
     /// Gets the file name (not the full path).
@@ -67,7 +56,7 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public string GetFileName()
     {
-      return Path.GetFileName(normalizedPath);
+      return Path.GetFileName(_normalizedPath);
     }
 
     /// <summary>
@@ -78,7 +67,7 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public string GetExtension()
     {
-      return Path.GetExtension(normalizedPath);
+      return Path.GetExtension(_normalizedPath);
     }
 
     /// <summary>
@@ -87,10 +76,10 @@ namespace Altaxo.Main.Services
     public bool HasExtension(string extension)
     {
       if (extension == null)
-        throw new ArgumentNullException("extension");
+        throw new ArgumentNullException(nameof(extension));
       if (extension.Length == 0 || extension[0] != '.')
         throw new ArgumentException("extension must start with '.'");
-      return normalizedPath.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
+      return _normalizedPath.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -101,7 +90,7 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public string GetFileNameWithoutExtension()
     {
-      return Path.GetFileNameWithoutExtension(normalizedPath);
+      return Path.GetFileNameWithoutExtension(_normalizedPath);
     }
 
     #region Equals and GetHashCode implementation
@@ -114,14 +103,14 @@ namespace Altaxo.Main.Services
     public bool Equals(FileName other)
     {
       if (other != null)
-        return string.Equals(normalizedPath, other.normalizedPath, StringComparison.OrdinalIgnoreCase);
+        return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
       else
         return false;
     }
 
     public override int GetHashCode()
     {
-      return StringComparer.OrdinalIgnoreCase.GetHashCode(normalizedPath);
+      return StringComparer.OrdinalIgnoreCase.GetHashCode(_normalizedPath);
     }
 
     public static bool operator ==(FileName left, FileName right)
@@ -163,6 +152,15 @@ namespace Altaxo.Main.Services
     }
 
     #endregion Equals and GetHashCode implementation
+
+    /// <summary>
+    /// Returns true if this directory exists in the file system.
+    /// </summary>
+    /// <returns>True if this directory exists in the file system.</returns>
+    public override bool Exists()
+    {
+      return File.Exists(_normalizedPath);
+    }
   }
 
   public class FileNameConverter : TypeConverter

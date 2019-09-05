@@ -576,7 +576,7 @@ namespace Altaxo.Com
           using (var archive = new Main.Services.Files.ZipArchiveAsProjectArchive(stream, System.IO.Compression.ZipArchiveMode.Create, false))
           {
             var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-            projectToSave.SaveToZippedFile(archive, info);
+            projectToSave.SaveToArchive(archive, info);
           }
           stream.Close();
         }

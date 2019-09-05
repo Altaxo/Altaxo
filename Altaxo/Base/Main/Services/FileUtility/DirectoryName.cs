@@ -66,7 +66,7 @@ namespace Altaxo.Main.Services
     {
       if (relativePath == null)
         return null;
-      return DirectoryName.Create(Path.Combine(normalizedPath, relativePath));
+      return DirectoryName.Create(Path.Combine(_normalizedPath, relativePath));
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ namespace Altaxo.Main.Services
     {
       if (relativePath == null)
         return null;
-      return FileName.Create(Path.Combine(normalizedPath, relativePath));
+      return FileName.Create(Path.Combine(_normalizedPath, relativePath));
     }
 
     /// <summary>
@@ -86,7 +86,7 @@ namespace Altaxo.Main.Services
     {
       if (relativeFileName == null)
         return null;
-      return FileName.Create(Path.Combine(normalizedPath, relativeFileName));
+      return FileName.Create(Path.Combine(_normalizedPath, relativeFileName));
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ namespace Altaxo.Main.Services
     {
       if (relativeDirectoryName == null)
         return null;
-      return DirectoryName.Create(Path.Combine(normalizedPath, relativeDirectoryName));
+      return DirectoryName.Create(Path.Combine(_normalizedPath, relativeDirectoryName));
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ namespace Altaxo.Main.Services
     {
       if (path == null)
         return null;
-      return DirectoryName.Create(FileUtility.GetRelativePath(normalizedPath, path));
+      return DirectoryName.Create(FileUtility.GetRelativePath(_normalizedPath, path));
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ namespace Altaxo.Main.Services
     {
       if (path == null)
         return null;
-      return FileName.Create(FileUtility.GetRelativePath(normalizedPath, path));
+      return FileName.Create(FileUtility.GetRelativePath(_normalizedPath, path));
     }
 
     /// <summary>
@@ -124,10 +124,10 @@ namespace Altaxo.Main.Services
     /// </summary>
     public string ToStringWithTrailingBackslash()
     {
-      if (normalizedPath.EndsWith("\\", StringComparison.Ordinal))
-        return normalizedPath; // trailing backslash exists in normalized version for root of drives ("C:\")
+      if (_normalizedPath.EndsWith("\\", StringComparison.Ordinal))
+        return _normalizedPath; // trailing backslash exists in normalized version for root of drives ("C:\")
       else
-        return normalizedPath + "\\";
+        return _normalizedPath + "\\";
     }
 
     #region Equals and GetHashCode implementation
@@ -140,14 +140,14 @@ namespace Altaxo.Main.Services
     public bool Equals(DirectoryName other)
     {
       if (other != null)
-        return string.Equals(normalizedPath, other.normalizedPath, StringComparison.OrdinalIgnoreCase);
+        return string.Equals(_normalizedPath, other._normalizedPath, StringComparison.OrdinalIgnoreCase);
       else
         return false;
     }
 
     public override int GetHashCode()
     {
-      return StringComparer.OrdinalIgnoreCase.GetHashCode(normalizedPath);
+      return StringComparer.OrdinalIgnoreCase.GetHashCode(_normalizedPath);
     }
 
     public static bool operator ==(DirectoryName left, DirectoryName right)
@@ -189,6 +189,16 @@ namespace Altaxo.Main.Services
     }
 
     #endregion Equals and GetHashCode implementation
+
+    /// <summary>
+    /// Returns true if this directory exists in the file system.
+    /// </summary>
+    /// <returns>True if this directory exists in the file system.</returns>
+    public override bool Exists()
+    {
+      return Directory.Exists(_normalizedPath);
+    }
+
   }
 
   public class DirectoryNameConverter : TypeConverter

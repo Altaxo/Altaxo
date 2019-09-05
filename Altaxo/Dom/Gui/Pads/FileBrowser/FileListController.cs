@@ -28,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Altaxo.Collections;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
@@ -246,7 +247,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
         if (Current.IProjectService.IsProjectFileExtension(fileExtension))
         {
-          Current.IProjectService.OpenProject(item.FullName, false);
+          Current.IProjectService.OpenProject(new FileName(item.FullName), false);
           break;
         }
 

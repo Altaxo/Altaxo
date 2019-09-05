@@ -818,7 +818,7 @@ namespace Altaxo.Graph.Commands
         using (var archive = new Main.Services.Files.ZipArchiveAsProjectArchive(myStream, System.IO.Compression.ZipArchiveMode.Create, false))
         {
           var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-          projectToSave.SaveToZippedFile(archive, info);
+          projectToSave.SaveToArchive(archive, info);
         }
         myStream.Close();
       }

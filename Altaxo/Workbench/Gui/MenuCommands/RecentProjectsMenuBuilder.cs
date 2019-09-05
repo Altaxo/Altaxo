@@ -76,7 +76,9 @@ namespace Altaxo.Gui.MenuCommands
     {
       if (sender is FrameworkElement ele && ele.Tag is string recentProjectFile)
       {
-        Current.IProjectService.OpenProject(recentProjectFile, false);
+        var pathName = PathName.CreateFromExisting(recentProjectFile);
+        if (null != pathName)
+          Current.IProjectService.OpenProject(pathName, false);
       }
     }
   }

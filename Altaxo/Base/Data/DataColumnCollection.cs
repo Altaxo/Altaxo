@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
+using Altaxo.Main.Services;
 using Altaxo.Main.Services.Files;
 using Altaxo.Scripting;
 using Altaxo.Serialization;

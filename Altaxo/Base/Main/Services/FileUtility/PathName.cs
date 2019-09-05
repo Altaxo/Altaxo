@@ -26,35 +26,32 @@ namespace Altaxo.Main.Services
   /// </summary>
   public abstract class PathName
   {
-    protected readonly string normalizedPath;
+    protected readonly string _normalizedPath;
 
     protected PathName(string path)
     {
       if (path == null)
-        throw new ArgumentNullException("path");
+        throw new ArgumentNullException(nameof(path));
       if (path.Length == 0)
         throw new ArgumentException("The empty string is not a valid path");
-      normalizedPath = FileUtility.NormalizePath(path);
+      _normalizedPath = FileUtility.NormalizePath(path);
     }
 
     protected PathName(PathName path)
     {
       if (path == null)
         throw new ArgumentNullException("path");
-      normalizedPath = path.normalizedPath;
+      _normalizedPath = path._normalizedPath;
     }
 
     public static implicit operator string(PathName path)
     {
-      if (path != null)
-        return path.normalizedPath;
-      else
-        return null;
+      return path?._normalizedPath;
     }
 
     public override string ToString()
     {
-      return normalizedPath;
+      return _normalizedPath;
     }
 
     /// <summary>
@@ -62,7 +59,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     public bool IsRelative
     {
-      get { return !Path.IsPathRooted(normalizedPath); }
+      get { return !Path.IsPathRooted(_normalizedPath); }
     }
 
     /// <summary>
@@ -73,10 +70,46 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public DirectoryName GetParentDirectory()
     {
-      if (normalizedPath.Length < 2 || normalizedPath[1] != ':')
-        return DirectoryName.Create(Path.Combine(normalizedPath, ".."));
+      if (_normalizedPath.Length < 2 || _normalizedPath[1] != ':')
+        return DirectoryName.Create(Path.Combine(_normalizedPath, ".."));
       else
-        return DirectoryName.Create(Path.GetDirectoryName(normalizedPath));
+        return DirectoryName.Create(Path.GetDirectoryName(_normalizedPath));
+    }
+
+    /// <summary>
+    /// Returns true if this directory exists in the file system.
+    /// </summary>
+    /// <returns>True if this directory exists in the file system.</returns>
+    public abstract bool Exists();
+
+    /// <summary>
+    /// Creates a path from a name that could be a file or a folder name. If a file with the given name exists in the file system,
+    /// it is decided that this is a file name, and a <see cref="FileName"/> is returned. If a folder with the given name exists
+    /// in the file system, then it is decided that this is a folder, and a <see cref="DirectoryName"/> is returned.
+    /// If neither of the two cases above applies, null is returned.
+    /// </summary>
+    /// <param name="fileOrFolderName">Name of the file or folder.</param>
+    /// <returns>Either a <see cref="FileName"/>, a <see cref="DirectoryName"/>, or null if neither a file nor folder with this name exists.</returns>
+    public static PathName CreateFromExisting(string fileOrFolderName)
+    {
+      try
+      {
+        if (System.IO.File.Exists(fileOrFolderName))
+          return new FileName(fileOrFolderName);
+      }
+      catch (Exception)
+      {
+      }
+
+      try
+      {
+        if (System.IO.Directory.Exists(fileOrFolderName))
+          return new DirectoryName(fileOrFolderName);
+      }
+      catch (Exception)
+      {
+      }
+      return null;
     }
   }
 }

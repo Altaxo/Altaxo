@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Main.Services;
 using Altaxo.Main.Services.Files;
 
 namespace Altaxo.Main
@@ -141,7 +142,7 @@ namespace Altaxo.Main
     /// <value>
     /// The current project storage, if the project was opened from the file system. The value is null if the project was opened from a COM stream.
     /// </value>
-    IProjectArchive CurrentProjectFileStorage { get; }
+    IProjectArchiveManager CurrentProjectArchiveManager { get; }
 
 
     /// <summary>
@@ -156,7 +157,7 @@ namespace Altaxo.Main
     /// <param name="withoutUserInteraction">If <c>false</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
     /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
     /// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
-    void OpenProject(string filename, bool withoutUserInteraction);
+    void OpenProject(PathName filename, bool withoutUserInteraction);
 
     /// <summary>
     /// Loads the project for an input stream

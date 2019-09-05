@@ -257,7 +257,7 @@ namespace Altaxo.Main.Commands
             "Currently opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
           ++numberOfProjectsTested;
-          Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, filename, true);
+          Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(filename), true);
 
           monitor.ReportProgress(string.Format(
             "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
@@ -339,7 +339,7 @@ namespace Altaxo.Main.Commands
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
               "Currently re-opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
-            Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, tempFileName, true);
+            Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, new Services.FileName(tempFileName), true);
 
             monitor.ReportProgress(string.Format(
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +

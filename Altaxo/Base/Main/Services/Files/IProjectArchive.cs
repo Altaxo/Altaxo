@@ -1,17 +1,50 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace Altaxo.Main.Services.Files
+namespace Altaxo.Main.Services
 {
   /// <summary>
   /// Abstracts a zip file or a virtual file system where the project is stored into.
   /// </summary>
   public interface IProjectArchive
   {
+
+    /// <summary>
+    /// Gets the name of the file, or a describing name in case the project archive is not base on the file system.
+    /// </summary>
+    /// <value>
+    /// The name of the file / describing name of the location.
+    /// </value>
+    string FileName { get; }
+
     // Write mode    
     /// <summary>
     /// Creates a new project archive entry.

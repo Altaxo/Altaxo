@@ -82,16 +82,16 @@ namespace Altaxo.Main
 
     #region Project saving
 
-    public override Exception SaveProject(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom)
+    public override Exception SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom)
     {
       Exception savingException = null;
       try
       {
         var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-        CurrentOpenProject.SaveToZippedFile(archiveToSaveTo, info, archiveToCopyFrom);
+        CurrentOpenProject.SaveToArchive(archiveToSaveTo, info, archiveToCopyFrom);
 
         if (!Current.Dispatcher.InvokeRequired)
-          SaveWindowStateToZippedFile(archiveToSaveTo, info);
+          SaveWindowStateToArchive(archiveToSaveTo, info);
       }
       catch (Exception exc)
       {
@@ -101,11 +101,11 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Saves the state of the main window into a zipped file.
+    /// Saves the state of the main window into an archive.
     /// </summary>
     /// <param name="zippedStream">The file stream of the zip file.</param>
     /// <param name="info">The serialization info used to serialize the state of the main window.</param>
-    public void SaveWindowStateToZippedFile(Services.Files.IProjectArchive zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
+    public void SaveWindowStateToArchive(Services.IProjectArchive zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
     {
       var errorText = new System.Text.StringBuilder();
 
@@ -181,6 +181,95 @@ namespace Altaxo.Main
 
     #region Project opening
 
+    protected override IFileBasedProjectArchiveManager InternalGetOpenedProjectArchiveFromFileOrFolderLocation(PathName fileOrFolderName)
+    {
+      if (fileOrFolderName is FileName)
+        return new ZipFileProjectArchiveManager();
+
+      return null;
+    }
+
+    protected override string InternalRestoreProjectAndWindowsStateFromArchive(IProjectArchive projectArchive)
+    {
+      var errorText = new System.Text.StringBuilder();
+
+      var oldProject = CurrentOpenProject;
+
+      if (null != oldProject)
+        OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosing));
+
+      try
+      {
+        Current.Workbench.CloseAllViews();
+      }
+      catch (Exception exc)
+      {
+        errorText.Append(exc.ToString());
+      }
+
+      try
+      {
+        SetCurrentProject(null, string.Empty);
+      }
+      catch (Exception exc)
+      {
+        errorText.Append(exc.ToString());
+      }
+
+      // Old project is now closed
+      if (null != oldProject)
+        OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosed));
+
+      // Now open new project
+
+      OnProjectChanged(new ProjectEventArgs(null, projectArchive.FileName, ProjectEventKind.ProjectOpening));
+
+      AltaxoDocument newdocument = null;
+      Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
+
+      try
+      {
+        newdocument = new AltaxoDocument();
+        info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+      }
+      catch (Exception exc)
+      {
+        errorText.Append(exc.ToString());
+        return errorText.ToString(); // this is unrecoverable - we must return
+      }
+
+      try
+      {
+        using (var suspendToken = newdocument.SuspendGetToken())
+        {
+          newdocument.RestoreFromZippedFile(projectArchive, info);
+        }
+      }
+      catch (Exception exc)
+      {
+        errorText.Append(exc.ToString());
+      }
+
+      try
+      {
+        SetCurrentProject(newdocument, projectArchive.FileName);
+
+        RestoreWindowStateFromZippedFile(projectArchive, info, newdocument);
+        info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
+
+        CurrentOpenProject.IsDirty = false;
+
+        info.AnnounceDeserializationHasCompletelyFinished(); // Annonce completly finished deserialization, activate data sources of the Altaxo document
+
+        OnProjectChanged(new ProjectEventArgs(CurrentOpenProject, projectArchive.FileName, ProjectEventKind.ProjectOpened));
+      }
+      catch (Exception exc)
+      {
+        errorText.Append(exc.ToString());
+      }
+      return errorText.Length == 0 ? null : errorText.ToString();
+    }
+
     /// <summary>
     /// Opens a Altaxo project from a stream. Any existing old project will be closed without confirmation.
     /// </summary>
@@ -221,7 +310,7 @@ namespace Altaxo.Main
 
       OnProjectChanged(new ProjectEventArgs(null, filename, ProjectEventKind.ProjectOpening));
 
-      Services.Files.IProjectArchive projectArchive = null;
+      Services.IProjectArchive projectArchive = null;
       AltaxoDocument newdocument = null;
       Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
 
@@ -276,7 +365,7 @@ namespace Altaxo.Main
     /// <param name="zipFile">The zip file where the state file can be found into.</param>
     /// <param name="info">The deserialization info used to retrieve the data.</param>
     /// <param name="restoredDoc">The previously (also from the zip file!) restored Altaxo document.</param>
-    public void RestoreWindowStateFromZippedFile(Services.Files.IProjectArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
+    public void RestoreWindowStateFromZippedFile(Services.IProjectArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
     {
       var restoredDocModels = new List<(object Document, string ZipEntryName)>();
       var restoredPadModels = new List<object>();
@@ -351,7 +440,10 @@ namespace Altaxo.Main
     {
       foreach (var file in cmdFiles)
       {
-        LoadProjectFromFile(file);
+        if (System.IO.File.Exists(file))
+          LoadProjectFromFileOrFolder(FileName.Create(file));
+        else if (System.IO.Directory.Exists(file))
+          LoadProjectFromFileOrFolder(DirectoryName.Create(file));
         break;
       }
 

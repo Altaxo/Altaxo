@@ -32,6 +32,7 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Com
 {
+  using Altaxo.Main.Services;
   using UnmanagedApi.Ole32;
 
   [Guid("072CDB1D-745E-4213-9124-53667725B839"),
@@ -191,7 +192,7 @@ namespace Altaxo.Com
     {
       ComDebug.ReportInfo("{0}.Load filename: {1}", GetType().Name, pszFileName);
 
-      Current.IProjectService.OpenProject(pszFileName, false);
+      Current.IProjectService.OpenProject(new FileName(pszFileName), false);
     }
 
     public void Save(string pszFileName, bool fRemember)

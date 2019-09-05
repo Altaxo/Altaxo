@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.Runtime.Serialization;
 using Altaxo.Main;
+using Altaxo.Main.Services;
 using Altaxo.Main.Services.Files;
 using Altaxo.Serialization;
 
@@ -100,7 +101,7 @@ namespace Altaxo
     /// <param name="originalArchive">The original archive that belongs to the project being saved. Can accelerate the saving of the document by recycling some of the already saved streams.
     /// This parameter can be null.</param>
     /// <exception cref="ApplicationException"></exception>
-    public void SaveToZippedFile(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive originalArchive = null)
+    public void SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive originalArchive = null)
     {
       bool supportsSeparateDataStorage = true;
       var errorText = new System.Text.StringBuilder();
