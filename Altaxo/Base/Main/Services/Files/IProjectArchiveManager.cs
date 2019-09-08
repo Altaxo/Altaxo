@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,8 +35,7 @@ namespace Altaxo.Main.Services
   /// Delegate that should load the project from the given archive, and then restore the state of the Gui.
   /// </summary>
   /// <param name="archive">The archive to load the project from.</param>
-  /// <returns>Null if successfull, otherwise the error messages.</returns>
-  public delegate string RestoreProjectAndWindowsState(IProjectArchive archive);
+  public delegate void RestoreProjectAndWindowsState(IProjectArchive archive);
 
 
   /// <summary>
@@ -43,12 +43,12 @@ namespace Altaxo.Main.Services
   /// </summary>
   /// <param name="newArchive">The archive to save the project and windows state to.</param>
   /// <param name="oldArchive">The old project archive. Can be null. If not null, this archive represents the state of the project at the last saving.</param>
-  /// <returns>Null if successfull, otherwise the exception.</returns>
-  public delegate Exception SaveProjectAndWindowsStateDelegate(IProjectArchive newArchive, IProjectArchive oldArchive);
+  public delegate void SaveProjectAndWindowsStateDelegate(IProjectArchive newArchive, IProjectArchive oldArchive);
 
 
   /// <summary>
-  /// Represents a project archive that is currently open.
+  /// Manages an open project archive, including making and maintaining a safety copy of the project, and saving the project
+  /// into a new or temporary file or folder.
   /// </summary>
   public interface IProjectArchiveManager : IDisposable
   {
@@ -61,11 +61,34 @@ namespace Altaxo.Main.Services
     PathName FileOrFolderName { get; }
 
     /// <summary>
+    /// Gets a value indicating whether this instance is disposed.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
+    /// </value>
+    bool IsDisposed { get; }
+
+    /// <summary>
     /// Saves the specified save project and windows state to the same file or folder that was used to open the project.
     /// </summary>
     /// <param name="saveProjectAndWindowsState">State of the save project and windows.</param>
-    /// <returns></returns>
-    string Save(SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
+    void Save(SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
+
+    /// <summary>
+    /// Intended for deferred reading of (typically only a single) project item from an archive.
+    /// Gets an archive, for read-only purposes only. The call to this function should be thread-safe.
+    /// It is required to call <see cref="ReleaseArchiveThreadSave(object, ref IProjectArchive)"/> to release the returned archive if it is no longer in use.
+    /// </summary>
+    /// <param name="claimer">The claimer. If the returned archive is no longer </param>
+    /// <returns>The archive that can be used to retrieve data (read-only).</returns>
+    IProjectArchive GetArchiveReadOnlyThreadSave(object claimer);
+
+    /// <summary>
+    /// Releases the archive that was claimed with <see cref="GetArchiveReadOnlyThreadSave(object)"/>.
+    /// </summary>
+    /// <param name="claimer">The claimer. This parameter should be identical to that used in the call to <see cref="GetArchiveReadOnlyThreadSave(object)"/></param>.
+    /// <param name="archive">The archive to release.</param>
+    void ReleaseArchiveThreadSave(object claimer, ref IProjectArchive archive);
   }
 
   /// <summary>
@@ -79,10 +102,14 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="fileName">Name of the file to load from.</param>
     /// <param name="restoreProjectAndWindowsState">Delegate that is used to deserialize and restore the project and the windows state.</param>
-    /// <returns>Null if successfull; otherwise, error messages.</returns>
-    string LoadFromFile(FileName fileName, RestoreProjectAndWindowsState restoreProjectAndWindowsState);
+    void LoadFromFile(FileName fileName, RestoreProjectAndWindowsState restoreProjectAndWindowsState);
 
-    string SaveAs(FileName fileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
+    /// <summary>
+    /// Saves a project into a Zip file using the name given in <paramref name="fileName"/>.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    /// <param name="saveProjectAndWindowsState">A delegate that saves the project document and the Gui state into a <see cref="IProjectArchive"/>.</param>
+    void SaveAs(FileName fileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
   }
 
   /// <summary>
@@ -97,8 +124,13 @@ namespace Altaxo.Main.Services
     /// <param name="folderName">Name of the folder.</param>
     /// <param name="restoreProjectAndWindowsState">Delegate that is used to deserialize and restore the project and the windows state.</param>
     /// <returns></returns>
-    string LoadFromFolder(DirectoryName folderName, RestoreProjectAndWindowsState restoreProjectAndWindowsState);
+    void LoadFromFolder(DirectoryName folderName, RestoreProjectAndWindowsState restoreProjectAndWindowsState);
 
-    string SaveAs(DirectoryName folderName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
+    /// <summary>
+    /// Saves a project into a file system folder (the project items are represented by files in that folder). The folder name is given in <paramref name="folderName"/>.
+    /// </summary>
+    /// <param name="folderName">Name of the folder.</param>
+    /// <param name="saveProjectAndWindowsState">A delegate that saves the project document and the Gui state into a <see cref="IProjectArchive"/>.</param>
+    void SaveAs(DirectoryName folderName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
   }
 }

@@ -17,17 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System;
-using System.Collections.Generic;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq;
-using System.Text;
 using System.Text;
 using System.Text.RegularExpressions;
 using Altaxo.Collections;
-using Microsoft.Win32;
 
 namespace Altaxo.Main.Services
 {
@@ -47,6 +42,9 @@ namespace Altaxo.Main.Services
   public delegate void FileOperationDelegate();
 
   public delegate void NamedFileOperationDelegate(FileName fileName);
+
+  public delegate void NamedFileOrFolderOperationDelegate(PathName fileName);
+
 
   /// <summary>
   /// A utility class related to file utilities.
@@ -460,7 +458,7 @@ namespace Altaxo.Main.Services
     }
 
     // Observe SAVE functions
-    public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, FileName fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
+    public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, PathName fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       System.Diagnostics.Debug.Assert(IsValidPath(fileName));
       try
@@ -479,7 +477,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    private static FileOperationResult ObservedSaveHandleException(Exception e, FileOperationDelegate saveFile, FileName fileName, string message, FileErrorPolicy policy)
+    private static FileOperationResult ObservedSaveHandleException(Exception e, FileOperationDelegate saveFile, PathName fileName, string message, FileErrorPolicy policy)
     {
       var messageService = Altaxo.Current.GetRequiredService<IMessageService>();
       switch (policy)
@@ -511,7 +509,7 @@ namespace Altaxo.Main.Services
                                               policy);
     }
 
-    public static FileOperationResult ObservedSave(NamedFileOperationDelegate saveFileAs, FileName fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
+    public static FileOperationResult ObservedSave(NamedFileOrFolderOperationDelegate saveFileAs, PathName fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       System.Diagnostics.Debug.Assert(IsValidPath(fileName));
       try
@@ -531,7 +529,8 @@ namespace Altaxo.Main.Services
       }
     }
 
-    private static FileOperationResult ObservedSaveHandleError(Exception e, NamedFileOperationDelegate saveFileAs, FileName fileName, string message, FileErrorPolicy policy)
+
+    private static FileOperationResult ObservedSaveHandleError(Exception e, NamedFileOrFolderOperationDelegate saveFileAs, PathName fileName, string message, FileErrorPolicy policy)
     {
       message = message + Environment.NewLine + Environment.NewLine + e.Message;
       var messageService = Altaxo.Current.GetRequiredService<IMessageService>();
@@ -560,7 +559,7 @@ namespace Altaxo.Main.Services
       return FileOperationResult.Failed;
     }
 
-    public static FileOperationResult ObservedSave(NamedFileOperationDelegate saveFileAs, FileName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
+    public static FileOperationResult ObservedSave(NamedFileOrFolderOperationDelegate saveFileAs, PathName fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
     {
       return ObservedSave(saveFileAs,
                                               fileName,

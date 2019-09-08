@@ -224,7 +224,7 @@ namespace Altaxo.Gui.Workbench
       {
         if (!alreadyProcessedFiles.Contains(file) && System.IO.File.Exists(file))
         {
-          if (Current.IProjectService.TryOpenProjectDocumentFile(file, forceTrialRegardlessOfExtension: false))
+          if (Current.IProjectService.TryOpenProjectItemFile(new FileName(file), forceTrialRegardlessOfExtension: false))
           {
             alreadyProcessedFiles.Add(file);
           }

@@ -47,7 +47,8 @@ namespace Altaxo.Main.Services
             "App\\RecentFiles",
             Altaxo.Main.Properties.PropertyLevel.Application);
 
-    public static readonly Altaxo.Main.Properties.PropertyKey<IList<FileName>> PropertyKeyRecentProjects =
+
+    static readonly Altaxo.Main.Properties.PropertyKey<IList<FileName>> PropertyKeyRecentProjects =
     new Altaxo.Main.Properties.PropertyKey<IList<FileName>>(
         "0C3B80BC-BE6B-4270-B59A-AAF5BA9CF00C",
         "App\\RecentProjects",
@@ -91,11 +92,12 @@ namespace Altaxo.Main.Services
       }
     }
 
+
     #endregion Serialization
 
     public RecentOpenBase()
     {
-      _recentProjects = Current.PropertyService.GetValue(PropertyKeyRecentProjects, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new List<FileName>());
+      _recentProjects = Current.PropertyService.GetValue(PropertyKeyRecentProjects, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new List<FileName>()) ?? new List<FileName>();
       _recentFiles = Current.PropertyService.GetValue(PropertyKeyRecentFiles, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new List<FileName>());
     }
 
@@ -104,7 +106,7 @@ namespace Altaxo.Main.Services
       get { return new ReadOnlyCollection<FileName>(_recentFiles); }
     }
 
-    public IReadOnlyList<FileName> RecentProjects
+    public IReadOnlyList<PathName> RecentProjects
     {
       get { return new ReadOnlyCollection<FileName>(_recentProjects); }
     }
@@ -135,22 +137,29 @@ namespace Altaxo.Main.Services
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);
     }
 
-    public void RemoveRecentProject(FileName name)
+    public void RemoveRecentProject(PathName pathName)
     {
-      _recentProjects.Remove(name);
+      if (pathName is FileName name)
+      {
+        _recentProjects.Remove(name);
+      }
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);
     }
 
-    public virtual void AddRecentProject(FileName name)
+    public virtual void AddRecentProject(PathName pathName)
     {
-      _recentProjects.Remove(name);
-
-      while (_recentProjects.Count >= MAX_LENGTH)
+      if (pathName is FileName name)
       {
-        _recentProjects.RemoveAt(_recentProjects.Count - 1);
+        _recentProjects.Remove(name);
+
+        while (_recentProjects.Count >= MAX_LENGTH)
+        {
+          _recentProjects.RemoveAt(_recentProjects.Count - 1);
+        }
+
+        _recentProjects.Insert(0, name);
       }
 
-      _recentProjects.Insert(0, name);
       Current.PropertyService.SetValue(PropertyKeyRecentProjects, _recentProjects);
     }
 

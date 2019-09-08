@@ -36,24 +36,30 @@ namespace Altaxo.Main.Services.Files
   /// Wraps a <see cref="ZipArchive"/> to implement <see cref="IProjectArchive"/>
   /// </summary>
   /// <seealso cref="IProjectArchive" />
-  public class ZipArchiveAsProjectArchive : IProjectArchive, IDisposable
+  public class ZipArchiveAsProjectArchive : IProjectArchive
   {
+    private bool _isDisposed;
     Stream _stream;
     ZipArchiveAxo _zipArchive;
     bool _leaveOpen;
 
-    public string FileName
+    /// <inheritdoc/>
+    public PathName FileName
     {
       get
       {
         if (_stream is FileStream fs)
-          return fs.Name;
-        else if (null != _stream)
-          return "From COM";
+          return new FileName(fs.Name);
         else
-          return string.Empty;
+          return null;
       }
     }
+
+    /// <inheritdoc/>
+    public bool IsDisposed => _isDisposed;
+
+    /// <inheritdoc/>
+    public IProjectArchiveManager ArchiveManager { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ZipArchiveAsProjectArchive"/> class.
@@ -68,6 +74,12 @@ namespace Altaxo.Main.Services.Files
       _leaveOpen = leaveOpen;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ZipArchiveAsProjectArchive"/> class.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    /// <param name="mode">The mode used to open the project archive.</param>
+    /// <exception cref="ArgumentException">mode</exception>
     public ZipArchiveAsProjectArchive(string fileName, ZipArchiveMode mode)
     {
       if (mode == ZipArchiveMode.Read)
@@ -83,6 +95,7 @@ namespace Altaxo.Main.Services.Files
       _zipArchive = new ZipArchiveAxo(_stream, mode, _leaveOpen);
     }
 
+    /// <inheritdoc/>
     public bool SupportsDeferredLoading
     {
       get
@@ -100,52 +113,47 @@ namespace Altaxo.Main.Services.Files
       return new ZipEntryAsProjectArchiveEntry(_zipArchive.CreateEntry(name));
     }
 
+    /// <inheritdoc/>
     public IProjectArchiveEntry GetEntry(string entryName)
     {
       var e = _zipArchive.GetEntry(entryName);
       return e is null ? null : new ZipEntryAsProjectArchiveEntry(e);
     }
 
+    /// <inheritdoc/>
     public bool ContainsEntry(string entryName)
     {
       return !(_zipArchive.GetEntry(entryName) is null);
     }
 
     #region IDisposable Support
-    private bool _isDisposed = false; // To detect redundant calls
 
-    protected virtual void Dispose(bool disposing)
+    /// <inheritdoc/>
+    public void Dispose()
     {
       if (!_isDisposed)
       {
-        if (disposing)
+        _stream?.Flush();
+        _zipArchive?.Dispose();
+        _zipArchive = null;
+        if (!_leaveOpen)
         {
-          _zipArchive?.Dispose();
-          _zipArchive = null;
-          if (!_leaveOpen)
-          {
-            _stream?.Dispose();
-          }
-          _stream = null;
+          _stream?.Close();
+          _stream?.Dispose();
         }
-        _isDisposed = true;
+        _stream = null;
       }
+      _isDisposed = true;
     }
 
-    // This code added to correctly implement the disposable pattern.
-    public void Dispose()
-    {
-      // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-      Dispose(true);
-      // TODO: uncomment the following line if the finalizer is overridden above.
-      // GC.SuppressFinalize(this);
-    }
 
+
+    /// <inheritdoc/>
     public IProjectArchiveEntryMemento GetEntryMemento(string entryName)
     {
       if (_stream is FileStream fs)
       {
-        return new ZipArchiveEntryMemento(fs.Name, entryName);
+        return new ZipArchiveEntryMemento(entryName, ArchiveManager, fs.Name);
       }
       else
       {
@@ -153,11 +161,13 @@ namespace Altaxo.Main.Services.Files
       }
     }
 
+    /// <inheritdoc/>
     public bool SupportsCopyEntryFrom(IProjectArchive archive)
     {
       return archive is ZipArchiveAsProjectArchive;
     }
 
+    /// <inheritdoc/>
     public void CopyEntryFrom(IProjectArchive archive, string entryName)
     {
       if (!(archive is ZipArchiveAsProjectArchive zipArchiveWrapper))
@@ -172,68 +182,5 @@ namespace Altaxo.Main.Services.Files
 
     }
     #endregion
-  }
-
-  /// <summary>
-  /// Wraps a <see cref="ZipArchiveEntry"/> to implement <see cref="IProjectArchiveEntry"/>.
-  /// </summary>
-  /// <seealso cref="Altaxo.Main.Services.Files.IProjectArchiveEntry" />
-  public class ZipEntryAsProjectArchiveEntry : IProjectArchiveEntry
-  {
-    ZipArchiveEntryAxo _entry;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ZipEntryAsProjectArchiveEntry"/> class.
-    /// </summary>
-    /// <param name="entry">The zip archive entry to wrap.</param>
-    /// <exception cref="ArgumentNullException">entry</exception>
-    public ZipEntryAsProjectArchiveEntry(ZipArchiveEntryAxo entry)
-    {
-      _entry = entry ?? throw new ArgumentNullException(nameof(entry));
-    }
-
-    /// <inheritdoc/>
-    public string FullName { get { return _entry.FullName; } }
-
-    /// <inheritdoc/>
-    public Stream OpenForReading()
-    {
-      return _entry.Open();
-    }
-
-    /// <inheritdoc/>
-    public Stream OpenForWriting()
-    {
-      return _entry.Open();
-    }
-  }
-
-  public class ZipArchiveEntryMemento : IProjectArchiveEntryMemento, IDisposable
-  {
-    string _fileName;
-    string _entryName;
-    ZipArchiveAxo _archive;
-
-
-    public ZipArchiveEntryMemento(string archiveFileName, string entryName)
-    {
-      _fileName = archiveFileName;
-      _entryName = entryName;
-    }
-
-
-
-    public IProjectArchiveEntry GetArchiveEntry()
-    {
-      var stream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-      _archive = new ZipArchiveAxo(stream, ZipArchiveMode.Read, false);
-      return new ZipEntryAsProjectArchiveEntry(_archive.GetEntry(_entryName));
-    }
-
-    public void Dispose()
-    {
-      _archive?.Dispose();
-      _archive = null;
-    }
   }
 }

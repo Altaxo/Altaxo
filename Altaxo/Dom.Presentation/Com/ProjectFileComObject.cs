@@ -199,7 +199,7 @@ namespace Altaxo.Com
     {
       ComDebug.ReportInfo("{0}.Save filename: {1}", GetType().Name, pszFileName);
 
-      Current.IProjectService.SaveProject(pszFileName);
+      Current.IProjectService.SaveProject(new FileName(pszFileName));
     }
 
     public void SaveCompleted(string pszFileName)

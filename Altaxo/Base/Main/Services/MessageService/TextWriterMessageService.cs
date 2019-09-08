@@ -138,14 +138,14 @@ namespace Altaxo.Main.Services.Implementation
       writer.WriteLine(caption + ": " + message);
     }
 
-    public void InformSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot)
+    public void InformSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot)
     {
       writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
       if (exceptionGot != null)
         writer.WriteLine(exceptionGot.ToString());
     }
 
-    public ChooseSaveErrorResult ChooseSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
+    public ChooseSaveErrorResult ChooseSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       writer.WriteLine(dialogName + ": " + message + " (" + fileName + ")");
       if (exceptionGot != null)

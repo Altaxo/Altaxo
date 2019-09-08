@@ -34,7 +34,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Gets the collection of recently opened project files.
     /// </summary>
-    IReadOnlyList<FileName> RecentProjects { get; }
+    IReadOnlyList<PathName> RecentProjects { get; }
 
     /// <summary>
     /// Clears the collection of recently opened files (other than project files).
@@ -49,7 +49,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Removes one project file from the collection of recently opened project files.
     /// </summary>
-    void RemoveRecentProject(FileName fileName);
+    void RemoveRecentProject(PathName fileName);
 
     /// <summary>
     /// Adds a file to the collection of recently opened files (other than project files).
@@ -59,6 +59,6 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Adds a project file to the collection of recently opened project files.
     /// </summary>
-    void AddRecentProject(FileName fileName);
+    void AddRecentProject(PathName fileName);
   }
 }

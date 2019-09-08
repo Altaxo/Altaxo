@@ -134,7 +134,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
     /// </summary>
-    string CurrentProjectFileName { get; set; }
+    PathName CurrentProjectFileName { get; set; }
 
     /// <summary>
     /// Gets the object that represents the storage of the current project on disk. If the current project was opened as a COM object, the value is null.
@@ -150,21 +150,27 @@ namespace Altaxo.Main
     /// </summary>
     void CreateInitialProject();
 
+    #region Opening a project
+
     /// <summary>
     /// Opens a Altaxo project. If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
     /// </summary>
-    /// <param name="filename"></param>
+    /// <param name="pathName">Can be a <see cref="FileName"/>, if the project is file-based, or a <see cref="DirectoryName"/>, if the project is based on a directory.</param>
     /// <param name="withoutUserInteraction">If <c>false</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
     /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
     /// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
-    void OpenProject(PathName filename, bool withoutUserInteraction);
+    void OpenProject(PathName pathName, bool withoutUserInteraction);
 
     /// <summary>
-    /// Loads the project for an input stream
+    /// Opens a project from an archive. This function is intended for opening the project from a COM stream on a freshly started application.
+    /// Thus it is assumed that no old project has to be saved before!
     /// </summary>
     /// <param name="istream">The input stream.</param>
-    /// <returns>Null if the project was successfully loaded; or an error string otherwise.</returns>
-    string LoadProjectFromStream(System.IO.Stream istream);
+    void OpenProjectFromArchive(IProjectArchive istream);
+
+    #endregion Opening a project
+
+    #region Saving a project
 
     /// <summary>
     /// Asks the user whether or not the project should be saved, and saves it in case the user answers with yes.
@@ -178,28 +184,35 @@ namespace Altaxo.Main
     void SaveProjectAs();
 
     /// <summary>
-    /// This command is used if in embedded object mode. It saves the current project to a file,
-    /// but don't set the current file name of the project (in project service). Furthermore, the title in the title bar is not influenced by the saving.
+    /// This command is used if in embedded object mode.
+    /// It saves the current project to a file,
+    /// but don't set the current file name of the project (in project service).
+    /// Furthermore, the title in the title bar is not influenced by the saving.
     /// </summary>
     void SaveProjectCopyAs();
 
     /// <summary>
     /// Saves the project under the given file name, using the standard archive format.
     /// </summary>
-    /// <param name="fileName">Name of the file.</param>
-    void SaveProject(string fileName);
+    /// <param name="fileOrFolderName">If the project should be saved into a file, is should be a <see cref="FileName"/>. If the project should be saved into a folder, use a <see cref="DirectoryName"/> instead.</param>
+    void SaveProject(PathName fileOrFolderName);
 
     /// <summary>
-    /// Saves the project in the provided stream.
+    /// Saves the project in the provided archive. Is intended for saving the project into a COM stream only.
+    /// For regular saving into the file system, use one of the other Save.. methods.
     /// </summary>
     /// <param name="archive">Archive to save the project into</param>
     /// <returns>Null if everything was saved sucessfully, or an exception if not.</returns>
-    Exception SaveProject(IProjectArchive archive);
+    void SaveProject(IProjectArchive archive);
 
     /// <summary>
     /// Saves a project under the current file name.
     /// </summary>
     void SaveProject();
+
+    #endregion Saving a project
+
+    #region Closing a project
 
     /// <summary>
     /// Closes a project. If the project is dirty, and <paramref name="forceClose"/> is <c>false</c>, the user is asked to save the project.
@@ -210,9 +223,12 @@ namespace Altaxo.Main
     bool CloseProject(bool forceClose);
 
     /// <summary>
-    /// Disposes the whole project and sets the current project to null.
+    /// Disposes the entire project and sets the current project to null.
+    /// Attention: This function is intended to be used during application shutdown only.
     /// </summary>
     void DisposeProjectAndSetToNull();
+
+    #endregion Closing a project
 
     /// <summary>
     /// Returns true if the given document has at least one open view in the workbench.
@@ -240,7 +256,7 @@ namespace Altaxo.Main
     void ShowDocumentView(object document);
 
     /// <summary>
-    /// This function will delete a project document and close all corresponding views.
+    /// This function will delete a project item and close all corresponding views.
     /// </summary>
     /// <param name="document">The document (project item) to delete.</param>
     /// <param name="force">If true, the document is deleted without safety question; otherwise, the user is ask before the graph document is deleted.</param>
@@ -290,13 +306,13 @@ namespace Altaxo.Main
     IEnumerable<string> ProjectFileExtensions { get; }
 
     /// <summary>
-    /// Tests if the provided file name to have an extension that is associated with the extension of a project document
-    /// (a specific part of the project), and if it is, tries to open the document and add it to the current project.
+    /// Tests if the provided file name to have an extension that is associated with the extension of a project item 
+    /// (a specific item of the project), and if it is, tries to open the project item and adds it to the current project.
     /// </summary>
     /// <param name="fileName">Name of the file.</param>
     /// <param name="forceTrialRegardlessOfExtension">If true, it is tried to deserialize the object in the file regardless of the file extension.</param>
     /// <returns>True if the fileName has an extension that is a project document extension, and the document could successfully be opened; otherwise, false.</returns>
-    bool TryOpenProjectDocumentFile(string fileName, bool forceTrialRegardlessOfExtension);
+    bool TryOpenProjectItemFile(FileName fileName, bool forceTrialRegardlessOfExtension);
 
     /// <summary>
     /// Gets the title that should be shown as the main window title.

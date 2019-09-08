@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Main.Commands
 {
@@ -297,7 +298,7 @@ namespace Altaxo.Main.Commands
         if (testOptions.TestSavingAndReopening)
         {
           // Test saving of the project (now with the current version of Altaxo)
-          string tempFileName = System.IO.Path.GetTempFileName();
+          var tempFileName = new FileName(System.IO.Path.GetTempFileName());
           try
           {
             monitor.ReportProgress(string.Format(

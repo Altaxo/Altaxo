@@ -152,42 +152,62 @@ namespace Altaxo.Main.Services
       return messageBox.Result;
     }
 
-    public void InformSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot)
+    public void InformSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot)
     {
       var dlg = new SaveErrorInformDialog(fileName, message, dialogName, exceptionGot);
       ((GuiFactoryServiceWpfWin)Current.Gui).ShowDialog(dlg);
     }
 
-    public ChooseSaveErrorResult ChooseSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
+    public ChooseSaveErrorResult ChooseSaveError(PathName fileOrFolderName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       ChooseSaveErrorResult r = ChooseSaveErrorResult.Ignore;
 
 restartlabel:
-      var dlg = new SaveErrorChooseDialog(fileName, message, dialogName, exceptionGot, chooseLocationEnabled);
+      var dlg = new SaveErrorChooseDialog(fileOrFolderName, message, dialogName, exceptionGot, chooseLocationEnabled);
       ((GuiFactoryServiceWpfWin)Current.Gui).ShowDialog(dlg);
 
       switch (dlg.DetailedDialogResult)
       {
         case SaveErrorChooseDialog.SaveErrorChooseDialogResult.ChooseLocation:
           {
-            // choose location:
-            var fdiag = new SaveFileDialog
+            if (fileOrFolderName is FileName fileName)
             {
-              OverwritePrompt = true,
-              AddExtension = true,
-              CheckFileExists = false,
-              CheckPathExists = true,
-              Title = "Choose alternate file name",
-              FileName = fileName
-            };
-            if (fdiag.ShowDialog() == true)
+              // choose location:
+              var fdiag = new SaveFileDialog
+              {
+                OverwritePrompt = true,
+                AddExtension = true,
+                CheckFileExists = false,
+                CheckPathExists = true,
+                Title = "Choose alternate file name",
+                FileName = fileOrFolderName
+              };
+              if (fdiag.ShowDialog() == true)
+              {
+                r = ChooseSaveErrorResult.SaveAlternative(FileName.Create(fdiag.FileName));
+                break;
+              }
+              else
+              {
+                goto restartlabel;
+              }
+            }
+            else if (fileOrFolderName is DirectoryName folderName)
             {
-              r = ChooseSaveErrorResult.SaveAlternative(FileName.Create(fdiag.FileName));
-              break;
+              var fdiag = new System.Windows.Forms.FolderBrowserDialog();
+              if (System.Windows.Forms.DialogResult.OK == fdiag.ShowDialog())
+              {
+                r = ChooseSaveErrorResult.SaveAlternative(DirectoryName.Create(fdiag.SelectedPath));
+                break;
+              }
+              else
+              {
+                goto restartlabel;
+              }
             }
             else
             {
-              goto restartlabel;
+              throw new NotImplementedException($"Unhandled type of PathName: {fileOrFolderName?.GetType()}");
             }
           }
         case SaveErrorChooseDialog.SaveErrorChooseDialogResult.Retry:

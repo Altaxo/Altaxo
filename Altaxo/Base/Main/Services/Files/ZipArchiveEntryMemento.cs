@@ -1,0 +1,98 @@
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
+using System.IO;
+using System.IO.Compression;
+
+namespace Altaxo.Main.Services.Files
+{
+  /// <summary>
+  /// Instances of this class can be used in project items to load data delayed (i.e. after the project has been loaded).
+  /// The instance store a memento that points to an archive entry that can be used to load the data when needed.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.Services.IProjectArchiveEntryMemento" />
+  /// <seealso cref="System.IDisposable" />
+  public class ZipArchiveEntryMemento : IProjectArchiveEntryMemento, IDisposable
+  {
+    // fixed data
+    readonly string _fileName;
+    readonly string _entryName;
+    readonly IProjectArchiveManager _archiveManager;
+
+    // operational data
+    IProjectArchive _archive;
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ZipArchiveEntryMemento"/> class.
+    /// </summary>
+    /// <param name="entryName">Name of the entry.</param>
+    /// <param name="archiveManager">The archive manager.</param>
+    /// <param name="archiveFileName">Name of the archive file. This parameter is used only if the provided <paramref name="archiveManager"/> is null or invalid.</param>
+    public ZipArchiveEntryMemento(string entryName, IProjectArchiveManager archiveManager, string archiveFileName)
+    {
+      _entryName = entryName;
+      _archiveManager = archiveManager;
+      _fileName = archiveFileName;
+    }
+
+
+
+    /// <summary>
+    /// Gets the archive entry that is memento refers to.
+    /// </summary>
+    /// <returns>
+    /// The archive entry.
+    /// </returns>
+    public IProjectArchiveEntry GetArchiveEntry()
+    {
+      if (!(_archiveManager is null || _archiveManager.IsDisposed))
+      {
+        _archive = _archiveManager.GetArchiveReadOnlyThreadSave(this);
+        return _archive.GetEntry(_entryName);
+      }
+      else
+      {
+        var stream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        _archive = new ZipArchiveAsProjectArchive(stream, ZipArchiveMode.Read, false);
+        return _archive.GetEntry(_entryName);
+      }
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+      if (!(_archiveManager?.IsDisposed == true))
+      {
+        _archiveManager.ReleaseArchiveThreadSave(this, ref _archive);
+      }
+      else
+      {
+        _archive?.Dispose();
+        _archive = null;
+      }
+    }
+  }
+}

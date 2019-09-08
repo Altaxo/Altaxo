@@ -34,16 +34,15 @@ namespace Altaxo.Main.Services
   /// <summary>
   /// Abstracts a zip file or a virtual file system where the project is stored into.
   /// </summary>
-  public interface IProjectArchive
+  public interface IProjectArchive : IDisposable
   {
-
     /// <summary>
-    /// Gets the name of the file, or a describing name in case the project archive is not base on the file system.
+    /// Gets the name of the file or folder 
     /// </summary>
     /// <value>
     /// The name of the file / describing name of the location.
     /// </value>
-    string FileName { get; }
+    PathName FileName { get; }
 
     // Write mode    
     /// <summary>
@@ -73,6 +72,13 @@ namespace Altaxo.Main.Services
     IProjectArchiveEntry GetEntry(string entryName);
 
 
+    /// <summary>
+    /// Determines whether the archive contains an entry with the name given in <paramref name="entryName"/>.
+    /// </summary>
+    /// <param name="entryName">Name of the entry.</param>
+    /// <returns>
+    ///   <c>true</c> if the archive contains the entry; otherwise, <c>false</c>.
+    /// </returns>
     bool ContainsEntry(string entryName);
 
     /// <summary>
@@ -106,18 +112,6 @@ namespace Altaxo.Main.Services
     /// <param name="entryName">Name of the entry.</param>
     /// <returns></returns>
     IProjectArchiveEntryMemento GetEntryMemento(string entryName);
-  }
-
-  /// <summary>
-  /// A class from which a project archive can be restored. Ideally, this object should not claim any resources.
-  /// </summary>
-  public interface IProjectArchiveEntryMemento : IDisposable
-  {
-    /// <summary>
-    /// Gets the archive.
-    /// </summary>
-    /// <returns>The archive. Usually, after finishing working with the archive, it should be disposed.</returns>
-    IProjectArchiveEntry GetArchiveEntry();
   }
 
   /// <summary>

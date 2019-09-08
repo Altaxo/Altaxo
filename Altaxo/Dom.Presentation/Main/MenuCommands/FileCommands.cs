@@ -85,7 +85,7 @@ namespace Altaxo.Main.Commands
         var failedToOpen = new List<string>();
         foreach (var fileName in dlg.FileNames)
         {
-          if (!Current.IProjectService.TryOpenProjectDocumentFile(fileName, forceTrialRegardlessOfExtension: true))
+          if (!Current.IProjectService.TryOpenProjectItemFile(new FileName(fileName), forceTrialRegardlessOfExtension: true))
           {
             failedToOpen.Add(fileName);
           }

@@ -18,8 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Generic;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Shell;
 using Altaxo.Main;
@@ -32,7 +30,7 @@ namespace Altaxo.Main.Services
   /// </summary>
   public class RecentOpen : RecentOpenBase
   {
-    public override void AddRecentProject(FileName name)
+    public override void AddRecentProject(PathName name)
     {
       base.AddRecentProject(name);
       JumpList.AddToRecentCategory(name);

@@ -43,9 +43,9 @@ namespace Altaxo.Dom
 
     protected IProject _currentProject;
 
-    protected string _currentProjectFileName;
+    protected PathName _currentProjectFileName;
 
-    protected IProjectArchiveManager _currentProjectFileStorage;
+    protected IProjectArchiveManager _currentProjectArchiveManager = new UnnamedProjectArchiveManager();
 
     public event ProjectEventHandler ProjectOpened;
 
@@ -107,7 +107,7 @@ namespace Altaxo.Dom
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
     /// For setting, call <see cref="SetCurrentProject(IProject, string)"/>.
     /// </summary>
-    public virtual string CurrentProjectFileName
+    public virtual PathName CurrentProjectFileName
     {
       get { return _currentProjectFileName; }
       set
@@ -121,18 +121,28 @@ namespace Altaxo.Dom
       }
     }
 
+    /// <summary>
+    /// Gets or sets the current project archive manager.
+    /// </summary>
+    /// <value>
+    /// The current project archive manager.
+    /// </value>
+    /// <exception cref="ArgumentNullException">CurrentProjectArchiveManager</exception>
     public virtual IProjectArchiveManager CurrentProjectArchiveManager
     {
       get
       {
-        return _currentProjectFileStorage;
+        return _currentProjectArchiveManager;
       }
       set
       {
-        if (!object.ReferenceEquals(_currentProjectFileStorage, value))
+        if (value is null)
+          throw new ArgumentNullException(nameof(CurrentProjectArchiveManager));
+
+        if (!object.ReferenceEquals(_currentProjectArchiveManager, value))
         {
-          _currentProjectFileStorage?.Dispose();
-          _currentProjectFileStorage = value;
+          _currentProjectArchiveManager?.Dispose();
+          _currentProjectArchiveManager = value;
         }
       }
     }
@@ -143,7 +153,7 @@ namespace Altaxo.Dom
     /// </summary>
     /// <param name="project">The new project.</param>
     /// <param name="projectFileName">Name of the new project file (for internally build instances, null).</param>
-    protected void SetCurrentProject(IProject project, string projectFileName)
+    protected void SetCurrentProject(IProject project, PathName projectFileName)
     {
       var oldProject = _currentProject;
       string oldProjectFileName = _currentProjectFileName;
@@ -225,18 +235,18 @@ namespace Altaxo.Dom
     /// Saves the current project under a provided file name. If the provided file name differs
     /// from the current file name, a project renaming event is triggered.
     /// </summary>
-    /// <param name="filename">The new project file name.</param>
-    public virtual void SaveProject(string filename)
+    /// <param name="fileOrFolderName">If the project should be saved into a file, is should be a <see cref="FileName"/>. If the project should be saved into a folder, use a <see cref="DirectoryName"/> instead.</param>
+    public virtual void SaveProject(PathName fileOrFolderName)
     {
       string oldFileName = CurrentProjectFileName;
-      _currentProjectFileName = filename; // set file name silently, because
-      if (oldFileName != filename)
+      _currentProjectFileName = fileOrFolderName; // set file name silently
+      if (oldFileName != fileOrFolderName)
       {
-        OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldFileName, filename));
+        OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldFileName, fileOrFolderName));
       }
 
-      FileUtility.ObservedSave(new NamedFileOperationDelegate(InternalSave),
-          FileName.Create(filename),
+      FileUtility.ObservedSave(new NamedFileOrFolderOperationDelegate(InternalSave),
+          FileName.Create(fileOrFolderName),
           Current.ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
           FileErrorPolicy.ProvideAlternative);
     }
@@ -255,7 +265,7 @@ namespace Altaxo.Dom
 
       if (Current.Gui.ShowSaveFileDialog(options))
       {
-        string filename = options.FileName;
+        var filename = new FileName(options.FileName);
         SaveProject(filename);
         Current.GetService<IRecentOpen>()?.AddRecentProject(new FileName(filename));
         Current.StatusBar.SetMessage(filename + ": " + Current.ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
@@ -280,7 +290,7 @@ namespace Altaxo.Dom
         string filename = options.FileName;
 
         FileUtility.ObservedSave(
-            new NamedFileOperationDelegate(InternalSave),
+            new NamedFileOrFolderOperationDelegate(InternalSave),
             FileName.Create(filename),
             Current.ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
             FileErrorPolicy.ProvideAlternative);
@@ -297,23 +307,20 @@ namespace Altaxo.Dom
     /// <param name="filename"></param>
     protected virtual void InternalSave(PathName filename)
     {
-      string savingErrors = null;
-
       if (!filename.Equals(CurrentProjectArchiveManager?.FileOrFolderName))
       {
-        var saveProjectManager = InternalGetOpenedProjectArchiveFromFileOrFolderLocation(filename) ?? throw new ApplicationException($"Can't find a storage manager for file/folder {filename}");
+        var saveProjectManager = InternalCreateProjectArchiveManagerFromFileOrFolderLocation(filename) ?? throw new ApplicationException($"Can't find a storage manager for file/folder {filename}");
 
         if (saveProjectManager.GetType() != CurrentProjectArchiveManager?.GetType())
         {
-          CurrentProjectArchiveManager?.Dispose();
           CurrentProjectArchiveManager = saveProjectManager;
         }
 
 
         if (CurrentProjectArchiveManager is IFileBasedProjectArchiveManager fileBasedManager)
-          savingErrors = fileBasedManager.SaveAs((FileName)filename, SaveProjectAndWindowsState);
+          fileBasedManager.SaveAs((FileName)filename, SaveProjectAndWindowsState);
         else if (CurrentProjectArchiveManager is IFolderBasedProjectArchiveManager folderBasedManager)
-          savingErrors = folderBasedManager.SaveAs((DirectoryName)filename, SaveProjectAndWindowsState);
+          folderBasedManager.SaveAs((DirectoryName)filename, SaveProjectAndWindowsState);
         else
           throw new NotImplementedException($"Storage manager type {CurrentProjectArchiveManager} is not implemented here.");
 
@@ -321,11 +328,9 @@ namespace Altaxo.Dom
       else
       {
         // we save the project under the same name, thus we can use the same storage manager
-        savingErrors = CurrentProjectArchiveManager.Save(SaveProjectAndWindowsState);
+        CurrentProjectArchiveManager.Save(SaveProjectAndWindowsState);
       }
 
-      if (null != savingErrors)
-        throw new ApplicationException(savingErrors);
 
       _currentProject.IsDirty = false;
     }
@@ -339,14 +344,14 @@ namespace Altaxo.Dom
     /// <param name="archiveToCopyFrom">The project archive that represents the last state of saving before this saving Can be used to copy some of the data,
     /// that were not changed inbetween savings. This parameter can be null, for instance, if no such archive exists.</param>
     /// <returns>Null if the operation succeeded, otherwise, the exception being thrown.</returns>
-    public abstract Exception SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom);
+    public abstract void SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom);
 
     /// <summary>
     /// Saves a project.
     /// </summary>
     /// <param name="archiveToSaveTo">The project archive to save the project to.</param>
     /// <returns>Null if the operation succeeded, otherwise, the exception being thrown.</returns>
-    public Exception SaveProject(IProjectArchive archiveToSaveTo) => SaveProjectAndWindowsState(archiveToSaveTo, null);
+    public void SaveProject(IProjectArchive archiveToSaveTo) => SaveProjectAndWindowsState(archiveToSaveTo, null);
 
     #endregion Project saving
 
@@ -359,9 +364,9 @@ namespace Altaxo.Dom
     /// <returns>
     /// Null if the project was successfully loaded; or an error string otherwise.
     /// </returns>
-    public string LoadProjectFromStream(Stream istream)
+    public void OpenProjectFromArchive(IProjectArchive archive)
     {
-      return InternalLoadProjectFromStream(istream, null);
+      InternalLoadProjectAndWindowsStateFromArchive(archive);
     }
 
     /// <summary>
@@ -402,7 +407,7 @@ namespace Altaxo.Dom
         if (withoutUserInteraction)
           throw;
         else
-          Current.Gui.ErrorMessageBox(ex.Message);
+          Current.Gui.ErrorMessageBox(string.Concat(ex.Message, "\r\nDetails:\r\n", ex.ToString()));
       }
 
       Current.StatusBar.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
@@ -414,49 +419,38 @@ namespace Altaxo.Dom
     /// <param name="filename"></param>
     protected virtual void LoadProjectFromFileOrFolder(PathName filename)
     {
-      string errorText;
-      var projectArchiveManager = InternalGetOpenedProjectArchiveFromFileOrFolderLocation(filename) ?? throw new ApplicationException($"Can not find any archive manager that can handle the file / folder {filename}");
+      var projectArchiveManager = InternalCreateProjectArchiveManagerFromFileOrFolderLocation(filename) ?? throw new ApplicationException($"Can not find any archive manager that can handle the file / folder {filename}");
       CurrentProjectArchiveManager = projectArchiveManager;
 
       if (projectArchiveManager is IFileBasedProjectArchiveManager fileProjectArchiveManager)
-        errorText = fileProjectArchiveManager.LoadFromFile((FileName)filename, InternalRestoreProjectAndWindowsStateFromArchive);
+        fileProjectArchiveManager.LoadFromFile((FileName)filename, InternalLoadProjectAndWindowsStateFromArchive);
       else if (projectArchiveManager is IFolderBasedProjectArchiveManager folderProjectArchiveManager)
-        errorText = folderProjectArchiveManager.LoadFromFolder((DirectoryName)filename, InternalRestoreProjectAndWindowsStateFromArchive);
+        folderProjectArchiveManager.LoadFromFolder((DirectoryName)filename, InternalLoadProjectAndWindowsStateFromArchive);
       else
         throw new ApplicationException($"Unexpected type of ProjectArchiveManager: {projectArchiveManager.GetType().FullName}");
-
-      if (errorText?.Length > 0)
-        throw new ApplicationException(errorText);
 
       var recentService = Current.GetService<IRecentOpen>();
 
       if (recentService != null)
-        recentService.AddRecentProject(FileName.Create(filename));
+        recentService.AddRecentProject(filename);
     }
-
-    /// <summary>
-    /// Opens a Altaxo project from a stream. Any existing old project will be closed without confirmation.
-    /// </summary>
-    /// <param name="myStream">The stream from which to load the project.</param>
-    /// <param name="filename">Either the filename of the file which stored the document, or null (e.g. myStream is a MemoryStream).</param>
-    protected abstract string InternalLoadProjectFromStream(System.IO.Stream myStream, string filename);
 
     /// <summary>
     /// Loads the project (see <see cref="AltaxoDocument"/>) and the state of the windows from a project archive.
     /// </summary>
     /// <param name="archive">The project archive to load from.</param>
     /// <returns>Null if successfull, otherwise the errors that have occured during loading.</returns>
-    protected abstract string InternalRestoreProjectAndWindowsStateFromArchive(IProjectArchive archive);
+    protected abstract void InternalLoadProjectAndWindowsStateFromArchive(IProjectArchive archive);
 
     /// <summary>
-    /// Enumerates the registered types that implement IOpenProjectArchive and searches for the type that can handle the provided file or folder.
+    /// Enumerates the registered types for a manager that implements <see cref="IFileBasedProjectArchiveManager"/> and searches for the type that can handle the provided file or folder.
     /// </summary>
     /// <param name="fileOrFolderName">Name of the file or folder.</param>
     /// <returns></returns>
-    protected abstract IFileBasedProjectArchiveManager InternalGetOpenedProjectArchiveFromFileOrFolderLocation(PathName fileOrFolderName);
+    protected abstract IFileBasedProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName);
 
     /// <inheritdoc/>
-    public abstract bool TryOpenProjectDocumentFile(string fileName, bool forceTrialRegardlessOfExtension);
+    public abstract bool TryOpenProjectItemFile(FileName fileName, bool forceTrialRegardlessOfExtension);
 
     #endregion Project opening
 
@@ -486,6 +480,7 @@ namespace Altaxo.Dom
 
       Current.Workbench.CloseAllViews();
       SetCurrentProject(null, null);
+      CurrentProjectArchiveManager = new UnnamedProjectArchiveManager();
 
       if (oldProject != null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosed));

@@ -82,22 +82,16 @@ namespace Altaxo.Main
 
     #region Project saving
 
-    public override Exception SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom)
+    public override void SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom)
     {
-      Exception savingException = null;
-      try
-      {
-        var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-        CurrentOpenProject.SaveToArchive(archiveToSaveTo, info, archiveToCopyFrom);
 
-        if (!Current.Dispatcher.InvokeRequired)
-          SaveWindowStateToArchive(archiveToSaveTo, info);
-      }
-      catch (Exception exc)
-      {
-        savingException = exc;
-      }
-      return savingException;
+
+      var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+      CurrentOpenProject.SaveToArchive(archiveToSaveTo, info, archiveToCopyFrom);
+
+      if (!Current.Dispatcher.InvokeRequired)
+        SaveWindowStateToArchive(archiveToSaveTo, info);
+
     }
 
     /// <summary>
@@ -107,7 +101,7 @@ namespace Altaxo.Main
     /// <param name="info">The serialization info used to serialize the state of the main window.</param>
     public void SaveWindowStateToArchive(Services.IProjectArchive zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
     {
-      var errorText = new System.Text.StringBuilder();
+      var exceptions = new List<Exception>();
 
       {
         // first, we save our own state
@@ -123,7 +117,7 @@ namespace Altaxo.Main
         }
         catch (Exception exc)
         {
-          errorText.Append(exc.ToString());
+          exceptions.Add(exc);
         }
       }
 
@@ -150,7 +144,7 @@ namespace Altaxo.Main
           }
           catch (Exception exc)
           {
-            errorText.Append(exc.ToString());
+            exceptions.Add(exc);
           }
         }
       }
@@ -169,19 +163,19 @@ namespace Altaxo.Main
         }
         catch (Exception exc)
         {
-          errorText.Append(exc.ToString());
+          exceptions.Add(exc);
         }
       }
 
-      if (errorText.Length != 0)
-        throw new ApplicationException(errorText.ToString());
+      if (exceptions.Count > 0)
+        throw exceptions.Count == 1 ? exceptions[0] : new AggregateException(exceptions);
     }
 
     #endregion Project saving
 
     #region Project opening
 
-    protected override IFileBasedProjectArchiveManager InternalGetOpenedProjectArchiveFromFileOrFolderLocation(PathName fileOrFolderName)
+    protected override IFileBasedProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName)
     {
       if (fileOrFolderName is FileName)
         return new ZipFileProjectArchiveManager();
@@ -189,9 +183,9 @@ namespace Altaxo.Main
       return null;
     }
 
-    protected override string InternalRestoreProjectAndWindowsStateFromArchive(IProjectArchive projectArchive)
+    protected override void InternalLoadProjectAndWindowsStateFromArchive(IProjectArchive projectArchive)
     {
-      var errorText = new System.Text.StringBuilder();
+      var exceptions = new List<Exception>();
 
       var oldProject = CurrentOpenProject;
 
@@ -204,16 +198,16 @@ namespace Altaxo.Main
       }
       catch (Exception exc)
       {
-        errorText.Append(exc.ToString());
+        exceptions.Add(exc);
       }
 
       try
       {
-        SetCurrentProject(null, string.Empty);
+        SetCurrentProject(null, null);
       }
       catch (Exception exc)
       {
-        errorText.Append(exc.ToString());
+        exceptions.Add(exc);
       }
 
       // Old project is now closed
@@ -234,8 +228,8 @@ namespace Altaxo.Main
       }
       catch (Exception exc)
       {
-        errorText.Append(exc.ToString());
-        return errorText.ToString(); // this is unrecoverable - we must return
+        exceptions.Add(exc);
+        throw new AggregateException(exceptions);
       }
 
       try
@@ -247,7 +241,7 @@ namespace Altaxo.Main
       }
       catch (Exception exc)
       {
-        errorText.Append(exc.ToString());
+        exceptions.Add(exc);
       }
 
       try
@@ -265,98 +259,11 @@ namespace Altaxo.Main
       }
       catch (Exception exc)
       {
-        errorText.Append(exc.ToString());
-      }
-      return errorText.Length == 0 ? null : errorText.ToString();
-    }
-
-    /// <summary>
-    /// Opens a Altaxo project from a stream. Any existing old project will be closed without confirmation.
-    /// </summary>
-    /// <param name="myStream">The stream from which to load the project.</param>
-    /// <param name="filename">Either the filename of the file which stored the document, or null (e.g. myStream is a MemoryStream).</param>
-    protected override string InternalLoadProjectFromStream(System.IO.Stream myStream, string filename)
-    {
-      var errorText = new System.Text.StringBuilder();
-
-      var oldProject = CurrentOpenProject;
-
-      if (null != oldProject)
-        OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosing));
-
-      try
-      {
-        Current.Workbench.CloseAllViews();
-      }
-      catch (Exception exc)
-      {
-        errorText.Append(exc.ToString());
+        exceptions.Add(exc);
       }
 
-      try
-      {
-        SetCurrentProject(null, string.Empty);
-      }
-      catch (Exception exc)
-      {
-        errorText.Append(exc.ToString());
-      }
-
-      // Old project is now closed
-      if (null != oldProject)
-        OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosed));
-
-      // Now open new project
-
-      OnProjectChanged(new ProjectEventArgs(null, filename, ProjectEventKind.ProjectOpening));
-
-      Services.IProjectArchive projectArchive = null;
-      AltaxoDocument newdocument = null;
-      Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
-
-      try
-      {
-        newdocument = new AltaxoDocument();
-
-        projectArchive = new Services.Files.ZipArchiveAsProjectArchive(myStream, ZipArchiveMode.Read, false);
-        info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-      }
-      catch (Exception exc)
-      {
-        errorText.Append(exc.ToString());
-        return errorText.ToString(); // this is unrecoverable - we must return
-      }
-
-      try
-      {
-        using (var suspendToken = newdocument.SuspendGetToken())
-        {
-          newdocument.RestoreFromZippedFile(projectArchive, info);
-        }
-      }
-      catch (Exception exc)
-      {
-        errorText.Append(exc.ToString());
-      }
-
-      try
-      {
-        SetCurrentProject(newdocument, filename);
-
-        RestoreWindowStateFromZippedFile(projectArchive, info, newdocument);
-        info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
-
-        CurrentOpenProject.IsDirty = false;
-
-        info.AnnounceDeserializationHasCompletelyFinished(); // Annonce completly finished deserialization, activate data sources of the Altaxo document
-
-        OnProjectChanged(new ProjectEventArgs(CurrentOpenProject, filename, ProjectEventKind.ProjectOpened));
-      }
-      catch (Exception exc)
-      {
-        errorText.Append(exc.ToString());
-      }
-      return errorText.ToString();
+      if (exceptions.Count > 0)
+        throw new AggregateException(exceptions);
     }
 
     /// <summary>
@@ -480,7 +387,7 @@ namespace Altaxo.Main
 			};
 
     /// <inheritdoc/>
-    public override bool TryOpenProjectDocumentFile(string fileName, bool forceTrialRegardlessOfExtension)
+    public override bool TryOpenProjectItemFile(FileName fileName, bool forceTrialRegardlessOfExtension)
     {
       if (null == fileName)
         throw new ArgumentNullException(nameof(fileName));
@@ -550,7 +457,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="project">The new project.</param>
     /// <param name="projectFileName">Name of the new project file (for internally build instances, null).</param>
-    private void SetCurrentProject(Altaxo.AltaxoDocument project, string projectFileName)
+    private void SetCurrentProject(Altaxo.AltaxoDocument project, PathName projectFileName)
     {
       Altaxo.AltaxoDocument oldProject = CurrentOpenProject;
       string oldProjectFileName = _currentProjectFileName;

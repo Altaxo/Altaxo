@@ -504,8 +504,8 @@ namespace Altaxo.Com
 
       try
       {
-        Exception exInner = null;
-        string loadErrors = null;
+        Exception closeErrors = null;
+        Exception loadErrors = null;
 
         using (var streamWrapper = new ComStreamWrapper(pstg.OpenStream("AltaxoProjectZip", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
         {
@@ -514,18 +514,29 @@ namespace Altaxo.Com
             try
             {
               Current.IProjectService.CloseProject(true);
-              loadErrors = Current.IProjectService.LoadProjectFromStream(streamWrapper);
             }
             catch (Exception ex)
             {
-              exInner = ex;
+              closeErrors = ex;
+            }
+
+            try
+            {
+              using (var archive = new Altaxo.Main.Services.Files.ZipArchiveAsProjectArchive(streamWrapper, System.IO.Compression.ZipArchiveMode.Read, true))
+              {
+                Current.IProjectService.OpenProjectFromArchive(archive);
+              }
+            }
+            catch (Exception ex2)
+            {
+              loadErrors = ex2;
             }
           });
         }
-        if (null != exInner)
-          throw exInner;
+        if (null != closeErrors)
+          throw closeErrors;
 
-        if (!string.IsNullOrEmpty(loadErrors))
+        if (null != loadErrors)
           ComDebug.ReportInfo("{0}.IPersistStorage.Load Project loaded with errors: {1}", GetType().Name, loadErrors);
         else
           ComDebug.ReportInfo("{0}.IPersistStorage.Load Project loaded successfully", GetType().Name);
@@ -579,7 +590,6 @@ namespace Altaxo.Com
 
       try
       {
-        Exception saveEx = null;
         Ole32Func.WriteClassStg(pStgSave, GetType().GUID);
 
         // Store the version of this assembly
@@ -602,13 +612,21 @@ namespace Altaxo.Com
         }
 
         // Store the project
+        Exception saveErrors = null;
         using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZip", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
         {
           _comManager.InvokeGuiThread(() =>
           {
             using (var archive = new Main.Services.Files.ZipArchiveAsProjectArchive(stream, System.IO.Compression.ZipArchiveMode.Create, false))
             {
-              saveEx = Current.IProjectService.SaveProject(archive);
+              try
+              {
+                Current.IProjectService.SaveProject(archive);
+              }
+              catch (Exception ex)
+              {
+                saveErrors = ex;
+              }
             }
           }
 
@@ -617,8 +635,8 @@ namespace Altaxo.Com
 
         _isDocumentDirty = false;
 
-        if (null != saveEx)
-          throw saveEx;
+        if (null != saveErrors)
+          throw saveErrors;
       }
       catch (Exception ex)
       {

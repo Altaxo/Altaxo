@@ -126,13 +126,13 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Show a message informing the user about a save error.
     /// </summary>
-    void InformSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot);
+    void InformSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot);
 
     /// <summary>
     /// Show a message informing the user about a save error,
     /// and allow him to retry/save under alternative name.
     /// </summary>
-    ChooseSaveErrorResult ChooseSaveError(FileName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled);
+    ChooseSaveErrorResult ChooseSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled);
   }
 
   internal sealed class FallbackMessageService : TextWriterMessageService
@@ -147,7 +147,7 @@ namespace Altaxo.Main.Services
     public bool IsRetry { get; private set; }
     public bool IsIgnore { get; private set; }
     public bool IsSaveAlternative { get { return AlternativeFileName != null; } }
-    public FileName AlternativeFileName { get; private set; }
+    public PathName AlternativeFileName { get; private set; }
 
     private ChooseSaveErrorResult()
     {
@@ -159,7 +159,7 @@ namespace Altaxo.Main.Services
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "ChooseSaveErrorResult is immutable")]
     public static readonly ChooseSaveErrorResult Ignore = new ChooseSaveErrorResult { IsIgnore = true };
 
-    public static ChooseSaveErrorResult SaveAlternative(FileName alternativeFileName)
+    public static ChooseSaveErrorResult SaveAlternative(PathName alternativeFileName)
     {
       if (alternativeFileName == null)
         throw new ArgumentNullException("alternativeFileName");
