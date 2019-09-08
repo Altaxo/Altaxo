@@ -1135,16 +1135,6 @@ namespace Altaxo.Data
       _propertyColumns.ChangeRowPosition(selectedIndices, newPosition);
     }
 
-    /// <summary>
-    /// Signals that the table has changed, but has not currently signaled that change to it's parent.
-    /// </summary>
-    public virtual bool IsDirty
-    {
-      get
-      {
-        return _accumulatedEventData != null;
-      }
-    }
 
     /// <summary>
     /// Remove the data columns <b>and the corresponding property rows</b> beginning at index nFirstColumn.

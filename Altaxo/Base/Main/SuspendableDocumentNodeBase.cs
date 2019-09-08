@@ -468,9 +468,7 @@ namespace Altaxo.Main
     /// <param name="e">The <see cref="TunnelingEventArgs"/> instance containing the event data.</param>
     protected virtual void OnTunnelingEvent(IDocumentLeafNode originalSource, TunnelingEventArgs e)
     {
-      var ev = TunneledEvent;
-      if (null != ev)
-        ev(this, originalSource, e);
+      TunneledEvent?.Invoke(this, originalSource, e);
     }
 
     #endregion Tunneling event handling

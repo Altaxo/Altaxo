@@ -145,7 +145,7 @@ namespace Altaxo
           var entryName = string.Concat("TableData/", table.Name, ".xml");
           try
           {
-            if (supportsStreamRecycling && !table.DataColumns.IsDirty && originalArchive.ContainsEntry(entryName))
+            if (supportsStreamRecycling && !table.DataColumns.IsDataDirty && originalArchive.ContainsEntry(entryName))
             {
               archiveToSaveTo.CopyEntryFrom(originalArchive, entryName);
             }
@@ -515,11 +515,13 @@ namespace Altaxo
       get { return _isDirty; }
       set
       {
-        bool oldValue = _isDirty;
-        _isDirty = value;
-        if (oldValue != _isDirty)
+        if (!(_isDirty == value))
         {
+          _isDirty = value;
           OnDirtyChanged();
+
+          if (false == _isDirty) // announce that the dirty flag was reset to all childs
+            EhSelfTunnelingEventHappened(DirtyResetEventArgs.Empty, true);
         }
       }
     }

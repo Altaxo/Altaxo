@@ -35,7 +35,10 @@ namespace Altaxo.Main
   public interface ITunnelingEventSource
   {
     /// <summary>
-    /// The event that is fired when the object is disposed. First argument is the sender, second argument is the original source, and third argument is the event arg.
+    /// The event that is fired when the object is disposed.
+    /// First argument is the sender,
+    /// second argument is the original source,
+    /// and third argument is the event arg.
     /// </summary>
     event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
   }
@@ -58,6 +61,19 @@ namespace Altaxo.Main
     public static new readonly DocumentPathChangedEventArgs Empty = new DocumentPathChangedEventArgs();
 
     private DocumentPathChangedEventArgs()
+    {
+    }
+  }
+
+  /// <summary>
+  /// Happens when the dirty status of the main document is cleared (usually after the project was saved).
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.TunnelingEventArgs" />
+  public class DirtyResetEventArgs : TunnelingEventArgs
+  {
+    public static new readonly DirtyResetEventArgs Empty = new DirtyResetEventArgs();
+
+    private DirtyResetEventArgs()
     {
     }
   }

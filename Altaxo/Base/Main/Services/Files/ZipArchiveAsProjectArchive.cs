@@ -133,13 +133,16 @@ namespace Altaxo.Main.Services.Files
     {
       if (!_isDisposed)
       {
-        _stream?.Flush();
-        _zipArchive?.Dispose();
+        _zipArchive?.Dispose(); // dispose the zip archive __before__ flushing the stream!
         _zipArchive = null;
         if (!_leaveOpen)
         {
           _stream?.Close();
           _stream?.Dispose();
+        }
+        else
+        {
+          _stream?.Flush();
         }
         _stream = null;
       }

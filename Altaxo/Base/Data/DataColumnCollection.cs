@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
+using Altaxo.Main;
 using Altaxo.Main.Services;
 using Altaxo.Main.Services.Files;
 using Altaxo.Scripting;
@@ -162,6 +163,12 @@ namespace Altaxo.Data
     /// It stores information like the position of the column, the kind of the column.
     /// </summary>
     protected Dictionary<DataColumn, DataColumnInfo> _columnInfoByColumn = new Dictionary<DataColumn, DataColumnInfo>();
+
+    /// <summary>
+    /// Is true if any data in a child DataColumn has changed since the last saving of the project.
+    /// This flag is <b>not</b> set to true if other parts of this collection changed, for instance the column scripts.
+    /// </summary>
+    protected bool _isDataDirty;
 
     /// <summary>
     /// Cached number of rows. This is the maximum of the Count of all DataColumns contained in this collection.
@@ -2179,6 +2186,18 @@ namespace Altaxo.Data
     #region Collection Properties
 
     /// <summary>
+    /// Is true if any data in a child DataColumn has changed since the last saving of the project.
+    /// This flag is <b>not</b> set to true if other parts of this collection changed, for instance the column scripts.
+    /// </summary>
+    public bool IsDataDirty
+    {
+      get
+      {
+        return _isDataDirty;
+      }
+    }
+
+    /// <summary>
     /// The row count, i.e. the maximum of the row counts of all columns.
     /// </summary>
     public int RowCount
@@ -2316,26 +2335,26 @@ namespace Altaxo.Data
     /// <param name="accumulatedEventData">The instance were the event arg e is accumulated. If this parameter is <c>null</c>, a new instance of <see cref="DataColumnCollectionChangedEventArgs"/> is created and returned into this parameter.</param>
     protected void AccumulateChangeData(object sender, EventArgs e, ref DataColumnCollectionChangedEventArgs accumulatedEventData)
     {
-      var dataColumnChangeEventArgs = e as DataColumnChangedEventArgs;
-      DataColumnCollectionChangedEventArgs dataColumnCollectionChangeEventArgs;
-      DataColumn senderAsDataColumn;
-
-      if (null != (senderAsDataColumn = sender as DataColumn) && (null != (dataColumnChangeEventArgs = e as DataColumnChangedEventArgs))) // ChangeEventArgs from a DataColumn
+      if (sender is DataColumn senderAsDataColumn) // ChangeEventArgs from a DataColumn
       {
-        int columnNumberOfSender = GetColumnNumber(senderAsDataColumn);
-        int rowCountOfSender = senderAsDataColumn.Count;
+        _isDataDirty = true;
+        if (e is DataColumnChangedEventArgs dataColumnChangeEventArgs)
+        {
+          int columnNumberOfSender = GetColumnNumber(senderAsDataColumn);
+          int rowCountOfSender = senderAsDataColumn.Count;
 
-        if (accumulatedEventData == null)
-          accumulatedEventData = new DataColumnCollectionChangedEventArgs(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
-        else
-          accumulatedEventData.Accumulate(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
+          if (accumulatedEventData == null)
+            accumulatedEventData = new DataColumnCollectionChangedEventArgs(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
+          else
+            accumulatedEventData.Accumulate(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
 
-        // update the row count
-        if (_numberOfRows < rowCountOfSender)
-          _numberOfRows = rowCountOfSender;
-        _hasNumberOfRowsDecreased |= dataColumnChangeEventArgs.HasRowCountDecreased;
+          // update the row count
+          if (_numberOfRows < rowCountOfSender)
+            _numberOfRows = rowCountOfSender;
+          _hasNumberOfRowsDecreased |= dataColumnChangeEventArgs.HasRowCountDecreased;
+        }
       }
-      else if (null != (dataColumnCollectionChangeEventArgs = e as DataColumnCollectionChangedEventArgs)) // ChangeEventArgs from a DataColumnCollection, i.e. from myself
+      else if (e is DataColumnCollectionChangedEventArgs dataColumnCollectionChangeEventArgs) // ChangeEventArgs from a DataColumnCollection, i.e. from myself
       {
         if (null == accumulatedEventData)
           accumulatedEventData = dataColumnCollectionChangeEventArgs;
@@ -2361,8 +2380,7 @@ namespace Altaxo.Data
 
     protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
     {
-      Main.ParentChangedEventArgs parentChangedEventArgs;
-      if (null != (parentChangedEventArgs = e as Main.ParentChangedEventArgs))
+      if (e is Main.ParentChangedEventArgs parentChangedEventArgs)
       {
         if (object.ReferenceEquals(this, parentChangedEventArgs.OldParent) && ContainsColumn((DataColumn)sender))
           RemoveColumn((DataColumn)sender);
@@ -2393,6 +2411,16 @@ namespace Altaxo.Data
       e = result;
 
       return false;
+    }
+
+    protected override void OnTunnelingEvent(IDocumentLeafNode originalSource, TunnelingEventArgs e)
+    {
+      if (e is DirtyResetEventArgs)
+      {
+        _isDataDirty = false;
+      }
+
+      base.OnTunnelingEvent(originalSource, e);
     }
 
     #endregion Event handling

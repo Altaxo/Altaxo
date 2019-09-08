@@ -160,7 +160,9 @@ namespace Altaxo.Main.Services
         // create a file in the local app folder for writing to
         var instanceStorageService = Current.GetService<IInstanceStorageService>();
         var path = instanceStorageService.InstanceStoragePath;
-        var clonedFileName = Path.Combine(path, ClonedProjectRelativePath, ClonedProjectFileName + Path.GetExtension(destinationFileName));
+        var clonedPath = Path.Combine(path, ClonedProjectRelativePath);
+        var clonedFileName = Path.Combine(clonedPath, ClonedProjectFileName + Path.GetExtension(destinationFileName));
+        Directory.CreateDirectory(clonedPath);
         newProjectArchiveFileStream = new FileStream(clonedFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
       }
 
