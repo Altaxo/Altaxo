@@ -15,6 +15,7 @@
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\System.IO.Compression.Altaxo\System.IO.Compression.Altaxo.csproj" />
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj" />
     <ProjectReference Include="..\..\Libraries\Numerator\zNumerator.csproj" />
