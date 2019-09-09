@@ -845,8 +845,8 @@ namespace Altaxo.Data
       get { return _tableScript; }
       set
       {
-        if (ChildSetMember(ref _tableScript, value))
-          EhSelfChanged(EventArgs.Empty);
+        if (ChildSetMember(ref _tableScript, value) && !object.Equals(_tableScript, value))
+          EhSelfChanged(EventArgs.Empty); // Raise change event only if text has changed
       }
     }
 
