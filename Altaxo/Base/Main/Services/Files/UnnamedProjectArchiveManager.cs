@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Main.Services.Files
+namespace Altaxo.Main.Services
 {
   /// <summary>
   /// Represents the state of an unnamed and thus unsaved project.

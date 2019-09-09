@@ -134,7 +134,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
     /// </summary>
-    PathName CurrentProjectFileName { get; set; }
+    PathName CurrentProjectFileName { get; }
 
     /// <summary>
     /// Gets the object that represents the storage of the current project on disk. If the current project was opened as a COM object, the value is null.
@@ -143,6 +143,15 @@ namespace Altaxo.Main
     /// The current project storage, if the project was opened from the file system. The value is null if the project was opened from a COM stream.
     /// </value>
     IProjectArchiveManager CurrentProjectArchiveManager { get; }
+
+    /// <summary>
+    /// Exchanges the current project archive manager without disposing the old manager. This function is intended to be used twice in succession:
+    /// 1st to temporarily exchange the current archive manager by another on, and then to change back the new archive manager with the old one.
+    /// </summary>
+    /// <param name="newManager">The new manager that becomes the current manager after this call.</param>
+    /// <returns>The archive manager that is currently set.</returns>
+    IProjectArchiveManager ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager newManager);
+
 
 
     /// <summary>

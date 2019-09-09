@@ -33,7 +33,6 @@ using Altaxo.Gui;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Main.Services;
-using Altaxo.Main.Services.Files;
 
 namespace Altaxo.Dom
 {
@@ -42,8 +41,6 @@ namespace Altaxo.Dom
     protected string _applicationName = "Application";
 
     protected IProject _currentProject;
-
-    protected PathName _currentProjectFileName;
 
     protected IProjectArchiveManager _currentProjectArchiveManager = new UnnamedProjectArchiveManager();
 
@@ -109,16 +106,7 @@ namespace Altaxo.Dom
     /// </summary>
     public virtual PathName CurrentProjectFileName
     {
-      get { return _currentProjectFileName; }
-      set
-      {
-        if (!(_currentProjectFileName == value))
-        {
-          var oldName = _currentProjectFileName;
-          _currentProjectFileName = value;
-          OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldName, _currentProjectFileName));
-        }
-      }
+      get { return _currentProjectArchiveManager.FileOrFolderName; }
     }
 
     /// <summary>
@@ -141,22 +129,55 @@ namespace Altaxo.Dom
 
         if (!object.ReferenceEquals(_currentProjectArchiveManager, value))
         {
-          _currentProjectArchiveManager?.Dispose();
+          string oldFileName = null;
+          string newFileName = null;
+          if (null != _currentProjectArchiveManager)
+          {
+            oldFileName = _currentProjectArchiveManager?.FileOrFolderName;
+            _currentProjectArchiveManager.FileOrFolderNameChanged -= EhFileOrFolderNameChanged;
+            _currentProjectArchiveManager?.Dispose();
+          }
+
           _currentProjectArchiveManager = value;
+
+          if (null != _currentProjectArchiveManager)
+          {
+            _currentProjectArchiveManager.FileOrFolderNameChanged += EhFileOrFolderNameChanged;
+            newFileName = _currentProjectArchiveManager.FileOrFolderName;
+          }
+          OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldFileName, newFileName));
         }
       }
     }
 
     /// <summary>
-    /// Sets the current project instance and file name. No events raised (events should be raised by the caller).
+    /// Exchanges the current project archive manager without disposing the old manager. This function is intended to be used twice in succession:
+    /// 1st to temporarily exchange the current archive manager by another on, and then to change back the new archive manager with the old one.
+    /// </summary>
+    /// <param name="newManager">The new manager that becomes the current manager after this call.</param>
+    /// <returns>The archive manager that is currently set.</returns>
+    public IProjectArchiveManager ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(IProjectArchiveManager newManager)
+    {
+      var oldManager = _currentProjectArchiveManager;
+      _currentProjectArchiveManager = newManager;
+      OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldManager?.FileOrFolderName, newManager?.FileOrFolderName));
+      return oldManager;
+    }
+
+    private void EhFileOrFolderNameChanged(object sender, NameChangedEventArgs e)
+    {
+      OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, e.OldName, e.NewName));
+    }
+
+    /// <summary>
+    /// Sets the current project instance, and set it's file name to null. No events raised (events should be raised by the caller).
     /// The old project instance will be disposed of.
     /// </summary>
-    /// <param name="project">The new project.</param>
-    /// <param name="projectFileName">Name of the new project file (for internally build instances, null).</param>
-    protected void SetCurrentProject(IProject project, PathName projectFileName)
+    /// <param name="project">The new project to be set. The file name of this project will be null (thus the project is considered unnamed).</param>
+    /// <param name="asUnnamedProject">If true, the current <see cref="CurrentProjectArchiveManager"/> is replaced by a dummy project archive manager that represents an unnamed project.</param>
+    protected void SetCurrentProject(IProject project, bool asUnnamedProject)
     {
       var oldProject = _currentProject;
-      string oldProjectFileName = _currentProjectFileName;
 
       if (null != _currentProject)
       {
@@ -164,7 +185,10 @@ namespace Altaxo.Dom
       }
 
       _currentProject = project;
-      _currentProjectFileName = projectFileName;
+      if (asUnnamedProject)
+      {
+        CurrentProjectArchiveManager = new UnnamedProjectArchiveManager();
+      }
 
       if (_currentProject != null)
       {
@@ -228,7 +252,7 @@ namespace Altaxo.Dom
     /// </summary>
     public void SaveProject()
     {
-      SaveProject(_currentProjectFileName);
+      SaveProject(CurrentProjectFileName);
     }
 
     /// <summary>
@@ -239,7 +263,7 @@ namespace Altaxo.Dom
     public virtual void SaveProject(PathName fileOrFolderName)
     {
       string oldFileName = CurrentProjectFileName;
-      _currentProjectFileName = fileOrFolderName; // set file name silently
+      var currentProjectFileName = fileOrFolderName; // set file name silently
       if (oldFileName != fileOrFolderName)
       {
         OnProjectChanged(new ProjectRenamedEventArgs(_currentProject, oldFileName, fileOrFolderName));
@@ -473,14 +497,13 @@ namespace Altaxo.Dom
       }
 
       var oldProject = _currentProject;
-      var oldProjectName = _currentProjectFileName;
+      var oldProjectName = CurrentProjectFileName;
 
       if (oldProject != null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosing));
 
       Current.Workbench.CloseAllViews();
-      SetCurrentProject(null, null);
-      CurrentProjectArchiveManager = new UnnamedProjectArchiveManager();
+      SetCurrentProject(null, asUnnamedProject: true);
 
       if (oldProject != null)
         OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosed));
@@ -489,7 +512,7 @@ namespace Altaxo.Dom
 
       OnProjectChanged(new ProjectEventArgs(null, null, ProjectEventKind.ProjectOpening));
       var newProject = InternalCreateNewProject();
-      SetCurrentProject(newProject, null);
+      SetCurrentProject(newProject, asUnnamedProject: true);
       OnProjectChanged(new ProjectEventArgs(newProject, null, ProjectEventKind.ProjectOpened));
 
       return true;
@@ -502,7 +525,7 @@ namespace Altaxo.Dom
 
       OnProjectChanged(new ProjectEventArgs(null, null, ProjectEventKind.ProjectOpening));
       var newProject = InternalCreateNewProject();
-      SetCurrentProject(newProject, null);
+      SetCurrentProject(newProject, asUnnamedProject: true);
       OnProjectChanged(new ProjectEventArgs(newProject, null, ProjectEventKind.ProjectOpened));
     }
 
@@ -514,7 +537,7 @@ namespace Altaxo.Dom
 
     public void DisposeProjectAndSetToNull()
     {
-      SetCurrentProject(null, null);
+      SetCurrentProject(null, asUnnamedProject: true);
     }
 
     /// <inheritdoc/>

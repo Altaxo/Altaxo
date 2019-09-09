@@ -32,6 +32,7 @@ namespace Altaxo.Main.Commands
   using Altaxo.Gui;
   using Altaxo.Gui.AddInItems;
   using Altaxo.Main.Services;
+  using Altaxo.Main.Services.Files;
   using Altaxo.Scripting;
 
   public class CreateNewWorksheet : SimpleCommand
@@ -411,10 +412,10 @@ namespace Altaxo.Main.Commands
       var oldFileName = Current.ProjectService.CurrentProjectFileName;
 
 
+      IProjectArchiveManager oldManager = null;
       try
       {
-        Current.ProjectService.CurrentProjectFileName = null;
-
+        oldManager = Current.ProjectService.ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(new UnnamedProjectArchiveManager());
         Current.ProjectService.SaveProjectAs();
       }
       finally
@@ -424,7 +425,8 @@ namespace Altaxo.Main.Commands
           table.TableScript = dict[table];
         }
 
-        Current.ProjectService.CurrentProjectFileName = oldFileName;
+        var tempManager = Current.ProjectService.ExchangeCurrentProjectArchiveManagerTemporarilyWithoutDisposing(oldManager);
+        tempManager?.Dispose();
       }
 
     }

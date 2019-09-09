@@ -203,7 +203,7 @@ namespace Altaxo.Main
 
       try
       {
-        SetCurrentProject(null, null);
+        SetCurrentProject(null, asUnnamedProject: false);
       }
       catch (Exception exc)
       {
@@ -246,7 +246,7 @@ namespace Altaxo.Main
 
       try
       {
-        SetCurrentProject(newdocument, projectArchive.FileName);
+        SetCurrentProject(newdocument, asUnnamedProject: false);
 
         RestoreWindowStateFromZippedFile(projectArchive, info, newdocument);
         info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
@@ -451,44 +451,7 @@ namespace Altaxo.Main
 
     #endregion Opening of project document files
 
-    /// <summary>
-    /// Sets the current project instance and file name. No events raised (events should be raised by the caller).
-    /// The old project instance will be disposed of.
-    /// </summary>
-    /// <param name="project">The new project.</param>
-    /// <param name="projectFileName">Name of the new project file (for internally build instances, null).</param>
-    private void SetCurrentProject(Altaxo.AltaxoDocument project, PathName projectFileName)
-    {
-      Altaxo.AltaxoDocument oldProject = CurrentOpenProject;
-      string oldProjectFileName = _currentProjectFileName;
 
-      if (null != _currentProject)
-      {
-        _currentProject.IsDirtyChanged -= EhProjectDirtyChanged;
-      }
-
-      _currentProject = project;
-      _currentProjectFileName = projectFileName;
-
-      if (_currentProject != null)
-      {
-        _currentProject.IsDirtyChanged += EhProjectDirtyChanged;
-      }
-
-      if (!object.ReferenceEquals(oldProject, _currentProject)) // Project instance has changed
-      {
-        if (null != oldProject)
-        {
-          try
-          {
-            oldProject.Dispose();
-          }
-          catch (Exception ex)
-          {
-          }
-        }
-      }
-    }
 
     #region IProjectItem functions
 
