@@ -2607,9 +2607,16 @@ namespace Altaxo.Data
     public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
     {
       if (_columnsByName.TryGetValue(name, out var col))
+      {
+        if (null != _deferredDataLoader)
+          TryLoadDeferredData();
+
         return col;
+      }
       else
+      {
         return null;
+      }
     }
 
     /// <summary>

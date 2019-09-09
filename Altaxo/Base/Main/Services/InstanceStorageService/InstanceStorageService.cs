@@ -44,8 +44,6 @@ namespace Altaxo.Main.Services
     Stream _lockFile;
     bool _isDisposed;
 
-    private CachedService<IShutdownService, IShutdownService> _shutDownService;
-
     /// <inheritdoc/>
     public string InstanceStoragePath => _localInstancePath;
 
@@ -60,11 +58,6 @@ namespace Altaxo.Main.Services
       System.IO.Directory.CreateDirectory(_localInstancePath);
       _lockFilePath = Path.Combine(_localInstancePath, LockFileName);
       _lockFile = new FileStream(_lockFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
-
-      _shutDownService = new CachedService<IShutdownService, IShutdownService>(false,
-        (shutdownService) => shutdownService.Closed += EhApplicationClosed,
-        (shutdownService) => shutdownService.Closed -= EhApplicationClosed);
-      _shutDownService.StartCaching();
 
       RemoveAbandonedInstanceStorageServiceInstances();
     }
@@ -121,10 +114,6 @@ namespace Altaxo.Main.Services
       }
     }
 
-    private void EhApplicationClosed(object sender, EventArgs e)
-    {
-      Dispose();
-    }
 
     public void Dispose()
     {
@@ -138,8 +127,9 @@ namespace Altaxo.Main.Services
         {
           Directory.Delete(_localInstancePath, true);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          System.Diagnostics.Debug.WriteLine($"Exception during shutdown of InstanceStorageService\r\nDetails:\r\n{ex.ToString()}");
         }
       }
     }

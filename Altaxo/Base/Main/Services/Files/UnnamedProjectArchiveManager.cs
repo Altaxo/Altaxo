@@ -37,10 +37,30 @@ namespace Altaxo.Main.Services.Files
   public class UnnamedProjectArchiveManager : IProjectArchiveManager
   {
     bool _isDisposed; // not really neccessary, but useful for debugging purposes
+
+    PathName _fileOrFolderName;
+
+    public event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged // Never used, because name can not change
+    {
+      add { }
+      remove { }
+    }
+
+
+    public UnnamedProjectArchiveManager()
+    {
+
+    }
+
+    public UnnamedProjectArchiveManager(PathName pathName)
+    {
+      _fileOrFolderName = pathName;
+    }
+
     /// <summary>
     /// Returns null because a unnamed project does not have a file name yet.
     /// </summary>
-    public PathName FileOrFolderName => null;
+    public PathName FileOrFolderName => _fileOrFolderName;
 
     /// <inheritdoc/>
     public bool IsDisposed => _isDisposed;

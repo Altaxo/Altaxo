@@ -61,6 +61,11 @@ namespace Altaxo.Main.Services
     PathName FileOrFolderName { get; }
 
     /// <summary>
+    /// Occurs when the property <see cref="FileOrFolderName"/> has changed.
+    /// </summary>
+    event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged;
+
+    /// <summary>
     /// Gets a value indicating whether this instance is disposed.
     /// </summary>
     /// <value>

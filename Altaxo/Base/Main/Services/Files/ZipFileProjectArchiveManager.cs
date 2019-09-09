@@ -46,6 +46,8 @@ namespace Altaxo.Main.Services
 
     bool _isDisposed;
 
+    public event EventHandler<NameChangedEventArgs> FileOrFolderNameChanged;
+
     /// <summary>
     /// The stream of the original project file that is kept open in order to prevent modifications.
     /// </summary>
@@ -79,6 +81,9 @@ namespace Altaxo.Main.Services
     {
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
 
+      var oldFileName = _originalFileStream?.Name;
+      bool hasFileNameChanged = 0 != string.Compare(fileName, _originalFileStream?.Name, false);
+
       CloneTask_CancelAndClearAll();
 
       try
@@ -101,6 +106,9 @@ namespace Altaxo.Main.Services
 
       // make a copy of the original file
       StartCloneTask();
+
+      if (hasFileNameChanged)
+        FileOrFolderNameChanged?.Invoke(this, new NameChangedEventArgs(this, oldFileName, _originalFileStream?.Name));
     }
 
 
@@ -255,6 +263,9 @@ namespace Altaxo.Main.Services
 
       if (null != savingException)
         throw savingException;
+
+      if (isNewDestinationFileName)
+        FileOrFolderNameChanged?.Invoke(this, new NameChangedEventArgs(this, originalFileName, _originalFileStream?.Name));
     }
 
     #region Clone task
