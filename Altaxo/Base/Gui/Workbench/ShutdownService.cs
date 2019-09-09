@@ -186,7 +186,7 @@ namespace Altaxo.Gui.Workbench
       var projectService = Altaxo.Current.IProjectService;
       if (null != projectService && (false == (Current.ComManager?.IsInEmbeddedMode ?? false)))
       {
-        if (projectService.CurrentProject.IsDirty)
+        if (projectService.CurrentProject?.IsDirty == true)
           projectService.AskForSavingOfProject(e); // Save the project, but leave it open
       }
     }
