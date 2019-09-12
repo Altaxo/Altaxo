@@ -484,7 +484,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public Altaxo.Data.IReadableColumn GetDataColumn(int i)
     {
-      return _matrixProxy.GetDataColumnProxy(i).Document;
+      return _matrixProxy.GetDataColumnProxy(i).Document();
     }
 
     public Altaxo.Data.IReadableColumn XColumn

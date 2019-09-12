@@ -71,7 +71,7 @@ namespace Altaxo.Main
       if (null == proxy)
         return;
 
-      var docPath = proxy.DocumentPath;
+      var docPath = proxy.DocumentPath();
 
       // the _itemRelocationDictionary has first priority
       if (_itemRelocationDictionary != null && _itemRelocationDictionary.Count > 0)

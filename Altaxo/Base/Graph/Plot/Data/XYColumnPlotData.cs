@@ -825,9 +825,9 @@ namespace Altaxo.Graph.Plot.Data
   Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller (Arguments are column, table and group number)
   )> GetColumns()
     {
-      yield return ("X", XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { XColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } }
+      yield return ("X", XColumn, _xColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { XColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } }
       );
-      yield return ("Y", YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } }
+      yield return ("Y", YColumn, _yColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } }
       );
     }
 
@@ -835,7 +835,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _xColumn == null ? null : _xColumn.Document;
+        return _xColumn == null ? null : _xColumn.Document();
       }
       set
       {
@@ -854,7 +854,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _xColumn?.DocumentPath?.LastPartOrDefault;
+        return _xColumn?.DocumentPath()?.LastPartOrDefault;
       }
     }
 
@@ -862,7 +862,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _yColumn == null ? null : _yColumn.Document;
+        return _yColumn == null ? null : _yColumn.Document();
       }
       set
       {
@@ -881,7 +881,7 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _yColumn?.DocumentPath?.LastPartOrDefault;
+        return _yColumn?.DocumentPath()?.LastPartOrDefault;
       }
     }
 
@@ -1211,8 +1211,14 @@ namespace Altaxo.Graph.Plot.Data
     /// </returns>
     protected override void OnChanged(EventArgs e)
     {
-      if (!_isCachedDataValidX || !_isCachedDataValidY)
-        CalculateCachedData(); // Calculates cached data -> If boundaries changed, this will trigger a boundary changed event
+      /* 2019-09-12 Outcommented for new data deserialization: the next lines will cause the XColumn and YColumn to be instantiated
+       * from the corresponding proxies,
+       * this is unwanted, because it will require to load the table. It should happen only if the graph is really needed
+
+            if (!_isCachedDataValidX || !_isCachedDataValidY)
+              CalculateCachedData(); // Calculates cached data -> If boundaries changed, this will trigger a boundary changed event
+
+        */
 
       base.OnChanged(e);
     }

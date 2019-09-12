@@ -672,7 +672,7 @@ namespace Altaxo.Data
 
       var src = _dataColumnBundles[identifier].DataColumns;
 
-      return new List<DataColumn>(src.Where(x => x.Document is DataColumn).Select(x => (DataColumn)x.Document));
+      return new List<DataColumn>(src.Where(x => x.Document() is DataColumn).Select(x => (DataColumn)x.Document()));
     }
 
     /// <summary>
@@ -695,7 +695,7 @@ namespace Altaxo.Data
       var bundle = _dataColumnBundles[identifier];
       var src = _dataColumnBundles[identifier].DataColumns;
 
-      return src.Where(x => x.Document is DataColumn).Select(x => (DataColumn)x.Document).FirstOrDefault();
+      return src.Where(x => x.Document() is DataColumn).Select(x => (DataColumn)x.Document()).FirstOrDefault();
     }
 
     /// <summary>If <c>true</c>, all available rows (of the columns that contribute to the matrix) will be included in the matrix.</summary>
@@ -783,7 +783,7 @@ namespace Altaxo.Data
             continue;
           }
 
-          var c = dataColumns[i].Document as DataColumn;
+          var c = dataColumns[i].Document() as DataColumn;
           if (c == null)
             continue; // not yet resolved, leave it as it is
 
@@ -864,7 +864,7 @@ namespace Altaxo.Data
     /// <returns>Maximum row count of all resolveable data columns in all column bundles.</returns>
     private int GetMaximumRowCountNow()
     {
-      return GetAllColumnProxies().Where(p => p.Document != null).MaxOrDefault(p => p.Document.Count ?? 0, 0);
+      return GetAllColumnProxies().Where(p => p.Document() != null).MaxOrDefault(p => p.Document().Count ?? 0, 0);
     }
 
     #region Change event handling

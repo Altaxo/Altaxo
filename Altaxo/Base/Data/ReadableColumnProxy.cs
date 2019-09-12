@@ -35,7 +35,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
     /// </summary>
-    IReadableColumn Document { get; }
+    IReadableColumn Document();
 
     /// <summary>
     /// Gets the name of the column that is held by this proxy.
@@ -81,7 +81,7 @@ namespace Altaxo.Data
   /// Summary description for DataColumnPlaceHolder.
   /// </summary>
   [Serializable]
-  internal class ReadableColumnProxy : DocNodeProxy, IReadableColumnProxy
+  public class ReadableColumnProxy : DocNodeProxy2ndLevel, IReadableColumnProxy
   {
     #region Serialization
 
@@ -110,7 +110,7 @@ namespace Altaxo.Data
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxy), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.ReadableColumnProxy", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -122,6 +122,23 @@ namespace Altaxo.Data
       {
         var s = (ReadableColumnProxy)o ?? new ReadableColumnProxy(info);
         info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
+
+        return s;
+      }
+    }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxy), 2)]
+    private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy2ndLevel)); // serialize the base class
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (ReadableColumnProxy)o ?? new ReadableColumnProxy(info);
+        info.GetBaseValueEmbedded(s, typeof(DocNodeProxy2ndLevel), parent);         // deserialize the base class
 
         return s;
       }
@@ -167,12 +184,9 @@ namespace Altaxo.Data
       return (obj is IReadableColumn) || obj == null;
     }
 
-    public IReadableColumn Document
+    public IReadableColumn Document()
     {
-      get
-      {
-        return (IReadableColumn)base.DocumentObject;
-      }
+      return (IReadableColumn)base.DocumentObject();
     }
 
     public override object Clone()
@@ -182,7 +196,7 @@ namespace Altaxo.Data
 
     public string GetName(int level)
     {
-      return GetName(level, Document, InternalDocumentPath);
+      return GetName(level, Document(), InternalDocumentPath);
     }
 
     public static string GetName(int level, IReadableColumn Document, AbsoluteDocumentPath InternalDocumentPath)

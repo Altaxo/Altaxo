@@ -183,18 +183,17 @@ namespace Altaxo.Graph.Procedures
       if (null == proxy || proxy.IsEmpty)
       {
       }
-      else if (proxy.DocumentObject is Altaxo.Data.DataColumn)
+      else if (proxy.DocumentObject() is Altaxo.Data.DataColumn dataColumn)
       {
-        var dataColumn = (DataColumn)proxy.DocumentObject;
         if (!_columnsToChange.ContainsKey(dataColumn))
         {
           var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataColumn);
           _columnsToChange.Add(dataColumn, table);
         }
       }
-      else if (proxy.DocumentObject is Altaxo.Data.DataColumnCollection)
+      else if (proxy.DocumentObject() is Altaxo.Data.DataColumnCollection dataColumnCollection)
       {
-        var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumnCollection)proxy.DocumentObject);
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataColumnCollection);
         if (table != null)
         {
           var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
@@ -202,15 +201,11 @@ namespace Altaxo.Graph.Procedures
             _tablesToChange.Add(tablePath, null);
         }
       }
-      else if (proxy.DocumentObject is DataTable)
+      else if (proxy.DocumentObject() is DataTable table)
       {
-        var table = proxy.DocumentObject as DataTable;
-        if (table != null)
-        {
-          var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
-          if (!_tablesToChange.ContainsKey(tablePath))
-            _tablesToChange.Add(tablePath, null);
-        }
+        var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
+        if (!_tablesToChange.ContainsKey(tablePath))
+          _tablesToChange.Add(tablePath, null);
       }
       else if ((proxy is Altaxo.Data.INumericColumnProxy) || (proxy is Altaxo.Data.IReadableColumnProxy))
       {

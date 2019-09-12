@@ -442,8 +442,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         string nameOfVariable = null != FitFunction && i < FitFunction.NumberOfIndependentVariables ? FitFunction.IndependentVariableName(i) : string.Empty;
         yield return (
           nameOfVariable,
-          _independentVariables[k]?.Document,
-          _independentVariables[k]?.DocumentPath?.LastPartOrDefault,
+          _independentVariables[k]?.Document(),
+          _independentVariables[k]?.DocumentPath()?.LastPartOrDefault,
           (col, table, group) =>
           {
             if (table != null)
@@ -472,8 +472,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         string nameOfVariable = null != FitFunction && k < FitFunction.NumberOfDependentVariables ? FitFunction.DependentVariableName(k) : string.Empty;
         yield return (
           nameOfVariable,
-          _dependentVariables[k]?.Document,
-          _dependentVariables[k]?.DocumentPath?.LastPartOrDefault,
+          _dependentVariables[k]?.Document(),
+          _dependentVariables[k]?.DocumentPath()?.LastPartOrDefault,
           (col, table, group) =>
           {
             if (table != null)
@@ -497,7 +497,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       foreach (var proxy in _independentVariables.Concat(_dependentVariables))
       {
-        var column = proxy?.Document;
+        var column = proxy?.Document();
 
         if (null != column && column.Count.HasValue)
           maxRowIndex = Math.Min(maxRowIndex, column.Count.Value);
@@ -517,7 +517,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <returns>The ith independent variable column, or <c>null if such a column is no longer available.</c></returns>
     public IReadableColumn IndependentVariables(int i)
     {
-      return _independentVariables[i]?.Document;
+      return _independentVariables[i]?.Document();
     }
 
     /// <summary>
@@ -527,7 +527,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="col">Independent variable column to set.</param>
     public void SetIndependentVariable(int i, IReadableColumn col)
     {
-      if (!object.ReferenceEquals(_independentVariables[i]?.Document, col))
+      if (!object.ReferenceEquals(_independentVariables[i]?.Document(), col))
       {
         ChildSetMember(ref _independentVariables[i], ReadableColumnProxyBase.FromColumn(col));
         EhSelfChanged(EventArgs.Empty);
@@ -542,7 +542,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <returns>The ith dependent variable column, or <c>null if such a column is no longer available.</c></returns>
     public IReadableColumn DependentVariables(int i)
     {
-      return _dependentVariables[i]?.Document;
+      return _dependentVariables[i]?.Document();
     }
 
     /// <summary>
@@ -552,7 +552,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="col">Dependent variable column to set.</param>
     public void SetDependentVariable(int i, IReadableColumn col)
     {
-      if (!object.ReferenceEquals(_dependentVariables[i]?.Document, col))
+      if (!object.ReferenceEquals(_dependentVariables[i]?.Document(), col))
       {
         ChildSetMember(ref _dependentVariables[i], ReadableColumnProxyBase.FromColumn(col));
 
@@ -779,7 +779,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
             len = Math.Min(len, _fitFunction.NumberOfDependentVariables);
 
           for (int i = len - 1; i >= 0; --i)
-            if (_dependentVariables[i] != null && _dependentVariables[i].Document != null)
+            if (_dependentVariables[i] != null && _dependentVariables[i].Document() != null)
               sum++;
         }
         return sum;
@@ -813,7 +813,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       int maxLength = int.MaxValue;
       for (i = 0; i < _independentVariables.Length; i++)
       {
-        cols[i] = _independentVariables[i].Document;
+        cols[i] = _independentVariables[i].Document();
         selectedCols.Add(i);
         if (cols[i]?.Count != null)
           maxLength = Math.Min(maxLength, cols[i].Count.Value);
@@ -822,9 +822,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // note: for a fitting session some of the dependent variables can be null
       for (int j = 0; j < _dependentVariables.Length; ++j, ++i)
       {
-        if (_dependentVariables[j] != null && _dependentVariables[j].Document != null)
+        if (_dependentVariables[j] != null && _dependentVariables[j].Document() != null)
         {
-          cols[i] = _dependentVariables[j].Document;
+          cols[i] = _dependentVariables[j].Document();
           selectedCols.Add(i);
           if (cols[i]?.Count != null)
             maxLength = Math.Min(maxLength, cols[i].Count.Value);

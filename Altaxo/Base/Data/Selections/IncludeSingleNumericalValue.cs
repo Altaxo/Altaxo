@@ -104,7 +104,7 @@ namespace Altaxo.Data.Selections
     /// <inheritdoc/>
     public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
     {
-      var column = _columnProxy?.Document;
+      var column = _columnProxy?.Document();
 
       if (null == column)
         yield break;
@@ -163,11 +163,11 @@ namespace Altaxo.Data.Selections
     {
       get
       {
-        return _columnProxy?.Document;
+        return _columnProxy?.Document();
       }
       set
       {
-        var oldValue = _columnProxy?.Document;
+        var oldValue = _columnProxy?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
           ChildSetMember(ref _columnProxy, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
@@ -186,7 +186,7 @@ namespace Altaxo.Data.Selections
     {
       get
       {
-        return _columnProxy?.DocumentPath?.LastPartOrDefault;
+        return _columnProxy?.DocumentPath()?.LastPartOrDefault;
       }
     }
 

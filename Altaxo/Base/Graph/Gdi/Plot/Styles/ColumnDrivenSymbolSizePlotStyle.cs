@@ -310,7 +310,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return _dataColumnProxy == null ? null : _dataColumnProxy.Document;
+        return _dataColumnProxy == null ? null : _dataColumnProxy.Document();
       }
       set
       {
@@ -332,7 +332,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return _dataColumnProxy?.DocumentPath?.LastPartOrDefault;
+        return _dataColumnProxy?.DocumentPath()?.LastPartOrDefault;
       }
     }
 
@@ -607,7 +607,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      yield return (nameof(DataColumn), DataColumn, _dataColumnProxy?.DocumentPath?.LastPartOrDefault, (col) => DataColumn = col as IReadableColumn);
+      yield return (nameof(DataColumn), DataColumn, _dataColumnProxy?.DocumentPath()?.LastPartOrDefault, (col) => DataColumn = col as IReadableColumn);
     }
   }
 }

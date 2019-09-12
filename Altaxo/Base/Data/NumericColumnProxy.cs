@@ -35,7 +35,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
     /// </summary>
-    new INumericColumn Document { get; }
+    new INumericColumn Document();
   }
 
   /// <summary>
@@ -105,17 +105,14 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
-    public INumericColumn Document
+    public INumericColumn Document()
     {
-      get { return _column; }
+      return _column;
     }
 
-    IReadableColumn IReadableColumnProxy.Document
+    IReadableColumn IReadableColumnProxy.Document()
     {
-      get
-      {
-        return _column;
-      }
+      return _column;
     }
 
     string IReadableColumnProxy.GetName(int level)
@@ -133,14 +130,14 @@ namespace Altaxo.Data
       return FromColumn(_column);
     }
 
-    public object DocumentObject
+    public object DocumentObject()
     {
-      get { return _column; }
+      return _column;
     }
 
-    public AbsoluteDocumentPath DocumentPath
+    public AbsoluteDocumentPath DocumentPath()
     {
-      get { return AbsoluteDocumentPath.DocumentPathOfRootNode; }
+      return AbsoluteDocumentPath.DocumentPathOfRootNode;
     }
 
     public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
@@ -152,7 +149,7 @@ namespace Altaxo.Data
   /// <summary>
   /// Holds a "weak" reference to a numeric column, altogether with a document path to that column.
   /// </summary>
-  public class NumericColumnProxy : DocNodeProxy, INumericColumnProxy
+  public class NumericColumnProxy : DocNodeProxy2ndLevel, INumericColumnProxy
   {
     #region Serialization
 
@@ -182,7 +179,7 @@ namespace Altaxo.Data
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericColumnProxy), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.NumericColumnProxy", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -194,6 +191,27 @@ namespace Altaxo.Data
       {
         var s = (NumericColumnProxy)o ?? new NumericColumnProxy(info);
         info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
+
+        return s;
+      }
+    }
+
+    /// <summary>
+    /// 2019-09-12 Class now inherits from <see cref="DocNodeProxy2ndLevel"/> instead of <see cref="DocNodeProxy"/>.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericColumnProxy), 2)]
+    private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy2ndLevel)); // serialize the base class
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (NumericColumnProxy)o ?? new NumericColumnProxy(info);
+        info.GetBaseValueEmbedded(s, typeof(DocNodeProxy2ndLevel), parent);         // deserialize the base class
 
         return s;
       }
@@ -252,25 +270,19 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
     /// </summary>
-    public INumericColumn Document
+    public INumericColumn Document()
     {
-      get
-      {
-        return (INumericColumn)base.DocumentObject;
-      }
+      return (INumericColumn)base.DocumentObject();
     }
 
-    IReadableColumn IReadableColumnProxy.Document
+    IReadableColumn IReadableColumnProxy.Document()
     {
-      get
-      {
-        return (INumericColumn)base.DocumentObject;
-      }
+      return (INumericColumn)base.DocumentObject();
     }
 
     string IReadableColumnProxy.GetName(int level)
     {
-      return Document?.FullName;
+      return Document()?.FullName;
     }
 
     /// <summary>

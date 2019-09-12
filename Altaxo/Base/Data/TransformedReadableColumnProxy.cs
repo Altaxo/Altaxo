@@ -35,7 +35,7 @@ namespace Altaxo.Data
   /// </summary>
   /// <seealso cref="Altaxo.Main.DocNodeProxy" />
   /// <seealso cref="Altaxo.Data.IReadableColumnProxy" />
-  internal class TransformedReadableColumnProxy : DocNodeProxy, IReadableColumnProxy
+  internal class TransformedReadableColumnProxy : DocNodeProxy2ndLevel, IReadableColumnProxy
   {
     private IVariantToVariantTransformation _transformation = null;
 
@@ -45,7 +45,7 @@ namespace Altaxo.Data
     /// 2016-06-24 intial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TransformedReadableColumnProxy), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.TransformedReadableColumnProxy", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -59,6 +59,29 @@ namespace Altaxo.Data
       {
         var s = (TransformedReadableColumnProxy)o ?? new TransformedReadableColumnProxy(info);
         info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
+        s._transformation = (IVariantToVariantTransformation)info.GetValue("Transformation", s);
+        return s;
+      }
+    }
+
+    /// <summary>
+    /// 2019-09-23 Class now derives from <see cref="DocNodeProxy2ndLevel"/> instead of <see cref="DocNodeProxy"/>.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TransformedReadableColumnProxy), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (TransformedReadableColumnProxy)obj;
+        info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy2ndLevel)); // serialize the base class
+        info.AddValue("Transformation", s._transformation);
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        var s = (TransformedReadableColumnProxy)o ?? new TransformedReadableColumnProxy(info);
+        info.GetBaseValueEmbedded(s, typeof(DocNodeProxy2ndLevel), parent);         // deserialize the base class
         s._transformation = (IVariantToVariantTransformation)info.GetValue("Transformation", s);
         return s;
       }
@@ -106,16 +129,13 @@ namespace Altaxo.Data
       return (obj is IReadableColumn) || obj == null;
     }
 
-    public IReadableColumn Document
+    public IReadableColumn Document()
     {
-      get
-      {
-        var originalColumn = (IReadableColumn)base.DocumentObject;
-        if (null == originalColumn)
-          return null;
-        else
-          return new TransformedReadableColumn(originalColumn, _transformation);
-      }
+      var originalColumn = (IReadableColumn)base.DocumentObject();
+      if (null == originalColumn)
+        return null;
+      else
+        return new TransformedReadableColumn(originalColumn, _transformation);
     }
 
     public override object Clone()
@@ -126,7 +146,7 @@ namespace Altaxo.Data
     public string GetName(int level)
     {
       string trans = _transformation.RepresentationAsOperator ?? _transformation.RepresentationAsFunction;
-      return trans + " " + ReadableColumnProxy.GetName(level, (IReadableColumn)base.DocumentObject, InternalDocumentPath);
+      return trans + " " + ReadableColumnProxy.GetName(level, (IReadableColumn)base.DocumentObject(), InternalDocumentPath);
     }
   }
 }

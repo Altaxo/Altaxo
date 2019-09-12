@@ -1182,7 +1182,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           // if we copy or move inside the same application, we deserialize only references to the items
           var str = (string)dao.GetData(ListViewDragDropDataObject.Format_ItemReferenceList);
           var items = Altaxo.Serialization.Clipboard.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemReferenceClipboardList>(str);
-          var projectItems = new List<object>(items.ProjectItemReferences.Select(x => x.DocumentObject).Where(x => x != null));
+          var projectItems = new List<object>(items.ProjectItemReferences.Select(x => x.DocumentObject()).Where(x => x != null));
 
           if (isMove && !isCopy)
           {

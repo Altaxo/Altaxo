@@ -168,8 +168,8 @@ namespace Altaxo.Data
 
       public int Compare(IReadableColumnProxy a, IReadableColumnProxy b)
       {
-        var ca = a.Document as DataColumn;
-        var cb = b.Document as DataColumn;
+        var ca = a.Document() as DataColumn;
+        var cb = b.Document() as DataColumn;
 
         if (ca != null && cb != null)
         {
@@ -631,11 +631,11 @@ namespace Altaxo.Data
     {
       get
       {
-        return _rowHeaderColumn.Document;
+        return _rowHeaderColumn.Document();
       }
       set
       {
-        var oldValue = _rowHeaderColumn.Document;
+        var oldValue = _rowHeaderColumn.Document();
         if (!object.ReferenceEquals(oldValue, value))
         {
           InternalSetRowHeaderColumn(ReadableColumnProxyBase.FromColumn(value));
@@ -649,11 +649,11 @@ namespace Altaxo.Data
     {
       get
       {
-        return _columnHeaderColumn.Document;
+        return _columnHeaderColumn.Document();
       }
       set
       {
-        var oldValue = _columnHeaderColumn.Document;
+        var oldValue = _columnHeaderColumn.Document();
         if (!object.ReferenceEquals(oldValue, value))
         {
           InternalSetColumnHeaderColumn(ReadableColumnProxyBase.FromColumn(value));
@@ -826,7 +826,7 @@ namespace Altaxo.Data
           continue;
         }
 
-        var c = _dataColumns[i].Document as DataColumn;
+        var c = _dataColumns[i].Document() as DataColumn;
         if (c == null)
         {
           continue; // not yet resolved, leave it as it is
@@ -862,7 +862,7 @@ namespace Altaxo.Data
     /// <param name="table">The table to search.</param>
     protected virtual void InternalRemoveUnresolvedDataColumnsIfAllDataColumnsShouldBeIncluded(DataTable table)
     {
-      _dataColumns.RemoveAll(proxy => proxy.Document == null);
+      _dataColumns.RemoveAll(proxy => proxy.Document() == null);
     }
 
     /// <summary>
@@ -872,7 +872,7 @@ namespace Altaxo.Data
     protected virtual void InternalAddMissingDataColumnsIfAllDataColumnsShouldBeIncluded(DataTable table)
     {
       var dataColumns = table.DataColumns;
-      var existing = new HashSet<DataColumn>(_dataColumns.Select(x => x.Document as DataColumn).Where(c => null != c));
+      var existing = new HashSet<DataColumn>(_dataColumns.Select(x => x.Document() as DataColumn).Where(c => null != c));
       var toInsert = dataColumns.Columns.Where(c => dataColumns.GetColumnGroup(c) == _groupNumber && dataColumns.GetColumnKind(c) == ColumnKind.V && !existing.Contains(c));
       foreach (var ins in toInsert)
       {
@@ -926,7 +926,7 @@ namespace Altaxo.Data
 
       for (int i = 0; i < _dataColumns.Count; ++i)
       {
-        var col = _dataColumns[i].Document as DataColumn;
+        var col = _dataColumns[i].Document() as DataColumn;
         if (null != col)
         {
           _participatingDataColumns.Add(table.DataColumns.GetColumnNumber(col));
@@ -940,7 +940,7 @@ namespace Altaxo.Data
     /// <returns></returns>
     private int GetMaximumRowCountNow()
     {
-      return _dataColumns.Where(p => p.Document != null).MaxOrDefault(p => p.Document.Count ?? 0, 0);
+      return _dataColumns.Where(p => p.Document() != null).MaxOrDefault(p => p.Document().Count ?? 0, 0);
     }
 
     /// <summary>
@@ -952,7 +952,7 @@ namespace Altaxo.Data
       DataTable table;
       foreach (var colproxy in _dataColumns)
       {
-        col = colproxy.Document as DataColumn;
+        col = colproxy.Document() as DataColumn;
         if (null != col)
         {
           table = DataTable.GetParentDataTableOf(col);
@@ -963,7 +963,7 @@ namespace Altaxo.Data
 
       foreach (var colproxy in new IReadableColumnProxy[] { _rowHeaderColumn, _columnHeaderColumn })
       {
-        col = colproxy.Document as DataColumn;
+        col = colproxy.Document() as DataColumn;
         if (null != col)
         {
           table = DataTable.GetParentDataTableOf(col);
@@ -1068,10 +1068,10 @@ namespace Altaxo.Data
     /// <returns>Wrapper vector around the row header data. Each element of this vector corresponds to the row with the same index of the matrix.</returns>
     public IROVector<double> GetRowHeaderWrapper()
     {
-      if (_rowHeaderColumn.IsEmpty || _rowHeaderColumn.Document == null)
+      if (_rowHeaderColumn.IsEmpty || _rowHeaderColumn.Document() == null)
         return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataRows.Count);
       else
-        return new HeaderColumnWrapper(_rowHeaderColumn.Document, _participatingDataRows);
+        return new HeaderColumnWrapper(_rowHeaderColumn.Document(), _participatingDataRows);
     }
 
     /// <summary>
@@ -1080,10 +1080,10 @@ namespace Altaxo.Data
     /// <returns>Wrapper vector around the column header data. Each element of this vector corresponds to the column with the same index of the matrix.</returns>
     public IROVector<double> GetColumnHeaderWrapper()
     {
-      if (_columnHeaderColumn.IsEmpty || _columnHeaderColumn.Document == null)
+      if (_columnHeaderColumn.IsEmpty || _columnHeaderColumn.Document() == null)
         return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataColumns.Count);
       else
-        return new HeaderColumnWrapper(_columnHeaderColumn.Document, _participatingDataColumns);
+        return new HeaderColumnWrapper(_columnHeaderColumn.Document(), _participatingDataColumns);
     }
 
     /// <summary>
@@ -1193,7 +1193,7 @@ namespace Altaxo.Data
         Update();
       }
 
-      var col = _rowHeaderColumn.Document;
+      var col = _rowHeaderColumn.Document();
 
       if (null != col)
       {
@@ -1214,7 +1214,7 @@ namespace Altaxo.Data
         Update();
       }
 
-      var col = _columnHeaderColumn.Document;
+      var col = _columnHeaderColumn.Document();
 
       if (null != col)
       {
@@ -1257,7 +1257,7 @@ namespace Altaxo.Data
         return false;
       }
 
-      var col = proxy.Document;
+      var col = proxy.Document();
       if (null == col)
       {
         errorOrWarningMessage = string.Format("Link to {0} header column is lost.", rowOrCol);

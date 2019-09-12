@@ -693,14 +693,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         _useCommonErrorColumn = value;
         if (value)
         {
-          CommonErrorColumn = _positiveErrorColumn?.Document ?? _negativeErrorColumn?.Document;
+          CommonErrorColumn = _positiveErrorColumn?.Document() ?? _negativeErrorColumn?.Document();
           ChildSetMember(ref _positiveErrorColumn, null);
           ChildSetMember(ref _negativeErrorColumn, null);
         }
         else
         {
-          PositiveErrorColumn = _commonErrorColumn?.Document;
-          NegativeErrorColumn = _commonErrorColumn?.Document;
+          PositiveErrorColumn = _commonErrorColumn?.Document();
+          NegativeErrorColumn = _commonErrorColumn?.Document();
           ChildSetMember(ref _commonErrorColumn, null);
         }
 
@@ -718,13 +718,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         if (!_useCommonErrorColumn)
           throw new InvalidOperationException("Style is set to use separate columns for positive and negative error!");
 
-        return _commonErrorColumn?.Document;
+        return _commonErrorColumn?.Document();
       }
       set
       {
         if (_useCommonErrorColumn)
         {
-          var oldValue = _commonErrorColumn?.Document;
+          var oldValue = _commonErrorColumn?.Document();
           if (!object.ReferenceEquals(value, oldValue))
           {
             ChildSetMember(ref _commonErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
@@ -733,8 +733,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
         }
         else
         {
-          var oldValue1 = _positiveErrorColumn?.Document;
-          var oldValue2 = _negativeErrorColumn?.Document;
+          var oldValue1 = _positiveErrorColumn?.Document();
+          var oldValue2 = _negativeErrorColumn?.Document();
           if (!object.ReferenceEquals(value, oldValue1) || !object.ReferenceEquals(value, oldValue2))
           {
             ChildSetMember(ref _positiveErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
@@ -756,7 +756,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _commonErrorColumn?.DocumentPath?.LastPartOrDefault;
+        return _commonErrorColumn?.DocumentPath()?.LastPartOrDefault;
       }
     }
 
@@ -767,14 +767,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _useCommonErrorColumn ? _commonErrorColumn?.Document : _positiveErrorColumn?.Document;
+        return _useCommonErrorColumn ? _commonErrorColumn?.Document() : _positiveErrorColumn?.Document();
       }
       set
       {
         if (_useCommonErrorColumn)
           throw new InvalidOperationException("Style is set to use a common column for positive and negative error!");
 
-        var oldValue = _positiveErrorColumn?.Document;
+        var oldValue = _positiveErrorColumn?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
           ChildSetMember(ref _positiveErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
@@ -793,7 +793,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _positiveErrorColumn?.DocumentPath?.LastPartOrDefault;
+        return _positiveErrorColumn?.DocumentPath()?.LastPartOrDefault;
       }
     }
 
@@ -804,14 +804,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _useCommonErrorColumn ? _commonErrorColumn?.Document : _negativeErrorColumn?.Document;
+        return _useCommonErrorColumn ? _commonErrorColumn?.Document() : _negativeErrorColumn?.Document();
       }
       set
       {
         if (_useCommonErrorColumn)
           throw new InvalidOperationException("Style is set to use a common column for positive and negative error!");
 
-        var oldValue = _negativeErrorColumn?.Document;
+        var oldValue = _negativeErrorColumn?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
           ChildSetMember(ref _negativeErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
@@ -830,7 +830,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _negativeErrorColumn?.DocumentPath?.LastPartOrDefault;
+        return _negativeErrorColumn?.DocumentPath()?.LastPartOrDefault;
       }
     }
 
@@ -1147,13 +1147,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       if (_useCommonErrorColumn)
       {
-        yield return (nameof(CommonErrorColumn), CommonErrorColumn, _commonErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => CommonErrorColumn = col as INumericColumn);
+        yield return (nameof(CommonErrorColumn), CommonErrorColumn, _commonErrorColumn?.DocumentPath()?.LastPartOrDefault, (col) => CommonErrorColumn = col as INumericColumn);
       }
       else
       {
-        yield return (nameof(PositiveErrorColumn), PositiveErrorColumn, _positiveErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => PositiveErrorColumn = col as INumericColumn);
+        yield return (nameof(PositiveErrorColumn), PositiveErrorColumn, _positiveErrorColumn?.DocumentPath()?.LastPartOrDefault, (col) => PositiveErrorColumn = col as INumericColumn);
 
-        yield return (nameof(NegativeErrorColumn), NegativeErrorColumn, _negativeErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => NegativeErrorColumn = col as INumericColumn);
+        yield return (nameof(NegativeErrorColumn), NegativeErrorColumn, _negativeErrorColumn?.DocumentPath()?.LastPartOrDefault, (col) => NegativeErrorColumn = col as INumericColumn);
       }
     }
 

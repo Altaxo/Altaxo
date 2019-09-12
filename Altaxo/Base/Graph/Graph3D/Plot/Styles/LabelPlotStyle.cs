@@ -436,7 +436,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _labelColumnProxy == null ? null : _labelColumnProxy.Document;
+        return _labelColumnProxy == null ? null : _labelColumnProxy.Document();
       }
       set
       {
@@ -457,7 +457,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _labelColumnProxy.DocumentPath.LastPartOrDefault;
+        return _labelColumnProxy.DocumentPath().LastPartOrDefault;
       }
     }
 
@@ -1036,7 +1036,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
     {
-      if (_labelColumnProxy.Document == null)
+      if (_labelColumnProxy.Document() == null)
         return;
 
       if (null != _attachedPlane)
@@ -1044,7 +1044,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
       PlotRangeList rangeList = pdata.RangeList;
       var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      Altaxo.Data.IReadableColumn labelColumn = _labelColumnProxy.Document;
+      Altaxo.Data.IReadableColumn labelColumn = _labelColumnProxy.Document();
 
       bool isUsingVariableColorForLabelText = null != _cachedColorForIndexFunction && IsColorReceiver;
       bool isUsingVariableColorForLabelBackground = null != _cachedColorForIndexFunction &&

@@ -118,7 +118,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return (DataTable)base.DocumentObject;
+        return (DataTable)base.DocumentObject();
       }
     }
 

@@ -378,11 +378,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _columnX?.Document;
+        return _columnX?.Document();
       }
       set
       {
-        var oldValue = _columnX?.Document;
+        var oldValue = _columnX?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
           ChildSetMember(ref _columnX, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
@@ -401,7 +401,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _columnX?.DocumentPath?.LastPartOrDefault;
+        return _columnX?.DocumentPath()?.LastPartOrDefault;
       }
     }
 
@@ -412,11 +412,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _columnY?.Document;
+        return _columnY?.Document();
       }
       set
       {
-        var oldValue = _columnY?.Document;
+        var oldValue = _columnY?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
           ChildSetMember(ref _columnY, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
@@ -435,7 +435,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _columnY?.DocumentPath?.LastPartOrDefault;
+        return _columnY?.DocumentPath()?.LastPartOrDefault;
       }
     }
 
@@ -446,11 +446,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _columnZ?.Document;
+        return _columnZ?.Document();
       }
       set
       {
-        var oldValue = _columnZ?.Document;
+        var oldValue = _columnZ?.Document();
         if (!object.ReferenceEquals(value, oldValue))
         {
           ChildSetMember(ref _columnZ, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
@@ -469,7 +469,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     {
       get
       {
-        return _columnZ?.DocumentPath?.LastPartOrDefault;
+        return _columnZ?.DocumentPath()?.LastPartOrDefault;
       }
     }
 
@@ -1028,11 +1028,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
       )> GetAdditionallyUsedColumns()
     {
-      yield return (nameof(ColumnX), ColumnX, _columnX?.DocumentPath?.LastPartOrDefault, (col) => ColumnX = col as INumericColumn);
+      yield return (nameof(ColumnX), ColumnX, _columnX?.DocumentPath()?.LastPartOrDefault, (col) => ColumnX = col as INumericColumn);
 
-      yield return (nameof(ColumnY), ColumnY, _columnY?.DocumentPath?.LastPartOrDefault, (col) => ColumnY = col as INumericColumn);
+      yield return (nameof(ColumnY), ColumnY, _columnY?.DocumentPath()?.LastPartOrDefault, (col) => ColumnY = col as INumericColumn);
 
-      yield return (nameof(ColumnZ), ColumnZ, _columnZ?.DocumentPath?.LastPartOrDefault, (col) => ColumnZ = col as INumericColumn);
+      yield return (nameof(ColumnZ), ColumnZ, _columnZ?.DocumentPath()?.LastPartOrDefault, (col) => ColumnZ = col as INumericColumn);
     }
 
     #endregion IDocumentNode Members

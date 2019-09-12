@@ -1508,6 +1508,8 @@ namespace Altaxo.Data
 
           EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnRenameArgs(GetColumnNumber(datac)));
 
+
+          EhSelfTunnelingEventHappened(new NameChangedEventArgs(datac, oldName, newName));
           // Inform also the data column itself that the name has changed
           datac.EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
 
@@ -2135,10 +2137,13 @@ namespace Altaxo.Data
     /// <returns>Either the column with the given name, or Null if such a column don't exist.</returns>
     public Altaxo.Data.DataColumn TryGetColumn(string s)
     {
-      if (_columnsByName.TryGetValue(s, out var result))
-        return result;
-      else
+      if (!_columnsByName.ContainsKey(s))
         return null;
+
+      if (null != _deferredDataLoader)
+        TryLoadDeferredData();
+
+      return _columnsByName[s];
     }
 
     /// <summary>

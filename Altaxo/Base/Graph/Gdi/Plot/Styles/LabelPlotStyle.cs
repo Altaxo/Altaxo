@@ -737,7 +737,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return _labelColumnProxy == null ? null : _labelColumnProxy.Document;
+        return _labelColumnProxy == null ? null : _labelColumnProxy.Document();
       }
       set
       {
@@ -758,7 +758,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return _labelColumnProxy.DocumentPath.LastPartOrDefault;
+        return _labelColumnProxy.DocumentPath().LastPartOrDefault;
       }
     }
 
@@ -1227,7 +1227,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void PaintOneRange(Graphics g, IPlotArea layer, IPlotRange range, Processed2DPlotData pdata)
     {
-      if (_labelColumnProxy.Document == null)
+      if (_labelColumnProxy.Document() == null)
         return;
 
       _cachedStringFormat.Alignment = GdiExtensionMethods.ToGdi(_alignmentX);
@@ -1237,7 +1237,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _attachedPlane = layer.UpdateCSPlaneID(_attachedPlane);
 
       var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      Altaxo.Data.IReadableColumn labelColumn = _labelColumnProxy.Document;
+      Altaxo.Data.IReadableColumn labelColumn = _labelColumnProxy.Document();
 
       bool isUsingVariableColorForLabelText = null != _cachedColorForIndexFunction && IsColorReceiver;
       bool isUsingVariableColorForLabelBackground = null != _cachedColorForIndexFunction &&

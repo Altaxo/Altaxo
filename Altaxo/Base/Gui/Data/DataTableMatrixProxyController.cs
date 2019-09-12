@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Data
         for (int i = 0; i < _doc.ColumnCount; ++i)
         {
           var col = _doc.GetDataColumnProxy(i);
-          _valueColumns.Add(new SelectableListNode(col.Document != null ? col.Document.FullName : "Unresolved column", col, false));
+          _valueColumns.Add(new SelectableListNode(col.Document() != null ? col.Document().FullName : "Unresolved column", col, false));
         }
 
         CalcMaxPossiblePlotRangeTo();
@@ -314,7 +314,7 @@ namespace Altaxo.Gui.Data
 
         // before adding this node, check that it is not already present
         var proxyToAdd = ReadableColumnProxyBase.FromColumn(colToAdd);
-        if (_valueColumns.Any(n => proxyToAdd.DocumentPath.Equals(((IReadableColumnProxy)n.Tag).DocumentPath)))
+        if (_valueColumns.Any(n => proxyToAdd.DocumentPath().Equals(((IReadableColumnProxy)n.Tag).DocumentPath())))
           continue;
 
         _valueColumns.Add(new SelectableListNode(colToAdd.FullName, proxyToAdd, false));

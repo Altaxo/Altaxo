@@ -156,7 +156,7 @@ namespace Altaxo.Gui.Data
       var columnProxies = _doc.GetDataColumnProxies(ConvertXYVToMatrixDataAndOptions.ColumnV);
       foreach (var colProxy in columnProxies)
       {
-        _valueColumns.Add(new SelectableListNode(colProxy.Document != null ? colProxy.Document.FullName : "Unresolved column", colProxy.Clone(), false)); // clone of colProxy is important for apply later on
+        _valueColumns.Add(new SelectableListNode(colProxy.Document() != null ? colProxy.Document().FullName : "Unresolved column", colProxy.Clone(), false)); // clone of colProxy is important for apply later on
       }
 
       if (null != _view)
@@ -220,7 +220,7 @@ namespace Altaxo.Gui.Data
 
     private DataColumn GetColumnInOtherTable(DataTable table, int groupNumber, IReadableColumnProxy proxyTemplate)
     {
-      var oldColumn = (DataColumn)proxyTemplate.Document;
+      var oldColumn = (DataColumn)proxyTemplate.Document();
 
       if (null != oldColumn)
       {
@@ -241,7 +241,7 @@ namespace Altaxo.Gui.Data
       }
       else // no document available, try it with the path name
       {
-        var documentPath = proxyTemplate.DocumentPath;
+        var documentPath = proxyTemplate.DocumentPath();
         var oldName = documentPath.LastPart;
         DataColumn newCol = null;
 
@@ -313,7 +313,7 @@ namespace Altaxo.Gui.Data
 
         // before adding this node, check that it is not already present
         var proxyToAdd = ReadableColumnProxyBase.FromColumn(colToAdd);
-        if (_valueColumns.Any(n => proxyToAdd.DocumentPath.Equals(((IReadableColumnProxy)n.Tag).DocumentPath)))
+        if (_valueColumns.Any(n => proxyToAdd.DocumentPath().Equals(((IReadableColumnProxy)n.Tag).DocumentPath())))
           continue;
 
         _valueColumns.Add(new SelectableListNode(colToAdd.FullName, proxyToAdd, false));

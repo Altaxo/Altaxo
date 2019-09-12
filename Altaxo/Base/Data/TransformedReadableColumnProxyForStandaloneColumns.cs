@@ -93,12 +93,9 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
-    public IReadableColumn Document
+    public IReadableColumn Document()
     {
-      get
-      {
-        return _cachedResultingColumn;
-      }
+      return _cachedResultingColumn;
     }
 
     public object Clone()
@@ -119,14 +116,14 @@ namespace Altaxo.Data
         return (_transformation.RepresentationAsOperator ?? _transformation.RepresentationAsFunction) + " " + _underlyingColumn.FullName;
     }
 
-    public object DocumentObject
+    public object DocumentObject()
     {
-      get { return _cachedResultingColumn; }
+      return _cachedResultingColumn;
     }
 
-    public AbsoluteDocumentPath DocumentPath
+    public AbsoluteDocumentPath DocumentPath()
     {
-      get { return AbsoluteDocumentPath.DocumentPathOfRootNode; }
+      return AbsoluteDocumentPath.DocumentPathOfRootNode;
     }
 
     public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)

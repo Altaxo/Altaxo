@@ -205,6 +205,24 @@ namespace Altaxo.Main
     }
 
     /// <summary>
+    /// Gets the parent path of the current path. The parent path contains all parts except for the last part.
+    /// </summary>
+    /// <value>
+    /// The parent path.
+    /// </value>
+    /// <exception cref="InvalidOperationException">Can not return parent path of root path</exception>
+    public AbsoluteDocumentPath ParentPath
+    {
+      get
+      {
+        if (this.Count == 0)
+          throw new InvalidOperationException("Can not return parent path of root path");
+
+        return SubPath(0, Count - 1);
+      }
+    }
+
+    /// <summary>
     /// Gets the last part, which is often the name of the object.
     /// </summary>
     /// <value>
