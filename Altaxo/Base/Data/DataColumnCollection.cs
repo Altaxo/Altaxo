@@ -304,6 +304,25 @@ namespace Altaxo.Data
 
         var storeDataOnly = info.GetProperty(SerialiationInfoProperty_StoreDataOnly) != null;
 
+        info.AddValue("NumberOfRows", s._numberOfRows);
+
+        {
+          info.CreateArray("ColumnArray", s._columnsByNumber.Count);
+          for (int i = 0; i < s._columnsByNumber.Count; i++)
+          {
+            info.CreateElement("Column");
+
+            DataColumnInfo colinfo = s.GetColumnInfo(i);
+            info.AddValue("Name", colinfo.Name);
+            info.AddValue("Kind", (int)colinfo.Kind);
+            info.AddValue("Group", colinfo.Group);
+            info.AddValue("Data", s._columnsByNumber[i]);
+
+            info.CommitElement();
+          }
+          info.CommitArray();
+        }
+
         if (!storeDataOnly)
         {
           // serialize the column scripts
@@ -317,35 +336,38 @@ namespace Altaxo.Data
           }
           info.CommitArray();
         }
-
-        info.AddValue("NumberOfRows", s._numberOfRows);
-
-        info.CreateArray("ColumnArray", s._columnsByNumber.Count);
-        for (int i = 0; i < s._columnsByNumber.Count; i++)
-        {
-          info.CreateElement("Column");
-
-          DataColumnInfo colinfo = s.GetColumnInfo(i);
-          info.AddValue("Name", colinfo.Name);
-          info.AddValue("Kind", (int)colinfo.Kind);
-          info.AddValue("Group", colinfo.Group);
-          info.AddValue("Data", s._columnsByNumber[i]);
-
-          info.CommitElement();
-        }
-        info.CommitArray();
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         Altaxo.Data.DataColumnCollection s = null != o ? (Altaxo.Data.DataColumnCollection)o : new Altaxo.Data.DataColumnCollection();
 
-        int count;
+
+        int numberOfRows = info.GetInt32("NumberOfRows");
+
+        {
+          // deserialize the columns, here the columns are deserialized without data.
+          int count = info.OpenArray();
+          for (int i = 0; i < count; i++)
+          {
+            info.OpenElement(); // Column
+
+            string name = info.GetString("Name");
+            var kind = (ColumnKind)info.GetInt32("Kind");
+            int group = info.GetInt32("Group");
+            var col = (DataColumn)info.GetValue("Data", s);
+            if (col != null)
+              s.Add(col, new DataColumnInfo(name, kind, group));
+
+            info.CloseElement(); // Column
+          }
+          info.CloseArray(count);
+        }
 
         if (!info.PropertyDictionary.ContainsKey(DeserialiationInfoProperty_RestoreDataOnly))
         {
           // deserialize the scripts
-          count = info.OpenArray();
+          int count = info.OpenArray();
           for (int i = 0; i < count; i++)
           {
             info.OpenElement();
@@ -356,24 +378,6 @@ namespace Altaxo.Data
           }
           info.CloseArray(count); // end script array
         }
-
-        int numberOfRows = info.GetInt32("NumberOfRows");
-        // deserialize the columns, here the columns are deserialized without data.
-        count = info.OpenArray();
-        for (int i = 0; i < count; i++)
-        {
-          info.OpenElement(); // Column
-
-          string name = info.GetString("Name");
-          var kind = (ColumnKind)info.GetInt32("Kind");
-          int group = info.GetInt32("Group");
-          var col = (DataColumn)info.GetValue("Data", s);
-          if (col != null)
-            s.Add(col, new DataColumnInfo(name, kind, group));
-
-          info.CloseElement(); // Column
-        }
-        info.CloseArray(count);
 
         s._deferredDataLoader = info.GetPropertyOrDefault<object>(DeserialiationInfoProperty_DeferredDataDeserialization);
         if (null != s._deferredDataLoader)

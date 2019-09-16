@@ -163,8 +163,7 @@ namespace Altaxo.Main
 
     public override bool Equals(object obj)
     {
-      var o = obj as AbsoluteDocumentPath;
-      if (null == o)
+      if (!(obj is AbsoluteDocumentPath o))
         return false;
       if (Count != o.Count)
         return false;

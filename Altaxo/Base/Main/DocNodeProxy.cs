@@ -549,9 +549,13 @@ namespace Altaxo.Main
       {
         OnDocNode_Changed(sender, e);
 
-        InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(iNode);
-        InternalCheckAbsolutePath();
-        EhSelfChanged(EventArgs.Empty);
+        var path = Main.AbsoluteDocumentPath.GetAbsolutePath(iNode);
+        if (!object.Equals(path, InternalDocumentPath))
+        {
+          InternalDocumentPath = path;
+          InternalCheckAbsolutePath();
+          EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 

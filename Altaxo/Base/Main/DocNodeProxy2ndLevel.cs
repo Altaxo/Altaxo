@@ -204,6 +204,10 @@ namespace Altaxo.Main
           SetDocNode(child); // we are tracking the child now
           result = child;
         }
+        else
+        {
+          result = null; // can not resolved yet
+        }
       }
       return result;
 

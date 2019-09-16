@@ -283,18 +283,27 @@ namespace Altaxo.Main.Services
       var clonedFileDir = Path.Combine(path, ClonedProjectRelativePath);
       Directory.CreateDirectory(clonedFileDir);
       var clonedFileName = Path.Combine(clonedFileDir, ClonedProjectFileName + Path.GetExtension(_originalFileStream.Name));
-      var clonedFileStream = new FileStream(clonedFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
       _cloneTaskCancel = new CancellationTokenSource();
-      _cloneTask = Task.Run(() =>
+
       {
-        using (var orgStream = new FileStream(_originalFileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-        {
-          orgStream.CopyTo(clonedFileStream);
-          clonedFileStream.Flush();
-          orgStream.Close();
-        }
-        _clonedFileStream = clonedFileStream;
-      }, _cloneTaskCancel.Token);
+        var cancellationToken = _cloneTaskCancel.Token;
+        var clonedFileStream = new FileStream(clonedFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+        var orgStream = new FileStream(_originalFileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        _cloneTask = orgStream.CopyToAsync(clonedFileStream, 81920, cancellationToken)
+          .ContinueWith(async (task1) =>
+            {
+              await clonedFileStream.FlushAsync(cancellationToken);
+            }, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default)
+          .ContinueWith((task2) =>
+            {
+              orgStream.Close();
+              orgStream.Dispose();
+              if (task2.Status == TaskStatus.RanToCompletion)
+                _clonedFileStream = clonedFileStream;
+              else
+                clonedFileStream?.Dispose();
+            });
+      }
     }
 
     /// <summary>
@@ -305,6 +314,8 @@ namespace Altaxo.Main.Services
       try
       {
         _cloneTaskCancel?.Cancel();
+        if (null != _cloneTask && _cloneTask.Status == TaskStatus.Running)
+          _cloneTask.Wait();
         _cloneTaskCancel?.Dispose();
         _cloneTaskCancel = null;
         _cloneTask?.Dispose();
