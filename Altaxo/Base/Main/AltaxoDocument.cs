@@ -103,11 +103,12 @@ namespace Altaxo
     /// <exception cref="ApplicationException"></exception>
     public void SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive originalArchive = null)
     {
-      bool supportsSeparateDataStorage = true;
       var errorText = new System.Text.StringBuilder();
-      int compressionLevel = 1;
-      // DateTime time1 = DateTime.UtcNow;
 
+      // If true, data were stored separately from the table
+      bool supportsSeparateDataStorage = archiveToSaveTo.SupportsDeferredLoading;
+
+      // If true, archive entries (of items that have not changed) are copied directly from the original archive to the new archive
       bool supportsStreamRecycling = originalArchive?.GetType() == archiveToSaveTo.GetType() && archiveToSaveTo.SupportsCopyEntryFrom(originalArchive);
 
       if (supportsSeparateDataStorage)
