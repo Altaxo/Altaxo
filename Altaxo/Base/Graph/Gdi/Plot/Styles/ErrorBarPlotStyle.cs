@@ -1231,11 +1231,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Prepares the scale of this plot style. Since this style does not utilize a scale, this function does nothing.
+    /// Prepares the scale of this plot style.
+    /// We make sure here that the columns are accessible and pre-loaded.
     /// </summary>
     /// <param name="layer">The parent layer.</param>
     public void PrepareScales(IPlotArea layer)
     {
+      // make sure that the columns are accessible and pre-loaded.
+      var posErrCol = PositiveErrorColumn;
+      var negErrCol = NegativeErrorColumn;
+
+      if (null != posErrCol && !typeof(double).IsAssignableFrom(posErrCol.ItemType))
+        posErrCol = null; // TODO make this an runtime paint error to be reported
+
+      if (null != negErrCol && !typeof(double).IsAssignableFrom(negErrCol.ItemType))
+        negErrCol = null; // TODO make this an runtime paint error to be reported
     }
 
     #endregion IG2DPlotStyle Members

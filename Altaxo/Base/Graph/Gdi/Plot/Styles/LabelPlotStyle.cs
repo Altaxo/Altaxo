@@ -1419,11 +1419,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Prepares the scale of this plot style. Since this style does not utilize a scale, this function does nothing.
+    /// Prepares the scale of this plot style. 
     /// </summary>
     /// <param name="layer">The parent layer.</param>
     public void PrepareScales(IPlotArea layer)
     {
+      // Make sure to pre-load the label-column here.
+      var labelColumn = this.LabelColumn;
+      if (null == labelColumn)
+      {
+
+      }
     }
 
     #region I2DPlotStyle Members

@@ -980,11 +980,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
-    /// Prepares the scale of this plot style. Since this style does not utilize a scale, this function does nothing.
+    /// Prepares the scale of this plot style. 
     /// </summary>
     /// <param name="layer">The parent layer.</param>
     public void PrepareScales(IPlotArea layer)
     {
+      // make sure to preload the columns here
+      var xColumn = ColumnX;
+      var yColumn = ColumnY;
+
+      if (xColumn == null)
+      {
+
+      }
+      if (yColumn == null)
+      {
+
+      }
     }
 
     #endregion IG3DPlotStyle Members
