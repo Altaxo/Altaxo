@@ -528,6 +528,45 @@ namespace Altaxo.Data
 
     #region Deserialization (deferred data loading)
 
+    /// <summary>
+    /// Infrastructure - do not use this unless absolutely neccessary.
+    /// Gets or sets the deferred data memento that helps to late load the data for this <see cref="DataColumnCollection"/>.
+    /// </summary>
+    /// <value>
+    /// The deferred data memento.
+    /// </value>
+    public IProjectArchiveEntryMemento DeferredDataMemento
+    {
+      get
+      {
+        lock (_deferredLock)
+        {
+          return _deferredDataLoader as IProjectArchiveEntryMemento;
+        }
+      }
+      set
+      {
+        for (; ; )
+        {
+          object oldValue;
+          lock (_deferredLock)
+          {
+            oldValue = _deferredDataLoader;
+            if (oldValue == null || oldValue is IProjectArchiveEntryMemento)
+              oldValue = _deferredDataLoader = value;
+          }
+
+          if (object.ReferenceEquals(oldValue, value))
+            break;
+          else
+            System.Threading.Thread.Sleep(20);
+        }
+
+        if (null != value)
+          _isDataDirty = false;
+      }
+    }
+
     private object _deferredLock = new object();
     private void TryLoadDeferredData()
     {

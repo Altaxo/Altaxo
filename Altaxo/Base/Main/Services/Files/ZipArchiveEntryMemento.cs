@@ -34,7 +34,7 @@ namespace Altaxo.Main.Services.Files
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.IProjectArchiveEntryMemento" />
   /// <seealso cref="System.IDisposable" />
-  public class ZipArchiveEntryMemento : IProjectArchiveEntryMemento, IDisposable
+  public class ProjectArchiveEntryMemento : IProjectArchiveEntryMemento, IDisposable
   {
     // fixed data
     readonly string _fileName;
@@ -46,19 +46,26 @@ namespace Altaxo.Main.Services.Files
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ZipArchiveEntryMemento"/> class.
+    /// Initializes a new instance of the <see cref="ProjectArchiveEntryMemento"/> class.
     /// </summary>
     /// <param name="entryName">Name of the entry.</param>
     /// <param name="archiveManager">The archive manager.</param>
     /// <param name="archiveFileName">Name of the archive file. This parameter is used only if the provided <paramref name="archiveManager"/> is null or invalid.</param>
-    public ZipArchiveEntryMemento(string entryName, IProjectArchiveManager archiveManager, string archiveFileName)
+    public ProjectArchiveEntryMemento(string entryName, IProjectArchiveManager archiveManager, string archiveFileName)
     {
       _entryName = entryName;
       _archiveManager = archiveManager;
       _fileName = archiveFileName;
     }
 
-
+    /// <inheritdoc/>
+    public string EntryName
+    {
+      get
+      {
+        return _entryName;
+      }
+    }
 
     /// <summary>
     /// Gets the archive entry that is memento refers to.

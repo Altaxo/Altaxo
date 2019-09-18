@@ -100,9 +100,10 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Copies the entry from another archive.
     /// </summary>
-    /// <param name="archive">The archive to copy the entry from.</param>
-    /// <param name="entryName">The name of the entry to copy.</param>
-    void CopyEntryFrom(IProjectArchive archive, string entryName);
+    /// <param name="sourceArchive">The archive to copy the entry from.</param>
+    /// <param name="sourceEntryName">The name of the entry to copy.</param>
+    /// <param name="destinationEntryName">The name of the entry in the destination archive.</param>
+    void CopyEntryFrom(IProjectArchive sourceArchive, string sourceEntryName, string destinationEntryName);
 
 
 

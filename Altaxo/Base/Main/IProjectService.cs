@@ -211,8 +211,8 @@ namespace Altaxo.Main
     /// For regular saving into the file system, use one of the other Save.. methods.
     /// </summary>
     /// <param name="archive">Archive to save the project into</param>
-    /// <returns>Null if everything was saved sucessfully, or an exception if not.</returns>
-    void SaveProject(IProjectArchive archive);
+    /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
+    IDictionary<string, IProjectItem> SaveProject(IProjectArchive archive);
 
     /// <summary>
     /// Saves a project under the current file name.

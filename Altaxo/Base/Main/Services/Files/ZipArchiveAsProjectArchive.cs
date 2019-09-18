@@ -156,7 +156,7 @@ namespace Altaxo.Main.Services.Files
     {
       if (_stream is FileStream fs)
       {
-        return new ZipArchiveEntryMemento(entryName, ArchiveManager, fs.Name);
+        return new ProjectArchiveEntryMemento(entryName, ArchiveManager, fs.Name);
       }
       else
       {
@@ -171,17 +171,17 @@ namespace Altaxo.Main.Services.Files
     }
 
     /// <inheritdoc/>
-    public void CopyEntryFrom(IProjectArchive archive, string entryName)
+    public void CopyEntryFrom(IProjectArchive sourceArchive, string sourceEntryName, string destinationEntryName)
     {
-      if (!(archive is ZipArchiveAsProjectArchive zipArchiveWrapper))
-        throw new ArgumentOutOfRangeException(nameof(archive), "Has to be a wrapper around a Zip archive");
+      if (!(sourceArchive is ZipArchiveAsProjectArchive zipArchiveWrapper))
+        throw new ArgumentOutOfRangeException(nameof(sourceArchive), "Has to be a wrapper around a Zip archive");
 
-      var entry = zipArchiveWrapper._zipArchive.GetEntry(entryName);
+      var entry = zipArchiveWrapper._zipArchive.GetEntry(sourceEntryName);
 
       if (entry is null)
-        throw new ArgumentOutOfRangeException(nameof(entryName), $"Entry name {entryName} was not found in the archive to copy from");
+        throw new ArgumentOutOfRangeException(nameof(sourceEntryName), $"Entry name {sourceEntryName} was not found in the archive to copy from");
 
-      _zipArchive.CopyEntryFromAnotherArchive(entry);
+      _zipArchive.CopyEntryFromAnotherArchive(entry, destinationEntryName: destinationEntryName);
 
     }
     #endregion

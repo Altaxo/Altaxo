@@ -331,6 +331,9 @@ namespace Altaxo.Dom
     /// <param name="filename"></param>
     protected virtual void InternalSave(PathName filename)
     {
+      // a dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling)
+      IDictionary<string, IProjectItem> entryNameItemDictionary = null;
+
       if (!filename.Equals(CurrentProjectArchiveManager?.FileOrFolderName))
       {
         var saveProjectManager = InternalCreateProjectArchiveManagerFromFileOrFolderLocation(filename) ?? throw new ApplicationException($"Can't find a storage manager for file/folder {filename}");
@@ -342,9 +345,9 @@ namespace Altaxo.Dom
 
 
         if (CurrentProjectArchiveManager is IFileBasedProjectArchiveManager fileBasedManager)
-          fileBasedManager.SaveAs((FileName)filename, SaveProjectAndWindowsState);
+          entryNameItemDictionary = fileBasedManager.SaveAs((FileName)filename, SaveProjectAndWindowsState);
         else if (CurrentProjectArchiveManager is IFolderBasedProjectArchiveManager folderBasedManager)
-          folderBasedManager.SaveAs((DirectoryName)filename, SaveProjectAndWindowsState);
+          entryNameItemDictionary = folderBasedManager.SaveAs((DirectoryName)filename, SaveProjectAndWindowsState);
         else
           throw new NotImplementedException($"Storage manager type {CurrentProjectArchiveManager} is not implemented here.");
 
@@ -355,8 +358,7 @@ namespace Altaxo.Dom
         CurrentProjectArchiveManager.Save(SaveProjectAndWindowsState);
       }
 
-
-      _currentProject.IsDirty = false;
+      _currentProject.ClearIsDirty(CurrentProjectArchiveManager, entryNameItemDictionary);
     }
 
 
@@ -367,15 +369,15 @@ namespace Altaxo.Dom
     /// <param name="archiveToSaveTo">The project archive to save the project to.</param>
     /// <param name="archiveToCopyFrom">The project archive that represents the last state of saving before this saving Can be used to copy some of the data,
     /// that were not changed inbetween savings. This parameter can be null, for instance, if no such archive exists.</param>
-    /// <returns>Null if the operation succeeded, otherwise, the exception being thrown.</returns>
-    public abstract void SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom);
+    /// <returns>A dictionary where the keys are the entrynames that where used to store the project items that are the values.</returns>
+    public abstract IDictionary<string, IProjectItem> SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom);
 
     /// <summary>
     /// Saves a project.
     /// </summary>
     /// <param name="archiveToSaveTo">The project archive to save the project to.</param>
-    /// <returns>Null if the operation succeeded, otherwise, the exception being thrown.</returns>
-    public void SaveProject(IProjectArchive archiveToSaveTo) => SaveProjectAndWindowsState(archiveToSaveTo, null);
+    /// <returns>A dictionary where the keys are the entrynames that where used to store the project items that are the values.</returns>
+    public IDictionary<string, IProjectItem> SaveProject(IProjectArchive archiveToSaveTo) => SaveProjectAndWindowsState(archiveToSaveTo, null);
 
     #endregion Project saving
 

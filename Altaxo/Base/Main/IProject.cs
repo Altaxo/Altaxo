@@ -38,6 +38,15 @@ namespace Altaxo.Main
     new bool IsDirty { get; set; }
 
     /// <summary>
+    /// Clears the <see cref="IsDirty"/> flag in a more advanced manner,
+    /// supporting the needs for late loading of data etc.
+    /// It should update the data needed for deferred data loading before clearing the flag.
+    /// </summary>
+    /// <param name="archiveManager">The archive manager that currently manages the archive in which the project is stored.</param>
+    /// <param name="entryNameToItemDictionary">A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</param>
+    void ClearIsDirty(Services.IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem> entryNameToItemDictionary);
+
+    /// <summary>
     /// Gets the types of project items currently supported in the project.
     /// </summary>
     /// <value>

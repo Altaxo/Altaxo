@@ -133,10 +133,13 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="destinationFileName">Name of the destination file.</param>
     /// <param name="saveProjectAndWindowsState">Delegate to store the project document and the windows state into an <see cref="IProjectArchive"/>.</param>
+    /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
     /// <exception cref="ObjectDisposedException"></exception>
-    public void SaveAs(FileName destinationFileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
+    public IDictionary<string, IProjectItem> SaveAs(FileName destinationFileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
+
+      IDictionary<string, IProjectItem> dictionaryResult = null;
 
       var originalFileName = _originalFileStream?.Name;
       bool isNewDestinationFileName = destinationFileName != originalFileName;
@@ -188,7 +191,7 @@ namespace Altaxo.Main.Services
         {
           using (var newProjectArchive = new Services.Files.ZipArchiveAsProjectArchive(newProjectArchiveFileStream ?? _originalFileStream, ZipArchiveMode.Create, leaveOpen: true))
           {
-            saveProjectAndWindowsState(newProjectArchive, oldProjectArchive);
+            dictionaryResult = saveProjectAndWindowsState(newProjectArchive, oldProjectArchive);
           }
         }
         catch (Exception ex)
@@ -266,6 +269,8 @@ namespace Altaxo.Main.Services
 
       if (isNewDestinationFileName)
         FileOrFolderNameChanged?.Invoke(this, new NameChangedEventArgs(this, originalFileName, _originalFileStream?.Name));
+
+      return dictionaryResult;
     }
 
     #region Clone task

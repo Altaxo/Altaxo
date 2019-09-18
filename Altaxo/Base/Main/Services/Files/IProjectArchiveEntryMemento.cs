@@ -36,6 +36,14 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <returns>The archive entry.</returns>
     IProjectArchiveEntry GetArchiveEntry();
+
+    /// <summary>
+    /// Gets the full name of the archive entry.
+    /// </summary>
+    /// <value>
+    /// The full name of the archive entry.
+    /// </value>
+    string EntryName { get; }
   }
 
 }

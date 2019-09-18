@@ -82,16 +82,16 @@ namespace Altaxo.Main
 
     #region Project saving
 
-    public override void SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom)
+    /// <inheritdoc/>
+    public override IDictionary<string, IProjectItem> SaveProjectAndWindowsState(IProjectArchive archiveToSaveTo, IProjectArchive archiveToCopyFrom)
     {
-
-
       var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-      CurrentOpenProject.SaveToArchive(archiveToSaveTo, info, archiveToCopyFrom);
+      var result = CurrentOpenProject.SaveToArchive(archiveToSaveTo, info, archiveToCopyFrom);
 
       if (!Current.Dispatcher.InvokeRequired)
         SaveWindowStateToArchive(archiveToSaveTo, info);
 
+      return result;
     }
 
     /// <summary>

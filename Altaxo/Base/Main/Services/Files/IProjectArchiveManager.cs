@@ -43,7 +43,8 @@ namespace Altaxo.Main.Services
   /// </summary>
   /// <param name="newArchive">The archive to save the project and windows state to.</param>
   /// <param name="oldArchive">The old project archive. Can be null. If not null, this archive represents the state of the project at the last saving.</param>
-  public delegate void SaveProjectAndWindowsStateDelegate(IProjectArchive newArchive, IProjectArchive oldArchive);
+  /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
+  public delegate IDictionary<string, IProjectItem> SaveProjectAndWindowsStateDelegate(IProjectArchive newArchive, IProjectArchive oldArchive);
 
 
   /// <summary>
@@ -114,7 +115,8 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="fileName">Name of the file.</param>
     /// <param name="saveProjectAndWindowsState">A delegate that saves the project document and the Gui state into a <see cref="IProjectArchive"/>.</param>
-    void SaveAs(FileName fileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
+    /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
+    IDictionary<string, IProjectItem> SaveAs(FileName fileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
   }
 
   /// <summary>
@@ -136,6 +138,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="folderName">Name of the folder.</param>
     /// <param name="saveProjectAndWindowsState">A delegate that saves the project document and the Gui state into a <see cref="IProjectArchive"/>.</param>
-    void SaveAs(DirectoryName folderName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
+    /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
+    IDictionary<string, IProjectItem> SaveAs(DirectoryName folderName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState);
   }
 }

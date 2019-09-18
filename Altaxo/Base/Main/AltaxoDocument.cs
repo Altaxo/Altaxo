@@ -100,10 +100,12 @@ namespace Altaxo
     /// <param name="info">The serialization information.</param>
     /// <param name="originalArchive">The original archive that belongs to the project being saved. Can accelerate the saving of the document by recycling some of the already saved streams.
     /// This parameter can be null.</param>
+    /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
     /// <exception cref="ApplicationException"></exception>
-    public void SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive originalArchive = null)
+    public Dictionary<string, IProjectItem> SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive originalArchive = null, IProjectArchiveManager projectArchiveManager = null)
     {
       var errorText = new System.Text.StringBuilder();
+      var dictionary = new Dictionary<string, IProjectItem>();
 
       // If true, data were stored separately from the table
       bool supportsSeparateDataStorage = archiveToSaveTo.SupportsDeferredLoading;
@@ -144,11 +146,15 @@ namespace Altaxo
         foreach (Altaxo.Data.DataTable table in _dataTables)
         {
           var entryName = string.Concat("TableData/", table.Name, ".xml");
+          dictionary.Add(entryName, table);
           try
           {
-            if (supportsStreamRecycling && !table.DataColumns.IsDataDirty && originalArchive.ContainsEntry(entryName))
+            if (supportsStreamRecycling &&
+                !table.DataColumns.IsDataDirty &&
+                table.DataColumns.DeferredDataMemento is IProjectArchiveEntryMemento entryMemento &&
+                originalArchive.ContainsEntry(entryMemento.EntryName))
             {
-              archiveToSaveTo.CopyEntryFrom(originalArchive, entryName);
+              archiveToSaveTo.CopyEntryFrom(originalArchive, sourceEntryName: entryMemento.EntryName, destinationEntryName: entryName);
             }
             else
             {
@@ -316,6 +322,8 @@ namespace Altaxo
 
       if (errorText.Length != 0)
         throw new ApplicationException(errorText.ToString());
+
+      return dictionary;
     }
 
     public void RestoreFromZippedFile(IProjectArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
@@ -525,6 +533,27 @@ namespace Altaxo
             EhSelfTunnelingEventHappened(DirtyResetEventArgs.Empty, true);
         }
       }
+    }
+    /// <summary>
+    /// Clears the <see cref="IsDirty"/> flag in a more advanced manner,
+    /// supporting the needs for late loading of data.
+    /// It updates the data needed for deferred data loading before clearing the flag.
+    /// </summary>
+    /// <param name="archiveManager">The archive manager that currently manages the archive in which the project is stored.</param>
+    /// <param name="entryNameToItemDictionary">A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</param>
+    public void ClearIsDirty(IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem> entryNameToItemDictionary)
+    {
+      if (null != archiveManager && null != entryNameToItemDictionary)
+      {
+        foreach (var entry in entryNameToItemDictionary)
+        {
+          if (entry.Value is Altaxo.Data.DataTable table && entry.Key.StartsWith("TableData"))
+          {
+            table.DataColumns.DeferredDataMemento = new ProjectArchiveEntryMemento(entry.Key, archiveManager, archiveManager.FileOrFolderName);
+          }
+        }
+      }
+      IsDirty = false;
     }
 
     protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
