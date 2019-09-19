@@ -33,6 +33,9 @@ namespace Altaxo.Main
   {
     private string _documentIdentifier;
     private string _documentNotes;
+    private Version _versionCreatedWith = new Version(0, 0, 0, 0);
+
+
 
     #region Serialization
 
@@ -60,11 +63,45 @@ namespace Altaxo.Main
         s._documentIdentifier = info.GetString("Identifier");
         s._documentNotes = info.GetString("Notes");
 
+
+        return s;
+      }
+    }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocumentInformation), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DocumentInformation)obj;
+
+        info.AddValue("Identifier", s.DocumentIdentifier);
+        info.AddValue("Notes", s.DocumentNotes);
+
+        var version = Version.Parse(RevisionClass.FullVersion);
+        info.AddValue("AltaxoVersion", version.ToString());
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        DocumentInformation s = SDeserialize(o, info, parent);
+        return s;
+      }
+
+      protected virtual DocumentInformation SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        DocumentInformation s = null != o ? (DocumentInformation)o : new DocumentInformation();
+
+        s._documentIdentifier = info.GetString("Identifier");
+        s._documentNotes = info.GetString("Notes");
+        s._versionCreatedWith = Version.Parse(info.GetString("AltaxoVersion"));
+
         return s;
       }
     }
 
     #endregion Serialization
+
 
     public string DocumentIdentifier
     {
@@ -77,5 +114,21 @@ namespace Altaxo.Main
       get { return _documentNotes; }
       set { _documentNotes = value; }
     }
+
+    /// <summary>
+    /// Gets the Altaxo version this document was created with.
+    /// </summary>
+    /// <value>
+    /// The Altaxo version this document was created with.
+    /// </value>
+    public Version AltaxoVersionCreatedWith
+    {
+      get
+      {
+        return _versionCreatedWith;
+      }
+    }
+
+
   }
 }

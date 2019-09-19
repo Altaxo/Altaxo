@@ -567,6 +567,15 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Ensures that the data for this collection are loaded.
+    /// </summary>
+    public void EnsureDeferredDataAreLoaded()
+    {
+      if (null != _deferredDataLoader)
+        TryLoadDeferredData();
+    }
+
     private object _deferredLock = new object();
     private void TryLoadDeferredData()
     {

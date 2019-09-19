@@ -158,6 +158,7 @@ namespace Altaxo
             }
             else
             {
+              table.DataColumns.EnsureDeferredDataAreLoaded();
               var zipEntry = archiveToSaveTo.CreateEntry(entryName);
               using (var zs = zipEntry.OpenForWriting())
               {
@@ -447,6 +448,17 @@ namespace Altaxo
       catch (Exception exc)
       {
         errorText.Append(exc.ToString());
+      }
+
+      {
+        // Test the versions
+        var versionHere = Version.Parse(RevisionClass.FullVersion);
+        var versionDeserialized = _documentInformation.AltaxoVersionCreatedWith;
+        if (versionDeserialized > versionHere)
+        {
+          errorText.Insert(0,
+            $"\r\n\r\nATTENTION: The document was created with a NEWER version of Altaxo ({versionDeserialized}).\r\nYour version of Altaxo is {versionHere}\r\nATTENTION - do NOT store this project unless you are absolutely sure - you may DAMAGE your project file!");
+        }
       }
 
       if (errorText.Length != 0)

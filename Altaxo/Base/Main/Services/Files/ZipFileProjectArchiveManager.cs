@@ -156,9 +156,6 @@ namespace Altaxo.Main.Services
       if (isNewDestinationFileName)
       {
         // create a new file stream for writing to
-        _originalFileStream?.Close();
-        _originalFileStream?.Dispose();
-        _originalFileStream = null;
         newProjectArchiveFileStream = new FileStream(destinationFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
       }
       else if (useClonedStreamAsBackup)
@@ -318,15 +315,24 @@ namespace Altaxo.Main.Services
     {
       try
       {
-        _cloneTaskCancel?.Cancel();
-        if (null != _cloneTask && _cloneTask.Status == TaskStatus.Running)
-          _cloneTask.Wait();
-        _cloneTaskCancel?.Dispose();
-        _cloneTaskCancel = null;
-        _cloneTask?.Dispose();
-        _cloneTask = null;
-        _clonedFileStream?.Dispose();
-        _clonedFileStream = null;
+        if (null != _cloneTask)
+        {
+          _cloneTaskCancel?.Cancel();
+          if (null != _cloneTask && _cloneTask.Status == TaskStatus.Running)
+          {
+            _cloneTask.Wait();
+          }
+          while (!(_cloneTask.Status == TaskStatus.RanToCompletion || _cloneTask.Status == TaskStatus.Faulted || _cloneTask.Status == TaskStatus.Canceled))
+          {
+            System.Threading.Thread.Sleep(1);
+          }
+          _cloneTask?.Dispose();
+          _cloneTask = null;
+          _cloneTaskCancel?.Dispose();
+          _cloneTaskCancel = null;
+          _clonedFileStream?.Dispose();
+          _clonedFileStream = null;
+        }
       }
       catch (Exception ex)
       {
@@ -344,13 +350,30 @@ namespace Altaxo.Main.Services
         if (!_cloneTask.IsCompleted)
         {
           _cloneTaskCancel.Cancel();
+          if (null != _cloneTask && _cloneTask.Status == TaskStatus.Running)
+          {
+            _cloneTask.Wait();
+          }
+
+          // System.Diagnostics.Debug.WriteLine($"Status of clone task is {_cloneTask.Status}");
+
+          // int slept = 0;
+          while (!(_cloneTask.Status == TaskStatus.RanToCompletion || _cloneTask.Status == TaskStatus.Faulted || _cloneTask.Status == TaskStatus.Canceled))
+          {
+            System.Threading.Thread.Sleep(1);
+            // slept += 1;
+          }
+
+          // System.Diagnostics.Debug.WriteLine($"Status of clone task is now {_cloneTask.Status}, slept {slept} ms");
+
           _cloneTask.Dispose();
+          _cloneTask = null;
           _cloneTaskCancel.Dispose();
           _cloneTaskCancel = null;
           _clonedFileStream?.Dispose();
           _clonedFileStream = null;
         }
-        else
+        else // Clone task runs to completion
         {
           if (!(_cloneTask.Exception is null))
           {
