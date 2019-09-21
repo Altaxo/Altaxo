@@ -158,7 +158,6 @@ namespace Altaxo
             }
             else
             {
-              table.DataColumns.EnsureDeferredDataAreLoaded();
               var zipEntry = archiveToSaveTo.CreateEntry(entryName);
               using (var zs = zipEntry.OpenForWriting())
               {

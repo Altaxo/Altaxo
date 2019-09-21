@@ -303,6 +303,12 @@ namespace Altaxo.Data
         var s = (Altaxo.Data.DataColumnCollection)obj;
 
         var storeDataOnly = info.GetProperty(SerialiationInfoProperty_StoreDataOnly) != null;
+        var supportsSeparateDataStorage = info.GetProperty(DataTable.SerializationInfoProperty_SupportsSeparatedData) != null;
+
+        if (!supportsSeparateDataStorage)
+        {
+          s.EnsureDeferredDataAreLoaded();
+        }
 
         info.AddValue("NumberOfRows", s._numberOfRows);
 
