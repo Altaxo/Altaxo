@@ -103,7 +103,7 @@ namespace Altaxo.Gui.CodeEditing
           TextArea.IndentationStrategy = null;
 
           _adapter.DiagnosticsUpdated -= EhDiagnosticsUpdated;
-          _adapter.SourceTextChanged += EhSourceTextChanged;
+          _adapter.SyntaxTreeChanged -= EhSyntaxTreeChanged;
         }
         _adapter = value;
 
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.CodeEditing
           TextArea.IndentationStrategy = _adapter.IndentationStrategy;
 
           _adapter.DiagnosticsUpdated += EhDiagnosticsUpdated;
-          _adapter.SourceTextChanged += EhSourceTextChanged;
+          _adapter.SyntaxTreeChanged += EhSyntaxTreeChanged;
 
           // now use the adapter to do all the little things
 
@@ -459,11 +459,19 @@ namespace Altaxo.Gui.CodeEditing
 
     #region Folding
 
-    private void EhSourceTextChanged(object sender, Microsoft.CodeAnalysis.Text.TextChangeEventArgs e)
+    private void EhSyntaxTreeChanged(Document document, SyntaxTree syntaxTree)
     {
-      // update foldings
-      var newFoldings = _adapter?.GetNewFoldings();
-      _foldingManager.UpdateFoldings(newFoldings, -1);
+      Action action = () =>
+      {
+        // update foldings
+        var newFoldings = _adapter?.GetNewFoldings();
+        _foldingManager.UpdateFoldings(newFoldings, -1);
+      };
+
+      if (Dispatcher.CheckAccess())
+        action();
+      else
+        Dispatcher.BeginInvoke(action, DispatcherPriority.Background);
     }
 
     #endregion Folding

@@ -183,7 +183,7 @@ namespace Altaxo.Gui.CodeEditing
           if (null != secondaryTextEditor)
             secondaryTextEditor.Adapter = null;
 
-          _adapter.SourceTextChanged -= EhSourceTextChanged;
+          _adapter.SyntaxTreeChanged -= EhSyntaxTreeChanged;
         }
 
         _adapter = value;
@@ -195,7 +195,7 @@ namespace Altaxo.Gui.CodeEditing
           if (null != secondaryTextEditor)
             secondaryTextEditor.Adapter = _adapter;
 
-          _adapter.SourceTextChanged += EhSourceTextChanged;
+          _adapter.SyntaxTreeChanged += EhSyntaxTreeChanged;
         }
 
         // if an adapter is coupled
@@ -304,15 +304,16 @@ namespace Altaxo.Gui.CodeEditing
       primaryTextEditor.TextArea.Selection = Selection.Create(primaryTextEditor.TextArea, pos1, pos2);
     }
 
-    private async void EhSourceTextChanged(object sender, Microsoft.CodeAnalysis.Text.TextChangeEventArgs e)
+    private void EhSyntaxTreeChanged(Microsoft.CodeAnalysis.Document document, Microsoft.CodeAnalysis.SyntaxTree syntaxTree)
     {
-      var adapter = Adapter;
-      if (null != adapter)
-      {
-        var syntaxTree = await adapter.GetDocumentSyntaxTreeAsync();
-        quickClassBrowser.Update(syntaxTree.GetRoot());
-      }
+      Action action = () => quickClassBrowser.Update(syntaxTree.GetRoot());
+
+      if (Dispatcher.CheckAccess())
+        action();
+      else
+        Dispatcher.BeginInvoke(action, DispatcherPriority.Background);
     }
+
 
     private void TextAreaCaretPositionChanged(object sender, EventArgs e)
     {

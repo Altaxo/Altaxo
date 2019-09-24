@@ -111,6 +111,11 @@ namespace Altaxo.CodeEditing
     event EventHandler<Microsoft.CodeAnalysis.Text.TextChangeEventArgs> SourceTextChanged;
 
     /// <summary>
+    /// Occurs when the syntax tree changed has been evaluated after the document changed.
+    /// </summary>
+    event Action<Document, SyntaxTree> SyntaxTreeChanged;
+
+    /// <summary>
     /// Finds references to resolved expression in the current file.
     /// </summary>
     Task<ImmutableArray<DocumentHighlights>> FindReferencesInCurrentFile(int cursorPosition);

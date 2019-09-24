@@ -197,7 +197,7 @@ namespace Altaxo.CodeEditing
       _roslynHost = workspace.RoslynHost;
       SourceTextAdapter.TextChanged += EhSourceTextAdapter_TextChanged;
 
-      HighlightingColorizer = new SemanticHighlighting.SemanticHighlightingColorizer(Workspace, DocumentId);
+      HighlightingColorizer = new SemanticHighlighting.SemanticHighlightingColorizer(this, Workspace, DocumentId);
       QuickInfoProvider = _roslynHost.GetService<QuickInfo.IQuickInfoProvider>();
       FoldingStrategy = new SyntaxTreeFoldingStrategy();
       BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
@@ -207,12 +207,92 @@ namespace Altaxo.CodeEditing
       IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy();
       LiveDocumentFormatter = new LiveDocumentFormatterCSharp();
       ExternalHelpProvider = new ExternalHelp.ExternalHelpProvider();
-
       Workspace.SubscribeToDiagnosticsUpdateNotification(DocumentId, EhDiagnosticsUpdated);
+      StartBackgroundEvaluationOfSyntaxTreeAndSemanticModel();
+    }
+
+    CancellationTokenSource _syntaxTreeCancellationTokenSource;
+
+    /// <summary>
+    /// Occurs when the syntax tree has been evaluated after the document changed.
+    /// </summary>
+    public event Action<Document, SyntaxTree> SyntaxTreeChanged;
+    /// <summary>
+    /// Occurs when the semantic model has been evaluated after the document changed.
+    /// </summary>
+    /// 
+    public event Action<Document, SemanticModel> SemanticModelChanged;
+
+    /// <summary>
+    /// Gets the latest evaluated syntax tree together with the corresponding document.
+    /// </summary>
+    public (Document Document, SyntaxTree SyntaxTree) LastSyntaxTree { get; private set; }
+
+    /// <summary>
+    /// Gets the latest evaluated semantic model together with the corresponding document.
+    /// </summary>
+    public (Document Document, SemanticModel SemanticModel) LastSemanticModel { get; private set; }
+
+    /// <summary>
+    /// Starts the evaluation of syntax tree and semantic model for the current document in the background.
+    /// If finished, the event <see cref="SyntaxTreeChanged"/> and <see cref="SemanticModelChanged"/> are fired,
+    /// and the properties <see cref="LastSyntaxTree"/> and <see cref="LastSemanticModel"/> updated.
+    /// </summary>
+    private void StartBackgroundEvaluationOfSyntaxTreeAndSemanticModel()
+    {
+      _syntaxTreeCancellationTokenSource?.Cancel();
+      _syntaxTreeCancellationTokenSource?.Dispose();
+
+      _syntaxTreeCancellationTokenSource = new CancellationTokenSource();
+      var token = _syntaxTreeCancellationTokenSource.Token;
+
+
+      Task.Run(
+        () =>
+        {
+          var document = Workspace.CurrentSolution.GetDocument(DocumentId);
+          SyntaxTree syntaxTree = null;
+          try
+          {
+            syntaxTree = document.GetSyntaxTreeAsync(token).Result;
+          }
+          catch (Exception ex)
+          {
+            return;
+          }
+
+          if (null != syntaxTree)
+          {
+            LastSyntaxTree = (document, syntaxTree);
+            SyntaxTreeChanged?.Invoke(document, syntaxTree);
+          }
+
+          if (token.IsCancellationRequested)
+            return;
+
+          SemanticModel semanticModel = null;
+          try
+          {
+            semanticModel = document.GetSemanticModelAsync(token).Result;
+          }
+          catch (Exception ex)
+          {
+            return;
+          }
+
+          if (null != semanticModel)
+          {
+            LastSemanticModel = (document, semanticModel);
+            SemanticModelChanged?.Invoke(document, semanticModel);
+          }
+        },
+        token
+        );
     }
 
     private void EhSourceTextAdapter_TextChanged(object sender, TextChangeEventArgs e)
     {
+      StartBackgroundEvaluationOfSyntaxTreeAndSemanticModel();
       SourceTextChanged?.Invoke(sender, e);
     }
 
@@ -272,10 +352,12 @@ namespace Altaxo.CodeEditing
     /// </returns>
     public IEnumerable<NewFolding> GetNewFoldings()
     {
-      var document = Workspace.CurrentSolution.GetDocument(DocumentId);
-      //var text = document.GetTextAsync().Result;
-
-      var syntaxTree = document.GetSyntaxTreeAsync().Result;
+      var syntaxTree = LastSyntaxTree.SyntaxTree;
+      if (syntaxTree is null)
+      {
+        var document = Workspace.CurrentSolution.GetDocument(DocumentId);
+        syntaxTree = document.GetSyntaxTreeAsync().Result;
+      }
       return FoldingStrategy?.GetNewFoldings(syntaxTree);
     }
 

@@ -18,19 +18,21 @@ namespace Altaxo.CodeEditing.SemanticHighlighting
   {
     private readonly Workspace _workspace;
     private readonly DocumentId _documentId;
+    private readonly CodeEditorViewAdapterCSharp _adapter;
 
     private ISemanticHighlightingColors _highlightingColors;
 
-    public SemanticHighlightingColorizer(Workspace workspace, DocumentId documentId, ISemanticHighlightingColors highlightingColors = null)
+    public SemanticHighlightingColorizer(CodeEditorViewAdapterCSharp adapter, Workspace workspace, DocumentId documentId, ISemanticHighlightingColors highlightingColors = null)
     {
       _workspace = workspace;
       _documentId = documentId;
+      _adapter = adapter;
       _highlightingColors = highlightingColors ?? TextHighlightingColorsAltaxoStyle.Instance;
     }
 
     protected override IHighlighter CreateHighlighter(TextView textView, ICSharpCode.AvalonEdit.Document.TextDocument document)
     {
-      return new SemanticHighlighter(_workspace, _documentId, document, _highlightingColors);
+      return new SemanticHighlighter(_adapter, _workspace, _documentId, document, _highlightingColors);
     }
 
     public ISemanticHighlightingColors HighlightingColors

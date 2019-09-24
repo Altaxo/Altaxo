@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.Gui.CodeEditing.SemanticHighlighting;
-using Altaxo.Gui.CodeEditing.SemanticHighlighting;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis;
@@ -46,6 +45,7 @@ namespace Altaxo.CodeEditing.SemanticHighlighting
     private Workspace _workspace;
     private readonly IDocument _avalonEditTextDocument;
     private readonly DocumentId _documentId;
+    private readonly CodeEditorViewAdapterCSharp _adapter;
     private ISemanticHighlightingColors _highlightingColors;
 
     /// <summary>
@@ -59,10 +59,11 @@ namespace Altaxo.CodeEditing.SemanticHighlighting
     /// <param name="workspace">The workspace containing the document to highlight.</param>
     /// <param name="documentId">The document identifier.</param>
     /// <param name="avalonEditTextDocument">The corresponsing avalon edit text document.</param>
-    public SemanticHighlighter(Workspace workspace, DocumentId documentId, IDocument avalonEditTextDocument, ISemanticHighlightingColors highlightingColors = null)
+    public SemanticHighlighter(CodeEditorViewAdapterCSharp adapter, Workspace workspace, DocumentId documentId, IDocument avalonEditTextDocument, ISemanticHighlightingColors highlightingColors = null)
     {
       _workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
       _documentId = documentId ?? throw new ArgumentNullException(nameof(documentId));
+      _adapter = adapter;
       _avalonEditTextDocument = avalonEditTextDocument ?? throw new ArgumentNullException(nameof(avalonEditTextDocument));
       _highlightingColors = highlightingColors ?? TextHighlightingColorsAltaxoStyle.Instance;
     }
@@ -185,11 +186,6 @@ namespace Altaxo.CodeEditing.SemanticHighlighting
     /// <returns>A <see cref="HighlightedLine"/> line object that represents the highlighted sections.</returns>
     public HighlightedLine HighlightLine(int lineNumber)
     {
-      return HighlightLineAsync(lineNumber).Result;
-    }
-
-    public async Task<HighlightedLine> HighlightLineAsync(int lineNumber)
-    {
       var documentLine = _avalonEditTextDocument.GetLineByNumber(lineNumber);
       var currentDocumentVersion = _avalonEditTextDocument.Version;
 
@@ -206,39 +202,39 @@ namespace Altaxo.CodeEditing.SemanticHighlighting
       }
       else
       {
-        //System.Diagnostics.Debug.WriteLine("SemanticHightlighter2 Line[{0}] from fresh.", lineNumber);
-      }
-      // get classified spans
-
-      var document = _workspace.CurrentSolution.GetDocument(_documentId);
-      if (documentTextLength >= offset + totalLength)
-      {
-        var classifiedSpans = await Classifier.GetClassifiedSpansAsync(
-            document,
-            new TextSpan(offset, totalLength),
-            default(CancellationToken)).ConfigureAwait(true); // back to Gui context
-
         var highlightedLine = new HighlightedLine(_avalonEditTextDocument, documentLine);
-        foreach (var classifiedSpan in classifiedSpans)
+
+        var lastSemanticModel = _adapter.LastSemanticModel.SemanticModel; // most of the time we will use the semantic model created in the background
+        if (lastSemanticModel is null) // but particularly at the beginning, the semantic model might not be created already
         {
-          if (IsSpanIntersectingDocumentLine(classifiedSpan, offset, endOffset, out var startOfIntersection, out var lengthOfIntersection))
-          {
-            highlightedLine.Sections.Add(new HighlightedSection
-            {
-              Color = _highlightingColors.GetColor(classifiedSpan.ClassificationType),
-              Offset = startOfIntersection,
-              Length = lengthOfIntersection
-            });
-          }
+          var document = _workspace.CurrentSolution.GetDocument(_documentId);
+          lastSemanticModel = document.GetSemanticModelAsync().Result; // then we can not help it, we must wait for it! 
         }
 
-        _cachedLines[lineNumber] = new CachedLine(highlightedLine, currentDocumentVersion);
+        if (documentTextLength >= offset + totalLength)
+        {
+          var classifiedSpans = Classifier.GetClassifiedSpans(
+              lastSemanticModel,
+              new TextSpan(offset, totalLength),
+              _workspace);
 
+          foreach (var classifiedSpan in classifiedSpans)
+          {
+            if (IsSpanIntersectingDocumentLine(classifiedSpan, offset, endOffset, out var startOfIntersection, out var lengthOfIntersection))
+            {
+              highlightedLine.Sections.Add(new HighlightedSection
+              {
+                Color = _highlightingColors.GetColor(classifiedSpan.ClassificationType),
+                Offset = startOfIntersection,
+                Length = lengthOfIntersection
+              });
+            }
+          }
+
+          _cachedLines[lineNumber] = new CachedLine(highlightedLine, currentDocumentVersion);
+
+        }
         return highlightedLine;
-      }
-      else
-      {
-        return null;
       }
     }
 
