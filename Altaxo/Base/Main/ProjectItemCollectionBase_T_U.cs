@@ -538,7 +538,7 @@ namespace Altaxo.Main
     {
       get
       {
-        foreach (var item in _itemsByName.Values)
+        foreach (var item in _itemsByName.Values.OfType<TItem>())
           yield return item;
       }
     }
