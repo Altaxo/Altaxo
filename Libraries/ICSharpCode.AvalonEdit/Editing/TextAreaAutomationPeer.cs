@@ -17,10 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
+
 using ICSharpCode.AvalonEdit.Document;
 
 namespace ICSharpCode.AvalonEdit.Editing
@@ -36,6 +38,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 
 		private void OnSelectionChanged(object sender, EventArgs e)
 		{
+			Debug.WriteLine("RaiseAutomationEvent(AutomationEvents.TextPatternOnTextSelectionChanged)");
 			RaiseAutomationEvent(AutomationEvents.TextPatternOnTextSelectionChanged);
 		}
 
@@ -46,8 +49,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 			return AutomationControlType.Document;
 		}
 
-		internal IRawElementProviderSimple Provider
-		{
+		internal IRawElementProviderSimple Provider {
 			get { return ProviderFromPeer(this); }
 		}
 
@@ -65,36 +67,42 @@ namespace ICSharpCode.AvalonEdit.Editing
 		}
 
 		public ITextRangeProvider DocumentRange {
-			get { return new TextRangeProvider(TextArea, TextArea.Document, 0, TextArea.Document.TextLength); }
+			get {
+				Debug.WriteLine("TextAreaAutomationPeer.get_DocumentRange()");
+				return new TextRangeProvider(TextArea, TextArea.Document, 0, TextArea.Document.TextLength);
+			}
 		}
 
 		public ITextRangeProvider[] GetSelection()
 		{
+			Debug.WriteLine("TextAreaAutomationPeer.GetSelection()");
 			if (TextArea.Selection.IsEmpty) {
 				var anchor = TextArea.Document.CreateAnchor(TextArea.Caret.Offset);
 				anchor.SurviveDeletion = true;
-				return new ITextRangeProvider[] { new TextRangeProvider(TextArea, TextArea.Document, new AnchorSegment(anchor, anchor))};
+				return new ITextRangeProvider[] { new TextRangeProvider(TextArea, TextArea.Document, new AnchorSegment(anchor, anchor)) };
 			}
 			return TextArea.Selection.Segments.Select(s => new TextRangeProvider(TextArea, TextArea.Document, s)).ToArray();
 		}
 
 		public ITextRangeProvider[] GetVisibleRanges()
 		{
+			Debug.WriteLine("TextAreaAutomationPeer.GetVisibleRanges()");
 			throw new NotImplementedException();
 		}
 
 		public ITextRangeProvider RangeFromChild(IRawElementProviderSimple childElement)
 		{
+			Debug.WriteLine("TextAreaAutomationPeer.RangeFromChild()");
 			throw new NotImplementedException();
 		}
 
 		public ITextRangeProvider RangeFromPoint(System.Windows.Point screenLocation)
 		{
+			Debug.WriteLine("TextAreaAutomationPeer.RangeFromPoint()");
 			throw new NotImplementedException();
 		}
 
-		public SupportedTextSelection SupportedTextSelection
-		{
+		public SupportedTextSelection SupportedTextSelection {
 			get { return SupportedTextSelection.Single; }
 		}
 
@@ -107,7 +115,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 			if (patternInterface == PatternInterface.Scroll) {
 				TextEditor editor = TextArea.GetService(typeof(TextEditor)) as TextEditor;
 				if (editor != null)
-					return FromElement(editor).GetPattern(patternInterface); 
+					return FromElement(editor).GetPattern(patternInterface);
 			}
 			return base.GetPattern(patternInterface);
 		}

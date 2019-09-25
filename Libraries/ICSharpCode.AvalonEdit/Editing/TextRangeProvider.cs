@@ -17,11 +17,15 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Windows.Automation.Provider;
-using System.Windows.Documents;
-using ICSharpCode.AvalonEdit.Document;
-using System.Windows.Automation.Text;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation.Provider;
+using System.Windows.Automation.Text;
+using System.Windows.Documents;
+
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Rendering;
 
 namespace ICSharpCode.AvalonEdit.Editing
 {
@@ -71,7 +75,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 
 		public bool Compare(ITextRangeProvider range)
 		{
-			TextRangeProvider other = (TextRangeProvider) range;
+			TextRangeProvider other = (TextRangeProvider)range;
 			bool result = doc == other.doc
 				&& segment.Offset == other.segment.Offset
 				&& segment.EndOffset == other.segment.EndOffset;
@@ -93,7 +97,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 
 		public int CompareEndpoints(TextPatternRangeEndpoint endpoint, ITextRangeProvider targetRange, TextPatternRangeEndpoint targetEndpoint)
 		{
-			TextRangeProvider other = (TextRangeProvider) targetRange;
+			TextRangeProvider other = (TextRangeProvider)targetRange;
 			int result = GetEndpoint(endpoint).CompareTo(other.GetEndpoint(targetEndpoint));
 			Log("{0}.CompareEndpoints({1}, {2}, {3}) = {4}", ID, endpoint, other.ID, targetEndpoint, result);
 			return result;
@@ -158,7 +162,18 @@ namespace ICSharpCode.AvalonEdit.Editing
 		public double[] GetBoundingRectangles()
 		{
 			Log("{0}.GetBoundingRectangles()", ID);
-			return null;
+			var textView = textArea.TextView;
+			var source = PresentationSource.FromVisual(this.textArea);
+			var result = new List<double>();
+			foreach (var rect in BackgroundGeometryBuilder.GetRectsForSegment(textView, segment)) {
+				var tl = textView.PointToScreen(rect.TopLeft);
+				var br = textView.PointToScreen(rect.BottomRight);
+				result.Add(tl.X);
+				result.Add(tl.Y);
+				result.Add(br.X - tl.X);
+				result.Add(br.Y - tl.Y);
+			}
+			return result.ToArray();
 		}
 
 		public IRawElementProviderSimple[] GetChildren()
@@ -197,7 +212,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 		public void MoveEndpointByRange(TextPatternRangeEndpoint endpoint, ITextRangeProvider targetRange, TextPatternRangeEndpoint targetEndpoint)
 		{
 			TextRangeProvider other = (TextRangeProvider)targetRange;
-			Log("{0}.MoveEndpointByRange({1}, {2})", ID, endpoint, other.ID, targetEndpoint);
+			Log("{0}.MoveEndpointByRange({1}, {2}, {3})", ID, endpoint, other.ID, targetEndpoint);
 			SetEndpoint(endpoint, other.GetEndpoint(targetEndpoint));
 		}
 
