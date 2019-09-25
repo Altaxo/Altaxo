@@ -69,7 +69,6 @@ namespace Altaxo.Gui.CodeEditing.ReferenceHightlighting
       var builder = new BackgroundGeometryBuilder
       {
         CornerRadius = cornerRadius,
-        AlignToMiddleOfPixels = true
       };
       foreach (var reference in renderedReferences)
       {

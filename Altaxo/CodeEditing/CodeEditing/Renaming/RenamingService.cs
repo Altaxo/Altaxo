@@ -30,7 +30,7 @@ namespace Altaxo.CodeEditing.Renaming
 
         var renameLocations = await Renamer.GetRenameLocationsAsync(document.Project.Solution, new Microsoft.CodeAnalysis.FindSymbols.SymbolAndProjectId(symbol, document.Project.Id), null, CancellationToken.None).ConfigureAwait(true); // we need Gui context afterwards
         var textChanges = renameLocations.Locations.Select(loc => new TextChange(loc.Location.SourceSpan, newSymbolName));
-        sourceText.ApplyTextChanges(textChanges, (modifiedSourceText) => workspace.TryApplyChanges(document.WithText(modifiedSourceText).Project.Solution));
+        sourceText.ApplyTextChangesToAvalonEdit(textChanges);
 
         /*
 

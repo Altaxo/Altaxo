@@ -67,7 +67,6 @@ namespace Altaxo.Gui.CodeEditing.BraceMatching
         var builder = new BackgroundGeometryBuilder
         {
           CornerRadius = 1,
-          AlignToMiddleOfPixels = true
         };
 
         builder.AddSegment(textView, new TextSegment() { StartOffset = match.LeftSpan.Start, Length = match.LeftSpan.Length });

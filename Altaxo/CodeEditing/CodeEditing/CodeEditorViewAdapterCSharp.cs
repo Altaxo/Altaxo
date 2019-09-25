@@ -471,7 +471,7 @@ namespace Altaxo.CodeEditing
 
       var syntaxTree = await document.GetSyntaxRootAsync();
       var textChanges = await Formatter.GetFormattedTextChangesAsync(syntaxTree, Workspace);
-      SourceTextAdapter.ApplyTextChanges(textChanges, (modifiedSourceText) => Workspace.TryApplyChanges(document.WithText(modifiedSourceText).Project.Solution));
+      SourceTextAdapter.ApplyTextChangesToAvalonEdit(textChanges);
     }
 
     /// <summary>

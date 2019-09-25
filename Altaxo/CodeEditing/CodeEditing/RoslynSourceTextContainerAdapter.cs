@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using ICSharpCode.AvalonEdit;
@@ -106,6 +107,23 @@ namespace Altaxo.CodeEditing
     }
 
     /// <summary>
+    /// Applies the text changes directly to the AvalonEdit document. This is equivalent as typing those changes manually.
+    /// The order of the changes can be arbitrary; the changes are sorted in descendend order of their endpoints, and then
+    /// applied.
+    /// </summary>
+    /// <param name="changes">The changes to apply.</param>
+    public void ApplyTextChangesToAvalonEdit(IEnumerable<TextChange> changes)
+    {
+      var list = changes.ToList();
+      list.Sort((x, y) => Comparer<int>.Default.Compare(y.Span.End, x.Span.End));
+      foreach (var change in list)
+      {
+        AvalonEditTextDocument.Replace(change.Span.Start, change.Span.Length, change.NewText);
+      }
+    }
+
+    /*
+    /// <summary>
     /// Applies a bunch of text changes to the source text. The caret position is moved in a hopefully intelligent way to reflect the changes.
     /// </summary>
     /// <param name="changes">The text changes to apply.</param>
@@ -115,6 +133,7 @@ namespace Altaxo.CodeEditing
     /// retrieve the code text from the Roslyn document in the moment when AvalonEdit's <see cref="TextDocument.EndUpdate"/>
     /// is called, and would crash if AvalonEdit's text and Roslyn's text are not in sync.</param>
     /// <exception cref="InvalidOperationException"></exception>
+    [Obsolete("Please use ApplyTextChangesToAvalonEdit instead")]
     public void ApplyTextChanges(IEnumerable<TextChange> changes, Action<SourceText> UpdateRoslynDocumentBeforeAvalonEditEndUpdate)
     {
       if (CanBeginUpdatingHere())
@@ -164,6 +183,7 @@ namespace Altaxo.CodeEditing
         }
       }
     }
+    */
 
     public void UpdateText(SourceText newText)
     {
