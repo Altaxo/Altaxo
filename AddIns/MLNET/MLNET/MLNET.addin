@@ -1,0 +1,35 @@
+<AddIn name        = "MLNet"
+       url         = "https://altaxo.sf.net"
+       version     = "1.0.0">
+
+  <Manifest>
+    <Identity name="Altaxo.AddIns.MLNet"/>
+  </Manifest>
+
+  <Runtime>
+    <Import assembly=":AltaxoBase" />
+    <Import assembly=":AltaxoBase.Presentation" />
+    <Import assembly=":AltaxoDom" />
+    <Import assembly="MLNetAddin.dll"/>
+  </Runtime>
+
+  <Path name="/Altaxo/CodeEditing/AdditionalAssemblyReferences">
+    <!-- Please specify here additional assemblies to be loaded that are referenced by Altaxo scripts
+				 The assembly name must be fully specified
+		<String id = "System.Data" text = "System.Data, ... version information depending what framework Altaxo is currently using ..." />
+		-->
+    <String id="ML.Net.dll"            text="..\AddIns\ML.Net\MLNetAddin.dll" />
+    <String id="MSML_Core"             text="..\AddIns\ML.Net\Microsoft.ML.Core.dll" />
+    <String id="MSML_CpuMath"          text="..\AddIns\ML.Net\Microsoft.ML.CpuMath.dll" />
+    <String id="MSML_Data"             text="..\AddIns\ML.Net\Microsoft.ML.Data.dll" />
+    <String id="MSML_DataView"         text="..\AddIns\ML.Net\Microsoft.ML.DataView.dll" />
+    <String id="MSML_KMeansClustering" text="..\AddIns\ML.Net\Microsoft.ML.KMeansClustering.dll" />
+    <String id="MSML_PCA"              text="..\AddIns\ML.Net\Microsoft.ML.PCA.dll" />
+    <String id="MSML_StandardTrainers" text="..\AddIns\ML.Net\Microsoft.ML.StandardTrainers.dll" />
+    <String id="MSML_Transforms"       text="..\AddIns\ML.Net\Microsoft.ML.Transforms.dll" />
+    <String id="Sys_Memory"            text="..\AddIns\ML.Net\System.Memory.dll" />
+
+  </Path>
+
+
+</AddIn>
