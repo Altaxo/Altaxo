@@ -344,6 +344,32 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Converts the variant to a nullable boolean value.
+    /// </summary>
+    /// <returns>Nullable boolean value.</returns>
+    /// <exception cref="ApplicationException">Unable to convert the contents of this variant to a number, the contents is: " + ToString()</exception>
+    public bool? ToNullableBoolean()
+    {
+      if (_typeOfContent == Content.VDouble)
+      {
+        return Double.IsNaN(_double) ? null : (bool?)(!(_double == 0));
+      }
+      else if (_typeOfContent == Content.VString)
+      {
+        return bool.TryParse((string)_object, out var result) ? (bool?)result : null;
+      }
+      else if (_object != null)
+      {
+        return bool.TryParse(_object.ToString(), out var result) ? (bool?)result : null;
+      }
+      else
+      {
+        throw new ApplicationException("Unable to convert the contents of this variant to a number, the contents is: " + ToString());
+      }
+
+    }
+
+    /// <summary>
     /// Converts the content to a double, if possible. The structure remains unchanged.
     /// </summary>
     /// <returns>The content converted to a double.</returns>

@@ -537,6 +537,37 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
+    public void GetArray(System.Collections.BitArray values, System.Collections.BitArray conditions, int count)
+    {
+      // Attribute must be readed before ReadStartElement
+      if (count > 0)
+      {
+        _xmlReader.ReadStartElement(); // read the first inner element
+
+        for (int i = 0; i < count; i++)
+        {
+          var s = _xmlReader.ReadElementString();
+          if (string.IsNullOrEmpty(s))
+          {
+            conditions[i] = false;
+            values[i] = false;
+          }
+          else
+          {
+            conditions[i] = true;
+            values[i] = System.Xml.XmlConvert.ToBoolean(s);
+          }
+        }
+        _xmlReader.ReadEndElement(); // read the outer XmlElement, i.e. "DoubleArray"
+      } // if count>0
+      else
+      {
+        _xmlReader.Read();
+      }
+    }
+
+
+
     public void OpenElement()
     {
       _xmlReader.ReadStartElement();

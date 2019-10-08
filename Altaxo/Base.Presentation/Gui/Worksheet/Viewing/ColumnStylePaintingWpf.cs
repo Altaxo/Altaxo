@@ -47,6 +47,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       Altaxo.Worksheet.DoubleColumnStyle.RegisteredPaintMethods.Add(typeof(DrawingContext), DoubleColumnStyle_Paint);
       Altaxo.Worksheet.DateTimeColumnStyle.RegisteredPaintMethods.Add(typeof(DrawingContext), DateTimeColumnStyle_Paint);
       Altaxo.Worksheet.TextColumnStyle.RegisteredPaintMethods.Add(typeof(DrawingContext), TextColumnStyle_Paint);
+      Altaxo.Worksheet.BooleanColumnStyle.RegisteredPaintMethods.Add(typeof(DrawingContext), BooleanColumnStyle_Paint);
     }
 
     public static void PaintBackground(this Altaxo.Worksheet.ColumnStyle thiss, DrawingContext dc, RectangleD2D cellRectangle, bool bSelected)
@@ -148,6 +149,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
     private static void TextColumnStyle_Paint(Altaxo.Worksheet.TextColumnStyle thiss, object drawingContext, RectangleD2D cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       string myString = data[nRow].ToString();
+      GeneralText_Paint(thiss, drawingContext, cellRect, myString, TextAlignment.Right, bSelected);
+    }
+
+    private static void BooleanColumnStyle_Paint(Altaxo.Worksheet.BooleanColumnStyle thiss, object drawingContext, RectangleD2D cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+    {
+      string myString = thiss.GetColumnValueAtRow(nRow, data);
       GeneralText_Paint(thiss, drawingContext, cellRect, myString, TextAlignment.Right, bSelected);
     }
 

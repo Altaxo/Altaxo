@@ -295,7 +295,6 @@ namespace Altaxo.Worksheet
           return colstyle;
 
         // second look to the defaultcolumnstyles hash table, key is the type of the column style
-
         System.Type searchstyletype = key.GetColumnStyleType();
         if (null == searchstyletype)
         {

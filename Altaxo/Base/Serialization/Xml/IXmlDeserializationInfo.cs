@@ -108,6 +108,15 @@ namespace Altaxo.Serialization.Xml
 
     void GetArray(string[] val, int count);
 
+    /// <summary>
+    /// Gets an array of nullable booleans.
+    /// </summary>
+    /// <param name="values">The boolean values to store (true or false).</param>
+    /// <param name="conditions">The conditions to store (if true, the value is set, if false, the value is null).</param>
+    /// <param name="count">The element count.</param>
+    void GetArray(System.Collections.BitArray values, System.Collections.BitArray conditions, int count);
+
+
     void OpenElement();
 
     void CloseElement();

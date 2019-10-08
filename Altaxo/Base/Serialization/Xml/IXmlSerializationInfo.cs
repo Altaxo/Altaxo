@@ -92,6 +92,16 @@ namespace Altaxo.Serialization.Xml
 
     void AddArray(string name, string[] val, int count);
 
+    /// <summary>
+    /// Adds an array of nullable boolean values. The array <paramref name="val"/> contains the boolean values, whereas
+    /// the array <paramref name="cond"/> indicates if the boolean value is set (true) or not set (false).
+    /// </summary>
+    /// <param name="name">The name of the entry.</param>
+    /// <param name="val">The value.</param>
+    /// <param name="cond">The cond.</param>
+    /// <param name="count">The count.</param>
+    void AddArray(string name, System.Collections.BitArray val, System.Collections.BitArray cond, int count);
+
     void AddArray(string name, object[] val, int count);
 
     void CreateElement(string name);

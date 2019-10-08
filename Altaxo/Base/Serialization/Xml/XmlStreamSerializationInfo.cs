@@ -379,6 +379,36 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
+    public void AddArray(string name, System.Collections.BitArray val, System.Collections.BitArray cond, int count)
+    {
+      CreateArray(name, count);
+
+
+      if (count > 0)
+      {
+        if (m_DefaultArrayEncoding == XmlArrayEncoding.Xml)
+        {
+          m_Writer.WriteAttributeString("Encoding", "Xml");
+          m_Writer.WriteStartElement("e");
+          m_Writer.WriteRaw(cond[0] ? System.Xml.XmlConvert.ToString(val[0]) : string.Empty);
+          for (int i = 1; i < count; i++)
+          {
+            m_Writer.WriteRaw("</e><e>");
+            if (cond[i])
+            {
+              m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
+            }
+          }
+          m_Writer.WriteEndElement(); // node "e"
+        }
+        else
+        {
+          throw new NotImplementedException();
+        }
+      } // count>0
+      CommitArray();
+    }
+
     public void AddArrayOfPrimitiveType(string name, System.Array val, int count, int sizeofelement, XmlArrayEncoding encoding)
     {
       switch (encoding)
