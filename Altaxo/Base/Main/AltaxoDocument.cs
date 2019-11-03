@@ -155,6 +155,10 @@ namespace Altaxo
                 originalArchive.ContainsEntry(entryMemento.EntryName))
             {
               archiveToSaveTo.CopyEntryFrom(originalArchive, sourceEntryName: entryMemento.EntryName, destinationEntryName: entryName);
+
+              // The data now should not be dirty anymore.
+              // In any case, we set a new memento
+              table.DataColumns.DeferredDataMemento = archiveToSaveTo.GetEntryMemento(entryName);
             }
             else
             {
@@ -166,6 +170,7 @@ namespace Altaxo
                 info.EndWriting();
               }
             }
+
           }
           catch (Exception exc)
           {

@@ -98,7 +98,7 @@ namespace Altaxo.Main.Services
       }
 
       // deserialize the project....
-      using (var projectArchive = new Services.Files.ZipArchiveAsProjectArchive(_originalFileStream, ZipArchiveMode.Read, leaveOpen: true) { ArchiveManager = this })
+      using (var projectArchive = new Services.Files.ZipArchiveAsProjectArchive(_originalFileStream, ZipArchiveMode.Read, leaveOpen: true, archiveManager: this))
       {
         // Restore the state of the windows
         restoreProjectAndWindowsState(projectArchive);
@@ -178,15 +178,15 @@ namespace Altaxo.Main.Services
       Exception savingException = null;
 
       using (var oldProjectArchive = useClonedStreamAsBackup ?
-                new Services.Files.ZipArchiveAsProjectArchive(_clonedFileStream, ZipArchiveMode.Read, leaveOpen: true) :
+                new Services.Files.ZipArchiveAsProjectArchive(_clonedFileStream, ZipArchiveMode.Read, leaveOpen: true, archiveManager: this) :
                 _originalFileStream != null ?
-                  new Services.Files.ZipArchiveAsProjectArchive(_originalFileStream, ZipArchiveMode.Read, leaveOpen: true) : null
+                  new Services.Files.ZipArchiveAsProjectArchive(_originalFileStream, ZipArchiveMode.Read, leaveOpen: true, archiveManager: this) : null
             )
       {
 
         try
         {
-          using (var newProjectArchive = new Services.Files.ZipArchiveAsProjectArchive(newProjectArchiveFileStream ?? _originalFileStream, ZipArchiveMode.Create, leaveOpen: true))
+          using (var newProjectArchive = new Services.Files.ZipArchiveAsProjectArchive(newProjectArchiveFileStream ?? _originalFileStream, ZipArchiveMode.Create, leaveOpen: true, archiveManager: this))
           {
             dictionaryResult = saveProjectAndWindowsState(newProjectArchive, oldProjectArchive);
           }
@@ -401,7 +401,7 @@ namespace Altaxo.Main.Services
     {
       var name = _clonedFileStream?.Name ?? _originalFileStream?.Name;
       var stream = new FileStream(name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-      var archive = new ZipArchiveAsProjectArchive(stream, ZipArchiveMode.Read, leaveOpen: false);
+      var archive = new ZipArchiveAsProjectArchive(stream, ZipArchiveMode.Read, leaveOpen: false, archiveManager: this);
       return archive;
     }
 

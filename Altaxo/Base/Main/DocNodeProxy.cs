@@ -157,7 +157,15 @@ namespace Altaxo.Main
       if (null == docNode)
         throw new ArgumentNullException(nameof(docNode));
 
-      InternalSetDocNode(docNode);
+      InternalSetDocNode(docNode); // if constructed from derived classes, use the constructor below
+    }
+
+    protected DocNodeProxy(IDocumentLeafNode docNode, bool isCalledFromConstructor)
+    {
+      if (null == docNode)
+        throw new ArgumentNullException(nameof(docNode));
+
+      InternalSetDocNode(docNode, isCalledFromConstructor);
     }
 
     /// <summary>
@@ -187,7 +195,7 @@ namespace Altaxo.Main
 
       if (null != from.InternalDocumentNode)
       {
-        InternalSetDocNode(from.InternalDocumentNode); // than the new Proxy refers to the same document node
+        InternalSetDocNode(from.InternalDocumentNode, true); // than the new Proxy refers to the same document node
       }
       else
       {
@@ -253,8 +261,9 @@ namespace Altaxo.Main
     /// this proxy.
     /// </summary>
     /// <param name="obj">The object to test.</param>
+    /// <param name="isCalledFromConstructor">If true, this function is called from the constructor. A value of true indicated, that some values might not be set yet.</param>
     /// <returns>True if the <c>obj</c> has the right type to store in this proxy, false otherwise.</returns>
-    protected virtual bool InternalIsValidDocument(object obj)
+    protected virtual bool InternalIsValidDocument(object obj, bool isCalledFromConstructor)
     {
       return IsValidDocument(obj);
     }
@@ -304,7 +313,8 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="value">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentLeafNode" />,
     /// the document path is stored for this object in addition to the object itself.</param>
-    protected virtual void InternalSetDocNode(IDocumentLeafNode value)
+    /// <param name="isCalledFromConstructor">If true, this function is called from the constructor. A value of true indicated, that some values might not be set yet.</param>
+    protected virtual void InternalSetDocNode(IDocumentLeafNode value, bool isCalledFromConstructor = false)
     {
       if (null == value)
         throw new ArgumentNullException(nameof(value));
@@ -313,7 +323,7 @@ namespace Altaxo.Main
       if (object.ReferenceEquals(oldValue, value))
         return;
 
-      if (!InternalIsValidDocument(value))
+      if (!InternalIsValidDocument(value, isCalledFromConstructor))
         throw new ArgumentException("This type of document is not allowed for the proxy of type " + GetType().ToString());
 
 #if DOCNODEPROXY_CONCURRENTDEBUG
@@ -554,8 +564,8 @@ namespace Altaxo.Main
         {
           InternalDocumentPath = path;
           InternalCheckAbsolutePath();
-          EhSelfChanged(EventArgs.Empty);
         }
+        EhSelfChanged(EventArgs.Empty);
       }
     }
 

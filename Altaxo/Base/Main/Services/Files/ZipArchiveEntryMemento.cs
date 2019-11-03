@@ -67,6 +67,18 @@ namespace Altaxo.Main.Services.Files
       }
     }
 
+    /// <inheritdoc/>
+    public IProjectArchiveEntryMemento WithEntryName(string newName)
+    {
+      if (string.IsNullOrEmpty(newName))
+        throw new ArgumentNullException(nameof(newName));
+
+      if (_entryName == newName)
+        return this;
+
+      return new ProjectArchiveEntryMemento(newName, _archiveManager, _fileName);
+    }
+
     /// <summary>
     /// Gets the archive entry that is memento refers to.
     /// </summary>

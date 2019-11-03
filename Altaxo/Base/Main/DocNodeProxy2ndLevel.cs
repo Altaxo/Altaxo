@@ -96,8 +96,9 @@ namespace Altaxo.Main
     #endregion Serialization
 
     public DocNodeProxy2ndLevel(IDocumentLeafNode docNode)
-      : base(docNode)
+      : base(docNode, isCalledFromConstructor: true)
     {
+
     }
 
     /// <summary>
@@ -155,10 +156,12 @@ namespace Altaxo.Main
       base.SetDocNode(value);
     }
 
-    protected override bool InternalIsValidDocument(object obj)
+    protected override bool InternalIsValidDocument(object obj, bool isCalledFromConstructor)
     {
-      if (_childName == null)
-        return IsValidDocument(obj);
+      if (_childName is null && IsValidDocument(obj))
+        return true;
+      else if (_childName is null && isCalledFromConstructor)
+        return true;
       else
         return obj is IDocumentNode;
     }
