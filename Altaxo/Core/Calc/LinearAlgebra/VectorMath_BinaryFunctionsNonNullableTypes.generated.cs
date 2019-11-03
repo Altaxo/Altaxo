@@ -170,7 +170,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-
+	
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
@@ -361,6 +361,18 @@ namespace Altaxo.Calc.LinearAlgebra
 			return sum;
 		}
 
+        /// <summary>
+		/// Returns the Euclidean distance of two vectors, i.e. the L2-norm of the difference of the two vectors.
+		/// </summary>
+		/// <param name="vector1">The first vector.</param>
+		/// <param name="vector2">The other vector.</param>
+		/// <returns>The Euclidean distance of vector1 and vector2.</returns>
+		public static double EuclideanDistance(double[] vector1, double[] vector2)
+		{
+			return Math.Sqrt(SumOfSquaredDifferences(vector1, vector2));
+		}
+
+
 
 		/// <summary>
 		/// Returns the dot product of vector1 and vector2.
@@ -515,7 +527,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-
+	
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
@@ -706,6 +718,18 @@ namespace Altaxo.Calc.LinearAlgebra
 			return sum;
 		}
 
+        /// <summary>
+		/// Returns the Euclidean distance of two vectors, i.e. the L2-norm of the difference of the two vectors.
+		/// </summary>
+		/// <param name="vector1">The first vector.</param>
+		/// <param name="vector2">The other vector.</param>
+		/// <returns>The Euclidean distance of vector1 and vector2.</returns>
+		public static double EuclideanDistance(float[] vector1, float[] vector2)
+		{
+			return Math.Sqrt(SumOfSquaredDifferences(vector1, vector2));
+		}
+
+
 
 		/// <summary>
 		/// Returns the dot product of vector1 and vector2.
@@ -860,7 +884,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-
+	
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
@@ -1051,6 +1075,18 @@ namespace Altaxo.Calc.LinearAlgebra
 			return sum;
 		}
 
+        /// <summary>
+		/// Returns the Euclidean distance of two vectors, i.e. the L2-norm of the difference of the two vectors.
+		/// </summary>
+		/// <param name="vector1">The first vector.</param>
+		/// <param name="vector2">The other vector.</param>
+		/// <returns>The Euclidean distance of vector1 and vector2.</returns>
+		public static double EuclideanDistance(int[] vector1, int[] vector2)
+		{
+			return Math.Sqrt(SumOfSquaredDifferences(vector1, vector2));
+		}
+
+
 
 		/// <summary>
 		/// Returns the dot product of vector1 and vector2.
@@ -1205,7 +1241,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-
+	
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
@@ -1396,6 +1432,18 @@ namespace Altaxo.Calc.LinearAlgebra
 			return sum;
 		}
 
+        /// <summary>
+		/// Returns the Euclidean distance of two vectors, i.e. the L2-norm of the difference of the two vectors.
+		/// </summary>
+		/// <param name="vector1">The first vector.</param>
+		/// <param name="vector2">The other vector.</param>
+		/// <returns>The Euclidean distance of vector1 and vector2.</returns>
+		public static double EuclideanDistance(IReadOnlyList<double> vector1, IReadOnlyList<double> vector2)
+		{
+			return Math.Sqrt(SumOfSquaredDifferences(vector1, vector2));
+		}
+
+
 
 		/// <summary>
 		/// Returns the dot product of vector1 and vector2.
@@ -1550,7 +1598,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				result[i] = function(i, src1[i]);
 		}
 
-
+	
 
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
@@ -1740,6 +1788,18 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			return sum;
 		}
+
+        /// <summary>
+		/// Returns the Euclidean distance of two vectors, i.e. the L2-norm of the difference of the two vectors.
+		/// </summary>
+		/// <param name="vector1">The first vector.</param>
+		/// <param name="vector2">The other vector.</param>
+		/// <returns>The Euclidean distance of vector1 and vector2.</returns>
+		public static double EuclideanDistance(IReadOnlyList<float> vector1, IReadOnlyList<float> vector2)
+		{
+			return Math.Sqrt(SumOfSquaredDifferences(vector1, vector2));
+		}
+
 
 
 		/// <summary>

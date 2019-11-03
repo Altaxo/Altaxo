@@ -56,6 +56,11 @@ namespace Altaxo.Calc.Clustering
     int[] _clusterCounts;
 
     /// <summary>
+    /// The the default data.
+    /// </summary>
+    Func<TDataSum> _createDefault;
+
+    /// <summary>
     /// Function that gives the distance between the mean value (1st argument) and the data point (2nd argument).
     /// </summary>
     Func<TDataSum, TData, double> _distanceFunction;
@@ -134,6 +139,7 @@ namespace Altaxo.Calc.Clustering
     /// <summary>
     /// Initalize a new instance of <see cref="KMeans{TData, TDataSum}"/>.
     /// </summary>
+    /// <param name="createDefaultFunction">Creates the default data. Sum up the default data and other data should result in the same value of the other data.</param>
     /// <param name="distanceFunction">
     /// A function that evaluates the distance between the mean value of the cluster and a data point.
     /// The return value is either the Euclidean distance, or the square of the distance. In the latter case
@@ -165,12 +171,14 @@ namespace Altaxo.Calc.Clustering
     /// </para>
     /// </example>
     public KMeans(
+      Func<TDataSum> createDefaultFunction,
       Func<TDataSum, TData, double> distanceFunction,
       bool isDistanceFunctionReturningSquareOfDistance,
       Func<TDataSum, TData, TDataSum> sumUpFunction,
       Func<TDataSum, int, TDataSum> divideFunction
       )
     {
+      _createDefault = createDefaultFunction ?? throw new ArgumentNullException(nameof(createDefaultFunction));
       _distanceFunction = distanceFunction ?? throw new ArgumentNullException(nameof(distanceFunction));
       _isDistanceFunctionSquareOfDistance = isDistanceFunctionReturningSquareOfDistance;
       _sumUpFunction = sumUpFunction ?? throw new ArgumentNullException(nameof(sumUpFunction));
@@ -285,7 +293,7 @@ namespace Altaxo.Calc.Clustering
       // 1. Choose one center uniformly at random from among the data points.
       Random random = new Random();
       int idx = random.Next(0, _pointsData.Length);
-      _clusterMeans[0] = _divideFunction(_sumUpFunction(default, _pointsData[idx]), 1); // we use divideFunction here to signal that sumUp is finished
+      _clusterMeans[0] = _divideFunction(_sumUpFunction(_createDefault(), _pointsData[idx]), 1); // we use divideFunction here to signal that sumUp is finished
 
       var D = new double[_pointsData.Length];
       for (int c = 1; c < _clusterMeans.Length; c++)
@@ -330,7 +338,7 @@ namespace Altaxo.Calc.Clustering
           if (cumulativeSum > uniformRandomVariable)
             break;
         }
-        _clusterMeans[c] = _divideFunction(_sumUpFunction(default, _pointsData[idx]),1);
+        _clusterMeans[c] = _divideFunction(_sumUpFunction(_createDefault(), _pointsData[idx]), 1);
       }
 
 
@@ -361,7 +369,10 @@ namespace Altaxo.Calc.Clustering
     /// be filled with other data.</returns>
     protected bool UpdateClusterMeanValues()
     {
-      Array.Clear(_clusterMeans, 0, _clusterMeans.Length);
+      for (int i = 0; i < _clusterMeans.Length; ++i)
+      {
+        _clusterMeans[i] = _createDefault();
+      }
 
       for (int i = 0; i < _pointsClusterIdx.Length; ++i)
       {
@@ -435,10 +446,10 @@ namespace Altaxo.Calc.Clustering
           _pointsClusterIdx[ip] = ic;
 
           // update the mean value of the new cluster
-          _clusterMeans[ic] = _divideFunction(_sumUpFunction(default, _pointsData[ip]),1);
+          _clusterMeans[ic] = _divideFunction(_sumUpFunction(_createDefault(), _pointsData[ip]), 1);
 
           // update the mean value of the old cluster
-          _clusterMeans[oldClusterIdx] = default;
+          _clusterMeans[oldClusterIdx] = _createDefault();
           for (int k = 0; k < _pointsClusterIdx.Length; ++k)
           {
             if (_pointsClusterIdx[k] == oldClusterIdx)
@@ -545,7 +556,7 @@ namespace Altaxo.Calc.Clustering
     /// <summary>
     /// Evaluates for each cluster the standard deviation, i.e. the square root ( of the sum of squared distances divided by N-1)
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The standard deviation of each cluster, i.e. the square root ( of the sum of squared distances divided by N-1)</returns>
     public IReadOnlyList<double> EvaluateClustersStandardDeviation()
     {
       var stdDev = new double[_clusterMeans.Length];
@@ -568,11 +579,179 @@ namespace Altaxo.Calc.Clustering
               sum += x * x;
           }
         }
-        stdDev[ic] = Math.Sqrt(sum / (count-1));
+        stdDev[ic] = Math.Sqrt(sum / (count - 1));
       }
       return stdDev;
     }
 
+
+    /// <summary>
+    /// Evaluates for each cluster the mean distance, i.e. the square root ( of the sum of squared distances divided by N)
+    /// </summary>
+    /// <returns>The mean distance in each cluster, i.e. the square root ( of the sum of squared distances divided by N)</returns>
+    public IReadOnlyList<double> EvaluateMeanNthMomentOfDistances(int q)
+    {
+      if (q == 1)
+        return EvaluateMeanDistances();
+      else if (q == 2)
+        return EvaluateMean2ndMomentOfDistances();
+      else
+        return InternalEvaluateMeanNthMomentOfDistances(q);
+    }
+
+    /// <summary>
+    /// Evaluates for each cluster the mean distance, i.e. the average of the Euclidean distances (or whatever the distance function is) of the points to their respective centroid.
+    /// </summary>
+    /// <returns>The mean distance in each cluster, i.e. the mean of the Euclidean distances (or whatever the distance function is) of the points to their respective centroid</returns>
+    public IReadOnlyList<double> EvaluateMeanDistances()
+    {
+      var stdDev = new double[_clusterMeans.Length];
+
+      for (int ic = 0; ic < _clusterMeans.Length; ++ic)
+      {
+        var mean = _clusterMeans[ic];
+
+        double sum = 0;
+        int count = 0;
+        for (int jp = 0; jp < _pointsData.Length; ++jp)
+        {
+          if (_pointsClusterIdx[jp] == ic)
+          {
+            ++count;
+            var x = _distanceFunction(mean, _pointsData[jp]);
+            if (_isDistanceFunctionSquareOfDistance)
+              sum += Math.Sqrt(x);
+            else
+              sum += x;
+          }
+        }
+        stdDev[ic] = sum / (count);
+      }
+      return stdDev;
+    }
+
+    /// <summary>
+    /// Evaluates for each cluster the 2nd moment of the distances, i.e. the square root of the average of the squared Euclidean distances (or whatever the distance function is) of the points to their respective centroid.
+    /// </summary>
+    /// <returns>The 2nd moment of the distances in each cluster, i.e. the square root of the average of the squared Euclidean distances (or whatever the distance function is) of the points to their respective centroid</returns>
+    public IReadOnlyList<double> EvaluateMean2ndMomentOfDistances()
+    {
+      var stdDev = new double[_clusterMeans.Length];
+
+      for (int ic = 0; ic < _clusterMeans.Length; ++ic)
+      {
+        var mean = _clusterMeans[ic];
+
+        double sum = 0;
+        int count = 0;
+        for (int jp = 0; jp < _pointsData.Length; ++jp)
+        {
+          if (_pointsClusterIdx[jp] == ic)
+          {
+            ++count;
+            var x = _distanceFunction(mean, _pointsData[jp]);
+            if (_isDistanceFunctionSquareOfDistance)
+              sum += x;
+            else
+              sum += x * x;
+          }
+        }
+        stdDev[ic] = Math.Sqrt(sum / (count));
+      }
+      return stdDev;
+    }
+
+    /// <summary>
+    /// Evaluates for each cluster the 2nd moment of the distances, i.e. the square root of the average of the squared Euclidean distances (or whatever the distance function is) of the points to their respective centroid.
+    /// </summary>
+    /// <returns>The 2nd moment of the distances in each cluster, i.e. the square root of the average of the squared Euclidean distances (or whatever the distance function is) of the points to their respective centroid</returns>
+    protected IReadOnlyList<double> InternalEvaluateMeanNthMomentOfDistances(int q)
+    {
+      var stdDev = new double[_clusterMeans.Length];
+
+      for (int ic = 0; ic < _clusterMeans.Length; ++ic)
+      {
+        var mean = _clusterMeans[ic];
+
+        double sum = 0;
+        int count = 0;
+        for (int jp = 0; jp < _pointsData.Length; ++jp)
+        {
+          if (_pointsClusterIdx[jp] == ic)
+          {
+            ++count;
+            var x = _distanceFunction(mean, _pointsData[jp]);
+            if (_isDistanceFunctionSquareOfDistance)
+              sum += RMath.Pow(Math.Sqrt(x), q);
+            else
+              sum += RMath.Pow(x, q);
+          }
+        }
+        stdDev[ic] = Math.Pow(sum / (count), 1.0 / q);
+      }
+      return stdDev;
+    }
+
+
+    /// <summary>
+    /// Evaluates the sum of (squared distance of each point to its cluster center).
+    /// </summary>
+    /// <returns>Sum of (squared distance of each point to its cluster center).</returns>
+    public double EvaluateSumOfSquaredDistancesToClusterMean()
+    {
+      double sum = 0;
+      for (int jp = 0; jp < _pointsData.Length; ++jp)
+      {
+        var mean = _clusterMeans[_pointsClusterIdx[jp]];
+        var x = _distanceFunction(mean, _pointsData[jp]);
+        if (_isDistanceFunctionSquareOfDistance)
+          sum += x;
+        else
+          sum += x * x;
+      }
+      return sum;
+    }
+
+    /// <summary>
+    /// Evaluates the Davies-Bouldin-Index. The exponent q (see <see cref="EvaluateDaviesBouldinIndex(Func{TDataSum, TDataSum, double}, int)"/>) is set to 1,
+    /// meaning that the mean Euclidean distance of the points to their respective centroid is used in the nominator.
+    /// </summary>
+    /// <param name="distanceFunctionOfClusterMeans">Function to calculate the Euclidean distance between two cluster centroids.</param>
+    /// <returns>The Davies-Bouldin-Index using q=1 (p=2 if <paramref name="distanceFunctionOfClusterMeans"/> returns the Euclidean distance between the cluster centroids).</returns>
+    public double EvaluateDaviesBouldinIndex(Func<TDataSum, TDataSum, double> distanceFunctionOfClusterMeans)
+    {
+      return EvaluateDaviesBouldinIndex(distanceFunctionOfClusterMeans, 1);
+    }
+
+    /// <summary>
+    /// Evaluates the Davies-Bouldin-Index. The exponent q (used to calculate the average distance of the cluster points to their centroid) can be set as parameter.
+    /// </summary>
+    /// <param name="distanceFunctionOfClusterMeans">Function to calculate the Euclidean distance between two cluster centroids.</param>
+    /// <param name="q">Order of the moment to calculate the average distance of the cluster points to their centroid. A value of one results in
+    /// calculating the average (Euclidean) distance, a value of 2 results in the square root of the mean squared distances, etc.</param>
+    /// <returns>The Davies-Bouldin-Index using the exponent q (p is implicitely 2 if <paramref name="distanceFunctionOfClusterMeans"/> returns the Euclidean distance between the cluster centroids).</returns>
+    public double EvaluateDaviesBouldinIndex(Func<TDataSum, TDataSum, double> distanceFunctionOfClusterMeans, int q)
+    {
+      var meanDistances = EvaluateMeanNthMomentOfDistances(q);
+
+      double sumDi = 0;
+
+      for (int i = 0; i < _clusterMeans.Length; ++i)
+      {
+        double maxRij = double.NegativeInfinity;
+        for (int j = 0; j < _clusterMeans.Length; ++j)
+        {
+          if (i == j)
+            continue;
+
+          double rij = meanDistances[i] + meanDistances[j];
+          rij /= distanceFunctionOfClusterMeans(_clusterMeans[i], _clusterMeans[j]);
+          maxRij = Math.Max(maxRij, rij);
+        }
+        sumDi += maxRij;
+      }
+      return sumDi / _clusterMeans.Length;
+    }
 
     #endregion
   }
@@ -587,6 +766,7 @@ namespace Altaxo.Calc.Clustering
     public KMeans_Double1D()
       :
       base(
+        () => 0.0,
         (x, y) => Math.Abs(x - y),  // distance function
         false,                      // distance is Euclidean distance
         (sum, x) => sum + x,        // sum up function

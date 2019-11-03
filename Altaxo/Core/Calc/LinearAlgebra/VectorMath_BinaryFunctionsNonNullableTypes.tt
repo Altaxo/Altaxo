@@ -357,6 +357,18 @@
 			return sum;
 		}
 
+        /// <summary>
+		/// Returns the Euclidean distance of two vectors, i.e. the L2-norm of the difference of the two vectors.
+		/// </summary>
+		/// <param name="vector1">The first vector.</param>
+		/// <param name="vector2">The other vector.</param>
+		/// <returns>The Euclidean distance of vector1 and vector2.</returns>
+		public static double EuclideanDistance(<#= arrT #> vector1, <#= arrT #> vector2)
+		{
+			return Math.Sqrt(SumOfSquaredDifferences(vector1, vector2));
+		}
+
+
 
 		/// <summary>
 		/// Returns the dot product of vector1 and vector2.
