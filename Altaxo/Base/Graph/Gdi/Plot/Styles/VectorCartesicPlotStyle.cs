@@ -959,7 +959,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           }
 
           if (null != isoLinePathPoints)
-            g.DrawLines(_strokePen, isoLinePathPoints);
+            g.DrawLines(strokePen, isoLinePathPoints);
           else
             g.DrawPath(strokePen, isoLine);
         }

@@ -1008,7 +1008,7 @@ protected void _SetPropertiesFromPen(Pen pen)
     {
       Configured cp = _configuredProperties;
 
-      if (0 == (cp & PenX.Configured.IsNotNull))
+      if (Configured.IsNull == cp)
         return null;
 
       var pen = new Pen(ToGdi(NamedColors.Black));
