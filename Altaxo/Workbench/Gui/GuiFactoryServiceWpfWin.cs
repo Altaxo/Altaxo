@@ -252,12 +252,26 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
     /// <param name="title">The titel (header) of the message box.</param>
     public override void ErrorMessageBox(string errortxt, string title)
     {
-      Current.Dispatcher.InvokeIfRequired(System.Windows.MessageBox.Show, MainWindowWpf, errortxt, title ?? "Error(s)!", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+      Current.Dispatcher.InvokeIfRequired(() => MessageBox_GuiContextOnly(errortxt, title ?? "Error(s)!", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error));
+    }
+
+    private void MessageBox_GuiContextOnly(string errortext, string title, System.Windows.MessageBoxButton button, System.Windows.MessageBoxImage image)
+    {
+      errortext = errortext ?? string.Empty;
+
+      // Due to a bug? in MessageBox it does not show up if the message text is very long
+      // In order to avoid that, we limit the number of characters.
+      if (errortext.Length > 2000)
+      {
+        errortext = errortext.Substring(0, 2000) + "...";
+      }
+
+      var result = System.Windows.MessageBox.Show(errortext, title, button, image);
     }
 
     public override void InfoMessageBox(string infotxt, string title)
     {
-      Current.Dispatcher.InvokeIfRequired(System.Windows.MessageBox.Show, MainWindowWpf, infotxt, title ?? "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+      Current.Dispatcher.InvokeIfRequired(() => MessageBox_GuiContextOnly(infotxt, title ?? "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information));
     }
 
     /// <summary>
@@ -270,7 +284,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
     public override bool YesNoMessageBox(string txt, string caption, bool defaultanswer)
     {
       if (null != Current.Workbench)
-        return System.Windows.MessageBoxResult.Yes == Current.Dispatcher.InvokeIfRequired(System.Windows.MessageBox.Show, MainWindowWpf, txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
+        return System.Windows.MessageBoxResult.Yes == Current.Dispatcher.InvokeIfRequired(System.Windows.MessageBox.Show, txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
       else
         return System.Windows.MessageBoxResult.Yes == System.Windows.MessageBox.Show(txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
     }
@@ -288,7 +302,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       if (defaultAnswer != null)
         defaultButton = ((bool)defaultAnswer) ? System.Windows.MessageBoxResult.Yes : System.Windows.MessageBoxResult.No;
 
-      var result = Current.Dispatcher.InvokeIfRequired(System.Windows.MessageBox.Show, MainWindowWpf, text, caption, System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question, defaultButton);
+      var result = Current.Dispatcher.InvokeIfRequired(System.Windows.MessageBox.Show, text, caption, System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question, defaultButton);
 
       if (result == System.Windows.MessageBoxResult.Yes)
         return true;
