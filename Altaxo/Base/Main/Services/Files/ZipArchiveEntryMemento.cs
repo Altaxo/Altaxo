@@ -79,6 +79,12 @@ namespace Altaxo.Main.Services.Files
       return new ProjectArchiveEntryMemento(newName, _archiveManager, _fileName);
     }
 
+    /// <inheritdoc/>
+    public IProjectArchiveEntryMemento Clone()
+    {
+      return new ProjectArchiveEntryMemento(_entryName, _archiveManager, _fileName);
+    }
+
     /// <summary>
     /// Gets the archive entry that is memento refers to.
     /// </summary>

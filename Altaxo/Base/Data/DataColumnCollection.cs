@@ -203,9 +203,19 @@ namespace Altaxo.Data
     protected bool _triedOutRegularNaming = false;
 
     /// <summary>
-    /// If not null, this is a sign that the data of this collection are not yet loaded.
+    /// This object can have three states: if it is a <see cref="IProjectArchiveEntryMemento"/>, then this indicates that data
+    /// have to be loaded using this memento. If some other object, this indicates that the loading of data is currently in progress.
+    /// If null, the data have been loaded. In this case, the archive memento is stored in another field (see <see cref="_archiveMemento"/> ).
     /// </summary>
     protected object _deferredDataLoader;
+
+    /// <summary>
+    /// This field is set to the <see cref="IProjectArchiveEntryMemento"/> that indicates in which entry in
+    /// the project archive the table data is stored. This member is set independent of whether
+    /// data should be late loaded with the memento or not! (The indicator for that
+    /// is stored in <see cref="_deferredDataLoader"/>).
+    /// </summary>
+    protected IProjectArchiveEntryMemento _archiveMemento;
 
     #endregion Member data
 
@@ -547,25 +557,14 @@ namespace Altaxo.Data
       {
         lock (_deferredLock)
         {
-          return _deferredDataLoader as IProjectArchiveEntryMemento;
+          return _deferredDataLoader as IProjectArchiveEntryMemento ?? _archiveMemento;
         }
       }
       set
       {
-        for (; ; )
+        lock (_deferredLock)
         {
-          object oldValue;
-          lock (_deferredLock)
-          {
-            oldValue = _deferredDataLoader;
-            if (oldValue == null || oldValue is IProjectArchiveEntryMemento)
-              oldValue = _deferredDataLoader = value;
-          }
-
-          if (object.ReferenceEquals(oldValue, value))
-            break;
-          else
-            System.Threading.Thread.Sleep(20);
+          _archiveMemento = value;
         }
 
         if (null != value)
@@ -602,10 +601,12 @@ namespace Altaxo.Data
       else if (deferredDataLoader is IProjectArchiveEntryMemento tp)
       {
         LoadDeferredData(tp);
+        var newMemento = tp.Clone();
         tp?.Dispose();
         lock (_deferredLock)
         {
           _deferredDataLoader = null;
+          _archiveMemento = newMemento;
         }
       }
       else

@@ -169,8 +169,9 @@ namespace Altaxo
                 info.AddValue("TableData", table.DataColumns);
                 info.EndWriting();
               }
+              // set a memento that indicates where to find the data of this table
+              table.DataColumns.DeferredDataMemento = archiveToSaveTo.GetEntryMemento(entryName);
             }
-
           }
           catch (Exception exc)
           {
