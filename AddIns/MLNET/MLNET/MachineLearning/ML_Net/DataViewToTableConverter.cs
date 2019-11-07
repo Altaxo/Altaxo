@@ -161,11 +161,20 @@ namespace Altaxo.MachineLearning.ML_Net
             throw new NotImplementedException();
           if (!(1 == vectorDataViewType.Dimensions.Length))
             throw new NotImplementedException();
-          if (!(vectorDataViewType.ItemType == NumberDataViewType.Single))
+          if (vectorDataViewType.ItemType == NumberDataViewType.Single)
+          {
+            var c = Enumerable.Range(0, vectorDataViewType.Dimensions[0])
+                    .Select((k) => { var cc = new DoubleColumn(); col.Add(cc, columnName + k.ToString(), ColumnKind.V, 0); return cc; }).ToArray();
+            act += new Action(() => Vector1DSingleGetter(cursor, c, cursor.GetGetter<VBuffer<float>>(schemaCol)));
+          }
+          else if (vectorDataViewType.ItemType == NumberDataViewType.Double)
+          {
+            var c = Enumerable.Range(0, vectorDataViewType.Dimensions[0])
+                    .Select((k) => { var cc = new DoubleColumn(); col.Add(cc, columnName + k.ToString(), ColumnKind.V, 0); return cc; }).ToArray();
+            act += new Action(() => Vector1DDoubleGetter(cursor, c, cursor.GetGetter<VBuffer<double>>(schemaCol)));
+          }
+          else
             throw new NotImplementedException();
-          var c = Enumerable.Range(0, vectorDataViewType.Dimensions[0])
-                  .Select((k) => { var cc = new DoubleColumn(); col.Add(cc, columnName + k.ToString(), ColumnKind.V, 0); return cc; }).ToArray();
-          act += new Action(() => Vector1DSingleGetter(cursor, c, cursor.GetGetter<VBuffer<float>>(schemaCol)));
         }
         else
         {
@@ -273,6 +282,19 @@ namespace Altaxo.MachineLearning.ML_Net
     static void Vector1DSingleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<float>> getter)
     {
       VBuffer<float> value = default;
+      getter(ref value);
+
+      int i = 0;
+      foreach (var v in value.DenseValues())
+      {
+        c[i][(int)cursor.Position] = v;
+        ++i;
+      }
+    }
+
+    static void Vector1DDoubleGetter(DataViewRowCursor cursor, Altaxo.Data.DoubleColumn[] c, ValueGetter<VBuffer<double>> getter)
+    {
+      VBuffer<double> value = default;
       getter(ref value);
 
       int i = 0;
