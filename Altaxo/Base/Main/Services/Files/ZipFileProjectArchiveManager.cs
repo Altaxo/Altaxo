@@ -91,6 +91,27 @@ namespace Altaxo.Main.Services
         // Open the stream for reading ...
         _originalFileStream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
       }
+      catch (System.IO.IOException exIO)
+      {
+        FileStream roFileStream;
+        try
+        {
+          roFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        }
+        catch (Exception ex)
+        {
+          _originalFileStream = null;
+          throw exIO;
+        }
+        var shouldOpenReadonly = Current.Gui.YesNoMessageBox($"The file {fileName} seems to be read-only or currently in use.\r\n\r\nDo you want try to open it in read-only mode?", "Question", true);
+
+        if (shouldOpenReadonly)
+        {
+          LoadFromFileStreamReadonly(roFileStream, restoreProjectAndWindowsState);
+        }
+
+        return;
+      }
       catch (Exception ex)
       {
         _originalFileStream = null;
@@ -109,6 +130,38 @@ namespace Altaxo.Main.Services
 
       if (hasFileNameChanged)
         FileOrFolderNameChanged?.Invoke(this, new NameChangedEventArgs(this, oldFileName, _originalFileStream?.Name));
+    }
+
+    /// <summary>
+    /// Loads a project from a file stream in read-only mode. For that, it is tried to make a copy of the file stream, and then
+    /// use the copy to read the project from.
+    /// </summary>
+    /// <param name="fileStream">The file stream to copy from.</param>
+    /// <param name="restoreProjectAndWindowsState">Delegate that is used to deserialize and restore the project and the windows state.</param>
+    protected void LoadFromFileStreamReadonly(FileStream fileStream, RestoreProjectAndWindowsState restoreProjectAndWindowsState)
+    {
+      try
+      {
+        // Here, we can't copy the data to the cloned file in the background...
+        // Instead, we have to wait for the end of the copy process, and then restore the project from the cloned file
+        var clonedFileName = GetClonedFileName(fileStream.Name);
+        fileStream.Seek(0, SeekOrigin.Begin);
+        var clonedFileStream = new FileStream(clonedFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+        fileStream.CopyTo(clonedFileStream);
+        _originalFileStream = null;
+        _clonedFileStream = clonedFileStream;
+      }
+      finally
+      {
+        fileStream.Dispose();
+      }
+
+      // now, deserialize the project from the cloned file....
+      using (var projectArchive = new Services.Files.ZipArchiveAsProjectArchive(_clonedFileStream, ZipArchiveMode.Read, leaveOpen: true, archiveManager: this))
+      {
+        // Restore the state of the windows
+        restoreProjectAndWindowsState(projectArchive);
+      }
     }
 
 
@@ -280,11 +333,7 @@ namespace Altaxo.Main.Services
       _clonedFileStream?.Dispose(); // Close/dispose old cloned stream
       _clonedFileStream = null;
 
-      var instanceStorageService = Current.GetService<IInstanceStorageService>();
-      var path = instanceStorageService.InstanceStoragePath;
-      var clonedFileDir = Path.Combine(path, ClonedProjectRelativePath);
-      Directory.CreateDirectory(clonedFileDir);
-      var clonedFileName = Path.Combine(clonedFileDir, ClonedProjectFileName + Path.GetExtension(_originalFileStream.Name));
+      var clonedFileName = GetClonedFileName();
       _cloneTaskCancel = new CancellationTokenSource();
 
       {
@@ -293,19 +342,29 @@ namespace Altaxo.Main.Services
         var orgStream = new FileStream(_originalFileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         _cloneTask = orgStream.CopyToAsync(clonedFileStream, 81920, cancellationToken)
           .ContinueWith(async (task1) =>
-            {
-              await clonedFileStream.FlushAsync(cancellationToken);
-            }, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default)
+          {
+            await clonedFileStream.FlushAsync(cancellationToken);
+          }, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default)
           .ContinueWith((task2) =>
-            {
-              orgStream.Close();
-              orgStream.Dispose();
-              if (task2.Status == TaskStatus.RanToCompletion)
-                _clonedFileStream = clonedFileStream;
-              else
-                clonedFileStream?.Dispose();
-            });
+          {
+            orgStream.Close();
+            orgStream.Dispose();
+            if (task2.Status == TaskStatus.RanToCompletion)
+              _clonedFileStream = clonedFileStream;
+            else
+              clonedFileStream?.Dispose();
+          });
       }
+    }
+
+    private string GetClonedFileName(string originalFileName = null)
+    {
+      var instanceStorageService = Current.GetService<IInstanceStorageService>();
+      var path = instanceStorageService.InstanceStoragePath;
+      var clonedFileDir = Path.Combine(path, ClonedProjectRelativePath);
+      Directory.CreateDirectory(clonedFileDir);
+      var clonedFileName = Path.Combine(clonedFileDir, ClonedProjectFileName + Path.GetExtension(originalFileName ?? _originalFileStream.Name));
+      return clonedFileName;
     }
 
     /// <summary>
