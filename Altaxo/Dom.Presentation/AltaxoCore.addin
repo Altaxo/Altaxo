@@ -502,6 +502,8 @@
 					class="Altaxo.Worksheet.Commands.AddDataColumns" />
         <MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}"
 					description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
+        <MenuItem id="TableScript" label="${res:XML.MainMenu.WorksheetMenu.TableScript}" description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
+					class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
         <MenuItem id="CreatePropColOfColNames" label="${res:XML.MainMenu.WorksheetMenu.CreatePropertyColumnOfColumnNames}"
 					description="${res:XML.MainMenu.WorksheetMenu.CreatePropertyColumnOfColumnNames.Description}" class="Altaxo.Worksheet.Commands.CreatePropertyColumnOfColumnNames" />
         <MenuItem id="Rename" label="${res:XML.MainMenu.WorksheetMenu.Rename}" description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}"
@@ -510,8 +512,6 @@
 					class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
         <MenuItem id="ClearDataAll" label="${res:XML.MainMenu.WorksheetMenu.ClearDataAll}" description="${res:XML.MainMenu.WorksheetMenu.ClearDataAll.Description}"
 					class="Altaxo.Worksheet.Commands.WorksheetClearDataAll" />
-        <MenuItem id="TableScript" label="${res:XML.MainMenu.WorksheetMenu.TableScript}" description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
-					class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
         <MenuItem id="ExtractTableData" label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}" description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
 					class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
         <MenuItem id="MoveRows" label="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows}" description="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows.Description}"
