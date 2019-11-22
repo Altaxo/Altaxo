@@ -443,7 +443,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -473,7 +473,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -509,7 +509,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return (double)System.Math.Pow(ret, 1 / p);
 		}
 
-
+		
 
 
 		/// <summary>
@@ -622,7 +622,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Length; ++i)
         sum += vector[i];
 
-      return sum;
+      return sum; 
     }
 
 
@@ -637,7 +637,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Length; ++i)
         sum += vector[i];
 
-      return sum / (double)vector.Length;
+      return sum / (double)vector.Length; 
     }
 
 		/// <summary>
@@ -702,7 +702,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		/// <summary>
     /// Returns the excess kurtosis of the elements in <paramref name="vector"/>. The excess kurtosis is defined as
-		/// excesskurtosis(X) = E{X^4} - 3(E{X²})².
+		/// excesskurtosis(X) = E{X^4} - 3(E{X²})². 
     /// </summary>
     /// <param name="vector">The vector.</param>
     /// <returns>The excess kurtosis of the elements in <paramref name="vector"/>.</returns>
@@ -720,7 +720,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var N = vector.Length;
 
-      return sumy4/N -3*RMath.Pow2(sumy2/N);
+      return sumy4/N -3*RMath.Pow2(sumy2/N); 
     }
 
 
@@ -1129,7 +1129,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -1159,7 +1159,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -1195,7 +1195,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return (float)System.Math.Pow(ret, 1 / p);
 		}
 
-
+		
 
 
 		/// <summary>
@@ -1308,7 +1308,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Length; ++i)
         sum += vector[i];
 
-      return sum;
+      return sum; 
     }
 
 
@@ -1323,7 +1323,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Length; ++i)
         sum += vector[i];
 
-      return sum / (double)vector.Length;
+      return sum / (double)vector.Length; 
     }
 
 		/// <summary>
@@ -1388,7 +1388,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		/// <summary>
     /// Returns the excess kurtosis of the elements in <paramref name="vector"/>. The excess kurtosis is defined as
-		/// excesskurtosis(X) = E{X^4} - 3(E{X²})².
+		/// excesskurtosis(X) = E{X^4} - 3(E{X²})². 
     /// </summary>
     /// <param name="vector">The vector.</param>
     /// <returns>The excess kurtosis of the elements in <paramref name="vector"/>.</returns>
@@ -1406,7 +1406,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var N = vector.Length;
 
-      return sumy4/N -3*RMath.Pow2(sumy2/N);
+      return sumy4/N -3*RMath.Pow2(sumy2/N); 
     }
 
 
@@ -1813,7 +1813,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -1841,7 +1841,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -1877,7 +1877,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return (long)System.Math.Pow(ret, 1 / p);
 		}
 
-
+		
 
 
 		/// <summary>
@@ -1990,7 +1990,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Length; ++i)
         sum += vector[i];
 
-      return sum;
+      return sum; 
     }
 
 
@@ -2005,7 +2005,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Length; ++i)
         sum += vector[i];
 
-      return sum / (double)vector.Length;
+      return sum / (double)vector.Length; 
     }
 
 		/// <summary>
@@ -2070,7 +2070,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		/// <summary>
     /// Returns the excess kurtosis of the elements in <paramref name="vector"/>. The excess kurtosis is defined as
-		/// excesskurtosis(X) = E{X^4} - 3(E{X²})².
+		/// excesskurtosis(X) = E{X^4} - 3(E{X²})². 
     /// </summary>
     /// <param name="vector">The vector.</param>
     /// <returns>The excess kurtosis of the elements in <paramref name="vector"/>.</returns>
@@ -2088,7 +2088,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var N = vector.Length;
 
-      return sumy4/N -3*RMath.Pow2(sumy2/N);
+      return sumy4/N -3*RMath.Pow2(sumy2/N); 
     }
 
 
@@ -2497,7 +2497,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -2527,7 +2527,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -2563,7 +2563,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return (double)System.Math.Pow(ret, 1 / p);
 		}
 
-
+		
 
 
 		/// <summary>
@@ -2676,7 +2676,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Count; ++i)
         sum += vector[i];
 
-      return sum;
+      return sum; 
     }
 
 
@@ -2691,7 +2691,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Count; ++i)
         sum += vector[i];
 
-      return sum / (double)vector.Count;
+      return sum / (double)vector.Count; 
     }
 
 		/// <summary>
@@ -2756,7 +2756,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		/// <summary>
     /// Returns the excess kurtosis of the elements in <paramref name="vector"/>. The excess kurtosis is defined as
-		/// excesskurtosis(X) = E{X^4} - 3(E{X²})².
+		/// excesskurtosis(X) = E{X^4} - 3(E{X²})². 
     /// </summary>
     /// <param name="vector">The vector.</param>
     /// <returns>The excess kurtosis of the elements in <paramref name="vector"/>.</returns>
@@ -2774,7 +2774,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var N = vector.Count;
 
-      return sumy4/N -3*RMath.Pow2(sumy2/N);
+      return sumy4/N -3*RMath.Pow2(sumy2/N); 
     }
 
 
@@ -3183,7 +3183,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -3213,7 +3213,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				}
 			}
-
+			
 			return max;
 		}
 
@@ -3249,7 +3249,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return (float)System.Math.Pow(ret, 1 / p);
 		}
 
-
+		
 
 
 		/// <summary>
@@ -3362,7 +3362,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Count; ++i)
         sum += vector[i];
 
-      return sum;
+      return sum; 
     }
 
 
@@ -3377,7 +3377,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < vector.Count; ++i)
         sum += vector[i];
 
-      return sum / (double)vector.Count;
+      return sum / (double)vector.Count; 
     }
 
 		/// <summary>
@@ -3442,7 +3442,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		/// <summary>
     /// Returns the excess kurtosis of the elements in <paramref name="vector"/>. The excess kurtosis is defined as
-		/// excesskurtosis(X) = E{X^4} - 3(E{X²})².
+		/// excesskurtosis(X) = E{X^4} - 3(E{X²})². 
     /// </summary>
     /// <param name="vector">The vector.</param>
     /// <returns>The excess kurtosis of the elements in <paramref name="vector"/>.</returns>
@@ -3460,7 +3460,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var N = vector.Count;
 
-      return sumy4/N -3*RMath.Pow2(sumy2/N);
+      return sumy4/N -3*RMath.Pow2(sumy2/N); 
     }
 
 

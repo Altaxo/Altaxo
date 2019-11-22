@@ -140,6 +140,15 @@ namespace Altaxo.Text.Renderers
 
 
     /// <summary>
+    /// Gets or sets a value indicating whether to treat heading level 1 as title.
+    /// If true, heading level 1 is formatted as title, heading level2 is formatted as Heading1, etc.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if heading level1 is treated as as title; otherwise, <c>false</c>.
+    /// </value>
+    public bool TreatHeading1AsTitle { get; set; }
+
+    /// <summary>
     /// This of the figure captions that needs to be replaced by automatic figure numbers.
     /// </summary>
     public List<((string Name, int Position, int Count) Category, (int Position, int Count) Number, Figure Figure, FigureCaption FigureCaption)> FigureCaptionList { get; private set; }
@@ -241,6 +250,12 @@ namespace Altaxo.Text.Renderers
 
       if (markdownObject is MarkdownDocument markdownDocument)
       {
+        if (markdownDocument[0] is HeadingBlock hbStart && hbStart.Level == 1)
+        {
+          var firstHeadingBlockIsParentOfAll = (1 == markdownDocument.Count(x => x is HeadingBlock hb && hb.Level <= hbStart.Level));
+          TreatHeading1AsTitle = firstHeadingBlockIsParentOfAll;
+        }
+
         if (UseAutomaticFigureNumbering)
         {
           FigureCaptionList = FigureRenumerator.GetCaptionList(markdownDocument);

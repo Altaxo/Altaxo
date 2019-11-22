@@ -357,8 +357,8 @@
       /// <param name="x">The array to wrap. The array is used directly (without copying).</param>
       public RO<#= bigScalT #>InverseElementWrapper(IReadOnlyList<<#= scalT #>> x)
       {
-        _length = _x.Count;
         _x = x;
+        _length = x.Count;
       }
 
       /// <summary>

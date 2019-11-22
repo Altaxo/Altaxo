@@ -34,7 +34,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 // ******************************************** Definitions for Double *******************************************
 
-	public partial class DoubleVector : Vector<Double>
+	public partial class DoubleVector : Vector<Double> 
 	{
 
 		#region Constructors
@@ -89,7 +89,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 		}
 
-
+		
 
 		/// <summary>
 		/// Creates a vector, that is a wrapper of the provided array. The array is used directly.
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		///     underflow and rgiant**2 not overflow. the constants
 		///     given here are suitable for every known computer.
 		///     <para>burton s. garbow, kenneth e. hillstrom, jorge j. more</para>
-		/// </remarks>
+		/// </remarks> 
 		public double L2Norm
 		{
 			get
@@ -261,7 +261,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return Blas.Dot.Compute(this.Length, this._array, 1, Y._array, 1);
 		}
 
-
+	
 
 		///<summary>Sum the components in this <c>DoubleVector</c></summary>
 		///<returns><c>double</c> results from the summary of <c>DoubleVector</c> components.</returns>
@@ -581,7 +581,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 // ******************************************** Definitions for Single *******************************************
 
-	public partial class FloatVector : Vector<Single>
+	public partial class FloatVector : Vector<Single> 
 	{
 
 		#region Constructors
@@ -636,7 +636,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 		}
 
-
+		
 
 		/// <summary>
 		/// Creates a vector, that is a wrapper of the provided array. The array is used directly.
@@ -721,7 +721,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		///     underflow and rgiant**2 not overflow. the constants
 		///     given here are suitable for every known computer.
 		///     <para>burton s. garbow, kenneth e. hillstrom, jorge j. more</para>
-		/// </remarks>
+		/// </remarks> 
 		public double L2Norm
 		{
 			get
@@ -808,7 +808,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return Blas.Dot.Compute(this.Length, this._array, 1, Y._array, 1);
 		}
 
-
+	
 
 		///<summary>Sum the components in this <c>DoubleVector</c></summary>
 		///<returns><c>double</c> results from the summary of <c>DoubleVector</c> components.</returns>

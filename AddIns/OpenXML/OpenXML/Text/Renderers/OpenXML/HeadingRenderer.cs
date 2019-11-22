@@ -44,8 +44,12 @@ namespace Altaxo.Text.Renderers.OpenXML
 
 
       FormatStyle id;
-      switch (obj.Level)
+      int offset = renderer.TreatHeading1AsTitle ? 1 : 0;
+      switch (obj.Level - offset)
       {
+        case 0:
+          id = FormatStyle.Title;
+          break;
         case 1:
           id = FormatStyle.Heading1;
           break;

@@ -33,6 +33,7 @@ namespace Altaxo.Text.Renderers.OpenXML
   public enum FormatStyle
   {
     // Built-in styles (for the names used in word see the StyleDictionary)
+    Title,
     Heading1,
     Heading2,
     Heading3,
@@ -72,6 +73,7 @@ namespace Altaxo.Text.Renderers.OpenXML
       _idToName = new Dictionary<FormatStyle, string>()
       {
         [FormatStyle.Caption] = "caption",
+        [FormatStyle.Title] = "Title",
         [FormatStyle.Heading1] = "heading 1",
         [FormatStyle.Heading2] = "heading 2",
         [FormatStyle.Heading3] = "heading 3",
