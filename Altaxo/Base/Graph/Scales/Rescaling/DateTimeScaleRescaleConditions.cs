@@ -360,14 +360,45 @@ namespace Altaxo.Graph.Scales.Rescaling
       if (!(newZoomOrg < newZoomEnd))
         throw new ArgumentOutOfRangeException("zoomOrg should be less than zoomEnd");
 
+      var oldResultingOrg = _resultingOrg;
+      var oldResultingEnd = _resultingEnd;
+      var oldResultingMinOrg = _resultingMinOrg;
+      var oldResultingMaxEnd = _resultingMaxEnd;
+
       ProcessOrg_UserZoomed(newZoomOrg.Ticks);
       ProcessEnd_UserZoomed(newZoomEnd.Ticks);
+
+      if (
+        oldResultingOrg != _resultingOrg ||
+        oldResultingEnd != _resultingEnd ||
+        oldResultingMinOrg != _resultingMinOrg ||
+        oldResultingMaxEnd != _resultingMaxEnd
+        )
+      {
+        EhSelfChanged();
+      }
+
     }
 
     public void OnUserRescaled()
     {
+      var oldResultingOrg = _resultingOrg;
+      var oldResultingEnd = _resultingEnd;
+      var oldResultingMinOrg = _resultingMinOrg;
+      var oldResultingMaxEnd = _resultingMaxEnd;
+
       ProcessOrg_UserRescaled();
       ProcessEnd_UserRescaled();
+
+      if (
+        oldResultingOrg != _resultingOrg ||
+        oldResultingEnd != _resultingEnd ||
+        oldResultingMinOrg != _resultingMinOrg ||
+        oldResultingMaxEnd != _resultingMaxEnd
+        )
+      {
+        EhSelfChanged();
+      }
     }
 
     /// <summary>
