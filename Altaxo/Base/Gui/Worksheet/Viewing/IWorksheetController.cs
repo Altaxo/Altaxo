@@ -164,6 +164,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     void SelectAll();
 
-    //event EventHandler TitleNameChanged;
+    /// <summary>
+    /// The vertical scroll position is defined as following:
+    /// If 0 (zero), the data row 0 is the first visible line (after the column header).
+    /// If positive, the data row with the number of VertScrollPos is the first visible row.
+    /// If negative, the property column with index PropertyColumnCount+VertScrollPos is the first visible line.
+    /// </summary>
+    int VerticalScrollPosition { get; set; }
   }
 }

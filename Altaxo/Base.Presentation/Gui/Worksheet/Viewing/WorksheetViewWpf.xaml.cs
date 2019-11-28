@@ -359,7 +359,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
         WorksheetPaintingWpf.PaintTableArea(dc, _guiController.WorksheetLayout, clipRect.Size, clipRect,
             _guiController.SelectedDataColumns, _guiController.SelectedDataRows, _guiController.SelectedPropertyColumns, _guiController.SelectedPropertyRows,
-            _guiController.HorzScrollPos, _guiController.VertScrollPos);
+            _guiController.HorzScrollPos, _guiController.VerticalScrollPosition);
 
         dc.Close();
       }

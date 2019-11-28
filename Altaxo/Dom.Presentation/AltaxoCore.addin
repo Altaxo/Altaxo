@@ -391,6 +391,10 @@
 										class="Altaxo.Graph.Commands.CopyPageAsBitmap300dpiRGB" />
         </MenuItem>
       </Condition>
+      <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
+        <MenuItem id="GotoTableRow" label="Goto row.." description="Goto table row number"
+          class="Altaxo.Worksheet.Commands.GotoTableRow" />
+      </Condition>
     </MenuItem>
     <!-- View menu -->
     <MenuItem id="View" label="${res:XML.MainMenu.ViewMenu}"  type="Menu">

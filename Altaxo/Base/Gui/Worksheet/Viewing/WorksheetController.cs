@@ -224,7 +224,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
             VertScrollMaximum = _scrollVertMax;
             HorzScrollMaximum = _scrollHorzMax;
 
-            VertScrollPos = _scrollVertPos;
+            VerticalScrollPosition = _scrollVertPos;
             HorzScrollPos = _scrollHorzPos;
 
             // Simulate a SizeChanged event

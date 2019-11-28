@@ -313,8 +313,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       VertScrollMaximum = _numberOfTableRows > 0 ? _numberOfTableRows - 1 : 0;
 
-      if (VertScrollPos >= _numberOfTableRows)
-        VertScrollPos = _numberOfTableRows > 0 ? _numberOfTableRows - 1 : 0;
+      if (VerticalScrollPosition >= _numberOfTableRows)
+        VerticalScrollPosition = _numberOfTableRows > 0 ? _numberOfTableRows - 1 : 0;
 
       if (_view != null)
         _view.TableArea_TriggerRedrawing();
@@ -389,19 +389,19 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         // if we was scrolled to the most upper position, we later scroll
         // to the most upper position again
-        bool bUpperPosition = (oldPropCols == -VertScrollPos);
+        bool bUpperPosition = (oldPropCols == -VerticalScrollPosition);
 
         // Adjust Y ScrollBar Maximum();
         AdjustYScrollBarMaximum();
 
         if (bUpperPosition) // we scroll again to the most upper position
         {
-          VertScrollPos = -TotalEnabledPropertyColumns;
+          VerticalScrollPosition = -TotalEnabledPropertyColumns;
         }
         else
         {
           // we first bring the VertScrollPosition to an allowed value
-          VertScrollPos = Math.Max(VertScrollPos, -TotalEnabledPropertyColumns);
+          VerticalScrollPosition = Math.Max(VerticalScrollPosition, -TotalEnabledPropertyColumns);
         }
       }
     }
@@ -632,7 +632,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       else if (newCellRow > LastFullyVisibleTableRow)
         navigateToRow = newCellRow + 1 - FullyVisibleTableRows - FullyVisiblePropertyColumns;
       else
-        navigateToRow = VertScrollPos;
+        navigateToRow = VerticalScrollPosition;
 
       if (navigateToCol != FirstVisibleColumn || navigateToRow != FirstVisibleTableRow)
       {
@@ -642,7 +642,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       // 3. Fill the cell edit control with new content
       _cellEdit_EditedCell.ColumnNumber = newCellCol;
       _cellEdit_EditedCell.RowNumber = newCellRow;
-      var cellRect = AM.GetCoordinatesOfDataCell(_cellEdit_EditedCell.ColumnNumber, _cellEdit_EditedCell.RowNumber, _worksheetLayout, HorzScrollPos, VertScrollPos);
+      var cellRect = AM.GetCoordinatesOfDataCell(_cellEdit_EditedCell.ColumnNumber, _cellEdit_EditedCell.RowNumber, _worksheetLayout, HorzScrollPos, VerticalScrollPosition);
       _view.CellEdit_Location = cellRect;
       SetCellEditContentAndShow();
 
@@ -740,7 +740,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       else if (newCellCol > LastFullyVisiblePropertyColumn)
         navigateToCol = newCellCol - FullyVisiblePropertyColumns + 1 - _numberOfPropertyCols;
       else
-        navigateToCol = VertScrollPos;
+        navigateToCol = VerticalScrollPosition;
 
       if (newCellRow < FirstVisibleColumn)
         navigateToRow = newCellRow;
@@ -757,7 +757,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       // 3. Fill the cell edit control with new content
       _cellEdit_EditedCell.ColumnNumber = newCellCol;
       _cellEdit_EditedCell.RowNumber = newCellRow;
-      var cellRect = AM.GetCoordinatesOfPropertyCell(_cellEdit_EditedCell.ColumnNumber, _cellEdit_EditedCell.RowNumber, _worksheetLayout, HorzScrollPos, VertScrollPos);
+      var cellRect = AM.GetCoordinatesOfPropertyCell(_cellEdit_EditedCell.ColumnNumber, _cellEdit_EditedCell.RowNumber, _worksheetLayout, HorzScrollPos, VerticalScrollPosition);
       _view.CellEdit_Location = cellRect;
       SetCellEditContentAndShow();
 
@@ -781,7 +781,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetFirstVisibleTableRow(_worksheetLayout, VertScrollPos);
+        return AM.GetFirstVisibleTableRow(_worksheetLayout, VerticalScrollPosition);
       }
     }
 
@@ -792,7 +792,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetVerticalPositionOfFirstVisibleDataRow(_worksheetLayout, VertScrollPos);
+        return AM.GetVerticalPositionOfFirstVisibleDataRow(_worksheetLayout, VerticalScrollPosition);
       }
     }
 
@@ -801,7 +801,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetVisibleTableRows(0, TableAreaHeight, _worksheetLayout, VertScrollPos);
+        return AM.GetVisibleTableRows(0, TableAreaHeight, _worksheetLayout, VerticalScrollPosition);
       }
     }
 
@@ -810,7 +810,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetFullyVisibleTableRows(0, TableAreaHeight, _worksheetLayout, VertScrollPos);
+        return AM.GetFullyVisibleTableRows(0, TableAreaHeight, _worksheetLayout, VerticalScrollPosition);
       }
     }
 
@@ -819,7 +819,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetLastVisibleTableRow(_worksheetLayout, VertScrollPos, TableAreaHeight);
+        return AM.GetLastVisibleTableRow(_worksheetLayout, VerticalScrollPosition, TableAreaHeight);
       }
     }
 
@@ -828,7 +828,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetLastFullyVisibleTableRow(_worksheetLayout, VertScrollPos, TableAreaHeight);
+        return AM.GetLastFullyVisibleTableRow(_worksheetLayout, VerticalScrollPosition, TableAreaHeight);
       }
     }
 
@@ -842,7 +842,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetRemainingEnabledPropertyColumns(_worksheetLayout, VertScrollPos);
+        return AM.GetRemainingEnabledPropertyColumns(_worksheetLayout, VerticalScrollPosition);
       }
     }
 
@@ -861,7 +861,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetFirstVisiblePropertyColumn(_worksheetLayout, VertScrollPos);
+        return AM.GetFirstVisiblePropertyColumn(_worksheetLayout, VerticalScrollPosition);
       }
     }
 
@@ -870,7 +870,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetLastFullyVisiblePropertyColumn(_worksheetLayout, VertScrollPos, TableAreaHeight);
+        return AM.GetLastFullyVisiblePropertyColumn(_worksheetLayout, VerticalScrollPosition, TableAreaHeight);
       }
     }
 
@@ -879,7 +879,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetVisiblePropertyColumns(0, TableAreaHeight, _worksheetLayout, VertScrollPos);
+        return AM.GetVisiblePropertyColumns(0, TableAreaHeight, _worksheetLayout, VerticalScrollPosition);
       }
     }
 
@@ -888,7 +888,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       get
       {
-        return AM.GetFullyVisiblePropertyColumns(0, TableAreaHeight, _worksheetLayout, VertScrollPos);
+        return AM.GetFullyVisiblePropertyColumns(0, TableAreaHeight, _worksheetLayout, VerticalScrollPosition);
       }
     }
 
@@ -974,7 +974,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// If negative, the property column with index PropertyColumnCount+VertScrollPos is the first visible line.
     /// </summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public int VertScrollPos
+    public int VerticalScrollPosition
     {
       get { return _scrollVertPos; }
       set
@@ -1043,7 +1043,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
       if (VertScrollMaximum < nRow)
         VertScrollMaximum = nRow;
-      VertScrollPos = nRow;
+      VerticalScrollPosition = nRow;
     }
 
     #endregion Scrolling logic
@@ -1057,7 +1057,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void EhView_VertScrollBarScroll(int newScrollValue)
     {
-      VertScrollPos = newScrollValue - TotalEnabledPropertyColumns;
+      VerticalScrollPosition = newScrollValue - TotalEnabledPropertyColumns;
     }
 
     public void EhView_HorzScrollBarScroll(int newScrollValue)
@@ -1120,8 +1120,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <param name="mouseDelta">Delta value of the mouse wheel.</param>
     public void EhView_TableAreaMouseWheel(PointD2D position, int mouseDelta)
     {
-      int oldScrollPos = VertScrollPos;
-      VertScrollPos = VertScrollPos - mouseDelta / 120;
+      int oldScrollPos = VerticalScrollPosition;
+      VerticalScrollPosition = VerticalScrollPosition - mouseDelta / 120;
     }
 
     public void EhView_TableAreaMouseMove(PointD2D position)
@@ -1415,7 +1415,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     public void EhView_TableAreaMouseClick(PointD2D position, AltaxoMouseButtons eButton, AltaxoKeyboardModifierKeys modifierKeys)
     {
-      var _mouseInfo = AM.GetAreaType(position.X, position.Y, _worksheetLayout, HorzScrollPos, VertScrollPos);
+      var _mouseInfo = AM.GetAreaType(position.X, position.Y, _worksheetLayout, HorzScrollPos, VerticalScrollPosition);
 
       //ClickedCellInfoWpf clickedCell = new ClickedCellInfoWpf(this,this.m_MouseDownPosition);
 
@@ -1604,11 +1604,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
       switch (eKey)
       {
         case AltaxoKeyboardKey.PageDown: // Page-Down-Key
-          VertScrollPos = VertScrollPos + VisibleTableRows;
+          VerticalScrollPosition = VerticalScrollPosition + VisibleTableRows;
           break;
 
         case AltaxoKeyboardKey.PageUp: // Page-Up-Key
-          VertScrollPos = VertScrollPos - VisibleTableRows;
+          VerticalScrollPosition = VerticalScrollPosition - VisibleTableRows;
           break;
 
         case AltaxoKeyboardKey.Home:

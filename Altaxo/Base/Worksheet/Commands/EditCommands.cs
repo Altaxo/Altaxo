@@ -206,6 +206,20 @@ namespace Altaxo.Worksheet.Commands
       ctrl.TableAreaInvalidate(); // necessary because we changed the selections
     }
 
+    /// <summary>
+    /// Opens a dialog to enter a row number,
+    /// and then jumps to that row in the worksheet view.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    public static void GotoRow(IWorksheetController ctrl)
+    {
+      var controller = new Gui.Common.IntegerValueInputController(0, "Row number: ");
+      if (true == Current.Gui.ShowDialog(controller, "Enter row number.."))
+      {
+        ctrl.VerticalScrollPosition = controller.EnteredContents;
+      }
+    }
+
     public static void CopyToClipboard(IWorksheetController dg)
     {
       Altaxo.Data.DataTable dt = dg.DataTable;

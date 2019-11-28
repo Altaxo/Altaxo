@@ -225,6 +225,20 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Opens a dialog to enter a row number,
+  /// and then jumps to that row in the worksheet view.
+  /// </summary>
+  /// <seealso cref="Altaxo.Worksheet.Commands.AbstractWorksheetControllerCommand" />
+  public class GotoTableRow : AbstractWorksheetControllerCommand
+  {
+    /// <inheritdoc/>
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.EditCommands.GotoRow(ctrl);
+    }
+  }
+
   #endregion Edit commands
 
   #region Plot commands
