@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -274,6 +274,16 @@ namespace Altaxo.Graph.Scales.Ticks
       {
         return (other is TimeSpanEx) ? Equals((TimeSpanEx)other) : false;
       }
+
+      public static bool operator ==(TimeSpanEx x, TimeSpanEx y)
+      {
+        return x.Equals(y);
+      }
+
+      public static bool operator !=(TimeSpanEx x, TimeSpanEx y)
+      {
+        return !(x.Equals(y));
+      }
     }
 
     private class CachedMajorMinor : ICloneable
@@ -420,8 +430,8 @@ namespace Altaxo.Graph.Scales.Ticks
 
     #endregion static fields
 
-    private List<AltaxoVariant> _majorTicks;
-    private List<AltaxoVariant> _minorTicks;
+    /// <summary>Maximum allowed number of ticks in case manual tick input will produce a big amount of ticks.</summary>
+    protected static readonly int _maxSafeNumberOfTicks = 10000;
 
     /// <summary>If set, gives the number of minor ticks choosen by the user.</summary>
     private int? _userDefinedMinorTicks;
@@ -429,8 +439,8 @@ namespace Altaxo.Graph.Scales.Ticks
     /// <summary>If set, gives the physical value between two major ticks choosen by the user.</summary>
     private TimeSpanEx? _userDefinedMajorSpan;
 
-    private double _orgGrace = 0.05;
-    private double _endGrace = 0.05;
+    private double _orgGrace = 1 / 16.0;
+    private double _endGrace = 1 / 16.0;
     private int _targetNumberOfMajorTicks = 6;
     private int _targetNumberOfMinorTicks = 2;
 
@@ -444,6 +454,11 @@ namespace Altaxo.Graph.Scales.Ticks
     private AdditionalTicks _additionalMajorTicks;
     private AdditionalTicks _additionalMinorTicks;
 
+    // Results
+    private List<AltaxoVariant> _majorTicks;
+    private List<AltaxoVariant> _minorTicks;
+
+    // Cached values
     private CachedMajorMinor _cachedMajorMinor;
 
     #region Serialization
@@ -541,6 +556,58 @@ namespace Altaxo.Graph.Scales.Ticks
     public override object Clone()
     {
       return new DateTimeTickSpacing(this);
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (object.ReferenceEquals(this, obj))
+        return true;
+      else if (!(obj is DateTimeTickSpacing))
+        return false;
+      else
+      {
+        var from = (DateTimeTickSpacing)obj;
+
+        if (_userDefinedMajorSpan != from._userDefinedMajorSpan)
+          return false;
+        if (_userDefinedMinorTicks != from._userDefinedMinorTicks)
+          return false;
+
+        if (_targetNumberOfMajorTicks != from._targetNumberOfMajorTicks)
+          return false;
+        if (_targetNumberOfMinorTicks != from._targetNumberOfMinorTicks)
+          return false;
+
+        if (_orgGrace != from._orgGrace)
+          return false;
+        if (_endGrace != from._endGrace)
+          return false;
+
+        if (_snapOrgToTick != from._snapOrgToTick)
+          return false;
+        if (_snapEndToTick != from._snapEndToTick)
+          return false;
+
+
+        if (!_suppressedMajorTicks.Equals(from._suppressedMajorTicks))
+          return false;
+
+        if (!_suppressedMinorTicks.Equals(from._suppressedMinorTicks))
+          return false;
+
+        if (!_additionalMajorTicks.Equals(from._additionalMajorTicks))
+          return false;
+
+        if (!_additionalMinorTicks.Equals(from._additionalMinorTicks))
+          return false;
+      }
+
+      return true;
+    }
+
+    public override int GetHashCode()
+    {
+      return base.GetHashCode() + 13 * _targetNumberOfMajorTicks + 31 * _targetNumberOfMinorTicks;
     }
 
     #region User parameters
@@ -708,6 +775,11 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       return _minorTicks.ToArray();
     }
+
+    // GetMajorTicksNormal : no need to override because no transformation available
+
+    // GetMinorTicksNormal : no need to override because no transformation available
+
 
     private static void ConvertOrgEndToDateTimeValues(AltaxoVariant org, AltaxoVariant end, out DateTime dorg, out DateTime dend)
     {

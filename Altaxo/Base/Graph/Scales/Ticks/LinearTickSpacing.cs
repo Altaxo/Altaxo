@@ -36,6 +36,42 @@ namespace Altaxo.Graph.Scales.Ticks
   /// </summary>
   public class LinearTickSpacing : NumericTickSpacing
   {
+    #region Inner classes
+
+    private class CachedMajorMinor : ICloneable
+    {
+      public double Org, End;
+      /// <summary>Physical span value between two major ticks.</summary>
+
+      public double MajorSpan;
+
+      /// <summary>Minor ticks per Major tick ( if there is one minor tick between two major ticks m_minorticks is 2!</summary>
+
+      public int MinorTicks;
+
+      /// <summary>Current axis origin divided by the major tick span value.</summary>
+      public double AxisOrgByMajor;
+
+      /// <summary>Current axis end divided by the major tick span value.</summary>
+      public double AxisEndByMajor;
+
+      public CachedMajorMinor(double org, double end, double major, int minor)
+      {
+        Org = org;
+        End = end;
+        MajorSpan = major;
+        MinorTicks = minor;
+      }
+
+      public object Clone()
+      {
+        return MemberwiseClone();
+      }
+    }
+
+    #endregion
+
+
     private static readonly double[] _majorSpanValues = new double[] { 1, 1.5, 2, 2.5, 3, 4, 5, 10 };
     private static readonly double[] _minorSpanValues = new double[] { 1, 1.5, 2, 2.5, 3, 4, 5, 10 };
 
@@ -75,37 +111,6 @@ namespace Altaxo.Graph.Scales.Ticks
     private List<double> _minorTicks;
 
     // Cached values
-    private class CachedMajorMinor : ICloneable
-    {
-      public double Org, End;
-      /// <summary>Physical span value between two major ticks.</summary>
-
-      public double MajorSpan;
-
-      /// <summary>Minor ticks per Major tick ( if there is one minor tick between two major ticks m_minorticks is 2!</summary>
-
-      public int MinorTicks;
-
-      /// <summary>Current axis origin divided by the major tick span value.</summary>
-      public double AxisOrgByMajor;
-
-      /// <summary>Current axis end divided by the major tick span value.</summary>
-      public double AxisEndByMajor;
-
-      public CachedMajorMinor(double org, double end, double major, int minor)
-      {
-        Org = org;
-        End = end;
-        MajorSpan = major;
-        MinorTicks = minor;
-      }
-
-      public object Clone()
-      {
-        return MemberwiseClone();
-      }
-    }
-
     private CachedMajorMinor _cachedMajorMinor;
 
     #region Serialization

@@ -58,6 +58,10 @@ namespace Altaxo.Serialization
 
     public static System.Globalization.CultureInfo CultureSettings
     {
+      get
+      {
+        return _cultureSettings;
+      }
       set
       {
         if (null == value)
