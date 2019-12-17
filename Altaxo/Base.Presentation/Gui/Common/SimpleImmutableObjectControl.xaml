@@ -6,11 +6,11 @@
              xmlns:local="clr-namespace:Altaxo.Gui.Data.Transformations"
              mc:Ignorable="d"
 						 MinWidth="200">
-    <Grid x:Name="_guiGrid">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="4" />
-            <ColumnDefinition Width="Auto" MinWidth="50" />
-        </Grid.ColumnDefinitions>
-    </Grid>
+	<Grid x:Name="_guiGrid">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="4" />
+			<ColumnDefinition Width="Auto" MinWidth="50" />
+		</Grid.ColumnDefinitions>
+	</Grid>
 </UserControl>

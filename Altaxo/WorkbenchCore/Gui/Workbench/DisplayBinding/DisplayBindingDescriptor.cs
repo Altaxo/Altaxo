@@ -17,9 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-
-using System;
-
 using System.Text.RegularExpressions;
 using Altaxo.AddInItems;
 using Altaxo.Main.Services;

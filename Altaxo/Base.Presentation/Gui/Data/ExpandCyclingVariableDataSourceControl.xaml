@@ -5,29 +5,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Grid.IsSharedSizeScope="True">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition  Height="Auto" />
-        </Grid.RowDefinitions>
-        <Expander Grid.Row="0" Background="BlanchedAlmond">
-            <Expander.Header>
-                <TextBlock Text="Data source import options" FontWeight="Bold" />
-            </Expander.Header>
-            <Border x:Name="_guiImportOptionsHost" />
-        </Expander>
-        <Expander Grid.Row="1" IsExpanded="True" Background="Lavender">
-            <Expander.Header>
-                <TextBlock Text="Expand options" FontWeight="Bold" />
-            </Expander.Header>
-            <Border x:Name="_guiProcessOptionsHost" />
-        </Expander>
-        <Expander Grid.Row="2" Background="BlanchedAlmond">
-            <Expander.Header>
-                <TextBlock Text="Input data source" FontWeight="Bold" />
-            </Expander.Header>
-            <Border x:Name="_guiProcessDataHost" />
-        </Expander>
-    </Grid>
+	<Grid Grid.IsSharedSizeScope="True">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition  Height="Auto" />
+		</Grid.RowDefinitions>
+		<Expander Grid.Row="0" Background="BlanchedAlmond">
+			<Expander.Header>
+				<TextBlock Text="Data source import options" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiImportOptionsHost" />
+		</Expander>
+		<Expander Grid.Row="1" IsExpanded="True" Background="Lavender">
+			<Expander.Header>
+				<TextBlock Text="Expand options" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiProcessOptionsHost" />
+		</Expander>
+		<Expander Grid.Row="2" Background="BlanchedAlmond">
+			<Expander.Header>
+				<TextBlock Text="Input data source" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiProcessDataHost" />
+		</Expander>
+	</Grid>
 </UserControl>

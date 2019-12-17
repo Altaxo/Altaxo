@@ -5,16 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <RadioButton Grid.Row="0" Margin="4" Name="_rbMin" Checked="EhMin_Checked">Min</RadioButton>
-        <RadioButton Grid.Row="1" Margin="4" Name="_rbMax" Checked="EhMax_Checked">Max</RadioButton>
-        <RadioButton Grid.Row="2" Margin="4" Name="_rbEnterNumber" Checked="EhNumber_Checked">Number:</RadioButton>
-        <local:Int32UpDown Grid.Row="3" Margin="4" Minimum="1" x:Name="_edNumber" ValueChanged="EhNumber_ValueChanged" LostFocus="EhNumber_LostFocus" />
-    </Grid>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<RadioButton Grid.Row="0" Margin="4" Name="_rbMin" Checked="EhMin_Checked">Min</RadioButton>
+		<RadioButton Grid.Row="1" Margin="4" Name="_rbMax" Checked="EhMax_Checked">Max</RadioButton>
+		<RadioButton Grid.Row="2" Margin="4" Name="_rbEnterNumber" Checked="EhNumber_Checked">Number:</RadioButton>
+		<local:Int32UpDown Grid.Row="3" Margin="4" Minimum="1" x:Name="_edNumber" ValueChanged="EhNumber_ValueChanged" LostFocus="EhNumber_LostFocus" />
+	</Grid>
 </UserControl>

@@ -98,6 +98,20 @@ namespace Altaxo.Gui.Main.Services
     }
 
     private bool _isViewDirectionRecentIsFirst;
+    public bool IsViewDirectionRecentIsFirst
+    {
+      get
+      {
+        return _isViewDirectionRecentIsFirst;
+      }
+      set
+      {
+        if (!(_isViewDirectionRecentIsFirst == value))
+        {
+          _isViewDirectionRecentIsFirst = value;
+        }
+      }
+    }
 
     private void EhContextMenuOpened(object sender, RoutedEventArgs e)
     {

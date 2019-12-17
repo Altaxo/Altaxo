@@ -31,45 +31,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of Methane and SO2.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'methane-so2.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Bell &amp; Herrig (2015)</para>
-    /// </remarks>
-    [CASRegistryNumber("74-82-8")]
-    [CASRegistryNumber("7446-09-5")]
-    public class Mixture_Methane_SO2 : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of Methane and SO2.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'methane-so2.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Bell &amp; Herrig (2015)</para>
+  /// </remarks>
+  [CASRegistryNumber("74-82-8")]
+  [CASRegistryNumber("7446-09-5")]
+  public class Mixture_Methane_SO2 : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_Methane_SO2 Instance { get; } = new Mixture_Methane_SO2();
+
+    #region Constants for the binary mixture of Methane and SO2
+
+    /// <summary>Gets the CAS registry number of component 1 (Methane).</summary>
+    public override string CASRegistryNumber1 { get; } = "74-82-8";
+
+    /// <summary>Gets the CAS registry number of component 2 (SO2).</summary>
+    public override string CASRegistryNumber2 { get; } = "7446-09-5";
+
+    #endregion Constants for the binary mixture of Methane and SO2
+
+    private Mixture_Methane_SO2()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_Methane_SO2 Instance { get; } = new Mixture_Methane_SO2();
+      _beta_T = 1.01576;
+      _gamma_T = 1.08456;
+      _beta_v = 1;
+      _gamma_v = 1;
+      _F = 0;
+      #endregion
 
-        #region Constants for the binary mixture of Methane and SO2
-
-        /// <summary>Gets the CAS registry number of component 1 (Methane).</summary>
-        public override string CASRegistryNumber1 { get; } = "74-82-8";
-
-        /// <summary>Gets the CAS registry number of component 2 (SO2).</summary>
-        public override string CASRegistryNumber2 { get; } = "7446-09-5";
-
-        #endregion Constants for the binary mixture of Methane and SO2
-
-        private Mixture_Methane_SO2()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 1.01576;
-            _gamma_T = 1.08456;
-            _beta_v = 1;
-            _gamma_v = 1;
-            _F = 0;
-            #endregion
-
-        }
     }
+  }
 }

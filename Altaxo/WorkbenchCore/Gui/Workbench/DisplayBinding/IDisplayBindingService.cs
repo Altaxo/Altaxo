@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Generic;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench

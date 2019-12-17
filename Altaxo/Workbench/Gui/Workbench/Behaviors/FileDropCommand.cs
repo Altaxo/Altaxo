@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Workbench
   /// <remarks>
   /// References:
   /// <para><see href="http://stackoverflow.com/questions/1034374/drag-and-drop-in-mvvm-with-scatterview"/></para>
-  /// <para><see cref="http://social.msdn.microsoft.com/Forums/de-DE/wpf/thread/21bed380-c485-44fb-8741-f9245524d0ae"/></para>
+  /// <para><see href="http://social.msdn.microsoft.com/Forums/de-DE/wpf/thread/21bed380-c485-44fb-8741-f9245524d0ae"/></para>
   /// </remarks>
   /// <example>
   /// Add the following to the XAMK of your UIElement:

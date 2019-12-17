@@ -60,7 +60,7 @@ namespace Altaxo.Main.Properties
     /// <value>
     /// The assembly version of Altaxo this bag was loaded from, or null if this is the default bag.
     /// </value>
-    public Version AssemblyVersionLoadedFrom { get; private set; }
+    public Version AssemblyVersionLoadedFrom { get; protected set; }
 
     #region Serialization
 

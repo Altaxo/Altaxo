@@ -23,8 +23,8 @@ using Altaxo.Gui.Workbench;
 namespace Altaxo.Workbench
 {
   /// <summary>
-  /// Default implementation for classes that wrap Navigational
-  /// information for the <see cref="NavigationService"/>.
+  /// Default implementation for classes that wrap navigational
+  /// information for the navigational services.
   /// </summary>
   public class DefaultNavigationPoint : INavigationPoint
   {

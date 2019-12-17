@@ -41,7 +41,7 @@ namespace Altaxo.Gui.AddInItems
     /// </summary>
     /// <param name="toolBarItems">The tool bar items.</param>
     /// <remarks>The workbench calls <see cref="IStatusUpdate.UpdateStatus"/> for all tool bars when
-    /// <see cref="CommandManager.RequerySuggested"/> fires.</remarks>
+    /// <see cref="System.Windows.Input.CommandManager.RequerySuggested"/> fires.</remarks>
     public static void UpdateStatus(IEnumerable toolBarItems)
     {
       MenuService.UpdateStatus(toolBarItems);
@@ -137,21 +137,16 @@ namespace Altaxo.Gui.AddInItems
       return tb;
     }
 
-    private sealed class CoreToolBar : ToolBar, IWeakEventListener
+    private sealed class CoreToolBar : ToolBar
     {
       public CoreToolBar()
       {
-        LanguageChangeWeakEventManager.AddListener(this);
+        LanguageChangeWeakEventManager.LanguageChanged += EhLanguageChanged;
       }
 
-      bool IWeakEventListener.ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
-      {
-        if (managerType == typeof(LanguageChangeWeakEventManager))
+      private void EhLanguageChanged()
         {
           MenuService.UpdateText(ItemsSource);
-          return true;
-        }
-        return false;
       }
     }
 

@@ -31,46 +31,46 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of Methane and Hexane.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'methane-hexane.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Kunz and Wagner (2007)</para>
-    /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
-    /// </remarks>
-    [CASRegistryNumber("74-82-8")]
-    [CASRegistryNumber("110-54-3")]
-    public class Mixture_Methane_Hexane : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of Methane and Hexane.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'methane-hexane.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Kunz and Wagner (2007)</para>
+  /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
+  /// </remarks>
+  [CASRegistryNumber("74-82-8")]
+  [CASRegistryNumber("110-54-3")]
+  public class Mixture_Methane_Hexane : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_Methane_Hexane Instance { get; } = new Mixture_Methane_Hexane();
+
+    #region Constants for the binary mixture of Methane and Hexane
+
+    /// <summary>Gets the CAS registry number of component 1 (Methane).</summary>
+    public override string CASRegistryNumber1 { get; } = "74-82-8";
+
+    /// <summary>Gets the CAS registry number of component 2 (Hexane).</summary>
+    public override string CASRegistryNumber2 { get; } = "110-54-3";
+
+    #endregion Constants for the binary mixture of Methane and Hexane
+
+    private Mixture_Methane_Hexane()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_Methane_Hexane Instance { get; } = new Mixture_Methane_Hexane();
+      _beta_T = 0.981844797;
+      _gamma_T = 1.330570181;
+      _beta_v = 0.958015294;
+      _gamma_v = 1.052643846;
+      _F = 0;
+      #endregion
 
-        #region Constants for the binary mixture of Methane and Hexane
-
-        /// <summary>Gets the CAS registry number of component 1 (Methane).</summary>
-        public override string CASRegistryNumber1 { get; } = "74-82-8";
-
-        /// <summary>Gets the CAS registry number of component 2 (Hexane).</summary>
-        public override string CASRegistryNumber2 { get; } = "110-54-3";
-
-        #endregion Constants for the binary mixture of Methane and Hexane
-
-        private Mixture_Methane_Hexane()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 0.981844797;
-            _gamma_T = 1.330570181;
-            _beta_v = 0.958015294;
-            _gamma_v = 1.052643846;
-            _F = 0;
-            #endregion
-
-        }
     }
+  }
 }

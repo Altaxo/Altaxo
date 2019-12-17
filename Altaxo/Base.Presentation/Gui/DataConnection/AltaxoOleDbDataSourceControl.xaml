@@ -5,22 +5,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Expander Grid.Row="0" Background="BlanchedAlmond">
-            <Expander.Header>
-                <TextBlock Text="Data source import options" FontWeight="Bold" />
-            </Expander.Header>
-            <Border x:Name="_guiImportOptionsHost" />
-        </Expander>
-        <Expander Grid.Row="1" IsExpanded="True" Background="Lavender">
-            <Expander.Header>
-                <TextBlock Text="Data query" FontWeight="Bold" />
-            </Expander.Header>
-            <Border x:Name="_guiDataQueryHost" />
-        </Expander>
-    </Grid>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Expander Grid.Row="0" Background="BlanchedAlmond">
+			<Expander.Header>
+				<TextBlock Text="Data source import options" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiImportOptionsHost" />
+		</Expander>
+		<Expander Grid.Row="1" IsExpanded="True" Background="Lavender">
+			<Expander.Header>
+				<TextBlock Text="Data query" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiDataQueryHost" />
+		</Expander>
+	</Grid>
 </UserControl>

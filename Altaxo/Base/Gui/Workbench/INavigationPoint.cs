@@ -21,7 +21,7 @@ using System;
 namespace Altaxo.Gui.Workbench
 {
   /// <summary>
-  /// Interface for classes that store Navigational information for
+  /// Interface for classes that store navigational information for
   /// the navigational services.
   /// </summary>
   public interface INavigationPoint : IComparable

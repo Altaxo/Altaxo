@@ -140,6 +140,8 @@ namespace Altaxo.Gui
         }
         else if (imageObject is byte[] byteArray)
         {
+          if (name.Contains("Xaml"))
+          {
           // then it is probably a Xaml text
           // Note: do not catch Exceptions here, because we want to know about wrong resources
           using (var ms = new System.IO.MemoryStream(byteArray))
@@ -147,6 +149,23 @@ namespace Altaxo.Gui
             var presentation = System.Windows.Markup.XamlReader.Load(ms);
             return (ImageSource)presentation;
           }
+          }
+          else
+          {
+
+            // Try a image
+            using (var ms = new System.IO.MemoryStream(byteArray))
+            {
+              var bi = BitmapFrame.Create(ms, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+              bi.Freeze();
+              return bi;
+            }
+          }
+        }
+        else if (imageObject is string s)
+        {
+          var presentation = System.Windows.Markup.XamlReader.Parse(s);
+          return (ImageSource)presentation;
         }
         else if (imageObject != null)
         {

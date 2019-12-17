@@ -34,7 +34,10 @@ namespace Altaxo.Gui.AddInItems
     protected readonly object _caller;
     protected readonly IReadOnlyCollection<ICondition> _conditions;
 
-    /// <summary>Cached value of _codon's property 'usedatacontext'. If true, the data context of this menu item is used as the parameter of <see cref="UpdateStatus(object)"/> instead of <see cref="_caller"/>.</summary>
+    /// <summary>
+    /// Cached value of _codon's property 'usedatacontext'.
+    /// If true, the data context of this menu item is used as the parameter
+    /// of <see cref="UpdateStatus"/> instead of <see cref="_caller"/>.</summary>
     internal bool _useDataContext;
 
     /// <summary>

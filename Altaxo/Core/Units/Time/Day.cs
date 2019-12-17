@@ -29,47 +29,47 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
-    [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
-    public class Day : UnitBase, IUnit
+  [UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
+  public class Day : UnitBase, IUnit
+  {
+    public const double OneDayInSeconds = 24 * 3600;
+
+    private static readonly Day _instance = new Day();
+
+    public static Day Instance { get { return _instance; } }
+
+    protected Day()
     {
-        public const double OneDayInSeconds = 24 * 3600;
-
-        private static readonly Day _instance = new Day();
-
-        public static Day Instance { get { return _instance; } }
-
-        protected Day()
-        {
-        }
-
-        public string Name
-        {
-            get { return "Day"; }
-        }
-
-        public string ShortCut
-        {
-            get { return "d"; }
-        }
-
-        public double ToSIUnit(double x)
-        {
-            return x * OneDayInSeconds;
-        }
-
-        public double FromSIUnit(double x)
-        {
-            return x / OneDayInSeconds;
-        }
-
-        public ISIPrefixList Prefixes
-        {
-            get { return SIPrefix.ListWithNonePrefixOnly; }
-        }
-
-        public SIUnit SIUnit
-        {
-            get { return Second.Instance; }
-        }
     }
+
+    public string Name
+    {
+      get { return "Day"; }
+    }
+
+    public string ShortCut
+    {
+      get { return "d"; }
+    }
+
+    public double ToSIUnit(double x)
+    {
+      return x * OneDayInSeconds;
+    }
+
+    public double FromSIUnit(double x)
+    {
+      return x / OneDayInSeconds;
+    }
+
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
+
+    public SIUnit SIUnit
+    {
+      get { return Second.Instance; }
+    }
+  }
 }

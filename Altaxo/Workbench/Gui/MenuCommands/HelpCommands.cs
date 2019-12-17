@@ -46,15 +46,6 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
-  public class LoadVS2010Theme : SimpleCommand
-  {
-    public override void Execute(object parameter)
-    {
-      var wb = Current.GetRequiredService<AltaxoWorkbench>();
-      wb.DockManagerTheme = "vs2010";
-    }
-  }
-
   public class LoadAeroTheme : SimpleCommand
   {
     public override void Execute(object parameter)
@@ -64,12 +55,48 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
+  public class LoadExpressionDarkTheme : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var wb = Current.GetRequiredService<AltaxoWorkbench>();
+      wb.DockManagerTheme = "expressiondark";
+    }
+  }
+
+  public class LoadExpressionLightTheme : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var wb = Current.GetRequiredService<AltaxoWorkbench>();
+      wb.DockManagerTheme = "expressionlight";
+    }
+  }
+
   public class LoadMetroTheme : SimpleCommand
   {
     public override void Execute(object parameter)
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();
       wb.DockManagerTheme = "metro";
+    }
+  }
+
+  public class LoadVS2010Theme : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var wb = Current.GetRequiredService<AltaxoWorkbench>();
+      wb.DockManagerTheme = "vs2010";
+    }
+  }
+
+  public class LoadVS2013BlueTheme : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var wb = Current.GetRequiredService<AltaxoWorkbench>();
+      wb.DockManagerTheme = "vs2013blue";
     }
   }
 
@@ -88,15 +115,6 @@ namespace Altaxo.Gui.MenuCommands
     {
       var wb = Current.GetRequiredService<AltaxoWorkbench>();
       wb.DockManagerTheme = "vs2013light";
-    }
-  }
-
-  public class LoadVS2013BlueTheme : SimpleCommand
-  {
-    public override void Execute(object parameter)
-    {
-      var wb = Current.GetRequiredService<AltaxoWorkbench>();
-      wb.DockManagerTheme = "vs2013blue";
     }
   }
 }

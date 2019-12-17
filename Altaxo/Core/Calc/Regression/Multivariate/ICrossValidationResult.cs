@@ -27,112 +27,112 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
+  /// <summary>
+  /// Stores the result(s) of cross validation.
+  /// </summary>
+  public interface ICrossValidationResult
+  {
     /// <summary>
-    /// Stores the result(s) of cross validation.
+    /// Gets the predicted y values for cross validation.
     /// </summary>
-    public interface ICrossValidationResult
+    /// <param name="numberOfFactor">Number of factors to use for prediction.</param>
+    /// <returns>The matrix of predicted y.(Columns=number of concentrations, rows=Number of points).</returns>
+    IROMatrix<double> GetPredictedY(int numberOfFactor);
+
+    /// <summary>
+    /// Gets the spectral residuals for cross validation.
+    /// </summary>
+    /// <param name="numberOfFactor">Number of factors to use for calculation.</param>
+    /// <returns>The matrix of spectral residuals. (rows=Number of points).</returns>
+    IROMatrix<double> GetSpectralResidual(int numberOfFactor);
+
+    /// <summary>
+    /// Get the cross PRESS vector.
+    /// </summary>
+    IROVector<double> CrossPRESS { get; }
+
+    /// <summary>
+    /// Returns the mean number of excluded spectra during cross validation.
+    /// </summary>
+    double MeanNumberOfExcludedSpectra { get; }
+  }
+
+  /// <summary>
+  /// Stores the result(s) of cross validation.
+  /// </summary>
+  public class CrossValidationResult : ICrossValidationResult
+  {
+    public IMatrix<double>[] _predictedY;
+    public IMatrix<double>[] _spectralResidual;
+    public IVector<double> _crossPRESS;
+    public double _MeanNumberExcludedSpectra;
+
+    public CrossValidationResult(int numberOfPoints, int numberOfY, int numberOfFactors, bool multipleSpectralResiduals)
     {
-        /// <summary>
-        /// Gets the predicted y values for cross validation.
-        /// </summary>
-        /// <param name="numberOfFactor">Number of factors to use for prediction.</param>
-        /// <returns>The matrix of predicted y.(Columns=number of concentrations, rows=Number of points).</returns>
-        IROMatrix<double> GetPredictedY(int numberOfFactor);
+      _predictedY = new IMatrix<double>[numberOfFactors + 1];
+      _spectralResidual = new IMatrix<double>[numberOfFactors + 1];
+      _crossPRESS = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
 
-        /// <summary>
-        /// Gets the spectral residuals for cross validation.
-        /// </summary>
-        /// <param name="numberOfFactor">Number of factors to use for calculation.</param>
-        /// <returns>The matrix of spectral residuals. (rows=Number of points).</returns>
-        IROMatrix<double> GetSpectralResidual(int numberOfFactor);
-
-        /// <summary>
-        /// Get the cross PRESS vector.
-        /// </summary>
-        IROVector<double> CrossPRESS { get; }
-
-        /// <summary>
-        /// Returns the mean number of excluded spectra during cross validation.
-        /// </summary>
-        double MeanNumberOfExcludedSpectra { get; }
+      for (int i = 0; i <= numberOfFactors; i++)
+      {
+        _predictedY[i] = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfPoints, numberOfY);
+        _spectralResidual[i] = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfPoints, multipleSpectralResiduals ? numberOfY : 1);
+      }
     }
 
     /// <summary>
-    /// Stores the result(s) of cross validation.
+    /// Gets the predicted y values for cross validation.
     /// </summary>
-    public class CrossValidationResult : ICrossValidationResult
+    /// <param name="numberOfFactor">Number of factors to use for prediction.</param>
+    /// <returns>The matrix of predicted y.(Columns=number of concentrations, rows=Number of points).</returns>
+    public IROMatrix<double> GetPredictedY(int numberOfFactor)
     {
-        public IMatrix<double>[] _predictedY;
-        public IMatrix<double>[] _spectralResidual;
-        public IVector<double> _crossPRESS;
-        public double _MeanNumberExcludedSpectra;
-
-        public CrossValidationResult(int numberOfPoints, int numberOfY, int numberOfFactors, bool multipleSpectralResiduals)
-        {
-            _predictedY = new IMatrix<double>[numberOfFactors + 1];
-            _spectralResidual = new IMatrix<double>[numberOfFactors + 1];
-            _crossPRESS = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
-
-            for (int i = 0; i <= numberOfFactors; i++)
-            {
-                _predictedY[i] = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfPoints, numberOfY);
-                _spectralResidual[i] = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfPoints, multipleSpectralResiduals ? numberOfY : 1);
-            }
-        }
-
-        /// <summary>
-        /// Gets the predicted y values for cross validation.
-        /// </summary>
-        /// <param name="numberOfFactor">Number of factors to use for prediction.</param>
-        /// <returns>The matrix of predicted y.(Columns=number of concentrations, rows=Number of points).</returns>
-        public IROMatrix<double> GetPredictedY(int numberOfFactor)
-        {
-            return _predictedY[numberOfFactor];
-        }
-
-        /// <summary>
-        /// Gets the predicted y values for cross validation.
-        /// </summary>
-        /// <param name="numberOfFactor">Number of factors to use for prediction.</param>
-        /// <returns>The matrix of predicted y.(Columns=number of concentrations, rows=Number of points).</returns>
-        public IMatrix<double> GetPredictedYW(int numberOfFactor)
-        {
-            return _predictedY[numberOfFactor];
-        }
-
-        /// <summary>
-        /// Gets the spectral residuals for cross validation.
-        /// </summary>
-        /// <param name="numberOfFactor">Number of factors to use for calculation.</param>
-        /// <returns>The matrix of spectral residuals. (rows=Number of points).</returns>
-        public IROMatrix<double> GetSpectralResidual(int numberOfFactor)
-        {
-            return _spectralResidual[numberOfFactor];
-        }
-
-        /// <summary>
-        /// Gets the spectral residuals for cross validation.
-        /// </summary>
-        /// <param name="numberOfFactor">Number of factors to use for calculation.</param>
-        /// <returns>The matrix of spectral residuals. (rows=Number of points).</returns>
-        public IMatrix<double> GetSpectralResidualW(int numberOfFactor)
-        {
-            return _spectralResidual[numberOfFactor];
-        }
-
-        /// <summary>
-        /// Get the cross PRESS vector.
-        /// </summary>
-        public IROVector<double> CrossPRESS { get { return _crossPRESS; } }
-
-        /// <summary>
-        /// Get the cross PRESS vector.
-        /// </summary>
-        public IROVector<double> CrossPRESSW { get { return _crossPRESS; } }
-
-        /// <summary>
-        /// Returns the mean number of excluded spectra during cross validation.
-        /// </summary>
-        public double MeanNumberOfExcludedSpectra { get { return _MeanNumberExcludedSpectra; } }
+      return _predictedY[numberOfFactor];
     }
+
+    /// <summary>
+    /// Gets the predicted y values for cross validation.
+    /// </summary>
+    /// <param name="numberOfFactor">Number of factors to use for prediction.</param>
+    /// <returns>The matrix of predicted y.(Columns=number of concentrations, rows=Number of points).</returns>
+    public IMatrix<double> GetPredictedYW(int numberOfFactor)
+    {
+      return _predictedY[numberOfFactor];
+    }
+
+    /// <summary>
+    /// Gets the spectral residuals for cross validation.
+    /// </summary>
+    /// <param name="numberOfFactor">Number of factors to use for calculation.</param>
+    /// <returns>The matrix of spectral residuals. (rows=Number of points).</returns>
+    public IROMatrix<double> GetSpectralResidual(int numberOfFactor)
+    {
+      return _spectralResidual[numberOfFactor];
+    }
+
+    /// <summary>
+    /// Gets the spectral residuals for cross validation.
+    /// </summary>
+    /// <param name="numberOfFactor">Number of factors to use for calculation.</param>
+    /// <returns>The matrix of spectral residuals. (rows=Number of points).</returns>
+    public IMatrix<double> GetSpectralResidualW(int numberOfFactor)
+    {
+      return _spectralResidual[numberOfFactor];
+    }
+
+    /// <summary>
+    /// Get the cross PRESS vector.
+    /// </summary>
+    public IROVector<double> CrossPRESS { get { return _crossPRESS; } }
+
+    /// <summary>
+    /// Get the cross PRESS vector.
+    /// </summary>
+    public IROVector<double> CrossPRESSW { get { return _crossPRESS; } }
+
+    /// <summary>
+    /// Returns the mean number of excluded spectra during cross validation.
+    /// </summary>
+    public double MeanNumberOfExcludedSpectra { get { return _MeanNumberExcludedSpectra; } }
+  }
 }

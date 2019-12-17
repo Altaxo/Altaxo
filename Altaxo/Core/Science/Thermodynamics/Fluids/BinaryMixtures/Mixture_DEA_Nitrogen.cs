@@ -31,45 +31,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of DEA and Nitrogen.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'dea-nitrogen.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Herrig (2015)</para>
-    /// </remarks>
-    [CASRegistryNumber("111-42-2")]
-    [CASRegistryNumber("7727-37-9")]
-    public class Mixture_DEA_Nitrogen : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of DEA and Nitrogen.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'dea-nitrogen.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Herrig (2015)</para>
+  /// </remarks>
+  [CASRegistryNumber("111-42-2")]
+  [CASRegistryNumber("7727-37-9")]
+  public class Mixture_DEA_Nitrogen : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_DEA_Nitrogen Instance { get; } = new Mixture_DEA_Nitrogen();
+
+    #region Constants for the binary mixture of DEA and Nitrogen
+
+    /// <summary>Gets the CAS registry number of component 1 (DEA).</summary>
+    public override string CASRegistryNumber1 { get; } = "111-42-2";
+
+    /// <summary>Gets the CAS registry number of component 2 (Nitrogen).</summary>
+    public override string CASRegistryNumber2 { get; } = "7727-37-9";
+
+    #endregion Constants for the binary mixture of DEA and Nitrogen
+
+    private Mixture_DEA_Nitrogen()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_DEA_Nitrogen Instance { get; } = new Mixture_DEA_Nitrogen();
+      _beta_T = 1;
+      _gamma_T = 1.414900573;
+      _beta_v = 1;
+      _gamma_v = 1.120799447;
+      _F = 0;
+      #endregion
 
-        #region Constants for the binary mixture of DEA and Nitrogen
-
-        /// <summary>Gets the CAS registry number of component 1 (DEA).</summary>
-        public override string CASRegistryNumber1 { get; } = "111-42-2";
-
-        /// <summary>Gets the CAS registry number of component 2 (Nitrogen).</summary>
-        public override string CASRegistryNumber2 { get; } = "7727-37-9";
-
-        #endregion Constants for the binary mixture of DEA and Nitrogen
-
-        private Mixture_DEA_Nitrogen()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 1;
-            _gamma_T = 1.414900573;
-            _beta_v = 1;
-            _gamma_v = 1.120799447;
-            _F = 0;
-            #endregion
-
-        }
     }
+  }
 }

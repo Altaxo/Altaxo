@@ -17,10 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System;
 using System.Collections.Generic;
-using System.Collections.Generic;
-using System.Text;
 using System.Text;
 using Altaxo.Main.Services;
 

@@ -77,8 +77,12 @@ namespace Altaxo.Serialization.Xml
     {
       try
       {
+#if NETFRAMEWORK
         System.Runtime.Remoting.ObjectHandle oh = System.Activator.CreateInstance(_assemblyName, _typeName);
         return oh.Unwrap();
+#else
+        throw new NotImplementedException("Need to find Core function for line below");
+#endif
       }
       catch (Exception)
       {

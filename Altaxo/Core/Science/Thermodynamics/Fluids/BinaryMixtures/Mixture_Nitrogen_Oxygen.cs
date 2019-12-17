@@ -31,45 +31,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of Nitrogen and Oxygen.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'nitrogen-oxygen.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Kunz and Wagner (2006) - original GERG-2004 mixture model used in EOS-CG!</para>
-    /// </remarks>
-    [CASRegistryNumber("7727-37-9")]
-    [CASRegistryNumber("7782-44-7")]
-    public class Mixture_Nitrogen_Oxygen : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of Nitrogen and Oxygen.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'nitrogen-oxygen.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Kunz and Wagner (2006) - original GERG-2004 mixture model used in EOS-CG!</para>
+  /// </remarks>
+  [CASRegistryNumber("7727-37-9")]
+  [CASRegistryNumber("7782-44-7")]
+  public class Mixture_Nitrogen_Oxygen : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_Nitrogen_Oxygen Instance { get; } = new Mixture_Nitrogen_Oxygen();
+
+    #region Constants for the binary mixture of Nitrogen and Oxygen
+
+    /// <summary>Gets the CAS registry number of component 1 (Nitrogen).</summary>
+    public override string CASRegistryNumber1 { get; } = "7727-37-9";
+
+    /// <summary>Gets the CAS registry number of component 2 (Oxygen).</summary>
+    public override string CASRegistryNumber2 { get; } = "7782-44-7";
+
+    #endregion Constants for the binary mixture of Nitrogen and Oxygen
+
+    private Mixture_Nitrogen_Oxygen()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_Nitrogen_Oxygen Instance { get; } = new Mixture_Nitrogen_Oxygen();
+      _beta_T = 0.997190589;
+      _gamma_T = 0.995157044;
+      _beta_v = 0.99952177;
+      _gamma_v = 0.997082328;
+      _F = 0;
+      #endregion
 
-        #region Constants for the binary mixture of Nitrogen and Oxygen
-
-        /// <summary>Gets the CAS registry number of component 1 (Nitrogen).</summary>
-        public override string CASRegistryNumber1 { get; } = "7727-37-9";
-
-        /// <summary>Gets the CAS registry number of component 2 (Oxygen).</summary>
-        public override string CASRegistryNumber2 { get; } = "7782-44-7";
-
-        #endregion Constants for the binary mixture of Nitrogen and Oxygen
-
-        private Mixture_Nitrogen_Oxygen()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 0.997190589;
-            _gamma_T = 0.995157044;
-            _beta_v = 0.99952177;
-            _gamma_v = 0.997082328;
-            _F = 0;
-            #endregion
-
-        }
     }
+  }
 }

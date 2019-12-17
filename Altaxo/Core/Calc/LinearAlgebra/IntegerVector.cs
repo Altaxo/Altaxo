@@ -26,53 +26,53 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <summary>
+  /// Vector of integer elements.
+  /// </summary>
+  public class IntegerVector
+  {
+    protected int[] x;
+    protected int len = 0;
+
     /// <summary>
-    /// Vector of integer elements.
+    /// Element accessor.
     /// </summary>
-    public class IntegerVector
+    public int this[int i]
     {
-        protected int[] x;
-        protected int len = 0;
-
-        /// <summary>
-        /// Element accessor.
-        /// </summary>
-        public int this[int i]
-        {
-            get { return x[i]; }
-            set { x[i] = value; }
-        }
-
-        /// <summary>
-        /// Sets all elements to the provided value.
-        /// </summary>
-        /// <param name="val">The value all elements are set to.</param>
-        public void SetAllElementsTo(int val)
-        {
-            for (int i = len - 1; i >= 0; --i)
-                x[i] = val;
-        }
-
-        /// <summary>
-        /// Clears all elements and deletes the underlying array.
-        /// </summary>
-        public void Clear()
-        {
-            x = null;
-            len = 0;
-        }
-
-        /// <summary>
-        /// Resizes the vector. Previosly stored data are lost.
-        /// </summary>
-        /// <param name="length">New length.</param>
-        public void Resize(int length)
-        {
-            if (x == null || length >= x.Length)
-            {
-                x = new int[length];
-            }
-            len = length;
-        }
+      get { return x[i]; }
+      set { x[i] = value; }
     }
+
+    /// <summary>
+    /// Sets all elements to the provided value.
+    /// </summary>
+    /// <param name="val">The value all elements are set to.</param>
+    public void SetAllElementsTo(int val)
+    {
+      for (int i = len - 1; i >= 0; --i)
+        x[i] = val;
+    }
+
+    /// <summary>
+    /// Clears all elements and deletes the underlying array.
+    /// </summary>
+    public void Clear()
+    {
+      x = null;
+      len = 0;
+    }
+
+    /// <summary>
+    /// Resizes the vector. Previosly stored data are lost.
+    /// </summary>
+    /// <param name="length">New length.</param>
+    public void Resize(int length)
+    {
+      if (x == null || length >= x.Length)
+      {
+        x = new int[length];
+      }
+      len = length;
+    }
+  }
 }

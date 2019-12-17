@@ -6,13 +6,13 @@
 						 xmlns:AltaxoCommon="clr-namespace:Altaxo.Gui.Common"
 	mc:Ignorable="d">
 
-    <Grid Grid.IsSharedSizeScope="True">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="4" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Border x:Name="_guiDataControlHost" Grid.Row="0" />
-        <Border x:Name="_guiOptionsControlHost" Grid.Row="2" />
-    </Grid>
+	<Grid Grid.IsSharedSizeScope="True">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Border x:Name="_guiDataControlHost" Grid.Row="0" />
+		<Border x:Name="_guiOptionsControlHost" Grid.Row="2" />
+	</Grid>
 </UserControl>

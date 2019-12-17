@@ -17,9 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-
-using System;
-
 using Altaxo.AddInItems;
 using Altaxo.Main.Services;
 

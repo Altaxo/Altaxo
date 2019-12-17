@@ -43,9 +43,6 @@ namespace Altaxo.Gui.Workbench
     /// <param name="name">
     /// The name of the requested bitmap (prefix, path and filename).
     /// </param>
-    /// <exception cref="FileNotFoundException">
-    /// Is thrown when the bitmap was not found in the file system.
-    /// </exception>
     public static Bitmap GetBitmap(string name)
     {
       Bitmap bmp = null;

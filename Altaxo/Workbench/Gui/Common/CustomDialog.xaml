@@ -6,16 +6,16 @@
         xmlns:local="clr-namespace:Altaxo.Gui.Common"
         mc:Ignorable="d"
         Title="SaveErrorChooseDialog" Height="300" Width="300">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-		</Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+        </Grid.RowDefinitions>
 
-		<Label x:Name="label" Grid.Row="0" />
-		<Grid x:Name="buttonGrid" Grid.Row="2">
-		</Grid>
-	</Grid>
+        <Label x:Name="label" Grid.Row="0" />
+        <Grid x:Name="buttonGrid" Grid.Row="2">
+        </Grid>
+    </Grid>
 </Window>

@@ -27,35 +27,35 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-    public class PCRCalibrationModel : MultivariateCalibrationModel
+  public class PCRCalibrationModel : MultivariateCalibrationModel
+  {
+    private IROMatrix<double> _xScores;
+    private IROMatrix<double> _xLoads;
+    private IROMatrix<double> _yLoads;
+    private IROVector<double> _crossProduct;
+
+    public IROMatrix<double> XScores
     {
-        private IROMatrix<double> _xScores;
-        private IROMatrix<double> _xLoads;
-        private IROMatrix<double> _yLoads;
-        private IROVector<double> _crossProduct;
-
-        public IROMatrix<double> XScores
-        {
-            get { return _xScores; }
-            set { _xScores = value; }
-        }
-
-        public IROMatrix<double> XLoads
-        {
-            get { return _xLoads; }
-            set { _xLoads = value; }
-        }
-
-        public IROMatrix<double> YLoads
-        {
-            get { return _yLoads; }
-            set { _yLoads = value; }
-        }
-
-        public IROVector<double> CrossProduct
-        {
-            get { return _crossProduct; }
-            set { _crossProduct = value; }
-        }
+      get { return _xScores; }
+      set { _xScores = value; }
     }
+
+    public IROMatrix<double> XLoads
+    {
+      get { return _xLoads; }
+      set { _xLoads = value; }
+    }
+
+    public IROMatrix<double> YLoads
+    {
+      get { return _yLoads; }
+      set { _yLoads = value; }
+    }
+
+    public IROVector<double> CrossProduct
+    {
+      get { return _crossProduct; }
+      set { _crossProduct = value; }
+    }
+  }
 }

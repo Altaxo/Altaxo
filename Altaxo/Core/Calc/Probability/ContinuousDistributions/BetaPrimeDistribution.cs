@@ -23,247 +23,247 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
+  /// <summary>
+  /// Provides generation of beta-prime distributed random numbers. This distribution is alsow known as inverted beta distribution.
+  /// </summary>
+  /// <remarks>
+  /// The implementation of the <see cref="BetaPrimeDistribution"/> type bases upon information presented on
+  ///   <a href="http://www.xycoon.com/ibeta.htm">Xycoon - Inverted Beta Distribution</a>.
+  /// </remarks>
+  public class BetaPrimeDistribution : ContinuousDistribution
+  {
+    #region instance fields
+
     /// <summary>
-    /// Provides generation of beta-prime distributed random numbers. This distribution is alsow known as inverted beta distribution.
+    /// Gets or sets the parameter alpha which is used for generation of beta-prime distributed random numbers.
     /// </summary>
-    /// <remarks>
-    /// The implementation of the <see cref="BetaPrimeDistribution"/> type bases upon information presented on
-    ///   <a href="http://www.xycoon.com/ibeta.htm">Xycoon - Inverted Beta Distribution</a>.
-    /// </remarks>
-    public class BetaPrimeDistribution : ContinuousDistribution
+    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+    public double Alpha
     {
-        #region instance fields
-
-        /// <summary>
-        /// Gets or sets the parameter alpha which is used for generation of beta-prime distributed random numbers.
-        /// </summary>
-        /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-        public double Alpha
-        {
-            get
-            {
-                return alpha;
-            }
-            set
-            {
-                Initialize(value, beta);
-            }
-        }
-
-        /// <summary>
-        /// Stores the parameter alpha which is used for generation of beta-prime distributed random numbers.
-        /// </summary>
-        private double alpha;
-
-        /// <summary>
-        /// Gets or sets the parameter beta which is used for generation of beta-prime distributed random numbers.
-        /// </summary>
-        /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
-        public double Beta
-        {
-            get
-            {
-                return beta;
-            }
-            set
-            {
-                Initialize(alpha, value);
-            }
-        }
-
-        /// <summary>
-        /// Stores the parameter beta which is used for generation of beta-prime distributed random numbers.
-        /// </summary>
-        private double beta;
-
-        /// <summary>
-        /// Stores a <see cref="BetaDistribution"/> object used for generation of beta-prime distributed random numbers.
-        /// </summary>
-        private BetaDistribution betaDistribution;
-
-        #endregion instance fields
-
-        #region construction
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using a
-        ///   <see cref="StandardGenerator"/> as underlying random number generator.
-        /// </summary>
-        public BetaPrimeDistribution()
-          : this(DefaultGenerator)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the specified
-        ///   <see cref="Generator"/> as underlying random number generator.
-        /// </summary>
-        /// <param name="generator">A <see cref="Generator"/> object.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-        /// </exception>
-        public BetaPrimeDistribution(Generator generator)
-          : this(2, 2, generator)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the default generator.
-        /// </summary>
-        public BetaPrimeDistribution(double alpha, double beta)
-          : this(alpha, beta, DefaultGenerator)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the specified
-        ///   <see cref="Generator"/> as underlying random number generator.
-        /// </summary>
-        /// <param name="alpha">First parameter of the distribution.</param>
-        /// <param name="beta">Second parameter of the distribution.</param>
-        /// <param name="generator">A <see cref="Generator"/> object.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-        /// </exception>
-        public BetaPrimeDistribution(double alpha, double beta, Generator generator)
-          : base(generator)
-        {
-            Initialize(alpha, beta);
-        }
-
-        #endregion construction
-
-        #region instance methods
-
-        /// <summary>
-        /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
-        /// </summary>
-        /// <param name="value">The value to check.</param>
-        /// <returns>
-        /// <see langword="true"/> if value is greater than 1.0; otherwise, <see langword="false"/>.
-        /// </returns>
-        public bool IsValidAlpha(double value)
-        {
-            return value > 1.0;
-        }
-
-        /// <summary>
-        /// Determines whether the specified value is valid for parameter <see cref="Beta"/>.
-        /// </summary>
-        /// <param name="value">The value to check.</param>
-        /// <returns>
-        /// <see langword="true"/> if value is greater than 1.0; otherwise, <see langword="false"/>.
-        /// </returns>
-        public bool IsValidBeta(double value)
-        {
-            return value > 1.0;
-        }
-
-        /// <summary>
-        /// Updates the helper variables that store intermediate results for generation of beta-prime distributed random
-        ///   numbers.
-        /// </summary>
-        public void Initialize(double alpha, double beta)
-        {
-            if (!IsValidAlpha(alpha))
-                throw new ArgumentOutOfRangeException("alpha has to be greater than 1");
-            if (!IsValidBeta(beta))
-                throw new ArgumentOutOfRangeException("beta has to be greater than 1");
-
-            this.alpha = alpha;
-            this.beta = beta;
-            betaDistribution = new BetaDistribution();
-            betaDistribution.Initialize(this.alpha, this.beta);
-        }
-
-        #endregion instance methods
-
-        #region overridden IDistribution members
-
-        /// <summary>
-        /// Gets the minimum possible value of beta-prime distributed random numbers.
-        /// </summary>
-        public override double Minimum
-        {
-            get
-            {
-                return 0.0;
-            }
-        }
-
-        /// <summary>
-        /// Gets the maximum possible value of beta-prime distributed random numbers.
-        /// </summary>
-        public override double Maximum
-        {
-            get
-            {
-                return double.MaxValue;
-            }
-        }
-
-        /// <summary>
-        /// Gets the mean value of beta-prime distributed random numbers.
-        /// </summary>
-        public override double Mean
-        {
-            get
-            {
-                return alpha / (beta - 1.0);
-            }
-        }
-
-        /// <summary>
-        /// Gets the median of beta-prime distributed random numbers.
-        /// </summary>
-        public override double Median
-        {
-            get
-            {
-                return double.NaN;
-            }
-        }
-
-        /// <summary>
-        /// Gets the variance of beta-prime distributed random numbers.
-        /// </summary>
-        public override double Variance
-        {
-            get
-            {
-                if (beta > 2)
-                {
-                    return alpha * (alpha + beta - 1.0) / (Math.Pow(beta - 1.0, 2) * (beta - 2.0));
-                }
-                else
-                {
-                    return double.NaN;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the mode of beta-prime distributed random numbers.
-        /// </summary>
-        public override double[] Mode
-        {
-            get
-            {
-                return new double[] { (alpha - 1.0) / (beta + 1.0) };
-            }
-        }
-
-        /// <summary>
-        /// Returns a beta-prime distributed floating point random number.
-        /// </summary>
-        /// <returns>A beta-prime distributed double-precision floating point number.</returns>
-        public override double NextDouble()
-        {
-            double betaVariate = betaDistribution.NextDouble();
-
-            return betaVariate / (1.0 - betaVariate);
-        }
-
-        #endregion overridden IDistribution members
+      get
+      {
+        return alpha;
+      }
+      set
+      {
+        Initialize(value, beta);
+      }
     }
+
+    /// <summary>
+    /// Stores the parameter alpha which is used for generation of beta-prime distributed random numbers.
+    /// </summary>
+    private double alpha;
+
+    /// <summary>
+    /// Gets or sets the parameter beta which is used for generation of beta-prime distributed random numbers.
+    /// </summary>
+    /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
+    public double Beta
+    {
+      get
+      {
+        return beta;
+      }
+      set
+      {
+        Initialize(alpha, value);
+      }
+    }
+
+    /// <summary>
+    /// Stores the parameter beta which is used for generation of beta-prime distributed random numbers.
+    /// </summary>
+    private double beta;
+
+    /// <summary>
+    /// Stores a <see cref="BetaDistribution"/> object used for generation of beta-prime distributed random numbers.
+    /// </summary>
+    private BetaDistribution betaDistribution;
+
+    #endregion instance fields
+
+    #region construction
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using a
+    ///   <see cref="StandardGenerator"/> as underlying random number generator.
+    /// </summary>
+    public BetaPrimeDistribution()
+      : this(DefaultGenerator)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the specified
+    ///   <see cref="Generator"/> as underlying random number generator.
+    /// </summary>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+    /// </exception>
+    public BetaPrimeDistribution(Generator generator)
+      : this(2, 2, generator)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the default generator.
+    /// </summary>
+    public BetaPrimeDistribution(double alpha, double beta)
+      : this(alpha, beta, DefaultGenerator)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the specified
+    ///   <see cref="Generator"/> as underlying random number generator.
+    /// </summary>
+    /// <param name="alpha">First parameter of the distribution.</param>
+    /// <param name="beta">Second parameter of the distribution.</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+    /// </exception>
+    public BetaPrimeDistribution(double alpha, double beta, Generator generator)
+      : base(generator)
+    {
+      Initialize(alpha, beta);
+    }
+
+    #endregion construction
+
+    #region instance methods
+
+    /// <summary>
+    /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+    /// </summary>
+    /// <param name="value">The value to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if value is greater than 1.0; otherwise, <see langword="false"/>.
+    /// </returns>
+    public bool IsValidAlpha(double value)
+    {
+      return value > 1.0;
+    }
+
+    /// <summary>
+    /// Determines whether the specified value is valid for parameter <see cref="Beta"/>.
+    /// </summary>
+    /// <param name="value">The value to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if value is greater than 1.0; otherwise, <see langword="false"/>.
+    /// </returns>
+    public bool IsValidBeta(double value)
+    {
+      return value > 1.0;
+    }
+
+    /// <summary>
+    /// Updates the helper variables that store intermediate results for generation of beta-prime distributed random
+    ///   numbers.
+    /// </summary>
+    public void Initialize(double alpha, double beta)
+    {
+      if (!IsValidAlpha(alpha))
+        throw new ArgumentOutOfRangeException("alpha has to be greater than 1");
+      if (!IsValidBeta(beta))
+        throw new ArgumentOutOfRangeException("beta has to be greater than 1");
+
+      this.alpha = alpha;
+      this.beta = beta;
+      betaDistribution = new BetaDistribution();
+      betaDistribution.Initialize(this.alpha, this.beta);
+    }
+
+    #endregion instance methods
+
+    #region overridden IDistribution members
+
+    /// <summary>
+    /// Gets the minimum possible value of beta-prime distributed random numbers.
+    /// </summary>
+    public override double Minimum
+    {
+      get
+      {
+        return 0.0;
+      }
+    }
+
+    /// <summary>
+    /// Gets the maximum possible value of beta-prime distributed random numbers.
+    /// </summary>
+    public override double Maximum
+    {
+      get
+      {
+        return double.MaxValue;
+      }
+    }
+
+    /// <summary>
+    /// Gets the mean value of beta-prime distributed random numbers.
+    /// </summary>
+    public override double Mean
+    {
+      get
+      {
+        return alpha / (beta - 1.0);
+      }
+    }
+
+    /// <summary>
+    /// Gets the median of beta-prime distributed random numbers.
+    /// </summary>
+    public override double Median
+    {
+      get
+      {
+        return double.NaN;
+      }
+    }
+
+    /// <summary>
+    /// Gets the variance of beta-prime distributed random numbers.
+    /// </summary>
+    public override double Variance
+    {
+      get
+      {
+        if (beta > 2)
+        {
+          return alpha * (alpha + beta - 1.0) / (Math.Pow(beta - 1.0, 2) * (beta - 2.0));
+        }
+        else
+        {
+          return double.NaN;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the mode of beta-prime distributed random numbers.
+    /// </summary>
+    public override double[] Mode
+    {
+      get
+      {
+        return new double[] { (alpha - 1.0) / (beta + 1.0) };
+      }
+    }
+
+    /// <summary>
+    /// Returns a beta-prime distributed floating point random number.
+    /// </summary>
+    /// <returns>A beta-prime distributed double-precision floating point number.</returns>
+    public override double NextDouble()
+    {
+      double betaVariate = betaDistribution.NextDouble();
+
+      return betaVariate / (1.0 - betaVariate);
+    }
+
+    #endregion overridden IDistribution members
+  }
 }

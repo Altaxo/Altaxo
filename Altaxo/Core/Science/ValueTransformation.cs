@@ -29,281 +29,281 @@ using System.Text;
 
 namespace Altaxo.Science
 {
-    public interface IDoubleToDoubleValueTransformation
+  public interface IDoubleToDoubleValueTransformation
+  {
+    double Transform(double value);
+
+    string StringRepresentation { get; }
+
+    IDoubleToDoubleValueTransformation BackTransformation { get; }
+  }
+
+  public class InverseTransformation : IDoubleToDoubleValueTransformation
+  {
+    public double Transform(double value)
     {
-        double Transform(double value);
-
-        string StringRepresentation { get; }
-
-        IDoubleToDoubleValueTransformation BackTransformation { get; }
+      return 1 / value;
     }
 
-    public class InverseTransformation : IDoubleToDoubleValueTransformation
+    public string StringRepresentation
     {
-        public double Transform(double value)
-        {
-            return 1 / value;
-        }
-
-        public string StringRepresentation
-        {
-            get { return "1/x"; }
-        }
-
-        public IDoubleToDoubleValueTransformation BackTransformation
-        {
-            get { return this; }
-        }
+      get { return "1/x"; }
     }
 
-    public class NegateTransformation : IDoubleToDoubleValueTransformation
+    public IDoubleToDoubleValueTransformation BackTransformation
     {
-        public double Transform(double value)
-        {
-            return -value;
-        }
+      get { return this; }
+    }
+  }
 
-        public string StringRepresentation
-        {
-            get { return "-x"; }
-        }
-
-        public IDoubleToDoubleValueTransformation BackTransformation
-        {
-            get { return this; }
-        }
+  public class NegateTransformation : IDoubleToDoubleValueTransformation
+  {
+    public double Transform(double value)
+    {
+      return -value;
     }
 
-    public class OffsetTransformation : IDoubleToDoubleValueTransformation
+    public string StringRepresentation
     {
-        private double _offsetValue;
-
-        public double Transform(double value)
-        {
-            return value + _offsetValue;
-        }
-
-        public string StringRepresentation
-        {
-            get { return string.Format("(x+{0})", _offsetValue); }
-        }
-
-        public IDoubleToDoubleValueTransformation BackTransformation
-        {
-            get { return new OffsetTransformation() { _offsetValue = -_offsetValue }; }
-        }
+      get { return "-x"; }
     }
 
-    public class ScaleTransformation : IDoubleToDoubleValueTransformation
+    public IDoubleToDoubleValueTransformation BackTransformation
     {
-        private double _scaleValue;
+      get { return this; }
+    }
+  }
 
-        public double Transform(double value)
-        {
-            return value * _scaleValue;
-        }
+  public class OffsetTransformation : IDoubleToDoubleValueTransformation
+  {
+    private double _offsetValue;
 
-        public string StringRepresentation
-        {
-            get { return string.Format("({0}*x)", _scaleValue); }
-        }
-
-        public IDoubleToDoubleValueTransformation BackTransformation
-        {
-            get { return new ScaleTransformation() { _scaleValue = 1 / _scaleValue }; }
-        }
+    public double Transform(double value)
+    {
+      return value + _offsetValue;
     }
 
-    public class NaturalLogarithmTransformation : IDoubleToDoubleValueTransformation
+    public string StringRepresentation
     {
-        public double Transform(double value)
-        {
-            return Math.Log(value);
-        }
-
-        public string StringRepresentation
-        {
-            get { return "ln(x)"; }
-        }
-
-        public IDoubleToDoubleValueTransformation BackTransformation
-        {
-            get { return new NaturalExponentialTransform(); }
-        }
+      get { return string.Format("(x+{0})", _offsetValue); }
     }
 
-    public class NaturalExponentialTransform : IDoubleToDoubleValueTransformation
+    public IDoubleToDoubleValueTransformation BackTransformation
     {
-        public double Transform(double value)
-        {
-            return Math.Exp(value);
-        }
+      get { return new OffsetTransformation() { _offsetValue = -_offsetValue }; }
+    }
+  }
 
-        public string StringRepresentation
-        {
-            get { return "exp(x)"; }
-        }
+  public class ScaleTransformation : IDoubleToDoubleValueTransformation
+  {
+    private double _scaleValue;
 
-        public IDoubleToDoubleValueTransformation BackTransformation
-        {
-            get { return new NaturalLogarithmTransformation(); }
-        }
+    public double Transform(double value)
+    {
+      return value * _scaleValue;
     }
 
-    public class CombinedTransform : IDoubleToDoubleValueTransformation
+    public string StringRepresentation
     {
-        private List<IDoubleToDoubleValueTransformation> _transformations = new List<IDoubleToDoubleValueTransformation>();
-
-        public double Transform(double value)
-        {
-            foreach (var item in _transformations)
-                value = item.Transform(value);
-            return value;
-        }
-
-        public string StringRepresentation
-        {
-            get { return "CombinedTransform"; }
-        }
-
-        public IDoubleToDoubleValueTransformation BackTransformation
-        {
-            get
-            {
-                var t = new CombinedTransform();
-                for (int i = _transformations.Count - 1; i >= 0; i--)
-                    t._transformations.Add(_transformations[i].BackTransformation);
-                return t;
-            }
-        }
+      get { return string.Format("({0}*x)", _scaleValue); }
     }
 
-    public enum TransformedValueRepresentation
+    public IDoubleToDoubleValueTransformation BackTransformation
     {
-        /// <summary>Value is used directly (no transformation).</summary>
-        Original = 0,
+      get { return new ScaleTransformation() { _scaleValue = 1 / _scaleValue }; }
+    }
+  }
 
-        /// <summary>Value is used in form of its inverse.</summary>
-        Inverse,
-
-        /// <summary>Value is used in form of its negative.</summary>
-        Negative,
-
-        /// <summary>Value is used in the form of its decadic logarithm.</summary>
-        DecadicLogarithm,
-
-        /// <summary>Value is used in the form of its negative decadic logarithm.</summary>
-        NegativeDecadicLogarithm,
-
-        /// <summary>Value is used in the form of its natural logarithm.</summary>
-        NaturalLogarithm,
-
-        /// <summary>Value is used in the form of its negative natural logarithm.</summary>
-        NegativeNaturalLogarithm
+  public class NaturalLogarithmTransformation : IDoubleToDoubleValueTransformation
+  {
+    public double Transform(double value)
+    {
+      return Math.Log(value);
     }
 
-    public struct TransformedValue
+    public string StringRepresentation
     {
-        #region Transformations (static)
-
-        public static double TransformedValueToBaseValue(double srcValue, TransformedValueRepresentation srcUnit)
-        {
-            switch (srcUnit)
-            {
-                case TransformedValueRepresentation.Original:
-                    return srcValue;
-
-                case TransformedValueRepresentation.Inverse:
-                    return 1 / srcValue;
-
-                case TransformedValueRepresentation.Negative:
-                    return -srcValue;
-
-                case TransformedValueRepresentation.DecadicLogarithm:
-                    return Math.Pow(10, srcValue);
-
-                case TransformedValueRepresentation.NegativeDecadicLogarithm:
-                    return Math.Pow(10, -srcValue);
-
-                case TransformedValueRepresentation.NaturalLogarithm:
-                    return Math.Exp(srcValue);
-
-                case TransformedValueRepresentation.NegativeNaturalLogarithm:
-                    return Math.Exp(-srcValue);
-
-                default:
-                    throw new ArgumentOutOfRangeException("ValueTransformationType unknown: " + srcUnit.ToString());
-            }
-        }
-
-        public static double BaseValueToTransformedValue(double baseValue, TransformedValueRepresentation destTransform)
-        {
-            switch (destTransform)
-            {
-                case TransformedValueRepresentation.Original:
-                    return baseValue;
-
-                case TransformedValueRepresentation.Inverse:
-                    return 1 / baseValue;
-
-                case TransformedValueRepresentation.Negative:
-                    return -baseValue;
-
-                case TransformedValueRepresentation.DecadicLogarithm:
-                    return Math.Log10(baseValue);
-
-                case TransformedValueRepresentation.NegativeDecadicLogarithm:
-                    return -Math.Log10(baseValue);
-
-                case TransformedValueRepresentation.NaturalLogarithm:
-                    return Math.Log(baseValue);
-
-                case TransformedValueRepresentation.NegativeNaturalLogarithm:
-                    return -Math.Log(baseValue);
-
-                default:
-                    throw new ArgumentOutOfRangeException("ValueTransformationType unknown: " + destTransform.ToString());
-            }
-        }
-
-        public static string GetFormula(string nameOfVariable, TransformedValueRepresentation transform)
-        {
-            switch (transform)
-            {
-                case TransformedValueRepresentation.Original:
-                    return nameOfVariable;
-
-                case TransformedValueRepresentation.Inverse:
-                    return "1/" + nameOfVariable;
-
-                case TransformedValueRepresentation.Negative:
-                    return "-" + nameOfVariable;
-
-                case TransformedValueRepresentation.DecadicLogarithm:
-                    return "lg(" + nameOfVariable + ")";
-
-                case TransformedValueRepresentation.NegativeDecadicLogarithm:
-                    return "-lg(" + nameOfVariable + ")";
-
-                case TransformedValueRepresentation.NaturalLogarithm:
-                    return "ln(" + nameOfVariable + ")";
-
-                case TransformedValueRepresentation.NegativeNaturalLogarithm:
-                    return "-ln(" + nameOfVariable + ")";
-
-                default:
-                    throw new ArgumentOutOfRangeException("ValueTransformationType unknown: " + transform.ToString());
-            }
-        }
-
-        public static double FromTo(double srcValue, TransformedValueRepresentation srcUnit, TransformedValueRepresentation destUnit)
-        {
-            if (srcUnit == destUnit)
-                return srcValue;
-            else
-                return BaseValueToTransformedValue(TransformedValueToBaseValue(srcValue, srcUnit), destUnit);
-        }
-
-        #endregion Transformations (static)
+      get { return "ln(x)"; }
     }
+
+    public IDoubleToDoubleValueTransformation BackTransformation
+    {
+      get { return new NaturalExponentialTransform(); }
+    }
+  }
+
+  public class NaturalExponentialTransform : IDoubleToDoubleValueTransformation
+  {
+    public double Transform(double value)
+    {
+      return Math.Exp(value);
+    }
+
+    public string StringRepresentation
+    {
+      get { return "exp(x)"; }
+    }
+
+    public IDoubleToDoubleValueTransformation BackTransformation
+    {
+      get { return new NaturalLogarithmTransformation(); }
+    }
+  }
+
+  public class CombinedTransform : IDoubleToDoubleValueTransformation
+  {
+    private List<IDoubleToDoubleValueTransformation> _transformations = new List<IDoubleToDoubleValueTransformation>();
+
+    public double Transform(double value)
+    {
+      foreach (var item in _transformations)
+        value = item.Transform(value);
+      return value;
+    }
+
+    public string StringRepresentation
+    {
+      get { return "CombinedTransform"; }
+    }
+
+    public IDoubleToDoubleValueTransformation BackTransformation
+    {
+      get
+      {
+        var t = new CombinedTransform();
+        for (int i = _transformations.Count - 1; i >= 0; i--)
+          t._transformations.Add(_transformations[i].BackTransformation);
+        return t;
+      }
+    }
+  }
+
+  public enum TransformedValueRepresentation
+  {
+    /// <summary>Value is used directly (no transformation).</summary>
+    Original = 0,
+
+    /// <summary>Value is used in form of its inverse.</summary>
+    Inverse,
+
+    /// <summary>Value is used in form of its negative.</summary>
+    Negative,
+
+    /// <summary>Value is used in the form of its decadic logarithm.</summary>
+    DecadicLogarithm,
+
+    /// <summary>Value is used in the form of its negative decadic logarithm.</summary>
+    NegativeDecadicLogarithm,
+
+    /// <summary>Value is used in the form of its natural logarithm.</summary>
+    NaturalLogarithm,
+
+    /// <summary>Value is used in the form of its negative natural logarithm.</summary>
+    NegativeNaturalLogarithm
+  }
+
+  public struct TransformedValue
+  {
+    #region Transformations (static)
+
+    public static double TransformedValueToBaseValue(double srcValue, TransformedValueRepresentation srcUnit)
+    {
+      switch (srcUnit)
+      {
+        case TransformedValueRepresentation.Original:
+          return srcValue;
+
+        case TransformedValueRepresentation.Inverse:
+          return 1 / srcValue;
+
+        case TransformedValueRepresentation.Negative:
+          return -srcValue;
+
+        case TransformedValueRepresentation.DecadicLogarithm:
+          return Math.Pow(10, srcValue);
+
+        case TransformedValueRepresentation.NegativeDecadicLogarithm:
+          return Math.Pow(10, -srcValue);
+
+        case TransformedValueRepresentation.NaturalLogarithm:
+          return Math.Exp(srcValue);
+
+        case TransformedValueRepresentation.NegativeNaturalLogarithm:
+          return Math.Exp(-srcValue);
+
+        default:
+          throw new ArgumentOutOfRangeException("ValueTransformationType unknown: " + srcUnit.ToString());
+      }
+    }
+
+    public static double BaseValueToTransformedValue(double baseValue, TransformedValueRepresentation destTransform)
+    {
+      switch (destTransform)
+      {
+        case TransformedValueRepresentation.Original:
+          return baseValue;
+
+        case TransformedValueRepresentation.Inverse:
+          return 1 / baseValue;
+
+        case TransformedValueRepresentation.Negative:
+          return -baseValue;
+
+        case TransformedValueRepresentation.DecadicLogarithm:
+          return Math.Log10(baseValue);
+
+        case TransformedValueRepresentation.NegativeDecadicLogarithm:
+          return -Math.Log10(baseValue);
+
+        case TransformedValueRepresentation.NaturalLogarithm:
+          return Math.Log(baseValue);
+
+        case TransformedValueRepresentation.NegativeNaturalLogarithm:
+          return -Math.Log(baseValue);
+
+        default:
+          throw new ArgumentOutOfRangeException("ValueTransformationType unknown: " + destTransform.ToString());
+      }
+    }
+
+    public static string GetFormula(string nameOfVariable, TransformedValueRepresentation transform)
+    {
+      switch (transform)
+      {
+        case TransformedValueRepresentation.Original:
+          return nameOfVariable;
+
+        case TransformedValueRepresentation.Inverse:
+          return "1/" + nameOfVariable;
+
+        case TransformedValueRepresentation.Negative:
+          return "-" + nameOfVariable;
+
+        case TransformedValueRepresentation.DecadicLogarithm:
+          return "lg(" + nameOfVariable + ")";
+
+        case TransformedValueRepresentation.NegativeDecadicLogarithm:
+          return "-lg(" + nameOfVariable + ")";
+
+        case TransformedValueRepresentation.NaturalLogarithm:
+          return "ln(" + nameOfVariable + ")";
+
+        case TransformedValueRepresentation.NegativeNaturalLogarithm:
+          return "-ln(" + nameOfVariable + ")";
+
+        default:
+          throw new ArgumentOutOfRangeException("ValueTransformationType unknown: " + transform.ToString());
+      }
+    }
+
+    public static double FromTo(double srcValue, TransformedValueRepresentation srcUnit, TransformedValueRepresentation destUnit)
+    {
+      if (srcUnit == destUnit)
+        return srcValue;
+      else
+        return BaseValueToTransformedValue(TransformedValueToBaseValue(srcValue, srcUnit), destUnit);
+    }
+
+    #endregion Transformations (static)
+  }
 }

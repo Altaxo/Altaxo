@@ -428,9 +428,13 @@ namespace Altaxo.Main
     #region String extensions
 
     /// <summary>
-    /// Removes <param name="stringToRemove" /> from the start of this string.
-    /// Throws ArgumentException if this string does not start with <param name="stringToRemove" />.
+    /// Removes <paramref name="stringToRemove"/> from the start of this string.
+    /// Throws ArgumentException if this string does not start with <paramref name="stringToRemove"/>.
     /// </summary>
+    /// <param name="s">String from which we want to remove another string at the start.</param>
+    /// <param name="stringToRemove">The string to remove.</param>
+    /// <returns>The string <paramref name="s"/> without string <paramref name="stringToRemove"/> at the start.</returns>
+    /// <exception cref="ArgumentException"></exception>
     public static string RemoveFromStart(this string s, string stringToRemove)
     {
       if (s == null)
@@ -446,6 +450,10 @@ namespace Altaxo.Main
     /// Removes <paramref name="stringToRemove" /> from the end of this string.
     /// Throws ArgumentException if this string does not end with <paramref name="stringToRemove" />.
     /// </summary>
+    /// <param name="s">String from which we want to remove another string at the end.</param>
+    /// <param name="stringToRemove">The string to remove.</param>
+    /// <returns>The string <paramref name="s"/> without string <paramref name="stringToRemove"/> at the end.</returns>
+    /// <exception cref="ArgumentException"></exception>
     public static string RemoveFromEnd(this string s, string stringToRemove)
     {
       if (s == null)
@@ -477,9 +485,12 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Takes at most <param name="length" /> first characters from string.
+    /// Takes at most <paramref name="length" /> first characters from string <paramref name="s"/>.
     /// String can be null.
     /// </summary>
+    /// <param name="s">The string to take from.</param>
+    /// <param name="length">The number of characters taken.</param>
+    /// <returns>The first <paramref name="length"/> characters of <paramref name="s"/>.</returns>
     public static string TakeStart(this string s, int length)
     {
       if (string.IsNullOrEmpty(s) || length >= s.Length)
@@ -488,9 +499,12 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Takes at most <param name="length" /> first characters from string, and appends '...' if string is longer.
+    /// Takes at most <paramref name="length" /> first characters from string, and appends '...' if string is longer.
     /// String can be null.
     /// </summary>
+    /// <param name="s">The string to take from.</param>
+    /// <param name="length">The number of characters taken at most.</param>
+    /// <returns>The first <paramref name="length"/> characters of <paramref name="s"/> at most, and an ellipsis if the string was longer.</returns>
     public static string TakeStartEllipsis(this string s, int length)
     {
       if (string.IsNullOrEmpty(s) || length >= s.Length)

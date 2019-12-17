@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Main.Services;
-using Altaxo.Main.Services.Files;
 
 namespace Altaxo.Main
 {

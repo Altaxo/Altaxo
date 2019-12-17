@@ -84,19 +84,6 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     string CurrentLayoutConfiguration { get; set; }
 
-    /// <summary>
-    /// Is called, when a workbench view was opened
-    /// </summary>
-    /// <example>
-    /// WorkbenchSingleton.WorkbenchCreated += delegate {
-    /// 	WorkbenchSingleton.Workbench.ViewOpened += ...;
-    /// };
-    /// </example>
-    event EventHandler<ViewContentEventArgs> ViewOpened;
 
-    /// <summary>
-    /// Is called, when a workbench view was closed
-    /// </summary>
-    event EventHandler<ViewContentEventArgs> ViewClosed;
   }
 }

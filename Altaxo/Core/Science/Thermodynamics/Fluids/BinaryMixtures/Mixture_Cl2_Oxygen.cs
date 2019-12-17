@@ -31,45 +31,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of Cl2 and Oxygen.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'chlorine-oxygen.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Herrig (2015)</para>
-    /// </remarks>
-    [CASRegistryNumber("7782-50-5")]
-    [CASRegistryNumber("7782-44-7")]
-    public class Mixture_Cl2_Oxygen : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of Cl2 and Oxygen.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'chlorine-oxygen.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Herrig (2015)</para>
+  /// </remarks>
+  [CASRegistryNumber("7782-50-5")]
+  [CASRegistryNumber("7782-44-7")]
+  public class Mixture_Cl2_Oxygen : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_Cl2_Oxygen Instance { get; } = new Mixture_Cl2_Oxygen();
+
+    #region Constants for the binary mixture of Cl2 and Oxygen
+
+    /// <summary>Gets the CAS registry number of component 1 (Cl2).</summary>
+    public override string CASRegistryNumber1 { get; } = "7782-50-5";
+
+    /// <summary>Gets the CAS registry number of component 2 (Oxygen).</summary>
+    public override string CASRegistryNumber2 { get; } = "7782-44-7";
+
+    #endregion Constants for the binary mixture of Cl2 and Oxygen
+
+    private Mixture_Cl2_Oxygen()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_Cl2_Oxygen Instance { get; } = new Mixture_Cl2_Oxygen();
+      _beta_T = 1;
+      _gamma_T = 1.125566785;
+      _beta_v = 1;
+      _gamma_v = 1.022883184;
+      _F = 0;
+      #endregion
 
-        #region Constants for the binary mixture of Cl2 and Oxygen
-
-        /// <summary>Gets the CAS registry number of component 1 (Cl2).</summary>
-        public override string CASRegistryNumber1 { get; } = "7782-50-5";
-
-        /// <summary>Gets the CAS registry number of component 2 (Oxygen).</summary>
-        public override string CASRegistryNumber2 { get; } = "7782-44-7";
-
-        #endregion Constants for the binary mixture of Cl2 and Oxygen
-
-        private Mixture_Cl2_Oxygen()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 1;
-            _gamma_T = 1.125566785;
-            _beta_v = 1;
-            _gamma_v = 1.022883184;
-            _F = 0;
-            #endregion
-
-        }
     }
+  }
 }

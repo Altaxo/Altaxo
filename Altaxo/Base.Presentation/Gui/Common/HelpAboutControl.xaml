@@ -7,105 +7,105 @@
              mc:Ignorable="d"
              Width="500"
 						Title="About Altaxo">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.RowSpan="3" Content="Altaxo" FontFamily="Times New Roman" FontSize="32" HorizontalAlignment="Center" />
-        <Label Grid.Row="0" Content="(C) 2002-2017 Dr. Dirk Lellinger" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" Margin="0,-4,0,-4" />
-        <Label Grid.Row="1" Content="{Binding Path=VersionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
-        <Label Grid.Row="2" Content="{Binding Path=RevisionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
-        <Label Grid.Row="3" Content="data processing / data plotting program" FontFamily="Times New Roman" FontSize="24" HorizontalAlignment="Center" />
-        <RichTextBox Grid.Row="4">
-            <RichTextBox.Document>
-                <FlowDocument>
-                    <Paragraph>You can obtain the latest version of Altaxo from
-                        <Hyperlink Foreground="Blue" NavigateUri="http://sourceforge.net/projects/altaxo" PreviewMouseDown="EhOpenExplorer" Cursor="Arrow">
-                            http://sourceforge.net/projects/altaxo
-                        </Hyperlink>
-                    </Paragraph>
-                    <Paragraph TextAlignment="Center">ACKNOWLEDGEMENTS</Paragraph>
-                    <Paragraph>
-                        This projects would not be possible without the great contributions of the open
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Label Grid.Row="0" Grid.RowSpan="3" Content="Altaxo" FontFamily="Times New Roman" FontSize="32" HorizontalAlignment="Center" />
+		<Label Grid.Row="0" Content="(C) 2002-2017 Dr. Dirk Lellinger" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" Margin="0,-4,0,-4" />
+		<Label Grid.Row="1" Content="{Binding Path=VersionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
+		<Label Grid.Row="2" Content="{Binding Path=RevisionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
+		<Label Grid.Row="3" Content="data processing / data plotting program" FontFamily="Times New Roman" FontSize="24" HorizontalAlignment="Center" />
+		<RichTextBox Grid.Row="4">
+			<RichTextBox.Document>
+				<FlowDocument>
+					<Paragraph>You can obtain the latest version of Altaxo from
+						<Hyperlink Foreground="Blue" NavigateUri="http://sourceforge.net/projects/altaxo" PreviewMouseDown="EhOpenExplorer" Cursor="Arrow">
+							http://sourceforge.net/projects/altaxo
+						</Hyperlink>
+					</Paragraph>
+					<Paragraph TextAlignment="Center">ACKNOWLEDGEMENTS</Paragraph>
+					<Paragraph>
+						This projects would not be possible without the great contributions of the open
 			    source community. I want to thank the authors of the projects, that are included
     directly or indirectly in this project:
-                    </Paragraph>
-                    <List>
-                        <ListItem>
-                            <Paragraph>SharpDevelop, (www.icsharpcode.net), from which the GUI and the cool code completion
+					</Paragraph>
+					<List>
+						<ListItem>
+							<Paragraph>SharpDevelop, (www.icsharpcode.net), from which the GUI and the cool code completion
   and syntax highlighting is adopted.
 - The authors of the projects that are included in SharpDevelop and therefore also in Altaxo</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>Matpack (B.Gammel, www.matpack.de). A lot of the function library was adopted from the
+						</ListItem>
+						<ListItem>
+							<Paragraph>Matpack (B.Gammel, www.matpack.de). A lot of the function library was adopted from the
   C++ sources of Matpack.</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>Exocortex DSP (exocortexdsp.sourceforge.net) contributes the complex library.</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>dnAnalytics (www.dnAnalytics.net) for part of the linear algebra and optimization functions.</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>Gongsolutions (https://github.com/punker76/gong-wpf-dragdrop) for the WPF drag-drop library.</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>Lim Bio Liong for the excellent article 'Building COM Servers in .NET'. Furthermore  the author of 'Dazzled-Box', guangboo49, for the example how to make a graphical COM server as .NET program.</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>Angus Johnson for the excellent polygon clipping library (Clipperlib).</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>The contributors to the Poly2Tri library, a polygon triangulation library.</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>Microsoft and the Moscow State University for providing code for solving ordinary differential equations (project OSLO).</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>Alexandre Mutel et al. for providing the Markdig library, which is used to parse Markdown text.</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>Nicolas Musset et al. for providing the Markdig.Wpf library, which is used for rendering a Markdown document.</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>Alex Regueiro and the WPF-Math contributors for providing the WpfMath library, which is used for rendering of LaTeX formulas an a Markdown document.</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>The authors of the projects that I have forgotten (sorry!), and the authors of the
+						</ListItem>
+						<ListItem>
+							<Paragraph>Exocortex DSP (exocortexdsp.sourceforge.net) contributes the complex library.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>dnAnalytics (www.dnAnalytics.net) for part of the linear algebra and optimization functions.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Gongsolutions (https://github.com/punker76/gong-wpf-dragdrop) for the WPF drag-drop library.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Lim Bio Liong for the excellent article 'Building COM Servers in .NET'. Furthermore  the author of 'Dazzled-Box', guangboo49, for the example how to make a graphical COM server as .NET program.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Angus Johnson for the excellent polygon clipping library (Clipperlib).</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>The contributors to the Poly2Tri library, a polygon triangulation library.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Microsoft and the Moscow State University for providing code for solving ordinary differential equations (project OSLO).</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Alexandre Mutel et al. for providing the Markdig library, which is used to parse Markdown text.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Nicolas Musset et al. for providing the Markdig.Wpf library, which is used for rendering a Markdown document.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Alex Regueiro and the WPF-Math contributors for providing the WpfMath library, which is used for rendering of LaTeX formulas an a Markdown document.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>The authors of the projects that I have forgotten (sorry!), and the authors of the
   countless support tools that are neccessary to manage such a project (for instance
   Mercurial, WinMerge, NUnit, NDoc).</Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph>My wife for for her support, new ideas and critism.</Paragraph>
-                        </ListItem>
-                    </List>
-                    <Paragraph>
-                        Dr. D. Lellinger
-                    </Paragraph>
-                </FlowDocument>
-            </RichTextBox.Document>
-        </RichTextBox>
-        <Expander Grid.Row="5" Header="License" Margin="0,12,0,0">
-            <RichTextBox>
-                <RichTextBox.Document>
-                    <FlowDocument>
+						</ListItem>
+						<ListItem>
+							<Paragraph>My wife for for her support, new ideas and critism.</Paragraph>
+						</ListItem>
+					</List>
+					<Paragraph>
+						Dr. D. Lellinger
+					</Paragraph>
+				</FlowDocument>
+			</RichTextBox.Document>
+		</RichTextBox>
+		<Expander Grid.Row="5" Header="License" Margin="0,12,0,0">
+			<RichTextBox>
+				<RichTextBox.Document>
+					<FlowDocument>
 
-                        <Paragraph>
-                            This program is licensed unter the terms and conditions of the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991. You can find a copy of the license
+						<Paragraph>
+							This program is licensed unter the terms and conditions of the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991. You can find a copy of the license
 							in the file
 							&lt;&lt;main_project_folder&gt;&gt;/doc/license.txt.</Paragraph>
-                        <Paragraph>
-                            Parts of the program
+						<Paragraph>
+							Parts of the program
 						may be licensed unter different terms and conditions.
 							Please refer to the folder &lt;&lt;main_project_folder&gt;&gt;/doc/Contributions to see the licenses corresponding to the contributions.</Paragraph>
-                    </FlowDocument>
-                </RichTextBox.Document>
-            </RichTextBox>
-        </Expander>
-    </Grid>
+					</FlowDocument>
+				</RichTextBox.Document>
+			</RichTextBox>
+		</Expander>
+	</Grid>
 </Window>

@@ -36,215 +36,215 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
-    /// <summary>
-    /// Generates central chi-square distributed random numbers.
-    /// </summary>
-    /// <remarks><code>
-    /// Generates random deviates from a central chi-square distribution with
-    /// f degrees of freedom. f must be positive.
-    /// The density of this distribution is:
-    ///
-    ///
-    ///                -f/2   f/2-1  -x/2
-    ///               2      x      e
-    ///  p (x) dx =  --------------------- dx  for x > 0
-    ///   f               Gamma(f/2)
-    ///
-    ///           =  0                         otherwise
-    ///
-    /// The calculation uses the relation between chi-square and gamma distribution:
-    ///
-    ///  ChiSquare(f) = GammaDistribution(f/2,1/2)
-    ///
-    /// References:
-    ///    K. Behnen, G. Neuhaus, "Grundkurs Stochastik", Teubner Studienbuecher
-    ///    Mathematik, Teubner Verlag, Stuttgart, 1984.
-    ///
-    /// </code></remarks>
-    public class ChiSquareDistribution : ContinuousDistribution
+  /// <summary>
+  /// Generates central chi-square distributed random numbers.
+  /// </summary>
+  /// <remarks><code>
+  /// Generates random deviates from a central chi-square distribution with
+  /// f degrees of freedom. f must be positive.
+  /// The density of this distribution is:
+  ///
+  ///
+  ///                -f/2   f/2-1  -x/2
+  ///               2      x      e
+  ///  p (x) dx =  --------------------- dx  for x > 0
+  ///   f               Gamma(f/2)
+  ///
+  ///           =  0                         otherwise
+  ///
+  /// The calculation uses the relation between chi-square and gamma distribution:
+  ///
+  ///  ChiSquare(f) = GammaDistribution(f/2,1/2)
+  ///
+  /// References:
+  ///    K. Behnen, G. Neuhaus, "Grundkurs Stochastik", Teubner Studienbuecher
+  ///    Mathematik, Teubner Verlag, Stuttgart, 1984.
+  ///
+  /// </code></remarks>
+  public class ChiSquareDistribution : ContinuousDistribution
+  {
+    protected double F;
+    protected GammaDistribution gamma;
+
+    public ChiSquareDistribution()
+      : this(DefaultGenerator)
     {
-        protected double F;
-        protected GammaDistribution gamma;
-
-        public ChiSquareDistribution()
-          : this(DefaultGenerator)
-        {
-        }
-
-        public ChiSquareDistribution(Generator gen)
-          : this(1, gen)
-        {
-        }
-
-        public ChiSquareDistribution(double f)
-          : this(f, DefaultGenerator)
-        {
-        }
-
-        public ChiSquareDistribution(double f, Generator ran)
-          : base(ran)
-        {
-            Initialize(f);
-        }
-
-        public void Initialize(double F)
-        {
-            if (!IsValidAlpha(F))
-                throw new ArgumentOutOfRangeException("F is out of range (has to be positive)");
-
-            this.F = F;
-            if (gamma == null)
-                gamma = new GammaDistribution(0.5 * F, 1);
-            else
-                gamma.Initialize(0.5 * F, 1);
-        }
-
-        /// <summary>
-        /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
-        /// </summary>
-        /// <param name="value">The value to check.</param>
-        /// <returns>
-        /// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
-        /// </returns>
-        public bool IsValidAlpha(double value)
-        {
-            return value > 0;
-        }
-
-        public override double NextDouble()
-        {
-            return 2.0 * gamma.NextDouble();
-        }
-
-        public double Freedom { get { return F; } }
-
-        /// <summary>
-        /// Gets or sets the parameter alpha which is used for generation of chi-square distributed random numbers.
-        /// </summary>
-        /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-        public double Alpha
-        {
-            get
-            {
-                return F;
-            }
-            set
-            {
-                Initialize(value);
-            }
-        }
-
-        #region overridden Distribution members
-
-        /// <summary>
-        /// Gets the minimum possible value of chi-square distributed random numbers.
-        /// </summary>
-        public override double Minimum
-        {
-            get
-            {
-                return 0.0;
-            }
-        }
-
-        /// <summary>
-        /// Gets the maximum possible value of chi-square distributed random numbers.
-        /// </summary>
-        public override double Maximum
-        {
-            get
-            {
-                return double.MaxValue;
-            }
-        }
-
-        /// <summary>
-        /// Gets the mean value of chi-square distributed random numbers.
-        /// </summary>
-        public override double Mean
-        {
-            get
-            {
-                return F;
-            }
-        }
-
-        /// <summary>
-        /// Gets the median of chi-square distributed random numbers.
-        /// </summary>
-        public override double Median
-        {
-            get
-            {
-                return F - 2.0 / 3.0;
-            }
-        }
-
-        /// <summary>
-        /// Gets the variance of chi-square distributed random numbers.
-        /// </summary>
-        public override double Variance
-        {
-            get
-            {
-                return 2.0 * F;
-            }
-        }
-
-        /// <summary>
-        /// Gets the mode of chi-square distributed random numbers.
-        /// </summary>
-        public override double[] Mode
-        {
-            get
-            {
-                if (F >= 2)
-                {
-                    return new double[] { F - 2.0 };
-                }
-                else
-                {
-                    return new double[] { };
-                }
-            }
-        }
-
-        #endregion overridden Distribution members
-
-        #region CdfPdfQuantile
-
-        public override double CDF(double x)
-        {
-            return CDF(x, F);
-        }
-
-        public static double CDF(double x, double F)
-        {
-            return Calc.GammaRelated.GammaRegularized(0.5 * F, 0, 0.5 * x);
-        }
-
-        public override double PDF(double x)
-        {
-            return PDF(x, F);
-        }
-
-        public static double PDF(double x, double F)
-        {
-            return Math.Pow(x, -1 + 0.5 * F) / (Math.Pow(2, 0.5 * F) * Math.Exp(0.5 * x) * Calc.GammaRelated.Gamma(0.5 * F));
-        }
-
-        public override double Quantile(double p)
-        {
-            return Quantile(p, F);
-        }
-
-        public static double Quantile(double p, double F)
-        {
-            return 2 * GammaRelated.InverseGammaRegularized(0.5 * F, 1 - p);
-        }
-
-        #endregion CdfPdfQuantile
     }
+
+    public ChiSquareDistribution(Generator gen)
+      : this(1, gen)
+    {
+    }
+
+    public ChiSquareDistribution(double f)
+      : this(f, DefaultGenerator)
+    {
+    }
+
+    public ChiSquareDistribution(double f, Generator ran)
+      : base(ran)
+    {
+      Initialize(f);
+    }
+
+    public void Initialize(double F)
+    {
+      if (!IsValidAlpha(F))
+        throw new ArgumentOutOfRangeException("F is out of range (has to be positive)");
+
+      this.F = F;
+      if (gamma == null)
+        gamma = new GammaDistribution(0.5 * F, 1);
+      else
+        gamma.Initialize(0.5 * F, 1);
+    }
+
+    /// <summary>
+    /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+    /// </summary>
+    /// <param name="value">The value to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
+    /// </returns>
+    public bool IsValidAlpha(double value)
+    {
+      return value > 0;
+    }
+
+    public override double NextDouble()
+    {
+      return 2.0 * gamma.NextDouble();
+    }
+
+    public double Freedom { get { return F; } }
+
+    /// <summary>
+    /// Gets or sets the parameter alpha which is used for generation of chi-square distributed random numbers.
+    /// </summary>
+    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+    public double Alpha
+    {
+      get
+      {
+        return F;
+      }
+      set
+      {
+        Initialize(value);
+      }
+    }
+
+    #region overridden Distribution members
+
+    /// <summary>
+    /// Gets the minimum possible value of chi-square distributed random numbers.
+    /// </summary>
+    public override double Minimum
+    {
+      get
+      {
+        return 0.0;
+      }
+    }
+
+    /// <summary>
+    /// Gets the maximum possible value of chi-square distributed random numbers.
+    /// </summary>
+    public override double Maximum
+    {
+      get
+      {
+        return double.MaxValue;
+      }
+    }
+
+    /// <summary>
+    /// Gets the mean value of chi-square distributed random numbers.
+    /// </summary>
+    public override double Mean
+    {
+      get
+      {
+        return F;
+      }
+    }
+
+    /// <summary>
+    /// Gets the median of chi-square distributed random numbers.
+    /// </summary>
+    public override double Median
+    {
+      get
+      {
+        return F - 2.0 / 3.0;
+      }
+    }
+
+    /// <summary>
+    /// Gets the variance of chi-square distributed random numbers.
+    /// </summary>
+    public override double Variance
+    {
+      get
+      {
+        return 2.0 * F;
+      }
+    }
+
+    /// <summary>
+    /// Gets the mode of chi-square distributed random numbers.
+    /// </summary>
+    public override double[] Mode
+    {
+      get
+      {
+        if (F >= 2)
+        {
+          return new double[] { F - 2.0 };
+        }
+        else
+        {
+          return new double[] { };
+        }
+      }
+    }
+
+    #endregion overridden Distribution members
+
+    #region CdfPdfQuantile
+
+    public override double CDF(double x)
+    {
+      return CDF(x, F);
+    }
+
+    public static double CDF(double x, double F)
+    {
+      return Calc.GammaRelated.GammaRegularized(0.5 * F, 0, 0.5 * x);
+    }
+
+    public override double PDF(double x)
+    {
+      return PDF(x, F);
+    }
+
+    public static double PDF(double x, double F)
+    {
+      return Math.Pow(x, -1 + 0.5 * F) / (Math.Pow(2, 0.5 * F) * Math.Exp(0.5 * x) * Calc.GammaRelated.Gamma(0.5 * F));
+    }
+
+    public override double Quantile(double p)
+    {
+      return Quantile(p, F);
+    }
+
+    public static double Quantile(double p, double F)
+    {
+      return 2 * GammaRelated.InverseGammaRegularized(0.5 * F, 1 - p);
+    }
+
+    #endregion CdfPdfQuantile
+  }
 }
 
 #if false

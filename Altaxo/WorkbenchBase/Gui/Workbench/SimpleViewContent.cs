@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Workbench
       base.SetLocalizedTitle(text);
     }
 
-    public new string TitleName
+    public string TitleName
     {
       get { return base.Title; }
       set { base.Title = value; } // make setter public

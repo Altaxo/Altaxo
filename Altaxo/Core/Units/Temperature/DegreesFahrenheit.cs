@@ -29,57 +29,57 @@ using System.Text;
 
 namespace Altaxo.Units.Temperature
 {
-    [UnitDescription("Temperature", 0, 0, 0, 0, 1, 0, 0)]
-    public class DegreesFahrenheit : UnitBase, IUnit, IBiasedUnit
+  [UnitDescription("Temperature", 0, 0, 0, 0, 1, 0, 0)]
+  public class DegreesFahrenheit : UnitBase, IUnit, IBiasedUnit
+  {
+    private const double KelvinOffset = 459.67;
+
+    private static readonly DegreesFahrenheit _instance = new DegreesFahrenheit();
+
+    public static DegreesFahrenheit Instance { get { return _instance; } }
+
+    protected DegreesFahrenheit()
     {
-        private const double KelvinOffset = 459.67;
-
-        private static readonly DegreesFahrenheit _instance = new DegreesFahrenheit();
-
-        public static DegreesFahrenheit Instance { get { return _instance; } }
-
-        protected DegreesFahrenheit()
-        {
-        }
-
-        public string Name
-        {
-            get { return "DegreesFahrenheit"; }
-        }
-
-        public string ShortCut
-        {
-            get { return "°F"; }
-        }
-
-        public double ToSIUnit(double x)
-        {
-            return (x + KelvinOffset) * 5 / 9.0;
-        }
-
-        public double FromSIUnit(double x)
-        {
-            return x * 9 / 5.0 - KelvinOffset;
-        }
-
-        public double ToSIUnitIfTreatedAsDifference(double differenceValue)
-        {
-            return differenceValue * 5 / 9.0;
-        }
-
-        public double AddBiasedValueOfThisUnitAndSIValue(double biasedValueOfThisUnit, double siValue)
-        {
-            return biasedValueOfThisUnit + siValue * 9 / 5.0;
-        }
-
-        public ISIPrefixList Prefixes
-        {
-            get { return SIPrefix.ListWithNonePrefixOnly; }
-        }
-
-        public SIUnit SIUnit
-        {
-            get { return Kelvin.Instance; }
-        }
     }
+
+    public string Name
+    {
+      get { return "DegreesFahrenheit"; }
+    }
+
+    public string ShortCut
+    {
+      get { return "°F"; }
+    }
+
+    public double ToSIUnit(double x)
+    {
+      return (x + KelvinOffset) * 5 / 9.0;
+    }
+
+    public double FromSIUnit(double x)
+    {
+      return x * 9 / 5.0 - KelvinOffset;
+    }
+
+    public double ToSIUnitIfTreatedAsDifference(double differenceValue)
+    {
+      return differenceValue * 5 / 9.0;
+    }
+
+    public double AddBiasedValueOfThisUnitAndSIValue(double biasedValueOfThisUnit, double siValue)
+    {
+      return biasedValueOfThisUnit + siValue * 9 / 5.0;
+    }
+
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
+
+    public SIUnit SIUnit
+    {
+      get { return Kelvin.Instance; }
+    }
+  }
 }

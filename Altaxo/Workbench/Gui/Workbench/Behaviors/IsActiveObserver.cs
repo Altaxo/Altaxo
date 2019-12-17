@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Workbench
   /// <code>
   /// &lt;Window ....
   /// local:IsActiveObserver.Observe="True"
-  //  local:IsActiveObserver.ObservedIsActive="{Binding IsActiveWindow, Mode=OneWayToSource}"
+  /// local:IsActiveObserver.ObservedIsActive="{Binding IsActiveWindow, Mode=OneWayToSource}"
   /// </code>
   /// </remarks>
   public static class IsActiveObserver

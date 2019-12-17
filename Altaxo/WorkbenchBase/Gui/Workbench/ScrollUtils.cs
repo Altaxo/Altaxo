@@ -55,6 +55,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Scrolls ScrollViewer up by given offset.
     /// </summary>
+    /// <param name="scrollViewer">The scroll viewer which receives the command.</param>
     /// <param name="offset">Offset by which to scroll up. Should be positive.</param>
     public static void ScrollUp(this ScrollViewer scrollViewer, double offset)
     {
@@ -64,6 +65,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Scrolls ScrollViewer down by given offset.
     /// </summary>
+    /// <param name="scrollViewer">The scroll viewer which receives the command.</param>
     /// <param name="offset">Offset by which to scroll down. Should be positive.</param>
     public static void ScrollDown(this ScrollViewer scrollViewer, double offset)
     {

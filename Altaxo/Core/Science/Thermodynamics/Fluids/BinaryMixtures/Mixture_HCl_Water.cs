@@ -31,45 +31,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of HCl and Water.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'hcl-water.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Herrig (2015)</para>
-    /// </remarks>
-    [CASRegistryNumber("7647-01-0")]
-    [CASRegistryNumber("7732-18-5")]
-    public class Mixture_HCl_Water : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of HCl and Water.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'hcl-water.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Herrig (2015)</para>
+  /// </remarks>
+  [CASRegistryNumber("7647-01-0")]
+  [CASRegistryNumber("7732-18-5")]
+  public class Mixture_HCl_Water : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_HCl_Water Instance { get; } = new Mixture_HCl_Water();
+
+    #region Constants for the binary mixture of HCl and Water
+
+    /// <summary>Gets the CAS registry number of component 1 (HCl).</summary>
+    public override string CASRegistryNumber1 { get; } = "7647-01-0";
+
+    /// <summary>Gets the CAS registry number of component 2 (Water).</summary>
+    public override string CASRegistryNumber2 { get; } = "7732-18-5";
+
+    #endregion Constants for the binary mixture of HCl and Water
+
+    private Mixture_HCl_Water()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_HCl_Water Instance { get; } = new Mixture_HCl_Water();
+      _beta_T = 1;
+      _gamma_T = 1.060114823;
+      _beta_v = 1;
+      _gamma_v = 1.014322409;
+      _F = 0;
+      #endregion
 
-        #region Constants for the binary mixture of HCl and Water
-
-        /// <summary>Gets the CAS registry number of component 1 (HCl).</summary>
-        public override string CASRegistryNumber1 { get; } = "7647-01-0";
-
-        /// <summary>Gets the CAS registry number of component 2 (Water).</summary>
-        public override string CASRegistryNumber2 { get; } = "7732-18-5";
-
-        #endregion Constants for the binary mixture of HCl and Water
-
-        private Mixture_HCl_Water()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 1;
-            _gamma_T = 1.060114823;
-            _beta_v = 1;
-            _gamma_v = 1.014322409;
-            _F = 0;
-            #endregion
-
-        }
     }
+  }
 }

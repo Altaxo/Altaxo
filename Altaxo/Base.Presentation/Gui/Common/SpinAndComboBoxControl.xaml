@@ -5,18 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="4" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="4" />
-        </Grid.RowDefinitions>
-        <Label x:Name="_lblIntegerLabel" Grid.Row="0" Content="Label1" />
-        <axogc:Int32UpDown x:Name="_edIntegerUpDown" Grid.Row="1" ValueChanged="EhIntegerUpDown_ValueChanged" />
-        <Label x:Name="_lblComboBoxLabel" Grid.Row="3" Content="Label2" />
-        <ComboBox x:Name="_cbComboBox" Grid.Row="4" SelectionChanged="EhComboBox_SelectionChangeCommit" />
-    </Grid>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+		</Grid.RowDefinitions>
+		<Label x:Name="_lblIntegerLabel" Grid.Row="0" Content="Label1" />
+		<axogc:Int32UpDown x:Name="_edIntegerUpDown" Grid.Row="1" ValueChanged="EhIntegerUpDown_ValueChanged" />
+		<Label x:Name="_lblComboBoxLabel" Grid.Row="3" Content="Label2" />
+		<ComboBox x:Name="_cbComboBox" Grid.Row="4" SelectionChanged="EhComboBox_SelectionChangeCommit" />
+	</Grid>
 </UserControl>

@@ -6,31 +6,31 @@
         xmlns:local="clr-namespace:Altaxo.Gui.Common"
         mc:Ignorable="d"
         Title="SaveErrorChooseDialog">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="16" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" MinWidth="16" />
-			<ColumnDefinition Width="Auto" MinWidth="80" />
-			<ColumnDefinition Width="8" />
-			<ColumnDefinition Width="Auto" MinWidth="80" />
-			<ColumnDefinition Width="8" />
-			<ColumnDefinition Width="Auto" MinWidth="80" />
-			<ColumnDefinition Width="8" />
-			<ColumnDefinition Width="Auto" MinWidth="80" />
-			<ColumnDefinition Width="16" />
-		</Grid.ColumnDefinitions>
-		<Label x:Name="descriptionLabel" Content="Description:" Grid.Row="0" Grid.ColumnSpan="9" Margin="16,0,16,0" FontSize="16" />
-		<TextBox x:Name="descriptionTextBox" Grid.Row="2" Grid.ColumnSpan="9" AcceptsReturn="True" Background="LightGoldenrodYellow" Margin="16,0,16,0" />
-		<Button x:Name="retryButton" Content="Retry" Grid.Row="4" Grid.Column="1" IsDefault="True" Click="EhRetryButton_Clicked" />
-		<Button x:Name="ignoreButton" Content="Ignore" Grid.Row="4" Grid.Column="3" Click="EhIgnoreButton_Clicked" />
-		<Button x:Name="chooseLocationButton" Content="Choose location .." Grid.Row="4" Grid.Column="5" Click="EhChooseLocationButton_Clicked" />
-		<Button x:Name="exceptionButton" Content="Show exception .." Grid.Row="4" Grid.Column="7" Click="EhShowException" />
-	</Grid>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="16" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MinWidth="16" />
+            <ColumnDefinition Width="Auto" MinWidth="80" />
+            <ColumnDefinition Width="8" />
+            <ColumnDefinition Width="Auto" MinWidth="80" />
+            <ColumnDefinition Width="8" />
+            <ColumnDefinition Width="Auto" MinWidth="80" />
+            <ColumnDefinition Width="8" />
+            <ColumnDefinition Width="Auto" MinWidth="80" />
+            <ColumnDefinition Width="16" />
+        </Grid.ColumnDefinitions>
+        <Label x:Name="descriptionLabel" Content="Description:" Grid.Row="0" Grid.ColumnSpan="9" Margin="16,0,16,0" FontSize="16" />
+        <TextBox x:Name="descriptionTextBox" Grid.Row="2" Grid.ColumnSpan="9" AcceptsReturn="True" Background="LightGoldenrodYellow" Margin="16,0,16,0" />
+        <Button x:Name="retryButton" Content="Retry" Grid.Row="4" Grid.Column="1" IsDefault="True" Click="EhRetryButton_Clicked" />
+        <Button x:Name="ignoreButton" Content="Ignore" Grid.Row="4" Grid.Column="3" Click="EhIgnoreButton_Clicked" />
+        <Button x:Name="chooseLocationButton" Content="Choose location .." Grid.Row="4" Grid.Column="5" Click="EhChooseLocationButton_Clicked" />
+        <Button x:Name="exceptionButton" Content="Show exception .." Grid.Row="4" Grid.Column="7" Click="EhShowException" />
+    </Grid>
 </Window>

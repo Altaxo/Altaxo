@@ -5,19 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <TextBlock x:Name="_edDescription" Grid.Row="0" Margin="0,4,0,8" TextWrapping="Wrap" />
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<TextBlock x:Name="_edDescription" Grid.Row="0" Margin="0,4,0,8" TextWrapping="Wrap" />
 
-        <ListView x:Name="_lvItems" Grid.Row="1" SelectionMode="Extended">
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}">
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-        </ListView>
-    </Grid>
+		<ListView x:Name="_lvItems" Grid.Row="1" SelectionMode="Extended">
+			<ItemsControl.ItemContainerStyle>
+				<Style TargetType="{x:Type ListViewItem}">
+					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+				</Style>
+			</ItemsControl.ItemContainerStyle>
+		</ListView>
+	</Grid>
 </UserControl>

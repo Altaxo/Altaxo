@@ -46,9 +46,36 @@ namespace Altaxo.AddInItems
     {
       lock (assemblies)
       {
-        assemblies.TryGetValue(args.Name, out var assembly);
-        return assembly;
+        if (assemblies.TryGetValue(args.Name, out var assembly))
+          return assembly;
       }
+
+
+      // try to load the assembly by the name, from the same directory as the calling assembly
+      if (null != args.RequestingAssembly)
+      {
+        var path = System.IO.Path.GetDirectoryName(args.RequestingAssembly.Location);
+        var fileNameParts = args.Name.Split(new char[] { ',' });
+        if (fileNameParts.Length > 0)
+        {
+          var fileName = System.IO.Path.Combine(path, fileNameParts[0] + ".dll");
+          try
+          {
+            if (System.IO.File.Exists(fileName))
+            {
+              var assembly = Assembly.LoadFile(fileName);
+              if (null != assembly)
+                return assembly;
+            }
+          }
+          catch (Exception)
+          {
+          }
+        }
+      }
+
+
+      return null;
     }
 
     private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)

@@ -28,98 +28,98 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-    /// <summary>
-    /// Contains the basic data that where obtained during preprocessing.
-    /// </summary>
-    public interface IMultivariatePreprocessingModel
+  /// <summary>
+  /// Contains the basic data that where obtained during preprocessing.
+  /// </summary>
+  public interface IMultivariatePreprocessingModel
+  {
+    int[] SpectralRegions
     {
-        int[] SpectralRegions
-        {
-            get;
-        }
-
-        IReadOnlyList<double> XOfX
-        {
-            get;
-        }
-
-        IROVector<double> XMean
-        {
-            get;
-        }
-
-        IROVector<double> XScale
-        {
-            get;
-        }
-
-        IROVector<double> YMean
-        {
-            get;
-        }
-
-        IROVector<double> YScale
-        {
-            get;
-        }
-
-        SpectralPreprocessingOptions PreprocessOptions
-        {
-            get;
-        }
+      get;
     }
 
-    public class MultivariatePreprocessingModel : IMultivariatePreprocessingModel
+    IReadOnlyList<double> XOfX
     {
-        private SpectralPreprocessingOptions _preprocessOptions;
-
-        private int[] _spectralRegions;
-        private IReadOnlyList<double> _xOfX;
-        private IROVector<double> _xMean;
-        private IROVector<double> _xScale;
-        private IROVector<double> _yMean;
-        private IROVector<double> _yScale;
-
-        public SpectralPreprocessingOptions PreprocessOptions
-        {
-            get { return _preprocessOptions; }
-            set { _preprocessOptions = value; }
-        }
-
-        public int[] SpectralRegions
-        {
-            get { return _spectralRegions; }
-            set { _spectralRegions = value; }
-        }
-
-        public IReadOnlyList<double> XOfX
-        {
-            get { return _xOfX; }
-            set { _xOfX = value; }
-        }
-
-        public IROVector<double> XMean
-        {
-            get { return _xMean; }
-            set { _xMean = value; }
-        }
-
-        public IROVector<double> XScale
-        {
-            get { return _xScale; }
-            set { _xScale = value; }
-        }
-
-        public IROVector<double> YMean
-        {
-            get { return _yMean; }
-            set { _yMean = value; }
-        }
-
-        public IROVector<double> YScale
-        {
-            get { return _yScale; }
-            set { _yScale = value; }
-        }
+      get;
     }
+
+    IROVector<double> XMean
+    {
+      get;
+    }
+
+    IROVector<double> XScale
+    {
+      get;
+    }
+
+    IROVector<double> YMean
+    {
+      get;
+    }
+
+    IROVector<double> YScale
+    {
+      get;
+    }
+
+    SpectralPreprocessingOptions PreprocessOptions
+    {
+      get;
+    }
+  }
+
+  public class MultivariatePreprocessingModel : IMultivariatePreprocessingModel
+  {
+    private SpectralPreprocessingOptions _preprocessOptions;
+
+    private int[] _spectralRegions;
+    private IReadOnlyList<double> _xOfX;
+    private IROVector<double> _xMean;
+    private IROVector<double> _xScale;
+    private IROVector<double> _yMean;
+    private IROVector<double> _yScale;
+
+    public SpectralPreprocessingOptions PreprocessOptions
+    {
+      get { return _preprocessOptions; }
+      set { _preprocessOptions = value; }
+    }
+
+    public int[] SpectralRegions
+    {
+      get { return _spectralRegions; }
+      set { _spectralRegions = value; }
+    }
+
+    public IReadOnlyList<double> XOfX
+    {
+      get { return _xOfX; }
+      set { _xOfX = value; }
+    }
+
+    public IROVector<double> XMean
+    {
+      get { return _xMean; }
+      set { _xMean = value; }
+    }
+
+    public IROVector<double> XScale
+    {
+      get { return _xScale; }
+      set { _xScale = value; }
+    }
+
+    public IROVector<double> YMean
+    {
+      get { return _yMean; }
+      set { _yMean = value; }
+    }
+
+    public IROVector<double> YScale
+    {
+      get { return _yScale; }
+      set { _yScale = value; }
+    }
+  }
 }

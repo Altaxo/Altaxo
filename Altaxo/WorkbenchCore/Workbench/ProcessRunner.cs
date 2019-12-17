@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -275,9 +274,9 @@ namespace Altaxo.Workbench
         throw new NotImplementedException("Needs investigation");
         //await reader.CopyToAsync(new MessageViewCategoryTextWriter(outputCategory));
       }
-      await WaitForExitAsync();
-      outputCategory.AppendLine(StringParser.Parse("${res:XML.MainMenu.ToolMenu.ExternalTools.ExitedWithCode} " + ExitCode));
-      return ExitCode;
+      // await WaitForExitAsync();
+      // outputCategory.AppendLine(StringParser.Parse("${res:XML.MainMenu.ToolMenu.ExternalTools.ExitedWithCode} " + ExitCode));
+      // return ExitCode;
     }
 
     #endregion RunInOutputPad

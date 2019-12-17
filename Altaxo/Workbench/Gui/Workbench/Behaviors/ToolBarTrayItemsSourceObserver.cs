@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Workbench
   /// <code>
   /// &lt;ToolBarTray ....
   /// local:ToolBarTrayItemsSourceObserver.Observe="True"
-  //  local:ToolBarTrayItemsSourceObserver.ObservedItemsSource="{Binding ToolBarItems, Mode=OneWay}"
+  ///  local:ToolBarTrayItemsSourceObserver.ObservedItemsSource="{Binding ToolBarItems, Mode=OneWay}"
   /// </code>
   /// </remarks>
   public static class ToolBarTrayItemsSourceObserver

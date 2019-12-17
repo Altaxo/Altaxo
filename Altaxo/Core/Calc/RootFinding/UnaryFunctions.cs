@@ -30,48 +30,48 @@ using System;
 
 namespace Altaxo.Calc.RootFinding
 {
-    public static class UnaryFunctions
+  public static class UnaryFunctions
+  {
+    public static Func<double, double> Identity()
     {
-        public static Func<double, double> Identity()
-        {
-            return new Func<double, double>(delegate (double x)
-            { return x; });
-        }
-
-        public static Func<double, double> Constant(double a)
-        {
-            return new Func<double, double>(delegate (double x)
-            { return a; });
-        }
-
-        public static Func<double, double> Add(Func<double, double> f1, Func<double, double> f2)
-        {
-            return new Func<double, double>(delegate (double x)
-            { return f1(x) + f2(x); });
-        }
-
-        public static Func<double, double> Multiply(Func<double, double> f, double lambda)
-        {
-            return new Func<double, double>(delegate (double x)
-            { return lambda * f(x); });
-        }
-
-        public static Func<double, double> Minus(Func<double, double> f)
-        {
-            return new Func<double, double>(delegate (double x)
-            { return -f(x); });
-        }
-
-        public static Func<double, double> Subtract(Func<double, double> f1, Func<double, double> f2)
-        {
-            return new Func<double, double>(delegate (double x)
-            { return f1(x) - f2(x); });
-        }
-
-        public static Func<double, double> Compound(Func<double, double> f1, Func<double, double> f2)
-        {
-            return new Func<double, double>(delegate (double x)
-            { return f1(f2(x)); });
-        }
+      return new Func<double, double>(delegate (double x)
+      { return x; });
     }
+
+    public static Func<double, double> Constant(double a)
+    {
+      return new Func<double, double>(delegate (double x)
+      { return a; });
+    }
+
+    public static Func<double, double> Add(Func<double, double> f1, Func<double, double> f2)
+    {
+      return new Func<double, double>(delegate (double x)
+      { return f1(x) + f2(x); });
+    }
+
+    public static Func<double, double> Multiply(Func<double, double> f, double lambda)
+    {
+      return new Func<double, double>(delegate (double x)
+      { return lambda * f(x); });
+    }
+
+    public static Func<double, double> Minus(Func<double, double> f)
+    {
+      return new Func<double, double>(delegate (double x)
+      { return -f(x); });
+    }
+
+    public static Func<double, double> Subtract(Func<double, double> f1, Func<double, double> f2)
+    {
+      return new Func<double, double>(delegate (double x)
+      { return f1(x) - f2(x); });
+    }
+
+    public static Func<double, double> Compound(Func<double, double> f1, Func<double, double> f2)
+    {
+      return new Func<double, double>(delegate (double x)
+      { return f1(f2(x)); });
+    }
+  }
 }

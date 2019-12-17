@@ -28,107 +28,107 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-    /// <summary>
-    /// VectorMath provides common static functions concerning vectors.
-    /// </summary>
-    public static partial class VectorMath
+  /// <summary>
+  /// VectorMath provides common static functions concerning vectors.
+  /// </summary>
+  public static partial class VectorMath
+  {
+    #region Extensible Vector
+
+    private class ExtensibleVector<T> : IExtensibleVector<T>
     {
-        #region Extensible Vector
+      private T[] _arr;
+      private int _length;
 
-        private class ExtensibleVector<T> : IExtensibleVector<T>
+      public ExtensibleVector(int initiallength)
+      {
+        _arr = new T[initiallength];
+        _length = initiallength;
+      }
+
+      #region IVector Members
+
+      public T this[int i]
+      {
+        get
         {
-            private T[] _arr;
-            private int _length;
-
-            public ExtensibleVector(int initiallength)
-            {
-                _arr = new T[initiallength];
-                _length = initiallength;
-            }
-
-            #region IVector Members
-
-            public T this[int i]
-            {
-                get
-                {
-                    return _arr[i];
-                }
-                set
-                {
-                    _arr[i] = value;
-                }
-            }
-
-            #endregion IVector Members
-
-            #region IROVector Members
-
-            public int Length
-            {
-                get
-                {
-                    return _length;
-                }
-            }
-
-            public int Count
-            {
-                get
-                {
-                    return _length;
-                }
-            }
-
-            #endregion IROVector Members
-
-            #region IExtensibleVector Members
-
-            public void Append(IROVector<T> vector)
-            {
-                if (_length + vector.Length >= _arr.Length)
-                    Redim((int)(32 + 1.3 * (_length + vector.Length)));
-
-                for (int i = 0; i < vector.Length; i++)
-                    _arr[i + _length] = vector[i];
-                _length += vector.Length;
-            }
-
-            public IEnumerator<T> GetEnumerator()
-            {
-                for (int i = 0; i < _length; ++i)
-                    yield return this[i];
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                for (int i = 0; i < _length; ++i)
-                    yield return this[i];
-            }
-
-            #endregion IExtensibleVector Members
-
-            private void Redim(int newsize)
-            {
-                if (newsize > _arr.Length)
-                {
-                    var oldarr = _arr;
-                    _arr = new T[newsize];
-                    Array.Copy(oldarr, 0, _arr, 0, _length);
-                }
-            }
+          return _arr[i];
         }
-
-        /// <summary>
-        /// Creates a new extensible vector of length <c>length</c>
-        /// </summary>
-        /// <param name="length">The inital length of the vector.</param>
-        /// <returns>An instance of a extensible vector.</returns>
-        public static IExtensibleVector<T> CreateExtensibleVector<T>(int length)
+        set
         {
-            return new ExtensibleVector<T>(length);
+          _arr[i] = value;
         }
+      }
 
-        #endregion Extensible Vector
+      #endregion IVector Members
+
+      #region IROVector Members
+
+      public int Length
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      public int Count
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      #endregion IROVector Members
+
+      #region IExtensibleVector Members
+
+      public void Append(IROVector<T> vector)
+      {
+        if (_length + vector.Length >= _arr.Length)
+          Redim((int)(32 + 1.3 * (_length + vector.Length)));
+
+        for (int i = 0; i < vector.Length; i++)
+          _arr[i + _length] = vector[i];
+        _length += vector.Length;
+      }
+
+      public IEnumerator<T> GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return this[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return this[i];
+      }
+
+      #endregion IExtensibleVector Members
+
+      private void Redim(int newsize)
+      {
+        if (newsize > _arr.Length)
+        {
+          var oldarr = _arr;
+          _arr = new T[newsize];
+          Array.Copy(oldarr, 0, _arr, 0, _length);
+        }
+      }
     }
+
+    /// <summary>
+    /// Creates a new extensible vector of length <c>length</c>
+    /// </summary>
+    /// <param name="length">The inital length of the vector.</param>
+    /// <returns>An instance of a extensible vector.</returns>
+    public static IExtensibleVector<T> CreateExtensibleVector<T>(int length)
+    {
+      return new ExtensibleVector<T>(length);
+    }
+
+    #endregion Extensible Vector
+  }
 }

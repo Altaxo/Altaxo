@@ -5,96 +5,96 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:AltaxoCommon="clr-namespace:Altaxo.Gui.Common"
 	mc:Ignorable="d">
-    <StackPanel Orientation="Vertical">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
-                <ColumnDefinition MinWidth="140" SharedSizeGroup="EditColumn1" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="4" />
-                <RowDefinition  Height="Auto" />
-                <RowDefinition Height="0" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Label Grid.Column="0" Grid.Row="0">Column with cycling variable:</Label>
-            <Label Grid.Column="0" Grid.Row="2">Columns to average over repeat period:</Label>
+	<StackPanel Orientation="Vertical">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+				<ColumnDefinition MinWidth="140" SharedSizeGroup="EditColumn1" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition  Height="Auto" />
+				<RowDefinition Height="0" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Label Grid.Column="0" Grid.Row="0">Column with cycling variable:</Label>
+			<Label Grid.Column="0" Grid.Row="2">Columns to average over repeat period:</Label>
 
-            <ComboBox Grid.Column="1" Grid.Row="0" x:Name="_guiColumnWithCyclingVariable" SelectionChanged="EhCyclicVariableColumnChanged" />
-            <AltaxoCommon:MultipleChoiceListView Grid.Column="1" Grid.Row="2" x:Name="_guiColumnsToAverage" MaxHeight="200" />
-        </Grid>
-        <Expander Header="More data options">
-            <Grid xmlns:axogc="clr-namespace:Altaxo.Gui.Common">
-                <Grid.Resources>
-                    <ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
-                </Grid.Resources>
+			<ComboBox Grid.Column="1" Grid.Row="0" x:Name="_guiColumnWithCyclingVariable" SelectionChanged="EhCyclicVariableColumnChanged" />
+			<AltaxoCommon:MultipleChoiceListView Grid.Column="1" Grid.Row="2" x:Name="_guiColumnsToAverage" MaxHeight="200" />
+		</Grid>
+		<Expander Header="More data options">
+			<Grid xmlns:axogc="clr-namespace:Altaxo.Gui.Common">
+				<Grid.Resources>
+					<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+				</Grid.Resources>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="60" SharedSizeGroup="LabelColumn1" />
-                    <ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="4" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="4" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="4" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Label Content="Table:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" />
-                <ComboBox x:Name="_guiAvailableTables" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="0" Margin="4,0,4,0" SelectionChanged="EhTables_SelectionChangeCommit" />
-                <Label Grid.Row="2" Grid.Column="0" Content="Data column group number:"   HorizontalAlignment="Right" />
-                <axogc:Int32UpDown Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" x:Name="_guiGroupNumber"  Margin="4,0,4,0" ValueChanged="EhGroupNumberChanged" />
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" MinWidth="60" SharedSizeGroup="LabelColumn1" />
+					<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<Label Content="Table:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" />
+				<ComboBox x:Name="_guiAvailableTables" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="0" Margin="4,0,4,0" SelectionChanged="EhTables_SelectionChangeCommit" />
+				<Label Grid.Row="2" Grid.Column="0" Content="Data column group number:"   HorizontalAlignment="Right" />
+				<axogc:Int32UpDown Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" x:Name="_guiGroupNumber"  Margin="4,0,4,0" ValueChanged="EhGroupNumberChanged" />
 
-                <Label Grid.Column="0" Grid.Row="4">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="Available columns:" />
-                        <Rectangle Fill="Black" Height="1" />
-                    </StackPanel>
-                </Label>
+				<Label Grid.Column="0" Grid.Row="4">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="Available columns:" />
+						<Rectangle Fill="Black" Height="1" />
+					</StackPanel>
+				</Label>
 
-                <axogc:BorderWithSizeGreedLimit Grid.Row="6" HeightGreedLimit="400">
-                    <ListBox x:Name="_guiAvailableColumnNames" SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Visible" />
-                </axogc:BorderWithSizeGreedLimit>
+				<axogc:BorderWithSizeGreedLimit Grid.Row="6" HeightGreedLimit="400">
+					<ListBox x:Name="_guiAvailableColumnNames" SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Visible" />
+				</axogc:BorderWithSizeGreedLimit>
 
-                <Label Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="Columns participating:" />
-                        <Rectangle Fill="Black" Height="1" />
-                    </StackPanel>
-                </Label>
+				<Label Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="Columns participating:" />
+						<Rectangle Fill="Black" Height="1" />
+					</StackPanel>
+				</Label>
 
-                <Grid Grid.Row="6" Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
+				<Grid Grid.Row="6" Grid.Column="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition />
+					</Grid.RowDefinitions>
 
-                    <Button Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Click="EhUseSelectedAvailableColumnsAsParticipatingColumns" Margin="4">
-                        <StackPanel Orientation="Horizontal">
-                            <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
-                                <Path Style="{StaticResource LeftArrowPathStyle}" />
-                            </Viewbox>
-                        </StackPanel>
-                    </Button>
+					<Button Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Click="EhUseSelectedAvailableColumnsAsParticipatingColumns" Margin="4">
+						<StackPanel Orientation="Horizontal">
+							<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+								<Path Style="{StaticResource LeftArrowPathStyle}" />
+							</Viewbox>
+						</StackPanel>
+					</Button>
 
-                    <axogc:BorderWithSizeGreedLimit  Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HeightGreedLimit="400">
-                        <ListBox x:Name="_guiColumnsParticipating" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Extended" />
-                    </axogc:BorderWithSizeGreedLimit>
+					<axogc:BorderWithSizeGreedLimit  Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HeightGreedLimit="400">
+						<ListBox x:Name="_guiColumnsParticipating" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Extended" />
+					</axogc:BorderWithSizeGreedLimit>
 
-                    <Button Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Click="EhDeleteSelectedParticipatingColumn" Margin="4">
-                        <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
-                            <Path Style="{StaticResource RemoveCrossPathStyle}" />
-                        </Viewbox>
-                    </Button>
-                </Grid>
-            </Grid>
-        </Expander>
-    </StackPanel>
+					<Button Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Click="EhDeleteSelectedParticipatingColumn" Margin="4">
+						<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+							<Path Style="{StaticResource RemoveCrossPathStyle}" />
+						</Viewbox>
+					</Button>
+				</Grid>
+			</Grid>
+		</Expander>
+	</StackPanel>
 </UserControl>

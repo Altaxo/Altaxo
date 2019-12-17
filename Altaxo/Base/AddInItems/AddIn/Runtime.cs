@@ -295,7 +295,13 @@ namespace Altaxo.AddInItems
 
     protected virtual Assembly LoadAssembly(string assemblyString)
     {
+#if NETSTANDARD
+      var loader = new AssemblyLoadContextIntoDefault(this.hintPath);
+      return loader.LoadFromPartialName(assemblyString);
+#else
       return System.Reflection.Assembly.Load(assemblyString);
+#endif
+
     }
 
     protected virtual Assembly LoadAssemblyFrom(string assemblyFile)

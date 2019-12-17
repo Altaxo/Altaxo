@@ -40,8 +40,8 @@ namespace Altaxo.Main
 
   /// <summary>
   /// Can be used to to relocate the <see cref="AbsoluteDocumentPath"/> that the <see cref="DocNodeProxy"/> is holding. The <see cref="Visit"/> function implements
-  /// the <see cref="DocNodeProxyReporter"/> delegate that is used to enumerate all proxies to <see cref="Altaxo.Data.DataColumn"/>s and change there references
-  /// to the corresponding <see cref="Altaxo.Data.DataColumn"/>s of another table.
+  /// the <see cref="DocNodeProxyReporter"/> delegate that is used to enumerate all proxies to document nodes<see cref="IDocumentNode"/>s and change their references
+  /// to the relocated <see cref="IDocumentNode"/>.
   /// </summary>
   public class DocNodePathReplacementOptions
   {

@@ -31,45 +31,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of Nitrogen and Argon.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'nitrogen-argon.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Gernert (2013)</para>
-    /// </remarks>
-    [CASRegistryNumber("7727-37-9")]
-    [CASRegistryNumber("7440-37-1")]
-    public class Mixture_Nitrogen_Argon : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of Nitrogen and Argon.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'nitrogen-argon.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Gernert (2013)</para>
+  /// </remarks>
+  [CASRegistryNumber("7727-37-9")]
+  [CASRegistryNumber("7440-37-1")]
+  public class Mixture_Nitrogen_Argon : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_Nitrogen_Argon Instance { get; } = new Mixture_Nitrogen_Argon();
+
+    #region Constants for the binary mixture of Nitrogen and Argon
+
+    /// <summary>Gets the CAS registry number of component 1 (Nitrogen).</summary>
+    public override string CASRegistryNumber1 { get; } = "7727-37-9";
+
+    /// <summary>Gets the CAS registry number of component 2 (Argon).</summary>
+    public override string CASRegistryNumber2 { get; } = "7440-37-1";
+
+    #endregion Constants for the binary mixture of Nitrogen and Argon
+
+    private Mixture_Nitrogen_Argon()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_Nitrogen_Argon Instance { get; } = new Mixture_Nitrogen_Argon();
+      _beta_T = 0.999442;
+      _gamma_T = 0.989311;
+      _beta_v = 1.006697;
+      _gamma_v = 1.001549;
+      _F = 0;
+      #endregion
 
-        #region Constants for the binary mixture of Nitrogen and Argon
-
-        /// <summary>Gets the CAS registry number of component 1 (Nitrogen).</summary>
-        public override string CASRegistryNumber1 { get; } = "7727-37-9";
-
-        /// <summary>Gets the CAS registry number of component 2 (Argon).</summary>
-        public override string CASRegistryNumber2 { get; } = "7440-37-1";
-
-        #endregion Constants for the binary mixture of Nitrogen and Argon
-
-        private Mixture_Nitrogen_Argon()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 0.999442;
-            _gamma_T = 0.989311;
-            _beta_v = 1.006697;
-            _gamma_v = 1.001549;
-            _F = 0;
-            #endregion
-
-        }
     }
+  }
 }

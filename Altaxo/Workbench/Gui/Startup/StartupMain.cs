@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Startup
     /// <summary>
     /// Finds the name of the application.
     /// If the name of the startup assembly ends with "Startup", "Startup64", or "Startup32", e.g. AltaxoStartup, the part of the name before "Startup" is used as the application name, i.e. "Altaxo"
-    // Otherwise, the name of the startup assembly is used directly as application name.
+    /// Otherwise, the name of the startup assembly is used directly as application name.
     /// </summary>
     /// <returns>Application name.</returns>
     private static string FindApplicationName()
@@ -394,7 +394,6 @@ namespace Altaxo.Gui.Startup
     /// Runs the workbench.
     /// </summary>
     /// <param name="wbSettings">The workbench settings.</param>
-    /// <param name="useExceptionBox">If set to <c>true</c>, any exception will be shown in the <see cref="ExceptionBox"/>. If false, the exception will be not catched.</param>
     /// <param name="BeforeRunWorkbench">Action(s) that are executed immediatly before the workbench runs. May be null.</param>
     /// <param name="WorkbenchClosed">Action(s) that are executed immediatly after the workbench has closed. May be null.</param>
     /// <exception cref="RunWorkbenchException"></exception>

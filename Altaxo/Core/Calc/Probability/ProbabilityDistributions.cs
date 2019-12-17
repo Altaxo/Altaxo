@@ -27,7 +27,7 @@ namespace Altaxo.Calc
   class FDistribution
   {
 
-    #region ipmpar
+  #region ipmpar
 
     /*
 -----------------------------------------------------------------------
@@ -122,9 +122,9 @@ namespace Altaxo.Calc
     }
 
 
-    #endregion
+  #endregion
 
-    #region spmpar
+  #region spmpar
 
     static double spmpar(int i)
     {
@@ -203,9 +203,9 @@ namespace Altaxo.Calc
         return spmpar;
       }
     }
-    #endregion
+  #endregion
 
-    #region CUMF
+  #region CUMF
 
     static double dsum,prod,xx,yy;
     static int ierr;
@@ -306,9 +306,9 @@ namespace Altaxo.Calc
     }
 
 
-    #endregion
+  #endregion
 
-    #region E000
+  #region E000
 
     class _E0000
     {
@@ -545,9 +545,9 @@ namespace Altaxo.Calc
       }
     }
 
-    #endregion
+  #endregion
 
-    #region E0001
+  #region E0001
 
     class _E0001
     {
@@ -859,8 +859,8 @@ namespace Altaxo.Calc
   _E0001.E0001(1,ref idum1,ref dum1,ref dum2,ref dum3, ref dum4, ref bdum1,ref bdum2,ref zabstl,ref zreltl,ref zxhi,ref zxlo);
 }
 
-    #endregion
-    #region dstinv
+  #endregion
+  #region dstinv
 
   void dstinv(ref double zsmall, ref double zbig, ref double zabsst,
   ref double zrelst, ref double zstpmu, ref double zabsto,
@@ -934,7 +934,7 @@ namespace Altaxo.Calc
   zstpmu);
 }
 
-    #endregion
+  #endregion
 
   const double tol=1.0e-8;
   const double atol=1.0e-50;

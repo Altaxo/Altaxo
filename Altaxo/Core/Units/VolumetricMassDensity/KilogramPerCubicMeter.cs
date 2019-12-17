@@ -29,31 +29,31 @@ using System.Text;
 
 namespace Altaxo.Units.VolumetricMassDensity
 {
-    [UnitDescription("Volumetric mass density", -3, 1, 0, 0, 0, 0, 0)]
-    public class KilogramPerCubicMeter : SIUnit
+  [UnitDescription("Volumetric mass density", -3, 1, 0, 0, 0, 0, 0)]
+  public class KilogramPerCubicMeter : SIUnit
+  {
+    private static readonly KilogramPerCubicMeter _instance = new KilogramPerCubicMeter();
+
+    public static KilogramPerCubicMeter Instance { get { return _instance; } }
+
+    private KilogramPerCubicMeter()
+        : base(-3, 1, 0, 0, 0, 0, 0)
     {
-        private static readonly KilogramPerCubicMeter _instance = new KilogramPerCubicMeter();
-
-        public static KilogramPerCubicMeter Instance { get { return _instance; } }
-
-        private KilogramPerCubicMeter()
-            : base(-3, 1, 0, 0, 0, 0, 0)
-        {
-        }
-
-        public override string Name
-        {
-            get { return "KilogramPerCubicMeter"; }
-        }
-
-        public override string ShortCut
-        {
-            get { return "kg/m³"; }
-        }
-
-        public override ISIPrefixList Prefixes
-        {
-            get { return SIPrefix.ListWithNonePrefixOnly; }
-        }
     }
+
+    public override string Name
+    {
+      get { return "KilogramPerCubicMeter"; }
+    }
+
+    public override string ShortCut
+    {
+      get { return "kg/m³"; }
+    }
+
+    public override ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
+  }
 }

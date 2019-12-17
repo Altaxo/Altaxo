@@ -31,58 +31,58 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of Oxygen and Water.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'oxygen-water.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Gernert (2013)</para>
-    /// </remarks>
-    [CASRegistryNumber("7782-44-7")]
-    [CASRegistryNumber("7732-18-5")]
-    public class Mixture_Oxygen_Water : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of Oxygen and Water.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'oxygen-water.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Gernert (2013)</para>
+  /// </remarks>
+  [CASRegistryNumber("7782-44-7")]
+  [CASRegistryNumber("7732-18-5")]
+  public class Mixture_Oxygen_Water : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_Oxygen_Water Instance { get; } = new Mixture_Oxygen_Water();
+
+    #region Constants for the binary mixture of Oxygen and Water
+
+    /// <summary>Gets the CAS registry number of component 1 (Oxygen).</summary>
+    public override string CASRegistryNumber1 { get; } = "7782-44-7";
+
+    /// <summary>Gets the CAS registry number of component 2 (Water).</summary>
+    public override string CASRegistryNumber2 { get; } = "7732-18-5";
+
+    #endregion Constants for the binary mixture of Oxygen and Water
+
+    private Mixture_Oxygen_Water()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_Oxygen_Water Instance { get; } = new Mixture_Oxygen_Water();
+      _beta_T = 1.25306;
+      _gamma_T = 0.807842;
+      _beta_v = 1.028197;
+      _gamma_v = 0.87346;
+      _F = 0.6017;
 
-        #region Constants for the binary mixture of Oxygen and Water
-
-        /// <summary>Gets the CAS registry number of component 1 (Oxygen).</summary>
-        public override string CASRegistryNumber1 { get; } = "7782-44-7";
-
-        /// <summary>Gets the CAS registry number of component 2 (Water).</summary>
-        public override string CASRegistryNumber2 { get; } = "7732-18-5";
-
-        #endregion Constants for the binary mixture of Oxygen and Water
-
-        private Mixture_Oxygen_Water()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 1.25306;
-            _gamma_T = 0.807842;
-            _beta_v = 1.028197;
-            _gamma_v = 0.87346;
-            _F = 0.6017;
-
-            _departureCoefficients_Polynomial = new (double ai, double ti, double di)[]
-             {
+      _departureCoefficients_Polynomial = new (double ai, double ti, double di)[]
+       {
         (           4.0142079,                0.547,                    1),
-             };
+       };
 
-            _departureCoefficients_Exponential = new (double ai, double ti, double di, double li)[]
-            {
+      _departureCoefficients_Exponential = new (double ai, double ti, double di, double li)[]
+      {
         (          -1.1573939,                0.055,                    1,                    1),
         (          -7.2102425,                1.925,                    1,                    1),
         (          -5.3251223,                0.552,                    2,                    1),
         (          -2.2155867,                    1,                    4,                    1),
-            };
-            #endregion
+      };
+      #endregion
 
-        }
     }
+  }
 }

@@ -39,6 +39,8 @@ namespace Altaxo.Serialization.Xml
     /// 2015-06-30 Initial version
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(string), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Private.CoreLib", "System.String", 0)] // Deserialization for .Net core type
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.String", 0)] // Deserialization for .Net framework type
     private class XmlSerializationSurrogateForSystemString : IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

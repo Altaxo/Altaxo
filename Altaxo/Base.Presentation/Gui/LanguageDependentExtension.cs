@@ -40,7 +40,7 @@ namespace Altaxo.Gui
   /// <seealso cref="System.Windows.Markup.MarkupExtension" />
   /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
   /// <seealso cref="System.Windows.IWeakEventListener" />
-  public abstract class LanguageDependentExtension : MarkupExtension, INotifyPropertyChanged, IWeakEventListener
+  public abstract class LanguageDependentExtension : MarkupExtension, INotifyPropertyChanged
   {
     protected LanguageDependentExtension()
     {
@@ -80,7 +80,7 @@ namespace Altaxo.Gui
         if (!isRegisteredForLanguageChange)
         {
           isRegisteredForLanguageChange = true;
-          LanguageChangeWeakEventManager.AddListener(this);
+          LanguageChangeWeakEventManager.LanguageChanged += EhLanguageChanged;
         }
         ChangedEvent += value;
       }
@@ -90,12 +90,11 @@ namespace Altaxo.Gui
     private static readonly System.ComponentModel.PropertyChangedEventArgs
         valueChangedEventArgs = new System.ComponentModel.PropertyChangedEventArgs("Value");
 
-    bool IWeakEventListener.ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
+
+
+    private void EhLanguageChanged()
     {
-      var handler = ChangedEvent;
-      if (handler != null)
-        handler(this, valueChangedEventArgs);
-      return true;
+      ChangedEvent?.Invoke(this, valueChangedEventArgs);
     }
   }
 }

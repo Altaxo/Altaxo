@@ -29,24 +29,24 @@ using System.Text;
 
 namespace Altaxo.Calc.Fourier
 {
-    /// <summary>
-    /// Designates different possible kinds of output of the real fourier transformation.
-    /// </summary>
-    public enum RealFourierTransformationOutputKind
-    {
-        /// <summary>Output is the real part of the fourier transformation.</summary>
-        RealPart,
+  /// <summary>
+  /// Designates different possible kinds of output of the real fourier transformation.
+  /// </summary>
+  public enum RealFourierTransformationOutputKind
+  {
+    /// <summary>Output is the real part of the fourier transformation.</summary>
+    RealPart,
 
-        /// <summary>Output is the imaginary part of the fourier transformation.</summary>
-        ImaginaryPart,
+    /// <summary>Output is the imaginary part of the fourier transformation.</summary>
+    ImaginaryPart,
 
-        /// <summary>Output is the amplitude of the fourier transformation.</summary>
-        Amplitude,
+    /// <summary>Output is the amplitude of the fourier transformation.</summary>
+    Amplitude,
 
-        /// <summary>Output is the phase (-Pi..+Pi) of the fourier transformation.</summary>
-        Phase,
+    /// <summary>Output is the phase (-Pi..+Pi) of the fourier transformation.</summary>
+    Phase,
 
-        /// <summary>Output is the power (square of the amplitude) of the fourier transformation.</summary>
-        Power,
-    }
+    /// <summary>Output is the power (square of the amplitude) of the fourier transformation.</summary>
+    Power,
+  }
 }

@@ -29,34 +29,34 @@ using System.Text;
 
 namespace Altaxo.Units.Angle
 {
-    [UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
-    public class Radian : SIUnit
+  [UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
+  public class Radian : SIUnit
+  {
+    private static readonly Radian _instance = new Radian();
+
+    /// <summary>List with only the prefix <see cref="SIPrefix.None"/>.</summary>
+    private static SIPrefixList _prefixList = new SIPrefixList(new SIPrefix[] { SIPrefix.None, SIPrefix.Micro, SIPrefix.Nano, SIPrefix.Pico });
+
+    public static Radian Instance { get { return _instance; } }
+
+    private Radian()
+        : base(0, 0, 0, 0, 0, 0, 0)
     {
-        private static readonly Radian _instance = new Radian();
-
-        /// <summary>List with only the prefix <see cref="SIPrefix.None"/>.</summary>
-        private static SIPrefixList _prefixList = new SIPrefixList(new SIPrefix[] { SIPrefix.None, SIPrefix.Micro, SIPrefix.Nano, SIPrefix.Pico });
-
-        public static Radian Instance { get { return _instance; } }
-
-        private Radian()
-            : base(0, 0, 0, 0, 0, 0, 0)
-        {
-        }
-
-        public override string Name
-        {
-            get { return "Radian"; }
-        }
-
-        public override string ShortCut
-        {
-            get { return "rad"; }
-        }
-
-        public override ISIPrefixList Prefixes
-        {
-            get { return _prefixList; }
-        }
     }
+
+    public override string Name
+    {
+      get { return "Radian"; }
+    }
+
+    public override string ShortCut
+    {
+      get { return "rad"; }
+    }
+
+    public override ISIPrefixList Prefixes
+    {
+      get { return _prefixList; }
+    }
+  }
 }

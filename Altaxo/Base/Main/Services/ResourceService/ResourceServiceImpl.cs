@@ -1,4 +1,5 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+﻿// #define USERESOURCETRACKING
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -105,7 +106,8 @@ namespace Altaxo.Main.Services
     /// <example><c>ResourceService.RegisterStrings("TestAddin.Resources.StringResources", GetType().Assembly);</c></example>
     public void RegisterStrings(string baseResourceName, Assembly assembly)
     {
-      RegisterNeutralStrings(Path.GetFileNameWithoutExtension(baseResourceName) + ".", new ResourceManager(baseResourceName, assembly));
+      var prefix = GetPrefixFromBaseResourceName(baseResourceName);
+      RegisterNeutralStrings(prefix, new ResourceManager(baseResourceName, assembly));
       var ra = new ResourceAssembly(this, assembly, baseResourceName, false);
       _resourceAssemblies.Add(ra);
       ra.Load();
@@ -129,10 +131,30 @@ namespace Altaxo.Main.Services
     /// <example><c>ResourceService.RegisterImages("TestAddin.Resources.BitmapResources", GetType().Assembly);</c></example>
     public void RegisterImages(string baseResourceName, Assembly assembly)
     {
-      RegisterNeutralImages(Path.GetFileNameWithoutExtension(baseResourceName) + ".", new ResourceManager(baseResourceName, assembly));
+      var prefix = GetPrefixFromBaseResourceName(baseResourceName);
+      RegisterNeutralImages(prefix, new ResourceManager(baseResourceName, assembly));
       var ra = new ResourceAssembly(this, assembly, baseResourceName, true);
       _resourceAssemblies.Add(ra);
       ra.Load();
+    }
+
+    private string GetPrefixFromBaseResourceName(string baseResourceName)
+    {
+      // we make an exception for backward compatibility here:
+      // if the resources file is in a subdirectory named "Resources", then
+      // we do not assume a base name
+      // this ensures that old resources will be accessible with their original name
+
+
+      var splitText = baseResourceName.Split(new char[] { '.' });
+      string prefix;
+
+      if (splitText.Length >= 2 && splitText[1].ToLowerInvariant() == "resources")
+        prefix = string.Empty;
+      else
+        prefix = string.Join(".", splitText, 0, splitText.Length - 1) + ".";
+
+      return prefix;
     }
 
     public void RegisterNeutralImages(ResourceManager imageManager)
@@ -160,19 +182,9 @@ namespace Altaxo.Main.Services
             {
               var baseName = Path.GetFileNameWithoutExtension(resourceName);
               var prefix = Path.GetFileNameWithoutExtension(baseName);
-              var name = baseName.Substring(prefix.Length);
+              var name = baseName.Substring(prefix.Length).ToLowerInvariant();
               if (name != ".g")
               {
-                {
-                  // we make an exception for backward compatibility here:
-                  // if the resources file is in a subdirectory named "Resources", then
-                  // we do not assume a base name
-                  // this ensures that old resources will be accessible with their original name
-                  var splitName = baseName.Split(new char[] { '.' });
-                  if (splitName.Length >= 2 && splitName[1].ToLowerInvariant() == "resources")
-                    baseName = string.Empty; // do not use a base name if subdirectory is "Resources"
-                }
-
                 if (name.Contains("image") || name.Contains("icon") || name.Contains("bitmap"))
                 {
                   RegisterImages(baseName, assembly);
@@ -282,14 +294,16 @@ namespace Altaxo.Main.Services
     {
       lock (_loadLock)
       {
+        string s = null;
+
         // String is already in the hashtable of localized strings?
         if (_localStrings != null && _localStrings[name] != null)
         {
-          return _localStrings[name].ToString();
+          s = _localStrings[name].ToString();
         }
-
+        else
+        {
         // search all local resource managers
-        string s = null;
         foreach ((string prefix, ResourceManager resourceManger) in _localStringsResMgrs)
         {
           try
@@ -329,6 +343,11 @@ namespace Altaxo.Main.Services
           // throw an exception if not found
           throw new ResourceNotFoundException("string >" + name + "<");
         }
+        }
+
+#if USERESOURCETRACKING
+        LogStringResource(name, s, Assembly.GetCallingAssembly());
+#endif
 
         return s;
       }
@@ -336,6 +355,10 @@ namespace Altaxo.Main.Services
 
     public object GetImageResource(string name)
     {
+#if USERESOURCETRACKING
+        LogImageResource(name, s, Assembly.GetCallingAssembly());
+#endif
+
       lock (_loadLock)
       {
         object iconobj = null;
@@ -500,5 +523,60 @@ namespace Altaxo.Main.Services
     }
 
     #endregion Inner classes
+
+    #region Instrumentation
+
+    private HashSet<string> _stringKeysForLogging;
+    private void LogStringResource(string name, string value, Assembly callingAssembly)
+    {
+      if (null == _stringKeysForLogging)
+        _stringKeysForLogging = new HashSet<string>();
+
+      if (!_stringKeysForLogging.Contains(name))
+      {
+        _stringKeysForLogging.Add(name);
+
+        using (var stream = new System.IO.FileStream(@"C:\TEMP\UsedKeysForStrings.txt", FileMode.Append, FileAccess.Write, FileShare.None))
+        {
+          using (var wr = new StreamWriter(stream))
+          {
+            wr.Write(name);
+            wr.Write("\t");
+            var val = value.Trim();
+            var idx = val.IndexOfAny(new char[] { '\r', '\n', '\t' });
+            var len = idx >= 0 ? Math.Min(val.Length, idx) : val.Length;
+            wr.Write(val.Substring(0, len));
+            wr.Write("\t");
+            wr.Write(callingAssembly.GetName().Name);
+            wr.WriteLine();
+          }
+        }
+      }
+    }
+
+    private HashSet<string> _imageKeysForLogging;
+    private void LogImageResource(string name, Assembly callingAssembly)
+    {
+      if (null == _imageKeysForLogging)
+        _imageKeysForLogging = new HashSet<string>();
+
+      if (!_imageKeysForLogging.Contains(name))
+      {
+        _imageKeysForLogging.Add(name);
+
+        using (var stream = new System.IO.FileStream(@"C:\TEMP\UsedKeysForImages.txt", FileMode.Append, FileAccess.Write, FileShare.None))
+        {
+          using (var wr = new StreamWriter(stream))
+          {
+            wr.Write(name);
+            wr.Write("\t");
+            wr.Write(callingAssembly.GetName().Name);
+            wr.WriteLine();
+          }
+        }
+      }
+    }
+
+    #endregion
   }
 }

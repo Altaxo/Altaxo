@@ -25,7 +25,7 @@ namespace Altaxo.Gui.Common
   public static class WpfTreeNavigation
   {
     /// <summary>
-    /// Returns the first occurence of object of type <paramref name="T" /> in the visual tree of <paramref name="dependencyObject" />.
+    /// Returns the first occurence of object of type <typeparamref name="T"/> in the visual tree of <paramref name="root" />.
     /// <param name="root">Start node.</param>
     /// </summary>
     public static T TryFindChild<T>(DependencyObject root) where T : DependencyObject
@@ -42,9 +42,10 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Returns the first occurence of object of type <paramref name="T" /> in the visual tree of <paramref name="dependencyObject" />.
+    /// Returns the first occurence of object of type <typeparamref name="T"/> in the visual tree of <paramref name="child" />.
     /// </summary>
     /// <param name="child">Start node</param>
+    /// <param name="includeItSelf">If true, the <paramref name="child"/> itself is included in the search.</param>
     /// <returns></returns>
     public static T TryFindParent<T>(DependencyObject child, bool includeItSelf = true) where T : DependencyObject
     {

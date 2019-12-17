@@ -149,10 +149,6 @@ namespace Altaxo.Gui.Workbench
 
     public event EventHandler ActiveContentChanged;
 
-    public event EventHandler<ViewContentEventArgs> ViewOpened;
-
-    public event EventHandler<ViewContentEventArgs> ViewClosed;
-
     public event PropertyChangedEventHandler PropertyChanged;
 
     #region "Serialization"

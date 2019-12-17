@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System;
 using System.Collections.ObjectModel;
 using Altaxo.Main.Services.Implementation;
 

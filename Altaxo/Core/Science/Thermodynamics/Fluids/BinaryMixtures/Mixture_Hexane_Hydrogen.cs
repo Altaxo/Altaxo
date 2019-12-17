@@ -31,46 +31,46 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of Hexane and Hydrogen.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'hexane-hydrogen.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Kunz and Wagner (2007)</para>
-    /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
-    /// </remarks>
-    [CASRegistryNumber("110-54-3")]
-    [CASRegistryNumber("1333-74-0")]
-    public class Mixture_Hexane_Hydrogen : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of Hexane and Hydrogen.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'hexane-hydrogen.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Kunz and Wagner (2007)</para>
+  /// <para>Departure function (MXM): Kunz, O., Klimeck, R., Wagner, W., Jaeschke, M. The GERG-2004 Wide-Range Equation of State for Natural Gases and Other Mixtures. GERG Technical Monograph 15. Fortschr.-Ber. VDI, VDI-Verlag, D�sseldorf, 2007.</para>
+  /// </remarks>
+  [CASRegistryNumber("110-54-3")]
+  [CASRegistryNumber("1333-74-0")]
+  public class Mixture_Hexane_Hydrogen : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_Hexane_Hydrogen Instance { get; } = new Mixture_Hexane_Hydrogen();
+
+    #region Constants for the binary mixture of Hexane and Hydrogen
+
+    /// <summary>Gets the CAS registry number of component 1 (Hexane).</summary>
+    public override string CASRegistryNumber1 { get; } = "110-54-3";
+
+    /// <summary>Gets the CAS registry number of component 2 (Hydrogen).</summary>
+    public override string CASRegistryNumber2 { get; } = "1333-74-0";
+
+    #endregion Constants for the binary mixture of Hexane and Hydrogen
+
+    private Mixture_Hexane_Hydrogen()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_Hexane_Hydrogen Instance { get; } = new Mixture_Hexane_Hydrogen();
+      _beta_T = 1;
+      _gamma_T = 3.021197546;
+      _beta_v = 1;
+      _gamma_v = 1.243461678;
+      _F = 0;
+      #endregion
 
-        #region Constants for the binary mixture of Hexane and Hydrogen
-
-        /// <summary>Gets the CAS registry number of component 1 (Hexane).</summary>
-        public override string CASRegistryNumber1 { get; } = "110-54-3";
-
-        /// <summary>Gets the CAS registry number of component 2 (Hydrogen).</summary>
-        public override string CASRegistryNumber2 { get; } = "1333-74-0";
-
-        #endregion Constants for the binary mixture of Hexane and Hydrogen
-
-        private Mixture_Hexane_Hydrogen()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 1;
-            _gamma_T = 3.021197546;
-            _beta_v = 1;
-            _gamma_v = 1.243461678;
-            _F = 0;
-            #endregion
-
-        }
     }
+  }
 }

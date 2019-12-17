@@ -6,34 +6,34 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <Style TargetType="Label">
-            <Style.Setters>
-                <Setter Property="Margin" Value="8,0,8,0" />
-                <Setter Property="HorizontalAlignment" Value="Right" />
-            </Style.Setters>
-        </Style>
-    </UserControl.Resources>
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,8,0" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" MinWidth="40" />
-        </Grid.ColumnDefinitions>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" MinWidth="40" />
+		</Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="12" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="12" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="12" />
-        </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Content="Number of points:" />
-        <axogc:Int32UpDown x:Name="_edNumberOfPoints" Grid.Column="1" Grid.Row="0" Minimum="3" Change="2" ValueChanged="_edNumberOfPoints_Validating" />
-        <Label Grid.Column="0" Grid.Row="2" Content="Polynomial order:" />
-        <axogc:Int32UpDown x:Name="_edPolynomialOrder" Grid.Column="1" Grid.Row="2" ValueChanged="_edPolynomialOrder_Validating" />
-        <Label Grid.Column="0" Grid.Row="4" Content="Derivative order (use 0 for smoothing):" />
-        <axogc:Int32UpDown x:Name="_edDerivativeOrder" Grid.Column="1" Grid.Row="4" ValueChanged="_edDerivativeOrder_Validating" />
-    </Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="12" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="12" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="12" />
+		</Grid.RowDefinitions>
+		<Label Grid.Column="0" Grid.Row="0" Content="Number of points:" />
+		<axogc:Int32UpDown x:Name="_edNumberOfPoints" Grid.Column="1" Grid.Row="0" Minimum="3" Change="2" ValueChanged="_edNumberOfPoints_Validating" />
+		<Label Grid.Column="0" Grid.Row="2" Content="Polynomial order:" />
+		<axogc:Int32UpDown x:Name="_edPolynomialOrder" Grid.Column="1" Grid.Row="2" ValueChanged="_edPolynomialOrder_Validating" />
+		<Label Grid.Column="0" Grid.Row="4" Content="Derivative order (use 0 for smoothing):" />
+		<axogc:Int32UpDown x:Name="_edDerivativeOrder" Grid.Column="1" Grid.Row="4" ValueChanged="_edDerivativeOrder_Validating" />
+	</Grid>
 </UserControl>

@@ -5,16 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Name="_mainGrid">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Margin="4" Name="_lblDescription">Please enter:</Label>
-        <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Vertical" Name="_stackPanel">
-        </StackPanel>
-    </Grid>
+	<Grid Name="_mainGrid">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<Label Grid.Column="0" Grid.Row="0" Margin="4" Name="_lblDescription">Please enter:</Label>
+		<StackPanel Grid.Column="0" Grid.Row="1" Orientation="Vertical" Name="_stackPanel">
+		</StackPanel>
+	</Grid>
 </UserControl>

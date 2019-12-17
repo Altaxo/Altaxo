@@ -29,45 +29,45 @@ using System.Text;
 
 namespace Altaxo.Units.Length
 {
-    [UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]
-    public class Point : UnitBase, IUnit
+  [UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]
+  public class Point : UnitBase, IUnit
+  {
+    private static readonly Point _instance = new Point();
+
+    public static Point Instance { get { return _instance; } }
+
+    protected Point()
     {
-        private static readonly Point _instance = new Point();
-
-        public static Point Instance { get { return _instance; } }
-
-        protected Point()
-        {
-        }
-
-        public string Name
-        {
-            get { return "Point"; }
-        }
-
-        public string ShortCut
-        {
-            get { return "pt"; }
-        }
-
-        public double ToSIUnit(double x)
-        {
-            return x * (2.54E-2 / 72.0);
-        }
-
-        public double FromSIUnit(double x)
-        {
-            return x * (72.0 / 2.54E-2);
-        }
-
-        public ISIPrefixList Prefixes
-        {
-            get { return SIPrefix.ListWithNonePrefixOnly; }
-        }
-
-        public SIUnit SIUnit
-        {
-            get { return Meter.Instance; }
-        }
     }
+
+    public string Name
+    {
+      get { return "Point"; }
+    }
+
+    public string ShortCut
+    {
+      get { return "pt"; }
+    }
+
+    public double ToSIUnit(double x)
+    {
+      return x * (2.54E-2 / 72.0);
+    }
+
+    public double FromSIUnit(double x)
+    {
+      return x * (72.0 / 2.54E-2);
+    }
+
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
+
+    public SIUnit SIUnit
+    {
+      get { return Meter.Instance; }
+    }
+  }
 }

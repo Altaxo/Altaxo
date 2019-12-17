@@ -41,8 +41,6 @@ namespace Altaxo.Gui.Common
   {
     public int Result { get; private set; } = -1;
 
-    private string displayMessage;
-    private Exception exceptionGot;
 
     private int cancelButton;
     private int acceptButton;

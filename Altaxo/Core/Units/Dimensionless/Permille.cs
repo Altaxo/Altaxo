@@ -29,45 +29,45 @@ using System.Text;
 
 namespace Altaxo.Units.Dimensionless
 {
-    [UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
-    public class Permille : UnitBase, IUnit
+  [UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
+  public class Permille : UnitBase, IUnit
+  {
+    private static readonly Permille _instance = new Permille();
+
+    public static Permille Instance { get { return _instance; } }
+
+    protected Permille()
     {
-        private static readonly Permille _instance = new Permille();
-
-        public static Permille Instance { get { return _instance; } }
-
-        protected Permille()
-        {
-        }
-
-        public string Name
-        {
-            get { return "Per mill"; }
-        }
-
-        public string ShortCut
-        {
-            get { return "‰"; }
-        }
-
-        public double ToSIUnit(double x)
-        {
-            return x / 1000;
-        }
-
-        public double FromSIUnit(double x)
-        {
-            return x * 1000;
-        }
-
-        public ISIPrefixList Prefixes
-        {
-            get { return SIPrefix.ListWithNonePrefixOnly; }
-        }
-
-        public SIUnit SIUnit
-        {
-            get { return Unity.Instance; }
-        }
     }
+
+    public string Name
+    {
+      get { return "Per mill"; }
+    }
+
+    public string ShortCut
+    {
+      get { return "‰"; }
+    }
+
+    public double ToSIUnit(double x)
+    {
+      return x / 1000;
+    }
+
+    public double FromSIUnit(double x)
+    {
+      return x * 1000;
+    }
+
+    public ISIPrefixList Prefixes
+    {
+      get { return SIPrefix.ListWithNonePrefixOnly; }
+    }
+
+    public SIUnit SIUnit
+    {
+      get { return Unity.Instance; }
+    }
+  }
 }

@@ -21,7 +21,7 @@ using System;
 namespace Altaxo.Main
 {
   /// <summary>
-  /// The arguments for the <see cref="LineReceivedEventHandler"/> event.
+  /// The arguments for the LineReceivedEventHandler event.
   /// </summary>
   public class LineReceivedEventArgs : EventArgs
   {

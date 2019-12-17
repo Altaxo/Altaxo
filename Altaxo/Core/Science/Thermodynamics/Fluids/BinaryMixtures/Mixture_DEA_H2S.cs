@@ -31,45 +31,45 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
-    /// <summary>
-    /// State equations and constants of mixtures of DEA and H2S.
-    /// </summary>
-    /// <remarks>
-    /// <para>References:</para>
-    /// <para>The source code was created automatically using the mixture file 'dea-h2s.mix' from the following software:</para>
-    /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
-    /// <para>Further references (extracted from the mixture file):</para>
-    /// <para>Info: Herrig (2015)</para>
-    /// </remarks>
-    [CASRegistryNumber("111-42-2")]
-    [CASRegistryNumber("7783-06-4")]
-    public class Mixture_DEA_H2S : BinaryMixtureDefinitionBase
+  /// <summary>
+  /// State equations and constants of mixtures of DEA and H2S.
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>The source code was created automatically using the mixture file 'dea-h2s.mix' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the mixture file):</para>
+  /// <para>Info: Herrig (2015)</para>
+  /// </remarks>
+  [CASRegistryNumber("111-42-2")]
+  [CASRegistryNumber("7783-06-4")]
+  public class Mixture_DEA_H2S : BinaryMixtureDefinitionBase
+  {
+
+    /// <summary>Gets the (only) instance of this class.</summary>
+    public static Mixture_DEA_H2S Instance { get; } = new Mixture_DEA_H2S();
+
+    #region Constants for the binary mixture of DEA and H2S
+
+    /// <summary>Gets the CAS registry number of component 1 (DEA).</summary>
+    public override string CASRegistryNumber1 { get; } = "111-42-2";
+
+    /// <summary>Gets the CAS registry number of component 2 (H2S).</summary>
+    public override string CASRegistryNumber2 { get; } = "7783-06-4";
+
+    #endregion Constants for the binary mixture of DEA and H2S
+
+    private Mixture_DEA_H2S()
     {
+      #region  Mixture parameter
 
-        /// <summary>Gets the (only) instance of this class.</summary>
-        public static Mixture_DEA_H2S Instance { get; } = new Mixture_DEA_H2S();
+      _beta_T = 1;
+      _gamma_T = 1.058369832;
+      _beta_v = 1;
+      _gamma_v = 1.103490253;
+      _F = 0;
+      #endregion
 
-        #region Constants for the binary mixture of DEA and H2S
-
-        /// <summary>Gets the CAS registry number of component 1 (DEA).</summary>
-        public override string CASRegistryNumber1 { get; } = "111-42-2";
-
-        /// <summary>Gets the CAS registry number of component 2 (H2S).</summary>
-        public override string CASRegistryNumber2 { get; } = "7783-06-4";
-
-        #endregion Constants for the binary mixture of DEA and H2S
-
-        private Mixture_DEA_H2S()
-        {
-            #region  Mixture parameter
-
-            _beta_T = 1;
-            _gamma_T = 1.058369832;
-            _beta_v = 1;
-            _gamma_v = 1.103490253;
-            _F = 0;
-            #endregion
-
-        }
     }
+  }
 }

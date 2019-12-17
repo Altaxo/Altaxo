@@ -44,14 +44,6 @@ namespace Altaxo.Main.Properties
     /// </summary>
     private Dictionary<string, string> _propertiesLazyLoaded = new Dictionary<string, string>();
 
-    /// <summary>
-    /// Gets the assembly version this property bag was loaded from, i.e. the version of Altaxo that has serialized this bag before it was loaded again.
-    /// </summary>
-    /// <value>
-    /// The assembly version of Altaxo this bag was loaded from, or null if this is the default bag.
-    /// </value>
-    public Version AssemblyVersionLoadedFrom { get; private set; }
-
     #region Serialization
 
     /// <summary>

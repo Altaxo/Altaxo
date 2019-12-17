@@ -414,7 +414,7 @@ namespace Altaxo.Main.Services
         throw new NotImplementedException();
         // XamlServices.Save(xmlWriter, value);
       }
-      return element;
+      // return element;
     }
 
     private object Deserialize(object serializedVal, Type targetType)
